@@ -1,0 +1,27 @@
+{
+  "name": "frozen-river",
+  "version": "0.0.1",
+  "description": "Immutable date wrapper",
+  "author": "Isaac Cambron",
+  "keywords": ["date", "immutable"],
+  "devDependencies": {
+    "mocha": "latest",
+    "chai": "latest",
+    "grunt-mocha-test": "latest",
+    "grunt": "latest",
+    "grunt-gobble": "latest",
+    "gobble": "latest",
+    "gobble-rollup-babel": "latest",
+    "gobble-uglifyjs": "latest"
+  },
+  "main": "dist/frozen-river-node",
+  "engines": {
+    "node": "*"
+  },
+  "license": "MIT",
+  "config": {
+    "blanket": {
+      "pattern": ["dist/twix.js"]
+    }
+  }
+}
