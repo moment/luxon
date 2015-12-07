@@ -1,21 +1,24 @@
-'use strict';
-
-const gulp = require('gulp'),
-      gulpif = require('gulp-if'),
-      lazypipe = require('lazypipe'),
-      rollup = require('gulp-rollup'),
-      uglify = require('gulp-uglify'),
-      babel = require('rollup-plugin-babel'),
-      sourcemaps = require('gulp-sourcemaps'),
-      rename = require('gulp-rename'),
-      mocha = require('gulp-mocha'),
-      path = require('path');
+let gulp = require('gulp'),
+    gulpif = require('gulp-if'),
+    lazypipe = require('lazypipe'),
+    rollup = require('gulp-rollup'),
+    uglify = require('gulp-uglify'),
+    babel = require('rollup-plugin-babel'),
+    sourcemaps = require('gulp-sourcemaps'),
+    rename = require('gulp-rename'),
+    mocha = require('gulp-mocha'),
+    path = require('path');
 
 function preprocess(inopts){
 
   let opts = Object.assign(
-    {sourceMap: true, format: inopts.format, plugins: []},
-    inopts.rollupOpts || {})
+    {
+      sourceMap: true,
+      format: inopts.format,
+      plugins: []
+    },
+    inopts.rollupOpts || {}
+  );
 
   if (inopts.compile || typeof(inopts.compile) == 'undefined'){
     opts.plugins.push(babel());
@@ -25,7 +28,7 @@ function preprocess(inopts){
 }
 
 function processSrc(opts) {
-  let dest = `dist/${opts.dest}`
+  let dest = `dist/${opts.dest}`;
   return lazypipe()
     .pipe(gulp.dest, dest)
     .pipe(() => gulpif(!opts.nougly,
@@ -41,7 +44,7 @@ function resolveLib(opts = {}){
     //external import, so I could point it at dist/cjs/luxon.js
     resolveId: (importee) =>
       importee === 'luxon' ? path.resolve(__dirname, 'src/luxon.js') : null
-  }
+  };
 }
 
 
@@ -69,7 +72,7 @@ gulp.task('global', () =>
           .pipe(preprocess({format: 'iife', rollupOpts: {moduleName: 'luxon'}}))
           .pipe(processSrc({dest: 'global', nougly: true})));
 
-gulp.task('build', ['cjs', 'es6', 'amd', 'global'])
+gulp.task('build', ['cjs', 'es6', 'amd', 'global']);
 
 gulp.task('test', ['buildNodeTest'], () =>
   gulp
@@ -78,7 +81,7 @@ gulp.task('test', ['buildNodeTest'], () =>
 
 //sort of annoying: you can't stream a built file to the mocha wrapper,
 //so build it to a temp dir and then run it
-gulp.task('buildNodeTest', ['build'], () =>
+gulp.task('buildNodeTest', () =>
   gulp
     .src('test/instant/instant.spec.js')
     .pipe(preprocess({
@@ -91,7 +94,7 @@ gulp.task('buildNodeTest', ['build'], () =>
     }))
     .pipe(gulp.dest('.compiled-tests/node')));
 
-gulp.task('browserTest', ['build'], () =>
+gulp.task('browserTest', ['global'], () =>
   gulp
     .src('test/instant/instant.spec.js')
     .pipe(preprocess({

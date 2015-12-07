@@ -1,6 +1,18 @@
 import {Formatter} from "./impl/formatter";
 import {Duration} from "./duration";
 
+function objectToDate(obj, defaults){
+  return new Date(
+    obj.year || defaults.year,
+    (obj.month || defaults.month) - 1,
+    obj.day || defaults.day,
+    obj.hour || defaults.hour,
+    obj.minute || defaults.minute,
+    obj.second || defaults.second,
+    obj.millisecond || defaults.millisecond
+  );
+}
+
 export class Instant {
 
   constructor(config = {}){
@@ -27,15 +39,9 @@ export class Instant {
   }
 
   static fromObject(obj){
-    let def = this.now().toObject();
-        date = new Date(
-          m.year || def.year,
-          (m.month || def.month) - 1,
-          m.day || def.day,
-          m.hour || 0,
-          m.minute || 0,
-          m.second || 0,
-          m.millisecond || 0);
+    let now = this.now().toObject(),
+        lowOrder = {hour: 0, minute: 0, second: 0, millisecond: 0},
+        date = objectToDate(obj, Object.assign(now, lowOrder));
     return new Instant({date: date});
   }
 
@@ -54,7 +60,7 @@ export class Instant {
 
   //basics
 
-  clone(alts = {}){
+  _clone(alts = {}){
     return new Instant(Object.assign(this._c, alts));
   }
 
@@ -65,11 +71,11 @@ export class Instant {
   }
 
   utc(){
-    return this._c.utc ? this : this.clone({utc: true});
+    return this._c.utc ? this : this._clone({utc: true});
   }
 
   local(){
-    return !this._c.utc ? this : this.clone({utc: false});
+    return !this._c.utc ? this : this._clone({utc: false});
   }
 
   get timezone(){
@@ -83,12 +89,14 @@ export class Instant {
   }
 
   set offset(n){
-    return this.clone({alts: {offset: 0}});
+    return this._clone({alts: {offset: 0}});
   }
 
   //get/set date and time
 
   set(values){
+    let mixed = Object.assign(this.toObject(), values);
+    return this._clone({date: objectToDate(mixed)});
   }
 
   //convenience getters
@@ -96,35 +104,35 @@ export class Instant {
     this[unit]();
   }
 
-  get year(){
+  year(){
     return this.isUTC() ? this._d.getUTCFullYear() : this._d.getFullYear();
   }
 
-  get month(){
-    return this.isUTC() ? this._d.getUTCMonth() : this._d.getMonth();
+  month(){
+    return (this.isUTC() ? this._d.getUTCMonth() : this._d.getMonth()) + 1;
   }
 
-  get day(){
+  day(){
     return this.isUTC() ? this._d.getUTCDate() : this._d.getDate();
   }
 
-  get hour(){
-    return this.isUTC() ? this._d.getUTCHour() : this._d.getHour();
+  hour(){
+    return this.isUTC() ? this._d.getUTCHours() : this._d.getHours();
   }
 
-  get minute(){
-    return this.isUTC() ? this._d.getUTCMinute() : this._d.getMinute();
+  minute(){
+    return this.isUTC() ? this._d.getUTCMinutes() : this._d.getMinutes();
   }
 
-  get second(){
-    return this.isUTC() ? this._d.getUTCSecond() : this._d.getSecond();
+  second(){
+    return this.isUTC() ? this._d.getUTCSeconds() : this._d.getSeconds();
   }
 
-  get millisecond(){
-    return this.isUTC() ? this._d.getUTCMillisecond() : this._d.getMillisecond();
+  millisecond(){
+    return this.isUTC() ? this._d.getUTCMilliseconds() : this._d.getMilliseconds();
   }
 
-  get weekday(){
+  weekday(){
     return this.isUTC() ? this._d.getUTCDay() : this._d.getDay();
   }
 
@@ -165,7 +173,7 @@ export class Instant {
       month: this.month(),
       day: this.day(),
       hour: this.hour(),
-      minute: this.minue(),
+      minute: this.minute(),
       second: this.second(),
       millisecond: this.millisecond()
     };
@@ -186,9 +194,9 @@ export class Instant {
   minus(druationOrNumber, type){
   }
 
-  diff(otherInstant, granularity='millisecond'){
+  diff(otherInstant, opts = {granularity: 'millisecond'}){
   }
 
-  diffNow(granularity='millisecond'){
+  diffNow(opts = {granularity : 'millisecond'}){
   }
 }

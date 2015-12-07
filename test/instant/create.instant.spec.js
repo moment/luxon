@@ -59,5 +59,48 @@ export let create = () => {
         instant.valueOf().should.equal(value * 1000);
       });
     });
+
+    describe('#fromObject', () => {
+
+      it('sets all the fields', () => {
+
+          let instant = Instant.fromObject({
+            year: 1982,
+            month: 5,
+            day: 25,
+            hour: 9,
+            minute: 23,
+            second: 54,
+            millisecond: 123
+          });
+
+        instant.year().should.equal(1982);
+        instant.month().should.equal(5);
+        instant.day().should.equal(25);
+        instant.hour().should.equal(9);
+        instant.minute().should.equal(23);
+        instant.second().should.equal(54);
+        instant.millisecond().should.equal(123);
+      });
+
+      it('defaults high-order values to the current date', () => {
+
+        let instant = Instant.fromObject({}),
+            now = Instant.now();
+        instant.year().should.equal(now.year());
+        instant.month().should.equal(now.month());
+        instant.day().should.equal(now.day());
+      });
+
+      it('defaults lower-order values to 0', () => {
+
+        let instant = Instant.fromObject({});
+
+        instant.hour().should.equal(0),
+        instant.minute().should.equal(0),
+        instant.second().should.equal(0),
+        instant.millisecond().should.equal(0);
+      });
+    });
   });
 };
