@@ -1,5 +1,5 @@
 {
-  "name": "frozen-river",
+  "name": "luxon",
   "version": "0.0.1",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
@@ -7,14 +7,20 @@
   "devDependencies": {
     "mocha": "latest",
     "chai": "latest",
-    "grunt-mocha-test": "latest",
-    "grunt": "latest",
-    "grunt-gobble": "latest",
-    "gobble": "latest",
-    "gobble-rollup-babel": "latest",
-    "gobble-uglifyjs": "latest"
+    "lazypipe": "latest",
+    "gulp": "latest",
+    "gulp-babel": "latest",
+    "gulp-rollup": "latest",
+    "gulp-sourcemaps": "latest",
+    "gulp-uglify": "latest",
+    "gulp-mocha": "latest",
+    "gulp-rename": "latest",
+    "gulp-if": "latest",
+    "rollup-plugin-babel": "latest",
+    "babel-preset-es2015": "latest",
+    "babel-preset-es2015-rollup": "latest"
   },
-  "main": "dist/frozen-river-node",
+  "main": "dist/cjs/luxon.js",
   "engines": {
     "node": "*"
   },

@@ -1,5 +1,5 @@
 import {chai} from 'chai';
-import {Instant} from 'frozen-river';
+import {Instant} from 'luxon';
 
 export let create = () => {
   describe('creation functions', () => {
