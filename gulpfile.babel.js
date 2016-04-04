@@ -76,14 +76,14 @@ gulp.task('build', ['cjs', 'es6', 'amd', 'global']);
 
 gulp.task('test', ['buildNodeTest'], () =>
   gulp
-    .src('.compiled-tests/node/instant.spec.js')
+    .src('.compiled-tests/node/index.spec.js')
     .pipe(mocha({reporter: 'spec'})));
 
 //sort of annoying: you can't stream a built file to the mocha wrapper,
 //so build it to a temp dir and then run it
 gulp.task('buildNodeTest', () =>
   gulp
-    .src('test/instant/instant.spec.js')
+    .src('test/index.spec.js')
     .pipe(preprocess({
       format: 'cjs',
       compile: true,
@@ -96,7 +96,7 @@ gulp.task('buildNodeTest', () =>
 
 gulp.task('browserTest', ['global'], () =>
   gulp
-    .src('test/instant/instant.spec.js')
+    .src('test/index.spec.js')
     .pipe(preprocess({
       format: 'iife',
       rollupOpts: {

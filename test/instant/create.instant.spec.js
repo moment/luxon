@@ -74,6 +74,29 @@ export let create = () => {
             millisecond: 123
           });
 
+        instant.isUTC().should.equal(false);
+        instant.year().should.equal(1982);
+        instant.month().should.equal(5);
+        instant.day().should.equal(25);
+        instant.hour().should.equal(9);
+        instant.minute().should.equal(23);
+        instant.second().should.equal(54);
+        instant.millisecond().should.equal(123);
+      });
+
+      it('allows utc: true option', () => {
+
+        let instant = Instant.fromObject({
+          year: 1982,
+          month: 5,
+          day: 25,
+          hour: 9,
+          minute: 23,
+          second: 54,
+          millisecond: 123
+        }, {utc: true});
+
+        instant.isUTC().should.equal(true);
         instant.year().should.equal(1982);
         instant.month().should.equal(5);
         instant.day().should.equal(25);

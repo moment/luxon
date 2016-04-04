@@ -1,10 +1,16 @@
-import * as chai from 'chai';
 import {create} from './create.instant.spec';
 import {getters} from './getters.instant.spec';
+import {format} from './format.instant.spec';
 
-chai.should();
-
-describe('Instant', () => {
-  create();
-  getters();
-});
+export let instant = () => {
+  describe('Instant', () => {
+    create();
+    //offset()
+    getters();
+    //setters();
+    format();
+    //parse();
+    //math();
+    //utils();
+  });
+};
