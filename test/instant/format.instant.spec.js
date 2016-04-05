@@ -12,7 +12,7 @@ export let format = () => {
       });
 
       it('shows the offset if it has one', () => {
-        date.utcOffset(-6 * 60).toISO().should.equal('1982-05-25T07:23:54.123-06:00');
+        date.utcOffset(-6 * 60).toISO().should.equal('1982-05-25T03:23:54.123-06:00');
       });
     });
   });

@@ -1,5 +1,10 @@
-import {Formatter} from "./impl/formatter";
-import {Duration} from "./duration";
+import {Duration} from './duration';
+import {Formatter} from './impl/formatter';
+import {UTCDate} from './impl/utcdate';
+
+function isUndefined(o){
+  return typeof(o) == 'undefined';
+}
 
 function objectToDate(obj, defaults, utc = false){
   let args = [
@@ -12,72 +17,20 @@ function objectToDate(obj, defaults, utc = false){
     obj.millisecond || defaults.millisecond
   ];
 
-  return utc ? new Date(Date.UTC(...args)) : new Date(...args);
+  return utc ? toUTC(Date.UTC(...args)) : new Date(...args);
 }
 
-function makeGetSet(name, getter){
-  return function(v){
-    if (typeof(v) === 'undefined') {
-      return getter(this._shifted, this.isUTC());
-    }
-    else{
-      return this.set({[name]: v});
-    }
-  };
-}
-
-class GetSet {
-
-  static getYear(d, isUTC){
-    return isUTC ? d.getUTCFullYear() : d.getFullYear();
-  }
-
-  static getMonth(d, isUTC){
-    return (isUTC ? d.getUTCMonth() : d.getMonth()) + 1;
-  }
-
-  static getDay(d, isUTC){
-    return isUTC ? d.getUTCDate() : d.getDate();
-  }
-
-  static getHour(d, isUTC){
-    return isUTC ? d.getUTCHours() : d.getHours();
-  }
-
-  static getMinute(d, isUTC){
-    return isUTC ? d.getUTCMinutes() : d.getMinutes();
-  }
-
-  static getSecond(d, isUTC){
-    return isUTC ? d.getUTCSeconds() : d.getSeconds();
-  }
-
-  static getMillisecond(d, isUTC){
-    return isUTC ? d.getUTCMilliseconds() : d.getMilliseconds();
-  }
-
-  static setYear(d, v, isUTC){
-    isUTC ? d.setUTCFullYear(v) : d.setFullYear(v);
-  }
-
-  static setMonth(d, v, isUTC){
-    isUTC ? d.setUTCMonth(v - 1) : d.setMonth(v - 1);
-  }
-
-  static setDay(d, v, isUTC){
-    isUTC ? d.setUTCDate(v) : d.setDate(v);
-  }
-
-  //shouldn't need setters for lower-order fields
+function toUTC(dateOrMS, offset=0){
+  return new UTCDate(new Date(dateOrMS), -offset);
 }
 
 function adjustTime(inst, dur){
   let d = new Date(inst._d);
 
   //things with change the date exclusively
-  if (dur.years()) {GetSet.setYear(d, d.getYear() + dur.years());}
-  if (dur.months()) {GetSet.setMonth(d, d.getMonth() + dur.months());}
-  if (dur.days()) {GetSet.setDay(d, d.getDay() + dur.days());}
+  if (dur.years()) {d.setYear(d, d.getYear() + dur.years());}
+  if (dur.months()) {d.setMonth(d, d.getMonth() + dur.months());}
+  if (dur.days()) {d.setDay(d, d.getDay() + dur.days());}
 
   //things that change the millis
   let leftovers = {},
@@ -107,20 +60,8 @@ function friendlyDuration(durationOrNumber, type){
 export class Instant{
 
   constructor(config = {}){
-
-    this._c = config;
+    this._c = Object.assign({utc: false, offset: 0}, config);
     this._d = config.date;
-
-    this._c.offset = config.offset || 0;
-
-    if (this._c.offset === 0){
-      this._shifted = this._d;
-    }
-    else{
-      let originalOffset = -Math.round(config.date.getTimezoneOffset() / 15) * 15,
-          diff = this._c.offset - originalOffset;
-      this._shifted = adjustTime(this, Duration.fromObject({minutes: diff}));
-    }
   }
 
   //create instants
@@ -175,7 +116,7 @@ export class Instant{
   //localization
 
   locale(l){
-    if (typeof(l) === 'undefined'){
+    if (isUndefined(l)){
       return this._c.localeConfig || 'us-en';
     }
     else{
@@ -190,28 +131,42 @@ export class Instant{
   }
 
   utc(){
-    return this._c.utc ? this : this._clone({utc: true, offset: 0});
+    return this._c.utc ? this : this._clone({
+      date: toUTC(this._d),
+      utc: true,
+      offset: 0
+    });
   }
 
   local(){
-    return !this._c.utc ? this : this._clone({utc: false, offset: 0});
+    return !this._c.utc ? this : this._clone({
+      date: new Date(+this._d),
+      utc: false,
+      offset: 0
+    });
   }
 
   timezone(opts = {}){
     //wait for formatToParts()
   }
 
-  utcOffset(n){
-    if (typeof(n) === 'undefined'){
+  utcOffset(offset){
+    if (isUndefined(offset)){
       return this._c.offset;
     }
     else{
-      return this._clone({offset: n, utc: true});
+      return this._clone({
+        date: toUTC(this._d, offset),
+        offset: offset,
+        utc: true});
     }
   }
 
-  asInUTCOffset(n){
-    return this._clone({offset: n, utc: true});
+  asInUTC(offset = 0){
+    return this._clone({
+      date: toUTC(this._d, offset, true),
+      offset: offset,
+      utc: true});
   }
 
   //get/set date and time
@@ -221,13 +176,41 @@ export class Instant{
     return this._clone({date: objectToDate(mixed)});
   }
 
-  //convenience getters
+  //convenience getters/setters
   get(unit){
     return this[unit]();
   }
 
+  year(v){
+    return isUndefined ? this._d.getFullYear() : this.set({year: v});
+  }
+
+  month(v){
+    return isUndefined ? this._d.getMonth() + 1 : this.set({month: v});
+  }
+
+  day(v){
+    return isUndefined ? this._d.getDate() : this.set({day: v});
+  }
+
+  hour(v){
+    return isUndefined ? this._d.getHours() : this.set({hour: v});
+  }
+
+  minute(v){
+    return isUndefined ? this._d.getMinutes() : this.set({minute: v});
+  }
+
+  second(v){
+    return isUndefined ? this._d.getSeconds() : this.set({second: v});
+  }
+
+  millisecond(v){
+    return isUndefined ? this._d.getMilliseconds() : this.set({millsecond: v});
+  }
+
   weekday(){
-    return this.isUTC ? this._shifted.getUTCDay() : this._shifted.getDay();
+    return this._d.getDay();
   }
 
   //useful info
@@ -257,7 +240,7 @@ export class Instant{
     return Formatter.create(this._c, opts).formatFromString(this);
   }
 
-  toLocalString(opts = {}){
+  toLocaleString(opts = {}){
     return Formatter.create(this._c, opts).formatDate(this);
   }
 
@@ -314,11 +297,3 @@ export class Instant{
   diffNow(opts = {granularity : 'millisecond'}){
   }
 }
-
-Instant.prototype.year = makeGetSet('year', GetSet.getYear);
-Instant.prototype.month = makeGetSet('month', GetSet.getMonth);
-Instant.prototype.day = makeGetSet('day', GetSet.getDay);
-Instant.prototype.hour = makeGetSet('hour', GetSet.getHour);
-Instant.prototype.minute = makeGetSet('minute', GetSet.getMinute);
-Instant.prototype.second = makeGetSet('second', GetSet.getSecond);
-Instant.prototype.millisecond = makeGetSet('millisecond', GetSet.getMillisecond);
