@@ -1,6 +1,5 @@
 node_modules
-.gobble
-.gobble-build
 .tern-port
 .compiled-tests
 dist
+#*
