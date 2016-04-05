@@ -74,7 +74,7 @@ export let create = () => {
             millisecond: 123
           });
 
-        instant.isUTC().should.equal(false);
+        instant.isOffsetFixed().should.equal(false);
         instant.year().should.equal(1982);
         instant.month().should.equal(5);
         instant.day().should.equal(25);
@@ -96,7 +96,7 @@ export let create = () => {
           millisecond: 123
         }, {utc: true});
 
-        instant.isUTC().should.equal(true);
+        instant.isOffsetFixed().should.equal(true);
         instant.year().should.equal(1982);
         instant.month().should.equal(5);
         instant.day().should.equal(25);

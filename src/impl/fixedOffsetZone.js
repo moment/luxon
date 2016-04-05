@@ -1,4 +1,6 @@
-export class UTCDate {
+import {Formatter} from './formatter';
+
+class UTCDatelike {
   constructor(date, offset = 0, skipShift = false){
     this._d = date;
     this._o = offset;
@@ -12,7 +14,7 @@ export class UTCDate {
   }
 
   _adjust(date, dir){
-    return this._o == 0 ? date : new Date(+date + this._o * 60 * 1000 * -dir);
+    return this._o == 0 ? date : new Date(+date + this._o * 60 * 1000 * dir);
   }
 
   _shift(){
@@ -31,7 +33,7 @@ export class UTCDate {
   getSeconds(){return this._s.getUTCSeconds();}
   getMilliseconds(){return this._s.getUTCMilliseconds();}
   getDay(){return this._s.getUTCDay();}
-  getTimeZoneOffset(){return this._o;}
+  getTimezoneOffset(){return -this._o;}
 
   setFullYear(y){
     s.setUTCFullYear(y),
@@ -89,5 +91,34 @@ export class UTCDate {
 
   valueOf(){
     return this._d.valueOf();
+  }
+}
+
+export class FixedOffsetZone {
+
+  constructor(offset){
+    this._offset = offset;
+  }
+
+  name(opts = {format: 'wide'}){
+    let base = format == 'wide' ? 'Universal Coordinated Time' : 'UTC',
+        number = Formatter.formatOffset(this._offset, {format: 'narrow'});
+    return this._offset == 0 ? 'UTC' : `UTC${number}`;
+  }
+
+  universal() {
+    return true;
+  }
+
+  fromDate(date, opts = {keepCalendarTime: false}){
+    return new UTCDatelike(date, this._offset, opts.keepCalendarTime);
+  }
+
+  fromArgs(args){
+    return new UTCDatelike(new Date(Date.UTC(...args)));
+  }
+
+  equals(otherZone){
+    return (otherZone instanceof FixedOffsetZone) && otherZone._offset == this._offset;
   }
 }

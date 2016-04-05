@@ -2,25 +2,23 @@ function pad(input, n = 2) {
   return ('0'.repeat(n) + input).slice(-n);
 };
 
-function formatOffset(inst){
-
-  //todo - is this always right? Should be an option?
-  if (inst.isUTC() && inst.utcOffset() === 0){
-    return 'Z';
-  }
-
-  //todo - use the duration formatter once there's a duration formatter
-  let offsetMins = inst.utcOffset(),
-      hours = offsetMins/60,
-      minutes = offsetMins % 60,
-      sign = hours > 0 ? '+' : '-';
-  ;
-
-  //todo - use the number formatter and the right : separator
-  return sign + pad(Math.abs(hours)) + ':' + pad(minutes);
-}
-
 export class Formatter {
+
+  static formatOffset(offset, opts = {format: 'wide'}){
+
+    let hours = offset/60,
+        minutes = offset % 60,
+        sign = hours > 0 ? '+' : '-';
+
+    if (opts.format == 'wide'){
+      return `${sign}${pad(Math.abs(hours))}:${pad(minutes)}`;
+    }
+    else{
+      let base = sign + Math.abs(hours);
+      return minutes > 0 ? `${base}:${pad(minutes)}` : base;
+    }
+
+  }
 
   static create(config, opts = {}){
 
@@ -31,10 +29,6 @@ export class Formatter {
     delete formatOpts.calendar;
     delete formatOpts.numbering;
     delete formatOpts.locale;
-
-    if (localeConfig.utc){
-      formatOpts.timeZone = "UTC";
-    }
 
     return new Formatter(localeConfig, formatOpts);
   }
@@ -73,6 +67,17 @@ export class Formatter {
     //Don't implement until formatToParts() is done. Waste of time otherwise.
     //See https://github.com/tc39/ecma402/issues/30
     //I've added some silly placeholders so that I can get ISO formatting working
+
+    function formatOffset(inst){
+
+      //todo - is this always right? Should be an option?
+      if (inst.isOffsetFixed() && inst.offset() === 0){
+        return 'Z';
+      }
+
+      //todo - use the duration formatter once there's a duration formatter
+      return Formatter.formatOffset(inst.offset());
+    }
 
     function tokenToString(token){
       switch (token) {

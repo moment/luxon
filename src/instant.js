@@ -1,13 +1,14 @@
 import {Duration} from './duration';
 import {Formatter} from './impl/formatter';
-import {UTCDate} from './impl/utcdate';
+import {FixedOffsetZone} from './impl/fixedOffsetZone';
+import {LocalZone} from './impl/localZone';
 
 function isUndefined(o){
   return typeof(o) == 'undefined';
 }
 
-function objectToDate(obj, defaults, utc = false){
-  let args = [
+function objectToArgs(obj, defaults){
+  return [
     obj.year || defaults.year,
     (obj.month || defaults.month) - 1,
     obj.day || defaults.day,
@@ -16,12 +17,6 @@ function objectToDate(obj, defaults, utc = false){
     obj.second || defaults.second,
     obj.millisecond || defaults.millisecond
   ];
-
-  return utc ? toUTC(Date.UTC(...args)) : new Date(...args);
-}
-
-function toUTC(dateOrMS, offset=0){
-  return new UTCDate(new Date(dateOrMS), -offset);
 }
 
 function adjustTime(inst, dur){
@@ -60,22 +55,32 @@ function friendlyDuration(durationOrNumber, type){
 export class Instant{
 
   constructor(config = {}){
-    this._c = Object.assign({utc: false, offset: 0}, config);
+    this._c = config;
+
+    if (this._c.zone === null){
+      this._c.zone = new LocalZone();
+    }
+
     this._d = config.date;
+    this._z = this._c.zone;
+  }
+
+  static get defaultZone(){
+    return new LocalZone();
   }
 
   //create instants
 
   static now(){
-    return new Instant({date: new Date()});
+    return new Instant({date: Instant.defaultZone.fromDate(new Date())});
   }
 
   static fromJSDate(date){
-    return new Instant({date: new Date(date)});
+    return new Instant({date: Instant.defaultZone.fromDate(new Date(date))});
   }
 
   static fromMillis(milliseconds){
-    return new Instant({date: new Date(milliseconds)});
+    return new Instant({date: Instant.defaultZone.fromDate(new Date(milliseconds))});
   }
 
   static fromUnix(seconds){
@@ -89,9 +94,10 @@ export class Instant{
     }
 
     let defaulted = Object.assign(now.toObject(), {hour: 0, minute: 0, second: 0, millisecond: 0}),
-        date = objectToDate(obj, defaulted, opts.utc);
+        zone = opts.utc ? new FixedOffsetZone(0) : new LocalZone(),
+        date = zone.fromArgs(objectToArgs(obj, defaulted));
 
-    return new Instant({date: date, utc: opts.utc});
+    return new Instant({date: date, zone: zone});
   }
 
   static fromISOString(text){
@@ -113,6 +119,18 @@ export class Instant{
     return new Instant(Object.assign(this._c, alts));
   }
 
+  _rezone(zone, opts){
+    if (zone.equals(this._z)){
+      return this;
+    }
+    else {
+      return this._clone({
+        date: zone.fromDate(this._d, opts),
+        zone: zone
+      });
+    }
+  }
+
   //localization
 
   locale(l){
@@ -126,91 +144,73 @@ export class Instant{
 
   //zones and offsets
 
-  isUTC(){
-    return this._c.utc;
+  utc(){
+    return this.useUTCOffset(0);
   }
 
-  utc(){
-    return this._c.utc ? this : this._clone({
-      date: toUTC(this._d),
-      utc: true,
-      offset: 0
-    });
+  useUTCOffset(offset, opts = {keepCalendarTime: false}){
+    return this._rezone(new FixedOffsetZone(offset), opts);
   }
 
   local(){
-    return !this._c.utc ? this : this._clone({
-      date: new Date(+this._d),
-      utc: false,
-      offset: 0
-    });
+    return this._rezone(new LocalZone());
   }
 
-  timezone(opts = {}){
-    //wait for formatToParts()
+  timezone(){
+    return this._z;
   }
 
-  utcOffset(offset){
-    if (isUndefined(offset)){
-      return this._c.offset;
-    }
-    else{
-      return this._clone({
-        date: toUTC(this._d, offset),
-        offset: offset,
-        utc: true});
-    }
+  timezoneName(opts = {}){
+    return this._z.name(opts);
   }
 
-  asInUTC(offset = 0){
-    return this._clone({
-      date: toUTC(this._d, offset, true),
-      offset: offset,
-      utc: true});
+  isOffsetFixed(){
+    return this._z.universal();
   }
 
-  //get/set date and time
-
-  set(values){
-    let mixed = Object.assign(this.toObject(), values);
-    return this._clone({date: objectToDate(mixed)});
-  }
-
-  //convenience getters/setters
+  //getters/setters
   get(unit){
     return this[unit]();
   }
+  set(values){
+    let mixed = Object.assign(this.toObject(), values);
+    return this._clone({date: this._z.fromArgs(objectToArgs(mixed))});
+  }
 
   year(v){
-    return isUndefined ? this._d.getFullYear() : this.set({year: v});
+    return isUndefined(v) ? this._d.getFullYear() : this.set({year: v});
   }
 
   month(v){
-    return isUndefined ? this._d.getMonth() + 1 : this.set({month: v});
+    return isUndefined(v) ? this._d.getMonth() + 1 : this.set({month: v});
   }
 
   day(v){
-    return isUndefined ? this._d.getDate() : this.set({day: v});
+    return isUndefined(v) ? this._d.getDate() : this.set({day: v});
   }
 
   hour(v){
-    return isUndefined ? this._d.getHours() : this.set({hour: v});
+    return isUndefined(v) ? this._d.getHours() : this.set({hour: v});
   }
 
   minute(v){
-    return isUndefined ? this._d.getMinutes() : this.set({minute: v});
+    return isUndefined(v) ? this._d.getMinutes() : this.set({minute: v});
   }
 
   second(v){
-    return isUndefined ? this._d.getSeconds() : this.set({second: v});
+    return isUndefined(v) ? this._d.getSeconds() : this.set({second: v});
   }
 
   millisecond(v){
-    return isUndefined ? this._d.getMilliseconds() : this.set({millsecond: v});
+    return isUndefined(v) ? this._d.getMilliseconds() : this.set({millsecond: v});
   }
 
   weekday(){
     return this._d.getDay();
+  }
+
+  offset(){
+    return -this._d.getTimezoneOffset();
   }
 
   //useful info
@@ -221,7 +221,7 @@ export class Instant{
   }
 
   isDST(){
-    return this.utcOffset() > this.month(0).utcOffset() || this.utcOffset() > this.month(5).utcOffset();
+    return this.offset() > this.month(0).offset() || this.offset() > this.month(5).offset();
   }
 
   daysInMonth(){
@@ -283,12 +283,12 @@ export class Instant{
   //add/subtract/compare
   plus(durationOrNumber, type){
     let dur = friendlyDuration(durationOrNumber, type);
-    this._clone({date: adjustTime(this, dur)});
+    this._clone({date: this._z.fromDate(adjustTime(this, dur))});
   }
 
   minus(durationOrNumber, type){
     let dur = friendlyDuration(durationOrNumber, type).negate();
-    this._clone({date: adjustTime(this, dur)});
+    this._clone({date: this._z.fromDate(adjustTime(this, dur))});
   }
 
   diff(otherInstant, opts = {granularity: 'millisecond'}){
