@@ -67,7 +67,6 @@ gulp.task('amd', () =>
           .pipe(preprocess({format: 'amd'}))
           .pipe(processSrc({dest: 'amd'})));
 
-
 gulp.task('global-es6', () =>
           src()
           .pipe(preprocess({format: 'iife', rollupOpts: {moduleName: 'luxon'}, compile: false}))
@@ -111,6 +110,7 @@ gulp.task('browserTest', ['global'], () =>
     }))
     .pipe(gulp.dest('.compiled-tests/browser')));
 
+//todo - don't kerplode on build failures
 gulp.task('watch', ['build'], () => gulp.watch('src/**/*.js', ['build']));
 
 gulp.task('default', ['build']);
