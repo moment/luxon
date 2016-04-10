@@ -6,7 +6,7 @@ import {LocalZone} from './impl/localZone';
 import {IntlZone} from './impl/intlZone';
 
 function isUndefined(o){
-  return typeof(o) == 'undefined';
+  return typeof(o) === 'undefined';
 }
 
 function now(){
@@ -23,7 +23,7 @@ function clone(inst, alts = {}){
 function fixOffset(ts, tz, o){
   //1. test whether the zone matches the offset for this ts
   let o2 = tz.offset(ts);
-  if (o == o2){
+  if (o === o2){
     return [ts, o];
   }
 
@@ -34,7 +34,7 @@ function fixOffset(ts, tz, o){
   let o3 = tz.offset(ts);
 
   //4. if it's the same, good to go
-  if (o2 == o3){
+  if (o2 === o3){
     return [ts, o2];
   }
 
@@ -92,14 +92,9 @@ export class Instant{
       enumerable: true
     });
 
-    let c = (config.old && config.old.ts == this.ts && config.old.zone.equals(this.zone)) ?
-          config.old.c :
-          Gregorian.tsToObj(this.ts, this.zone.offset(this.ts));
-
-
-    let o = (config.old && config.old.zone.equals(this.zone)) ?
-          config.old.o :
-          this.zone.offset(this.ts);
+    let unchanged = (config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone)),
+        c = unchanged? config.old.c : Gregorian.tsToObj(this.ts, this.zone.offset(this.ts)),
+        o = unchanged? config.old.o : this.zone.offset(this.ts);
 
     Object.defineProperty(this, 'c', {value: c});
     Object.defineProperty(this, 'o', {value: o});
