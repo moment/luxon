@@ -278,15 +278,7 @@ export class Instant{
   }
 
   toObject(opts = {}){
-    return {
-      year: this.year(),
-      month: this.month(),
-      day: this.day(),
-      hour: this.hour(),
-      minute: this.minute(),
-      second: this.second(),
-      millisecond: this.millisecond()
-    };
+    return Object.assign({}, this.c);
   }
 
   toJSDate(){
