@@ -17,27 +17,29 @@ function clone(inst, alts = {}){
   return new Instant(Object.assign({}, current, alts, {old: current}));
 }
 
-function rezone(inst, zone, opts){
-  if (zone.equals(inst.zone)){
-    return inst;
-  }
-  else {
-    //inst keepCalendarTime thing probably doesn't work for variable-offset zones
-    let newTS = opts.keepCalendarTime ? inst.ts - inst.o + zone(inst.ts) : inst.ts;
-    return clone(inst, {ts: newTS, zone: zone});
-  }
-}
-
+//seems like this might be more complicated than it appears here:
+//https://github.com/v8/v8/blob/master/src/date.cc#L212
 function fixOffset(ts, tz, o){
-  //todo! actually implement me!
-  //outline:
-  //1. test whether the zone matches the offset
+  //1. test whether the zone matches the offset for this ts
+  let o2 = tz.offset(ts);
+  if (o == o2){
+    return [ts, o];
+  }
+
   //2. if not, change the ts by the difference in the offset
+  ts -= (o2 - o) * 60 * 1000;
+
   //3. check it again
+  let o3 = tz.offset(ts);
+
   //4. if it's the same, good to go
+  if (o2 == o3){
+    return [ts, o2];
+  }
+
   //5. if it's different, steal underpants
   //6. profit!
-  return [ts, tz, o];
+  return [ts, o];
 }
 
 function adjustTime(inst, dur){
@@ -50,7 +52,7 @@ function adjustTime(inst, dur){
       }),
       ts = Gregorian.objToTS(c, o);
 
-  [ts, tz, o] = fixOffset(ts, tz, o);
+  [ts, o] = fixOffset(ts, o);
 
   let millisToAdd = Duration
         .fromObject(leftovers)
@@ -59,7 +61,7 @@ function adjustTime(inst, dur){
 
   ts += millisToAdd;
 
-  [ts, tz, o] = fixOffset(ts, tz, o);
+  [ts, o] = fixOffset(ts, o);
 
   return {ts: Gregorian.tsToObj(ts, o), zone: tz};
 }
@@ -122,16 +124,16 @@ export class Instant{
     return this.fromMillis(seconds * 1000);
   }
 
-  static fromObject(obj, opts = {utc: false}){
+  static fromObject(obj, opts = {utc: false, zone: null}){
     let tsNow = now();
 
-    let zone = opts.utc ? new FixedOffsetZone(0) : new LocalZone(),
+    let zone = opts.zone ? opts.zone : (opts.utc ? new FixedOffsetZone(0) : new LocalZone()),
         offsetProvis = zone.offset(tsNow),
         defaulted = Object.assign(Gregorian.tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj),
         tsProvis = Gregorian.objToTS(defaulted, offsetProvis),
-        [tsFinal, zoneFinal, _] = fixOffset(tsProvis, zone, offsetProvis);
+        [tsFinal, _] = fixOffset(tsProvis, zone, offsetProvis);
 
-    return new Instant({ts: tsFinal, zone: zoneFinal});
+    return new Instant({ts: tsFinal, zone: zone});
   }
 
   static fromISOString(text){
@@ -165,15 +167,26 @@ export class Instant{
   }
 
   useUTCOffset(offset, opts = {keepCalendarTime: false}){
-    return rezone(this, new FixedOffsetZone(offset), opts);
+    return this.rezone(new FixedOffsetZone(offset), opts);
   }
 
   local(){
-    return rezone(this, new LocalZone());
+    return this.rezone(new LocalZone());
   }
 
-  timezone(){
+  timezone(zone){
     return this.zone;
+  }
+
+  rezone(zone, opts = {keepCalendarTime: false}){
+    if (zone.equals(this.zone)){
+      return this;
+    }
+    else {
+      //this keepCalendarTime thing probably doesn't work for variable-offset zones
+      let newTS = opts.keepCalendarTime ? this.ts - this.o + zone(this.ts) : this.ts;
+      return clone(this, {ts: newTS, zone: zone});
+    }
   }
 
   timezoneName(opts = {}){

@@ -1,5 +1,6 @@
 import {chai} from 'chai';
 import {Instant} from 'luxon';
+import {FakePT} from '../helpers/fakePT';
 
 export let create = () => {
   describe('creation functions', () => {
@@ -104,6 +105,40 @@ export let create = () => {
         instant.minute().should.equal(23);
         instant.second().should.equal(54);
         instant.millisecond().should.equal(123);
+      });
+
+      it('allows a zone to be specified', () => {
+        let base = {
+          year: 1982,
+          day: 25,
+          hour: 9,
+          minute: 23,
+          second: 54,
+          millisecond: 123
+        },
+            daylight = Instant.fromObject(Object.assign({}, base, {month: 5}), {zone: new FakePT()}),
+            standard = Instant.fromObject(Object.assign({}, base, {month: 12}), {zone: new FakePT()});
+
+        daylight.isOffsetFixed().should.equal(false);
+        daylight.offset().should.equal(-7 * 60);
+        daylight.year().should.equal(1982);
+        daylight.month().should.equal(5);
+        daylight.day().should.equal(25);
+        daylight.hour().should.equal(9);
+        daylight.minute().should.equal(23);
+        daylight.second().should.equal(54);
+        daylight.millisecond().should.equal(123);
+
+        standard.isOffsetFixed().should.equal(false);
+        standard.offset().should.equal(-8 * 60);
+        standard.year().should.equal(1982);
+        standard.month().should.equal(12);
+        standard.day().should.equal(25);
+        standard.hour().should.equal(9);
+        standard.minute().should.equal(23);
+        standard.second().should.equal(54);
+        standard.millisecond().should.equal(123);
+
       });
 
       it('defaults high-order values to the current date', () => {

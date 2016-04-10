@@ -7,7 +7,7 @@ export class FixedOffsetZone {
   }
 
   name(opts = {format: 'wide'}){
-    let base = format == 'wide' ? 'Universal Coordinated Time' : 'UTC',
+    let base = opts.format == 'wide' ? 'Universal Coordinated Time' : 'UTC',
         number = Formatter.formatOffset(this._offset, {format: 'narrow'});
     return this._offset == 0 ? 'UTC' : `UTC${number}`;
   }
