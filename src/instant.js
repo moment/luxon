@@ -17,7 +17,7 @@ function clone(inst, alts = {}){
   return new Instant(Object.assign({}, current, alts, {old: current}));
 }
 
-//seems like this might be more complicated than it appears here:
+//seems like this might be more complicated than it appears. E.g.:
 //https://github.com/v8/v8/blob/master/src/date.cc#L212
 function fixOffset(ts, tz, o){
   //1. test whether the zone matches the offset for this ts
@@ -38,7 +38,8 @@ function fixOffset(ts, tz, o){
   }
 
   //5. if it's different, steal underpants
-  //6. profit!
+  //6. ???
+  //7. profit!
   return [ts, o];
 }
 
@@ -255,10 +256,7 @@ export class Instant{
   }
 
   daysInMonth(){
-    let year = this.year(),
-        month = this.month();
-
-    return Gregorian.daysInMonth(year, month);
+    return Gregorian.daysInMonth(this.month(), this.year());
   }
 
   daysInYear(){
