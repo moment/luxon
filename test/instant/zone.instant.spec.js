@@ -11,10 +11,10 @@ export let zone = () => {
       instant = Instant.fromMillis(millis);
     });
 
-    describe('#timezone', () => {
+    describe('timezone basics', () => {
       it('defaults to local', () => {
-        instant.timezone().name().should.equal('local');
-        instant.timezone().universal().should.equal(false);
+        instant.timezoneName().should.equal('local');
+        instant.isOffsetFixed().should.equal(false);
       });
     });
 
@@ -33,8 +33,8 @@ export let zone = () => {
       });
 
       it('changes the zone setting', () => {
-        zoned.timezone().name().should.equal('UTC');
-        zoned.timezone().universal().should.equal(true);
+        zoned.timezoneName().should.equal('UTC');
+        zoned.isOffsetFixed().should.equal(true);
       });
     });
 
@@ -53,8 +53,8 @@ export let zone = () => {
       });
 
       it('changes the zone setting', () => {
-        zoned.timezone().name().should.equal('UTC+5');
-        zoned.timezone().universal().should.equal(true);
+        zoned.timezoneName().should.equal('UTC+5');
+        zoned.isOffsetFixed().should.equal(true);
       });
     });
 
@@ -67,8 +67,8 @@ export let zone = () => {
       });
 
       it('resets the zone to local', () => {
-        relocaled.timezone().name().should.equal('local');
-        relocaled.timezone().universal().should.equal(false);
+        relocaled.timezoneName().should.equal('local');
+        relocaled.isOffsetFixed().should.equal(false);
       });
 
       it("doesn't change the time", () => {
@@ -90,7 +90,7 @@ export let zone = () => {
       });
 
       it('sets the zone', () => {
-        zoned.timezone().name().should.equal('Pacific Time');
+        zoned.timezoneName().should.equal('Pacific Time');
       });
 
       it("doesn't change the time", () => {
@@ -100,6 +100,28 @@ export let zone = () => {
       it('changes the calendar', () => {
         zoned.hour().should.equal(21); //pacific daylight time
       });
+    });
+
+    describe('intlZone', () => {
+      //this will only work in Chrome/V8 for now
+      let zoned;
+
+      beforeEach(() => {
+        zoned = instant.timezone('Europe/Paris');
+      });
+
+      it('sets the zone', () => {
+        zoned.timezoneName().should.equal('Europe/Paris');
+      });
+
+      it("doesn't change the time", () => {
+        zoned.valueOf().should.equal(instant.valueOf());
+      });
+
+      it('changes the calendar', () => {
+        zoned.hour().should.equal(6); //cest is +2
+      });
+
     });
   });
 };

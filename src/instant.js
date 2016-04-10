@@ -3,6 +3,7 @@ import {Formatter} from './impl/formatter';
 import {Gregorian} from './impl/gregorian';
 import {FixedOffsetZone} from './impl/fixedOffsetZone';
 import {LocalZone} from './impl/localZone';
+import {IntlZone} from './impl/intlZone';
 
 function isUndefined(o){
   return typeof(o) == 'undefined';
@@ -95,6 +96,7 @@ export class Instant{
           config.old.c :
           Gregorian.tsToObj(this.ts, this.zone.offset(this.ts));
 
+
     let o = (config.old && config.old.zone.equals(this.zone)) ?
           config.old.o :
           this.zone.offset(this.ts);
@@ -175,8 +177,8 @@ export class Instant{
     return this.rezone(new LocalZone());
   }
 
-  timezone(zone){
-    return this.zone;
+  timezone(zoneName){
+    return this.rezone(new IntlZone(zoneName));
   }
 
   rezone(zone, opts = {keepCalendarTime: false}){

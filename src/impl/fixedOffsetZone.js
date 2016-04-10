@@ -3,13 +3,13 @@ import {Formatter} from './formatter';
 export class FixedOffsetZone {
 
   constructor(offset){
-    this._offset = offset;
+    this.fixed = offset;
   }
 
   name(opts = {format: 'wide'}){
     let base = opts.format == 'wide' ? 'Universal Coordinated Time' : 'UTC',
-        number = Formatter.formatOffset(this._offset, {format: 'narrow'});
-    return this._offset == 0 ? 'UTC' : `UTC${number}`;
+        number = Formatter.formatOffset(this.fixed, {format: 'narrow'});
+    return this.fixed == 0 ? 'UTC' : `UTC${number}`;
   }
 
   universal() {
@@ -17,10 +17,10 @@ export class FixedOffsetZone {
   }
 
   offset(ts){
-    return this._offset;
+    return this.fixed;
   }
 
   equals(otherZone){
-    return (otherZone instanceof FixedOffsetZone) && otherZone._offset == this._offset;
+    return (otherZone instanceof FixedOffsetZone) && otherZone.fixed == this.fixed;
   }
 }
