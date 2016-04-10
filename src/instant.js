@@ -311,6 +311,12 @@ export class Instant{
     this.clone(this, adjustTime(this, dur));
   }
 
+  startOf(unit){
+  }
+
+  endOf(unit){
+  }
+
   diff(otherInstant, opts = {granularity: 'millisecond'}){
   }
 
