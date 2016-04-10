@@ -63,7 +63,7 @@ function adjustTime(inst, dur){
                      seconds: dur.seconds(),
                      milliseconds: dur.milliseconds()
                     })
-        .shiftTo('milliseconds')
+        .as('milliseconds')
         .milliseconds();
 
   ts += millisToAdd;

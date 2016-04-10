@@ -64,11 +64,7 @@ export class Duration{
     return this[unit]();
   }
 
-  as(unit){
-    return shiftTo(unit);
-  }
-
-  shiftTo(...units){
+  as(...units){
     if (units.length == 0){
       return this;
     }
