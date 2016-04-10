@@ -35,6 +35,7 @@ export let zone = () => {
       it('changes the zone setting', () => {
         zoned.timezoneName().should.equal('UTC');
         zoned.isOffsetFixed().should.equal(true);
+        zoned.isInDST().should.equal(false);
       });
     });
 
@@ -55,6 +56,7 @@ export let zone = () => {
       it('changes the zone setting', () => {
         zoned.timezoneName().should.equal('UTC+5');
         zoned.isOffsetFixed().should.equal(true);
+        zoned.isInDST().should.equal(false);
       });
     });
 
@@ -91,6 +93,7 @@ export let zone = () => {
 
       it('sets the zone', () => {
         zoned.timezoneName().should.equal('Pacific Time');
+        zoned.isOffsetFixed().should.equal(false);
       });
 
       it("doesn't change the time", () => {
@@ -99,6 +102,27 @@ export let zone = () => {
 
       it('changes the calendar', () => {
         zoned.hour().should.equal(21); //pacific daylight time
+        zoned.isInDST().should.equal(true);
+      });
+    });
+
+    describe('#isInDST', () => {
+      let zoned;
+
+      beforeEach(() => {
+        zoned = instant.rezone(new FakePT());
+      });
+
+      it('returns false for pre-DST times', () => {
+        zoned.month(1).isInDST().should.equal(false);
+      });
+
+      it('returns true for during-DST times', () => {
+        zoned.month(4).isInDST().should.equal(true);
+      });
+
+      it('returns false for post-DST times', () => {
+        zoned.month(12).isInDST().should.equal(false);
       });
     });
 

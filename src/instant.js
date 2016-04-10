@@ -195,6 +195,15 @@ export class Instant{
     return this.zone.universal();
   }
 
+  isInDST(){
+    if (this.isOffsetFixed()){
+      return false;
+    }
+    else{
+      return this.offset() > this.month(1).offset();
+    }
+  }
+
   //getters/setters
   get(unit){
     return this[unit]();
@@ -202,7 +211,7 @@ export class Instant{
 
   set(values){
     let mixed = Object.assign(this.toObject(), values);
-    return this.clone(this, {ts: Gregorian.objToTS(mixed)});
+    return clone(this, {ts: Gregorian.objToTS(mixed)});
   }
 
   year(v){
@@ -246,10 +255,6 @@ export class Instant{
   isInLeapYear(){
     let year = this.year();
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-  }
-
-  isDST(){
-    return this.offset() > this.month(0).offset() || this.offset() > this.month(5).offset();
   }
 
   daysInMonth(){
