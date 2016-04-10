@@ -45,27 +45,32 @@ function fixOffset(ts, tz, o){
 }
 
 function adjustTime(inst, dur){
-  let tz = inst.zone,
-      o = tz.offset(this.ts),
+  let o = inst.o,
+
+      //todo: only do this part if there are higher-order items in the dur
       c = Object.assign({}, inst.c, {
-        year: inst.c.year + dur.years,
-        month: inst.c.month + dur.months,
-        day: inst.c.day + dur.days
+        year: inst.c.year + dur.years(),
+        month: inst.c.month + dur.months(),
+        day: inst.c.day + dur.days()
       }),
       ts = Gregorian.objToTS(c, o);
 
-  [ts, o] = fixOffset(ts, o);
+  [ts, o] = fixOffset(ts, inst.zone, o);
 
   let millisToAdd = Duration
-        .fromObject(leftovers)
+        .fromObject({hours: dur.hours(),
+                     minutes: dur.minutes(),
+                     seconds: dur.seconds(),
+                     milliseconds: dur.milliseconds()
+                    })
         .shiftTo('milliseconds')
         .milliseconds();
 
   ts += millisToAdd;
 
-  [ts, o] = fixOffset(ts, o);
+  [ts, o] = fixOffset(ts, inst.zone, o);
 
-  return {ts: Gregorian.tsToObj(ts, o), zone: tz};
+  return {ts: ts, o: o};
 }
 
 function friendlyDuration(durationOrNumber, type){
@@ -147,7 +152,7 @@ export class Instant{
       return this.locale;
     }
     else{
-      return this.clone(this, {locale: l});
+      return clone(this, {locale: l});
     }
   }
 
@@ -204,7 +209,7 @@ export class Instant{
 
   set(values){
     let mixed = Object.assign(this.toObject(), values);
-    return clone(this, {ts: Gregorian.objToTS(mixed)});
+    return clone(this, {ts: Gregorian.objToTS(mixed, this.o)});
   }
 
   year(v){
@@ -297,18 +302,32 @@ export class Instant{
   //add/subtract/compare
   plus(durationOrNumber, type){
     let dur = friendlyDuration(durationOrNumber, type);
-    this.clone(this, adjustTime(this, dur));
+    return clone(this, adjustTime(this, dur));
   }
 
   minus(durationOrNumber, type){
     let dur = friendlyDuration(durationOrNumber, type).negate();
-    this.clone(this, adjustTime(this, dur));
+    return clone(this, adjustTime(this, dur));
   }
 
   startOf(unit){
+    let o = {};
+    switch (unit) {
+      case 'year': o.month = 1;
+      case 'month': o.day = 1;
+      case 'day': o.hour = 0;
+      case 'hour': o.minute = 0;
+      case 'minute': o.second = 0;
+      case 'second': o.millisecond = 0;
+    }
+    return this.set(o);
   }
 
   endOf(unit){
+    return this
+      .startOf(unit)
+      .plus(1, unit)
+      .minus(1, 'milliseconds');
   }
 
   diff(otherInstant, opts = {granularity: 'millisecond'}){

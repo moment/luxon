@@ -15,21 +15,28 @@ let matrix = {
 
 let ordered = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
+function ensure(unit){
+  //todo - yell if it's not a valid unit
+  return unit.endsWith('s') ? unit : unit + 's';
+}
+
 export class Duration{
 
   constructor(obj){
-    this._values = obj;
+    this.values = obj;
   }
 
   _clone(alts) {
-    new Duration(Object.assign(this._values), alts);
+    new Duration(Object.assign(this.values), alts);
   }
 
   static fromLength(count, unit){
-    return fromObject({[unit]: count});
+    unit = ensure(unit);
+    return Duration.fromObject({[unit]: count});
   }
 
   static fromObject(obj){
+    //todo - ensure() each key
     return new Duration(obj);
   }
 
@@ -40,7 +47,7 @@ export class Duration{
   toFormatString(fmt){}
 
   toObject(){
-    return Object.assign({}, this._values);
+    return Object.assign({}, this.values);
   }
 
   toISO(){}
@@ -78,51 +85,52 @@ export class Duration{
           delete(accumulated[ak]);
         }
 
-        if (this._values[k]) {
-          built[k] += this._values[k];
+        if (typeof(this.values[k]) === 'number') {
+          built[k] += this.values[k];
         }
       }
 
-      else if (this._values[k]) {
-        accumulated[k] = this._values[k];
+      else if (typeof(this.values[k]) === 'number') {
+        accumulated[k] = this.values[k];
       }
     }
+
     return Duration.fromObject(built);
   }
 
   negate(){
     let negated = {};
-    for(let k in Object.keys(this)){
-      negated[k] = -this._values[k];
+    for(let k of Object.keys(this.values)){
+      negated[k] = -this.values[k];
     }
     return Duration.fromObject(negated);
   };
 
   years(){
-    return this._values.years || 0;
+    return this.values.years || 0;
   }
 
   months(){
-    return this._values.months || 0;
+    return this.values.months || 0;
   }
 
   days(){
-    return this._values.days || 0;
+    return this.values.days || 0;
   }
 
   hours(){
-    return this._values.hours || 0;
+    return this.values.hours || 0;
   }
 
   minutes(){
-    return this._values.minutes || 0;
+    return this.values.minutes || 0;
   }
 
   seconds(){
-    return this._values.seconds || 0;
+    return this.values.seconds || 0;
   }
 
   milliseconds(){
-    return this._values.milliseconds || 0;
+    return this.values.milliseconds || 0;
   }
 }

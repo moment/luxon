@@ -127,7 +127,7 @@ export class Gregorian {
     };
   }
 
-  static objToTS(obj, offset = 0){
+  static objToTS(obj, offset){
     let {year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond} = obj,
         days = boilToDays(year, month, day),
         timeMS = boilToMilliseconds(hour, minute, second, millisecond),
