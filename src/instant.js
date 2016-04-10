@@ -140,13 +140,6 @@ export class Instant{
   static fromString(text, fmt){
   }
 
-  //operate on many instants
-  static max(...instants){
-  }
-
-  static min(...instants){
-  }
-
   //localization
 
   locale(l){
@@ -251,7 +244,6 @@ export class Instant{
   }
 
   //useful info
-
   isInLeapYear(){
     let year = this.year();
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -323,5 +315,12 @@ export class Instant{
   }
 
   diffNow(opts = {granularity : 'millisecond'}){
+  }
+
+  //operate on many instants
+  static max(...instants){
+  }
+
+  static min(...instants){
   }
 }
