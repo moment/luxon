@@ -9,12 +9,8 @@ export class LocalZone {
     return false;
   }
 
-  fromDate(date, opts = {}){
-    return date;
-  }
-
-  fromArgs(args){
-    return new Date(...args);
+  offset(ts){
+    return -(new Date(ts).getTimezoneOffset());
   }
 
   equals(otherZone){

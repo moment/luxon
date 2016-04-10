@@ -2,19 +2,6 @@ const d365 = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365],
       d366 = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366],
       f = Math.floor;
 
-function defaults(obj){
-  return Object.assign({hour: 0, minute: 0, second: 0, millisecond: 0}, obj);
-}
-
-function daysInMonth(m, year){
-  if (m == 2){
-    return isLeap(year) ? 29 : 28;
-  }
-  else {
-    return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
-  }
-}
-
 function isLeap(year){
   return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
@@ -78,7 +65,7 @@ function rollupMilliseconds(ms){
 
 function fixOverflow(year, month, day){
 
-  if (month < 1 || month > 11 || day < 0 || day > daysInMonth(month, year) < day){
+  if (month < 1 || month > 11 || day < 0 || day > Gregorian.daysInMonth(month, year) < day){
 
     function adjustMonthYear(){
       if (month < 1 || month > 12){
@@ -91,13 +78,13 @@ function fixOverflow(year, month, day){
 
     while(day < 0){
       adjustMonthYear();
-      day += daysInMonth(month - 1, year);
+      day += Gregorian.daysInMonth(month - 1, year);
       month--;
     }
 
-    while (daysInMonth(month, year) < day){
+    while (Gregorian.daysInMonth(month, year) < day){
       adjustMonthYear();
-      day -= daysInMonth(month, year);
+      day -= Gregorian.daysInMonth(month, year);
       month++;
     }
   }
@@ -141,16 +128,14 @@ export class Gregorian {
   }
 
   static objToTS(obj, offset = 0){
-    obj = defaults(obj);
     let {year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond} = obj,
         days = boilToDays(year, month, day),
         timeMS = boilToMilliseconds(hour, minute, second, millisecond),
         offsetMS = offset * 60 * 1000;
-    return (days - 	719163) * 864e5 + timeMS - offsetMS;
+    return (days - 719163) * 864e5 + timeMS - offsetMS;
   }
 
   static normalize(obj){
-    obj = defaults(obj);
     if (hasOverflow(obj)){
 
       let {year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond} = obj,
@@ -172,4 +157,18 @@ export class Gregorian {
       return obj;
     }
   }
+
+  static daysInMonth(m, year){
+    if (m == 2){
+      return isLeap(year) ? 29 : 28;
+    }
+    else {
+      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+    }
+  }
+
+  static daysInYear(year){
+    return leap(year) ? 366 : 365;
+  }
+
 }

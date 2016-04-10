@@ -1,5 +1,6 @@
 import {Duration} from './duration';
 import {Formatter} from './impl/formatter';
+import {Gregorian} from './impl/gregorian';
 import {FixedOffsetZone} from './impl/fixedOffsetZone';
 import {LocalZone} from './impl/localZone';
 
@@ -7,43 +8,60 @@ function isUndefined(o){
   return typeof(o) == 'undefined';
 }
 
-function objectToArgs(obj, defaults){
-  return [
-    obj.year || defaults.year,
-    (obj.month || defaults.month) - 1,
-    obj.day || defaults.day,
-    obj.hour || defaults.hour,
-    obj.minute || defaults.minute,
-    obj.second || defaults.second,
-    obj.millisecond || defaults.millisecond
-  ];
+function now(){
+  return new Date().valueOf();
+}
+
+function clone(inst, alts = {}){
+  let current = {ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o};
+  return new Instant(Object.assign(current, alts, {old: Object.assign({}, current)}));
+}
+
+function rezone(inst, zone, opts){
+  if (zone.equals(inst.zone)){
+    return inst;
+  }
+  else {
+    //inst keepCalendarTime thing probably doesn't work for variable-offset zones
+    let newTS = opts.keepCalendarTime ? inst.ts - inst.o + zone(inst.ts) : inst.ts;
+    return clone(inst, {ts: newTS, zone: zone});
+  }
+}
+
+function fixOffset(ts, tz, o){
+  //todo! actually implement me!
+  //outline:
+  //1. test whether the zone matches the offset
+  //2. if not, change the ts by the difference in the offset
+  //3. check it again
+  //4. if it's the same, good to go
+  //5. if it's different, steal underpants
+  //6. profit!
+  return [ts, tz, o];
 }
 
 function adjustTime(inst, dur){
-  let d = new Date(inst._d);
+  let tz = inst.zone,
+      o = tz.offset(this.ts),
+      c = Object.assign({}, inst.c, {
+        year: inst.c.year + dur.years,
+        month: inst.c.month + dur.months,
+        day: inst.c.day + dur.days
+      }),
+      ts = Gregorian.objToTS(c, o);
 
-  //things with change the date exclusively
-  if (dur.years()) {d.setYear(d, d.getYear() + dur.years());}
-  if (dur.months()) {d.setMonth(d, d.getMonth() + dur.months());}
-  if (dur.days()) {d.setDay(d, d.getDay() + dur.days());}
-
-  //things that change the millis
-  let leftovers = {},
-      durObj = dur.toObject();
-
-  for(let key of ['hours', 'minutes', 'seconds', 'millisconds']){
-    if (typeof(durObj[key]) === 'number'){
-      leftovers[key] = durObj[key];
-    }
-  }
+  [ts, tz, o] = fixOffset(ts, tz, o);
 
   let millisToAdd = Duration
         .fromObject(leftovers)
         .shiftTo('milliseconds')
         .milliseconds();
 
-  d.setTime(+d + millisToAdd);
-  return d;
+  ts += millisToAdd;
+
+  [ts, tz, o] = fixOffset(ts, tz, o);
+
+  return {ts: Gregorian.tsToObj(ts, o), zone: tz};
 }
 
 function friendlyDuration(durationOrNumber, type){
@@ -55,14 +73,31 @@ function friendlyDuration(durationOrNumber, type){
 export class Instant{
 
   constructor(config = {}){
-    this._c = config;
+    Object.defineProperty(this, 'ts', {
+      value: config.ts || Instant.now(),
+      enumerable: true
+    });
 
-    if (this._c.zone === null){
-      this._c.zone = new LocalZone();
-    }
+    Object.defineProperty(this, 'zone', {
+      value: config.zone || Instant.defaultZone,
+      enumerable: true
+    });
 
-    this._d = config.date;
-    this._z = this._c.zone;
+    Object.defineProperty(this, 'locale', {
+      value: config.locale || 'en-us',
+      enumerable: true
+    });
+
+    let c = (config.old && config.old.ts == this.ts && config.old.zone.equals(this.zone)) ?
+          config.old.c :
+          Gregorian.tsToObj(this.ts, this.zone.offset(this.ts));
+
+    let o = (config.old && config.old.zone.equals(this.zone)) ?
+          config.old.o :
+          this.zone.offset(this.ts);
+
+    Object.defineProperty(this, 'c', {value: c});
+    Object.defineProperty(this, 'o', {value: o});
   }
 
   static get defaultZone(){
@@ -72,15 +107,15 @@ export class Instant{
   //create instants
 
   static now(){
-    return new Instant({date: Instant.defaultZone.fromDate(new Date())});
+    return new Instant({ts: now()});
   }
 
   static fromJSDate(date){
-    return new Instant({date: Instant.defaultZone.fromDate(new Date(date))});
+    return new Instant({ts: date.valueOf()});
   }
 
   static fromMillis(milliseconds){
-    return new Instant({date: Instant.defaultZone.fromDate(new Date(milliseconds))});
+    return new Instant({ts: milliseconds});
   }
 
   static fromUnix(seconds){
@@ -88,16 +123,15 @@ export class Instant{
   }
 
   static fromObject(obj, opts = {utc: false}){
-    let now = Instant.now();
-    if (opts.utc){
-      now = now.utc();
-    }
+    let tsNow = now();
 
-    let defaulted = Object.assign(now.toObject(), {hour: 0, minute: 0, second: 0, millisecond: 0}),
-        zone = opts.utc ? new FixedOffsetZone(0) : new LocalZone(),
-        date = zone.fromArgs(objectToArgs(obj, defaulted));
+    let zone = opts.utc ? new FixedOffsetZone(0) : new LocalZone(),
+        offsetProvis = zone.offset(tsNow),
+        defaulted = Object.assign(Gregorian.tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj),
+        tsProvis = Gregorian.objToTS(defaulted, offsetProvis),
+        [tsFinal, zoneFinal, _] = fixOffset(tsProvis, zone, offsetProvis);
 
-    return new Instant({date: date, zone: zone});
+    return new Instant({ts: tsFinal, zone: zoneFinal});
   }
 
   static fromISOString(text){
@@ -113,32 +147,14 @@ export class Instant{
   static min(...instants){
   }
 
-  //basics
-
-  _clone(alts = {}){
-    return new Instant(Object.assign(this._c, alts));
-  }
-
-  _rezone(zone, opts){
-    if (zone.equals(this._z)){
-      return this;
-    }
-    else {
-      return this._clone({
-        date: zone.fromDate(this._d, opts),
-        zone: zone
-      });
-    }
-  }
-
   //localization
 
   locale(l){
     if (isUndefined(l)){
-      return this._c.localeConfig || 'us-en';
+      return this.locale;
     }
     else{
-      return this._clone({locale: l});
+      return this.clone(this, {locale: l});
     }
   }
 
@@ -149,68 +165,69 @@ export class Instant{
   }
 
   useUTCOffset(offset, opts = {keepCalendarTime: false}){
-    return this._rezone(new FixedOffsetZone(offset), opts);
+    return rezone(this, new FixedOffsetZone(offset), opts);
   }
 
   local(){
-    return this._rezone(new LocalZone());
+    return rezone(this, new LocalZone());
   }
 
   timezone(){
-    return this._z;
+    return this.zone;
   }
 
   timezoneName(opts = {}){
-    return this._z.name(opts);
+    return this.zone.name(opts);
   }
 
   isOffsetFixed(){
-    return this._z.universal();
+    return this.zone.universal();
   }
 
   //getters/setters
   get(unit){
     return this[unit]();
   }
+
   set(values){
     let mixed = Object.assign(this.toObject(), values);
-    return this._clone({date: this._z.fromArgs(objectToArgs(mixed))});
+    return this.clone(this, {ts: Gregorian.objToTS(mixed)});
   }
 
   year(v){
-    return isUndefined(v) ? this._d.getFullYear() : this.set({year: v});
+    return isUndefined(v) ? this.c.year : this.set({year: v});
   }
 
   month(v){
-    return isUndefined(v) ? this._d.getMonth() + 1 : this.set({month: v});
+    return isUndefined(v) ? this.c.month : this.set({month: v});
   }
 
   day(v){
-    return isUndefined(v) ? this._d.getDate() : this.set({day: v});
+    return isUndefined(v) ? this.c.day : this.set({day: v});
   }
 
   hour(v){
-    return isUndefined(v) ? this._d.getHours() : this.set({hour: v});
+    return isUndefined(v) ? this.c.hour : this.set({hour: v});
   }
 
   minute(v){
-    return isUndefined(v) ? this._d.getMinutes() : this.set({minute: v});
+    return isUndefined(v) ? this.c.minute : this.set({minute: v});
   }
 
   second(v){
-    return isUndefined(v) ? this._d.getSeconds() : this.set({second: v});
+    return isUndefined(v) ? this.c.second : this.set({second: v});
   }
 
   millisecond(v){
-    return isUndefined(v) ? this._d.getMilliseconds() : this.set({millsecond: v});
+    return isUndefined(v) ? this.c.millisecond : this.set({millsecond: v});
   }
 
   weekday(){
-    return this._d.getDay();
+    return "Not implemented";
   }
 
   offset(){
-    return -this._d.getTimezoneOffset();
+    return this.zone.offset(this.ts);
   }
 
   //useful info
@@ -228,20 +245,20 @@ export class Instant{
     let year = this.year(),
         month = this.month();
 
-    return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    return Gregorian.daysInMonth(year, month);
   }
 
   daysInYear(){
-    return this.isInLeapYear() ? 366 : 365;
+    return Gregorian.daysInYear(this.year());
   }
 
   //generate strings and other values
   toFormatString(fmt, opts = {}){
-    return Formatter.create(this._c, opts).formatFromString(this);
+    return Formatter.create(this, opts).formatFromString(this);
   }
 
   toLocaleString(opts = {}){
-    return Formatter.create(this._c, opts).formatDate(this);
+    return Formatter.create(this, opts).formatDate(this);
   }
 
   toISO(){
@@ -253,7 +270,7 @@ export class Instant{
   }
 
   valueOf(){
-    return this._d.valueOf();
+    return this.ts;
   }
 
   toJSON(){
@@ -273,22 +290,22 @@ export class Instant{
   }
 
   toJSDate(){
-    return new Date(this._d);
+    return new Date(this.ts);
   }
 
   resolvedLocaleOpts(opts = {}){
-    return Formatter.create(this._c, opts).resolvedOptions();
+    return Formatter.create(this, opts).resolvedOptions();
   }
 
   //add/subtract/compare
   plus(durationOrNumber, type){
     let dur = friendlyDuration(durationOrNumber, type);
-    this._clone({date: this._z.fromDate(adjustTime(this, dur))});
+    this.clone(this, adjustTime(this, dur));
   }
 
   minus(durationOrNumber, type){
     let dur = friendlyDuration(durationOrNumber, type).negate();
-    this._clone({date: this._z.fromDate(adjustTime(this, dur))});
+    this.clone(this, adjustTime(this, dur));
   }
 
   diff(otherInstant, opts = {granularity: 'millisecond'}){
