@@ -10,7 +10,6 @@ let gulp = require('gulp'),
     path = require('path');
 
 function preprocess(inopts){
-
   let opts = Object.assign(
     {
       sourceMap: true,
@@ -46,7 +45,6 @@ function resolveLib(opts = {}){
       importee === 'luxon' ? path.resolve(__dirname, 'src/luxon.js') : null
   };
 }
-
 
 function src(){
   return gulp.src('src/luxon.js');

@@ -14,7 +14,7 @@ function now(){
 
 function clone(inst, alts = {}){
   let current = {ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o};
-  return new Instant(Object.assign(current, alts, {old: Object.assign({}, current)}));
+  return new Instant(Object.assign({}, current, alts, {old: current}));
 }
 
 function rezone(inst, zone, opts){
