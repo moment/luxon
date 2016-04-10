@@ -67,12 +67,18 @@ gulp.task('amd', () =>
           .pipe(preprocess({format: 'amd'}))
           .pipe(processSrc({dest: 'amd'})));
 
+
+gulp.task('global-es6', () =>
+          src()
+          .pipe(preprocess({format: 'iife', rollupOpts: {moduleName: 'luxon'}, compile: false}))
+          .pipe(processSrc({dest: 'global-es6', nougly: true})));
+
 gulp.task('global', () =>
           src()
           .pipe(preprocess({format: 'iife', rollupOpts: {moduleName: 'luxon'}}))
           .pipe(processSrc({dest: 'global', nougly: true})));
 
-gulp.task('build', ['cjs', 'es6', 'amd', 'global']);
+gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
 gulp.task('test', ['buildNodeTest'], () =>
   gulp
@@ -104,5 +110,7 @@ gulp.task('browserTest', ['global'], () =>
       }
     }))
     .pipe(gulp.dest('.compiled-tests/browser')));
+
+gulp.task('watch', ['build'], () => gulp.watch('src/**/*.js', ['build']));
 
 gulp.task('default', ['build']);
