@@ -83,7 +83,7 @@ gulp.task('test', ['buildNodeTest'], () =>
     .pipe(mocha({reporter: 'spec'})));
 
 //sort of annoying: you can't stream a built file to the mocha wrapper,
-//so build it to a temp dir and then run it
+//so build it to a temp dir and then run it. Maybe replace gulp-mocha?
 gulp.task('buildNodeTest', () =>
   gulp
     .src('test/index.spec.js')
@@ -97,6 +97,7 @@ gulp.task('buildNodeTest', () =>
     }))
     .pipe(gulp.dest('.compiled-tests/node')));
 
+//todo - get this set up to run with es6 modules natively instead of the iife
 gulp.task('browserTest', ['global'], () =>
   gulp
     .src('test/index.spec.js')
