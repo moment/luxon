@@ -1,8 +1,12 @@
 Just playing around, for now.
 
-Todo:
+Roadmap:
 
+ - Mocha -> Ava
  - Intervals
+ - Polyfill for formatToParts
  - Formatting
  - Parsing
- - weekyear/week/weekday
+ - Weekyear/week/weekday
+ - Humanization/CLDR
+ - Documentation & tooling
