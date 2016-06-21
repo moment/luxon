@@ -3,6 +3,7 @@ import {Formatter} from './impl/formatter';
 import {FixedOffsetZone} from './impl/fixedOffsetZone';
 import {LocalZone} from './impl/localZone';
 import {IntlZone} from './impl/intlZone';
+import {Util} from './impl/util';
 
 function isUndefined(o){
   return typeof(o) === 'undefined';
@@ -99,12 +100,6 @@ function adjustTime(inst, dur){
   [ts, o] = fixOffset(ts, inst.zone, o);
 
   return {ts: ts, o: o};
-}
-
-function friendlyDuration(durationOrNumber, type){
-  return typeof durationOrNumber === 'number' ?
-    Duration.fromLength(durationOrNumber, type) :
-    durationOrNumber;
 }
 
 function isLeap(year){
@@ -337,12 +332,12 @@ export class Instant{
 
   //add/subtract/compare
   plus(durationOrNumber, type){
-    let dur = friendlyDuration(durationOrNumber, type);
+    let dur = Util.friendlyDuration(durationOrNumber, type);
     return clone(this, adjustTime(this, dur));
   }
 
   minus(durationOrNumber, type){
-    let dur = friendlyDuration(durationOrNumber, type).negate();
+    let dur = Util.friendlyDuration(durationOrNumber, type).negate();
     return clone(this, adjustTime(this, dur));
   }
 
@@ -366,10 +361,20 @@ export class Instant{
       .minus(1, 'milliseconds');
   }
 
-  diff(otherInstant, opts = {granularity: 'millisecond'}){
+  diff(otherInstant, opts = {units: 'millisecond'}){
   }
 
-  diffNow(opts = {granularity : 'millisecond'}){
+  diffNow(opts = {units: 'millisecond'}){
+  }
+
+  hasSame(otherInstant, unit){
+    if (units === 'millisecond'){
+      return this.valueOf() === otherInstant.valueOf();
+    }
+    else{
+      let inputMs = otherInstant.valueOf();
+      return this.startOf(unit).valueOf() <= inputMs && inputMs <= this.endOf(unit).valueOf();
+    }
   }
 
   //operate on many instants

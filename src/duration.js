@@ -1,3 +1,5 @@
+import {Util} from "./impl/util";
+
 let matrix = {
   years: {
     months: 12,
@@ -45,12 +47,6 @@ function ensure(unit){
   return normalized;
 }
 
-function friendlyDuration(durationOrNumber, type){
-  return typeof durationOrNumber === 'number' ?
-    Duration.fromLength(durationOrNumber, type) :
-    durationOrNumber;
-}
-
 export class Duration{
 
   constructor(obj){
@@ -86,7 +82,7 @@ export class Duration{
   toJSON(){}
 
   plus(countOrDuration, unit='milliseconds'){
-    let dur = friendlyDuration(countOrDuration, unit),
+    let dur = Util.friendlyDuration(countOrDuration, unit),
         result = {};
 
     for (let k of ordered){
@@ -100,7 +96,7 @@ export class Duration{
   }
 
   minus(countOrDuration, unit='milliseconds'){
-    let dur = friendlyDuration(countOrDuration, unit);
+    let dur = Util.friendlyDuration(countOrDuration, unit);
     return this.plus(dur.negate());
   }
 
