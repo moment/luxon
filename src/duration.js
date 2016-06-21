@@ -40,7 +40,7 @@ let ordered = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'millis
 function ensure(unit){
   let normalized = unit.endsWith('s') ? unit : unit + 's';
   if (ordered.indexOf(normalized) === -1){
-    throw "Invalid unit " + unit;
+    throw `Invalid unit ${unit}`;
   }
   return normalized;
 }
