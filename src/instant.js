@@ -92,8 +92,7 @@ function adjustTime(inst, dur){
                      seconds: dur.seconds(),
                      milliseconds: dur.milliseconds()
                     })
-        .as('milliseconds')
-        .milliseconds();
+        .as('milliseconds');
 
   ts += millisToAdd;
 
@@ -290,7 +289,7 @@ export class Instant{
     if (this.month() == 2){
       return isLeap(this.year()) ? 29 : 28;
     }
-    else {
+    else{
       return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][this.month() - 1];
     }
   }
