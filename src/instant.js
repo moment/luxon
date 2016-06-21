@@ -1,6 +1,5 @@
 import {Duration} from './duration';
 import {Formatter} from './impl/formatter';
-import {Gregorian} from './impl/gregorian';
 import {FixedOffsetZone} from './impl/fixedOffsetZone';
 import {LocalZone} from './impl/localZone';
 import {IntlZone} from './impl/intlZone';
@@ -44,6 +43,36 @@ function fixOffset(ts, tz, o){
   return [ts, o];
 }
 
+function tsToObj(ts, offset){
+
+  ts += offset * 60 * 1000;
+
+  let d = new Date(ts);
+
+  return {
+    year: d.getUTCFullYear(),
+    month: d.getUTCMonth() + 1,
+    day: d.getUTCDate(),
+    hour: d.getUTCHours(),
+    minute: d.getUTCMinutes(),
+    second: d.getUTCSeconds(),
+    millisecond: d.getUTCMilliseconds()
+  };
+}
+
+function objToTS(obj, offset){
+
+  let d = Date.UTC(obj.year,
+                   obj.month - 1,
+                   obj.day,
+                   obj.hour,
+                   obj.minute,
+                   obj.second,
+                   obj.millisecond);
+
+  return +d - offset * 60 * 1000;
+}
+
 function adjustTime(inst, dur){
   let o = inst.o,
 
@@ -53,7 +82,7 @@ function adjustTime(inst, dur){
         month: inst.c.month + dur.months(),
         day: inst.c.day + dur.days()
       }),
-      ts = Gregorian.objToTS(c, o);
+      ts = objToTS(c, o);
 
   [ts, o] = fixOffset(ts, inst.zone, o);
 
@@ -79,6 +108,10 @@ function friendlyDuration(durationOrNumber, type){
     durationOrNumber;
 }
 
+function isLeap(year){
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+}
+
 export class Instant{
 
   constructor(config = {}){
@@ -98,8 +131,8 @@ export class Instant{
     });
 
     let unchanged = (config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone)),
-        c = unchanged? config.old.c : Gregorian.tsToObj(this.ts, this.zone.offset(this.ts)),
-        o = unchanged? config.old.o : this.zone.offset(this.ts);
+        c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
+        o = unchanged ? config.old.o : this.zone.offset(this.ts);
 
     Object.defineProperty(this, 'c', {value: c});
     Object.defineProperty(this, 'o', {value: o});
@@ -128,12 +161,11 @@ export class Instant{
   }
 
   static fromObject(obj, opts = {utc: false, zone: null}){
-    let tsNow = now();
-
-    let zone = opts.zone ? opts.zone : (opts.utc ? new FixedOffsetZone(0) : new LocalZone()),
+    let tsNow = now(),
+        zone = opts.zone ? opts.zone : (opts.utc ? new FixedOffsetZone(0) : new LocalZone()),
         offsetProvis = zone.offset(tsNow),
-        defaulted = Object.assign(Gregorian.tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj),
-        tsProvis = Gregorian.objToTS(defaulted, offsetProvis),
+        defaulted = Object.assign(tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj),
+        tsProvis = objToTS(defaulted, offsetProvis),
         [tsFinal, _] = fixOffset(tsProvis, zone, offsetProvis);
 
     return new Instant({ts: tsFinal, zone: zone});
@@ -209,7 +241,7 @@ export class Instant{
 
   set(values){
     let mixed = Object.assign(this.toObject(), values);
-    return clone(this, {ts: Gregorian.objToTS(mixed, this.o)});
+    return clone(this, {ts: objToTS(mixed, this.o)});
   }
 
   year(v){
@@ -255,11 +287,16 @@ export class Instant{
   }
 
   daysInMonth(){
-    return Gregorian.daysInMonth(this.month(), this.year());
+    if (this.month() == 2){
+      return isLeap(this.year()) ? 29 : 28;
+    }
+    else {
+      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][this.month() - 1];
+    }
   }
 
   daysInYear(){
-    return Gregorian.daysInYear(this.year());
+    return leap(this.year()) ? 366 : 365;
   }
 
   //generate strings and other values
