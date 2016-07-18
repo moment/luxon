@@ -1,0 +1,122 @@
+import test from 'tape';
+import {Instant} from 'luxon';
+import {FakePT} from '../helpers/fakePT';
+
+export let zone = () => {
+
+  let millis = 391147200000, //1982-05-25T04:00:00.000Z
+      instant = () => Instant.fromMillis(millis);
+
+  //------
+  // defaults
+  //------
+
+  test('timezone defaults to local', t => {
+    let inst = instant();
+    t.is(inst.timezoneName(), 'local');
+    t.is(inst.isOffsetFixed(), false);
+    t.end();
+  });
+
+  //------
+  // #utc()
+  //------
+
+  test("Instant#utc() puts the instant in UTC 'mode'", t => {
+
+    let zoned = instant().utc();
+
+    t.is(zoned.valueOf(), millis);
+    t.is(zoned.hour().valueOf(), 4);
+    t.is(zoned.timezoneName(), 'UTC');
+    t.is(zoned.isOffsetFixed(), true);
+    t.is(zoned.isInDST(), false);
+    t.end();
+  });
+
+  //------
+  // #utcOffset()
+  //------
+
+  test("Instant#useUTCOffset() sets instant in UTC+offset 'mode'", t => {
+
+    let zoned = instant().useUTCOffset(5 * 60);
+
+    t.is(zoned.valueOf(), millis);
+    t.is(zoned.hour().valueOf(), 9);
+    t.is(zoned.timezoneName(), 'UTC+5');
+    t.is(zoned.isOffsetFixed(), true);
+    t.is(zoned.isInDST(), false);
+    t.end();
+  });
+
+  //------
+  // #local()
+  //------
+
+  test('Instant#local() sets the calendar back to local', t => {
+
+    let relocaled = instant().utc().local(),
+        expected = new Date(millis).getHours();
+
+    t.is(relocaled.timezoneName(), 'local');
+    t.is(relocaled.isOffsetFixed(), false);
+    t.is(relocaled.valueOf(), millis);
+    t.is(relocaled.hour(), expected);
+    t.end();
+  });
+
+  //------
+  // #rezone()
+  //------
+
+
+  test('rezone sets the TZ to the specified zone', t => {
+
+    let zoned = instant().rezone(new FakePT());
+
+    t.is(zoned.timezoneName(), 'Pacific Time');
+    t.is(zoned.isOffsetFixed(), false);
+    t.is(zoned.valueOf(), millis);
+    t.is(zoned.hour(), 21); //pacific daylight time
+    t.is(zoned.isInDST(), true);
+    t.end();
+  });
+
+  //------
+  // #isInDST()
+  //------
+
+  test('Instant#isInDST() returns false for pre-DST times', t => {
+    let zoned = instant().rezone(new FakePT());
+    t.is(zoned.month(1).isInDST(), false);
+    t.end();
+  });
+
+  test('Instant#isInDST() returns true for during-DST times', t => {
+    let zoned = instant().rezone(new FakePT());
+    t.is(zoned.month(4).isInDST(), true);
+    t.end();
+  });
+
+  test('Instant#isInDST() returns false for post-DST times', t => {
+    let zoned = instant().rezone(new FakePT());
+    t.is(zoned.month(12).isInDST(), false);
+    t.end();
+  });
+
+  //------
+  // magic zone
+  //------
+
+  test('magic zones are magic', t => {
+
+    //this will only work in Chrome/V8 for now
+    let zoned = instant().timezone('Europe/Paris');
+
+    t.is(zoned.timezoneName(), 'Europe/Paris');
+    t.is(zoned.valueOf(), millis);
+    t.is(zoned.hour(), 6); //cest is +2
+    t.end();
+  });
+};
