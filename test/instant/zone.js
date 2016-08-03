@@ -35,7 +35,7 @@ export let zone = () => {
   });
 
   //------
-  // #utcOffset()
+  // #useUTCOffset()
   //------
 
   test("Instant#useUTCOffset() sets instant in UTC+offset 'mode'", t => {

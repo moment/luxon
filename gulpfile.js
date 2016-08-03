@@ -50,7 +50,7 @@ function processLib(opts){
       .pipe(sourcemaps.init({loadMaps: true}))
       .pipe(sourcemaps.write('.'))
       .pipe(gulp.dest(dest))
-      .pipe(gulpif(opts.mini), minify());
+      .pipe(gulpif(opts.mini, minify()));
   };
 }
 
@@ -65,30 +65,33 @@ function resolveLib(opts = {}){
 }
 
 gulp.task('cjs', processLib({
-  format: 'cjs'
+  format: 'cjs',
+  rollupOpts: {external: ['intl']}
 }));
 
 gulp.task('es6', processLib({
   format: 'es',
   dest: 'es6',
+  rollupOpts: {external: ['intl']},
   compile: false
 }));
 
 gulp.task('amd', processLib({
   format: 'amd',
+  rollupOpts: {moduleName: 'luxon', external: ['intl']},
   mini: true
 }));
 
 gulp.task('global-es6', processLib({
   format: 'iife',
-  rollupOpts: {moduleName: 'luxon'},
+  rollupOpts: {moduleName: 'luxon', globals: {intl: 'intl'}, external: ['intl']},
   dest: 'global-es6',
   compile: false
 }));
 
 gulp.task('global', processLib({
   format: 'iife',
-  rollupOpts: {moduleName: 'luxon'},
+  rollupOpts: {moduleName: 'luxon', globals: {intl: 'intl'}, external: ['intl']},
   dest: 'global',
   mini: true
 }));
@@ -101,7 +104,7 @@ gulp.task('test', function(){
     format: 'cjs',
     rollupOpts: {
       plugins: [resolveLib()],
-      external: ['tape']
+      external: ['tape', 'intl']
     }
   })
     .pipe(source('index.js'))

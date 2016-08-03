@@ -4,7 +4,7 @@ export class IntlZone {
     this.zoneName = name;
   }
 
-  name(opts = {format: 'long'}){
+  name(opts = {}){
     return this.zoneName;
   }
 
@@ -13,7 +13,7 @@ export class IntlZone {
   }
 
   offset(ts){
-    //formatToParts() will simplify this
+    //formatToParts() will simplify this, but the polyfill doesn't support TZs, so leaving this hack in
     let date = new Date(ts),
         formatted = new Intl.DateTimeFormat('en-us', {
           hour12: false,

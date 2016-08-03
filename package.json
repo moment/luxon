@@ -4,6 +4,10 @@
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
+  "repository": "https://github.com/icambron/luxon",
+  "dependencies": {
+    "intl": "latest"
+  },
   "devDependencies": {
     "babel-preset-es2015": "latest",
     "babel-preset-es2015-rollup": "latest",
@@ -11,7 +15,6 @@
     "gulp-debug": "latest",
     "gulp-filter": "latest",
     "gulp-if": "latest",
-    "gulp-mocha": "latest",
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-tape": "latest",

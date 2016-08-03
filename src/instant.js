@@ -9,12 +9,25 @@ function isUndefined(o){
   return typeof(o) === 'undefined';
 }
 
+function bestBy(arr, by, compare) {
+  return arr.reduce((best, next) => {
+    let pair = [by(next), next];
+    if (!best) {
+      return pair;
+    } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+      return best;
+    } else {
+      return pair;
+    }
+  }, null)[1];
+};
+
 function now(){
   return new Date().valueOf();
 }
 
 function clone(inst, alts = {}){
-  let current = {ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o};
+  let current = {ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc, nums: inst.nums};
   return new Instant(Object.assign({}, current, alts, {old: current}));
 }
 
@@ -71,6 +84,13 @@ function objToTS(obj, offset){
                    obj.second,
                    obj.millisecond);
 
+  //javascript is stupid and i hate it
+  if (obj.year < 100 && obj.year >= 0){
+    let t = new Date(d);
+    t.setFullYear(obj.year);
+    d = t.valueOf();
+  }
+
   return +d - offset * 60 * 1000;
 }
 
@@ -119,8 +139,18 @@ export class Instant{
       enumerable: true
     });
 
-    Object.defineProperty(this, 'locale', {
-      value: config.locale || 'en-us',
+    Object.defineProperty(this, 'loc', {
+      value: config.loc || 'en-us',
+      enumerable: true
+    });
+
+    Object.defineProperty(this, 'nums', {
+      value: config.nums || null,
+      enumerable: true
+    });
+
+    Object.defineProperty(this, 'outputCal', {
+      value: config.outputCal || 'gregory',
       enumerable: true
     });
 
@@ -135,8 +165,6 @@ export class Instant{
   static get defaultZone(){
     return new LocalZone();
   }
-
-  //create instants
 
   static now(){
     return new Instant({ts: now()});
@@ -171,18 +199,23 @@ export class Instant{
   static fromString(text, fmt){
   }
 
-  //localization
-
   locale(l){
     if (isUndefined(l)){
-      return this.locale;
+      return this.loc;
     }
     else{
-      return clone(this, {locale: l});
+      return clone(this, {loc: l});
     }
   }
 
-  //zones and offsets
+  numbering(n){
+    if (isUndefined(n)){
+      return this.nums;
+    }
+    else{
+      return clone(this, {nums: n});
+    }
+  }
 
   utc(){
     return this.useUTCOffset(0);
@@ -228,7 +261,6 @@ export class Instant{
     }
   }
 
-  //getters/setters
   get(unit){
     return this[unit]();
   }
@@ -263,18 +295,17 @@ export class Instant{
   }
 
   millisecond(v){
-    return isUndefined(v) ? this.c.millisecond : this.set({millsecond: v});
+    return isUndefined(v) ? this.c.millisecond : this.set({millisecond: v});
   }
 
   weekday(){
-    return "Not implemented";
+    return Util.asIfUTC(this).getUTCDay();
   }
 
   offset(){
     return this.zone.offset(this.ts);
   }
 
-  //useful info
   isInLeapYear(){
     let year = this.year();
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -293,9 +324,8 @@ export class Instant{
     return leap(this.year()) ? 366 : 365;
   }
 
-  //generate strings and other values
   toFormatString(fmt, opts = {}){
-    return Formatter.create(this, opts).formatFromString(this);
+    return Formatter.create(this, opts).formatFromString(this, fmt);
   }
 
   toLocaleString(opts = {}){
@@ -303,7 +333,7 @@ export class Instant{
   }
 
   toISO(){
-    return Formatter.create({locale: 'en'}).formatFromString(this, 'yyyy-MM-ddTHH:mm:ss.SSSZ');
+    return Formatter.create({loc: 'en'}).formatFromString(this, 'yyyy-MM-ddTHH:mm:ss.SSSZZ');
   }
 
   toString(){
@@ -330,7 +360,6 @@ export class Instant{
     return Formatter.create(this, opts).resolvedOptions();
   }
 
-  //add/subtract/compare
   plus(durationOrNumber, type){
     let dur = Util.friendlyDuration(durationOrNumber, type);
     return clone(this, adjustTime(this, dur));
@@ -377,10 +406,11 @@ export class Instant{
     }
   }
 
-  //operate on many instants
-  static max(...instants){
+  static min(...instants){
+    return bestBy(instants, (i) => i.valueOf(), Math.min);
   }
 
-  static min(...instants){
+  static max(...instants){
+    return bestBy(instants, (i) => i.valueOf(), Math.max);
   }
 }

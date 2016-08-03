@@ -1,24 +1,30 @@
-function pad(input, n = 2) {
-  return ('0'.repeat(n) + input).slice(-n);
-};
+//hack for now so that I can use formatToParts()
+import * as Alt from 'intl';
+import {Util} from './util';
+
+function fullLocale(localeConfig){
+  let loc = localeConfig.loc || new Intl.DateTimeFormat().resolvedOptions().locale;
+  loc = Array.isArray(loc) ? loc : [loc];
+
+  if (localeConfig.outputCal || localeConfig.nums){
+    loc = loc.map((l) => {
+      l += "-u";
+
+      //this doesn't seem to really work yet, so this is mostly not exposed
+      //todo - in the meantime, should force to 'gregory'?
+      if (localeConfig.outputCal){
+        l += "-ca-" + localeConfig.outputCal;
+      }
+      if (localeConfig.nums){
+        l += "-nu-" + localeConfig.nums;
+      }
+      return l;
+    });
+  }
+  return loc;
+}
 
 export class Formatter {
-
-  static formatOffset(offset, opts = {format: 'wide'}){
-
-    let hours = offset/60,
-        minutes = offset % 60,
-        sign = hours > 0 ? '+' : '-';
-
-    if (opts.format == 'wide'){
-      return `${sign}${pad(Math.abs(hours))}:${pad(minutes)}`;
-    }
-    else{
-      let base = sign + Math.abs(hours);
-      return minutes > 0 ? `${base}:${pad(minutes)}` : base;
-    }
-
-  }
 
   static create(config, opts = {}){
 
@@ -26,115 +32,131 @@ export class Formatter {
     let localeConfig = Object.assign({}, config, opts),
         formatOpts = Object.assign({}, opts);
 
-    delete formatOpts.calendar;
-    delete formatOpts.numbering;
-    delete formatOpts.locale;
+    delete formatOpts.outputCal;
+    delete formatOpts.nums;
+    delete formatOpts.loc;
 
     return new Formatter(localeConfig, formatOpts);
   }
 
   constructor(localeConfig, formatOpts){
-    let loc = localeConfig.locale || new Intl.DateTimeFormat().resolvedOptions().locale;
-    loc = Array.isArray(loc) ? loc : [loc];
-
-    if (localeConfig.calendar || localeConfig.numbering){
-      loc = loc.map((l) => {
-        l += "-u";
-
-        if (localeConfig.calendar){
-          l += "-ca-" + localeConfig.calendar;
-        }
-        if (localeConfig.numbering){
-          l += "-nu-" + localeConfig.numbering;
-        }
-        return l;
-      });
-    }
-
-    this._df = new Intl.DateTimeFormat(loc, formatOpts);
-    this._nf = new Intl.NumberFormat(loc, formatOpts);
+    this.opts = formatOpts;
+    this.loc = fullLocale(localeConfig);
+    this.df = Intl.DateTimeFormat(this.loc, this.opts);
   }
 
   formatDate(inst){
-    return this._df.format(inst.toJSDate());
+    //todo - this is way broken:
+    //1. what this is UTC? Need to show UTC time
+    //2. what if it's some random other zone -- need to apply that zone here
+    //3. what if it's a UTC offset?
+    //Using Util.asIfUTC() helps, but will screw up the zone/offset display.
+    return this.df.format(inst.toJSDate());
   }
 
   resolvedOptions(){
-    return this._df.resolvedOptions();
+    return this.df.resolvedOptions();
   }
 
   formatFromString(inst, fmt){
-    //Don't implement until formatToParts() is done. Waste of time otherwise.
-    //See https://github.com/tc39/ecma402/issues/30
-    //I've added some silly placeholders so that I can get ISO formatting working
 
-    function formatOffset(inst){
+    let padder = (p) => {
+      let opts = {useGrouping: false};
+      if (p > 0){
+        opts['minimumIntegerDigits'] = p;
+      }
+      //The polyfill works better for this in Node ATM.
+      //The built-in works fine in Chrome so presumably this will change.
+      return new Alt.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
+    };
+
+    let num = (n, p = 0) => padder(p).format(n);
+
+    let string = (opts, extract) => {
+      let realOpts = Object.assign(opts, {timeZone: "UTC"}),
+          results = new Alt.DateTimeFormat(this.loc, realOpts).formatToParts(Util.asIfUTC(inst));
+      return results.find((m) => m.type == extract).value;
+    };
+
+    let formatOffset = (opts) => {
 
       //todo - is this always right? Should be an option?
       if (inst.isOffsetFixed() && inst.offset() === 0){
         return 'Z';
       }
 
-      //todo - use the duration formatter once there's a duration formatter
-      return Formatter.formatOffset(inst.offset());
-    }
+      let hours = Util.towardZero(inst.offset()/60),
+          minutes = Math.abs(inst.offset() % 60),
+          sign = hours > 0 ? '+' : '-',
+          fmt = (n) => num(n, opts.format == 'short' ? 2 : 0);
 
-    function tokenToString(token){
+      switch(opts.format){
+      case 'short': return `${sign}${fmt(Math.abs(hours))}:${fmt(minutes)}`;
+      case 'narrow':
+        let base = sign + fmt(Math.abs(hours));
+        return minutes > 0 ? `${base}:${fmt(minutes)}` : base;
+      default: throw new RangeError(`Value format ${opts.format} is out of range for property format`);
+      }
+    };
+
+    let tokenToString = (token) => {
       switch (token) {
       //ms
-      case 'S': return inst.millisecond().toString();
-      case 'SSS': return pad(inst.millisecond(), 3);
+      case 'S': return num(inst.millisecond());
+      case 'SSS': return num(inst.millisecond(), 3);
 
       //seconds
-      case 's': return inst.second().toString();
-      case 'ss': return pad(inst.second());
+      case 's': return num(inst.second());
+      case 'ss': return num(inst.second(), 2);
 
       //minutes
-      case 'm': return inst.minute().toString();
-      case 'mm': return pad(inst.minute());
+      case 'm': return num(inst.minute());
+      case 'mm': return num(inst.minute(), 2);
 
       //hours
-      case 'h': return (inst.hour() % 12).toString();
-      case 'hh': return pad(inst.hour() % 12);
-      case 'H': return inst.hour().toString();
-      case 'HH': return pad(inst.hour());
+      case 'h': return num(inst.hour() == 12 ? 12 : inst.hour() % 12);
+      case 'hh': return num(inst.hour() == 12 ? 12 : inst.hour() % 12, 2);
+      case 'H': return num(inst.hour());
+      case 'HH': return num(inst.hour(), 2);
 
       //offset
-      case 'Z': return formatOffset(inst);
-      case 'z': return null;
-      case 'zzz': return null;
+      case 'Z': return formatOffset({format: 'narrow'});         //like +6
+      case 'ZZ': return formatOffset({format: 'short'});         //like +06:00
+
+      //these don't work because we need TZ + formatToParts
+      case 'z': return null;                                     //like EST
+      case 'zz': return null;                                    //like Eastern Standard Time
+      case 'zzz': return null;                                   //like America/New_York
 
       //meridiens
-      case 'a': return null;
-      case 'aaaa': return null;
+      case 'a': return string({hour: 'numeric', hour12: true}, 'dayPeriod');
 
       //dates
-      case 'd': return inst.day().toString();
-      case 'dd': return pad(inst.day());
+      case 'd': return num(inst.day());
+      case 'dd': return num(inst.day(), 2);
 
       //weekdays
-      case 'E': return inst.weekday().toString();
-      case 'EE': return pad(inst.weekday());
-      case 'EEE': return null;
-      case 'EEEE': return null;
-      case 'EEEEE': return null;
+      case 'E': return num(inst.weekday());                        //like 1
+      case 'EEE': return string({weekday: 'narrow'}, 'weekday');    //like 'T'
+      case 'EEEE': return string({weekday: 'short'}, 'weekday');    //like 'Tues'
+      case 'EEEEE': return string({weekday: 'long'}, 'weekday');    //like 'Tuesday'
 
       //months
-      case 'M': return inst.month().toString();
-      case 'MM': return pad(inst.month(), 2);
-      case 'MMM': return null;
-      case 'MMMM': return null;
-      case 'MMMMM': return null;
+      case 'M': return num(inst.month());                          //like 1
+      case 'MM': return num(inst.month(), 2);                      //like 01
+      case 'MMM': return string({month: 'narrow'}, 'month');       //like J
+      case 'MMMM': return string({month: 'short'}, 'month');       //like Jan
+      case 'MMMMM': return string({month: 'long'}, 'month');       //like January
 
       //years
-      case 'y': return inst.year().toString();
-      case 'yy': return inst.year().toString().slice(-2);
-      case 'yyyy': return pad(inst.year(), 4);
+      case 'y': return num(inst.year());                           //like 2014
+      case 'yy': return num(inst.year().toString().slice(-2), 2);  //like 14
+      case 'yyyy': return num(inst.year(), 4);                     //like 0012
 
       //eras
-      case 'G': return null;
-
-      //local
+      case 'G': return string({era: 'narrow'}, 'era');             //like A
+      case 'GG': return string({era: 'short'}, 'era');             //like AD
+      case 'GGG': return string({era: 'long'}, 'era');             //like Anno Domini
 
       default:
         return token;
