@@ -24,15 +24,43 @@ export let format = () => {
   // #toString()
   //-------
 
+  test('Instant#toString() returns the ISO time in UTC', t => {
+    let i = inst();
+    t.is(i.toString(), '1982-05-25T09:23:54.123Z');
+    t.is(i.local().toString(), '1982-05-25T09:23:54.123Z');
+    t.is(i.useUTCOffset(-6 * 60).toString(), '1982-05-25T09:23:54.123Z');
+    t.end();
+  });
+
   //------
   // #toLocaleString()
   //-------
+
+  test('Instant#toLocaleString returns a sensible string by default', t => {
+    t.is(inst().locale('en-us').toLocaleString(), '5/25/1982');
+    t.end();
+  });
+
+  test('Instant#toLocaleString accepts locale settings from the instant', t => {
+    t.is(inst().locale('be').toLocaleString(), '25.5.1982');
+    t.end();
+  });
+
+  test('Instant#toLocaleString accepts options to the formatter', t => {
+    t.ok(inst().toLocaleString({weekday: 'short'}).indexOf('Tue') >= 0);
+    t.end();
+  });
+
+  test("Instant#toLocaleString can override the instant's locale", t => {
+    t.is(inst().locale('be').toLocaleString({loc: 'fr'}), '25/05/1982');
+    t.end();
+  });
 
   //------
   // #toFormatString()
   //-------
 
-  test('S', t => {
+  test("Instant#toFormatString('S') returns the millisecond", t => {
     let i = inst();
     t.is(i.toFormatString('S'), '123');
     t.is(i.locale('bn').toFormatString('S'), '১২৩');
@@ -41,7 +69,7 @@ export let format = () => {
     t.end();
   });
 
-  test('SSS', t => {
+  test("Instant#toFormatString('SSS') returns padded the millisecond", t => {
     let i = inst();
     t.is(i.toFormatString('SSS'), '123');
     t.is(i.locale('bn').toFormatString('SSS'), '১২৩');
@@ -49,7 +77,7 @@ export let format = () => {
     t.end();
   });
 
-  test('s', t => {
+  test("Instant#toFormatString('s') returns the second", t => {
     let i = inst();
     t.is(i.toFormatString('s'), '54');
     t.is(i.locale('bn').toFormatString('s'), '৫৪');
@@ -57,7 +85,7 @@ export let format = () => {
     t.end();
   });
 
-  test('ss', t => {
+  test("Instant#toFormatString('ss') returns the padded second", t => {
     let i = inst();
     t.is(i.toFormatString('ss'), '54');
     t.is(i.locale('bn').toFormatString('ss'), '৫৪');
@@ -65,7 +93,7 @@ export let format = () => {
     t.end();
   });
 
-  test('m', t => {
+  test("Instant#toFormatString('m') returns the minute", t => {
     let i = inst();
     t.is(i.toFormatString('m'), '23');
     t.is(i.locale('bn').toFormatString('m'), '২৩');
@@ -73,7 +101,7 @@ export let format = () => {
     t.end();
   });
 
-  test('mm', t => {
+  test("Instant#toFormatString('mm') returns the padded minute", t => {
     let i = inst();
     t.is(i.toFormatString('mm'), '23');
     t.is(i.locale('bn').toFormatString('mm'), '২৩');
@@ -81,7 +109,7 @@ export let format = () => {
     t.end();
   });
 
-  test('h', t => {
+  test("Instant#toFormatString('h') returns the hours", t => {
     let i = inst();
     t.is(i.toFormatString('h'), '9');
     t.is(i.locale('bn').toFormatString('h'), '৯');
@@ -90,7 +118,7 @@ export let format = () => {
     t.end();
   });
 
-  test('hh', t => {
+  test("Instant#toFormatString('hh') returns the padded hour (12-hour time)", t => {
     let i = inst();
     t.is(i.toFormatString('hh'), '09');
     t.is(i.locale('bn').toFormatString('hh'), '০৯');
@@ -99,7 +127,7 @@ export let format = () => {
     t.end();
   });
 
-  test('H', t => {
+  test("Instant#toFormatString('H') returns the hour (24-hour time)", t => {
     let i = inst();
     t.is(i.toFormatString('H'), '9');
     t.is(i.locale('bn').toFormatString('H'), '৯');
@@ -108,7 +136,7 @@ export let format = () => {
     t.end();
   });
 
-  test('HH', t => {
+  test("Instant#toFormatString('HH') returns the padded hour (24-hour time)", t => {
     let i = inst();
     t.is(i.toFormatString('HH'), '09');
     t.is(i.locale('bn').toFormatString('HH'), '০৯');
@@ -117,7 +145,7 @@ export let format = () => {
     t.end();
   });
 
-  test('Z', t => {
+  test("Instant#toFormatString('Z') returns the narrow offset", t => {
     let i = inst();
     t.is(i.useUTCOffset(360).toFormatString('Z'), '+6');
     t.is(i.useUTCOffset(390).toFormatString('Z'), '+6:30');
@@ -126,7 +154,7 @@ export let format = () => {
     t.end();
   });
 
-  test('ZZ', t => {
+  test("Instant#toFormatString('ZZ') returns the padded offset", t => {
     let i = inst();
     t.is(i.useUTCOffset(360).toFormatString('ZZ'), '+06:00');
     t.is(i.useUTCOffset(390).toFormatString('ZZ'), '+06:30');
@@ -135,7 +163,7 @@ export let format = () => {
     t.end();
   });
 
-  test('a', t => {
+  test("Instant#toFormatString('a') returns the meridiem", t => {
     let i = inst();
     t.is(i.toFormatString('a'), 'AM');;
     t.is(i.locale('de').toFormatString('a'), 'vorm.');;
@@ -144,21 +172,21 @@ export let format = () => {
     t.end();
   });
 
-  test('d', t => {
+  test("Instant#toFormatString('d') returns the day", t => {
     let i = inst();
     t.is(i.toFormatString('d'), '25');
     t.is(i.day(1).toFormatString('d'), '1');
     t.end();
   });
 
-  test('dd', t => {
+  test("Instant#toFormatString('dd') returns the padded day", t => {
     let i = inst();
     t.is(i.toFormatString('dd'), '25');
     t.is(i.day(1).toFormatString('dd'), '01');
     t.end();
   });
 
-  test('E', t => {
+  test("Instant#toFormatString('E') returns weekday number", t => {
     let i = inst();
     t.is(i.toFormatString('E'), '2');
     t.end();
@@ -166,44 +194,44 @@ export let format = () => {
 
   //all these commented-out tests are bc https://github.com/andyearnshaw/Intl.js/issues/190
 
-  //test('EEE', t => {
+  //test("Instant#toFormatString('EEE') returns narrow weekday name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('EEE'), 'T');
   //  t.end();
   //});
 
-  test('EEEE', t => {
+  test("Instant#toFormatString('EEEE') returns short weekday name", t => {
     let i = inst();
     t.is(i.toFormatString('EEEE'), 'Tue');
     t.is(i.locale('de').toFormatString('EEE'), 'Di.');;
     t.end();
   });
 
-  //test('EEEEE', t => {
+  //test("Instant#toFormatString('EEEEE') returns the full weekday name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('EEEE'), 'Tuesday');
   //  t.end();
   //});
 
-  //test('M', t => {
+  //test("Instant#toFormatString('M') returns the month number", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('M'), '5');
   //  t.end();
   //});
 
-  //test('MM', t => {
+  //test("Instant#toFormatString('MM') returns the padded month number", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('MM'), '05');
   //  t.end();
   //});
 
-  //test('MMM', t => {
+  //test("Instant#toFormatString('MMM') returns the narrow month name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('MMM'), 'M');
   //  t.end();
   //});
 
-  test('MMMM', t => {
+  test("Instant#toFormatString('MMMM') returns the short month name", t => {
     let i = inst();
     t.is(i.toFormatString('MMMM'), 'May');
     t.is(i.locale('de').toFormatString('MMMM'), 'Mai');
@@ -211,14 +239,14 @@ export let format = () => {
     t.end();
   });
 
-  //test('MMMMM', t => {
+  //test("Instant#toFormatString('MMMMM') returns the full month name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('MMMM'), 'May');
   //  t.is(i.month(8).toFormatString('MMMM'), 'August');
   //  t.end();
   //});
 
-  test('y', t => {
+  test("Instant#toFormatString('y') returns the full year", t => {
     let i = inst();
     t.is(i.toFormatString('y'), '1982');
     t.is(i.locale('bn').toFormatString('y'), '১৯৮২');
@@ -226,7 +254,7 @@ export let format = () => {
     t.end();
   });
 
-  test('yy', t => {
+  test("Instant#toFormatString('yy') returns the two-digit year", t => {
     let i = inst();
     t.is(i.toFormatString('yy'), '82');
     t.is(i.locale('bn').toFormatString('yy'), '৮২');
@@ -234,7 +262,7 @@ export let format = () => {
     t.end();
   });
 
-  test('yyyy', t => {
+  test("Instant#toFormatString('yyyy') returns the padded full year", t => {
     let i = inst();
     t.is(i.toFormatString('yyyy'), '1982');
     t.is(i.locale('bn').toFormatString('yyyy'), '১৯৮২');
@@ -243,14 +271,14 @@ export let format = () => {
     t.end();
   });
 
-  //test('G', t => {
+  //test("Instant#toFormatString('G') returns the narrow era", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('G'), 'A');
   //  t.is(i.year(-21).toFormatString('G'), 'B');
   //  t.end();
   //});
 
-  test('GG', t => {
+  test("Instant#toFormatString('GG') returns the short era", t => {
     let i = inst();
     t.is(i.toFormatString('G'), 'AD');
     t.is(i.locale('de').toFormatString('G'), 'n. Chr.');
@@ -259,10 +287,29 @@ export let format = () => {
     t.end();
   });
 
-  //test('GGG', t => {
+  //test("Instant#toFormatString('GGG') returns the full era", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('G'), 'Anno Domini');
   //  t.is(i.year(-21).toFormatString('G'), 'Before Christ');
+  //  t.end();
+  //});
+
+  test("Instant#toFormatString returns a full formatted string", t => {
+    let i = inst();
+    t.is(i.toFormatString('MM/yyyy GG'), '05/1982 AD');
+    t.end();
+  });
+
+  test("Instant#toFormatString() accepts literals in [] ", t => {
+    let i = inst();
+    t.is(i.toFormatString('dd/MM/yyyy [at] hh:mm'), '25/05/1982 at 09:23');
+    t.end();
+  });
+
+  //numbering is disable while we're still using the polyfill for number formatting
+  //test('Instant#numbering() overides the numbering system from the locale', t => {
+  //  let i = inst();
+  //  t.is(i.numbering('beng').toFormatString('S'), '১২৩');
   //  t.end();
   //});
 };

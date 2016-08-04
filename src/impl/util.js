@@ -20,4 +20,9 @@ export class Util{
     let ts = inst.ts - inst.offset();
     return new Date(ts);
   }
+
+  static asIfLocal(inst){
+    let ts = inst.ts + inst.local().offset();
+    return new Date(ts);
+  }
 }

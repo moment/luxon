@@ -11,10 +11,11 @@ function fullLocale(localeConfig){
       l += "-u";
 
       //this doesn't seem to really work yet, so this is mostly not exposed
-      //todo - in the meantime, should force to 'gregory'?
       if (localeConfig.outputCal){
         l += "-ca-" + localeConfig.outputCal;
       }
+
+      //this doesn't work yet either
       if (localeConfig.nums){
         l += "-nu-" + localeConfig.nums;
       }
@@ -42,39 +43,76 @@ export class Formatter {
   constructor(localeConfig, formatOpts){
     this.opts = formatOpts;
     this.loc = fullLocale(localeConfig);
-    this.df = Intl.DateTimeFormat(this.loc, this.opts);
+  }
+
+  dateFormatter(inst, alt = false, options = {}){
+
+    //todo: add global cache?
+
+    let d, z;
+
+    if (inst.zone.universal()){
+      d = Util.asIfUTC(inst);
+      z = 'UTC'; //this is wrong, but there's no way to tell the formatter that
+    }
+    else {
+      d = inst.toJSDate();
+      z = inst.zone.name();
+    }
+
+    let opts = {};
+    if (z) {
+      opts['timeZone'] = z;
+    }
+
+    let realOpts = Object.assign(opts, this.opts, options);
+
+    if (alt){
+      return [new Alt.DateTimeFormat(this.loc, realOpts), d];
+    }
+    else {
+      return [new Intl.DateTimeFormat(this.loc, realOpts), d];
+    }
+  }
+
+  numberFormatter(padTo = 0){
+    //todo: add global cache?
+
+    let opts = {useGrouping: false};
+    if (padTo > 0){
+      opts['minimumIntegerDigits'] = padTo;
+    }
+    //The polyfill uses the locale's numbering, so it's a little better ATM.
+    //The built-in does this fine in the latest Chrome so presumably this will change.
+    //We'd def like to change to the built-in b/c it respects numbering overrides
+    return new Alt.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
   }
 
   formatDate(inst){
-    //todo - this is way broken:
-    //1. what this is UTC? Need to show UTC time
-    //2. what if it's some random other zone -- need to apply that zone here
-    //3. what if it's a UTC offset?
-    //Using Util.asIfUTC() helps, but will screw up the zone/offset display.
-    return this.df.format(inst.toJSDate());
+    //I need to do this:https://github.com/nodejs/node/wiki/Intl
+    //That will allow me to not use the polyfill here.
+    let [df, d] = this.dateFormatter(inst, true);
+    return df.format(d);
   }
 
-  resolvedOptions(){
-    return this.df.resolvedOptions();
+  formatParts(inst){
+    let [df, d] = this.dateFormatter(inst, true);
+    return df.format(d);
+  }
+
+  resolvedOptions(inst, forParts = false){
+    let [df, d] = this.dateFormatter(inst, forParts);
+    return df.resolvedOptions(d);
   }
 
   formatFromString(inst, fmt){
 
-    let padder = (p) => {
-      let opts = {useGrouping: false};
-      if (p > 0){
-        opts['minimumIntegerDigits'] = p;
-      }
-      //The polyfill works better for this in Node ATM.
-      //The built-in works fine in Chrome so presumably this will change.
-      return new Alt.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
-    };
-
-    let num = (n, p = 0) => padder(p).format(n);
+    let num = (n, p = 0) => this.numberFormatter(p).format(n);
 
     let string = (opts, extract) => {
-      let realOpts = Object.assign(opts, {timeZone: "UTC"}),
-          results = new Alt.DateTimeFormat(this.loc, realOpts).formatToParts(Util.asIfUTC(inst));
+      let [df, d] = this.dateFormatter(inst, true, opts),
+          results = df.formatToParts(d);
+
       return results.find((m) => m.type == extract).value;
     };
 
@@ -163,21 +201,43 @@ export class Formatter {
       };
     };
 
-    let current = null, splits = [];
+    let current = null, currentFull = '', splits = [], bracketed = false;
     for (let i = 0; i < fmt.length; i++){
       let c = fmt.charAt(i);
-      if (c === current) {
-        splits[splits.length - 1] += c;
+      if (c == ']'){
+        bracketed = false;
+        splits.push({literal: true, val: currentFull});
+        current = null;
+        currentFull = '';
+      }
+      else if (c == '['){
+        bracketed = true;
+      }
+      else if (bracketed){
+        currentFull += c;
+      }
+      else if (c === current){
+        currentFull += c;
       }
       else {
-        splits.push(c);
+        splits.push({literal: false, val: currentFull});
+        currentFull = c;
         current = c;
       }
     }
 
+    if (currentFull.length > 0){
+      splits.push({literal: bracketed, val: currentFull});
+    }
+
     let s = '';
-    for (let token of splits) {
-      s += tokenToString(token);
+    for (let token of splits){
+      if (token.literal){
+        s += token.val;
+      }
+      else {
+        s += tokenToString(token.val);
+      }
     }
     return s;
   }

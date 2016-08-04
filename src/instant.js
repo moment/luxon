@@ -208,14 +208,16 @@ export class Instant{
     }
   }
 
-  numbering(n){
-    if (isUndefined(n)){
-      return this.nums;
-    }
-    else{
-      return clone(this, {nums: n});
-    }
-  }
+  //the Intl polyfill respects the locale's numbering, but not the extension numbering.
+  //We prefer the former so we're using the polyfill. So unexpose this.
+  //numbering(n){
+  //  if (isUndefined(n)){
+  //    return this.nums;
+  //  }
+  //  else{
+  //    return clone(this, {nums: n});
+  //  }
+  //}
 
   utc(){
     return this.useUTCOffset(0);

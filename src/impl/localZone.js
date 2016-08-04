@@ -1,8 +1,7 @@
 export class LocalZone {
 
-  name(opts = {format: 'long'}){
-    //wait until formatToParts()
-    return 'local';
+  name(){
+    return null;
   }
 
   universal() {

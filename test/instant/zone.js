@@ -13,7 +13,7 @@ export let zone = () => {
 
   test('timezone defaults to local', t => {
     let inst = instant();
-    t.is(inst.timezoneName(), 'local');
+    t.is(inst.timezoneName(), null);
     t.is(inst.isOffsetFixed(), false);
     t.end();
   });
@@ -59,7 +59,7 @@ export let zone = () => {
     let relocaled = instant().utc().local(),
         expected = new Date(millis).getHours();
 
-    t.is(relocaled.timezoneName(), 'local');
+    t.is(relocaled.timezoneName(), null);
     t.is(relocaled.isOffsetFixed(), false);
     t.is(relocaled.valueOf(), millis);
     t.is(relocaled.hour(), expected);
