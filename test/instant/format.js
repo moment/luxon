@@ -192,20 +192,14 @@ export let format = () => {
     t.end();
   });
 
-  //all these commented-out tests are bc https://github.com/andyearnshaw/Intl.js/issues/190
-
-  //test("Instant#toFormatString('EE') returns narrow weekday name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('EEE'), 'T');
-  //  t.end();
-  //});
-
-  test("Instant#toFormatString('EEE') returns short weekday name", t => {
+  test("Instant#toFormatString('EEE) returns short weekday name", t => {
     let i = inst();
-    t.is(i.toFormatString('EEEE'), 'Tue');
+    t.is(i.toFormatString('EEE'), 'Tue');
     t.is(i.locale('de').toFormatString('EEE'), 'Di.');;
     t.end();
   });
+
+  //all these commented-out tests are bc https://github.com/andyearnshaw/Intl.js/issues/190
 
   //test("Instant#toFormatString('EEEE') returns the full weekday name", t => {
   //  let i = inst();
@@ -213,29 +207,29 @@ export let format = () => {
   //  t.end();
   //});
 
-  //test("Instant#toFormatString('M') returns the month number", t => {
+  //test("Instant#toFormatString('EEEEE') returns narrow weekday name", t => {
   //  let i = inst();
-  //  t.is(i.toFormatString('M'), '5');
+  //  t.is(i.toFormatString('EEEEE'), 'T');
   //  t.end();
   //});
 
-  //test("Instant#toFormatString('MM') returns the padded month number", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('MM'), '05');
-  //  t.end();
-  //});
-
-  //test("Instant#toFormatString('MMM') returns the narrow month name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('MMM'), 'M');
-  //  t.end();
-  //});
-
-  test("Instant#toFormatString('MMMM') returns the short month name", t => {
+  test("Instant#toFormatString('M') returns the month number", t => {
     let i = inst();
-    t.is(i.toFormatString('MMMM'), 'May');
-    t.is(i.locale('de').toFormatString('MMMM'), 'Mai');
-    t.is(i.month(8).toFormatString('MMMM'), 'Aug');
+    t.is(i.toFormatString('M'), '5');
+    t.end();
+  });
+
+  test("Instant#toFormatString('MM') returns the padded month number", t => {
+    let i = inst();
+    t.is(i.toFormatString('MM'), '05');
+    t.end();
+  });
+
+  test("Instant#toFormatString('MMM') returns the short month name", t => {
+    let i = inst();
+    t.is(i.toFormatString('MMM'), 'May');
+    t.is(i.locale('de').toFormatString('MMM'), 'Mai');
+    t.is(i.month(8).toFormatString('MMM'), 'Aug');
     t.end();
   });
 
@@ -243,6 +237,12 @@ export let format = () => {
   //  let i = inst();
   //  t.is(i.toFormatString('MMMM'), 'May');
   //  t.is(i.month(8).toFormatString('MMMM'), 'August');
+  //  t.end();
+  //});
+
+  //test("Instant#toFormatString('MMMMM') returns the narrow month name", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('MMMMM'), 'M');
   //  t.end();
   //});
 

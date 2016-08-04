@@ -233,17 +233,17 @@ export class Formatter {
       case 'dd': return this.num(inst.day(), 2);
 
       //weekdays
-      case 'E': return this.num(inst.weekday());                         //like 1
-      case 'EE': return string({weekday: 'narrow'}, 'weekday');    //like 'T'
-      case 'EEE': return string({weekday: 'short'}, 'weekday');    //like 'Tues'
-      case 'EEEE': return string({weekday: 'long'}, 'weekday');    //like 'Tuesday'
+      case 'E': return this.num(inst.weekday());                        //like 1
+      case 'EEE': return string({weekday: 'short'}, 'weekday');         //like 'Tues'
+      case 'EEEE': return string({weekday: 'long'}, 'weekday');         //like 'Tuesday'
+      case 'EEEEE': return string({weekday: 'narrow'}, 'weekday');      //like 'T'
 
       //months
       case 'M': return this.num(inst.month());                          //like 1
       case 'MM': return this.num(inst.month(), 2);                      //like 01
-      case 'MMM': return string({month: 'narrow'}, 'month');       //like J
-      case 'MMMM': return string({month: 'short'}, 'month');       //like Jan
-      case 'MMMMM': return string({month: 'long'}, 'month');       //like January
+      case 'MMM': return string({month: 'short'}, 'month');             //like Jan
+      case 'MMMM': return string({month: 'long'}, 'month');             //like January
+      case 'MMMMM': return string({month: 'narrow'}, 'month');          //like J
 
       //years
       case 'y': return this.num(inst.year());                           //like 2014
@@ -251,9 +251,9 @@ export class Formatter {
       case 'yyyy': return this.num(inst.year(), 4);                     //like 0012
 
       //eras
-      case 'G': return string({era: 'narrow'}, 'era');             //like A
-      case 'GG': return string({era: 'short'}, 'era');             //like AD
-      case 'GGG': return string({era: 'long'}, 'era');             //like Anno Domini
+      case 'G': return string({era: 'narrow'}, 'era');                  //like A
+      case 'GG': return string({era: 'short'}, 'era');                  //like AD
+      case 'GGG': return string({era: 'long'}, 'era');                  //like Anno Domini
 
       default:
         return token;
