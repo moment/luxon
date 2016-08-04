@@ -70,4 +70,9 @@ export let format = () => {
     t.is(lil.toFormatString('yyyyy'), '00005');
     t.end();
   });
+
+  test('Duration#toFormatString localizes the numbers', t => {
+    t.is(dur().locale('bn').toFormatString('yy:MM:dd:h:mm:ss.SSS'), '০১:০২:০৩:৪:০৫:০৬.০০৭');
+    t.end();
+  });
 };

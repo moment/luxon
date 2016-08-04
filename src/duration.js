@@ -82,7 +82,7 @@ export class Duration{
   static fromString(text, fmt){}
 
   locale(l){
-    if (isUndefined(l)){
+    if (Util.isUndefined(l)){
       return this.loc;
     }
     else{
