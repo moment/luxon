@@ -1,4 +1,5 @@
 import {Util} from "./impl/util";
+import {Formatter} from './impl/formatter';
 
 let matrix = {
   years: {
@@ -89,7 +90,9 @@ export class Duration{
     }
   }
 
-  toFormatString(fmt){}
+  toFormatString(fmt, opts = {}){
+    return Formatter.create(this, opts).formatDurationFromString(this, fmt);
+  }
 
   toObject(){
     return Object.assign({}, this.values);

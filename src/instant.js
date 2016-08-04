@@ -332,15 +332,15 @@ export class Instant{
   }
 
   toFormatString(fmt, opts = {}){
-    return Formatter.create(this, opts).formatFromString(this, fmt);
+    return Formatter.create(this, opts).formatInstantFromString(this, fmt);
   }
 
   toLocaleString(opts = {}){
-    return Formatter.create(this, opts).formatDate(this);
+    return Formatter.create(this, opts).formatInstant(this);
   }
 
   toISO(){
-    return Formatter.create({loc: 'en'}).formatFromString(this, 'yyyy-MM-ddTHH:mm:ss.SSSZZ');
+    return Formatter.create({loc: 'en'}).formatInstantFromString(this, 'yyyy-MM-ddTHH:mm:ss.SSSZZ');
   }
 
   toString(){
