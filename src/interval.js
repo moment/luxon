@@ -6,7 +6,6 @@ export class Interval {
 
   constructor(start, end, opts = {openStart: false, openEnd: false}){
     //todo - break if start > end
-    //todo - implement openness
     Object.defineProperty(this, "s", {value: start, enumerable: true});
     Object.defineProperty(this, "e", {value: end, enumerable: true});
 
@@ -56,8 +55,6 @@ export class Interval {
 
   count(durationOrUnit, opts){
   }
-
-  iterate(durationOrUnit, opts){}
 
   split(arg){
   }
@@ -124,11 +121,14 @@ export class Interval {
     return this.openEnd;
   }
 
-
   contains(instant){
     return this.start() < instant &&
       this.end() > instant;
   }
+
+  toString(){}
+
+  toISO(){}
 
   toFormatString(overallFormat, dateFormat){}
 
