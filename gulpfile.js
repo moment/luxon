@@ -84,14 +84,14 @@ gulp.task('amd', processLib({
 
 gulp.task('global-es6', processLib({
   format: 'iife',
-  rollupOpts: {moduleName: 'luxon', globals: {intl: 'intl'}, external: ['intl']},
+  rollupOpts: {moduleName: 'luxon', globals: {intl: 'IntlPolyfill'}, external: ['intl']},
   dest: 'global-es6',
   compile: false
 }));
 
 gulp.task('global', processLib({
   format: 'iife',
-  rollupOpts: {moduleName: 'luxon', globals: {intl: 'intl'}, external: ['intl']},
+  rollupOpts: {moduleName: 'luxon', globals: {intl: 'IntlPolyfill'}, external: ['intl']},
   dest: 'global',
   mini: true
 }));
@@ -118,10 +118,20 @@ gulp.task('test', function(){
 
 gulp.task('browserTest', ['global'], function(){
   gulp
-    .src('test/index.js')
-    .pipe(process({
-      format: 'iife'
-    }))
+    process({
+      entry: 'test/index.js',
+      format: 'iife',
+      rollupOpts: {
+        plugins: [resolveLib()],
+        external: ['intl', 'tape'],
+        globals: {intl: 'IntlPolyfill', tape: 'tape'}
+      }
+    })
+    .pipe(source('index.js'))
+    .pipe(gulp.dest('.compiled-tests/browser'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('.compiled-tests/browser'));
 });
 

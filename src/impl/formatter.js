@@ -1,5 +1,4 @@
-//hack for now so that I can use formatToParts()
-import * as Alt from 'intl';
+import * as Intl from 'intl';
 import {Util} from './util';
 
 function fullLocale(localeConfig){
@@ -45,7 +44,7 @@ export class Formatter {
     this.loc = fullLocale(localeConfig);
   }
 
-  dateFormatter(inst, alt = false, options = {}){
+  dateFormatter(inst, options = {}){
 
     //todo: add global cache?
 
@@ -66,13 +65,7 @@ export class Formatter {
     }
 
     let realOpts = Object.assign(opts, this.opts, options);
-
-    if (alt){
-      return [new Alt.DateTimeFormat(this.loc, realOpts), d];
-    }
-    else {
-      return [new Intl.DateTimeFormat(this.loc, realOpts), d];
-    }
+    return [new Intl.DateTimeFormat(this.loc, realOpts), d];
   }
 
   numberFormatter(padTo = 0){
@@ -85,23 +78,23 @@ export class Formatter {
     //The polyfill uses the locale's numbering, so it's a little better ATM.
     //The built-in does this fine in the latest Chrome so presumably this will change.
     //We'd def like to change to the built-in b/c it respects numbering overrides
-    return new Alt.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
+    return new Intl.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
   }
 
   formatDate(inst){
     //I need to do this:https://github.com/nodejs/node/wiki/Intl
     //That will allow me to not use the polyfill here.
-    let [df, d] = this.dateFormatter(inst, true);
+    let [df, d] = this.dateFormatter(inst);
     return df.format(d);
   }
 
   formatParts(inst){
-    let [df, d] = this.dateFormatter(inst, true);
+    let [df, d] = this.dateFormatter(inst);
     return df.format(d);
   }
 
-  resolvedOptions(inst, forParts = false){
-    let [df, d] = this.dateFormatter(inst, forParts);
+  resolvedOptions(inst){
+    let [df, d] = this.dateFormatter(inst);
     return df.resolvedOptions(d);
   }
 
@@ -110,7 +103,7 @@ export class Formatter {
     let num = (n, p = 0) => this.numberFormatter(p).format(n);
 
     let string = (opts, extract) => {
-      let [df, d] = this.dateFormatter(inst, true, opts),
+      let [df, d] = this.dateFormatter(inst, opts),
           results = df.formatToParts(d);
 
       return results.find((m) => m.type == extract).value;
@@ -174,7 +167,7 @@ export class Formatter {
       case 'dd': return num(inst.day(), 2);
 
       //weekdays
-      case 'E': return num(inst.weekday());                        //like 1
+      case 'E': return num(inst.weekday());                         //like 1
       case 'EEE': return string({weekday: 'narrow'}, 'weekday');    //like 'T'
       case 'EEEE': return string({weekday: 'short'}, 'weekday');    //like 'Tues'
       case 'EEEEE': return string({weekday: 'long'}, 'weekday');    //like 'Tuesday'
