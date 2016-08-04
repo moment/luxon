@@ -194,20 +194,20 @@ export let format = () => {
 
   //all these commented-out tests are bc https://github.com/andyearnshaw/Intl.js/issues/190
 
-  //test("Instant#toFormatString('EEE') returns narrow weekday name", t => {
+  //test("Instant#toFormatString('EE') returns narrow weekday name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('EEE'), 'T');
   //  t.end();
   //});
 
-  test("Instant#toFormatString('EEEE') returns short weekday name", t => {
+  test("Instant#toFormatString('EEE') returns short weekday name", t => {
     let i = inst();
     t.is(i.toFormatString('EEEE'), 'Tue');
     t.is(i.locale('de').toFormatString('EEE'), 'Di.');;
     t.end();
   });
 
-  //test("Instant#toFormatString('EEEEE') returns the full weekday name", t => {
+  //test("Instant#toFormatString('EEEE') returns the full weekday name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('EEEE'), 'Tuesday');
   //  t.end();

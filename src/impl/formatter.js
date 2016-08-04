@@ -234,9 +234,9 @@ export class Formatter {
 
       //weekdays
       case 'E': return this.num(inst.weekday());                         //like 1
-      case 'EEE': return string({weekday: 'narrow'}, 'weekday');    //like 'T'
-      case 'EEEE': return string({weekday: 'short'}, 'weekday');    //like 'Tues'
-      case 'EEEEE': return string({weekday: 'long'}, 'weekday');    //like 'Tuesday'
+      case 'EE': return string({weekday: 'narrow'}, 'weekday');    //like 'T'
+      case 'EEE': return string({weekday: 'short'}, 'weekday');    //like 'Tues'
+      case 'EEEE': return string({weekday: 'long'}, 'weekday');    //like 'Tuesday'
 
       //months
       case 'M': return this.num(inst.month());                          //like 1
@@ -261,7 +261,6 @@ export class Formatter {
     };
 
     return stringifyTokens(parseFormat(fmt), tokenToString);
-
   }
 
   formatDuration(){
