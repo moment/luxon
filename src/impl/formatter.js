@@ -229,18 +229,32 @@ export class Formatter {
       case 'd': return this.num(inst.day());
       case 'dd': return this.num(inst.day(), 2);
 
-      //weekdays
-      case 'E': return this.num(inst.weekday());                        //like 1
-      case 'EEE': return string({weekday: 'short'}, 'weekday');         //like 'Tues'
-      case 'EEEE': return string({weekday: 'long'}, 'weekday');         //like 'Tuesday'
-      case 'EEEEE': return string({weekday: 'narrow'}, 'weekday');      //like 'T'
+      //weekdays - format
+      case 'c': return this.num(inst.weekday());                               //like 1
+      case 'ccc': return string({weekday: 'short'}, 'weekday');                //like 'Tues'
+      case 'cccc': return string({weekday: 'long'}, 'weekday');                //like 'Tuesday'
+      case 'ccccc': return string({weekday: 'narrow'}, 'weekday');             //like 'T'
 
-      //months
-      case 'M': return this.num(inst.month());                          //like 1
-      case 'MM': return this.num(inst.month(), 2);                      //like 01
-      case 'MMM': return string({month: 'short'}, 'month');             //like Jan
-      case 'MMMM': return string({month: 'long'}, 'month');             //like January
-      case 'MMMMM': return string({month: 'narrow'}, 'month');          //like J
+     //weekdays - standalone
+
+      case 'E': return this.num(inst.weekday());                               //like 1
+      case 'EEE': return string({weekday: 'short'}, 'weekday');                //like 'Tues'
+      case 'EEEE': return string({weekday: 'long'}, 'weekday');                //like 'Tuesday'
+      case 'EEEEE': return string({weekday: 'narrow'}, 'weekday');             //like 'T'
+
+      //months - format
+      case 'L': return string({month: 'numeric', day: 'numeric'}, 'month');    //like 1
+      case 'LL': return string({month: '2-digit', day: 'numeric'}, 'month');   //like 01
+      case 'LLL': return string({month: 'short', day: 'numeric'}, 'month');    //like Jan
+      case 'LLLL': return string({month: 'long', day: 'numeric'}, 'month');    //like January
+      case 'LLLLL': return string({month: 'narrow', day: 'numeric'}, 'month'); //like J
+
+      //months - standalone
+      case 'M': return this.num(inst.month());                                 //like 1
+      case 'MM': return this.num(inst.month(), 2);                             //like 01
+      case 'MMM': return string({month: 'short', day: 'numeric'}, 'month');    //like Jan
+      case 'MMMM': return string({month: 'long', day: 'numeric'}, 'month');    //like January
+      case 'MMMMM': return string({month: 'narrow', day: 'numeric'}, 'month'); //like J
 
       //years
       case 'y': return this.num(inst.year());                           //like 2014

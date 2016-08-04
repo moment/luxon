@@ -186,63 +186,112 @@ export let format = () => {
     t.end();
   });
 
-  test("Instant#toFormatString('E') returns weekday number", t => {
+  test("Instant#toFormatString('E' || 'c') returns weekday number", t => {
     let i = inst();
     t.is(i.toFormatString('E'), '2');
+    t.is(i.toFormatString('c'), '2');
     t.end();
   });
 
-  test("Instant#toFormatString('EEE) returns short weekday name", t => {
+  test("Instant#toFormatString('EEE) returns short format weekday name", t => {
     let i = inst();
     t.is(i.toFormatString('EEE'), 'Tue');
     t.is(i.locale('de').toFormatString('EEE'), 'Di.');;
+
+    //anyone know a language where the *abbreviated* genitive is different than the standalone?
+    //if so, test that here
+
+    t.end();
+  });
+
+  test("Instant#toFormatString('ccc) returns short standalone weekday name", t => {
+    let i = inst();
+    t.is(i.toFormatString('ccc'), 'Tue');
+    t.is(i.locale('de').toFormatString('ccc'), 'Di.');;
     t.end();
   });
 
   //all these commented-out tests are bc https://github.com/andyearnshaw/Intl.js/issues/190
 
-  //test("Instant#toFormatString('EEEE') returns the full weekday name", t => {
+  //test("Instant#toFormatString('EEEE') returns the full format weekday name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('EEEE'), 'Tuesday');
   //  t.end();
   //});
 
-  //test("Instant#toFormatString('EEEEE') returns narrow weekday name", t => {
+  //test("Instant#toFormatString('cccc') returns the full standalone weekday name", t => {
   //  let i = inst();
-  //  t.is(i.toFormatString('EEEEE'), 'T');
+  //  t.is(i.toFormatString('cccc'), 'Tuesday');
+
+  //  //I can't find anything I can generate different standalones for. 'ga' has a different genitive
+  //  //case, but at least according to Intl, it's *always* used in dates.
+  //  //todo - find one and test it here
+
   //  t.end();
   //});
 
-  test("Instant#toFormatString('M') returns the month number", t => {
+  //test("Instant#toFormatString('EEEEE' || 'ccccc') returns narrow weekday name", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('EEEEE'), 'T');
+  //  t.is(i.toFormatString('ccccc'), 'T');
+  //  t.end();
+  //});
+
+  test("Instant#toFormatString('M' || 'L') return the month number", t => {
     let i = inst();
     t.is(i.toFormatString('M'), '5');
+    t.is(i.toFormatString('L'), '5');
     t.end();
   });
 
-  test("Instant#toFormatString('MM') returns the padded month number", t => {
+  test("Instant#toFormatString('MM' || 'LL') return the padded month number", t => {
     let i = inst();
     t.is(i.toFormatString('MM'), '05');
+    //t.is(i.toFormatString('LL'), '05');
     t.end();
   });
 
-  test("Instant#toFormatString('MMM') returns the short month name", t => {
+  test("Instant#toFormatString('MMM') returns the short format month name", t => {
     let i = inst();
     t.is(i.toFormatString('MMM'), 'May');
     t.is(i.locale('de').toFormatString('MMM'), 'Mai');
     t.is(i.month(8).toFormatString('MMM'), 'Aug');
+
+    //anyone know a language where the *abbreviated* genitive is different than the standalone?
+    //if so, test that here
+
     t.end();
   });
 
-  //test("Instant#toFormatString('MMMMM') returns the full month name", t => {
+  test("Instant#toFormatString('LLL') returns the short standalone month name", t => {
+    let i = inst();
+    t.is(i.toFormatString('LLL'), 'May');
+    t.is(i.locale('de').toFormatString('LLL'), 'Mai');
+    t.is(i.month(8).toFormatString('LLL'), 'Aug');
+
+    t.end();
+  });
+
+  //test("Instant#toFormatString('MMMMM') returns the full format month name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('MMMM'), 'May');
   //  t.is(i.month(8).toFormatString('MMMM'), 'August');
+  //  t.is(i.month(8).locale('ru').toFormatString('MMMM'), 'августа');
   //  t.end();
   //});
 
-  //test("Instant#toFormatString('MMMMM') returns the narrow month name", t => {
+  //test("Instant#toFormatString('LLLLM') returns the full standalone month name", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('LLLL'), 'May');
+  //  t.is(i.month(8).toFormatString('LLLL'), 'August');
+  //  t.is(i.month(8).locale('ru').toFormatString('LLLL'), 'август');
+  //  t.end();
+  //});
+
+  //test("Instant#toFormatString('MMMMM' || 'LLLL') returns the narrow month name", t => {
   //  let i = inst();
   //  t.is(i.toFormatString('MMMMM'), 'M');
+  //  t.is(i.toFormatString('LLLLL'), 'M');
   //  t.end();
   //});
 
