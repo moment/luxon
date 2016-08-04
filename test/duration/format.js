@@ -3,11 +3,29 @@ import {Duration} from 'luxon';
 
 export let format = () => {
 
+  let dur = () => Duration.fromObject({years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6, milliseconds: 7});
+
+  //------
+  // #toISO()
+  //------
+
+  test('Duration#toISO fills out every field', t => {
+    t.is(dur().toISO(), 'P1Y2M3DT4H5M6S');
+    t.end();
+  });
+
+  test('Duration#toISO creates a minimal string', t => {
+    t.is(Duration.fromObject({years: 3, seconds: 45}).toISO(), 'P3YT45S');
+    t.is(Duration.fromObject({months: 4, seconds: 45}).toISO(), 'P4MT45S');
+    t.is(Duration.fromObject({months: 5}).toISO(), 'P5M');
+    t.is(Duration.fromObject({minutes: 5}).toISO(), 'PT5M');
+    t.end();
+  });
+
   //------
   // #toFormatString()
   //------
 
-  let dur = () => Duration.fromObject({years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6, milliseconds: 7});
 
   test("Duration#toFormatString('S') returns milliseconds", t => {
     t.is(dur().toFormatString('S'), '36993906007');

@@ -98,7 +98,18 @@ export class Duration{
     return Object.assign({}, this.values);
   }
 
-  toISO(){}
+  toISO(){
+    //we could use the formatter, but this is an easier way to get the minimum string
+    let s = 'P';
+    if (this.years() > 0) s += this.years() + 'Y';
+    if (this.months() > 0) s += this.months() + 'M';
+    if (this.days() > 0) s += this.days() + 'D';
+    if (this.hours() > 0 || this.minutes() > 0 || this.seconds() > 0 || this.milliseconds() > 0) s += 'T';
+    if (this.hours() > 0) s += this.hours() + 'H';
+    if (this.minutes() > 0) s += this.minutes() + 'M';
+    if (this.seconds() > 0) s += this.seconds() + 'S';
+    return s;
+  }
 
   toJSON(){}
 
