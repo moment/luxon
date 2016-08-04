@@ -47,14 +47,23 @@ function ensure(unit){
   return normalized;
 }
 
+function clone(dur, alts) {
+  //deep merge for vals
+  let conf = {};
+  conf.values = Object.assign(dur.values, alts.values);
+  if (alts.loc) conf.loc = alts.loc;
+  return new Duration(conf); 
+}
+
 export class Duration{
 
-  constructor(obj){
-    this.values = obj;
-  }
+  constructor(config){
+    this.values = config.values;
 
-  _clone(alts) {
-    new Duration(Object.assign(this.values), alts);
+    Object.defineProperty(this, 'loc', {
+      value: config.loc || 'en-us',
+      enumerable: true
+    });
   }
 
   static fromLength(count, unit){
@@ -64,12 +73,21 @@ export class Duration{
 
   static fromObject(obj){
     //todo - ensure() each key
-    return new Duration(obj);
+    return new Duration({values: obj});
   }
 
   static fromISO(text){}
 
   static fromString(text, fmt){}
+
+  locale(l){
+    if (isUndefined(l)){
+      return this.loc;
+    }
+    else{
+      return clone(this, {loc: l});
+    }
+  }
 
   toFormatString(fmt){}
 
@@ -102,6 +120,11 @@ export class Duration{
 
   get(unit){
     return this[unit]();
+  }
+
+  set(values){
+    let mixed = Object.assign(this.values, values);
+    return clone(this, {values: mixed});
   }
 
   as(unit){
@@ -170,31 +193,31 @@ export class Duration{
     return Duration.fromObject(negated);
   };
 
-  years(){
-    return this.values.years || 0;
+  years(v){
+    return Util.isUndefined(v) ? this.values.years || 0 : this.set({years: v});
   }
 
-  months(){
-    return this.values.months || 0;
+  months(v){
+    return Util.isUndefined(v) ? this.values.months || 0 : this.set({months: v});
   }
 
-  days(){
-    return this.values.days || 0;
+  days(v){
+    return Util.isUndefined(v) ? this.values.days || 0 : this.set({days: v});
   }
 
-  hours(){
-    return this.values.hours || 0;
+  hours(v){
+    return Util.isUndefined(v) ? this.values.hours || 0 : this.set({hours: v});
   }
 
-  minutes(){
-    return this.values.minutes || 0;
+  minutes(v){
+    return Util.isUndefined(v) ? this.values.minutes || 0 : this.set({minutes: v});
   }
 
-  seconds(){
-    return this.values.seconds || 0;
+  seconds(v){
+    return Util.isUndefined(v) ? this.values.seconds || 0 : this.set({seconds: v});
   }
 
-  milliseconds(){
-    return this.values.milliseconds || 0;
+  milliseconds(v){
+    return Util.isUndefined(v) ? this.values.milliseconds || 0 : this.set({milliseconds: v});
   }
 }

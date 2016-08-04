@@ -7,6 +7,10 @@ export class Util{
       durationOrNumber;
   }
 
+  static isUndefined(o){
+    return typeof(o) === 'undefined';
+  }
+
   static pad(input, n = 2){
     return ('0'.repeat(n) + input).slice(-n);
   };

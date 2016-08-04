@@ -5,10 +5,6 @@ import {LocalZone} from './impl/localZone';
 import {IntlZone} from './impl/intlZone';
 import {Util} from './impl/util';
 
-function isUndefined(o){
-  return typeof(o) === 'undefined';
-}
-
 function bestBy(arr, by, compare) {
   return arr.reduce((best, next) => {
     let pair = [by(next), next];
@@ -193,14 +189,14 @@ export class Instant{
     return new Instant({ts: tsFinal, zone: zone});
   }
 
-  static fromISOString(text){
+  static fromISO(text){
   }
 
   static fromString(text, fmt){
   }
 
   locale(l){
-    if (isUndefined(l)){
+    if (Util.isUndefined(l)){
       return this.loc;
     }
     else{
@@ -208,14 +204,23 @@ export class Instant{
     }
   }
 
-  //the Intl polyfill respects the locale's numbering, but not the extension numbering.
-  //We prefer the former so we're using the polyfill. So unexpose this.
+  //the Intl polyfill respects the locale's numbering, but not the extension numbering. So unexpose this.
   //numbering(n){
-  //  if (isUndefined(n)){
+  //  if (Util.isUndefined(n)){
   //    return this.nums;
   //  }
   //  else{
   //    return clone(this, {nums: n});
+  //  }
+  //}
+
+  //same here
+  //outputCalendar(c){
+  //  if (Util.isUndefined(c)){
+  //    return this.outputCal;
+  //  }
+  //  else{
+  //    return clone(this, {outputCal: c});
   //  }
   //}
 
@@ -273,31 +278,31 @@ export class Instant{
   }
 
   year(v){
-    return isUndefined(v) ? this.c.year : this.set({year: v});
+    return Util.isUndefined(v) ? this.c.year : this.set({year: v});
   }
 
   month(v){
-    return isUndefined(v) ? this.c.month : this.set({month: v});
+    return Util.isUndefined(v) ? this.c.month : this.set({month: v});
   }
 
   day(v){
-    return isUndefined(v) ? this.c.day : this.set({day: v});
+    return Util.isUndefined(v) ? this.c.day : this.set({day: v});
   }
 
   hour(v){
-    return isUndefined(v) ? this.c.hour : this.set({hour: v});
+    return Util.isUndefined(v) ? this.c.hour : this.set({hour: v});
   }
 
   minute(v){
-    return isUndefined(v) ? this.c.minute : this.set({minute: v});
+    return Util.isUndefined(v) ? this.c.minute : this.set({minute: v});
   }
 
   second(v){
-    return isUndefined(v) ? this.c.second : this.set({second: v});
+    return Util.isUndefined(v) ? this.c.second : this.set({second: v});
   }
 
   millisecond(v){
-    return isUndefined(v) ? this.c.millisecond : this.set({millisecond: v});
+    return Util.isUndefined(v) ? this.c.millisecond : this.set({millisecond: v});
   }
 
   weekday(){

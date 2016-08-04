@@ -1,3 +1,19 @@
+//We use the Intl polyfill exclusively here, for these reasons:
+// 1. We need formatToParts(), which isn't implemented anywhere
+// 2. Node doesn't ship with real locale support unless you do this: https://github.com/nodejs/node/wiki/Intl
+// 3. It made for a cleaner job.
+
+//However, it has some drawbacks:
+// 1. It's an onerous requirement
+// 2. It doesn't have TZ support
+// 3. It doesn't support number and calendar overrides.
+
+//In the future we might see either (probably both?) of these:
+// 1. Drop the requirement for the polyfill if you want US-EN only.
+//    Not doing this now because providing the defaults will slow me down.
+// 2. Let the user actually do a real polyfill where they please once Chrome/Node supports formatToParts OR Intl supports zones.
+//    This is impractical now because we still want access to the Chrome's native Intl's TZ support elsewhere.
+
 import * as Intl from 'intl';
 import {Util} from './util';
 
@@ -75,15 +91,10 @@ export class Formatter {
     if (padTo > 0){
       opts['minimumIntegerDigits'] = padTo;
     }
-    //The polyfill uses the locale's numbering, so it's a little better ATM.
-    //The built-in does this fine in the latest Chrome so presumably this will change.
-    //We'd def like to change to the built-in b/c it respects numbering overrides
     return new Intl.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
   }
 
   formatDate(inst){
-    //I need to do this:https://github.com/nodejs/node/wiki/Intl
-    //That will allow me to not use the polyfill here.
     let [df, d] = this.dateFormatter(inst);
     return df.format(d);
   }
