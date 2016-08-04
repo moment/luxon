@@ -44,16 +44,13 @@ function parseFormat(fmt){
   let current = null, currentFull = '', splits = [], bracketed = false;
   for (let i = 0; i < fmt.length; i++){
     let c = fmt.charAt(i);
-    if (c == "'" && bracketed){
-      bracketed = false;
+    if (c == "'"){
       if (currentFull.length > 0){
-        splits.push({literal: true, val: currentFull});
+        splits.push({literal: bracketed, val: currentFull});
       }
       current = null;
       currentFull = '';
-    }
-    else if (c == "'"){
-      bracketed = true;
+      bracketed = !bracketed;
     }
     else if (bracketed){
       currentFull += c;
@@ -147,13 +144,13 @@ export class Formatter {
     return new Intl.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
   }
 
-  formatInstant(inst){
-    let [df, d] = this.dateFormatter(inst);
+  formatInstant(inst, opts = {}){
+    let [df, d] = this.dateFormatter(inst, opts);
     return df.format(d);
   }
 
-  formatInstantParts(inst){
-    let [df, d] = this.dateFormatter(inst);
+  formatInstantParts(inst, opts = {}){
+    let [df, d] = this.dateFormatter(inst, opts);
     return df.format(d);
   }
 
@@ -254,6 +251,34 @@ export class Formatter {
       case 'G': return string({era: 'short'}, 'era');                   //like AD
       case 'GG': return string({era: 'long'}, 'era');                   //like Anno Domini
       case 'GGGGG': return string({era: 'narrow'}, 'era');              //like A
+
+      //macros
+      case 'D': return this.formatInstant(inst, {year: 'numeric', month: 'numeric', day: 'numeric'});
+      case 'DD': return this.formatInstant(inst, {year: 'numeric', month: 'short', day: 'numeric'});
+      case 'DDD': return this.formatInstant(inst, {year: 'numeric', month: 'long', day: 'numeric'});
+      case 'DDDD': return this.formatInstant(inst, {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'});
+
+      case 't': return this.formatInstant(inst, {hour: 'numeric', minute: '2-digit'});
+      case 'tt': return this.formatInstant(inst, {hour: 'numeric', minute: '2-digit', second: '2-digit'});
+        //todo: ttt and tttt when we have zones
+
+      case 'T': return this.formatInstant(inst, {hour: 'numeric', minute: '2-digit', hour12: false});
+      case 'TT': return this.formatInstant(inst, {hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false});
+        //todo: TTT and TTTT when we have zones
+
+      case 'f': return this.formatInstant(inst, {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+      case 'ff': return this.formatInstant(inst, {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+
+        //todo: add zones
+      case 'fff': return this.formatInstant(inst, {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+      case 'ffff': return this.formatInstant(inst, {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', hour: 'numeric', minute: '2-digit'});
+
+      case 'F': return this.formatInstant(inst, {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit'});
+      case 'FF': return this.formatInstant(inst, {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit'});
+
+        //todo: add zones
+      case 'FFF': return this.formatInstant(inst, {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit'});
+      case 'FFFF': return this.formatInstant(inst, {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', hour: 'numeric', minute: '2-digit', second: '2-digit'});
 
       default:
         return token;

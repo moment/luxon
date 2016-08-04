@@ -340,7 +340,7 @@ export class Instant{
   }
 
   toISO(){
-    return Formatter.create({loc: 'en'}).formatInstantFromString(this, 'yyyy-MM-ddTHH:mm:ss.SSSZZ');
+    return Formatter.create({loc: 'en'}).formatInstantFromString(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
   }
 
   toString(){

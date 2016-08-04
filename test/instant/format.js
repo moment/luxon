@@ -303,6 +303,7 @@ export let format = () => {
   test("Instant#toFormatString() accepts literals in single quotes", t => {
     let i = inst();
     t.is(i.toFormatString("dd/MM/yyyy 'at' hh:mm"), '25/05/1982 at 09:23');
+    t.is(i.toFormatString("MMdd'T'hh"), '0525T09');
     t.end();
   });
 
@@ -312,4 +313,161 @@ export let format = () => {
   //  t.is(i.numbering('beng').toFormatString('S'), '১২৩');
   //  t.end();
   //});
+
+  test("Instant#toFormatString('D') returns a short date representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('D'), '5/25/1982');
+    t.is(i.locale('fr').toFormatString('D'), '25/05/1982');
+    t.end();
+  });
+
+  test("Instant#toFormatString('DD') returns a medium date representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('DD'), 'May 25, 1982');
+    t.is(i.month(8).toFormatString('DD'), 'Aug 25, 1982');
+    t.is(i.locale('fr').toFormatString('DD'), '25 mai 1982');
+    t.is(i.locale('fr').month(2).toFormatString('DD'), '25 févr. 1982');
+    t.end();
+  });
+
+  //more bunkassery from the polyfill
+
+  //test("Instant#toFormatString('DDD') returns a long date representation", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('DDD'), 'May 25, 1982');
+  //  t.is(i.month(8).toFormatString('DDD'), 'August 25, 1982');
+  //  t.is(i.locale('fr').toFormatString('DDD'), '25 mai 1982');
+  //  t.is(i.locale('fr').month(2).toFormatString('DDD'), '25 février 1982');
+  //  t.end();
+  //});
+
+  //test("Instant#toFormatString('DDDD') returns a long date representation", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('DDDD'), 'Tuesday, May 25, 1982');
+  //  t.is(i.month(8).toFormatString('DDDD'), 'Wednesday, August 25, 1982');
+  //  t.is(i.locale('fr').toFormatString('DDDD'), 'mardi 25 mai 1982');
+  //  t.is(i.locale('fr').month(2).toFormatString('DDDD'), 'jeudi 25 février 1982');
+  //  t.end();
+  //});
+
+  test("Instant#toFormatString('t') returns a short time representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('t'), '9:23 AM');
+    t.is(i.hour(13).toFormatString('t'), '1:23 PM');
+    t.is(i.locale('fr').toFormatString('t'), '9:23');
+    t.is(i.locale('fr').hour(13).toFormatString('t'), '13:23');
+    t.end();
+  });
+
+  test("Instant#toFormatString('T') returns a short 24-hour time representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('T'), '9:23');
+    t.is(i.hour(13).toFormatString('T'), '13:23');
+    t.is(i.locale('fr').toFormatString('T'), '9:23');
+    t.is(i.locale('fr').hour(13).toFormatString('T'), '13:23');
+    t.end();
+  });
+
+  test("Instant#toFormatString('tt') returns a medium time representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('tt'), '9:23:54 AM');
+    t.is(i.hour(13).toFormatString('tt'), '1:23:54 PM');
+    t.is(i.locale('fr').toFormatString('tt'), '9:23:54');
+    t.is(i.locale('fr').hour(13).toFormatString('tt'), '13:23:54');
+    t.end();
+  });
+
+  test("Instant#toFormatString('TT') returns a medium 24-hour time representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('TT'), '9:23:54');
+    t.is(i.hour(13).toFormatString('TT'), '13:23:54');
+    t.is(i.locale('fr').toFormatString('TT'), '9:23:54');
+    t.is(i.locale('fr').hour(13).toFormatString('TT'), '13:23:54');
+    t.end();
+  });
+
+  test("Instant#toFormatString('f') returns a short date/time representation without seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('f'), '5/25/1982, 9:23 AM');
+    t.is(i.hour(13).toFormatString('f'), '5/25/1982, 1:23 PM');
+    t.is(i.locale('fr').toFormatString('f'), '25/05/1982 9:23');
+    t.is(i.locale('fr').hour(13).toFormatString('f'), '25/05/1982 13:23');
+    t.end();
+  });
+
+  test("Instant#toFormatString('ff') returns a medium date/time representation without seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('ff'), 'May 25, 1982, 9:23 AM');
+    t.is(i.hour(13).toFormatString('ff'), 'May 25, 1982, 1:23 PM');
+    t.is(i.month(8).toFormatString('ff'), 'Aug 25, 1982, 9:23 AM');
+    t.is(i.locale('fr').toFormatString('ff'), '25 mai 1982 à 9:23');
+    t.is(i.locale('fr').month(2).toFormatString('ff'), '25 févr. 1982 à 9:23');
+    t.is(i.locale('fr').hour(13).toFormatString('ff'), '25 mai 1982 à 13:23');
+    t.end();
+  });
+
+  //test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('fff'), 'May 25, 1982, 9:23 AM');
+  //  t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982, 1:23 PM');
+  //  t.is(i.month(8).toFormatString('fff'), 'August 25, 1982, 9:23 AM');
+  //  t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
+  //  t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
+  //  t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
+  //  t.end();
+  //});
+
+  //test("Instant#toFormatString('ffff') returns a long date/time representation without seconds", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('ffff'), 'Tuesday May 25, 1982, 9:23 AM');
+  //  t.is(i.hour(13).toFormatString('ffff'), 'Tuesday, May 25, 1982, 1:23 PM');
+  //  t.is(i.month(8).toFormatString('ffff'), 'Wednesday, August 25, 1982, 9:23 AM');
+  //  t.is(i.locale('fr').toFormatString('ffff'), 'mardi 25 mai 1982 à 9:23');
+  //  t.is(i.locale('fr').month(2).toFormatString('ffff'), 'mardi 25 février 1982 à 9:23');
+  //  t.is(i.locale('fr').hour(13).toFormatString('ffff'), 'jeudi 25 mai 1982 à 13:23');
+  //  t.end();
+  //});
+
+  test("Instant#toFormatString('F') returns a short date/time representation with seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('F'), '5/25/1982, 9:23:54 AM');
+    t.is(i.hour(13).toFormatString('F'), '5/25/1982, 1:23:54 PM');
+    t.is(i.locale('fr').toFormatString('F'), '25/05/1982 9:23:54');
+    t.is(i.locale('fr').hour(13).toFormatString('F'), '25/05/1982 13:23:54');
+    t.end();
+  });
+
+  test("Instant#toFormatString('FF') returns a medium date/time representation with seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('FF'), 'May 25, 1982, 9:23:54 AM');
+    t.is(i.hour(13).toFormatString('FF'), 'May 25, 1982, 1:23:54 PM');
+    t.is(i.month(8).toFormatString('FF'), 'Aug 25, 1982, 9:23:54 AM');
+    t.is(i.locale('fr').toFormatString('FF'), '25 mai 1982 à 9:23:54');
+    t.is(i.locale('fr').month(2).toFormatString('FF'), '25 févr. 1982 à 9:23:54');
+    t.is(i.locale('fr').hour(13).toFormatString('FF'), '25 mai 1982 à 13:23:54');
+    t.end();
+  });
+
+  //test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('fff'), 'May 25, 1982, 9:23 AM');
+  //  t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982, 1:23 PM');
+  //  t.is(i.month(8).toFormatString('fff'), 'August 25, 1982, 9:23 AM');
+  //  t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
+  //  t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
+  //  t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
+  //  t.end();
+  //});
+
+  //test("Instant#toFormatString('FFFF') returns a long date/time representation without seconds", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('FFFF'), 'Tuesday May 25, 1982, 9:23:54 AM');
+  //  t.is(i.hour(13).toFormatString('FFFF'), 'Tuesday, May 25, 1982, 1:23:54 PM');
+  //  t.is(i.month(8).toFormatString('FFFF'), 'Wednesday, August 25, 1982, 9:23:54 AM');
+  //  t.is(i.locale('fr').toFormatString('FFFF'), 'mardi 25 mai 1982 à 9:23:54');
+  //  t.is(i.locale('fr').month(2).toFormatString('FFFF'), 'mardi 25 février 1982 à 9:23:54');
+  //  t.is(i.locale('fr').hour(13).toFormatString('FFFF'), 'jeudi 25 mai 1982 à 13:23:54');
+  //  t.end();
+  //});
 };
+
