@@ -44,7 +44,7 @@ function parseFormat(fmt){
   let current = null, currentFull = '', splits = [], bracketed = false;
   for (let i = 0; i < fmt.length; i++){
     let c = fmt.charAt(i);
-    if (c == ']'){
+    if (c == "'" && bracketed){
       bracketed = false;
       if (currentFull.length > 0){
         splits.push({literal: true, val: currentFull});
@@ -52,7 +52,7 @@ function parseFormat(fmt){
       current = null;
       currentFull = '';
     }
-    else if (c == '['){
+    else if (c == "'"){
       bracketed = true;
     }
     else if (bracketed){
@@ -251,9 +251,9 @@ export class Formatter {
       case 'yyyy': return this.num(inst.year(), 4);                     //like 0012
 
       //eras
-      case 'G': return string({era: 'narrow'}, 'era');                  //like A
-      case 'GG': return string({era: 'short'}, 'era');                  //like AD
-      case 'GGG': return string({era: 'long'}, 'era');                  //like Anno Domini
+      case 'G': return string({era: 'short'}, 'era');                   //like AD
+      case 'GG': return string({era: 'long'}, 'era');                   //like Anno Domini
+      case 'GGGGG': return string({era: 'narrow'}, 'era');              //like A
 
       default:
         return token;

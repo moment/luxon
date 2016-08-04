@@ -271,14 +271,7 @@ export let format = () => {
     t.end();
   });
 
-  //test("Instant#toFormatString('G') returns the narrow era", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('G'), 'A');
-  //  t.is(i.year(-21).toFormatString('G'), 'B');
-  //  t.end();
-  //});
-
-  test("Instant#toFormatString('GG') returns the short era", t => {
+  test("Instant#toFormatString('G') returns the short era", t => {
     let i = inst();
     t.is(i.toFormatString('G'), 'AD');
     t.is(i.locale('de').toFormatString('G'), 'n. Chr.');
@@ -287,10 +280,17 @@ export let format = () => {
     t.end();
   });
 
-  //test("Instant#toFormatString('GGG') returns the full era", t => {
+  //test("Instant#toFormatString('GG') returns the full era", t => {
   //  let i = inst();
-  //  t.is(i.toFormatString('G'), 'Anno Domini');
-  //  t.is(i.year(-21).toFormatString('G'), 'Before Christ');
+  //  t.is(i.toFormatString('GG'), 'Anno Domini');
+  //  t.is(i.year(-21).toFormatString('GG'), 'Before Christ');
+  //  t.end();
+  //});
+
+  //test("Instant#toFormatString('GGGGG') returns the narrow era", t => {
+  //  let i = inst();
+  //  t.is(i.toFormatString('GGGG'), 'A');
+  //  t.is(i.year(-21).toFormatString('GGGGG'), 'B');
   //  t.end();
   //});
 
@@ -300,9 +300,9 @@ export let format = () => {
     t.end();
   });
 
-  test("Instant#toFormatString() accepts literals in [] ", t => {
+  test("Instant#toFormatString() accepts literals in single quotes", t => {
     let i = inst();
-    t.is(i.toFormatString('dd/MM/yyyy [at] hh:mm'), '25/05/1982 at 09:23');
+    t.is(i.toFormatString("dd/MM/yyyy 'at' hh:mm"), '25/05/1982 at 09:23');
     t.end();
   });
 
