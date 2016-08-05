@@ -335,8 +335,7 @@ export class Formatter {
 
     let tokens = parseFormat(fmt),
         realTokens = tokens.reduce((found, {literal, val}) => literal ? found : found.concat(val), []),
-        collapsed = dur.shiftTo.apply(dur, realTokens.map((t) => map(t)));
-
+        collapsed = dur.shiftTo(...realTokens.map((t) => map(t)));
     return stringifyTokens(tokens, tokenToString(collapsed));
   }
 }

@@ -89,6 +89,13 @@ export let format = () => {
     t.end();
   });
 
+  test('Duration#toFormatString leaves in zeros', t => {
+    let tiny = Duration.fromLength(5, 'seconds');
+    t.is(tiny.toFormatString('hh:mm:ss'), '00:00:05');
+    t.is(tiny.toFormatString('hh:mm:ss.SSS'), '00:00:05.000');
+    t.end();
+  });
+
   test('Duration#toFormatString localizes the numbers', t => {
     t.is(dur().locale('bn').toFormatString('yy:MM:dd:h:mm:ss.SSS'), '০১:০২:০৩:৪:০৫:০৬.০০৭');
     t.end();

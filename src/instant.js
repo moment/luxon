@@ -27,7 +27,7 @@ function clone(inst, alts = {}){
   return new Instant(Object.assign({}, current, alts, {old: current}));
 }
 
-//seems like this might be more complicated than it appears. E.g.:
+//Seems like this might be more complicated than it appears. E.g.:
 //https://github.com/v8/v8/blob/master/src/date.cc#L212
 function fixOffset(ts, tz, o){
   //1. test whether the zone matches the offset for this ts
@@ -70,7 +70,7 @@ function tsToObj(ts, offset){
   };
 }
 
-function objToTS(obj, offset){
+function objToTS(obj, zone, offset){
 
   let d = Date.UTC(obj.year,
                    obj.month - 1,
@@ -87,11 +87,12 @@ function objToTS(obj, offset){
     d = t.valueOf();
   }
 
-  return +d - offset * 60 * 1000;
+  let tsProvis = +d - offset * 60 * 1000;
+  return fixOffset(tsProvis, zone, offset);
 }
 
 function adjustTime(inst, dur){
-  let o = inst.o,
+  let oPre = inst.o,
 
       //todo: only do this part if there are higher-order items in the dur
       c = Object.assign({}, inst.c, {
@@ -99,9 +100,7 @@ function adjustTime(inst, dur){
         month: inst.c.month + dur.months(),
         day: inst.c.day + dur.days()
       }),
-      ts = objToTS(c, o);
-
-  [ts, o] = fixOffset(ts, inst.zone, o);
+      [ts, o] = objToTS(c, inst.zone, oPre);
 
   let millisToAdd = Duration
         .fromObject({hours: dur.hours(),
@@ -183,8 +182,7 @@ export class Instant{
         zone = opts.zone ? opts.zone : (opts.utc ? new FixedOffsetZone(0) : new LocalZone()),
         offsetProvis = zone.offset(tsNow),
         defaulted = Object.assign(tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj),
-        tsProvis = objToTS(defaulted, offsetProvis),
-        [tsFinal, _] = fixOffset(tsProvis, zone, offsetProvis);
+        [tsFinal, _] = objToTS(defaulted, zone, offsetProvis);
 
     return new Instant({ts: tsFinal, zone: zone});
   }
@@ -273,8 +271,9 @@ export class Instant{
   }
 
   set(values){
-    let mixed = Object.assign(this.toObject(), values);
-    return clone(this, {ts: objToTS(mixed, this.o)});
+    let mixed = Object.assign(this.toObject(), values),
+        [ts, o] = objToTS(mixed, this.zone, this.o);
+    return clone(this, {ts: ts, o: o});
   }
 
   year(v){
@@ -397,10 +396,73 @@ export class Instant{
       .minus(1, 'milliseconds');
   }
 
-  diff(otherInstant, opts = {units: 'millisecond'}){
+  diff(otherInstant, ...units){
+    let flipped = otherInstant.valueOf() > this.valueOf(),
+        cursor = flipped ? this : otherInstant,
+        post = flipped ? otherInstant : this,
+        lowestOrder = null,
+        later = (c) => c.valueOf() > post.valueOf(),
+        accum = {};
+
+    if (units.indexOf('years') >= 0){
+
+      let dYear = post.year() - cursor.year();
+
+      cursor = cursor.year(post.year());
+
+      if (later(cursor)){
+        cursor = cursor.minus(1, 'years');
+        dYear -= 1;
+      }
+
+      accum.years = dYear;
+      lowestOrder = 'years';
+    }
+
+    if (units.indexOf('months') >= 0){
+      let dYear = post.year() - cursor.year(),
+          dMonth = post.month() - cursor.month() + dYear * 12;
+
+      cursor = cursor.set({year: post.year(), month: post.month()});
+
+      if (later(cursor)){
+        cursor = cursor.minus(1, 'months');
+        dMonth -= 1;
+      }
+
+      accum.months = dMonth;
+      lowestOrder = 'months';
+    }
+
+    //days is tricky because we want to ignore offset differences
+    if (units.indexOf('days') >= 0){
+      //there's almost certainly a quicker, simpler way to do this
+      let utcDayStart = (i) => Instant.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
+          ms = utcDayStart(post) - utcDayStart(cursor),
+          dDay = Math.floor(Duration.fromLength(ms).shiftTo('days').days());
+
+      cursor = cursor.set({year: post.year(), month: post.month(), day: post.day()});
+
+      if (later(cursor)){
+        cursor.minus(1, 'day');
+        dDay =- 1;
+      }
+
+      accum.days = dDay;
+      lowestOrder = 'days';
+    }
+
+    let remaining = Duration.fromLength(post.valueOf() - cursor.valueOf()),
+        moreUnits = units.filter((u) => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0),
+        shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
+        shifted = remaining.shiftTo(...shiftTo),
+        merged = shifted.plus(Duration.fromObject(accum));
+
+    return flipped ? merged.negate() : merged;
   }
 
-  diffNow(opts = {units: 'millisecond'}){
+  diffNow(...units){
+    return this.diff(Instant.now(), ...units);
   }
 
   hasSame(otherInstant, unit){

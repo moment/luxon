@@ -53,7 +53,7 @@ function clone(dur, alts) {
   let conf = {};
   conf.values = Object.assign(dur.values, alts.values);
   if (alts.loc) conf.loc = alts.loc;
-  return new Duration(conf); 
+  return new Duration(conf);
 }
 
 export class Duration{
@@ -67,7 +67,7 @@ export class Duration{
     });
   }
 
-  static fromLength(count, unit){
+  static fromLength(count, unit = 'milliseconds'){
     unit = ensure(unit);
     return Duration.fromObject({[unit]: count});
   }
@@ -143,6 +143,10 @@ export class Duration{
 
   as(unit){
     return this.shiftTo(unit).get(unit);
+  }
+
+  normalize(){
+    return this.shiftTo(...Object.keys(this.values));
   }
 
   shiftTo(...units){

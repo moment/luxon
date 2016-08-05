@@ -16,6 +16,7 @@ export let setters = () => {
 
   test('Instant#month() sets the (1-indexed) month', t => {
     t.is(instant().month(2).month(), 2);
+    t.is(instant().month(2).hour(), 9); //this will cross a DST for many people
     t.end();
   });
 

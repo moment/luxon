@@ -19,6 +19,17 @@ export let math = () => {
     t.end();
   });
 
+  test("Duration#plus noops empty druations", t => {
+    let first = Duration.fromObject({hours: 4, minutes: 12, seconds: 2}),
+        second = Duration.fromObject({}),
+        result = first.plus(second);
+
+    t.is(result.hours(), 4);
+    t.is(result.minutes(), 12);
+    t.is(result.seconds(), 2);
+    t.end();
+  });
+
   test("Duration#plus adds negatives", t => {
     let first = Duration.fromObject({hours: 4, minutes: -12, seconds: -2}),
         second = Duration.fromObject({hours: -5, seconds: 6, milliseconds: 14}),

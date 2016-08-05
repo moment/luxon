@@ -2,7 +2,7 @@ import {Util} from './impl/util';
 import {Instant} from './instant';
 import {Duration} from './duration';
 
-export class Interval {
+export class Interval{
 
   constructor(start, end, opts = {openStart: false, openEnd: false}){
     //todo - break if start > end
@@ -33,8 +33,8 @@ export class Interval {
     return Interval.fromInstants(end.minus(dur), end);
   }
 
-  toDuration(opts = {units: 'millisecond'}){
-    //use Instant#diff()
+  toDuration(...units){
+    return this.e.diff(this.s);
   }
 
   start(){
@@ -133,4 +133,9 @@ export class Interval {
   toFormatString(overallFormat, dateFormat){}
 
   toLocaleString(overallFormat){}
+
+  isInDST(){
+    return this.offset() > this.month(0).offset() || this.offset() > this.month(5).offset();
+  }
+
 }

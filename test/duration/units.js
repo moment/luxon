@@ -41,4 +41,24 @@ export let units = () => {
     t.is(dur.minutes(), 8 * 60);
     t.end();
   });
+
+  //------
+  // #normalize()
+  //-------
+
+  test('Duration#normalize rebalances negative units', t => {
+    let dur = Duration.fromObject({years: 2, days: -2}).normalize();
+
+    t.is(dur.years(), 1);
+    t.is(dur.days(), 363);
+    t.end();
+  });
+
+  test('Duration#normalize de-overflows', t => {
+    let dur = Duration.fromObject({years: 2, days: 5000}).normalize();
+
+    t.is(dur.years(), 15);
+    t.is(dur.days(), 255);
+    t.end();
+  });
 };
