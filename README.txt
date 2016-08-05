@@ -2,7 +2,6 @@ Just playing around, for now.
 
 Roadmap:
 
- - Diff
  - Intervals
  - Parsing!
  - Weekyear/week

@@ -1,9 +1,11 @@
 import {Duration} from './duration';
+import {Interval} from './interval';
 import {Formatter} from './impl/formatter';
 import {FixedOffsetZone} from './impl/fixedOffsetZone';
 import {LocalZone} from './impl/localZone';
 import {IntlZone} from './impl/intlZone';
 import {Util} from './impl/util';
+import {ISOParser} from './impl/isoParser';
 
 function bestBy(arr, by, compare) {
   return arr.reduce((best, next) => {
@@ -145,7 +147,7 @@ export class Instant{
     });
 
     Object.defineProperty(this, 'outputCal', {
-      value: config.outputCal || 'gregory',
+      value: config.outputCal || null,
       enumerable: true
     });
 
@@ -187,7 +189,18 @@ export class Instant{
     return new Instant({ts: tsFinal, zone: zone});
   }
 
-  static fromISO(text){
+  static fromISO(text, opts = {acceptOffset: false, assumeUTC: false}){
+    let parsed = ISOParser.parseISODate(text);
+    if (parsed){
+      let {local, offset} = parsed,
+          zone = local ? (opts.assumeUTC ? new FixedOffsetZone(0) : new LocalZone()) : new FixedOffsetZone(offset),
+          inst = Instant.fromObject(parsed, {zone: zone});
+
+      return opts.acceptOffset ? inst : inst.local();
+    }
+    else{
+      return null;
+    }
   }
 
   static fromString(text, fmt){
@@ -343,7 +356,7 @@ export class Instant{
   }
 
   toString(){
-    return this.utc().toISO();
+    return this.toISO();
   }
 
   valueOf(){
@@ -397,6 +410,9 @@ export class Instant{
   }
 
   diff(otherInstant, ...units){
+
+    if (units.length == 0) units = ['milliseconds'];
+
     let flipped = otherInstant.valueOf() > this.valueOf(),
         cursor = flipped ? this : otherInstant,
         post = flipped ? otherInstant : this,
@@ -463,6 +479,10 @@ export class Instant{
 
   diffNow(...units){
     return this.diff(Instant.now(), ...units);
+  }
+
+  until(otherInstant){
+    return Interval.fromInstants(this, otherInstant);
   }
 
   hasSame(otherInstant, unit){

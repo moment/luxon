@@ -34,7 +34,7 @@ export class Interval{
   }
 
   toDuration(...units){
-    return this.e.diff(this.s);
+    return this.e.diff(this.s, ...units);
   }
 
   start(){
@@ -45,15 +45,18 @@ export class Interval{
     return this.e;
   }
 
-  length(unit){
-    return toDuration({units: unit}).get(unit);
+  length(unit = 'milliseconds'){
+    return this.toDuration(...[unit]).get(unit);
   }
 
   hasSame(unit){
     this.firstTick.isSame(this.lastTick, unit);
   }
 
-  count(durationOrUnit, opts){
+  count(unit = 'milliseconds'){
+    let start = this.start().startOf(unit),
+        end = this.end().startOf(unit);
+    return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
   split(arg){

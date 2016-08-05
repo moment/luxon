@@ -24,11 +24,9 @@ export let format = () => {
   // #toString()
   //-------
 
-  test('Instant#toString() returns the ISO time in UTC', t => {
+  test('Instant#toString() returns the ISO time', t => {
     let i = inst();
-    t.is(i.toString(), '1982-05-25T09:23:54.123Z');
-    t.is(i.local().toString(), '1982-05-25T09:23:54.123Z');
-    t.is(i.useUTCOffset(-6 * 60).toString(), '1982-05-25T09:23:54.123Z');
+    t.is(i.useUTCOffset(-6 * 60).toString(), '1982-05-25T03:23:54.123-06:00');
     t.end();
   });
 
