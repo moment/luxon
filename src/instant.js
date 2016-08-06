@@ -417,7 +417,6 @@ export class Instant{
         cursor = flipped ? this : otherInstant,
         post = flipped ? otherInstant : this,
         lowestOrder = null,
-        later = (c) => c.valueOf() > post.valueOf(),
         accum = {};
 
     if (units.indexOf('years') >= 0){
@@ -426,7 +425,7 @@ export class Instant{
 
       cursor = cursor.year(post.year());
 
-      if (later(cursor)){
+      if (cursor > post){
         cursor = cursor.minus(1, 'years');
         dYear -= 1;
       }
@@ -441,7 +440,7 @@ export class Instant{
 
       cursor = cursor.set({year: post.year(), month: post.month()});
 
-      if (later(cursor)){
+      if (cursor > post){
         cursor = cursor.minus(1, 'months');
         dMonth -= 1;
       }
@@ -459,7 +458,7 @@ export class Instant{
 
       cursor = cursor.set({year: post.year(), month: post.month(), day: post.day()});
 
-      if (later(cursor)){
+      if (cursor > post){
         cursor.minus(1, 'day');
         dDay =- 1;
       }
@@ -481,8 +480,8 @@ export class Instant{
     return this.diff(Instant.now(), ...units);
   }
 
-  until(otherInstant){
-    return Interval.fromInstants(this, otherInstant);
+  until(otherInstant, opts = {}){
+    return Interval.fromInstants(this, otherInstant, opts);
   }
 
   hasSame(otherInstant, unit){

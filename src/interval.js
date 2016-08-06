@@ -9,18 +9,18 @@ export class Interval{
     Object.defineProperty(this, "s", {value: start, enumerable: true});
     Object.defineProperty(this, "e", {value: end, enumerable: true});
 
-    Object.defineProperty(this, 'openStart', {value: opts['openStart'], enumerable: true});
-    Object.defineProperty(this, 'openEnd', {value: opts['openEnd'], enumerable: true});
+    Object.defineProperty(this, 'openStart', {value: opts['openStart'] || false, enumerable: true});
+    Object.defineProperty(this, 'openEnd', {value: opts['openEnd'] || false, enumerable: true});
 
     let firstTick = opts['openStart'] ? start : start.plus(1, 'millisecond'),
         lastTick = opts['openEnd'] ? end : end.minus(1, 'millisecond');
 
     Object.defineProperty(this, "firstTick", {value: firstTick, enumerable: false});
-    Object.defineProperty(this, "lastTick", {value: end, enumerable: false});
+    Object.defineProperty(this, "lastTick", {value: lastTick, enumerable: false});
   }
 
-  static fromInstants(start, end){
-    return new Interval(start, end);
+  static fromInstants(start, end, opts = {}){
+    return new Interval(start, end, opts);
   }
 
   static after(start, durationOrNumber, unit){
@@ -125,8 +125,7 @@ export class Interval{
   }
 
   contains(instant){
-    return this.start() < instant &&
-      this.end() > instant;
+    return this.firstTick <= instant && this.lastTick >= instant;
   }
 
   toString(){}

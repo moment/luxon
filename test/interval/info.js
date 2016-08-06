@@ -5,7 +5,7 @@ export let info = () => {
 
   let yesterday = () => Instant.now().minus(1, 'day').startOf('day'),
       tomorrow = () => moment().plus(1, 'day').startOf('day'),
-      fromISOs = (s, e) => Instant.fromISO(s).until(Instant.fromISO(e)),
+      fromISOs = (s, e, opts = {}) => Instant.fromISO(s).until(Instant.fromISO(e), opts),
       now = () => Instant.now(),
       today = () => now().startOf('day');
 
@@ -73,6 +73,38 @@ export let info = () => {
   //------
   // .contains()
   //-------
+
+  test('Interval.contains returns true for instants in the interval', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
+    t.ok(i.contains(Instant.fromISO('1982-05-25T06:30')));
+    t.end();
+  });
+
+  test('Interval.contains returns false for instants after the interval', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
+    t.notOk(i.contains(Instant.fromISO('1982-05-25T08:30')));
+    t.end();
+  });
+
+  test('Interval.contains returns false for instants before the interval', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
+    t.notOk(i.contains(Instant.fromISO('1982-05-25T05:30')));
+    t.end();
+  });
+
+  test('Interval.contains returns false for the ends of closed interval', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
+    t.notOk(i.contains(Instant.fromISO('1982-05-25T06:00')), 'closed start');
+    t.notOk(i.contains(Instant.fromISO('1982-05-25T07:00')), 'closed end');
+    t.end();
+  });
+
+  test('Interval.contains returns true for the ends of open interval', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00', {openStart: true, openEnd: true});
+    t.ok(i.contains(Instant.fromISO('1982-05-25T07:00')));
+    t.ok(i.contains(Instant.fromISO('1982-05-25T06:00')));
+    t.end();
+  });
 
   //------
   // .isEmpty()
