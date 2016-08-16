@@ -94,14 +94,20 @@ export class Interval{
   }
 
   equals(other){
-    return this.s === other.s
-      && this.e === other.e
+    return this.s.valueOf() === other.s.valueOf()
+      && this.e.valueOf() === other.e.valueOf()
       && this.openStart == other.openStart
       && this.openEnd == other.openEnd;
   }
 
   isEmpty(){
-    return +this.firstTick === +this.lastTick;
+    if (this.openStart || this.openEnd){
+      //open intervals always contain at least one millisecond
+      return false;
+    }
+    else{
+      return this.s.valueOf() === this.e.valueOf();
+    }
   }
 
   isFuture(){

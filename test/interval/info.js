@@ -110,6 +110,30 @@ export let info = () => {
   // .isEmpty()
   //-------
 
+  test('Interval.isEmpty returns true for empty intervals', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00');
+    t.ok(i.isEmpty());
+    t.end();
+  });
+
+  test('Interval.isEmpty returns false for non-empty intervals', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T08:00');
+    t.notOk(i.isEmpty());
+    t.end();
+  });
+
+  test('Interval.isEmpty returns false for partially open intervals', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00', {openStart: true});
+    t.notOk(i.isEmpty());
+    t.end();
+  });
+
+  test('Interval.isEmpty returns false for fully open intervals', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00', {openStart: true, openEnd: true});
+    t.notOk(i.isEmpty());
+    t.end();
+  });
+
   //------
   // .isPast()
   //-------
