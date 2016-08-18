@@ -4,7 +4,7 @@ import {Instant, Duration} from 'luxon';
 export let create = () => {
 
   //------
-  // .froObject()
+  // .fromObject()
   //-------
 
   test('Duration.fromObject sets all the values', t => {
