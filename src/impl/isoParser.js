@@ -23,6 +23,9 @@ export class ISOParser {
 
   static parseISODate(s, opts = {}){
 
+    const timeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
+          ymdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/;
+
     function extractTime(match, cursor){
 
       let local = !match[cursor + 4] && !match[cursor + 5],
@@ -54,9 +57,8 @@ export class ISOParser {
       return [items, cursor + 3];
     }
 
-    let time = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
-        ymdComb = [
-          combine(/^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/, time),
+    let ymdComb = [
+          combine(ymdRegex, timeRegex),
           [extractYmd, extractTime]
         ];
     return parse(s, ymdComb);
