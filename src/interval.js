@@ -50,7 +50,7 @@ export class Interval{
   }
 
   hasSame(unit){
-    this.firstTick.isSame(this.lastTick, unit);
+    return this.firstTick.hasSame(this.lastTick, unit);
   }
 
   count(unit = 'milliseconds'){
@@ -94,10 +94,10 @@ export class Interval{
   }
 
   equals(other){
-    return this.s.valueOf() === other.s.valueOf()
-      && this.e.valueOf() === other.e.valueOf()
-      && this.openStart == other.openStart
-      && this.openEnd == other.openEnd;
+    return this.s.equals(other.s)
+      && this.e.equals(other.e)
+      && this.openStart === other.openStart
+      && this.openEnd === other.openEnd;
   }
 
   isEmpty(){
@@ -110,24 +110,12 @@ export class Interval{
     }
   }
 
-  isFuture(){
-    return this.firstTick > Instant.now();
+  isAfter(other){
+    return this.firstTick > other;
   }
 
-  isPast(){
-    return this.lastTick < Instant.now();
-  }
-
-  isCurrent(){
-    return this.contains(Instant.now());
-  }
-
-  isStartOpen(){
-    return this.openStart;
-  }
-
-  isEndOpen(){
-    return this.openEnd;
+  isBefore(other){
+    return this.lastTick < other;
   }
 
   contains(instant){
@@ -141,9 +129,4 @@ export class Interval{
   toFormatString(overallFormat, dateFormat){}
 
   toLocaleString(overallFormat){}
-
-  isInDST(){
-    return this.offset() > this.month(0).offset() || this.offset() > this.month(5).offset();
-  }
-
 }

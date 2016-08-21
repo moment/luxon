@@ -275,7 +275,7 @@ export class Instant{
       return false;
     }
     else{
-      return this.offset() > this.month(1).offset();
+      return this.offset() > this.month(0).offset() || this.offset() > this.month(5).offset();
     }
   }
 
@@ -467,7 +467,7 @@ export class Instant{
       lowestOrder = 'days';
     }
 
-    let remaining = Duration.fromLength(post.valueOf() - cursor.valueOf()),
+    let remaining = Duration.fromLength(post - cursor),
         moreUnits = units.filter((u) => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0),
         shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
         shifted = remaining.shiftTo(...shiftTo),
@@ -485,13 +485,18 @@ export class Instant{
   }
 
   hasSame(otherInstant, unit){
-    if (units === 'millisecond'){
+    if (unit === 'millisecond'){
       return this.valueOf() === otherInstant.valueOf();
     }
     else{
       let inputMs = otherInstant.valueOf();
-      return this.startOf(unit).valueOf() <= inputMs && inputMs <= this.endOf(unit).valueOf();
+      return this.startOf(unit) <= inputMs && inputMs <= this.endOf(unit);
     }
+  }
+
+  equals(other){
+    //todo - check other stuff?
+    return this.valueOf() === other.valueOf();
   }
 
   static min(...instants){
