@@ -86,7 +86,10 @@ export class Interval{
   }
 
   union(other){
-    //needs to inherit this's endness
+    let s = this.s < other.s ? this.s : other.s,
+        e = this.e > other.e ? this.e : other.e;
+
+    return Interval.fromInstants(s, e, {openStart: this.openStart, openEnd: this.openEnd});
   }
 
   xor(other){
