@@ -7,8 +7,8 @@ export let many = () => {
       todayAt = (h) => Instant.now().startOf('day').hour(h),
       todayFrom = (h1, h2, opts) => Interval.fromInstants(todayAt(h1), todayAt(h2), opts);
 
-  //------
-  // .equals()
+  //-------
+  // #equals()
   //-------
 
   test('Interval#equals returns true iff the times are the same', t => {
@@ -25,26 +25,8 @@ export let many = () => {
     t.end();
   });
 
-  test('Interval#equals returns false if the openness is different', t => {
-    let start = '2016-10-14',
-        end = '2016-10-15',
-        from = (s, e) => fromISOs(start, end, {openStart: s, openEnd: e}),
-        quick = (s1, e1, s2, e2) => from(s1, e1).equals(from(s2, e2));
-
-    t.ok(quick(false, false, false, false));
-    t.notOk(quick(false, false, false, true));
-    t.notOk(quick(false, false, true, false));
-    t.notOk(quick(false, false, true, true));
-    t.notOk(quick(false, true, false, false));
-    t.ok(quick(false, true, false, true));
-    t.notOk(quick(false, true, true, false));
-    //not gonna do all 16
-    t.ok(quick(true, true, true, true));
-    t.end();
-  });
-
-  //------
-  // .union()
+  //-------
+  // #union()
   //-------
 
   test('Interval#union returns an interval spanning an later interval', t => {
@@ -82,39 +64,47 @@ export let many = () => {
     t.end();
   });
 
-  test('Interval#union inherits the openness of the interval', t => {
-    t.notOk(todayFrom(5, 8).union(todayFrom(8, 10, {openStart: true})).openStart);
-    t.notOk(todayFrom(5, 8).union(todayFrom(8, 10, {openEnd: true})).openEnd);
-    t.ok(todayFrom(5, 8, {openStart: true}).union(todayFrom(8, 10)).openStart);
-    t.ok(todayFrom(5, 8, {openEnd: true}).union(todayFrom(8, 10)).openEnd);
+  //-------
+  // #intersection()
+  //-------
+
+  //todo - is this what should happen here? Seems annoying.
+  test("Interval#intersection returns null if there's no intersection", t => {
+    t.is(todayFrom(5, 8).intersection(todayFrom(3, 4)), null);
     t.end();
   });
 
-  //------
-  // .intersection()
+  test('Interval#intersection returns the intersection for overlapping intervals', t => {
+    t.ok(todayFrom(5, 8).intersection(todayFrom(3, 7)).equals(todayFrom(5, 7)));
+    t.end();
+  });
+
+  test('Interval#intersection returns empty for adjacent intervals', t => {
+    t.ok(todayFrom(5, 8).intersection(todayFrom(8, 10)).isEmpty());
+    t.end();
+  });
+
+  //-------
+  // #xor()
   //-------
 
-  //------
-  // .xor()
+  //-------
+  // #engulfs()
   //-------
 
-  //------
-  // .engulfs()
+  //-------
+  // #abutsStart()
   //-------
 
-  //------
-  // .abutsStart()
+  //-------
+  // #abutsEnd()
   //-------
 
-  //------
-  // .abutsEnd()
+  //-------
+  // #split()
   //-------
 
-  //------
-  // .split()
   //-------
-
-  //------
-  // .divideEqually()
+  // #divideEqually()
   //-------
 };

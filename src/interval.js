@@ -4,19 +4,11 @@ import {Duration} from './duration';
 
 export class Interval{
 
-  constructor(start, end, opts = {openStart: false, openEnd: false}){
-    //todo - break if start > end
-    Object.defineProperty(this, "s", {value: start, enumerable: true});
-    Object.defineProperty(this, "e", {value: end, enumerable: true});
+  constructor(start, end){
 
-    Object.defineProperty(this, 'openStart', {value: opts['openStart'] || false, enumerable: true});
-    Object.defineProperty(this, 'openEnd', {value: opts['openEnd'] || false, enumerable: true});
+    Object.defineProperty(this, 's', {value: start, enumerable: true});
+    Object.defineProperty(this, 'e', {value: end, enumerable: true});
 
-    let firstTick = opts['openStart'] ? start : start.plus(1, 'millisecond'),
-        lastTick = opts['openEnd'] ? end : end.minus(1, 'millisecond');
-
-    Object.defineProperty(this, "firstTick", {value: firstTick, enumerable: false});
-    Object.defineProperty(this, "lastTick", {value: lastTick, enumerable: false});
   }
 
   static fromInstants(start, end, opts = {}){
@@ -31,7 +23,7 @@ export class Interval{
   static before(end, durationOrNumber, unit){
     let dur = Util.friendlyDuration(durationOrNumber, unit);
     return Interval.fromInstants(end.minus(dur), end);
-  }
+sNull  }
 
   toDuration(...units){
     return this.e.diff(this.s, ...units);
@@ -50,7 +42,7 @@ export class Interval{
   }
 
   hasSame(unit){
-    return this.firstTick.hasSame(this.lastTick, unit);
+    return this.e.minus(1).hasSame(this.s, unit);
   }
 
   count(unit = 'milliseconds'){
@@ -63,66 +55,68 @@ export class Interval{
   }
 
   overlaps(other){
-    return this.lastTick > other.firstTick && this.firstTick < other.lastTick;
+    return this.e > other.s && this.s < other.e;
   }
 
   abutsStart(other){
-    return +this.lastTick + 1 === +other.firstTick;
+    return +this.e === +other.s;
   }
 
   abutsEnd(other){
-    return +other.lastTick + 1 === +this.firstTick;
+    return +other.e === +this.start;
   }
 
   engulfs(other){
-    return this.firstTick <= other.firstTick && this.lastTick >= other.lastTick;
+    return this.s <= other.s && this.e >= other.e;
   }
 
   divideEqually(numberOfParts){
   }
 
   intersection(other){
-    //needs to inherit this's endness
+    let s = this.s > other.s ? this.s : other.s,
+        e = this.e < other.e ? this.e : other.e;
+
+    if (s > e){
+      return null;
+    }
+    else{
+      return Interval.fromInstants(s, e);
+    }
   }
 
   union(other){
     let s = this.s < other.s ? this.s : other.s,
         e = this.e > other.e ? this.e : other.e;
 
-    return Interval.fromInstants(s, e, {openStart: this.openStart, openEnd: this.openEnd});
+    return Interval.fromInstants(s, e);
   }
 
   xor(other){
-    //needs to inherit this's endness
   }
 
   equals(other){
-    return this.s.equals(other.s)
-      && this.e.equals(other.e)
-      && this.openStart === other.openStart
-      && this.openEnd === other.openEnd;
+    return this.s.equals(other.s) && this.e.equals(other.e);
   }
 
   isEmpty(){
-    if (this.openStart || this.openEnd){
-      //open intervals always contain at least one millisecond
-      return false;
-    }
-    else{
-      return this.s.valueOf() === this.e.valueOf();
-    }
+    return this.s.valueOf() === this.e.valueOf();
+  }
+
+  isValid(){
+    return this.s <= this.e;
   }
 
   isAfter(other){
-    return this.firstTick > other;
+    return this.s > other;
   }
 
   isBefore(other){
-    return this.lastTick < other;
+    return this.e.plus(1) < other;
   }
 
   contains(instant){
-    return this.firstTick <= instant && this.lastTick >= instant;
+    return this.s <= instant && this.e > instant;
   }
 
   toString(){}

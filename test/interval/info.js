@@ -14,8 +14,10 @@ export let info = () => {
   //-------
 
   test('Interval#length defaults to milliseconds', t => {
-    let n = now();
-    t.is(n.until(n.plus(1, 'minute')).length(), 60 * 1000);
+    let n = now(),
+        d = n.until(n.plus(1, 'minute'));
+
+    t.is(d.length(), 60 * 1000);
     t.end();
   });
 
@@ -92,17 +94,15 @@ export let info = () => {
     t.end();
   });
 
-  test('Interval#contains returns false for the ends of closed interval', t => {
+  test('Interval#contains returns true for the start endpoint', t => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-    t.notOk(i.contains(Instant.fromISO('1982-05-25T06:00')), 'closed start');
-    t.notOk(i.contains(Instant.fromISO('1982-05-25T07:00')), 'closed end');
+    t.ok(i.contains(Instant.fromISO('1982-05-25T06:00')));
     t.end();
   });
 
-  test('Interval#contains returns true for the ends of open interval', t => {
-    let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00', {openStart: true, openEnd: true});
-    t.ok(i.contains(Instant.fromISO('1982-05-25T07:00')));
-    t.ok(i.contains(Instant.fromISO('1982-05-25T06:00')));
+  test('Interval#contains returns false for the end endpoint', t => {
+    let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
+    t.notOk(i.contains(Instant.fromISO('1982-05-25T07:00')));
     t.end();
   });
 
@@ -118,18 +118,6 @@ export let info = () => {
 
   test('Interval#isEmpty returns false for non-empty intervals', t => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T08:00');
-    t.notOk(i.isEmpty());
-    t.end();
-  });
-
-  test('Interval#isEmpty returns false for partially open intervals', t => {
-    let i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00', {openStart: true});
-    t.notOk(i.isEmpty());
-    t.end();
-  });
-
-  test('Interval#isEmpty returns false for fully open intervals', t => {
-    let i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00', {openStart: true, openEnd: true});
     t.notOk(i.isEmpty());
     t.end();
   });
@@ -152,24 +140,17 @@ export let info = () => {
     t.end();
   });
 
-  test('Interval#isBefore returns false for fully after the input ', t => {
+  test('Interval#isBefore returns false for intervals fully after the input ', t => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n.plus(2, 'day'), n.plus(3, 'day'));
     t.notOk(i.isBefore(n));
     t.end();
   });
 
-  test('Interval#isBefore returns true for closed intervals ending at the input', t => {
+  test('Interval#isBefore returns true for intervals starting at the input', t => {
     let n = Instant.fromISO('1982-05-25T06:00'),
-        i = Interval.fromInstants(n.minus(1, 'day'), n);
+        i = Interval.fromInstants(n, n.minus(1, 'day'));
     t.ok(i.isBefore(n));
-    t.end();
-  });
-
-  test('Interval#isBefore returns false for open intervals ending at the input', t => {
-    let n = Instant.fromISO('1982-05-25T06:00'),
-        i = Interval.fromInstants(n.minus(1, 'day'), n, {openEnd: true});
-    t.notOk(i.isBefore(n));
     t.end();
   });
 
@@ -198,16 +179,9 @@ export let info = () => {
     t.end();
   });
 
-  test('Interval#isAfter returns true for closed intervals beginning at the input', t => {
+  test('Interval#isAfter returns false for intervals beginning at the input', t => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n, n.plus(1, 'day'));
-    t.ok(i.isAfter(n));
-    t.end();
-  });
-
-  test('Interval#isAfter returns false for open intervals beginning at the input', t => {
-    let n = Instant.fromISO('1982-05-25T06:00'),
-        i = Interval.fromInstants(n, n.plus(1, 'day'), {openStart: true});
     t.notOk(i.isAfter(n));
     t.end();
   });
@@ -230,17 +204,10 @@ export let info = () => {
     t.end();
   });
 
-  test("Interval#hasSame('day') returns true for durations closed durations ending at midnight", t => {
+  test("Interval#hasSame('day') returns true for durations durations ending at midnight", t => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n, n.plus(1, 'day').startOf('day'));
     t.ok(i.hasSame('day'));
-    t.end();
-  });
-
-  test("Interval#hasSame('day') returns false for durations open durations ending at midnight", t => {
-    let n = Instant.fromISO('1982-05-25T06:00'),
-        i = Interval.fromInstants(n, n.plus(1, 'day').startOf('day'), {openEnd: true});
-    t.notOk(i.hasSame('day'));
     t.end();
   });
 };

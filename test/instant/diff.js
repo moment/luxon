@@ -7,9 +7,17 @@ export let diff = () => {
   // diff
   //-------
 
-  let diffObjs = (o1, o2, ...units) => Instant.fromObject(o1).diff(Instant.fromObject(o2), ...units).toObject();
+  let diffFromObjs = (o1, o2, ...units) => Instant.fromObject(o1).diff(Instant.fromObject(o2), ...units),
+      diffObjs = (o1, o2, ...units) => diffFromObjs(o1, o2, ...units).toObject();
+
+  test('Instant#diff defaults to milliseconds', t => {
+    t.deepEqual(diffObjs({year: 2017, millisecond: 12}, {year: 2017}), {milliseconds: 12});
+    t.is(diffFromObjs({year: 2017}, {year: 2017}).milliseconds(), 0);
+    t.end();
+  });
 
   test('Instant#diff makes simple diffs', t => {
+    t.deepEqual(diffObjs({year: 2017}, {year: 2017}, 'years'), {});
     t.deepEqual(diffObjs({year: 2017}, {year: 2016}, 'years'), {years: 1});
     t.deepEqual(diffObjs({year: 2016, month: 3, day: 28}, {year: 2016, month: 2, day: 28}, 'months'), {months: 1});
     t.deepEqual(diffObjs({year: 2016, month: 3, day: 28}, {year: 2016, month: 3, day: 25}, 'days'), {days: 3});
@@ -33,6 +41,10 @@ export let diff = () => {
 
     t.deepEqual(diffObjs({year: 2015, month: 3, day: 14},
                          {year: 2009, month: 3, day: 16}, 'years', 'days'),
+                {years: 5, days: 363});
+
+    t.deepEqual(diffObjs({year: 2015, month: 3, day: 14},
+                         {year: 2009, month: 3, day: 16}, 'years', 'days', 'hours'),
                 {years: 5, days: 363});
     t.end();
   });
