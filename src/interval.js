@@ -92,7 +92,57 @@ sNull  }
     return Interval.fromInstants(s, e);
   }
 
-  xor(other){
+  static merge(intervals){
+    let [found, final] = intervals
+          .sort((a, b) => a.s - b.s)
+          .reduce(([found, current], item) => {
+            if (!current){
+              return [found, item];
+            }
+            else if (current.overlaps(item) || current.abutsStart(item)){
+              return [found, current.union(item)];
+            }
+            else{
+              return [found.concat([current]), item];
+            }
+          }, [[], null]);
+    if (final){
+      found.push(final);
+    }
+    return found;
+  }
+
+  static xor(intervals){
+
+    let start = null,
+        currentCount = 0,
+        results = [],
+        ends = intervals
+          .map(i => [{time: i.s, type: 's'},
+                     {time: i.e, type: 'e'}]),
+        arr = Util.flatten(ends)
+          .sort((a, b) => a.time - b.time);
+
+    for (let i of arr){
+
+      currentCount += i.type == 's' ? 1 : -1;
+
+      if (currentCount === 1){
+        start = i.time;
+      }
+      else {
+        if (start && +start != +i.time){
+          results.push(Interval.fromInstants(start, i.time));
+        }
+
+        start = null;
+      }
+    }
+
+    return Interval.merge(results);
+  }
+
+  difference(...others){
   }
 
   equals(other){
@@ -119,7 +169,9 @@ sNull  }
     return this.s <= instant && this.e > instant;
   }
 
-  toString(){}
+  toString(){
+    return "[" + this.s.toString() + " - " + this.e.toString() + ")";
+  }
 
   toISO(){}
 

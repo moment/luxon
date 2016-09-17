@@ -85,7 +85,105 @@ export let many = () => {
   });
 
   //-------
-  // #xor()
+  // .merge()
+  //-------
+
+  test('Interval.merge returns the minimal set of intervals', t => {
+    let list = [
+      todayFrom(5, 8),
+      todayFrom(4, 7),
+      todayFrom(10, 11),
+      todayFrom(11, 12),
+      todayFrom(13, 15)],
+
+        results = Interval.merge(list);
+
+    t.is(results.length, 3);
+    t.ok(results[0] && results[0].equals(todayFrom(4, 8)));
+    t.ok(results[1] && results[1].equals(todayFrom(10, 12)));
+    t.ok(results[2] && results[2].equals(todayFrom(13, 15)));
+    t.end();
+  });
+
+  test('Interval.merge returns empty for an empty input', t => {
+    t.deepEqual(Interval.merge([]), []);
+    t.end();
+  });
+
+  //-------
+  // .xor()
+  //-------
+
+  let xor = (t, items, expected) => {
+    let r = Interval.xor(items);
+    t.is(r.length, expected.length);
+    for (let i in expected){
+      t.ok(r[i] && r[i].equals(expected[i]));
+    }
+    return r;
+  };
+
+  test('Interval.xor returns non-overlapping intervals as-is', t => {
+    let ix = [todayFrom(6, 7), todayFrom(8, 9)];
+    xor(t, ix, ix);
+    t.end();
+  });
+
+  test('Interval.xor returns empty for an empty input', t => {
+    xor(t, [], []);
+    t.end();
+  });
+
+  test('Interval.xor returns empty for a fully overlapping set of intervals', t => {
+    xor(t, [todayFrom(5, 8), todayFrom(5, 8)], []);
+    xor(t, [todayFrom(5, 8), todayFrom(5, 6), todayFrom(6, 8)], []);
+    t.end();
+  });
+
+  test('Interval.xor returns the non-overlapping parts of intervals', t => {
+
+    //overlapping
+    xor(t,
+        [todayFrom(5, 8), todayFrom(7, 11)],
+        [todayFrom(5, 7), todayFrom(8, 11)]);
+
+    //engulfing
+    xor(t,
+        [todayFrom(5, 12), todayFrom(9, 10)],
+        [todayFrom(5, 9), todayFrom(10, 12)]);
+
+    //adjacent
+    xor(t,
+        [todayFrom(5, 6), todayFrom(6, 8)],
+        [todayFrom(5, 8)]);
+
+    //three intervals
+    xor(t,
+        [todayFrom(10, 13), todayFrom(8, 11), todayFrom(12, 14)],
+        [todayFrom(8, 10), todayFrom(11, 12), todayFrom(13, 14)]);
+
+    t.end();
+  });
+
+  test('Interval.xor handles funny adjacency cases', t => {
+
+    xor(t,
+        [todayFrom(5, 14), todayFrom(7, 11), todayFrom(11, 12)],
+        [todayFrom(5, 7), todayFrom(12, 14)]);
+
+    xor(t,
+        [todayFrom(5, 10), todayFrom(9, 11), todayFrom(9, 12)],
+        [todayFrom(5, 9), todayFrom(11, 12)]);
+
+    xor(t,
+        [todayFrom(5, 9), todayFrom(9, 11), todayFrom(9, 12), todayFrom(5, 9)],
+        [todayFrom(11, 12)]);
+
+    t.end();
+  });
+
+  //-------
+  // #difference()
   //-------
 
   //-------

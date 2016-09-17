@@ -24,4 +24,11 @@ export class Util{
     let ts = inst.ts - inst.offset();
     return new Date(ts);
   }
+
+  //http://stackoverflow.com/a/15030117
+  static flatten(arr) {
+    return arr.reduce(function (flat, toFlatten) {
+      return flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten);
+    }, []);
+  }
 }
