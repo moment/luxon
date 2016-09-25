@@ -1,6 +1,7 @@
 import test from 'tape';
 import {Instant} from 'luxon';
 import {FakePT} from '../helpers/fakePT';
+import {FakeET} from '../helpers/fakeET';
 
 export let zone = () => {
 
@@ -80,6 +81,25 @@ export let zone = () => {
     t.is(zoned.valueOf(), millis);
     t.is(zoned.hour(), 21); //pacific daylight time
     t.is(zoned.isInDST(), true);
+    t.end();
+  });
+
+  test('rezone accepts a keepCalendarTime option', t => {
+    let zoned = instant().utc().rezone(new FakePT(), {keepCalendarTime: true});
+    t.is(zoned.timezoneName(), 'Pacific Time');
+    t.is(zoned.year(), 1982);
+    t.is(zoned.month(), 5);
+    t.is(zoned.day(), 25);
+    t.is(zoned.hour(), 4);
+    t.is(zoned.isOffsetFixed(), false);
+
+    let zonedMore = zoned.rezone(new FakeET(), {keepCalendarTime: true});
+    t.is(zonedMore.timezoneName(), 'Eastern Time');
+    t.is(zonedMore.year(), 1982);
+    t.is(zonedMore.month(), 5);
+    t.is(zonedMore.day(), 25);
+    t.is(zonedMore.hour(), 4);
+    t.is(zonedMore.isOffsetFixed(), false);
     t.end();
   });
 

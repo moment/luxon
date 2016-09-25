@@ -31,4 +31,17 @@ export class Util{
       return flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten);
     }, []);
   }
+
+  static bestBy(arr, by, compare) {
+    return arr.reduce((best, next) => {
+      let pair = [by(next), next];
+      if (!best) {
+        return pair;
+      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+        return best;
+      } else {
+        return pair;
+      }
+    }, null)[1];
+  };
 }

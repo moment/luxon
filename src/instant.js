@@ -7,19 +7,6 @@ import {IntlZone} from './impl/intlZone';
 import {Util} from './impl/util';
 import {ISOParser} from './impl/isoParser';
 
-function bestBy(arr, by, compare) {
-  return arr.reduce((best, next) => {
-    let pair = [by(next), next];
-    if (!best) {
-      return pair;
-    } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
-      return best;
-    } else {
-      return pair;
-    }
-  }, null)[1];
-};
-
 function now(){
   return new Date().valueOf();
 }
@@ -31,7 +18,7 @@ function clone(inst, alts = {}){
 
 //Seems like this might be more complicated than it appears. E.g.:
 //https://github.com/v8/v8/blob/master/src/date.cc#L212
-function fixOffset(ts, tz, o){
+function fixOffset(ts, tz, o, leaveTime = false){
   //1. test whether the zone matches the offset for this ts
   let o2 = tz.offset(ts);
   if (o === o2){
@@ -39,7 +26,9 @@ function fixOffset(ts, tz, o){
   }
 
   //2. if not, change the ts by the difference in the offset
-  ts -= (o2 - o) * 60 * 1000;
+  if (!leaveTime){
+    ts -= (o2 - o) * 60 * 1000;
+  }
 
   //3. check it again
   let o3 = tz.offset(ts);
@@ -112,9 +101,10 @@ function adjustTime(inst, dur){
                     })
         .as('milliseconds');
 
-  ts += millisToAdd;
-
-  [ts, o] = fixOffset(ts, inst.zone, o);
+  if (millisToAdd != 0){
+    ts += millisToAdd;
+    [ts, o] = fixOffset(ts, inst.zone, o, true);
+  }
 
   return {ts: ts, o: o};
 }
@@ -256,8 +246,7 @@ export class Instant{
       return this;
     }
     else {
-      //this keepCalendarTime thing probably doesn't work for variable-offset zones
-      let newTS = opts.keepCalendarTime ? this.ts - this.o + zone(this.ts) : this.ts;
+      let newTS = opts.keepCalendarTime ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000 : this.ts;
       return clone(this, {ts: newTS, zone: zone});
     }
   }
@@ -500,10 +489,10 @@ export class Instant{
   }
 
   static min(...instants){
-    return bestBy(instants, (i) => i.valueOf(), Math.min);
+    return Util.bestBy(instants, (i) => i.valueOf(), Math.min);
   }
 
   static max(...instants){
-    return bestBy(instants, (i) => i.valueOf(), Math.max);
+    return Util.bestBy(instants, (i) => i.valueOf(), Math.max);
   }
 }
