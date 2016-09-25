@@ -211,29 +211,29 @@ export let format = () => {
 
   //all these commented-out tests are bc https://github.com/andyearnshaw/Intl.js/issues/190
 
-  //test("Instant#toFormatString('EEEE') returns the full format weekday name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('EEEE'), 'Tuesday');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('EEEE') returns the full format weekday name", t => {
+    let i = inst();
+    t.is(i.toFormatString('EEEE'), 'Tuesday');
+    t.end();
+  });
 
-  //test("Instant#toFormatString('cccc') returns the full standalone weekday name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('cccc'), 'Tuesday');
+  test("Instant#toFormatString('cccc') returns the full standalone weekday name", t => {
+    let i = inst();
+    t.is(i.toFormatString('cccc'), 'Tuesday');
 
-  //  //I can't find anything I can generate different standalones for. 'ga' has a different genitive
-  //  //case, but at least according to Intl, it's *always* used in dates.
-  //  //todo - find one and test it here
+    //I can't find anything I can generate different standalones for. 'ga' has a different genitive
+    //case, but at least according to Intl, it's *always* used in dates.
+    //todo - find one and test it here
 
-  //  t.end();
-  //});
+    t.end();
+  });
 
-  //test("Instant#toFormatString('EEEEE' || 'ccccc') returns narrow weekday name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('EEEEE'), 'T');
-  //  t.is(i.toFormatString('ccccc'), 'T');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('EEEEE' || 'ccccc') returns narrow weekday name", t => {
+    let i = inst();
+    t.is(i.toFormatString('EEEEE'), 'T');
+    t.is(i.toFormatString('ccccc'), 'T');
+    t.end();
+  });
 
   test("Instant#toFormatString('M' || 'L') return the month number", t => {
     let i = inst();
@@ -270,28 +270,30 @@ export let format = () => {
     t.end();
   });
 
-  //test("Instant#toFormatString('MMMMM') returns the full format month name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('MMMM'), 'May');
-  //  t.is(i.month(8).toFormatString('MMMM'), 'August');
-  //  t.is(i.month(8).locale('ru').toFormatString('MMMM'), 'августа');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('MMMM') returns the full format month name", t => {
+    let i = inst();
+    t.is(i.toFormatString('MMMM'), 'May');
+    t.is(i.month(8).toFormatString('MMMM'), 'August');
+    t.is(i.month(8).locale('ru').toFormatString('MMMM'), 'августа');
+    t.end();
+  });
 
-  //test("Instant#toFormatString('LLLLM') returns the full standalone month name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('LLLL'), 'May');
-  //  t.is(i.month(8).toFormatString('LLLL'), 'August');
-  //  t.is(i.month(8).locale('ru').toFormatString('LLLL'), 'август');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('LLLL') returns the full standalone month name", t => {
+    let i = inst();
+    t.is(i.toFormatString('LLLL'), 'May');
+    t.is(i.month(8).toFormatString('LLLL'), 'August');
 
-  //test("Instant#toFormatString('MMMMM' || 'LLLL') returns the narrow month name", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('MMMMM'), 'M');
-  //  t.is(i.toFormatString('LLLLL'), 'M');
-  //  t.end();
-  //});
+    //this doesn't work yet, instead returning  'августа'
+    //t.is(i.month(8).locale('ru').toFormatString('LLLL'), 'август');
+    t.end();
+  });
+
+  test("Instant#toFormatString('MMMMM' || 'LLLLL') returns the narrow month name", t => {
+    let i = inst();
+    t.is(i.toFormatString('MMMMM'), 'M');
+    t.is(i.toFormatString('LLLLL'), 'M');
+    t.end();
+  });
 
   test("Instant#toFormatString('y') returns the full year", t => {
     let i = inst();
@@ -354,7 +356,7 @@ export let format = () => {
     t.end();
   });
 
-  //numbering is disable while we're still using the polyfill for number formatting
+  //numbering is disabled while we're still using the polyfill for number formatting
   //test('Instant#numbering() overides the numbering system from the locale', t => {
   //  let i = inst();
   //  t.is(i.numbering('beng').toFormatString('S'), '১২৩');
@@ -377,25 +379,23 @@ export let format = () => {
     t.end();
   });
 
-  //more bunkassery from the polyfill
+  test("Instant#toFormatString('DDD') returns a long date representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('DDD'), 'May 25, 1982');
+    t.is(i.month(8).toFormatString('DDD'), 'August 25, 1982');
+    t.is(i.locale('fr').toFormatString('DDD'), '25 mai 1982');
+    t.is(i.locale('fr').month(2).toFormatString('DDD'), '25 février 1982');
+    t.end();
+  });
 
-  //test("Instant#toFormatString('DDD') returns a long date representation", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('DDD'), 'May 25, 1982');
-  //  t.is(i.month(8).toFormatString('DDD'), 'August 25, 1982');
-  //  t.is(i.locale('fr').toFormatString('DDD'), '25 mai 1982');
-  //  t.is(i.locale('fr').month(2).toFormatString('DDD'), '25 février 1982');
-  //  t.end();
-  //});
-
-  //test("Instant#toFormatString('DDDD') returns a long date representation", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('DDDD'), 'Tuesday, May 25, 1982');
-  //  t.is(i.month(8).toFormatString('DDDD'), 'Wednesday, August 25, 1982');
-  //  t.is(i.locale('fr').toFormatString('DDDD'), 'mardi 25 mai 1982');
-  //  t.is(i.locale('fr').month(2).toFormatString('DDDD'), 'jeudi 25 février 1982');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('DDDD') returns a long date representation", t => {
+    let i = inst();
+    t.is(i.toFormatString('DDDD'), 'Tuesday, May 25, 1982');
+    t.is(i.month(8).toFormatString('DDDD'), 'Wednesday, August 25, 1982');
+    t.is(i.locale('fr').toFormatString('DDDD'), 'mardi 25 mai 1982');
+    t.is(i.locale('fr').month(2).toFormatString('DDDD'), 'jeudi 25 février 1982');
+    t.end();
+  });
 
   test("Instant#toFormatString('t') returns a short time representation", t => {
     let i = inst();
@@ -453,27 +453,27 @@ export let format = () => {
     t.end();
   });
 
-  //test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('fff'), 'May 25, 1982, 9:23 AM');
-  //  t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982, 1:23 PM');
-  //  t.is(i.month(8).toFormatString('fff'), 'August 25, 1982, 9:23 AM');
-  //  t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
-  //  t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
-  //  t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('fff'), 'May 25, 1982 at 9:23 AM');
+    t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982 at 1:23 PM');
+    t.is(i.month(8).toFormatString('fff'), 'August 25, 1982 at 9:23 AM');
+    t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
+    t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
+    t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
+    t.end();
+  });
 
-  //test("Instant#toFormatString('ffff') returns a long date/time representation without seconds", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('ffff'), 'Tuesday May 25, 1982, 9:23 AM');
-  //  t.is(i.hour(13).toFormatString('ffff'), 'Tuesday, May 25, 1982, 1:23 PM');
-  //  t.is(i.month(8).toFormatString('ffff'), 'Wednesday, August 25, 1982, 9:23 AM');
-  //  t.is(i.locale('fr').toFormatString('ffff'), 'mardi 25 mai 1982 à 9:23');
-  //  t.is(i.locale('fr').month(2).toFormatString('ffff'), 'mardi 25 février 1982 à 9:23');
-  //  t.is(i.locale('fr').hour(13).toFormatString('ffff'), 'jeudi 25 mai 1982 à 13:23');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('ffff') returns a long date/time representation without seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('ffff'), 'Tuesday, May 25, 1982 at 9:23 AM');
+    t.is(i.hour(13).toFormatString('ffff'), 'Tuesday, May 25, 1982 at 1:23 PM');
+    t.is(i.month(8).toFormatString('ffff'), 'Wednesday, August 25, 1982 at 9:23 AM');
+    t.is(i.locale('fr').toFormatString('ffff'), 'mardi 25 mai 1982 à 9:23');
+    t.is(i.locale('fr').month(2).toFormatString('ffff'), 'jeudi 25 février 1982 à 9:23');
+    t.is(i.locale('fr').hour(13).toFormatString('ffff'), 'mardi 25 mai 1982 à 13:23');
+    t.end();
+  });
 
   test("Instant#toFormatString('F') returns a short date/time representation with seconds", t => {
     let i = inst();
@@ -495,25 +495,25 @@ export let format = () => {
     t.end();
   });
 
-  //test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('fff'), 'May 25, 1982, 9:23 AM');
-  //  t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982, 1:23 PM');
-  //  t.is(i.month(8).toFormatString('fff'), 'August 25, 1982, 9:23 AM');
-  //  t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
-  //  t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
-  //  t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('fff'), 'May 25, 1982 at 9:23 AM');
+    t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982 at 1:23 PM');
+    t.is(i.month(8).toFormatString('fff'), 'August 25, 1982 at 9:23 AM');
+    t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
+    t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
+    t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
+    t.end();
+  });
 
-  //test("Instant#toFormatString('FFFF') returns a long date/time representation without seconds", t => {
-  //  let i = inst();
-  //  t.is(i.toFormatString('FFFF'), 'Tuesday May 25, 1982, 9:23:54 AM');
-  //  t.is(i.hour(13).toFormatString('FFFF'), 'Tuesday, May 25, 1982, 1:23:54 PM');
-  //  t.is(i.month(8).toFormatString('FFFF'), 'Wednesday, August 25, 1982, 9:23:54 AM');
-  //  t.is(i.locale('fr').toFormatString('FFFF'), 'mardi 25 mai 1982 à 9:23:54');
-  //  t.is(i.locale('fr').month(2).toFormatString('FFFF'), 'mardi 25 février 1982 à 9:23:54');
-  //  t.is(i.locale('fr').hour(13).toFormatString('FFFF'), 'jeudi 25 mai 1982 à 13:23:54');
-  //  t.end();
-  //});
+  test("Instant#toFormatString('FFFF') returns a long date/time representation without seconds", t => {
+    let i = inst();
+    t.is(i.toFormatString('FFFF'), 'Tuesday, May 25, 1982 at 9:23:54 AM');
+    t.is(i.hour(13).toFormatString('FFFF'), 'Tuesday, May 25, 1982 at 1:23:54 PM');
+    t.is(i.month(8).toFormatString('FFFF'), 'Wednesday, August 25, 1982 at 9:23:54 AM');
+    t.is(i.locale('fr').toFormatString('FFFF'), 'mardi 25 mai 1982 à 9:23:54');
+    t.is(i.locale('fr').month(2).toFormatString('FFFF'), 'jeudi 25 février 1982 à 9:23:54');
+    t.is(i.locale('fr').hour(13).toFormatString('FFFF'), 'mardi 25 mai 1982 à 13:23:54');
+    t.end();
+  });
 };

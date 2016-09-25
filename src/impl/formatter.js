@@ -244,17 +244,17 @@ export class Formatter {
 
       //months - format
       case 'L': return string({month: 'numeric', day: 'numeric'}, 'month');    //like 1
-      case 'LL': return string({month: '2-digit', day: 'numeric'}, 'month');   //like 01
+      case 'LL': return string({month: '2-digit', day: 'numeric'}, 'month');   //like 01, doesn't seem to work
       case 'LLL': return string({month: 'short', day: 'numeric'}, 'month');    //like Jan
-      case 'LLLL': return string({month: 'long', day: 'numeric'}, 'month');    //like January
-      case 'LLLLL': return string({month: 'narrow', day: 'numeric'}, 'month'); //like J
+      case 'LLLL': return string({month: 'long'}, 'month');                    //like January
+      case 'LLLLL': return string({month: 'narrow'}, 'month');                 //like J
 
       //months - standalone
       case 'M': return this.num(inst.month());                                 //like 1
       case 'MM': return this.num(inst.month(), 2);                             //like 01
       case 'MMM': return string({month: 'short', day: 'numeric'}, 'month');    //like Jan
       case 'MMMM': return string({month: 'long', day: 'numeric'}, 'month');    //like January
-      case 'MMMMM': return string({month: 'narrow', day: 'numeric'}, 'month'); //like J
+      case 'MMMMM': return string({month: 'narrow'}, 'month');                 //like J
 
       //years
       case 'y': return this.num(inst.year());                           //like 2014

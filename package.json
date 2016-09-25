@@ -20,7 +20,6 @@
     "gulp-tape": "latest",
     "gulp-uglify": "latest",
     "lazypipe": "latest",
-    "mocha": "latest",
     "rollup-plugin-babel": "latest",
     "rollup-stream": "latest",
     "tape": "latest",
