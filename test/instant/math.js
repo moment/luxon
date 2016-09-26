@@ -37,8 +37,6 @@ export let math = () => {
   test("Instant#plus(24, 'hours') gains an hour to spring forward", t => {
     let i = Instant.fromISO("2016-03-12T10:00").rezone(new FakePT(), {keepCalendarTime: true}),
         later = i.plus(24, 'hours');
-    console.log(i.toString());
-    console.log(later.toString());
     t.is(later.day(), 13);
     t.is(later.hour(), 11);
     t.end();

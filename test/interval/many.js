@@ -186,6 +186,48 @@ export let many = () => {
   // #difference()
   //-------
 
+  let diff = (t, interval, items, expected) => {
+    let r = interval.difference.apply(interval, items);
+    t.is(r.length, expected.length);
+    for (let i in expected){
+      t.ok(r[i] && r[i].equals(expected[i]));
+    }
+    return r;
+  };
+
+  test('Interval#difference returns self for non-overlapping intervals', t => {
+    diff(t, todayFrom(8, 9), [todayFrom,(10, 11)], [todayFrom(8, 9)]);
+    diff(t, todayFrom(8, 9), [todayFrom,(6,7)], [todayFrom(8, 9)]);
+    t.end();
+  });
+
+  test('Interval#difference returns the non-overlapping parts of intervals', t => {
+    diff(t, todayFrom(8, 10), [todayFrom(9, 11)], [todayFrom(8, 9)]);
+    diff(t, todayFrom(9, 11), [todayFrom(8, 10)], [todayFrom(10, 11)]);
+    diff(t, todayFrom(9, 11), [todayFrom(8, 9), todayFrom(9, 10)], [todayFrom(10, 11)]);
+    t.end();
+  });
+
+  test('Interval#difference returns the empty for fully subtracted intervals', t => {
+    diff(t, todayFrom(8, 10), [todayFrom(7, 11)], []);
+    diff(t, todayFrom(8, 10), [todayFrom(8, 9), todayFrom(9, 10)], []);
+    diff(t, todayFrom(8, 12), [todayFrom(8, 10), todayFrom(9, 11), todayFrom(10, 13)], []);
+    t.end();
+  });
+
+  test('Interval#difference returns the outside parts when engulfing another interval', t => {
+    diff(t, todayFrom(8, 12), [todayFrom(9, 11)], [todayFrom(8, 9), todayFrom(11, 12)]);
+    diff(t, todayFrom(8, 12), [todayFrom(9, 10), todayFrom(10, 11)], [todayFrom(8, 9), todayFrom(11, 12)]);
+    t.end();
+  });
+
+  test('Interval#difference allows holes', t => {
+    diff(t, todayFrom(8, 13),
+         [todayFrom(9, 10), todayFrom(11, 12)],
+         [todayFrom(8, 9), todayFrom(10, 11), todayFrom(12, 13)]);
+    t.end();
+  });
+
   //-------
   // #engulfs()
   //-------

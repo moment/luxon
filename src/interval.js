@@ -113,7 +113,6 @@ sNull  }
   }
 
   static xor(intervals){
-
     let start = null,
         currentCount = 0,
         results = [],
@@ -143,6 +142,9 @@ sNull  }
   }
 
   difference(...others){
+    return Interval.xor([this].concat(others))
+      .map((i) => this.intersection(i))
+      .filter((i) => i && !i.isEmpty());
   }
 
   equals(other){
