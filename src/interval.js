@@ -51,7 +51,36 @@ sNull  }
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
-  split(arg){
+  splitAt(...instants){
+    let sorted = instants.sort(),
+        results = [],
+        s = this.s,
+        i = 0;
+
+    while (s < this.e) {
+      let added = sorted[i] || this.e,
+          next = +added > +this.e ? this.e : added;
+      results.push(Interval.fromInstants(s, next));
+      s = next;
+      i += 1;
+    }
+
+    return results;
+  }
+
+  splitBy(countOrDuration, unit='milliseconds'){
+    let dur = Util.friendlyDuration(countOrDuration, unit),
+        results = [],
+        s = this.s;
+
+    while (s < this.e){
+      let added = s.plus(dur),
+          next = +added > +this.e ? this.e : added;
+      results.push(Interval.fromInstants(s, next));
+      s = next;
+    }
+
+    return results;
   }
 
   overlaps(other){

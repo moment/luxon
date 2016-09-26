@@ -241,8 +241,39 @@ export let many = () => {
   //-------
 
   //-------
-  // #split()
+  // #splitAt()
   //-------
+
+  test('Interval#splitAt breaks up the interval', t => {
+    let split = todayFrom(8, 13).splitAt(todayAt(9), todayAt(11));
+    t.is(split.length, 3);
+    t.ok(split[0].equals(todayFrom(8, 9)));
+    t.ok(split[1].equals(todayFrom(9, 11)));
+    t.ok(split[2].equals(todayFrom(11, 13)));
+    t.end();
+  });
+
+  //-------
+  // #splitBy()
+  //-------
+
+  test('Interval#splitBy accepts a count and unit', t => {
+    let split = todayFrom(8, 13).splitBy(2, 'hours');
+    t.is(split.length, 3);
+    t.ok(split[0].equals(todayFrom(8, 10)));
+    t.ok(split[1].equals(todayFrom(10, 12)));
+    t.ok(split[2].equals(todayFrom(12, 13)));
+    t.end();
+  });
+
+  test('Interval#splitBy accepts a duration', t => {
+    let split = todayFrom(8, 13).splitBy(Duration.fromObject({hours: 2}));
+    t.is(split.length, 3);
+    t.ok(split[0].equals(todayFrom(8, 10)));
+    t.ok(split[1].equals(todayFrom(10, 12)));
+    t.ok(split[2].equals(todayFrom(12, 13)));
+    t.end();
+  });
 
   //-------
   // #divideEqually()
