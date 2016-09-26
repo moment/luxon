@@ -232,13 +232,47 @@ export let many = () => {
   // #engulfs()
   //-------
 
+  test('Interval#engulfs', t => {
+
+    let i = todayFrom(9, 12);
+
+    t.notOk(i.engulfs(todayFrom(13, 15), 'wholly later'));
+    t.notOk(i.engulfs(todayFrom(11, 15), 'partially later'));
+    t.notOk(i.engulfs(todayFrom(6, 8), 'wholly earlier'));
+    t.notOk(i.engulfs(todayFrom(6, 10), 'partially earlier'));
+    t.notOk(i.engulfs(todayFrom(8, 13), 'engulfed'));
+
+    t.ok(i.engulfs(todayFrom(10, 11), 'engulfing'));
+    t.ok(i.engulfs(todayFrom(9, 12), 'equal'));
+
+    t.end();
+  });
+
   //-------
   // #abutsStart()
   //-------
 
+  test('Interval#abutsStart', t => {
+
+    t.ok(todayFrom(9, 10).abutsStart(todayFrom(10, 11)), 'abuts');
+    t.notOk(todayFrom(9, 10).abutsStart(todayFrom(11, 12)), 'starts too late');
+    t.notOk(todayFrom(9, 10).abutsStart(todayFrom(8, 11)), 'starts too early');
+    t.notOk(todayFrom(9, 10).abutsStart(todayFrom(9, 10)), 'equal');
+    t.end();
+  });
+
+
   //-------
   // #abutsEnd()
   //-------
+
+  test('Interval#abutsEnd', t => {
+    t.ok(todayFrom(9, 11).abutsEnd(todayFrom(8, 9)), 'abuts');
+    t.notOk(todayFrom(9, 11).abutsEnd(todayFrom(8, 10)), 'ends too late');
+    t.notOk(todayFrom(9, 11).abutsEnd(todayFrom(7, 8)), 'ends too early');
+    t.notOk(todayFrom(9, 11).abutsEnd(todayFrom(9, 11)), 'equal');
+    t.end();
+  });
 
   //-------
   // #splitAt()

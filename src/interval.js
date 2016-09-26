@@ -5,10 +5,8 @@ import {Duration} from './duration';
 export class Interval{
 
   constructor(start, end){
-
     Object.defineProperty(this, 's', {value: start, enumerable: true});
     Object.defineProperty(this, 'e', {value: end, enumerable: true});
-
   }
 
   static fromInstants(start, end, opts = {}){
@@ -23,7 +21,7 @@ export class Interval{
   static before(end, durationOrNumber, unit){
     let dur = Util.friendlyDuration(durationOrNumber, unit);
     return Interval.fromInstants(end.minus(dur), end);
-sNull  }
+  }
 
   toDuration(...units){
     return this.e.diff(this.s, ...units);
@@ -97,7 +95,7 @@ sNull  }
   }
 
   abutsEnd(other){
-    return +other.e === +this.start;
+    return +other.e === +this.s;
   }
 
   engulfs(other){
