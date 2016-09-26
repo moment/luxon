@@ -238,4 +238,12 @@ export class Duration{
   milliseconds(v){
     return Util.isUndefined(v) ? this.values.milliseconds || 0 : this.set({milliseconds: v});
   }
+
+  equals(other){
+    for (let u of ordered){
+      if (this.values[u] !== other.values[u])
+        return false;
+    }
+    return true;
+  }
 }

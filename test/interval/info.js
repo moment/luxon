@@ -3,18 +3,16 @@ import {Instant, Interval, Duration} from 'luxon';
 
 export let info = () => {
 
-  let yesterday = () => Instant.now().minus(1, 'day').startOf('day'),
-      tomorrow = () => moment().plus(1, 'day').startOf('day'),
-      fromISOs = (s, e, opts = {}) => Instant.fromISO(s).until(Instant.fromISO(e), opts),
-      now = () => Instant.now(),
-      today = () => now().startOf('day');
+  let fromISOs = (s, e, opts = {}) => Instant.fromISO(s).until(Instant.fromISO(e), opts),
+      todayAt = (h) => Instant.now().startOf('day').hour(h),
+      todayFrom = (h1, h2, opts) => Interval.fromInstants(todayAt(h1), todayAt(h2), opts);
 
   //------
   // #length()
   //-------
 
   test('Interval#length defaults to milliseconds', t => {
-    let n = now(),
+    let n = Instant.now(),
         d = n.until(n.plus(1, 'minute'));
 
     t.is(d.length(), 60 * 1000);
@@ -22,7 +20,7 @@ export let info = () => {
   });
 
   test("Interval#length('days') returns 1 for yesterday", t => {
-    t.is(yesterday().until(today()).length('days'), 1);
+    t.is(todayAt(13).minus(1, 'day').until(todayAt(13)).length('days'), 1);
     t.end();
   });
 
@@ -69,6 +67,15 @@ export let info = () => {
   //-------
 
   test('Interval#toDuration(units) creates a duration in those units', t => {
+
+    let int = Interval.fromInstants(todayAt(9), todayAt(13));
+
+    t.ok(int.toDuration().equals(Duration.fromLength(4 * 3600 * 1000)), 'none');
+    t.ok(int.toDuration('milliseconds').equals(Duration.fromLength(4 * 3600 * 1000)), 'milliseconds');
+    t.ok(int.toDuration('seconds').equals(Duration.fromLength(4 * 3600, 'seconds')), 'seconds');
+    t.ok(int.toDuration('minutes').equals(Duration.fromLength(4 * 60, 'minutes')), 'minutes');
+    t.ok(int.toDuration('hours').equals(Duration.fromLength(4, 'hours')), 'hours');
+    t.ok(int.toDuration('days').equals(Duration.fromLength(1.0 / 6, 'days')), 'days');
     t.end();
   });
 
