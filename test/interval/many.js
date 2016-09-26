@@ -278,4 +278,28 @@ export let many = () => {
   //-------
   // #divideEqually()
   //-------
+  test('Interval#divideEqually should split a 4 hour period into 4 contiguous 1-hour parts', t => {
+    let split = todayFrom(5, 9).divideEqually(4);
+    t.is(split.length, 4);
+    t.ok(split[0].equals(todayFrom(5, 6)));
+    t.ok(split[3].equals(todayFrom(8, 9)));
+    t.end();
+  });
+
+  test('Interval#divideEqually should split a 1m30s into 3 30-second parts', t => {
+
+    let after = (i, m, s) => Interval.after(i, Duration.fromObject({minutes: m, seconds: s})),
+        split = after(todayAt(9), 1, 30).divideEqually(3);
+    t.is(split.length, 3);
+    t.ok(split[0].equals(after(todayAt(9), 0, 30)));
+    t.ok(split[2].equals(after(todayAt(9).plus(1, 'minute'), 0, 30)));
+    t.end();
+  });
+
+  test('Interval#divideEqually always gives you the right number of parts', t => {
+    let int = Interval.after(todayAt(9), 7, 'minutes'),
+        split = int.divideEqually(17);
+    t.is(split.length, 17);
+    t.end();
+  });
 };

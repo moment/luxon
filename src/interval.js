@@ -83,6 +83,11 @@ sNull  }
     return results;
   }
 
+  divideEqually(numberOfParts){
+    return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
+  }
+
+
   overlaps(other){
     return this.e > other.s && this.s < other.e;
   }
@@ -97,9 +102,6 @@ sNull  }
 
   engulfs(other){
     return this.s <= other.s && this.e >= other.e;
-  }
-
-  divideEqually(numberOfParts){
   }
 
   intersection(other){
