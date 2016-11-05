@@ -6,6 +6,7 @@ import {LocalZone} from './impl/localZone';
 import {IntlZone} from './impl/intlZone';
 import {Util} from './impl/util';
 import {ISOParser} from './impl/isoParser';
+import {Parser} from './impl/parser';
 
 function now(){
   return new Date().valueOf();
@@ -194,6 +195,7 @@ export class Instant{
   }
 
   static fromString(text, fmt){
+    return Instant.fromObject(Parser.parseInstant(text, fmt));
   }
 
   locale(l){

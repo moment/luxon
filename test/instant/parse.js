@@ -96,4 +96,57 @@ export let parse = () => {
 
     t.end();
   });
+
+  //------
+  // .fromString
+  //-------
+
+  test('Instant.fromString() parses basic times', t => {
+    let i = Instant.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
+    t.is(i.year(), 1982);
+    t.is(i.month(), 5);
+    t.is(i.day(), 25);
+    t.is(i.hour(), 9);
+    t.is(i.minute(), 10);
+    t.is(i.second(), 11);
+    t.is(i.millisecond(), 445);
+    t.end();
+  });
+
+  test('Instant.fromString() parses meridiems', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() parses eras', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() parses month names', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() defaults yy to the right century', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() parses offsets', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() validates weekday names', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() allows regex content', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() allows literals', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() returns null when not found', t => {
+    t.end();
+  });
+
 };

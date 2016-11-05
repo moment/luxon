@@ -85,7 +85,6 @@ export class Interval{
     return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
   }
 
-
   overlaps(other){
     return this.e > other.s && this.s < other.e;
   }

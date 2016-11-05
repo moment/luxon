@@ -40,40 +40,6 @@ function fullLocale(localeConfig){
   return loc;
 }
 
-function parseFormat(fmt){
-  let current = null, currentFull = '', splits = [], bracketed = false;
-  for (let i = 0; i < fmt.length; i++){
-    let c = fmt.charAt(i);
-    if (c == "'"){
-      if (currentFull.length > 0){
-        splits.push({literal: bracketed, val: currentFull});
-      }
-      current = null;
-      currentFull = '';
-      bracketed = !bracketed;
-    }
-    else if (bracketed){
-      currentFull += c;
-    }
-    else if (c === current){
-      currentFull += c;
-    }
-    else {
-      if (currentFull.length > 0){
-        splits.push({literal: false, val: currentFull});
-      }
-      currentFull = c;
-      current = c;
-    }
-  }
-
-  if (currentFull.length > 0){
-    splits.push({literal: bracketed, val: currentFull});
-  }
-
-  return splits;
-}
-
 function stringifyTokens(splits, tokenToString){
 
   let s = '';
@@ -101,6 +67,40 @@ export class Formatter {
     delete formatOpts.loc;
 
     return new Formatter(localeConfig, formatOpts);
+  }
+
+  static parseFormat(fmt){
+    let current = null, currentFull = '', splits = [], bracketed = false;
+    for (let i = 0; i < fmt.length; i++){
+      let c = fmt.charAt(i);
+      if (c == "'"){
+        if (currentFull.length > 0){
+          splits.push({literal: bracketed, val: currentFull});
+        }
+        current = null;
+        currentFull = '';
+        bracketed = !bracketed;
+      }
+      else if (bracketed){
+        currentFull += c;
+      }
+      else if (c === current){
+        currentFull += c;
+      }
+      else {
+        if (currentFull.length > 0){
+          splits.push({literal: false, val: currentFull});
+        }
+        currentFull = c;
+        current = c;
+      }
+    }
+
+    if (currentFull.length > 0){
+      splits.push({literal: bracketed, val: currentFull});
+    }
+
+    return splits;
   }
 
   constructor(localeConfig, formatOpts){
@@ -194,7 +194,7 @@ export class Formatter {
     };
 
     let tokenToString = (token) => {
-      switch (token) {
+      switch(token){
       //ms
       case 'S': return this.num(inst.millisecond());
       case 'SSS': return this.num(inst.millisecond(), 3);
@@ -222,7 +222,7 @@ export class Formatter {
       case 'zz': return null;                                    //like Eastern Standard Time
       case 'zzz': return null;                                   //like America/New_York
 
-      //meridiens
+      //meridiems
       case 'a': return string({hour: 'numeric', hour12: true}, 'dayPeriod');
 
       //dates
@@ -299,7 +299,7 @@ export class Formatter {
       };
     };
 
-    return stringifyTokens(parseFormat(fmt), tokenToString);
+    return stringifyTokens(Formatter.parseFormat(fmt), tokenToString);
   }
 
   formatDuration(){
@@ -308,7 +308,7 @@ export class Formatter {
 
   formatDurationFromString(dur, fmt){
 
-    let map = (token) => {
+    let tokenToField = (token) => {
       switch (token[0]) {
       case 'S': return 'milliseconds';
       case 's': return 'seconds';
@@ -323,7 +323,7 @@ export class Formatter {
 
     let tokenToString = (dur) => {
       return (token) => {
-        let mapped = map(token[0]);
+        let mapped = tokenToField(token);
         if (mapped){
           return this.num(dur.get(mapped), token.length);
         }
@@ -333,9 +333,9 @@ export class Formatter {
       };
     };
 
-    let tokens = parseFormat(fmt),
+    let tokens = Formatter.parseFormat(fmt),
         realTokens = tokens.reduce((found, {literal, val}) => literal ? found : found.concat(val), []),
-        collapsed = dur.shiftTo(...realTokens.map((t) => map(t)));
+        collapsed = dur.shiftTo(...realTokens.map((t) => tokenToField(t)));
     return stringifyTokens(tokens, tokenToString(collapsed));
   }
 }

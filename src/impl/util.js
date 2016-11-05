@@ -44,4 +44,9 @@ export class Util{
       }
     }, null)[1];
   };
+
+  static zip(...arrays){
+    return arrays[0].map(
+      (_, c) => arrays.map(arr => arr[c]));
+  }
 }
