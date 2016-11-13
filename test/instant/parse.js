@@ -62,7 +62,7 @@ export let parse = () => {
     isSame("2016-05-25T092415.123", {year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123});
     isSame("2016-05-25T09:24:15,123", {year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123});
 
-    //these are formats that aren't technically valid but we parse anyway. Testing them more to document them
+    //these are formats that aren't technically valid but we parse anyway. Testing them more to document them than anything else
     isSame("2016-05-25T0924:15.123", {year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123});
     isSame("2016-05-25T09:2415.123", {year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123});
 
@@ -122,6 +122,15 @@ export let parse = () => {
   });
 
   test('Instant.fromString() parses month names', t => {
+    let i = Instant.fromString('May 25 1982', 'LLLL dd yyyy');
+    t.is(i.year(), 1982);
+    t.is(i.month(), 5);
+    t.is(i.day(), 25);
+
+    i = Instant.fromString('Sep 25 1982', 'LLL dd yyyy');
+    t.is(i.year(), 1982);
+    t.is(i.month(), 9);
+    t.is(i.day(), 25);
     t.end();
   });
 
@@ -145,7 +154,7 @@ export let parse = () => {
     t.end();
   });
 
-  test('Instant.fromString() returns null when not found', t => {
+  test('Instant.fromString() returns invalid when unparsed', t => {
     t.end();
   });
 

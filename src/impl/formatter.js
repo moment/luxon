@@ -1,44 +1,5 @@
-//We use the Intl polyfill exclusively here, for these reasons:
-// 1. We need formatToParts(), which isn't implemented anywhere
-// 2. Node doesn't ship with real locale support unless you do this: https://github.com/nodejs/node/wiki/Intl
-// 3. It made for a cleaner job.
-
-//However, it has some drawbacks:
-// 1. It's an onerous requirement
-// 2. It doesn't have TZ support
-// 3. It doesn't support number and calendar overrides.
-
-//In the future we might see either (probably both?) of these:
-// 1. Drop the requirement for the polyfill if you want US-EN only.
-//    Not doing this now because providing the defaults will slow me down.
-// 2. Let the user actually do a real polyfill where they please once Chrome/Node supports formatToParts OR Intl supports zones.
-//    This is impractical now because we still want access to the Chrome's native Intl's TZ support elsewhere.
-
-import * as Intl from 'intl';
 import {Util} from './util';
-
-function fullLocale(localeConfig){
-  let loc = localeConfig.loc || new Intl.DateTimeFormat().resolvedOptions().locale;
-  loc = Array.isArray(loc) ? loc : [loc];
-
-  if (localeConfig.outputCal || localeConfig.nums){
-    loc = loc.map((l) => {
-      l += "-u";
-
-      //this doesn't seem to really work yet, so this is mostly not exposed
-      if (localeConfig.outputCal){
-        l += "-ca-" + localeConfig.outputCal;
-      }
-
-      //this doesn't work yet either
-      if (localeConfig.nums){
-        l += "-nu-" + localeConfig.nums;
-      }
-      return l;
-    });
-  }
-  return loc;
-}
+import {Locale} from './locale';
 
 function stringifyTokens(splits, tokenToString){
 
@@ -56,17 +17,9 @@ function stringifyTokens(splits, tokenToString){
 
 export class Formatter {
 
-  static create(config, opts = {}){
-
-    //todo add caching?
-    let localeConfig = Object.assign({}, config, opts),
-        formatOpts = Object.assign({}, {round: true}, opts);
-
-    delete formatOpts.outputCal;
-    delete formatOpts.nums;
-    delete formatOpts.loc;
-
-    return new Formatter(localeConfig, formatOpts);
+  static create(locale, opts = {}){
+    let formatOpts = Object.assign({}, {round: true}, opts);
+    return new Formatter(locale, formatOpts);
   }
 
   static parseFormat(fmt){
@@ -103,74 +56,39 @@ export class Formatter {
     return splits;
   }
 
-  constructor(localeConfig, formatOpts){
+  constructor(locale, formatOpts){
     this.opts = formatOpts;
-    this.loc = fullLocale(localeConfig);
-  }
-
-  dateFormatter(inst, options = {}){
-
-    //todo: add global cache?
-
-    let d, z;
-
-    if (inst.zone.universal()){
-      d = Util.asIfUTC(inst);
-      z = 'UTC'; //this is wrong, but there's no way to tell the formatter that
-    }
-    else {
-      d = inst.toJSDate();
-      z = inst.zone.name();
-    }
-
-    let opts = {};
-    if (z) {
-      opts['timeZone'] = z;
-    }
-
-    let realOpts = Object.assign(opts, this.opts, options);
-    return [new Intl.DateTimeFormat(this.loc, realOpts), d];
-  }
-
-  numberFormatter(padTo = 0){
-    //todo: add global cache?
-    let opts = {useGrouping: false};
-    if (padTo > 0){
-      opts['minimumIntegerDigits'] = padTo;
-      if (this.opts.round) {
-        opts['maximumFractionDigits'] = 0;
-      }
-    }
-    return new Intl.NumberFormat(this.loc, Object.assign({}, this.opts, opts));
+    this.loc = locale;
   }
 
   formatInstant(inst, opts = {}){
-    let [df, d] = this.dateFormatter(inst, opts);
+    let [df, d] = this.loc.instFormatter(inst, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   formatInstantParts(inst, opts = {}){
-    let [df, d] = this.dateFormatter(inst, opts);
+    let [df, d] = this.loc.instFormatter(inst, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   resolvedDateOptions(inst){
-    let [df, d] = this.dateFormatter(inst);
+    let [df, d] = this.loc.instFormatter(inst);
     return df.resolvedOptions(d);
   }
 
-  num(n, p = 0, round = false){
-    return this.numberFormatter(p, round).format(n);
+  num(n, p = 0){
+    let opts = Object.assign({}, this.opts);
+
+    if (p > 0){
+      opts.padTo = p;
+    }
+
+    return this.loc.numberFormatter(opts).format(n);
   }
 
   formatInstantFromString(inst, fmt){
 
-    let string = (opts, extract) => {
-      let [df, d] = this.dateFormatter(inst, opts),
-          results = df.formatToParts(d);
-
-      return results.find((m) => m.type == extract).value;
-    };
+    let string = (opts, extract) => this.loc.extract(inst, opts, extract);
 
     let formatOffset = (opts) => {
 

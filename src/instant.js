@@ -3,6 +3,7 @@ import {Interval} from './interval';
 import {Formatter} from './impl/formatter';
 import {FixedOffsetZone} from './impl/fixedOffsetZone';
 import {LocalZone} from './impl/localZone';
+import {Locale} from './impl/locale';
 import {IntlZone} from './impl/intlZone';
 import {Util} from './impl/util';
 import {ISOParser} from './impl/isoParser';
@@ -13,7 +14,7 @@ function now(){
 }
 
 function clone(inst, alts = {}){
-  let current = {ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc, nums: inst.nums};
+  let current = {ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc};
   return new Instant(Object.assign({}, current, alts, {old: current}));
 }
 
@@ -128,17 +129,7 @@ export class Instant{
     });
 
     Object.defineProperty(this, 'loc', {
-      value: config.loc || 'en-us',
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'nums', {
-      value: config.nums || null,
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'outputCal', {
-      value: config.outputCal || null,
+      value: config.loc || Locale.create(),
       enumerable: true
     });
 
@@ -194,38 +185,25 @@ export class Instant{
     }
   }
 
-  static fromString(text, fmt){
-    return Instant.fromObject(Parser.parseInstant(text, fmt));
+  static fromString(text, fmt, opts = {}){
+    let parser = new Parser(Locale.fromOpts(opts)),
+        result = parser.parseInstant(text, fmt);
+    return Instant.fromObject(result);
+  }
+
+  static fromStringExplain(text, fmt, opts = {}){
+    let parser = new Parser(Locale.fromOpts(opts));
+    return parser.explainParse(text, fmt);
   }
 
   locale(l){
     if (Util.isUndefined(l)){
-      return this.loc;
+      return this.loc ? this.loc.code : null;
     }
     else{
-      return clone(this, {loc: l});
+      return clone(this, {loc: Locale.create(l)});
     }
   }
-
-  //the Intl polyfill respects the locale's numbering, but not the extension numbering. So unexpose this.
-  //numbering(n){
-  //  if (Util.isUndefined(n)){
-  //    return this.nums;
-  //  }
-  //  else{
-  //    return clone(this, {nums: n});
-  //  }
-  //}
-
-  //same here
-  //outputCalendar(c){
-  //  if (Util.isUndefined(c)){
-  //    return this.outputCal;
-  //  }
-  //  else{
-  //    return clone(this, {outputCal: c});
-  //  }
-  //}
 
   utc(){
     return this.useUTCOffset(0);
@@ -335,15 +313,15 @@ export class Instant{
   }
 
   toFormatString(fmt, opts = {}){
-    return Formatter.create(this, opts).formatInstantFromString(this, fmt);
+    return Formatter.create(this.loc, opts).formatInstantFromString(this, fmt);
   }
 
   toLocaleString(opts = {}){
-    return Formatter.create(this, opts).formatInstant(this);
+    return Formatter.create(this.loc.clone(opts), opts).formatInstant(this);
   }
 
   toISO(){
-    return Formatter.create({loc: 'en'}).formatInstantFromString(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+    return Formatter.create(Locale.create('en')).formatInstantFromString(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
   }
 
   toString(){
@@ -367,7 +345,7 @@ export class Instant{
   }
 
   resolvedLocaleOpts(opts = {}){
-    return Formatter.create(this, opts).resolvedOptions();
+    return Formatter.create(this.loc, opts).resolvedOptions();
   }
 
   plus(durationOrNumber, type){

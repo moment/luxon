@@ -50,7 +50,7 @@ export let format = () => {
   });
 
   test("Instant#toLocaleString can override the instant's locale", t => {
-    t.is(inst().locale('be').toLocaleString({loc: 'fr'}), '25/05/1982');
+    t.is(inst().locale('be').toLocaleString({code: 'fr'}), '25/05/1982');
     t.end();
   });
 

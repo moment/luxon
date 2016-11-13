@@ -1,4 +1,5 @@
 import {Instant} from './instant';
+import {Locale} from './impl/locale';
 
 export class Info{
 
@@ -6,9 +7,14 @@ export class Info{
     return !zone.universal() && Instant.now().month(1).offset() != Instant.now().month(5).offset();
   }
 
-  static listMonths(locale, styleOrFormat = 'LLLL'){
+  static months(length, locale, numbering){
+    return new Locale(locale, numbering).months(length);
   }
 
-  static listWeekdays(locale, styleOrFormat = 'cccc'){
+  static monthsFormat(length, locale, numbering){
+    return new Locale(locale, numbering).monthsFormat(length);
+  }
+
+  static weekdays(length, locale, numbering){
   }
 }

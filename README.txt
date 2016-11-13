@@ -6,6 +6,7 @@ Roadmap
 Definitely:
 
  - Parsing
+ - Invalid instances
  - Weekyear/week
  - Interval formatting
  - Intl polyfill contributions

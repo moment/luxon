@@ -1,4 +1,5 @@
 import {Util} from "./impl/util";
+import {Locale} from "./impl/locale";
 import {Formatter} from './impl/formatter';
 
 let matrix = {
@@ -62,7 +63,7 @@ export class Duration{
     this.values = config.values;
 
     Object.defineProperty(this, 'loc', {
-      value: config.loc || 'en-us',
+      value: config.loc || Locale.create(),
       enumerable: true
     });
   }
@@ -86,12 +87,12 @@ export class Duration{
       return this.loc;
     }
     else{
-      return clone(this, {loc: l});
+      return clone(this, {loc: Locale.create(l)});
     }
   }
 
   toFormatString(fmt, opts = {}){
-    return Formatter.create(this, opts).formatDurationFromString(this, fmt);
+    return Formatter.create(this.loc, opts).formatDurationFromString(this, fmt);
   }
 
   toObject(){

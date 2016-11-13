@@ -51,4 +51,13 @@ export let getters = () => {
     t.is(utc.millisecond(), 123);
     t.end();
   });
+
+  //------
+  // locale
+  //-------
+  test('instant#locale() returns the locale', t => {
+    let i = Instant.now().locale('be');
+    t.is(i.locale(), 'be');
+    t.end();
+  });
 };

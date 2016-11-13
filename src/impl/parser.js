@@ -12,7 +12,14 @@ function untruncateYear(years){
   return years > 60 ? 1900 + years : 2000 + years;
 }
 
-function unitForToken(token){
+function oneOf(strings){
+  return {
+    regex: RegExp(strings.join('|')),
+    deser: (s) => strings.indexOf(s) + 1
+  };
+}
+
+function unitForToken(token, loc){
 
   let two = /\d\d/,
       three = /\d{3}/,
@@ -39,10 +46,14 @@ function unitForToken(token){
         case 'yy': return intUnit(twoToFour, untruncateYear);
 
           //months
-        case 'MM': return intUnit(two);
         case 'M': return intUnit(oneOrTwo);
-        case 'LL': return intUnit(two);
+        case 'MM': return intUnit(two);
+        case 'MMM': return oneOf(loc.monthsFormat('short'));
+        case 'MMMM': return oneOf(loc.monthsFormat('long'));
         case 'L': return intUnit(oneOrTwo);
+        case 'LL': return intUnit(two);
+        case 'LLL': return oneOf(loc.months('short'));
+        case 'LLLL': return oneOf(loc.months('long'));
 
           //dates
         case 'd': return intUnit(oneOrTwo);
@@ -76,9 +87,7 @@ function unitForToken(token){
   return unit;
 }
 
-function buildRegex(tokens){
-  let units = tokens.map(unitForToken);
-
+function buildRegex(units){
   return [
     units
       .map((u) => u.regex)
@@ -87,9 +96,8 @@ function buildRegex(tokens){
   ];
 }
 
-function match(input, tokens){
-  let [regex, handlers] = buildRegex(tokens),
-      matches = input.match(regex);
+function match(input, regex, handlers){
+  let matches = input.match(regex);
 
   if (matches){
 
@@ -120,6 +128,7 @@ function instantFromMatches(matches){
     case 'h':
     case 'H': return 'hour';
     case 'd': return 'day';
+    case 'L':
     case 'M': return 'month';
     case 'y': return 'year';
     default: return null;
@@ -144,17 +153,27 @@ function instantFromMatches(matches){
 
 export class Parser{
 
-  static explainParse(input, format){
+  constructor(loc){
+    Object.defineProperty(this, 'loc', {value: loc, enumerable: true});
   }
 
-  static parseInstant(input, format){
+  explainParse(input, format){
     let tokens = Formatter.parseFormat(format),
-        matches = match(input, tokens);
+        units = tokens.map((t) => unitForToken(t, this.loc)),
+        [regex, handlers] = buildRegex(units),
+        matches = match(input, regex, handlers),
+        result = matches ?  instantFromMatches(matches) : null;
 
-    if (!matches){
-      return null;
-    }
+    return {
+      input: input,
+      tokens: tokens,
+      regex: regex,
+      matches: matches,
+      result: result
+    };
+  }
 
-    return instantFromMatches(matches);
+  parseInstant(input, format){
+    return this.explainParse(input, format).result;
   }
 }
