@@ -166,7 +166,12 @@ export class Instant{
         zone = opts.zone ? opts.zone : (opts.utc ? new FixedOffsetZone(0) : new LocalZone()),
         offsetProvis = zone.offset(tsNow),
         defaulted = Object.assign(tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj),
-        [tsFinal, _] = objToTS(defaulted, zone, offsetProvis);
+        [tsFinal, _] = objToTS(defaulted, zone, offsetProvis),
+        inst = new Instant({ts: tsFinal, zone: zone});
+
+    if (!Util.isUndefined(obj.weekday) && obj.weekday != inst.weekday()){
+      console.log("bad weekday");
+    }
 
     return new Instant({ts: tsFinal, zone: zone});
   }

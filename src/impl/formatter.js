@@ -154,7 +154,6 @@ export class Formatter {
       case 'ccccc': return string({weekday: 'narrow'}, 'weekday');             //like 'T'
 
      //weekdays - standalone
-
       case 'E': return this.num(inst.weekday());                               //like 1
       case 'EEE': return string({weekday: 'short'}, 'weekday');                //like 'Tues'
       case 'EEEE': return string({weekday: 'long'}, 'weekday');                //like 'Tuesday'

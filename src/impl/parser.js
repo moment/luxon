@@ -12,10 +12,10 @@ function untruncateYear(years){
   return years > 60 ? 1900 + years : 2000 + years;
 }
 
-function oneOf(strings){
+function oneOf(strings, startIndex){
   return {
     regex: RegExp(strings.join('|')),
-    deser: (s) => strings.indexOf(s) + 1
+    deser: (s) => strings.indexOf(s) + startIndex
   };
 }
 
@@ -48,12 +48,12 @@ function unitForToken(token, loc){
           //months
         case 'M': return intUnit(oneOrTwo);
         case 'MM': return intUnit(two);
-        case 'MMM': return oneOf(loc.monthsFormat('short'));
-        case 'MMMM': return oneOf(loc.monthsFormat('long'));
+        case 'MMM': return oneOf(loc.monthsFormat('short'), 1);
+        case 'MMMM': return oneOf(loc.monthsFormat('long'), 1);
         case 'L': return intUnit(oneOrTwo);
         case 'LL': return intUnit(two);
-        case 'LLL': return oneOf(loc.months('short'));
-        case 'LLLL': return oneOf(loc.months('long'));
+        case 'LLL': return oneOf(loc.months('short'), 1);
+        case 'LLLL': return oneOf(loc.months('long'), 1);
 
           //dates
         case 'd': return intUnit(oneOrTwo);
@@ -74,6 +74,9 @@ function unitForToken(token, loc){
           //meridiem
 
           //weekdays
+        case 'E': return intUnit(one);
+        case 'EEE': return oneOf(loc.weekdays('short'), 0);
+        case 'EEEE': return oneOf(loc.weekdays('long'), 0);
 
           //offset/zone
 
@@ -131,6 +134,8 @@ function instantFromMatches(matches){
     case 'L':
     case 'M': return 'month';
     case 'y': return 'year';
+    case 'E':
+    case 'c': return 'weekday';
     default: return null;
     };
   };

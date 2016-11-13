@@ -16,5 +16,10 @@ export class Info{
   }
 
   static weekdays(length, locale, numbering){
+    return new Locale(locale, numbering).weekdays(length);
+  }
+
+  static weekdaysFormat(length, locale, numbering){
+    return new Locale(locale, numbering).weekdaysFormat(length);
   }
 }

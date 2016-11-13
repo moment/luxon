@@ -52,6 +52,15 @@ function mapMonths(f){
   return ms;
 }
 
+function mapWeekdays(f){
+  let ms = [];
+  for(let i=0; i<7; i++){
+    let inst = Instant.fromObject({year: 2016, month: 11, day: 13 + i}, {utc: true});
+    ms.push(f(inst));
+  };
+  return ms;
+}
+
 export class Locale{
 
   static fromOpts(opts){
@@ -85,9 +94,11 @@ export class Locale{
   }
 
   weekdays(length){
+    return mapWeekdays((inst) => this.extract(inst, {weekday: length}, 'weekday'));
   }
 
   weekdaysFormat(length){
+    return mapWeekdays((inst) => this.extract(inst, {weekday: length, year: 'numeric', month: 'long', day: 'numeric'}, 'weekday'));
   }
 
   meridiems(length){

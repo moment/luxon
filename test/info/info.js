@@ -27,21 +27,12 @@ export let info = () => {
     t.end();
   });
 
-
   test('Info.months respects the numbering system', t => {
     //the polyfill doesn't allow num overrides, so skip this for now
     t.end();
   });
 
   test('Info.months respects the locale', t => {
-
-    t.deepEqual(
-      Info.months('long', 'bn'),
-      ['জানুয়ারী', 'ফেব্রুয়ারী', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর' ]);
-
-    t.deepEqual(
-      Info.months('numeric', 'bn'),
-      ['১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯', '১০', '১১', '১২']);
 
     t.deepEqual(
       Info.months('numeric', 'bn'),
@@ -53,7 +44,6 @@ export let info = () => {
 
     t.end();
   });
-
 
   //------
   // .monthsFormat()
@@ -80,4 +70,50 @@ export let info = () => {
     t.end();
   });
 
+  //------
+  // .weekdays()
+  //-------
+
+  test('Info.weekdays lists all the weekdays', t => {
+
+    t.deepEqual(
+      Info.weekdays('long', 'en'),
+      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
+
+    t.deepEqual(
+      Info.weekdays('short', 'en'),
+      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+
+    t.deepEqual(
+      Info.weekdays('narrow', 'en'),
+      ['S', 'M', 'T', 'W', 'T', 'F', 'S']);
+
+    t.deepEqual(
+      Info.weekdays('long', 'ru'),
+      ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']);
+
+    t.end();
+  });
+
+  //------
+  // .weekdaysFormat()
+  //-------
+
+  test('Info.weekdaysFormat lists all the weekdays', t => {
+
+    t.deepEqual(
+      Info.weekdaysFormat('long', 'en'),
+      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
+
+    t.deepEqual(
+      Info.weekdaysFormat('short', 'en'),
+      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+
+    //this passes, but is wrong. These are the same as the standalone values
+    //t.deepEqual(
+    //  Info.weekdaysFormat('long', 'ru'),
+    //  ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']);
+
+    t.end();
+  });
 };

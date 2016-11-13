@@ -131,6 +131,12 @@ export let parse = () => {
     t.is(i.year(), 1982);
     t.is(i.month(), 9);
     t.is(i.day(), 25);
+
+    i = Instant.fromString('mai 25 1982', 'LLLL dd yyyy', {code: 'fr'});
+    t.is(i.year(), 1982);
+    t.is(i.month(), 5);
+    t.is(i.day(), 25);
+
     t.end();
   });
 
@@ -143,6 +149,18 @@ export let parse = () => {
   });
 
   test('Instant.fromString() validates weekday names', t => {
+    let i = Instant.fromString('Tuesday, 05/25/1982', 'EEEE, LL/dd/yyyy');
+    t.is(i.year(), 1982);
+    t.is(i.month(), 5);
+    t.is(i.day(), 25);
+
+    i = Instant.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', {code: 'fr'});
+    t.is(i.year(), 1982);
+    t.is(i.month(), 5);
+    t.is(i.day(), 25);
+
+    //todo: same for a bad day, returns invalid
+
     t.end();
   });
 
@@ -155,6 +173,10 @@ export let parse = () => {
   });
 
   test('Instant.fromString() returns invalid when unparsed', t => {
+    t.end();
+  });
+
+  test('Instant.fromString() returns invalid for out-of-range values', t => {
     t.end();
   });
 
