@@ -9,6 +9,8 @@ import {Util} from './impl/util';
 import {ISOParser} from './impl/isoParser';
 import {Parser} from './impl/parser';
 
+const INVALID = 'Invalid Date';
+
 function now(){
   return new Date().valueOf();
 }
@@ -16,6 +18,16 @@ function now(){
 function clone(inst, alts = {}){
   let current = {ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc};
   return new Instant(Object.assign({}, current, alts, {old: current}));
+}
+
+function validateObject(obj){
+  return Util.isNumber(obj.year) &&
+    Util.isNumber(obj.month) && obj.month >= 1 && obj.month <= 12 &&
+    Util.isNumber(obj.day) && obj.day >= 1 && obj.day <= Util.daysInMonth(obj.year, obj.month) &&
+    Util.isNumber(obj.hour) && obj.hour >= 0 && obj.hour <= 23 &&
+    Util.isNumber(obj.minute) && obj.minute >= 0 && obj.minute <= 59 &&
+    Util.isNumber(obj.second) && obj.second >= 0 && obj.second <= 59 &&
+    Util.isNumber(obj.millisecond) && obj.millisecond >= 0 && obj.millisecond <= 999;
 }
 
 //Seems like this might be more complicated than it appears. E.g.:
@@ -64,7 +76,6 @@ function tsToObj(ts, offset){
 }
 
 function objToTS(obj, zone, offset){
-
   let d = Date.UTC(obj.year,
                    obj.month - 1,
                    obj.day,
@@ -111,10 +122,6 @@ function adjustTime(inst, dur){
   return {ts: ts, o: o};
 }
 
-function isLeap(year){
-  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-}
-
 export class Instant{
 
   constructor(config = {}){
@@ -133,6 +140,11 @@ export class Instant{
       enumerable: true
     });
 
+    Object.defineProperty(this, 'valid', {
+      value: Util.isUndefined(config.valid) ? true : config.valid,
+      enumerable: false
+    });
+
     let unchanged = (config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone)),
         c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
         o = unchanged ? config.old.o : this.zone.offset(this.ts);
@@ -147,6 +159,10 @@ export class Instant{
 
   static now(){
     return new Instant({ts: now()});
+  }
+
+  static invalid(){
+    return new Instant({valid: false});
   }
 
   static fromJSDate(date){
@@ -165,15 +181,22 @@ export class Instant{
     let tsNow = now(),
         zone = opts.zone ? opts.zone : (opts.utc ? new FixedOffsetZone(0) : new LocalZone()),
         offsetProvis = zone.offset(tsNow),
-        defaulted = Object.assign(tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj),
-        [tsFinal, _] = objToTS(defaulted, zone, offsetProvis),
-        inst = new Instant({ts: tsFinal, zone: zone});
+        defaulted = Object.assign(tsToObj(tsNow, offsetProvis), {hour: 0, minute: 0, second: 0, millisecond: 0}, obj);
 
-    if (!Util.isUndefined(obj.weekday) && obj.weekday != inst.weekday()){
-      console.log("bad weekday");
+    if (validateObject(defaulted)){
+
+      let [tsFinal, _] = objToTS(defaulted, zone, offsetProvis),
+          inst = new Instant({ts: tsFinal, zone: zone});
+
+      if (!Util.isUndefined(obj.weekday) && obj.weekday != inst.weekday()){
+        return Instant.invalid();
+      }
+
+      return new Instant({ts: tsFinal, zone: zone});
     }
-
-    return new Instant({ts: tsFinal, zone: zone});
+    else{
+      return Instant.invalid();
+    }
   }
 
   static fromISO(text, opts = {acceptOffset: false, assumeUTC: false}){
@@ -186,14 +209,16 @@ export class Instant{
       return opts.acceptOffset ? inst : inst.local();
     }
     else{
-      return null;
+      return Instant.invalid();
     }
   }
 
   static fromString(text, fmt, opts = {}){
     let parser = new Parser(Locale.fromOpts(opts)),
         result = parser.parseInstant(text, fmt);
-    return Instant.fromObject(result);
+    return Object.keys(result).length === 0 ?
+      Instant.invalid() :
+      Instant.fromObject(result);
   }
 
   static fromStringExplain(text, fmt, opts = {}){
@@ -201,8 +226,13 @@ export class Instant{
     return parser.explainParse(text, fmt);
   }
 
+  isValid(){
+    return this.valid;
+  }
+
   locale(l){
     if (Util.isUndefined(l)){
+      //todo: this should return the effective locale
       return this.loc ? this.loc.code : null;
     }
     else{
@@ -254,7 +284,7 @@ export class Instant{
   }
 
   get(unit){
-    return this[unit]();
+    return this.valid ? this[unit]() : NaN;
   }
 
   set(values){
@@ -264,77 +294,77 @@ export class Instant{
   }
 
   year(v){
-    return Util.isUndefined(v) ? this.c.year : this.set({year: v});
+    return Util.isUndefined(v) ? (this.valid ? this.c.year : NaN) : this.set({year: v});
   }
 
   month(v){
-    return Util.isUndefined(v) ? this.c.month : this.set({month: v});
+    return Util.isUndefined(v) ? (this.valid ? this.c.month : NaN) : this.set({month: v});
   }
 
   day(v){
-    return Util.isUndefined(v) ? this.c.day : this.set({day: v});
+    return Util.isUndefined(v) ? (this.valid ? this.c.day : NaN) : this.set({day: v});
   }
 
   hour(v){
-    return Util.isUndefined(v) ? this.c.hour : this.set({hour: v});
+    return Util.isUndefined(v) ? (this.valid ? this.c.hour : NaN) : this.set({hour: v});
   }
 
   minute(v){
-    return Util.isUndefined(v) ? this.c.minute : this.set({minute: v});
+    return Util.isUndefined(v) ? (this.valid ? this.c.minute : NaN) : this.set({minute: v});
   }
 
   second(v){
-    return Util.isUndefined(v) ? this.c.second : this.set({second: v});
+    return Util.isUndefined(v) ? (this.valid ? this.c.second : NaN) : this.set({second: v});
   }
 
   millisecond(v){
-    return Util.isUndefined(v) ? this.c.millisecond : this.set({millisecond: v});
+    return Util.isUndefined(v) ? (this.valid ? this.c.millisecond : NaN) : this.set({millisecond: v});
   }
 
   weekday(){
-    return Util.asIfUTC(this).getUTCDay();
+    return this.valid ? Util.asIfUTC(this).getUTCDay() : NaN;
   }
 
   offset(){
-    return this.zone.offset(this.ts);
+    return this.valid ? this.zone.offset(this.ts) : NaN;
   }
 
   isInLeapYear(){
-    let year = this.year();
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    return Util.isLeapyear(this.year());
   }
 
   daysInMonth(){
-    if (this.month() == 2){
-      return isLeap(this.year()) ? 29 : 28;
-    }
-    else{
-      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][this.month() - 1];
-    }
+    return Util.daysInMonth(this.year(), this.month());
   }
 
   daysInYear(){
-    return leap(this.year()) ? 366 : 365;
+    return this.valid ? (leap(this.year()) ? 366 : 365) : NaN;
   }
 
   toFormatString(fmt, opts = {}){
-    return Formatter.create(this.loc, opts).formatInstantFromString(this, fmt);
+    return this.valid ?
+      Formatter.create(this.loc, opts).formatInstantFromString(this, fmt) :
+      INVALID;
   }
 
   toLocaleString(opts = {}){
-    return Formatter.create(this.loc.clone(opts), opts).formatInstant(this);
+    return this.valid ?
+      Formatter.create(this.loc.clone(opts), opts).formatInstant(this):
+      INVALID;
   }
 
   toISO(){
-    return Formatter.create(Locale.create('en')).formatInstantFromString(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+    return this.valid ?
+      Formatter.create(Locale.create('en')).formatInstantFromString(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"):
+      INVALID;
   }
 
   toString(){
-    return this.toISO();
+    return this.valid ? this.toISO() : INVALID;
   }
 
   valueOf(){
-    return this.ts;
+    return this.valid ? this.ts : NaN;
   }
 
   toJSON(){
@@ -342,11 +372,12 @@ export class Instant{
   }
 
   toObject(opts = {}){
+    //todo: invalid
     return Object.assign({}, this.c);
   }
 
   toJSDate(){
-    return new Date(this.ts);
+    return new Date(this.valid ? this.ts : NaN);
   }
 
   resolvedLocaleOpts(opts = {}){
@@ -354,16 +385,19 @@ export class Instant{
   }
 
   plus(durationOrNumber, type){
+    if (!this.valid) return this;
     let dur = Util.friendlyDuration(durationOrNumber, type);
     return clone(this, adjustTime(this, dur));
   }
 
   minus(durationOrNumber, type){
+    if (!this.valid) return this;
     let dur = Util.friendlyDuration(durationOrNumber, type).negate();
     return clone(this, adjustTime(this, dur));
   }
 
   startOf(unit){
+    if (!this.valid) return this;
     let o = {};
     switch (unit) {
       case 'year': o.month = 1;
@@ -377,13 +411,16 @@ export class Instant{
   }
 
   endOf(unit){
-    return this
-      .startOf(unit)
-      .plus(1, unit)
-      .minus(1, 'milliseconds');
+    return this.valid ?
+      this
+        .startOf(unit)
+        .plus(1, unit)
+        .minus(1, 'milliseconds'):
+      this;
   }
 
   diff(otherInstant, ...units){
+    if (!this.valid) return this;
 
     if (units.length == 0) units = ['milliseconds'];
 
@@ -451,14 +488,15 @@ export class Instant{
   }
 
   diffNow(...units){
-    return this.diff(Instant.now(), ...units);
+    return this.valid ? this.diff(Instant.now(), ...units) : Duration.invalid();
   }
 
   until(otherInstant, opts = {}){
-    return Interval.fromInstants(this, otherInstant, opts);
+    return this.valid ? Interval.fromInstants(this, otherInstant, opts) : Duration.invalid();
   }
 
   hasSame(otherInstant, unit){
+    if (!this.valid) return false;
     if (unit === 'millisecond'){
       return this.valueOf() === otherInstant.valueOf();
     }
@@ -470,7 +508,9 @@ export class Instant{
 
   equals(other){
     //todo - check other stuff?
-    return this.valueOf() === other.valueOf();
+    return (this.valid && other.valid) ?
+      this.valueOf() === other.valueOf() :
+      false;
   }
 
   static min(...instants){

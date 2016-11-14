@@ -12,7 +12,7 @@ export class Info{
   }
 
   static monthsFormat(length, locale, numbering){
-    return new Locale(locale, numbering).monthsFormat(length);
+    return new Locale(locale, numbering).months(length, true);
   }
 
   static weekdays(length, locale, numbering){
@@ -20,6 +20,6 @@ export class Info{
   }
 
   static weekdaysFormat(length, locale, numbering){
-    return new Locale(locale, numbering).weekdaysFormat(length);
+    return new Locale(locale, numbering).weekdays(length, true);
   }
 }

@@ -18,6 +18,8 @@ import {Instant} from 'luxon';
 // 2. Let the user actually do a real polyfill where they please once Chrome/Node supports formatToParts OR Intl supports zones.
 //    This is impractical now because we still want access to the Chrome's native Intl's TZ support elsewhere.
 
+let localeCache = new Map();
+
 function intlConfigString(localeCode, nums, cal){
   let loc = localeCode || new Intl.DateTimeFormat().resolvedOptions().locale;
   loc = Array.isArray(localeCode) ? localeCode : [localeCode];
@@ -67,16 +69,33 @@ export class Locale{
     return Locale.create(opts.code, opts.nums, opts.cal);
   }
 
-  //todo: add caching
   static create(code, nums, cal){
-    return new Locale(code, nums, cal);
+
+    let codeR = code || 'en-us',
+        numsR = nums || null,
+        calR = cal || null,
+        cacheKey = `${codeR}|${numsR}|${calR}`,
+        cached = localeCache.get(cacheKey);
+
+    if (cached){
+      return cached;
+    }
+    else {
+      let fresh = new Locale(codeR, numsR, calR);
+      localeCache.set(cacheKey, fresh);
+      return fresh;
+    }
   }
 
   constructor(code, numbering, calendar){
-    Object.defineProperty(this, 'code', {value: code || 'en-us', enumerable: true});
+    Object.defineProperty(this, 'code', {value: code , enumerable: true});
     Object.defineProperty(this, 'nums', {value: numbering || null, enumerable: true});
     Object.defineProperty(this, 'cal', {value: calendar || null, enumerable: true});
     Object.defineProperty(this, 'intl', {value: intlConfigString(this.code, this.num, this.cal), enumerable: false});
+
+    //cached usefulness
+    Object.defineProperty(this, 'weekdaysCache', {value: {format: {}, standalone: {}}, enumerable: false});
+    Object.defineProperty(this, 'monthsCache', {value: {format: {}, standalone: {}}, enumerable: false});
   }
 
   clone(alts){
@@ -85,20 +104,22 @@ export class Locale{
                          alts.cal || this.cal);
   }
 
-  months(length){
-    return mapMonths((inst) => this.extract(inst, {month: length}, 'month'));
+  months(length, format = false){
+    let intl = format ? {month: length, day: 'numeric'} : {month: length},
+        formatStr = format ? 'format' : 'standalone';
+    if (!this.monthsCache[formatStr][length]) {
+      this.monthsCache[formatStr][length] = mapMonths((inst) => this.extract(inst, intl, 'month'));;
+    }
+    return this.monthsCache[formatStr][length];
   }
 
-  monthsFormat(length){
-    return mapMonths((inst) => this.extract(inst, {month: length, day: 'numeric'}, 'month'));
-  }
-
-  weekdays(length){
-    return mapWeekdays((inst) => this.extract(inst, {weekday: length}, 'weekday'));
-  }
-
-  weekdaysFormat(length){
-    return mapWeekdays((inst) => this.extract(inst, {weekday: length, year: 'numeric', month: 'long', day: 'numeric'}, 'weekday'));
+  weekdays(length, format = false){
+    let intl = format ? {weekday: length, year: 'numeric', month: 'long', day: 'numeric'} : {weekday: length},
+        formatStr = format ? 'format' : 'standalone';
+    if (!this.weekdaysCache[formatStr][length]) {
+      this.weekdaysCache[formatStr][length] = mapWeekdays((inst) => this.extract(inst, intl, 'weekday'));
+    }
+    return this.weekdaysCache[formatStr][length];
   }
 
   meridiems(length){

@@ -2,13 +2,17 @@ import {Duration} from "../duration";
 
 export class Util{
   static friendlyDuration(durationOrNumber, type){
-    return typeof durationOrNumber === 'number' ?
+    return Util.isNumber(durationOrNumber) ?
       Duration.fromLength(durationOrNumber, type) :
       durationOrNumber;
   }
 
   static isUndefined(o){
     return typeof(o) === 'undefined';
+  }
+
+  static isNumber(o){
+    return typeof(o) === 'number';
   }
 
   static pad(input, n = 2){
@@ -48,5 +52,18 @@ export class Util{
   static zip(...arrays){
     return arrays[0].map(
       (_, c) => arrays.map(arr => arr[c]));
+  }
+
+  static isLeapYear(year){
+    return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  }
+
+  static daysInMonth(year, month){
+    if (month === 2){
+      return Util.isLeapYear(year) ? 29 : 28;
+    }
+    else{
+      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+    }
   }
 }

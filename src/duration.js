@@ -66,6 +66,12 @@ export class Duration{
       value: config.loc || Locale.create(),
       enumerable: true
     });
+
+    Object.defineProperty(this, 'valid', {value: config.valid || true, enumerable: false});
+  }
+
+  static invalid(){
+    return new Duration({valid: false});
   }
 
   static fromLength(count, unit = 'milliseconds'){
@@ -173,7 +179,7 @@ export class Duration{
         }
 
         //plus anything that's already in this unit
-        if (typeof(vals[k]) === 'number'){
+        if (Util.isNumber(vals[k])){
           built[k] += vals[k];
         }
 
@@ -189,7 +195,7 @@ export class Duration{
       }
 
       //otherwise, keep it in the wings to boil it later
-      else if (typeof(vals[k]) === 'number'){
+      else if (Util.isNumber(vals[k])){
         accumulated[k] = vals[k];
       }
     }

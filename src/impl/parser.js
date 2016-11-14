@@ -48,12 +48,12 @@ function unitForToken(token, loc){
           //months
         case 'M': return intUnit(oneOrTwo);
         case 'MM': return intUnit(two);
-        case 'MMM': return oneOf(loc.monthsFormat('short'), 1);
-        case 'MMMM': return oneOf(loc.monthsFormat('long'), 1);
+        case 'MMM': return oneOf(loc.months('short', true), 1);
+        case 'MMMM': return oneOf(loc.months('long', true), 1);
         case 'L': return intUnit(oneOrTwo);
         case 'LL': return intUnit(two);
-        case 'LLL': return oneOf(loc.months('short'), 1);
-        case 'LLLL': return oneOf(loc.months('long'), 1);
+        case 'LLL': return oneOf(loc.months('short', false), 1);
+        case 'LLLL': return oneOf(loc.months('long', false), 1);
 
           //dates
         case 'd': return intUnit(oneOrTwo);

@@ -71,7 +71,7 @@ export let parse = () => {
 
   test('Instant.fromISO() rejects poop', t => {
 
-    let rejects = (s) => t.notOk(Instant.fromISO(s));
+    let rejects = (s) => t.notOk(Instant.fromISO(s).isValid());
 
     rejects(null);
     rejects('');
@@ -154,12 +154,13 @@ export let parse = () => {
     t.is(i.month(), 5);
     t.is(i.day(), 25);
 
+    i = Instant.fromString('Monday, 05/25/1982', 'EEEE, LL/dd/yyyy');
+    t.notOk(i.isValid());
+
     i = Instant.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', {code: 'fr'});
     t.is(i.year(), 1982);
     t.is(i.month(), 5);
     t.is(i.day(), 25);
-
-    //todo: same for a bad day, returns invalid
 
     t.end();
   });
@@ -177,6 +178,14 @@ export let parse = () => {
   });
 
   test('Instant.fromString() returns invalid for out-of-range values', t => {
+
+    let rejects = (s, fmt, opts = {}) => t.notOk(Instant.fromString(s, fmt, opts).isValid(), opts);
+
+    rejects('Tuesday, 05/25/1982', 'EEEE, MM/dd/yyyy', {code: 'fr'});
+    rejects('Giberish, 05/25/1982', 'EEEE, MM/dd/yyyy');
+    rejects('14/25/1982', 'MM/dd/yyyy');
+    rejects('05/46/1982', 'MM/dd/yyyy');
+
     t.end();
   });
 
