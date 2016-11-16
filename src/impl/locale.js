@@ -1,6 +1,6 @@
 import * as Intl from 'intl';
 import {Util} from './util';
-import {Instant} from 'luxon';
+import {Instant} from '../instant';
 
 //We use the Intl polyfill exclusively here, for these reasons:
 // 1. We need formatToParts(), which isn't implemented anywhere
@@ -96,6 +96,7 @@ export class Locale{
     //cached usefulness
     Object.defineProperty(this, 'weekdaysCache', {value: {format: {}, standalone: {}}, enumerable: false});
     Object.defineProperty(this, 'monthsCache', {value: {format: {}, standalone: {}}, enumerable: false});
+    Object.defineProperty(this, 'meridiemCache', {value: null, enumerable: false, writable: true});
   }
 
   clone(alts){
@@ -122,7 +123,18 @@ export class Locale{
     return this.weekdaysCache[formatStr][length];
   }
 
-  meridiems(length){
+  meridiems(){
+    let intl =  {hour: 'numeric', hour12: true};
+
+    //In theory there could be aribitrary day periods. We're gonna assume there are exactly two
+    //for AM and PM. This is probably wrong, but it's makes parsing way easier.
+    if (!this.meridiemCache) {
+      this.meridiemCache = [
+        Instant.fromObject({year: 2016, month: 11, day: 13, hour: 9}, {utc: true}),
+        Instant.fromObject({year: 2016, month: 11, day: 13, hour: 19}, {utc: true})
+      ].map((inst) => this.extract(inst, intl, 'dayPeriod'));
+    }
+    return this.meridiemCache;
   }
 
   eras(length){
@@ -155,13 +167,16 @@ export class Locale{
   instFormatter(inst, intlOpts = {}){
     let d, z;
 
-    if (inst.zone.universal()){
+    if (inst.zone.universal){
+      //if we have a fixed-offset zone that isn't actually UTC,
+      //(like UTC+8), we need to make due with just displaying
+      //the time in UTC; the formatter has not idea what UTC+8 means
       d = Util.asIfUTC(inst);
-      z = 'UTC'; //this is wrong, but there's no way to tell the formatter that
+      z = 'UTC';
     }
     else {
       d = inst.toJSDate();
-      z = inst.zone.name();
+      z = inst.zone.name;
     }
 
     let realIntlOpts = Object.assign({}, intlOpts);

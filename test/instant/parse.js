@@ -9,40 +9,34 @@ export let parse = () => {
 
   test('Instant.fromISO() parses as local by default', t => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123");
-    t.is(inst.zone.name(), null, "Still in the local zone");
     t.deepEqual(inst.toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
     t.end();
   });
 
   test('Instant.fromISO() uses the offset provided, but keeps the instant as local', t => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123+06:00");
-    t.is(inst.zone.name(), null, "Still in the local zone");
     t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123});
     t.end();
   });
 
   test('Instant.fromISO() uses the Z if provided, but keeps the instant as local', t => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123Z");
-    t.is(inst.zone.name(), null, "Still in the local zone");
     t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
     t.end();
   });
 
   test('Instant.fromISO() optionally adopts the UTC offset provided', t => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123+06:00", {acceptOffset: true});
-    t.is(inst.zone.name(), 'UTC+6');
+    t.is(inst.zone.name, 'UTC+6');
     t.deepEqual(inst.toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
     t.end();
   });
 
   test('Instant.fromISO() optionally considers the date UTC if not otherwise specified', t => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123", {assumeUTC: true});
-    t.is(inst.zone.name(), null, "It's still a locale instant");
     t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
 
-
     inst = Instant.fromISO("2016-05-25T09:08:34.123+06:00", {assumeUTC: true});
-    t.is(inst.zone.name(), null, "It's still a locale instant");
     t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123});
     t.end();
   });
@@ -114,6 +108,19 @@ export let parse = () => {
   });
 
   test('Instant.fromString() parses meridiems', t => {
+
+    let i = Instant.fromString('1982/05/25 9 PM', 'yyyy/MM/dd h a');
+    t.is(i.year(), 1982);
+    t.is(i.month(), 5);
+    t.is(i.day(), 25);
+    t.is(i.hour(), 21);
+
+    i = Instant.fromString('1982/05/25 9 AM', 'yyyy/MM/dd h a');
+    t.is(i.year(), 1982);
+    t.is(i.month(), 5);
+    t.is(i.day(), 25);
+    t.is(i.hour(), 9);
+
     t.end();
   });
 

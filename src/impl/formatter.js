@@ -132,13 +132,13 @@ export class Formatter {
       case 'HH': return this.num(inst.hour(), 2);
 
       //offset
-      case 'Z': return formatOffset({format: 'narrow'});         //like +6
-      case 'ZZ': return formatOffset({format: 'short'});         //like +06:00
+      case 'Z': return formatOffset({format: 'narrow'});       //like +6
+      case 'ZZ': return formatOffset({format: 'short'});       //like +06:00
+      case 'ZZZ': return inst.offsetNameLong();               //like Eastern Standard Time
+      case 'ZZZZ': return inst.offsetNameShort();               //like EST
 
-      //these don't work because we need TZ + formatToParts
-      case 'z': return null;                                     //like EST
-      case 'zz': return null;                                    //like Eastern Standard Time
-      case 'zzz': return null;                                   //like America/New_York
+        //zone
+      case 'z': return inst.timezoneName();                    //like America/New_York
 
       //meridiems
       case 'a': return string({hour: 'numeric', hour12: true}, 'dayPeriod');
@@ -184,6 +184,10 @@ export class Formatter {
       case 'GGGGG': return string({era: 'narrow'}, 'era');              //like A
 
       //macros
+      //Some of these output take zones or offsets. We have to choose between that internationalization, though
+      //since Node doesn't ship with Itln data and the polyfill doesn't support zones. Revisit when
+      //either of those change or I give up on this dance and require a special Node build.
+
       case 'D': return this.formatInstant(inst, {year: 'numeric', month: 'numeric', day: 'numeric'});
       case 'DD': return this.formatInstant(inst, {year: 'numeric', month: 'short', day: 'numeric'});
       case 'DDD': return this.formatInstant(inst, {year: 'numeric', month: 'long', day: 'numeric'});

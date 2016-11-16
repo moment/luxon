@@ -66,4 +66,34 @@ export class Util{
       return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
     }
   }
+
+  //Huge hack. The point of this is to extract the named offset info
+  //WITHOUT using the polyfill OR formatToParts, since the poly doesn't support
+  //zones and real JS doesn't support formatToParts.
+  //Only works if offset name is at the end of the string, so probably spews
+  //junk for Arabic. Also note that this won't internationalize in Node
+  //unless you have an Intl build.
+  static parseZoneInfo(ts, offsetFormat, localeCode, timeZone = null){
+    let date = new Date(ts),
+        intl = {
+          hour12: false, //avoid AM/PM
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        };
+
+    if (timeZone){
+      intl.timeZone = timeZone;
+    }
+
+    let without = new Intl.DateTimeFormat(localeCode, intl).format(date),
+        modified = Object.assign({timeZoneName: offsetFormat}, intl),
+        included = new Intl.DateTimeFormat(localeCode, modified).format(date),
+        diffed = included.substring(without.length),
+        trimmed = diffed.replace(/^[, ]+/, '');
+
+    return trimmed;
+  }
 }

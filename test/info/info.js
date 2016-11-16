@@ -116,4 +116,14 @@ export let info = () => {
 
     t.end();
   });
+
+  //------
+  // .meridiems()
+  //-------
+
+  test('Info.weekdaysFormat lists all the weekdays', t => {
+    t.deepEqual(Info.meridiems('en'), ['AM', 'PM']);
+    t.deepEqual(Info.meridiems('de'), ['vorm.', 'nachm.']);
+    t.end();
+  });
 };

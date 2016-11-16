@@ -7,7 +7,7 @@ export class FixedOffsetZone {
     this.fixed = offset;
   }
 
-  name(){
+  get name(){
     let hours = this.fixed/60,
         minutes = Math.abs(this.fixed % 60),
         sign = hours > 0 ? '+' : '-',
@@ -17,7 +17,7 @@ export class FixedOffsetZone {
     return this.fixed == 0 ? 'UTC' : `UTC${number}`;
   }
 
-  universal() {
+  get universal() {
     return true;
   }
 

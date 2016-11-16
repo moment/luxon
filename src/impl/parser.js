@@ -72,6 +72,7 @@ function unitForToken(token, loc){
         case 'SSS': return intUnit(three);
 
           //meridiem
+        case 'a': return oneOf(loc.meridiems(), 0);
 
           //weekdays
         case 'E': return intUnit(one);
@@ -79,6 +80,12 @@ function unitForToken(token, loc){
         case 'EEEE': return oneOf(loc.weekdays('long'), 0);
 
           //offset/zone
+        case 'Z':
+        case 'ZZ':
+          //we don't support ZZZ (PST) or ZZZZ (Pacific Standard Time) in parsing
+          //because we don't have any way to figure out what they are
+
+        case 'z':
 
         default: return literal(t);
 
@@ -140,7 +147,7 @@ function instantFromMatches(matches){
     };
   };
 
-  if (matches.h && matches.a){
+  if (matches.h && matches.a === 1){
     matches.h += 12;
   }
 

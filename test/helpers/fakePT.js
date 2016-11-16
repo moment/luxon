@@ -1,11 +1,18 @@
 export class FakePT {
 
-  name(opts = {format: 'long'}){
-    return 'Pacific Time';
+  get name(){
+    return 'Fake Pacific Time';
   }
 
-  universal() {
+  get universal() {
     return false;
+  }
+
+  offsetName(ts, opts = {}){
+    let off = this.offset(ts);
+    return opts.format == 'long' ?
+      (off === -8 ? 'PST' : 'PDT') :
+    (off === -8 ? 'Pacific Standard Time' : 'Pacific Daylight Time');
   }
 
   offset(ts){

@@ -1,5 +1,6 @@
 import test from 'tape';
 import {Instant} from 'luxon';
+import {FakePT} from '../helpers/fakePT';
 
 export let format = () => {
 
@@ -158,6 +159,24 @@ export let format = () => {
     t.is(i.useUTCOffset(390).toFormatString('ZZ'), '+06:30');
     t.is(i.useUTCOffset(-360).toFormatString('ZZ'), '-06:00');
     t.is(i.useUTCOffset(-390).toFormatString('ZZ'), '-06:30');
+    t.end();
+  });
+
+  test("Instant#toFormatString('ZZZ') returns the short offset name", t => {
+    let i = inst().rezone(new FakePT());
+    t.is(i.toFormatString('ZZZ'), 'PDT');
+    t.end();
+  });
+
+  test("Instant#toFormatString('ZZZZ') returns the full offset name", t => {
+    let i = inst().rezone(new FakePT());
+    t.is(i.toFormatString('ZZZZ'), 'Pacific Daylight Time');
+    t.end();
+  });
+
+  test("Instant#toFormatString('z') returns the zone name", t => {
+    let i = inst().rezone(new FakePT());
+    t.is(i.toFormatString('z'), 'Fake Pacific Time');
     t.end();
   });
 

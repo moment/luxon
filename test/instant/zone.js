@@ -14,7 +14,6 @@ export let zone = () => {
 
   test('timezone defaults to local', t => {
     let inst = instant();
-    t.is(inst.timezoneName(), null);
     t.is(inst.isOffsetFixed(), false);
     t.end();
   });
@@ -60,7 +59,6 @@ export let zone = () => {
     let relocaled = instant().utc().local(),
         expected = new Date(millis).getHours();
 
-    t.is(relocaled.timezoneName(), null);
     t.is(relocaled.isOffsetFixed(), false);
     t.is(relocaled.valueOf(), millis);
     t.is(relocaled.hour(), expected);
@@ -76,7 +74,7 @@ export let zone = () => {
 
     let zoned = instant().rezone(new FakePT());
 
-    t.is(zoned.timezoneName(), 'Pacific Time');
+    t.is(zoned.timezoneName(), 'Fake Pacific Time');
     t.is(zoned.isOffsetFixed(), false);
     t.is(zoned.valueOf(), millis);
     t.is(zoned.hour(), 21); //pacific daylight time
@@ -86,7 +84,7 @@ export let zone = () => {
 
   test('rezone accepts a keepCalendarTime option', t => {
     let zoned = instant().utc().rezone(new FakePT(), {keepCalendarTime: true});
-    t.is(zoned.timezoneName(), 'Pacific Time');
+    t.is(zoned.timezoneName(), 'Fake Pacific Time');
     t.is(zoned.year(), 1982);
     t.is(zoned.month(), 5);
     t.is(zoned.day(), 25);
@@ -94,7 +92,7 @@ export let zone = () => {
     t.is(zoned.isOffsetFixed(), false);
 
     let zonedMore = zoned.rezone(new FakeET(), {keepCalendarTime: true});
-    t.is(zonedMore.timezoneName(), 'Eastern Time');
+    t.is(zonedMore.timezoneName(), 'Fake Eastern Time');
     t.is(zonedMore.year(), 1982);
     t.is(zonedMore.month(), 5);
     t.is(zonedMore.day(), 25);
@@ -126,7 +124,7 @@ export let zone = () => {
   });
 
   //------
-  // magic zone
+  // timezone
   //------
 
   test('magic zones are magic', t => {
@@ -135,8 +133,10 @@ export let zone = () => {
     let zoned = instant().timezone('Europe/Paris');
 
     t.is(zoned.timezoneName(), 'Europe/Paris');
+    t.is(zoned.offsetNameShort(), 'GMT+2'); //not convinced this is universal. Could also be 'CEDT'
+    t.is(zoned.offsetNameLong(), 'Central European Summer Time');
     t.is(zoned.valueOf(), millis);
-    t.is(zoned.hour(), 6); //cest is +2
+    t.is(zoned.hour(), 6); //cedt is +2
     t.end();
   });
 };

@@ -1,15 +1,24 @@
+import {Util} from "./util";
+
 export class IntlZone {
 
   constructor(name){
     this.zoneName = name;
   }
 
-  name(opts = {}){
+  get name(){
     return this.zoneName;
   }
 
-  universal() {
+  get universal() {
     return false;
+  }
+
+  offsetName(ts, opts = {}){
+    return Util.parseZoneInfo(ts,
+                              opts.offsetFormat = opts.format || 'long',
+                              opts.localeCode || 'en-us',
+                              this.zoneName);
   }
 
   offset(ts){

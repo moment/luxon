@@ -267,11 +267,19 @@ export class Instant{
   }
 
   timezoneName(opts = {}){
-    return this.zone.name(opts);
+    return this.zone.name;
+  }
+
+  offsetNameShort(){
+    return this.zone.offsetName(this.ts, {format: 'short', localeCode: this.locale.code});
+  }
+
+  offsetNameLong(){
+    return this.zone.offsetName(this.ts, {format: 'long', localeCode: this.locale.code});
   }
 
   isOffsetFixed(){
-    return this.zone.universal();
+    return this.zone.universal;
   }
 
   isInDST(){

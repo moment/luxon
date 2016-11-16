@@ -1,11 +1,18 @@
 export class FakeET {
 
-  name(opts = {format: 'long'}){
-    return 'Eastern Time';
+  get name(){
+    return 'Fake Eastern Time';
   }
 
-  universal() {
+  get universal() {
     return false;
+  }
+
+  offsetName(ts, opts = {}){
+    let off = this.offset(ts);
+    return opts.format == 'long' ?
+      (off === -5 ? 'EST' : 'EDT') :
+      (off === -5 ? 'Eastern Standard Time' : 'Eastern Daylight Time');
   }
 
   offset(ts){
