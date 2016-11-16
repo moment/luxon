@@ -9,10 +9,12 @@ Definitely:
  - Invalid instances (partially done)
  - Weekyear/week
  - Interval formatting
+ - Deeper dive on timezones
  - Documentation & tooling
 
 Mayyyybe:
  - Intl polyfill contributions
- - Calendar abstraction?
+ - Non-intl defaults
+ - Calendar abstraction
  - Humanization plugin
- - Date type?
+ - Date type
