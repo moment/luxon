@@ -66,12 +66,12 @@ function mapWeekdays(f){
 export class Locale{
 
   static fromOpts(opts){
-    return Locale.create(opts.code, opts.nums, opts.cal);
+    return Locale.create(opts.localeCode, opts.nums, opts.cal);
   }
 
-  static create(code, nums, cal){
+  static create(localeCode, nums, cal){
 
-    let codeR = code || 'en-us',
+    let codeR = localeCode || 'en-us',
         numsR = nums || null,
         calR = cal || null,
         cacheKey = `${codeR}|${numsR}|${calR}`,
@@ -87,11 +87,11 @@ export class Locale{
     }
   }
 
-  constructor(code, numbering, calendar){
-    Object.defineProperty(this, 'code', {value: code , enumerable: true});
+  constructor(localeCode, numbering, calendar){
+    Object.defineProperty(this, 'localeCode', {value: localeCode , enumerable: true});
     Object.defineProperty(this, 'nums', {value: numbering || null, enumerable: true});
     Object.defineProperty(this, 'cal', {value: calendar || null, enumerable: true});
-    Object.defineProperty(this, 'intl', {value: intlConfigString(this.code, this.num, this.cal), enumerable: false});
+    Object.defineProperty(this, 'intl', {value: intlConfigString(this.localeCode, this.num, this.cal), enumerable: false});
 
     //cached usefulness
     Object.defineProperty(this, 'weekdaysCache', {value: {format: {}, standalone: {}}, enumerable: false});
@@ -100,7 +100,7 @@ export class Locale{
   }
 
   clone(alts){
-    return Locale.create(alts.code || this.code,
+    return Locale.create(alts.localeCode || this.localeCode,
                          alts.nums || this.nums,
                          alts.cal || this.cal);
   }

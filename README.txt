@@ -5,14 +5,14 @@ Roadmap
 
 Definitely:
 
- - Parsing
- - Invalid instances
+ - Parsing (partially done)
+ - Invalid instances (partially done)
  - Weekyear/week
  - Interval formatting
- - Intl polyfill contributions
  - Documentation & tooling
 
 Mayyyybe:
+ - Intl polyfill contributions
  - Calendar abstraction?
  - Humanization plugin
  - Date type?

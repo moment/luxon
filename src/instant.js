@@ -233,7 +233,7 @@ export class Instant{
   locale(l){
     if (Util.isUndefined(l)){
       //todo: this should return the effective locale
-      return this.loc ? this.loc.code : null;
+      return this.loc ? this.loc.localeCode : null;
     }
     else{
       return clone(this, {loc: Locale.create(l)});
@@ -271,11 +271,11 @@ export class Instant{
   }
 
   offsetNameShort(){
-    return this.zone.offsetName(this.ts, {format: 'short', localeCode: this.locale.code});
+    return this.zone.offsetName(this.ts, {format: 'short', localeCode: this.locale.localeCode});
   }
 
   offsetNameLong(){
-    return this.zone.offsetName(this.ts, {format: 'long', localeCode: this.locale.code});
+    return this.zone.offsetName(this.ts, {format: 'long', localeCode: this.locale.localeCode});
   }
 
   isOffsetFixed(){
