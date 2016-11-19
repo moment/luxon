@@ -2,7 +2,7 @@ Just playing around, for now.
 
 # Planned
 
- - [https://github.com/icambron/luxon/issues/3](This big list of issues)
+ - [This big list of issues](https://github.com/icambron/luxon/issues/3)
  -  Documentation & tooling
 
 # Mayyyybe
