@@ -3,9 +3,10 @@ import {Util} from './util';
 import {Instant} from '../instant';
 
 //We use the Intl polyfill exclusively here, for these reasons:
-// 1. We need formatToParts(), which isn't implemented anywhere
+// 1. We need formatToParts(), which isn't in Node
 // 2. Node doesn't ship with real locale support unless you do this: https://github.com/nodejs/node/wiki/Intl
-// 3. It made for a cleaner job.
+// 3. It standardizes the tests across different browsers
+// 4. It made for a cleaner job.
 
 //However, it has some drawbacks:
 // 1. It's an onerous requirement
@@ -132,8 +133,9 @@ export class Locale{
       this.meridiemCache = [
         Instant.fromObject({year: 2016, month: 11, day: 13, hour: 9}, {utc: true}),
         Instant.fromObject({year: 2016, month: 11, day: 13, hour: 19}, {utc: true})
-      ].map((inst) => this.extract(inst, intl, 'dayPeriod'));
+      ].map((inst) => this.extract(inst, intl, 'dayperiod'));
     }
+
     return this.meridiemCache;
   }
 
@@ -145,9 +147,10 @@ export class Locale{
 
   extract(inst, intlOpts, field){
     let [df, d] = this.instFormatter(inst, intlOpts),
-        results = df.formatToParts(d);
+        results = df.formatToParts(d),
+        matching = results.find((m) => m.type.toLowerCase() === field);
 
-    return results.find((m) => m.type == field).value;
+    return matching ? matching.value : null;
   }
 
   numberFormatter(opts = {}, intlOpts = {}){
@@ -170,7 +173,7 @@ export class Locale{
     if (inst.zone.universal){
       //if we have a fixed-offset zone that isn't actually UTC,
       //(like UTC+8), we need to make due with just displaying
-      //the time in UTC; the formatter has not idea what UTC+8 means
+      //the time in UTC; the formatter has no idea what UTC+8 means
       d = Util.asIfUTC(inst);
       z = 'UTC';
     }

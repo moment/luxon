@@ -141,7 +141,7 @@ export class Formatter {
       case 'z': return inst.timezoneName();                    //like America/New_York
 
       //meridiems
-      case 'a': return string({hour: 'numeric', hour12: true}, 'dayPeriod');
+      case 'a': return string({hour: 'numeric', hour12: true}, 'dayperiod');
 
       //dates
       case 'd': return this.num(inst.day());
