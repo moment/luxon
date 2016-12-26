@@ -54,16 +54,6 @@ function processLib(opts){
   };
 }
 
-function resolveLib(opts = {}){
-  return {
-    //It's sort of annoying that we compile the whole library into the tests.
-    //Ideally, there would be a Rollup option to replace it with a customized
-    //external import, so I could point it at dist/cjs/luxon.js
-    resolveId: (importee) =>
-      importee === 'luxon' ? path.resolve(__dirname, 'src/luxon.js') : null
-  };
-}
-
 gulp.task('cjs', processLib({
   format: 'cjs',
   rollupOpts: {external: ['intl']}
@@ -103,7 +93,6 @@ gulp.task('test', function(){
     entry: 'test/index.js',
     format: 'cjs',
     rollupOpts: {
-      plugins: [resolveLib()],
       external: ['tape', 'intl', 'luxon'],
       paths: {
         luxon: '../../dist/cjs/luxon.js'
@@ -125,9 +114,8 @@ gulp.task('browserTest', ['global'], function(){
       entry: 'test/index.js',
       format: 'iife',
       rollupOpts: {
-        plugins: [resolveLib()],
-        external: ['intl', 'tape'],
-        globals: {intl: 'IntlPolyfill', tape: 'tape'}
+        external: ['intl', 'tape', 'luxon'],
+        globals: {intl: 'IntlPolyfill', tape: 'tape', luxon: 'luxon'}
       }
     })
     .pipe(source('index.js'))
