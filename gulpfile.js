@@ -104,7 +104,10 @@ gulp.task('test', function(){
     format: 'cjs',
     rollupOpts: {
       plugins: [resolveLib()],
-      external: ['tape', 'intl']
+      external: ['tape', 'intl', 'luxon'],
+      paths: {
+        luxon: '../../dist/cjs/luxon.js'
+      }
     }
   })
     .pipe(source('index.js'))
