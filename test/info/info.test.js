@@ -1,6 +1,5 @@
-import {Info} from 'luxon';
+import {Info} from '../../dist/cjs/luxon'
 
-export let info = () => {
 
   //------
   // .months()
@@ -89,4 +88,3 @@ export let info = () => {
     expect(Info.meridiems('en')).toEqual(['AM', 'PM']);
     expect(Info.meridiems('de')).toEqual(['vorm.', 'nachm.']);
   });
-};

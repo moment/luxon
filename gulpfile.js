@@ -94,23 +94,7 @@ gulp.task('global', processLib({
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
 gulp.task('test', function(){
-  process({
-    entry: 'test/index.test.js',
-    format: 'cjs',
-    rollupOpts: {
-      external: ['luxon'],
-      paths: {
-        luxon: '../../dist/cjs/luxon.js'
-      }
-    }
-  })
-    .pipe(source('index.test.js'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('.compiled-tests/node'))
-    .pipe(filter(['.compiled-tests/node/*.js']))
-    .pipe(jest()) ;
+  gulp.src("test").pipe(jest());
 });
 
 gulp.task('default', ['build']);

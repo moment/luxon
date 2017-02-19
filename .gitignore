@@ -1,6 +1,7 @@
 node_modules
 .tern-port
-.compiled-tests
 dist
 #*
 .#*
+coverage/
+
