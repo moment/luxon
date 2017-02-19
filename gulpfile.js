@@ -2,14 +2,13 @@ let babel = require('rollup-plugin-babel'),
     buffer = require('vinyl-buffer'),
     filter = require('gulp-filter'),
     gulpif = require('gulp-if'),
+    jest = require('gulp-jest').default,
     lazypipe = require('lazypipe'),
     path = require('path'),
     rename = require('gulp-rename'),
-    reporter = require('tap-min'),
     rollup = require('rollup-stream'),
     source = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
-    tape = require('gulp-tape'),
     uglify = require('gulp-uglify'),
     gulp = require('gulp');
 
@@ -25,7 +24,13 @@ function process(inopts){
   );
 
   if (inopts.compile || typeof(inopts.compile) == 'undefined'){
-    opts.plugins.push(babel());
+    opts.plugins.push(babel({
+      babelrc: false,
+      presets: [
+        ['es2015', {modules: false}]
+      ],
+      plugins: ['external-helpers']
+    }));
   }
 
   return rollup(opts);
@@ -90,40 +95,22 @@ gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
 gulp.task('test', function(){
   process({
-    entry: 'test/index.js',
+    entry: 'test/index.test.js',
     format: 'cjs',
     rollupOpts: {
-      external: ['tape', 'intl', 'luxon'],
+      external: ['luxon'],
       paths: {
         luxon: '../../dist/cjs/luxon.js'
       }
     }
   })
-    .pipe(source('index.js'))
+    .pipe(source('index.test.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('.compiled-tests/node'))
     .pipe(filter(['.compiled-tests/node/*.js']))
-    .pipe(tape({reporter: reporter()})) ;
-});
-
-gulp.task('browserTest', ['global'], function(){
-  gulp
-    process({
-      entry: 'test/index.js',
-      format: 'iife',
-      rollupOpts: {
-        external: ['intl', 'tape', 'luxon'],
-        globals: {intl: 'IntlPolyfill', tape: 'tape', luxon: 'luxon'}
-      }
-    })
-    .pipe(source('index.js'))
-    .pipe(gulp.dest('.compiled-tests/browser'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('.compiled-tests/browser'));
+    .pipe(jest()) ;
 });
 
 gulp.task('default', ['build']);

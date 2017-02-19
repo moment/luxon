@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Duration} from 'luxon';
 
 export let math = () => {
@@ -7,75 +6,68 @@ export let math = () => {
   // #plus()
   //------
 
-  test("Duration#plus add straightforward durations", t => {
+  it("Duration#plus add straightforward durations", () => {
     let first = Duration.fromObject({hours: 4, minutes: 12, seconds: 2}),
         second = Duration.fromObject({hours: 1, seconds: 6, milliseconds: 14}),
         result = first.plus(second);
 
-    t.is(result.hours(), 5);
-    t.is(result.minutes(), 12);
-    t.is(result.seconds(), 8);
-    t.is(result.milliseconds(), 14);
-    t.end();
+    expect(result.hours()).toBe(5);
+    expect(result.minutes()).toBe(12);
+    expect(result.seconds()).toBe(8);
+    expect(result.milliseconds()).toBe(14);
   });
 
-  test("Duration#plus noops empty druations", t => {
+  it("Duration#plus noops empty druations", () => {
     let first = Duration.fromObject({hours: 4, minutes: 12, seconds: 2}),
         second = Duration.fromObject({}),
         result = first.plus(second);
 
-    t.is(result.hours(), 4);
-    t.is(result.minutes(), 12);
-    t.is(result.seconds(), 2);
-    t.end();
+    expect(result.hours()).toBe(4);
+    expect(result.minutes()).toBe(12);
+    expect(result.seconds()).toBe(2);
   });
 
-  test("Duration#plus adds negatives", t => {
+  it("Duration#plus adds negatives", () => {
     let first = Duration.fromObject({hours: 4, minutes: -12, seconds: -2}),
         second = Duration.fromObject({hours: -5, seconds: 6, milliseconds: 14}),
         result = first.plus(second);
 
-    t.is(result.hours(), -1);
-    t.is(result.minutes(), -12);
-    t.is(result.seconds(), 4);
-    t.is(result.milliseconds(), 14);
-    t.end();
+    expect(result.hours()).toBe(-1);
+    expect(result.minutes()).toBe(-12);
+    expect(result.seconds()).toBe(4);
+    expect(result.milliseconds()).toBe(14);
   });
 
-  test("Duration#plus adds single values", t => {
+  it("Duration#plus adds single values", () => {
     let first = Duration.fromObject({hours: 4, minutes: 12, seconds: 2}),
         result = first.plus(5, 'minutes');
 
-    t.is(result.hours(), 4);
-    t.is(result.minutes(), 17);
-    t.is(result.seconds(), 2);
-    t.end();
+    expect(result.hours()).toBe(4);
+    expect(result.minutes()).toBe(17);
+    expect(result.seconds()).toBe(2);
   });
 
   //------
   // #minus()
   //------
 
-  test("Duration#minus subtracts durations", t => {
-
+  it("Duration#minus subtracts durations", () => {
     let first = Duration.fromObject({hours: 4, minutes: 12, seconds: 2}),
         second = Duration.fromObject({hours: 1, seconds: 6, milliseconds: 14}),
         result = first.minus(second);
 
-    t.is(result.hours(), 3);
-    t.is(result.minutes(), 12);
-    t.is(result.seconds(), -4);
-    t.is(result.milliseconds(), -14);
-    t.end();
+    expect(result.hours()).toBe(3);
+    expect(result.minutes()).toBe(12);
+    expect(result.seconds()).toBe(-4);
+    expect(result.milliseconds()).toBe(-14);
   });
 
-  test("Duration#minus subtracts single values", t => {
+  it("Duration#minus subtracts single values", () => {
     let first = Duration.fromObject({hours: 4, minutes: 12, seconds: 2}),
         result = first.minus(5, 'minutes');
 
-    t.is(result.hours(), 4);
-    t.is(result.minutes(), 7);
-    t.is(result.seconds(), 2);
-    t.end();
+    expect(result.hours()).toBe(4);
+    expect(result.minutes()).toBe(7);
+    expect(result.seconds()).toBe(2);
   });
 };

@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant, Interval, Duration} from 'luxon';
 
 export let info = () => {
@@ -11,210 +10,184 @@ export let info = () => {
   // #length()
   //-------
 
-  test('Interval#length defaults to milliseconds', t => {
+  it('Interval#length defaults to milliseconds', () => {
     let n = Instant.now(),
         d = n.until(n.plus(1, 'minute'));
 
-    t.is(d.length(), 60 * 1000);
-    t.end();
+    expect(d.length()).toBe(60 * 1000);
   });
 
-  test("Interval#length('days') returns 1 for yesterday", t => {
-    t.is(todayAt(13).minus(1, 'day').until(todayAt(13)).length('days'), 1);
-    t.end();
+  it("Interval#length('days') returns 1 for yesterday", () => {
+    expect(todayAt(13).minus(1, 'day').until(todayAt(13)).length('days')).toBe(1);
   });
 
-  test("Interval#length('months') returns the right number of months", t => {
-    t.is(Math.floor(fromISOs('1996-02-17', '2012-08-14').length('months')), 197);
-    t.end();
+  it("Interval#length('months') returns the right number of months", () => {
+    expect(Math.floor(fromISOs('1996-02-17', '2012-08-14').length('months'))).toBe(197);
   });
 
-  test("Interval#length('years') returns the right number of years", t => {
-    t.is(Math.floor(fromISOs('1996-02-17', '2012-08-14').length('years')), 16);
-    t.end();
+  it("Interval#length('years') returns the right number of years", () => {
+    expect(Math.floor(fromISOs('1996-02-17', '2012-08-14').length('years'))).toBe(16);
   });
 
   //------
   // #count()
   //-------
 
-  test("Interval#count('days') returns 1 inside a day", t => {
+  it("Interval#count('days') returns 1 inside a day", () => {
     let i = Instant.fromISO('2016-05-25T03:00').until(Instant.fromISO('2016-05-25T14:00'));
-    t.is(i.count('days'), 1);
-    t.end();
+    expect(i.count('days')).toBe(1);
   });
 
-  test("Interval#count('days') returns 2 if the interval crosses midnight", t => {
+  it("Interval#count('days') returns 2 if the interval crosses midnight", () => {
     let i = Instant.fromISO('2016-05-25T03:00').until(Instant.fromISO('2016-05-26T14:00'));
-    t.is(i.count('days'), 2);
-    t.end();
+    expect(i.count('days')).toBe(2);
   });
 
-  test("Interval#count('years') returns 1 inside a year", t => {
+  it("Interval#count('years') returns 1 inside a year", () => {
     let i = Instant.fromISO('2016-05-25').until(Instant.fromISO('2016-05-26'));
-    t.is(i.count('years'), 1);
-    t.end();
+    expect(i.count('years')).toBe(1);
   });
 
-  test("Interval#count('days') returns 2 if the interval crosses the new year", t => {
+  it("Interval#count('days') returns 2 if the interval crosses the new year", () => {
     let i = Instant.fromISO('2016-05-25').until(Instant.fromISO('2017-05-26'));
-    t.is(i.count('years'), 2);
-    t.end();
+    expect(i.count('years')).toBe(2);
   });
 
   //------
   // #toDuration()
   //-------
 
-  test('Interval#toDuration(units) creates a duration in those units', t => {
-
+  it('Interval#toDuration(units) creates a duration in those units', () => {
     let int = Interval.fromInstants(todayAt(9), todayAt(13));
 
-    t.ok(int.toDuration().equals(Duration.fromLength(4 * 3600 * 1000)), 'none');
-    t.ok(int.toDuration('milliseconds').equals(Duration.fromLength(4 * 3600 * 1000)), 'milliseconds');
-    t.ok(int.toDuration('seconds').equals(Duration.fromLength(4 * 3600, 'seconds')), 'seconds');
-    t.ok(int.toDuration('minutes').equals(Duration.fromLength(4 * 60, 'minutes')), 'minutes');
-    t.ok(int.toDuration('hours').equals(Duration.fromLength(4, 'hours')), 'hours');
-    t.ok(int.toDuration('days').equals(Duration.fromLength(1.0 / 6, 'days')), 'days');
-    t.end();
+    expect(int.toDuration().equals(Duration.fromLength(4 * 3600 * 1000))).toBeTruthy();
+    expect(
+      int.toDuration('milliseconds').equals(Duration.fromLength(4 * 3600 * 1000))
+    ).toBeTruthy();
+    expect(int.toDuration('seconds').equals(Duration.fromLength(4 * 3600, 'seconds'))).toBeTruthy();
+    expect(int.toDuration('minutes').equals(Duration.fromLength(4 * 60, 'minutes'))).toBeTruthy();
+    expect(int.toDuration('hours').equals(Duration.fromLength(4, 'hours'))).toBeTruthy();
+    expect(int.toDuration('days').equals(Duration.fromLength(1.0 / 6, 'days'))).toBeTruthy();
   });
 
   //------
   // #contains()
   //-------
 
-  test('Interval#contains returns true for instants in the interval', t => {
+  it('Interval#contains returns true for instants in the interval', () => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-    t.ok(i.contains(Instant.fromISO('1982-05-25T06:30')));
-    t.end();
+    expect(i.contains(Instant.fromISO('1982-05-25T06:30'))).toBeTruthy();
   });
 
-  test('Interval#contains returns false for instants after the interval', t => {
+  it('Interval#contains returns false for instants after the interval', () => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-    t.notOk(i.contains(Instant.fromISO('1982-05-25T08:30')));
-    t.end();
+    expect(i.contains(Instant.fromISO('1982-05-25T08:30'))).toBeFalsy();
   });
 
-  test('Interval#contains returns false for instants before the interval', t => {
+  it('Interval#contains returns false for instants before the interval', () => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-    t.notOk(i.contains(Instant.fromISO('1982-05-25T05:30')));
-    t.end();
+    expect(i.contains(Instant.fromISO('1982-05-25T05:30'))).toBeFalsy();
   });
 
-  test('Interval#contains returns true for the start endpoint', t => {
+  it('Interval#contains returns true for the start endpoint', () => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-    t.ok(i.contains(Instant.fromISO('1982-05-25T06:00')));
-    t.end();
+    expect(i.contains(Instant.fromISO('1982-05-25T06:00'))).toBeTruthy();
   });
 
-  test('Interval#contains returns false for the end endpoint', t => {
+  it('Interval#contains returns false for the end endpoint', () => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-    t.notOk(i.contains(Instant.fromISO('1982-05-25T07:00')));
-    t.end();
+    expect(i.contains(Instant.fromISO('1982-05-25T07:00'))).toBeFalsy();
   });
 
   //------
   // #isEmpty()
   //-------
 
-  test('Interval#isEmpty returns true for empty intervals', t => {
+  it('Interval#isEmpty returns true for empty intervals', () => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00');
-    t.ok(i.isEmpty());
-    t.end();
+    expect(i.isEmpty()).toBeTruthy();
   });
 
-  test('Interval#isEmpty returns false for non-empty intervals', t => {
+  it('Interval#isEmpty returns false for non-empty intervals', () => {
     let i = fromISOs('1982-05-25T06:00', '1982-05-25T08:00');
-    t.notOk(i.isEmpty());
-    t.end();
+    expect(i.isEmpty()).toBeFalsy();
   });
 
   //------
   // #isBefore()
   //-------
 
-  test('Interval#isBefore returns true for intervals fully before the input', t => {
+  it('Interval#isBefore returns true for intervals fully before the input', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n.minus(2, 'day'), n.minus(1, 'day'));
-    t.ok(i.isBefore(n));
-    t.end();
+    expect(i.isBefore(n)).toBeTruthy();
   });
 
-  test('Interval#isBefore returns false for intervals containing the input', t => {
+  it('Interval#isBefore returns false for intervals containing the input', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n.minus(2, 'day'), n.plus(2, 'day'));
-    t.notOk(i.isBefore(n));
-    t.end();
+    expect(i.isBefore(n)).toBeFalsy();
   });
 
-  test('Interval#isBefore returns false for intervals fully after the input ', t => {
+  it('Interval#isBefore returns false for intervals fully after the input ', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n.plus(2, 'day'), n.plus(3, 'day'));
-    t.notOk(i.isBefore(n));
-    t.end();
+    expect(i.isBefore(n)).toBeFalsy();
   });
 
-  test('Interval#isBefore returns true for intervals starting at the input', t => {
+  it('Interval#isBefore returns true for intervals starting at the input', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n, n.minus(1, 'day'));
-    t.ok(i.isBefore(n));
-    t.end();
+    expect(i.isBefore(n)).toBeTruthy();
   });
 
   //------
   // #isAfter()
   //-------
 
-  test('Interval#isAfter returns true for intervals fully after the input', t => {
+  it('Interval#isAfter returns true for intervals fully after the input', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n.plus(1, 'day'), n.plus(2, 'day'));
-    t.ok(i.isAfter(n));
-    t.end();
+    expect(i.isAfter(n)).toBeTruthy();
   });
 
-  test('Interval#isAfter returns false for intervals containing the input', t => {
+  it('Interval#isAfter returns false for intervals containing the input', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n.minus(2, 'day'), n.plus(2, 'day'));
-    t.notOk(i.isAfter(n));
-    t.end();
+    expect(i.isAfter(n)).toBeFalsy();
   });
 
-  test('Interval#isAfter returns false for fully before the input ', t => {
+  it('Interval#isAfter returns false for fully before the input ', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n.minus(2, 'day'), n.minus(1, 'day'));
-    t.notOk(i.isAfter(n));
-    t.end();
+    expect(i.isAfter(n)).toBeFalsy();
   });
 
-  test('Interval#isAfter returns false for intervals beginning at the input', t => {
+  it('Interval#isAfter returns false for intervals beginning at the input', () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n, n.plus(1, 'day'));
-    t.notOk(i.isAfter(n));
-    t.end();
+    expect(i.isAfter(n)).toBeFalsy();
   });
 
   //------
   // #hasSame()
   //-------
 
-  test("Interval#hasSame('day') returns true for durations on the same day", t => {
+  it("Interval#hasSame('day') returns true for durations on the same day", () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n, n.plus(5, 'hours'));
-    t.ok(i.hasSame('day'));
-    t.end();
+    expect(i.hasSame('day')).toBeTruthy();
   });
 
-  test("Interval#hasSame('day') returns true for durations that last until the next day", t => {
+  it("Interval#hasSame('day') returns true for durations that last until the next day", () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n, n.plus(20, 'hours'));
-    t.notOk(i.hasSame('day'));
-    t.end();
+    expect(i.hasSame('day')).toBeFalsy();
   });
 
-  test("Interval#hasSame('day') returns true for durations durations ending at midnight", t => {
+  it("Interval#hasSame('day') returns true for durations durations ending at midnight", () => {
     let n = Instant.fromISO('1982-05-25T06:00'),
         i = Interval.fromInstants(n, n.plus(1, 'day').startOf('day'));
-    t.ok(i.hasSame('day'));
-    t.end();
+    expect(i.hasSame('day')).toBeTruthy();
   });
 };

@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant} from 'luxon';
 import {FakePT} from '../helpers/fakePT';
 
@@ -10,342 +9,282 @@ export let format = () => {
 
   let inst = () => Instant.fromObject({year: 1982, month: 5, day: 25, hour: 9, minute: 23, second: 54, millisecond: 123}, {utc: true});
 
-  test("Instant#toISO() shows 'Z' for UTC", t => {
-    t.is(inst().toISO(), '1982-05-25T09:23:54.123Z');
-    t.end();
+  it("Instant#toISO() shows 'Z' for UTC", () => {
+    expect(inst().toISO()).toBe('1982-05-25T09:23:54.123Z');
   });
 
-  test('Instant#toISO() shows the offset', t => {
+  it('Instant#toISO() shows the offset', () => {
     let offsetted = inst().useUTCOffset(-6 * 60);
-    t.is(offsetted.toISO(), '1982-05-25T03:23:54.123-06:00');
-    t.end();
+    expect(offsetted.toISO()).toBe('1982-05-25T03:23:54.123-06:00');
   });
 
   //------
   // #toString()
   //-------
 
-  test('Instant#toString() returns the ISO time', t => {
+  it('Instant#toString() returns the ISO time', () => {
     let i = inst();
-    t.is(i.useUTCOffset(-6 * 60).toString(), '1982-05-25T03:23:54.123-06:00');
-    t.end();
+    expect(i.useUTCOffset(-6 * 60).toString()).toBe('1982-05-25T03:23:54.123-06:00');
   });
 
   //------
   // #toLocaleString()
   //-------
 
-  test('Instant#toLocaleString returns a sensible string by default', t => {
-    t.is(inst().locale('en-us').toLocaleString(), '5/25/1982');
-    t.end();
+  it('Instant#toLocaleString returns a sensible string by default', () => {
+    expect(inst().locale('en-us').toLocaleString()).toBe('5/25/1982');
   });
 
-  test('Instant#toLocaleString accepts locale settings from the instant', t => {
-    t.is(inst().locale('be').toLocaleString(), '25.5.1982');
-    t.end();
+  it('Instant#toLocaleString accepts locale settings from the instant', () => {
+    expect(inst().locale('be').toLocaleString()).toBe('25.5.1982');
   });
 
-  test('Instant#toLocaleString accepts options to the formatter', t => {
-    t.ok(inst().toLocaleString({weekday: 'short'}).indexOf('Tue') >= 0);
-    t.end();
+  it('Instant#toLocaleString accepts options to the formatter', () => {
+    expect(inst().toLocaleString({weekday: 'short'}).indexOf('Tue') >= 0).toBeTruthy();
   });
 
-  test("Instant#toLocaleString can override the instant's locale", t => {
-    t.is(inst().locale('be').toLocaleString({localeCode: 'fr'}), '25/05/1982');
-    t.end();
+  it("Instant#toLocaleString can override the instant's locale", () => {
+    expect(inst().locale('be').toLocaleString({localeCode: 'fr'})).toBe('25/05/1982');
   });
 
   //------
   // #toFormatString()
   //-------
 
-  test("Instant#toFormatString('S') returns the millisecond", t => {
+  it("Instant#toFormatString('S') returns the millisecond", () => {
     let i = inst();
-    t.is(i.toFormatString('S'), '123');
-    t.is(i.locale('bn').toFormatString('S'), '১২৩');
-    t.is(i.toFormatString('S'), '123');
-    t.is(i.millisecond(82).toFormatString('S'), '82');
-    t.end();
+    expect(i.toFormatString('S')).toBe('123');
+    expect(i.locale('bn').toFormatString('S')).toBe('১২৩');
+    expect(i.toFormatString('S')).toBe('123');
+    expect(i.millisecond(82).toFormatString('S')).toBe('82');
   });
 
-  test("Instant#toFormatString('SSS') returns padded the millisecond", t => {
+  it("Instant#toFormatString('SSS') returns padded the millisecond", () => {
     let i = inst();
-    t.is(i.toFormatString('SSS'), '123');
-    t.is(i.locale('bn').toFormatString('SSS'), '১২৩');
-    t.is(i.millisecond(82).toFormatString('SSS'), '082');
-    t.end();
+    expect(i.toFormatString('SSS')).toBe('123');
+    expect(i.locale('bn').toFormatString('SSS')).toBe('১২৩');
+    expect(i.millisecond(82).toFormatString('SSS')).toBe('082');
   });
 
-  test("Instant#toFormatString('s') returns the second", t => {
+  it("Instant#toFormatString('s') returns the second", () => {
     let i = inst();
-    t.is(i.toFormatString('s'), '54');
-    t.is(i.locale('bn').toFormatString('s'), '৫৪');
-    t.is(i.second(6).toFormatString('s'), '6');
-    t.end();
+    expect(i.toFormatString('s')).toBe('54');
+    expect(i.locale('bn').toFormatString('s')).toBe('৫৪');
+    expect(i.second(6).toFormatString('s')).toBe('6');
   });
 
-  test("Instant#toFormatString('ss') returns the padded second", t => {
+  it("Instant#toFormatString('ss') returns the padded second", () => {
     let i = inst();
-    t.is(i.toFormatString('ss'), '54');
-    t.is(i.locale('bn').toFormatString('ss'), '৫৪');
-    t.is(i.second(6).toFormatString('ss'), '06');
-    t.end();
+    expect(i.toFormatString('ss')).toBe('54');
+    expect(i.locale('bn').toFormatString('ss')).toBe('৫৪');
+    expect(i.second(6).toFormatString('ss')).toBe('06');
   });
 
-  test("Instant#toFormatString('m') returns the minute", t => {
+  it("Instant#toFormatString('m') returns the minute", () => {
     let i = inst();
-    t.is(i.toFormatString('m'), '23');
-    t.is(i.locale('bn').toFormatString('m'), '২৩');
-    t.is(i.minute(6).toFormatString('m'), '6');
-    t.end();
+    expect(i.toFormatString('m')).toBe('23');
+    expect(i.locale('bn').toFormatString('m')).toBe('২৩');
+    expect(i.minute(6).toFormatString('m')).toBe('6');
   });
 
-  test("Instant#toFormatString('mm') returns the padded minute", t => {
+  it("Instant#toFormatString('mm') returns the padded minute", () => {
     let i = inst();
-    t.is(i.toFormatString('mm'), '23');
-    t.is(i.locale('bn').toFormatString('mm'), '২৩');
-    t.is(i.minute(6).toFormatString('mm'), '06');
-    t.end();
+    expect(i.toFormatString('mm')).toBe('23');
+    expect(i.locale('bn').toFormatString('mm')).toBe('২৩');
+    expect(i.minute(6).toFormatString('mm')).toBe('06');
   });
 
-  test("Instant#toFormatString('h') returns the hours", t => {
+  it("Instant#toFormatString('h') returns the hours", () => {
     let i = inst();
-    t.is(i.toFormatString('h'), '9');
-    t.is(i.locale('bn').toFormatString('h'), '৯');
-    t.is(i.hour(12).toFormatString('h'), '12');
-    t.is(i.hour(13).toFormatString('h'), '1');
-    t.end();
+    expect(i.toFormatString('h')).toBe('9');
+    expect(i.locale('bn').toFormatString('h')).toBe('৯');
+    expect(i.hour(12).toFormatString('h')).toBe('12');
+    expect(i.hour(13).toFormatString('h')).toBe('1');
   });
 
-  test("Instant#toFormatString('hh') returns the padded hour (12-hour time)", t => {
+  it("Instant#toFormatString('hh') returns the padded hour (12-hour time)", () => {
     let i = inst();
-    t.is(i.toFormatString('hh'), '09');
-    t.is(i.locale('bn').toFormatString('hh'), '০৯');
-    t.is(i.hour(12).toFormatString('hh'), '12');
-    t.is(i.hour(13).toFormatString('hh'), '01');
-    t.end();
+    expect(i.toFormatString('hh')).toBe('09');
+    expect(i.locale('bn').toFormatString('hh')).toBe('০৯');
+    expect(i.hour(12).toFormatString('hh')).toBe('12');
+    expect(i.hour(13).toFormatString('hh')).toBe('01');
   });
 
-  test("Instant#toFormatString('H') returns the hour (24-hour time)", t => {
+  it("Instant#toFormatString('H') returns the hour (24-hour time)", () => {
     let i = inst();
-    t.is(i.toFormatString('H'), '9');
-    t.is(i.locale('bn').toFormatString('H'), '৯');
-    t.is(i.hour(12).toFormatString('H'), '12');
-    t.is(i.hour(13).toFormatString('H'), '13');
-    t.end();
+    expect(i.toFormatString('H')).toBe('9');
+    expect(i.locale('bn').toFormatString('H')).toBe('৯');
+    expect(i.hour(12).toFormatString('H')).toBe('12');
+    expect(i.hour(13).toFormatString('H')).toBe('13');
   });
 
-  test("Instant#toFormatString('HH') returns the padded hour (24-hour time)", t => {
+  it("Instant#toFormatString('HH') returns the padded hour (24-hour time)", () => {
     let i = inst();
-    t.is(i.toFormatString('HH'), '09');
-    t.is(i.locale('bn').toFormatString('HH'), '০৯');
-    t.is(i.hour(12).toFormatString('HH'), '12');
-    t.is(i.hour(13).toFormatString('HH'), '13');
-    t.end();
+    expect(i.toFormatString('HH')).toBe('09');
+    expect(i.locale('bn').toFormatString('HH')).toBe('০৯');
+    expect(i.hour(12).toFormatString('HH')).toBe('12');
+    expect(i.hour(13).toFormatString('HH')).toBe('13');
   });
 
-  test("Instant#toFormatString('Z') returns the narrow offset", t => {
+  it("Instant#toFormatString('Z') returns the narrow offset", () => {
     let i = inst();
-    t.is(i.useUTCOffset(360).toFormatString('Z'), '+6');
-    t.is(i.useUTCOffset(390).toFormatString('Z'), '+6:30');
-    t.is(i.useUTCOffset(-360).toFormatString('Z'), '-6');
-    t.is(i.useUTCOffset(-390).toFormatString('Z'), '-6:30');
-    t.end();
+    expect(i.useUTCOffset(360).toFormatString('Z')).toBe('+6');
+    expect(i.useUTCOffset(390).toFormatString('Z')).toBe('+6:30');
+    expect(i.useUTCOffset(-360).toFormatString('Z')).toBe('-6');
+    expect(i.useUTCOffset(-390).toFormatString('Z')).toBe('-6:30');
   });
 
-  test("Instant#toFormatString('ZZ') returns the padded offset", t => {
+  it("Instant#toFormatString('ZZ') returns the padded offset", () => {
     let i = inst();
-    t.is(i.useUTCOffset(360).toFormatString('ZZ'), '+06:00');
-    t.is(i.useUTCOffset(390).toFormatString('ZZ'), '+06:30');
-    t.is(i.useUTCOffset(-360).toFormatString('ZZ'), '-06:00');
-    t.is(i.useUTCOffset(-390).toFormatString('ZZ'), '-06:30');
-    t.end();
+    expect(i.useUTCOffset(360).toFormatString('ZZ')).toBe('+06:00');
+    expect(i.useUTCOffset(390).toFormatString('ZZ')).toBe('+06:30');
+    expect(i.useUTCOffset(-360).toFormatString('ZZ')).toBe('-06:00');
+    expect(i.useUTCOffset(-390).toFormatString('ZZ')).toBe('-06:30');
   });
 
-  test("Instant#toFormatString('ZZZ') returns the short offset name", t => {
+  it("Instant#toFormatString('ZZZ') returns the short offset name", () => {
     let i = inst().rezone(new FakePT());
-    t.is(i.toFormatString('ZZZ'), 'PDT');
-    t.end();
+    expect(i.toFormatString('ZZZ')).toBe('PDT');
   });
 
-  test("Instant#toFormatString('ZZZZ') returns the full offset name", t => {
+  it("Instant#toFormatString('ZZZZ') returns the full offset name", () => {
     let i = inst().rezone(new FakePT());
-    t.is(i.toFormatString('ZZZZ'), 'Pacific Daylight Time');
-    t.end();
+    expect(i.toFormatString('ZZZZ')).toBe('Pacific Daylight Time');
   });
 
-  test("Instant#toFormatString('z') returns the zone name", t => {
+  it("Instant#toFormatString('z') returns the zone name", () => {
     let i = inst().rezone(new FakePT());
-    t.is(i.toFormatString('z'), 'Fake Pacific Time');
-    t.end();
+    expect(i.toFormatString('z')).toBe('Fake Pacific Time');
   });
 
-  test("Instant#toFormatString('a') returns the meridiem", t => {
+  it("Instant#toFormatString('a') returns the meridiem", () => {
     let i = inst();
-    t.is(i.toFormatString('a'), 'AM');;
-    t.is(i.locale('de').toFormatString('a'), 'vorm.');;
-    t.is(i.hour(13).toFormatString('a'), 'PM');
-    t.is(i.hour(13).locale('de').toFormatString('a'), 'nachm.');
-    t.end();
+    expect(i.toFormatString('a')).toBe('AM');
+    expect(i.locale('de').toFormatString('a')).toBe('vorm.');
+    expect(i.hour(13).toFormatString('a')).toBe('PM');
+    expect(i.hour(13).locale('de').toFormatString('a')).toBe('nachm.');
   });
 
-  test("Instant#toFormatString('d') returns the day", t => {
+  it("Instant#toFormatString('d') returns the day", () => {
     let i = inst();
-    t.is(i.toFormatString('d'), '25');
-    t.is(i.day(1).toFormatString('d'), '1');
-    t.end();
+    expect(i.toFormatString('d')).toBe('25');
+    expect(i.day(1).toFormatString('d')).toBe('1');
   });
 
-  test("Instant#toFormatString('dd') returns the padded day", t => {
+  it("Instant#toFormatString('dd') returns the padded day", () => {
     let i = inst();
-    t.is(i.toFormatString('dd'), '25');
-    t.is(i.day(1).toFormatString('dd'), '01');
-    t.end();
+    expect(i.toFormatString('dd')).toBe('25');
+    expect(i.day(1).toFormatString('dd')).toBe('01');
   });
 
-  test("Instant#toFormatString('E' || 'c') returns weekday number", t => {
+  it("Instant#toFormatString('E' || 'c') returns weekday number", () => {
     let i = inst();
-    t.is(i.toFormatString('E'), '2');
-    t.is(i.toFormatString('c'), '2');
-    t.end();
+    expect(i.toFormatString('E')).toBe('2');
+    expect(i.toFormatString('c')).toBe('2');
   });
 
-  test("Instant#toFormatString('EEE) returns short format weekday name", t => {
+  it("Instant#toFormatString('EEE) returns short format weekday name", () => {
     let i = inst();
-    t.is(i.toFormatString('EEE'), 'Tue');
-    t.is(i.locale('de').toFormatString('EEE'), 'Di.');;
-
-    //anyone know a language where the *abbreviated* genitive is different than the standalone?
-    //if so, test that here
-
-    t.end();
+    expect(i.toFormatString('EEE')).toBe('Tue');
+    expect(i.locale('de').toFormatString('EEE')).toBe('Di.');
   });
 
-  test("Instant#toFormatString('ccc) returns short standalone weekday name", t => {
+  it("Instant#toFormatString('ccc) returns short standalone weekday name", () => {
     let i = inst();
-    t.is(i.toFormatString('ccc'), 'Tue');
-    t.is(i.locale('de').toFormatString('ccc'), 'Di.');;
-    t.end();
+    expect(i.toFormatString('ccc')).toBe('Tue');
+    expect(i.locale('de').toFormatString('ccc')).toBe('Di.');
   });
 
   //all these commented-out tests are bc https://github.com/andyearnshaw/Intl.js/issues/190
 
-  test("Instant#toFormatString('EEEE') returns the full format weekday name", t => {
+  it("Instant#toFormatString('EEEE') returns the full format weekday name", () => {
     let i = inst();
-    t.is(i.toFormatString('EEEE'), 'Tuesday');
-    t.end();
+    expect(i.toFormatString('EEEE')).toBe('Tuesday');
   });
 
-  test("Instant#toFormatString('cccc') returns the full standalone weekday name", t => {
+  it("Instant#toFormatString('cccc') returns the full standalone weekday name", () => {
     let i = inst();
-    t.is(i.toFormatString('cccc'), 'Tuesday');
-
-    //I can't find anything I can generate different standalones for. 'ga' has a different genitive
-    //case, but at least according to Intl, it's *always* used in dates.
-    //todo - find one and test it here
-
-    t.end();
+    expect(i.toFormatString('cccc')).toBe('Tuesday');
   });
 
-  test("Instant#toFormatString('EEEEE' || 'ccccc') returns narrow weekday name", t => {
+  it("Instant#toFormatString('EEEEE' || 'ccccc') returns narrow weekday name", () => {
     let i = inst();
-    t.is(i.toFormatString('EEEEE'), 'T');
-    t.is(i.toFormatString('ccccc'), 'T');
-    t.end();
+    expect(i.toFormatString('EEEEE')).toBe('T');
+    expect(i.toFormatString('ccccc')).toBe('T');
   });
 
-  test("Instant#toFormatString('M' || 'L') return the month number", t => {
+  it("Instant#toFormatString('M' || 'L') return the month number", () => {
     let i = inst();
-    t.is(i.toFormatString('M'), '5');
-    t.is(i.toFormatString('L'), '5');
-    t.end();
+    expect(i.toFormatString('M')).toBe('5');
+    expect(i.toFormatString('L')).toBe('5');
   });
 
-  test("Instant#toFormatString('MM' || 'LL') return the padded month number", t => {
+  it("Instant#toFormatString('MM' || 'LL') return the padded month number", () => {
     let i = inst();
-    t.is(i.toFormatString('MM'), '05');
-    //t.is(i.toFormatString('LL'), '05');
-    t.end();
+    expect(i.toFormatString('MM')).toBe('05');
   });
 
-  test("Instant#toFormatString('MMM') returns the short format month name", t => {
+  it("Instant#toFormatString('MMM') returns the short format month name", () => {
     let i = inst();
-    t.is(i.toFormatString('MMM'), 'May');
-    t.is(i.locale('de').toFormatString('MMM'), 'Mai');
-    t.is(i.month(8).toFormatString('MMM'), 'Aug');
-
-    //anyone know a language where the *abbreviated* genitive is different than the standalone?
-    //if so, test that here
-
-    t.end();
+    expect(i.toFormatString('MMM')).toBe('May');
+    expect(i.locale('de').toFormatString('MMM')).toBe('Mai');
+    expect(i.month(8).toFormatString('MMM')).toBe('Aug');
   });
 
-  test("Instant#toFormatString('LLL') returns the short standalone month name", t => {
+  it("Instant#toFormatString('LLL') returns the short standalone month name", () => {
     let i = inst();
-    t.is(i.toFormatString('LLL'), 'May');
-    t.is(i.locale('de').toFormatString('LLL'), 'Mai');
-    t.is(i.month(8).toFormatString('LLL'), 'Aug');
-
-    t.end();
+    expect(i.toFormatString('LLL')).toBe('May');
+    expect(i.locale('de').toFormatString('LLL')).toBe('Mai');
+    expect(i.month(8).toFormatString('LLL')).toBe('Aug');
   });
 
-  test("Instant#toFormatString('MMMM') returns the full format month name", t => {
+  it("Instant#toFormatString('MMMM') returns the full format month name", () => {
     let i = inst();
-    t.is(i.toFormatString('MMMM'), 'May');
-    t.is(i.month(8).toFormatString('MMMM'), 'August');
-    t.is(i.month(8).locale('ru').toFormatString('MMMM'), 'августа');
-    t.end();
+    expect(i.toFormatString('MMMM')).toBe('May');
+    expect(i.month(8).toFormatString('MMMM')).toBe('August');
+    expect(i.month(8).locale('ru').toFormatString('MMMM')).toBe('августа');
   });
 
-  test("Instant#toFormatString('LLLL') returns the full standalone month name", t => {
+  it("Instant#toFormatString('LLLL') returns the full standalone month name", () => {
     let i = inst();
-    t.is(i.toFormatString('LLLL'), 'May');
-    t.is(i.month(8).toFormatString('LLLL'), 'August');
-
-    //this doesn't work yet, instead returning  'августа'
-    //t.is(i.month(8).locale('ru').toFormatString('LLLL'), 'август');
-    t.end();
+    expect(i.toFormatString('LLLL')).toBe('May');
+    expect(i.month(8).toFormatString('LLLL')).toBe('August');
   });
 
-  test("Instant#toFormatString('MMMMM' || 'LLLLL') returns the narrow month name", t => {
+  it("Instant#toFormatString('MMMMM' || 'LLLLL') returns the narrow month name", () => {
     let i = inst();
-    t.is(i.toFormatString('MMMMM'), 'M');
-    t.is(i.toFormatString('LLLLL'), 'M');
-    t.end();
+    expect(i.toFormatString('MMMMM')).toBe('M');
+    expect(i.toFormatString('LLLLL')).toBe('M');
   });
 
-  test("Instant#toFormatString('y') returns the full year", t => {
+  it("Instant#toFormatString('y') returns the full year", () => {
     let i = inst();
-    t.is(i.toFormatString('y'), '1982');
-    t.is(i.locale('bn').toFormatString('y'), '১৯৮২');
-    t.is(i.year(3).toFormatString('y'), '3');
-    t.end();
+    expect(i.toFormatString('y')).toBe('1982');
+    expect(i.locale('bn').toFormatString('y')).toBe('১৯৮২');
+    expect(i.year(3).toFormatString('y')).toBe('3');
   });
 
-  test("Instant#toFormatString('yy') returns the two-digit year", t => {
+  it("Instant#toFormatString('yy') returns the two-digit year", () => {
     let i = inst();
-    t.is(i.toFormatString('yy'), '82');
-    t.is(i.locale('bn').toFormatString('yy'), '৮২');
-    t.is(i.year(3).toFormatString('yy'), '03');
-    t.end();
+    expect(i.toFormatString('yy')).toBe('82');
+    expect(i.locale('bn').toFormatString('yy')).toBe('৮২');
+    expect(i.year(3).toFormatString('yy')).toBe('03');
   });
 
-  test("Instant#toFormatString('yyyy') returns the padded full year", t => {
+  it("Instant#toFormatString('yyyy') returns the padded full year", () => {
     let i = inst();
-    t.is(i.toFormatString('yyyy'), '1982');
-    t.is(i.locale('bn').toFormatString('yyyy'), '১৯৮২');
-    t.is(i.year(3).toFormatString('yyyy'), '0003');
-    t.is(i.year(3).locale('bn').toFormatString('yyyy'), '০০০৩');
-    t.end();
+    expect(i.toFormatString('yyyy')).toBe('1982');
+    expect(i.locale('bn').toFormatString('yyyy')).toBe('১৯৮২');
+    expect(i.year(3).toFormatString('yyyy')).toBe('0003');
+    expect(i.year(3).locale('bn').toFormatString('yyyy')).toBe('০০০৩');
   });
 
-  test("Instant#toFormatString('G') returns the short era", t => {
+  it("Instant#toFormatString('G') returns the short era", () => {
     let i = inst();
-    t.is(i.toFormatString('G'), 'AD');
-    t.is(i.locale('de').toFormatString('G'), 'n. Chr.');
-    t.is(i.year(-21).toFormatString('G'), 'BC');
-    t.is(i.year(-21).locale('de').toFormatString('G'), 'v. Chr.');
-    t.end();
+    expect(i.toFormatString('G')).toBe('AD');
+    expect(i.locale('de').toFormatString('G')).toBe('n. Chr.');
+    expect(i.year(-21).toFormatString('G')).toBe('BC');
+    expect(i.year(-21).locale('de').toFormatString('G')).toBe('v. Chr.');
   });
 
   //test("Instant#toFormatString('GG') returns the full era", t => {
@@ -362,17 +301,15 @@ export let format = () => {
   //  t.end();
   //});
 
-  test("Instant#toFormatString returns a full formatted string", t => {
+  it("Instant#toFormatString returns a full formatted string", () => {
     let i = inst();
-    t.is(i.toFormatString('MM/yyyy GG'), '05/1982 AD');
-    t.end();
+    expect(i.toFormatString('MM/yyyy GG')).toBe('05/1982 AD');
   });
 
-  test("Instant#toFormatString() accepts literals in single quotes", t => {
+  it("Instant#toFormatString() accepts literals in single quotes", () => {
     let i = inst();
-    t.is(i.toFormatString("dd/MM/yyyy 'at' hh:mm"), '25/05/1982 at 09:23');
-    t.is(i.toFormatString("MMdd'T'hh"), '0525T09');
-    t.end();
+    expect(i.toFormatString("dd/MM/yyyy 'at' hh:mm")).toBe('25/05/1982 at 09:23');
+    expect(i.toFormatString("MMdd'T'hh")).toBe('0525T09');
   });
 
   //numbering is disabled while we're still using the polyfill for number formatting
@@ -382,157 +319,141 @@ export let format = () => {
   //  t.end();
   //});
 
-  test("Instant#toFormatString('D') returns a short date representation", t => {
+  it("Instant#toFormatString('D') returns a short date representation", () => {
     let i = inst();
-    t.is(i.toFormatString('D'), '5/25/1982');
-    t.is(i.locale('fr').toFormatString('D'), '25/05/1982');
-    t.end();
+    expect(i.toFormatString('D')).toBe('5/25/1982');
+    expect(i.locale('fr').toFormatString('D')).toBe('25/05/1982');
   });
 
-  test("Instant#toFormatString('DD') returns a medium date representation", t => {
+  it("Instant#toFormatString('DD') returns a medium date representation", () => {
     let i = inst();
-    t.is(i.toFormatString('DD'), 'May 25, 1982');
-    t.is(i.month(8).toFormatString('DD'), 'Aug 25, 1982');
-    t.is(i.locale('fr').toFormatString('DD'), '25 mai 1982');
-    t.is(i.locale('fr').month(2).toFormatString('DD'), '25 févr. 1982');
-    t.end();
+    expect(i.toFormatString('DD')).toBe('May 25, 1982');
+    expect(i.month(8).toFormatString('DD')).toBe('Aug 25, 1982');
+    expect(i.locale('fr').toFormatString('DD')).toBe('25 mai 1982');
+    expect(i.locale('fr').month(2).toFormatString('DD')).toBe('25 févr. 1982');
   });
 
-  test("Instant#toFormatString('DDD') returns a long date representation", t => {
+  it("Instant#toFormatString('DDD') returns a long date representation", () => {
     let i = inst();
-    t.is(i.toFormatString('DDD'), 'May 25, 1982');
-    t.is(i.month(8).toFormatString('DDD'), 'August 25, 1982');
-    t.is(i.locale('fr').toFormatString('DDD'), '25 mai 1982');
-    t.is(i.locale('fr').month(2).toFormatString('DDD'), '25 février 1982');
-    t.end();
+    expect(i.toFormatString('DDD')).toBe('May 25, 1982');
+    expect(i.month(8).toFormatString('DDD')).toBe('August 25, 1982');
+    expect(i.locale('fr').toFormatString('DDD')).toBe('25 mai 1982');
+    expect(i.locale('fr').month(2).toFormatString('DDD')).toBe('25 février 1982');
   });
 
-  test("Instant#toFormatString('DDDD') returns a long date representation", t => {
+  it("Instant#toFormatString('DDDD') returns a long date representation", () => {
     let i = inst();
-    t.is(i.toFormatString('DDDD'), 'Tuesday, May 25, 1982');
-    t.is(i.month(8).toFormatString('DDDD'), 'Wednesday, August 25, 1982');
-    t.is(i.locale('fr').toFormatString('DDDD'), 'mardi 25 mai 1982');
-    t.is(i.locale('fr').month(2).toFormatString('DDDD'), 'jeudi 25 février 1982');
-    t.end();
+    expect(i.toFormatString('DDDD')).toBe('Tuesday, May 25, 1982');
+    expect(i.month(8).toFormatString('DDDD')).toBe('Wednesday, August 25, 1982');
+    expect(i.locale('fr').toFormatString('DDDD')).toBe('mardi 25 mai 1982');
+    expect(i.locale('fr').month(2).toFormatString('DDDD')).toBe('jeudi 25 février 1982');
   });
 
-  test("Instant#toFormatString('t') returns a short time representation", t => {
+  it("Instant#toFormatString('t') returns a short time representation", () => {
     let i = inst();
-    t.is(i.toFormatString('t'), '9:23 AM');
-    t.is(i.hour(13).toFormatString('t'), '1:23 PM');
-    t.is(i.locale('fr').toFormatString('t'), '9:23');
-    t.is(i.locale('fr').hour(13).toFormatString('t'), '13:23');
-    t.end();
+    expect(i.toFormatString('t')).toBe('9:23 AM');
+    expect(i.hour(13).toFormatString('t')).toBe('1:23 PM');
+    expect(i.locale('fr').toFormatString('t')).toBe('9:23');
+    expect(i.locale('fr').hour(13).toFormatString('t')).toBe('13:23');
   });
 
-  test("Instant#toFormatString('T') returns a short 24-hour time representation", t => {
+  it("Instant#toFormatString('T') returns a short 24-hour time representation", () => {
     let i = inst();
-    t.is(i.toFormatString('T'), '9:23');
-    t.is(i.hour(13).toFormatString('T'), '13:23');
-    t.is(i.locale('fr').toFormatString('T'), '9:23');
-    t.is(i.locale('fr').hour(13).toFormatString('T'), '13:23');
-    t.end();
+    expect(i.toFormatString('T')).toBe('9:23');
+    expect(i.hour(13).toFormatString('T')).toBe('13:23');
+    expect(i.locale('fr').toFormatString('T')).toBe('9:23');
+    expect(i.locale('fr').hour(13).toFormatString('T')).toBe('13:23');
   });
 
-  test("Instant#toFormatString('tt') returns a medium time representation", t => {
+  it("Instant#toFormatString('tt') returns a medium time representation", () => {
     let i = inst();
-    t.is(i.toFormatString('tt'), '9:23:54 AM');
-    t.is(i.hour(13).toFormatString('tt'), '1:23:54 PM');
-    t.is(i.locale('fr').toFormatString('tt'), '9:23:54');
-    t.is(i.locale('fr').hour(13).toFormatString('tt'), '13:23:54');
-    t.end();
+    expect(i.toFormatString('tt')).toBe('9:23:54 AM');
+    expect(i.hour(13).toFormatString('tt')).toBe('1:23:54 PM');
+    expect(i.locale('fr').toFormatString('tt')).toBe('9:23:54');
+    expect(i.locale('fr').hour(13).toFormatString('tt')).toBe('13:23:54');
   });
 
-  test("Instant#toFormatString('TT') returns a medium 24-hour time representation", t => {
+  it("Instant#toFormatString('TT') returns a medium 24-hour time representation", () => {
     let i = inst();
-    t.is(i.toFormatString('TT'), '9:23:54');
-    t.is(i.hour(13).toFormatString('TT'), '13:23:54');
-    t.is(i.locale('fr').toFormatString('TT'), '9:23:54');
-    t.is(i.locale('fr').hour(13).toFormatString('TT'), '13:23:54');
-    t.end();
+    expect(i.toFormatString('TT')).toBe('9:23:54');
+    expect(i.hour(13).toFormatString('TT')).toBe('13:23:54');
+    expect(i.locale('fr').toFormatString('TT')).toBe('9:23:54');
+    expect(i.locale('fr').hour(13).toFormatString('TT')).toBe('13:23:54');
   });
 
-  test("Instant#toFormatString('f') returns a short date/time representation without seconds", t => {
+  it("Instant#toFormatString('f') returns a short date/time representation without seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('f'), '5/25/1982, 9:23 AM');
-    t.is(i.hour(13).toFormatString('f'), '5/25/1982, 1:23 PM');
-    t.is(i.locale('fr').toFormatString('f'), '25/05/1982 9:23');
-    t.is(i.locale('fr').hour(13).toFormatString('f'), '25/05/1982 13:23');
-    t.end();
+    expect(i.toFormatString('f')).toBe('5/25/1982, 9:23 AM');
+    expect(i.hour(13).toFormatString('f')).toBe('5/25/1982, 1:23 PM');
+    expect(i.locale('fr').toFormatString('f')).toBe('25/05/1982 9:23');
+    expect(i.locale('fr').hour(13).toFormatString('f')).toBe('25/05/1982 13:23');
   });
 
-  test("Instant#toFormatString('ff') returns a medium date/time representation without seconds", t => {
+  it("Instant#toFormatString('ff') returns a medium date/time representation without seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('ff'), 'May 25, 1982, 9:23 AM');
-    t.is(i.hour(13).toFormatString('ff'), 'May 25, 1982, 1:23 PM');
-    t.is(i.month(8).toFormatString('ff'), 'Aug 25, 1982, 9:23 AM');
-    t.is(i.locale('fr').toFormatString('ff'), '25 mai 1982 à 9:23');
-    t.is(i.locale('fr').month(2).toFormatString('ff'), '25 févr. 1982 à 9:23');
-    t.is(i.locale('fr').hour(13).toFormatString('ff'), '25 mai 1982 à 13:23');
-    t.end();
+    expect(i.toFormatString('ff')).toBe('May 25, 1982, 9:23 AM');
+    expect(i.hour(13).toFormatString('ff')).toBe('May 25, 1982, 1:23 PM');
+    expect(i.month(8).toFormatString('ff')).toBe('Aug 25, 1982, 9:23 AM');
+    expect(i.locale('fr').toFormatString('ff')).toBe('25 mai 1982 à 9:23');
+    expect(i.locale('fr').month(2).toFormatString('ff')).toBe('25 févr. 1982 à 9:23');
+    expect(i.locale('fr').hour(13).toFormatString('ff')).toBe('25 mai 1982 à 13:23');
   });
 
-  test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
+  it("Instant#toFormatString('fff') returns a medium date/time representation without seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('fff'), 'May 25, 1982 at 9:23 AM');
-    t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982 at 1:23 PM');
-    t.is(i.month(8).toFormatString('fff'), 'August 25, 1982 at 9:23 AM');
-    t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
-    t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
-    t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
-    t.end();
+    expect(i.toFormatString('fff')).toBe('May 25, 1982 at 9:23 AM');
+    expect(i.hour(13).toFormatString('fff')).toBe('May 25, 1982 at 1:23 PM');
+    expect(i.month(8).toFormatString('fff')).toBe('August 25, 1982 at 9:23 AM');
+    expect(i.locale('fr').toFormatString('fff')).toBe('25 mai 1982 à 9:23');
+    expect(i.locale('fr').month(2).toFormatString('fff')).toBe('25 février 1982 à 9:23');
+    expect(i.locale('fr').hour(13).toFormatString('fff')).toBe('25 mai 1982 à 13:23');
   });
 
-  test("Instant#toFormatString('ffff') returns a long date/time representation without seconds", t => {
+  it("Instant#toFormatString('ffff') returns a long date/time representation without seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('ffff'), 'Tuesday, May 25, 1982 at 9:23 AM');
-    t.is(i.hour(13).toFormatString('ffff'), 'Tuesday, May 25, 1982 at 1:23 PM');
-    t.is(i.month(8).toFormatString('ffff'), 'Wednesday, August 25, 1982 at 9:23 AM');
-    t.is(i.locale('fr').toFormatString('ffff'), 'mardi 25 mai 1982 à 9:23');
-    t.is(i.locale('fr').month(2).toFormatString('ffff'), 'jeudi 25 février 1982 à 9:23');
-    t.is(i.locale('fr').hour(13).toFormatString('ffff'), 'mardi 25 mai 1982 à 13:23');
-    t.end();
+    expect(i.toFormatString('ffff')).toBe('Tuesday, May 25, 1982 at 9:23 AM');
+    expect(i.hour(13).toFormatString('ffff')).toBe('Tuesday, May 25, 1982 at 1:23 PM');
+    expect(i.month(8).toFormatString('ffff')).toBe('Wednesday, August 25, 1982 at 9:23 AM');
+    expect(i.locale('fr').toFormatString('ffff')).toBe('mardi 25 mai 1982 à 9:23');
+    expect(i.locale('fr').month(2).toFormatString('ffff')).toBe('jeudi 25 février 1982 à 9:23');
+    expect(i.locale('fr').hour(13).toFormatString('ffff')).toBe('mardi 25 mai 1982 à 13:23');
   });
 
-  test("Instant#toFormatString('F') returns a short date/time representation with seconds", t => {
+  it("Instant#toFormatString('F') returns a short date/time representation with seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('F'), '5/25/1982, 9:23:54 AM');
-    t.is(i.hour(13).toFormatString('F'), '5/25/1982, 1:23:54 PM');
-    t.is(i.locale('fr').toFormatString('F'), '25/05/1982 9:23:54');
-    t.is(i.locale('fr').hour(13).toFormatString('F'), '25/05/1982 13:23:54');
-    t.end();
+    expect(i.toFormatString('F')).toBe('5/25/1982, 9:23:54 AM');
+    expect(i.hour(13).toFormatString('F')).toBe('5/25/1982, 1:23:54 PM');
+    expect(i.locale('fr').toFormatString('F')).toBe('25/05/1982 9:23:54');
+    expect(i.locale('fr').hour(13).toFormatString('F')).toBe('25/05/1982 13:23:54');
   });
 
-  test("Instant#toFormatString('FF') returns a medium date/time representation with seconds", t => {
+  it("Instant#toFormatString('FF') returns a medium date/time representation with seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('FF'), 'May 25, 1982, 9:23:54 AM');
-    t.is(i.hour(13).toFormatString('FF'), 'May 25, 1982, 1:23:54 PM');
-    t.is(i.month(8).toFormatString('FF'), 'Aug 25, 1982, 9:23:54 AM');
-    t.is(i.locale('fr').toFormatString('FF'), '25 mai 1982 à 9:23:54');
-    t.is(i.locale('fr').month(2).toFormatString('FF'), '25 févr. 1982 à 9:23:54');
-    t.is(i.locale('fr').hour(13).toFormatString('FF'), '25 mai 1982 à 13:23:54');
-    t.end();
+    expect(i.toFormatString('FF')).toBe('May 25, 1982, 9:23:54 AM');
+    expect(i.hour(13).toFormatString('FF')).toBe('May 25, 1982, 1:23:54 PM');
+    expect(i.month(8).toFormatString('FF')).toBe('Aug 25, 1982, 9:23:54 AM');
+    expect(i.locale('fr').toFormatString('FF')).toBe('25 mai 1982 à 9:23:54');
+    expect(i.locale('fr').month(2).toFormatString('FF')).toBe('25 févr. 1982 à 9:23:54');
+    expect(i.locale('fr').hour(13).toFormatString('FF')).toBe('25 mai 1982 à 13:23:54');
   });
 
-  test("Instant#toFormatString('fff') returns a medium date/time representation without seconds", t => {
+  it("Instant#toFormatString('fff') returns a medium date/time representation without seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('fff'), 'May 25, 1982 at 9:23 AM');
-    t.is(i.hour(13).toFormatString('fff'), 'May 25, 1982 at 1:23 PM');
-    t.is(i.month(8).toFormatString('fff'), 'August 25, 1982 at 9:23 AM');
-    t.is(i.locale('fr').toFormatString('fff'), '25 mai 1982 à 9:23');
-    t.is(i.locale('fr').month(2).toFormatString('fff'), '25 février 1982 à 9:23');
-    t.is(i.locale('fr').hour(13).toFormatString('fff'), '25 mai 1982 à 13:23');
-    t.end();
+    expect(i.toFormatString('fff')).toBe('May 25, 1982 at 9:23 AM');
+    expect(i.hour(13).toFormatString('fff')).toBe('May 25, 1982 at 1:23 PM');
+    expect(i.month(8).toFormatString('fff')).toBe('August 25, 1982 at 9:23 AM');
+    expect(i.locale('fr').toFormatString('fff')).toBe('25 mai 1982 à 9:23');
+    expect(i.locale('fr').month(2).toFormatString('fff')).toBe('25 février 1982 à 9:23');
+    expect(i.locale('fr').hour(13).toFormatString('fff')).toBe('25 mai 1982 à 13:23');
   });
 
-  test("Instant#toFormatString('FFFF') returns a long date/time representation without seconds", t => {
+  it("Instant#toFormatString('FFFF') returns a long date/time representation without seconds", () => {
     let i = inst();
-    t.is(i.toFormatString('FFFF'), 'Tuesday, May 25, 1982 at 9:23:54 AM');
-    t.is(i.hour(13).toFormatString('FFFF'), 'Tuesday, May 25, 1982 at 1:23:54 PM');
-    t.is(i.month(8).toFormatString('FFFF'), 'Wednesday, August 25, 1982 at 9:23:54 AM');
-    t.is(i.locale('fr').toFormatString('FFFF'), 'mardi 25 mai 1982 à 9:23:54');
-    t.is(i.locale('fr').month(2).toFormatString('FFFF'), 'jeudi 25 février 1982 à 9:23:54');
-    t.is(i.locale('fr').hour(13).toFormatString('FFFF'), 'mardi 25 mai 1982 à 13:23:54');
-    t.end();
+    expect(i.toFormatString('FFFF')).toBe('Tuesday, May 25, 1982 at 9:23:54 AM');
+    expect(i.hour(13).toFormatString('FFFF')).toBe('Tuesday, May 25, 1982 at 1:23:54 PM');
+    expect(i.month(8).toFormatString('FFFF')).toBe('Wednesday, August 25, 1982 at 9:23:54 AM');
+    expect(i.locale('fr').toFormatString('FFFF')).toBe('mardi 25 mai 1982 à 9:23:54');
+    expect(i.locale('fr').month(2).toFormatString('FFFF')).toBe('jeudi 25 février 1982 à 9:23:54');
+    expect(i.locale('fr').hour(13).toFormatString('FFFF')).toBe('mardi 25 mai 1982 à 13:23:54');
   });
 };

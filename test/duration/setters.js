@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant, Duration} from 'luxon';
 
 export let setters = () => {
@@ -9,38 +8,31 @@ export let setters = () => {
 
   let dur = () => Duration.fromObject({years: 1, months: 1, days: 1, hours: 1, minutes: 1, seconds: 1, milliseconds: 1});
 
-  test('Duration#years() sets the years', t => {
-    t.is(dur().years(2).years(), 2);
-    t.end();
+  it('Duration#years() sets the years', () => {
+    expect(dur().years(2).years()).toBe(2);
   });
 
-  test('Duration#months() sets the months', t => {
-    t.is(dur().months(2).months(), 2);
-    t.end();
+  it('Duration#months() sets the months', () => {
+    expect(dur().months(2).months()).toBe(2);
   });
 
-  test('Duration#days() sets the days', t => {
-    t.is(dur().days(2).days(), 2);
-    t.end();
+  it('Duration#days() sets the days', () => {
+    expect(dur().days(2).days()).toBe(2);
   });
 
-  test('Duration#hours() sets the hours', t => {
-    t.is(dur().hours(4).hours(), 4);
-    t.end();
+  it('Duration#hours() sets the hours', () => {
+    expect(dur().hours(4).hours()).toBe(4);
   });
 
-  test('Duration#minutes() sets the minutes', t => {
-    t.is(dur().minutes(16).minutes(), 16);
-    t.end();
+  it('Duration#minutes() sets the minutes', () => {
+    expect(dur().minutes(16).minutes()).toBe(16);
   });
 
-  test('Duration#seconds() sets the seconds', t => {
-    t.is(dur().seconds(45).seconds(), 45);
-    t.end();
+  it('Duration#seconds() sets the seconds', () => {
+    expect(dur().seconds(45).seconds()).toBe(45);
   });
 
-  test('Duration#milliseconds() sets the milliseconds', t => {
-    t.is(dur().milliseconds(86).milliseconds(), 86);
-    t.end();
+  it('Duration#milliseconds() sets the milliseconds', () => {
+    expect(dur().milliseconds(86).milliseconds()).toBe(86);
   });
 };

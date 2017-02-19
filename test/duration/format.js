@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Duration} from 'luxon';
 
 export let format = () => {
@@ -9,17 +8,15 @@ export let format = () => {
   // #toISO()
   //------
 
-  test('Duration#toISO fills out every field', t => {
-    t.is(dur().toISO(), 'P1Y2M3DT4H5M6S');
-    t.end();
+  it('Duration#toISO fills out every field', () => {
+    expect(dur().toISO()).toBe('P1Y2M3DT4H5M6S');
   });
 
-  test('Duration#toISO creates a minimal string', t => {
-    t.is(Duration.fromObject({years: 3, seconds: 45}).toISO(), 'P3YT45S');
-    t.is(Duration.fromObject({months: 4, seconds: 45}).toISO(), 'P4MT45S');
-    t.is(Duration.fromObject({months: 5}).toISO(), 'P5M');
-    t.is(Duration.fromObject({minutes: 5}).toISO(), 'PT5M');
-    t.end();
+  it('Duration#toISO creates a minimal string', () => {
+    expect(Duration.fromObject({years: 3, seconds: 45}).toISO()).toBe('P3YT45S');
+    expect(Duration.fromObject({months: 4, seconds: 45}).toISO()).toBe('P4MT45S');
+    expect(Duration.fromObject({months: 5}).toISO()).toBe('P5M');
+    expect(Duration.fromObject({minutes: 5}).toISO()).toBe('PT5M');
   });
 
   //------
@@ -27,77 +24,68 @@ export let format = () => {
   //------
 
 
-  test("Duration#toFormatString('S') returns milliseconds", t => {
-    t.is(dur().toFormatString('S'), '36993906007');
+  it("Duration#toFormatString('S') returns milliseconds", () => {
+    expect(dur().toFormatString('S')).toBe('36993906007');
 
     let lil = Duration.fromLength(5, 'milliseconds');
-    t.is(lil.toFormatString('S'), '5');
-    t.is(lil.toFormatString('SS'), '05');
-    t.is(lil.toFormatString('SSSSS'), '00005');
-    t.end();
+    expect(lil.toFormatString('S')).toBe('5');
+    expect(lil.toFormatString('SS')).toBe('05');
+    expect(lil.toFormatString('SSSSS')).toBe('00005');
   });
 
-  test("Duration#toFormatString('s') returns seconds", t => {
-    t.is(dur().toFormatString('s'), '36993906');
-    t.is(dur().toFormatString('s', {round: false}), '36993906.007');
-    t.is(dur().toFormatString('s.SSS'), '36993906.007');
-    t.end();
+  it("Duration#toFormatString('s') returns seconds", () => {
+    expect(dur().toFormatString('s')).toBe('36993906');
+    expect(dur().toFormatString('s', {round: false})).toBe('36993906.007');
+    expect(dur().toFormatString('s.SSS')).toBe('36993906.007');
   });
 
-  test("Duration#toFormatString('m') returns minutes", t => {
-    t.is(dur().toFormatString('m'), '616565');
-    t.is(dur().toFormatString('m', {round: false}), '616565.1');
-    t.is(dur().toFormatString('m:ss'), '616565:06');
-    t.is(dur().toFormatString('m:ss.SSS'), '616565:06.007');
-    t.end();
+  it("Duration#toFormatString('m') returns minutes", () => {
+    expect(dur().toFormatString('m')).toBe('616565');
+    expect(dur().toFormatString('m', {round: false})).toBe('616565.1');
+    expect(dur().toFormatString('m:ss')).toBe('616565:06');
+    expect(dur().toFormatString('m:ss.SSS')).toBe('616565:06.007');
   });
 
-  test("Duration#toFormatString('h') returns hours", t => {
-    t.is(dur().toFormatString('h'), '10276');
-    t.is(dur().toFormatString('h', {round: false}), '10276.085');
-    t.is(dur().toFormatString('h:ss'), '10276:306');
-    t.is(dur().toFormatString('h:mm:ss.SSS'), '10276:05:06.007');
-    t.end();
+  it("Duration#toFormatString('h') returns hours", () => {
+    expect(dur().toFormatString('h')).toBe('10276');
+    expect(dur().toFormatString('h', {round: false})).toBe('10276.085');
+    expect(dur().toFormatString('h:ss')).toBe('10276:306');
+    expect(dur().toFormatString('h:mm:ss.SSS')).toBe('10276:05:06.007');
   });
 
-  test("Duration#toFormatString('d') returns days", t => {
-    t.is(dur().toFormatString('d'), '428');
-    t.is(dur().toFormatString('d', {round: false}), '428.17');
-    t.is(dur().toFormatString('d:h:ss'), '428:4:306');
-    t.is(dur().toFormatString('d:h:mm:ss.SSS'), '428:4:05:06.007');
-    t.end();
+  it("Duration#toFormatString('d') returns days", () => {
+    expect(dur().toFormatString('d')).toBe('428');
+    expect(dur().toFormatString('d', {round: false})).toBe('428.17');
+    expect(dur().toFormatString('d:h:ss')).toBe('428:4:306');
+    expect(dur().toFormatString('d:h:mm:ss.SSS')).toBe('428:4:05:06.007');
   });
 
-  test("Duration#toFormatString('M') returns months", t => {
-    t.is(dur().toFormatString('M'), '14');
-    t.is(dur().toFormatString('M', {round: false}), '14.106');
-    t.is(dur().toFormatString('M:s'), '14:273906');
-    t.is(dur().toFormatString('M:dd:h:mm:ss.SSS'), '14:03:4:05:06.007');
-    t.end();
+  it("Duration#toFormatString('M') returns months", () => {
+    expect(dur().toFormatString('M')).toBe('14');
+    expect(dur().toFormatString('M', {round: false})).toBe('14.106');
+    expect(dur().toFormatString('M:s')).toBe('14:273906');
+    expect(dur().toFormatString('M:dd:h:mm:ss.SSS')).toBe('14:03:4:05:06.007');
   });
 
-  test("Duration#toFormatString('y') returns years", t => {
-    t.is(dur().toFormatString('y'), '1');
-    t.is(dur().toFormatString('y', {round: false}), '1.175');
-    t.is(dur().toFormatString('y:m'), '1:90965');
-    t.is(dur().toFormatString('y:M:dd:h:mm:ss.SSS'), '1:2:03:4:05:06.007');
+  it("Duration#toFormatString('y') returns years", () => {
+    expect(dur().toFormatString('y')).toBe('1');
+    expect(dur().toFormatString('y', {round: false})).toBe('1.175');
+    expect(dur().toFormatString('y:m')).toBe('1:90965');
+    expect(dur().toFormatString('y:M:dd:h:mm:ss.SSS')).toBe('1:2:03:4:05:06.007');
 
     let lil = Duration.fromLength(5, 'years');
-    t.is(lil.toFormatString('y'), '5');
-    t.is(lil.toFormatString('yy'), '05');
-    t.is(lil.toFormatString('yyyyy'), '00005');
-    t.end();
+    expect(lil.toFormatString('y')).toBe('5');
+    expect(lil.toFormatString('yy')).toBe('05');
+    expect(lil.toFormatString('yyyyy')).toBe('00005');
   });
 
-  test('Duration#toFormatString leaves in zeros', t => {
+  it('Duration#toFormatString leaves in zeros', () => {
     let tiny = Duration.fromLength(5, 'seconds');
-    t.is(tiny.toFormatString('hh:mm:ss'), '00:00:05');
-    t.is(tiny.toFormatString('hh:mm:ss.SSS'), '00:00:05.000');
-    t.end();
+    expect(tiny.toFormatString('hh:mm:ss')).toBe('00:00:05');
+    expect(tiny.toFormatString('hh:mm:ss.SSS')).toBe('00:00:05.000');
   });
 
-  test('Duration#toFormatString localizes the numbers', t => {
-    t.is(dur().locale('bn').toFormatString('yy:MM:dd:h:mm:ss.SSS'), '০১:০২:০৩:৪:০৫:০৬.০০৭');
-    t.end();
+  it('Duration#toFormatString localizes the numbers', () => {
+    expect(dur().locale('bn').toFormatString('yy:MM:dd:h:mm:ss.SSS')).toBe('০১:০২:০৩:৪:০৫:০৬.০০৭');
   });
 };

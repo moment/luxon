@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant} from 'luxon';
 import {FakePT} from '../helpers/fakePT';
 
@@ -8,58 +7,53 @@ export let create = () => {
   // .now()
   //-------
 
-  test("Instant.now has today's date", t => {
+  it("Instant.now has today's date", () => {
     let now = Instant.now();
-    t.is(now.toJSDate().getDate(), new Date().getDate());
-    t.end();
+    expect(now.toJSDate().getDate()).toBe(new Date().getDate());
   });
 
   //------
   // .fromJSDate()
   //-------
 
-  test('Instant.fromJSDate(date) reflects the date', t => {
+  it('Instant.fromJSDate(date) reflects the date', () => {
     let date = new Date(1982, 4, 25),
         instant = Instant.fromJSDate(date);
-    t.is(instant.toJSDate().valueOf(), date.valueOf());
-    t.end();
+    expect(instant.toJSDate().valueOf()).toBe(date.valueOf());
   });
 
-  test('Instant.fromJSDate(date) clones the date', t => {
+  it('Instant.fromJSDate(date) clones the date', () => {
     let date = new Date(1982, 4, 25),
         instant = Instant.fromJSDate(date),
         oldValue = instant.valueOf();
 
     date.setDate(14);
-    t.is(instant.toJSDate().valueOf(), oldValue);
+    expect(instant.toJSDate().valueOf()).toBe(oldValue);
 
     date.setDate(12);
-    t.is(instant.toJSDate().valueOf(), oldValue);
-    t.end();
+    expect(instant.toJSDate().valueOf()).toBe(oldValue);
   });
 
   //------
   // .fromMillis()
   //-------
 
-  test('Instant.fromMillis(ms) has a value of ms', t => {
+  it('Instant.fromMillis(ms) has a value of ms', () => {
     let value = 391147200000,
         instant = Instant.fromMillis(value);
 
-    t.is(instant.valueOf(), value);
-    t.end();
+    expect(instant.valueOf()).toBe(value);
   });
 
   //------
   // .fromUnix()
   //-------
 
-  test('Instant.fromUnix(secs) has a value of 1000 * secs', t => {
+  it('Instant.fromUnix(secs) has a value of 1000 * secs', () => {
     let value = 391147200,
         instant = Instant.fromUnix(value);
 
-    t.is(instant.valueOf(), value * 1000);
-    t.end();
+    expect(instant.valueOf()).toBe(value * 1000);
   });
 
   //------
@@ -76,82 +70,72 @@ export let create = () => {
     millisecond: 123
   };
 
-  test('Instant.fromObject() sets all the fields', t => {
-
+  it('Instant.fromObject() sets all the fields', () => {
     let instant = Instant.fromObject(baseObject);
 
-    t.is(instant.isOffsetFixed(), false);
-    t.is(instant.year(), 1982);
-    t.is(instant.month(), 5);
-    t.is(instant.day(), 25);
-    t.is(instant.hour(), 9);
-    t.is(instant.minute(), 23);
-    t.is(instant.second(), 54);
-    t.is(instant.millisecond(), 123);
-    t.end();
+    expect(instant.isOffsetFixed()).toBe(false);
+    expect(instant.year()).toBe(1982);
+    expect(instant.month()).toBe(5);
+    expect(instant.day()).toBe(25);
+    expect(instant.hour()).toBe(9);
+    expect(instant.minute()).toBe(23);
+    expect(instant.second()).toBe(54);
+    expect(instant.millisecond()).toBe(123);
   });
 
-  test('Instant.fromObject() takes a UTC option', t => {
-
+  it('Instant.fromObject() takes a UTC option', () => {
     let instant = Instant.fromObject(baseObject, {utc: true});
 
-    t.is(instant.isOffsetFixed(), true);
-    t.is(instant.year(), 1982);
-    t.is(instant.month(), 5);
-    t.is(instant.day(), 25);
-    t.is(instant.hour(), 9);
-    t.is(instant.minute(), 23);
-    t.is(instant.second(), 54);
-    t.is(instant.millisecond(), 123);
-    t.end();
+    expect(instant.isOffsetFixed()).toBe(true);
+    expect(instant.year()).toBe(1982);
+    expect(instant.month()).toBe(5);
+    expect(instant.day()).toBe(25);
+    expect(instant.hour()).toBe(9);
+    expect(instant.minute()).toBe(23);
+    expect(instant.second()).toBe(54);
+    expect(instant.millisecond()).toBe(123);
   });
 
-  test('Instant.fromObject() takes a zone option', t => {
-
+  it('Instant.fromObject() takes a zone option', () => {
     let daylight = Instant.fromObject(Object.assign({}, baseObject, {month: 5}), {zone: new FakePT()}),
         standard = Instant.fromObject(Object.assign({}, baseObject, {month: 12}), {zone: new FakePT()});
 
-    t.is(daylight.isOffsetFixed(), false);
-    t.is(daylight.offset(), -7 * 60);
-    t.is(daylight.year(), 1982);
-    t.is(daylight.month(), 5);
-    t.is(daylight.day(), 25);
-    t.is(daylight.hour(), 9);
-    t.is(daylight.minute(), 23);
-    t.is(daylight.second(), 54);
-    t.is(daylight.millisecond(), 123);
+    expect(daylight.isOffsetFixed()).toBe(false);
+    expect(daylight.offset()).toBe(-7 * 60);
+    expect(daylight.year()).toBe(1982);
+    expect(daylight.month()).toBe(5);
+    expect(daylight.day()).toBe(25);
+    expect(daylight.hour()).toBe(9);
+    expect(daylight.minute()).toBe(23);
+    expect(daylight.second()).toBe(54);
+    expect(daylight.millisecond()).toBe(123);
 
-    t.is(standard.isOffsetFixed(), false);
-    t.is(standard.offset(), -8 * 60);
-    t.is(standard.year(), 1982);
-    t.is(standard.month(), 12);
-    t.is(standard.day(), 25);
-    t.is(standard.hour(), 9);
-    t.is(standard.minute(), 23);
-    t.is(standard.second(), 54);
-    t.is(standard.millisecond(), 123);
-    t.end();
+    expect(standard.isOffsetFixed()).toBe(false);
+    expect(standard.offset()).toBe(-8 * 60);
+    expect(standard.year()).toBe(1982);
+    expect(standard.month()).toBe(12);
+    expect(standard.day()).toBe(25);
+    expect(standard.hour()).toBe(9);
+    expect(standard.minute()).toBe(23);
+    expect(standard.second()).toBe(54);
+    expect(standard.millisecond()).toBe(123);
   });
 
-  test('Instant.fromObject() defaults high-order values to the current date', t => {
-
+  it('Instant.fromObject() defaults high-order values to the current date', () => {
     let instant = Instant.fromObject({}),
         now = Instant.now();
 
-    t.is(instant.year(), now.year());
-    t.is(instant.month(), now.month());
-    t.is(instant.day(), now.day());
-    t.end();
+    expect(instant.year()).toBe(now.year());
+    expect(instant.month()).toBe(now.month());
+    expect(instant.day()).toBe(now.day());
   });
 
-  test('Instant.fromObject() defaults lower-order values to 0', t => {
-
+  it('Instant.fromObject() defaults lower-order values to 0', () => {
     let instant = Instant.fromObject({});
 
-    t.is(instant.hour(), 0),
-    t.is(instant.minute(), 0),
-    t.is(instant.second(), 0),
-    t.is(instant.millisecond(), 0);
-    t.end();
+    expect(instant.hour()).toBe(0),
+    expect(instant.minute()).toBe(0),
+    expect(instant.second()).toBe(0),
+    expect(instant.millisecond()).toBe(0);
   });
 };

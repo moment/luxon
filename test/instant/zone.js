@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant} from 'luxon';
 import {FakePT} from '../helpers/fakePT';
 import {FakeET} from '../helpers/fakeET';
@@ -12,57 +11,50 @@ export let zone = () => {
   // defaults
   //------
 
-  test('timezone defaults to local', t => {
+  it('timezone defaults to local', () => {
     let inst = instant();
-    t.is(inst.isOffsetFixed(), false);
-    t.end();
+    expect(inst.isOffsetFixed()).toBe(false);
   });
 
   //------
   // #utc()
   //------
 
-  test("Instant#utc() puts the instant in UTC 'mode'", t => {
-
+  it("Instant#utc() puts the instant in UTC 'mode'", () => {
     let zoned = instant().utc();
 
-    t.is(zoned.valueOf(), millis);
-    t.is(zoned.hour().valueOf(), 4);
-    t.is(zoned.timezoneName(), 'UTC');
-    t.is(zoned.isOffsetFixed(), true);
-    t.is(zoned.isInDST(), false);
-    t.end();
+    expect(zoned.valueOf()).toBe(millis);
+    expect(zoned.hour().valueOf()).toBe(4);
+    expect(zoned.timezoneName()).toBe('UTC');
+    expect(zoned.isOffsetFixed()).toBe(true);
+    expect(zoned.isInDST()).toBe(false);
   });
 
   //------
   // #useUTCOffset()
   //------
 
-  test("Instant#useUTCOffset() sets instant in UTC+offset 'mode'", t => {
-
+  it("Instant#useUTCOffset() sets instant in UTC+offset 'mode'", () => {
     let zoned = instant().useUTCOffset(5 * 60);
 
-    t.is(zoned.valueOf(), millis);
-    t.is(zoned.hour().valueOf(), 9);
-    t.is(zoned.timezoneName(), 'UTC+5');
-    t.is(zoned.isOffsetFixed(), true);
-    t.is(zoned.isInDST(), false);
-    t.end();
+    expect(zoned.valueOf()).toBe(millis);
+    expect(zoned.hour().valueOf()).toBe(9);
+    expect(zoned.timezoneName()).toBe('UTC+5');
+    expect(zoned.isOffsetFixed()).toBe(true);
+    expect(zoned.isInDST()).toBe(false);
   });
 
   //------
   // #local()
   //------
 
-  test('Instant#local() sets the calendar back to local', t => {
-
+  it('Instant#local() sets the calendar back to local', () => {
     let relocaled = instant().utc().local(),
         expected = new Date(millis).getHours();
 
-    t.is(relocaled.isOffsetFixed(), false);
-    t.is(relocaled.valueOf(), millis);
-    t.is(relocaled.hour(), expected);
-    t.end();
+    expect(relocaled.isOffsetFixed()).toBe(false);
+    expect(relocaled.valueOf()).toBe(millis);
+    expect(relocaled.hour()).toBe(expected);
   });
 
   //------
@@ -70,73 +62,65 @@ export let zone = () => {
   //------
 
 
-  test('rezone sets the TZ to the specified zone', t => {
-
+  it('rezone sets the TZ to the specified zone', () => {
     let zoned = instant().rezone(new FakePT());
 
-    t.is(zoned.timezoneName(), 'Fake Pacific Time');
-    t.is(zoned.isOffsetFixed(), false);
-    t.is(zoned.valueOf(), millis);
-    t.is(zoned.hour(), 21); //pacific daylight time
-    t.is(zoned.isInDST(), true);
-    t.end();
+    expect(zoned.timezoneName()).toBe('Fake Pacific Time');
+    expect(zoned.isOffsetFixed()).toBe(false);
+    expect(zoned.valueOf()).toBe(millis);
+    expect(zoned.hour()).toBe(21); //pacific daylight time
+    expect(zoned.isInDST()).toBe(true);
   });
 
-  test('rezone accepts a keepCalendarTime option', t => {
+  it('rezone accepts a keepCalendarTime option', () => {
     let zoned = instant().utc().rezone(new FakePT(), {keepCalendarTime: true});
-    t.is(zoned.timezoneName(), 'Fake Pacific Time');
-    t.is(zoned.year(), 1982);
-    t.is(zoned.month(), 5);
-    t.is(zoned.day(), 25);
-    t.is(zoned.hour(), 4);
-    t.is(zoned.isOffsetFixed(), false);
+    expect(zoned.timezoneName()).toBe('Fake Pacific Time');
+    expect(zoned.year()).toBe(1982);
+    expect(zoned.month()).toBe(5);
+    expect(zoned.day()).toBe(25);
+    expect(zoned.hour()).toBe(4);
+    expect(zoned.isOffsetFixed()).toBe(false);
 
     let zonedMore = zoned.rezone(new FakeET(), {keepCalendarTime: true});
-    t.is(zonedMore.timezoneName(), 'Fake Eastern Time');
-    t.is(zonedMore.year(), 1982);
-    t.is(zonedMore.month(), 5);
-    t.is(zonedMore.day(), 25);
-    t.is(zonedMore.hour(), 4);
-    t.is(zonedMore.isOffsetFixed(), false);
-    t.end();
+    expect(zonedMore.timezoneName()).toBe('Fake Eastern Time');
+    expect(zonedMore.year()).toBe(1982);
+    expect(zonedMore.month()).toBe(5);
+    expect(zonedMore.day()).toBe(25);
+    expect(zonedMore.hour()).toBe(4);
+    expect(zonedMore.isOffsetFixed()).toBe(false);
   });
 
   //------
   // #isInDST()
   //------
 
-  test('Instant#isInDST() returns false for pre-DST times', t => {
+  it('Instant#isInDST() returns false for pre-DST times', () => {
     let zoned = instant().rezone(new FakePT());
-    t.is(zoned.month(1).isInDST(), false);
-    t.end();
+    expect(zoned.month(1).isInDST()).toBe(false);
   });
 
-  test('Instant#isInDST() returns true for during-DST times', t => {
+  it('Instant#isInDST() returns true for during-DST times', () => {
     let zoned = instant().rezone(new FakePT());
-    t.is(zoned.month(4).isInDST(), true);
-    t.end();
+    expect(zoned.month(4).isInDST()).toBe(true);
   });
 
-  test('Instant#isInDST() returns false for post-DST times', t => {
+  it('Instant#isInDST() returns false for post-DST times', () => {
     let zoned = instant().rezone(new FakePT());
-    t.is(zoned.month(12).isInDST(), false);
-    t.end();
+    expect(zoned.month(12).isInDST()).toBe(false);
   });
 
   //------
   // timezone
   //------
 
-  test('magic zones are magic', t => {
-
+  it('magic zones are magic', () => {
     //this will only work in Chrome/V8 for now
     let zoned = instant().timezone('Europe/Paris');
 
-    t.is(zoned.timezoneName(), 'Europe/Paris');
-    t.is(zoned.offsetNameShort(), 'GMT+2'); //not convinced this is universal. Could also be 'CEDT'
-    t.is(zoned.offsetNameLong(), 'Central European Summer Time');
-    t.is(zoned.valueOf(), millis);
-    t.is(zoned.hour(), 6); //cedt is +2
-    t.end();
+    expect(zoned.timezoneName()).toBe('Europe/Paris');
+    expect(zoned.offsetNameShort()).toBe('GMT+2'); //not convinced this is universal. Could also be 'CEDT'
+    expect(zoned.offsetNameLong()).toBe('Central European Summer Time');
+    expect(zoned.valueOf()).toBe(millis);
+    expect(zoned.hour()).toBe(6); //cedt is +2
   });
 };

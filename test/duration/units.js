@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Duration} from 'luxon';
 
 export let units = () => {
@@ -7,58 +6,51 @@ export let units = () => {
   // #shiftTo()
   //-------
 
-  test('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', t => {
-
+  it('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', () => {
     let dur = Duration.fromLength(5760000, 'milliseconds');
 
-    t.is(dur.shiftTo('hours').hours(), 1.6);
+    expect(dur.shiftTo('hours').hours()).toBe(1.6);
 
     let mod = dur.shiftTo('hours', 'minutes');
-    t.is(mod.hours(), 1);
-    t.is(mod.minutes(), 36);
-    t.is(mod.seconds(), 0);
-    t.end();
+    expect(mod.hours()).toBe(1);
+    expect(mod.minutes()).toBe(36);
+    expect(mod.seconds()).toBe(0);
   });
 
-  test('Duration#shiftTo boils hours down shiftTo milliseconds', t => {
+  it('Duration#shiftTo boils hours down shiftTo milliseconds', () => {
     let dur = Duration .fromLength(1, 'hour').shiftTo('milliseconds');
-    t.is(dur.milliseconds(), 3600000);
-    t.end();
+    expect(dur.milliseconds()).toBe(3600000);
   });
 
-  test('Duration boils hours down shiftTo minutes and milliseconds', t => {
+  it('Duration boils hours down shiftTo minutes and milliseconds', () => {
     let dur = Duration .fromObject({hours: 1, seconds: 30}).shiftTo('minutes', 'milliseconds');
-    t.is(dur.minutes(), 60);
-    t.is(dur.milliseconds(), 30000);
-    t.end();
+    expect(dur.minutes()).toBe(60);
+    expect(dur.milliseconds()).toBe(30000);
   });
 
-  test('Duration#shiftTo boils down and then rolls up', t => {
+  it('Duration#shiftTo boils down and then rolls up', () => {
     let dur = Duration.fromObject({years: 2, hours: 5000}).shiftTo('months', 'days', 'minutes');
 
-    t.is(dur.months(), 30);
-    t.is(dur.days(), 28);
-    t.is(dur.minutes(), 8 * 60);
-    t.end();
+    expect(dur.months()).toBe(30);
+    expect(dur.days()).toBe(28);
+    expect(dur.minutes()).toBe(8 * 60);
   });
 
   //------
   // #normalize()
   //-------
 
-  test('Duration#normalize rebalances negative units', t => {
+  it('Duration#normalize rebalances negative units', () => {
     let dur = Duration.fromObject({years: 2, days: -2}).normalize();
 
-    t.is(dur.years(), 1);
-    t.is(dur.days(), 363);
-    t.end();
+    expect(dur.years()).toBe(1);
+    expect(dur.days()).toBe(363);
   });
 
-  test('Duration#normalize de-overflows', t => {
+  it('Duration#normalize de-overflows', () => {
     let dur = Duration.fromObject({years: 2, days: 5000}).normalize();
 
-    t.is(dur.years(), 15);
-    t.is(dur.days(), 255);
-    t.end();
+    expect(dur.years()).toBe(15);
+    expect(dur.days()).toBe(255);
   });
 };

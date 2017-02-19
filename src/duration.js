@@ -2,7 +2,7 @@ import {Util} from "./impl/util";
 import {Locale} from "./impl/locale";
 import {Formatter} from './impl/formatter';
 
-let matrix = {
+const matrix = {
   years: {
     months: 12,
     days: 365,
@@ -39,7 +39,7 @@ let matrix = {
   }
 };
 
-let ordered = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
+const ordered = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
 function ensure(unit){
   let normalized = unit.endsWith('s') ? unit : unit + 's';

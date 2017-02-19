@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant} from 'luxon';
 import {FakePT} from '../helpers/fakePT';
 
@@ -20,211 +19,195 @@ export let math = () => {
   // #plus()
   //------
 
-  test("Instant#plus(1, 'year') adds a year", t => {
+  it("Instant#plus(1, 'year') adds a year", () => {
     let i = createInstant().plus(1, 'years');
-    t.is(i.year(), 2011);
-    t.end();
+    expect(i.year()).toBe(2011);
   });
 
-  test("Instant#plus(1, 'day') keeps the same time across a DST", t => {
+  it("Instant#plus(1, 'day') keeps the same time across a DST", () => {
     let i = Instant.fromISO("2016-03-12T10:00").rezone(new FakePT(), {keepCalendarTime: true}),
         later = i.plus(1, 'day');
-    t.is(later.day(), 13);
-    t.is(later.hour(), 10);
-    t.end();
+    expect(later.day()).toBe(13);
+    expect(later.hour()).toBe(10);
   });
 
-  test("Instant#plus(24, 'hours') gains an hour to spring forward", t => {
+  it("Instant#plus(24, 'hours') gains an hour to spring forward", () => {
     let i = Instant.fromISO("2016-03-12T10:00").rezone(new FakePT(), {keepCalendarTime: true}),
         later = i.plus(24, 'hours');
-    t.is(later.day(), 13);
-    t.is(later.hour(), 11);
-    t.end();
+    expect(later.day()).toBe(13);
+    expect(later.hour()).toBe(11);
   });
 
   //------
   // #minus()
   //------
 
-  test("Instant#minus(1, 'year') subtracts a year", t => {
+  it("Instant#minus(1, 'year') subtracts a year", () => {
     let i = createInstant().minus(1, 'year');
-    t.is(i.year(), 2009);
-    t.end();
+    expect(i.year()).toBe(2009);
   });
 
   //------
   // #startOf()
   //------
 
-  test("Instant#startOf('year') goes to the start of the year", t => {
+  it("Instant#startOf('year') goes to the start of the year", () => {
     let i = createInstant().startOf('year');
 
-    t.is(i.year(), 2010);
+    expect(i.year()).toBe(2010);
 
-    t.is(i.month(), 1);
-    t.is(i.day(), 1);
-    t.is(i.hour(), 0);
-    t.is(i.minute(), 0);
-    t.is(i.second(), 0);
-    t.is(i.millisecond(), 0);
-    t.end();
+    expect(i.month()).toBe(1);
+    expect(i.day()).toBe(1);
+    expect(i.hour()).toBe(0);
+    expect(i.minute()).toBe(0);
+    expect(i.second()).toBe(0);
+    expect(i.millisecond()).toBe(0);
   });
 
-  test("Instant#startOf('month') goes to the start of the month", t => {
+  it("Instant#startOf('month') goes to the start of the month", () => {
     let i = createInstant().startOf('month');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
 
-    t.is(i.day(), 1);
-    t.is(i.hour(), 0);
-    t.is(i.minute(), 0);
-    t.is(i.second(), 0);
-    t.is(i.millisecond(), 0);
-    t.end();
+    expect(i.day()).toBe(1);
+    expect(i.hour()).toBe(0);
+    expect(i.minute()).toBe(0);
+    expect(i.second()).toBe(0);
+    expect(i.millisecond()).toBe(0);
   });
 
-  test("Instant#startOf('day') goes to the start of the day", t => {
+  it("Instant#startOf('day') goes to the start of the day", () => {
     let i = createInstant().startOf('day');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
 
-    t.is(i.hour(), 0);
-    t.is(i.minute(), 0);
-    t.is(i.second(), 0);
-    t.is(i.millisecond(), 0);
-    t.end();
+    expect(i.hour()).toBe(0);
+    expect(i.minute()).toBe(0);
+    expect(i.second()).toBe(0);
+    expect(i.millisecond()).toBe(0);
   });
 
-  test("Instant#startOf('hour') goes to the start of the hour", t => {
+  it("Instant#startOf('hour') goes to the start of the hour", () => {
     let i = createInstant().startOf('hour');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
-    t.is(i.hour(), 4);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
+    expect(i.hour()).toBe(4);
 
-    t.is(i.minute(), 0);
-    t.is(i.second(), 0);
-    t.is(i.millisecond(), 0);
-    t.end();
+    expect(i.minute()).toBe(0);
+    expect(i.second()).toBe(0);
+    expect(i.millisecond()).toBe(0);
   });
 
-  test("Instant#startOf('minute') goes to the start of the minute", t => {
+  it("Instant#startOf('minute') goes to the start of the minute", () => {
     let i = createInstant().startOf('minute');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
-    t.is(i.hour(), 4);
-    t.is(i.minute(), 5);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
+    expect(i.hour()).toBe(4);
+    expect(i.minute()).toBe(5);
 
-    t.is(i.second(), 0);
-    t.is(i.millisecond(), 0);
-    t.end();
+    expect(i.second()).toBe(0);
+    expect(i.millisecond()).toBe(0);
   });
 
-  test("Instant#startOf('second') goes to the start of the second", t => {
+  it("Instant#startOf('second') goes to the start of the second", () => {
     let i = createInstant().startOf('second');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
-    t.is(i.hour(), 4);
-    t.is(i.minute(), 5);
-    t.is(i.second(), 6);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
+    expect(i.hour()).toBe(4);
+    expect(i.minute()).toBe(5);
+    expect(i.second()).toBe(6);
 
-    t.is(i.millisecond(), 0);
-    t.end();
+    expect(i.millisecond()).toBe(0);
   });
 
   //------
   // #endOf()
   //------
 
-  test("Instant#endOf('year') goes to the start of the year", t => {
+  it("Instant#endOf('year') goes to the start of the year", () => {
     let i = createInstant().endOf('year');
 
-    t.is(i.year(), 2010);
+    expect(i.year()).toBe(2010);
 
-    t.is(i.month(), 12);
-    t.is(i.day(), 31);
-    t.is(i.hour(), 23);
-    t.is(i.minute(), 59);
-    t.is(i.second(), 59);
-    t.is(i.millisecond(), 999);
-    t.end();
+    expect(i.month()).toBe(12);
+    expect(i.day()).toBe(31);
+    expect(i.hour()).toBe(23);
+    expect(i.minute()).toBe(59);
+    expect(i.second()).toBe(59);
+    expect(i.millisecond()).toBe(999);
   });
 
-  test("Instant#endOf('month') goes to the start of the month", t => {
+  it("Instant#endOf('month') goes to the start of the month", () => {
     let i = createInstant().endOf('month');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
 
-    t.is(i.day(), 28);
-    t.is(i.hour(), 23);
-    t.is(i.minute(), 59);
-    t.is(i.second(), 59);
-    t.is(i.millisecond(), 999);
-    t.end();
+    expect(i.day()).toBe(28);
+    expect(i.hour()).toBe(23);
+    expect(i.minute()).toBe(59);
+    expect(i.second()).toBe(59);
+    expect(i.millisecond()).toBe(999);
   });
 
-  test("Instant#endOf('day') goes to the start of the day", t => {
+  it("Instant#endOf('day') goes to the start of the day", () => {
     let i = createInstant().endOf('day');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
 
-    t.is(i.hour(), 23);
-    t.is(i.minute(), 59);
-    t.is(i.second(), 59);
-    t.is(i.millisecond(), 999);
-    t.end();
+    expect(i.hour()).toBe(23);
+    expect(i.minute()).toBe(59);
+    expect(i.second()).toBe(59);
+    expect(i.millisecond()).toBe(999);
   });
 
-  test("Instant#endOf('hour') goes to the start of the hour", t => {
+  it("Instant#endOf('hour') goes to the start of the hour", () => {
     let i = createInstant().endOf('hour');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
-    t.is(i.hour(), 4);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
+    expect(i.hour()).toBe(4);
 
-    t.is(i.minute(), 59);
-    t.is(i.second(), 59);
-    t.is(i.millisecond(), 999);
-    t.end();
+    expect(i.minute()).toBe(59);
+    expect(i.second()).toBe(59);
+    expect(i.millisecond()).toBe(999);
   });
 
-  test("Instant#endOf('minute') goes to the start of the minute", t => {
+  it("Instant#endOf('minute') goes to the start of the minute", () => {
     let i = createInstant().endOf('minute');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
-    t.is(i.hour(), 4);
-    t.is(i.minute(), 5);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
+    expect(i.hour()).toBe(4);
+    expect(i.minute()).toBe(5);
 
-    t.is(i.second(), 59);
-    t.is(i.millisecond(), 999);
-    t.end();
+    expect(i.second()).toBe(59);
+    expect(i.millisecond()).toBe(999);
   });
 
-  test("Instant#endOf('second') goes to the start of the second", t => {
+  it("Instant#endOf('second') goes to the start of the second", () => {
     let i = createInstant().endOf('second');
 
-    t.is(i.year(), 2010);
-    t.is(i.month(), 2);
-    t.is(i.day(), 3);
-    t.is(i.hour(), 4);
-    t.is(i.minute(), 5);
-    t.is(i.second(), 6);
+    expect(i.year()).toBe(2010);
+    expect(i.month()).toBe(2);
+    expect(i.day()).toBe(3);
+    expect(i.hour()).toBe(4);
+    expect(i.minute()).toBe(5);
+    expect(i.second()).toBe(6);
 
-    t.is(i.millisecond(), 999);
-    t.end();
+    expect(i.millisecond()).toBe(999);
   });
 };

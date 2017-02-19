@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant} from 'luxon';
 
 export let getters = () => {
@@ -10,54 +9,46 @@ export let getters = () => {
   // year/month/day/hour/minute/second/millisecond
   //-------
 
-  test('instant#year() returns the year', t => {
-    t.is(instant.year(), 1982);
-    t.is(utc.year(), 1982);
-    t.end();
+  it('instant#year() returns the year', () => {
+    expect(instant.year()).toBe(1982);
+    expect(utc.year()).toBe(1982);
   });
 
-  test('instant#month() returns the (1-indexed) month', t => {
-    t.is(instant.month(), 5);
-    t.is(utc.month(), 5);
-    t.end();
+  it('instant#month() returns the (1-indexed) month', () => {
+    expect(instant.month()).toBe(5);
+    expect(utc.month()).toBe(5);
   });
 
-  test('instant#day() returns the day', t => {
-    t.is(instant.day(), 25);
-    t.is(utc.day(), 25);
-    t.end();
+  it('instant#day() returns the day', () => {
+    expect(instant.day()).toBe(25);
+    expect(utc.day()).toBe(25);
   });
 
-  test('instant#hour() returns the hour', t => {
-    t.is(instant.hour(), 9);
-    t.is(utc.hour(), 9);
-    t.end();
+  it('instant#hour() returns the hour', () => {
+    expect(instant.hour()).toBe(9);
+    expect(utc.hour()).toBe(9);
   });
 
-  test('instant#minute() returns the minute', t => {
-    t.is(instant.minute(), 23);
-    t.is(utc.minute(), 23);
-    t.end();
+  it('instant#minute() returns the minute', () => {
+    expect(instant.minute()).toBe(23);
+    expect(utc.minute()).toBe(23);
   });
 
-  test('instant#second() returns the second', t => {
-    t.is(instant.second(), 54);
-    t.is(utc.second(), 54);
-    t.end();
+  it('instant#second() returns the second', () => {
+    expect(instant.second()).toBe(54);
+    expect(utc.second()).toBe(54);
   });
 
-  test('instant#millisecond() returns the millisecond', t => {
-    t.is(instant.millisecond(), 123);
-    t.is(utc.millisecond(), 123);
-    t.end();
+  it('instant#millisecond() returns the millisecond', () => {
+    expect(instant.millisecond()).toBe(123);
+    expect(utc.millisecond()).toBe(123);
   });
 
   //------
   // locale
   //-------
-  test('instant#locale() returns the locale', t => {
+  it('instant#locale() returns the locale', () => {
     let i = Instant.now().locale('be');
-    t.is(i.locale(), 'be');
-    t.end();
+    expect(i.locale()).toBe('be');
   });
 };

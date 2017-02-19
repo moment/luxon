@@ -1,5 +1,4 @@
 import {Info} from 'luxon';
-import test from 'tape';
 
 export let info = () => {
 
@@ -7,123 +6,87 @@ export let info = () => {
   // .months()
   //-------
 
-  test('Info.months lists all the months', t => {
-    t.deepEqual(
-      Info.months('long', 'en'),
-      ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']);
+  it('Info.months lists all the months', () => {
+    expect(Info.months('long', 'en')).toEqual(
+      ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    );
 
-    t.deepEqual(
-      Info.months('short', 'en'),
-      ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
+    expect(Info.months('short', 'en')).toEqual(
+      ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    );
 
-    t.deepEqual(
-      Info.months('narrow', 'en'),
-      ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']);
+    expect(Info.months('narrow', 'en')).toEqual(['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']);
 
-    t.deepEqual(
-      Info.months('numeric', 'en'),
-      ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
-
-    t.end();
+    expect(Info.months('numeric', 'en')).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
   });
 
-  test('Info.months respects the numbering system', t => {
-    //the polyfill doesn't allow num overrides, so skip this for now
-    t.end();
-  });
+  it('Info.months respects the numbering system', () => {});
 
-  test('Info.months respects the locale', t => {
+  it('Info.months respects the locale', () => {
+    expect(Info.months('numeric', 'bn')).toEqual(['১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯', '১০', '১১', '১২']);
 
-    t.deepEqual(
-      Info.months('numeric', 'bn'),
-      ['১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯', '১০', '১১', '১২']);
-
-    t.deepEqual(
-      Info.monthsFormat('long', 'ru'),
-      ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']);
-
-    t.end();
+    expect(Info.monthsFormat('long', 'ru')).toEqual(
+      ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
+    );
   });
 
   //------
   // .monthsFormat()
   //-------
 
-  test('Info.monthsFormat lists all the months', t => {
-    t.deepEqual(
-      Info.monthsFormat('long', 'en'),
-      ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']);
+  it('Info.monthsFormat lists all the months', () => {
+    expect(Info.monthsFormat('long', 'en')).toEqual(
+      ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    );
 
     //this passes, but is wrong. These are the same as the standalone values
     //t.deepEqual(
     //  Info.monthsFormat('long', 'ru'),
     //  ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']);
 
-    t.deepEqual(
-      Info.monthsFormat('short', 'en'),
-      ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
+    expect(Info.monthsFormat('short', 'en')).toEqual(
+      ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    );
 
-    t.deepEqual(
-      Info.monthsFormat('numeric', 'en'),
-      ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
-
-    t.end();
+    expect(Info.monthsFormat('numeric', 'en')).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
   });
 
   //------
   // .weekdays()
   //-------
 
-  test('Info.weekdays lists all the weekdays', t => {
+  it('Info.weekdays lists all the weekdays', () => {
+    expect(Info.weekdays('long', 'en')).toEqual(
+      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    );
 
-    t.deepEqual(
-      Info.weekdays('long', 'en'),
-      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
+    expect(Info.weekdays('short', 'en')).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
 
-    t.deepEqual(
-      Info.weekdays('short', 'en'),
-      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+    expect(Info.weekdays('narrow', 'en')).toEqual(['S', 'M', 'T', 'W', 'T', 'F', 'S']);
 
-    t.deepEqual(
-      Info.weekdays('narrow', 'en'),
-      ['S', 'M', 'T', 'W', 'T', 'F', 'S']);
-
-    t.deepEqual(
-      Info.weekdays('long', 'ru'),
-      ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']);
-
-    t.end();
+    expect(Info.weekdays('long', 'ru')).toEqual(
+      ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
+    );
   });
 
   //------
   // .weekdaysFormat()
   //-------
 
-  test('Info.weekdaysFormat lists all the weekdays', t => {
+  it('Info.weekdaysFormat lists all the weekdays', () => {
+    expect(Info.weekdaysFormat('long', 'en')).toEqual(
+      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    );
 
-    t.deepEqual(
-      Info.weekdaysFormat('long', 'en'),
-      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
-
-    t.deepEqual(
-      Info.weekdaysFormat('short', 'en'),
-      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
-
-    //this passes, but is wrong. These are the same as the standalone values
-    //t.deepEqual(
-    //  Info.weekdaysFormat('long', 'ru'),
-    //  ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']);
-
-    t.end();
+    expect(Info.weekdaysFormat('short', 'en')).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
   });
 
   //------
   // .meridiems()
   //-------
 
-  test('Info.weekdaysFormat lists all the weekdays', t => {
-    t.deepEqual(Info.meridiems('en'), ['AM', 'PM']);
-    t.deepEqual(Info.meridiems('de'), ['vorm.', 'nachm.']);
-    t.end();
+  it('Info.weekdaysFormat lists all the weekdays', () => {
+    expect(Info.meridiems('en')).toEqual(['AM', 'PM']);
+    expect(Info.meridiems('de')).toEqual(['vorm.', 'nachm.']);
   });
 };

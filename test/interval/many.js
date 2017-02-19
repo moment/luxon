@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant, Interval, Duration} from 'luxon';
 
 export let many = () => {
@@ -11,57 +10,49 @@ export let many = () => {
   // #equals()
   //-------
 
-  test('Interval#equals returns true iff the times are the same', t => {
+  it('Interval#equals returns true iff the times are the same', () => {
     let s = '2016-10-14',
         e = '2016-10-15',
         s2 = '2016-10-13',
         e2 = '2016-10-16',
         first = fromISOs(s, e);
 
-    t.ok(first.equals(fromISOs(s, e)));
-    t.notOk(first.equals(fromISOs(s2, e)));
-    t.notOk(first.equals(fromISOs(s, e2)));
-    t.notOk(first.equals(fromISOs(s2, e2)));
-    t.end();
+    expect(first.equals(fromISOs(s, e))).toBeTruthy();
+    expect(first.equals(fromISOs(s2, e))).toBeFalsy();
+    expect(first.equals(fromISOs(s, e2))).toBeFalsy();
+    expect(first.equals(fromISOs(s2, e2))).toBeFalsy();
   });
 
   //-------
   // #union()
   //-------
 
-  test('Interval#union returns an interval spanning an later interval', t => {
-    t.ok(todayFrom(5, 8).union(todayFrom(9, 11)).equals(todayFrom(5, 11)));
-    t.end();
+  it('Interval#union returns an interval spanning an later interval', () => {
+    expect(todayFrom(5, 8).union(todayFrom(9, 11)).equals(todayFrom(5, 11))).toBeTruthy();
   });
 
-  test('Interval#union returns an interval spanning a earlier interval', t => {
-    t.ok(todayFrom(5, 8).union(todayFrom(3, 4)).equals(todayFrom(3, 8)));
-    t.end();
+  it('Interval#union returns an interval spanning a earlier interval', () => {
+    expect(todayFrom(5, 8).union(todayFrom(3, 4)).equals(todayFrom(3, 8))).toBeTruthy();
   });
 
-  test('Interval#union returns an interval spanning a partially later interval', t => {
-    t.ok(todayFrom(5, 8).union(todayFrom(7, 10)).equals(todayFrom(5, 10)));
-    t.end();
+  it('Interval#union returns an interval spanning a partially later interval', () => {
+    expect(todayFrom(5, 8).union(todayFrom(7, 10)).equals(todayFrom(5, 10))).toBeTruthy();
   });
 
-  test('Interval#union returns an interval spanning a partially earlier interval', t => {
-    t.ok(todayFrom(5, 8).union(todayFrom(4, 6)).equals(todayFrom(4, 8)));
-    t.end();
+  it('Interval#union returns an interval spanning a partially earlier interval', () => {
+    expect(todayFrom(5, 8).union(todayFrom(4, 6)).equals(todayFrom(4, 8))).toBeTruthy();
   });
 
-  test('Interval#union returns an interval no-ops when applied to an engulfed interval', t => {
-    t.ok(todayFrom(5, 8).union(todayFrom(6, 7)).equals(todayFrom(5, 8)));
-    t.end();
+  it('Interval#union returns an interval no-ops when applied to an engulfed interval', () => {
+    expect(todayFrom(5, 8).union(todayFrom(6, 7)).equals(todayFrom(5, 8))).toBeTruthy();
   });
 
-  test('Interval#union expands to an engulfing interval', t => {
-    t.ok(todayFrom(5, 8).union(todayFrom(4, 10)).equals(todayFrom(4, 10)));
-    t.end();
+  it('Interval#union expands to an engulfing interval', () => {
+    expect(todayFrom(5, 8).union(todayFrom(4, 10)).equals(todayFrom(4, 10))).toBeTruthy();
   });
 
-  test('Interval#union spans adjacent intervals', t => {
-    t.ok(todayFrom(5, 8).union(todayFrom(8, 10)).equals(todayFrom(5, 10)));
-    t.end();
+  it('Interval#union spans adjacent intervals', () => {
+    expect(todayFrom(5, 8).union(todayFrom(8, 10)).equals(todayFrom(5, 10))).toBeTruthy();
   });
 
   //-------
@@ -69,26 +60,23 @@ export let many = () => {
   //-------
 
   //todo - is this what should happen here? Seems annoying.
-  test("Interval#intersection returns null if there's no intersection", t => {
-    t.is(todayFrom(5, 8).intersection(todayFrom(3, 4)), null);
-    t.end();
+  it("Interval#intersection returns null if there's no intersection", () => {
+    expect(todayFrom(5, 8).intersection(todayFrom(3, 4))).toBe(null);
   });
 
-  test('Interval#intersection returns the intersection for overlapping intervals', t => {
-    t.ok(todayFrom(5, 8).intersection(todayFrom(3, 7)).equals(todayFrom(5, 7)));
-    t.end();
+  it('Interval#intersection returns the intersection for overlapping intervals', () => {
+    expect(todayFrom(5, 8).intersection(todayFrom(3, 7)).equals(todayFrom(5, 7))).toBeTruthy();
   });
 
-  test('Interval#intersection returns empty for adjacent intervals', t => {
-    t.ok(todayFrom(5, 8).intersection(todayFrom(8, 10)).isEmpty());
-    t.end();
+  it('Interval#intersection returns empty for adjacent intervals', () => {
+    expect(todayFrom(5, 8).intersection(todayFrom(8, 10)).isEmpty()).toBeTruthy();
   });
 
   //-------
   // .merge()
   //-------
 
-  test('Interval.merge returns the minimal set of intervals', t => {
+  it('Interval.merge returns the minimal set of intervals', () => {
     let list = [
       todayFrom(5, 8),
       todayFrom(4, 7),
@@ -98,167 +86,139 @@ export let many = () => {
 
         results = Interval.merge(list);
 
-    t.is(results.length, 3);
-    t.ok(results[0] && results[0].equals(todayFrom(4, 8)));
-    t.ok(results[1] && results[1].equals(todayFrom(10, 12)));
-    t.ok(results[2] && results[2].equals(todayFrom(13, 15)));
-    t.end();
+    expect(results.length).toBe(3);
+    expect(results[0] && results[0].equals(todayFrom(4, 8))).toBeTruthy();
+    expect(results[1] && results[1].equals(todayFrom(10, 12))).toBeTruthy();
+    expect(results[2] && results[2].equals(todayFrom(13, 15))).toBeTruthy();
   });
 
-  test('Interval.merge returns empty for an empty input', t => {
-    t.deepEqual(Interval.merge([]), []);
-    t.end();
+  it('Interval.merge returns empty for an empty input', () => {
+    expect(Interval.merge([])).toEqual([]);
   });
 
   //-------
   // .xor()
   //-------
 
-  let xor = (t, items, expected) => {
+  let xor = (items, expected) => {
     let r = Interval.xor(items);
-    t.is(r.length, expected.length);
+    expect(r.length).toBe(expected.length);
     for (let i in expected){
-      t.ok(r[i] && r[i].equals(expected[i]));
+      expect(r[i] && r[i].equals(expected[i])).toBeTruthy();
     }
     return r;
   };
 
-  test('Interval.xor returns non-overlapping intervals as-is', t => {
+  it('Interval.xor returns non-overlapping intervals as-is', () => {
     let ix = [todayFrom(6, 7), todayFrom(8, 9)];
-    xor(t, ix, ix);
-    t.end();
+    xor(ix, ix);
   });
 
-  test('Interval.xor returns empty for an empty input', t => {
-    xor(t, [], []);
-    t.end();
+  it('Interval.xor returns empty for an empty input', () => {
+    xor([], []);
   });
 
-  test('Interval.xor returns empty for a fully overlapping set of intervals', t => {
-    xor(t, [todayFrom(5, 8), todayFrom(5, 8)], []);
-    xor(t, [todayFrom(5, 8), todayFrom(5, 6), todayFrom(6, 8)], []);
-    t.end();
+  it('Interval.xor returns empty for a fully overlapping set of intervals', () => {
+    xor([todayFrom(5, 8), todayFrom(5, 8)], []);
+    xor([todayFrom(5, 8), todayFrom(5, 6), todayFrom(6, 8)], []);
   });
 
-  test('Interval.xor returns the non-overlapping parts of intervals', t => {
-
+  it('Interval.xor returns the non-overlapping parts of intervals', () => {
     //overlapping
-    xor(t,
-        [todayFrom(5, 8), todayFrom(7, 11)],
+    xor([todayFrom(5, 8), todayFrom(7, 11)],
         [todayFrom(5, 7), todayFrom(8, 11)]);
 
     //engulfing
-    xor(t,
-        [todayFrom(5, 12), todayFrom(9, 10)],
+    xor([todayFrom(5, 12), todayFrom(9, 10)],
         [todayFrom(5, 9), todayFrom(10, 12)]);
 
     //adjacent
-    xor(t,
-        [todayFrom(5, 6), todayFrom(6, 8)],
+    xor([todayFrom(5, 6), todayFrom(6, 8)],
         [todayFrom(5, 8)]);
 
     //three intervals
-    xor(t,
-        [todayFrom(10, 13), todayFrom(8, 11), todayFrom(12, 14)],
+    xor([todayFrom(10, 13), todayFrom(8, 11), todayFrom(12, 14)],
         [todayFrom(8, 10), todayFrom(11, 12), todayFrom(13, 14)]);
-
-    t.end();
   });
 
-  test('Interval.xor handles funny adjacency cases', t => {
-
-    xor(t,
-        [todayFrom(5, 14), todayFrom(7, 11), todayFrom(11, 12)],
+  it('Interval.xor handles funny adjacency cases', () => {
+    xor([todayFrom(5, 14), todayFrom(7, 11), todayFrom(11, 12)],
         [todayFrom(5, 7), todayFrom(12, 14)]);
 
-    xor(t,
-        [todayFrom(5, 10), todayFrom(9, 11), todayFrom(9, 12)],
+    xor([todayFrom(5, 10), todayFrom(9, 11), todayFrom(9, 12)],
         [todayFrom(5, 9), todayFrom(11, 12)]);
 
-    xor(t,
-        [todayFrom(5, 9), todayFrom(9, 11), todayFrom(9, 12), todayFrom(5, 9)],
+    xor([todayFrom(5, 9), todayFrom(9, 11), todayFrom(9, 12), todayFrom(5, 9)],
         [todayFrom(11, 12)]);
-
-    t.end();
   });
 
   //-------
   // #difference()
   //-------
 
-  let diff = (t, interval, items, expected) => {
+  let diff = (interval, items, expected) => {
     let r = interval.difference.apply(interval, items);
-    t.is(r.length, expected.length);
+    expect(r.length).toBe(expected.length);
     for (let i in expected){
-      t.ok(r[i] && r[i].equals(expected[i]));
+      expect(r[i] && r[i].equals(expected[i])).toBeTruthy();
     }
     return r;
   };
 
-  test('Interval#difference returns self for non-overlapping intervals', t => {
-    diff(t, todayFrom(8, 9), [todayFrom,(10, 11)], [todayFrom(8, 9)]);
-    diff(t, todayFrom(8, 9), [todayFrom,(6,7)], [todayFrom(8, 9)]);
-    t.end();
+  it('Interval#difference returns self for non-overlapping intervals', () => {
+    diff(todayFrom(8, 9), [todayFrom,(10, 11)], [todayFrom(8, 9)]);
+    diff(todayFrom(8, 9), [todayFrom,(6,7)], [todayFrom(8, 9)]);
   });
 
-  test('Interval#difference returns the non-overlapping parts of intervals', t => {
-    diff(t, todayFrom(8, 10), [todayFrom(9, 11)], [todayFrom(8, 9)]);
-    diff(t, todayFrom(9, 11), [todayFrom(8, 10)], [todayFrom(10, 11)]);
-    diff(t, todayFrom(9, 11), [todayFrom(8, 9), todayFrom(9, 10)], [todayFrom(10, 11)]);
-    t.end();
+  it('Interval#difference returns the non-overlapping parts of intervals', () => {
+    diff(todayFrom(8, 10), [todayFrom(9, 11)], [todayFrom(8, 9)]);
+    diff(todayFrom(9, 11), [todayFrom(8, 10)], [todayFrom(10, 11)]);
+    diff(todayFrom(9, 11), [todayFrom(8, 9), todayFrom(9, 10)], [todayFrom(10, 11)]);
   });
 
-  test('Interval#difference returns the empty for fully subtracted intervals', t => {
-    diff(t, todayFrom(8, 10), [todayFrom(7, 11)], []);
-    diff(t, todayFrom(8, 10), [todayFrom(8, 9), todayFrom(9, 10)], []);
-    diff(t, todayFrom(8, 12), [todayFrom(8, 10), todayFrom(9, 11), todayFrom(10, 13)], []);
-    t.end();
+  it('Interval#difference returns the empty for fully subtracted intervals', () => {
+    diff(todayFrom(8, 10), [todayFrom(7, 11)], []);
+    diff(todayFrom(8, 10), [todayFrom(8, 9), todayFrom(9, 10)], []);
+    diff(todayFrom(8, 12), [todayFrom(8, 10), todayFrom(9, 11), todayFrom(10, 13)], []);
   });
 
-  test('Interval#difference returns the outside parts when engulfing another interval', t => {
-    diff(t, todayFrom(8, 12), [todayFrom(9, 11)], [todayFrom(8, 9), todayFrom(11, 12)]);
-    diff(t, todayFrom(8, 12), [todayFrom(9, 10), todayFrom(10, 11)], [todayFrom(8, 9), todayFrom(11, 12)]);
-    t.end();
+  it('Interval#difference returns the outside parts when engulfing another interval', () => {
+    diff(todayFrom(8, 12), [todayFrom(9, 11)], [todayFrom(8, 9), todayFrom(11, 12)]);
+    diff(todayFrom(8, 12), [todayFrom(9, 10), todayFrom(10, 11)], [todayFrom(8, 9), todayFrom(11, 12)]);
   });
 
-  test('Interval#difference allows holes', t => {
-    diff(t, todayFrom(8, 13),
+  it('Interval#difference allows holes', () => {
+    diff(todayFrom(8, 13),
          [todayFrom(9, 10), todayFrom(11, 12)],
          [todayFrom(8, 9), todayFrom(10, 11), todayFrom(12, 13)]);
-    t.end();
   });
 
   //-------
   // #engulfs()
   //-------
 
-  test('Interval#engulfs', t => {
-
+  it('Interval#engulfs', () => {
     let i = todayFrom(9, 12);
 
-    t.notOk(i.engulfs(todayFrom(13, 15), 'wholly later'));
-    t.notOk(i.engulfs(todayFrom(11, 15), 'partially later'));
-    t.notOk(i.engulfs(todayFrom(6, 8), 'wholly earlier'));
-    t.notOk(i.engulfs(todayFrom(6, 10), 'partially earlier'));
-    t.notOk(i.engulfs(todayFrom(8, 13), 'engulfed'));
+    expect(i.engulfs(todayFrom(13, 15), 'wholly later')).toBeFalsy();
+    expect(i.engulfs(todayFrom(11, 15), 'partially later')).toBeFalsy();
+    expect(i.engulfs(todayFrom(6, 8), 'wholly earlier')).toBeFalsy();
+    expect(i.engulfs(todayFrom(6, 10), 'partially earlier')).toBeFalsy();
+    expect(i.engulfs(todayFrom(8, 13), 'engulfed')).toBeFalsy();
 
-    t.ok(i.engulfs(todayFrom(10, 11), 'engulfing'));
-    t.ok(i.engulfs(todayFrom(9, 12), 'equal'));
-
-    t.end();
+    expect(i.engulfs(todayFrom(10, 11), 'engulfing')).toBeTruthy();
+    expect(i.engulfs(todayFrom(9, 12), 'equal')).toBeTruthy();
   });
 
   //-------
   // #abutsStart()
   //-------
 
-  test('Interval#abutsStart', t => {
-
-    t.ok(todayFrom(9, 10).abutsStart(todayFrom(10, 11)), 'abuts');
-    t.notOk(todayFrom(9, 10).abutsStart(todayFrom(11, 12)), 'starts too late');
-    t.notOk(todayFrom(9, 10).abutsStart(todayFrom(8, 11)), 'starts too early');
-    t.notOk(todayFrom(9, 10).abutsStart(todayFrom(9, 10)), 'equal');
-    t.end();
+  it('Interval#abutsStart', () => {
+    expect(todayFrom(9, 10).abutsStart(todayFrom(10, 11))).toBeTruthy();
+    expect(todayFrom(9, 10).abutsStart(todayFrom(11, 12))).toBeFalsy();
+    expect(todayFrom(9, 10).abutsStart(todayFrom(8, 11))).toBeFalsy();
+    expect(todayFrom(9, 10).abutsStart(todayFrom(9, 10))).toBeFalsy();
   });
 
 
@@ -266,74 +226,66 @@ export let many = () => {
   // #abutsEnd()
   //-------
 
-  test('Interval#abutsEnd', t => {
-    t.ok(todayFrom(9, 11).abutsEnd(todayFrom(8, 9)), 'abuts');
-    t.notOk(todayFrom(9, 11).abutsEnd(todayFrom(8, 10)), 'ends too late');
-    t.notOk(todayFrom(9, 11).abutsEnd(todayFrom(7, 8)), 'ends too early');
-    t.notOk(todayFrom(9, 11).abutsEnd(todayFrom(9, 11)), 'equal');
-    t.end();
+  it('Interval#abutsEnd', () => {
+    expect(todayFrom(9, 11).abutsEnd(todayFrom(8, 9))).toBeTruthy();
+    expect(todayFrom(9, 11).abutsEnd(todayFrom(8, 10))).toBeFalsy();
+    expect(todayFrom(9, 11).abutsEnd(todayFrom(7, 8))).toBeFalsy();
+    expect(todayFrom(9, 11).abutsEnd(todayFrom(9, 11))).toBeFalsy();
   });
 
   //-------
   // #splitAt()
   //-------
 
-  test('Interval#splitAt breaks up the interval', t => {
+  it('Interval#splitAt breaks up the interval', () => {
     let split = todayFrom(8, 13).splitAt(todayAt(9), todayAt(11));
-    t.is(split.length, 3);
-    t.ok(split[0].equals(todayFrom(8, 9)));
-    t.ok(split[1].equals(todayFrom(9, 11)));
-    t.ok(split[2].equals(todayFrom(11, 13)));
-    t.end();
+    expect(split.length).toBe(3);
+    expect(split[0].equals(todayFrom(8, 9))).toBeTruthy();
+    expect(split[1].equals(todayFrom(9, 11))).toBeTruthy();
+    expect(split[2].equals(todayFrom(11, 13))).toBeTruthy();
   });
 
   //-------
   // #splitBy()
   //-------
 
-  test('Interval#splitBy accepts a count and unit', t => {
+  it('Interval#splitBy accepts a count and unit', () => {
     let split = todayFrom(8, 13).splitBy(2, 'hours');
-    t.is(split.length, 3);
-    t.ok(split[0].equals(todayFrom(8, 10)));
-    t.ok(split[1].equals(todayFrom(10, 12)));
-    t.ok(split[2].equals(todayFrom(12, 13)));
-    t.end();
+    expect(split.length).toBe(3);
+    expect(split[0].equals(todayFrom(8, 10))).toBeTruthy();
+    expect(split[1].equals(todayFrom(10, 12))).toBeTruthy();
+    expect(split[2].equals(todayFrom(12, 13))).toBeTruthy();
   });
 
-  test('Interval#splitBy accepts a duration', t => {
+  it('Interval#splitBy accepts a duration', () => {
     let split = todayFrom(8, 13).splitBy(Duration.fromObject({hours: 2}));
-    t.is(split.length, 3);
-    t.ok(split[0].equals(todayFrom(8, 10)));
-    t.ok(split[1].equals(todayFrom(10, 12)));
-    t.ok(split[2].equals(todayFrom(12, 13)));
-    t.end();
+    expect(split.length).toBe(3);
+    expect(split[0].equals(todayFrom(8, 10))).toBeTruthy();
+    expect(split[1].equals(todayFrom(10, 12))).toBeTruthy();
+    expect(split[2].equals(todayFrom(12, 13))).toBeTruthy();
   });
 
   //-------
   // #divideEqually()
   //-------
-  test('Interval#divideEqually should split a 4 hour period into 4 contiguous 1-hour parts', t => {
+  it('Interval#divideEqually should split a 4 hour period into 4 contiguous 1-hour parts', () => {
     let split = todayFrom(5, 9).divideEqually(4);
-    t.is(split.length, 4);
-    t.ok(split[0].equals(todayFrom(5, 6)));
-    t.ok(split[3].equals(todayFrom(8, 9)));
-    t.end();
+    expect(split.length).toBe(4);
+    expect(split[0].equals(todayFrom(5, 6))).toBeTruthy();
+    expect(split[3].equals(todayFrom(8, 9))).toBeTruthy();
   });
 
-  test('Interval#divideEqually should split a 1m30s into 3 30-second parts', t => {
-
+  it('Interval#divideEqually should split a 1m30s into 3 30-second parts', () => {
     let after = (i, m, s) => Interval.after(i, Duration.fromObject({minutes: m, seconds: s})),
         split = after(todayAt(9), 1, 30).divideEqually(3);
-    t.is(split.length, 3);
-    t.ok(split[0].equals(after(todayAt(9), 0, 30)));
-    t.ok(split[2].equals(after(todayAt(9).plus(1, 'minute'), 0, 30)));
-    t.end();
+    expect(split.length).toBe(3);
+    expect(split[0].equals(after(todayAt(9), 0, 30))).toBeTruthy();
+    expect(split[2].equals(after(todayAt(9).plus(1, 'minute'), 0, 30))).toBeTruthy();
   });
 
-  test('Interval#divideEqually always gives you the right number of parts', t => {
+  it('Interval#divideEqually always gives you the right number of parts', () => {
     let int = Interval.after(todayAt(9), 7, 'minutes'),
         split = int.divideEqually(17);
-    t.is(split.length, 17);
-    t.end();
+    expect(split.length).toBe(17);
   });
 };

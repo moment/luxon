@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant, Interval, Duration} from 'luxon';
 
 export let create = () => {
@@ -7,62 +6,52 @@ export let create = () => {
   // .fromObject()
   //-------
 
-  test('Interval.fromObject creates an interval', t => {
-
+  it('Interval.fromObject creates an interval', () => {
     let start = Instant.fromObject({year: 2016, month: 5, day: 25}),
         end = Instant.fromObject({year: 2016, month: 5, day: 27}),
         int = Interval.fromInstants(start, end);
 
-    t.is(int.start(), start);
-    t.is(int.end(), end);
-    t.end();
+    expect(int.start()).toBe(start);
+    expect(int.end()).toBe(end);
   });
 
   //------
   // .after()
   //-------
 
-  test('Interval.after takes a duration', t => {
-
+  it('Interval.after takes a duration', () => {
     let start = Instant.fromObject({year: 2016, month: 5, day: 25}),
         int = Interval.after(start, Duration.fromObject({days: 3}));
 
-    t.is(int.start(), start);
-    t.is(int.end().day(), 28);
-    t.end();
+    expect(int.start()).toBe(start);
+    expect(int.end().day()).toBe(28);
   });
 
-  test('Interval.after takes a number and unit', t => {
-
+  it('Interval.after takes a number and unit', () => {
     let start = Instant.fromObject({year: 2016, month: 5, day: 25}),
         int = Interval.after(start, 3, 'days');
 
-    t.is(int.start(), start);
-    t.is(int.end().day(), 28);
-    t.end();
+    expect(int.start()).toBe(start);
+    expect(int.end().day()).toBe(28);
   });
 
   //------
   // .before()
   //-------
 
-  test('Interval.before takes a duration', t => {
-
+  it('Interval.before takes a duration', () => {
     let end = Instant.fromObject({year: 2016, month: 5, day: 25}),
         int = Interval.before(end, Duration.fromObject({days: 3}));
 
-    t.is(int.start().day(), 22);
-    t.is(int.end(), end);
-    t.end();
+    expect(int.start().day()).toBe(22);
+    expect(int.end()).toBe(end);
   });
 
-  test('Interval.before takes a number and unit', t => {
-
+  it('Interval.before takes a number and unit', () => {
     let end = Instant.fromObject({year: 2016, month: 5, day: 25}),
         int = Interval.before(end, 3, 'days');
 
-    t.is(int.start().day(), 22);
-    t.is(int.end(), end);
-    t.end();
+    expect(int.start().day()).toBe(22);
+    expect(int.end()).toBe(end);
   });
 };

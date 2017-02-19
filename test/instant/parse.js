@@ -1,4 +1,3 @@
-import test from 'tape';
 import {Instant} from 'luxon';
 
 export let parse = () => {
@@ -7,43 +6,49 @@ export let parse = () => {
   // .fromISO
   //-------
 
-  test('Instant.fromISO() parses as local by default', t => {
+  it('Instant.fromISO() parses as local by default', () => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123");
-    t.deepEqual(inst.toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
-    t.end();
+    expect(inst.toObject()).toEqual(
+      {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123}
+    );
   });
 
-  test('Instant.fromISO() uses the offset provided, but keeps the instant as local', t => {
+  it('Instant.fromISO() uses the offset provided, but keeps the instant as local', () => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123+06:00");
-    t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123});
-    t.end();
+    expect(inst.utc().toObject()).toEqual(
+      {year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123}
+    );
   });
 
-  test('Instant.fromISO() uses the Z if provided, but keeps the instant as local', t => {
+  it('Instant.fromISO() uses the Z if provided, but keeps the instant as local', () => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123Z");
-    t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
-    t.end();
+    expect(inst.utc().toObject()).toEqual(
+      {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123}
+    );
   });
 
-  test('Instant.fromISO() optionally adopts the UTC offset provided', t => {
+  it('Instant.fromISO() optionally adopts the UTC offset provided', () => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123+06:00", {acceptOffset: true});
-    t.is(inst.zone.name, 'UTC+6');
-    t.deepEqual(inst.toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
-    t.end();
+    expect(inst.zone.name).toBe('UTC+6');
+    expect(inst.toObject()).toEqual(
+      {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123}
+    );
   });
 
-  test('Instant.fromISO() optionally considers the date UTC if not otherwise specified', t => {
+  it('Instant.fromISO() optionally considers the date UTC if not otherwise specified', () => {
     let inst = Instant.fromISO("2016-05-25T09:08:34.123", {assumeUTC: true});
-    t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123});
+    expect(inst.utc().toObject()).toEqual(
+      {year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123}
+    );
 
     inst = Instant.fromISO("2016-05-25T09:08:34.123+06:00", {assumeUTC: true});
-    t.deepEqual(inst.utc().toObject(), {year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123});
-    t.end();
+    expect(inst.utc().toObject()).toEqual(
+      {year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123}
+    );
   });
 
-  test('Instant.fromISO() accepts a variety of ISO formats', t => {
-
-    let isSame = (s, expected) => t.deepEqual(Instant.fromISO(s, {assumeUTC: true}).utc().toObject(), expected);
+  it('Instant.fromISO() accepts a variety of ISO formats', () => {
+    let isSame = (s, expected) => expect(Instant.fromISO(s, {assumeUTC: true}).utc().toObject()).toEqual(expected);
 
     isSame("2016-05-25", {year: 2016, month: 5, day: 25, hour: 0, minute: 0, second: 0, millisecond: 0});
     isSame("20160525", {year: 2016, month: 5, day: 25, hour: 0, minute: 0, second: 0, millisecond: 0});
@@ -59,13 +64,10 @@ export let parse = () => {
     //these are formats that aren't technically valid but we parse anyway. Testing them more to document them than anything else
     isSame("2016-05-25T0924:15.123", {year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123});
     isSame("2016-05-25T09:2415.123", {year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123});
-
-    t.end();
   });
 
-  test('Instant.fromISO() rejects poop', t => {
-
-    let rejects = (s) => t.notOk(Instant.fromISO(s).isValid());
+  it('Instant.fromISO() rejects poop', () => {
+    let rejects = (s) => expect(Instant.fromISO(s).isValid()).toBeFalsy();
 
     rejects(null);
     rejects('');
@@ -87,113 +89,88 @@ export let parse = () => {
     rejects('2016-082');
     rejects('2016-W32');
     rejects('2016-W32-02');
-
-    t.end();
   });
 
   //------
   // .fromString
   //-------
 
-  test('Instant.fromString() parses basic times', t => {
+  it('Instant.fromString() parses basic times', () => {
     let i = Instant.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
-    t.is(i.year(), 1982);
-    t.is(i.month(), 5);
-    t.is(i.day(), 25);
-    t.is(i.hour(), 9);
-    t.is(i.minute(), 10);
-    t.is(i.second(), 11);
-    t.is(i.millisecond(), 445);
-    t.end();
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(5);
+    expect(i.day()).toBe(25);
+    expect(i.hour()).toBe(9);
+    expect(i.minute()).toBe(10);
+    expect(i.second()).toBe(11);
+    expect(i.millisecond()).toBe(445);
   });
 
-  test('Instant.fromString() parses meridiems', t => {
-
+  it('Instant.fromString() parses meridiems', () => {
     let i = Instant.fromString('1982/05/25 9 PM', 'yyyy/MM/dd h a');
-    t.is(i.year(), 1982);
-    t.is(i.month(), 5);
-    t.is(i.day(), 25);
-    t.is(i.hour(), 21);
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(5);
+    expect(i.day()).toBe(25);
+    expect(i.hour()).toBe(21);
 
     i = Instant.fromString('1982/05/25 9 AM', 'yyyy/MM/dd h a');
-    t.is(i.year(), 1982);
-    t.is(i.month(), 5);
-    t.is(i.day(), 25);
-    t.is(i.hour(), 9);
-
-    t.end();
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(5);
+    expect(i.day()).toBe(25);
+    expect(i.hour()).toBe(9);
   });
 
-  test('Instant.fromString() parses eras', t => {
-    t.end();
-  });
+  it('Instant.fromString() parses eras', () => {});
 
-  test('Instant.fromString() parses month names', t => {
+  it('Instant.fromString() parses month names', () => {
     let i = Instant.fromString('May 25 1982', 'LLLL dd yyyy');
-    t.is(i.year(), 1982);
-    t.is(i.month(), 5);
-    t.is(i.day(), 25);
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(5);
+    expect(i.day()).toBe(25);
 
     i = Instant.fromString('Sep 25 1982', 'LLL dd yyyy');
-    t.is(i.year(), 1982);
-    t.is(i.month(), 9);
-    t.is(i.day(), 25);
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(9);
+    expect(i.day()).toBe(25);
 
     i = Instant.fromString('mai 25 1982', 'LLLL dd yyyy', {localeCode: 'fr'});
-    t.is(i.year(), 1982);
-    t.is(i.month(), 5);
-    t.is(i.day(), 25);
-
-    t.end();
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(5);
+    expect(i.day()).toBe(25);
   });
 
-  test('Instant.fromString() defaults yy to the right century', t => {
-    t.end();
-  });
+  it('Instant.fromString() defaults yy to the right century', () => {});
 
-  test('Instant.fromString() parses offsets', t => {
-    t.end();
-  });
+  it('Instant.fromString() parses offsets', () => {});
 
-  test('Instant.fromString() validates weekday names', t => {
+  it('Instant.fromString() validates weekday names', () => {
     let i = Instant.fromString('Tuesday, 05/25/1982', 'EEEE, LL/dd/yyyy');
-    t.is(i.year(), 1982);
-    t.is(i.month(), 5);
-    t.is(i.day(), 25);
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(5);
+    expect(i.day()).toBe(25);
 
     i = Instant.fromString('Monday, 05/25/1982', 'EEEE, LL/dd/yyyy');
-    t.notOk(i.isValid());
+    expect(i.isValid()).toBeFalsy();
 
     i = Instant.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', {localeCode: 'fr'});
-    t.is(i.year(), 1982);
-    t.is(i.month(), 5);
-    t.is(i.day(), 25);
-
-    t.end();
+    expect(i.year()).toBe(1982);
+    expect(i.month()).toBe(5);
+    expect(i.day()).toBe(25);
   });
 
-  test('Instant.fromString() allows regex content', t => {
-    t.end();
-  });
+  it('Instant.fromString() allows regex content', () => {});
 
-  test('Instant.fromString() allows literals', t => {
-    t.end();
-  });
+  it('Instant.fromString() allows literals', () => {});
 
-  test('Instant.fromString() returns invalid when unparsed', t => {
-    t.end();
-  });
+  it('Instant.fromString() returns invalid when unparsed', () => {});
 
-  test('Instant.fromString() returns invalid for out-of-range values', t => {
-
-    let rejects = (s, fmt, opts = {}) => t.notOk(Instant.fromString(s, fmt, opts).isValid(), opts);
+  it('Instant.fromString() returns invalid for out-of-range values', () => {
+    let rejects = (s, fmt, opts = {}) => expect(Instant.fromString(s, fmt, opts).isValid()).toBeFalsy();
 
     rejects('Tuesday, 05/25/1982', 'EEEE, MM/dd/yyyy', {localeCode: 'fr'});
     rejects('Giberish, 05/25/1982', 'EEEE, MM/dd/yyyy');
     rejects('14/25/1982', 'MM/dd/yyyy');
     rejects('05/46/1982', 'MM/dd/yyyy');
-
-    t.end();
   });
 
 };
