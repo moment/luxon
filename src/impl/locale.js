@@ -3,9 +3,9 @@ import {Util} from './util';
 import {Instant} from '../instant';
 
 //We use the Intl polyfill exclusively here, for these reasons:
-// 1. We need formatToParts(), which isn't in Node
+// 1. We need formatToParts(), which isn't in Node or even most browsers
 // 2. Node doesn't ship with real locale support unless you do this: https://github.com/nodejs/node/wiki/Intl
-// 3. It standardizes the tests across different browsers
+// 3. It standardizes the tests across different browsers.
 // 4. It made for a cleaner job.
 
 //However, it has some drawbacks:

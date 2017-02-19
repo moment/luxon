@@ -26,4 +26,32 @@ export class Info{
   static meridiems(locale, numbering){
     return new Locale(locale, numbering).meridiems();
   }
+
+  static features(){
+    let intl = false,
+        ftp = false,
+        zones = false;
+
+    if (Intl.DateTimeFormat){
+
+      intl = true,
+
+      ftp = typeof(new Intl.DateTimeFormat().formatToParts) != "undefined";
+
+      try{
+        Intl.DateTimeFormat({timeZone: "America/New_York"});
+        zones = true;
+      }
+      catch(e){
+        zones = false;
+      }
+    }
+
+    return {
+      intl: intl,
+      intlParseFormat: ftp,
+      englishParseFormat: ftp,
+      timezones: zones
+    };
+  }
 }
