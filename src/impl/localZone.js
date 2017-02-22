@@ -1,8 +1,8 @@
-import {Util} from "./util";
+import { Util } from './util';
 
 export class LocalZone {
 
-  get name(){
+  get name() {
     return new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
@@ -10,17 +10,16 @@ export class LocalZone {
     return false;
   }
 
-  offsetName(ts, opts = {}){
-    return Util.parseZoneInfo(ts,
-                              opts.offsetFormat = opts.format || 'long',
-                              opts.localeCode || 'en-us');
+  offsetName(ts, opts = {}) {
+    const offsetFormat = opts.format || 'long';
+    return Util.parseZoneInfo(ts, offsetFormat, opts.localeCode || 'en-us');
   }
 
-  offset(ts){
+  offset(ts) {
     return -(new Date(ts).getTimezoneOffset());
   }
 
-  equals(otherZone){
+  equals(otherZone) {
     return (otherZone instanceof LocalZone);
   }
 }

@@ -25,7 +25,7 @@ test('Interval#equals returns true iff the times are the same', () => {
 // #union()
 //-------
 
-test('Interval#union returns an interval spanning an later interval', () => {
+test('Interval#union returns an interval spanning a later interval', () => {
   expect(todayFrom(5, 8).union(todayFrom(9, 11)).equals(todayFrom(5, 11))).toBeTruthy();
 });
 

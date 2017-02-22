@@ -1,4 +1,4 @@
-import {Instant, Interval, Duration} from '../../dist/cjs/luxon';
+import { Instant, Interval, Duration } from '../../dist/cjs/luxon';
 
 let fromISOs = (s, e, opts = {}) => Instant.fromISO(s).until(Instant.fromISO(e), opts),
     todayAt = (h) => Instant.now().startOf('day').hour(h),

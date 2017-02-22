@@ -1,7 +1,9 @@
-import {Instant} from '../../dist/cjs/luxon';
+/* global test expect */
 
-let instant = Instant.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123)),
-    utc = Instant.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).utc();
+import { Instant } from '../../dist/cjs/luxon';
+
+const instant = Instant.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
+const utc = Instant.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).utc();
 
 //------
 // year/month/day/hour/minute/second/millisecond
@@ -46,6 +48,6 @@ test('instant#millisecond() returns the millisecond', () => {
 // locale
 //-------
 test('instant#locale() returns the locale', () => {
-  let i = Instant.now().locale('be');
+  const i = Instant.now().locale('be');
   expect(i.locale()).toBe('be');
 });

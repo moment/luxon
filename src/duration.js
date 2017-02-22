@@ -59,7 +59,7 @@ function clone(dur, alts) {
   return new Duration(conf);
 }
 
-export default class Duration {
+export class Duration {
 
   constructor(config) {
     this.values = config.values;
@@ -171,8 +171,10 @@ export default class Duration {
         lastUnit = k;
 
         // anything we haven't boiled down yet should get boiled to this unit
-        for (const ak of accumulated) {
-          built[k] += matrix[ak][k] * accumulated[ak];
+        for (const ak in accumulated) {
+          if (accumulated.hasOwnProperty(ak)) {
+            built[k] += matrix[ak][k] * accumulated[ak];
+          }
           delete accumulated[ak];
         }
 
@@ -198,8 +200,10 @@ export default class Duration {
 
     // anything leftover becomes the decimal for the last unit
     if (lastUnit) {
-      for (const key of accumulated) {
-        built[lastUnit] += accumulated[key] / matrix[lastUnit][key];
+      for (const key in accumulated) {
+        if (accumulated.hasOwnProperty(key)) {
+          built[lastUnit] += accumulated[key] / matrix[lastUnit][key];
+        }
       }
     }
 

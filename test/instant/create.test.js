@@ -1,12 +1,14 @@
-import {Instant} from '../../dist/cjs/luxon';
-import {FakePT} from '../helpers/fakePT';
+/* global test expect */
+
+import { Instant } from '../../dist/cjs/luxon';
+import { FakePT } from '../helpers/fakePT';
 
 //------
 // .now()
 //-------
 
 test("Instant.now has today's date", () => {
-  let now = Instant.now();
+  const now = Instant.now();
   expect(now.toJSDate().getDate()).toBe(new Date().getDate());
 });
 
@@ -15,15 +17,15 @@ test("Instant.now has today's date", () => {
 //-------
 
 test('Instant.fromJSDate(date) reflects the date', () => {
-  let date = new Date(1982, 4, 25),
-      instant = Instant.fromJSDate(date);
+  const date = new Date(1982, 4, 25);
+  const instant = Instant.fromJSDate(date);
   expect(instant.toJSDate().valueOf()).toBe(date.valueOf());
 });
 
 test('Instant.fromJSDate(date) clones the date', () => {
-  let date = new Date(1982, 4, 25),
-  instant = Instant.fromJSDate(date),
-  oldValue = instant.valueOf();
+  const date = new Date(1982, 4, 25);
+  const instant = Instant.fromJSDate(date);
+  const oldValue = instant.valueOf();
 
   date.setDate(14);
   expect(instant.toJSDate().valueOf()).toBe(oldValue);
@@ -37,8 +39,8 @@ test('Instant.fromJSDate(date) clones the date', () => {
 //-------
 
 test('Instant.fromMillis(ms) has a value of ms', () => {
-  let value = 391147200000,
-      instant = Instant.fromMillis(value);
+  const value = 391147200000;
+  const instant = Instant.fromMillis(value);
 
   expect(instant.valueOf()).toBe(value);
 });
@@ -48,8 +50,8 @@ test('Instant.fromMillis(ms) has a value of ms', () => {
 //-------
 
 test('Instant.fromUnix(secs) has a value of 1000 * secs', () => {
-  let value = 391147200,
-      instant = Instant.fromUnix(value);
+  const value = 391147200;
+  const instant = Instant.fromUnix(value);
 
   expect(instant.valueOf()).toBe(value * 1000);
 });
@@ -58,18 +60,18 @@ test('Instant.fromUnix(secs) has a value of 1000 * secs', () => {
 // .fromObject()
 //-------
 
-let baseObject = {
+const baseObject = {
   year: 1982,
   month: 5,
   day: 25,
   hour: 9,
   minute: 23,
   second: 54,
-  millisecond: 123
+  millisecond: 123,
 };
 
 test('Instant.fromObject() sets all the fields', () => {
-  let instant = Instant.fromObject(baseObject);
+  const instant = Instant.fromObject(baseObject);
 
   expect(instant.isOffsetFixed()).toBe(false);
   expect(instant.year()).toBe(1982);
@@ -82,7 +84,7 @@ test('Instant.fromObject() sets all the fields', () => {
 });
 
 test('Instant.fromObject() takes a UTC option', () => {
-  let instant = Instant.fromObject(baseObject, {utc: true});
+  const instant = Instant.fromObject(baseObject, { utc: true });
 
   expect(instant.isOffsetFixed()).toBe(true);
   expect(instant.year()).toBe(1982);
@@ -95,8 +97,10 @@ test('Instant.fromObject() takes a UTC option', () => {
 });
 
 test('Instant.fromObject() takes a zone option', () => {
-  let daylight = Instant.fromObject(Object.assign({}, baseObject, {month: 5}), {zone: new FakePT()}),
-  standard = Instant.fromObject(Object.assign({}, baseObject, {month: 12}), {zone: new FakePT()});
+  const daylight = Instant.fromObject(Object.assign({}, baseObject, { month: 5 }),
+                                      { zone: new FakePT() });
+  const standard = Instant.fromObject(Object.assign({}, baseObject, { month: 12 }),
+                                      { zone: new FakePT() });
 
   expect(daylight.isOffsetFixed()).toBe(false);
   expect(daylight.offset()).toBe(-7 * 60);
@@ -120,8 +124,8 @@ test('Instant.fromObject() takes a zone option', () => {
 });
 
 test('Instant.fromObject() defaults high-order values to the current date', () => {
-  let instant = Instant.fromObject({}),
-  now = Instant.now();
+  const instant = Instant.fromObject({});
+  const now = Instant.now();
 
   expect(instant.year()).toBe(now.year());
   expect(instant.month()).toBe(now.month());
@@ -129,10 +133,9 @@ test('Instant.fromObject() defaults high-order values to the current date', () =
 });
 
 test('Instant.fromObject() defaults lower-order values to 0', () => {
-  let instant = Instant.fromObject({});
-
-  expect(instant.hour()).toBe(0),
-  expect(instant.minute()).toBe(0),
-  expect(instant.second()).toBe(0),
+  const instant = Instant.fromObject({});
+  expect(instant.hour()).toBe(0);
+  expect(instant.minute()).toBe(0);
+  expect(instant.second()).toBe(0);
   expect(instant.millisecond()).toBe(0);
 });

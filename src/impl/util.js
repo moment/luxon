@@ -1,6 +1,6 @@
 import { Duration } from '../duration';
 
-export default class Util {
+export class Util {
   static friendlyDuration(durationOrNumber, type) {
     return Util.isNumber(durationOrNumber) ?
       Duration.fromLength(durationOrNumber, type) :

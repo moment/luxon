@@ -28,9 +28,7 @@ function intlConfigString(localeCode, nums, cal) {
   loc = Array.isArray(localeCode) ? localeCode : [localeCode];
 
   if (cal || nums) {
-    loc = loc.map((inputL) => {
-      let l = inputL;
-
+    loc = loc.map((l) => {
       l += '-u';
 
       // This doesn't seem to really work yet, so this is mostly not exposed.
@@ -69,7 +67,7 @@ function mapWeekdays(f) {
   return ms;
 }
 
-export default class Locale {
+export class Locale {
 
   static fromOpts(opts) {
     return Locale.create(opts.localeCode, opts.nums, opts.cal);

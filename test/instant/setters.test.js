@@ -1,6 +1,8 @@
-import {Instant} from '../../dist/cjs/luxon';
+/* global test expect */
 
-let instant = () => Instant.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
+import { Instant } from '../../dist/cjs/luxon';
+
+const instant = () => Instant.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
 
 //------
 // year/month/day/hour/minute/second/millisecond
@@ -12,7 +14,7 @@ test('Instant#year() sets the year', () => {
 
 test('Instant#month() sets the (1-indexed) month', () => {
   expect(instant().month(2).month()).toBe(2);
-  expect(instant().month(2).hour()).toBe(9); //this will cross a DST for many people
+  expect(instant().month(2).hour()).toBe(9); // this will cross a DST for many people
 });
 
 test('Instant#day() sets the day', () => {

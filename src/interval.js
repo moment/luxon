@@ -35,29 +35,31 @@ export class Interval{
     return this.e;
   }
 
-  length(unit = 'milliseconds'){
+  length(unit = 'milliseconds') {
     return this.toDuration(...[unit]).get(unit);
   }
 
-  hasSame(unit){
+  hasSame(unit) {
     return this.e.minus(1).hasSame(this.s, unit);
   }
 
-  count(unit = 'milliseconds'){
-    let start = this.start().startOf(unit),
-        end = this.end().startOf(unit);
+  count(unit = 'milliseconds') {
+    // todo: check unit
+    const singularUnit = unit.replace(/s$/, '');
+    const start = this.start().startOf(singularUnit);
+    const end = this.end().startOf(singularUnit);
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
-  splitAt(...instants){
-    let sorted = instants.sort(),
-        results = [],
-        s = this.s,
+  splitAt(...instants) {
+    const sorted = instants.sort();
+    const results = [];
+    let s = this.s,
         i = 0;
 
     while (s < this.e) {
-      let added = sorted[i] || this.e,
-          next = +added > +this.e ? this.e : added;
+      const added = sorted[i] || this.e;
+      const next = +added > +this.e ? this.e : added;
       results.push(Interval.fromInstants(s, next));
       s = next;
       i += 1;

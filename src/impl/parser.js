@@ -1,137 +1,136 @@
-import {Util} from './util';
-import {Formatter} from './formatter';
+import { Util } from './util';
+import { Formatter } from './formatter';
 
-function intUnit(regex, post = (i) => i){
+function intUnit(regex, post = i => i) {
   return {
-    regex: regex,
-    deser: (s) => post(parseInt(s))
+    regex,
+    deser: s => post(parseInt(s, 10)),
   };
 }
 
-function untruncateYear(years){
+function untruncateYear(years) {
   return years > 60 ? 1900 + years : 2000 + years;
 }
 
-function oneOf(strings, startIndex){
+function oneOf(strings, startIndex) {
   return {
     regex: RegExp(strings.join('|')),
-    deser: (s) => strings.indexOf(s) + startIndex
+    deser: s => strings.indexOf(s) + startIndex,
   };
 }
 
-function unitForToken(token, loc){
+function unitForToken(token, loc) {
+  const one = /\d/;
+  const two = /\d\d/;
+  const three = /\d{3}/;
+  const four = /\d{4}/;
+  const oneOrTwo = /\d\d?/;
+  const oneToThree = /\d\d{2}?/;
+  const twoToFour = /\d\d\d{2}?/;
+  const literal = t => ({
+    regex: RegExp(t.val),
+    deser: s => s,
+    literal: true,
+  });
+  const unitate = (t) => {
+    if (token.literal) {
+      return literal(t);
+    }
 
-  let two = /\d\d/,
-      three = /\d{3}/,
-      four = /\d{4}/,
-      oneOrTwo = /\d\d?/,
-      oneToThree = /\d\d{2}?/,
-      twoToFour = /\d\d\d{2}?/,
-      literal = (t) => ({
-        regex: RegExp(t.val),
-        deser: (s) => s,
-        literal: true
-      }),
-      unitate = (t) => {
-        if (token.literal){
-          return literal(t);
-        }
+    switch (t.val) {
 
-        switch(t.val){
+      // era
 
-          //era
+      // years
+    case 'yyyy': return intUnit(four);
+    case 'yy': return intUnit(twoToFour, untruncateYear);
 
-          //years
-        case 'yyyy': return intUnit(four);
-        case 'yy': return intUnit(twoToFour, untruncateYear);
+      // months
+    case 'M': return intUnit(oneOrTwo);
+    case 'MM': return intUnit(two);
+    case 'MMM': return oneOf(loc.months('short', true), 1);
+    case 'MMMM': return oneOf(loc.months('long', true), 1);
+    case 'L': return intUnit(oneOrTwo);
+    case 'LL': return intUnit(two);
+    case 'LLL': return oneOf(loc.months('short', false), 1);
+    case 'LLLL': return oneOf(loc.months('long', false), 1);
 
-          //months
-        case 'M': return intUnit(oneOrTwo);
-        case 'MM': return intUnit(two);
-        case 'MMM': return oneOf(loc.months('short', true), 1);
-        case 'MMMM': return oneOf(loc.months('long', true), 1);
-        case 'L': return intUnit(oneOrTwo);
-        case 'LL': return intUnit(two);
-        case 'LLL': return oneOf(loc.months('short', false), 1);
-        case 'LLLL': return oneOf(loc.months('long', false), 1);
+      // dates
+    case 'd': return intUnit(oneOrTwo);
+    case 'dd': return intUnit(two);
 
-          //dates
-        case 'd': return intUnit(oneOrTwo);
-        case 'dd': return intUnit(two);
+      // time
+    case 'HH': return intUnit(two);
+    case 'H': return intUnit(oneOrTwo);
+    case 'hh': return intUnit(two);
+    case 'h': return intUnit(oneOrTwo);
+    case 'mm': return intUnit(two);
+    case 'm': return intUnit(oneOrTwo);
+    case 's': return intUnit(oneOrTwo);
+    case 'ss': return intUnit(two);
+    case 'S': return intUnit(oneToThree);
+    case 'SSS': return intUnit(three);
 
-          //time
-        case 'HH': return intUnit(two);
-        case 'H': return intUnit(oneOrTwo);
-        case 'hh': return intUnit(two);
-        case 'h': return intUnit(oneOrTwo);
-        case 'mm': return intUnit(two);
-        case 'm': return intUnit(oneOrTwo);
-        case 's': return intUnit(oneOrTwo);
-        case 'ss': return intUnit(two);
-        case 'S': return intUnit(oneToThree);
-        case 'SSS': return intUnit(three);
+      // meridiem
+    case 'a': return oneOf(loc.meridiems(), 0);
 
-          //meridiem
-        case 'a': return oneOf(loc.meridiems(), 0);
+      // weekdays
+    case 'E': return intUnit(one);
+    case 'EEE': return oneOf(loc.weekdays('short'), 0);
+    case 'EEEE': return oneOf(loc.weekdays('long'), 0);
 
-          //weekdays
-        case 'E': return intUnit(one);
-        case 'EEE': return oneOf(loc.weekdays('short'), 0);
-        case 'EEEE': return oneOf(loc.weekdays('long'), 0);
+      // offset/zone
+    case 'Z':
+    case 'ZZ':
+      return null;
+      // we don't support ZZZ (PST) or ZZZZ (Pacific Standard Time) in parsing
+      // because we don't have any way to figure out what they are
+    case 'z':
+      return null;
 
-          //offset/zone
-        case 'Z':
-        case 'ZZ':
-          //we don't support ZZZ (PST) or ZZZZ (Pacific Standard Time) in parsing
-          //because we don't have any way to figure out what they are
+    default: return literal(t);
 
-        case 'z':
+    }
+  };
 
-        default: return literal(t);
-
-        }
-      };
-
-  let unit = unitate(token);
+  const unit = unitate(token);
   unit.token = token;
   return unit;
 }
 
-function buildRegex(units){
+function buildRegex(units) {
   return [
     units
-      .map((u) => u.regex)
+      .map(u => u.regex)
       .reduce((f, r) => `${f}(${r.source})`, ''),
-    units
+    units,
   ];
 }
 
-function match(input, regex, handlers){
-  let matches = input.match(regex);
+function match(input, regex, handlers) {
+  const matches = input.match(regex);
 
-  if (matches){
-
-    if (matches.length - 1 != handlers.length){
+  if (matches) {
+    if (matches.length - 1 !== handlers.length) {
       return null;
     }
 
     return Util
       .zip(matches.splice(1), handlers)
       .reduce((all, [m, h]) => {
-        if (!h.literal){
+        if (!h.literal) {
           all[h.token.val[0]] = h.deser(m);
         }
         return all;
       }, {});
-  }
-  else{
+  } else {
     return {};
   }
 }
 
-function instantFromMatches(matches){
-  let toField = (token) => {
-    switch(token){
+function instantFromMatches(matches) {
+  const toField = (token) => {
+    switch (token) {
     case 'S': return 'millisecond';
     case 's': return 'second';
     case 'm': return 'minute';
@@ -144,18 +143,18 @@ function instantFromMatches(matches){
     case 'E':
     case 'c': return 'weekday';
     default: return null;
-    };
+    }
   };
 
-  if (matches.h && matches.a === 1){
+  if (matches.h && matches.a === 1) {
     matches.h += 12;
   }
 
-  //todo: era
+  // todo: era
 
   return Object.keys(matches).reduce((r, k) => {
-    let f = toField(k);
-    if (f){
+    const f = toField(k);
+    if (f) {
       r[f] = matches[k];
     }
 
@@ -163,29 +162,29 @@ function instantFromMatches(matches){
   }, {});
 }
 
-export class Parser{
+export class Parser {
 
-  constructor(loc){
-    Object.defineProperty(this, 'loc', {value: loc, enumerable: true});
+  constructor(loc) {
+    Object.defineProperty(this, 'loc', { value: loc, enumerable: true });
   }
 
-  explainParse(input, format){
-    let tokens = Formatter.parseFormat(format),
-        units = tokens.map((t) => unitForToken(t, this.loc)),
-        [regex, handlers] = buildRegex(units),
-        matches = match(input, regex, handlers),
-        result = matches ?  instantFromMatches(matches) : null;
+  explainParse(input, format) {
+    const tokens = Formatter.parseFormat(format);
+    const units = tokens.map(t => unitForToken(t, this.loc));
+    const [regex, handlers] = buildRegex(units);
+    const matches = match(input, regex, handlers);
+    const result = matches ? instantFromMatches(matches) : null;
 
     return {
-      input: input,
-      tokens: tokens,
-      regex: regex,
-      matches: matches,
-      result: result
+      input,
+      tokens,
+      regex,
+      matches,
+      result,
     };
   }
 
-  parseInstant(input, format){
+  parseInstant(input, format) {
     return this.explainParse(input, format).result;
   }
 }
