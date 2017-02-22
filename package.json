@@ -3,16 +3,26 @@
   "version": "0.0.1",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
-  "keywords": ["date", "immutable"],
+  "keywords": [
+    "date",
+    "immutable"
+  ],
   "repository": "https://github.com/icambron/luxon",
   "dependencies": {
     "intl": "latest"
   },
   "devDependencies": {
     "babel-jest": "latest",
+    "babel-polyfill": "latest",
     "babel-preset-es2015": "latest",
     "babel-preset-es2015-rollup": "latest",
-    "babel-polyfill": "latest",
+    "eslint": "^3.16.0",
+    "eslint-config-airbnb-base": "^11.1.0",
+    "eslint-config-google": "^0.7.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-promise": "^3.4.2",
+    "eslint-plugin-standard": "^2.0.1",
     "gulp": "latest",
     "gulp-debug": "latest",
     "gulp-filter": "latest",
