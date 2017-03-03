@@ -1,37 +1,35 @@
-import {Util} from './impl/util';
-import {Instant} from './instant';
-import {Duration} from './duration';
+import { Util } from './impl/util';
 
-export class Interval{
+export class Interval {
 
-  constructor(start, end){
-    Object.defineProperty(this, 's', {value: start, enumerable: true});
-    Object.defineProperty(this, 'e', {value: end, enumerable: true});
+  constructor(start, end) {
+    Object.defineProperty(this, 's', { value: start, enumerable: true });
+    Object.defineProperty(this, 'e', { value: end, enumerable: true });
   }
 
-  static fromInstants(start, end, opts = {}){
+  static fromInstants(start, end, opts = {}) {
     return new Interval(start, end, opts);
   }
 
-  static after(start, durationOrNumber, unit){
-    let dur = Util.friendlyDuration(durationOrNumber, unit);
+  static after(start, durationOrNumber, unit) {
+    const dur = Util.friendlyDuration(durationOrNumber, unit);
     return Interval.fromInstants(start, start.plus(dur));
   }
 
-  static before(end, durationOrNumber, unit){
-    let dur = Util.friendlyDuration(durationOrNumber, unit);
+  static before(end, durationOrNumber, unit) {
+    const dur = Util.friendlyDuration(durationOrNumber, unit);
     return Interval.fromInstants(end.minus(dur), end);
   }
 
-  toDuration(...units){
+  toDuration(...units) {
     return this.e.diff(this.s, ...units);
   }
 
-  start(){
+  start() {
     return this.s;
   }
 
-  end(){
+  end() {
     return this.e;
   }
 
@@ -68,14 +66,16 @@ export class Interval{
     return results;
   }
 
-  splitBy(countOrDuration, unit='milliseconds'){
-    let dur = Util.friendlyDuration(countOrDuration, unit),
-        results = [],
-        s = this.s;
+  splitBy(countOrDuration, unit = 'milliseconds') {
+    const dur = Util.friendlyDuration(countOrDuration, unit);
+    const results = [];
+    let s = this.s,
+        added,
+        next;
 
-    while (s < this.e){
-      let added = s.plus(dur),
-          next = +added > +this.e ? this.e : added;
+    while (s < this.e) {
+      added = s.plus(dur);
+      next = +added > +this.e ? this.e : added;
       results.push(Interval.fromInstants(s, next));
       s = next;
     }
@@ -83,84 +83,78 @@ export class Interval{
     return results;
   }
 
-  divideEqually(numberOfParts){
+  divideEqually(numberOfParts) {
     return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
   }
 
-  overlaps(other){
+  overlaps(other) {
     return this.e > other.s && this.s < other.e;
   }
 
-  abutsStart(other){
+  abutsStart(other) {
     return +this.e === +other.s;
   }
 
-  abutsEnd(other){
+  abutsEnd(other) {
     return +other.e === +this.s;
   }
 
-  engulfs(other){
+  engulfs(other) {
     return this.s <= other.s && this.e >= other.e;
   }
 
-  intersection(other){
-    let s = this.s > other.s ? this.s : other.s,
-        e = this.e < other.e ? this.e : other.e;
+  intersection(other) {
+    const s = this.s > other.s ? this.s : other.s;
+    const e = this.e < other.e ? this.e : other.e;
 
-    if (s > e){
+    if (s > e) {
       return null;
-    }
-    else{
+    } else {
       return Interval.fromInstants(s, e);
     }
   }
 
-  union(other){
-    let s = this.s < other.s ? this.s : other.s,
-        e = this.e > other.e ? this.e : other.e;
+  union(other) {
+    const s = this.s < other.s ? this.s : other.s;
+    const e = this.e > other.e ? this.e : other.e;
 
     return Interval.fromInstants(s, e);
   }
 
-  static merge(intervals){
-    let [found, final] = intervals
+  static merge(intervals) {
+    const [found, final] = intervals
           .sort((a, b) => a.s - b.s)
-          .reduce(([found, current], item) => {
-            if (!current){
-              return [found, item];
-            }
-            else if (current.overlaps(item) || current.abutsStart(item)){
-              return [found, current.union(item)];
-            }
-            else{
-              return [found.concat([current]), item];
+          .reduce(([sofar, current], item) => {
+            if (!current) {
+              return [sofar, item];
+            } else if (current.overlaps(item) || current.abutsStart(item)) {
+              return [sofar, current.union(item)];
+            } else {
+              return [sofar.concat([current]), item];
             }
           }, [[], null]);
-    if (final){
+    if (final) {
       found.push(final);
     }
     return found;
   }
 
-  static xor(intervals){
+  static xor(intervals) {
     let start = null,
-        currentCount = 0,
-        results = [],
-        ends = intervals
-          .map(i => [{time: i.s, type: 's'},
-                     {time: i.e, type: 'e'}]),
-        arr = Util.flatten(ends)
-          .sort((a, b) => a.time - b.time);
+        currentCount = 0;
+    const results = [];
+    const ends = intervals
+            .map(i => [{ time: i.s, type: 's' },
+                       { time: i.e, type: 'e' }]);
+    const arr = Util.flatten(ends).sort((a, b) => a.time - b.time);
 
-    for (let i of arr){
+    for (const i of arr) {
+      currentCount += i.type === 's' ? 1 : -1;
 
-      currentCount += i.type == 's' ? 1 : -1;
-
-      if (currentCount === 1){
+      if (currentCount === 1) {
         start = i.time;
-      }
-      else {
-        if (start && +start != +i.time){
+      } else {
+        if (start && +start !== +i.time) {
           results.push(Interval.fromInstants(start, i.time));
         }
 
@@ -171,43 +165,43 @@ export class Interval{
     return Interval.merge(results);
   }
 
-  difference(...others){
+  difference(...others) {
     return Interval.xor([this].concat(others))
-      .map((i) => this.intersection(i))
-      .filter((i) => i && !i.isEmpty());
+      .map(i => this.intersection(i))
+      .filter(i => i && !i.isEmpty());
   }
 
-  equals(other){
+  equals(other) {
     return this.s.equals(other.s) && this.e.equals(other.e);
   }
 
-  isEmpty(){
+  isEmpty() {
     return this.s.valueOf() === this.e.valueOf();
   }
 
-  isValid(){
+  isValid() {
     return this.s <= this.e;
   }
 
-  isAfter(other){
+  isAfter(other) {
     return this.s > other;
   }
 
-  isBefore(other){
+  isBefore(other) {
     return this.e.plus(1) < other;
   }
 
-  contains(instant){
+  contains(instant) {
     return this.s <= instant && this.e > instant;
   }
 
-  toString(){
-    return "[" + this.s.toString() + " - " + this.e.toString() + ")";
+  toString() {
+    return `[${this.s.toString()} - ${this.e.toString()})`;
   }
 
-  toISO(){}
+  // toISO(){}
 
-  toFormatString(overallFormat, dateFormat){}
+  // toFormatString(overallFormat, dateFormat){}
 
-  toLocaleString(overallFormat){}
+  // toLocaleString(overallFormat){}
 }

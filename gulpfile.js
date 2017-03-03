@@ -95,9 +95,9 @@ gulp.task('test', ['cjs'], () => {
 });
 
 gulp.task('lint', () =>
-          gulp.src(['**/*.js', '!node_modules/**'])
+          gulp.src(['src/**/*.js', 'test/**/*.js'])
           .pipe(eslint())
           .pipe(eslint.format())
           .pipe(eslint.failAfterError()));
 
-gulp.task('default', ['lint', 'build']);
+gulp.task('default', ['lint', 'build', 'test']);
