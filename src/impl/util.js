@@ -1,5 +1,9 @@
 import { Duration } from '../duration';
 
+/**
+ * @private
+ */
+
 export class Util {
   static friendlyDuration(durationOrNumber, type) {
     return Util.isNumber(durationOrNumber)

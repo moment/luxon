@@ -1,14 +1,14 @@
 import { Duration } from './duration';
 import { Interval } from './interval';
 import { Formatter } from './impl/formatter';
-import { FixedOffsetZone } from './impl/fixedOffsetZone';
-import { LocalZone } from './impl/localZone';
+import { FixedOffsetZone } from './zones/fixedOffsetZone';
+import { LocalZone } from './zones/localZone';
 import { Locale } from './impl/locale';
-import { IntlZone } from './impl/intlZone';
+import { IntlZone } from './zones/intlZone';
 import { Util } from './impl/util';
 import { ISOParser } from './impl/isoParser';
 import { Parser } from './impl/parser';
-import { InvalidUnitException } from './impl/exceptions';
+import { InvalidUnitException } from './exceptions/exceptions';
 
 const INVALID = 'Invalid Date';
 
@@ -134,7 +134,13 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
+/**
+ * A specific millisecond with an associated time zone and locale
+ */
 export class Instant {
+  /**
+   * @access private
+   */
   constructor(config = {}) {
     Object.defineProperty(this, 'ts', { value: config.ts || Instant.now(), enumerable: true });
 
@@ -158,34 +164,71 @@ export class Instant {
     Object.defineProperty(this, 'o', { value: o });
   }
 
+  /**
+   * The default zone to create an instant in
+   * @return {Zone}
+   */
   static get defaultZone() {
     return new LocalZone();
   }
 
+  /**
+   * The current time in the default zone.
+   * @return {Instant}
+   */
   static now() {
     return new Instant({ ts: now() });
   }
 
+  /**
+   * Create an invalid Instant.
+   * @return {Instant}
+   */
   static invalid() {
     return new Instant({ valid: false });
   }
 
+  /**
+   * Create an Instant from a Javascript Date object. Uses the default zone.
+   * @param {Date} date - a Javascript Date object
+   * @return {Instant}
+   */
   static fromJSDate(date) {
     return new Instant({ ts: date.valueOf() });
   }
 
+  /**
+   * Create an Instant from a count of epoch milliseconds. Uses the default zone.
+   * @param {number} milliseconds - a number of milliseconds since 1970 UTC
+   * @return {Instant}
+   */
   static fromMillis(milliseconds) {
     return new Instant({ ts: milliseconds });
   }
 
+  /**
+   * Create an Instant from a count of epoch seconds. Uses the default zone.
+   * @param {number} seconds - a number of seconds since 1970 UTC
+   * @return {Instant}
+   */
   static fromUnix(seconds) {
     return this.fromMillis(seconds * 1000);
   }
 
-  static fromObject(obj, opts = { utc: false, zone: null }) {
+  /**
+   * Create an Instant from a Javascript object with keys like "year" and "hour" with reasonable defaults.
+   * @param {Object} obj - the object to create the Instant from
+   * @param {Object} options - options to affect the creation
+   * @param {boolean} options.utc - interpret the object as a UTC time. Conflicts with the zone option
+   * @param {Zone} options.zone - interpret the object as if it were a local time in this zone. Conflicts with the utc option
+   * @example Instant.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
+   * @example Instant.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06]
+   * @return {Instant}
+   */
+  static fromObject(obj, { utc = false, zone = null } = {}) {
     const tsNow = now(),
-      zone = opts.zone ? opts.zone : opts.utc ? new FixedOffsetZone(0) : new LocalZone(),
-      offsetProvis = zone.offset(tsNow),
+      zoneToUse = zone || (utc ? new FixedOffsetZone(0) : new LocalZone()),
+      offsetProvis = zoneToUse.offset(tsNow),
       defaulted = Object.assign(
         tsToObj(tsNow, offsetProvis),
         { hour: 0, minute: 0, second: 0, millisecond: 0 },
@@ -193,29 +236,40 @@ export class Instant {
       );
 
     if (validateObject(defaulted)) {
-      const [tsFinal] = objToTS(defaulted, zone, offsetProvis),
-        inst = new Instant({ ts: tsFinal, zone });
+      const [tsFinal] = objToTS(defaulted, zoneToUse, offsetProvis),
+        inst = new Instant({ ts: tsFinal, zone: zoneToUse });
 
       if (!Util.isUndefined(obj.weekday) && obj.weekday !== inst.weekday()) {
         return Instant.invalid();
       }
 
-      return new Instant({ ts: tsFinal, zone });
+      return new Instant({ ts: tsFinal, zone: zoneToUse });
     } else {
       return Instant.invalid();
     }
   }
 
-  static fromISO(text, opts = { acceptOffset: false, assumeUTC: false }) {
+  /**
+   * Create an Instant from an ISO 8601 string
+   * @param {string} text - the ISO string
+   * @param {Object} options - options to affect the creation
+   * @param {boolean} options.acceptOffset - accept the offset provided and keep the Instant in that zone
+   * @param {boolean} options.assumeUTC - treat unspecified offsets as UTC
+   * @example Instant.fromISO('2016-05-25T09:08:34.123')
+   * @example Instant.fromISO('2016-05-25T09:08:34.123+06:00')
+   * @example Instant.fromISO('2016-05-25T09:08:34.123+06:00', {assumeUTC: true})
+   * @return {Instant}
+   */
+  static fromISO(text, { acceptOffset = false, assumeUTC = false } = {}) {
     const parsed = ISOParser.parseISODate(text);
     if (parsed) {
       const { local, offset } = parsed,
         zone = local
-          ? opts.assumeUTC ? new FixedOffsetZone(0) : new LocalZone()
+          ? assumeUTC ? new FixedOffsetZone(0) : new LocalZone()
           : new FixedOffsetZone(offset),
         inst = Instant.fromObject(parsed, { zone });
 
-      return opts.acceptOffset ? inst : inst.local();
+      return acceptOffset ? inst : inst.local();
     } else {
       return Instant.invalid();
     }
@@ -443,6 +497,19 @@ export class Instant {
     return this.valid ? this.startOf(unit).plus(1, unit).minus(1, 'milliseconds') : this;
   }
 
+  /**
+   * Return the difference between two instants as a Duration
+   * @param {Instant} otherInstant - the instant to compare this one to
+   * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration
+   * @example
+   * var i1 = Instant.fromISO('1982-05-25T09:45'),
+   *     i2 = Instant.fromISO('1983-10-14T10:30');
+   * i2.diff(i1).toObject() //=> { milliseconds: 43807500000 }
+   * i2.diff(i1, 'months', 'days').toObject() //=> { months: 16, days: 19.03125 }
+   * i2.diff(i1, 'months', 'days', 'hours').toObject() //=> { months: 16, days: 19, hours: 0.75 }
+   * i2.diff(i1, 'hours').toObject() //=> { hours: 12168.75 }
+   * @return {Duration}
+   */
   diff(otherInstant, ...units) {
     if (!this.valid) return this;
 

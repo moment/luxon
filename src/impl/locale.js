@@ -64,6 +64,10 @@ function mapWeekdays(f) {
   return ms;
 }
 
+/**
+ * @private
+ */
+
 export class Locale {
   static fromOpts(opts) {
     return Locale.create(opts.localeCode, opts.nums, opts.cal);

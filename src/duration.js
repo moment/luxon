@@ -1,7 +1,7 @@
 import { Util } from './impl/util';
 import { Locale } from './impl/locale';
 import { Formatter } from './impl/formatter';
-import { InvalidUnitException } from './impl/exceptions';
+import { InvalidUnitException } from './exceptions/exceptions';
 
 const matrix = {
   years: {

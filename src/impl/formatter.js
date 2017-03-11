@@ -12,6 +12,10 @@ function stringifyTokens(splits, tokenToString) {
   return s;
 }
 
+/**
+ * @private
+ */
+
 export class Formatter {
   static create(locale, opts = {}) {
     const formatOpts = Object.assign({}, { round: true }, opts);

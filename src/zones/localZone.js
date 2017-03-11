@@ -1,6 +1,7 @@
-import { Util } from './util';
+import { Util } from '../impl/util';
+import { Zone } from '../zone';
 
-export class LocalZone {
+export class LocalZone extends Zone {
   get name() {
     return new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
@@ -9,9 +10,8 @@ export class LocalZone {
     return false;
   }
 
-  offsetName(ts, opts = {}) {
-    const offsetFormat = opts.format || 'long';
-    return Util.parseZoneInfo(ts, offsetFormat, opts.localeCode || 'en-us');
+  offsetName(ts, { format = 'long', localeCode = 'en-us' } = {}) {
+    return Util.parseZoneInfo(ts, format, localeCode || 'en-us');
   }
 
   offset(ts) {

@@ -16,7 +16,7 @@
     "babel-polyfill": "latest",
     "babel-preset-es2015": "latest",
     "babel-preset-es2015-rollup": "latest",
-    "eslint": "^3.16.0",
+    "eslint": "latest",
     "eslint-config-airbnb-base": "latest",
     "eslint-config-prettier": "latest",
     "eslint-plugin-import": "latest",

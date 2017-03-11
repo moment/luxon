@@ -1,7 +1,9 @@
-import { Util } from './util';
+import { Util } from '../impl/util';
+import { Zone } from '../zone';
 
-export class IntlZone {
+export class IntlZone extends Zone {
   constructor(name) {
+    super();
     this.zoneName = name;
   }
 
@@ -13,9 +15,8 @@ export class IntlZone {
     return false;
   }
 
-  offsetName(ts, opts = {}) {
-    const offsetFormat = opts.format || 'long';
-    return Util.parseZoneInfo(ts, offsetFormat, opts.localeCode || 'en-us', this.zoneName);
+  offsetName(ts, { format = 'long', localeCode = 'en-us' } = {}) {
+    return Util.parseZoneInfo(ts, format, localeCode || 'en-us', this.zoneName);
   }
 
   offset(ts) {

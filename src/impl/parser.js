@@ -183,6 +183,10 @@ function instantFromMatches(matches) {
   );
 }
 
+/**
+ * @private
+ */
+
 export class Parser {
   constructor(loc) {
     Object.defineProperty(this, 'loc', { value: loc, enumerable: true });

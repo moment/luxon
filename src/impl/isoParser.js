@@ -22,6 +22,10 @@ function parse(s, ...patterns) {
   return null;
 }
 
+/**
+ * @private
+ */
+
 export class ISOParser {
   static parseISODate(s) {
     const timeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
