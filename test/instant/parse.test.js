@@ -5,67 +5,198 @@ import { Instant } from '../../dist/cjs/luxon';
 //------
 // .fromISO
 //-------
-
 test('Instant.fromISO() parses as local by default', () => {
   const inst = Instant.fromISO('2016-05-25T09:08:34.123');
-  expect(inst.toObject()).toEqual(
-    { year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123 },
-  );
+  expect(inst.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 8,
+    second: 34,
+    millisecond: 123
+  });
 });
 
 test('Instant.fromISO() uses the offset provided, but keeps the instant as local', () => {
   const inst = Instant.fromISO('2016-05-25T09:08:34.123+06:00');
-  expect(inst.utc().toObject()).toEqual(
-    { year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123 },
-  );
+  expect(inst.utc().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 3,
+    minute: 8,
+    second: 34,
+    millisecond: 123
+  });
 });
 
 test('Instant.fromISO() uses the Z if provided, but keeps the instant as local', () => {
   const inst = Instant.fromISO('2016-05-25T09:08:34.123Z');
-  expect(inst.utc().toObject()).toEqual(
-    { year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123 },
-  );
+  expect(inst.utc().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 8,
+    second: 34,
+    millisecond: 123
+  });
 });
 
 test('Instant.fromISO() optionally adopts the UTC offset provided', () => {
   const inst = Instant.fromISO('2016-05-25T09:08:34.123+06:00', { acceptOffset: true });
   expect(inst.zone.name).toBe('UTC+6');
-  expect(inst.toObject()).toEqual(
-    { year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123 },
-  );
+  expect(inst.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 8,
+    second: 34,
+    millisecond: 123
+  });
 });
 
 test('Instant.fromISO() optionally considers the date UTC if not otherwise specified', () => {
   let inst = Instant.fromISO('2016-05-25T09:08:34.123', { assumeUTC: true });
-  expect(inst.utc().toObject()).toEqual(
-    { year: 2016, month: 5, day: 25, hour: 9, minute: 8, second: 34, millisecond: 123 },
-  );
+  expect(inst.utc().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 8,
+    second: 34,
+    millisecond: 123
+  });
 
   inst = Instant.fromISO('2016-05-25T09:08:34.123+06:00', { assumeUTC: true });
-  expect(inst.utc().toObject()).toEqual(
-    { year: 2016, month: 5, day: 25, hour: 3, minute: 8, second: 34, millisecond: 123 },
-  );
+  expect(inst.utc().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 3,
+    minute: 8,
+    second: 34,
+    millisecond: 123
+  });
 });
 
 test('Instant.fromISO() accepts a variety of ISO formats', () => {
   const isSame = (s, expected) =>
-          expect(Instant.fromISO(s, { assumeUTC: true }).utc().toObject()).toEqual(expected);
+    expect(Instant.fromISO(s, { assumeUTC: true }).utc().toObject()).toEqual(expected);
 
-  isSame('2016-05-25', { year: 2016, month: 5, day: 25, hour: 0, minute: 0, second: 0, millisecond: 0 });
-  isSame('20160525', { year: 2016, month: 5, day: 25, hour: 0, minute: 0, second: 0, millisecond: 0 });
-  isSame('2016-05-25T09', { year: 2016, month: 5, day: 25, hour: 9, minute: 0, second: 0, millisecond: 0 });
-  isSame('2016-05-25T09:24', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 0, millisecond: 0 });
-  isSame('2016-05-25T09:24:15', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 0 });
-  isSame('2016-05-25T09:24:15.123', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123 });
-  isSame('2016-05-25T0924', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 0, millisecond: 0 });
-  isSame('2016-05-25T092415', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 0 });
-  isSame('2016-05-25T092415.123', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123 });
-  isSame('2016-05-25T09:24:15,123', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123 });
+  isSame('2016-05-25', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+  isSame('20160525', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+  isSame('2016-05-25T09', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+  isSame('2016-05-25T09:24', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 0,
+    millisecond: 0
+  });
+  isSame('2016-05-25T09:24:15', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 0
+  });
+  isSame('2016-05-25T09:24:15.123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+  isSame('2016-05-25T0924', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 0,
+    millisecond: 0
+  });
+  isSame('2016-05-25T092415', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 0
+  });
+  isSame('2016-05-25T092415.123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+  isSame('2016-05-25T09:24:15,123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
 
   // these are formats that aren't technically valid but we parse anyway.
   // Testing them more to document them than anything else
-  isSame('2016-05-25T0924:15.123', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123 });
-  isSame('2016-05-25T09:2415.123', { year: 2016, month: 5, day: 25, hour: 9, minute: 24, second: 15, millisecond: 123 });
+  isSame('2016-05-25T0924:15.123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+  isSame('2016-05-25T09:2415.123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
 });
 
 test('Instant.fromISO() rejects poop', () => {
@@ -96,7 +227,6 @@ test('Instant.fromISO() rejects poop', () => {
 //------
 // .fromString
 //-------
-
 test('Instant.fromString() parses basic times', () => {
   const i = Instant.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
   expect(i.year()).toBe(1982);
@@ -168,7 +298,7 @@ test('Instant.fromString() returns invalid when unparsed', () => {});
 
 test('Instant.fromString() returns invalid for out-of-range values', () => {
   const rejects = (s, fmt, opts = {}) =>
-          expect(Instant.fromString(s, fmt, opts).isValid()).toBeFalsy();
+    expect(Instant.fromString(s, fmt, opts).isValid()).toBeFalsy();
 
   rejects('Tuesday, 05/25/1982', 'EEEE, MM/dd/yyyy', { localeCode: 'fr' });
   rejects('Giberish, 05/25/1982', 'EEEE, MM/dd/yyyy');

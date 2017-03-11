@@ -1,7 +1,6 @@
 import { Util } from './impl/util';
 
 export class Interval {
-
   constructor(start, end) {
     Object.defineProperty(this, 's', { value: start, enumerable: true });
     Object.defineProperty(this, 'e', { value: end, enumerable: true });
@@ -43,21 +42,18 @@ export class Interval {
 
   count(unit = 'milliseconds') {
     // todo: check unit
-    const singularUnit = unit.replace(/s$/, '');
-    const start = this.start().startOf(singularUnit);
-    const end = this.end().startOf(singularUnit);
+    const singularUnit = unit.replace(/s$/, ''),
+      start = this.start().startOf(singularUnit),
+      end = this.end().startOf(singularUnit);
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
   splitAt(...instants) {
-    const sorted = instants.sort();
-    const results = [];
-    let s = this.s,
-        i = 0;
+    const sorted = instants.sort(), results = [];
+    let s = this.s, i = 0;
 
     while (s < this.e) {
-      const added = sorted[i] || this.e;
-      const next = +added > +this.e ? this.e : added;
+      const added = sorted[i] || this.e, next = +added > +this.e ? this.e : added;
       results.push(Interval.fromInstants(s, next));
       s = next;
       i += 1;
@@ -67,11 +63,8 @@ export class Interval {
   }
 
   splitBy(countOrDuration, unit = 'milliseconds') {
-    const dur = Util.friendlyDuration(countOrDuration, unit);
-    const results = [];
-    let s = this.s,
-        added,
-        next;
+    const dur = Util.friendlyDuration(countOrDuration, unit), results = [];
+    let s = this.s, added, next;
 
     while (s < this.e) {
       added = s.plus(dur);
@@ -104,8 +97,7 @@ export class Interval {
   }
 
   intersection(other) {
-    const s = this.s > other.s ? this.s : other.s;
-    const e = this.e < other.e ? this.e : other.e;
+    const s = this.s > other.s ? this.s : other.s, e = this.e < other.e ? this.e : other.e;
 
     if (s > e) {
       return null;
@@ -115,24 +107,21 @@ export class Interval {
   }
 
   union(other) {
-    const s = this.s < other.s ? this.s : other.s;
-    const e = this.e > other.e ? this.e : other.e;
+    const s = this.s < other.s ? this.s : other.s, e = this.e > other.e ? this.e : other.e;
 
     return Interval.fromInstants(s, e);
   }
 
   static merge(intervals) {
-    const [found, final] = intervals
-          .sort((a, b) => a.s - b.s)
-          .reduce(([sofar, current], item) => {
-            if (!current) {
-              return [sofar, item];
-            } else if (current.overlaps(item) || current.abutsStart(item)) {
-              return [sofar, current.union(item)];
-            } else {
-              return [sofar.concat([current]), item];
-            }
-          }, [[], null]);
+    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(([sofar, current], item) => {
+      if (!current) {
+        return [sofar, item];
+      } else if (current.overlaps(item) || current.abutsStart(item)) {
+        return [sofar, current.union(item)];
+      } else {
+        return [sofar.concat([current]), item];
+      }
+    }, [[], null]);
     if (final) {
       found.push(final);
     }
@@ -140,13 +129,10 @@ export class Interval {
   }
 
   static xor(intervals) {
-    let start = null,
-        currentCount = 0;
-    const results = [];
-    const ends = intervals
-            .map(i => [{ time: i.s, type: 's' },
-                       { time: i.e, type: 'e' }]);
-    const arr = Util.flatten(ends).sort((a, b) => a.time - b.time);
+    let start = null, currentCount = 0;
+    const results = [],
+      ends = intervals.map(i => [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }]),
+      arr = Util.flatten(ends).sort((a, b) => a.time - b.time);
 
     for (const i of arr) {
       currentCount += i.type === 's' ? 1 : -1;
@@ -198,10 +184,7 @@ export class Interval {
   toString() {
     return `[${this.s.toString()} - ${this.e.toString()})`;
   }
-
   // toISO(){}
-
   // toFormatString(overallFormat, dateFormat){}
-
   // toLocaleString(overallFormat){}
 }

@@ -11,29 +11,28 @@ function createInstant() {
     hour: 4,
     minute: 5,
     second: 6,
-    millisecond: 7,
+    millisecond: 7
   });
 }
 
 //------
 // #plus()
 //------
-
 test("Instant#plus(1, 'year') adds a year", () => {
   const i = createInstant().plus(1, 'years');
   expect(i.year()).toBe(2011);
 });
 
 test("Instant#plus(1, 'day') keeps the same time across a DST", () => {
-  const i = Instant.fromISO('2016-03-12T10:00').rezone(new FakePT(), { keepCalendarTime: true });
-  const later = i.plus(1, 'day');
+  const i = Instant.fromISO('2016-03-12T10:00').rezone(new FakePT(), { keepCalendarTime: true }),
+    later = i.plus(1, 'day');
   expect(later.day()).toBe(13);
   expect(later.hour()).toBe(10);
 });
 
 test("Instant#plus(24, 'hours') gains an hour to spring forward", () => {
-  const i = Instant.fromISO('2016-03-12T10:00').rezone(new FakePT(), { keepCalendarTime: true });
-  const later = i.plus(24, 'hours');
+  const i = Instant.fromISO('2016-03-12T10:00').rezone(new FakePT(), { keepCalendarTime: true }),
+    later = i.plus(24, 'hours');
   expect(later.day()).toBe(13);
   expect(later.hour()).toBe(11);
 });
@@ -41,7 +40,6 @@ test("Instant#plus(24, 'hours') gains an hour to spring forward", () => {
 //------
 // #minus()
 //------
-
 test("Instant#minus(1, 'year') subtracts a year", () => {
   const i = createInstant().minus(1, 'year');
   expect(i.year()).toBe(2009);
@@ -50,7 +48,6 @@ test("Instant#minus(1, 'year') subtracts a year", () => {
 //------
 // #startOf()
 //------
-
 test("Instant#startOf('year') goes to the start of the year", () => {
   const i = createInstant().startOf('year');
 
@@ -132,7 +129,6 @@ test("Instant#startOf('second') goes to the start of the second", () => {
 //------
 // #endOf()
 //------
-
 test("Instant#endOf('year') goes to the start of the year", () => {
   const i = createInstant().endOf('year');
 

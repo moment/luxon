@@ -1,16 +1,14 @@
 /* global test expect */
 import { Instant, Interval, Duration } from '../../dist/cjs/luxon';
 
-const fromISOs = (s, e, opts = {}) => Instant.fromISO(s).until(Instant.fromISO(e), opts);
-const todayAt = h => Instant.now().startOf('day').hour(h);
+const fromISOs = (s, e, opts = {}) => Instant.fromISO(s).until(Instant.fromISO(e), opts),
+  todayAt = h => Instant.now().startOf('day').hour(h);
 
 //------
 // #length()
 //-------
-
 test('Interval#length defaults to milliseconds', () => {
-  const n = Instant.now();
-  const d = n.until(n.plus(1, 'minute'));
+  const n = Instant.now(), d = n.until(n.plus(1, 'minute'));
 
   expect(d.length()).toBe(60 * 1000);
 });
@@ -30,7 +28,6 @@ test("Interval#length('years') returns the right number of years", () => {
 //------
 // #count()
 //-------
-
 test("Interval#count('days') returns 1 inside a day", () => {
   const i = Instant.fromISO('2016-05-25T03:00').until(Instant.fromISO('2016-05-25T14:00'));
   expect(i.count('days')).toBe(1);
@@ -54,7 +51,6 @@ test("Interval#count('days') returns 2 if the interval crosses the new year", ()
 //------
 // #toDuration()
 //-------
-
 test('Interval#toDuration(units) creates a duration in those units', () => {
   const int = Interval.fromInstants(todayAt(9), todayAt(13));
 
@@ -63,13 +59,12 @@ test('Interval#toDuration(units) creates a duration in those units', () => {
   expect(int.toDuration('seconds').equals(Duration.fromLength(4 * 3600, 'seconds'))).toBeTruthy();
   expect(int.toDuration('minutes').equals(Duration.fromLength(4 * 60, 'minutes'))).toBeTruthy();
   expect(int.toDuration('hours').equals(Duration.fromLength(4, 'hours'))).toBeTruthy();
-  expect(int.toDuration('days').equals(Duration.fromLength(1.0 / 6, 'days'))).toBeTruthy();
+  expect(int.toDuration('days').equals(Duration.fromLength(1 / 6, 'days'))).toBeTruthy();
 });
 
 //------
 // #contains()
 //-------
-
 test('Interval#contains returns true for instants in the interval', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
   expect(i.contains(Instant.fromISO('1982-05-25T06:30'))).toBeTruthy();
@@ -98,7 +93,6 @@ test('Interval#contains returns false for the end endpoint', () => {
 //------
 // #isEmpty()
 //-------
-
 test('Interval#isEmpty returns true for empty intervals', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00');
   expect(i.isEmpty()).toBeTruthy();
@@ -112,77 +106,70 @@ test('Interval#isEmpty returns false for non-empty intervals', () => {
 //------
 // #isBefore()
 //-------
-
 test('Interval#isBefore returns true for intervals fully before the input', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n.minus(2, 'day'), n.minus(1, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'),
+    i = Interval.fromInstants(n.minus(2, 'day'), n.minus(1, 'day'));
   expect(i.isBefore(n)).toBeTruthy();
 });
 
 test('Interval#isBefore returns false for intervals containing the input', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n.minus(2, 'day'), n.plus(2, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'),
+    i = Interval.fromInstants(n.minus(2, 'day'), n.plus(2, 'day'));
   expect(i.isBefore(n)).toBeFalsy();
 });
 
 test('Interval#isBefore returns false for intervals fully after the input ', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n.plus(2, 'day'), n.plus(3, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'),
+    i = Interval.fromInstants(n.plus(2, 'day'), n.plus(3, 'day'));
   expect(i.isBefore(n)).toBeFalsy();
 });
 
 test('Interval#isBefore returns true for intervals starting at the input', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n, n.minus(1, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'), i = Interval.fromInstants(n, n.minus(1, 'day'));
   expect(i.isBefore(n)).toBeTruthy();
 });
 
 //------
 // #isAfter()
 //-------
-
 test('Interval#isAfter returns true for intervals fully after the input', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n.plus(1, 'day'), n.plus(2, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'),
+    i = Interval.fromInstants(n.plus(1, 'day'), n.plus(2, 'day'));
   expect(i.isAfter(n)).toBeTruthy();
 });
 
 test('Interval#isAfter returns false for intervals containing the input', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n.minus(2, 'day'), n.plus(2, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'),
+    i = Interval.fromInstants(n.minus(2, 'day'), n.plus(2, 'day'));
   expect(i.isAfter(n)).toBeFalsy();
 });
 
 test('Interval#isAfter returns false for fully before the input ', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n.minus(2, 'day'), n.minus(1, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'),
+    i = Interval.fromInstants(n.minus(2, 'day'), n.minus(1, 'day'));
   expect(i.isAfter(n)).toBeFalsy();
 });
 
 test('Interval#isAfter returns false for intervals beginning at the input', () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n, n.plus(1, 'day'));
+  const n = Instant.fromISO('1982-05-25T06:00'), i = Interval.fromInstants(n, n.plus(1, 'day'));
   expect(i.isAfter(n)).toBeFalsy();
 });
 
 //------
 // #hasSame()
 //-------
-
 test("Interval#hasSame('day') returns true for durations on the same day", () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n, n.plus(5, 'hours'));
+  const n = Instant.fromISO('1982-05-25T06:00'), i = Interval.fromInstants(n, n.plus(5, 'hours'));
   expect(i.hasSame('day')).toBeTruthy();
 });
 
 test("Interval#hasSame('day') returns true for durations that last until the next day", () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n, n.plus(20, 'hours'));
+  const n = Instant.fromISO('1982-05-25T06:00'), i = Interval.fromInstants(n, n.plus(20, 'hours'));
   expect(i.hasSame('day')).toBeFalsy();
 });
 
 test("Interval#hasSame('day') returns true for durations durations ending at midnight", () => {
-  const n = Instant.fromISO('1982-05-25T06:00');
-  const i = Interval.fromInstants(n, n.plus(1, 'day').startOf('day'));
+  const n = Instant.fromISO('1982-05-25T06:00'),
+    i = Interval.fromInstants(n, n.plus(1, 'day').startOf('day'));
   expect(i.hasSame('day')).toBeTruthy();
 });

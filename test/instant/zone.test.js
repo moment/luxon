@@ -4,13 +4,13 @@ import { Instant } from '../../dist/cjs/luxon';
 import { FakePT } from '../helpers/fakePT';
 import { FakeET } from '../helpers/fakeET';
 
-const millis = 391147200000; // 1982-05-25T04:00:00.000Z
-const instant = () => Instant.fromMillis(millis);
+const millis = 391147200000,
+  // 1982-05-25T04:00:00.000Z
+  instant = () => Instant.fromMillis(millis);
 
 //------
 // defaults
 //------
-
 test('timezone defaults to local', () => {
   const inst = instant();
   expect(inst.isOffsetFixed()).toBe(false);
@@ -19,7 +19,6 @@ test('timezone defaults to local', () => {
 //------
 // #utc()
 //------
-
 test("Instant#utc() puts the instant in UTC 'mode'", () => {
   const zoned = instant().utc();
 
@@ -33,7 +32,6 @@ test("Instant#utc() puts the instant in UTC 'mode'", () => {
 //------
 // #useUTCOffset()
 //------
-
 test("Instant#useUTCOffset() sets instant in UTC+offset 'mode'", () => {
   const zoned = instant().useUTCOffset(5 * 60);
 
@@ -47,10 +45,8 @@ test("Instant#useUTCOffset() sets instant in UTC+offset 'mode'", () => {
 //------
 // #local()
 //------
-
 test('Instant#local() sets the calendar back to local', () => {
-  const relocaled = instant().utc().local();
-  const expected = new Date(millis).getHours();
+  const relocaled = instant().utc().local(), expected = new Date(millis).getHours();
 
   expect(relocaled.isOffsetFixed()).toBe(false);
   expect(relocaled.valueOf()).toBe(millis);
@@ -60,15 +56,14 @@ test('Instant#local() sets the calendar back to local', () => {
 //------
 // #rezone()
 //------
-
-
 test('rezone sets the TZ to the specified zone', () => {
   const zoned = instant().rezone(new FakePT());
 
   expect(zoned.timezoneName()).toBe('Fake Pacific Time');
   expect(zoned.isOffsetFixed()).toBe(false);
   expect(zoned.valueOf()).toBe(millis);
-  expect(zoned.hour()).toBe(21); // pacific daylight time
+  expect(zoned.hour()).toBe(21);
+  // pacific daylight time
   expect(zoned.isInDST()).toBe(true);
 });
 
@@ -93,7 +88,6 @@ test('rezone accepts a keepCalendarTime option', () => {
 //------
 // #isInDST()
 //------
-
 test('Instant#isInDST() returns false for pre-DST times', () => {
   const zoned = instant().rezone(new FakePT());
   expect(zoned.month(1).isInDST()).toBe(false);
@@ -112,13 +106,13 @@ test('Instant#isInDST() returns false for post-DST times', () => {
 //------
 // timezone
 //------
-
 test('magic zones are magic', () => {
   // this will only work in Chrome/V8 for now
   const zoned = instant().timezone('Europe/Paris');
 
   expect(zoned.timezoneName()).toBe('Europe/Paris');
-  expect(zoned.offsetNameShort()).toBe('GMT+2'); // not convinced this is universal. Could also be 'CEDT'
+  expect(zoned.offsetNameShort()).toBe('GMT+2');
+  // not convinced this is universal. Could also be 'CEDT'
   expect(zoned.offsetNameLong()).toBe('Central European Summer Time');
   expect(zoned.valueOf()).toBe(millis);
   expect(zoned.hour()).toBe(6); // cedt is +2

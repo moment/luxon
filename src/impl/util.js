@@ -2,9 +2,9 @@ import { Duration } from '../duration';
 
 export class Util {
   static friendlyDuration(durationOrNumber, type) {
-    return Util.isNumber(durationOrNumber) ?
-      Duration.fromLength(durationOrNumber, type) :
-      durationOrNumber;
+    return Util.isNumber(durationOrNumber)
+      ? Duration.fromLength(durationOrNumber, type)
+      : durationOrNumber;
   }
 
   static isUndefined(o) {
@@ -31,27 +31,31 @@ export class Util {
 
   // http://stackoverflow.com/a/15030117
   static flatten(arr) {
-    return arr.reduce((flat, toFlatten) =>
-                      flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),
-                      []);
+    return arr.reduce(
+      (flat, toFlatten) =>
+        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),
+      []
+    );
   }
 
   static bestBy(arr, by, compare) {
-    return arr.reduce((best, next) => {
-      const pair = [by(next), next];
-      if (!best) {
-        return pair;
-      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
-        return best;
-      } else {
-        return pair;
-      }
-    }, null)[1];
+    return arr.reduce(
+      (best, next) => {
+        const pair = [by(next), next];
+        if (!best) {
+          return pair;
+        } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+          return best;
+        } else {
+          return pair;
+        }
+      },
+      null
+    )[1];
   }
 
   static zip(...arrays) {
-    return arrays[0].map(
-      (_, c) => arrays.map(arr => arr[c]));
+    return arrays[0].map((_, c) => arrays.map(arr => arr[c]));
   }
 
   static isLeapYear(year) {
@@ -73,25 +77,26 @@ export class Util {
   // junk for Arabic. Also note that this won't internationalize in Node
   // unless you have an Intl build.
   static parseZoneInfo(ts, offsetFormat, localeCode, timeZone = null) {
-    const date = new Date(ts);
-    const intl = {
-      hour12: false, // avoid AM/PM
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    };
+    const date = new Date(ts),
+      intl = {
+        hour12: false,
+        // avoid AM/PM
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
 
     if (timeZone) {
       intl.timeZone = timeZone;
     }
 
-    const without = new Intl.DateTimeFormat(localeCode, intl).format(date);
-    const modified = Object.assign({ timeZoneName: offsetFormat }, intl);
-    const included = new Intl.DateTimeFormat(localeCode, modified).format(date);
-    const diffed = included.substring(without.length);
-    const trimmed = diffed.replace(/^[, ]+/, '');
+    const without = new Intl.DateTimeFormat(localeCode, intl).format(date),
+      modified = Object.assign({ timeZoneName: offsetFormat }, intl),
+      included = new Intl.DateTimeFormat(localeCode, modified).format(date),
+      diffed = included.substring(without.length),
+      trimmed = diffed.replace(/^[, ]+/, '');
 
     return trimmed;
   }

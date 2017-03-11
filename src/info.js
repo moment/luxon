@@ -2,7 +2,6 @@ import { Instant } from './instant';
 import { Locale } from './impl/locale';
 
 export class Info {
-
   static hasDST(zone = Instant.defaultZone) {
     return !zone.universal && Instant.now().month(1).offset() !== Instant.now().month(5).offset();
   }
@@ -28,14 +27,12 @@ export class Info {
   }
 
   static features() {
-    let intl = false,
-        ftp = false,
-        zones = false;
+    let intl = false, ftp = false, zones = false;
 
     if (Intl.DateTimeFormat) {
       intl = true;
 
-      ftp = typeof (new Intl.DateTimeFormat().formatToParts) !== 'undefined';
+      ftp = typeof new Intl.DateTimeFormat().formatToParts !== 'undefined';
 
       try {
         Intl.DateTimeFormat({ timeZone: 'America/New_York' });
@@ -45,11 +42,6 @@ export class Info {
       }
     }
 
-    return {
-      intl,
-      intlParseFormat: ftp,
-      englishParseFormat: ftp,
-      timezones: zones,
-    };
+    return { intl, intlParseFormat: ftp, englishParseFormat: ftp, timezones: zones };
   }
 }

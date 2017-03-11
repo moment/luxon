@@ -5,7 +5,6 @@ import { Duration } from '../../dist/cjs/luxon';
 //------
 // .fromObject()
 //-------
-
 test('Duration.fromObject sets all the values', () => {
   const dur = Duration.fromObject({
     years: 1,
@@ -14,7 +13,7 @@ test('Duration.fromObject sets all the values', () => {
     hours: 4,
     minutes: 5,
     seconds: 6,
-    milliseconds: 7,
+    milliseconds: 7
   });
   expect(dur.years()).toBe(1);
   expect(dur.months()).toBe(2);

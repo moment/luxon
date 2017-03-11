@@ -1,7 +1,6 @@
 import { Util } from './util';
 
 export class LocalZone {
-
   get name() {
     return new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
@@ -16,10 +15,10 @@ export class LocalZone {
   }
 
   offset(ts) {
-    return -(new Date(ts).getTimezoneOffset());
+    return -new Date(ts).getTimezoneOffset();
   }
 
   equals(otherZone) {
-    return (otherZone instanceof LocalZone);
+    return otherZone instanceof LocalZone;
   }
 }

@@ -4,10 +4,8 @@ import { Duration } from '../../dist/cjs/luxon';
 //------
 // #shiftTo()
 //-------
-
 test('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', () => {
   const dur = Duration.fromLength(5760000, 'milliseconds');
-
   expect(dur.shiftTo('hours').hours()).toBe(1.6);
 
   const mod = dur.shiftTo('hours', 'minutes');
@@ -38,7 +36,6 @@ test('Duration#shiftTo boils down and then rolls up', () => {
 //------
 // #normalize()
 //-------
-
 test('Duration#normalize rebalances negative units', () => {
   const dur = Duration.fromObject({ years: 2, days: -2 }).normalize();
 

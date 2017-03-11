@@ -4,16 +4,16 @@ import { Duration } from '../../dist/cjs/luxon';
 //------
 // years/months/days/hours/minutes/seconds/milliseconds
 //-------
-
-const dur = () => Duration.fromObject({
-  years: 1,
-  months: 1,
-  days: 1,
-  hours: 1,
-  minutes: 1,
-  seconds: 1,
-  milliseconds: 1,
-});
+const dur = () =>
+  Duration.fromObject({
+    years: 1,
+    months: 1,
+    days: 1,
+    hours: 1,
+    minutes: 1,
+    seconds: 1,
+    milliseconds: 1
+  });
 
 test('Duration#years() sets the years', () => {
   expect(dur().years(2).years()).toBe(2);

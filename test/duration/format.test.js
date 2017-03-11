@@ -1,20 +1,20 @@
 /* global test expect */
 import { Duration } from '../../dist/cjs/luxon';
 
-const dur = () => Duration.fromObject({
-  years: 1,
-  months: 2,
-  days: 3,
-  hours: 4,
-  minutes: 5,
-  seconds: 6,
-  milliseconds: 7,
-});
+const dur = () =>
+  Duration.fromObject({
+    years: 1,
+    months: 2,
+    days: 3,
+    hours: 4,
+    minutes: 5,
+    seconds: 6,
+    milliseconds: 7
+  });
 
 //------
 // #toISO()
 //------
-
 test('Duration#toISO fills out every field', () => {
   expect(dur().toISO()).toBe('P1Y2M3DT4H5M6S');
 });
@@ -29,8 +29,6 @@ test('Duration#toISO creates a minimal string', () => {
 //------
 // #toFormatString()
 //------
-
-
 test("Duration#toFormatString('S') returns milliseconds", () => {
   expect(dur().toFormatString('S')).toBe('36993906007');
 

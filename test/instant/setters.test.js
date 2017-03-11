@@ -7,7 +7,6 @@ const instant = () => Instant.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
 //------
 // year/month/day/hour/minute/second/millisecond
 //-------
-
 test('Instant#year() sets the year', () => {
   expect(instant().year(2012).year()).toBe(2012);
 });

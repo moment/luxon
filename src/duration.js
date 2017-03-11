@@ -10,36 +10,21 @@ const matrix = {
     hours: 365 * 24,
     minutes: 365 * 24 * 60,
     seconds: 365 * 24 * 60 * 60,
-    milliseconds: 365 * 24 * 60 * 60 * 1000,
+    milliseconds: 365 * 24 * 60 * 60 * 1000
   },
   months: {
     days: 30,
     hours: 30 * 24,
     minutes: 30 * 24 * 60,
     seconds: 30 * 24 * 60 * 60,
-    milliseconds: 30 * 24 * 60 * 60 * 1000,
+    milliseconds: 30 * 24 * 60 * 60 * 1000
   },
-  days: {
-    hours: 24,
-    minutes: 24 * 60,
-    seconds: 24 * 60 * 60,
-    milliseconds: 24 * 60 * 60 * 1000,
-  },
-  hours: {
-    minutes: 60,
-    seconds: 60 * 60,
-    milliseconds: 60 * 60 * 1000,
-  },
-  minutes: {
-    seconds: 60,
-    milliseconds: 60 * 1000,
-  },
-  seconds: {
-    milliseconds: 1000,
-  },
-};
-
-const ordered = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
+  days: { hours: 24, minutes: 24 * 60, seconds: 24 * 60 * 60, milliseconds: 24 * 60 * 60 * 1000 },
+  hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
+  minutes: { seconds: 60, milliseconds: 60 * 1000 },
+  seconds: { milliseconds: 1000 }
+},
+  ordered = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
 function ensure(unit) {
   const normalized = unit.endsWith('s') ? unit : `${unit}s`;
@@ -60,14 +45,10 @@ function clone(dur, alts) {
 }
 
 export class Duration {
-
   constructor(config) {
     this.values = config.values;
 
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true,
-    });
+    Object.defineProperty(this, 'loc', { value: config.loc || Locale.create(), enumerable: true });
 
     Object.defineProperty(this, 'valid', { value: config.valid || true, enumerable: false });
   }
@@ -87,13 +68,9 @@ export class Duration {
   }
 
   // static fromISO(text) {}
-
   // static fromString(text, fmt) {}
-
   locale(l) {
-    return Util.isUndefined(l) ?
-      this.loc :
-      clone(this, { loc: Locale.create(l) });
+    return Util.isUndefined(l) ? this.loc : clone(this, { loc: Locale.create(l) });
   }
 
   toFormatString(fmt, opts = {}) {
@@ -110,7 +87,8 @@ export class Duration {
     if (this.years() > 0) s += this.years() + 'Y';
     if (this.months() > 0) s += this.months() + 'M';
     if (this.days() > 0) s += this.days() + 'D';
-    if (this.hours() > 0 || this.minutes() > 0 || this.seconds() > 0 || this.milliseconds() > 0) s += 'T';
+    if (this.hours() > 0 || this.minutes() > 0 || this.seconds() > 0 || this.milliseconds() > 0)
+      s += 'T';
     if (this.hours() > 0) s += this.hours() + 'H';
     if (this.minutes() > 0) s += this.minutes() + 'M';
     if (this.seconds() > 0) s += this.seconds() + 'S';
@@ -118,10 +96,8 @@ export class Duration {
   }
 
   // toJSON() {}
-
   plus(countOrDuration, unit = 'milliseconds') {
-    const dur = Util.friendlyDuration(countOrDuration, unit);
-    const result = {};
+    const dur = Util.friendlyDuration(countOrDuration, unit), result = {};
 
     for (const k of ordered) {
       const val = dur.get(k) + this.get(k);
@@ -160,9 +136,7 @@ export class Duration {
       return this;
     }
 
-    const built = {};
-    const accumulated = {};
-    const vals = this.toObject();
+    const built = {}, accumulated = {}, vals = this.toObject();
     let lastUnit;
 
     for (const k of ordered) {
@@ -186,8 +160,7 @@ export class Duration {
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
           if (ordered.indexOf(down) > ordered.indexOf(k)) {
-            const conv = matrix[k][down];
-            const added = Math.floor(vals[down] / conv);
+            const conv = matrix[k][down], added = Math.floor(vals[down] / conv);
             built[k] += added;
             vals[down] -= added * conv;
           }

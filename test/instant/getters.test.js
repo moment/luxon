@@ -2,13 +2,12 @@
 
 import { Instant } from '../../dist/cjs/luxon';
 
-const instant = Instant.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
-const utc = Instant.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).utc();
+const instant = Instant.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123)),
+  utc = Instant.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).utc();
 
 //------
 // year/month/day/hour/minute/second/millisecond
 //-------
-
 test('instant#year() returns the year', () => {
   expect(instant.year()).toBe(1982);
   expect(utc.year()).toBe(1982);
