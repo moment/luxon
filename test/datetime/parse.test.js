@@ -45,7 +45,7 @@ test('DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local
 });
 
 test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
-  const dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { setOffset: true });
+  const dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { setZone: true });
   expect(dt.zone.name).toBe('UTC+6');
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -58,9 +58,10 @@ test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
   });
 });
 
-test('DateTime.fromISO() optionally considers the date UTC if not otherwise specified', () => {
-  let dt = DateTime.fromISO('2016-05-25T09:08:34.123', { assumeUTC: true });
-  expect(dt.utc().toObject()).toEqual({
+test('DateTime.fromISO() can optionally specify a zone', () => {
+  let dt = DateTime.fromISO('2016-05-25T09:08:34.123', { zone: 'utc' });
+  expect(dt.offset()).toEqual(0);
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -70,8 +71,9 @@ test('DateTime.fromISO() optionally considers the date UTC if not otherwise spec
     millisecond: 123
   });
 
-  dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { assumeUTC: true });
-  expect(dt.utc().toObject()).toEqual({
+  dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { zone: 'utc' });
+  expect(dt.offset()).toEqual(0);
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -83,8 +85,7 @@ test('DateTime.fromISO() optionally considers the date UTC if not otherwise spec
 });
 
 test('DateTime.fromISO() accepts a variety of ISO formats', () => {
-  const isSame = (s, expected) =>
-    expect(DateTime.fromISO(s, { assumeUTC: true }).utc().toObject()).toEqual(expected);
+  const isSame = (s, expected) => expect(DateTime.fromISO(s).toObject()).toEqual(expected);
 
   isSame('2016-05-25', {
     year: 2016,

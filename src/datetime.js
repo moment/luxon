@@ -245,23 +245,22 @@ export class DateTime {
    * Create a DateTime in the default zone from an ISO 8601 string
    * @param {string} text - the ISO string
    * @param {Object} options - options to affect the creation
-   * @param {boolean} options.setOffset - set DateTime's zone to a fixed offset specified by the string. If this is false, the offset will still be used in computing the absolute time represented by the string, but the resulting instance will be converted to the default zone.
-   * @param {boolean} options.assumeUTC - treat unspecified offsets as UTC.
+   * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
+   * @param {boolean} [options.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
-   * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {assumeUTC: true})
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc')
    * @return {DateTime}
    */
-  static fromISO(text, { setOffset = false, assumeUTC = false } = {}) {
+  static fromISO(text, { setZone = false, zone = DateTime.defaultZone } = {}) {
     const parsed = ISOParser.parseISODate(text);
     if (parsed) {
       const { local, offset } = parsed,
-        zone = local
-          ? assumeUTC ? new FixedOffsetZone(0) : new LocalZone()
-          : new FixedOffsetZone(offset),
-        inst = DateTime.fromObject(parsed, zone);
+        interpretationZone = local ? zone : new FixedOffsetZone(offset),
+        inst = DateTime.fromObject(parsed, interpretationZone);
 
-      return setOffset ? inst : inst.local();
+      return setZone ? inst : inst.rezone(zone);
     } else {
       return DateTime.invalid();
     }
@@ -307,6 +306,7 @@ export class DateTime {
   }
 
   rezone(zone, opts = { keepCalendarTime: false }) {
+    zone = Util.normalizeZone(zone);
     if (zone.equals(this.zone)) {
       return this;
     } else {
