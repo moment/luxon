@@ -41,15 +41,6 @@ test('DateTime.fromMillis(ms) has a value of ms', () => {
 });
 
 //------
-// .fromUnix()
-//-------
-test('DateTime.fromUnix(secs) has a value of 1000 * secs', () => {
-  const value = 391147200, dateTime = DateTime.fromUnix(value);
-
-  expect(dateTime.valueOf()).toBe(value * 1000);
-});
-
-//------
 // .fromObject()
 //-------
 const baseObject = {

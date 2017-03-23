@@ -207,15 +207,6 @@ export class DateTime {
   }
 
   /**
-   * Create an DateTime from a count of epoch seconds. Uses the default zone.
-   * @param {number} seconds - a number of seconds since 1970 UTC
-   * @return {DateTime}
-   */
-  static fromUnix(seconds) {
-    return this.fromMillis(seconds * 1000);
-  }
-
-  /**
    * Create an DateTime from a Javascript object with keys like "year" and "hour" with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
    * @param {Object} options - options to affect the creation
