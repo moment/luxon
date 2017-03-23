@@ -9,7 +9,7 @@ import { FakePT } from '../helpers/fakePT';
 const dt = () =>
   DateTime.fromObject(
     { year: 1982, month: 5, day: 25, hour: 9, minute: 23, second: 54, millisecond: 123 },
-    { utc: true }
+    'utc'
   );
 
 test("DateTime#toISO() shows 'Z' for UTC", () => {

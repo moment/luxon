@@ -59,18 +59,18 @@ export class Formatter {
     this.loc = locale;
   }
 
-  formatDateTime(inst, opts = {}) {
-    const [df, d] = this.loc.instFormatter(inst, Object.assign({}, this.opts, opts));
+  formatDateTime(dt, opts = {}) {
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
-  formatDateTimeParts(inst, opts = {}) {
-    const [df, d] = this.loc.instFormatter(inst, Object.assign({}, this.opts, opts));
+  formatDateTimeParts(dt, opts = {}) {
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
-  resolvedDateOptions(inst) {
-    const [df, d] = this.loc.instFormatter(inst);
+  resolvedDateOptions(dt) {
+    const [df, d] = this.loc.dtFormatter(dt);
     return df.resolvedOptions(d);
   }
 
@@ -84,16 +84,16 @@ export class Formatter {
     return this.loc.numberFormatter(opts).format(n);
   }
 
-  formatDateTimeFromString(inst, fmt) {
-    const string = (opts, extract) => this.loc.extract(inst, opts, extract),
+  formatDateTimeFromString(dt, fmt) {
+    const string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
         // todo - is this always right? Should be an option?
-        if (inst.isOffsetFixed() && inst.offset() === 0) {
+        if (dt.isOffsetFixed() && dt.offset() === 0) {
           return 'Z';
         }
 
-        const hours = Util.towardZero(inst.offset() / 60),
-          minutes = Math.abs(inst.offset() % 60),
+        const hours = Util.towardZero(dt.offset() / 60),
+          minutes = Math.abs(dt.offset() % 60),
           sign = hours > 0 ? '+' : '-',
           formatter = n => this.num(n, opts.format === 'short' ? 2 : 0),
           base = sign + formatter(Math.abs(hours));
@@ -111,32 +111,31 @@ export class Formatter {
         switch (token) {
           // ms
           case 'S':
-            return this.num(inst.millisecond());
+            return this.num(dt.millisecond());
           case 'SSS':
-            return this.num(inst.millisecond(), 3);
+            return this.num(dt.millisecond(), 3);
 
           // seconds
           case 's':
-            return this.num(inst.second());
+            return this.num(dt.second());
           case 'ss':
-            return this.num(inst.second(), 2);
+            return this.num(dt.second(), 2);
 
           // minutes
           case 'm':
-            return this.num(inst.minute());
+            return this.num(dt.minute());
           case 'mm':
-            return this.num(inst.minute(), 2);
+            return this.num(dt.minute(), 2);
 
           // hours
           case 'h':
-            return this.num(inst.hour() === 12 ? 12 : inst.hour() % 12);
+            return this.num(dt.hour() === 12 ? 12 : dt.hour() % 12);
           case 'hh':
-            return this.num(inst.hour() === 12 ? 12 : inst.hour() % 12, 2);
+            return this.num(dt.hour() === 12 ? 12 : dt.hour() % 12, 2);
           case 'H':
-            return this.num(inst.hour());
+            return this.num(dt.hour());
           case 'HH':
-            return this.num(inst.hour(), 2);
-
+            return this.num(dt.hour(), 2);
           // offset
           case 'Z':
             return formatOffset({ format: 'narrow' });
@@ -145,14 +144,14 @@ export class Formatter {
             return formatOffset({ format: 'short' });
           // like +06:00
           case 'ZZZ':
-            return inst.offsetNameLong();
+            return dt.offsetNameLong();
           // like Eastern Standard Time
           case 'ZZZZ':
-            return inst.offsetNameShort();
+            return dt.offsetNameShort();
           // like EST
           // zone
           case 'z':
-            return inst.timezoneName();
+            return dt.timezoneName();
           // like America/New_York
           // meridiems
           case 'a':
@@ -160,13 +159,13 @@ export class Formatter {
 
           // dates
           case 'd':
-            return this.num(inst.day());
+            return this.num(dt.day());
           case 'dd':
-            return this.num(inst.day(), 2);
+            return this.num(dt.day(), 2);
 
           // weekdays - format
           case 'c':
-            return this.num(inst.weekday());
+            return this.num(dt.weekday());
           // like 1
           case 'ccc':
             return string({ weekday: 'short' }, 'weekday');
@@ -179,7 +178,7 @@ export class Formatter {
           // like 'T'
           // weekdays - standalone
           case 'E':
-            return this.num(inst.weekday());
+            return this.num(dt.weekday());
           // like 1
           case 'EEE':
             return string({ weekday: 'short' }, 'weekday');
@@ -208,10 +207,10 @@ export class Formatter {
           // like J
           // months - standalone
           case 'M':
-            return this.num(inst.month());
+            return this.num(dt.month());
           // like 1
           case 'MM':
-            return this.num(inst.month(), 2);
+            return this.num(dt.month(), 2);
           // like 01
           case 'MMM':
             return string({ month: 'short', day: 'numeric' }, 'month');
@@ -224,13 +223,13 @@ export class Formatter {
           // like J
           // years
           case 'y':
-            return this.num(inst.year());
+            return this.num(dt.year());
           // like 2014
           case 'yy':
-            return this.num(inst.year().toString().slice(-2), 2);
+            return this.num(dt.year().toString().slice(-2), 2);
           // like 14
           case 'yyyy':
-            return this.num(inst.year(), 4);
+            return this.num(dt.year(), 4);
           // like 0012
           // eras
           case 'G':
@@ -249,13 +248,13 @@ export class Formatter {
           // Revisit when either of those change or I give up on this dance and require
           // a special Node build.
           case 'D':
-            return this.formatDateTime(inst, { year: 'numeric', month: 'numeric', day: 'numeric' });
+            return this.formatDateTime(dt, { year: 'numeric', month: 'numeric', day: 'numeric' });
           case 'DD':
-            return this.formatDateTime(inst, { year: 'numeric', month: 'short', day: 'numeric' });
+            return this.formatDateTime(dt, { year: 'numeric', month: 'short', day: 'numeric' });
           case 'DDD':
-            return this.formatDateTime(inst, { year: 'numeric', month: 'long', day: 'numeric' });
+            return this.formatDateTime(dt, { year: 'numeric', month: 'long', day: 'numeric' });
           case 'DDDD':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -263,18 +262,18 @@ export class Formatter {
             });
 
           case 't':
-            return this.formatDateTime(inst, { hour: 'numeric', minute: '2-digit' });
+            return this.formatDateTime(dt, { hour: 'numeric', minute: '2-digit' });
           case 'tt':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               hour: 'numeric',
               minute: '2-digit',
               second: '2-digit'
             });
           // todo: ttt and tttt when we have zones
           case 'T':
-            return this.formatDateTime(inst, { hour: 'numeric', minute: '2-digit', hour12: false });
+            return this.formatDateTime(dt, { hour: 'numeric', minute: '2-digit', hour12: false });
           case 'TT':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               hour: 'numeric',
               minute: '2-digit',
               second: '2-digit',
@@ -282,7 +281,7 @@ export class Formatter {
             });
           // todo: TTT and TTTT when we have zones
           case 'f':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'numeric',
               day: 'numeric',
@@ -290,7 +289,7 @@ export class Formatter {
               minute: '2-digit'
             });
           case 'ff':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
@@ -300,7 +299,7 @@ export class Formatter {
 
           // todo: add zones
           case 'fff':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -308,7 +307,7 @@ export class Formatter {
               minute: '2-digit'
             });
           case 'ffff':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -318,7 +317,7 @@ export class Formatter {
             });
 
           case 'F':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'numeric',
               day: 'numeric',
@@ -327,7 +326,7 @@ export class Formatter {
               second: '2-digit'
             });
           case 'FF':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
@@ -338,7 +337,7 @@ export class Formatter {
 
           // todo: add zones
           case 'FFF':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -347,7 +346,7 @@ export class Formatter {
               second: '2-digit'
             });
           case 'FFFF':
-            return this.formatDateTime(inst, {
+            return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',

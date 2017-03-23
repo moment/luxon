@@ -1,7 +1,26 @@
 import { Util } from '../impl/util';
 import { Zone } from '../zone';
 
+let singleton = null;
+
 export class FixedOffsetZone extends Zone {
+  static get utcInstance() {
+    if (singleton === null) {
+      singleton = new FixedOffsetZone(0);
+    }
+    return singleton;
+  }
+
+  static parseSpecifier(s) {
+    if (s) {
+      const r = s.match(/^utc([+-]\d+)?$/i);
+      if (r) {
+        return new FixedOffsetZone(r[1] ? parseInt(r[1], 10) * 60 : 0);
+      }
+    }
+    return null;
+  }
+
   constructor(offset) {
     super();
     this.fixed = offset;

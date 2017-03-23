@@ -1,10 +1,8 @@
-export class FakePT {
+import { Zone } from '../../src/zone';
+
+export class FakePT extends Zone {
   get name() {
     return 'Fake Pacific Time';
-  }
-
-  get universal() {
-    return false;
   }
 
   offsetName(ts, opts = {}) {
@@ -12,6 +10,10 @@ export class FakePT {
     return opts.format === 'long'
       ? off === -8 ? 'PST' : 'PDT'
       : off === -8 ? 'Pacific Standard Time' : 'Pacific Daylight Time';
+  }
+
+  get universal() {
+    return false;
   }
 
   offset(ts) {

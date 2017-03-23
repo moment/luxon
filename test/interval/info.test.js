@@ -164,7 +164,8 @@ test("Interval#hasSame('day') returns true for durations on the same day", () =>
 });
 
 test("Interval#hasSame('day') returns true for durations that last until the next day", () => {
-  const n = DateTime.fromISO('1982-05-25T06:00'), i = Interval.fromDateTimes(n, n.plus(20, 'hours'));
+  const n = DateTime.fromISO('1982-05-25T06:00'),
+    i = Interval.fromDateTimes(n, n.plus(20, 'hours'));
   expect(i.hasSame('day')).toBeFalsy();
 });
 

@@ -169,7 +169,7 @@ export class DateTime {
    * @return {Zone}
    */
   static get defaultZone() {
-    return new LocalZone();
+    return LocalZone.instance;
   }
 
   /**
@@ -209,16 +209,17 @@ export class DateTime {
   /**
    * Create an DateTime from a Javascript object with keys like "year" and "hour" with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
-   * @param {Object} options - options to affect the creation
-   * @param {boolean} options.utc - interpret the object as a UTC time. Conflicts with the zone option
-   * @param {Zone} options.zone - interpret the object as if it were a local time in this zone. Conflicts with the utc option
+   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can be a Luxon Zone instance or a string. Strings accepted include 'utc', 'local', 'utc+3', and 'America/New_York'
    * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06]
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'utc')
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'local')
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'America/New_York')
    * @return {DateTime}
    */
-  static fromObject(obj, { utc = false, zone = null } = {}) {
+  static fromObject(obj, zone = DateTime.defaultZone) {
     const tsNow = now(),
-      zoneToUse = zone || (utc ? new FixedOffsetZone(0) : new LocalZone()),
+      zoneToUse = Util.normalizeZone(zone) || DateTime.defaultZone,
       offsetProvis = zoneToUse.offset(tsNow),
       defaulted = Object.assign(
         tsToObj(tsNow, offsetProvis),
@@ -258,7 +259,7 @@ export class DateTime {
         zone = local
           ? assumeUTC ? new FixedOffsetZone(0) : new LocalZone()
           : new FixedOffsetZone(offset),
-        inst = DateTime.fromObject(parsed, { zone });
+        inst = DateTime.fromObject(parsed, zone);
 
       return setOffset ? inst : inst.local();
     } else {

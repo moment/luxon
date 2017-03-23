@@ -1,5 +1,10 @@
 import { Duration } from '../duration';
 
+import { Zone } from '../zone';
+import { LocalZone } from '../zones/localZone';
+import { IntlZone } from '../zones/intlZone';
+import { FixedOffsetZone } from '../zones/fixedOffsetZone';
+
 /**
  * @private
  */
@@ -17,6 +22,10 @@ export class Util {
 
   static isNumber(o) {
     return typeof o === 'number';
+  }
+
+  static isString(o) {
+    return typeof o === 'string';
   }
 
   static pad(input, n = 2) {
@@ -103,5 +112,23 @@ export class Util {
       trimmed = diffed.replace(/^[, ]+/, '');
 
     return trimmed;
+  }
+
+  static normalizeZone(input) {
+    if (input instanceof Zone) {
+      return input;
+    } else if (Util.isString(input)) {
+      const lowered = input.toLowerCase();
+      if (lowered === 'local') return LocalZone.instance;
+      else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
+      else if (IntlZone.isValidSpecier(lowered)) return new IntlZone(lowered);
+      else return FixedOffsetZone.parseSpecifier(lowered);
+    } else if (typeof input === 'object' && input.offset) {
+      // This is dumb, but the instanceof check above doesn't seem to really work
+      // so we're duck checking it
+      return input;
+    } else {
+      return null;
+    }
   }
 }

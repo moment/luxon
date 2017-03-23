@@ -49,8 +49,8 @@ function intlConfigString(localeCode, nums, cal) {
 function mapMonths(f) {
   const ms = [];
   for (let i = 1; i <= 12; i++) {
-    const inst = DateTime.fromObject({ year: 2016, month: i, day: 1 }, { utc: true });
-    ms.push(f(inst));
+    const dt = DateTime.fromObject({ year: 2016, month: i, day: 1 }, 'utc');
+    ms.push(f(dt));
   }
   return ms;
 }
@@ -58,8 +58,8 @@ function mapMonths(f) {
 function mapWeekdays(f) {
   const ms = [];
   for (let i = 0; i < 7; i++) {
-    const inst = DateTime.fromObject({ year: 2016, month: 11, day: 13 + i }, { utc: true });
-    ms.push(f(inst));
+    const dt = DateTime.fromObject({ year: 2016, month: 11, day: 13 + i }, 'utc');
+    ms.push(f(dt));
   }
   return ms;
 }
@@ -126,7 +126,7 @@ export class Locale {
     const intl = format ? { month: length, day: 'numeric' } : { month: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.monthsCache[formatStr][length]) {
-      this.monthsCache[formatStr][length] = mapMonths(inst => this.extract(inst, intl, 'month'));
+      this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));
     }
     return this.monthsCache[formatStr][length];
   }
@@ -137,8 +137,7 @@ export class Locale {
       : { weekday: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.weekdaysCache[formatStr][length]) {
-      this.weekdaysCache[formatStr][length] = mapWeekdays(inst =>
-        this.extract(inst, intl, 'weekday'));
+      this.weekdaysCache[formatStr][length] = mapWeekdays(dt => this.extract(dt, intl, 'weekday'));
     }
     return this.weekdaysCache[formatStr][length];
   }
@@ -150,9 +149,9 @@ export class Locale {
     // for AM and PM. This is probably wrong, but it's makes parsing way easier.
     if (!this.meridiemCache) {
       this.meridiemCache = [
-        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 9 }, { utc: true }),
-        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 19 }, { utc: true })
-      ].map(inst => this.extract(inst, intl, 'dayperiod'));
+        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 9 }, 'utc'),
+        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 19 }, 'utc')
+      ].map(dt => this.extract(dt, intl, 'dayperiod'));
     }
 
     return this.meridiemCache;
@@ -162,8 +161,8 @@ export class Locale {
   // }
   // fieldValues(){
   // }
-  extract(inst, intlOpts, field) {
-    const [df, d] = this.instFormatter(inst, intlOpts),
+  extract(dt, intlOpts, field) {
+    const [df, d] = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(d),
       matching = results.find(m => m.type.toLowerCase() === field);
 
@@ -184,18 +183,18 @@ export class Locale {
     return new Intl.NumberFormat(this.intl, realIntlOpts);
   }
 
-  instFormatter(inst, intlOpts = {}) {
+  dtFormatter(dt, intlOpts = {}) {
     let d, z;
 
-    if (inst.zone.universal) {
+    if (dt.zone.universal) {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make due with just displaying
       // the time in UTC; the formatter has no idea what UTC+8 means
-      d = Util.asIfUTC(inst);
+      d = Util.asIfUTC(dt);
       z = 'UTC';
     } else {
-      d = inst.toJSDate();
-      z = inst.zone.name;
+      d = dt.toJSDate();
+      z = dt.zone.name;
     }
 
     const realIntlOpts = Object.assign({}, intlOpts);
