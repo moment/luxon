@@ -18,7 +18,7 @@ function now() {
 
 function clone(inst, alts = {}) {
   const current = { ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc };
-  return new Instant(Object.assign({}, current, alts, { old: current }));
+  return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
 
 function numberBetween(thing, bottom, top) {
@@ -137,15 +137,15 @@ function adjustTime(inst, dur) {
 /**
  * A specific millisecond with an associated time zone and locale
  */
-export class Instant {
+export class DateTime {
   /**
    * @access private
    */
   constructor(config = {}) {
-    Object.defineProperty(this, 'ts', { value: config.ts || Instant.now(), enumerable: true });
+    Object.defineProperty(this, 'ts', { value: config.ts || DateTime.now(), enumerable: true });
 
     Object.defineProperty(this, 'zone', {
-      value: config.zone || Instant.defaultZone,
+      value: config.zone || DateTime.defaultZone,
       enumerable: true
     });
 
@@ -165,7 +165,7 @@ export class Instant {
   }
 
   /**
-   * The default zone to create an instant in
+   * The default zone to create an DateTime in
    * @return {Zone}
    */
   static get defaultZone() {
@@ -174,56 +174,56 @@ export class Instant {
 
   /**
    * The current time in the default zone.
-   * @return {Instant}
+   * @return {DateTime}
    */
   static now() {
-    return new Instant({ ts: now() });
+    return new DateTime({ ts: now() });
   }
 
   /**
-   * Create an invalid Instant.
-   * @return {Instant}
+   * Create an invalid DateTime.
+   * @return {DateTime}
    */
   static invalid() {
-    return new Instant({ valid: false });
+    return new DateTime({ valid: false });
   }
 
   /**
-   * Create an Instant from a Javascript Date object. Uses the default zone.
+   * Create an DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date} date - a Javascript Date object
-   * @return {Instant}
+   * @return {DateTime}
    */
   static fromJSDate(date) {
-    return new Instant({ ts: date.valueOf() });
+    return new DateTime({ ts: date.valueOf() });
   }
 
   /**
-   * Create an Instant from a count of epoch milliseconds. Uses the default zone.
+   * Create an DateTime from a count of epoch milliseconds. Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
-   * @return {Instant}
+   * @return {DateTime}
    */
   static fromMillis(milliseconds) {
-    return new Instant({ ts: milliseconds });
+    return new DateTime({ ts: milliseconds });
   }
 
   /**
-   * Create an Instant from a count of epoch seconds. Uses the default zone.
+   * Create an DateTime from a count of epoch seconds. Uses the default zone.
    * @param {number} seconds - a number of seconds since 1970 UTC
-   * @return {Instant}
+   * @return {DateTime}
    */
   static fromUnix(seconds) {
     return this.fromMillis(seconds * 1000);
   }
 
   /**
-   * Create an Instant from a Javascript object with keys like "year" and "hour" with reasonable defaults.
-   * @param {Object} obj - the object to create the Instant from
+   * Create an DateTime from a Javascript object with keys like "year" and "hour" with reasonable defaults.
+   * @param {Object} obj - the object to create the DateTime from
    * @param {Object} options - options to affect the creation
    * @param {boolean} options.utc - interpret the object as a UTC time. Conflicts with the zone option
    * @param {Zone} options.zone - interpret the object as if it were a local time in this zone. Conflicts with the utc option
-   * @example Instant.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
-   * @example Instant.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06]
-   * @return {Instant}
+   * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06]
+   * @return {DateTime}
    */
   static fromObject(obj, { utc = false, zone = null } = {}) {
     const tsNow = now(),
@@ -237,47 +237,47 @@ export class Instant {
 
     if (validateObject(defaulted)) {
       const [tsFinal] = objToTS(defaulted, zoneToUse, offsetProvis),
-        inst = new Instant({ ts: tsFinal, zone: zoneToUse });
+        inst = new DateTime({ ts: tsFinal, zone: zoneToUse });
 
       if (!Util.isUndefined(obj.weekday) && obj.weekday !== inst.weekday()) {
-        return Instant.invalid();
+        return DateTime.invalid();
       }
 
-      return new Instant({ ts: tsFinal, zone: zoneToUse });
+      return new DateTime({ ts: tsFinal, zone: zoneToUse });
     } else {
-      return Instant.invalid();
+      return DateTime.invalid();
     }
   }
 
   /**
-   * Create an Instant from an ISO 8601 string
+   * Create a DateTime in the default zone from an ISO 8601 string
    * @param {string} text - the ISO string
    * @param {Object} options - options to affect the creation
-   * @param {boolean} options.acceptOffset - accept the offset provided and keep the Instant in that zone
-   * @param {boolean} options.assumeUTC - treat unspecified offsets as UTC
-   * @example Instant.fromISO('2016-05-25T09:08:34.123')
-   * @example Instant.fromISO('2016-05-25T09:08:34.123+06:00')
-   * @example Instant.fromISO('2016-05-25T09:08:34.123+06:00', {assumeUTC: true})
-   * @return {Instant}
+   * @param {boolean} options.setOffset - set DateTime's zone to a fixed offset specified by the string. If this is false, the offset will still be used in computing the absolute time represented by the string, but the resulting instance will be converted to the default zone.
+   * @param {boolean} options.assumeUTC - treat unspecified offsets as UTC.
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123')
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {assumeUTC: true})
+   * @return {DateTime}
    */
-  static fromISO(text, { acceptOffset = false, assumeUTC = false } = {}) {
+  static fromISO(text, { setOffset = false, assumeUTC = false } = {}) {
     const parsed = ISOParser.parseISODate(text);
     if (parsed) {
       const { local, offset } = parsed,
         zone = local
           ? assumeUTC ? new FixedOffsetZone(0) : new LocalZone()
           : new FixedOffsetZone(offset),
-        inst = Instant.fromObject(parsed, { zone });
+        inst = DateTime.fromObject(parsed, { zone });
 
-      return acceptOffset ? inst : inst.local();
+      return setOffset ? inst : inst.local();
     } else {
-      return Instant.invalid();
+      return DateTime.invalid();
     }
   }
 
   static fromString(text, fmt, opts = {}) {
-    const parser = new Parser(Locale.fromOpts(opts)), result = parser.parseInstant(text, fmt);
-    return Object.keys(result).length === 0 ? Instant.invalid() : Instant.fromObject(result);
+    const parser = new Parser(Locale.fromOpts(opts)), result = parser.parseDateTime(text, fmt);
+    return Object.keys(result).length === 0 ? DateTime.invalid() : DateTime.fromObject(result);
   }
 
   static fromStringExplain(text, fmt, opts = {}) {
@@ -411,17 +411,17 @@ export class Instant {
 
   toFormatString(fmt, opts = {}) {
     return this.valid
-      ? Formatter.create(this.loc, opts).formatInstantFromString(this, fmt)
+      ? Formatter.create(this.loc, opts).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 
   toLocaleString(opts = {}) {
-    return this.valid ? Formatter.create(this.loc.clone(opts), opts).formatInstant(this) : INVALID;
+    return this.valid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID;
   }
 
   toISO() {
     return this.valid
-      ? Formatter.create(Locale.create('en')).formatInstantFromString(
+      ? Formatter.create(Locale.create('en')).formatDateTimeFromString(
           this,
           "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"
         )
@@ -498,28 +498,28 @@ export class Instant {
   }
 
   /**
-   * Return the difference between two instants as a Duration
-   * @param {Instant} otherInstant - the instant to compare this one to
+   * Return the difference between two DateTimes as a Duration
+   * @param {DateTime} otherDateTime - the DateTime to compare this one to
    * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration
    * @example
-   * var i1 = Instant.fromISO('1982-05-25T09:45'),
-   *     i2 = Instant.fromISO('1983-10-14T10:30');
+   * var i1 = DateTime.fromISO('1982-05-25T09:45'),
+   *     i2 = DateTime.fromISO('1983-10-14T10:30');
    * i2.diff(i1).toObject() //=> { milliseconds: 43807500000 }
    * i2.diff(i1, 'months', 'days').toObject() //=> { months: 16, days: 19.03125 }
    * i2.diff(i1, 'months', 'days', 'hours').toObject() //=> { months: 16, days: 19, hours: 0.75 }
    * i2.diff(i1, 'hours').toObject() //=> { hours: 12168.75 }
    * @return {Duration}
    */
-  diff(otherInstant, ...units) {
+  diff(otherDateTime, ...units) {
     if (!this.valid) return this;
 
     if (units.length === 0) units = ['milliseconds'];
 
-    const flipped = otherInstant.valueOf() > this.valueOf(),
-      post = flipped ? otherInstant : this,
+    const flipped = otherDateTime.valueOf() > this.valueOf(),
+      post = flipped ? otherDateTime : this,
       accum = {};
 
-    let cursor = flipped ? this : otherInstant, lowestOrder = null;
+    let cursor = flipped ? this : otherDateTime, lowestOrder = null;
 
     if (units.indexOf('years') >= 0) {
       let dYear = post.year() - cursor.year();
@@ -553,7 +553,7 @@ export class Instant {
     // days is tricky because we want to ignore offset differences
     if (units.indexOf('days') >= 0) {
       // there's almost certainly a quicker, simpler way to do this
-      const utcDayStart = i => Instant.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
+      const utcDayStart = i => DateTime.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
       let dDay = Math.floor(Duration.fromLength(ms).shiftTo('days').days());
 
@@ -580,19 +580,19 @@ export class Instant {
   }
 
   diffNow(...units) {
-    return this.valid ? this.diff(Instant.now(), ...units) : Duration.invalid();
+    return this.valid ? this.diff(DateTime.now(), ...units) : Duration.invalid();
   }
 
-  until(otherInstant, opts = {}) {
-    return this.valid ? Interval.fromInstants(this, otherInstant, opts) : Duration.invalid();
+  until(otherDateTime, opts = {}) {
+    return this.valid ? Interval.fromDateTimes(this, otherDateTime, opts) : Duration.invalid();
   }
 
-  hasSame(otherInstant, unit) {
+  hasSame(otherDateTime, unit) {
     if (!this.valid) return false;
     if (unit === 'millisecond') {
-      return this.valueOf() === otherInstant.valueOf();
+      return this.valueOf() === otherDateTime.valueOf();
     } else {
-      const inputMs = otherInstant.valueOf();
+      const inputMs = otherDateTime.valueOf();
       return this.startOf(unit) <= inputMs && inputMs <= this.endOf(unit);
     }
   }
@@ -602,11 +602,11 @@ export class Instant {
     return this.valid && other.valid ? this.valueOf() === other.valueOf() : false;
   }
 
-  static min(...instants) {
-    return Util.bestBy(instants, i => i.valueOf(), Math.min);
+  static min(...DateTimes) {
+    return Util.bestBy(DateTimes, i => i.valueOf(), Math.min);
   }
 
-  static max(...instants) {
-    return Util.bestBy(instants, i => i.valueOf(), Math.max);
+  static max(...DateTimes) {
+    return Util.bestBy(DateTimes, i => i.valueOf(), Math.max);
   }
 }

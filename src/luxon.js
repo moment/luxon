@@ -1,4 +1,4 @@
-export { Instant } from './instant';
+export { DateTime } from './datetime';
 export { Duration } from './duration';
 export { Interval } from './interval';
 export { Info } from './info';

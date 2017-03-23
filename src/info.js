@@ -1,9 +1,9 @@
-import { Instant } from './instant';
+import { DateTime } from './datetime';
 import { Locale } from './impl/locale';
 
 export class Info {
-  static hasDST(zone = Instant.defaultZone) {
-    return !zone.universal && Instant.now().month(1).offset() !== Instant.now().month(5).offset();
+  static hasDST(zone = DateTime.defaultZone) {
+    return !zone.universal && DateTime.now().month(1).offset() !== DateTime.now().month(5).offset();
   }
 
   static months(length, locale, numbering) {

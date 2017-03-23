@@ -1,13 +1,13 @@
 /* global test expect */
 
-import { Instant } from '../../dist/cjs/luxon';
+import { DateTime } from '../../dist/cjs/luxon';
 
 //------
 // .fromISO
 //-------
-test('Instant.fromISO() parses as local by default', () => {
-  const inst = Instant.fromISO('2016-05-25T09:08:34.123');
-  expect(inst.toObject()).toEqual({
+test('DateTime.fromISO() parses as local by default', () => {
+  const dt = DateTime.fromISO('2016-05-25T09:08:34.123');
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -18,9 +18,9 @@ test('Instant.fromISO() parses as local by default', () => {
   });
 });
 
-test('Instant.fromISO() uses the offset provided, but keeps the instant as local', () => {
-  const inst = Instant.fromISO('2016-05-25T09:08:34.123+06:00');
-  expect(inst.utc().toObject()).toEqual({
+test('DateTime.fromISO() uses the offset provided, but keeps the dateTime as local', () => {
+  const dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00');
+  expect(dt.utc().toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -31,9 +31,9 @@ test('Instant.fromISO() uses the offset provided, but keeps the instant as local
   });
 });
 
-test('Instant.fromISO() uses the Z if provided, but keeps the instant as local', () => {
-  const inst = Instant.fromISO('2016-05-25T09:08:34.123Z');
-  expect(inst.utc().toObject()).toEqual({
+test('DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local', () => {
+  const dt = DateTime.fromISO('2016-05-25T09:08:34.123Z');
+  expect(dt.utc().toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -44,10 +44,10 @@ test('Instant.fromISO() uses the Z if provided, but keeps the instant as local',
   });
 });
 
-test('Instant.fromISO() optionally adopts the UTC offset provided', () => {
-  const inst = Instant.fromISO('2016-05-25T09:08:34.123+06:00', { acceptOffset: true });
-  expect(inst.zone.name).toBe('UTC+6');
-  expect(inst.toObject()).toEqual({
+test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
+  const dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { setOffset: true });
+  expect(dt.zone.name).toBe('UTC+6');
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -58,9 +58,9 @@ test('Instant.fromISO() optionally adopts the UTC offset provided', () => {
   });
 });
 
-test('Instant.fromISO() optionally considers the date UTC if not otherwise specified', () => {
-  let inst = Instant.fromISO('2016-05-25T09:08:34.123', { assumeUTC: true });
-  expect(inst.utc().toObject()).toEqual({
+test('DateTime.fromISO() optionally considers the date UTC if not otherwise specified', () => {
+  let dt = DateTime.fromISO('2016-05-25T09:08:34.123', { assumeUTC: true });
+  expect(dt.utc().toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -70,8 +70,8 @@ test('Instant.fromISO() optionally considers the date UTC if not otherwise speci
     millisecond: 123
   });
 
-  inst = Instant.fromISO('2016-05-25T09:08:34.123+06:00', { assumeUTC: true });
-  expect(inst.utc().toObject()).toEqual({
+  dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { assumeUTC: true });
+  expect(dt.utc().toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -82,9 +82,9 @@ test('Instant.fromISO() optionally considers the date UTC if not otherwise speci
   });
 });
 
-test('Instant.fromISO() accepts a variety of ISO formats', () => {
+test('DateTime.fromISO() accepts a variety of ISO formats', () => {
   const isSame = (s, expected) =>
-    expect(Instant.fromISO(s, { assumeUTC: true }).utc().toObject()).toEqual(expected);
+    expect(DateTime.fromISO(s, { assumeUTC: true }).utc().toObject()).toEqual(expected);
 
   isSame('2016-05-25', {
     year: 2016,
@@ -199,8 +199,8 @@ test('Instant.fromISO() accepts a variety of ISO formats', () => {
   });
 });
 
-test('Instant.fromISO() rejects poop', () => {
-  const rejects = s => expect(Instant.fromISO(s).isValid()).toBeFalsy();
+test('DateTime.fromISO() rejects poop', () => {
+  const rejects = s => expect(DateTime.fromISO(s).isValid()).toBeFalsy();
 
   rejects(null);
   rejects('');
@@ -227,8 +227,8 @@ test('Instant.fromISO() rejects poop', () => {
 //------
 // .fromString
 //-------
-test('Instant.fromString() parses basic times', () => {
-  const i = Instant.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
+test('DateTime.fromString() parses basic times', () => {
+  const i = DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
   expect(i.year()).toBe(1982);
   expect(i.month()).toBe(5);
   expect(i.day()).toBe(25);
@@ -238,67 +238,67 @@ test('Instant.fromString() parses basic times', () => {
   expect(i.millisecond()).toBe(445);
 });
 
-test('Instant.fromString() parses meridiems', () => {
-  let i = Instant.fromString('1982/05/25 9 PM', 'yyyy/MM/dd h a');
+test('DateTime.fromString() parses meridiems', () => {
+  let i = DateTime.fromString('1982/05/25 9 PM', 'yyyy/MM/dd h a');
   expect(i.year()).toBe(1982);
   expect(i.month()).toBe(5);
   expect(i.day()).toBe(25);
   expect(i.hour()).toBe(21);
 
-  i = Instant.fromString('1982/05/25 9 AM', 'yyyy/MM/dd h a');
+  i = DateTime.fromString('1982/05/25 9 AM', 'yyyy/MM/dd h a');
   expect(i.year()).toBe(1982);
   expect(i.month()).toBe(5);
   expect(i.day()).toBe(25);
   expect(i.hour()).toBe(9);
 });
 
-test('Instant.fromString() parses eras', () => {});
+test('DateTime.fromString() parses eras', () => {});
 
-test('Instant.fromString() parses month names', () => {
-  let i = Instant.fromString('May 25 1982', 'LLLL dd yyyy');
+test('DateTime.fromString() parses month names', () => {
+  let i = DateTime.fromString('May 25 1982', 'LLLL dd yyyy');
   expect(i.year()).toBe(1982);
   expect(i.month()).toBe(5);
   expect(i.day()).toBe(25);
 
-  i = Instant.fromString('Sep 25 1982', 'LLL dd yyyy');
+  i = DateTime.fromString('Sep 25 1982', 'LLL dd yyyy');
   expect(i.year()).toBe(1982);
   expect(i.month()).toBe(9);
   expect(i.day()).toBe(25);
 
-  i = Instant.fromString('mai 25 1982', 'LLLL dd yyyy', { localeCode: 'fr' });
+  i = DateTime.fromString('mai 25 1982', 'LLLL dd yyyy', { localeCode: 'fr' });
   expect(i.year()).toBe(1982);
   expect(i.month()).toBe(5);
   expect(i.day()).toBe(25);
 });
 
-test('Instant.fromString() defaults yy to the right century', () => {});
+test('DateTime.fromString() defaults yy to the right century', () => {});
 
-test('Instant.fromString() parses offsets', () => {});
+test('DateTime.fromString() parses offsets', () => {});
 
-test('Instant.fromString() validates weekday names', () => {
-  let i = Instant.fromString('Tuesday, 05/25/1982', 'EEEE, LL/dd/yyyy');
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(5);
-  expect(i.day()).toBe(25);
+test('DateTime.fromString() validates weekday names', () => {
+  let d = DateTime.fromString('Tuesday, 05/25/1982', 'EEEE, LL/dd/yyyy');
+  expect(d.year()).toBe(1982);
+  expect(d.month()).toBe(5);
+  expect(d.day()).toBe(25);
 
-  i = Instant.fromString('Monday, 05/25/1982', 'EEEE, LL/dd/yyyy');
-  expect(i.isValid()).toBeFalsy();
+  d = DateTime.fromString('Monday, 05/25/1982', 'EEEE, LL/dd/yyyy');
+  expect(d.isValid()).toBeFalsy();
 
-  i = Instant.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', { localeCode: 'fr' });
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(5);
-  expect(i.day()).toBe(25);
+  d = DateTime.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', { localeCode: 'fr' });
+  expect(d.year()).toBe(1982);
+  expect(d.month()).toBe(5);
+  expect(d.day()).toBe(25);
 });
 
-test('Instant.fromString() allows regex content', () => {});
+test('DateTime.fromString() allows regex content', () => {});
 
-test('Instant.fromString() allows literals', () => {});
+test('DateTime.fromString() allows literals', () => {});
 
-test('Instant.fromString() returns invalid when unparsed', () => {});
+test('DateTime.fromString() returns invalid when unparsed', () => {});
 
-test('Instant.fromString() returns invalid for out-of-range values', () => {
+test('DateTime.fromString() returns invalid for out-of-range values', () => {
   const rejects = (s, fmt, opts = {}) =>
-    expect(Instant.fromString(s, fmt, opts).isValid()).toBeFalsy();
+    expect(DateTime.fromString(s, fmt, opts).isValid()).toBeFalsy();
 
   rejects('Tuesday, 05/25/1982', 'EEEE, MM/dd/yyyy', { localeCode: 'fr' });
   rejects('Giberish, 05/25/1982', 'EEEE, MM/dd/yyyy');

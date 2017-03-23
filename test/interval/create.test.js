@@ -1,13 +1,13 @@
 /* global test expect */
-import { Instant, Interval, Duration } from '../../dist/cjs/luxon';
+import { DateTime, Interval, Duration } from '../../dist/cjs/luxon';
 
 //------
 // .fromObject()
 //-------
 test('Interval.fromObject creates an interval', () => {
-  const start = Instant.fromObject({ year: 2016, month: 5, day: 25 }),
-    end = Instant.fromObject({ year: 2016, month: 5, day: 27 }),
-    int = Interval.fromInstants(start, end);
+  const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
+    end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }),
+    int = Interval.fromDateTimes(start, end);
 
   expect(int.start()).toBe(start);
   expect(int.end()).toBe(end);
@@ -17,7 +17,7 @@ test('Interval.fromObject creates an interval', () => {
 // .after()
 //-------
 test('Interval.after takes a duration', () => {
-  const start = Instant.fromObject({ year: 2016, month: 5, day: 25 }),
+  const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.after(start, Duration.fromObject({ days: 3 }));
 
   expect(int.start()).toBe(start);
@@ -25,7 +25,7 @@ test('Interval.after takes a duration', () => {
 });
 
 test('Interval.after takes a number and unit', () => {
-  const start = Instant.fromObject({ year: 2016, month: 5, day: 25 }),
+  const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.after(start, 3, 'days');
 
   expect(int.start()).toBe(start);
@@ -36,7 +36,7 @@ test('Interval.after takes a number and unit', () => {
 // .before()
 //-------
 test('Interval.before takes a duration', () => {
-  const end = Instant.fromObject({ year: 2016, month: 5, day: 25 }),
+  const end = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.before(end, Duration.fromObject({ days: 3 }));
 
   expect(int.start().day()).toBe(22);
@@ -44,7 +44,7 @@ test('Interval.before takes a duration', () => {
 });
 
 test('Interval.before takes a number and unit', () => {
-  const end = Instant.fromObject({ year: 2016, month: 5, day: 25 }),
+  const end = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.before(end, 3, 'days');
 
   expect(int.start().day()).toBe(22);

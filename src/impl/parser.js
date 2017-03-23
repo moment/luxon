@@ -138,7 +138,7 @@ function match(input, regex, handlers) {
   }
 }
 
-function instantFromMatches(matches) {
+function dateTimeFromMatches(matches) {
   const toField = token => {
     switch (token) {
       case 'S':
@@ -197,12 +197,12 @@ export class Parser {
       units = tokens.map(t => unitForToken(t, this.loc)),
       [regex, handlers] = buildRegex(units),
       matches = match(input, regex, handlers),
-      result = matches ? instantFromMatches(matches) : null;
+      result = matches ? dateTimeFromMatches(matches) : null;
 
     return { input, tokens, regex, matches, result };
   }
 
-  parseInstant(input, format) {
+  parseDateTime(input, format) {
     return this.explainParse(input, format).result;
   }
 }

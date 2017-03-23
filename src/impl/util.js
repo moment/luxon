@@ -27,9 +27,9 @@ export class Util {
     return input < 0 ? Math.ceil(input) : Math.floor(input);
   }
 
-  // Instant -> JS date such that the date's UTC time is the instant's local time
-  static asIfUTC(inst) {
-    const ts = inst.ts - inst.offset();
+  // DateTime -> JS date such that the date's UTC time is the datetimes's local time
+  static asIfUTC(dt) {
+    const ts = dt.ts - dt.offset();
     return new Date(ts);
   }
 

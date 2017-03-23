@@ -6,18 +6,18 @@ export class Interval {
     Object.defineProperty(this, 'e', { value: end, enumerable: true });
   }
 
-  static fromInstants(start, end, opts = {}) {
+  static fromDateTimes(start, end, opts = {}) {
     return new Interval(start, end, opts);
   }
 
   static after(start, durationOrNumber, unit) {
     const dur = Util.friendlyDuration(durationOrNumber, unit);
-    return Interval.fromInstants(start, start.plus(dur));
+    return Interval.fromDateTimes(start, start.plus(dur));
   }
 
   static before(end, durationOrNumber, unit) {
     const dur = Util.friendlyDuration(durationOrNumber, unit);
-    return Interval.fromInstants(end.minus(dur), end);
+    return Interval.fromDateTimes(end.minus(dur), end);
   }
 
   toDuration(...units) {
@@ -48,13 +48,13 @@ export class Interval {
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
-  splitAt(...instants) {
-    const sorted = instants.sort(), results = [];
+  splitAt(...dateTimes) {
+    const sorted = dateTimes.sort(), results = [];
     let s = this.s, i = 0;
 
     while (s < this.e) {
       const added = sorted[i] || this.e, next = +added > +this.e ? this.e : added;
-      results.push(Interval.fromInstants(s, next));
+      results.push(Interval.fromDateTimes(s, next));
       s = next;
       i += 1;
     }
@@ -69,7 +69,7 @@ export class Interval {
     while (s < this.e) {
       added = s.plus(dur);
       next = +added > +this.e ? this.e : added;
-      results.push(Interval.fromInstants(s, next));
+      results.push(Interval.fromDateTimes(s, next));
       s = next;
     }
 
@@ -102,14 +102,14 @@ export class Interval {
     if (s > e) {
       return null;
     } else {
-      return Interval.fromInstants(s, e);
+      return Interval.fromDateTimes(s, e);
     }
   }
 
   union(other) {
     const s = this.s < other.s ? this.s : other.s, e = this.e > other.e ? this.e : other.e;
 
-    return Interval.fromInstants(s, e);
+    return Interval.fromDateTimes(s, e);
   }
 
   static merge(intervals) {
@@ -141,7 +141,7 @@ export class Interval {
         start = i.time;
       } else {
         if (start && +start !== +i.time) {
-          results.push(Interval.fromInstants(start, i.time));
+          results.push(Interval.fromDateTimes(start, i.time));
         }
 
         start = null;
@@ -177,8 +177,8 @@ export class Interval {
     return this.e.plus(1) < other;
   }
 
-  contains(instant) {
-    return this.s <= instant && this.e > instant;
+  contains(dateTime) {
+    return this.s <= dateTime && this.e > dateTime;
   }
 
   toString() {

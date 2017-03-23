@@ -1,20 +1,20 @@
 /* global test expect */
 
-import { Info, Instant } from '../../dist/cjs/luxon';
+import { Info, DateTime } from '../../dist/cjs/luxon';
 
 //------
 // diff
 //-------
 const diffFromObjs = (o1, o2, ...units) =>
-  Instant.fromObject(o1).diff(Instant.fromObject(o2), ...units);
+  DateTime.fromObject(o1).diff(DateTime.fromObject(o2), ...units);
 const diffObjs = (o1, o2, ...units) => diffFromObjs(o1, o2, ...units).toObject();
 
-test('Instant#diff defaults to milliseconds', () => {
+test('DateTime#diff defaults to milliseconds', () => {
   expect(diffObjs({ year: 2017, millisecond: 12 }, { year: 2017 })).toEqual({ milliseconds: 12 });
   expect(diffFromObjs({ year: 2017 }, { year: 2017 }).milliseconds()).toBe(0);
 });
 
-test('Instant#diff makes simple diffs', () => {
+test('DateTime#diff makes simple diffs', () => {
   expect(diffObjs({ year: 2017 }, { year: 2017 }, 'years')).toEqual({});
   expect(diffObjs({ year: 2017 }, { year: 2016 }, 'years')).toEqual({ years: 1 });
   expect(
@@ -39,7 +39,7 @@ test('Instant#diff makes simple diffs', () => {
   ).toEqual({ hours: 24 * 3 + 8 });
 });
 
-test('Instant#diff accepts multiple units', () => {
+test('DateTime#diff accepts multiple units', () => {
   expect(
     diffObjs(
       { year: 2016, month: 3, day: 28, hour: 13, minute: 46 },
@@ -74,7 +74,7 @@ test('Instant#diff accepts multiple units', () => {
   ).toEqual({ years: 5, days: 363 });
 });
 
-test('Instant#diff puts fractional parts in the lowest order unit', () => {
+test('DateTime#diff puts fractional parts in the lowest order unit', () => {
   expect(
     diffObjs(
       { year: 2017, month: 5, day: 14 },
@@ -85,7 +85,7 @@ test('Instant#diff puts fractional parts in the lowest order unit', () => {
   ).toEqual({ years: 1, months: 2 - 2 / 30 });
 });
 
-test('Instant#diff is calendary for years, months, day', () => {
+test('DateTime#diff is calendary for years, months, day', () => {
   // respecting the leap year
   expect(
     diffObjs({ year: 2016, month: 3, day: 14 }, { year: 2010, month: 3, day: 14 }, 'years', 'days')
@@ -101,7 +101,7 @@ test('Instant#diff is calendary for years, months, day', () => {
   ).toEqual({ days: 89 });
 });
 
-test('Instant#diff is precise for lower order units', () => {
+test('DateTime#diff is precise for lower order units', () => {
   const expected = Info.hasDST() ? 2999 : 3000;
   // spring forward skips one hour
   expect(

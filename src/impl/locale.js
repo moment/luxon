@@ -1,6 +1,6 @@
 import * as Intl from 'intl';
 import { Util } from './util';
-import { Instant } from '../instant';
+import { DateTime } from '../datetime';
 
 // We use the Intl polyfill exclusively here, for these reasons:
 // 1. We need formatToParts(), which isn't in Node or even most browsers
@@ -49,7 +49,7 @@ function intlConfigString(localeCode, nums, cal) {
 function mapMonths(f) {
   const ms = [];
   for (let i = 1; i <= 12; i++) {
-    const inst = Instant.fromObject({ year: 2016, month: i, day: 1 }, { utc: true });
+    const inst = DateTime.fromObject({ year: 2016, month: i, day: 1 }, { utc: true });
     ms.push(f(inst));
   }
   return ms;
@@ -58,7 +58,7 @@ function mapMonths(f) {
 function mapWeekdays(f) {
   const ms = [];
   for (let i = 0; i < 7; i++) {
-    const inst = Instant.fromObject({ year: 2016, month: 11, day: 13 + i }, { utc: true });
+    const inst = DateTime.fromObject({ year: 2016, month: 11, day: 13 + i }, { utc: true });
     ms.push(f(inst));
   }
   return ms;
@@ -150,8 +150,8 @@ export class Locale {
     // for AM and PM. This is probably wrong, but it's makes parsing way easier.
     if (!this.meridiemCache) {
       this.meridiemCache = [
-        Instant.fromObject({ year: 2016, month: 11, day: 13, hour: 9 }, { utc: true }),
-        Instant.fromObject({ year: 2016, month: 11, day: 13, hour: 19 }, { utc: true })
+        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 9 }, { utc: true }),
+        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 19 }, { utc: true })
       ].map(inst => this.extract(inst, intl, 'dayperiod'));
     }
 

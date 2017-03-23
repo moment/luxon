@@ -59,12 +59,12 @@ export class Formatter {
     this.loc = locale;
   }
 
-  formatInstant(inst, opts = {}) {
+  formatDateTime(inst, opts = {}) {
     const [df, d] = this.loc.instFormatter(inst, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
-  formatInstantParts(inst, opts = {}) {
+  formatDateTimeParts(inst, opts = {}) {
     const [df, d] = this.loc.instFormatter(inst, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
@@ -84,7 +84,7 @@ export class Formatter {
     return this.loc.numberFormatter(opts).format(n);
   }
 
-  formatInstantFromString(inst, fmt) {
+  formatDateTimeFromString(inst, fmt) {
     const string = (opts, extract) => this.loc.extract(inst, opts, extract),
       formatOffset = opts => {
         // todo - is this always right? Should be an option?
@@ -249,13 +249,13 @@ export class Formatter {
           // Revisit when either of those change or I give up on this dance and require
           // a special Node build.
           case 'D':
-            return this.formatInstant(inst, { year: 'numeric', month: 'numeric', day: 'numeric' });
+            return this.formatDateTime(inst, { year: 'numeric', month: 'numeric', day: 'numeric' });
           case 'DD':
-            return this.formatInstant(inst, { year: 'numeric', month: 'short', day: 'numeric' });
+            return this.formatDateTime(inst, { year: 'numeric', month: 'short', day: 'numeric' });
           case 'DDD':
-            return this.formatInstant(inst, { year: 'numeric', month: 'long', day: 'numeric' });
+            return this.formatDateTime(inst, { year: 'numeric', month: 'long', day: 'numeric' });
           case 'DDDD':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -263,18 +263,18 @@ export class Formatter {
             });
 
           case 't':
-            return this.formatInstant(inst, { hour: 'numeric', minute: '2-digit' });
+            return this.formatDateTime(inst, { hour: 'numeric', minute: '2-digit' });
           case 'tt':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               hour: 'numeric',
               minute: '2-digit',
               second: '2-digit'
             });
           // todo: ttt and tttt when we have zones
           case 'T':
-            return this.formatInstant(inst, { hour: 'numeric', minute: '2-digit', hour12: false });
+            return this.formatDateTime(inst, { hour: 'numeric', minute: '2-digit', hour12: false });
           case 'TT':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               hour: 'numeric',
               minute: '2-digit',
               second: '2-digit',
@@ -282,7 +282,7 @@ export class Formatter {
             });
           // todo: TTT and TTTT when we have zones
           case 'f':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'numeric',
               day: 'numeric',
@@ -290,7 +290,7 @@ export class Formatter {
               minute: '2-digit'
             });
           case 'ff':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
@@ -300,7 +300,7 @@ export class Formatter {
 
           // todo: add zones
           case 'fff':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -308,7 +308,7 @@ export class Formatter {
               minute: '2-digit'
             });
           case 'ffff':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -318,7 +318,7 @@ export class Formatter {
             });
 
           case 'F':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'numeric',
               day: 'numeric',
@@ -327,7 +327,7 @@ export class Formatter {
               second: '2-digit'
             });
           case 'FF':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
@@ -338,7 +338,7 @@ export class Formatter {
 
           // todo: add zones
           case 'FFF':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -347,7 +347,7 @@ export class Formatter {
               second: '2-digit'
             });
           case 'FFFF':
-            return this.formatInstant(inst, {
+            return this.formatDateTime(inst, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
