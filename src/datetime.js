@@ -242,7 +242,7 @@ export class DateTime {
   }
 
   /**
-   * Create a DateTime in the default zone from an ISO 8601 string
+   * Create a DateTime from an ISO 8601 string
    * @param {string} text - the ISO string
    * @param {Object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
@@ -266,9 +266,24 @@ export class DateTime {
     }
   }
 
-  static fromString(text, fmt, opts = {}) {
-    const parser = new Parser(Locale.fromOpts(opts)), result = parser.parseDateTime(text, fmt);
-    return Object.keys(result).length === 0 ? DateTime.invalid() : DateTime.fromObject(result);
+  /**
+   * Create a DateTime from an input string and format string
+   * @param {string} text - the string to parse
+   * @param {string} fmt - the format the string is expected to be in (see description)
+   * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {string} [options.localeCode='en-US'] - a locale string to use when parsing. Will also convert the DateTime to this locale
+   * @return {DateTime}
+   */
+  static fromString(
+    text,
+    fmt,
+    { zone = DateTime.defaultZone, localeCode = null, nums = null, cal = null } = {}
+  ) {
+    const parser = new Parser(Locale.fromOpts({ localeCode, nums, cal })),
+      result = parser.parseDateTime(text, fmt);
+    return Object.keys(result).length === 0
+      ? DateTime.invalid()
+      : DateTime.fromObject(result, zone);
   }
 
   static fromStringExplain(text, fmt, opts = {}) {

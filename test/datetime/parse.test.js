@@ -306,3 +306,17 @@ test('DateTime.fromString() returns invalid for out-of-range values', () => {
   rejects('14/25/1982', 'MM/dd/yyyy');
   rejects('05/46/1982', 'MM/dd/yyyy');
 });
+
+test('DateTime.fromString() accepts a zone argument', () => {
+  const d = DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS', {
+    zone: 'Asia/Tokyo'
+  });
+  expect(d.offset()).toBe(9 * 60);
+  expect(d.year()).toBe(1982);
+  expect(d.month()).toBe(5);
+  expect(d.day()).toBe(25);
+  expect(d.hour()).toBe(9);
+  expect(d.minute()).toBe(10);
+  expect(d.second()).toBe(11);
+  expect(d.millisecond()).toBe(445);
+});
