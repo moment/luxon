@@ -188,18 +188,18 @@ export class DateTime {
   /**
    * Create a UTC time
    * @example DateTime.utc() //~> now
-   * @example DateTime.utc(2017) //~> 2017-01-01T00:00:00
-   * @example DateTime.utc(2017, 3) //~> 2017-03-01T00:00:00
-   * @example DateTime.utc(2017, 3, 12) //~> 2017-03-12T00:00:00
-   * @example DateTime.utc(2017, 3, 12, 5) //~> 2017-03-12T05:00:00
-   * @example DateTime.utc(2017, 3, 12, 5, 45) //~> 2017-03-12T05:45:00
-   * @example DateTime.utc(2017, 3, 12, 5, 45, 10) //~> 2017-03-12T05:45:10
-   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
+   * @example DateTime.utc(2017) //~> 2017-01-01T00:00:00Z
+   * @example DateTime.utc(2017, 3) //~> 2017-03-01T00:00:00Z
+   * @example DateTime.utc(2017, 3, 12) //~> 2017-03-12T00:00:00Z
+   * @example DateTime.utc(2017, 3, 12, 5) //~> 2017-03-12T05:00:00Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45) //~> 2017-03-12T05:45:00Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10) //~> 2017-03-12T05:45:10Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675Z
    * @return {DateTime}
    */
   static utc(year, month, day, hour, minute, second, millisecond) {
     if (Util.isUndefined(year)) {
-      return new DateTime({ ts: Settings.now() });
+      return new DateTime({ ts: Settings.now(), zone: FixedOffsetZone.utcInstance });
     } else {
       return DateTime.fromObject(
         { year, month, day, hour, minute, second, millisecond },

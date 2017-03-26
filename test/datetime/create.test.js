@@ -18,6 +18,7 @@ test('DateTime.local(2017) is the beginning of the year', () => {
   expect(dt.day()).toBe(1);
   expect(dt.hour()).toBe(0);
   expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
   expect(dt.millisecond()).toBe(0);
 });
 
@@ -28,9 +29,153 @@ test('DateTime.local(2017, 3) is the beginning of the month', () => {
   expect(dt.day()).toBe(1);
   expect(dt.hour()).toBe(0);
   expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
   expect(dt.millisecond()).toBe(0);
 });
 
+test('DateTime.local(2017, 3, 12) is the beginning of 3/12', () => {
+  const dt = DateTime.local(2017, 3, 12);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(0);
+  expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.local(2017, 3, 12, 5) is the beginning of the hour', () => {
+  const dt = DateTime.local(2017, 3, 12, 5);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.local(2017, 3, 12, 5, 25) is the beginning of the minute', () => {
+  const dt = DateTime.local(2017, 3, 12, 5, 25);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(25);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.local(2017, 3, 12, 5, 25, 16) is the beginning of the second', () => {
+  const dt = DateTime.local(2017, 3, 12, 5, 25, 16);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(25);
+  expect(dt.second()).toBe(16);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.local(2017, 3, 12, 5, 25, 16, 255) is right down to the millisecond', () => {
+  const dt = DateTime.local(2017, 3, 12, 5, 25, 16, 255);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(25);
+  expect(dt.second()).toBe(16);
+  expect(dt.millisecond()).toBe(255);
+});
+
+//------
+// .utc()
+//-------
+test('DateTime.utc() is in utc', () => {
+  const now = DateTime.utc();
+  expect(now.offset()).toBe(0);
+});
+
+test('DateTime.utc(2017) is the beginning of the year', () => {
+  const dt = DateTime.utc(2017);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(1);
+  expect(dt.day()).toBe(1);
+  expect(dt.hour()).toBe(0);
+  expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.utc(2017, 3) is the beginning of the month', () => {
+  const dt = DateTime.utc(2017, 3);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(1);
+  expect(dt.hour()).toBe(0);
+  expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.utc(2017, 3, 12) is the beginning of 3/12', () => {
+  const dt = DateTime.utc(2017, 3, 12);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(0);
+  expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.utc(2017, 3, 12, 5) is the beginning of the hour', () => {
+  const dt = DateTime.utc(2017, 3, 12, 5);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(0);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.utc(2017, 3, 12, 5, 25) is the beginning of the minute', () => {
+  const dt = DateTime.utc(2017, 3, 12, 5, 25);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(25);
+  expect(dt.second()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.utc(2017, 3, 12, 5, 25, 16) is the beginning of the second', () => {
+  const dt = DateTime.utc(2017, 3, 12, 5, 25, 16);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(25);
+  expect(dt.second()).toBe(16);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.utc(2017, 3, 12, 5, 25, 16, 255) is right down to the millisecond', () => {
+  const dt = DateTime.utc(2017, 3, 12, 5, 25, 16, 255);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(12);
+  expect(dt.hour()).toBe(5);
+  expect(dt.minute()).toBe(25);
+  expect(dt.second()).toBe(16);
+  expect(dt.millisecond()).toBe(255);
+});
+
+//------
+// .fromJSDate()
+//-------
 test('DateTime.fromJSDate(date) clones the date', () => {
   const date = new Date(1982, 4, 25),
     dateTime = DateTime.fromJSDate(date),
