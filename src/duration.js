@@ -1,38 +1,28 @@
 import { Util } from './impl/util';
 import { Locale } from './impl/locale';
 import { Formatter } from './impl/formatter';
-import { InvalidUnitException } from './exceptions/exceptions';
 
 const matrix = {
-  years: {
-    months: 12,
-    days: 365,
-    hours: 365 * 24,
-    minutes: 365 * 24 * 60,
-    seconds: 365 * 24 * 60 * 60,
-    milliseconds: 365 * 24 * 60 * 60 * 1000
+  year: {
+    month: 12,
+    day: 365,
+    hour: 365 * 24,
+    minute: 365 * 24 * 60,
+    second: 365 * 24 * 60 * 60,
+    millisecond: 365 * 24 * 60 * 60 * 1000
   },
-  months: {
-    days: 30,
-    hours: 30 * 24,
-    minutes: 30 * 24 * 60,
-    seconds: 30 * 24 * 60 * 60,
-    milliseconds: 30 * 24 * 60 * 60 * 1000
+  month: {
+    day: 30,
+    hour: 30 * 24,
+    minute: 30 * 24 * 60,
+    second: 30 * 24 * 60 * 60,
+    millisecond: 30 * 24 * 60 * 60 * 1000
   },
-  days: { hours: 24, minutes: 24 * 60, seconds: 24 * 60 * 60, milliseconds: 24 * 60 * 60 * 1000 },
-  hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
-  minutes: { seconds: 60, milliseconds: 60 * 1000 },
-  seconds: { milliseconds: 1000 }
-},
-  ordered = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
-
-function ensure(unit) {
-  const normalized = unit.endsWith('s') ? unit : `${unit}s`;
-  if (ordered.indexOf(normalized) === -1) {
-    throw InvalidUnitException(unit);
-  }
-  return normalized;
-}
+  day: { hour: 24, minute: 24 * 60, second: 24 * 60 * 60, millisecond: 24 * 60 * 60 * 1000 },
+  hour: { minute: 60, second: 60 * 60, millisecond: 60 * 60 * 1000 },
+  minute: { second: 60, millisecond: 60 * 1000 },
+  second: { millisecond: 1000 }
+};
 
 function clone(dur, alts) {
   // deep merge for vals
@@ -57,14 +47,13 @@ export class Duration {
     return new Duration({ valid: false });
   }
 
-  static fromLength(count, unit = 'milliseconds') {
-    const realUnit = ensure(unit);
+  static fromLength(count, unit = 'millisecond') {
+    const realUnit = Util.normalizeUnit(unit);
     return Duration.fromObject({ [realUnit]: count });
   }
 
   static fromObject(obj) {
-    // todo - ensure() each key
-    return new Duration({ values: obj });
+    return new Duration({ values: Util.normalizeObject(obj) });
   }
 
   // static fromISO(text) {}
@@ -96,10 +85,10 @@ export class Duration {
   }
 
   // toJSON() {}
-  plus(countOrDuration, unit = 'milliseconds') {
+  plus(countOrDuration, unit = 'millisecond') {
     const dur = Util.friendlyDuration(countOrDuration, unit), result = {};
 
-    for (const k of ordered) {
+    for (const k of Util.orderedUnits) {
       const val = dur.get(k) + this.get(k);
       if (val !== 0) {
         result[k] = val;
@@ -109,17 +98,18 @@ export class Duration {
     return Duration.fromObject(result);
   }
 
-  minus(countOrDuration, unit = 'milliseconds') {
+  minus(countOrDuration, unit = 'millisecond') {
     const dur = Util.friendlyDuration(countOrDuration, unit);
     return this.plus(dur.negate());
   }
 
   get(unit) {
-    return this[unit]();
+    const accessor = `${Util.normalizeUnit(unit)}s`;
+    return this[accessor]();
   }
 
   set(values) {
-    const mixed = Object.assign(this.values, values);
+    const mixed = Object.assign(this.values, Util.normalizeObject(values));
     return clone(this, { values: mixed });
   }
 
@@ -136,10 +126,12 @@ export class Duration {
       return this;
     }
 
+    units = units.map(Util.normalizeUnit);
+
     const built = {}, accumulated = {}, vals = this.toObject();
     let lastUnit;
 
-    for (const k of ordered) {
+    for (const k of Util.orderedUnits) {
       if (units.indexOf(k) >= 0) {
         built[k] = 0;
         lastUnit = k;
@@ -159,7 +151,7 @@ export class Duration {
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
-          if (ordered.indexOf(down) > ordered.indexOf(k)) {
+          if (Util.orderedUnits.indexOf(down) > Util.orderedUnits.indexOf(k)) {
             const conv = matrix[k][down], added = Math.floor(vals[down] / conv);
             built[k] += added;
             vals[down] -= added * conv;
@@ -192,35 +184,35 @@ export class Duration {
   }
 
   years(v) {
-    return Util.isUndefined(v) ? this.values.years || 0 : this.set({ years: v });
+    return Util.isUndefined(v) ? this.values.year || 0 : this.set({ year: v });
   }
 
   months(v) {
-    return Util.isUndefined(v) ? this.values.months || 0 : this.set({ months: v });
+    return Util.isUndefined(v) ? this.values.month || 0 : this.set({ month: v });
   }
 
   days(v) {
-    return Util.isUndefined(v) ? this.values.days || 0 : this.set({ days: v });
+    return Util.isUndefined(v) ? this.values.day || 0 : this.set({ day: v });
   }
 
   hours(v) {
-    return Util.isUndefined(v) ? this.values.hours || 0 : this.set({ hours: v });
+    return Util.isUndefined(v) ? this.values.hour || 0 : this.set({ hour: v });
   }
 
   minutes(v) {
-    return Util.isUndefined(v) ? this.values.minutes || 0 : this.set({ minutes: v });
+    return Util.isUndefined(v) ? this.values.minute || 0 : this.set({ minute: v });
   }
 
   seconds(v) {
-    return Util.isUndefined(v) ? this.values.seconds || 0 : this.set({ seconds: v });
+    return Util.isUndefined(v) ? this.values.second || 0 : this.set({ second: v });
   }
 
   milliseconds(v) {
-    return Util.isUndefined(v) ? this.values.milliseconds || 0 : this.set({ milliseconds: v });
+    return Util.isUndefined(v) ? this.values.millisecond || 0 : this.set({ millisecond: v });
   }
 
   equals(other) {
-    for (const u of ordered) {
+    for (const u of Util.orderedUnits) {
       if (this.values[u] !== other.values[u]) {
         return false;
       }

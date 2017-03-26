@@ -1,9 +1,12 @@
 import { DateTime } from './datetime';
+import { Settings } from './settings';
 import { Locale } from './impl/locale';
 
 export class Info {
-  static hasDST(zone = DateTime.defaultZone) {
-    return !zone.universal && DateTime.now().month(1).offset() !== DateTime.now().month(5).offset();
+  static hasDST(zone = Settings.defaultZone) {
+    return !zone.universal &&
+      DateTime.local().rezone(zone).month(1).offset() !==
+        DateTime.local().rezone(zone).month(5).offset();
   }
 
   static months(length, locale, numbering) {

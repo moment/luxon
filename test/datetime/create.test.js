@@ -4,19 +4,31 @@ import { DateTime } from '../../dist/cjs/luxon';
 import { FakePT } from '../helpers/fakePT';
 
 //------
-// .now()
+// .local()
 //-------
-test("DateTime.now has today's date", () => {
-  const now = DateTime.now();
+test("DateTime.local() has today's date", () => {
+  const now = DateTime.local();
   expect(now.toJSDate().getDate()).toBe(new Date().getDate());
 });
 
-//------
-// .fromJSDate()
-//-------
-test('DateTime.fromJSDate(date) reflects the date', () => {
-  const date = new Date(1982, 4, 25), dateTime = DateTime.fromJSDate(date);
-  expect(dateTime.toJSDate().valueOf()).toBe(date.valueOf());
+test('DateTime.local(2017) is the beginning of the year', () => {
+  const dt = DateTime.local(2017);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(1);
+  expect(dt.day()).toBe(1);
+  expect(dt.hour()).toBe(0);
+  expect(dt.minute()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.local(2017, 3) is the beginning of the month', () => {
+  const dt = DateTime.local(2017, 3);
+  expect(dt.year()).toBe(2017);
+  expect(dt.month()).toBe(3);
+  expect(dt.day()).toBe(1);
+  expect(dt.hour()).toBe(0);
+  expect(dt.minute()).toBe(0);
+  expect(dt.millisecond()).toBe(0);
 });
 
 test('DateTime.fromJSDate(date) clones the date', () => {
@@ -25,9 +37,6 @@ test('DateTime.fromJSDate(date) clones the date', () => {
     oldValue = dateTime.valueOf();
 
   date.setDate(14);
-  expect(dateTime.toJSDate().valueOf()).toBe(oldValue);
-
-  date.setDate(12);
   expect(dateTime.toJSDate().valueOf()).toBe(oldValue);
 });
 
@@ -133,15 +142,16 @@ test('DateTime.fromObject() accepts a Zone as the second argument', () => {
 });
 
 test('DateTime.fromObject() defaults high-order values to the current date', () => {
-  const dateTime = DateTime.fromObject({}), now = DateTime.now();
+  const dateTime = DateTime.fromObject({}), now = DateTime.local();
 
   expect(dateTime.year()).toBe(now.year());
   expect(dateTime.month()).toBe(now.month());
   expect(dateTime.day()).toBe(now.day());
 });
 
-test('DateTime.fromObject() defaults lower-order values to 0', () => {
-  const dateTime = DateTime.fromObject({});
+test('DateTime.fromObject() defaults lower-order values to 0 if a high-order value is set', () => {
+  const dateTime = DateTime.fromObject({ year: 2017 });
+  expect(dateTime.year()).toBe(2017);
   expect(dateTime.hour()).toBe(0);
   expect(dateTime.minute()).toBe(0);
   expect(dateTime.second()).toBe(0);

@@ -2,14 +2,13 @@
 import { DateTime, Interval, Duration } from '../../dist/cjs/luxon';
 
 const fromISOs = (s, e, opts = {}) => DateTime.fromISO(s).until(DateTime.fromISO(e), opts),
-  todayAt = h => DateTime.now().startOf('day').hour(h);
+  todayAt = h => DateTime.local().startOf('day').hour(h);
 
 //------
 // #length()
 //-------
 test('Interval#length defaults to milliseconds', () => {
-  const n = DateTime.now(), d = n.until(n.plus(1, 'minute'));
-
+  const n = DateTime.local(), d = n.until(n.plus(1, 'minute'));
   expect(d.length()).toBe(60 * 1000);
 });
 

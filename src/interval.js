@@ -32,7 +32,7 @@ export class Interval {
     return this.e;
   }
 
-  length(unit = 'milliseconds') {
+  length(unit = 'millisecond') {
     return this.toDuration(...[unit]).get(unit);
   }
 
@@ -40,11 +40,8 @@ export class Interval {
     return this.e.minus(1).hasSame(this.s, unit);
   }
 
-  count(unit = 'milliseconds') {
-    // todo: check unit
-    const singularUnit = unit.replace(/s$/, ''),
-      start = this.start().startOf(singularUnit),
-      end = this.end().startOf(singularUnit);
+  count(unit = 'millisecond') {
+    const start = this.start().startOf(unit), end = this.end().startOf(unit);
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
@@ -62,7 +59,7 @@ export class Interval {
     return results;
   }
 
-  splitBy(countOrDuration, unit = 'milliseconds') {
+  splitBy(countOrDuration, unit = 'millisecond') {
     const dur = Util.friendlyDuration(countOrDuration, unit), results = [];
     let s = this.s, added, next;
 

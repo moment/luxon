@@ -1,5 +1,6 @@
 import { Duration } from './duration';
 import { Interval } from './interval';
+import { Settings } from './settings';
 import { Formatter } from './impl/formatter';
 import { FixedOffsetZone } from './zones/fixedOffsetZone';
 import { LocalZone } from './zones/localZone';
@@ -8,13 +9,8 @@ import { IntlZone } from './zones/intlZone';
 import { Util } from './impl/util';
 import { ISOParser } from './impl/isoParser';
 import { Parser } from './impl/parser';
-import { InvalidUnitException } from './exceptions/exceptions';
 
 const INVALID = 'Invalid Date';
-
-function now() {
-  return new Date().valueOf();
-}
 
 function clone(inst, alts = {}) {
   const current = { ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc };
@@ -134,6 +130,8 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
+const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 };
+
 /**
  * A specific millisecond with an associated time zone and locale
  */
@@ -142,10 +140,10 @@ export class DateTime {
    * @access private
    */
   constructor(config = {}) {
-    Object.defineProperty(this, 'ts', { value: config.ts || DateTime.now(), enumerable: true });
+    Object.defineProperty(this, 'ts', { value: config.ts || Settings.now(), enumerable: true });
 
     Object.defineProperty(this, 'zone', {
-      value: config.zone || DateTime.defaultZone,
+      value: config.zone || Settings.defaultZone,
       enumerable: true
     });
 
@@ -165,19 +163,49 @@ export class DateTime {
   }
 
   /**
-   * The default zone to create an DateTime in
-   * @return {Zone}
+   * Create a local time
+   * @example DateTime.local() //~> now
+   * @example DateTime.local(2017) //~> 2017-01-01T00:00:00
+   * @example DateTime.local(2017, 3) //~> 2017-03-01T00:00:00
+   * @example DateTime.local(2017, 3, 12) //~> 2017-03-12T00:00:00
+   * @example DateTime.local(2017, 3, 12, 5) //~> 2017-03-12T05:00:00
+   * @example DateTime.local(2017, 3, 12, 5, 45) //~> 2017-03-12T05:45:00
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10) //~> 2017-03-12T05:45:10
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
+   * @return {DateTime}
    */
-  static get defaultZone() {
-    return LocalZone.instance;
+  static local(year, month, day, hour, minute, second, millisecond) {
+    if (Util.isUndefined(year)) {
+      return new DateTime({ ts: Settings.now() });
+    } else {
+      return DateTime.fromObject(
+        { year, month, day, hour, minute, second, millisecond },
+        Settings.defaultZone
+      );
+    }
   }
 
   /**
-   * The current time in the default zone.
+   * Create a UTC time
+   * @example DateTime.utc() //~> now
+   * @example DateTime.utc(2017) //~> 2017-01-01T00:00:00
+   * @example DateTime.utc(2017, 3) //~> 2017-03-01T00:00:00
+   * @example DateTime.utc(2017, 3, 12) //~> 2017-03-12T00:00:00
+   * @example DateTime.utc(2017, 3, 12, 5) //~> 2017-03-12T05:00:00
+   * @example DateTime.utc(2017, 3, 12, 5, 45) //~> 2017-03-12T05:45:00
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10) //~> 2017-03-12T05:45:10
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
    * @return {DateTime}
    */
-  static now() {
-    return new DateTime({ ts: now() });
+  static utc(year, month, day, hour, minute, second, millisecond) {
+    if (Util.isUndefined(year)) {
+      return new DateTime({ ts: Settings.now() });
+    } else {
+      return DateTime.fromObject(
+        { year, month, day, hour, minute, second, millisecond },
+        FixedOffsetZone.utcInstance
+      );
+    }
   }
 
   /**
@@ -211,24 +239,34 @@ export class DateTime {
    * @param {Object} obj - the object to create the DateTime from
    * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can be a Luxon Zone instance or a string. Strings accepted include 'utc', 'local', 'utc+3', and 'America/New_York'
    * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
+   * @example DateTime.fromObject({year: 1982}).toISO() //=> '1982-01-01T00:00:00'
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'utc')
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'local')
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'America/New_York')
    * @return {DateTime}
    */
-  static fromObject(obj, zone = DateTime.defaultZone) {
-    const tsNow = now(),
-      zoneToUse = Util.normalizeZone(zone) || DateTime.defaultZone,
+  static fromObject(obj, zone = Settings.defaultZone) {
+    const tsNow = Settings.now(),
+      zoneToUse = Util.normalizeZone(zone) || Settings.defaultZone,
       offsetProvis = zoneToUse.offset(tsNow),
-      defaulted = Object.assign(
-        tsToObj(tsNow, offsetProvis),
-        { hour: 0, minute: 0, second: 0, millisecond: 0 },
-        obj
-      );
+      objNow = tsToObj(tsNow, offsetProvis),
+      normalized = Util.normalizeObject(obj);
 
-    if (validateObject(defaulted)) {
-      const [tsFinal] = objToTS(defaulted, zoneToUse, offsetProvis),
+    let foundFirst = false;
+    for (const u of Util.orderedUnits) {
+      const v = normalized[u];
+      if (!Util.isUndefined(v)) {
+        foundFirst = true;
+      } else if (foundFirst) {
+        normalized[u] = defaultUnitValues[u];
+      } else {
+        normalized[u] = objNow[u];
+      }
+    }
+
+    if (validateObject(normalized)) {
+      const [tsFinal] = objToTS(normalized, zoneToUse, offsetProvis),
         inst = new DateTime({ ts: tsFinal, zone: zoneToUse });
 
       if (!Util.isUndefined(obj.weekday) && obj.weekday !== inst.weekday()) {
@@ -253,12 +291,12 @@ export class DateTime {
    * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc')
    * @return {DateTime}
    */
-  static fromISO(text, { setZone = false, zone = DateTime.defaultZone } = {}) {
-    const parsed = ISOParser.parseISODate(text);
-    if (parsed) {
-      const { local, offset } = parsed,
+  static fromISO(text, { setZone = false, zone = Settings.defaultZone } = {}) {
+    const [vals, context] = ISOParser.parseISODate(text);
+    if (vals) {
+      const { local, offset } = context,
         interpretationZone = local ? zone : new FixedOffsetZone(offset),
-        inst = DateTime.fromObject(parsed, interpretationZone);
+        inst = DateTime.fromObject(vals, interpretationZone);
 
       return setZone ? inst : inst.rezone(zone);
     } else {
@@ -277,7 +315,7 @@ export class DateTime {
   static fromString(
     text,
     fmt,
-    { zone = DateTime.defaultZone, localeCode = null, nums = null, cal = null } = {}
+    { zone = Settings.defaultZone, localeCode = null, nums = null, cal = null } = {}
   ) {
     const parser = new Parser(Locale.fromOpts({ localeCode, nums, cal })),
       result = parser.parseDateTime(text, fmt);
@@ -475,7 +513,7 @@ export class DateTime {
   startOf(unit) {
     if (!this.valid) return this;
     const o = {};
-    switch (unit) {
+    switch (Util.normalizeUnit(unit)) {
       case 'year':
         o.month = 1;
       // falls through
@@ -495,7 +533,7 @@ export class DateTime {
         o.millisecond = 0;
         break;
       default:
-        throw new InvalidUnitException(unit);
+        throw new Error(`Can't find the start of ${unit}`);
     }
     return this.set(o);
   }
@@ -520,7 +558,11 @@ export class DateTime {
   diff(otherDateTime, ...units) {
     if (!this.valid) return this;
 
-    if (units.length === 0) units = ['milliseconds'];
+    if (units.length === 0) {
+      units = ['millisecond'];
+    } else {
+      units = units.map(Util.normalizeUnit);
+    }
 
     const flipped = otherDateTime.valueOf() > this.valueOf(),
       post = flipped ? otherDateTime : this,
@@ -528,41 +570,41 @@ export class DateTime {
 
     let cursor = flipped ? this : otherDateTime, lowestOrder = null;
 
-    if (units.indexOf('years') >= 0) {
+    if (units.indexOf('year') >= 0) {
       let dYear = post.year() - cursor.year();
 
       cursor = cursor.year(post.year());
 
       if (cursor > post) {
-        cursor = cursor.minus(1, 'years');
+        cursor = cursor.minus(1, 'year');
         dYear -= 1;
       }
 
       accum.years = dYear;
-      lowestOrder = 'years';
+      lowestOrder = 'year';
     }
 
-    if (units.indexOf('months') >= 0) {
+    if (units.indexOf('month') >= 0) {
       const dYear = post.year() - cursor.year();
       let dMonth = post.month() - cursor.month() + dYear * 12;
 
       cursor = cursor.set({ year: post.year(), month: post.month() });
 
       if (cursor > post) {
-        cursor = cursor.minus(1, 'months');
+        cursor = cursor.minus(1, 'month');
         dMonth -= 1;
       }
 
       accum.months = dMonth;
-      lowestOrder = 'months';
+      lowestOrder = 'month';
     }
 
     // days is tricky because we want to ignore offset differences
-    if (units.indexOf('days') >= 0) {
+    if (units.indexOf('day') >= 0) {
       // there's almost certainly a quicker, simpler way to do this
       const utcDayStart = i => DateTime.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      let dDay = Math.floor(Duration.fromLength(ms).shiftTo('days').days());
+      let dDay = Math.floor(Duration.fromLength(ms).shiftTo('day').days());
 
       cursor = cursor.set({ year: post.year(), month: post.month(), day: post.day() });
 
@@ -572,13 +614,11 @@ export class DateTime {
       }
 
       accum.days = dDay;
-      lowestOrder = 'days';
+      lowestOrder = 'day';
     }
 
     const remaining = Duration.fromLength(post - cursor),
-      moreUnits = units.filter(
-        u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
-      ),
+      moreUnits = units.filter(u => ['hour', 'minute', 'second', 'millisecond'].indexOf(u) >= 0),
       shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
       shifted = remaining.shiftTo(...shiftTo),
       merged = shifted.plus(Duration.fromObject(accum));
@@ -587,7 +627,7 @@ export class DateTime {
   }
 
   diffNow(...units) {
-    return this.valid ? this.diff(DateTime.now(), ...units) : Duration.invalid();
+    return this.valid ? this.diff(DateTime.local(), ...units) : Duration.invalid();
   }
 
   until(otherDateTime, opts = {}) {

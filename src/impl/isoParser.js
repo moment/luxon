@@ -5,21 +5,23 @@ function combine(...regexes) {
 
 function parse(s, ...patterns) {
   if (s == null) {
-    return null;
+    return [null, null];
   }
   for (const [regex, extractors] of patterns) {
     const m = s.match(regex);
     if (m) {
-      return extractors.reduce(
-        ([merged, cursor], ex) => {
-          const [val, next] = ex(m, cursor);
-          return [Object.assign(merged, val), next];
-        },
-        [{}, 1]
-      )[0];
+      return extractors
+        .reduce(
+          ([mergedVals, mergedContext, cursor], ex) => {
+            const [val, context, next] = ex(m, cursor);
+            return [Object.assign(mergedVals, val), Object.assign(mergedContext, context), next];
+          },
+          [{}, {}, 1]
+        )
+        .slice(0, 2);
     }
   }
-  return null;
+  return [null, null];
 }
 
 /**
@@ -42,22 +44,24 @@ export class ISOParser {
           hour: parse10(match[cursor]) || 0,
           minute: parse10(match[cursor + 1]) || 0,
           second: parse10(match[cursor + 2]) || 0,
-          millisecond: parse10(match[cursor + 3]) || 0,
+          millisecond: parse10(match[cursor + 3]) || 0
+        },
+        context = {
           offset: fullOffset,
           local
         };
 
-      return [item, cursor + 7];
+      return [item, context, cursor + 7];
     }
 
     function extractYmd(match, cursor) {
-      const items = {
+      const item = {
         year: parse10(match[cursor]),
         month: parse10(match[cursor + 1]),
         day: parse10(match[cursor + 2])
       };
 
-      return [items, cursor + 3];
+      return [item, {}, cursor + 3];
     }
 
     const ymdComb = [combine(ymdRegex, timeRegex), [extractYmd, extractTime]];

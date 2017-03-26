@@ -370,19 +370,19 @@ export class Formatter {
     const tokenToField = token => {
       switch (token[0]) {
         case 'S':
-          return 'milliseconds';
+          return 'millisecond';
         case 's':
-          return 'seconds';
+          return 'second';
         case 'm':
-          return 'minutes';
+          return 'minute';
         case 'h':
-          return 'hours';
+          return 'hour';
         case 'd':
-          return 'days';
+          return 'day';
         case 'M':
-          return 'months';
+          return 'month';
         case 'y':
-          return 'years';
+          return 'year';
         default:
           return null;
       }
@@ -399,7 +399,7 @@ export class Formatter {
       tokens = Formatter.parseFormat(fmt),
       realTokens = tokens.reduce((found, { literal, val }) => literal ? found : found.concat(val), [
       ]),
-      collapsed = dur.shiftTo(...realTokens.map(t => tokenToField(t)));
+      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter(t => t));
     return stringifyTokens(tokens, tokenToString(collapsed));
   }
 }

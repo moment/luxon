@@ -47,6 +47,6 @@ test('dateTime#millisecond() returns the millisecond', () => {
 // locale
 //-------
 test('dateTime#locale() returns the locale', () => {
-  const dt = DateTime.now().locale('be');
+  const dt = DateTime.local().locale('be');
   expect(dt.locale()).toBe('be');
 });

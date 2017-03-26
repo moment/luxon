@@ -1,5 +1,4 @@
 import { Duration } from '../duration';
-
 import { Zone } from '../zone';
 import { LocalZone } from '../zones/localZone';
 import { IntlZone } from '../zones/intlZone';
@@ -131,4 +130,41 @@ export class Util {
       return null;
     }
   }
+
+  static normalizeUnit(unit) {
+    const normalized = {
+      year: 'year',
+      years: 'year',
+      month: 'month',
+      months: 'month',
+      day: 'day',
+      days: 'day',
+      hour: 'hour',
+      hours: 'hour',
+      minute: 'minute',
+      minutes: 'minute',
+      second: 'second',
+      seconds: 'second',
+      millisecond: 'millisecond',
+      milliseconds: 'millisecond',
+      weekday: 'weekday',
+      weekdays: 'weekday'
+    }[unit ? unit.toLowerCase() : unit];
+
+    if (!normalized) throw new Error(`Invalid unit ${unit}`);
+
+    return normalized;
+  }
+
+  static normalizeObject(obj) {
+    const normalized = {};
+    for (const u in obj) {
+      if (obj.hasOwnProperty(u)) {
+        normalized[Util.normalizeUnit(u)] = obj[u];
+      }
+    }
+    return normalized;
+  }
 }
+
+Util.orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
