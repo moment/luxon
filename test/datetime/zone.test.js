@@ -16,10 +16,10 @@ test('timezone defaults to local', () => {
 });
 
 //------
-// #utc()
+// #toUTC()
 //------
 test("DateTime#utc() puts the dt in UTC 'mode'", () => {
-  const zoned = dt().utc();
+  const zoned = dt().toUTC();
   expect(zoned.valueOf()).toBe(millis);
   expect(zoned.hour().valueOf()).toBe(4);
   expect(zoned.timezoneName()).toBe('UTC');
@@ -28,7 +28,7 @@ test("DateTime#utc() puts the dt in UTC 'mode'", () => {
 });
 
 test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
-  const zoned = dt().utc(5 * 60);
+  const zoned = dt().toUTC(5 * 60);
   expect(zoned.valueOf()).toBe(millis);
   expect(zoned.hour().valueOf()).toBe(9);
   expect(zoned.timezoneName()).toBe('UTC+5');
@@ -37,10 +37,10 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
 });
 
 //------
-// #local()
+// #toLocal()
 //------
-test('DateTime#local() sets the calendar back to local', () => {
-  const relocaled = dt().utc().local(), expected = new Date(millis).getHours();
+test('DateTime#toLocal() sets the calendar back to local', () => {
+  const relocaled = dt().toUTC().toLocal(), expected = new Date(millis).getHours();
   expect(relocaled.isOffsetFixed()).toBe(false);
   expect(relocaled.valueOf()).toBe(millis);
   expect(relocaled.hour()).toBe(expected);
@@ -93,7 +93,7 @@ test('accepts IANA zone names', () => {
 });
 
 test('timezone accepts a keepCalendarTime option', () => {
-  const zoned = dt().utc().timezone(new FakePT(), { keepCalendarTime: true });
+  const zoned = dt().toUTC().timezone(new FakePT(), { keepCalendarTime: true });
   expect(zoned.timezoneName()).toBe('Fake Pacific Time');
   expect(zoned.year()).toBe(1982);
   expect(zoned.month()).toBe(5);

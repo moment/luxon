@@ -163,6 +163,13 @@ export class DateTime {
 
   /**
    * Create a local time
+   * @param {number} year - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
+   * @param {number} [month=1] - The month, 1-indexed
+   * @param {number} [day=1]
+   * @param {number} [hour=0] - The day of the day, in 24-hour time
+   * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
+   * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
+   * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
    * @example DateTime.local() //~> now
    * @example DateTime.local(2017) //~> 2017-01-01T00:00:00
    * @example DateTime.local(2017, 3) //~> 2017-03-01T00:00:00
@@ -186,6 +193,13 @@ export class DateTime {
 
   /**
    * Create a UTC time
+   * @param {number} year - The calendar year. If omitted (as in, call `utc()` with no arguments), the current time will be used
+   * @param {number} [month=1] - The month, 1-indexed
+   * @param {number} [day=1]
+   * @param {number} [hour=0] - The day of the day, in 24-hour time
+   * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
+   * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
+   * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
    * @example DateTime.utc() //~> now
    * @example DateTime.utc(2017) //~> 2017-01-01T00:00:00Z
    * @example DateTime.utc(2017, 3) //~> 2017-03-01T00:00:00Z
@@ -307,6 +321,7 @@ export class DateTime {
    * Create a DateTime from an input string and format string
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
+   * @param {Object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {string} [options.localeCode='en-US'] - a locale string to use when parsing. Will also convert the DateTime to this locale
    * @return {DateTime}
@@ -330,8 +345,8 @@ export class DateTime {
    * @param {object} options - options taken by fromString()
    * @return {object}
    */
-  static fromStringExplain(text, fmt, opts = {}) {
-    const parser = new Parser(Locale.fromOpts(opts));
+  static fromStringExplain(text, fmt, options = {}) {
+    const parser = new Parser(Locale.fromOpts(options));
     return parser.explainParse(text, fmt);
   }
 
@@ -347,6 +362,7 @@ export class DateTime {
 
   /**
    * Get or set the locale of a DateTime, such en-UK. The locale is used when formatting the DateTime
+   *
    * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter. If the locale is not supported, the best alternative is selected
    * @return {string|DateTime} - If a localeCode is provided, returns a new DateTime with the new locale. If not, returns the localeCode (a string) of the DateTime
    */
@@ -361,10 +377,10 @@ export class DateTime {
 
   /**
    * Sets the DateTime's zone to UTC. Equivalent to timezone('utc')
-   * @param {integer} [offset=0] - optionally, an offset from UTC in minutes
+   * @param {number} [offset=0] - optionally, an offset from UTC in minutes
    * @return {DateTime}
    */
-  utc(offset = 0) {
+  toUTC(offset = 0) {
     return this.timezone(FixedOffsetZone.instance(offset));
   }
 
@@ -372,21 +388,20 @@ export class DateTime {
    * Sets the DateTime's zone to the environment's local zone. Equivalent to `timezone('local')`
    * @return {DateTime}
    */
-  local() {
+  toLocal() {
     return this.timezone(new LocalZone());
   }
 
   /**
    * Gets or sets the DateTime's zone to specified zone.
-   * As a setter:
-   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will behave differently in these ways:
-   * * getters such as hour() or minute() will report local times in the target zone
-   * * plus() and minus() will use the target zone's DST rules (or their absence) when adding days or larger to the DateTime
-   * * strings will be formatted according to the target zone's offset
-   * You may wish to use local() and utc() which provide simple convenience wrappers for commonly used zones
    *
-   * As a getter:
-   * If you provide no arguments, returns a Luxon Zone instance. This is generally less useful than timeZoneName()
+   * **As a setter**: By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will behave differently in these ways:
+   * * getters such as {@link hour} or {@link minute} will report local times in the target zone
+   * * {@link plus} and {@link minus} will use the target zone's DST rules (or their absence) when adding days or larger to the DateTime
+   * * strings will be formatted according to the target zone's offset
+   * You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
+   *
+   * **As a getter**: If you provide no arguments, returns a Luxon Zone instance. This is generally less useful than {@link timezoneName}.
    * @param {string|Zone} zone - The zone to set. Can be a Luxon Zone instance or a string. Strings accepted include 'utc', 'local', 'utc+3', and any IANA identifier supported by the environment, such as 'America/New_York'
    * @param {Object} options - options to affect the conversion
    * @param {boolean} [options.keepCalendarTime=false] - Shift the underlying time so that the new local time is the same
@@ -408,22 +423,42 @@ export class DateTime {
     }
   }
 
+  /**
+   * Gets the name of the timezone
+   * @return {String}
+   */
   timezoneName() {
     return this.zone.name;
   }
 
+  /**
+   * Gets the short human name for the zone's current offset, for example "EST" or "EDT"
+   * @return {String}
+   */
   offsetNameShort() {
     return this.zone.offsetName(this.ts, { format: 'short', localeCode: this.locale.localeCode });
   }
 
+  /**
+   * Gets the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time". Is locale-aware.
+   * @return {String}
+   */
   offsetNameLong() {
     return this.zone.offsetName(this.ts, { format: 'long', localeCode: this.locale.localeCode });
   }
 
+  /**
+   * Gets whether this zone's offset ever changes, as in a DST
+   * @return {boolean}
+   */
   isOffsetFixed() {
     return this.zone.universal;
   }
 
+  /**
+   * Gets whether the DateTime is in a DST
+   * @return {boolean}
+   */
   isInDST() {
     if (this.isOffsetFixed()) {
       return false;
@@ -432,6 +467,10 @@ export class DateTime {
     }
   }
 
+  /**
+   * Gets the value of unit such as "minute" or "day".
+   * @return {number}
+   */
   get(unit) {
     return this.valid ? this[unit]() : NaN;
   }
@@ -581,7 +620,7 @@ export class DateTime {
   }
 
   /**
-   * Return the difference between two DateTimes as a Duration
+   * Return the difference between two DateTimes as a Duration.
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
    * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration
    * @example

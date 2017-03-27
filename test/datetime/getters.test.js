@@ -3,7 +3,7 @@
 import { DateTime } from '../../dist/cjs/luxon';
 
 const dateTime = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123)),
-  utc = DateTime.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).utc();
+  utc = DateTime.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).toUTC();
 
 //------
 // year/month/day/hour/minute/second/millisecond

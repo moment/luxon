@@ -20,7 +20,7 @@ test('DateTime.fromISO() parses as local by default', () => {
 
 test('DateTime.fromISO() uses the offset provided, but keeps the dateTime as local', () => {
   const dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00');
-  expect(dt.utc().toObject()).toEqual({
+  expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,
@@ -33,7 +33,7 @@ test('DateTime.fromISO() uses the offset provided, but keeps the dateTime as loc
 
 test('DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local', () => {
   const dt = DateTime.fromISO('2016-05-25T09:08:34.123Z');
-  expect(dt.utc().toObject()).toEqual({
+  expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 25,

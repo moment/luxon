@@ -17,7 +17,7 @@ test("DateTime#toISO() shows 'Z' for UTC", () => {
 });
 
 test('DateTime#toISO() shows the offset', () => {
-  const offsetted = dt().utc(-6 * 60);
+  const offsetted = dt().toUTC(-6 * 60);
   expect(offsetted.toISO()).toBe('1982-05-25T03:23:54.123-06:00');
 });
 
@@ -26,7 +26,7 @@ test('DateTime#toISO() shows the offset', () => {
 //-------
 test('DateTime#toString() returns the ISO time', () => {
   const i = dt();
-  expect(i.utc(-6 * 60).toString()).toBe('1982-05-25T03:23:54.123-06:00');
+  expect(i.toUTC(-6 * 60).toString()).toBe('1982-05-25T03:23:54.123-06:00');
 });
 
 //------
@@ -118,17 +118,17 @@ test("DateTime#toFormatString('HH') returns the padded hour (24-hour time)", () 
 });
 test("DateTime#toFormatString('Z') returns the narrow offset", () => {
   const i = dt();
-  expect(i.utc(360).toFormatString('Z')).toBe('+6');
-  expect(i.utc(390).toFormatString('Z')).toBe('+6:30');
-  expect(i.utc(-360).toFormatString('Z')).toBe('-6');
-  expect(i.utc(-390).toFormatString('Z')).toBe('-6:30');
+  expect(i.toUTC(360).toFormatString('Z')).toBe('+6');
+  expect(i.toUTC(390).toFormatString('Z')).toBe('+6:30');
+  expect(i.toUTC(-360).toFormatString('Z')).toBe('-6');
+  expect(i.toUTC(-390).toFormatString('Z')).toBe('-6:30');
 });
 test("DateTime#toFormatString('ZZ') returns the padded offset", () => {
   const i = dt();
-  expect(i.utc(360).toFormatString('ZZ')).toBe('+06:00');
-  expect(i.utc(390).toFormatString('ZZ')).toBe('+06:30');
-  expect(i.utc(-360).toFormatString('ZZ')).toBe('-06:00');
-  expect(i.utc(-390).toFormatString('ZZ')).toBe('-06:30');
+  expect(i.toUTC(360).toFormatString('ZZ')).toBe('+06:00');
+  expect(i.toUTC(390).toFormatString('ZZ')).toBe('+06:30');
+  expect(i.toUTC(-360).toFormatString('ZZ')).toBe('-06:00');
+  expect(i.toUTC(-390).toFormatString('ZZ')).toBe('-06:30');
 });
 test("DateTime#toFormatString('ZZZ') returns the short offset name", () => {
   const i = dt().timezone(new FakePT());
