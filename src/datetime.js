@@ -5,7 +5,6 @@ import { Formatter } from './impl/formatter';
 import { FixedOffsetZone } from './zones/fixedOffsetZone';
 import { LocalZone } from './zones/localZone';
 import { Locale } from './impl/locale';
-import { IntlZone } from './zones/intlZone';
 import { Util } from './impl/util';
 import { ISOParser } from './impl/isoParser';
 import { Parser } from './impl/parser';
@@ -237,7 +236,7 @@ export class DateTime {
   /**
    * Create an DateTime from a Javascript object with keys like "year" and "hour" with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
-   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can be a Luxon Zone instance or a string. Strings accepted include 'utc', 'local', 'utc+3', and 'America/New_York'
+   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to timezone()
    * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
    * @example DateTime.fromObject({year: 1982}).toISO() //=> '1982-01-01T00:00:00'
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
@@ -298,7 +297,7 @@ export class DateTime {
         interpretationZone = local ? zone : new FixedOffsetZone(offset),
         inst = DateTime.fromObject(vals, interpretationZone);
 
-      return setZone ? inst : inst.rezone(zone);
+      return setZone ? inst : inst.timezone(zone);
     } else {
       return DateTime.invalid();
     }
@@ -324,49 +323,88 @@ export class DateTime {
       : DateTime.fromObject(result, zone);
   }
 
+  /**
+   * Explain how a string would be parsed by fromString()
+   * @param {string} text - the string to parse
+   * @param {string} fmt - the format the string is expected to be in (see description)
+   * @param {object} options - options taken by fromString()
+   * @return {object}
+   */
   static fromStringExplain(text, fmt, opts = {}) {
     const parser = new Parser(Locale.fromOpts(opts));
     return parser.explainParse(text, fmt);
   }
 
+  /**
+   * Returns whether the DateTime is invalid. Invalid dates occur when:
+   * * The DateTime was created from invalid calendar information, such as the 13th month or February 30
+   * * The DateTime was created by an operation on another invalid date
+   * @return {boolean}
+   */
   isValid() {
     return this.valid;
   }
 
-  locale(l) {
-    if (Util.isUndefined(l)) {
-      // todo: this should return the effective locale
+  /**
+   * Get or set the locale of a DateTime, such en-UK. The locale is used when formatting the DateTime
+   * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter. If the locale is not supported, the best alternative is selected
+   * @return {string|DateTime} - If a localeCode is provided, returns a new DateTime with the new locale. If not, returns the localeCode (a string) of the DateTime
+   */
+  locale(localeCode) {
+    if (Util.isUndefined(localeCode)) {
+      // todo: this should return the effective locale using resolvedOptions
       return this.loc ? this.loc.localeCode : null;
     } else {
-      return clone(this, { loc: Locale.create(l) });
+      return clone(this, { loc: Locale.create(localeCode) });
     }
   }
 
-  utc() {
-    return this.useUTCOffset(0);
+  /**
+   * Sets the DateTime's zone to UTC. Equivalent to timezone('utc')
+   * @param {integer} [offset=0] - optionally, an offset from UTC in minutes
+   * @return {DateTime}
+   */
+  utc(offset = 0) {
+    return this.timezone(FixedOffsetZone.instance(offset));
   }
 
-  useUTCOffset(offset, opts = { keepCalendarTime: false }) {
-    return this.rezone(new FixedOffsetZone(offset), opts);
-  }
-
+  /**
+   * Sets the DateTime's zone to the environment's local zone. Equivalent to `timezone('local')`
+   * @return {DateTime}
+   */
   local() {
-    return this.rezone(new LocalZone());
+    return this.timezone(new LocalZone());
   }
 
-  timezone(zoneName) {
-    return this.rezone(new IntlZone(zoneName));
-  }
-
-  rezone(zone, opts = { keepCalendarTime: false }) {
-    zone = Util.normalizeZone(zone);
-    if (zone.equals(this.zone)) {
-      return this;
+  /**
+   * Gets or sets the DateTime's zone to specified zone.
+   * As a setter:
+   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will behave differently in these ways:
+   * * getters such as hour() or minute() will report local times in the target zone
+   * * plus() and minus() will use the target zone's DST rules (or their absence) when adding days or larger to the DateTime
+   * * strings will be formatted according to the target zone's offset
+   * You may wish to use local() and utc() which provide simple convenience wrappers for commonly used zones
+   *
+   * As a getter:
+   * If you provide no arguments, returns a Luxon Zone instance. This is generally less useful than timeZoneName()
+   * @param {string|Zone} zone - The zone to set. Can be a Luxon Zone instance or a string. Strings accepted include 'utc', 'local', 'utc+3', and any IANA identifier supported by the environment, such as 'America/New_York'
+   * @param {Object} options - options to affect the conversion
+   * @param {boolean} [options.keepCalendarTime=false] - Shift the underlying time so that the new local time is the same
+   * @return {DateTime|Zone}
+   */
+  timezone(zone, { keepCalendarTime = false } = {}) {
+    if (Util.isUndefined(zone)) {
+      return this.zone;
     } else {
-      const newTS = opts.keepCalendarTime
-        ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
-        : this.ts;
-      return clone(this, { ts: newTS, zone });
+      zone = Util.normalizeZone(zone);
+      if (zone.equals(this.zone)) {
+        return this;
+      } else {
+        const newTS = keepCalendarTime
+          ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
+          : this.ts;
+        return clone(this, { ts: newTS, zone });
+      }
     }
   }
 

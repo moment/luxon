@@ -5,8 +5,8 @@ import { Locale } from './impl/locale';
 export class Info {
   static hasDST(zone = Settings.defaultZone) {
     return !zone.universal &&
-      DateTime.local().rezone(zone).month(1).offset() !==
-        DateTime.local().rezone(zone).month(5).offset();
+      DateTime.local().timezone(zone).month(1).offset() !==
+        DateTime.local().timezone(zone).month(5).offset();
   }
 
   static months(length, locale, numbering) {

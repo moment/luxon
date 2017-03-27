@@ -17,7 +17,7 @@ test("DateTime#toISO() shows 'Z' for UTC", () => {
 });
 
 test('DateTime#toISO() shows the offset', () => {
-  const offsetted = dt().useUTCOffset(-6 * 60);
+  const offsetted = dt().utc(-6 * 60);
   expect(offsetted.toISO()).toBe('1982-05-25T03:23:54.123-06:00');
 });
 
@@ -26,7 +26,7 @@ test('DateTime#toISO() shows the offset', () => {
 //-------
 test('DateTime#toString() returns the ISO time', () => {
   const i = dt();
-  expect(i.useUTCOffset(-6 * 60).toString()).toBe('1982-05-25T03:23:54.123-06:00');
+  expect(i.utc(-6 * 60).toString()).toBe('1982-05-25T03:23:54.123-06:00');
 });
 
 //------
@@ -118,28 +118,28 @@ test("DateTime#toFormatString('HH') returns the padded hour (24-hour time)", () 
 });
 test("DateTime#toFormatString('Z') returns the narrow offset", () => {
   const i = dt();
-  expect(i.useUTCOffset(360).toFormatString('Z')).toBe('+6');
-  expect(i.useUTCOffset(390).toFormatString('Z')).toBe('+6:30');
-  expect(i.useUTCOffset(-360).toFormatString('Z')).toBe('-6');
-  expect(i.useUTCOffset(-390).toFormatString('Z')).toBe('-6:30');
+  expect(i.utc(360).toFormatString('Z')).toBe('+6');
+  expect(i.utc(390).toFormatString('Z')).toBe('+6:30');
+  expect(i.utc(-360).toFormatString('Z')).toBe('-6');
+  expect(i.utc(-390).toFormatString('Z')).toBe('-6:30');
 });
 test("DateTime#toFormatString('ZZ') returns the padded offset", () => {
   const i = dt();
-  expect(i.useUTCOffset(360).toFormatString('ZZ')).toBe('+06:00');
-  expect(i.useUTCOffset(390).toFormatString('ZZ')).toBe('+06:30');
-  expect(i.useUTCOffset(-360).toFormatString('ZZ')).toBe('-06:00');
-  expect(i.useUTCOffset(-390).toFormatString('ZZ')).toBe('-06:30');
+  expect(i.utc(360).toFormatString('ZZ')).toBe('+06:00');
+  expect(i.utc(390).toFormatString('ZZ')).toBe('+06:30');
+  expect(i.utc(-360).toFormatString('ZZ')).toBe('-06:00');
+  expect(i.utc(-390).toFormatString('ZZ')).toBe('-06:30');
 });
 test("DateTime#toFormatString('ZZZ') returns the short offset name", () => {
-  const i = dt().rezone(new FakePT());
+  const i = dt().timezone(new FakePT());
   expect(i.toFormatString('ZZZ')).toBe('PDT');
 });
 test("DateTime#toFormatString('ZZZZ') returns the full offset name", () => {
-  const i = dt().rezone(new FakePT());
+  const i = dt().timezone(new FakePT());
   expect(i.toFormatString('ZZZZ')).toBe('Pacific Daylight Time');
 });
 test("DateTime#toFormatString('z') returns the zone name", () => {
-  const i = dt().rezone(new FakePT());
+  const i = dt().timezone(new FakePT());
   expect(i.toFormatString('z')).toBe('Fake Pacific Time');
 });
 test("DateTime#toFormatString('a') returns the meridiem", () => {

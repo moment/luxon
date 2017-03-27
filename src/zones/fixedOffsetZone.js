@@ -11,6 +11,10 @@ export class FixedOffsetZone extends Zone {
     return singleton;
   }
 
+  static instance(offset) {
+    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
+  }
+
   static parseSpecifier(s) {
     if (s) {
       const r = s.match(/^utc([+-]\d+)?$/i);

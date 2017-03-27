@@ -1,7 +1,7 @@
 import { Util } from '../impl/util';
 import { Zone } from '../zone';
 
-export class IntlZone extends Zone {
+export class IANAZone extends Zone {
   static isValidSpecier(s) {
     return s && s.match(/[a-z_]+\/[a-z_]+/i);
   }
@@ -46,6 +46,6 @@ export class IntlZone extends Zone {
   }
 
   equals(otherZone) {
-    return otherZone instanceof IntlZone && otherZone.zoneName === this.zoneName;
+    return otherZone instanceof IANAZone && otherZone.zoneName === this.zoneName;
   }
 }

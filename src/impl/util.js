@@ -1,7 +1,7 @@
 import { Duration } from '../duration';
 import { Zone } from '../zone';
 import { LocalZone } from '../zones/localZone';
-import { IntlZone } from '../zones/intlZone';
+import { IANAZone } from '../zones/IANAZone';
 import { FixedOffsetZone } from '../zones/fixedOffsetZone';
 
 /**
@@ -120,7 +120,7 @@ export class Util {
       const lowered = input.toLowerCase();
       if (lowered === 'local') return LocalZone.instance;
       else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
-      else if (IntlZone.isValidSpecier(lowered)) return new IntlZone(lowered);
+      else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
       else return FixedOffsetZone.parseSpecifier(lowered);
     } else if (typeof input === 'object' && input.offset) {
       // This is dumb, but the instanceof check above doesn't seem to really work
