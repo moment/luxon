@@ -55,14 +55,10 @@ test('timezone sets the TZ to the specified zone', () => {
   expect(zoned.timezoneName()).toBe('Fake Pacific Time');
   expect(zoned.isOffsetFixed()).toBe(false);
   expect(zoned.valueOf()).toBe(millis);
+  expect(zoned.day()).toBe(24);
   expect(zoned.hour()).toBe(21);
   // pacific daylight time
   expect(zoned.isInDST()).toBe(true);
-});
-
-test('works as a getter', () => {
-  const zone = dt().timezone(new FakePT()).timezone();
-  expect(zone.name).toBe('Fake Pacific Time');
 });
 
 test('accepts "local"', () => {

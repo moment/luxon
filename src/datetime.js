@@ -129,6 +129,12 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
+function isoFormat(dt, format) {
+  return dt.valid
+    ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format)
+    : INVALID;
+}
+
 const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 };
 
 /**
@@ -165,18 +171,18 @@ export class DateTime {
    * Create a local time
    * @param {number} year - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
    * @param {number} [month=1] - The month, 1-indexed
-   * @param {number} [day=1]
-   * @param {number} [hour=0] - The day of the day, in 24-hour time
+   * @param {number} [day=1] - The day of the month
+   * @param {number} [hour=0] - The hour of the day, in 24-hour time
    * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
    * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
    * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
-   * @example DateTime.local() //~> now
-   * @example DateTime.local(2017) //~> 2017-01-01T00:00:00
-   * @example DateTime.local(2017, 3) //~> 2017-03-01T00:00:00
-   * @example DateTime.local(2017, 3, 12) //~> 2017-03-12T00:00:00
-   * @example DateTime.local(2017, 3, 12, 5) //~> 2017-03-12T05:00:00
-   * @example DateTime.local(2017, 3, 12, 5, 45) //~> 2017-03-12T05:45:00
-   * @example DateTime.local(2017, 3, 12, 5, 45, 10) //~> 2017-03-12T05:45:10
+   * @example DateTime.local()                            //~> now
+   * @example DateTime.local(2017)                        //~> 2017-01-01T00:00:00
+   * @example DateTime.local(2017, 3)                     //~> 2017-03-01T00:00:00
+   * @example DateTime.local(2017, 3, 12)                 //~> 2017-03-12T00:00:00
+   * @example DateTime.local(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00
+   * @example DateTime.local(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10
    * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
    * @return {DateTime}
    */
@@ -195,18 +201,18 @@ export class DateTime {
    * Create a UTC time
    * @param {number} year - The calendar year. If omitted (as in, call `utc()` with no arguments), the current time will be used
    * @param {number} [month=1] - The month, 1-indexed
-   * @param {number} [day=1]
-   * @param {number} [hour=0] - The day of the day, in 24-hour time
+   * @param {number} [day=1] - The day of the month
+   * @param {number} [hour=0] - The hour of the day, in 24-hour time
    * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
    * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
    * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
-   * @example DateTime.utc() //~> now
-   * @example DateTime.utc(2017) //~> 2017-01-01T00:00:00Z
-   * @example DateTime.utc(2017, 3) //~> 2017-03-01T00:00:00Z
-   * @example DateTime.utc(2017, 3, 12) //~> 2017-03-12T00:00:00Z
-   * @example DateTime.utc(2017, 3, 12, 5) //~> 2017-03-12T05:00:00Z
-   * @example DateTime.utc(2017, 3, 12, 5, 45) //~> 2017-03-12T05:45:00Z
-   * @example DateTime.utc(2017, 3, 12, 5, 45, 10) //~> 2017-03-12T05:45:10Z
+   * @example DateTime.utc()                            //~> now
+   * @example DateTime.utc(2017)                        //~> 2017-01-01T00:00:00Z
+   * @example DateTime.utc(2017, 3)                     //~> 2017-03-01T00:00:00Z
+   * @example DateTime.utc(2017, 3, 12)                 //~> 2017-03-12T00:00:00Z
+   * @example DateTime.utc(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10Z
    * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675Z
    * @return {DateTime}
    */
@@ -252,7 +258,7 @@ export class DateTime {
    * @param {Object} obj - the object to create the DateTime from
    * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to timezone()
    * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
-   * @example DateTime.fromObject({year: 1982}).toISO() //=> '1982-01-01T00:00:00'
+   * @example DateTime.fromObject({year: 1982}).toISODate() //=> '1982-01-01T00'
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'utc')
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'local')
@@ -361,7 +367,7 @@ export class DateTime {
   }
 
   /**
-   * Get or set the locale of a DateTime, such en-UK. The locale is used when formatting the DateTime
+   * Get or "set" the locale of a DateTime, such en-UK. The locale is used when formatting the DateTime
    *
    * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter. If the locale is not supported, the best alternative is selected
    * @return {string|DateTime} - If a localeCode is provided, returns a new DateTime with the new locale. If not, returns the localeCode (a string) of the DateTime
@@ -376,7 +382,9 @@ export class DateTime {
   }
 
   /**
-   * Sets the DateTime's zone to UTC. Equivalent to timezone('utc')
+   * "Sets" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
+   *
+   * Equivalent to timezone('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
    * @return {DateTime}
    */
@@ -385,7 +393,9 @@ export class DateTime {
   }
 
   /**
-   * Sets the DateTime's zone to the environment's local zone. Equivalent to `timezone('local')`
+   * "Sets" the DateTime's zone to the environment's local zone. Returns a newly-constructed DateTime.
+   *
+   * Equivalent to `timezone('local')`
    * @return {DateTime}
    */
   toLocal() {
@@ -393,33 +403,25 @@ export class DateTime {
   }
 
   /**
-   * Gets or sets the DateTime's zone to specified zone.
+   * "Sets" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
    *
-   * **As a setter**: By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will behave differently in these ways:
+   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will behave differently in these ways:
    * * getters such as {@link hour} or {@link minute} will report local times in the target zone
    * * {@link plus} and {@link minus} will use the target zone's DST rules (or their absence) when adding days or larger to the DateTime
    * * strings will be formatted according to the target zone's offset
    * You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
    *
-   * **As a getter**: If you provide no arguments, returns a Luxon Zone instance. This is generally less useful than {@link timezoneName}.
-   * @param {string|Zone} zone - The zone to set. Can be a Luxon Zone instance or a string. Strings accepted include 'utc', 'local', 'utc+3', and any IANA identifier supported by the environment, such as 'America/New_York'
-   * @param {Object} options - options to affect the conversion
-   * @param {boolean} [options.keepCalendarTime=false] - Shift the underlying time so that the new local time is the same
-   * @return {DateTime|Zone}
+   * @return {DateTime}
    */
   timezone(zone, { keepCalendarTime = false } = {}) {
-    if (Util.isUndefined(zone)) {
-      return this.zone;
+    zone = Util.normalizeZone(zone);
+    if (zone.equals(this.zone)) {
+      return this;
     } else {
-      zone = Util.normalizeZone(zone);
-      if (zone.equals(this.zone)) {
-        return this;
-      } else {
-        const newTS = keepCalendarTime
-          ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
-          : this.ts;
-        return clone(this, { ts: newTS, zone });
-      }
+      const newTS = keepCalendarTime
+        ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
+        : this.ts;
+      return clone(this, { ts: newTS, zone });
     }
   }
 
@@ -468,27 +470,58 @@ export class DateTime {
   }
 
   /**
-   * Gets the value of unit such as "minute" or "day".
+   * Gets the value of unit
+   * @param {string} unit - a unit such as 'minute' or 'day'
+   * @example DateTime.local(2017, 7, 4).get('month'); //=> 7
+   * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
    * @return {number}
    */
   get(unit) {
     return this.valid ? this[unit]() : NaN;
   }
 
+  /**
+   * "Sets" the values of specified units. Returns a newly-constructed DateTime.
+   * @param {object} values - a mapping of units to numbers
+   * @example dt.set({year: 2017})
+   * @example dt.set({hour: 8, minute: 30})
+   * @return {DateTime}
+   */
   set(values) {
-    const mixed = Object.assign(this.toObject(), values),
+    const mixed = Object.assign(this.toObject(), Util.normalizeObject(values)),
       [ts, o] = objToTS(mixed, this.zone, this.o);
     return clone(this, { ts, o });
   }
 
+  /**
+   * Gets or "sets" the year.
+   * @param {number} year - the year to set. If omitted, `year()` acts as a getter for the year.
+   * @example DateTime.local(2017, 5, 25).year(1982).toISODate() //=> "1982-05-25"
+   * @example DateTime.local(2017, 5, 25).year() //=> 2017
+   * @return {number|DateTime}
+   */
   year(v) {
     return Util.isUndefined(v) ? this.valid ? this.c.year : NaN : this.set({ year: v });
   }
 
+  /**
+   * Gets or "sets" the month.
+   * @param {number} month - the month to set. If omitted, `month()` acts as a getter for the month.
+   * @example DateTime.local(2017, 5, 25).month(6).toISODate() //=> "2017-06-25"
+   * @example DateTime.local(2017, 5, 25).month() //=> 5
+   * @return {number|DateTime}
+   */
   month(v) {
     return Util.isUndefined(v) ? this.valid ? this.c.month : NaN : this.set({ month: v });
   }
 
+  /**
+   * Gets or "sets" the day of the day.
+   * @param {number} day - the day to set. If omitted, `day()` acts as a getter for the day.
+   * @example DateTime.local(2017, 5, 25).day(26).toISODate() //=> "2017-05-26"
+   * @example DateTime.local(2017, 5, 25).day() //=> 25
+   * @return {number|DateTime}
+   */
   day(v) {
     return Util.isUndefined(v) ? this.valid ? this.c.day : NaN : this.set({ day: v });
   }
@@ -542,12 +575,18 @@ export class DateTime {
   }
 
   toISO() {
-    return this.valid
-      ? Formatter.create(Locale.create('en')).formatDateTimeFromString(
-          this,
-          "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"
-        )
-      : INVALID;
+    return isoFormat(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+  }
+
+  toISODate() {
+    return isoFormat(this, 'yyyy-MM-dd');
+  }
+
+  toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
+    const f = suppressSeconds && this.second() === 0 && this.millisecond() === 0
+      ? 'hh:mm'
+      : suppressMilliseconds && this.millisecond() === 0 ? 'hh:mm:ss' : 'hh:mm:ss.SSS';
+    return isoFormat(this, f);
   }
 
   toString() {

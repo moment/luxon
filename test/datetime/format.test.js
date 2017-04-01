@@ -3,15 +3,15 @@
 import { DateTime } from '../../dist/cjs/luxon';
 import { FakePT } from '../helpers/fakePT';
 
-//------
-// #toISO()
-//-------
 const dt = () =>
   DateTime.fromObject(
     { year: 1982, month: 5, day: 25, hour: 9, minute: 23, second: 54, millisecond: 123 },
     'utc'
   );
 
+//------
+// #toISO()
+//-------
 test("DateTime#toISO() shows 'Z' for UTC", () => {
   expect(dt().toISO()).toBe('1982-05-25T09:23:54.123Z');
 });
@@ -19,6 +19,42 @@ test("DateTime#toISO() shows 'Z' for UTC", () => {
 test('DateTime#toISO() shows the offset', () => {
   const offsetted = dt().toUTC(-6 * 60);
   expect(offsetted.toISO()).toBe('1982-05-25T03:23:54.123-06:00');
+});
+
+//------
+// #toISODate()
+//-------
+
+test('DateTime#toISODate() returns ISO 8601 date', () => {
+  expect(dt().toISODate()).toBe('1982-05-25');
+});
+
+test('DateTime#toISODate() is local to the zone', () => {
+  expect(dt().toUTC(-10 * 60).toISODate()).toBe('1982-05-24');
+});
+
+//------
+// #toISOTime()
+//-------
+
+test('DateTime#toISOTime() returns ISO 8601 date', () => {
+  expect(dt().toISOTime()).toBe('09:23:54.123');
+});
+
+test("DateTime#toISOTime({suppressMilliseconds: true}) won't suppress milliseconds if they're nonzero", () => {
+  expect(dt().toISOTime({ suppressMilliseconds: true })).toBe('09:23:54.123');
+});
+
+test("DateTime#toISOTime({suppressMilliseconds: true}) will suppress milliseconds if they're zero", () => {
+  expect(dt().millisecond(0).toISOTime({ suppressMilliseconds: true })).toBe('09:23:54');
+});
+
+test("DateTime#toISOTime({suppressSeconds: true}) won't suppress milliseconds if they're nonzero", () => {
+  expect(dt().toISOTime({ suppressSeconds: true })).toBe('09:23:54.123');
+});
+
+test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if they're zero", () => {
+  expect(dt().second(0).millisecond(0).toISOTime({ suppressSeconds: true })).toBe('09:23');
 });
 
 //------
