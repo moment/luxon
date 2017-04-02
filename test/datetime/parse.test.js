@@ -96,6 +96,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+
   isSame('20160525', {
     year: 2016,
     month: 5,
@@ -105,6 +106,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+
   isSame('2016-05-25T09', {
     year: 2016,
     month: 5,
@@ -114,6 +116,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+
   isSame('2016-05-25T09:24', {
     year: 2016,
     month: 5,
@@ -123,6 +126,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+
   isSame('2016-05-25T09:24:15', {
     year: 2016,
     month: 5,
@@ -132,6 +136,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 0
   });
+
   isSame('2016-05-25T09:24:15.123', {
     year: 2016,
     month: 5,
@@ -141,6 +146,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 123
   });
+
   isSame('2016-05-25T0924', {
     year: 2016,
     month: 5,
@@ -150,6 +156,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+
   isSame('2016-05-25T092415', {
     year: 2016,
     month: 5,
@@ -159,6 +166,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 0
   });
+
   isSame('2016-05-25T092415.123', {
     year: 2016,
     month: 5,
@@ -168,7 +176,48 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 123
   });
+
   isSame('2016-05-25T09:24:15,123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+
+  isSame('2016-W21-3', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+
+  isSame('2016W213', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+
+  isSame('2016-W21-3T09:24:15.123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+
+  isSame('2016W213T09:24:15.123', {
     year: 2016,
     month: 5,
     day: 25,
@@ -189,6 +238,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 123
   });
+
   isSame('2016-05-25T09:2415.123', {
     year: 2016,
     month: 5,
@@ -197,6 +247,16 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     minute: 24,
     second: 15,
     millisecond: 123
+  });
+
+  isSame('2016-W213', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   });
 });
 
@@ -276,6 +336,16 @@ test('DateTime.fromString() defaults yy to the right century', () => {});
 
 test('DateTime.fromString() parses offsets', () => {});
 
+test('DateTime.fromString() validates weekday numbers', () => {
+  let d = DateTime.fromString('2, 05/25/1982', 'E, LL/dd/yyyy');
+  expect(d.year()).toBe(1982);
+  expect(d.month()).toBe(5);
+  expect(d.day()).toBe(25);
+
+  d = DateTime.fromString('1, 05/25/1982', 'E, LL/dd/yyyy');
+  expect(d.isValid()).toBeFalsy();
+});
+
 test('DateTime.fromString() validates weekday names', () => {
   let d = DateTime.fromString('Tuesday, 05/25/1982', 'EEEE, LL/dd/yyyy');
   expect(d.year()).toBe(1982);
@@ -291,7 +361,51 @@ test('DateTime.fromString() validates weekday names', () => {
   expect(d.day()).toBe(25);
 });
 
-test('DateTime.fromString() allows regex content', () => {});
+test('DateTime.fromString() defaults weekday to this week', () => {
+  const d = DateTime.fromString('Monday', 'EEEE'), now = DateTime.local();
+  expect(d.weekYear()).toBe(now.weekYear());
+  expect(d.weekNumber()).toBe(now.weekNumber());
+  expect(d.weekday()).toBe(1);
+
+  const d2 = DateTime.fromString('3', 'E');
+  expect(d2.weekYear()).toBe(now.weekYear());
+  expect(d2.weekNumber()).toBe(now.weekNumber());
+  expect(d2.weekday()).toBe(3);
+});
+
+test('DateTime.fromString() throws on mixed units', () => {
+  expect(() => {
+    DateTime.fromString('2017 34', 'yyyy WW');
+  }).toThrow();
+});
+
+test('DateTime.fromString() accepts weekYear by itself', () => {
+  const d = DateTime.fromString('2004', 'kkkk');
+  expect(d.weekYear()).toBe(2004);
+  expect(d.weekNumber()).toBe(1);
+  expect(d.weekday()).toBe(1);
+});
+
+test('DateTime.fromString() accepts weekNumber by itself', () => {
+  const d = DateTime.fromString('17', 'WW'), now = DateTime.local();
+  expect(d.weekYear()).toBe(now.weekYear());
+  expect(d.weekNumber()).toBe(17);
+  expect(d.weekday()).toBe(1);
+});
+
+test('DateTime.fromString() accepts weekYear/weekNumber/weekday', () => {
+  const d = DateTime.fromString('2004 17 2', 'kkkk WW E');
+  expect(d.weekYear()).toBe(2004);
+  expect(d.weekNumber()).toBe(17);
+  expect(d.weekday()).toBe(2);
+});
+
+test('DateTime.fromString() allows regex content', () => {
+  const d = DateTime.fromString('Monday', 'EEEE'), now = DateTime.local();
+  expect(d.weekYear()).toBe(now.weekYear());
+  expect(d.weekNumber()).toBe(now.weekNumber());
+  expect(d.weekday()).toBe(1);
+});
 
 test('DateTime.fromString() allows literals', () => {});
 

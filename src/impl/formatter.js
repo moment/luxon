@@ -240,6 +240,14 @@ export class Formatter {
           // like Anno Domini
           case 'GGGGG':
             return string({ era: 'narrow' }, 'era');
+          case 'kk':
+            return this.num(dt.weekYear().toString().slice(-2), 2);
+          case 'kkkk':
+            return this.num(dt.weekYear(), 4);
+          case 'W':
+            return this.num(dt.weekNumber());
+          case 'WW':
+            return this.num(dt.weekNumber(), 2);
           // like A
           // macros
           // Some of these output take zones or offsets. We have to choose between that
@@ -260,7 +268,6 @@ export class Formatter {
               day: 'numeric',
               weekday: 'long'
             });
-
           case 't':
             return this.formatDateTime(dt, { hour: 'numeric', minute: '2-digit' });
           case 'tt':

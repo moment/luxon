@@ -3,6 +3,7 @@ import { Zone } from '../zone';
 import { LocalZone } from '../zones/localZone';
 import { IANAZone } from '../zones/IANAZone';
 import { FixedOffsetZone } from '../zones/fixedOffsetZone';
+import { Settings } from '../settings';
 
 /**
  * @private
@@ -25,6 +26,10 @@ export class Util {
 
   static isString(o) {
     return typeof o === 'string';
+  }
+
+  static numberBetween(thing, bottom, top) {
+    return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
 
   static pad(input, n = 2) {
@@ -70,8 +75,22 @@ export class Util {
     return arrays[0].map((_, c) => arrays.map(arr => arr[c]));
   }
 
+  static pick(obj, keys) {
+    return keys.reduce(
+      (a, k) => {
+        a[k] = obj[k];
+        return a;
+      },
+      {}
+    );
+  }
+
   static isLeapYear(year) {
     return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  }
+
+  static daysInYear(year) {
+    return Util.isLeapYear(year) ? 366 : 365;
   }
 
   static daysInMonth(year, month) {
@@ -127,10 +146,11 @@ export class Util {
       // so we're duck checking it
       return input;
     } else {
-      return null;
+      return Settings.defaultZone;
     }
   }
 
+  // todo: different units for durations?
   static normalizeUnit(unit) {
     const normalized = {
       year: 'year',
@@ -148,7 +168,12 @@ export class Util {
       millisecond: 'millisecond',
       milliseconds: 'millisecond',
       weekday: 'weekday',
-      weekdays: 'weekday'
+      weekdays: 'weekday',
+      weeknumber: 'weekNumber',
+      weeksnumber: 'weekNumber',
+      weeknumbers: 'weekNumber',
+      weekyear: 'weekYear',
+      weekyears: 'weekYear'
     }[unit ? unit.toLowerCase() : unit];
 
     if (!normalized) throw new Error(`Invalid unit ${unit}`);
@@ -165,6 +190,19 @@ export class Util {
     }
     return normalized;
   }
+
+  static timeObject(obj) {
+    return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
+  }
 }
 
 Util.orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+Util.orderedWeekUnits = [
+  'weekYear',
+  'weekNumber',
+  'weekday',
+  'hour',
+  'minute',
+  'second',
+  'millisecond'
+];

@@ -28,7 +28,7 @@ function unitForToken(token, loc) {
       }
 
       switch (t.val) {
-        // era
+        // era (G)
         // years
         case 'yyyy':
           return intUnit(four);
@@ -84,6 +84,18 @@ function unitForToken(token, loc) {
         // meridiem
         case 'a':
           return oneOf(loc.meridiems(), 0);
+
+        // weekYear (k)
+        case 'kkkk':
+          return intUnit(four);
+        case 'kk':
+          return intUnit(twoToFour, untruncateYear);
+
+        // weekNumber (W)
+        case 'W':
+          return intUnit(oneOrTwo);
+        case 'WW':
+          return intUnit(two);
 
         // weekdays
         case 'E':
@@ -160,6 +172,10 @@ function dateTimeFromMatches(matches) {
       case 'E':
       case 'c':
         return 'weekday';
+      case 'W':
+        return 'weekNumber';
+      case 'k':
+        return 'weekYear';
       default:
         return null;
     }

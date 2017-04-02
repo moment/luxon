@@ -32,6 +32,7 @@ export class ISOParser {
   static parseISODate(s) {
     const timeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
       ymdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/,
+      weekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
       parse10 = inty => parseInt(inty, 10);
 
     function extractTime(match, cursor) {
@@ -54,6 +55,16 @@ export class ISOParser {
       return [item, context, cursor + 7];
     }
 
+    function extractWeekData(match, cursor) {
+      const item = {
+        weekYear: parse10(match[cursor]),
+        weekNumber: parse10(match[cursor + 1]),
+        weekday: parse10(match[cursor + 2])
+      };
+
+      return [item, {}, cursor + 3];
+    }
+
     function extractYmd(match, cursor) {
       const item = {
         year: parse10(match[cursor]),
@@ -64,8 +75,9 @@ export class ISOParser {
       return [item, {}, cursor + 3];
     }
 
-    const ymdComb = [combine(ymdRegex, timeRegex), [extractYmd, extractTime]];
-    return parse(s, ymdComb);
+    const ymdComb = [combine(ymdRegex, timeRegex), [extractYmd, extractTime]],
+      weekComb = [combine(weekRegex, timeRegex), [extractWeekData, extractTime]];
+    return parse(s, ymdComb, weekComb);
   }
   // static parseISODuration(s, opts = {}) {
   // }

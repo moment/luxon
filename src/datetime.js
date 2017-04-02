@@ -8,26 +8,30 @@ import { Locale } from './impl/locale';
 import { Util } from './impl/util';
 import { ISOParser } from './impl/isoParser';
 import { Parser } from './impl/parser';
+import { Weeks } from './impl/weeks';
 
 const INVALID = 'Invalid Date';
+
+function possiblyCachedWeekData(dt) {
+  if (dt.weekData === null) {
+    dt.weekData = Weeks.toWeekData(dt.c);
+  }
+  return dt.weekData;
+}
 
 function clone(inst, alts = {}) {
   const current = { ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc };
   return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
 
-function numberBetween(thing, bottom, top) {
-  return Util.isNumber(thing) && thing >= bottom && thing <= top;
-}
-
 function validateObject(obj) {
   const validYear = Util.isNumber(obj.year),
-    validMonth = numberBetween(obj.month, 1, 12),
-    validDay = numberBetween(obj.day, 1, Util.daysInMonth(obj.year, obj.month)),
-    validHour = numberBetween(obj.hour, 0, 23),
-    validMinute = numberBetween(obj.minute, 0, 59),
-    validSecond = numberBetween(obj.second, 0, 59),
-    validMillisecond = numberBetween(obj.millisecond, 0, 999);
+    validMonth = Util.numberBetween(obj.month, 1, 12),
+    validDay = Util.numberBetween(obj.day, 1, Util.daysInMonth(obj.year, obj.month)),
+    validHour = Util.numberBetween(obj.hour, 0, 23),
+    validMinute = Util.numberBetween(obj.minute, 0, 59),
+    validSecond = Util.numberBetween(obj.second, 0, 59),
+    validMillisecond = Util.numberBetween(obj.millisecond, 0, 999);
 
   return validYear &&
     validMonth &&
@@ -135,7 +139,15 @@ function isoFormat(dt, format) {
     : INVALID;
 }
 
-const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 };
+const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
+  defaultWeekUnitValues = {
+    weekNumber: 1,
+    weekday: 1,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  };
 
 /**
  * A specific millisecond with an associated time zone and locale
@@ -156,6 +168,12 @@ export class DateTime {
 
     Object.defineProperty(this, 'valid', {
       value: Util.isUndefined(config.valid) ? true : config.valid,
+      enumerable: false
+    });
+
+    Object.defineProperty(this, 'weekData', {
+      writable: true, // !!!
+      value: null,
       enumerable: false
     });
 
@@ -254,10 +272,10 @@ export class DateTime {
   }
 
   /**
-   * Create an DateTime from a Javascript object with keys like "year" and "hour" with reasonable defaults.
+   * Create an DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
    * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to timezone()
-   * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISO() //=> '1982-05-25T00:00:00'
+   * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
    * @example DateTime.fromObject({year: 1982}).toISODate() //=> '1982-01-01T00'
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'utc')
@@ -265,9 +283,9 @@ export class DateTime {
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'America/New_York')
    * @return {DateTime}
    */
-  static fromObject(obj, zone = Settings.defaultZone) {
+  static fromObject(obj, zone) {
     const tsNow = Settings.now(),
-      zoneToUse = Util.normalizeZone(zone) || Settings.defaultZone,
+      zoneToUse = Util.normalizeZone(zone),
       offsetProvis = zoneToUse.offset(tsNow),
       objNow = tsToObj(tsNow, offsetProvis),
       normalized = Util.normalizeObject(obj);
@@ -288,9 +306,56 @@ export class DateTime {
       const [tsFinal] = objToTS(normalized, zoneToUse, offsetProvis),
         inst = new DateTime({ ts: tsFinal, zone: zoneToUse });
 
+      // weekday has no effect except that it can cause invalidity
       if (!Util.isUndefined(obj.weekday) && obj.weekday !== inst.weekday()) {
         return DateTime.invalid();
       }
+
+      return inst;
+    } else {
+      return DateTime.invalid();
+    }
+  }
+
+  /**
+   * Create an DateTime from a Javascript object with keys like 'weekYear', 'weekNumber', and 'hour' with reasonable defaults.
+   * @param {Object} obj - the object to create the DateTime from
+   * @param {number} obj.weekYear - an ISO week year
+   * @param {number} obj.weekNumber - an ISO week number, between 1 and 52 or 53, depending on the year
+   * @param {number} obj.weekday - an ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
+   * @param {number} obj.hour - hour of the day, 0-23
+   * @param {number} obj.minute - minute of the hour, 0-59
+   * @param {number} obj.second - second of the minute, 0-59
+   * @param {number} obj.millisecond - millisecond of the second, 0-999
+   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to timezone()
+   * @example DateTime.fromISOWeekDay({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
+   * @example DateTime.fromISOWeekDay({ weekYear: 2016, weekNumber: 2, weekday: 3, hour: 12, minute: 23 }).toISO() //=> '2016-01-13T12:23:00.000'
+   * @example DateTime.fromISOWeekDay({ weekYear: 2016}).toISODate() //=> '2016-01-04'
+   * @example DateTime.fromISOWeekDay({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
+   * @return {DateTime}
+   */
+  static fromISOWeekDate(obj, zone) {
+    const tsNow = Settings.now(),
+      zoneToUse = Util.normalizeZone(zone),
+      offsetProvis = zoneToUse.offset(tsNow),
+      objNow = Weeks.toWeekData(tsToObj(tsNow, offsetProvis)),
+      normalized = Util.normalizeObject(obj);
+
+    let foundFirst = false;
+    for (const u of Util.orderedWeekUnits) {
+      const v = normalized[u];
+      if (!Util.isUndefined(v)) {
+        foundFirst = true;
+      } else if (foundFirst) {
+        normalized[u] = defaultWeekUnitValues[u];
+      } else {
+        normalized[u] = objNow[u];
+      }
+    }
+
+    if (Weeks.validateWeekData(normalized)) {
+      const gregorian = Weeks.toGregorian(normalized),
+        [tsFinal] = objToTS(gregorian, zoneToUse, offsetProvis);
 
       return new DateTime({ ts: tsFinal, zone: zoneToUse });
     } else {
@@ -308,6 +373,7 @@ export class DateTime {
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
    * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc')
+   * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */
   static fromISO(text, { setZone = false, zone = Settings.defaultZone } = {}) {
@@ -315,8 +381,9 @@ export class DateTime {
     if (vals) {
       const { local, offset } = context,
         interpretationZone = local ? zone : new FixedOffsetZone(offset),
-        inst = DateTime.fromObject(vals, interpretationZone);
-
+        inst = Util.isUndefined(vals.weekday)
+          ? DateTime.fromObject(vals, interpretationZone)
+          : DateTime.fromISOWeekDate(vals, interpretationZone);
       return setZone ? inst : inst.timezone(zone);
     } else {
       return DateTime.invalid();
@@ -338,10 +405,21 @@ export class DateTime {
     { zone = Settings.defaultZone, localeCode = null, nums = null, cal = null } = {}
   ) {
     const parser = new Parser(Locale.fromOpts({ localeCode, nums, cal })),
-      result = parser.parseDateTime(text, fmt);
-    return Object.keys(result).length === 0
-      ? DateTime.invalid()
-      : DateTime.fromObject(result, zone);
+      result = parser.parseDateTime(text, fmt),
+      containsGregorDef = !Util.isUndefined(result.year) ||
+        !Util.isUndefined(result.month) ||
+        !Util.isUndefined(result.day),
+      definiteWeekDef = result.weekYear || result.weekNumber;
+
+    if (Object.keys(result).length === 0) {
+      return DateTime.invalid();
+    } else if (containsGregorDef && definiteWeekDef) {
+      throw new Error("Can't mix weekYear/weekNumber units with year/month/day");
+    } else if (definiteWeekDef || (result.weekday && !containsGregorDef)) {
+      return DateTime.fromISOWeekDate(result, zone);
+    } else {
+      return DateTime.fromObject(result, zone);
+    }
   }
 
   /**
@@ -483,12 +561,19 @@ export class DateTime {
   /**
    * "Sets" the values of specified units. Returns a newly-constructed DateTime.
    * @param {object} values - a mapping of units to numbers
-   * @example dt.set({year: 2017})
-   * @example dt.set({hour: 8, minute: 30})
+   * @example dt.set({ year: 2017 })
+   * @example dt.set({ hour: 8, minute: 30 })
+   * @example dt.set({ weekday: 5 })
    * @return {DateTime}
    */
   set(values) {
-    const mixed = Object.assign(this.toObject(), Util.normalizeObject(values)),
+    const normalized = Util.normalizeObject(values),
+      settingWeekStuff = !Util.isUndefined(normalized.weekYear) ||
+        !Util.isUndefined(normalized.weekNumber) ||
+        !Util.isUndefined(normalized.weekday),
+      mixed = settingWeekStuff
+        ? Weeks.toGregorian(Object.assign(Weeks.toWeekData(this.c), normalized))
+        : Object.assign(this.toObject(), normalized),
       [ts, o] = objToTS(mixed, this.zone, this.o);
     return clone(this, { ts, o });
   }
@@ -500,8 +585,8 @@ export class DateTime {
    * @example DateTime.local(2017, 5, 25).year() //=> 2017
    * @return {number|DateTime}
    */
-  year(v) {
-    return Util.isUndefined(v) ? this.valid ? this.c.year : NaN : this.set({ year: v });
+  year(year) {
+    return Util.isUndefined(year) ? this.valid ? this.c.year : NaN : this.set({ year });
   }
 
   /**
@@ -511,8 +596,8 @@ export class DateTime {
    * @example DateTime.local(2017, 5, 25).month() //=> 5
    * @return {number|DateTime}
    */
-  month(v) {
-    return Util.isUndefined(v) ? this.valid ? this.c.month : NaN : this.set({ month: v });
+  month(month) {
+    return Util.isUndefined(month) ? this.valid ? this.c.month : NaN : this.set({ month });
   }
 
   /**
@@ -522,20 +607,20 @@ export class DateTime {
    * @example DateTime.local(2017, 5, 25).day() //=> 25
    * @return {number|DateTime}
    */
-  day(v) {
-    return Util.isUndefined(v) ? this.valid ? this.c.day : NaN : this.set({ day: v });
+  day(day) {
+    return Util.isUndefined(day) ? this.valid ? this.c.day : NaN : this.set({ day });
   }
 
-  hour(v) {
-    return Util.isUndefined(v) ? this.valid ? this.c.hour : NaN : this.set({ hour: v });
+  hour(hour) {
+    return Util.isUndefined(hour) ? this.valid ? this.c.hour : NaN : this.set({ hour });
   }
 
-  minute(v) {
-    return Util.isUndefined(v) ? this.valid ? this.c.minute : NaN : this.set({ minute: v });
+  minute(minute) {
+    return Util.isUndefined(minute) ? this.valid ? this.c.minute : NaN : this.set({ minute });
   }
 
-  second(v) {
-    return Util.isUndefined(v) ? this.valid ? this.c.second : NaN : this.set({ second: v });
+  second(second) {
+    return Util.isUndefined(second) ? this.valid ? this.c.second : NaN : this.set({ second });
   }
 
   millisecond(v) {
@@ -544,8 +629,22 @@ export class DateTime {
       : this.set({ millisecond: v });
   }
 
-  weekday() {
-    return this.valid ? Util.asIfUTC(this).getUTCDay() : NaN;
+  weekNumber(weekNumber) {
+    return Util.isUndefined(weekNumber)
+      ? this.valid ? possiblyCachedWeekData(this).weekNumber : NaN
+      : this.set({ weekNumber });
+  }
+
+  weekYear(weekYear) {
+    return Util.isUndefined(weekYear)
+      ? this.valid ? possiblyCachedWeekData(this).weekYear : NaN
+      : this.set({ weekYear });
+  }
+
+  weekday(weekday) {
+    return Util.isUndefined(weekday)
+      ? this.valid ? possiblyCachedWeekData(this).weekday : NaN
+      : this.set({ weekday });
   }
 
   offset() {
@@ -561,7 +660,7 @@ export class DateTime {
   }
 
   daysInYear() {
-    return this.valid ? Util.isLeapYear(this.year()) ? 366 : 365 : NaN;
+    return this.valid ? Util.daysInYear(this.year()) : NaN;
   }
 
   toFormatString(fmt, opts = {}) {
