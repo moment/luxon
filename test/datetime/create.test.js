@@ -305,12 +305,8 @@ test('DateTime.fromObject() defaults lower-order values to their minimums if a h
   expect(dateTime.millisecond()).toBe(0);
 });
 
-//------
-// .fromISOWeekDate()
-//-------
-
-test('DateTime.fromISOWeekDate() handles fully specified dates', () => {
-  const dt = DateTime.fromISOWeekDate({
+test('DateTime.fromObject() w/weeks handles fully specified dates', () => {
+  const dt = DateTime.fromObject({
     weekYear: 2016,
     weekNumber: 2,
     weekday: 3,
@@ -327,8 +323,8 @@ test('DateTime.fromISOWeekDate() handles fully specified dates', () => {
   expect(dt.day()).toBe(13);
 });
 
-test('DateTime.fromISOWeekDate() handles skew with Gregorian years', () => {
-  let dt = DateTime.fromISOWeekDate({ weekYear: 2015, weekNumber: 1, weekday: 3 });
+test('DateTime.fromObject() w/weekYears handles skew with Gregorian years', () => {
+  let dt = DateTime.fromObject({ weekYear: 2015, weekNumber: 1, weekday: 3 });
   expect(dt.weekYear()).toBe(2015);
   expect(dt.weekNumber()).toBe(1);
   expect(dt.weekday()).toBe(3);
@@ -336,7 +332,7 @@ test('DateTime.fromISOWeekDate() handles skew with Gregorian years', () => {
   expect(dt.month()).toBe(12);
   expect(dt.day()).toBe(31);
 
-  dt = DateTime.fromISOWeekDate({ weekYear: 2009, weekNumber: 53, weekday: 5 });
+  dt = DateTime.fromObject({ weekYear: 2009, weekNumber: 53, weekday: 5 });
   expect(dt.weekYear()).toBe(2009);
   expect(dt.weekNumber()).toBe(53);
   expect(dt.weekday()).toBe(5);
@@ -345,16 +341,16 @@ test('DateTime.fromISOWeekDate() handles skew with Gregorian years', () => {
   expect(dt.day()).toBe(1);
 });
 
-test('DateTime.fromISOWeekDate() defaults high-order values to the current date', () => {
-  const dt = DateTime.fromISOWeekDate({}), now = DateTime.local();
+test('DateTime.fromObject() w/weeks defaults high-order values to the current date', () => {
+  const dt = DateTime.fromObject({}), now = DateTime.local();
 
   expect(dt.weekYear()).toBe(now.weekYear());
   expect(dt.weekNumber()).toBe(now.weekNumber());
   expect(dt.weekday()).toBe(now.weekday());
 });
 
-test('DateTime.fromISOWeekDate() defaults low-order values to their minimums', () => {
-  const dt = DateTime.fromISOWeekDate({ weekYear: 2016 });
+test('DateTime.fromObject() w/weeks defaults low-order values to their minimums', () => {
+  const dt = DateTime.fromObject({ weekYear: 2016 });
 
   expect(dt.weekYear()).toBe(2016);
   expect(dt.weekNumber()).toBe(1);
@@ -365,25 +361,8 @@ test('DateTime.fromISOWeekDate() defaults low-order values to their minimums', (
   expect(dt.millisecond()).toBe(0);
 });
 
-test('DateTime.fromISOWeekDate() accepts a timezone argument', () => {
-  const dt = DateTime.fromISOWeekDate(
-    { weekYear: 2016, weekNumber: 2, weekday: 3, hour: 10, minute: 15 },
-    'America/Los_Angeles'
-  );
-
-  expect(dt.isOffsetFixed()).toBe(false);
-  expect(dt.offset()).toBe(-8 * 60);
-  expect(dt.year()).toBe(2016);
-  expect(dt.month()).toBe(1);
-  expect(dt.day()).toBe(13);
-  expect(dt.hour()).toBe(10);
-  expect(dt.minute()).toBe(15);
-});
-
-test('DateTime.fromISOWeekDate() returns invalid for invalid values', () => {
-  expect(DateTime.fromISOWeekDate({ weekYear: 2017, weekNumber: 54 }).isValid()).toBe(false);
-  expect(DateTime.fromISOWeekDate({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid()).toBe(
-    false
-  );
-  expect(DateTime.fromISOWeekDate({ weekYear: 'goats' }).isValid()).toBe(false);
+test('DateTime.fromObject() returns invalid for invalid values', () => {
+  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid()).toBe(false);
+  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid()).toBe(false);
+  expect(DateTime.fromObject({ weekYear: 'goats' }).isValid()).toBe(false);
 });

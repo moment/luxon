@@ -274,52 +274,9 @@ export class DateTime {
   /**
    * Create an DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
-   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to timezone()
-   * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
-   * @example DateTime.fromObject({year: 1982}).toISODate() //=> '1982-01-01T00'
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'utc')
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'local')
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'America/New_York')
-   * @return {DateTime}
-   */
-  static fromObject(obj, zone) {
-    const tsNow = Settings.now(),
-      zoneToUse = Util.normalizeZone(zone),
-      offsetProvis = zoneToUse.offset(tsNow),
-      objNow = tsToObj(tsNow, offsetProvis),
-      normalized = Util.normalizeObject(obj);
-
-    let foundFirst = false;
-    for (const u of Util.orderedUnits) {
-      const v = normalized[u];
-      if (!Util.isUndefined(v)) {
-        foundFirst = true;
-      } else if (foundFirst) {
-        normalized[u] = defaultUnitValues[u];
-      } else {
-        normalized[u] = objNow[u];
-      }
-    }
-
-    if (validateObject(normalized)) {
-      const [tsFinal] = objToTS(normalized, zoneToUse, offsetProvis),
-        inst = new DateTime({ ts: tsFinal, zone: zoneToUse });
-
-      // weekday has no effect except that it can cause invalidity
-      if (!Util.isUndefined(obj.weekday) && obj.weekday !== inst.weekday()) {
-        return DateTime.invalid();
-      }
-
-      return inst;
-    } else {
-      return DateTime.invalid();
-    }
-  }
-
-  /**
-   * Create an DateTime from a Javascript object with keys like 'weekYear', 'weekNumber', and 'hour' with reasonable defaults.
-   * @param {Object} obj - the object to create the DateTime from
+   * @param {number} obj.year - a year, such as 1987
+   * @param {number} obj.month - a month, 1-12
+   * @param {number} obj.day - a day of the month, 1-31, depending on the month
    * @param {number} obj.weekYear - an ISO week year
    * @param {number} obj.weekNumber - an ISO week number, between 1 and 52 or 53, depending on the year
    * @param {number} obj.weekday - an ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
@@ -328,39 +285,81 @@ export class DateTime {
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
    * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to timezone()
-   * @example DateTime.fromISOWeekDay({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
-   * @example DateTime.fromISOWeekDay({ weekYear: 2016, weekNumber: 2, weekday: 3, hour: 12, minute: 23 }).toISO() //=> '2016-01-13T12:23:00.000'
-   * @example DateTime.fromISOWeekDay({ weekYear: 2016}).toISODate() //=> '2016-01-04'
-   * @example DateTime.fromISOWeekDay({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
+   * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
+   * @example DateTime.fromObject({year: 1982}).toISODate() //=> '1982-01-01T00'
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'utc')
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'local')
+   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'America/New_York')
+   * @example DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
    * @return {DateTime}
    */
-  static fromISOWeekDate(obj, zone) {
+  static fromObject(obj, zone) {
     const tsNow = Settings.now(),
       zoneToUse = Util.normalizeZone(zone),
       offsetProvis = zoneToUse.offset(tsNow),
-      objNow = Weeks.toWeekData(tsToObj(tsNow, offsetProvis)),
-      normalized = Util.normalizeObject(obj);
+      normalized = Util.normalizeObject(obj),
+      containsGregorDef = !Util.isUndefined(normalized.year) ||
+        !Util.isUndefined(normalized.month) ||
+        !Util.isUndefined(normalized.day),
+      definiteWeekDef = normalized.weekYear || normalized.weekNumber;
 
+    // Four cases:
+    // just a weekday -> this week's instance of that weekday
+    // gregorian data of any kind -> use it
+    // gregorian data of any kind + weekYear or weekNumber -> error
+    // weekYear/weekNumber data -> use it
+
+    if (containsGregorDef && definiteWeekDef) {
+      throw new Error("Can't mix weekYear/weekNumber units with year/month/day");
+    }
+
+    const useWeekData = definiteWeekDef || (normalized.weekday && !containsGregorDef);
+
+    // configure ourselves to deal with gregorian dates or week stuff
+    let units, defaultValues, objNow;
+    if (useWeekData) {
+      units = Util.orderedWeekUnits;
+      defaultValues = defaultWeekUnitValues;
+      objNow = Weeks.toWeekData(tsToObj(tsNow, offsetProvis));
+    } else {
+      units = Util.orderedUnits;
+      defaultValues = defaultUnitValues;
+      objNow = tsToObj(tsNow, offsetProvis);
+    }
+
+    // set default values for missing stuff
     let foundFirst = false;
-    for (const u of Util.orderedWeekUnits) {
+    for (const u of units) {
       const v = normalized[u];
       if (!Util.isUndefined(v)) {
         foundFirst = true;
       } else if (foundFirst) {
-        normalized[u] = defaultWeekUnitValues[u];
+        normalized[u] = defaultValues[u];
       } else {
         normalized[u] = objNow[u];
       }
     }
 
-    if (Weeks.validateWeekData(normalized)) {
-      const gregorian = Weeks.toGregorian(normalized),
-        [tsFinal] = objToTS(gregorian, zoneToUse, offsetProvis);
-
-      return new DateTime({ ts: tsFinal, zone: zoneToUse });
-    } else {
+    // make sure the values we have are in range
+    if (
+      (useWeekData && !Weeks.validateWeekData(normalized)) ||
+      (!useWeekData && !validateObject(normalized))
+    ) {
       return DateTime.invalid();
     }
+
+    // compute the actual time
+    const gregorian = useWeekData ? Weeks.toGregorian(normalized) : normalized,
+      [tsFinal] = objToTS(gregorian, zoneToUse, offsetProvis),
+      inst = new DateTime({ ts: tsFinal, zone: zoneToUse });
+
+    // gregorian data + weekday serves only to validate
+    if (normalized.weekday && containsGregorDef && obj.weekday !== inst.weekday()) {
+      return DateTime.invalid();
+    }
+
+    return inst;
   }
 
   /**
@@ -381,9 +380,7 @@ export class DateTime {
     if (vals) {
       const { local, offset } = context,
         interpretationZone = local ? zone : new FixedOffsetZone(offset),
-        inst = Util.isUndefined(vals.weekday)
-          ? DateTime.fromObject(vals, interpretationZone)
-          : DateTime.fromISOWeekDate(vals, interpretationZone);
+        inst = DateTime.fromObject(vals, interpretationZone);
       return setZone ? inst : inst.timezone(zone);
     } else {
       return DateTime.invalid();
@@ -405,18 +402,9 @@ export class DateTime {
     { zone = Settings.defaultZone, localeCode = null, nums = null, cal = null } = {}
   ) {
     const parser = new Parser(Locale.fromOpts({ localeCode, nums, cal })),
-      result = parser.parseDateTime(text, fmt),
-      containsGregorDef = !Util.isUndefined(result.year) ||
-        !Util.isUndefined(result.month) ||
-        !Util.isUndefined(result.day),
-      definiteWeekDef = result.weekYear || result.weekNumber;
-
+      result = parser.parseDateTime(text, fmt);
     if (Object.keys(result).length === 0) {
       return DateTime.invalid();
-    } else if (containsGregorDef && definiteWeekDef) {
-      throw new Error("Can't mix weekYear/weekNumber units with year/month/day");
-    } else if (definiteWeekDef || (result.weekday && !containsGregorDef)) {
-      return DateTime.fromISOWeekDate(result, zone);
     } else {
       return DateTime.fromObject(result, zone);
     }
