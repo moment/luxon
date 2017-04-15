@@ -211,7 +211,7 @@ function dateTimeFromMatches(matches) {
  * @private
  */
 
-export class Parser {
+export class TokenParser {
   constructor(loc) {
     Object.defineProperty(this, 'loc', { value: loc, enumerable: true });
   }

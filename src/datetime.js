@@ -6,8 +6,8 @@ import { FixedOffsetZone } from './zones/fixedOffsetZone';
 import { LocalZone } from './zones/localZone';
 import { Locale } from './impl/locale';
 import { Util } from './impl/util';
-import { ISOParser } from './impl/isoParser';
-import { Parser } from './impl/parser';
+import { RegexParser } from './impl/regexParser';
+import { TokenParser } from './impl/tokenParser';
 import { Conversions } from './impl/conversions';
 
 const INVALID = 'Invalid Date';
@@ -395,7 +395,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromISO(text, { setZone = false, zone = Settings.defaultZone } = {}) {
-    const [vals, context] = ISOParser.parseISODate(text);
+    const [vals, context] = RegexParser.parseISODate(text);
     if (vals) {
       const { local, offset } = context,
         interpretationZone = local ? zone : new FixedOffsetZone(offset),
@@ -420,7 +420,7 @@ export class DateTime {
     fmt,
     { zone = Settings.defaultZone, localeCode = null, nums = null, cal = null } = {}
   ) {
-    const parser = new Parser(Locale.fromOpts({ localeCode, nums, cal })),
+    const parser = new TokenParser(Locale.fromOpts({ localeCode, nums, cal })),
       result = parser.parseDateTime(text, fmt);
     if (Object.keys(result).length === 0) {
       return DateTime.invalid();
@@ -437,7 +437,7 @@ export class DateTime {
    * @return {object}
    */
   static fromStringExplain(text, fmt, options = {}) {
-    const parser = new Parser(Locale.fromOpts(options));
+    const parser = new TokenParser(Locale.fromOpts(options));
     return parser.explainParse(text, fmt);
   }
 
