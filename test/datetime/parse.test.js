@@ -227,6 +227,36 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     millisecond: 123
   });
 
+  isSame('2016-200', {
+    year: 2016,
+    month: 7,
+    day: 18,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+
+  isSame('2016200', {
+    year: 2016,
+    month: 7,
+    day: 18,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+
+  isSame('2016-200T09:24:15.123', {
+    year: 2016,
+    month: 7,
+    day: 18,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+
   // these are formats that aren't technically valid but we parse anyway.
   // Testing them more to document them than anything else
   isSame('2016-05-25T0924:15.123', {
@@ -277,12 +307,11 @@ test('DateTime.fromISO() rejects poop', () => {
   rejects('2016-05-25T08:04:4');
   rejects('2016-05-25T:03:4');
   rejects('2016-05-25T08::4');
+  rejects('2016-W32-02');
 
   // some of these are actually valid iso we don't take (yet)
   rejects('2016-08');
-  rejects('2016-082');
   rejects('2016-W32');
-  rejects('2016-W32-02');
 });
 
 //------
@@ -373,9 +402,19 @@ test('DateTime.fromString() defaults weekday to this week', () => {
   expect(d2.weekday()).toBe(3);
 });
 
+test('DateTime.fromString() parses ordinals', () => {
+  const d = DateTime.fromString('2016 200', 'yyyy DDD');
+  expect(d.year()).toBe(2016);
+  expect(d.ordinal()).toBe(200);
+});
+
 test('DateTime.fromString() throws on mixed units', () => {
   expect(() => {
     DateTime.fromString('2017 34', 'yyyy WW');
+  }).toThrow();
+
+  expect(() => {
+    DateTime.fromString('2017 05 340', 'yyyy MM DDD');
   }).toThrow();
 });
 

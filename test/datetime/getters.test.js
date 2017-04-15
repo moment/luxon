@@ -59,6 +59,14 @@ test('DateTime#weekday() returns the weekday', () => {
 });
 
 //------
+// year/ordinal
+//------
+
+test('DateTime#ordinal() returns the ordinal', () => {
+  expect(dateTime.ordinal()).toBe(145);
+});
+
+//------
 // locale
 //------
 test('DateTime#locale() returns the locale', () => {

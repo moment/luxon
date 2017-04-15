@@ -8,13 +8,13 @@ import { Locale } from './impl/locale';
 import { Util } from './impl/util';
 import { ISOParser } from './impl/isoParser';
 import { Parser } from './impl/parser';
-import { Weeks } from './impl/weeks';
+import { Conversions } from './impl/conversions';
 
 const INVALID = 'Invalid Date';
 
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
-    dt.weekData = Weeks.toWeekData(dt.c);
+    dt.weekData = Conversions.gregorianToWeek(dt.c);
   }
   return dt.weekData;
 }
@@ -143,6 +143,13 @@ const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, mil
   defaultWeekUnitValues = {
     weekNumber: 1,
     weekday: 1,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  },
+  defaultOrdinalUnitValues = {
+    ordinal: 1,
     hour: 0,
     minute: 0,
     second: 0,
@@ -277,6 +284,7 @@ export class DateTime {
    * @param {number} obj.year - a year, such as 1987
    * @param {number} obj.month - a month, 1-12
    * @param {number} obj.day - a day of the month, 1-31, depending on the month
+   * @param {number} obj.ordinal - day of the year, 1-365 or 366
    * @param {number} obj.weekYear - an ISO week year
    * @param {number} obj.weekNumber - an ISO week number, between 1 and 52 or 53, depending on the year
    * @param {number} obj.weekday - an ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
@@ -299,33 +307,41 @@ export class DateTime {
       zoneToUse = Util.normalizeZone(zone),
       offsetProvis = zoneToUse.offset(tsNow),
       normalized = Util.normalizeObject(obj),
-      containsGregorDef = !Util.isUndefined(normalized.year) ||
-        !Util.isUndefined(normalized.month) ||
-        !Util.isUndefined(normalized.day),
+      containsOrdinal = !Util.isUndefined(normalized.ordinal),
+      containsGregorYear = !Util.isUndefined(normalized.year),
+      containsGregorMD = !Util.isUndefined(normalized.month) || !Util.isUndefined(normalized.day),
+      containsGregor = containsGregorYear || containsGregorMD,
       definiteWeekDef = normalized.weekYear || normalized.weekNumber;
 
-    // Four cases:
-    // just a weekday -> this week's instance of that weekday
-    // gregorian data of any kind -> use it
-    // gregorian data of any kind + weekYear or weekNumber -> error
-    // weekYear/weekNumber data -> use it
+    // cases:
+    // just a weekday -> this week's instance of that weekday, no worries
+    // (gregorian data or ordinal) + (weekYear or weekNumber) -> error
+    // (gregorian month or day) + ordinal -> error
+    // otherwise just use weeks or ordinals or gregorian, depending on what's specified
 
-    if (containsGregorDef && definiteWeekDef) {
-      throw new Error("Can't mix weekYear/weekNumber units with year/month/day");
+    if ((containsGregor || containsOrdinal) && definiteWeekDef) {
+      throw new Error("Can't mix weekYear/weekNumber units with year/month/day or ordinals");
     }
 
-    const useWeekData = definiteWeekDef || (normalized.weekday && !containsGregorDef);
+    if (containsGregorMD && containsOrdinal) {
+      throw new Error("Can't mix ordinal dates with month/day");
+    }
+
+    const useWeekData = definiteWeekDef || (normalized.weekday && !containsGregor);
 
     // configure ourselves to deal with gregorian dates or week stuff
-    let units, defaultValues, objNow;
+    let units, defaultValues, objNow = tsToObj(tsNow, offsetProvis);
     if (useWeekData) {
       units = Util.orderedWeekUnits;
       defaultValues = defaultWeekUnitValues;
-      objNow = Weeks.toWeekData(tsToObj(tsNow, offsetProvis));
+      objNow = Conversions.gregorianToWeek(objNow);
+    } else if (containsOrdinal) {
+      units = Util.orderedOrdinalUnits;
+      defaultValues = defaultOrdinalUnitValues;
+      objNow = Conversions.gregorianToOrdinal(objNow);
     } else {
       units = Util.orderedUnits;
       defaultValues = defaultUnitValues;
-      objNow = tsToObj(tsNow, offsetProvis);
     }
 
     // set default values for missing stuff
@@ -342,20 +358,23 @@ export class DateTime {
     }
 
     // make sure the values we have are in range
-    if (
-      (useWeekData && !Weeks.validateWeekData(normalized)) ||
-      (!useWeekData && !validateObject(normalized))
-    ) {
+    const valid = useWeekData
+      ? Conversions.validateWeekData(normalized)
+      : containsOrdinal ? Conversions.validateOrdinalData(normalized) : validateObject(normalized);
+
+    if (!valid) {
       return DateTime.invalid();
     }
 
     // compute the actual time
-    const gregorian = useWeekData ? Weeks.toGregorian(normalized) : normalized,
+    const gregorian = useWeekData
+      ? Conversions.weekToGregorian(normalized)
+      : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
       [tsFinal] = objToTS(gregorian, zoneToUse, offsetProvis),
       inst = new DateTime({ ts: tsFinal, zone: zoneToUse });
 
     // gregorian data + weekday serves only to validate
-    if (normalized.weekday && containsGregorDef && obj.weekday !== inst.weekday()) {
+    if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday()) {
       return DateTime.invalid();
     }
 
@@ -552,17 +571,29 @@ export class DateTime {
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
    * @example dt.set({ weekday: 5 })
+   * @example dt.set({ year: 2005, ordinal: 234 })
    * @return {DateTime}
    */
   set(values) {
     const normalized = Util.normalizeObject(values),
       settingWeekStuff = !Util.isUndefined(normalized.weekYear) ||
         !Util.isUndefined(normalized.weekNumber) ||
-        !Util.isUndefined(normalized.weekday),
-      mixed = settingWeekStuff
-        ? Weeks.toGregorian(Object.assign(Weeks.toWeekData(this.c), normalized))
-        : Object.assign(this.toObject(), normalized),
-      [ts, o] = objToTS(mixed, this.zone, this.o);
+        !Util.isUndefined(normalized.weekday);
+
+    let mixed;
+    if (settingWeekStuff) {
+      mixed = Conversions.weekToGregorian(
+        Object.assign(Conversions.gregorianToWeek(this.c), normalized)
+      );
+    } else if (!Util.isUndefined(normalized.ordinal)) {
+      mixed = Conversions.ordinalToGregorian(
+        Object.assign(Conversions.gregorianToOrdinal(this.c), normalized)
+      );
+    } else {
+      mixed = Object.assign(this.toObject(), normalized);
+    }
+
+    const [ts, o] = objToTS(mixed, this.zone, this.o);
     return clone(this, { ts, o });
   }
 
@@ -635,18 +666,55 @@ export class DateTime {
       : this.set({ weekday });
   }
 
+  /**
+   * Gets or "sets" the ordinal (i.e. the day of the year)
+   * @param {number} ordinal - the ordinal to set. If omitted, `ordinal()` acts as a getter for the ordinal number.
+   * @example DateTime.local(2017, 5, 25).ordinal(200).toISODate() //=> "2017-07-19"
+   * @example DateTime.local(2017, 5, 25).ordinal() //=> 145
+   * @return {number|DateTime}
+   */
+  ordinal(ordinal) {
+    return Util.isUndefined(ordinal)
+      ? this.valid ? Conversions.gregorianToOrdinal(this.c).ordinal : NaN
+      : this.set({ ordinal });
+  }
+
+  /**
+   * Gets the UTC offset of this DateTime in minutes
+   * @example DateTime.local().offset() //=> -240
+   * @example DateTime.utc().offset() //=> 0
+   * @return {number}
+   */
   offset() {
     return this.valid ? this.zone.offset(this.ts) : NaN;
   }
 
+  /**
+   * Returns true if this DateTime is in a leap year, false otherwise
+   * @example DateTime.local(2016).isInLeapYear() //=> true
+   * @example DateTime.local(2013).isInLeapYear() //=> false
+   * @return {boolean}
+   */
   isInLeapYear() {
-    return Util.isLeapyear(this.year());
+    return Util.isLeapYear(this.year());
   }
 
+  /**
+   * Returns the number of days in this DateTime's month
+   * @example DateTime.local(2016, 2).days() //=> 29
+   * @example DateTime.local(2016, 3).days() //=> 31
+   * @return {number}
+   */
   daysInMonth() {
     return Util.daysInMonth(this.year(), this.month());
   }
 
+  /**
+   * Returns the number of days in this DateTime's year
+   * @example DateTime.local(2016).daysInYear() //=> 366
+   * @example DateTime.local(2013).daysInYear() //=> 365
+   * @return {number}
+   */
   daysInYear() {
     return this.valid ? Util.daysInYear(this.year()) : NaN;
   }

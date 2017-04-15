@@ -78,7 +78,23 @@ test("DateTime#weekday() sets the weekday to this week's matching day", () => {
 });
 
 //------
+// year/ordinal
+//------
+test('DateTime#ordinal() sets the date to the ordinal within the current year', () => {
+  const modified = dt.ordinal(200);
+  expect(modified.year()).toBe(1982);
+  expect(modified.month()).toBe(7);
+  expect(modified.day()).toBe(19);
+  expect(modified.hour()).toBe(9);
+  expect(modified.minute()).toBe(23);
+  expect(modified.second()).toBe(54);
+  expect(modified.millisecond()).toBe(123);
+});
+
+//------
 // set multiple things
 //------
 
-// todo
+//------
+// set invalid things
+//------

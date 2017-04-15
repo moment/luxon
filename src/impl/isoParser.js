@@ -33,6 +33,7 @@ export class ISOParser {
     const timeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
       ymdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/,
       weekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
+      ordinalRegex = /^(\d{4})-?(\d{3})/,
       parse10 = inty => parseInt(inty, 10);
 
     function extractTime(match, cursor) {
@@ -65,6 +66,15 @@ export class ISOParser {
       return [item, {}, cursor + 3];
     }
 
+    function extractOrdinalData(match, cursor) {
+      const item = {
+        year: parse10(match[cursor]),
+        ordinal: parse10(match[cursor + 1])
+      };
+
+      return [item, {}, cursor + 2];
+    }
+
     function extractYmd(match, cursor) {
       const item = {
         year: parse10(match[cursor]),
@@ -76,8 +86,9 @@ export class ISOParser {
     }
 
     const ymdComb = [combine(ymdRegex, timeRegex), [extractYmd, extractTime]],
-      weekComb = [combine(weekRegex, timeRegex), [extractWeekData, extractTime]];
-    return parse(s, ymdComb, weekComb);
+      weekComb = [combine(weekRegex, timeRegex), [extractWeekData, extractTime]],
+      ordinalCombo = [combine(ordinalRegex, timeRegex), [extractOrdinalData, extractTime]];
+    return parse(s, ymdComb, weekComb, ordinalCombo);
   }
   // static parseISODuration(s, opts = {}) {
   // }

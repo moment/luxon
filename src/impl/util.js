@@ -173,7 +173,8 @@ export class Util {
       weeksnumber: 'weekNumber',
       weeknumbers: 'weekNumber',
       weekyear: 'weekYear',
-      weekyears: 'weekYear'
+      weekyears: 'weekYear',
+      ordinal: 'ordinal'
     }[unit ? unit.toLowerCase() : unit];
 
     if (!normalized) throw new Error(`Invalid unit ${unit}`);
@@ -206,3 +207,5 @@ Util.orderedWeekUnits = [
   'second',
   'millisecond'
 ];
+
+Util.orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];

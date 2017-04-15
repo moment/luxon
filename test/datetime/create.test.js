@@ -342,11 +342,11 @@ test('DateTime.fromObject() w/weekYears handles skew with Gregorian years', () =
 });
 
 test('DateTime.fromObject() w/weeks defaults high-order values to the current date', () => {
-  const dt = DateTime.fromObject({}), now = DateTime.local();
+  const dt = DateTime.fromObject({ weekday: 2 }), now = DateTime.local();
 
   expect(dt.weekYear()).toBe(now.weekYear());
   expect(dt.weekNumber()).toBe(now.weekNumber());
-  expect(dt.weekday()).toBe(now.weekday());
+  expect(dt.weekday()).toBe(2);
 });
 
 test('DateTime.fromObject() w/weeks defaults low-order values to their minimums', () => {
@@ -359,6 +359,27 @@ test('DateTime.fromObject() w/weeks defaults low-order values to their minimums'
   expect(dt.minute()).toBe(0);
   expect(dt.second()).toBe(0);
   expect(dt.millisecond()).toBe(0);
+});
+
+test('DateTime.fromObject() w/ordinals handles fully specified dates', () => {
+  const dt = DateTime.fromObject({
+    year: 2016,
+    ordinal: 200,
+    hour: 9,
+    minute: 23,
+    second: 54,
+    millisecond: 123
+  });
+  expect(dt.year()).toBe(2016);
+  expect(dt.ordinal()).toBe(200);
+  expect(dt.month()).toBe(7);
+  expect(dt.day()).toBe(18);
+});
+
+test('DateTime.fromObject() w/ordinal defaults to the current year', () => {
+  const dt = DateTime.fromObject({ ordinal: 200 }), now = DateTime.local();
+  expect(dt.year()).toBe(now.year());
+  expect(dt.ordinal()).toBe(200);
 });
 
 test('DateTime.fromObject() returns invalid for invalid values', () => {
