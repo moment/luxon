@@ -600,8 +600,8 @@ export class DateTime {
   /**
    * Gets or "sets" the year.
    * @param {number} year - the year to set. If omitted, `year()` acts as a getter for the year.
-   * @example DateTime.local(2017, 5, 25).year(1982).toISODate() //=> "1982-05-25"
    * @example DateTime.local(2017, 5, 25).year() //=> 2017
+   * @example DateTime.local(2017, 5, 25).year(1982).toISODate() //=> "1982-05-25"
    * @return {number|DateTime}
    */
   year(year) {
@@ -609,10 +609,10 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the month.
+   * Gets or "sets" the month (1-12).
    * @param {number} month - the month to set. If omitted, `month()` acts as a getter for the month.
-   * @example DateTime.local(2017, 5, 25).month(6).toISODate() //=> "2017-06-25"
    * @example DateTime.local(2017, 5, 25).month() //=> 5
+   * @example DateTime.local(2017, 5, 25).month(6).toISODate() //=> "2017-06-25"
    * @return {number|DateTime}
    */
   month(month) {
@@ -620,46 +620,101 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the day of the day.
+   * Gets or "sets" the day of the month (1-30ish).
    * @param {number} day - the day to set. If omitted, `day()` acts as a getter for the day.
-   * @example DateTime.local(2017, 5, 25).day(26).toISODate() //=> "2017-05-26"
    * @example DateTime.local(2017, 5, 25).day() //=> 25
+   * @example DateTime.local(2017, 5, 25).day(26).toISODate() //=> "2017-05-26"
    * @return {number|DateTime}
    */
   day(day) {
     return Util.isUndefined(day) ? this.valid ? this.c.day : NaN : this.set({ day });
   }
 
+  /**
+   * Gets or "sets" the hour of the day (0-23).
+   * @param {number} hour - the hour to set. If omitted, `hour()` acts as a getter for the hour.
+   * @example DateTime.local(2017, 5, 25, 9).hour() //=> 9
+   * @example DateTime.local(2017, 5, 25, 9).hour(13).toISOTime() //=> 13:00:00.000"
+   * @return {number|DateTime}
+   */
   hour(hour) {
     return Util.isUndefined(hour) ? this.valid ? this.c.hour : NaN : this.set({ hour });
   }
 
+  /**
+   * Gets or "sets" the minute of the hour (0-59).
+   * @param {number} minute - the minute to set. If omitted, `minute()` acts as a getter for the minute.
+   * @example DateTime.local(2017, 5, 25, 9, 30).minute() //=> 30
+   * @example DateTime.local(2017, 5, 25, 9, 15).minute(45).toISOTime() //=> "09:45:00.000"
+   * @return {number|DateTime}
+   */
   minute(minute) {
     return Util.isUndefined(minute) ? this.valid ? this.c.minute : NaN : this.set({ minute });
   }
 
+  /**
+   * Gets or "sets" the second of the minute (0-59).
+   * @param {number} second - the second to set. If omitted, `second()` acts as a getter for the second.
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52).second() //=> 52
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52).second(45).toISOTime() //=> "09:30:45.000"
+   * @return {number|DateTime}
+   */
   second(second) {
     return Util.isUndefined(second) ? this.valid ? this.c.second : NaN : this.set({ second });
   }
 
+  /**
+   * Gets or "sets" the millisecond of the second (0-999).
+   * @param {number} millisecond - the millisecond to set. If omitted, `millisecond()` acts as a getter for the millisecond.
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond() //=> 654
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond(236).toISOTime() //=> "09:30:52.226"
+   * @return {number|DateTime}
+   */
   millisecond(v) {
     return Util.isUndefined(v)
       ? this.valid ? this.c.millisecond : NaN
       : this.set({ millisecond: v });
   }
-
-  weekNumber(weekNumber) {
-    return Util.isUndefined(weekNumber)
-      ? this.valid ? possiblyCachedWeekData(this).weekNumber : NaN
-      : this.set({ weekNumber });
-  }
-
+  
+  /**
+   * Gets or "sets" the week year.
+   * The setter maintains the current week number and day of the week.
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @param {number} weekYear - the week year to set. If omitted, `weekYear()` acts as a getter for the week year.
+   * @example DateTime.local(2014, 11, 31).weekYear() //=> 2015
+   * @example DateTime.local(2017, 5, 25).weekYear(2016).toISODate() //=> "2015-05-21"
+   * @return {number|DateTime}
+   */
   weekYear(weekYear) {
     return Util.isUndefined(weekYear)
       ? this.valid ? possiblyCachedWeekData(this).weekYear : NaN
       : this.set({ weekYear });
   }
 
+  /**
+   * Gets or "sets" the week number of the week year (1-52ish).
+   * The setter maintains the current day of the week.
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @param {number} weekNumber - the week number to set. If omitted, `weekNumber()` acts as a getter for the week number.
+   * @example DateTime.local(2017, 5, 25).weekNumber() //=> 21
+   * @example DateTime.local(2017, 5, 25).weekNumber(15).toISODate() //=> "2017-04-13"
+   * @return {number|DateTime}
+   */
+  weekNumber(weekNumber) {
+    return Util.isUndefined(weekNumber)
+      ? this.valid ? possiblyCachedWeekData(this).weekNumber : NaN
+      : this.set({ weekNumber });
+  }
+
+  /**
+   * Gets or "sets" the day of the week.
+   * 1 is Monday and 7 is Sunday
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @param {number} weekday - the weekday to set. If omitted, `weekday()` acts as a getter for the weekday.
+   * @example DateTime.local(2014, 11, 31).weekday() //=> 4
+   * @example DateTime.local(2017, 5, 25).weekday(1).toISODate() //=> "2015-05-22"
+   * @return {number|DateTime}
+   */
   weekday(weekday) {
     return Util.isUndefined(weekday)
       ? this.valid ? possiblyCachedWeekData(this).weekday : NaN
