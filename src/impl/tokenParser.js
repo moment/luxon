@@ -5,10 +5,6 @@ function intUnit(regex, post = i => i) {
   return { regex, deser: s => post(parseInt(s, 10)) };
 }
 
-function untruncateYear(years) {
-  return years > 60 ? 1900 + years : 2000 + years;
-}
-
 function oneOf(strings, startIndex) {
   return { regex: RegExp(strings.join('|')), deser: s => strings.indexOf(s) + startIndex };
 }
@@ -33,7 +29,7 @@ function unitForToken(token, loc) {
         case 'yyyy':
           return intUnit(four);
         case 'yy':
-          return intUnit(twoToFour, untruncateYear);
+          return intUnit(twoToFour, Util.untruncateYear);
 
         // months
         case 'M':
@@ -95,7 +91,7 @@ function unitForToken(token, loc) {
         case 'kkkk':
           return intUnit(four);
         case 'kk':
-          return intUnit(twoToFour, untruncateYear);
+          return intUnit(twoToFour, Util.untruncateYear);
 
         // weekNumber (W)
         case 'W':

@@ -195,6 +195,10 @@ export class Util {
   static timeObject(obj) {
     return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
   }
+
+  static untrucateYear(year) {
+    return year > 60 ? 1900 + year : 2000 + year;
+  }
 }
 
 Util.orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];

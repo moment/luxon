@@ -315,161 +315,84 @@ test('DateTime.fromISO() rejects poop', () => {
 });
 
 //------
-// .fromString
+// .fromRFC2822
 //-------
-test('DateTime.fromString() parses basic times', () => {
-  const i = DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(5);
-  expect(i.day()).toBe(25);
-  expect(i.hour()).toBe(9);
-  expect(i.minute()).toBe(10);
-  expect(i.second()).toBe(11);
-  expect(i.millisecond()).toBe(445);
-});
 
-test('DateTime.fromString() parses meridiems', () => {
-  let i = DateTime.fromString('1982/05/25 9 PM', 'yyyy/MM/dd h a');
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(5);
-  expect(i.day()).toBe(25);
-  expect(i.hour()).toBe(21);
-
-  i = DateTime.fromString('1982/05/25 9 AM', 'yyyy/MM/dd h a');
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(5);
-  expect(i.day()).toBe(25);
-  expect(i.hour()).toBe(9);
-});
-
-test('DateTime.fromString() parses eras', () => {});
-
-test('DateTime.fromString() parses month names', () => {
-  let i = DateTime.fromString('May 25 1982', 'LLLL dd yyyy');
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(5);
-  expect(i.day()).toBe(25);
-
-  i = DateTime.fromString('Sep 25 1982', 'LLL dd yyyy');
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(9);
-  expect(i.day()).toBe(25);
-
-  i = DateTime.fromString('mai 25 1982', 'LLLL dd yyyy', { localeCode: 'fr' });
-  expect(i.year()).toBe(1982);
-  expect(i.month()).toBe(5);
-  expect(i.day()).toBe(25);
-});
-
-test('DateTime.fromString() defaults yy to the right century', () => {});
-
-test('DateTime.fromString() parses offsets', () => {});
-
-test('DateTime.fromString() validates weekday numbers', () => {
-  let d = DateTime.fromString('2, 05/25/1982', 'E, LL/dd/yyyy');
-  expect(d.year()).toBe(1982);
-  expect(d.month()).toBe(5);
-  expect(d.day()).toBe(25);
-
-  d = DateTime.fromString('1, 05/25/1982', 'E, LL/dd/yyyy');
-  expect(d.isValid()).toBeFalsy();
-});
-
-test('DateTime.fromString() validates weekday names', () => {
-  let d = DateTime.fromString('Tuesday, 05/25/1982', 'EEEE, LL/dd/yyyy');
-  expect(d.year()).toBe(1982);
-  expect(d.month()).toBe(5);
-  expect(d.day()).toBe(25);
-
-  d = DateTime.fromString('Monday, 05/25/1982', 'EEEE, LL/dd/yyyy');
-  expect(d.isValid()).toBeFalsy();
-
-  d = DateTime.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', { localeCode: 'fr' });
-  expect(d.year()).toBe(1982);
-  expect(d.month()).toBe(5);
-  expect(d.day()).toBe(25);
-});
-
-test('DateTime.fromString() defaults weekday to this week', () => {
-  const d = DateTime.fromString('Monday', 'EEEE'), now = DateTime.local();
-  expect(d.weekYear()).toBe(now.weekYear());
-  expect(d.weekNumber()).toBe(now.weekNumber());
-  expect(d.weekday()).toBe(1);
-
-  const d2 = DateTime.fromString('3', 'E');
-  expect(d2.weekYear()).toBe(now.weekYear());
-  expect(d2.weekNumber()).toBe(now.weekNumber());
-  expect(d2.weekday()).toBe(3);
-});
-
-test('DateTime.fromString() parses ordinals', () => {
-  const d = DateTime.fromString('2016 200', 'yyyy DDD');
-  expect(d.year()).toBe(2016);
-  expect(d.ordinal()).toBe(200);
-});
-
-test('DateTime.fromString() throws on mixed units', () => {
-  expect(() => {
-    DateTime.fromString('2017 34', 'yyyy WW');
-  }).toThrow();
-
-  expect(() => {
-    DateTime.fromString('2017 05 340', 'yyyy MM DDD');
-  }).toThrow();
-});
-
-test('DateTime.fromString() accepts weekYear by itself', () => {
-  const d = DateTime.fromString('2004', 'kkkk');
-  expect(d.weekYear()).toBe(2004);
-  expect(d.weekNumber()).toBe(1);
-  expect(d.weekday()).toBe(1);
-});
-
-test('DateTime.fromString() accepts weekNumber by itself', () => {
-  const d = DateTime.fromString('17', 'WW'), now = DateTime.local();
-  expect(d.weekYear()).toBe(now.weekYear());
-  expect(d.weekNumber()).toBe(17);
-  expect(d.weekday()).toBe(1);
-});
-
-test('DateTime.fromString() accepts weekYear/weekNumber/weekday', () => {
-  const d = DateTime.fromString('2004 17 2', 'kkkk WW E');
-  expect(d.weekYear()).toBe(2004);
-  expect(d.weekNumber()).toBe(17);
-  expect(d.weekday()).toBe(2);
-});
-
-test('DateTime.fromString() allows regex content', () => {
-  const d = DateTime.fromString('Monday', 'EEEE'), now = DateTime.local();
-  expect(d.weekYear()).toBe(now.weekYear());
-  expect(d.weekNumber()).toBe(now.weekNumber());
-  expect(d.weekday()).toBe(1);
-});
-
-test('DateTime.fromString() allows literals', () => {});
-
-test('DateTime.fromString() returns invalid when unparsed', () => {});
-
-test('DateTime.fromString() returns invalid for out-of-range values', () => {
-  const rejects = (s, fmt, opts = {}) =>
-    expect(DateTime.fromString(s, fmt, opts).isValid()).toBeFalsy();
-
-  rejects('Tuesday, 05/25/1982', 'EEEE, MM/dd/yyyy', { localeCode: 'fr' });
-  rejects('Giberish, 05/25/1982', 'EEEE, MM/dd/yyyy');
-  rejects('14/25/1982', 'MM/dd/yyyy');
-  rejects('05/46/1982', 'MM/dd/yyyy');
-});
-
-test('DateTime.fromString() accepts a zone argument', () => {
-  const d = DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS', {
-    zone: 'Asia/Tokyo'
+test('DateTime.fromRFC2822() accepts full format', () => {
+  const dt = DateTime.fromRFC2822('Tue, 01 Nov 2016 13:23:12 +0630');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 11,
+    day: 1,
+    hour: 6,
+    minute: 53,
+    second: 12,
+    millisecond: 0
   });
-  expect(d.offset()).toBe(9 * 60);
-  expect(d.year()).toBe(1982);
-  expect(d.month()).toBe(5);
-  expect(d.day()).toBe(25);
-  expect(d.hour()).toBe(9);
-  expect(d.minute()).toBe(10);
-  expect(d.second()).toBe(11);
-  expect(d.millisecond()).toBe(445);
 });
+
+test('DateTime.fromRFC2822() rejects incorrect days of the week', () => {
+  const dt = DateTime.fromRFC2822('Wed, 01 Nov 2016 13:23:12 +0600');
+  expect(dt.isValid()).toBe(false);
+});
+
+test('DateTime.fromRFC2822() can elide the day of the week', () => {
+  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 +0600');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 11,
+    day: 1,
+    hour: 7,
+    minute: 23,
+    second: 12,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromRFC2822() can elide seconds', () => {
+  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23 +0600');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 11,
+    day: 1,
+    hour: 7,
+    minute: 23,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromRFC2822() can use Z', () => {
+  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 Z');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 11,
+    day: 1,
+    hour: 13,
+    minute: 23,
+    second: 12,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromRFC2822() can use a weird subset of offset abbreviations', () => {
+  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 EST');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 11,
+    day: 1,
+    hour: 18,
+    minute: 23,
+    second: 12,
+    millisecond: 0
+  });
+});
+
+//------
+// .fromHTTP
+//-------

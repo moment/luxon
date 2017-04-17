@@ -139,6 +139,17 @@ function isoFormat(dt, format) {
     : INVALID;
 }
 
+function adjustZoneOfParsedDate(vals, context, setZone, zone) {
+  if (vals) {
+    const { local, offset } = context,
+      interpretationZone = local ? zone : new FixedOffsetZone(offset),
+      inst = DateTime.fromObject(vals, interpretationZone);
+    return setZone ? inst : inst.timezone(zone);
+  } else {
+    return DateTime.invalid();
+  }
+}
+
 const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
   defaultWeekUnitValues = {
     weekNumber: 1,
@@ -396,14 +407,23 @@ export class DateTime {
    */
   static fromISO(text, { setZone = false, zone = Settings.defaultZone } = {}) {
     const [vals, context] = RegexParser.parseISODate(text);
-    if (vals) {
-      const { local, offset } = context,
-        interpretationZone = local ? zone : new FixedOffsetZone(offset),
-        inst = DateTime.fromObject(vals, interpretationZone);
-      return setZone ? inst : inst.timezone(zone);
-    } else {
-      return DateTime.invalid();
-    }
+    return adjustZoneOfParsedDate(vals, context, setZone, zone);
+  }
+
+  /**
+   * Create a DateTime from an RFC 2822 string
+   * @param {string} text - the RFC 2822 string
+   * @param {Object} options - options to affect the creation
+   * @param {boolean} [options.zone='local'] - convert the time to this zone
+   * @param {boolean} [options.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
+   * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
+   * @example DateTime.fromRFC2822('Tue, 25 Nov 2016 13:23:12 +0600')
+   * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
+   * @return {DateTime}
+   */
+  static fromRFC2822(text, { setZone = false, zone = Settings.defaultZone } = {}) {
+    const [vals, context] = RegexParser.parseRFC2822Date(text);
+    return adjustZoneOfParsedDate(vals, context, setZone, zone);
   }
 
   /**
