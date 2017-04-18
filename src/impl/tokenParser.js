@@ -56,9 +56,9 @@ function unitForToken(token, loc) {
           return intUnit(two);
 
         // ordinals
-        case 'D':
+        case 'o':
           return intUnit(oneToThree);
-        case 'DDD':
+        case 'ooo':
           return intUnit(three);
 
         // time
@@ -166,7 +166,7 @@ function dateTimeFromMatches(matches) {
         return 'hour';
       case 'd':
         return 'day';
-      case 'D':
+      case 'o':
         return 'ordinal';
       case 'L':
       case 'M':

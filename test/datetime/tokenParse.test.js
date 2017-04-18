@@ -90,7 +90,7 @@ test('DateTime.fromString() defaults weekday to this week', () => {
 });
 
 test('DateTime.fromString() parses ordinals', () => {
-  const d = DateTime.fromString('2016 200', 'yyyy DDD');
+  const d = DateTime.fromString('2016 200', 'yyyy ooo');
   expect(d.year()).toBe(2016);
   expect(d.ordinal()).toBe(200);
 });
@@ -101,7 +101,7 @@ test('DateTime.fromString() throws on mixed units', () => {
   }).toThrow();
 
   expect(() => {
-    DateTime.fromString('2017 05 340', 'yyyy MM DDD');
+    DateTime.fromString('2017 05 340', 'yyyy MM ooo');
   }).toThrow();
 });
 

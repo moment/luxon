@@ -108,6 +108,7 @@ export class Formatter {
         }
       },
       tokenToString = token => {
+        // Where possible: http://cldr.unicode.org/translation/date-time#TOC-Stand-Alone-vs.-Format-Styles
         switch (token) {
           // ms
           case 'S':
@@ -165,79 +166,79 @@ export class Formatter {
 
           // weekdays - format
           case 'c':
+            // like 1
             return this.num(dt.weekday());
-          // like 1
           case 'ccc':
+            // like 'Tues'
             return string({ weekday: 'short' }, 'weekday');
-          // like 'Tues'
           case 'cccc':
+            // like 'Tuesday'
             return string({ weekday: 'long' }, 'weekday');
-          // like 'Tuesday'
           case 'ccccc':
+            // like 'T'
             return string({ weekday: 'narrow' }, 'weekday');
-          // like 'T'
           // weekdays - standalone
           case 'E':
+            // like 1
             return this.num(dt.weekday());
-          // like 1
           case 'EEE':
+            // like 'Tues'
             return string({ weekday: 'short' }, 'weekday');
-          // like 'Tues'
           case 'EEEE':
+            // like 'Tuesday'
             return string({ weekday: 'long' }, 'weekday');
-          // like 'Tuesday'
           case 'EEEEE':
+            // like 'T'
             return string({ weekday: 'narrow' }, 'weekday');
-          // like 'T'
           // months - format
           case 'L':
+            // like 1
             return string({ month: 'numeric', day: 'numeric' }, 'month');
-          // like 1
           case 'LL':
+            // like 01, doesn't seem to work
             return string({ month: '2-digit', day: 'numeric' }, 'month');
-          // like 01, doesn't seem to work
           case 'LLL':
+            // like Jan
             return string({ month: 'short', day: 'numeric' }, 'month');
-          // like Jan
           case 'LLLL':
+            // like January
             return string({ month: 'long' }, 'month');
-          // like January
           case 'LLLLL':
+            // like J
             return string({ month: 'narrow' }, 'month');
-          // like J
           // months - standalone
           case 'M':
+            // like 1
             return this.num(dt.month());
-          // like 1
           case 'MM':
+            // like 01
             return this.num(dt.month(), 2);
-          // like 01
           case 'MMM':
+            // like Jan
             return string({ month: 'short', day: 'numeric' }, 'month');
-          // like Jan
           case 'MMMM':
+            // like January
             return string({ month: 'long', day: 'numeric' }, 'month');
-          // like January
           case 'MMMMM':
+            // like J
             return string({ month: 'narrow' }, 'month');
-          // like J
           // years
           case 'y':
+            // like 2014
             return this.num(dt.year());
-          // like 2014
           case 'yy':
+            // like 14
             return this.num(dt.year().toString().slice(-2), 2);
-          // like 14
           case 'yyyy':
+            // like 0012
             return this.num(dt.year(), 4);
-          // like 0012
           // eras
           case 'G':
+            // like AD
             return string({ era: 'short' }, 'era');
-          // like AD
           case 'GG':
+            // like Anno Domini
             return string({ era: 'long' }, 'era');
-          // like Anno Domini
           case 'GGGGG':
             return string({ era: 'narrow' }, 'era');
           case 'kk':
@@ -248,20 +249,22 @@ export class Formatter {
             return this.num(dt.weekNumber());
           case 'WW':
             return this.num(dt.weekNumber(), 2);
-          // like A
+          case 'o':
+            return this.num(dt.ordinal());
+          case 'ooo':
+            return this.num(dt.ordinal(), 3);
           // macros
-          // Some of these output take zones or offsets. We have to choose between that
-          // internationalization, though
-          // since Node doesn't ship with Itln data and the polyfill doesn't support zones.
-          // Revisit when either of those change or I give up on this dance and require
-          // a special Node build.
           case 'D':
+            // like 10/14/1983
             return this.formatDateTime(dt, { year: 'numeric', month: 'numeric', day: 'numeric' });
           case 'DD':
+            // like Oct 14, 1983
             return this.formatDateTime(dt, { year: 'numeric', month: 'short', day: 'numeric' });
           case 'DDD':
+            // like October 14, 1983
             return this.formatDateTime(dt, { year: 'numeric', month: 'long', day: 'numeric' });
           case 'DDDD':
+            // like Tuesday, October 14, 1983
             return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'long',

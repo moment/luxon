@@ -133,7 +133,7 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
-function isoFormat(dt, format) {
+function formatMaybe(dt, format) {
   return dt.valid
     ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format)
     : INVALID;
@@ -695,7 +695,7 @@ export class DateTime {
       ? this.valid ? this.c.millisecond : NaN
       : this.set({ millisecond: v });
   }
-  
+
   /**
    * Gets or "sets" the week year.
    * The setter maintains the current week number and day of the week.
@@ -805,18 +805,22 @@ export class DateTime {
   }
 
   toISO() {
-    return isoFormat(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+    return formatMaybe(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
   }
 
   toISODate() {
-    return isoFormat(this, 'yyyy-MM-dd');
+    return formatMaybe(this, 'yyyy-MM-dd');
   }
 
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
     const f = suppressSeconds && this.second() === 0 && this.millisecond() === 0
       ? 'hh:mm'
       : suppressMilliseconds && this.millisecond() === 0 ? 'hh:mm:ss' : 'hh:mm:ss.SSS';
-    return isoFormat(this, f);
+    return formatMaybe(this, f);
+  }
+
+  toRFC2822() {
+    return formatMaybe(this.toUTC(), 'EEE, dd LLL yyyy hh:mm:ss +0000');
   }
 
   toString() {

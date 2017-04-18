@@ -34,7 +34,7 @@ test('DateTime#toISODate() is local to the zone', () => {
 //------
 // #toISOTime()
 //-------
-test('DateTime#toISOTime() returns ISO 8601 date', () => {
+test('DateTime#toISOTime() returns an ISO 8601 date', () => {
   expect(dt.toISOTime()).toBe('09:23:54.123');
 });
 
@@ -53,6 +53,22 @@ test("DateTime#toISOTime({suppressSeconds: true}) won't suppress milliseconds if
 test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if they're zero", () => {
   expect(dt.second(0).millisecond(0).toISOTime({ suppressSeconds: true })).toBe('09:23');
 });
+
+//------
+// #toRFC2822()
+//------
+
+test('DateTime#toRFC2822() returns an RFC 2822 date', () => {
+  expect(dt.toRFC2822()).toBe('Tue, 25 May 1982 09:23:54 +0000');
+});
+
+test('DateTime#toRFC2822() always returns UTC', () => {
+  expect(dt.toLocal().toRFC2822()).toBe('Tue, 25 May 1982 09:23:54 +0000');
+});
+
+//------
+// #toHTTP()
+//------
 
 //------
 // #toString()
@@ -316,6 +332,18 @@ test("DateTime#toFormatString('kk') returns the abbreviated week year", () => {
 
 test("DateTime#toFormatString('kkkk') returns the full week year", () => {
   expect(dt.toFormatString('kkkk')).toBe('1982');
+});
+
+test("DateTime#toForamtString('o') returns an unpadded ordinal", () => {
+  expect(dt.toFormatString('o')).toBe('145');
+  expect(dt.month(1).day(13).toFormatString('o')).toBe('13');
+  expect(dt.month(1).day(8).toFormatString('o')).toBe('8');
+});
+
+test("DateTime#toForamtString('ooo') returns an unpadded ordinal", () => {
+  expect(dt.toFormatString('ooo')).toBe('145');
+  expect(dt.month(1).day(13).toFormatString('ooo')).toBe('013');
+  expect(dt.month(1).day(8).toFormatString('ooo')).toBe('008');
 });
 
 test('DateTime#toFormatString returns a full formatted string', () => {
