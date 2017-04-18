@@ -334,13 +334,13 @@ test("DateTime#toFormatString('kkkk') returns the full week year", () => {
   expect(dt.toFormatString('kkkk')).toBe('1982');
 });
 
-test("DateTime#toForamtString('o') returns an unpadded ordinal", () => {
+test("DateTime#toFormatString('o') returns an unpadded ordinal", () => {
   expect(dt.toFormatString('o')).toBe('145');
   expect(dt.month(1).day(13).toFormatString('o')).toBe('13');
   expect(dt.month(1).day(8).toFormatString('o')).toBe('8');
 });
 
-test("DateTime#toForamtString('ooo') returns an unpadded ordinal", () => {
+test("DateTime#toFormatString('ooo') returns an unpadded ordinal", () => {
   expect(dt.toFormatString('ooo')).toBe('145');
   expect(dt.month(1).day(13).toFormatString('ooo')).toBe('013');
   expect(dt.month(1).day(8).toFormatString('ooo')).toBe('008');
