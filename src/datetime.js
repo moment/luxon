@@ -799,7 +799,18 @@ export class DateTime {
       ? Formatter.create(this.loc, opts).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
-
+  
+  /**
+   * Returns the a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor.
+   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
+   * of the DateTime in the assigned locale. The options
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @example DateTime.local().toLocaleString(); //=> 4/20/2017
+   * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', date: '2-digit'}); //=> 'Thu, Apr 20'
+   * @exampel DateTime.local().toLocaleString({weekday: 'long', month: 'long', date: '2-digit', hour: '2-digit', minute: '2-digit'});
+'Thu, Apr 20, 11:27'
+   * @return {number}
+   */
   toLocaleString(opts = {}) {
     return this.valid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID;
   }
