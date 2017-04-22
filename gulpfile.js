@@ -4,7 +4,6 @@ const babel = require('rollup-plugin-babel'),
   eslint = require('gulp-eslint'),
   filter = require('gulp-filter'),
   gulp = require('gulp'),
-  gulpif = require('gulp-if'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
   prettierOptions = require('./.prettier.js'),
@@ -38,6 +37,8 @@ function processLib(opts) {
     opts.entry = './src/luxon.js';
 
     const dest = `./dist/${opts.dest || opts.format}`,
+      // confession: I have no idea why piping to lazypipe works
+      // after dest, but you can't pipe directly but it does so...
       minify = lazypipe()
         .pipe(filter, ['**/*.js'])
         .pipe(babili, { mangle: { keepClassNames: true } })
@@ -51,7 +52,7 @@ function processLib(opts) {
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('.'))
       .pipe(gulp.dest(dest))
-      .pipe(gulpif(opts.mini, minify()));
+      .pipe(minify());
   };
 }
 
@@ -63,8 +64,7 @@ gulp.task(
     format: 'es',
     dest: 'es6',
     rollupOpts: { external: ['intl'] },
-    compile: false,
-    mini: true
+    compile: false
   })
 );
 
@@ -72,8 +72,7 @@ gulp.task(
   'amd',
   processLib({
     format: 'amd',
-    rollupOpts: { moduleName: 'luxon', external: ['intl'] },
-    mini: true
+    rollupOpts: { moduleName: 'luxon', external: ['intl'] }
   })
 );
 
@@ -83,8 +82,7 @@ gulp.task(
     format: 'iife',
     rollupOpts: { moduleName: 'luxon', globals: { intl: 'IntlPolyfill' }, external: ['intl'] },
     dest: 'global-es6',
-    compile: false,
-    mini: true
+    compile: false
   })
 );
 
@@ -93,8 +91,7 @@ gulp.task(
   processLib({
     format: 'iife',
     rollupOpts: { moduleName: 'luxon', globals: { intl: 'IntlPolyfill' }, external: ['intl'] },
-    dest: 'global',
-    mini: true
+    dest: 'global'
   })
 );
 

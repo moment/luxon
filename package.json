@@ -26,7 +26,6 @@
     "gulp-debug": "latest",
     "gulp-eslint": "latest",
     "gulp-filter": "latest",
-    "gulp-if": "latest",
     "gulp-jest": "latest",
     "gulp-prettier": "icambron/gulp-prettier",
     "gulp-rename": "latest",
