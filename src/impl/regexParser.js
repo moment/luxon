@@ -80,6 +80,23 @@ function extractISOTime(match, cursor) {
   return [item, context, cursor + 7];
 }
 
+// ISO duration parsing
+
+const isoDuration = /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/;
+
+function extractISODuration(match) {
+  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match;
+
+  return {
+    year: parse10(yearStr),
+    month: parse10(monthStr),
+    day: parse10(dayStr),
+    hour: parse10(hourStr),
+    minute: parse10(minuteStr),
+    second: parse10(secondStr)
+  };
+}
+
 // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
 // and not just that we're in -240 *right now*. But since I don't think these are used that often
 // I'm just going to ignore that
@@ -218,8 +235,9 @@ export class RegexParser {
     );
   }
 
-  // static parseISODuration(s, opts = {}) {
-  // }
+  static parseISODuration(s) {
+    return parse(s, [isoDuration, extractISODuration]);
+  }
 
   // static parseISOInterval(s, opts = {}) {
   // }

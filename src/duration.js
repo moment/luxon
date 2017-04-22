@@ -1,6 +1,7 @@
 import { Util } from './impl/util';
 import { Locale } from './impl/locale';
 import { Formatter } from './impl/formatter';
+import { RegexParser } from './impl/regexParser';
 
 const matrix = {
   year: {
@@ -56,7 +57,11 @@ export class Duration {
     return new Duration({ values: Util.normalizeObject(obj) });
   }
 
-  // static fromISO(text) {}
+  static fromISO(text) {
+    const vals = RegexParser.parseISODuration(text);
+    return Duration.fromObject(vals);
+  }
+
   // static fromString(text, fmt) {}
   locale(l) {
     return Util.isUndefined(l) ? this.loc : clone(this, { loc: Locale.create(l) });

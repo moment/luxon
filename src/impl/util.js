@@ -186,7 +186,10 @@ export class Util {
     const normalized = {};
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
-        normalized[Util.normalizeUnit(u)] = obj[u];
+        const v = obj[u];
+        if (v !== null && !Util.isUndefined(v) && !isNaN(v)) {
+          normalized[Util.normalizeUnit(u)] = v;
+        }
       }
     }
     return normalized;

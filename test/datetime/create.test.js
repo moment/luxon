@@ -385,5 +385,4 @@ test('DateTime.fromObject() w/ordinal defaults to the current year', () => {
 test('DateTime.fromObject() returns invalid for invalid values', () => {
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid()).toBe(false);
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid()).toBe(false);
-  expect(DateTime.fromObject({ weekYear: 'goats' }).isValid()).toBe(false);
 });
