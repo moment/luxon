@@ -22,6 +22,7 @@
     "eslint-plugin-import": "latest",
     "eslint-plugin-prettier": "latest",
     "gulp": "latest",
+    "gulp-babili": "latest",
     "gulp-debug": "latest",
     "gulp-eslint": "latest",
     "gulp-filter": "latest",

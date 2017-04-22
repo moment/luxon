@@ -1,4 +1,5 @@
 const babel = require('rollup-plugin-babel'),
+  babili = require('gulp-babili'),
   buffer = require('vinyl-buffer'),
   eslint = require('gulp-eslint'),
   filter = require('gulp-filter'),
@@ -11,8 +12,7 @@ const babel = require('rollup-plugin-babel'),
   rename = require('gulp-rename'),
   rollup = require('rollup-stream'),
   source = require('vinyl-source-stream'),
-  sourcemaps = require('gulp-sourcemaps'),
-  uglify = require('gulp-uglify');
+  sourcemaps = require('gulp-sourcemaps');
 
 function process(inopts) {
   const opts = Object.assign(
@@ -40,7 +40,7 @@ function processLib(opts) {
     const dest = `./dist/${opts.dest || opts.format}`,
       minify = lazypipe()
         .pipe(filter, ['**/*.js'])
-        .pipe(uglify)
+        .pipe(babili, { mangle: { keepClassNames: true } })
         .pipe(rename, { extname: '.min.js' })
         .pipe(sourcemaps.write, '.')
         .pipe(gulp.dest, dest);
@@ -59,7 +59,13 @@ gulp.task('cjs', processLib({ format: 'cjs', rollupOpts: { external: ['intl'] } 
 
 gulp.task(
   'es6',
-  processLib({ format: 'es', dest: 'es6', rollupOpts: { external: ['intl'] }, compile: false })
+  processLib({
+    format: 'es',
+    dest: 'es6',
+    rollupOpts: { external: ['intl'] },
+    compile: false,
+    mini: true
+  })
 );
 
 gulp.task(
@@ -77,7 +83,8 @@ gulp.task(
     format: 'iife',
     rollupOpts: { moduleName: 'luxon', globals: { intl: 'IntlPolyfill' }, external: ['intl'] },
     dest: 'global-es6',
-    compile: false
+    compile: false,
+    mini: true
   })
 );
 
@@ -93,17 +100,14 @@ gulp.task(
 
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
-gulp.task('test', ['cjs'], () => {
-  gulp.src('test').pipe(jest());
-});
+gulp.task('test', ['cjs'], () => gulp.src('test').pipe(jest()));
 
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'];
 
-gulp.task('lint', () =>
+gulp.task('lint', ['format'], () =>
   gulp.src(lintable).pipe(eslint()).pipe(eslint.format()).pipe(eslint.failAfterError()));
 
-gulp.task('format', () => {
-  gulp.src(lintable, { base: './' }).pipe(prettier(prettierOptions)).pipe(gulp.dest('./'));
-});
+gulp.task('format', () =>
+  gulp.src(lintable, { base: './' }).pipe(prettier(prettierOptions)).pipe(gulp.dest('./')));
 
-gulp.task('default', ['format', 'lint', 'build', 'test']);
+gulp.task('default', ['lint', 'build', 'test']);
