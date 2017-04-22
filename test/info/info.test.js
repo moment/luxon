@@ -6,7 +6,7 @@ import { Info } from '../../dist/cjs/luxon';
 // .months()
 //-------
 test('Info.months lists all the months', () => {
-  expect(Info.months('long', 'en')).toEqual([
+  expect(Info.months('long')).toEqual([
     'January',
     'February',
     'March',
@@ -117,7 +117,9 @@ test('Info.monthsFormat lists all the months', () => {
     'October',
     'November',
     'December'
-  ]); // this passes, but is wrong. These are the same as the standalone values
+  ]);
+
+  // this passes, but is wrong. These are the same as the standalone values
   expect(Info.monthsFormat('long', 'ru')).toEqual([
     'января',
     'февраля',
@@ -132,6 +134,7 @@ test('Info.monthsFormat lists all the months', () => {
     'ноября',
     'декабря'
   ]);
+
   expect(Info.monthsFormat('short', 'en')).toEqual([
     'Jan',
     'Feb',
@@ -146,6 +149,7 @@ test('Info.monthsFormat lists all the months', () => {
     'Nov',
     'Dec'
   ]);
+
   expect(Info.monthsFormat('numeric', 'en')).toEqual([
     '1',
     '2',
@@ -175,8 +179,11 @@ test('Info.weekdays lists all the weekdays', () => {
     'Saturday',
     'Sunday'
   ]);
+
   expect(Info.weekdays('short', 'en')).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+
   expect(Info.weekdays('narrow', 'en')).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+
   expect(Info.weekdays('long', 'ru')).toEqual([
     'понедельник',
     'вторник',
@@ -201,6 +208,7 @@ test('Info.weekdaysFormat lists all the weekdays', () => {
     'Saturday',
     'Sunday'
   ]);
+
   expect(Info.weekdaysFormat('short', 'en')).toEqual([
     'Mon',
     'Tue',

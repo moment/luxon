@@ -9,23 +9,23 @@ export class Info {
         DateTime.local().timezone(zone).month(5).offset();
   }
 
-  static months(length, locale, numbering) {
+  static months(length, locale = 'en', numbering = null) {
     return new Locale(locale, numbering).months(length);
   }
 
-  static monthsFormat(length, locale, numbering) {
+  static monthsFormat(length, locale = 'en', numbering = null) {
     return new Locale(locale, numbering).months(length, true);
   }
 
-  static weekdays(length, locale, numbering) {
+  static weekdays(length, locale = 'en', numbering = null) {
     return new Locale(locale, numbering).weekdays(length);
   }
 
-  static weekdaysFormat(length, locale, numbering) {
+  static weekdaysFormat(length, locale = 'en', numbering = null) {
     return new Locale(locale, numbering).weekdays(length, true);
   }
 
-  static meridiems(locale, numbering) {
+  static meridiems(locale = 'en', numbering = null) {
     return new Locale(locale, numbering).meridiems();
   }
 
