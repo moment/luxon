@@ -396,3 +396,59 @@ test('DateTime.fromRFC2822() can use a weird subset of offset abbreviations', ()
 //------
 // .fromHTTP
 //-------
+
+test('DateTime.fromHTTP() can parse RFC 1123', () => {
+  const dt = DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 1994,
+    month: 11,
+    day: 6,
+    hour: 8,
+    minute: 49,
+    second: 37,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromHTTP() can parse RFC 850', () => {
+  const dt = DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 1994,
+    month: 11,
+    day: 6,
+    hour: 8,
+    minute: 49,
+    second: 37,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromHTTP() can parse ASCII dates with one date digit', () => {
+  const dt = DateTime.fromHTTP('Sun Nov  6 08:49:37 1994');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 1994,
+    month: 11,
+    day: 6,
+    hour: 8,
+    minute: 49,
+    second: 37,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromHTTP() can parse ASCII dates with two date digits', () => {
+  const dt = DateTime.fromHTTP('Wed Nov 16 08:49:37 1994');
+  expect(dt.isValid()).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 1994,
+    month: 11,
+    day: 16,
+    hour: 8,
+    minute: 49,
+    second: 37,
+    millisecond: 0
+  });
+});

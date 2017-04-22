@@ -30,6 +30,10 @@ export class FixedOffsetZone extends Zone {
     this.fixed = offset;
   }
 
+  get type() {
+    return 'fixed';
+  }
+
   get name() {
     const hours = this.fixed / 60,
       minutes = Math.abs(this.fixed % 60),
@@ -54,6 +58,6 @@ export class FixedOffsetZone extends Zone {
   }
 
   equals(otherZone) {
-    return otherZone instanceof FixedOffsetZone && otherZone.fixed === this.fixed;
+    return otherZone.type === 'fixed' && otherZone.fixed === this.fixed;
   }
 }

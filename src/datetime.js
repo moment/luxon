@@ -414,7 +414,7 @@ export class DateTime {
    * Create a DateTime from an RFC 2822 string
    * @param {string} text - the RFC 2822 string
    * @param {Object} options - options to affect the creation
-   * @param {boolean} [options.zone='local'] - convert the time to this zone
+   * @param {boolean} [options.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [options.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
    * @example DateTime.fromRFC2822('Tue, 25 Nov 2016 13:23:12 +0600')
@@ -423,6 +423,22 @@ export class DateTime {
    */
   static fromRFC2822(text, { setZone = false, zone = Settings.defaultZone } = {}) {
     const [vals, context] = RegexParser.parseRFC2822Date(text);
+    return adjustZoneOfParsedDate(vals, context, setZone, zone);
+  }
+
+  /**
+   * Create a DateTime from an HTTP header date
+   * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+   * @param {string} text - the HTTP header date
+   * @param {boolean} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
+   * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
+   * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
+   * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
+   * @return {DateTime}
+   */
+  static fromHTTP(text, { setZone = false, zone = Settings.defaultZone } = {}) {
+    const [vals, context] = RegexParser.parseHTTPDate(text);
     return adjustZoneOfParsedDate(vals, context, setZone, zone);
   }
 
@@ -799,7 +815,7 @@ export class DateTime {
       ? Formatter.create(this.loc, opts).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
-  
+
   /**
    * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor.
    * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
@@ -832,8 +848,25 @@ export class DateTime {
     return formatMaybe(this, f);
   }
 
+  /**
+   * Returns an RFC 2822-compatible string representation of the DateTime, always in UTC
+   * @example DateTime.utc(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 +0000'
+   * @example DateTime.local(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 -0400'
+   * @return {string}
+   */
   toRFC2822() {
-    return formatMaybe(this.toUTC(), 'EEE, dd LLL yyyy hh:mm:ss +0000');
+    return formatMaybe(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
+  }
+
+  /**
+   * Returns a string representation of the DateTime appropriate for use in HTTP headers.
+   * Specifically, the string conforms to RFC 1123.
+   * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+   * @example DateTime.utc(2014, 7, 13).toHTTP() //=> 'Sun, 13 Jul 2014 00:00:00 GMT'
+   * @return {string}
+   */
+  toHTTP() {
+    return formatMaybe(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
   }
 
   toString() {

@@ -11,6 +11,10 @@ export class LocalZone extends Zone {
     return singleton;
   }
 
+  get type() {
+    return 'local';
+  }
+
   get name() {
     return new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
@@ -28,6 +32,6 @@ export class LocalZone extends Zone {
   }
 
   equals(otherZone) {
-    return otherZone instanceof LocalZone;
+    return otherZone.type === 'local';
   }
 }

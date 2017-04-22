@@ -11,6 +11,10 @@ export class IANAZone extends Zone {
     this.zoneName = name;
   }
 
+  get type() {
+    return 'iana';
+  }
+
   get name() {
     return this.zoneName;
   }
@@ -46,6 +50,6 @@ export class IANAZone extends Zone {
   }
 
   equals(otherZone) {
-    return otherZone instanceof IANAZone && otherZone.zoneName === this.zoneName;
+    return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;
   }
 }

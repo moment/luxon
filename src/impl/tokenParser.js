@@ -107,11 +107,12 @@ function unitForToken(token, loc) {
         case 'EEEE':
           return oneOf(loc.weekdays('long'), 0);
 
-        // offset/zone
+        // offset/zone (todo)
         case 'Z':
         case 'ZZ':
+        case 'ZZZ':
           return null;
-        // we don't support ZZZ (PST) or ZZZZ (Pacific Standard Time) in parsing
+        // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
         // because we don't have any way to figure out what they are
         case 'z':
           return null;

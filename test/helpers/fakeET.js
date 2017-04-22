@@ -1,6 +1,10 @@
 import { Zone } from '../../src/zone';
 
 export class FakeET extends Zone {
+  get type() {
+    return 'fake';
+  }
+
   get name() {
     return 'Fake Eastern Time';
   }
@@ -8,8 +12,8 @@ export class FakeET extends Zone {
   offsetName(ts, opts = {}) {
     const off = this.offset(ts);
     return opts.format === 'long'
-      ? off === -5 ? 'EST' : 'EDT'
-      : off === -5 ? 'Eastern Standard Time' : 'Eastern Daylight Time';
+      ? off === -5 ? 'Eastern Standard Time' : 'Eastern Daylight Time'
+      : off === -5 ? 'EST' : 'EDT';
   }
 
   get universal() {

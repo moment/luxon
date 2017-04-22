@@ -189,10 +189,12 @@ export class Locale {
     if (dt.zone.universal) {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make do with just displaying
-      // the time in UTC; the formatter has no idea what UTC+8 means
+      // the time in UTC; the formatter how to handle UTC+8
       d = Util.asIfUTC(dt);
       z = 'UTC';
-    } else if (dt.zone.name === 'local') {
+    } else if (dt.zone.type === 'local') {
+      d = dt.toJSDate();
+    } else {
       d = dt.toJSDate();
       z = dt.zone.name;
     }

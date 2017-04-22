@@ -1,6 +1,10 @@
 import { Zone } from '../../src/zone';
 
 export class FakePT extends Zone {
+  get type() {
+    return 'fake';
+  }
+
   get name() {
     return 'Fake Pacific Time';
   }
@@ -8,8 +12,8 @@ export class FakePT extends Zone {
   offsetName(ts, opts = {}) {
     const off = this.offset(ts);
     return opts.format === 'long'
-      ? off === -8 ? 'PST' : 'PDT'
-      : off === -8 ? 'Pacific Standard Time' : 'Pacific Daylight Time';
+      ? off === -8 ? 'Pacific Standard Time' : 'Pacific Daylight Time'
+      : off === -8 ? 'PST' : 'PDT';
   }
 
   get universal() {
@@ -25,6 +29,6 @@ export class FakePT extends Zone {
   }
 
   equals(otherZone) {
-    return otherZone instanceof FakePT;
+    return otherZone.type === 'fake';
   }
 }

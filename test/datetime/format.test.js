@@ -59,16 +59,19 @@ test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if 
 //------
 
 test('DateTime#toRFC2822() returns an RFC 2822 date', () => {
-  expect(dt.toRFC2822()).toBe('Tue, 25 May 1982 09:23:54 +0000');
-});
-
-test('DateTime#toRFC2822() always returns UTC', () => {
-  expect(dt.toLocal().toRFC2822()).toBe('Tue, 25 May 1982 09:23:54 +0000');
+  expect(dt.toUTC().toRFC2822()).toBe('Tue, 25 May 1982 09:23:54 +0000');
+  // this won't work until we rip out the Intl poly
+  // expect(dt.timezone('America/New_York').toRFC2822()).toBe('Tue, 25 May 1982 05:23:54 -0400');
 });
 
 //------
 // #toHTTP()
 //------
+
+test('DateTime#toHTTP() returns an RFC 1123 date', () => {
+  expect(dt.toUTC().toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
+  expect(dt.timezone('America/New_York').toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
+});
 
 //------
 // #toString()
@@ -178,14 +181,21 @@ test("DateTime#toFormatString('ZZ') returns the padded offset", () => {
   expect(dt.toUTC(-390).toFormatString('ZZ')).toBe('-06:30');
 });
 
-test("DateTime#toFormatString('ZZZ') returns the short offset name", () => {
-  const zoned = dt.timezone(new FakePT());
-  expect(zoned.toFormatString('ZZZ')).toBe('PDT');
+test("DateTime#toFormatString('ZZZ') returns a numerical offset", () => {
+  expect(dt.toUTC(360).toFormatString('ZZZ')).toBe('+0600');
+  expect(dt.toUTC(390).toFormatString('ZZZ')).toBe('+0630');
+  expect(dt.toUTC(-360).toFormatString('ZZZ')).toBe('-0600');
+  expect(dt.toUTC(-390).toFormatString('ZZZ')).toBe('-0630');
 });
 
-test("DateTime#toFormatString('ZZZZ') returns the full offset name", () => {
+test("DateTime#toFormatString('ZZZZ') returns the short offset name", () => {
   const zoned = dt.timezone(new FakePT());
-  expect(zoned.toFormatString('ZZZZ')).toBe('Pacific Daylight Time');
+  expect(zoned.toFormatString('ZZZZ')).toBe('PDT');
+});
+
+test("DateTime#toFormatString('ZZZZZ') returns the full offset name", () => {
+  const zoned = dt.timezone(new FakePT());
+  expect(zoned.toFormatString('ZZZZZ')).toBe('Pacific Daylight Time');
 });
 
 test("DateTime#toFormatString('z') returns the zone name", () => {

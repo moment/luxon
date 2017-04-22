@@ -87,22 +87,22 @@ export class Formatter {
   formatDateTimeFromString(dt, fmt) {
     const string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
-        // todo - is this always right? Should be an option?
-        if (dt.isOffsetFixed() && dt.offset() === 0) {
+        if (dt.isOffsetFixed() && dt.offset() === 0 && opts.allowZ) {
           return 'Z';
         }
 
         const hours = Util.towardZero(dt.offset() / 60),
           minutes = Math.abs(dt.offset() % 60),
-          sign = hours > 0 ? '+' : '-',
-          formatter = n => this.num(n, opts.format === 'short' ? 2 : 0),
-          base = sign + formatter(Math.abs(hours));
+          sign = hours >= 0 ? '+' : '-',
+          base = `${sign}${Math.abs(hours)}`;
 
         switch (opts.format) {
           case 'short':
-            return `${sign}${formatter(Math.abs(hours))}:${formatter(minutes)}`;
+            return `${sign}${this.num(Math.abs(hours), 2)}:${this.num(minutes, 2)}`;
           case 'narrow':
-            return minutes > 0 ? `${base}:${formatter(minutes)}` : base;
+            return minutes > 0 ? `${base}:${minutes}` : base;
+          case 'techie':
+            return `${sign}${this.num(Math.abs(hours), 2)}${this.num(minutes, 2)}`;
           default:
             throw new RangeError(`Value format ${opts.format} is out of range for property format`);
         }
@@ -139,17 +139,20 @@ export class Formatter {
             return this.num(dt.hour(), 2);
           // offset
           case 'Z':
-            return formatOffset({ format: 'narrow' });
-          // like +6
+            // like +6
+            return formatOffset({ format: 'narrow', allowZ: true });
           case 'ZZ':
-            return formatOffset({ format: 'short' });
-          // like +06:00
+            // like +06:00
+            return formatOffset({ format: 'short', allowZ: true });
           case 'ZZZ':
-            return dt.offsetNameLong();
-          // like Eastern Standard Time
+            // like +0600
+            return formatOffset({ format: 'techie', allowZ: false });
           case 'ZZZZ':
+            // like EST
             return dt.offsetNameShort();
-          // like EST
+          case 'ZZZZZ':
+            // like Eastern Standard Time
+            return dt.offsetNameLong();
           // zone
           case 'z':
             return dt.timezoneName();

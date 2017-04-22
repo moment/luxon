@@ -9,6 +9,15 @@ function ZoneIsAbstract() {
 */
 export class Zone {
   /**
+   * The type of zone
+   * @abstract
+   * @return {string}
+   */
+  get type() {
+    throw new ZoneIsAbstract();
+  }
+
+  /**
    * The name of this zone.
    * @abstract
    * @return {string}

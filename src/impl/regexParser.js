@@ -1,26 +1,31 @@
 import { Util } from './util';
 
-function combine(...regexes) {
+function combineRegexes(...regexes) {
   const full = regexes.reduce((f, r) => f + r.source, '');
   return RegExp(full);
+}
+
+function combineExtractors(...extractors) {
+  return m =>
+    extractors
+      .reduce(
+        ([mergedVals, mergedContext, cursor], ex) => {
+          const [val, context, next] = ex(m, cursor);
+          return [Object.assign(mergedVals, val), Object.assign(mergedContext, context), next];
+        },
+        [{}, {}, 1]
+      )
+      .slice(0, 2);
 }
 
 function parse(s, ...patterns) {
   if (s == null) {
     return [null, null];
   }
-  for (const [regex, extractors] of patterns) {
+  for (const [regex, extractor] of patterns) {
     const m = regex.exec(s);
     if (m) {
-      return extractors
-        .reduce(
-          ([mergedVals, mergedContext, cursor], ex) => {
-            const [val, context, next] = ex(m, cursor);
-            return [Object.assign(mergedVals, val), Object.assign(mergedContext, context), next];
-          },
-          [{}, {}, 1]
-        )
-        .slice(0, 2);
+      return extractor(m);
     }
   }
   return [null, null];
@@ -75,23 +80,22 @@ function extractISOTime(match, cursor) {
   return [item, context, cursor + 7];
 }
 
-// RFC 2822/5322
-const full2822Regex = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/,
-  // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
-  // and not just that we're in -240 *right now*. But since I don't think these are used that often
-  // I'm just going to ignore that
-  obsOffsets = {
-    GMT: 0,
-    EDT: -4 * 60,
-    EST: -5 * 60,
-    CDT: 5 * 60,
-    CST: 6 * 60,
-    MDT: 6 * 60,
-    MST: 7 * 60,
-    PDT: 7 * 60,
-    PST: 8 * 60
-  },
+// These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
+// and not just that we're in -240 *right now*. But since I don't think these are used that often
+// I'm just going to ignore that
+const obsOffsets = {
+  GMT: 0,
+  EDT: -4 * 60,
+  EST: -5 * 60,
+  CDT: 5 * 60,
+  CST: 6 * 60,
+  MDT: 6 * 60,
+  MST: 7 * 60,
+  PDT: 7 * 60,
+  PST: 8 * 60
+},
   weekdayAbbreviations = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
   monthAbbreviations = [
     'Jan',
     'Feb',
@@ -106,6 +110,28 @@ const full2822Regex = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb
     'Nov',
     'Dec'
   ];
+
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+  const result = {
+    year: yearStr.length === 2 ? Util.untrucateYear(parse10(yearStr)) : parse10(yearStr),
+    month: monthAbbreviations.indexOf(monthStr) + 1,
+    day: parse10(dayStr),
+    hour: parse10(hourStr),
+    minute: parse10(minuteStr)
+  };
+
+  if (secondStr) result.second = parse10(secondStr);
+  if (weekdayStr) {
+    result.weekday = weekdayStr.length > 3
+      ? weekdays.indexOf(weekdayStr) + 1
+      : weekdayAbbreviations.indexOf(weekdayStr) + 1;
+  }
+
+  return result;
+}
+
+// RFC 2822/5322
+const rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/;
 
 function extractRFC2822(match) {
   const [
@@ -122,16 +148,7 @@ function extractRFC2822(match) {
     offHourStr,
     offMinuteStr
   ] = match,
-    result = {
-      year: yearStr.length === 2 ? Util.untrucateYear(parse10(yearStr)) : parse10(yearStr),
-      month: monthAbbreviations.indexOf(monthStr) + 1,
-      day: parse10(dayStr),
-      hour: parse10(hourStr),
-      minute: parse10(minuteStr)
-    };
-
-  if (secondStr) result.second = parse10(secondStr);
-  if (weekdayStr) result.weekday = weekdayAbbreviations.indexOf(weekdayStr) + 1;
+    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
 
   let offset;
   if (obsOffset) {
@@ -142,12 +159,30 @@ function extractRFC2822(match) {
     offset = signedOffset(offHourStr, offMinuteStr);
   }
 
-  return [result, { offset, local: false }, 0];
+  return [result, { offset, local: false }];
 }
 
 function preprocessRFC2822(s) {
   // Remove comments and folding whitespace and replace multiple-spaces with a single space
   return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').trim();
+}
+
+// http date
+
+const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/,
+  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/,
+  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
+
+function extractRFC1123Or850(match) {
+  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
+    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  return [result, { offset: 0, local: false }];
+}
+
+function extractASCII(match) {
+  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,
+    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  return [result, { offset: 0, local: false }];
 }
 
 /**
@@ -158,18 +193,30 @@ export class RegexParser {
   static parseISODate(s) {
     return parse(
       s,
-      [combine(isoYmdRegex, isoTimeRegex), [extractISOYmd, extractISOTime]],
-      [combine(isoWeekRegex, isoTimeRegex), [extractISOWeekData, extractISOTime]],
-      [combine(isoOrdinalRegex, isoTimeRegex), [extractISOOrdinalData, extractISOTime]]
+      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],
+      [
+        combineRegexes(isoWeekRegex, isoTimeRegex),
+        combineExtractors(extractISOWeekData, extractISOTime)
+      ],
+      [
+        combineRegexes(isoOrdinalRegex, isoTimeRegex),
+        combineExtractors(extractISOOrdinalData, extractISOTime)
+      ]
     );
   }
 
   static parseRFC2822Date(s) {
-    return parse(preprocessRFC2822(s), [full2822Regex, [extractRFC2822]]);
+    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
   }
 
-  // static parseHTTPDate(s, opts = {}) {
-  // }
+  static parseHTTPDate(s) {
+    return parse(
+      s,
+      [rfc1123, extractRFC1123Or850],
+      [rfc850, extractRFC1123Or850],
+      [ascii, extractASCII]
+    );
+  }
 
   // static parseISODuration(s, opts = {}) {
   // }
