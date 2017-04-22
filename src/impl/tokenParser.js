@@ -103,9 +103,9 @@ function unitForToken(token, loc) {
         case 'E':
           return intUnit(one);
         case 'EEE':
-          return oneOf(loc.weekdays('short'), 0);
+          return oneOf(loc.weekdays('short'), 1);
         case 'EEEE':
-          return oneOf(loc.weekdays('long'), 0);
+          return oneOf(loc.weekdays('long'), 1);
 
         // offset/zone (todo)
         case 'Z':

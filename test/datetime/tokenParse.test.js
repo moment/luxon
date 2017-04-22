@@ -46,6 +46,11 @@ test('DateTime.fromString() parses month names', () => {
   expect(i.year()).toBe(1982);
   expect(i.month()).toBe(5);
   expect(i.day()).toBe(25);
+
+  i = DateTime.fromString('janv. 25 1982', 'LLL dd yyyy', { localeCode: 'fr' });
+  expect(i.year()).toBe(1982);
+  expect(i.month()).toBe(1);
+  expect(i.day()).toBe(25);
 });
 
 test('DateTime.fromString() defaults yy to the right century', () => {});
@@ -64,6 +69,7 @@ test('DateTime.fromString() validates weekday numbers', () => {
 
 test('DateTime.fromString() validates weekday names', () => {
   let d = DateTime.fromString('Tuesday, 05/25/1982', 'EEEE, LL/dd/yyyy');
+  expect(d.isValid()).toBe(true);
   expect(d.year()).toBe(1982);
   expect(d.month()).toBe(5);
   expect(d.day()).toBe(25);
@@ -72,6 +78,7 @@ test('DateTime.fromString() validates weekday names', () => {
   expect(d.isValid()).toBeFalsy();
 
   d = DateTime.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', { localeCode: 'fr' });
+  expect(d.isValid()).toBe(true);
   expect(d.year()).toBe(1982);
   expect(d.month()).toBe(5);
   expect(d.day()).toBe(25);

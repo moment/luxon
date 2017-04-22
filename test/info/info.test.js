@@ -167,24 +167,24 @@ test('Info.monthsFormat lists all the months', () => {
 //-------
 test('Info.weekdays lists all the weekdays', () => {
   expect(Info.weekdays('long', 'en')).toEqual([
-    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
     'Friday',
-    'Saturday'
+    'Saturday',
+    'Sunday'
   ]);
-  expect(Info.weekdays('short', 'en')).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
-  expect(Info.weekdays('narrow', 'en')).toEqual(['S', 'M', 'T', 'W', 'T', 'F', 'S']);
+  expect(Info.weekdays('short', 'en')).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+  expect(Info.weekdays('narrow', 'en')).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
   expect(Info.weekdays('long', 'ru')).toEqual([
-    'воскресенье',
     'понедельник',
     'вторник',
     'среда',
     'четверг',
     'пятница',
-    'суббота'
+    'суббота',
+    'воскресенье'
   ]);
 });
 
@@ -193,22 +193,22 @@ test('Info.weekdays lists all the weekdays', () => {
 //------
 test('Info.weekdaysFormat lists all the weekdays', () => {
   expect(Info.weekdaysFormat('long', 'en')).toEqual([
-    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
     'Friday',
-    'Saturday'
+    'Saturday',
+    'Sunday'
   ]);
   expect(Info.weekdaysFormat('short', 'en')).toEqual([
-    'Sun',
     'Mon',
     'Tue',
     'Wed',
     'Thu',
     'Fri',
-    'Sat'
+    'Sat',
+    'Sun'
   ]);
 });
 

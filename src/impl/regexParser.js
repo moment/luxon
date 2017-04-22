@@ -1,4 +1,5 @@
 import { Util } from './util';
+import { English } from './english';
 
 function combineRegexes(...regexes) {
   const full = regexes.reduce((f, r) => f + r.source, '');
@@ -110,28 +111,12 @@ const obsOffsets = {
   MST: 7 * 60,
   PDT: 7 * 60,
   PST: 8 * 60
-},
-  weekdayAbbreviations = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-  weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-  monthAbbreviations = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
+};
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
     year: yearStr.length === 2 ? Util.untrucateYear(parse10(yearStr)) : parse10(yearStr),
-    month: monthAbbreviations.indexOf(monthStr) + 1,
+    month: English.monthsShort.indexOf(monthStr) + 1,
     day: parse10(dayStr),
     hour: parse10(hourStr),
     minute: parse10(minuteStr)
@@ -140,8 +125,8 @@ function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, 
   if (secondStr) result.second = parse10(secondStr);
   if (weekdayStr) {
     result.weekday = weekdayStr.length > 3
-      ? weekdays.indexOf(weekdayStr) + 1
-      : weekdayAbbreviations.indexOf(weekdayStr) + 1;
+      ? English.weekdaysLong.indexOf(weekdayStr) + 1
+      : English.weekdaysShort.indexOf(weekdayStr) + 1;
   }
 
   return result;

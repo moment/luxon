@@ -1,5 +1,6 @@
 import * as Intl from 'intl';
 import { Util } from './util';
+import { English } from './english';
 import { DateTime } from '../datetime';
 
 // We use the Intl polyfill exclusively here, for these reasons:
@@ -57,7 +58,7 @@ function mapMonths(f) {
 
 function mapWeekdays(f) {
   const ms = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 1; i <= 7; i++) {
     const dt = DateTime.fromObject({ year: 2016, month: 11, day: 13 + i }, 'utc');
     ms.push(f(dt));
   }
@@ -114,6 +115,10 @@ export class Locale {
     });
   }
 
+  knownEnglish() {
+    return this.localeCode === 'en' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US');
+  }
+
   clone(alts) {
     return Locale.create(
       alts.localeCode || this.localeCode,
@@ -123,6 +128,14 @@ export class Locale {
   }
 
   months(length, format = false) {
+
+    if (this.knownEnglish()) {
+      const english = English.months(length);
+      if (english) {
+        return english;
+      }
+    }
+
     const intl = format ? { month: length, day: 'numeric' } : { month: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.monthsCache[formatStr][length]) {
@@ -132,6 +145,14 @@ export class Locale {
   }
 
   weekdays(length, format = false) {
+
+    if (this.knownEnglish()) {
+      const english = English.weekdays(length);
+      if (english) {
+        return english;
+      }
+    }
+
     const intl = format
       ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
       : { weekday: length },
@@ -143,6 +164,11 @@ export class Locale {
   }
 
   meridiems() {
+
+    if (this.knownEnglish()){
+      return English.meridiems;
+    }
+
     const intl = { hour: 'numeric', hour12: true };
 
     // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
