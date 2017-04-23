@@ -7,7 +7,6 @@ Just playing around, for now.
 
 # Maybe
 
- - Intl polyfill contributions
  - Calendar abstraction
  - Humanization plugin
  - Date type
