@@ -62,7 +62,6 @@ export class Duration {
     return Duration.fromObject(vals);
   }
 
-  // static fromString(text, fmt) {}
   locale(l) {
     return Util.isUndefined(l) ? this.loc : clone(this, { loc: Locale.create(l) });
   }
@@ -89,7 +88,10 @@ export class Duration {
     return s;
   }
 
-  // toJSON() {}
+  toJSON() {
+    return this.toISO();
+  }
+
   plus(countOrDuration, unit = 'millisecond') {
     const dur = Util.friendlyDuration(countOrDuration, unit), result = {};
 

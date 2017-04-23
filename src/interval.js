@@ -181,7 +181,7 @@ export class Interval {
   toString() {
     return `[${this.s.toString()} - ${this.e.toString()})`;
   }
+
   // toISO(){}
   // toFormat(overallFormat, dateFormat){}
-  // toLocaleString(overallFormat){}
 }
