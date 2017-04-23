@@ -4,7 +4,7 @@ import { Info } from '../../dist/cjs/luxon';
 
 //------
 // .months()
-//-------
+//------
 test('Info.months lists all the months', () => {
   expect(Info.months('long')).toEqual([
     'January',
@@ -102,7 +102,7 @@ test('Info.months respects the locale', () => {
 
 //------
 // .monthsFormat()
-//-------
+//------
 test('Info.monthsFormat lists all the months', () => {
   expect(Info.monthsFormat('long', 'en')).toEqual([
     'January',
@@ -168,7 +168,7 @@ test('Info.monthsFormat lists all the months', () => {
 
 //------
 // .weekdays()
-//-------
+//------
 test('Info.weekdays lists all the weekdays', () => {
   expect(Info.weekdays('long', 'en')).toEqual([
     'Monday',
@@ -195,7 +195,7 @@ test('Info.weekdays lists all the weekdays', () => {
   ]);
 });
 
-//-------
+//------
 // .weekdaysFormat()
 //------
 test('Info.weekdaysFormat lists all the weekdays', () => {
@@ -222,7 +222,7 @@ test('Info.weekdaysFormat lists all the weekdays', () => {
 
 //------
 // .meridiems()
-//-------
+//------
 test('Info.weekdaysFormat lists all the weekdays', () => {
   expect(Info.meridiems('en')).toEqual(['AM', 'PM']);
   expect(Info.meridiems('de')).toEqual(['vorm.', 'nachm.']);

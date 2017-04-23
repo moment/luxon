@@ -20,7 +20,14 @@ function possiblyCachedWeekData(dt) {
 }
 
 function clone(inst, alts = {}) {
-  const current = { ts: inst.ts, zone: inst.zone, c: inst.c, o: inst.o, loc: inst.loc };
+  const current = {
+    ts: inst.ts,
+    zone: inst.zone,
+    c: inst.c,
+    o: inst.o,
+    loc: inst.loc,
+    valid: inst.valid
+  };
   return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
 

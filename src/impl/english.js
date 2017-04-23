@@ -1,7 +1,19 @@
 export class English {
-
   static get monthsLong() {
-    return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
   }
 
   static get monthsShort() {
@@ -9,28 +21,19 @@ export class English {
   }
 
   static get monthsNarrow() {
-    return [
-    'J',
-    'F',
-    'M',
-    'A',
-    'M',
-    'J',
-    'J',
-    'A',
-    'S',
-    'O',
-    'N',
-    'D'
-    ];
+    return ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
   }
 
   static months(length) {
-    switch(length) {
-      case 'narrow': return English.monthsNarrow;
-      case 'short': return English.monthsShort;
-      case 'long': return English.monthsLong;
-      default: return null;
+    switch (length) {
+      case 'narrow':
+        return English.monthsNarrow;
+      case 'short':
+        return English.monthsShort;
+      case 'long':
+        return English.monthsLong;
+      default:
+        return null;
     }
   }
 
@@ -47,11 +50,15 @@ export class English {
   }
 
   static weekdays(length) {
-    switch(length) {
-      case 'narrow': return English.weekdaysNarrow;
-      case 'short': return English.weekdaysShort;
-      case 'long': return English.weekdaysLong;
-      default: return null;
+    switch (length) {
+      case 'narrow':
+        return English.weekdaysNarrow;
+      case 'short':
+        return English.weekdaysShort;
+      case 'long':
+        return English.weekdaysLong;
+      default:
+        return null;
     }
   }
 

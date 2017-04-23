@@ -116,7 +116,8 @@ export class Locale {
   }
 
   knownEnglish() {
-    return this.localeCode === 'en' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US');
+    return this.localeCode === 'en' ||
+      Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US');
   }
 
   clone(alts) {
@@ -128,7 +129,6 @@ export class Locale {
   }
 
   months(length, format = false) {
-
     if (this.knownEnglish()) {
       const english = English.months(length);
       if (english) {
@@ -145,7 +145,6 @@ export class Locale {
   }
 
   weekdays(length, format = false) {
-
     if (this.knownEnglish()) {
       const english = English.weekdays(length);
       if (english) {
@@ -164,8 +163,7 @@ export class Locale {
   }
 
   meridiems() {
-
-    if (this.knownEnglish()){
+    if (this.knownEnglish()) {
       return English.meridiems;
     }
 
