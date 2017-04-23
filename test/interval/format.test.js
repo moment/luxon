@@ -9,7 +9,7 @@ test("Doesn't do anything yet", () => {});
 // .toISO()
 //-------
 //------
-// .toFormatString()
+// .toFormat()
 //-------
 //------
 // .toLocaleString()

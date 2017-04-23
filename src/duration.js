@@ -67,7 +67,7 @@ export class Duration {
     return Util.isUndefined(l) ? this.loc : clone(this, { loc: Locale.create(l) });
   }
 
-  toFormatString(fmt, opts = {}) {
+  toFormat(fmt, opts = {}) {
     return Formatter.create(this.loc, opts).formatDurationFromString(this, fmt);
   }
 

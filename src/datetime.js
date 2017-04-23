@@ -817,7 +817,14 @@ export class DateTime {
     return this.valid ? Util.daysInYear(this.year()) : NaN;
   }
 
-  toFormatString(fmt, opts = {}) {
+  /**
+   * Returns a string representation of this DateTime formatted according to the provided format string
+   * [todo - token definitions here]
+   * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
+   * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
+   * @return {string}
+   */
+  toFormat(fmt, opts = {}) {
     return this.valid
       ? Formatter.create(this.loc, opts).formatDateTimeFromString(this, fmt)
       : INVALID;
@@ -840,23 +847,46 @@ export class DateTime {
     return this.valid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID;
   }
 
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime
+   * @param opts {object} - options
+   * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
+   * @example DateTime.local().toISO() //=> '2017-04-22T20:47:05.335-04:00'
+   * @return {string}
+   */
   toISO() {
     return formatMaybe(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
   }
 
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime's date component
+   * @param opts {object} - options
+   * @example DateTime.utc(1982, 5, 25).toISODate() //=> '07:34:19.361Z'
+   * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
+   * @return {string}
+   */
   toISODate() {
     return formatMaybe(this, 'yyyy-MM-dd');
   }
 
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime's time component
+   * @param opts {object} - options
+   * @param opts.suppressMilliseconds {boolean} - exclude milliseconds from the format if they're 0
+   * @param opts.supressSeconds {boolean} - exclude seconds from the format if they're 0
+   * @example DateTime.utc().hour(7).minute(34).toISOTime() //=> '07:34:19.361Z'
+   * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
+   * @return {string}
+   */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
     const f = suppressSeconds && this.second() === 0 && this.millisecond() === 0
-      ? 'hh:mm'
-      : suppressMilliseconds && this.millisecond() === 0 ? 'hh:mm:ss' : 'hh:mm:ss.SSS';
+      ? 'hh:mmZ'
+      : suppressMilliseconds && this.millisecond() === 0 ? 'hh:mm:ssZZ' : 'hh:mm:ss.SSSZZ';
     return formatMaybe(this, f);
   }
 
   /**
-   * Returns an RFC 2822-compatible string representation of the DateTime, always in UTC
+   * Returns an RFC 2822-compatible string representation of this DateTime, always in UTC
    * @example DateTime.utc(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 +0000'
    * @example DateTime.local(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 -0400'
    * @return {string}
@@ -866,7 +896,7 @@ export class DateTime {
   }
 
   /**
-   * Returns a string representation of the DateTime appropriate for use in HTTP headers.
+   * Returns a string representation of this DateTime appropriate for use in HTTP headers.
    * Specifically, the string conforms to RFC 1123.
    * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
    * @example DateTime.utc(2014, 7, 13).toHTTP() //=> 'Sun, 13 Jul 2014 00:00:00 GMT'
@@ -876,23 +906,44 @@ export class DateTime {
     return formatMaybe(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
   }
 
+  /**
+   * Returns a string representation of this DateTime appropriate for debugging
+   * @return {string}
+   */
   toString() {
     return this.valid ? this.toISO() : INVALID;
   }
 
+  /**
+   * Returns the epoch milliseconds of this DateTime
+   * @return {number}
+   */
   valueOf() {
     return this.valid ? this.ts : NaN;
   }
 
+  /**
+   * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON
+   * @return {number}
+   */
   toJSON() {
     return this.toISO();
   }
 
+  /**
+   * Returns a Javascript object with this DateTime's year, month, day, and so on
+   * @example DateTime.local().toObject() //=> { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
+   * @return {object}
+   */
   toObject() {
     // todo: invalid
     return Object.assign({}, this.c);
   }
 
+  /**
+   * Returns a Javascript Date equivalent to this DateTime
+   * @return {object}
+   */
   toJSDate() {
     return new Date(this.valid ? this.ts : NaN);
   }
