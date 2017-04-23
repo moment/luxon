@@ -174,6 +174,12 @@ const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, mil
     millisecond: 0
   };
 
+function isoTimeFormat(dateTime, suppressSecs, suppressMillis) {
+  return suppressSecs && dateTime.second() === 0 && dateTime.millisecond() === 0
+    ? 'HH:mmZ'
+    : suppressMillis && dateTime.millisecond() === 0 ? 'HH:mm:ssZZ' : 'HH:mm:ss.SSSZZ';
+}
+
 /**
  * A specific millisecond with an associated time zone and locale
  */
@@ -855,12 +861,16 @@ export class DateTime {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime
+   * @param {object} opts - options
+   * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
+   * @param {boolean} opts.supressSeconds - exclude seconds from the format if they're 0
    * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.local().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @return {string}
    */
-  toISO() {
-    return formatMaybe(this, "yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+  toISO({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
+    const f = `yyyy-MM-dd'T'${isoTimeFormat(this, suppressSeconds, suppressMilliseconds)}`;
+    return formatMaybe(this, f);
   }
 
   /**
@@ -882,10 +892,7 @@ export class DateTime {
    * @return {string}
    */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    const f = suppressSeconds && this.second() === 0 && this.millisecond() === 0
-      ? 'hh:mmZ'
-      : suppressMilliseconds && this.millisecond() === 0 ? 'hh:mm:ssZZ' : 'hh:mm:ss.SSSZZ';
-    return formatMaybe(this, f);
+    return formatMaybe(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
   }
 
   /**
@@ -1139,11 +1146,10 @@ export class DateTime {
   /**
    * Return an Interval spanning between this DateTime and another DateTime
    * @param {DateTime} otherDateTime - the other end point of the Interval
-   * @param {object} opts - options for constructing the interval. {@link Interval.fromDateTimes}
    * @return {Duration}
    */
-  until(otherDateTime, opts = {}) {
-    return this.valid ? Interval.fromDateTimes(this, otherDateTime, opts) : Duration.invalid();
+  until(otherDateTime) {
+    return this.valid ? Interval.fromDateTimes(this, otherDateTime) : Duration.invalid();
   }
 
   /**

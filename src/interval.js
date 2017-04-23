@@ -6,8 +6,8 @@ export class Interval {
     Object.defineProperty(this, 'e', { value: end, enumerable: true });
   }
 
-  static fromDateTimes(start, end, opts = {}) {
-    return new Interval(start, end, opts);
+  static fromDateTimes(start, end) {
+    return new Interval(start, end);
   }
 
   static after(start, durationOrNumber, unit) {
@@ -24,12 +24,12 @@ export class Interval {
     return this.e.diff(this.s, ...units);
   }
 
-  start() {
-    return this.s;
+  start(s) {
+    return Util.isUndefined(s) ? this.isValid() ? this.s : NaN : Interval.fromDateTimes(s, this.e);
   }
 
-  end() {
-    return this.e;
+  end(e) {
+    return Util.isUndefined(e) ? this.isValid() ? this.e : NaN : Interval.fromDateTimes(this.s, e);
   }
 
   length(unit = 'millisecond') {
@@ -179,9 +179,14 @@ export class Interval {
   }
 
   toString() {
-    return `[${this.s.toString()} - ${this.e.toString()})`;
+    return `[${this.s.toISO()} – ${this.e.toISO()})`;
   }
 
-  // toISO(){}
-  // toFormat(overallFormat, dateFormat){}
+  toISO(opts) {
+    return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;
+  }
+
+  toFormat(dateFormat, { separator = ' – ' } = {}) {
+    return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
+  }
 }

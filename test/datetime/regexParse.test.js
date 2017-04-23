@@ -45,7 +45,7 @@ test('DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local
 });
 
 test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
-  const dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { setZone: true });
+  let dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { setZone: true });
   expect(dt.zone.name).toBe('UTC+6');
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -55,6 +55,19 @@ test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
     minute: 8,
     second: 34,
     millisecond: 123
+  });
+
+  dt = DateTime.fromISO('1983-10-14T13:30Z', { setZone: true });
+  expect(dt.zone.name).toBe('UTC');
+  expect(dt.offset()).toBe(0);
+  expect(dt.toObject()).toEqual({
+    year: 1983,
+    month: 10,
+    day: 14,
+    hour: 13,
+    minute: 30,
+    second: 0,
+    millisecond: 0
   });
 });
 

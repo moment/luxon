@@ -1,9 +1,9 @@
 /* global test expect */
 import { DateTime, Interval, Duration } from '../../dist/cjs/luxon';
 
-const fromISOs = (s, e, opts = {}) => DateTime.fromISO(s).until(DateTime.fromISO(e), opts),
+const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
   todayAt = h => DateTime.local().startOf('day').hour(h),
-  todayFrom = (h1, h2, opts) => Interval.fromDateTimes(todayAt(h1), todayAt(h2), opts);
+  todayFrom = (h1, h2) => Interval.fromDateTimes(todayAt(h1), todayAt(h2));
 
 //-------
 // #equals()
