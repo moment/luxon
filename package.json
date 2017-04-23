@@ -24,6 +24,7 @@
     "gulp": "latest",
     "gulp-babili": "latest",
     "gulp-debug": "latest",
+    "gulp-esdoc": "git@github.com:nanopx/gulp-esdoc.git",
     "gulp-eslint": "latest",
     "gulp-filter": "latest",
     "gulp-jest": "latest",

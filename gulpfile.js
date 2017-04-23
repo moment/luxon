@@ -1,6 +1,7 @@
 const babel = require('rollup-plugin-babel'),
   babili = require('gulp-babili'),
   buffer = require('vinyl-buffer'),
+  esdoc = require('gulp-esdoc'),
   eslint = require('gulp-eslint'),
   filter = require('gulp-filter'),
   gulp = require('gulp'),
@@ -107,4 +108,6 @@ gulp.task('lint', ['format'], () =>
 gulp.task('format', () =>
   gulp.src(lintable, { base: './' }).pipe(prettier(prettierOptions)).pipe(gulp.dest('./')));
 
-gulp.task('default', ['lint', 'build', 'test']);
+gulp.task('docs', () => gulp.src('./src').pipe(esdoc({ destination: './docs' })));
+
+gulp.task('default', ['lint', 'build', 'test', 'docs']);
