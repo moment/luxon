@@ -30,6 +30,10 @@ function uncomputeOrdinal(year, ordinal) {
   return { month: month0 + 1, day };
 }
 
+/**
+ * @private
+ */
+
 export class Conversions {
   static gregorianToWeek(gregObj) {
     const { year, month, day } = gregObj,

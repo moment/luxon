@@ -3,6 +3,10 @@ import { Zone } from '../zone';
 
 let singleton = null;
 
+/**
+ * @private
+ */
+
 export class FixedOffsetZone extends Zone {
   static get utcInstance() {
     if (singleton === null) {

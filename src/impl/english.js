@@ -1,3 +1,7 @@
+/**
+ * @private
+ */
+
 export class English {
   static get monthsLong() {
     return [

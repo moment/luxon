@@ -437,6 +437,7 @@ export class DateTime {
    * Create a DateTime from an HTTP header date
    * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
    * @param {string} text - the HTTP header date
+   * @param {object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
@@ -713,7 +714,7 @@ export class DateTime {
    * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond(236).toISOTime() //=> "09:30:52.226"
    * @return {number|DateTime}
    */
-  millisecond(v) {
+  millisecond(millisecond) {
     return Util.isUndefined(v)
       ? this.valid ? this.c.millisecond : NaN
       : this.set({ millisecond: v });
@@ -821,9 +822,9 @@ export class DateTime {
    * Returns a string representation of this DateTime formatted according to the provided format string
    * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool.
    * [todo - token definitions here]
-   * @param fmt {string} - the format string
-   * @param opts {object} - options
-   * @param opts.round {boolean} - round numerical values
+   * @param {string} fmt - the format string
+   * @param {object} opts - options
+   * @param {boolean} opts.round - round numerical values
    * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 avr. 22'
    * @example DateTime.local().locale('fr').toFormat('yyyy LLL dd') //=> '2017 Apr 22'
    * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
@@ -854,7 +855,6 @@ export class DateTime {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime
-   * @param opts {object} - options
    * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.local().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @return {string}
@@ -865,9 +865,7 @@ export class DateTime {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime's date component
-   * @param opts {object} - options
    * @example DateTime.utc(1982, 5, 25).toISODate() //=> '07:34:19.361Z'
-   * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
    * @return {string}
    */
   toISODate() {
@@ -876,9 +874,9 @@ export class DateTime {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime's time component
-   * @param opts {object} - options
-   * @param opts.suppressMilliseconds {boolean} - exclude milliseconds from the format if they're 0
-   * @param opts.supressSeconds {boolean} - exclude seconds from the format if they're 0
+   * @param {object} opts - options
+   * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
+   * @param {boolean} opts.supressSeconds - exclude seconds from the format if they're 0
    * @example DateTime.utc().hour(7).minute(34).toISOTime() //=> '07:34:19.361Z'
    * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
    * @return {string}
@@ -956,25 +954,53 @@ export class DateTime {
   /**
    * Returns the resolved Intl options for this DateTime
    * This is useful in understanding the behavior of parsing and formatting methods
-   * @param opts - the same options
+   * @param {object} opts - the same options as toLocaleString
    * @return {object}
    */
   resolvedLocaleOpts(opts = {}) {
     return Formatter.create(this.loc, opts).resolvedOptions();
   }
 
-  plus(durationOrNumber, type) {
+  /**
+   * Add a period of time to this DateTime and return the resulting DateTime
+   * * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds.
+   * * Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way.
+   * Thus, `dt.plus(24, 'hours')` may result in a different time than `dt.plus(1, 'day')` if there's a DST shift in between.
+   * @param {Duration|number} durationOrNumber - The amount to add. Either a Luxon Duration or a number
+   * @param {string} unit - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @example DateTime.local().plus(15, 'minutes') //~> in 15 minutes
+   * @example DateTime.local().plus(1, 'day') //~> this time tomorrow
+   * @example DateTime.local().plus(Duration.fromObject({hours: 3, minutes: 13}) //~> in 1 hr, 13 min
+   * @return {DateTime}
+   */
+  plus(durationOrNumber, unit) {
     if (!this.valid) return this;
-    const dur = Util.friendlyDuration(durationOrNumber, type);
+    const dur = Util.friendlyDuration(durationOrNumber, unit);
     return clone(this, adjustTime(this, dur));
   }
 
-  minus(durationOrNumber, type) {
+  /**
+   * Subtract a period of time to this DateTime and return the resulting DateTime
+   * See {@link plus}
+   * @param {Duration|number} durationOrNumber - The amount to add. Either a Luxon Duration or a number
+   * @param {string} unit - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @return {DateTime}
+   */
+  minus(durationOrNumber, unit) {
     if (!this.valid) return this;
-    const dur = Util.friendlyDuration(durationOrNumber, type).negate();
+    const dur = Util.friendlyDuration(durationOrNumber, unit).negate();
     return clone(this, adjustTime(this, dur));
   }
 
+  /**
+   * "Sets" this DateTime to the beginning of a unit of time
+   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
+   * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
+   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
+   * @return {DateTime}
+   */
   startOf(unit) {
     if (!this.valid) return this;
     const o = {};
@@ -1003,6 +1029,15 @@ export class DateTime {
     return this.set(o);
   }
 
+  /**
+   * "Sets" this DateTime to the end (i.e. the last millisecond) of a unit of time
+   * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-03T00:00:00.000-05:00'
+   * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('day').toISO(); //=> '2014-03-03T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
+   * @return {DateTime}
+   */
   endOf(unit) {
     return this.valid ? this.startOf(unit).plus(1, unit).minus(1, 'milliseconds') : this;
   }
@@ -1091,14 +1126,33 @@ export class DateTime {
     return flipped ? merged.negate() : merged;
   }
 
+  /**
+   * Return the difference between this DateTime and right now.
+   * See {@link diff}
+   * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration
+   * @return {Duration}
+   */
   diffNow(...units) {
     return this.valid ? this.diff(DateTime.local(), ...units) : Duration.invalid();
   }
 
+  /**
+   * Return an Interval spanning between this DateTime and another DateTime
+   * @param {DateTime} otherDateTime - the other end point of the Interval
+   * @param {object} opts - options for constructing the interval. {@link Interval.fromDateTimes}
+   * @return {Duration}
+   */
   until(otherDateTime, opts = {}) {
     return this.valid ? Interval.fromDateTimes(this, otherDateTime, opts) : Duration.invalid();
   }
 
+  /**
+   * Return whether this DateTime is in the same unit of time as another DateTime
+   * @param {DateTime} otherDateTime - the other DateTime
+   * @param {string} unit - the unit of time to check sameness on
+   * @example DateTime.local().hasSame(otherDT, 'day'); //~> true if both the same calendar day
+   * @return {boolean}
+   */
   hasSame(otherDateTime, unit) {
     if (!this.valid) return false;
     if (unit === 'millisecond') {
@@ -1109,16 +1163,32 @@ export class DateTime {
     }
   }
 
+  /**
+   * Equality check
+   * Two DateTimes are equal iff they represent the same millisecond
+   * @param {DateTime} other - the other DateTime
+   * @return {boolean}
+   */
   equals(other) {
     // todo - check other stuff?
     return this.valid && other.valid ? this.valueOf() === other.valueOf() : false;
   }
 
+  /**
+   * Return the min of several date times
+   * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
+   * @return {DateTime}
+   */
   static min(...dateTimes) {
     return Util.bestBy(dateTimes, i => i.valueOf(), Math.min);
   }
 
-  static max(...DateTimes) {
-    return Util.bestBy(DateTimes, i => i.valueOf(), Math.max);
+  /**
+   * Return the max of several date times
+   * @param {...DateTime} dateTimes - the DateTimes from which to choose the maximum
+   * @return {DateTime}
+   */
+  static max(...dateTimes) {
+    return Util.bestBy(dateTimes, i => i.valueOf(), Math.max);
   }
 }

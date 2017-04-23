@@ -1,6 +1,10 @@
 import { Util } from '../impl/util';
 import { Zone } from '../zone';
 
+/**
+ * @private
+ */
+
 export class IANAZone extends Zone {
   static isValidSpecier(s) {
     return s && s.match(/[a-z_]+\/[a-z_]+/i);
