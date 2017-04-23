@@ -715,9 +715,9 @@ export class DateTime {
    * @return {number|DateTime}
    */
   millisecond(millisecond) {
-    return Util.isUndefined(v)
+    return Util.isUndefined(millisecond)
       ? this.valid ? this.c.millisecond : NaN
-      : this.set({ millisecond: v });
+      : this.set({ millisecond });
   }
 
   /**
