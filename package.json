@@ -37,6 +37,7 @@
     "prettier": "latest",
     "rollup-plugin-babel": "latest",
     "rollup-stream": "latest",
+    "run-sequence": "latest",
     "tap-min": "latest",
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest"

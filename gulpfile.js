@@ -11,6 +11,7 @@ const babel = require('rollup-plugin-babel'),
   prettier = require('gulp-prettier'),
   rename = require('gulp-rename'),
   rollup = require('rollup-stream'),
+  runSequence = require('run-sequence'),
   source = require('vinyl-source-stream'),
   sourcemaps = require('gulp-sourcemaps');
 
@@ -111,3 +112,5 @@ gulp.task('format', () =>
 gulp.task('docs', () => gulp.src('./src').pipe(esdoc({ destination: './docs' })));
 
 gulp.task('default', ['lint', 'build', 'test', 'docs']);
+
+gulp.task('default', cb => runSequence('lint', 'build', 'test', 'docs', cb));
