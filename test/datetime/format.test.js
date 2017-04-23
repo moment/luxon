@@ -10,7 +10,7 @@ const dt = DateTime.fromObject(
 
 //------
 // #toISO()
-//-------
+//------
 test("DateTime#toISO() shows 'Z' for UTC", () => {
   expect(dt.toISO()).toBe('1982-05-25T09:23:54.123Z');
 });
@@ -22,7 +22,7 @@ test('DateTime#toISO() shows the offset', () => {
 
 //------
 // #toISODate()
-//-------
+//------
 test('DateTime#toISODate() returns ISO 8601 date', () => {
   expect(dt.toISODate()).toBe('1982-05-25');
 });
@@ -33,7 +33,7 @@ test('DateTime#toISODate() is local to the zone', () => {
 
 //------
 // #toISOTime()
-//-------
+//------
 test('DateTime#toISOTime() returns an ISO 8601 date', () => {
   expect(dt.toISOTime()).toBe('09:23:54.123Z');
 });
@@ -109,7 +109,7 @@ test("DateTime#toLocaleString can override the dateTime's locale", () => {
 
 //------
 // #toFormat()
-//-------
+//------
 test("DateTime#toFormat('S') returns the millisecond", () => {
   expect(dt.toFormat('S')).toBe('123');
   expect(dt.locale('bn').toFormat('S')).toBe('১২৩');

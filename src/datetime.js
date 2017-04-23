@@ -819,8 +819,13 @@ export class DateTime {
 
   /**
    * Returns a string representation of this DateTime formatted according to the provided format string
+   * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool.
    * [todo - token definitions here]
-   * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
+   * @param fmt {string} - the format string
+   * @param opts {object} - options
+   * @param opts.round {boolean} - round numerical values
+   * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 avr. 22'
+   * @example DateTime.local().locale('fr').toFormat('yyyy LLL dd') //=> '2017 Apr 22'
    * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
    * @return {string}
    */
@@ -948,6 +953,12 @@ export class DateTime {
     return new Date(this.valid ? this.ts : NaN);
   }
 
+  /**
+   * Returns the resolved Intl options for this DateTime
+   * This is useful in understanding the behavior of parsing and formatting methods
+   * @param opts - the same options
+   * @return {object}
+   */
   resolvedLocaleOpts(opts = {}) {
     return Formatter.create(this.loc, opts).resolvedOptions();
   }
