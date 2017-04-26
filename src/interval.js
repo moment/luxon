@@ -331,7 +331,7 @@ export class Interval {
   }
 
   /**
-   * Returns a string representation of this Interval appropriate for debugging
+   * Returns a string representation of this Interval appropriate for debugging.
    * @return {string}
    */
   toString() {
@@ -339,7 +339,7 @@ export class Interval {
   }
 
   /**
-   * Returns an ISO 8601-compliant string representation of this Interval
+   * Returns an ISO 8601-compliant string representation of this Interval.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @param {object} opts - The same options as {@link DateTime.toISO}
    * @return {string}
@@ -349,7 +349,7 @@ export class Interval {
   }
 
   /**
-   * Returns a string representation of this Interval formatted according to the specified format string
+   * Returns a string representation of this Interval formatted according to the specified format string.
    * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime.toFormat} for details.
    * @param {object} opts - options
    * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations

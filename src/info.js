@@ -2,49 +2,120 @@ import { DateTime } from './datetime';
 import { Settings } from './settings';
 import { Locale } from './impl/locale';
 
+/**
+ * Static methods for retrieving information.
+ */
 export class Info {
+
+  /**
+   * Return whether the specified zone contains a DST.
+   * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.
+   * @return {boolean}
+   */
   static hasDST(zone = Settings.defaultZone) {
     return !zone.universal &&
       DateTime.local().timezone(zone).month(1).offset() !==
         DateTime.local().timezone(zone).month(5).offset();
   }
 
-  static months(length, locale = 'en', numbering = null) {
-    return new Locale(locale, numbering).months(length);
+  /**
+   * Return an array of standalone month names.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
+   * @param {string} [localeCode='en'] - the locale code
+   * @param {string} [numbering=null] - the numbering system
+   * @example Info.months()[0] //=> 'January'
+   * @example Info.months('short')[0] //=> 'Jan'
+   * @example Info.months('numeric')[0] //=> '1'
+   * @example Info.months('short', 'fr-CA')[0] //=> 'janv.'
+   * @example Info.months('numeric', 'ar')[0] //=> '١'
+   * @return {[string]}
+   */
+  static months(length = 'long', localeCode = 'en', numbering = null) {
+    return new Locale(localeCode, numbering).months(length);
   }
 
-  static monthsFormat(length, locale = 'en', numbering = null) {
-    return new Locale(locale, numbering).months(length, true);
+  /**
+   * Return an array of format month names.
+   * Format months differ from standalone months in that they're meant to appear next to the day of the month. In some languages, that
+   * changes the string.
+   * See {@link months}
+   * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
+   * @param {string} [localeCode='en'] - the locale code
+   * @param {string} [numbering=null] - the numbering system
+   * @return {[string]}
+   */
+  static monthsFormat(length = 'long', localeCode = 'en', numbering = null) {
+    return new Locale(localeCode, numbering).months(length, true);
   }
 
-  static weekdays(length, locale = 'en', numbering = null) {
-    return new Locale(locale, numbering).weekdays(length);
+  /**
+   * Return an array of standalone week names.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
+   * @param {string} [localeCode='en'] - the locale code
+   * @param {string} [numbering=null] - the numbering system
+   * @example Info.weekdays()[0] //=> 'Monday'
+   * @example Info.weekdays('short')[0] //=> 'Mon'
+   * @example Info.weekdays('short', 'fr-CA')[0] //=> 'lun.'
+   * @example Info.weekdays('short', 'ar')[0] //=> 'الاثنين'
+   * @return {[string]}
+   */
+  static weekdays(length = 'long', localeCode = 'en', numbering = null) {
+    return new Locale(localeCode, numbering).weekdays(length);
   }
 
-  static weekdaysFormat(length, locale = 'en', numbering = null) {
-    return new Locale(locale, numbering).weekdays(length, true);
+  /**
+   * Return an array of format week names.
+   * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that
+   * changes the string.
+   * See {@link weekdays}
+   * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
+   * @param {string} [localeCode='en'] - the locale code
+   * @param {string} [numbering=null] - the numbering system
+   * @return {[string]}
+   */
+  static weekdaysFormat(length = 'long', localeCode = 'en', numbering = null) {
+    return new Locale(localeCode, numbering).weekdays(length, true);
   }
 
-  static meridiems(locale = 'en', numbering = null) {
-    return new Locale(locale, numbering).meridiems();
+  /**
+   * Return an array of meridiems.
+   * @param {string} [localeCode='en'] - the locale code
+   * @example Info.meridiems() //=> [ 'AM', 'PM' ]
+   * @example Info.meridiems('de') //=> [ 'vorm.', 'nachm.' ]
+   * @return {[string]}
+   */
+  static meridiems(localeCode = 'en') {
+    return new Locale(localeCode).meridiems();
   }
 
+  /**
+   * Return the set of available features in this environment.
+   * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.
+   * Keys:
+   * * `timezones`: whether this environment supports IANA timezones
+   * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
+   * * `intl`: whether this environment supports general internationalization
+   * @example Info.feature() //=> { intl: true, intlTokens: false, timezones: true }
+   * @return {object}
+   */
   static features() {
-    let intl = false, ftp = false, zones = false;
+    let intl = false, intlTokens = false, timezones = false;
 
     if (Intl.DateTimeFormat) {
       intl = true;
 
-      ftp = typeof new Intl.DateTimeFormat().formatToParts !== 'undefined';
+      intlTokens = typeof new Intl.DateTimeFormat().formatToParts !== 'undefined';
 
       try {
         Intl.DateTimeFormat({ timeZone: 'America/New_York' });
-        zones = true;
+        timezones = true;
       } catch (e) {
-        zones = false;
+        timezones = false;
       }
     }
 
-    return { intl, intlParseFormat: ftp, englishParseFormat: ftp, timezones: zones };
+    return { intl, intlTokens, timezones };
   }
 }

@@ -502,7 +502,7 @@ export class DateTime {
   }
 
   /**
-   * Get or "set" the locale of a DateTime, such en-UK. The locale is used when formatting the DateTime
+   * Get or "set" the locale of a DateTime, such 'en-UK'. The locale is used when formatting the DateTime
    *
    * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter. If the locale is not supported, the best alternative is selected
    * @return {string|DateTime} - If a localeCode is provided, returns a new DateTime with the new locale. If not, returns the localeCode (a string) of the DateTime
@@ -517,7 +517,7 @@ export class DateTime {
   }
 
   /**
-   * "Sets" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
+   * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
    *
    * Equivalent to timezone('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
@@ -528,7 +528,7 @@ export class DateTime {
   }
 
   /**
-   * "Sets" the DateTime's zone to the environment's local zone. Returns a newly-constructed DateTime.
+   * "Set" the DateTime's zone to the environment's local zone. Returns a newly-constructed DateTime.
    *
    * Equivalent to `timezone('local')`
    * @return {DateTime}
@@ -538,7 +538,7 @@ export class DateTime {
   }
 
   /**
-   * "Sets" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
+   * "Set" the DateTime's zone to specified zone. Return a newly-constructed DateTime.
    *
    * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will behave differently in these ways:
    * * getters such as {@link hour} or {@link minute} will report local times in the target zone
@@ -561,7 +561,7 @@ export class DateTime {
   }
 
   /**
-   * Gets the name of the timezone
+   * Get the name of the timezone
    * @return {String}
    */
   timezoneName() {
@@ -569,7 +569,7 @@ export class DateTime {
   }
 
   /**
-   * Gets the short human name for the zone's current offset, for example "EST" or "EDT"
+   * Get the short human name for the zone's current offset, for example "EST" or "EDT"
    * @return {String}
    */
   offsetNameShort() {
@@ -577,7 +577,7 @@ export class DateTime {
   }
 
   /**
-   * Gets the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time". Is locale-aware.
+   * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time". Is locale-aware.
    * @return {String}
    */
   offsetNameLong() {
@@ -585,7 +585,7 @@ export class DateTime {
   }
 
   /**
-   * Gets whether this zone's offset ever changes, as in a DST
+   * Get whether this zone's offset ever changes, as in a DST
    * @return {boolean}
    */
   isOffsetFixed() {
@@ -593,7 +593,7 @@ export class DateTime {
   }
 
   /**
-   * Gets whether the DateTime is in a DST
+   * Get whether the DateTime is in a DST
    * @return {boolean}
    */
   isInDST() {
@@ -605,7 +605,7 @@ export class DateTime {
   }
 
   /**
-   * Gets the value of unit
+   * Get the value of unit
    * @param {string} unit - a unit such as 'minute' or 'day'
    * @example DateTime.local(2017, 7, 4).get('month'); //=> 7
    * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
@@ -616,7 +616,7 @@ export class DateTime {
   }
 
   /**
-   * "Sets" the values of specified units. Returns a newly-constructed DateTime.
+   * "Set" the values of specified units. Returns a newly-constructed DateTime.
    * @param {object} values - a mapping of units to numbers
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
@@ -648,7 +648,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the year.
+   * Get or "set" the year.
    * @param {number} year - the year to set. If omitted, `year()` acts as a getter for the year.
    * @example DateTime.local(2017, 5, 25).year() //=> 2017
    * @example DateTime.local(2017, 5, 25).year(1982).toISODate() //=> "1982-05-25"
@@ -659,7 +659,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the month (1-12).
+   * Get or "set" the month (1-12).
    * @param {number} month - the month to set. If omitted, `month()` acts as a getter for the month.
    * @example DateTime.local(2017, 5, 25).month() //=> 5
    * @example DateTime.local(2017, 5, 25).month(6).toISODate() //=> "2017-06-25"
@@ -670,7 +670,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the day of the month (1-30ish).
+   * Get or "set" the day of the month (1-30ish).
    * @param {number} day - the day to set. If omitted, `day()` acts as a getter for the day.
    * @example DateTime.local(2017, 5, 25).day() //=> 25
    * @example DateTime.local(2017, 5, 25).day(26).toISODate() //=> "2017-05-26"
@@ -681,7 +681,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the hour of the day (0-23).
+   * Get or "set" the hour of the day (0-23).
    * @param {number} hour - the hour to set. If omitted, `hour()` acts as a getter for the hour.
    * @example DateTime.local(2017, 5, 25, 9).hour() //=> 9
    * @example DateTime.local(2017, 5, 25, 9).hour(13).toISOTime() //=> 13:00:00.000"
@@ -692,7 +692,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the minute of the hour (0-59).
+   * Get or "set" the minute of the hour (0-59).
    * @param {number} minute - the minute to set. If omitted, `minute()` acts as a getter for the minute.
    * @example DateTime.local(2017, 5, 25, 9, 30).minute() //=> 30
    * @example DateTime.local(2017, 5, 25, 9, 15).minute(45).toISOTime() //=> "09:45:00.000"
@@ -703,7 +703,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the second of the minute (0-59).
+   * Get or "set" the second of the minute (0-59).
    * @param {number} second - the second to set. If omitted, `second()` acts as a getter for the second.
    * @example DateTime.local(2017, 5, 25, 9, 30, 52).second() //=> 52
    * @example DateTime.local(2017, 5, 25, 9, 30, 52).second(45).toISOTime() //=> "09:30:45.000"
@@ -714,7 +714,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the millisecond of the second (0-999).
+   * Get or "set" the millisecond of the second (0-999).
    * @param {number} millisecond - the millisecond to set. If omitted, `millisecond()` acts as a getter for the millisecond.
    * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond() //=> 654
    * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond(236).toISOTime() //=> "09:30:52.226"
@@ -727,7 +727,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the week year.
+   * Get or "set" the week year.
    * The setter maintains the current week number and day of the week.
    * @see https://en.wikipedia.org/wiki/ISO_week_date
    * @param {number} weekYear - the week year to set. If omitted, `weekYear()` acts as a getter for the week year.
@@ -742,7 +742,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the week number of the week year (1-52ish).
+   * Get or "set" the week number of the week year (1-52ish).
    * The setter maintains the current day of the week.
    * @see https://en.wikipedia.org/wiki/ISO_week_date
    * @param {number} weekNumber - the week number to set. If omitted, `weekNumber()` acts as a getter for the week number.
@@ -757,7 +757,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the day of the week.
+   * Get or "set" the day of the week.
    * 1 is Monday and 7 is Sunday
    * @see https://en.wikipedia.org/wiki/ISO_week_date
    * @param {number} weekday - the weekday to set. If omitted, `weekday()` acts as a getter for the weekday.
@@ -772,7 +772,7 @@ export class DateTime {
   }
 
   /**
-   * Gets or "sets" the ordinal (i.e. the day of the year)
+   * Get or "set" the ordinal (i.e. the day of the year)
    * @param {number} ordinal - the ordinal to set. If omitted, `ordinal()` acts as a getter for the ordinal number.
    * @example DateTime.local(2017, 5, 25).ordinal(200).toISODate() //=> "2017-07-19"
    * @example DateTime.local(2017, 5, 25).ordinal() //=> 145
@@ -785,7 +785,7 @@ export class DateTime {
   }
 
   /**
-   * Gets the UTC offset of this DateTime in minutes
+   * Get the UTC offset of this DateTime in minutes
    * @example DateTime.local().offset() //=> -240
    * @example DateTime.utc().offset() //=> 0
    * @return {number}
@@ -933,15 +933,15 @@ export class DateTime {
   }
 
   /**
-   * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON
-   * @return {number}
+   * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON.
+   * @return {string}
    */
   toJSON() {
     return this.toISO();
   }
 
   /**
-   * Returns a Javascript object with this DateTime's year, month, day, and so on
+   * Returns a Javascript object with this DateTime's year, month, day, and so on.
    * @example DateTime.local().toObject() //=> { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
    * @return {object}
    */
@@ -951,7 +951,7 @@ export class DateTime {
   }
 
   /**
-   * Returns a Javascript Date equivalent to this DateTime
+   * Returns a Javascript Date equivalent to this DateTime.
    * @return {object}
    */
   toJSDate() {
@@ -959,7 +959,7 @@ export class DateTime {
   }
 
   /**
-   * Returns the resolved Intl options for this DateTime
+   * Returns the resolved Intl options for this DateTime.
    * This is useful in understanding the behavior of parsing and formatting methods
    * @param {object} opts - the same options as toLocaleString
    * @return {object}
@@ -1000,7 +1000,7 @@ export class DateTime {
   }
 
   /**
-   * "Sets" this DateTime to the beginning of a unit of time
+   * "Set" this DateTime to the beginning of a unit of time
    * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
    * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
@@ -1037,7 +1037,7 @@ export class DateTime {
   }
 
   /**
-   * "Sets" this DateTime to the end (i.e. the last millisecond) of a unit of time
+   * "Set" this DateTime to the end (i.e. the last millisecond) of a unit of time
    * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-03T00:00:00.000-05:00'
    * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
