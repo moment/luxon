@@ -217,7 +217,7 @@ export class DateTime {
   }
 
   /**
-   * Create a local time
+   * Create a local DateTime
    * @param {number} year - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
    * @param {number} [month=1] - The month, 1-indexed
    * @param {number} [day=1] - The day of the month
@@ -247,7 +247,7 @@ export class DateTime {
   }
 
   /**
-   * Create a UTC time
+   * Create a DateTime in UTC
    * @param {number} year - The calendar year. If omitted (as in, call `utc()` with no arguments), the current time will be used
    * @param {number} [month=1] - The month, 1-indexed
    * @param {number} [day=1] - The day of the month
@@ -825,7 +825,7 @@ export class DateTime {
   }
 
   /**
-   * Returns a string representation of this DateTime formatted according to the provided format string
+   * Returns a string representation of this DateTime formatted according to the specified format string
    * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool.
    * [todo - token definitions here]
    * @param {string} fmt - the format string
@@ -974,7 +974,7 @@ export class DateTime {
    * * Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way.
    * Thus, `dt.plus(24, 'hours')` may result in a different time than `dt.plus(1, 'day')` if there's a DST shift in between.
    * @param {Duration|number} durationOrNumber - The amount to add. Either a Luxon Duration or a number
-   * @param {string} unit - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {string} [unit='millisecond'] - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local().plus(15, 'minutes') //~> in 15 minutes
    * @example DateTime.local().plus(1, 'day') //~> this time tomorrow
    * @example DateTime.local().plus(Duration.fromObject({hours: 3, minutes: 13}) //~> in 1 hr, 13 min
@@ -1052,7 +1052,7 @@ export class DateTime {
   /**
    * Return the difference between two DateTimes as a Duration.
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
-   * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration
+   * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration.
    * @example
    * var i1 = DateTime.fromISO('1982-05-25T09:45'),
    *     i2 = DateTime.fromISO('1983-10-14T10:30');
