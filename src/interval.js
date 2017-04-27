@@ -4,6 +4,9 @@ import { Util } from './impl/util';
  * A half-open range of time spanning from one DateTime to another
  */
 export class Interval {
+  /**
+   * @private
+   */
   constructor(start, end) {
     Object.defineProperty(this, 's', { value: start, enumerable: true });
     Object.defineProperty(this, 'e', { value: end, enumerable: true });
@@ -63,7 +66,9 @@ export class Interval {
    * @return {DateTime|Interval} - If a value is supplied, returns the new Interval, otherwise returns the start DateTime
    */
   start(start) {
-    return Util.isUndefined(start) ? this.isValid() ? this.s : NaN : Interval.fromDateTimes(start, this.e);
+    return Util.isUndefined(start)
+      ? this.isValid() ? this.s : NaN
+      : Interval.fromDateTimes(start, this.e);
   }
 
   /**
@@ -72,7 +77,9 @@ export class Interval {
    * @return {DateTime|Interval} - If a value is supplied, returns the new Interval, otherwise returns the end DateTime
    */
   end(end) {
-    return Util.isUndefined(end) ? this.isValid() ? this.e : NaN : Interval.fromDateTimes(this.s, end);
+    return Util.isUndefined(end)
+      ? this.isValid() ? this.e : NaN
+      : Interval.fromDateTimes(this.s, end);
   }
 
   /**

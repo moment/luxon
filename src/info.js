@@ -6,7 +6,6 @@ import { Locale } from './impl/locale';
  * Static methods for retrieving information.
  */
 export class Info {
-
   /**
    * Return whether the specified zone contains a DST.
    * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.

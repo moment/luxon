@@ -39,8 +39,11 @@ function clone(dur, alts) {
  * An amount of time.
  */
 export class Duration {
+  /**
+   * @private
+   */
   constructor(config) {
-    this.values = config.values;
+    Object.defineProperty(this, 'values', { value: config.values, enumerable: true });
     Object.defineProperty(this, 'loc', { value: config.loc || Locale.create(), enumerable: true });
     Object.defineProperty(this, 'valid', { value: config.valid || true, enumerable: false });
   }
@@ -99,7 +102,9 @@ export class Duration {
    * @return {string|Duration} - If a localeCode is provided, returns a new DateTime with the new locale. If not, returns the localeCode (a string) of the DateTime
    */
   locale(localeCode) {
-    return Util.isUndefined(localeCode) ? this.loc : clone(this, { loc: Locale.create(localeCode) });
+    return Util.isUndefined(localeCode)
+      ? this.loc
+      : clone(this, { loc: Locale.create(localeCode) });
   }
 
   /**
@@ -309,7 +314,7 @@ export class Duration {
    * @return {number|Duration}
    */
   years(years) {
-    return Util.isUndefined(months) ? this.values.year || 0 : this.set({ years });
+    return Util.isUndefined(years) ? this.values.year || 0 : this.set({ year: years });
   }
 
   /**
@@ -318,7 +323,7 @@ export class Duration {
    * @return {number|Duration}
    */
   months(months) {
-    return Util.isUndefined(months) ? this.values.month || 0 : this.set({ months });
+    return Util.isUndefined(months) ? this.values.month || 0 : this.set({ month: months });
   }
 
   /**
@@ -327,7 +332,7 @@ export class Duration {
    * @return {number|Duration}
    */
   days(days) {
-    return Util.isUndefined(days) ? this.values.day || 0 : this.set({ days });
+    return Util.isUndefined(days) ? this.values.day || 0 : this.set({ day: days });
   }
 
   /**
@@ -336,7 +341,7 @@ export class Duration {
    * @return {number|Duration}
    */
   hours(hours) {
-    return Util.isUndefined(hours) ? this.values.hour || 0 : this.set({ hour });
+    return Util.isUndefined(hours) ? this.values.hour || 0 : this.set({ hour: hours });
   }
 
   /**
@@ -345,7 +350,7 @@ export class Duration {
    * @return {number|Duration}
    */
   minutes(minutes) {
-    return Util.isUndefined(minutes) ? this.values.minute || 0 : this.set({ minutes });
+    return Util.isUndefined(minutes) ? this.values.minute || 0 : this.set({ minute: minutes });
   }
 
   /**
@@ -354,7 +359,7 @@ export class Duration {
    * @return {number|Duration}
    */
   seconds(seconds) {
-    return Util.isUndefined(seconds) ? this.values.second || 0 : this.set({ seconds });
+    return Util.isUndefined(seconds) ? this.values.second || 0 : this.set({ second: seconds });
   }
 
   /**
@@ -363,7 +368,9 @@ export class Duration {
    * @return {number|Duration}
    */
   milliseconds(milliseconds) {
-    return Util.isUndefined(milliseconds) ? this.values.millisecond || 0 : this.set({ milliseconds });
+    return Util.isUndefined(milliseconds)
+      ? this.values.millisecond || 0
+      : this.set({ millisecond: milliseconds });
   }
 
   /**
