@@ -223,7 +223,4 @@ export class RegexParser {
   static parseISODuration(s) {
     return parse(s, [isoDuration, extractISODuration]);
   }
-
-  // static parseISOInterval(s, opts = {}) {
-  // }
 }

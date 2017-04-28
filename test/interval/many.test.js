@@ -52,6 +52,10 @@ test('Interval#union spans adjacent intervals', () => {
   expect(todayFrom(5, 8).union(todayFrom(8, 10)).equals(todayFrom(5, 10))).toBeTruthy();
 });
 
+test('Interval#union returns invalid for invalid intervals', () => {
+  expect(Interval.invalid().union(todayFrom(8, 10)).isValid()).toBeFalsy();
+});
+
 //-------
 // #intersection()
 //-------
@@ -66,6 +70,10 @@ test('Interval#intersection returns the intersection for overlapping intervals',
 
 test('Interval#intersection returns empty for adjacent intervals', () => {
   expect(todayFrom(5, 8).intersection(todayFrom(8, 10)).isEmpty()).toBeTruthy();
+});
+
+test('Interval#intersection returns invalid for invalid intervals', () => {
+  expect(Interval.invalid().intersection(todayFrom(8, 10)).isValid()).toBeFalsy();
 });
 
 //-------

@@ -104,7 +104,7 @@ test('Interval#isEmpty returns false for non-empty intervals', () => {
 
 //------
 // #isBefore()
-//-------
+//------
 test('Interval#isBefore returns true for intervals fully before the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.minus(2, 'day'), n.minus(1, 'day'));
@@ -123,9 +123,9 @@ test('Interval#isBefore returns false for intervals fully after the input ', () 
   expect(i.isBefore(n)).toBeFalsy();
 });
 
-test('Interval#isBefore returns true for intervals starting at the input', () => {
-  const n = DateTime.fromISO('1982-05-25T06:00'), i = Interval.fromDateTimes(n, n.minus(1, 'day'));
-  expect(i.isBefore(n)).toBeTruthy();
+test('Interval#isBefore returns false for intervals starting at the input', () => {
+  const n = DateTime.fromISO('1982-05-25T06:00'), i = Interval.fromDateTimes(n.minus(1, 'day'), n);
+  expect(i.isBefore(n)).toBeFalsy();
 });
 
 //------

@@ -10,7 +10,7 @@ import { RegexParser } from './impl/regexParser';
 import { TokenParser } from './impl/tokenParser';
 import { Conversions } from './impl/conversions';
 
-const INVALID = 'Invalid Date';
+const INVALID = 'Invalid DateTime';
 
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
@@ -140,21 +140,21 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
-function formatMaybe(dt, format) {
-  return dt.valid
-    ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format)
-    : INVALID;
-}
-
-function adjustZoneOfParsedDate(vals, context, setZone, zone) {
-  if (vals) {
+function parseDataToDateTime(parsed, context, { setZone, zone } = {}) {
+  if (parsed) {
     const { local, offset } = context,
       interpretationZone = local ? zone : new FixedOffsetZone(offset),
-      inst = DateTime.fromObject(vals, interpretationZone);
+      inst = DateTime.fromObject(parsed, interpretationZone);
     return setZone ? inst : inst.timezone(zone);
   } else {
     return DateTime.invalid();
   }
+}
+
+function formatMaybe(dt, format) {
+  return dt.valid
+    ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format)
+    : INVALID;
 }
 
 const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
@@ -420,7 +420,7 @@ export class DateTime {
    */
   static fromISO(text, { setZone = false, zone = Settings.defaultZone } = {}) {
     const [vals, context] = RegexParser.parseISODate(text);
-    return adjustZoneOfParsedDate(vals, context, setZone, zone);
+    return parseDataToDateTime(vals, context, { setZone, zone });
   }
 
   /**
@@ -436,7 +436,7 @@ export class DateTime {
    */
   static fromRFC2822(text, { setZone = false, zone = Settings.defaultZone } = {}) {
     const [vals, context] = RegexParser.parseRFC2822Date(text);
-    return adjustZoneOfParsedDate(vals, context, setZone, zone);
+    return parseDataToDateTime(vals, context, { setZone, zone });
   }
 
   /**
@@ -453,7 +453,7 @@ export class DateTime {
    */
   static fromHTTP(text, { setZone = false, zone = Settings.defaultZone } = {}) {
     const [vals, context] = RegexParser.parseHTTPDate(text);
-    return adjustZoneOfParsedDate(vals, context, setZone, zone);
+    return parseDataToDateTime(vals, context, { setZone, zone });
   }
 
   /**
