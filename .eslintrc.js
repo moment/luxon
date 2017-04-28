@@ -31,6 +31,10 @@ module.exports = {
     // this had the effect of forbidding mixing + and -
     'no-mixed-operators': 'off',
     // modern browsers only
-    'no-prototype-builtins': 'off'
+    'no-prototype-builtins': 'off',
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['test/**/*.js', 'benchmarks/*.js', 'gulpfile.js'] }
+    ]
   }
 };

@@ -50,7 +50,7 @@ function intlConfigString(localeCode, nums, cal) {
 function mapMonths(f) {
   const ms = [];
   for (let i = 1; i <= 12; i++) {
-    const dt = DateTime.fromObject({ year: 2016, month: i, day: 1 }, 'utc');
+    const dt = DateTime.utc(2016, i, 1);
     ms.push(f(dt));
   }
   return ms;
@@ -59,7 +59,7 @@ function mapMonths(f) {
 function mapWeekdays(f) {
   const ms = [];
   for (let i = 1; i <= 7; i++) {
-    const dt = DateTime.fromObject({ year: 2016, month: 11, day: 13 + i }, 'utc');
+    const dt = DateTime.utc(2016, 11, 13 + i);
     ms.push(f(dt));
   }
   return ms;
@@ -172,10 +172,8 @@ export class Locale {
     // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
     // for AM and PM. This is probably wrong, but it's makes parsing way easier.
     if (!this.meridiemCache) {
-      this.meridiemCache = [
-        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 9 }, 'utc'),
-        DateTime.fromObject({ year: 2016, month: 11, day: 13, hour: 19 }, 'utc')
-      ].map(dt => this.extract(dt, intl, 'dayperiod'));
+      this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(dt =>
+        this.extract(dt, intl, 'dayperiod'));
     }
 
     return this.meridiemCache;
