@@ -1,7 +1,6 @@
 /* global test expect */
 
 import { DateTime, Duration } from '../../dist/cjs/luxon';
-import { FakePT } from '../helpers/fakePT';
 
 function createDateTime() {
   return DateTime.fromObject({
@@ -24,13 +23,13 @@ test("DateTime#plus(1, 'year') adds a year", () => {
 });
 
 test("DateTime#plus(1, 'day') keeps the same time across a DST", () => {
-  const i = DateTime.fromISO('2016-03-12T10:00', { zone: new FakePT() }), later = i.plus(1, 'day');
+  const i = DateTime.fromISO('2016-03-12T10:00', { zone: 'America/Los_Angeles' }), later = i.plus(1, 'day');
   expect(later.day()).toBe(13);
   expect(later.hour()).toBe(10);
 });
 
 test("DateTime#plus(24, 'hours') gains an hour to spring forward", () => {
-  const i = DateTime.fromISO('2016-03-12T10:00', { zone: new FakePT() }),
+  const i = DateTime.fromISO('2016-03-12T10:00', { zone: 'America/Los_Angeles' }),
     later = i.plus(24, 'hours');
   expect(later.day()).toBe(13);
   expect(later.hour()).toBe(11);

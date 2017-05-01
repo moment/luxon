@@ -1,8 +1,6 @@
 /* global test expect */
 
 import { DateTime } from '../../dist/cjs/luxon';
-import { FakePT } from '../helpers/fakePT';
-import { FakeET } from '../helpers/fakeET';
 
 const millis = 391147200000,
   // 1982-05-25T04:00:00.000Z
@@ -50,9 +48,9 @@ test('DateTime#toLocal() sets the calendar back to local', () => {
 // #timezone()
 //------
 test('timezone sets the TZ to the specified zone', () => {
-  const zoned = dt().timezone(new FakePT());
+  const zoned = dt().timezone('America/Los_Angeles');
 
-  expect(zoned.timezoneName()).toBe('Fake Pacific Time');
+  expect(zoned.timezoneName()).toBe('America/Los_Angeles');
   expect(zoned.isOffsetFixed()).toBe(false);
   expect(zoned.valueOf()).toBe(millis);
   expect(zoned.day()).toBe(24);
@@ -89,16 +87,16 @@ test('accepts IANA zone names', () => {
 });
 
 test('timezone accepts a keepCalendarTime option', () => {
-  const zoned = dt().toUTC().timezone(new FakePT(), { keepCalendarTime: true });
-  expect(zoned.timezoneName()).toBe('Fake Pacific Time');
+  const zoned = dt().toUTC().timezone('America/Los_Angeles', { keepCalendarTime: true });
+  expect(zoned.timezoneName()).toBe('America/Los_Angeles');
   expect(zoned.year()).toBe(1982);
   expect(zoned.month()).toBe(5);
   expect(zoned.day()).toBe(25);
   expect(zoned.hour()).toBe(4);
   expect(zoned.isOffsetFixed()).toBe(false);
 
-  const zonedMore = zoned.timezone(new FakeET(), { keepCalendarTime: true });
-  expect(zonedMore.timezoneName()).toBe('Fake Eastern Time');
+  const zonedMore = zoned.timezone('America/New_York', { keepCalendarTime: true });
+  expect(zonedMore.timezoneName()).toBe('America/New_York');
   expect(zonedMore.year()).toBe(1982);
   expect(zonedMore.month()).toBe(5);
   expect(zonedMore.day()).toBe(25);
@@ -110,16 +108,16 @@ test('timezone accepts a keepCalendarTime option', () => {
 // #isInDST()
 //------
 test('DateTime#isInDST() returns false for pre-DST times', () => {
-  const zoned = dt().timezone(new FakePT());
+  const zoned = dt().timezone('America/Los_Angeles');
   expect(zoned.month(1).isInDST()).toBe(false);
 });
 
 test('DateTime#isInDST() returns true for during-DST times', () => {
-  const zoned = dt().timezone(new FakePT());
-  expect(zoned.month(4).isInDST()).toBe(true);
+  const zoned = dt().timezone('America/Los_Angeles');
+  expect(zoned.month(5).isInDST()).toBe(true);
 });
 
 test('DateTime#isInDST() returns false for post-DST times', () => {
-  const zoned = dt().timezone(new FakePT());
+  const zoned = dt().timezone('America/Los_Angeles');
   expect(zoned.month(12).isInDST()).toBe(false);
 });

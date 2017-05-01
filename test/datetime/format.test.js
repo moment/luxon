@@ -1,7 +1,6 @@
 /* global test expect */
 
 import { DateTime } from '../../dist/cjs/luxon';
-import { FakePT } from '../helpers/fakePT';
 
 const dt = DateTime.fromObject(
   { year: 1982, month: 5, day: 25, hour: 9, minute: 23, second: 54, millisecond: 123 },
@@ -197,18 +196,18 @@ test("DateTime#toFormat('ZZZ') returns a numerical offset", () => {
 });
 
 test("DateTime#toFormat('ZZZZ') returns the short offset name", () => {
-  const zoned = dt.timezone(new FakePT());
+  const zoned = dt.timezone('America/Los_Angeles');
   expect(zoned.toFormat('ZZZZ')).toBe('PDT');
 });
 
 test("DateTime#toFormat('ZZZZZ') returns the full offset name", () => {
-  const zoned = dt.timezone(new FakePT());
+  const zoned = dt.timezone('America/Los_Angeles');
   expect(zoned.toFormat('ZZZZZ')).toBe('Pacific Daylight Time');
 });
 
 test("DateTime#toFormat('z') returns the zone name", () => {
-  const zoned = dt.timezone(new FakePT());
-  expect(zoned.toFormat('z')).toBe('Fake Pacific Time');
+  const zoned = dt.timezone('America/Los_Angeles');
+  expect(zoned.toFormat('z')).toBe('America/Los_Angeles');
 });
 
 test("DateTime#toFormat('a') returns the meridiem", () => {

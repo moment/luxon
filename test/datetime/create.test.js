@@ -1,7 +1,6 @@
 /* global test expect */
 
 import { DateTime } from '../../dist/cjs/luxon';
-import { FakePT } from '../helpers/fakePT';
 
 //------
 // .local()
@@ -262,8 +261,8 @@ test('DateTime.fromObject() accepts "America/Los_Angeles" as the second argument
 });
 
 test('DateTime.fromObject() accepts a Zone as the second argument', () => {
-  const daylight = DateTime.fromObject(Object.assign({}, baseObject, { month: 5 }), new FakePT()),
-    standard = DateTime.fromObject(Object.assign({}, baseObject, { month: 12 }), new FakePT());
+  const daylight = DateTime.fromObject(Object.assign({}, baseObject, { month: 5 }), 'America/Los_Angeles'),
+    standard = DateTime.fromObject(Object.assign({}, baseObject, { month: 12 }), 'America/Los_Angeles');
 
   expect(daylight.isOffsetFixed()).toBe(false);
   expect(daylight.offset()).toBe(-7 * 60);
