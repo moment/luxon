@@ -11,10 +11,10 @@ test('Duration.fromISO can parse a variety of ISO formats', () => {
     expect(Duration.fromISO(s).toObject()).toEqual(ob);
   };
 
-  check('P5Y3M', { year: 5, month: 3 });
-  check('PT54M32S', { minute: 54, second: 32 });
-  check('P3DT54M32S', { day: 3, minute: 54, second: 32 });
-  check('P1YT34000S', { year: 1, second: 34000 });
+  check('P5Y3M', { years: 5, months: 3 });
+  check('PT54M32S', { minutes: 54, seconds: 32 });
+  check('P3DT54M32S', { days: 3, minutes: 54, seconds: 32 });
+  check('P1YT34000S', { years: 1, seconds: 34000 });
 });
 
 test('Duration.fromISO rejects junk', () => {

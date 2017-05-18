@@ -23,7 +23,8 @@ test("DateTime#plus(1, 'year') adds a year", () => {
 });
 
 test("DateTime#plus(1, 'day') keeps the same time across a DST", () => {
-  const i = DateTime.fromISO('2016-03-12T10:00', { zone: 'America/Los_Angeles' }), later = i.plus(1, 'day');
+  const i = DateTime.fromISO('2016-03-12T10:00', { zone: 'America/Los_Angeles' }),
+    later = i.plus(1, 'day');
   expect(later.day()).toBe(13);
   expect(later.hour()).toBe(10);
 });

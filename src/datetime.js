@@ -180,6 +180,50 @@ function isoTimeFormat(dateTime, suppressSecs, suppressMillis) {
     : suppressMillis && dateTime.millisecond() === 0 ? 'HH:mm:ssZZ' : 'HH:mm:ss.SSSZZ';
 }
 
+const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+const orderedWeekUnits = [
+  'weekYear',
+  'weekNumber',
+  'weekday',
+  'hour',
+  'minute',
+  'second',
+  'millisecond'
+];
+
+const orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
+
+function normalizeUnit(unit) {
+  const normalized = {
+    year: 'year',
+    years: 'year',
+    month: 'month',
+    months: 'month',
+    day: 'day',
+    days: 'day',
+    hour: 'hour',
+    hours: 'hour',
+    minute: 'minute',
+    minutes: 'minute',
+    second: 'second',
+    seconds: 'second',
+    millisecond: 'millisecond',
+    milliseconds: 'millisecond',
+    weekday: 'weekday',
+    weekdays: 'weekday',
+    weeknumber: 'weekNumber',
+    weeksnumber: 'weekNumber',
+    weeknumbers: 'weekNumber',
+    weekyear: 'weekYear',
+    weekyears: 'weekYear',
+    ordinal: 'ordinal'
+  }[unit ? unit.toLowerCase() : unit];
+
+  if (!normalized) throw new Error(`Invalid unit ${unit}`);
+
+  return normalized;
+}
+
 /**
  * A specific millisecond with an associated time zone and locale
  */
@@ -330,7 +374,7 @@ export class DateTime {
     const tsNow = Settings.now(),
       zoneToUse = Util.normalizeZone(zone),
       offsetProvis = zoneToUse.offset(tsNow),
-      normalized = Util.normalizeObject(obj),
+      normalized = Util.normalizeObject(obj, normalizeUnit),
       containsOrdinal = !Util.isUndefined(normalized.ordinal),
       containsGregorYear = !Util.isUndefined(normalized.year),
       containsGregorMD = !Util.isUndefined(normalized.month) || !Util.isUndefined(normalized.day),
@@ -356,15 +400,15 @@ export class DateTime {
     // configure ourselves to deal with gregorian dates or week stuff
     let units, defaultValues, objNow = tsToObj(tsNow, offsetProvis);
     if (useWeekData) {
-      units = Util.orderedWeekUnits;
+      units = orderedWeekUnits;
       defaultValues = defaultWeekUnitValues;
       objNow = Conversions.gregorianToWeek(objNow);
     } else if (containsOrdinal) {
-      units = Util.orderedOrdinalUnits;
+      units = orderedOrdinalUnits;
       defaultValues = defaultOrdinalUnitValues;
       objNow = Conversions.gregorianToOrdinal(objNow);
     } else {
-      units = Util.orderedUnits;
+      units = orderedUnits;
       defaultValues = defaultUnitValues;
     }
 
@@ -625,7 +669,7 @@ export class DateTime {
    * @return {DateTime}
    */
   set(values) {
-    const normalized = Util.normalizeObject(values),
+    const normalized = Util.normalizeObject(values, normalizeUnit),
       settingWeekStuff = !Util.isUndefined(normalized.weekYear) ||
         !Util.isUndefined(normalized.weekNumber) ||
         !Util.isUndefined(normalized.weekday);
@@ -1011,7 +1055,7 @@ export class DateTime {
   startOf(unit) {
     if (!this.valid) return this;
     const o = {};
-    switch (Util.normalizeUnit(unit)) {
+    switch (normalizeUnit(unit)) {
       case 'year':
         o.month = 1;
       // falls through
@@ -1066,9 +1110,9 @@ export class DateTime {
     if (!this.valid) return this;
 
     if (units.length === 0) {
-      units = ['millisecond'];
+      units = ['milliseconds'];
     } else {
-      units = units.map(Util.normalizeUnit);
+      units = units.map(Duration.normalizeUnit);
     }
 
     const flipped = otherDateTime.valueOf() > this.valueOf(),
@@ -1077,55 +1121,55 @@ export class DateTime {
 
     let cursor = flipped ? this : otherDateTime, lowestOrder = null;
 
-    if (units.indexOf('year') >= 0) {
+    if (units.indexOf('years') >= 0) {
       let dYear = post.year() - cursor.year();
 
       cursor = cursor.year(post.year());
 
       if (cursor > post) {
-        cursor = cursor.minus(1, 'year');
+        cursor = cursor.minus(1, 'years');
         dYear -= 1;
       }
 
       accum.years = dYear;
-      lowestOrder = 'year';
+      lowestOrder = 'years';
     }
 
-    if (units.indexOf('month') >= 0) {
+    if (units.indexOf('months') >= 0) {
       const dYear = post.year() - cursor.year();
       let dMonth = post.month() - cursor.month() + dYear * 12;
 
       cursor = cursor.set({ year: post.year(), month: post.month() });
 
       if (cursor > post) {
-        cursor = cursor.minus(1, 'month');
+        cursor = cursor.minus(1, 'months');
         dMonth -= 1;
       }
 
       accum.months = dMonth;
-      lowestOrder = 'month';
+      lowestOrder = 'months';
     }
 
     // days is tricky because we want to ignore offset differences
-    if (units.indexOf('day') >= 0) {
+    if (units.indexOf('days') >= 0) {
       // there's almost certainly a quicker, simpler way to do this
       const utcDayStart = i => DateTime.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      let dDay = Math.floor(Duration.fromLength(ms).shiftTo('day').days());
+      let dDay = Math.floor(Duration.fromLength(ms).shiftTo('days').days());
 
       cursor = cursor.set({ year: post.year(), month: post.month(), day: post.day() });
 
       if (cursor > post) {
-        cursor.minus(1, 'day');
+        cursor.minus(1, 'days');
         dDay = -1;
       }
 
       accum.days = dDay;
-      lowestOrder = 'day';
+      lowestOrder = 'days';
     }
 
     const remaining = Duration.fromLength(post - cursor),
-      moreUnits = units.filter(u => ['hour', 'minute', 'second', 'millisecond'].indexOf(u) >= 0),
+      moreUnits = units.filter(u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0),
       shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
       shifted = remaining.shiftTo(...shiftTo),
       merged = shifted.plus(Duration.fromObject(accum));

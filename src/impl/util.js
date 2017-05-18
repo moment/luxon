@@ -150,45 +150,13 @@ export class Util {
     }
   }
 
-  // todo: different units for durations?
-  static normalizeUnit(unit) {
-    const normalized = {
-      year: 'year',
-      years: 'year',
-      month: 'month',
-      months: 'month',
-      day: 'day',
-      days: 'day',
-      hour: 'hour',
-      hours: 'hour',
-      minute: 'minute',
-      minutes: 'minute',
-      second: 'second',
-      seconds: 'second',
-      millisecond: 'millisecond',
-      milliseconds: 'millisecond',
-      weekday: 'weekday',
-      weekdays: 'weekday',
-      weeknumber: 'weekNumber',
-      weeksnumber: 'weekNumber',
-      weeknumbers: 'weekNumber',
-      weekyear: 'weekYear',
-      weekyears: 'weekYear',
-      ordinal: 'ordinal'
-    }[unit ? unit.toLowerCase() : unit];
-
-    if (!normalized) throw new Error(`Invalid unit ${unit}`);
-
-    return normalized;
-  }
-
-  static normalizeObject(obj) {
+  static normalizeObject(obj, normalizer) {
     const normalized = {};
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
         const v = obj[u];
         if (v !== null && !Util.isUndefined(v) && !isNaN(v)) {
-          normalized[Util.normalizeUnit(u)] = v;
+          normalized[normalizer(u)] = v;
         }
       }
     }
@@ -203,16 +171,3 @@ export class Util {
     return year > 60 ? 1900 + year : 2000 + year;
   }
 }
-
-Util.orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
-Util.orderedWeekUnits = [
-  'weekYear',
-  'weekNumber',
-  'weekday',
-  'hour',
-  'minute',
-  'second',
-  'millisecond'
-];
-
-Util.orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];

@@ -37,7 +37,7 @@ export class Interval {
    * Create an Interval from a start DateTime and a Duration to extend to.
    * @param {DateTime} start
    * @param {Duration|number} durationOrNumber - the length of the Interval.
-   * @param {string} [unit='millisecond'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Interval}
    */
   static after(start, durationOrNumber, unit) {
@@ -49,7 +49,7 @@ export class Interval {
    * Create an Interval from an end DateTime and a Duration to extend backwards to.
    * @param {DateTime} end
    * @param {Duration|number} durationOrNumber - the length of the Interval.
-   * @param {string} [unit='millisecond'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Interval}
    */
   static before(end, durationOrNumber, unit) {
@@ -74,11 +74,11 @@ export class Interval {
   /**
    * Return a Duration representing the time spanned by this interval.
    * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration.
-   * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { millisecond: 88489257 }
-   * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { day: 1.0241812152777778 }
-   * @example Interval.fromDateTimes(dt1, dt2).toDuration('hours', 'minutes').toObject() //=> { hour: 24, minute: 34.82095 }
-   * @example Interval.fromDateTimes(dt1, dt2).toDuration('hours', 'minutes', 'seconds').toObject() //=> { hour: 24, minute: 34, second: 49.257 }
-   * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { second: 88489.257 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { milliseconds: 88489257 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { days: 1.0241812152777778 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration('hours', 'minutes').toObject() //=> { hours: 24, minutes: 34.82095 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration('hours', 'minutes', 'seconds').toObject() //=> { hours: 24, minutes: 34, seconds: 49.257 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }
    * @return {Duration}
    */
   toDuration(...units) {
@@ -115,7 +115,7 @@ export class Interval {
    * @param {string} unit - the unit (such as 'hours' or 'days') to return the length in.
    * @return {number}
    */
-  length(unit = 'millisecond') {
+  length(unit = 'milliseconds') {
     return this.valid ? this.toDuration(...[unit]).get(unit) : NaN;
   }
 
@@ -132,10 +132,10 @@ export class Interval {
    * Returns the count of minutes, hours, days, months, or years included in the Interval, even in part
    * Unlike {@link length} this counts sections of the calendar, not periods of time, e.g. specifying 'day'
    * asks 'what dates are included in this interval?', not 'how many days long is this interval?'
-   * @param {string} [unit='millisecond] - the unit of time to count.
+   * @param {string} [unit='milliseconds'] - the unit of time to count.
    * @return {number}
    */
-  count(unit = 'millisecond') {
+  count(unit = 'milliseconds') {
     if (!this.valid) return NaN;
     const start = this.start().startOf(unit), end = this.end().startOf(unit);
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
@@ -165,10 +165,10 @@ export class Interval {
    * Split this Interval into smaller Intervals, each of the specified length.
    * Left over time is grouped into a smaller interval
    * @param {Duration|number} durationOrNumber - The length of each resulting interval.
-   * @param {string} [unit='millisecond'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {[Interval]}
    */
-  splitBy(durationOrNumber, unit = 'millisecond') {
+  splitBy(durationOrNumber, unit = 'milliseconds') {
     if (!this.valid) return [];
     const dur = Util.friendlyDuration(durationOrNumber, unit), results = [];
     let s = this.s, added, next;
