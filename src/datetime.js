@@ -121,7 +121,7 @@ function adjustTime(inst, dur) {
     c = Object.assign({}, inst.c, {
       year: inst.c.year + dur.years(),
       month: inst.c.month + dur.months(),
-      day: inst.c.day + dur.days()
+      day: inst.c.day + dur.days() + dur.weeks() * 7
     }),
     millisToAdd = Duration.fromObject({
       hours: dur.hours(),
@@ -1150,21 +1150,36 @@ export class DateTime {
       lowestOrder = 'months';
     }
 
-    // days is tricky because we want to ignore offset differences
-    if (units.indexOf('days') >= 0) {
-      // there's almost certainly a quicker, simpler way to do this
+    const computeDayDelta = () => {
       const utcDayStart = i => DateTime.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
-        ms = utcDayStart(post) - utcDayStart(cursor);
-      let dDay = Math.floor(Duration.fromLength(ms).shiftTo('days').days());
+            ms = utcDayStart(post) - utcDayStart(cursor);
+      return Math.floor(Duration.fromLength(ms).shiftTo('days').days());
+    };
 
+    if (units.indexOf('weeks') >= 0) {
+      const days = computeDayDelta();
+      let weeks = (days - days % 7) / 7;
+      cursor = cursor.plus(weeks, 'weeks');
+
+      if (cursor > post) {
+        cursor.minus(1, 'week');
+        weeks -= 1;
+      }
+
+      accum.weeks = weeks;
+      lowestOrder = 'weeks';
+    }
+
+    if (units.indexOf('days') >= 0) {
+      let days = computeDayDelta();
       cursor = cursor.set({ year: post.year(), month: post.month(), day: post.day() });
 
       if (cursor > post) {
-        cursor.minus(1, 'days');
-        dDay = -1;
+        cursor.minus(1, 'day');
+        days -= 1;
       }
 
-      accum.days = dDay;
+      accum.days = days;
       lowestOrder = 'days';
     }
 

@@ -59,6 +59,7 @@ test('Interval#toDuration(units) creates a duration in those units', () => {
   expect(int.toDuration('minutes').equals(Duration.fromLength(4 * 60, 'minutes'))).toBeTruthy();
   expect(int.toDuration('hours').equals(Duration.fromLength(4, 'hours'))).toBeTruthy();
   expect(int.toDuration('days').equals(Duration.fromLength(1 / 6, 'days'))).toBeTruthy();
+  expect(int.toDuration('weeks').equals(Duration.fromLength(1 / (6 * 7), 'weeks'))).toBeTruthy();
 });
 
 //------

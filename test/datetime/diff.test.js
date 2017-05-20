@@ -16,13 +16,29 @@ test('DateTime#diff defaults to milliseconds', () => {
 
 test('DateTime#diff makes simple diffs', () => {
   expect(diffObjs({ year: 2017 }, { year: 2017 }, 'years')).toEqual({});
+
   expect(diffObjs({ year: 2017 }, { year: 2016 }, 'years')).toEqual({ years: 1 });
+
   expect(
     diffObjs({ year: 2016, month: 3, day: 28 }, { year: 2016, month: 2, day: 28 }, 'months')
   ).toEqual({ months: 1 });
+
   expect(
     diffObjs({ year: 2016, month: 3, day: 28 }, { year: 2016, month: 3, day: 25 }, 'days')
   ).toEqual({ days: 3 });
+
+  expect(
+    diffObjs({ year: 2016, month: 3, day: 1 }, { year: 2016, month: 2, day: 28 }, 'days')
+  ).toEqual({ days: 2 });
+
+  expect(
+    diffObjs({ year: 2016, month: 3, day: 29 }, { year: 2016, month: 3, day: 1 }, 'weeks')
+  ).toEqual({ weeks: 4 });
+
+  expect(
+    diffObjs({ year: 2016, month: 3, day: 3 }, { year: 2016, month: 2, day: 18 }, 'weeks')
+  ).toEqual({ weeks: 2 });
+
   expect(
     diffObjs(
       { year: 2016, month: 3, day: 28, hour: 13 },
@@ -30,6 +46,7 @@ test('DateTime#diff makes simple diffs', () => {
       'hours'
     )
   ).toEqual({ hours: 8 });
+
   expect(
     diffObjs(
       { year: 2016, month: 3, day: 28, hour: 13 },
@@ -37,6 +54,7 @@ test('DateTime#diff makes simple diffs', () => {
       'hours'
     )
   ).toEqual({ hours: 24 * 3 + 8 });
+
 });
 
 test('DateTime#diff accepts multiple units', () => {
@@ -50,6 +68,10 @@ test('DateTime#diff accepts multiple units', () => {
       'seconds'
     )
   ).toEqual({ days: 12, hours: 8, minutes: 45, seconds: 42 });
+
+  expect(
+    diffObjs({ year: 2016, month: 3, day: 25 }, { year: 2016, month: 3, day: 1 }, 'weeks', 'days')
+  ).toEqual({ weeks: 3, days: 3 });
 
   expect(
     diffObjs({ year: 2016, month: 3, day: 28 }, { year: 2010, month: 3, day: 16 }, 'years', 'days')

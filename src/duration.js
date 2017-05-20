@@ -6,6 +6,7 @@ import { RegexParser } from './impl/regexParser';
 const matrix = {
   years: {
     months: 12,
+    weeks: 52,
     days: 365,
     hours: 365 * 24,
     minutes: 365 * 24 * 60,
@@ -13,19 +14,21 @@ const matrix = {
     milliseconds: 365 * 24 * 60 * 60 * 1000
   },
   months: {
+    weeks: 4,
     days: 30,
     hours: 30 * 24,
     minutes: 30 * 24 * 60,
     seconds: 30 * 24 * 60 * 60,
     milliseconds: 30 * 24 * 60 * 60 * 1000
   },
+  weeks: { days: 7, hours: 7 * 24, minutes: 7 * 24 * 60, seconds: 7 * 24 * 60 * 60, milliseconds: 7 * 24 * 60 * 60 * 1000 },
   days: { hours: 24, minutes: 24 * 60, seconds: 24 * 60 * 60, milliseconds: 24 * 60 * 60 * 1000 },
   hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
   minutes: { seconds: 60, milliseconds: 60 * 1000 },
   seconds: { milliseconds: 1000 }
 };
 
-const orderedUnits = ['years', 'months', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
+const orderedUnits = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
 function clone(dur, alts) {
   // deep merge for vals
@@ -74,6 +77,7 @@ export class Duration {
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.months
+   * @param {number} obj.weeks
    * @param {number} obj.days
    * @param {number} obj.hours
    * @param {number} obj.minutes
@@ -107,6 +111,8 @@ export class Duration {
       years: 'years',
       month: 'months',
       months: 'months',
+      week: 'weeks',
+      weeks: 'weeks',
       day: 'days',
       days: 'days',
       hour: 'hours',
@@ -170,7 +176,7 @@ export class Duration {
     let s = 'P';
     if (this.years() > 0) s += this.years() + 'Y';
     if (this.months() > 0) s += this.months() + 'M';
-    if (this.days() > 0) s += this.days() + 'D';
+    if (this.days() > 0 || this.weeks() > 0) s += this.days() + this.weeks() * 7 + 'D';
     if (this.hours() > 0 || this.minutes() > 0 || this.seconds() > 0 || this.milliseconds() > 0)
       s += 'T';
     if (this.hours() > 0) s += this.hours() + 'H';
@@ -190,7 +196,7 @@ export class Duration {
   /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
    * @param {Duration|number} durationOrNumber - The amount to add. Either a Luxon Duration or a number.
-   * @param {string} [unit='milliseconds'] - The unit to add. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
+   * @param {string} [unit='milliseconds'] - The unit to add. Only applicable if the first argument is a number. Can be 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Duration}
    */
   plus(durationOrNumber, unit = 'millisecond') {
@@ -209,7 +215,7 @@ export class Duration {
   /**
    * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
    * @param {Duration|number} durationOrNumber - The amount to subtract. Either a Luxon Duration or a number.
-   * @param {string} [unit='milliseconds'] - The unit to subtract. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
+   * @param {string} [unit='milliseconds'] - The unit to subtract. Only applicable if the first argument is a number. Can be 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Duration}
    */
   minus(durationOrNumber, unit = 'milliseconds') {
@@ -336,8 +342,8 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the day of the years.
-   * @param {number} years - the day to set. If omitted, `years()` acts as a getter for the years.
+   * Get or "set" the years.
+   * @param {number} years - the years to set. If omitted, `years()` acts as a getter for the years.
    * @return {number|Duration}
    */
   years(years) {
@@ -345,8 +351,8 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the day of the months.
-   * @param {number} months - the day to set. If omitted, `months()` acts as a getter for the months.
+   * Get or "set" the months.
+   * @param {number} months - the months to set. If omitted, `months()` acts as a getter for the months.
    * @return {number|Duration}
    */
   months(months) {
@@ -354,8 +360,17 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the day of the days.
-   * @param {number} days - the day to set. If omitted, `days()` acts as a getter for the days.
+   * Get or "set" the weeks
+   * @param {number} weeks - the weeks to set. If omitted, `weeks()` acts as a getter for the days.
+   * @return {number|Duration}
+   */
+  weeks(weeks) {
+    return Util.isUndefined(weeks) ? this.values.weeks || 0 : this.set({ weeks });
+  }
+
+  /**
+   * Get or "set" the days.
+   * @param {number} days - the days to set. If omitted, `days()` acts as a getter for the days.
    * @return {number|Duration}
    */
   days(days) {
@@ -363,8 +378,8 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the day of the hours.
-   * @param {number} hours - the day to set. If omitted, `hours()` acts as a getter for the hours.
+   * Get or "set" the hours.
+   * @param {number} hours - the hours to set. If omitted, `hours()` acts as a getter for the hours.
    * @return {number|Duration}
    */
   hours(hours) {
@@ -372,8 +387,8 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the day of the minutes.
-   * @param {number} minutes - the day to set. If omitted, `minutes()` acts as a getter for the minutes.
+   * Get or "set" the minutes.
+   * @param {number} minutes - the minutes to set. If omitted, `minutes()` acts as a getter for the minutes.
    * @return {number|Duration}
    */
   minutes(minutes) {
@@ -381,8 +396,8 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the day of the seconds.
-   * @param {number} seconds - the day to set. If omitted, `seconds()` acts as a getter for the seconds.
+   * Get or "set" the seconds.
+   * @param {number} seconds - the seconds to set. If omitted, `seconds()` acts as a getter for the seconds.
    * @return {number|Duration}
    */
   seconds(seconds) {
@@ -390,8 +405,8 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the day of the milliseconds.
-   * @param {number} milliseconds - the day to set. If omitted, `milliseconds()` acts as a getter for the milliseconds.
+   * Get or "set" the milliseconds.
+   * @param {number} milliseconds - the milliseconds to set. If omitted, `milliseconds()` acts as a getter for the milliseconds.
    * @return {number|Duration}
    */
   milliseconds(milliseconds) {
