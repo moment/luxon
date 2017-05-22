@@ -1152,7 +1152,7 @@ export class DateTime {
 
     const computeDayDelta = () => {
       const utcDayStart = i => DateTime.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
-            ms = utcDayStart(post) - utcDayStart(cursor);
+        ms = utcDayStart(post) - utcDayStart(cursor);
       return Math.floor(Duration.fromLength(ms).shiftTo('days').days());
     };
 
@@ -1184,7 +1184,9 @@ export class DateTime {
     }
 
     const remaining = Duration.fromLength(post - cursor),
-      moreUnits = units.filter(u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0),
+      moreUnits = units.filter(
+        u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
+      ),
       shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
       shifted = remaining.shiftTo(...shiftTo),
       merged = shifted.plus(Duration.fromObject(accum));

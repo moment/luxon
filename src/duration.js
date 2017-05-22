@@ -21,14 +21,29 @@ const matrix = {
     seconds: 30 * 24 * 60 * 60,
     milliseconds: 30 * 24 * 60 * 60 * 1000
   },
-  weeks: { days: 7, hours: 7 * 24, minutes: 7 * 24 * 60, seconds: 7 * 24 * 60 * 60, milliseconds: 7 * 24 * 60 * 60 * 1000 },
+  weeks: {
+    days: 7,
+    hours: 7 * 24,
+    minutes: 7 * 24 * 60,
+    seconds: 7 * 24 * 60 * 60,
+    milliseconds: 7 * 24 * 60 * 60 * 1000
+  },
   days: { hours: 24, minutes: 24 * 60, seconds: 24 * 60 * 60, milliseconds: 24 * 60 * 60 * 1000 },
   hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
   minutes: { seconds: 60, milliseconds: 60 * 1000 },
   seconds: { milliseconds: 1000 }
 };
 
-const orderedUnits = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
+const orderedUnits = [
+  'years',
+  'months',
+  'weeks',
+  'days',
+  'hours',
+  'minutes',
+  'seconds',
+  'milliseconds'
+];
 
 function clone(dur, alts) {
   // deep merge for vals

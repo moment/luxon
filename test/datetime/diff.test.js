@@ -54,7 +54,6 @@ test('DateTime#diff makes simple diffs', () => {
       'hours'
     )
   ).toEqual({ hours: 24 * 3 + 8 });
-
 });
 
 test('DateTime#diff accepts multiple units', () => {
