@@ -565,12 +565,13 @@ export class DateTime {
   /**
    * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
    *
-   * Equivalent to timezone('utc')
+   * Equivalent to {@link timezone}('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
+   * @param {object} [opts={}] - options to pass to `timezone()`
    * @return {DateTime}
    */
-  toUTC(offset = 0) {
-    return this.timezone(FixedOffsetZone.instance(offset));
+  toUTC(offset = 0, opts = {}) {
+    return this.timezone(FixedOffsetZone.instance(offset), opts);
   }
 
   /**
@@ -1154,7 +1155,7 @@ export class DateTime {
     }
 
     const computeDayDelta = () => {
-      const utcDayStart = i => DateTime.fromJSDate(Util.asIfUTC(i)).startOf('day').valueOf(),
+      const utcDayStart = dt => dt.toUTC(0, {keepCalendarTime: true}).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
       return Math.floor(Duration.fromLength(ms).shiftTo('days').days());
     };

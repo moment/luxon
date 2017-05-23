@@ -119,7 +119,7 @@ test('DateTime#diff is calendary for years, months, day', () => {
   // ignores the DST, works in calendar days, not bubbled months
   expect(
     diffObjs({ year: 2016, month: 5, day: 14 }, { year: 2016, month: 2, day: 14 }, 'days')
-  ).toEqual({ days: 89 });
+  ).toEqual({ days: 90 });
 });
 
 test('DateTime#diff is precise for lower order units', () => {
