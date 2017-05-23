@@ -40,13 +40,15 @@ function validateObject(obj) {
     validSecond = Util.numberBetween(obj.second, 0, 59),
     validMillisecond = Util.numberBetween(obj.millisecond, 0, 999);
 
-  return validYear &&
+  return (
+    validYear &&
     validMonth &&
     validDay &&
     validHour &&
     validMinute &&
     validSecond &&
-    validMillisecond;
+    validMillisecond
+  );
 }
 
 // Seems like this might be more complicated than it appears. E.g.:
@@ -670,7 +672,8 @@ export class DateTime {
    */
   set(values) {
     const normalized = Util.normalizeObject(values, normalizeUnit),
-      settingWeekStuff = !Util.isUndefined(normalized.weekYear) ||
+      settingWeekStuff =
+        !Util.isUndefined(normalized.weekYear) ||
         !Util.isUndefined(normalized.weekNumber) ||
         !Util.isUndefined(normalized.weekday);
 
@@ -699,7 +702,7 @@ export class DateTime {
    * @return {number|DateTime}
    */
   year(year) {
-    return Util.isUndefined(year) ? this.valid ? this.c.year : NaN : this.set({ year });
+    return Util.isUndefined(year) ? (this.valid ? this.c.year : NaN) : this.set({ year });
   }
 
   /**
@@ -710,7 +713,7 @@ export class DateTime {
    * @return {number|DateTime}
    */
   month(month) {
-    return Util.isUndefined(month) ? this.valid ? this.c.month : NaN : this.set({ month });
+    return Util.isUndefined(month) ? (this.valid ? this.c.month : NaN) : this.set({ month });
   }
 
   /**
@@ -721,7 +724,7 @@ export class DateTime {
    * @return {number|DateTime}
    */
   day(day) {
-    return Util.isUndefined(day) ? this.valid ? this.c.day : NaN : this.set({ day });
+    return Util.isUndefined(day) ? (this.valid ? this.c.day : NaN) : this.set({ day });
   }
 
   /**
@@ -732,7 +735,7 @@ export class DateTime {
    * @return {number|DateTime}
    */
   hour(hour) {
-    return Util.isUndefined(hour) ? this.valid ? this.c.hour : NaN : this.set({ hour });
+    return Util.isUndefined(hour) ? (this.valid ? this.c.hour : NaN) : this.set({ hour });
   }
 
   /**
@@ -743,7 +746,7 @@ export class DateTime {
    * @return {number|DateTime}
    */
   minute(minute) {
-    return Util.isUndefined(minute) ? this.valid ? this.c.minute : NaN : this.set({ minute });
+    return Util.isUndefined(minute) ? (this.valid ? this.c.minute : NaN) : this.set({ minute });
   }
 
   /**
@@ -754,7 +757,7 @@ export class DateTime {
    * @return {number|DateTime}
    */
   second(second) {
-    return Util.isUndefined(second) ? this.valid ? this.c.second : NaN : this.set({ second });
+    return Util.isUndefined(second) ? (this.valid ? this.c.second : NaN) : this.set({ second });
   }
 
   /**

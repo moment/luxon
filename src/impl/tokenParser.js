@@ -30,7 +30,6 @@ function unitForToken(token, loc) {
           return intUnit(four);
         case 'yy':
           return intUnit(twoToFour, Util.untruncateYear);
-
         // months
         case 'M':
           return intUnit(oneOrTwo);
@@ -48,19 +47,16 @@ function unitForToken(token, loc) {
           return oneOf(loc.months('short', false), 1);
         case 'LLLL':
           return oneOf(loc.months('long', false), 1);
-
         // dates
         case 'd':
           return intUnit(oneOrTwo);
         case 'dd':
           return intUnit(two);
-
         // ordinals
         case 'o':
           return intUnit(oneToThree);
         case 'ooo':
           return intUnit(three);
-
         // time
         case 'HH':
           return intUnit(two);
@@ -82,23 +78,19 @@ function unitForToken(token, loc) {
           return intUnit(oneToThree);
         case 'SSS':
           return intUnit(three);
-
         // meridiem
         case 'a':
           return oneOf(loc.meridiems(), 0);
-
         // weekYear (k)
         case 'kkkk':
           return intUnit(four);
         case 'kk':
           return intUnit(twoToFour, Util.untruncateYear);
-
         // weekNumber (W)
         case 'W':
           return intUnit(oneOrTwo);
         case 'WW':
           return intUnit(two);
-
         // weekdays
         case 'E':
           return intUnit(one);
@@ -106,7 +98,6 @@ function unitForToken(token, loc) {
           return oneOf(loc.weekdays('short'), 1);
         case 'EEEE':
           return oneOf(loc.weekdays('long'), 1);
-
         // offset/zone (todo)
         case 'Z':
         case 'ZZ':
@@ -119,7 +110,6 @@ function unitForToken(token, loc) {
 
         default:
           return literal(t);
-
       }
     },
     unit = unitate(token);
@@ -139,15 +129,12 @@ function match(input, regex, handlers) {
       return null;
     }
 
-    return Util.zip(matches.splice(1), handlers).reduce(
-      (all, [m, h]) => {
-        if (!h.literal) {
-          all[h.token.val[0]] = h.deser(m);
-        }
-        return all;
-      },
-      {}
-    );
+    return Util.zip(matches.splice(1), handlers).reduce((all, [m, h]) => {
+      if (!h.literal) {
+        all[h.token.val[0]] = h.deser(m);
+      }
+      return all;
+    }, {});
   } else {
     return {};
   }
@@ -191,17 +178,14 @@ function dateTimeFromMatches(matches) {
   }
 
   // todo: era
-  return Object.keys(matches).reduce(
-    (r, k) => {
-      const f = toField(k);
-      if (f) {
-        r[f] = matches[k];
-      }
+  return Object.keys(matches).reduce((r, k) => {
+    const f = toField(k);
+    if (f) {
+      r[f] = matches[k];
+    }
 
-      return r;
-    },
-    {}
-  );
+    return r;
+  }, {});
 }
 
 /**

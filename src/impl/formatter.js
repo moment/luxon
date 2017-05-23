@@ -115,19 +115,16 @@ export class Formatter {
             return this.num(dt.millisecond());
           case 'SSS':
             return this.num(dt.millisecond(), 3);
-
           // seconds
           case 's':
             return this.num(dt.second());
           case 'ss':
             return this.num(dt.second(), 2);
-
           // minutes
           case 'm':
             return this.num(dt.minute());
           case 'mm':
             return this.num(dt.minute(), 2);
-
           // hours
           case 'h':
             return this.num(dt.hour() === 12 ? 12 : dt.hour() % 12);
@@ -160,13 +157,11 @@ export class Formatter {
           // meridiems
           case 'a':
             return string({ hour: 'numeric', hour12: true }, 'dayperiod');
-
           // dates
           case 'd':
             return this.num(dt.day());
           case 'dd':
             return this.num(dt.day(), 2);
-
           // weekdays - format
           case 'c':
             // like 1
@@ -309,7 +304,6 @@ export class Formatter {
               hour: 'numeric',
               minute: '2-digit'
             });
-
           // todo: add zones
           case 'fff':
             return this.formatDateTime(dt, {
@@ -347,7 +341,6 @@ export class Formatter {
               minute: '2-digit',
               second: '2-digit'
             });
-
           // todo: add zones
           case 'FFF':
             return this.formatDateTime(dt, {
@@ -400,18 +393,19 @@ export class Formatter {
           return null;
       }
     },
-      tokenToString = lildur =>
-        token => {
-          const mapped = tokenToField(token);
-          if (mapped) {
-            return this.num(lildur.get(mapped), token.length);
-          } else {
-            return token;
-          }
-        },
+      tokenToString = lildur => token => {
+        const mapped = tokenToField(token);
+        if (mapped) {
+          return this.num(lildur.get(mapped), token.length);
+        } else {
+          return token;
+        }
+      },
       tokens = Formatter.parseFormat(fmt),
-      realTokens = tokens.reduce((found, { literal, val }) => literal ? found : found.concat(val), [
-      ]),
+      realTokens = tokens.reduce(
+        (found, { literal, val }) => (literal ? found : found.concat(val)),
+        []
+      ),
       collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter(t => t));
     return stringifyTokens(tokens, tokenToString(collapsed));
   }

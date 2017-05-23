@@ -56,19 +56,16 @@ export class Util {
   }
 
   static bestBy(arr, by, compare) {
-    return arr.reduce(
-      (best, next) => {
-        const pair = [by(next), next];
-        if (!best) {
-          return pair;
-        } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
-          return best;
-        } else {
-          return pair;
-        }
-      },
-      null
-    )[1];
+    return arr.reduce((best, next) => {
+      const pair = [by(next), next];
+      if (!best) {
+        return pair;
+      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+        return best;
+      } else {
+        return pair;
+      }
+    }, null)[1];
   }
 
   static zip(...arrays) {
@@ -76,13 +73,10 @@ export class Util {
   }
 
   static pick(obj, keys) {
-    return keys.reduce(
-      (a, k) => {
-        a[k] = obj[k];
-        return a;
-      },
-      {}
-    );
+    return keys.reduce((a, k) => {
+      a[k] = obj[k];
+      return a;
+    }, {});
   }
 
   static isLeapYear(year) {

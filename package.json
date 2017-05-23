@@ -30,7 +30,6 @@
     "gulp-eslint": "latest",
     "gulp-filter": "latest",
     "gulp-jest": "latest",
-    "gulp-prettier": "icambron/gulp-prettier",
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-uglify": "latest",
@@ -41,6 +40,7 @@
     "rollup-stream": "latest",
     "run-sequence": "latest",
     "tap-min": "latest",
+    "through2": "latest",
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest"
   },

@@ -8,12 +8,13 @@ const babel = require('rollup-plugin-babel'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
   prettierOptions = require('./.prettier.js'),
-  prettier = require('gulp-prettier'),
+  prettier = require('prettier'),
   rename = require('gulp-rename'),
   rollup = require('rollup-stream'),
   runSequence = require('run-sequence'),
   source = require('vinyl-source-stream'),
-  sourcemaps = require('gulp-sourcemaps');
+  sourcemaps = require('gulp-sourcemaps'),
+  through = require('through2');
 
 function process(inopts) {
   const opts = Object.assign(
@@ -56,6 +57,14 @@ function processLib(opts) {
       .pipe(gulp.dest(dest))
       .pipe(minify());
   };
+}
+
+function prettify(opts) {
+  return through.obj((file, _, callback) => {
+    const str = file.contents.toString(), data = prettier.format(str, opts);
+    file.contents = new Buffer(data);
+    callback(null, file);
+  });
 }
 
 gulp.task('cjs', processLib({ format: 'cjs', rollupOpts: { external: ['intl'] } }));
@@ -104,10 +113,12 @@ gulp.task('test', ['cjs'], () => gulp.src('test').pipe(jest()));
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'];
 
 gulp.task('lint', ['format'], () =>
-  gulp.src(lintable).pipe(eslint()).pipe(eslint.format()).pipe(eslint.failAfterError()));
+  gulp.src(lintable).pipe(eslint()).pipe(eslint.format()).pipe(eslint.failAfterError())
+);
 
 gulp.task('format', () =>
-  gulp.src(lintable, { base: './' }).pipe(prettier(prettierOptions)).pipe(gulp.dest('./')));
+  gulp.src(lintable, { base: './' }).pipe(prettify(prettierOptions)).pipe(gulp.dest('./'))
+);
 
 gulp.task('docs', () => gulp.src('./src').pipe(esdoc({ destination: './docs' })));
 

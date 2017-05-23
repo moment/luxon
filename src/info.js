@@ -12,9 +12,11 @@ export class Info {
    * @return {boolean}
    */
   static hasDST(zone = Settings.defaultZone) {
-    return !zone.universal &&
+    return (
+      !zone.universal &&
       DateTime.local().timezone(zone).month(1).offset() !==
-        DateTime.local().timezone(zone).month(5).offset();
+        DateTime.local().timezone(zone).month(5).offset()
+    );
   }
 
   /**
