@@ -33,7 +33,7 @@
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-uglify": "latest",
-    "jest-cli": "latest",
+    "jest-cli": "19.x",
     "lazypipe": "latest",
     "prettier": "latest",
     "rollup-plugin-babel": "latest",
