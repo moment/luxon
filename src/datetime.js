@@ -1155,7 +1155,7 @@ export class DateTime {
     }
 
     const computeDayDelta = () => {
-      const utcDayStart = dt => dt.toUTC(0, {keepCalendarTime: true}).startOf('day').valueOf(),
+      const utcDayStart = dt => dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
       return Math.floor(Duration.fromLength(ms).shiftTo('days').days());
     };

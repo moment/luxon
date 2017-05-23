@@ -110,11 +110,12 @@ gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
 gulp.task('test', ['cjs'], () => gulp.src('test').pipe(jest()));
 
-const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'];
+const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
+  doLint = () =>
+    gulp.src(lintable).pipe(eslint()).pipe(eslint.format()).pipe(eslint.failAfterError());
 
-gulp.task('lint', ['format'], () =>
-  gulp.src(lintable).pipe(eslint()).pipe(eslint.format()).pipe(eslint.failAfterError())
-);
+gulp.task('lint!', ['format'], doLint);
+gulp.task('lint', doLint);
 
 gulp.task('format', () =>
   gulp.src(lintable, { base: './' }).pipe(prettify(prettierOptions)).pipe(gulp.dest('./'))
@@ -123,4 +124,5 @@ gulp.task('format', () =>
 gulp.task('docs', () => gulp.src('./src').pipe(esdoc({ destination: './docs' })));
 
 // build first so the test deps work
-gulp.task('default', cb => runSequence('build', 'lint', 'test', 'docs', cb));
+gulp.task('simple', cb => runSequence('build', 'lint', 'test', cb));
+gulp.task('default', cb => runSequence('format', 'build', 'lint', 'test', 'docs', cb));

@@ -5,7 +5,9 @@ node_js:
   - 7.10.0
 
 script:
-  - gulp
+  - gulp simple
+  - TZ=America/New_YORK gulp test
+  - gulp docs
 
 branches:
   only:
