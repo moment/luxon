@@ -51,32 +51,29 @@ function validateObject(obj) {
   );
 }
 
-// Seems like this might be more complicated than it appears. E.g.:
-// https://github.com/v8/v8/blob/master/src/date.cc#L212
-function fixOffset(ts, tz, o, leaveTime = false) {
-  // 1. test whether the zone matches the offset for this ts
-  const o2 = tz.offset(ts);
+function fixOffset(localTS, o, tz) {
+  // Our UTC time is just a guess because our offset is just a guess
+  let utcGuess = localTS - o * 60 * 1000;
+
+  // Test whether the zone matches the offset for this ts
+  const o2 = tz.offset(utcGuess);
+
+  // If so, offset didn't change and we're done
   if (o === o2) {
-    return [ts, o];
+    return [utcGuess, o];
   }
 
-  // 2. if not, change the ts by the difference in the offset
-  if (!leaveTime) {
-    ts -= (o2 - o) * 60 * 1000;
-  }
+  // If not, change the ts by the difference in the offset
+  utcGuess -= (o2 - o) * 60 * 1000;
 
-  // 3. check it again
-  const o3 = tz.offset(ts);
-
-  // 4. if it's the same, good to go
+  // If that gives us the local time we want, we're done
+  const o3 = tz.offset(utcGuess);
   if (o2 === o3) {
-    return [ts, o2];
+    return [utcGuess, o2];
   }
 
-  // 5. if it's different, steal underpants
-  // 6. ???
-  // 7. profit!
-  return [ts, o];
+  // If it's different, we're in a hole time. The offset has changed, but the we don't adjust the time
+  return [localTS - Math.min(o2, o3) * 60 * 1000, Math.max(o2, o3)];
 }
 
 function tsToObj(ts, offset) {
@@ -95,7 +92,7 @@ function tsToObj(ts, offset) {
   };
 }
 
-function objToTS(obj, zone, offset) {
+function objToLocalTS(obj) {
   let d = Date.UTC(
     obj.year,
     obj.month - 1,
@@ -108,18 +105,18 @@ function objToTS(obj, zone, offset) {
 
   // javascript is stupid and i hate it
   if (obj.year < 100 && obj.year >= 0) {
-    const t = new Date(d);
-    t.setFullYear(obj.year);
-    d = t.valueOf();
+    d = new Date(d);
+    d.setFullYear(obj.year);
   }
+  return +d;
+}
 
-  const tsProvis = +d - offset * 60 * 1000;
-  return fixOffset(tsProvis, zone, offset);
+function objToTS(obj, offset, zone) {
+  return fixOffset(objToLocalTS(obj), offset, zone);
 }
 
 function adjustTime(inst, dur) {
   const oPre = inst.o,
-    // todo: only do this part if there are higher-order items in the dur
     c = Object.assign({}, inst.c, {
       year: inst.c.year + dur.years(),
       month: inst.c.month + dur.months(),
@@ -130,13 +127,15 @@ function adjustTime(inst, dur) {
       minutes: dur.minutes(),
       seconds: dur.seconds(),
       milliseconds: dur.milliseconds()
-    }).as('milliseconds');
+    }).as('milliseconds'),
+    localTS = objToLocalTS(c);
 
-  let [ts, o] = objToTS(c, inst.zone, oPre);
+  let [ts, o] = fixOffset(localTS, oPre, inst.zone);
 
   if (millisToAdd !== 0) {
     ts += millisToAdd;
-    [ts, o] = fixOffset(ts, inst.zone, o, true);
+    // that could have changed the offset by going over a DST, but we want to keep the ts the same
+    o = inst.zone.offset(ts);
   }
 
   return { ts, o };
@@ -440,8 +439,8 @@ export class DateTime {
     const gregorian = useWeekData
       ? Conversions.weekToGregorian(normalized)
       : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
-      [tsFinal] = objToTS(gregorian, zoneToUse, offsetProvis),
-      inst = new DateTime({ ts: tsFinal, zone: zoneToUse });
+      [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
+      inst = new DateTime({ ts: tsFinal, zone: zoneToUse, o: offsetFinal });
 
     // gregorian data + weekday serves only to validate
     if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday()) {
@@ -691,7 +690,7 @@ export class DateTime {
       mixed = Object.assign(this.toObject(), normalized);
     }
 
-    const [ts, o] = objToTS(mixed, this.zone, this.o);
+    const [ts, o] = objToTS(mixed, this.o, this.zone);
     return clone(this, { ts, o });
   }
 
