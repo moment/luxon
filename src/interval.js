@@ -349,7 +349,7 @@ export class Interval {
 
   /**
    * Return this Interval's start is after the specified DateTime.
-   * @param {DateTime} other
+   * @param {DateTime} dateTime
    * @return {boolean}
    */
   isAfter(dateTime) {
