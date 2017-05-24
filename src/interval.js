@@ -19,6 +19,10 @@ export class Interval {
     });
   }
 
+  /**
+   * Create an invalid Interval.
+   * @return {Interval}
+   */
   static invalid() {
     return new Interval();
   }
