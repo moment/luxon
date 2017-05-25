@@ -210,7 +210,7 @@ export class Duration {
 
   /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number} durationOrNumber - The amount to add. Either a Luxon Duration or a number.
+   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
    * @param {string} [unit='milliseconds'] - The unit to add. Only applicable if the first argument is a number. Can be 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Duration}
    */
@@ -229,7 +229,7 @@ export class Duration {
 
   /**
    * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number} durationOrNumber - The amount to subtract. Either a Luxon Duration or a number.
+   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
    * @param {string} [unit='milliseconds'] - The unit to subtract. Only applicable if the first argument is a number. Can be 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Duration}
    */

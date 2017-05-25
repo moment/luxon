@@ -11,9 +11,15 @@ import { Settings } from '../settings';
 
 export class Util {
   static friendlyDuration(durationOrNumber, type) {
-    return Util.isNumber(durationOrNumber)
-      ? Duration.fromLength(durationOrNumber, type)
-      : durationOrNumber;
+    if (Util.isNumber(durationOrNumber)) {
+      return Duration.fromLength(durationOrNumber, type);
+    } else if (durationOrNumber instanceof Duration) {
+      return durationOrNumber;
+    } else if (durationOrNumber instanceof Object) {
+      return Duration.fromObject(durationOrNumber);
+    } else {
+      throw new Error('Unknown duration argument');
+    }
   }
 
   static isUndefined(o) {

@@ -44,6 +44,13 @@ test('DateTime#plus(Duration) adds the right amount of time', () => {
   expect(later.minute()).toBe(41);
 });
 
+test('DateTime#plus(object) adds the right amount of time', () => {
+  const i = DateTime.fromISO('2016-03-12T10:13'), later = i.plus({ day: 1, hour: 3, minute: 28 });
+  expect(later.day()).toBe(13);
+  expect(later.hour()).toBe(13);
+  expect(later.minute()).toBe(41);
+});
+
 //------
 // #minus()
 //------

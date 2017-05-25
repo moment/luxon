@@ -1,0 +1,19 @@
+<meta charset="utf-8" />
+<html>
+    <head>
+        <link rel='stylesheet' href='demo.css'/>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js'></script>
+        <script>
+            requirejs.config({
+                paths: {
+                    luxon: '../dist/amd/luxon',
+                    intl: '../node_modules/intl/dist/Intl.complete'
+                }
+            });
+            requirejs(['demo'], function(demo) {
+                //todo - this is broken because of https://github.com/andyearnshaw/Intl.js/issues/218
+                demo();
+            });
+         </script>
+    </head>
+</html>

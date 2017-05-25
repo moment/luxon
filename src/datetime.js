@@ -1020,11 +1020,12 @@ export class DateTime {
    * * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds.
    * * Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way.
    * Thus, `dt.plus(24, 'hours')` may result in a different time than `dt.plus(1, 'day')` if there's a DST shift in between.
-   * @param {Duration|number} durationOrNumber - The amount to add. Either a Luxon Duration or a number
+   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
    * @param {string} [unit='millisecond'] - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local().plus(15, 'minutes') //~> in 15 minutes
    * @example DateTime.local().plus(1, 'day') //~> this time tomorrow
-   * @example DateTime.local().plus(Duration.fromObject({hours: 3, minutes: 13}) //~> in 1 hr, 13 min
+   * @example DateTime.local().plus({hours: 3, minutes: 13}) //~> in 1 hr, 13 min
+   * @example DateTime.local().plus(Duration.fromObject({hours: 3, minutes: 13})) //~> in 1 hr, 13 min
    * @return {DateTime}
    */
   plus(durationOrNumber, unit) {
@@ -1036,7 +1037,7 @@ export class DateTime {
   /**
    * Subtract a period of time to this DateTime and return the resulting DateTime
    * See {@link plus}
-   * @param {Duration|number} durationOrNumber - The amount to add. Either a Luxon Duration or a number
+   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
    * @param {string} unit - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @return {DateTime}
    */
