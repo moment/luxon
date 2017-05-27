@@ -1,4 +1,5 @@
 import { Duration } from '../duration';
+import { DateTime } from '../datetime';
 import { Zone } from '../zone';
 import { LocalZone } from '../zones/localZone';
 import { IANAZone } from '../zones/IANAZone';
@@ -19,6 +20,18 @@ export class Util {
       return Duration.fromObject(durationOrNumber);
     } else {
       throw new Error('Unknown duration argument');
+    }
+  }
+
+  static friendlyDateTime(dateTimeish) {
+    if (dateTimeish instanceof DateTime) {
+      return dateTimeish;
+    } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
+      return DateTime.fromJSDate(dateTimeish);
+    } else if (dateTimeish instanceof Object) {
+      return DateTime.fromObject(dateTimeish);
+    } else {
+      throw new Error('Unknown datetime argument');
     }
   }
 

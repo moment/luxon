@@ -4,13 +4,31 @@ import { DateTime, Interval, Duration } from '../../dist/cjs/luxon';
 //------
 // .fromObject()
 //-------
-test('Interval.fromObject creates an interval', () => {
+test('Interval.fromObject creates an interval from datetimes', () => {
   const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }),
     int = Interval.fromDateTimes(start, end);
 
   expect(int.start()).toBe(start);
   expect(int.end()).toBe(end);
+});
+
+test('Interval.fromObject creates an interval from objects', () => {
+  const start = { year: 2016, month: 5, day: 25 },
+        end = { year: 2016, month: 5, day: 27 },
+        int = Interval.fromDateTimes(start, end);
+
+  expect(int.start()).toEqual(DateTime.fromObject(start));
+  expect(int.end()).toEqual(DateTime.fromObject(end));
+});
+
+test('Interval.fromObject creates an interval from Dates', () => {
+  const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }).toJSDate(),
+    end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }).toJSDate(),
+    int = Interval.fromDateTimes(start, end);
+
+  expect(int.start().toJSDate()).toEqual(start);
+  expect(int.end().toJSDate()).toEqual(end);
 });
 
 //------

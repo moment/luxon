@@ -29,36 +29,38 @@ export class Interval {
 
   /**
    * Create an Interval from a start DateTime and an end DateTime. Inclusive of the start but not the end.
-   * @param {DateTime} start
-   * @param {DateTime} end
+   * @param {DateTime|object|Date} start
+   * @param {DateTime|object|Date} end
    * @return {Interval}
    */
   static fromDateTimes(start, end) {
-    return new Interval(start, end);
+    return new Interval(Util.friendlyDateTime(start), Util.friendlyDateTime(end));
   }
 
   /**
    * Create an Interval from a start DateTime and a Duration to extend to.
-   * @param {DateTime} start
+   * @param {DateTime|object|Date} start
    * @param {Duration|number} durationOrNumber - the length of the Interval.
    * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Interval}
    */
   static after(start, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit);
-    return Interval.fromDateTimes(start, start.plus(dur));
+    const dur = Util.friendlyDuration(durationOrNumber, unit),
+          dt = Util.friendlyDateTime(start);
+    return Interval.fromDateTimes(dt, dt.plus(dur));
   }
 
   /**
    * Create an Interval from an end DateTime and a Duration to extend backwards to.
-   * @param {DateTime} end
+   * @param {DateTime|object|Date} end
    * @param {Duration|number} durationOrNumber - the length of the Interval.
    * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
    * @return {Interval}
    */
   static before(end, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit);
-    return Interval.fromDateTimes(end.minus(dur), end);
+    const dur = Util.friendlyDuration(durationOrNumber, unit),
+        dt = Util.friendlyDateTime(end);
+    return Interval.fromDateTimes(dt.minus(dur), dt);
   }
 
   /**
@@ -100,7 +102,7 @@ export class Interval {
   start(start) {
     return Util.isUndefined(start)
       ? this.valid ? this.s : DateTime.invalid()
-      : Interval.fromDateTimes(start, this.e);
+        : Interval.fromDateTimes(start, this.e);
   }
 
   /**
@@ -152,7 +154,7 @@ export class Interval {
    */
   splitAt(...dateTimes) {
     if (!this.valid) return [];
-    const sorted = dateTimes.sort(), results = [];
+    const sorted = dateTimes.map(Util.friendlyDateTime).sort(), results = [];
     let s = this.s, i = 0;
 
     while (s < this.e) {
@@ -411,5 +413,20 @@ export class Interval {
   toFormat(dateFormat, { separator = ' – ' } = {}) {
     if (!this.valid) return INVALID;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
+  }
+
+  /**
+   * Get or "set" the locale of the endpoints.
+   * @see DateTime.locale
+   *
+   * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter for the start time's locale.
+   * @return {string|Interval} - If a localeCode is provided, returns a new Interval with both the start and end times set to the locale. If not, returns the localeCode (a string) of the DateTime
+   */
+  locale(localeCode) {
+    if (Util.isUndefined(localeCode)) {
+      return this.s.locale();
+    } else {
+      return Interval.fromDateTimes(this.s.locale(localeCode), this.e.locale(localeCode));
+    }
   }
 }
