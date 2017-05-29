@@ -15,8 +15,8 @@ test('Interval.fromObject creates an interval from datetimes', () => {
 
 test('Interval.fromObject creates an interval from objects', () => {
   const start = { year: 2016, month: 5, day: 25 },
-        end = { year: 2016, month: 5, day: 27 },
-        int = Interval.fromDateTimes(start, end);
+    end = { year: 2016, month: 5, day: 27 },
+    int = Interval.fromDateTimes(start, end);
 
   expect(int.start()).toEqual(DateTime.fromObject(start));
   expect(int.end()).toEqual(DateTime.fromObject(end));

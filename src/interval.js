@@ -45,8 +45,7 @@ export class Interval {
    * @return {Interval}
    */
   static after(start, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit),
-          dt = Util.friendlyDateTime(start);
+    const dur = Util.friendlyDuration(durationOrNumber, unit), dt = Util.friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
   }
 
@@ -58,8 +57,7 @@ export class Interval {
    * @return {Interval}
    */
   static before(end, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit),
-        dt = Util.friendlyDateTime(end);
+    const dur = Util.friendlyDuration(durationOrNumber, unit), dt = Util.friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
   }
 
@@ -102,7 +100,7 @@ export class Interval {
   start(start) {
     return Util.isUndefined(start)
       ? this.valid ? this.s : DateTime.invalid()
-        : Interval.fromDateTimes(start, this.e);
+      : Interval.fromDateTimes(start, this.e);
   }
 
   /**

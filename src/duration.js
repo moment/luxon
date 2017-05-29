@@ -55,11 +55,10 @@ function clone(dur, alts) {
   return new Duration(conf);
 }
 
-function isHighOrderNegative(obj){
+function isHighOrderNegative(obj) {
   // only rule is that the highest-order part must be non-negative
   for (const k of orderedUnits) {
-    if (obj[k])
-      return obj[k] < 0;
+    if (obj[k]) return obj[k] < 0;
   }
   return false;
 }
@@ -188,8 +187,7 @@ export class Duration {
    */
   toISO() {
     // we could use the formatter, but this is an easier way to get the minimum string
-    let s = 'P',
-        norm = this.positive();
+    let s = 'P', norm = this.positive();
 
     // ISO durations are always positive, so take the absolute value
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
@@ -287,8 +285,8 @@ export class Duration {
    */
   normalize() {
     const neg = isHighOrderNegative(this.values),
-          dur = neg ? this.negate() : this,
-          shifted = dur.shiftTo(...Object.keys(this.values));
+      dur = neg ? this.negate() : this,
+      shifted = dur.shiftTo(...Object.keys(this.values));
     return neg ? shifted.negate() : shifted;
   }
 

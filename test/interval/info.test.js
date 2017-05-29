@@ -179,7 +179,6 @@ test("Interval#hasSame('day') returns true for durations durations ending at mid
 // locale
 //------
 test('Interval#locale() returns the locale', () => {
-  const dt = DateTime.local().locale('be'),
-    i = Interval.after(dt, 1, 'day');
+  const dt = DateTime.local().locale('be'), i = Interval.after(dt, 1, 'day');
   expect(i.locale()).toBe('be');
 });
