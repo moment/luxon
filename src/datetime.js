@@ -155,7 +155,7 @@ function parseDataToDateTime(parsed, context, { setZone, zone } = {}) {
 function formatMaybe(dt, format) {
   return dt.valid
     ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format)
-    : INVALID;
+    : null;
 }
 
 const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
@@ -537,7 +537,7 @@ export class DateTime {
   }
 
   /**
-   * Returns whether the DateTime is invalid. Invalid dates occur when:
+   * Returns whether the DateTime is invalid. Invalid DateTimes occur when:
    * * The DateTime was created from invalid calendar information, such as the 13th month or February 30
    * * The DateTime was created by an operation on another invalid date
    * @return {boolean}
@@ -658,7 +658,7 @@ export class DateTime {
    * @return {number}
    */
   get(unit) {
-    return this.valid ? this[unit]() : NaN;
+    return this[unit]();
   }
 
   /**
@@ -993,8 +993,7 @@ export class DateTime {
    * @return {object}
    */
   toObject() {
-    // todo: invalid
-    return Object.assign({}, this.c);
+    return this.valid ? Object.assign({}, this.c) : {};
   }
 
   /**
@@ -1111,7 +1110,7 @@ export class DateTime {
    * @return {Duration}
    */
   diff(otherDateTime, ...units) {
-    if (!this.valid) return this;
+    if (!this.valid) return Duration.invalid();
 
     if (units.length === 0) {
       units = ['milliseconds'];

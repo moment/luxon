@@ -3,6 +3,8 @@ import { Locale } from './impl/locale';
 import { Formatter } from './impl/formatter';
 import { RegexParser } from './impl/regexParser';
 
+const INVALID = 'Invalid Duration';
+
 const matrix = {
   years: {
     months: 12,
@@ -73,6 +75,7 @@ export class Duration {
   constructor(config) {
     Object.defineProperty(this, 'values', { value: config.values, enumerable: true });
     Object.defineProperty(this, 'loc', { value: config.loc || Locale.create(), enumerable: true });
+    Object.defineProperty(this, 'valid', { value: config.valid || true, enumerable: false });
   }
 
   /**
@@ -114,6 +117,14 @@ export class Duration {
   static fromISO(text) {
     const vals = RegexParser.parseISODuration(text);
     return Duration.fromObject(vals);
+  }
+
+  /**
+   * Create an invalid Duration.
+   * @return {Duration}
+   */
+  static invalid() {
+    return new Duration({ valid: false });
   }
 
   /**
@@ -164,7 +175,9 @@ export class Duration {
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
-    return Formatter.create(this.loc, opts).formatDurationFromString(this, fmt);
+    return this.valid
+      ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
+      : INVALID;
   }
 
   /**
@@ -173,7 +186,7 @@ export class Duration {
    * @return {object}
    */
   toObject() {
-    return Object.assign({}, this.values);
+    return this.valid ? Object.assign({}, this.values) : {};
   }
 
   /**
@@ -187,7 +200,9 @@ export class Duration {
    */
   toISO() {
     // we could use the formatter, but this is an easier way to get the minimum string
-    let s = 'P', norm = this.positive();
+    if (!this.valid) return null;
+
+    let s = 'P', norm = this.normalize();
 
     // ISO durations are always positive, so take the absolute value
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
@@ -218,6 +233,8 @@ export class Duration {
    * @return {Duration}
    */
   plus(durationOrNumber, unit = 'millisecond') {
+    if (!this.valid) return this;
+
     const dur = Util.friendlyDuration(durationOrNumber, unit), result = {};
 
     for (const k of orderedUnits) {
@@ -237,6 +254,8 @@ export class Duration {
    * @return {Duration}
    */
   minus(durationOrNumber, unit = 'milliseconds') {
+    if (!this.valid) return this;
+
     const dur = Util.friendlyDuration(durationOrNumber, unit);
     return this.plus(dur.negate());
   }
@@ -274,7 +293,7 @@ export class Duration {
    * @return {number}
    */
   as(unit) {
-    return this.shiftTo(unit).get(unit);
+    return this.valid ? this.shiftTo(unit).get(unit) : NaN;
   }
 
   /**
@@ -284,6 +303,8 @@ export class Duration {
    * @return {Duration}
    */
   normalize() {
+    if (!this.valid) return this;
+
     const neg = isHighOrderNegative(this.values),
       dur = neg ? this.negate() : this,
       shifted = dur.shiftTo(...Object.keys(this.values));
@@ -296,6 +317,8 @@ export class Duration {
    * @return {Duration}
    */
   shiftTo(...units) {
+    if (!this.valid) return this;
+
     if (units.length === 0) {
       return this;
     }
@@ -355,6 +378,7 @@ export class Duration {
    * @return {Duration}
    */
   negate() {
+    if (!this.valid) return this;
     const negated = {};
     for (const k of Object.keys(this.values)) {
       negated[k] = -this.values[k];
@@ -368,7 +392,9 @@ export class Duration {
    * @return {number|Duration}
    */
   years(years) {
-    return Util.isUndefined(years) ? this.values.years || 0 : this.set({ years });
+    return Util.isUndefined(years)
+      ? this.valid ? this.values.years || 0 : NaN
+      : this.set({ years });
   }
 
   /**
@@ -377,7 +403,9 @@ export class Duration {
    * @return {number|Duration}
    */
   months(months) {
-    return Util.isUndefined(months) ? this.values.months || 0 : this.set({ months });
+    return Util.isUndefined(months)
+      ? this.valid ? this.values.months || 0 : NaN
+      : this.set({ months });
   }
 
   /**
@@ -386,7 +414,9 @@ export class Duration {
    * @return {number|Duration}
    */
   weeks(weeks) {
-    return Util.isUndefined(weeks) ? this.values.weeks || 0 : this.set({ weeks });
+    return Util.isUndefined(weeks)
+      ? this.valid ? this.values.weeks || 0 : NaN
+      : this.set({ weeks });
   }
 
   /**
@@ -395,7 +425,7 @@ export class Duration {
    * @return {number|Duration}
    */
   days(days) {
-    return Util.isUndefined(days) ? this.values.days || 0 : this.set({ days });
+    return Util.isUndefined(days) ? (this.valid ? this.values.days || 0 : NaN) : this.set({ days });
   }
 
   /**
@@ -404,7 +434,9 @@ export class Duration {
    * @return {number|Duration}
    */
   hours(hours) {
-    return Util.isUndefined(hours) ? this.values.hours || 0 : this.set({ hours });
+    return Util.isUndefined(hours)
+      ? this.valid ? this.values.hours || 0 : NaN
+      : this.set({ hours });
   }
 
   /**
@@ -413,7 +445,9 @@ export class Duration {
    * @return {number|Duration}
    */
   minutes(minutes) {
-    return Util.isUndefined(minutes) ? this.values.minutes || 0 : this.set({ minutes });
+    return Util.isUndefined(minutes)
+      ? this.valid ? this.values.minutes || 0 : NaN
+      : this.set({ minutes });
   }
 
   /**
@@ -422,7 +456,9 @@ export class Duration {
    * @return {number|Duration}
    */
   seconds(seconds) {
-    return Util.isUndefined(seconds) ? this.values.seconds || 0 : this.set({ seconds });
+    return Util.isUndefined(seconds)
+      ? this.valid ? this.values.seconds || 0 : NaN
+      : this.set({ seconds });
   }
 
   /**
@@ -432,8 +468,17 @@ export class Duration {
    */
   milliseconds(milliseconds) {
     return Util.isUndefined(milliseconds)
-      ? this.values.milliseconds || 0
+      ? this.valid ? this.values.milliseconds || 0 : NaN
       : this.set({ milliseconds });
+  }
+
+  /**
+   * Returns whether the Duration is invalid. Invalid durations are returned by diff operations
+   * on invalid DateTimes or Intervals.
+   * @return {boolean}
+   */
+  isValid() {
+    return this.valid;
   }
 
   /**
@@ -443,6 +488,10 @@ export class Duration {
    * @return {boolean}
    */
   equals(other) {
+    if (!this.valid || !other.valid) {
+      return false;
+    }
+
     for (const u of orderedUnits) {
       if (this.values[u] !== other.values[u]) {
         return false;

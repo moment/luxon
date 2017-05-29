@@ -4,6 +4,10 @@ import { Duration } from './duration';
 
 const INVALID = 'Invalid Interval';
 
+function validateStartEnd(start, end) {
+  return !!start && !!end && start.isValid() && end.isValid() && start <= end;
+}
+
 /**
  * A half-open range of time spanning from one DateTime to another
  */
@@ -11,12 +15,10 @@ export class Interval {
   /**
    * @private
    */
-  constructor(start, end) {
-    Object.defineProperty(this, 's', { value: start, enumerable: true });
-    Object.defineProperty(this, 'e', { value: end, enumerable: true });
-    Object.defineProperty(this, 'valid', {
-      value: !!start && !!end && start.isValid() && end.isValid() && start <= end
-    });
+  constructor(config) {
+    Object.defineProperty(this, 's', { value: config.start, enumerable: true });
+    Object.defineProperty(this, 'e', { value: config.end, enumerable: true });
+    Object.defineProperty(this, 'valid', { value: config.valid, enumerable: true });
   }
 
   /**
@@ -24,7 +26,7 @@ export class Interval {
    * @return {Interval}
    */
   static invalid() {
-    return new Interval();
+    return new Interval({ valid: false });
   }
 
   /**
@@ -34,7 +36,13 @@ export class Interval {
    * @return {Interval}
    */
   static fromDateTimes(start, end) {
-    return new Interval(Util.friendlyDateTime(start), Util.friendlyDateTime(end));
+    const builtStart = Util.friendlyDateTime(start), builtEnd = Util.friendlyDateTime(end);
+
+    return new Interval({
+      start: builtStart,
+      end: builtEnd,
+      valid: validateStartEnd(builtStart, builtEnd)
+    });
   }
 
   /**
