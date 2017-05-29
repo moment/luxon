@@ -55,6 +55,15 @@ function clone(dur, alts) {
   return new Duration(conf);
 }
 
+function isHighOrderNegative(obj){
+  // only rule is that the highest-order part must be non-negative
+  for (const k of orderedUnits) {
+    if (obj[k])
+      return obj[k] < 0;
+  }
+  return false;
+}
+
 /**
  * An amount of time.
  */
@@ -65,15 +74,6 @@ export class Duration {
   constructor(config) {
     Object.defineProperty(this, 'values', { value: config.values, enumerable: true });
     Object.defineProperty(this, 'loc', { value: config.loc || Locale.create(), enumerable: true });
-    Object.defineProperty(this, 'valid', { value: config.valid || true, enumerable: false });
-  }
-
-  /**
-   * Create an invalid Duration.
-   * @return {Duration}
-   */
-  static invalid() {
-    return new Duration({ valid: false });
   }
 
   /**
@@ -188,15 +188,20 @@ export class Duration {
    */
   toISO() {
     // we could use the formatter, but this is an easier way to get the minimum string
-    let s = 'P';
-    if (this.years() > 0) s += this.years() + 'Y';
-    if (this.months() > 0) s += this.months() + 'M';
-    if (this.days() > 0 || this.weeks() > 0) s += this.days() + this.weeks() * 7 + 'D';
-    if (this.hours() > 0 || this.minutes() > 0 || this.seconds() > 0 || this.milliseconds() > 0)
+    let s = 'P',
+        norm = this.positive();
+
+    // ISO durations are always positive, so take the absolute value
+    norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
+
+    if (norm.years() > 0) s += norm.years() + 'Y';
+    if (norm.months() > 0) s += norm.months() + 'M';
+    if (norm.days() > 0 || norm.weeks() > 0) s += norm.days() + norm.weeks() * 7 + 'D';
+    if (norm.hours() > 0 || norm.minutes() > 0 || norm.seconds() > 0 || norm.milliseconds() > 0)
       s += 'T';
-    if (this.hours() > 0) s += this.hours() + 'H';
-    if (this.minutes() > 0) s += this.minutes() + 'M';
-    if (this.seconds() > 0) s += this.seconds() + 'S';
+    if (norm.hours() > 0) s += norm.hours() + 'H';
+    if (norm.minutes() > 0) s += norm.minutes() + 'M';
+    if (norm.seconds() > 0) s += norm.seconds() + 'S';
     return s;
   }
 
@@ -281,7 +286,10 @@ export class Duration {
    * @return {Duration}
    */
   normalize() {
-    return this.shiftTo(...Object.keys(this.values));
+    const neg = isHighOrderNegative(this.values),
+          dur = neg ? this.negate() : this,
+          shifted = dur.shiftTo(...Object.keys(this.values));
+    return neg ? shifted.negate() : shifted;
   }
 
   /**

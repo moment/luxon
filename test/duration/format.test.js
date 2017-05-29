@@ -26,6 +26,14 @@ test('Duration#toISO creates a minimal string', () => {
   expect(Duration.fromObject({ minutes: 5 }).toISO()).toBe('PT5M');
 });
 
+test('Duration#toISO handles negative durations', () => {
+  expect(Duration.fromObject({ years: -3, seconds: -45 }).toISO()).toBe('P3YT45S');
+});
+
+test('Duration#toISO handles mixed negative/positive durations', () => {
+  expect(Duration.fromObject({ years: 3, seconds: -45 }).toISO()).toBe('P2YT31535955S');
+});
+
 //------
 // #toFormat()
 //------

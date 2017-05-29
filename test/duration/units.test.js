@@ -38,14 +38,18 @@ test('Duration#shiftTo boils down and then rolls up', () => {
 //-------
 test('Duration#normalize rebalances negative units', () => {
   const dur = Duration.fromObject({ years: 2, days: -2 }).normalize();
-
   expect(dur.years()).toBe(1);
   expect(dur.days()).toBe(363);
 });
 
 test('Duration#normalize de-overflows', () => {
   const dur = Duration.fromObject({ years: 2, days: 5000 }).normalize();
-
   expect(dur.years()).toBe(15);
   expect(dur.days()).toBe(255);
+});
+
+test('Duration#normalize handles fully negative durations', () => {
+  const dur = Duration.fromObject({ years: -2, days: -5000 }).normalize();
+  expect(dur.years()).toBe(-15);
+  expect(dur.days()).toBe(-255);
 });
