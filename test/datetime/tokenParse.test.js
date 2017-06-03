@@ -29,7 +29,16 @@ test('DateTime.fromString() parses meridiems', () => {
   expect(i.hour()).toBe(9);
 });
 
-test('DateTime.fromString() parses eras', () => {});
+test('DateTime.fromString() parses eras', () => {
+  let dt = DateTime.fromString('0206 AD', 'yyyy G');
+  expect(dt.year()).toEqual(206);
+
+  dt = DateTime.fromString('0206 BC', 'yyyy G');
+  expect(dt.year()).toEqual(-206);
+
+  dt = DateTime.fromString('0206 Before Christ', 'yyyy GG');
+  expect(dt.year()).toEqual(-206);
+});
 
 test('DateTime.fromString() parses month names', () => {
   let i = DateTime.fromString('May 25 1982', 'LLLL dd yyyy');

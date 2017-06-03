@@ -96,6 +96,11 @@ export class Locale {
       enumerable: false,
       writable: true
     });
+    Object.defineProperty(this, 'eraCache', {
+      value: {},
+      enumerable: false,
+      writable: true
+    });
   }
 
   knownEnglish() {
@@ -152,11 +157,10 @@ export class Locale {
       return English.meridiems;
     }
 
-    const intl = { hour: 'numeric', hour12: true };
-
     // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
     // for AM and PM. This is probably wrong, but it's makes parsing way easier.
     if (!this.meridiemCache) {
+      const intl = { hour: 'numeric', hour12: true };
       this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(dt =>
         this.extract(dt, intl, 'dayperiod')
       );
@@ -165,10 +169,22 @@ export class Locale {
     return this.meridiemCache;
   }
 
-  // eras(length){
-  // }
-  // fieldValues(){
-  // }
+  eras(length) {
+    if (this.knownEnglish()) {
+      return English.eras(length);
+    }
+
+    const intl = { era: length };
+
+    if (!this.eraCache[length]) {
+      this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
+        this.extract(dt, intl, 'era')
+      );
+    }
+
+    return this.eraCache[length];
+  }
+
   extract(dt, intlOpts, field) {
     const [df, d] = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(d),

@@ -69,4 +69,8 @@ export class English {
   static get meridiems() {
     return ['AM', 'PM'];
   }
+
+  static eras(length) {
+    return length === 'short' ? ['BC', 'AD'] : ['Before Christ', 'Anno Domini'];
+  }
 }

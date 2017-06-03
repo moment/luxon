@@ -92,6 +92,19 @@ export class Info {
   }
 
   /**
+   * Return an array of eras.
+   * @param {string} [length='short'] - the length of the era representation, such as "short" or "long".
+   * @param {string} [localeCode='en'] - the locale code
+   * @example Info.eras() //=> [ 'BC', 'AD' ]
+   * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
+   * @example Info.eras('long', 'fr') //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
+   * @return {[string]}
+   */
+  static eras(length = 'short', localeCode = 'en') {
+    return new Locale(localeCode).eras(length);
+  }
+
+  /**
    * Return the set of available features in this environment.
    * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.
    * Keys:

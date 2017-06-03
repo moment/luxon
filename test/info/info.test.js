@@ -227,3 +227,15 @@ test('Info.weekdaysFormat lists all the weekdays', () => {
   expect(Info.meridiems('en')).toEqual(['AM', 'PM']);
   expect(Info.meridiems('de')).toEqual(['vorm.', 'nachm.']);
 });
+
+//------
+// .eras()
+//------
+
+test('Info.eras lists both eras', () => {
+  expect(Info.eras()).toEqual(['BC', 'AD']);
+  expect(Info.eras('short')).toEqual(['BC', 'AD']);
+  expect(Info.eras('long')).toEqual(['Before Christ', 'Anno Domini']);
+  expect(Info.eras('short', 'fr')).toEqual(['av. J.-C.', 'ap. J.-C.']);
+  expect(Info.eras('long', 'fr')).toEqual(['avant Jésus-Christ', 'après Jésus-Christ']);
+});

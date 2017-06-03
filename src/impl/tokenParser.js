@@ -24,7 +24,11 @@ function unitForToken(token, loc) {
       }
 
       switch (t.val) {
-        // era (G)
+        // era
+        case 'G':
+          return oneOf(loc.eras('short'), 0);
+        case 'GG':
+          return oneOf(loc.eras('long'), 0);
         // years
         case 'yyyy':
           return intUnit(four);
@@ -175,6 +179,10 @@ function dateTimeFromMatches(matches) {
 
   if (matches.h && matches.a === 1) {
     matches.h += 12;
+  }
+
+  if ((matches.G === 0 || matches.GG === 0) && matches.y) {
+    matches.y = -matches.y;
   }
 
   // todo: era
