@@ -1,6 +1,36 @@
 import { Util } from '../impl/util';
 import { Zone } from '../zone';
 
+const typeToPos = {
+  year: 0,
+  month: 1,
+  day: 2,
+  hour: 3,
+  minute: 4,
+  second: 5
+};
+
+function hackyOffset(dtf, date) {
+  const formatted = dtf.format(date),
+    parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
+    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
+  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
+}
+
+function partsOffset(dtf, date) {
+  const formatted = dtf.formatToParts(date),
+    filled = [];
+  for (let i = 0; i < formatted.length; i++) {
+    const { type, value } = formatted[i],
+      pos = typeToPos[type];
+
+    if (!Util.isUndefined(pos)) {
+      filled[pos] = parseInt(value, 10);
+    }
+  }
+  return filled;
+}
+
 /**
  * @private
  */
@@ -32,10 +62,8 @@ export class IANAZone extends Zone {
   }
 
   offset(ts) {
-    // formatToParts() will simplify this, but the polyfill doesn't support TZs,
-    // so leaving this hack in
     const date = new Date(ts),
-      formatted = new Intl.DateTimeFormat('en-us', {
+      dtf = new Intl.DateTimeFormat('en-us', {
         hour12: false,
         timeZone: this.zoneName,
         year: 'numeric',
@@ -44,9 +72,10 @@ export class IANAZone extends Zone {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
-      }).format(date),
-      parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
-      [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed,
+      }),
+      [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts
+        ? partsOffset(dtf, date)
+        : hackyOffset(dtf, date),
       asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
     let asTS = date.valueOf();
     asTS -= asTS % 1000;
