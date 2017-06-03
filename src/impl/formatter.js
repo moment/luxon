@@ -300,22 +300,22 @@ export class Formatter {
               second: '2-digit',
               hour12: false
             });
-        case 'TTT':
-          return this.formatDateTime(dt, {
-            hour: 'numeric',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-            timeZoneName: 'short'
-          });
-        case 'TTTT':
-          return this.formatDateTime(dt, {
-            hour: 'numeric',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-            timeZoneName: 'long'
-          });
+          case 'TTT':
+            return this.formatDateTime(dt, {
+              hour: 'numeric',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false,
+              timeZoneName: 'short'
+            });
+          case 'TTTT':
+            return this.formatDateTime(dt, {
+              hour: 'numeric',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false,
+              timeZoneName: 'long'
+            });
           case 'f':
             return this.formatDateTime(dt, {
               year: 'numeric',

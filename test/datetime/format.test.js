@@ -6,7 +6,7 @@ const dt = DateTime.fromObject(
   { year: 1982, month: 5, day: 25, hour: 9, minute: 23, second: 54, millisecond: 123 },
   'utc'
 ),
-      ny = dt.timezone('America/New_York', {keepCalendarTime: true});
+  ny = dt.timezone('America/New_York', { keepCalendarTime: true });
 
 //------
 // #toISO()
@@ -468,10 +468,16 @@ test("DateTime#toFormat('fff') returns a medium date/time representation without
 test("DateTime#toFormat('ffff') returns a long date/time representation without seconds", () => {
   expect(ny.toFormat('ffff')).toBe('Tuesday, May 25, 1982, 9:23 AM Eastern Daylight Time');
   expect(ny.hour(13).toFormat('ffff')).toBe('Tuesday, May 25, 1982, 1:23 PM Eastern Daylight Time');
-  expect(ny.month(2).toFormat('ffff')).toBe('Thursday, February 25, 1982, 9:23 AM Eastern Standard Time');
+  expect(ny.month(2).toFormat('ffff')).toBe(
+    'Thursday, February 25, 1982, 9:23 AM Eastern Standard Time'
+  );
   expect(ny.locale('fr').toFormat('ffff')).toBe('mardi 25 mai 1982 à 09:23 heure d’été de l’Est');
-  expect(ny.locale('fr').month(2).toFormat('ffff')).toBe('jeudi 25 février 1982 à 09:23 heure normale de l’Est nord-américain');
-  expect(ny.locale('fr').hour(13).toFormat('ffff')).toBe('mardi 25 mai 1982 à 13:23 heure d’été de l’Est');
+  expect(ny.locale('fr').month(2).toFormat('ffff')).toBe(
+    'jeudi 25 février 1982 à 09:23 heure normale de l’Est nord-américain'
+  );
+  expect(ny.locale('fr').hour(13).toFormat('ffff')).toBe(
+    'mardi 25 mai 1982 à 13:23 heure d’été de l’Est'
+  );
 });
 
 test("DateTime#toFormat('F') returns a short date/time representation with seconds", () => {
@@ -501,9 +507,19 @@ test("DateTime#toFormat('FFF') returns a medium date/time representation without
 
 test("DateTime#toFormat('FFFF') returns a long date/time representation without seconds", () => {
   expect(ny.toFormat('FFFF')).toBe('Tuesday, May 25, 1982, 9:23:54 AM Eastern Daylight Time');
-  expect(ny.hour(13).toFormat('FFFF')).toBe('Tuesday, May 25, 1982, 1:23:54 PM Eastern Daylight Time');
-  expect(ny.month(2).toFormat('FFFF')).toBe('Thursday, February 25, 1982, 9:23:54 AM Eastern Standard Time');
-  expect(ny.locale('fr').toFormat('FFFF')).toBe('mardi 25 mai 1982 à 09:23:54 heure d’été de l’Est');
-  expect(ny.locale('fr').month(2).toFormat('FFFF')).toBe('jeudi 25 février 1982 à 09:23:54 heure normale de l’Est nord-américain');
-  expect(ny.locale('fr').hour(13).toFormat('FFFF')).toBe('mardi 25 mai 1982 à 13:23:54 heure d’été de l’Est');
+  expect(ny.hour(13).toFormat('FFFF')).toBe(
+    'Tuesday, May 25, 1982, 1:23:54 PM Eastern Daylight Time'
+  );
+  expect(ny.month(2).toFormat('FFFF')).toBe(
+    'Thursday, February 25, 1982, 9:23:54 AM Eastern Standard Time'
+  );
+  expect(ny.locale('fr').toFormat('FFFF')).toBe(
+    'mardi 25 mai 1982 à 09:23:54 heure d’été de l’Est'
+  );
+  expect(ny.locale('fr').month(2).toFormat('FFFF')).toBe(
+    'jeudi 25 février 1982 à 09:23:54 heure normale de l’Est nord-américain'
+  );
+  expect(ny.locale('fr').hour(13).toFormat('FFFF')).toBe(
+    'mardi 25 mai 1982 à 13:23:54 heure d’été de l’Est'
+  );
 });
