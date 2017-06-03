@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from '../../dist/cjs/luxon';
+import { DateTime } from '../../src/luxon';
 
 const millis = 391147200000,
   // 1982-05-25T04:00:00.000Z

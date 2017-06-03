@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Info } from '../../dist/cjs/luxon';
+import { Info } from '../../src/luxon';
 
 //------
 // .months()

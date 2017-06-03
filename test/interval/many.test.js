@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime, Interval, Duration } from '../../dist/cjs/luxon';
+import { DateTime, Interval, Duration } from '../../src/luxon';
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
   todayAt = h => DateTime.local().startOf('day').hour(h),

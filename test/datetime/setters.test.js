@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from '../../dist/cjs/luxon';
+import { DateTime } from '../../src/luxon';
 
 const dt = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
 

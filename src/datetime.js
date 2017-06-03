@@ -561,6 +561,12 @@ export class DateTime {
     }
   }
 
+  // numbering(nums) {
+  // }
+
+  // calendar(ca) {
+  // }
+
   /**
    * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
    *

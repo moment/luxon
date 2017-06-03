@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime, Interval, Duration } from '../../dist/cjs/luxon';
+import { DateTime, Interval, Duration } from '../../src/luxon';
 
 //------
 // .fromObject()

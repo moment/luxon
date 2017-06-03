@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Info, DateTime } from '../../dist/cjs/luxon';
+import { Info, DateTime } from '../../src/luxon';
 
 //------
 // diff

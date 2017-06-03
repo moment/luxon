@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from '../../dist/cjs/luxon';
+import { DateTime } from '../../src/luxon';
 
 //------
 // .local()

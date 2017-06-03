@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Duration } from '../../dist/cjs/luxon';
+import { Duration } from '../../src/luxon';
 
 const dur = Duration.fromObject({
   years: 1,

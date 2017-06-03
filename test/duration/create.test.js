@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Duration } from '../../dist/cjs/luxon';
+import { Duration } from '../../src/luxon';
 
 //------
 // .fromObject()

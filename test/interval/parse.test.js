@@ -1,5 +1,5 @@
 /* global test expect */
-import { Interval } from '../../dist/cjs/luxon';
+import { Interval } from '../../src/luxon';
 
 //------
 // .fromISO()

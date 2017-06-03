@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Duration } from '../../dist/cjs/luxon';
+import { DateTime, Duration } from '../../src/luxon';
 
 function createDateTime() {
   return DateTime.fromObject({

@@ -1,5 +1,5 @@
 /* global test expect */
-import { Duration } from '../../dist/cjs/luxon';
+import { Duration } from '../../src/luxon';
 
 //------
 // years/months/days/hours/minutes/seconds/milliseconds

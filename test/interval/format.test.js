@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime } from '../../dist/cjs/luxon';
+import { DateTime } from '../../src/luxon';
 
 const fromISOs = (s, e) =>
   DateTime.fromISO(s, { setZone: true }).until(DateTime.fromISO(e, { setZone: true })),

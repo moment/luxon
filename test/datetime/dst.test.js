@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Settings } from '../../dist/cjs/luxon';
+import { DateTime, Settings } from '../../src/luxon';
 
 const local = (year, month, day, hour) =>
   DateTime.fromObject({ year, month, day, hour }, 'America/New_York');

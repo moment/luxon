@@ -107,7 +107,7 @@ gulp.task(
 
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
-gulp.task('test', ['cjs'], () => gulp.src('test').pipe(jest()));
+gulp.task('test', () => gulp.src('test').pipe(jest()));
 
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
   doLint = () =>
