@@ -288,6 +288,7 @@ test('Interval#divideEqually should split a 1m30s into 3 30-second parts', () =>
 });
 
 test('Interval#divideEqually always gives you the right number of parts', () => {
-  const int = Interval.after(todayAt(9), 7, 'minutes'), split = int.divideEqually(17);
+  const int = Interval.after(todayAt(9), 7, 'minutes'),
+    split = int.divideEqually(17);
   expect(split.length).toBe(17);
 });

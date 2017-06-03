@@ -1,6 +1,8 @@
 import { LocalZone } from './zones/localZone';
 
-let now = () => new Date().valueOf(), defaultZone = LocalZone.instance, throwOnInvalid = false;
+let now = () => new Date().valueOf(),
+  defaultZone = LocalZone.instance,
+  throwOnInvalid = false;
 
 /**
  * Global settings

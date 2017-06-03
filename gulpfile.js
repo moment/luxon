@@ -61,7 +61,8 @@ function processLib(opts) {
 
 function prettify(opts) {
   return through.obj((file, _, callback) => {
-    const str = file.contents.toString(), data = prettier.format(str, opts);
+    const str = file.contents.toString(),
+      data = prettier.format(str, opts);
     file.contents = new Buffer(data);
     callback(null, file);
   });

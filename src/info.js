@@ -102,7 +102,9 @@ export class Info {
    * @return {object}
    */
   static features() {
-    let intl = false, intlTokens = false, timezones = false;
+    let intl = false,
+      intlTokens = false,
+      timezones = false;
 
     if (Intl.DateTimeFormat) {
       intl = true;

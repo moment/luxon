@@ -23,7 +23,9 @@ export class Formatter {
   }
 
   static parseFormat(fmt) {
-    let current = null, currentFull = '', bracketed = false;
+    let current = null,
+      currentFull = '',
+      bracketed = false;
     const splits = [];
     for (let i = 0; i < fmt.length; i++) {
       const c = fmt.charAt(i);

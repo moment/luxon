@@ -36,7 +36,8 @@ export class Interval {
    * @return {Interval}
    */
   static fromDateTimes(start, end) {
-    const builtStart = Util.friendlyDateTime(start), builtEnd = Util.friendlyDateTime(end);
+    const builtStart = Util.friendlyDateTime(start),
+      builtEnd = Util.friendlyDateTime(end);
 
     return new Interval({
       start: builtStart,
@@ -53,7 +54,8 @@ export class Interval {
    * @return {Interval}
    */
   static after(start, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit), dt = Util.friendlyDateTime(start);
+    const dur = Util.friendlyDuration(durationOrNumber, unit),
+      dt = Util.friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
   }
 
@@ -65,7 +67,8 @@ export class Interval {
    * @return {Interval}
    */
   static before(end, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit), dt = Util.friendlyDateTime(end);
+    const dur = Util.friendlyDuration(durationOrNumber, unit),
+      dt = Util.friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
   }
 
@@ -149,7 +152,8 @@ export class Interval {
    */
   count(unit = 'milliseconds') {
     if (!this.valid) return NaN;
-    const start = this.start().startOf(unit), end = this.end().startOf(unit);
+    const start = this.start().startOf(unit),
+      end = this.end().startOf(unit);
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
@@ -160,11 +164,14 @@ export class Interval {
    */
   splitAt(...dateTimes) {
     if (!this.valid) return [];
-    const sorted = dateTimes.map(Util.friendlyDateTime).sort(), results = [];
-    let s = this.s, i = 0;
+    const sorted = dateTimes.map(Util.friendlyDateTime).sort(),
+      results = [];
+    let s = this.s,
+      i = 0;
 
     while (s < this.e) {
-      const added = sorted[i] || this.e, next = +added > +this.e ? this.e : added;
+      const added = sorted[i] || this.e,
+        next = +added > +this.e ? this.e : added;
       results.push(Interval.fromDateTimes(s, next));
       s = next;
       i += 1;
@@ -182,8 +189,11 @@ export class Interval {
    */
   splitBy(durationOrNumber, unit = 'milliseconds') {
     if (!this.valid) return [];
-    const dur = Util.friendlyDuration(durationOrNumber, unit), results = [];
-    let s = this.s, added, next;
+    const dur = Util.friendlyDuration(durationOrNumber, unit),
+      results = [];
+    let s = this.s,
+      added,
+      next;
 
     while (s < this.e) {
       added = s.plus(dur);
@@ -252,7 +262,8 @@ export class Interval {
    */
   intersection(other) {
     if (!this.valid) return Interval.invalid();
-    const s = this.s > other.s ? this.s : other.s, e = this.e < other.e ? this.e : other.e;
+    const s = this.s > other.s ? this.s : other.s,
+      e = this.e < other.e ? this.e : other.e;
 
     if (s > e) {
       return null;
@@ -269,7 +280,8 @@ export class Interval {
    */
   union(other) {
     if (!this.valid) return Interval.invalid();
-    const s = this.s < other.s ? this.s : other.s, e = this.e > other.e ? this.e : other.e;
+    const s = this.s < other.s ? this.s : other.s,
+      e = this.e > other.e ? this.e : other.e;
     return Interval.fromDateTimes(s, e);
   }
 
@@ -301,7 +313,8 @@ export class Interval {
    * @return {[Interval]}
    */
   static xor(intervals) {
-    let start = null, currentCount = 0;
+    let start = null,
+      currentCount = 0;
     const results = [],
       ends = intervals.map(i => [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }]),
       arr = Util.flatten(ends).sort((a, b) => a.time - b.time);

@@ -8,7 +8,8 @@ const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
 // #length()
 //-------
 test('Interval#length defaults to milliseconds', () => {
-  const n = DateTime.local(), d = n.until(n.plus(1, 'minute'));
+  const n = DateTime.local(),
+    d = n.until(n.plus(1, 'minute'));
   expect(d.length()).toBe(60 * 1000);
 });
 
@@ -125,7 +126,8 @@ test('Interval#isBefore returns false for intervals fully after the input ', () 
 });
 
 test('Interval#isBefore returns false for intervals starting at the input', () => {
-  const n = DateTime.fromISO('1982-05-25T06:00'), i = Interval.fromDateTimes(n.minus(1, 'day'), n);
+  const n = DateTime.fromISO('1982-05-25T06:00'),
+    i = Interval.fromDateTimes(n.minus(1, 'day'), n);
   expect(i.isBefore(n)).toBeFalsy();
 });
 
@@ -151,7 +153,8 @@ test('Interval#isAfter returns false for fully before the input ', () => {
 });
 
 test('Interval#isAfter returns false for intervals beginning at the input', () => {
-  const n = DateTime.fromISO('1982-05-25T06:00'), i = Interval.fromDateTimes(n, n.plus(1, 'day'));
+  const n = DateTime.fromISO('1982-05-25T06:00'),
+    i = Interval.fromDateTimes(n, n.plus(1, 'day'));
   expect(i.isAfter(n)).toBeFalsy();
 });
 
@@ -159,7 +162,8 @@ test('Interval#isAfter returns false for intervals beginning at the input', () =
 // #hasSame()
 //-------
 test("Interval#hasSame('day') returns true for durations on the same day", () => {
-  const n = DateTime.fromISO('1982-05-25T06:00'), i = Interval.fromDateTimes(n, n.plus(5, 'hours'));
+  const n = DateTime.fromISO('1982-05-25T06:00'),
+    i = Interval.fromDateTimes(n, n.plus(5, 'hours'));
   expect(i.hasSame('day')).toBeTruthy();
 });
 
@@ -179,6 +183,7 @@ test("Interval#hasSame('day') returns true for durations durations ending at mid
 // locale
 //------
 test('Interval#locale() returns the locale', () => {
-  const dt = DateTime.local().locale('be'), i = Interval.after(dt, 1, 'day');
+  const dt = DateTime.local().locale('be'),
+    i = Interval.after(dt, 1, 'day');
   expect(i.locale()).toBe('be');
 });

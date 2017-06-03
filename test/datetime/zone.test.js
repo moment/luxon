@@ -38,7 +38,8 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
 // #toLocal()
 //------
 test('DateTime#toLocal() sets the calendar back to local', () => {
-  const relocaled = dt().toUTC().toLocal(), expected = new Date(millis).getHours();
+  const relocaled = dt().toUTC().toLocal(),
+    expected = new Date(millis).getHours();
   expect(relocaled.isOffsetFixed()).toBe(false);
   expect(relocaled.valueOf()).toBe(millis);
   expect(relocaled.hour()).toBe(expected);

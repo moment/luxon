@@ -85,7 +85,8 @@ test('DateTime.fromString() validates weekday names', () => {
 });
 
 test('DateTime.fromString() defaults weekday to this week', () => {
-  const d = DateTime.fromString('Monday', 'EEEE'), now = DateTime.local();
+  const d = DateTime.fromString('Monday', 'EEEE'),
+    now = DateTime.local();
   expect(d.weekYear()).toBe(now.weekYear());
   expect(d.weekNumber()).toBe(now.weekNumber());
   expect(d.weekday()).toBe(1);
@@ -120,7 +121,8 @@ test('DateTime.fromString() accepts weekYear by itself', () => {
 });
 
 test('DateTime.fromString() accepts weekNumber by itself', () => {
-  const d = DateTime.fromString('17', 'WW'), now = DateTime.local();
+  const d = DateTime.fromString('17', 'WW'),
+    now = DateTime.local();
   expect(d.weekYear()).toBe(now.weekYear());
   expect(d.weekNumber()).toBe(17);
   expect(d.weekday()).toBe(1);
@@ -134,7 +136,8 @@ test('DateTime.fromString() accepts weekYear/weekNumber/weekday', () => {
 });
 
 test('DateTime.fromString() allows regex content', () => {
-  const d = DateTime.fromString('Monday', 'EEEE'), now = DateTime.local();
+  const d = DateTime.fromString('Monday', 'EEEE'),
+    now = DateTime.local();
   expect(d.weekYear()).toBe(now.weekYear());
   expect(d.weekNumber()).toBe(now.weekNumber());
   expect(d.weekday()).toBe(1);

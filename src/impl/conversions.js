@@ -41,7 +41,8 @@ export class Conversions {
       ordinal = computeOrdinal(year, month, day),
       weekday = dayOfWeek(year, month, day);
 
-    let weekNumber = Math.floor((ordinal - weekday + 10) / 7), weekYear;
+    let weekNumber = Math.floor((ordinal - weekday + 10) / 7),
+      weekYear;
 
     if (weekNumber < 1) {
       weekYear = year - 1;
@@ -60,7 +61,8 @@ export class Conversions {
     const { weekYear, weekNumber, weekday } = weekData,
       weekdayOfJan4 = dayOfWeek(weekYear, 1, 4),
       daysInYear = Util.daysInYear(weekYear);
-    let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 3, year;
+    let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 3,
+      year;
 
     if (ordinal < 1) {
       year = weekYear - 1;
@@ -78,13 +80,15 @@ export class Conversions {
   }
 
   static gregorianToOrdinal(gregData) {
-    const { year, month, day } = gregData, ordinal = computeOrdinal(year, month, day);
+    const { year, month, day } = gregData,
+      ordinal = computeOrdinal(year, month, day);
 
     return Object.assign({ year, ordinal }, Util.timeObject(gregData));
   }
 
   static ordinalToGregorian(ordinalData) {
-    const { year, ordinal } = ordinalData, { month, day } = uncomputeOrdinal(year, ordinal);
+    const { year, ordinal } = ordinalData,
+      { month, day } = uncomputeOrdinal(year, ordinal);
 
     return Object.assign({ year, month, day }, Util.timeObject(ordinalData));
   }

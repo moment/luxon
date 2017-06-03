@@ -188,7 +188,8 @@ test('DateTime.fromJSDate(date) clones the date', () => {
 // .fromMillis()
 //-------
 test('DateTime.fromMillis(ms) has a value of ms', () => {
-  const value = 391147200000, dateTime = DateTime.fromMillis(value);
+  const value = 391147200000,
+    dateTime = DateTime.fromMillis(value);
 
   expect(dateTime.valueOf()).toBe(value);
 });
@@ -292,7 +293,8 @@ test('DateTime.fromObject() accepts a Zone as the second argument', () => {
 });
 
 test('DateTime.fromObject() defaults high-order values to the current date', () => {
-  const dateTime = DateTime.fromObject({}), now = DateTime.local();
+  const dateTime = DateTime.fromObject({}),
+    now = DateTime.local();
 
   expect(dateTime.year()).toBe(now.year());
   expect(dateTime.month()).toBe(now.month());
@@ -347,7 +349,8 @@ test('DateTime.fromObject() w/weekYears handles skew with Gregorian years', () =
 });
 
 test('DateTime.fromObject() w/weeks defaults high-order values to the current date', () => {
-  const dt = DateTime.fromObject({ weekday: 2 }), now = DateTime.local();
+  const dt = DateTime.fromObject({ weekday: 2 }),
+    now = DateTime.local();
 
   expect(dt.weekYear()).toBe(now.weekYear());
   expect(dt.weekNumber()).toBe(now.weekNumber());
@@ -382,7 +385,8 @@ test('DateTime.fromObject() w/ordinals handles fully specified dates', () => {
 });
 
 test('DateTime.fromObject() w/ordinal defaults to the current year', () => {
-  const dt = DateTime.fromObject({ ordinal: 200 }), now = DateTime.local();
+  const dt = DateTime.fromObject({ ordinal: 200 }),
+    now = DateTime.local();
   expect(dt.year()).toBe(now.year());
   expect(dt.ordinal()).toBe(200);
 });

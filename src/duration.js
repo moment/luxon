@@ -202,7 +202,8 @@ export class Duration {
     // we could use the formatter, but this is an easier way to get the minimum string
     if (!this.valid) return null;
 
-    let s = 'P', norm = this.normalize();
+    let s = 'P',
+      norm = this.normalize();
 
     // ISO durations are always positive, so take the absolute value
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
@@ -235,7 +236,8 @@ export class Duration {
   plus(durationOrNumber, unit = 'millisecond') {
     if (!this.valid) return this;
 
-    const dur = Util.friendlyDuration(durationOrNumber, unit), result = {};
+    const dur = Util.friendlyDuration(durationOrNumber, unit),
+      result = {};
 
     for (const k of orderedUnits) {
       const val = dur.get(k) + this.get(k);
@@ -325,7 +327,9 @@ export class Duration {
 
     units = units.map(Duration.normalizeUnit);
 
-    const built = {}, accumulated = {}, vals = this.toObject();
+    const built = {},
+      accumulated = {},
+      vals = this.toObject();
     let lastUnit;
 
     for (const k of orderedUnits) {
@@ -349,7 +353,8 @@ export class Duration {
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
           if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
-            const conv = matrix[k][down], added = Math.floor(vals[down] / conv);
+            const conv = matrix[k][down],
+              added = Math.floor(vals[down] / conv);
             built[k] += added;
             vals[down] -= added * conv;
           }

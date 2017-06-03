@@ -399,7 +399,9 @@ export class DateTime {
     const useWeekData = definiteWeekDef || (normalized.weekday && !containsGregor);
 
     // configure ourselves to deal with gregorian dates or week stuff
-    let units, defaultValues, objNow = tsToObj(tsNow, offsetProvis);
+    let units,
+      defaultValues,
+      objNow = tsToObj(tsNow, offsetProvis);
     if (useWeekData) {
       units = orderedWeekUnits;
       defaultValues = defaultWeekUnitValues;
@@ -1128,7 +1130,8 @@ export class DateTime {
       post = flipped ? otherDateTime : this,
       accum = {};
 
-    let cursor = flipped ? this : otherDateTime, lowestOrder = null;
+    let cursor = flipped ? this : otherDateTime,
+      lowestOrder = null;
 
     if (units.indexOf('years') >= 0) {
       let dYear = post.year() - cursor.year();
