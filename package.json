@@ -8,9 +8,6 @@
     "immutable"
   ],
   "repository": "https://github.com/icambron/luxon",
-  "dependencies": {
-    "intl": "latest"
-  },
   "devDependencies": {
     "babel-jest": "latest",
     "babel-polyfill": "latest",

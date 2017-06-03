@@ -67,14 +67,13 @@ function prettify(opts) {
   });
 }
 
-gulp.task('cjs', processLib({ format: 'cjs', rollupOpts: { external: ['intl'] } }));
+gulp.task('cjs', processLib({ format: 'cjs' }));
 
 gulp.task(
   'es6',
   processLib({
     format: 'es',
     dest: 'es6',
-    rollupOpts: { external: ['intl'] },
     compile: false
   })
 );
@@ -83,7 +82,7 @@ gulp.task(
   'amd',
   processLib({
     format: 'amd',
-    rollupOpts: { moduleName: 'luxon', external: ['intl'] }
+    rollupOpts: { moduleName: 'luxon' }
   })
 );
 
@@ -91,7 +90,7 @@ gulp.task(
   'global-es6',
   processLib({
     format: 'iife',
-    rollupOpts: { moduleName: 'luxon', globals: { intl: 'IntlPolyfill' }, external: ['intl'] },
+    rollupOpts: { moduleName: 'luxon' },
     dest: 'global-es6',
     compile: false
   })
@@ -101,7 +100,7 @@ gulp.task(
   'global',
   processLib({
     format: 'iife',
-    rollupOpts: { moduleName: 'luxon', globals: { intl: 'IntlPolyfill' }, external: ['intl'] },
+    rollupOpts: { moduleName: 'luxon' },
     dest: 'global'
   })
 );

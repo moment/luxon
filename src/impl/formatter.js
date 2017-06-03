@@ -181,13 +181,13 @@ export class Formatter {
             return this.num(dt.weekday());
           case 'EEE':
             // like 'Tues'
-            return string({ weekday: 'short' }, 'weekday');
+            return string({ weekday: 'short', month: 'long', day: 'numeric' }, 'weekday');
           case 'EEEE':
             // like 'Tuesday'
-            return string({ weekday: 'long' }, 'weekday');
+            return string({ weekday: 'long', month: 'long', day: 'numeric' }, 'weekday');
           case 'EEEEE':
             // like 'T'
-            return string({ weekday: 'narrow' }, 'weekday');
+            return string({ weekday: 'narrow', month: 'long', day: 'numeric' }, 'weekday');
           // months - format
           case 'L':
             // like 1

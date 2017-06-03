@@ -1,24 +1,7 @@
-import * as Intl from 'intl';
 import { Util } from './util';
 import { English } from './english';
 import { DateTime } from '../datetime';
 
-// We use the Intl polyfill exclusively here, for these reasons:
-// 1. We need formatToParts(), which isn't in Node or even most browsers
-// 2. Node doesn't ship with real locale support unless you do this: https://github.com/nodejs/node/wiki/Intl
-// 3. It standardizes the tests across different browsers.
-// 4. It made for a cleaner job.
-// However, it has some drawbacks:
-// 1. It's an onerous requirement
-// 2. It doesn't have TZ support
-// 3. It doesn't support number and calendar overrides.
-// In the future we might see either (probably both?) of these:
-// 1. Drop the requirement for the polyfill if you want US-EN only.
-//    Not doing this now because providing the defaults will slow me down.
-// 2. Let the user actually do a real polyfill where they please once Chrome/Node supports
-//    formatToParts OR Intl supports zones.
-//    This is impractical now because we still want access to the Chrome's native Intl's TZ
-//    support elsewhere.
 const localeCache = new Map();
 
 function intlConfigString(localeCode, nums, cal) {
