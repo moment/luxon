@@ -277,7 +277,20 @@ export class Formatter {
               minute: '2-digit',
               second: '2-digit'
             });
-          // todo: ttt and tttt when we have zones
+          case 'ttt':
+            return this.formatDateTime(dt, {
+              hour: 'numeric',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZoneName: 'short'
+            });
+          case 'tttt':
+            return this.formatDateTime(dt, {
+              hour: 'numeric',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZoneName: 'long'
+            });
           case 'T':
             return this.formatDateTime(dt, { hour: 'numeric', minute: '2-digit', hour12: false });
           case 'TT':
@@ -287,7 +300,22 @@ export class Formatter {
               second: '2-digit',
               hour12: false
             });
-          // todo: TTT and TTTT when we have zones
+        case 'TTT':
+          return this.formatDateTime(dt, {
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            timeZoneName: 'short'
+          });
+        case 'TTTT':
+          return this.formatDateTime(dt, {
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            timeZoneName: 'long'
+          });
           case 'f':
             return this.formatDateTime(dt, {
               year: 'numeric',
@@ -304,14 +332,14 @@ export class Formatter {
               hour: 'numeric',
               minute: '2-digit'
             });
-          // todo: add zones
           case 'fff':
             return this.formatDateTime(dt, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
               hour: 'numeric',
-              minute: '2-digit'
+              minute: '2-digit',
+              timeZoneName: 'short'
             });
           case 'ffff':
             return this.formatDateTime(dt, {
@@ -320,7 +348,8 @@ export class Formatter {
               day: 'numeric',
               weekday: 'long',
               hour: 'numeric',
-              minute: '2-digit'
+              minute: '2-digit',
+              timeZoneName: 'long'
             });
 
           case 'F':
@@ -341,7 +370,6 @@ export class Formatter {
               minute: '2-digit',
               second: '2-digit'
             });
-          // todo: add zones
           case 'FFF':
             return this.formatDateTime(dt, {
               year: 'numeric',
@@ -349,7 +377,8 @@ export class Formatter {
               day: 'numeric',
               hour: 'numeric',
               minute: '2-digit',
-              second: '2-digit'
+              second: '2-digit',
+              timeZoneName: 'short'
             });
           case 'FFFF':
             return this.formatDateTime(dt, {
@@ -359,7 +388,8 @@ export class Formatter {
               weekday: 'long',
               hour: 'numeric',
               minute: '2-digit',
-              second: '2-digit'
+              second: '2-digit',
+              timeZoneName: 'long'
             });
 
           default:
