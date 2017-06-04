@@ -41,7 +41,7 @@
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest"
   },
-  "main": "dist/cjs/luxon.js",
+  "main": "build/cjs/luxon.js",
   "engines": {
     "node": "*"
   },

@@ -5,7 +5,7 @@
 // But for now we'll just run this file I guess
 
 var Benchmark = require('benchmark');
-var DateTime = require('../dist/cjs/luxon').DateTime;
+var DateTime = require('../build/cjs/luxon').DateTime;
 
 new Benchmark.Suite()
   .add('fromString', () =>
