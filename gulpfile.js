@@ -39,7 +39,7 @@ function processLib(opts) {
   return () => {
     opts.entry = './src/luxon.js';
 
-    const dest = `./dist/${opts.dest || opts.format}`,
+    const dest = `./build/${opts.dest || opts.format}`,
       // confession: I have no idea why piping to lazypipe works
       // after dest, but you can't pipe directly but it does so...
       minify = lazypipe()
@@ -121,7 +121,7 @@ gulp.task('format', () =>
   gulp.src(lintable, { base: './' }).pipe(prettify(prettierOptions)).pipe(gulp.dest('./'))
 );
 
-gulp.task('docs', () => gulp.src('./src').pipe(esdoc({ destination: './docs' })));
+gulp.task('docs', () => gulp.src('./src').pipe(esdoc({ destination: './build/docs' })));
 
 // build first so the test deps work
 gulp.task('simple', cb => runSequence('build', 'lint', 'test', cb));

@@ -40,10 +40,18 @@ export class Settings {
     defaultZone = z;
   }
 
+  /**
+   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+   * @type {Zone}
+   */
   static get throwOnInvalid() {
     return throwOnInvalid;
   }
 
+  /**
+   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+   * @type {Zone}
+   */
   static set throwOnInvalid(t) {
     throwOnInvalid = t;
   }
