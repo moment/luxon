@@ -98,12 +98,30 @@ test('DateTime#toLocaleString accepts locale settings from the dateTime', () => 
   expect(dt.locale('be').toLocaleString()).toBe('25.5.1982');
 });
 
+test('DateTime#toLocaleString accepts numbering system settings from the dateTime', () => {
+  expect(dt.numberingSystem('beng').toLocaleString()).toBe('৫/২৫/১৯৮২');
+});
+
+test('DateTime#toLocaleString accepts output calendar settings from the dateTime', () => {
+  expect(dt.outputCalendar('islamic').toLocaleString()).toBe('8/2/1402 AH');
+});
+
 test('DateTime#toLocaleString accepts options to the formatter', () => {
   expect(dt.toLocaleString({ weekday: 'short' }).indexOf('Tue') >= 0).toBeTruthy();
 });
 
 test("DateTime#toLocaleString can override the dateTime's locale", () => {
   expect(dt.locale('be').toLocaleString({ localeCode: 'fr' })).toBe('25/05/1982');
+});
+
+test("DateTime#toLocaleString can override the dateTime's numbering system", () => {
+  expect(dt.numberingSystem('beng').toLocaleString({ numberingSystem: 'mong' })).toBe('᠕/᠒᠕/᠑᠙᠘᠒');
+});
+
+test("DateTime#toLocaleString can override the dateTime's output calendar", () => {
+  expect(dt.outputCalendar('islamic').toLocaleString({ outputCalendar: 'coptic' })).toBe(
+    '9/17/1698 ERA1'
+  );
 });
 
 //------
@@ -367,10 +385,13 @@ test('DateTime#toFormat() accepts literals in single quotes', () => {
   expect(dt.toFormat("MMdd'T'hh")).toBe('0525T09');
 });
 
-// todo - implement numbering systems
-// test('DateTime#numbering() overides the numbering system from the locale', () => {
-//  expect(dt.numbering('beng').toFormat('S')).toBe('১২৩');
-// });
+test('DateTime#numberingSystem() overides the numbering system from the locale', () => {
+  expect(dt.numberingSystem('beng').toFormat('S')).toBe('১২৩');
+});
+
+test('DateTime#outputCalendar() overides the output calendar from the locale', () => {
+  expect(dt.outputCalendar('islamic').toFormat('MMMM yyyy')).toBe('Shaʻban 1402');
+});
 
 test("DateTime#toFormat('D') returns a short date representation", () => {
   expect(dt.toFormat('D')).toBe('5/25/1982');

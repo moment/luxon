@@ -4,25 +4,20 @@ import { DateTime } from '../datetime';
 
 const localeCache = new Map();
 
-function intlConfigString(localeCode, nums, cal) {
+function intlConfigString(localeCode, numberingSystem, outputCalendar) {
   let loc = localeCode || new Intl.DateTimeFormat().resolvedOptions().locale;
   loc = Array.isArray(localeCode) ? localeCode : [localeCode];
 
-  if (cal || nums) {
+  if (outputCalendar || numberingSystem) {
     loc = loc.map(l => {
       l += '-u';
 
-      // This doesn't seem to really work yet, so this is mostly not exposed.
-      // Also, this won't work with *parsing*, since we don't know how to translate
-      // them back into dates.
-      // So we need a way to specifically ignore it when parsing or we'll get gibberish
-      if (cal) {
-        l += '-ca-' + cal;
+      if (outputCalendar) {
+        l += '-ca-' + outputCalendar;
       }
 
-      // this doesn't work yet either
-      if (nums) {
-        l += '-nu-' + nums;
+      if (numberingSystem) {
+        l += '-nu-' + numberingSystem;
       }
       return l;
     });
@@ -54,31 +49,34 @@ function mapWeekdays(f) {
 
 export class Locale {
   static fromOpts(opts) {
-    return Locale.create(opts.localeCode, opts.nums, opts.cal);
+    return Locale.create(opts.localeCode, opts.numberingSystem, opts.outputCalendar);
   }
 
-  static create(localeCode, nums, cal) {
+  static create(localeCode, numberingSystem, outputCalendar) {
     const codeR = localeCode || 'en-us',
-      numsR = nums || null,
-      calR = cal || null,
-      cacheKey = `${codeR}|${numsR}|${calR}`,
+      numberingSystemR = numberingSystem || null,
+      outputCalendarR = outputCalendar || null,
+      cacheKey = `${codeR}|${numberingSystemR}|${outputCalendarR}`,
       cached = localeCache.get(cacheKey);
 
     if (cached) {
       return cached;
     } else {
-      const fresh = new Locale(codeR, numsR, calR);
+      const fresh = new Locale(codeR, numberingSystemR, outputCalendarR);
       localeCache.set(cacheKey, fresh);
       return fresh;
     }
   }
 
-  constructor(localeCode, numbering, calendar) {
+  constructor(localeCode, numbering, outputCalendar) {
     Object.defineProperty(this, 'localeCode', { value: localeCode, enumerable: true });
-    Object.defineProperty(this, 'nums', { value: numbering || null, enumerable: true });
-    Object.defineProperty(this, 'cal', { value: calendar || null, enumerable: true });
+    Object.defineProperty(this, 'numberingSystem', { value: numbering || null, enumerable: true });
+    Object.defineProperty(this, 'outputCalendar', {
+      value: outputCalendar || null,
+      enumerable: true
+    });
     Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.localeCode, this.num, this.cal),
+      value: intlConfigString(this.localeCode, this.numberingSystem, this.outputCalendar),
       enumerable: false
     });
 
@@ -105,16 +103,18 @@ export class Locale {
 
   knownEnglish() {
     return (
-      this.localeCode === 'en' ||
-      Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')
+      (this.localeCode === 'en' ||
+        Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) &&
+      this.numberingSystem === null &&
+      (this.outputCalendar === null || this.outputCalendar === 'latn')
     );
   }
 
   clone(alts) {
     return Locale.create(
       alts.localeCode || this.localeCode,
-      alts.nums || this.nums,
-      alts.cal || this.cal
+      alts.numberingSystem || this.numberingSystem,
+      alts.outputCalendar || this.outputCalendar
     );
   }
 
@@ -176,6 +176,8 @@ export class Locale {
 
     const intl = { era: length };
 
+    // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
+    // to definitely enumerate them.
     if (!this.eraCache[length]) {
       this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
         this.extract(dt, intl, 'era')

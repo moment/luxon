@@ -110,6 +110,8 @@ export class Formatter {
         }
       },
       tokenToString = token => {
+        const outputCal = this.loc.outputCalendar;
+
         // Where possible: http://cldr.unicode.org/translation/date-time#TOC-Stand-Alone-vs.-Format-Styles
         switch (token) {
           // ms
@@ -161,9 +163,9 @@ export class Formatter {
             return string({ hour: 'numeric', hour12: true }, 'dayperiod');
           // dates
           case 'd':
-            return this.num(dt.day());
+            return outputCal ? string({ day: 'numeric' }, 'day') : this.num(dt.day());
           case 'dd':
-            return this.num(dt.day(), 2);
+            return outputCal ? string({ day: '2-digit' }, 'day') : this.num(dt.day(), 2);
           // weekdays - format
           case 'c':
             // like 1
@@ -209,10 +211,10 @@ export class Formatter {
           // months - standalone
           case 'M':
             // like 1
-            return this.num(dt.month());
+            return outputCal ? string({ month: 'numeric' }, 'month') : this.num(dt.month());
           case 'MM':
             // like 01
-            return this.num(dt.month(), 2);
+            return outputCal ? string({ month: '2-digit' }, 'month') : this.num(dt.month(), 2);
           case 'MMM':
             // like Jan
             return string({ month: 'short', day: 'numeric' }, 'month');
@@ -225,13 +227,15 @@ export class Formatter {
           // years
           case 'y':
             // like 2014
-            return this.num(dt.year());
+            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year());
           case 'yy':
             // like 14
-            return this.num(dt.year().toString().slice(-2), 2);
+            return outputCal
+              ? string({ year: '2-digit' }, 'year')
+              : this.num(dt.year().toString().slice(-2), 2);
           case 'yyyy':
             // like 0012
-            return this.num(dt.year(), 4);
+            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year(), 4);
           // eras
           case 'G':
             // like AD

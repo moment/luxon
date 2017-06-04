@@ -23,17 +23,23 @@ export class Info {
    * Return an array of standalone month names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
-   * @param {string} [localeCode='en'] - the locale code
-   * @param {string} [numbering=null] - the numbering system
+   * @param {object} opts - options
+   * @param {string} [opts.localeCode='en'] - the locale code
+   * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.months()[0] //=> 'January'
    * @example Info.months('short')[0] //=> 'Jan'
    * @example Info.months('numeric')[0] //=> '1'
-   * @example Info.months('short', 'fr-CA')[0] //=> 'janv.'
-   * @example Info.months('numeric', 'ar')[0] //=> '١'
+   * @example Info.months('short', { localeCode: 'fr-CA' } )[0] //=> 'janv.'
+   * @example Info.months('numeric', { localeCode: 'ar' })[0] //=> '١'
+   * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'
    * @return {[string]}
    */
-  static months(length = 'long', localeCode = 'en', numbering = null) {
-    return new Locale(localeCode, numbering).months(length);
+  static months(
+    length = 'long',
+    { localeCode = 'en', numberingSystem = null, outputCalendar = 'gregory' } = {}
+  ) {
+    return new Locale(localeCode, numberingSystem, outputCalendar).months(length);
   }
 
   /**
@@ -42,28 +48,35 @@ export class Info {
    * changes the string.
    * See {@link months}
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
-   * @param {string} [localeCode='en'] - the locale code
-   * @param {string} [numbering=null] - the numbering system
+   * @param {object} opts - options
+   * @param {string} [opts.localeCode='en'] - the locale code
+   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
-  static monthsFormat(length = 'long', localeCode = 'en', numbering = null) {
-    return new Locale(localeCode, numbering).months(length, true);
+  static monthsFormat(
+    length = 'long',
+    { localeCode = 'en', numberingSystem = null, outputCalendar = 'gregory' } = {}
+  ) {
+    return new Locale(localeCode, numberingSystem, outputCalendar).months(length, true);
   }
 
   /**
    * Return an array of standalone week names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
-   * @param {string} [localeCode='en'] - the locale code
-   * @param {string} [numbering=null] - the numbering system
+   * @param {object} opts - options
+   * @param {string} [opts.localeCode='en'] - the locale code
+   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.weekdays()[0] //=> 'Monday'
    * @example Info.weekdays('short')[0] //=> 'Mon'
    * @example Info.weekdays('short', 'fr-CA')[0] //=> 'lun.'
    * @example Info.weekdays('short', 'ar')[0] //=> 'الاثنين'
    * @return {[string]}
    */
-  static weekdays(length = 'long', localeCode = 'en', numbering = null) {
-    return new Locale(localeCode, numbering).weekdays(length);
+  static weekdays(length = 'long', { localeCode = 'en', numberingSystem = null } = {}) {
+    return new Locale(localeCode, numberingSystem, null).weekdays(length);
   }
 
   /**
@@ -72,36 +85,40 @@ export class Info {
    * changes the string.
    * See {@link weekdays}
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
-   * @param {string} [localeCode='en'] - the locale code
-   * @param {string} [numbering=null] - the numbering system
+   * @param {object} opts - options
+   * @param {string} [opts.localeCode='en'] - the locale code
+   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
-  static weekdaysFormat(length = 'long', localeCode = 'en', numbering = null) {
-    return new Locale(localeCode, numbering).weekdays(length, true);
+  static weekdaysFormat(length = 'long', { localeCode = 'en', numberingSystem = null } = {}) {
+    return new Locale(localeCode, numberingSystem, null).weekdays(length, true);
   }
 
   /**
    * Return an array of meridiems.
-   * @param {string} [localeCode='en'] - the locale code
+   * @param {object} opts - options
+   * @param {string} [opts.localeCode='en'] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
    * @example Info.meridiems('de') //=> [ 'vorm.', 'nachm.' ]
    * @return {[string]}
    */
-  static meridiems(localeCode = 'en') {
+  static meridiems({ localeCode = 'en' } = {}) {
     return new Locale(localeCode).meridiems();
   }
 
   /**
-   * Return an array of eras.
+   * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.
    * @param {string} [length='short'] - the length of the era representation, such as "short" or "long".
-   * @param {string} [localeCode='en'] - the locale code
+   * @param {object} opts - options
+   * @param {string} [opts.localeCode='en'] - the locale code
    * @example Info.eras() //=> [ 'BC', 'AD' ]
    * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
    * @example Info.eras('long', 'fr') //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
    * @return {[string]}
    */
-  static eras(length = 'short', localeCode = 'en') {
-    return new Locale(localeCode).eras(length);
+  static eras(length = 'short', { localeCode = 'en' } = {}) {
+    return new Locale(localeCode, null, 'gregory').eras(length);
   }
 
   /**

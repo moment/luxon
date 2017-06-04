@@ -225,6 +225,14 @@ function normalizeUnit(unit) {
   return normalized;
 }
 
+function updateLocale(dt, { localeCode, numberingSystem, outputCalendar }) {
+  const newLocaleCode = localeCode || (dt.loc ? dt.loc.localeCode : null),
+    newNumberingSystem = numberingSystem || (dt.loc ? dt.loc.numberSystem : null),
+    newOutputCalendar = outputCalendar || (dt.loc ? dt.loc.outpuCalendar : null),
+    loc = Locale.create(newLocaleCode, newNumberingSystem, newOutputCalendar);
+  return clone(dt, { loc });
+}
+
 /**
  * A specific millisecond with an associated time zone and locale
  */
@@ -515,9 +523,9 @@ export class DateTime {
   static fromString(
     text,
     fmt,
-    { zone = Settings.defaultZone, localeCode = null, nums = null, cal = null } = {}
+    { zone = Settings.defaultZone, localeCode = null, numberingSystem = null } = {}
   ) {
-    const parser = new TokenParser(Locale.fromOpts({ localeCode, nums, cal })),
+    const parser = new TokenParser(Locale.fromOpts({ localeCode, numberingSystem })),
       result = parser.parseDateTime(text, fmt);
     if (Object.keys(result).length === 0) {
       return DateTime.invalid();
@@ -559,15 +567,37 @@ export class DateTime {
       // todo: this should return the effective locale using resolvedOptions
       return this.loc ? this.loc.localeCode : null;
     } else {
-      return clone(this, { loc: Locale.create(localeCode) });
+      return updateLocale(this, { localeCode });
     }
   }
 
-  // numbering(nums) {
-  // }
+  /**
+   * Get or "set" the numbering system of a DateTime, such 'beng'. The numbering system is used when formatting the DateTime
+   *
+   * @param {string} numberingSystem - the numbering system to set. If omitted, the method operates as a getter. If the numbering system is not supported, throws an error
+   * @return {string|DateTime} - If a numbering system is provided, returns a new DateTime with the new numbering system. If not, returns the number system (a string) of the DateTime
+   */
+  numberingSystem(numberingSystem) {
+    if (Util.isUndefined(numberingSystem)) {
+      return this.loc ? this.loc.numberingSystem : null;
+    } else {
+      return updateLocale(this, { numberingSystem });
+    }
+  }
 
-  // calendar(ca) {
-  // }
+  /**
+   * Get or "set" the output calendar of a DateTime, such 'islamic'. The output calendar is used when formatting the DateTime
+   *
+   * @param {string} outputCalendar - the output calendar to set. If omitted, the method operates as a getter. If the output calendar is not supported, throws an error
+   * @return {string|DateTime} - If an output calendar is provided, returns a new DateTime with the new output calendar. If not, returns the output calendar (a string) of the DateTime
+   */
+  outputCalendar(outputCalendar) {
+    if (Util.isUndefined(outputCalendar)) {
+      return this.loc ? this.loc.outputCalendar : null;
+    } else {
+      return updateLocale(this, { outputCalendar });
+    }
+  }
 
   /**
    * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
