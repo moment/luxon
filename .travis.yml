@@ -2,7 +2,7 @@ sudo: false
 language: node_js
 
 node_js:
-  - 8.0.0 --with-intl=system-icu
+  - 8.0.0 --with-intl=full-icu
 
 script:
   - gulp simple
