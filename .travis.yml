@@ -3,13 +3,14 @@ language: node_js
 
 before_install:
  - npm install -g full-icu
+ - cp /home/travis/.nvm/versions/node/v8.1.0/lib/node_modules/full-icu/icudt59l.dat /home/travis/.nvm/versions/node/v8.1.0/lib/node_modules/.node-icu
 
 node_js:
   - 8.1.0
 
 script:
   - gulp simple
-  - TZ=America/New_YORK gulp test
+  - TZ=America/NEW_YORK gulp test
   - gulp docs
 
 branches:
