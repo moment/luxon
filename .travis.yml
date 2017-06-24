@@ -1,8 +1,7 @@
 sudo: false
 language: node_js
 
-before_install:
- - npm install -g full-icu
+before_script:
  - cp /home/travis/.nvm/versions/node/v8.1.0/lib/node_modules/full-icu/icudt59l.dat /home/travis/.nvm/versions/node/v8.1.0/lib/node_modules/.node-icu
 
 node_js:
