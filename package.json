@@ -19,7 +19,6 @@
     "eslint-config-prettier": "latest",
     "eslint-plugin-import": "latest",
     "eslint-plugin-prettier": "latest",
-    "full-icu": "latest",
     "gulp": "latest",
     "gulp-babili": "latest",
     "gulp-bench": "latest",
