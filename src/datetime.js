@@ -684,7 +684,7 @@ export class DateTime {
     if (this.isOffsetFixed()) {
       return false;
     } else {
-      return this.offset() > this.month(0).offset() || this.offset() > this.month(5).offset();
+      return this.offset() > this.month(1).offset() || this.offset() > this.month(5).offset();
     }
   }
 
@@ -726,6 +726,12 @@ export class DateTime {
       );
     } else {
       mixed = Object.assign(this.toObject(), normalized);
+
+      // if we didn't set the day but we ended up on an overflow date,
+      // use the last day of the right month
+      if (Util.isUndefined(normalized.day)) {
+        mixed.day = Math.min(Util.daysInMonth(mixed.year, mixed.month), mixed.day);
+      }
     }
 
     const [ts, o] = objToTS(mixed, this.o, this.zone);

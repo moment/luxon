@@ -36,6 +36,20 @@ test('DateTime#millisecond() sets the millisecond', () => {
   expect(dt.millisecond(86).millisecond()).toBe(86);
 });
 
+test("DateTime#month() doesn't go to the wrong month", () => {
+  const end = DateTime.fromJSDate(new Date(1983, 4, 31)),
+        moved = end.month(4) ;
+  expect(moved.month()).toBe(4);
+  expect(moved.day()).toBe(30);
+});
+
+test("DateTime#year() doesn't wrap leap years", () => {
+  const end = DateTime.fromJSDate(new Date(2012, 1, 29)),
+        moved = end.year(2013);
+  expect(moved.month()).toBe(2);
+  expect(moved.day()).toBe(28);
+});
+
 //------
 // weekYear/weekNumber/weekday
 //------
