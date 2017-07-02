@@ -227,7 +227,7 @@ function normalizeUnit(unit) {
 
 function updateLocale(dt, { localeCode, numberingSystem, outputCalendar }) {
   const newLocaleCode = localeCode || (dt.loc ? dt.loc.localeCode : null),
-    newNumberingSystem = numberingSystem || (dt.loc ? dt.loc.numberSystem : null),
+    newNumberingSystem = numberingSystem || (dt.loc ? dt.loc.numberingSystem : null),
     newOutputCalendar = outputCalendar || (dt.loc ? dt.loc.outpuCalendar : null),
     loc = Locale.create(newLocaleCode, newNumberingSystem, newOutputCalendar);
   return clone(dt, { loc });
@@ -1055,7 +1055,7 @@ export class DateTime {
    * @return {object}
    */
   resolvedLocaleOpts(opts = {}) {
-    return Formatter.create(this.loc, opts).resolvedOptions();
+    return Formatter.create(this.loc.clone(opts), opts).resolvedOptions(this);
   }
 
   /**

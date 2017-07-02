@@ -4,7 +4,7 @@ import { DateTime } from '../../src/luxon';
 
 //------
 // .local()
-//-------
+//------
 test("DateTime.local() has today's date", () => {
   const now = DateTime.local();
   expect(now.toJSDate().getDate()).toBe(new Date().getDate());

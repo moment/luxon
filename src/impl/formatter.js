@@ -71,8 +71,8 @@ export class Formatter {
     return df.format(d);
   }
 
-  resolvedDateOptions(dt) {
-    const [df, d] = this.loc.dtFormatter(dt);
+  resolvedOptions(dt, opts = {}) {
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.resolvedOptions(d);
   }
 

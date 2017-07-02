@@ -125,6 +125,41 @@ test("DateTime#toLocaleString can override the dateTime's output calendar", () =
 });
 
 //------
+// #resolvedLocaleOpts()
+//------
+
+test('DateTime#resolvedLocaleOpts returns a thing', () => {
+  let res = DateTime.local().resolvedLocaleOpts();
+
+  expect(res.calendar).toBeDefined();
+  expect(res.locale).toBeDefined();
+  expect(res.numberingSystem).toBeDefined();
+  expect(res.timeZone).toBeDefined();
+});
+
+test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
+  const res = DateTime.local().locale('be').numberingSystem('mong').outputCalendar('coptic').resolvedLocaleOpts();
+
+  expect(res.locale).toBe('be-u-ca-coptic-nu-mong');
+  expect(res.calendar).toBe('coptic');
+  expect(res.numberingSystem).toBe('mong');
+
+});
+
+test("DateTime#resolvedLocaleOpts can override with options", () => {
+
+  const res = DateTime.local().resolvedLocaleOpts({
+    localeCode: 'be',
+    numberingSystem: 'mong',
+    outputCalendar: 'coptic'
+  });
+
+  expect(res.locale).toBe('be-u-ca-coptic-nu-mong');
+  expect(res.calendar).toBe('coptic');
+  expect(res.numberingSystem).toBe('mong');
+});
+
+//------
 // #toFormat()
 //------
 test("DateTime#toFormat('S') returns the millisecond", () => {
