@@ -560,7 +560,6 @@ export class DateTime {
    */
   locale(localeCode) {
     if (Util.isUndefined(localeCode)) {
-      // todo: this should return the effective locale using resolvedOptions
       return this.loc ? this.loc.localeCode : null;
     } else {
       return updateLocale(this, { localeCode });

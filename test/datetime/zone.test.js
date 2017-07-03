@@ -78,10 +78,9 @@ test('accepts "utc+3"', () => {
 test('accepts IANA zone names', () => {
   // this will only work in Chrome/V8 for now
   const zoned = dt().timezone('Europe/Paris');
-
   expect(zoned.timezoneName()).toBe('Europe/Paris');
-  expect(zoned.offsetNameShort()).toBe('GMT+2');
   // not convinced this is universal. Could also be 'CEDT'
+  expect(zoned.offsetNameShort()).toBe('GMT+2');
   expect(zoned.offsetNameLong()).toBe('Central European Summer Time');
   expect(zoned.valueOf()).toBe(millis);
   expect(zoned.hour()).toBe(6); // cedt is +2
