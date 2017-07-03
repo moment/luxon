@@ -153,7 +153,15 @@ test('DateTime.fromString() allows regex content', () => {
 });
 
 test('DateTime.fromString() allows literals', () => {
-  // todo
+  const i = DateTime.fromString('1982/05/25 hello 09:10:11.445', "yyyy/MM/dd 'hello' HH:mm:ss.SSS");
+
+  expect(i.year()).toBe(1982);
+  expect(i.month()).toBe(5);
+  expect(i.day()).toBe(25);
+  expect(i.hour()).toBe(9);
+  expect(i.minute()).toBe(10);
+  expect(i.second()).toBe(11);
+  expect(i.millisecond()).toBe(445);
 });
 
 test('DateTime.fromString() returns invalid when unparsed', () => {
