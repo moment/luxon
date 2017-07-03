@@ -141,10 +141,9 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
-function parseDataToDateTime(parsed, context, { setZone, zone } = {}) {
-  if (parsed) {
-    const { local, offset } = context,
-      interpretationZone = local ? zone : new FixedOffsetZone(offset),
+function parseDataToDateTime(parsed, parsedZone, { setZone, zone } = {}) {
+  if (parsed && Object.keys(parsed).length !== 0) {
+    const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(parsed, interpretationZone);
     return setZone ? inst : inst.timezone(zone);
   } else {
@@ -474,8 +473,8 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromISO(text, { setZone = false, zone = Settings.defaultZone } = {}) {
-    const [vals, context] = RegexParser.parseISODate(text);
-    return parseDataToDateTime(vals, context, { setZone, zone });
+    const [vals, parsedZone] = RegexParser.parseISODate(text);
+    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
   }
 
   /**
@@ -490,8 +489,8 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromRFC2822(text, { setZone = false, zone = Settings.defaultZone } = {}) {
-    const [vals, context] = RegexParser.parseRFC2822Date(text);
-    return parseDataToDateTime(vals, context, { setZone, zone });
+    const [vals, parsedZone] = RegexParser.parseRFC2822Date(text);
+    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
   }
 
   /**
@@ -507,8 +506,8 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromHTTP(text, { setZone = false, zone = Settings.defaultZone } = {}) {
-    const [vals, context] = RegexParser.parseHTTPDate(text);
-    return parseDataToDateTime(vals, context, { setZone, zone });
+    const [vals, parsedZone] = RegexParser.parseHTTPDate(text);
+    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
   }
 
   /**
@@ -517,21 +516,18 @@ export class DateTime {
    * @param {string} fmt - the format the string is expected to be in (see description)
    * @param {Object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [options.localeCode='en-US'] - a locale string to use when parsing. Will also convert the DateTime to this locale
    * @return {DateTime}
    */
   static fromString(
     text,
     fmt,
-    { zone = Settings.defaultZone, localeCode = null, numberingSystem = null } = {}
+    { setZone = false, zone = Settings.defaultZone, localeCode = null, numberingSystem = null } = {}
   ) {
     const parser = new TokenParser(Locale.fromOpts({ localeCode, numberingSystem })),
-      result = parser.parseDateTime(text, fmt);
-    if (Object.keys(result).length === 0) {
-      return DateTime.invalid();
-    } else {
-      return DateTime.fromObject(result, zone);
-    }
+      [vals, parsedZone] = parser.parseDateTime(text, fmt);
+    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
   }
 
   /**

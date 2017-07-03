@@ -129,7 +129,7 @@ test("DateTime#toLocaleString can override the dateTime's output calendar", () =
 //------
 
 test('DateTime#resolvedLocaleOpts returns a thing', () => {
-  let res = DateTime.local().resolvedLocaleOpts();
+  const res = DateTime.local().resolvedLocaleOpts();
 
   expect(res.calendar).toBeDefined();
   expect(res.locale).toBeDefined();
@@ -137,17 +137,19 @@ test('DateTime#resolvedLocaleOpts returns a thing', () => {
   expect(res.timeZone).toBeDefined();
 });
 
-test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
-  const res = DateTime.local().locale('be').numberingSystem('mong').outputCalendar('coptic').resolvedLocaleOpts();
+test('DateTime#resolvedLocaleOpts reflects changes to the locale', () => {
+  const res = DateTime.local()
+    .locale('be')
+    .numberingSystem('mong')
+    .outputCalendar('coptic')
+    .resolvedLocaleOpts();
 
   expect(res.locale).toBe('be-u-ca-coptic-nu-mong');
   expect(res.calendar).toBe('coptic');
   expect(res.numberingSystem).toBe('mong');
-
 });
 
-test("DateTime#resolvedLocaleOpts can override with options", () => {
-
+test('DateTime#resolvedLocaleOpts can override with options', () => {
   const res = DateTime.local().resolvedLocaleOpts({
     localeCode: 'be',
     numberingSystem: 'mong',

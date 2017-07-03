@@ -87,10 +87,6 @@ export class Util {
     }, null)[1];
   }
 
-  static zip(...arrays) {
-    return arrays[0].map((_, c) => arrays.map(arr => arr[c]));
-  }
-
   static pick(obj, keys) {
     return keys.reduce((a, k) => {
       a[k] = obj[k];
@@ -153,7 +149,9 @@ export class Util {
       if (lowered === 'local') return LocalZone.instance;
       else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
       else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
-      else return FixedOffsetZone.parseSpecifier(lowered);
+      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
+    } else if (Util.isNumber(input)) {
+      return FixedOffsetZone.instance(input);
     } else if (typeof input === 'object' && input.offset) {
       // This is dumb, but the instanceof check above doesn't seem to really work
       // so we're duck checking it
@@ -182,5 +180,13 @@ export class Util {
 
   static untrucateYear(year) {
     return year > 60 ? 1900 + year : 2000 + year;
+  }
+
+  // signedOffset('-5', '30') -> -330
+  static signedOffset(offHourStr, offMinuteStr) {
+    const offHour = parseInt(offHourStr, 10) || 0,
+      offMin = parseInt(offMinuteStr, 10) || 0,
+      offMinSigned = offHour < 0 ? -offMin : offMin;
+    return offHour * 60 + offMinSigned;
   }
 }

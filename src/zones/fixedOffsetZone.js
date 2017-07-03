@@ -21,9 +21,9 @@ export class FixedOffsetZone extends Zone {
 
   static parseSpecifier(s) {
     if (s) {
-      const r = s.match(/^utc([+-]\d+)?$/i);
+      const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
       if (r) {
-        return new FixedOffsetZone(r[1] ? parseInt(r[1], 10) * 60 : 0);
+        return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));
       }
     }
     return null;

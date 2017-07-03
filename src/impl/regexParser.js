@@ -1,5 +1,6 @@
 import { Util } from './util';
 import { English } from './english';
+import { FixedOffsetZone } from '../zones/fixedOffsetZone';
 
 function combineRegexes(...regexes) {
   const full = regexes.reduce((f, r) => f + r.source, '');
@@ -10,11 +11,11 @@ function combineExtractors(...extractors) {
   return m =>
     extractors
       .reduce(
-        ([mergedVals, mergedContext, cursor], ex) => {
-          const [val, context, next] = ex(m, cursor);
-          return [Object.assign(mergedVals, val), Object.assign(mergedContext, context), next];
+        ([mergedVals, mergedZone, cursor], ex) => {
+          const [val, zone, next] = ex(m, cursor);
+          return [Object.assign(mergedVals, val), mergedZone || zone, next];
         },
-        [{}, {}, 1]
+        [{}, null, 1]
       )
       .slice(0, 2);
 }
@@ -44,15 +45,8 @@ function simpleParse(...keys) {
     for (i = 0; i < keys.length; i++) {
       ret[keys[i]] = parse10(match[cursor + i]);
     }
-    return [ret, {}, cursor + i];
+    return [ret, null, cursor + i];
   };
-}
-
-function signedOffset(offHourStr, offMinuteStr) {
-  const offHour = parse10(offHourStr) || 0,
-    offMin = parse10(offMinuteStr) || 0,
-    offMinSigned = offHour < 0 ? -offMin : offMin;
-  return offHour * 60 + offMinSigned;
 }
 
 // ISO parsing
@@ -66,19 +60,16 @@ const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z
 
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
-    fullOffset = signedOffset(match[cursor + 5], match[cursor + 6]),
+    fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
     item = {
       hour: parse10(match[cursor]) || 0,
       minute: parse10(match[cursor + 1]) || 0,
       second: parse10(match[cursor + 2]) || 0,
       millisecond: parse10(match[cursor + 3]) || 0
     },
-    context = {
-      offset: fullOffset,
-      local
-    };
+    zone = local ? null : new FixedOffsetZone(fullOffset);
 
-  return [item, context, cursor + 7];
+  return [item, zone, cursor + 7];
 }
 
 // ISO duration parsing
@@ -158,10 +149,10 @@ function extractRFC2822(match) {
   } else if (milOffset) {
     offset = 0;
   } else {
-    offset = signedOffset(offHourStr, offMinuteStr);
+    offset = Util.signedOffset(offHourStr, offMinuteStr);
   }
 
-  return [result, { offset, local: false }];
+  return [result, new FixedOffsetZone(offset)];
 }
 
 function preprocessRFC2822(s) {
@@ -178,13 +169,13 @@ const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun
 function extractRFC1123Or850(match) {
   const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
     result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
-  return [result, { offset: 0, local: false }];
+  return [result, FixedOffsetZone.utcInstance];
 }
 
 function extractASCII(match) {
   const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,
     result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
-  return [result, { offset: 0, local: false }];
+  return [result, FixedOffsetZone.utcInstance];
 }
 
 /**

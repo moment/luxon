@@ -18,8 +18,6 @@ test('Duration.fromISO can parse a variety of ISO formats', () => {
 });
 
 test('Duration.fromISO rejects junk', () => {
-  // todo : reevaluate whether this is the right fail condition
-  // maybe return null instead
   const rejects = s => {
     expect(Duration.fromISO(s).as('milliseconds')).toBe(0);
   };

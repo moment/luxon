@@ -152,9 +152,13 @@ test('DateTime.fromString() allows regex content', () => {
   expect(d.weekday()).toBe(1);
 });
 
-test('DateTime.fromString() allows literals', () => {});
+test('DateTime.fromString() allows literals', () => {
+  // todo
+});
 
-test('DateTime.fromString() returns invalid when unparsed', () => {});
+test('DateTime.fromString() returns invalid when unparsed', () => {
+  expect(DateTime.fromString('Splurk', 'EEEE').isValid()).toBe(false);
+});
 
 test('DateTime.fromString() returns invalid for out-of-range values', () => {
   const rejects = (s, fmt, opts = {}) =>
@@ -170,6 +174,7 @@ test('DateTime.fromString() accepts a zone argument', () => {
   const d = DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS', {
     zone: 'Asia/Tokyo'
   });
+  expect(d.timezoneName()).toBe('Asia/Tokyo');
   expect(d.offset()).toBe(9 * 60);
   expect(d.year()).toBe(1982);
   expect(d.month()).toBe(5);
@@ -178,4 +183,58 @@ test('DateTime.fromString() accepts a zone argument', () => {
   expect(d.minute()).toBe(10);
   expect(d.second()).toBe(11);
   expect(d.millisecond()).toBe(445);
+});
+
+test('DateTime.fromString() parses IANA zones', () => {
+  const d = DateTime.fromString(
+    '1982/05/25 09:10:11.445 Asia/Tokyo',
+    'yyyy/MM/dd HH:mm:ss.SSS z'
+  ).toUTC();
+  expect(d.offset()).toBe(0);
+  expect(d.hour()).toBe(0);
+  expect(d.minute()).toBe(10);
+});
+
+test('DateTime.fromString() with setZone parses IANA zones and sets it', () => {
+  const d = DateTime.fromString('1982/05/25 09:10:11.445 Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss.SSS z', {
+    setZone: true
+  });
+  expect(d.timezoneName()).toBe('Asia/Tokyo');
+  expect(d.offset()).toBe(9 * 60);
+  expect(d.hour()).toBe(9);
+  expect(d.minute()).toBe(10);
+});
+
+test('DateTime.fromString() parses fixed offsets', () => {
+  const formats = [['Z', '-4'], ['ZZ', '-4:00'], ['ZZZ', '-0400']];
+
+  for (const i in formats) {
+    if (formats.hasOwnProperty(i)) {
+      const [format, example] = formats[i],
+        dt = DateTime.fromString(
+          `1982/05/25 09:10:11.445 ${example}`,
+          `yyyy/MM/dd HH:mm:ss.SSS ${format}`
+        );
+      expect(dt.toUTC().hour()).toBe(13);
+      expect(dt.toUTC().minute()).toBe(10);
+    }
+  }
+});
+
+test('DateTime.fromString() with setZone parses fixed offsets and sets it', () => {
+  const formats = [['Z', '-4'], ['ZZ', '-4:00'], ['ZZZ', '-0400']];
+
+  for (const i in formats) {
+    if (formats.hasOwnProperty(i)) {
+      const [format, example] = formats[i],
+        dt = DateTime.fromString(
+          `1982/05/25 09:10:11.445 ${example}`,
+          `yyyy/MM/dd HH:mm:ss.SSS ${format}`,
+          { setZone: true }
+        );
+      expect(dt.offset()).toBe(-4 * 60);
+      expect(dt.toUTC().hour()).toBe(13);
+      expect(dt.toUTC().minute()).toBe(10);
+    }
+  }
 });
