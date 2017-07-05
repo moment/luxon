@@ -2,6 +2,7 @@ sudo: false
 before_script:
   - nvm install 8.1.3
   - npm install full-icu
+  - npm install -g gulp
 script:
   - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp simple
   - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" TZ=America/New_YORK gulp test
