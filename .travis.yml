@@ -1,10 +1,13 @@
 sudo: false
+node_js:
+    - 8.1.0
+env:
+ - NODE_ICU_DATA=./node_modules/full-icu
 
 before_script:
-  - nvm install 8.1.2
   - npm install full-icu
 script:
-  - node --icu-data-dir=./node_modules/full-icu -e "console.log(new Intl.DateTimeFormat('es',{month:'long'}).format(new Date(9E8)))"
+  - node -e "console.log(new Intl.DateTimeFormat('es',{month:'long'}).format(new Date(9E8)))"
 
 branches:
   only:
