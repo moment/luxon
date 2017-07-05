@@ -115,9 +115,10 @@ function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, 
 
   if (secondStr) result.second = parse10(secondStr);
   if (weekdayStr) {
-    result.weekday = weekdayStr.length > 3
-      ? English.weekdaysLong.indexOf(weekdayStr) + 1
-      : English.weekdaysShort.indexOf(weekdayStr) + 1;
+    result.weekday =
+      weekdayStr.length > 3
+        ? English.weekdaysLong.indexOf(weekdayStr) + 1
+        : English.weekdaysShort.indexOf(weekdayStr) + 1;
   }
 
   return result;
@@ -128,19 +129,19 @@ const rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|A
 
 function extractRFC2822(match) {
   const [
-    ,
-    weekdayStr,
-    dayStr,
-    monthStr,
-    yearStr,
-    hourStr,
-    minuteStr,
-    secondStr,
-    obsOffset,
-    milOffset,
-    offHourStr,
-    offMinuteStr
-  ] = match,
+      ,
+      weekdayStr,
+      dayStr,
+      monthStr,
+      yearStr,
+      hourStr,
+      minuteStr,
+      secondStr,
+      obsOffset,
+      milOffset,
+      offHourStr,
+      offMinuteStr
+    ] = match,
     result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
 
   let offset;

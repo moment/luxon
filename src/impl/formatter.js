@@ -410,25 +410,25 @@ export class Formatter {
 
   formatDurationFromString(dur, fmt) {
     const tokenToField = token => {
-      switch (token[0]) {
-        case 'S':
-          return 'millisecond';
-        case 's':
-          return 'second';
-        case 'm':
-          return 'minute';
-        case 'h':
-          return 'hour';
-        case 'd':
-          return 'day';
-        case 'M':
-          return 'month';
-        case 'y':
-          return 'year';
-        default:
-          return null;
-      }
-    },
+        switch (token[0]) {
+          case 'S':
+            return 'millisecond';
+          case 's':
+            return 'second';
+          case 'm':
+            return 'minute';
+          case 'h':
+            return 'hour';
+          case 'd':
+            return 'day';
+          case 'M':
+            return 'month';
+          case 'y':
+            return 'year';
+          default:
+            return null;
+        }
+      },
       tokenToString = lildur => token => {
         const mapped = tokenToField(token);
         if (mapped) {

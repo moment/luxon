@@ -446,8 +446,8 @@ export class DateTime {
 
     // compute the actual time
     const gregorian = useWeekData
-      ? Conversions.weekToGregorian(normalized)
-      : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
+        ? Conversions.weekToGregorian(normalized)
+        : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
       inst = new DateTime({ ts: tsFinal, zone: zoneToUse, o: offsetFinal });
 

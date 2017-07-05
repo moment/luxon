@@ -3,14 +3,14 @@
 import { Duration } from '../../src/luxon';
 
 const dur = Duration.fromObject({
-  years: 1,
-  months: 2,
-  days: 3,
-  hours: 4,
-  minutes: 5,
-  seconds: 6,
-  milliseconds: 7
-}),
+    years: 1,
+    months: 2,
+    days: 3,
+    hours: 4,
+    minutes: 5,
+    seconds: 6,
+    milliseconds: 7
+  }),
   inv = Duration.invalid();
 
 //------

@@ -81,12 +81,12 @@ test('Interval#intersection returns invalid for invalid intervals', () => {
 //-------
 test('Interval.merge returns the minimal set of intervals', () => {
   const list = [
-    todayFrom(5, 8),
-    todayFrom(4, 7),
-    todayFrom(10, 11),
-    todayFrom(11, 12),
-    todayFrom(13, 15)
-  ],
+      todayFrom(5, 8),
+      todayFrom(4, 7),
+      todayFrom(10, 11),
+      todayFrom(11, 12),
+      todayFrom(13, 15)
+    ],
     results = Interval.merge(list);
 
   expect(results.length).toBe(3);

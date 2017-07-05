@@ -143,8 +143,8 @@ export class Locale {
     }
 
     const intl = format
-      ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
-      : { weekday: length },
+        ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
+        : { weekday: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.weekdaysCache[formatStr][length]) {
       this.weekdaysCache[formatStr][length] = mapWeekdays(dt => this.extract(dt, intl, 'weekday'));
