@@ -3,7 +3,7 @@ language: node_js
 node_js:
   - 8.1.3
 env:
-  - NODE_ICU_DATA=$(pwd)/node_modules/full-icu
+  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu"
 
 before_script:
   - npm install full-icu
