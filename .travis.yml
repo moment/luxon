@@ -1,12 +1,10 @@
 sudo: false
-env:
-  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu"
 before_script:
   - nvm install 8.1.3
   - npm install full-icu
 script:
-  - gulp simple
-  - TZ=America/New_YORK gulp test
+  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp simple
+  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" TZ=America/New_YORK gulp test
   - gulp docs
 branches:
   only:
