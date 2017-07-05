@@ -3,16 +3,8 @@ sudo: false
 before_script:
   - nvm install 8.1.2
   - npm install full-icu
-  - npm install icu4c-data@59l
-  - mkdir node_modules/.node-icu
-  - cp node_modules/full-icu/icudt59l.dat /home/travis/build/icambron/luxon/
-  - cp node_modules/full-icu/icudt59l.dat node_modules/.node-icu
 script:
-  - node -e "console.log(process.version)"
-  - node -e "console.log(require('full-icu'))"
-  - node -e "console.log(new Intl.DateTimeFormat('es',{month:'long'}).format(new Date(9E8)))"
-  - node -e "require('full-icu'); console.log(new Intl.DateTimeFormat('es',{month:'long'}).format(new Date(9E8)))"
-  - node -e "console.log(require('full-icu').datPath())"
+  - node --icu-data-dir=./node_modules/full-icu -e "console.log(new Intl.DateTimeFormat('es',{month:'long'}).format(new Date(9E8)))"
 
 branches:
   only:
