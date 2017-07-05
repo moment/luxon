@@ -123,6 +123,8 @@ gulp.task('format', () =>
 
 gulp.task('docs', () => gulp.src('./src').pipe(esdoc({ destination: './build/docs' })));
 
+gulp.task('site', () => gulp.src('./site/index.html').pipe(gulp.dest('./build')));
+
 // build first so the test deps work
 gulp.task('simple', cb => runSequence('build', 'lint', 'test', cb));
-gulp.task('default', cb => runSequence('format', 'build', 'lint', 'test', 'docs', cb));
+gulp.task('default', cb => runSequence('format', 'build', 'lint', 'test', 'docs', 'site', cb));
