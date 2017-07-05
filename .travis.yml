@@ -1,14 +1,14 @@
 sudo: false
+language: node_js
 node_js:
-    - 8.1.0
+  - 8.1.0
 env:
- - NODE_ICU_DATA=./node_modules/full-icu
+  - NODE_ICU_DATA=./node_modules/full-icu
 
 before_script:
   - npm install full-icu
 script:
   - node -e "console.log(new Intl.DateTimeFormat('es',{month:'long'}).format(new Date(9E8)))"
-
 branches:
   only:
     - master
