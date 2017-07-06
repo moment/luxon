@@ -49,7 +49,10 @@ DateTime.local().timezone('America/New_York').minus(1, 'week').endOf('day').toIS
                                 <b>Browser global</b>
                             </td>
                             <td>
-                                <a href="global/luxon.js">Download</a>
+                                <a href="global/luxon.js">Debug</a>
+                            </td>
+                            <td>
+                                <a href="global/luxon.min.js">Minified</a>
                             </td>
                             <td>
                                 <p>Exports a global variable called "Luxon". Use it like this</p>
@@ -61,25 +64,46 @@ DateTime.local().timezone('America/New_York').minus(1, 'week').endOf('day').toIS
                             <td>
                                 <b>Node</b>
                             </td>
-                            <td>
+                            <td colspan=2>
                                 <pre><code>npm install luxon</code></pre>
-                                <td>
-                                    <pre><code>var luxon = require('luxon');<br/>luxon.DateTime.local();</code></pre>
-                                </td>
-                                <td/>
+                            </td>
+                            <td>
+                                <p>Luxon as a Node.js module</p>
+                                <pre><code>var luxon = require('luxon');<br/>luxon.DateTime.local();</code></pre>
+                            </td>
+                            <td/>
                         </tr>
                         <tr>
                             <td>
                                 <b>AMD</b>
                             </td>
                             <td>
-                                <a href="amd/luxon.js">Download</a>
+                                <a href="amd/luxon.js">Debug</a>
+                            </td>
+                            <td>
+                                <a href="amd/luxon.min.js">Minified</a>
                             </td>
                             <td>
                                 <p>Luxon as an AMD module. Use with Require.js, System.js, and so on.</p>
-                                <pre><code>requirejs(['luxon'], function(demo) {<br/>  luxon.DateTime.local();<br/>});</code></pre>
+                                <pre><code>requirejs(['luxon'], function(luxon) {<br/>  luxon.DateTime.local();<br/>});</code></pre>
                             </td>
                             <td><a href="demo/requirejs.html">Demo</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>ES6</b>
+                            </td>
+                            <td>
+                                <a href="es6/luxon.js">Debug</a>
+                            </td>
+                            <td>
+                                <a href="es6/luxon.min.js">Minified</a>
+                            </td>
+                            <td>
+                                <p>Luxon as an ES6 module.</p>
+                                <pre><code>import { DateTime } from 'luxon';<br/>DateTime.local();</code></pre>
+                            </td>
+                            <td/>
                         </tr>
                     </tbody>
                 </table>
