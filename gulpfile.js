@@ -121,23 +121,27 @@ gulp.task('format', () =>
   gulp.src(lintable, { base: './' }).pipe(prettify(prettierOptions)).pipe(gulp.dest('./'))
 );
 
-gulp.task('docs', () => gulp.src('./src').pipe(esdoc({
-  destination: './build/docs',
-  title: 'Luxon',
-  manual: {
-    globalIndex: true,
-    design: ['./docs/install.md', './docs/tour.md'],
-    usage: ['./docs/intl.md', './docs/zones.md', './docs/calendars.md'],
-    faq: ['./docs/matrix.md'],
-    changelog: ['./changelog.md'],
-  },
-  styles: ['./site/styles.css'],
-  experimentalProposal: {
-    classProperties: true,
-    objectRestSpread: true
-  },
-  plugins: [{name: './site/doc-plugin.js'}]
-})));
+gulp.task('docs', () =>
+  gulp.src('./src').pipe(
+    esdoc({
+      destination: './build/docs',
+      title: 'Luxon',
+      manual: {
+        globalIndex: true,
+        design: ['./docs/install.md', './docs/tour.md'],
+        usage: ['./docs/intl.md', './docs/zones.md', './docs/calendars.md'],
+        faq: ['./docs/matrix.md'],
+        changelog: ['./changelog.md']
+      },
+      styles: ['./site/styles.css'],
+      experimentalProposal: {
+        classProperties: true,
+        objectRestSpread: true
+      },
+      plugins: [{ name: './site/doc-plugin.js' }]
+    })
+  )
+);
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
