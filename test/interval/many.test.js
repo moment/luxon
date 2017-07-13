@@ -2,7 +2,7 @@
 import { DateTime, Interval, Duration } from '../../src/luxon';
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
-  todayAt = h => DateTime.local().startOf('day').hour(h),
+  todayAt = h => DateTime.local().startOf('day').set({ hour: h }),
   todayFrom = (h1, h2) => Interval.fromDateTimes(todayAt(h1), todayAt(h2));
 
 //-------
@@ -53,7 +53,7 @@ test('Interval#union spans adjacent intervals', () => {
 });
 
 test('Interval#union returns invalid for invalid intervals', () => {
-  expect(Interval.invalid().union(todayFrom(8, 10)).isValid()).toBeFalsy();
+  expect(Interval.invalid().union(todayFrom(8, 10)).isValid).toBeFalsy();
 });
 
 //-------
@@ -73,7 +73,7 @@ test('Interval#intersection returns empty for adjacent intervals', () => {
 });
 
 test('Interval#intersection returns invalid for invalid intervals', () => {
-  expect(Interval.invalid().intersection(todayFrom(8, 10)).isValid()).toBeFalsy();
+  expect(Interval.invalid().intersection(todayFrom(8, 10)).isValid).toBeFalsy();
 });
 
 //-------

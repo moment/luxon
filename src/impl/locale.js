@@ -4,9 +4,9 @@ import { DateTime } from '../datetime';
 
 const localeCache = new Map();
 
-function intlConfigString(localeCode, numberingSystem, outputCalendar) {
-  let loc = localeCode || new Intl.DateTimeFormat().resolvedOptions().locale;
-  loc = Array.isArray(localeCode) ? localeCode : [localeCode];
+function intlConfigString(locale, numberingSystem, outputCalendar) {
+  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
+  loc = Array.isArray(locale) ? locale : [locale];
 
   if (outputCalendar || numberingSystem) {
     loc = loc.map(l => {
@@ -49,34 +49,34 @@ function mapWeekdays(f) {
 
 export class Locale {
   static fromOpts(opts) {
-    return Locale.create(opts.localeCode, opts.numberingSystem, opts.outputCalendar);
+    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
   }
 
-  static create(localeCode, numberingSystem, outputCalendar) {
-    const codeR = localeCode || 'en-us',
+  static create(locale, numberingSystem, outputCalendar) {
+    const localeR = locale || 'en-us',
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
-      cacheKey = `${codeR}|${numberingSystemR}|${outputCalendarR}`,
+      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
       cached = localeCache.get(cacheKey);
 
     if (cached) {
       return cached;
     } else {
-      const fresh = new Locale(codeR, numberingSystemR, outputCalendarR);
+      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
       localeCache.set(cacheKey, fresh);
       return fresh;
     }
   }
 
-  constructor(localeCode, numbering, outputCalendar) {
-    Object.defineProperty(this, 'localeCode', { value: localeCode, enumerable: true });
+  constructor(locale, numbering, outputCalendar) {
+    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
     Object.defineProperty(this, 'numberingSystem', { value: numbering || null, enumerable: true });
     Object.defineProperty(this, 'outputCalendar', {
       value: outputCalendar || null,
       enumerable: true
     });
     Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.localeCode, this.numberingSystem, this.outputCalendar),
+      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
       enumerable: false
     });
 
@@ -103,7 +103,7 @@ export class Locale {
 
   knownEnglish() {
     return (
-      (this.localeCode === 'en' ||
+      (this.locale === 'en' ||
         Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) &&
       this.numberingSystem === null &&
       (this.outputCalendar === null || this.outputCalendar === 'latn')
@@ -111,11 +111,15 @@ export class Locale {
   }
 
   clone(alts) {
-    return Locale.create(
-      alts.localeCode || this.localeCode,
-      alts.numberingSystem || this.numberingSystem,
-      alts.outputCalendar || this.outputCalendar
-    );
+    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
+      return this;
+    } else {
+      return Locale.create(
+        alts.locale || this.locale,
+        alts.numberingSystem || this.numberingSystem,
+        alts.outputCalendar || this.outputCalendar
+      );
+    }
   }
 
   months(length, format = false) {

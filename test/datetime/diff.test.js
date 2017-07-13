@@ -11,7 +11,7 @@ const diffObjs = (o1, o2, ...units) => diffFromObjs(o1, o2, ...units).toObject()
 
 test('DateTime#diff defaults to milliseconds', () => {
   expect(diffObjs({ year: 2017, millisecond: 12 }, { year: 2017 })).toEqual({ milliseconds: 12 });
-  expect(diffFromObjs({ year: 2017 }, { year: 2017 }).milliseconds()).toBe(0);
+  expect(diffFromObjs({ year: 2017 }, { year: 2017 }).milliseconds).toBe(0);
 });
 
 test('DateTime#diff makes simple diffs', () => {

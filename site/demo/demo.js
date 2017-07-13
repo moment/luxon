@@ -29,14 +29,14 @@ function demo(luxon) {
   example("DateTime.local().plus({minutes: 15, seconds: 8})");
   example("DateTime.local().plus({days: 6})");
   example("DateTime.local().minus({days: 6})");
-  example("DateTime.local().diff(DateTime.local(1982, 5, 25)).milliseconds()");
-  example("DateTime.local().diff(DateTime.local(1982, 5, 25), 'days').days()");
+  example("DateTime.local().diff(DateTime.local(1982, 5, 25)).milliseconds");
+  example("DateTime.local().diff(DateTime.local(1982, 5, 25), 'days').days");
   example("DateTime.local().diff(DateTime.local(1982, 5, 25), 'days', 'hours').toObject()");
   example("DateTime.local().toLocaleString()");
-  example("DateTime.local().locale('zh').toLocaleString()");
+  example("DateTime.local().setLocale('zh').toLocaleString()");
   example("DateTime.local().toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})");
-  example("DateTime.local().locale('zh').toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})");
-  example("DateTime.local().locale('fr').toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})");
+  example("DateTime.local().setLocale('zh').toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})");
+  example("DateTime.local().setLocale('fr').toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})");
   example("DateTime.fromISO('2017-05-15')");
   example("DateTime.fromISO('2017-05-15T17:36')");
   example("DateTime.fromISO('2017-W33-4')");
@@ -44,7 +44,7 @@ function demo(luxon) {
   example("DateTime.fromString('12-16-2017', 'MM-dd-yyyy')");
   example("DateTime.local().toFormat('MM-dd-yyyy')");
   example("DateTime.local().toFormat('MMMM dd, yyyy')");
-  example("DateTime.local().locale('fr').toFormat('MMMM dd, yyyy')");
+  example("DateTime.local().setLocale('fr').toFormat('MMMM dd, yyyy')");
 
   document.write("</table>");
 };

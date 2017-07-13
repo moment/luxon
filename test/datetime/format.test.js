@@ -43,7 +43,7 @@ test("DateTime#toISOTime({suppressMilliseconds: true}) won't suppress millisecon
 });
 
 test("DateTime#toISOTime({suppressMilliseconds: true}) will suppress milliseconds if they're zero", () => {
-  expect(dt.millisecond(0).toISOTime({ suppressMilliseconds: true })).toBe('09:23:54Z');
+  expect(dt.set({ millisecond: 0 }).toISOTime({ suppressMilliseconds: true })).toBe('09:23:54Z');
 });
 
 test("DateTime#toISOTime({suppressSeconds: true}) won't suppress milliseconds if they're nonzero", () => {
@@ -51,11 +51,11 @@ test("DateTime#toISOTime({suppressSeconds: true}) won't suppress milliseconds if
 });
 
 test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if they're zero", () => {
-  expect(dt.second(0).millisecond(0).toISOTime({ suppressSeconds: true })).toBe('09:23Z');
+  expect(dt.set({ second: 0, millisecond: 0 }).toISOTime({ suppressSeconds: true })).toBe('09:23Z');
 });
 
 test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if they're zero", () => {
-  expect(dt.second(0).millisecond(0).toISOTime({ suppressSeconds: true })).toBe('09:23Z');
+  expect(dt.set({ second: 0, millisecond: 0 }).toISOTime({ suppressSeconds: true })).toBe('09:23Z');
 });
 
 test('DateTime#toISOTime() handles other offsets', () => {
@@ -91,19 +91,19 @@ test('DateTime#toString() returns the ISO time', () => {
 // #toLocaleString()
 //-------
 test('DateTime#toLocaleString returns a sensible string by default', () => {
-  expect(dt.locale('en-us').toLocaleString()).toBe('5/25/1982');
+  expect(dt.set({ locale: 'en-us' }).toLocaleString()).toBe('5/25/1982');
 });
 
 test('DateTime#toLocaleString accepts locale settings from the dateTime', () => {
-  expect(dt.locale('be').toLocaleString()).toBe('25.5.1982');
+  expect(dt.set({ locale: 'be' }).toLocaleString()).toBe('25.5.1982');
 });
 
 test('DateTime#toLocaleString accepts numbering system settings from the dateTime', () => {
-  expect(dt.numberingSystem('beng').toLocaleString()).toBe('৫/২৫/১৯৮২');
+  expect(dt.set({ numberingSystem: 'beng' }).toLocaleString()).toBe('৫/২৫/১৯৮২');
 });
 
 test('DateTime#toLocaleString accepts output calendar settings from the dateTime', () => {
-  expect(dt.outputCalendar('islamic').toLocaleString()).toBe('8/2/1402 AH');
+  expect(dt.set({ outputCalendar: 'islamic' }).toLocaleString()).toBe('8/2/1402 AH');
 });
 
 test('DateTime#toLocaleString accepts options to the formatter', () => {
@@ -111,15 +111,17 @@ test('DateTime#toLocaleString accepts options to the formatter', () => {
 });
 
 test("DateTime#toLocaleString can override the dateTime's locale", () => {
-  expect(dt.locale('be').toLocaleString({ localeCode: 'fr' })).toBe('25/05/1982');
+  expect(dt.set({ locale: 'be' }).toLocaleString({ locale: 'fr' })).toBe('25/05/1982');
 });
 
 test("DateTime#toLocaleString can override the dateTime's numbering system", () => {
-  expect(dt.numberingSystem('beng').toLocaleString({ numberingSystem: 'mong' })).toBe('᠕/᠒᠕/᠑᠙᠘᠒');
+  expect(dt.set({ numberingSystem: 'beng' }).toLocaleString({ numberingSystem: 'mong' })).toBe(
+    '᠕/᠒᠕/᠑᠙᠘᠒'
+  );
 });
 
 test("DateTime#toLocaleString can override the dateTime's output calendar", () => {
-  expect(dt.outputCalendar('islamic').toLocaleString({ outputCalendar: 'coptic' })).toBe(
+  expect(dt.set({ outputCalendar: 'islamic' }).toLocaleString({ outputCalendar: 'coptic' })).toBe(
     '9/17/1698 ERA1'
   );
 });
@@ -139,9 +141,11 @@ test('DateTime#resolvedLocaleOpts returns a thing', () => {
 
 test('DateTime#resolvedLocaleOpts reflects changes to the locale', () => {
   const res = DateTime.local()
-    .locale('be')
-    .numberingSystem('mong')
-    .outputCalendar('coptic')
+    .set({
+      locale: 'be',
+      numberingSystem: 'mong',
+      outputCalendar: 'coptic'
+    })
     .resolvedLocaleOpts();
 
   expect(res.locale).toBe('be-u-ca-coptic-nu-mong');
@@ -151,7 +155,7 @@ test('DateTime#resolvedLocaleOpts reflects changes to the locale', () => {
 
 test('DateTime#resolvedLocaleOpts can override with options', () => {
   const res = DateTime.local().resolvedLocaleOpts({
-    localeCode: 'be',
+    locale: 'be',
     numberingSystem: 'mong',
     outputCalendar: 'coptic'
   });
@@ -166,67 +170,67 @@ test('DateTime#resolvedLocaleOpts can override with options', () => {
 //------
 test("DateTime#toFormat('S') returns the millisecond", () => {
   expect(dt.toFormat('S')).toBe('123');
-  expect(dt.locale('bn').toFormat('S')).toBe('১২৩');
+  expect(dt.set({ locale: 'bn' }).toFormat('S')).toBe('১২৩');
   expect(dt.toFormat('S')).toBe('123');
-  expect(dt.millisecond(82).toFormat('S')).toBe('82');
+  expect(dt.set({ millisecond: 82 }).toFormat('S')).toBe('82');
 });
 
 test("DateTime#toFormat('SSS') returns padded the millisecond", () => {
   expect(dt.toFormat('SSS')).toBe('123');
-  expect(dt.locale('bn').toFormat('SSS')).toBe('১২৩');
-  expect(dt.millisecond(82).toFormat('SSS')).toBe('082');
+  expect(dt.set({ locale: 'bn' }).toFormat('SSS')).toBe('১২৩');
+  expect(dt.set({ millisecond: 82 }).toFormat('SSS')).toBe('082');
 });
 
 test("DateTime#toFormat('s') returns the second", () => {
   expect(dt.toFormat('s')).toBe('54');
-  expect(dt.locale('bn').toFormat('s')).toBe('৫৪');
-  expect(dt.second(6).toFormat('s')).toBe('6');
+  expect(dt.set({ locale: 'bn' }).toFormat('s')).toBe('৫৪');
+  expect(dt.set({ second: 6 }).toFormat('s')).toBe('6');
 });
 
 test("DateTime#toFormat('ss') returns the padded second", () => {
   expect(dt.toFormat('ss')).toBe('54');
-  expect(dt.locale('bn').toFormat('ss')).toBe('৫৪');
-  expect(dt.second(6).toFormat('ss')).toBe('06');
+  expect(dt.set({ locale: 'bn' }).toFormat('ss')).toBe('৫৪');
+  expect(dt.set({ second: 6 }).toFormat('ss')).toBe('06');
 });
 
 test("DateTime#toFormat('m') returns the minute", () => {
   expect(dt.toFormat('m')).toBe('23');
-  expect(dt.locale('bn').toFormat('m')).toBe('২৩');
-  expect(dt.minute(6).toFormat('m')).toBe('6');
+  expect(dt.set({ locale: 'bn' }).toFormat('m')).toBe('২৩');
+  expect(dt.set({ minute: 6 }).toFormat('m')).toBe('6');
 });
 
 test("DateTime#toFormat('mm') returns the padded minute", () => {
   expect(dt.toFormat('mm')).toBe('23');
-  expect(dt.locale('bn').toFormat('mm')).toBe('২৩');
-  expect(dt.minute(6).toFormat('mm')).toBe('06');
+  expect(dt.set({ locale: 'bn' }).toFormat('mm')).toBe('২৩');
+  expect(dt.set({ minute: 6 }).toFormat('mm')).toBe('06');
 });
 
 test("DateTime#toFormat('h') returns the hours", () => {
   expect(dt.toFormat('h')).toBe('9');
-  expect(dt.locale('bn').toFormat('h')).toBe('৯');
-  expect(dt.hour(12).toFormat('h')).toBe('12');
-  expect(dt.hour(13).toFormat('h')).toBe('1');
+  expect(dt.set({ locale: 'bn' }).toFormat('h')).toBe('৯');
+  expect(dt.set({ hour: 12 }).toFormat('h')).toBe('12');
+  expect(dt.set({ hour: 13 }).toFormat('h')).toBe('1');
 });
 
 test("DateTime#toFormat('hh') returns the padded hour (12-hour time)", () => {
   expect(dt.toFormat('hh')).toBe('09');
-  expect(dt.locale('bn').toFormat('hh')).toBe('০৯');
-  expect(dt.hour(12).toFormat('hh')).toBe('12');
-  expect(dt.hour(13).toFormat('hh')).toBe('01');
+  expect(dt.set({ locale: 'bn' }).toFormat('hh')).toBe('০৯');
+  expect(dt.set({ hour: 12 }).toFormat('hh')).toBe('12');
+  expect(dt.set({ hour: 13 }).toFormat('hh')).toBe('01');
 });
 
 test("DateTime#toFormat('H') returns the hour (24-hour time)", () => {
   expect(dt.toFormat('H')).toBe('9');
-  expect(dt.locale('bn').toFormat('H')).toBe('৯');
-  expect(dt.hour(12).toFormat('H')).toBe('12');
-  expect(dt.hour(13).toFormat('H')).toBe('13');
+  expect(dt.set({ locale: 'bn' }).toFormat('H')).toBe('৯');
+  expect(dt.set({ hour: 12 }).toFormat('H')).toBe('12');
+  expect(dt.set({ hour: 13 }).toFormat('H')).toBe('13');
 });
 
 test("DateTime#toFormat('HH') returns the padded hour (24-hour time)", () => {
   expect(dt.toFormat('HH')).toBe('09');
-  expect(dt.locale('bn').toFormat('HH')).toBe('০৯');
-  expect(dt.hour(12).toFormat('HH')).toBe('12');
-  expect(dt.hour(13).toFormat('HH')).toBe('13');
+  expect(dt.set({ locale: 'bn' }).toFormat('HH')).toBe('০৯');
+  expect(dt.set({ hour: 12 }).toFormat('HH')).toBe('12');
+  expect(dt.set({ hour: 13 }).toFormat('HH')).toBe('13');
 });
 
 test("DateTime#toFormat('Z') returns the narrow offset", () => {
@@ -267,19 +271,19 @@ test("DateTime#toFormat('z') returns the zone name", () => {
 
 test("DateTime#toFormat('a') returns the meridiem", () => {
   expect(dt.toFormat('a')).toBe('AM');
-  expect(dt.locale('de').toFormat('a')).toBe('vorm.');
-  expect(dt.hour(13).toFormat('a')).toBe('PM');
-  expect(dt.hour(13).locale('de').toFormat('a')).toBe('nachm.');
+  expect(dt.set({ locale: 'de' }).toFormat('a')).toBe('vorm.');
+  expect(dt.set({ hour: 13 }).toFormat('a')).toBe('PM');
+  expect(dt.set({ hour: 13, locale: 'de' }).toFormat('a')).toBe('nachm.');
 });
 
 test("DateTime#toFormat('d') returns the day", () => {
   expect(dt.toFormat('d')).toBe('25');
-  expect(dt.day(1).toFormat('d')).toBe('1');
+  expect(dt.set({ day: 1 }).toFormat('d')).toBe('1');
 });
 
 test("DateTime#toFormat('dd') returns the padded day", () => {
   expect(dt.toFormat('dd')).toBe('25');
-  expect(dt.day(1).toFormat('dd')).toBe('01');
+  expect(dt.set({ day: 1 }).toFormat('dd')).toBe('01');
 });
 
 test("DateTime#toFormat('E' || 'c') returns weekday number", () => {
@@ -289,12 +293,12 @@ test("DateTime#toFormat('E' || 'c') returns weekday number", () => {
 
 test("DateTime#toFormat('EEE') returns short format weekday name", () => {
   expect(dt.toFormat('EEE')).toBe('Tue');
-  expect(dt.locale('de').toFormat('EEE')).toBe('Di.');
+  expect(dt.set({ locale: 'de' }).toFormat('EEE')).toBe('Di.');
 });
 
 test("DateTime#toFormat('ccc') returns short standalone weekday name", () => {
   expect(dt.toFormat('ccc')).toBe('Tue');
-  expect(dt.locale('de').toFormat('ccc')).toBe('Di');
+  expect(dt.set({ locale: 'de' }).toFormat('ccc')).toBe('Di');
 });
 
 test("DateTime#toFormat('EEEE') returns the full format weekday name", () => {
@@ -321,25 +325,25 @@ test("DateTime#toFormat('MM' || 'LL') return the padded month number", () => {
 
 test("DateTime#toFormat('MMM') returns the short format month name", () => {
   expect(dt.toFormat('MMM')).toBe('May');
-  expect(dt.locale('de').toFormat('MMM')).toBe('Mai');
-  expect(dt.month(8).toFormat('MMM')).toBe('Aug');
+  expect(dt.set({ locale: 'de' }).toFormat('MMM')).toBe('Mai');
+  expect(dt.set({ month: 8 }).toFormat('MMM')).toBe('Aug');
 });
 
 test("DateTime#toFormat('LLL') returns the short standalone month name", () => {
   expect(dt.toFormat('LLL')).toBe('May');
-  expect(dt.locale('de').toFormat('LLL')).toBe('Mai');
-  expect(dt.month(8).toFormat('LLL')).toBe('Aug');
+  expect(dt.set({ locale: 'de' }).toFormat('LLL')).toBe('Mai');
+  expect(dt.set({ month: 8 }).toFormat('LLL')).toBe('Aug');
 });
 
 test("DateTime#toFormat('MMMM') returns the full format month name", () => {
   expect(dt.toFormat('MMMM')).toBe('May');
-  expect(dt.month(8).toFormat('MMMM')).toBe('August');
-  expect(dt.month(8).locale('ru').toFormat('MMMM')).toBe('августа');
+  expect(dt.set({ month: 8 }).toFormat('MMMM')).toBe('August');
+  expect(dt.set({ month: 8 }).set({ locale: 'ru' }).toFormat('MMMM')).toBe('августа');
 });
 
 test("DateTime#toFormat('LLLL') returns the full standalone month name", () => {
   expect(dt.toFormat('LLLL')).toBe('May');
-  expect(dt.month(8).toFormat('LLLL')).toBe('August');
+  expect(dt.set({ month: 8 }).toFormat('LLLL')).toBe('August');
 });
 
 test("DateTime#toFormat('MMMMM' || 'LLLLL') returns the narrow month name", () => {
@@ -349,48 +353,48 @@ test("DateTime#toFormat('MMMMM' || 'LLLLL') returns the narrow month name", () =
 
 test("DateTime#toFormat('y') returns the full year", () => {
   expect(dt.toFormat('y')).toBe('1982');
-  expect(dt.locale('bn').toFormat('y')).toBe('১৯৮২');
-  expect(dt.year(3).toFormat('y')).toBe('3');
+  expect(dt.set({ locale: 'bn' }).toFormat('y')).toBe('১৯৮২');
+  expect(dt.set({ year: 3 }).toFormat('y')).toBe('3');
 });
 
 test("DateTime#toFormat('yy') returns the two-digit year", () => {
   expect(dt.toFormat('yy')).toBe('82');
-  expect(dt.locale('bn').toFormat('yy')).toBe('৮২');
-  expect(dt.year(3).toFormat('yy')).toBe('03');
+  expect(dt.set({ locale: 'bn'}).toFormat('yy')).toBe('৮২');
+  expect(dt.set({ year: 3 }).toFormat('yy')).toBe('03');
 });
 
 test("DateTime#toFormat('yyyy') returns the padded full year", () => {
   expect(dt.toFormat('yyyy')).toBe('1982');
-  expect(dt.locale('bn').toFormat('yyyy')).toBe('১৯৮২');
-  expect(dt.year(3).toFormat('yyyy')).toBe('0003');
-  expect(dt.year(3).locale('bn').toFormat('yyyy')).toBe('০০০৩');
+  expect(dt.set({ locale: 'bn' }).toFormat('yyyy')).toBe('১৯৮২');
+  expect(dt.set({ year: 3 }).toFormat('yyyy')).toBe('0003');
+  expect(dt.set({ year: 3, locale: 'bn' }).toFormat('yyyy')).toBe('০০০৩');
 });
 
 test("DateTime#toFormat('G') returns the short era", () => {
   expect(dt.toFormat('G')).toBe('AD');
-  expect(dt.locale('de').toFormat('G')).toBe('n. Chr.');
-  expect(dt.year(-21).toFormat('G')).toBe('BC');
-  expect(dt.year(-21).locale('de').toFormat('G')).toBe('v. Chr.');
+  expect(dt.set({ locale: 'de' }).toFormat('G')).toBe('n. Chr.');
+  expect(dt.set({ year: -21 }).toFormat('G')).toBe('BC');
+  expect(dt.set({ year: -21, locale: 'de' }).toFormat('G')).toBe('v. Chr.');
 });
 
 test("DateTime#toFormat('GG') returns the full era", () => {
   expect(dt.toFormat('GG')).toBe('Anno Domini');
-  expect(dt.year(-21).toFormat('GG')).toBe('Before Christ');
+  expect(dt.set({ year: -21 }).toFormat('GG')).toBe('Before Christ');
 });
 
 test("DateTime#toFormat('GGGGG') returns the narrow era", () => {
   expect(dt.toFormat('GGGGG')).toBe('A');
-  expect(dt.year(-21).toFormat('GGGGG')).toBe('B');
+  expect(dt.set({ year: -21 }).toFormat('GGGGG')).toBe('B');
 });
 
 test("DateTime#toFormat('W') returns the week number", () => {
   expect(dt.toFormat('W')).toBe('21');
-  expect(dt.weekNumber(5).toFormat('W')).toBe('5');
+  expect(dt.set({ weekNumber: 5 }).toFormat('W')).toBe('5');
 });
 
 test("DateTime#toFormat('WW') returns the padded week number", () => {
   expect(dt.toFormat('WW')).toBe('21');
-  expect(dt.weekNumber(5).toFormat('WW')).toBe('05');
+  expect(dt.set({ weekNumber: 5}).toFormat('WW')).toBe('05');
 });
 
 test("DateTime#toFormat('kk') returns the abbreviated week year", () => {
@@ -403,14 +407,14 @@ test("DateTime#toFormat('kkkk') returns the full week year", () => {
 
 test("DateTime#toFormat('o') returns an unpadded ordinal", () => {
   expect(dt.toFormat('o')).toBe('145');
-  expect(dt.month(1).day(13).toFormat('o')).toBe('13');
-  expect(dt.month(1).day(8).toFormat('o')).toBe('8');
+  expect(dt.set({ month: 1, day: 13 }).toFormat('o')).toBe('13');
+  expect(dt.set({ month: 1, day: 8 }).toFormat('o')).toBe('8');
 });
 
 test("DateTime#toFormat('ooo') returns an unpadded ordinal", () => {
   expect(dt.toFormat('ooo')).toBe('145');
-  expect(dt.month(1).day(13).toFormat('ooo')).toBe('013');
-  expect(dt.month(1).day(8).toFormat('ooo')).toBe('008');
+  expect(dt.set({ month: 1, day: 13 }).toFormat('ooo')).toBe('013');
+  expect(dt.set({ month: 1, day: 8 }).toFormat('ooo')).toBe('008');
 });
 
 test('DateTime#toFormat returns a full formatted string', () => {
@@ -423,163 +427,169 @@ test('DateTime#toFormat() accepts literals in single quotes', () => {
 });
 
 test('DateTime#numberingSystem() overides the numbering system from the locale', () => {
-  expect(dt.numberingSystem('beng').toFormat('S')).toBe('১২৩');
+  expect(dt.set({ numberingSystem: 'beng' }).toFormat('S')).toBe('১২৩');
 });
 
 test('DateTime#outputCalendar() overides the output calendar from the locale', () => {
-  expect(dt.outputCalendar('islamic').toFormat('MMMM yyyy')).toBe('Shaʻban 1402');
+  expect(dt.set({ outputCalendar: 'islamic' }).toFormat('MMMM yyyy')).toBe('Shaʻban 1402');
 });
 
 test("DateTime#toFormat('D') returns a short date representation", () => {
   expect(dt.toFormat('D')).toBe('5/25/1982');
-  expect(dt.locale('fr').toFormat('D')).toBe('25/05/1982');
+  expect(dt.set({ locale: 'fr' }).toFormat('D')).toBe('25/05/1982');
 });
 
 test("DateTime#toFormat('DD') returns a medium date representation", () => {
   expect(dt.toFormat('DD')).toBe('May 25, 1982');
-  expect(dt.month(8).toFormat('DD')).toBe('Aug 25, 1982');
-  expect(dt.locale('fr').toFormat('DD')).toBe('25 mai 1982');
-  expect(dt.locale('fr').month(2).toFormat('DD')).toBe('25 févr. 1982');
+  expect(dt.set({ month: 8 }).toFormat('DD')).toBe('Aug 25, 1982');
+  expect(dt.set({ locale: 'fr' }).toFormat('DD')).toBe('25 mai 1982');
+  expect(dt.set({ locale: 'fr', month: 2 }).toFormat('DD')).toBe('25 févr. 1982');
 });
 
 test("DateTime#toFormat('DDD') returns a long date representation", () => {
   expect(dt.toFormat('DDD')).toBe('May 25, 1982');
-  expect(dt.month(8).toFormat('DDD')).toBe('August 25, 1982');
-  expect(dt.locale('fr').toFormat('DDD')).toBe('25 mai 1982');
-  expect(dt.locale('fr').month(2).toFormat('DDD')).toBe('25 février 1982');
+  expect(dt.set({ month: 8 }).toFormat('DDD')).toBe('August 25, 1982');
+  expect(dt.set({ locale: 'fr' }).toFormat('DDD')).toBe('25 mai 1982');
+  expect(dt.set({ locale: 'fr', month: 2 }).toFormat('DDD')).toBe('25 février 1982');
 });
 
 test("DateTime#toFormat('DDDD') returns a long date representation", () => {
   expect(dt.toFormat('DDDD')).toBe('Tuesday, May 25, 1982');
-  expect(dt.month(8).toFormat('DDDD')).toBe('Wednesday, August 25, 1982');
-  expect(dt.locale('fr').toFormat('DDDD')).toBe('mardi 25 mai 1982');
-  expect(dt.locale('fr').month(2).toFormat('DDDD')).toBe('jeudi 25 février 1982');
+  expect(dt.set({ month: 8 }).toFormat('DDDD')).toBe('Wednesday, August 25, 1982');
+  expect(dt.set({ locale: 'fr' }).toFormat('DDDD')).toBe('mardi 25 mai 1982');
+  expect(dt.set({ locale: 'fr', month: 2 }).toFormat('DDDD')).toBe('jeudi 25 février 1982');
 });
 
 test("DateTime#toFormat('t') returns a short time representation", () => {
   expect(dt.toFormat('t')).toBe('9:23 AM');
-  expect(dt.hour(13).toFormat('t')).toBe('1:23 PM');
-  expect(dt.locale('fr').toFormat('t')).toBe('09:23');
-  expect(dt.locale('fr').hour(13).toFormat('t')).toBe('13:23');
+  expect(dt.set({ hour: 13 }).toFormat('t')).toBe('1:23 PM');
+  expect(dt.set({ locale: 'fr' }).toFormat('t')).toBe('09:23');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('t')).toBe('13:23');
 });
 
 test("DateTime#toFormat('T') returns a short 24-hour time representation", () => {
   expect(dt.toFormat('T')).toBe('09:23');
-  expect(dt.hour(13).toFormat('T')).toBe('13:23');
-  expect(dt.locale('fr').toFormat('T')).toBe('09:23');
-  expect(dt.locale('fr').hour(13).toFormat('T')).toBe('13:23');
+  expect(dt.set({ hour: 13 }).toFormat('T')).toBe('13:23');
+  expect(dt.set({ locale: 'fr' }).toFormat('T')).toBe('09:23');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('T')).toBe('13:23');
 });
 
 test("DateTime#toFormat('tt') returns a medium time representation", () => {
   expect(dt.toFormat('tt')).toBe('9:23:54 AM');
-  expect(dt.hour(13).toFormat('tt')).toBe('1:23:54 PM');
-  expect(dt.locale('fr').toFormat('tt')).toBe('09:23:54');
-  expect(dt.locale('fr').hour(13).toFormat('tt')).toBe('13:23:54');
+  expect(dt.set({ hour: 13 }).toFormat('tt')).toBe('1:23:54 PM');
+  expect(dt.set({ locale: 'fr' }).toFormat('tt')).toBe('09:23:54');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('tt')).toBe('13:23:54');
 });
 
 test("DateTime#toFormat('TT') returns a medium 24-hour time representation", () => {
   expect(dt.toFormat('TT')).toBe('09:23:54');
-  expect(dt.hour(13).toFormat('TT')).toBe('13:23:54');
-  expect(dt.locale('fr').toFormat('TT')).toBe('09:23:54');
-  expect(dt.locale('fr').hour(13).toFormat('TT')).toBe('13:23:54');
+  expect(dt.set({ hour: 13 }).toFormat('TT')).toBe('13:23:54');
+  expect(dt.set({ locale: 'fr' }).toFormat('TT')).toBe('09:23:54');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('TT')).toBe('13:23:54');
 });
 
 test("DateTime#toFormat('ttt') returns a medium time representation", () => {
   // these seem to fail on Travis
   // expect(dt.toFormat('ttt')).toBe('9:23:54 AM GMT');
-  // expect(dt.hour(13).toFormat('ttt')).toBe('1:23:54 PM GMT');
-  // expect(dt.locale('fr').toFormat('ttt')).toBe('09:23:54 UTC');
-  // expect(dt.locale('fr').hour(13).toFormat('ttt')).toBe('13:23:54 UTC');
+  // expect(dt.set({hour: 13}).toFormat('ttt')).toBe('1:23:54 PM GMT');
+  // expect(dt.set({locale: 'fr'}).toFormat('ttt')).toBe('09:23:54 UTC');
+  // expect(dt.set({locale: 'fr', hour: 13}).toFormat('ttt')).toBe('13:23:54 UTC');
 });
 
 test("DateTime#toFormat('TTT') returns a medium time representation", () => {
   // these seem to fail on Travis
   // expect(dt.toFormat('TTT')).toBe('09:23:54 GMT');
-  // expect(dt.hour(13).toFormat('TTT')).toBe('13:23:54 GMT');
-  // expect(dt.locale('fr').toFormat('TTT')).toBe('09:23:54 UTC');
-  // expect(dt.locale('fr').hour(13).toFormat('TTT')).toBe('13:23:54 UTC');
+  // expect(dt.set({hour: 13}).toFormat('TTT')).toBe('13:23:54 GMT');
+  // expect(dt.set({locale: 'fr'}).toFormat('TTT')).toBe('09:23:54 UTC');
+  // expect(dt.set({locale: 'fr', hour: 13}).toFormat('TTT')).toBe('13:23:54 UTC');
 });
 
 test("DateTime#toFormat('f') returns a short date/time representation without seconds", () => {
   expect(dt.toFormat('f')).toBe('5/25/1982, 9:23 AM');
-  expect(dt.hour(13).toFormat('f')).toBe('5/25/1982, 1:23 PM');
-  expect(dt.locale('fr').toFormat('f')).toBe('25/05/1982 à 09:23');
-  expect(dt.locale('fr').hour(13).toFormat('f')).toBe('25/05/1982 à 13:23');
+  expect(dt.set({ hour: 13 }).toFormat('f')).toBe('5/25/1982, 1:23 PM');
+  expect(dt.set({ locale: 'fr' }).toFormat('f')).toBe('25/05/1982 à 09:23');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('f')).toBe('25/05/1982 à 13:23');
 });
 
 test("DateTime#toFormat('ff') returns a medium date/time representation without seconds", () => {
   expect(dt.toFormat('ff')).toBe('May 25, 1982, 9:23 AM');
-  expect(dt.hour(13).toFormat('ff')).toBe('May 25, 1982, 1:23 PM');
-  expect(dt.month(8).toFormat('ff')).toBe('Aug 25, 1982, 9:23 AM');
-  expect(dt.locale('fr').toFormat('ff')).toBe('25 mai 1982 à 09:23');
-  expect(dt.locale('fr').month(2).toFormat('ff')).toBe('25 févr. 1982 à 09:23');
-  expect(dt.locale('fr').hour(13).toFormat('ff')).toBe('25 mai 1982 à 13:23');
+  expect(dt.set({ hour: 13 }).toFormat('ff')).toBe('May 25, 1982, 1:23 PM');
+  expect(dt.set({ month: 8 }).toFormat('ff')).toBe('Aug 25, 1982, 9:23 AM');
+  expect(dt.set({ locale: 'fr' }).toFormat('ff')).toBe('25 mai 1982 à 09:23');
+  expect(dt.set({ locale: 'fr', month: 2 }).toFormat('ff')).toBe('25 févr. 1982 à 09:23');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('ff')).toBe('25 mai 1982 à 13:23');
 });
 
 test("DateTime#toFormat('fff') returns a medium date/time representation without seconds", () => {
   expect(ny.toFormat('fff')).toBe('May 25, 1982, 9:23 AM EDT');
-  expect(ny.hour(13).toFormat('fff')).toBe('May 25, 1982, 1:23 PM EDT');
-  expect(ny.month(8).toFormat('fff')).toBe('August 25, 1982, 9:23 AM EDT');
-  expect(ny.locale('fr').toFormat('fff')).toBe('25 mai 1982 à 09:23 UTC−4');
-  expect(ny.locale('fr').month(2).toFormat('fff')).toBe('25 février 1982 à 09:23 UTC−5');
-  expect(ny.locale('fr').hour(13).toFormat('fff')).toBe('25 mai 1982 à 13:23 UTC−4');
+  expect(ny.set({ hour: 13 }).toFormat('fff')).toBe('May 25, 1982, 1:23 PM EDT');
+  expect(ny.set({ month: 8 }).toFormat('fff')).toBe('August 25, 1982, 9:23 AM EDT');
+  expect(ny.set({ locale: 'fr' }).toFormat('fff')).toBe('25 mai 1982 à 09:23 UTC−4');
+  expect(ny.set({ locale: 'fr', month: 2 }).toFormat('fff')).toBe('25 février 1982 à 09:23 UTC−5');
+  expect(ny.set({ locale: 'fr', hour: 13 }).toFormat('fff')).toBe('25 mai 1982 à 13:23 UTC−4');
 });
 
 test("DateTime#toFormat('ffff') returns a long date/time representation without seconds", () => {
   expect(ny.toFormat('ffff')).toBe('Tuesday, May 25, 1982, 9:23 AM Eastern Daylight Time');
-  expect(ny.hour(13).toFormat('ffff')).toBe('Tuesday, May 25, 1982, 1:23 PM Eastern Daylight Time');
-  expect(ny.month(2).toFormat('ffff')).toBe(
+  expect(ny.set({ hour: 13 }).toFormat('ffff')).toBe(
+    'Tuesday, May 25, 1982, 1:23 PM Eastern Daylight Time'
+  );
+  expect(ny.set({ month: 2 }).toFormat('ffff')).toBe(
     'Thursday, February 25, 1982, 9:23 AM Eastern Standard Time'
   );
-  expect(ny.locale('fr').toFormat('ffff')).toBe('mardi 25 mai 1982 à 09:23 heure d’été de l’Est');
-  expect(ny.locale('fr').month(2).toFormat('ffff')).toBe(
+  expect(ny.set({ locale: 'fr' }).toFormat('ffff')).toBe(
+    'mardi 25 mai 1982 à 09:23 heure d’été de l’Est'
+  );
+  expect(ny.set({ locale: 'fr', month: 2 }).toFormat('ffff')).toBe(
     'jeudi 25 février 1982 à 09:23 heure normale de l’Est nord-américain'
   );
-  expect(ny.locale('fr').hour(13).toFormat('ffff')).toBe(
+  expect(ny.set({ locale: 'fr', hour: 13 }).toFormat('ffff')).toBe(
     'mardi 25 mai 1982 à 13:23 heure d’été de l’Est'
   );
 });
 
 test("DateTime#toFormat('F') returns a short date/time representation with seconds", () => {
   expect(dt.toFormat('F')).toBe('5/25/1982, 9:23:54 AM');
-  expect(dt.hour(13).toFormat('F')).toBe('5/25/1982, 1:23:54 PM');
-  expect(dt.locale('fr').toFormat('F')).toBe('25/05/1982 à 09:23:54');
-  expect(dt.locale('fr').hour(13).toFormat('F')).toBe('25/05/1982 à 13:23:54');
+  expect(dt.set({ hour: 13 }).toFormat('F')).toBe('5/25/1982, 1:23:54 PM');
+  expect(dt.set({ locale: 'fr' }).toFormat('F')).toBe('25/05/1982 à 09:23:54');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('F')).toBe('25/05/1982 à 13:23:54');
 });
 
 test("DateTime#toFormat('FF') returns a medium date/time representation with seconds", () => {
   expect(dt.toFormat('FF')).toBe('May 25, 1982, 9:23:54 AM');
-  expect(dt.hour(13).toFormat('FF')).toBe('May 25, 1982, 1:23:54 PM');
-  expect(dt.month(8).toFormat('FF')).toBe('Aug 25, 1982, 9:23:54 AM');
-  expect(dt.locale('fr').toFormat('FF')).toBe('25 mai 1982 à 09:23:54');
-  expect(dt.locale('fr').month(2).toFormat('FF')).toBe('25 févr. 1982 à 09:23:54');
-  expect(dt.locale('fr').hour(13).toFormat('FF')).toBe('25 mai 1982 à 13:23:54');
+  expect(dt.set({ hour: 13 }).toFormat('FF')).toBe('May 25, 1982, 1:23:54 PM');
+  expect(dt.set({ month: 8 }).toFormat('FF')).toBe('Aug 25, 1982, 9:23:54 AM');
+  expect(dt.set({ locale: 'fr' }).toFormat('FF')).toBe('25 mai 1982 à 09:23:54');
+  expect(dt.set({ locale: 'fr', month: 2 }).toFormat('FF')).toBe('25 févr. 1982 à 09:23:54');
+  expect(dt.set({ locale: 'fr', hour: 13 }).toFormat('FF')).toBe('25 mai 1982 à 13:23:54');
 });
 
 test("DateTime#toFormat('FFF') returns a medium date/time representation without seconds", () => {
   expect(ny.toFormat('FFF')).toBe('May 25, 1982, 9:23:54 AM EDT');
-  expect(ny.hour(13).toFormat('FFF')).toBe('May 25, 1982, 1:23:54 PM EDT');
-  expect(ny.month(8).toFormat('FFF')).toBe('August 25, 1982, 9:23:54 AM EDT');
-  expect(ny.locale('fr').toFormat('FFF')).toBe('25 mai 1982 à 09:23:54 UTC−4');
-  expect(ny.locale('fr').month(2).toFormat('FFF')).toBe('25 février 1982 à 09:23:54 UTC−5');
-  expect(ny.locale('fr').hour(13).toFormat('FFF')).toBe('25 mai 1982 à 13:23:54 UTC−4');
+  expect(ny.set({ hour: 13 }).toFormat('FFF')).toBe('May 25, 1982, 1:23:54 PM EDT');
+  expect(ny.set({ month: 8 }).toFormat('FFF')).toBe('August 25, 1982, 9:23:54 AM EDT');
+  expect(ny.set({ locale: 'fr' }).toFormat('FFF')).toBe('25 mai 1982 à 09:23:54 UTC−4');
+  expect(ny.set({ locale: 'fr', month: 2 }).toFormat('FFF')).toBe(
+    '25 février 1982 à 09:23:54 UTC−5'
+  );
+  expect(ny.set({ locale: 'fr', hour: 13 }).toFormat('FFF')).toBe('25 mai 1982 à 13:23:54 UTC−4');
 });
 
 test("DateTime#toFormat('FFFF') returns a long date/time representation without seconds", () => {
   expect(ny.toFormat('FFFF')).toBe('Tuesday, May 25, 1982, 9:23:54 AM Eastern Daylight Time');
-  expect(ny.hour(13).toFormat('FFFF')).toBe(
+  expect(ny.set({ hour: 13 }).toFormat('FFFF')).toBe(
     'Tuesday, May 25, 1982, 1:23:54 PM Eastern Daylight Time'
   );
-  expect(ny.month(2).toFormat('FFFF')).toBe(
+  expect(ny.set({ month: 2 }).toFormat('FFFF')).toBe(
     'Thursday, February 25, 1982, 9:23:54 AM Eastern Standard Time'
   );
-  expect(ny.locale('fr').toFormat('FFFF')).toBe(
+  expect(ny.set({ locale: 'fr' }).toFormat('FFFF')).toBe(
     'mardi 25 mai 1982 à 09:23:54 heure d’été de l’Est'
   );
-  expect(ny.locale('fr').month(2).toFormat('FFFF')).toBe(
+  expect(ny.set({ locale: 'fr', month: 2 }).toFormat('FFFF')).toBe(
     'jeudi 25 février 1982 à 09:23:54 heure normale de l’Est nord-américain'
   );
-  expect(ny.locale('fr').hour(13).toFormat('FFFF')).toBe(
+  expect(ny.set({ locale: 'fr', hour: 13 }).toFormat('FFFF')).toBe(
     'mardi 25 mai 1982 à 13:23:54 heure d’été de l’Est'
   );
 });

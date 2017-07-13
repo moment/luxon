@@ -39,7 +39,7 @@ test('Interval.after takes a duration', () => {
     int = Interval.after(start, Duration.fromObject({ days: 3 }));
 
   expect(int.start()).toBe(start);
-  expect(int.end().day()).toBe(28);
+  expect(int.end().day).toBe(28);
 });
 
 test('Interval.after takes a number and unit', () => {
@@ -47,7 +47,7 @@ test('Interval.after takes a number and unit', () => {
     int = Interval.after(start, 3, 'days');
 
   expect(int.start()).toBe(start);
-  expect(int.end().day()).toBe(28);
+  expect(int.end().day).toBe(28);
 });
 
 //------
@@ -57,7 +57,7 @@ test('Interval.before takes a duration', () => {
   const end = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.before(end, Duration.fromObject({ days: 3 }));
 
-  expect(int.start().day()).toBe(22);
+  expect(int.start().day).toBe(22);
   expect(int.end()).toBe(end);
 });
 
@@ -65,6 +65,6 @@ test('Interval.before takes a number and unit', () => {
   const end = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.before(end, 3, 'days');
 
-  expect(int.start().day()).toBe(22);
+  expect(int.start().day).toBe(22);
   expect(int.end()).toBe(end);
 });

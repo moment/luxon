@@ -49,11 +49,10 @@ const orderedUnits = [
 
 function clone(dur, alts) {
   // deep merge for vals
-  const conf = {};
-  conf.values = Object.assign(dur.values, alts.values);
-  if (alts.loc) {
-    conf.loc = alts.loc;
-  }
+  const conf = {
+    values: Object.assign(dur.values, alts.values),
+    loc: dur.loc.clone(alts.loc)
+  };
   return new Duration(conf);
 }
 
@@ -156,14 +155,20 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the locale of a Duration, such 'en-UK'. The locale is used when formatting the Duration.
-   * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter. If the locale is not supported, the best alternative is selected
-   * @return {string|Duration} - If a localeCode is provided, returns a new DateTime with the new locale. If not, returns the localeCode (a string) of the DateTime
+   * Get  the locale of a Duration, such 'en-UK'
+   * @return {string}
    */
-  locale(localeCode) {
-    return Util.isUndefined(localeCode)
-      ? this.loc
-      : clone(this, { loc: Locale.create(localeCode) });
+  get locale() {
+    return this.loc.locale;
+  }
+
+  /**
+   * Get the numbering system of a Duration, such 'beng'. The numbering system is used when formatting the Duration
+   *
+   * @return {string}
+   */
+  get numberingSystem() {
+    return this.loc.numberingSystem;
   }
 
   /**
@@ -208,14 +213,13 @@ export class Duration {
     // ISO durations are always positive, so take the absolute value
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
 
-    if (norm.years() > 0) s += norm.years() + 'Y';
-    if (norm.months() > 0) s += norm.months() + 'M';
-    if (norm.days() > 0 || norm.weeks() > 0) s += norm.days() + norm.weeks() * 7 + 'D';
-    if (norm.hours() > 0 || norm.minutes() > 0 || norm.seconds() > 0 || norm.milliseconds() > 0)
-      s += 'T';
-    if (norm.hours() > 0) s += norm.hours() + 'H';
-    if (norm.minutes() > 0) s += norm.minutes() + 'M';
-    if (norm.seconds() > 0) s += norm.seconds() + 'S';
+    if (norm.years > 0) s += norm.years + 'Y';
+    if (norm.months > 0) s += norm.months + 'M';
+    if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + 'D';
+    if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += 'T';
+    if (norm.hours > 0) s += norm.hours + 'H';
+    if (norm.minutes > 0) s += norm.minutes + 'M';
+    if (norm.seconds > 0) s += norm.seconds + 'S';
     return s;
   }
 
@@ -265,13 +269,13 @@ export class Duration {
   /**
    * Get the value of unit.
    * @param {string} unit - a unit such as 'minute' or 'day'
-   * @example Duration.fromObject({years: 2, days: 3}).years() //=> 2
-   * @example Duration.fromObject({years: 2, days: 3}).months() //=> 0
-   * @example Duration.fromObject({years: 2, days: 3}).days() //=> 3
+   * @example Duration.fromObject({years: 2, days: 3}).years //=> 2
+   * @example Duration.fromObject({years: 2, days: 3}).months //=> 0
+   * @example Duration.fromObject({years: 2, days: 3}).days //=> 3
    * @return {number}
    */
   get(unit) {
-    return this[Duration.normalizeUnit(unit)]();
+    return this[Duration.normalizeUnit(unit)];
   }
 
   /**
@@ -279,11 +283,15 @@ export class Duration {
    * @param {object} values - a mapping of units to numbers
    * @example dur.set({ years: 2017 })
    * @example dur.set({ hours: 8, minutes: 30 })
+   * @example dur.set({ locale: 'en-UK' })
    * @return {Duration}
    */
   set(values) {
-    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
-    return clone(this, { values: mixed });
+    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit)),
+          { locale, numberingSystem } = values,
+          loc = this.loc.clone(values);
+
+    return clone(this, { values: mixed, loc });
   }
 
   /**
@@ -392,89 +400,67 @@ export class Duration {
   }
 
   /**
-   * Get or "set" the years.
-   * @param {number} years - the years to set. If omitted, `years()` acts as a getter for the years.
-   * @return {number|Duration}
+   * Get the years.
+   * @return {number}
    */
-  years(years) {
-    return Util.isUndefined(years)
-      ? this.valid ? this.values.years || 0 : NaN
-      : this.set({ years });
+  get years() {
+    return this.valid ? this.values.years || 0 : NaN;
   }
 
   /**
-   * Get or "set" the months.
-   * @param {number} months - the months to set. If omitted, `months()` acts as a getter for the months.
-   * @return {number|Duration}
+   * Get the months.
+   * @return {number}
    */
-  months(months) {
-    return Util.isUndefined(months)
-      ? this.valid ? this.values.months || 0 : NaN
-      : this.set({ months });
+  get months() {
+    return this.valid ? this.values.months || 0 : NaN;
   }
 
   /**
-   * Get or "set" the weeks
-   * @param {number} weeks - the weeks to set. If omitted, `weeks()` acts as a getter for the days.
-   * @return {number|Duration}
+   * Get the weeks
+   * @return {number}
    */
-  weeks(weeks) {
-    return Util.isUndefined(weeks)
-      ? this.valid ? this.values.weeks || 0 : NaN
-      : this.set({ weeks });
+  get weeks() {
+    return this.valid ? this.values.weeks || 0 : NaN;
   }
 
   /**
-   * Get or "set" the days.
-   * @param {number} days - the days to set. If omitted, `days()` acts as a getter for the days.
-   * @return {number|Duration}
+   * Get the days.
+   * @return {number
    */
-  days(days) {
-    return Util.isUndefined(days) ? (this.valid ? this.values.days || 0 : NaN) : this.set({ days });
+  get days() {
+    return this.valid ? this.values.days || 0 : NaN;
   }
 
   /**
-   * Get or "set" the hours.
-   * @param {number} hours - the hours to set. If omitted, `hours()` acts as a getter for the hours.
-   * @return {number|Duration}
+   * Get the hours.
+   * @return {number}
    */
-  hours(hours) {
-    return Util.isUndefined(hours)
-      ? this.valid ? this.values.hours || 0 : NaN
-      : this.set({ hours });
+  get hours() {
+    return this.valid ? this.values.hours || 0 : NaN;
   }
 
   /**
-   * Get or "set" the minutes.
-   * @param {number} minutes - the minutes to set. If omitted, `minutes()` acts as a getter for the minutes.
-   * @return {number|Duration}
+   * Get the minutes.
+   * @return {number}
    */
-  minutes(minutes) {
-    return Util.isUndefined(minutes)
-      ? this.valid ? this.values.minutes || 0 : NaN
-      : this.set({ minutes });
+  get minutes() {
+    return this.valid ? this.values.minutes || 0 : NaN;
   }
 
   /**
-   * Get or "set" the seconds.
-   * @param {number} seconds - the seconds to set. If omitted, `seconds()` acts as a getter for the seconds.
-   * @return {number|Duration}
+   * Get the seconds.
+   * @return {number}
    */
-  seconds(seconds) {
-    return Util.isUndefined(seconds)
-      ? this.valid ? this.values.seconds || 0 : NaN
-      : this.set({ seconds });
+  get seconds() {
+    return this.valid ? this.values.seconds || 0 : NaN;
   }
 
   /**
-   * Get or "set" the milliseconds.
-   * @param {number} milliseconds - the milliseconds to set. If omitted, `milliseconds()` acts as a getter for the milliseconds.
-   * @return {number|Duration}
+   * Get the milliseconds.
+   * @return {number}
    */
-  milliseconds(milliseconds) {
-    return Util.isUndefined(milliseconds)
-      ? this.valid ? this.values.milliseconds || 0 : NaN
-      : this.set({ milliseconds });
+  get milliseconds() {
+    return this.valid ? this.values.milliseconds || 0 : NaN;
   }
 
   /**
@@ -482,7 +468,7 @@ export class Duration {
    * on invalid DateTimes or Intervals.
    * @return {boolean}
    */
-  isValid() {
+  get isValid() {
     return this.valid;
   }
 

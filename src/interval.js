@@ -5,7 +5,7 @@ import { Duration } from './duration';
 const INVALID = 'Invalid Interval';
 
 function validateStartEnd(start, end) {
-  return !!start && !!end && start.isValid() && end.isValid() && start <= end;
+  return !!start && !!end && start.isValid && end.isValid && start <= end;
 }
 
 /**
@@ -368,7 +368,7 @@ export class Interval {
    * Return whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
    * @return {boolean}
    */
-  isValid() {
+  get isValid() {
     return this.valid;
   }
 
@@ -432,20 +432,5 @@ export class Interval {
   toFormat(dateFormat, { separator = ' – ' } = {}) {
     if (!this.valid) return INVALID;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
-  }
-
-  /**
-   * Get or "set" the locale of the endpoints.
-   * @see DateTime.locale
-   *
-   * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter for the start time's locale.
-   * @return {string|Interval} - If a localeCode is provided, returns a new Interval with both the start and end times set to the locale. If not, returns the localeCode (a string) of the DateTime
-   */
-  locale(localeCode) {
-    if (Util.isUndefined(localeCode)) {
-      return this.s.locale();
-    } else {
-      return Interval.fromDateTimes(this.s.locale(localeCode), this.e.locale(localeCode));
-    }
   }
 }

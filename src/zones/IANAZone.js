@@ -57,8 +57,8 @@ export class IANAZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', localeCode = 'en-us' } = {}) {
-    return Util.parseZoneInfo(ts, format, localeCode || 'en-us', this.zoneName);
+  offsetName(ts, { format = 'long', locale = 'en-us' } = {}) {
+    return Util.parseZoneInfo(ts, format, locale || 'en-us', this.zoneName);
   }
 
   offset(ts) {

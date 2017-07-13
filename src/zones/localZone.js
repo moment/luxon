@@ -27,8 +27,8 @@ export class LocalZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', localeCode = 'en-us' } = {}) {
-    return Util.parseZoneInfo(ts, format, localeCode || 'en-us');
+  offsetName(ts, { format = 'long', locale = 'en-us' } = {}) {
+    return Util.parseZoneInfo(ts, format, locale || 'en-us');
   }
 
   offset(ts) {

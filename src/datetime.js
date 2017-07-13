@@ -118,15 +118,15 @@ function objToTS(obj, offset, zone) {
 function adjustTime(inst, dur) {
   const oPre = inst.o,
     c = Object.assign({}, inst.c, {
-      year: inst.c.year + dur.years(),
-      month: inst.c.month + dur.months(),
-      day: inst.c.day + dur.days() + dur.weeks() * 7
+      year: inst.c.year + dur.years,
+      month: inst.c.month + dur.months,
+      day: inst.c.day + dur.days + dur.weeks * 7
     }),
     millisToAdd = Duration.fromObject({
-      hours: dur.hours(),
-      minutes: dur.minutes(),
-      seconds: dur.seconds(),
-      milliseconds: dur.milliseconds()
+      hours: dur.hours,
+      minutes: dur.minutes,
+      seconds: dur.seconds,
+      milliseconds: dur.milliseconds
     }).as('milliseconds'),
     localTS = objToLocalTS(c);
 
@@ -175,9 +175,9 @@ const defaultUnitValues = { month: 1, day: 1, hour: 0, minute: 0, second: 0, mil
   };
 
 function isoTimeFormat(dateTime, suppressSecs, suppressMillis) {
-  return suppressSecs && dateTime.second() === 0 && dateTime.millisecond() === 0
+  return suppressSecs && dateTime.second === 0 && dateTime.millisecond === 0
     ? 'HH:mmZ'
-    : suppressMillis && dateTime.millisecond() === 0 ? 'HH:mm:ssZZ' : 'HH:mm:ss.SSSZZ';
+    : suppressMillis && dateTime.millisecond === 0 ? 'HH:mm:ssZZ' : 'HH:mm:ss.SSSZZ';
 }
 
 const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
@@ -222,14 +222,6 @@ function normalizeUnit(unit) {
   if (!normalized) throw new Error(`Invalid unit ${unit}`);
 
   return normalized;
-}
-
-function updateLocale(dt, { localeCode, numberingSystem, outputCalendar }) {
-  const newLocaleCode = localeCode || (dt.loc ? dt.loc.localeCode : null),
-    newNumberingSystem = numberingSystem || (dt.loc ? dt.loc.numberingSystem : null),
-    newOutputCalendar = outputCalendar || (dt.loc ? dt.loc.outpuCalendar : null),
-    loc = Locale.create(newLocaleCode, newNumberingSystem, newOutputCalendar);
-  return clone(dt, { loc });
 }
 
 /**
@@ -452,7 +444,7 @@ export class DateTime {
       inst = new DateTime({ ts: tsFinal, zone: zoneToUse, o: offsetFinal });
 
     // gregorian data + weekday serves only to validate
-    if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday()) {
+    if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
       return DateTime.invalid();
     }
 
@@ -517,15 +509,15 @@ export class DateTime {
    * @param {Object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
-   * @param {string} [options.localeCode='en-US'] - a locale string to use when parsing. Will also convert the DateTime to this locale
+   * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also convert the DateTime to this locale
    * @return {DateTime}
    */
   static fromString(
     text,
     fmt,
-    { setZone = false, zone = Settings.defaultZone, localeCode = null, numberingSystem = null } = {}
+    { setZone = false, zone = Settings.defaultZone, locale = null, numberingSystem = null } = {}
   ) {
-    const parser = new TokenParser(Locale.fromOpts({ localeCode, numberingSystem })),
+    const parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem })),
       [vals, parsedZone] = parser.parseDateTime(text, fmt);
     return parseDataToDateTime(vals, parsedZone, { setZone, zone });
   }
@@ -548,50 +540,35 @@ export class DateTime {
    * * The DateTime was created by an operation on another invalid date
    * @return {boolean}
    */
-  isValid() {
+  get isValid() {
     return this.valid;
   }
 
   /**
-   * Get or "set" the locale of a DateTime, such 'en-UK'. The locale is used when formatting the DateTime
+   * Get the locale of a DateTime, such 'en-UK'. The locale is used when formatting the DateTime
    *
-   * @param {string} localeCode - the locale to set. If omitted, the method operates as a getter. If the locale is not supported, the best alternative is selected
-   * @return {string|DateTime} - If a localeCode is provided, returns a new DateTime with the new locale. If not, returns the localeCode (a string) of the DateTime
+   * @return {string}
    */
-  locale(localeCode) {
-    if (Util.isUndefined(localeCode)) {
-      return this.loc ? this.loc.localeCode : null;
-    } else {
-      return updateLocale(this, { localeCode });
-    }
+  get locale() {
+    return this.loc.locale;
   }
 
   /**
-   * Get or "set" the numbering system of a DateTime, such 'beng'. The numbering system is used when formatting the DateTime
+   * Get the numbering system of a DateTime, such 'beng'. The numbering system is used when formatting the DateTime
    *
-   * @param {string} numberingSystem - the numbering system to set. If omitted, the method operates as a getter. If the numbering system is not supported, throws an error
-   * @return {string|DateTime} - If a numbering system is provided, returns a new DateTime with the new numbering system. If not, returns the number system (a string) of the DateTime
+   * @return {string}
    */
-  numberingSystem(numberingSystem) {
-    if (Util.isUndefined(numberingSystem)) {
-      return this.loc ? this.loc.numberingSystem : null;
-    } else {
-      return updateLocale(this, { numberingSystem });
-    }
+  get numberingSystem() {
+    return this.loc.numberingSystem;
   }
 
   /**
-   * Get or "set" the output calendar of a DateTime, such 'islamic'. The output calendar is used when formatting the DateTime
+   * Get the output calendar of a DateTime, such 'islamic'. The output calendar is used when formatting the DateTime
    *
-   * @param {string} outputCalendar - the output calendar to set. If omitted, the method operates as a getter. If the output calendar is not supported, throws an error
-   * @return {string|DateTime} - If an output calendar is provided, returns a new DateTime with the new output calendar. If not, returns the output calendar (a string) of the DateTime
+   * @return {string}
    */
-  outputCalendar(outputCalendar) {
-    if (Util.isUndefined(outputCalendar)) {
-      return this.loc ? this.loc.outputCalendar : null;
-    } else {
-      return updateLocale(this, { outputCalendar });
-    }
+  outputCalendar() {
+    return this.loc.outputCalendar;
   }
 
   /**
@@ -643,7 +620,7 @@ export class DateTime {
    * Get the name of the timezone
    * @return {String}
    */
-  timezoneName() {
+  get timezoneName() {
     return this.zone.name;
   }
 
@@ -651,23 +628,23 @@ export class DateTime {
    * Get the short human name for the zone's current offset, for example "EST" or "EDT"
    * @return {String}
    */
-  offsetNameShort() {
-    return this.zone.offsetName(this.ts, { format: 'short', localeCode: this.locale.localeCode });
+  get offsetNameShort() {
+    return this.zone.offsetName(this.ts, { format: 'short', locale: this.locale });
   }
 
   /**
    * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time". Is locale-aware.
    * @return {String}
    */
-  offsetNameLong() {
-    return this.zone.offsetName(this.ts, { format: 'long', localeCode: this.locale.localeCode });
+  get offsetNameLong() {
+    return this.zone.offsetName(this.ts, { format: 'long', locale: this.locale });
   }
 
   /**
    * Get whether this zone's offset ever changes, as in a DST
    * @return {boolean}
    */
-  isOffsetFixed() {
+  get isOffsetFixed() {
     return this.zone.universal;
   }
 
@@ -675,11 +652,13 @@ export class DateTime {
    * Get whether the DateTime is in a DST
    * @return {boolean}
    */
-  isInDST() {
-    if (this.isOffsetFixed()) {
+  get isInDST() {
+    if (this.isOffsetFixed) {
       return false;
     } else {
-      return this.offset() > this.month(1).offset() || this.offset() > this.month(5).offset();
+      return (
+        this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
+      );
     }
   }
 
@@ -691,7 +670,7 @@ export class DateTime {
    * @return {number}
    */
   get(unit) {
-    return this[unit]();
+    return this[unit];
   }
 
   /**
@@ -729,185 +708,164 @@ export class DateTime {
       }
     }
 
+    const { locale, numberingSystem, outputCalendar } = values,
+          loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
+
     const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o });
+    return clone(this, { ts, o, loc });
   }
 
   /**
-   * Get or "set" the year.
-   * @param {number} year - the year to set. If omitted, `year()` acts as a getter for the year.
-   * @example DateTime.local(2017, 5, 25).year() //=> 2017
-   * @example DateTime.local(2017, 5, 25).year(1982).toISODate() //=> "1982-05-25"
-   * @return {number|DateTime}
+   * "Set" the locale  Returns a newly-constructed DateTime.
+   * Just a convenient alias for set({ locale })
+   * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
+   * @return {DateTime}
    */
-  year(year) {
-    return Util.isUndefined(year) ? (this.valid ? this.c.year : NaN) : this.set({ year });
+  setLocale(locale) {
+    return this.set({ locale });
   }
 
   /**
-   * Get or "set" the month (1-12).
-   * @param {number} month - the month to set. If omitted, `month()` acts as a getter for the month.
-   * @example DateTime.local(2017, 5, 25).month() //=> 5
-   * @example DateTime.local(2017, 5, 25).month(6).toISODate() //=> "2017-06-25"
-   * @return {number|DateTime}
+   * Get the year
+   * @example DateTime.local(2017, 5, 25).year //=> 2017
+   * @return {number}
    */
-  month(month) {
-    return Util.isUndefined(month) ? (this.valid ? this.c.month : NaN) : this.set({ month });
+  get year() {
+    return this.valid ? this.c.year : NaN;
   }
 
   /**
-   * Get or "set" the day of the month (1-30ish).
-   * @param {number} day - the day to set. If omitted, `day()` acts as a getter for the day.
-   * @example DateTime.local(2017, 5, 25).day() //=> 25
-   * @example DateTime.local(2017, 5, 25).day(26).toISODate() //=> "2017-05-26"
-   * @return {number|DateTime}
+   * Get the month (1-12).
+   * @example DateTime.local(2017, 5, 25).month //=> 5
+   * @return {number}
    */
-  day(day) {
-    return Util.isUndefined(day) ? (this.valid ? this.c.day : NaN) : this.set({ day });
+  get month() {
+    return this.valid ? this.c.month : NaN;
   }
 
   /**
-   * Get or "set" the hour of the day (0-23).
-   * @param {number} hour - the hour to set. If omitted, `hour()` acts as a getter for the hour.
-   * @example DateTime.local(2017, 5, 25, 9).hour() //=> 9
-   * @example DateTime.local(2017, 5, 25, 9).hour(13).toISOTime() //=> 13:00:00.000"
-   * @return {number|DateTime}
+   * Get the day of the month (1-30ish).
+   * @example DateTime.local(2017, 5, 25).day //=> 25
+   * @return {number}
    */
-  hour(hour) {
-    return Util.isUndefined(hour) ? (this.valid ? this.c.hour : NaN) : this.set({ hour });
+  get day() {
+    return this.valid ? this.c.day : NaN;
   }
 
   /**
-   * Get or "set" the minute of the hour (0-59).
-   * @param {number} minute - the minute to set. If omitted, `minute()` acts as a getter for the minute.
-   * @example DateTime.local(2017, 5, 25, 9, 30).minute() //=> 30
-   * @example DateTime.local(2017, 5, 25, 9, 15).minute(45).toISOTime() //=> "09:45:00.000"
-   * @return {number|DateTime}
+   * Get the hour of the day (0-23).
+   * @example DateTime.local(2017, 5, 25, 9).hour //=> 9
+   * @return {number}
    */
-  minute(minute) {
-    return Util.isUndefined(minute) ? (this.valid ? this.c.minute : NaN) : this.set({ minute });
+  get hour() {
+    return this.valid ? this.c.hour : NaN;
   }
 
   /**
-   * Get or "set" the second of the minute (0-59).
-   * @param {number} second - the second to set. If omitted, `second()` acts as a getter for the second.
-   * @example DateTime.local(2017, 5, 25, 9, 30, 52).second() //=> 52
-   * @example DateTime.local(2017, 5, 25, 9, 30, 52).second(45).toISOTime() //=> "09:30:45.000"
-   * @return {number|DateTime}
+   * Get the minute of the hour (0-59).
+   * @example DateTime.local(2017, 5, 25, 9, 30).minute //=> 30
+   * @return {number}
    */
-  second(second) {
-    return Util.isUndefined(second) ? (this.valid ? this.c.second : NaN) : this.set({ second });
+  get minute() {
+    return this.valid ? this.c.minute : NaN;
   }
 
   /**
-   * Get or "set" the millisecond of the second (0-999).
-   * @param {number} millisecond - the millisecond to set. If omitted, `millisecond()` acts as a getter for the millisecond.
-   * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond() //=> 654
-   * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond(236).toISOTime() //=> "09:30:52.226"
-   * @return {number|DateTime}
+   * Get the second of the minute (0-59).
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52).second //=> 52
+   * @return {number}
    */
-  millisecond(millisecond) {
-    return Util.isUndefined(millisecond)
-      ? this.valid ? this.c.millisecond : NaN
-      : this.set({ millisecond });
+  get second() {
+    return this.valid ? this.c.second : NaN;
   }
 
   /**
-   * Get or "set" the week year.
-   * The setter maintains the current week number and day of the week.
+   * Get the millisecond of the second (0-999).
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond //=> 654
+   * @return {number}
+   */
+  get millisecond() {
+    return this.valid ? this.c.millisecond : NaN;
+  }
+
+  /**
+   * Get the week year
    * @see https://en.wikipedia.org/wiki/ISO_week_date
-   * @param {number} weekYear - the week year to set. If omitted, `weekYear()` acts as a getter for the week year.
-   * @example DateTime.local(2014, 11, 31).weekYear() //=> 2015
-   * @example DateTime.local(2017, 5, 25).weekYear(2016).toISODate() //=> "2015-05-21"
-   * @return {number|DateTime}
+   * @example DateTime.local(2014, 11, 31).weekYear //=> 2015
+   * @return {number}
    */
-  weekYear(weekYear) {
-    return Util.isUndefined(weekYear)
-      ? this.valid ? possiblyCachedWeekData(this).weekYear : NaN
-      : this.set({ weekYear });
+  get weekYear() {
+    return this.valid ? possiblyCachedWeekData(this).weekYear : NaN;
   }
 
   /**
-   * Get or "set" the week number of the week year (1-52ish).
-   * The setter maintains the current day of the week.
+   * Get the week number of the week year (1-52ish).
    * @see https://en.wikipedia.org/wiki/ISO_week_date
-   * @param {number} weekNumber - the week number to set. If omitted, `weekNumber()` acts as a getter for the week number.
-   * @example DateTime.local(2017, 5, 25).weekNumber() //=> 21
-   * @example DateTime.local(2017, 5, 25).weekNumber(15).toISODate() //=> "2017-04-13"
-   * @return {number|DateTime}
+   * @example DateTime.local(2017, 5, 25).weekNumber //=> 21
+   * @return {number}
    */
-  weekNumber(weekNumber) {
-    return Util.isUndefined(weekNumber)
-      ? this.valid ? possiblyCachedWeekData(this).weekNumber : NaN
-      : this.set({ weekNumber });
+  get weekNumber() {
+    return this.valid ? possiblyCachedWeekData(this).weekNumber : NaN;
   }
 
   /**
-   * Get or "set" the day of the week.
+   * Get the day of the week.
    * 1 is Monday and 7 is Sunday
    * @see https://en.wikipedia.org/wiki/ISO_week_date
-   * @param {number} weekday - the weekday to set. If omitted, `weekday()` acts as a getter for the weekday.
-   * @example DateTime.local(2014, 11, 31).weekday() //=> 4
-   * @example DateTime.local(2017, 5, 25).weekday(1).toISODate() //=> "2015-05-22"
-   * @return {number|DateTime}
+   * @example DateTime.local(2014, 11, 31).weekday //=> 4
+   * @return {number}
    */
-  weekday(weekday) {
-    return Util.isUndefined(weekday)
-      ? this.valid ? possiblyCachedWeekData(this).weekday : NaN
-      : this.set({ weekday });
+  get weekday() {
+    return this.valid ? possiblyCachedWeekData(this).weekday : NaN;
   }
 
   /**
-   * Get or "set" the ordinal (i.e. the day of the year)
-   * @param {number} ordinal - the ordinal to set. If omitted, `ordinal()` acts as a getter for the ordinal number.
-   * @example DateTime.local(2017, 5, 25).ordinal(200).toISODate() //=> "2017-07-19"
-   * @example DateTime.local(2017, 5, 25).ordinal() //=> 145
+   * Get the ordinal (i.e. the day of the year)
+   * @example DateTime.local(2017, 5, 25).ordinal //=> 145
    * @return {number|DateTime}
    */
-  ordinal(ordinal) {
-    return Util.isUndefined(ordinal)
-      ? this.valid ? Conversions.gregorianToOrdinal(this.c).ordinal : NaN
-      : this.set({ ordinal });
+  get ordinal() {
+    return this.valid ? Conversions.gregorianToOrdinal(this.c).ordinal : NaN;
   }
 
   /**
    * Get the UTC offset of this DateTime in minutes
-   * @example DateTime.local().offset() //=> -240
-   * @example DateTime.utc().offset() //=> 0
+   * @example DateTime.local().offset //=> -240
+   * @example DateTime.utc().offset //=> 0
    * @return {number}
    */
-  offset() {
+  get offset() {
     return this.valid ? this.zone.offset(this.ts) : NaN;
   }
 
   /**
    * Returns true if this DateTime is in a leap year, false otherwise
-   * @example DateTime.local(2016).isInLeapYear() //=> true
-   * @example DateTime.local(2013).isInLeapYear() //=> false
+   * @example DateTime.local(2016).isInLeapYear //=> true
+   * @example DateTime.local(2013).isInLeapYear //=> false
    * @return {boolean}
    */
-  isInLeapYear() {
-    return Util.isLeapYear(this.year());
+  get isInLeapYear() {
+    return Util.isLeapYear(this.year);
   }
 
   /**
    * Returns the number of days in this DateTime's month
-   * @example DateTime.local(2016, 2).days() //=> 29
-   * @example DateTime.local(2016, 3).days() //=> 31
+   * @example DateTime.local(2016, 2).daysInMonth //=> 29
+   * @example DateTime.local(2016, 3).days //=> 31
    * @return {number}
    */
-  daysInMonth() {
-    return Util.daysInMonth(this.year(), this.month());
+  get daysInMonth() {
+    return Util.daysInMonth(this.year, this.month);
   }
 
   /**
    * Returns the number of days in this DateTime's year
-   * @example DateTime.local(2016).daysInYear() //=> 366
-   * @example DateTime.local(2013).daysInYear() //=> 365
+   * @example DateTime.local(2016).daysInYear //=> 366
+   * @example DateTime.local(2013).daysInYear //=> 365
    * @return {number}
    */
-  daysInYear() {
-    return this.valid ? Util.daysInYear(this.year()) : NaN;
+  get daysInYear() {
+    return this.valid ? Util.daysInYear(this.year) : NaN;
   }
 
   /**
@@ -918,7 +876,7 @@ export class DateTime {
    * @param {object} opts - options
    * @param {boolean} opts.round - round numerical values
    * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 avr. 22'
-   * @example DateTime.local().locale('fr').toFormat('yyyy LLL dd') //=> '2017 Apr 22'
+   * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 Apr 22'
    * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
    * @return {string}
    */
@@ -935,7 +893,7 @@ export class DateTime {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param opts {object} - Intl.DateTimeFormat constructor options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
-   * @example DateTime.local().locale('en-gb').toLocaleString(); //=> '20/04/2017'
+   * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
    * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', date: '2-digit'}); //=> 'Thu, Apr 20'
    * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', date: '2-digit', hour: '2-digit', minute: '2-digit'}); //=> 'Thu, Apr 20, 11:27'
    * @example DateTime.local().toLocaleString({hour: '2-digit', minute: '2-digit'}); //=> '11:32'
@@ -1165,9 +1123,9 @@ export class DateTime {
       lowestOrder = null;
 
     if (units.indexOf('years') >= 0) {
-      let dYear = post.year() - cursor.year();
+      let dYear = post.year - cursor.year;
 
-      cursor = cursor.year(post.year());
+      cursor = cursor.set({ year: post.year });
 
       if (cursor > post) {
         cursor = cursor.minus(1, 'years');
@@ -1179,10 +1137,10 @@ export class DateTime {
     }
 
     if (units.indexOf('months') >= 0) {
-      const dYear = post.year() - cursor.year();
-      let dMonth = post.month() - cursor.month() + dYear * 12;
+      const dYear = post.year - cursor.year;
+      let dMonth = post.month - cursor.month + dYear * 12;
 
-      cursor = cursor.set({ year: post.year(), month: post.month() });
+      cursor = cursor.set({ year: post.year, month: post.month });
 
       if (cursor > post) {
         cursor = cursor.minus(1, 'months');
@@ -1196,7 +1154,7 @@ export class DateTime {
     const computeDayDelta = () => {
       const utcDayStart = dt => dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromLength(ms).shiftTo('days').days());
+      return Math.floor(Duration.fromLength(ms).shiftTo('days').days);
     };
 
     if (units.indexOf('weeks') >= 0) {
@@ -1215,7 +1173,7 @@ export class DateTime {
 
     if (units.indexOf('days') >= 0) {
       let days = computeDayDelta();
-      cursor = cursor.set({ year: post.year(), month: post.month(), day: post.day() });
+      cursor = cursor.set({ year: post.year, month: post.month, day: post.day });
 
       if (cursor > post) {
         cursor.minus(1, 'day');

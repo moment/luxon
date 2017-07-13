@@ -7,102 +7,96 @@ const dt = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
 //------
 // year/month/day/hour/minute/second/millisecond
 //-------
-test('DateTime#year() sets the year', () => {
-  expect(dt.year(2012).year()).toBe(2012);
+test('DateTime#set() sets Gregorian fields', () => {
+  expect(dt.set({ year: 2012 }).year).toBe(2012);
+  expect(dt.set({ month: 2 }).month).toBe(2);
+  expect(dt.set({ month: 2 }).hour).toBe(9); // this will cross a DST for many people
+  expect(dt.set({ day: 5 }).day).toBe(5);
+  expect(dt.set({ hour: 4 }).hour).toBe(4);
+  expect(dt.set({ minute: 16 }).minute).toBe(16);
+  expect(dt.set({ second: 45 }).second).toBe(45);
+  expect(dt.set({ millisecond: 86 }).millisecond).toBe(86);
 });
 
-test('DateTime#month() sets the (1-indexed) month', () => {
-  expect(dt.month(2).month()).toBe(2);
-  expect(dt.month(2).hour()).toBe(9); // this will cross a DST for many people
-});
-
-test('DateTime#day() sets the day', () => {
-  expect(dt.day(5).day()).toBe(5);
-});
-
-test('DateTime#hour() sets the hour', () => {
-  expect(dt.hour(4).hour()).toBe(4);
-});
-
-test('DateTime#minute() sets the minute', () => {
-  expect(dt.minute(16).minute()).toBe(16);
-});
-
-test('DateTime#second() sets the second', () => {
-  expect(dt.second(45).second()).toBe(45);
-});
-
-test('DateTime#millisecond() sets the millisecond', () => {
-  expect(dt.millisecond(86).millisecond()).toBe(86);
-});
-
-test("DateTime#month() doesn't go to the wrong month", () => {
+test("DateTime#set({ month }) doesn't go to the wrong month", () => {
   const end = DateTime.fromJSDate(new Date(1983, 4, 31)),
-    moved = end.month(4);
-  expect(moved.month()).toBe(4);
-  expect(moved.day()).toBe(30);
+    moved = end.set({ month: 4 });
+  expect(moved.month).toBe(4);
+  expect(moved.day).toBe(30);
 });
 
-test("DateTime#year() doesn't wrap leap years", () => {
+test("DateTime#set({ year }) doesn't wrap leap years", () => {
   const end = DateTime.fromJSDate(new Date(2012, 1, 29)),
-    moved = end.year(2013);
-  expect(moved.month()).toBe(2);
-  expect(moved.day()).toBe(28);
+    moved = end.set({ year: 2013 });
+  expect(moved.month).toBe(2);
+  expect(moved.day).toBe(28);
 });
 
 //------
 // weekYear/weekNumber/weekday
 //------
 
-test('DateTime#weekYear() sets the date to the same weekNumber/weekday of the target weekYear', () => {
-  const modified = dt.weekYear(2017);
-  expect(modified.weekday()).toBe(2); // still tuesday
-  expect(modified.weekNumber()).toBe(21);
-  expect(modified.year()).toBe(2017);
-  expect(modified.month()).toBe(5);
-  expect(modified.day()).toBe(23); // 2017-W21-2 is the 23
-  expect(modified.hour()).toBe(9);
-  expect(modified.minute()).toBe(23);
-  expect(modified.second()).toBe(54);
-  expect(modified.millisecond()).toBe(123);
+test('DateTime#set({ weekYear }) sets the date to the same weekNumber/weekday of the target weekYear', () => {
+  const modified = dt.set({ weekYear: 2017 });
+  expect(modified.weekday).toBe(2); // still tuesday
+  expect(modified.weekNumber).toBe(21);
+  expect(modified.year).toBe(2017);
+  expect(modified.month).toBe(5);
+  expect(modified.day).toBe(23); // 2017-W21-2 is the 23
+  expect(modified.hour).toBe(9);
+  expect(modified.minute).toBe(23);
+  expect(modified.second).toBe(54);
+  expect(modified.millisecond).toBe(123);
 });
 
-test('DateTime#weekNumber() sets the date to the same weekday of the target weekNumber', () => {
-  const modified = dt.weekNumber(2);
-  expect(modified.weekday()).toBe(2); // still tuesday
-  expect(modified.year()).toBe(1982);
-  expect(modified.month()).toBe(1);
-  expect(modified.day()).toBe(12);
-  expect(modified.hour()).toBe(9);
-  expect(modified.minute()).toBe(23);
-  expect(modified.second()).toBe(54);
-  expect(modified.millisecond()).toBe(123);
+test('DateTime#set({ weekNumber }) sets the date to the same weekday of the target weekNumber', () => {
+  const modified = dt.set({ weekNumber: 2 });
+  expect(modified.weekday).toBe(2); // still tuesday
+  expect(modified.year).toBe(1982);
+  expect(modified.month).toBe(1);
+  expect(modified.day).toBe(12);
+  expect(modified.hour).toBe(9);
+  expect(modified.minute).toBe(23);
+  expect(modified.second).toBe(54);
+  expect(modified.millisecond).toBe(123);
 });
 
-test("DateTime#weekday() sets the weekday to this week's matching day", () => {
-  const modified = dt.weekday(1);
-  expect(modified.weekday()).toBe(1);
-  expect(modified.year()).toBe(1982);
-  expect(modified.month()).toBe(5);
-  expect(modified.day()).toBe(24); // monday is the previous day
-  expect(modified.hour()).toBe(9);
-  expect(modified.minute()).toBe(23);
-  expect(modified.second()).toBe(54);
-  expect(modified.millisecond()).toBe(123);
+test("DateTime#set({ weekday }) sets the weekday to this week's matching day", () => {
+  const modified = dt.set({ weekday: 1 });
+  expect(modified.weekday).toBe(1);
+  expect(modified.year).toBe(1982);
+  expect(modified.month).toBe(5);
+  expect(modified.day).toBe(24); // monday is the previous day
+  expect(modified.hour).toBe(9);
+  expect(modified.minute).toBe(23);
+  expect(modified.second).toBe(54);
+  expect(modified.millisecond).toBe(123);
 });
 
 //------
 // year/ordinal
 //------
-test('DateTime#ordinal() sets the date to the ordinal within the current year', () => {
-  const modified = dt.ordinal(200);
-  expect(modified.year()).toBe(1982);
-  expect(modified.month()).toBe(7);
-  expect(modified.day()).toBe(19);
-  expect(modified.hour()).toBe(9);
-  expect(modified.minute()).toBe(23);
-  expect(modified.second()).toBe(54);
-  expect(modified.millisecond()).toBe(123);
+test('DateTime#set({ ordinal }) sets the date to the ordinal within the current year', () => {
+  const modified = dt.set({ ordinal: 200 });
+  expect(modified.year).toBe(1982);
+  expect(modified.month).toBe(7);
+  expect(modified.day).toBe(19);
+  expect(modified.hour).toBe(9);
+  expect(modified.minute).toBe(23);
+  expect(modified.second).toBe(54);
+  expect(modified.millisecond).toBe(123);
+});
+
+//------
+// locale
+//------
+
+test('DateTime#set({ locale }) sets locale', () => {
+  expect(dt.set({ locale: 'zh' }).locale).toBe('zh');
+});
+
+test('DateTime#setLocale() sets locale', () => {
+  expect(dt.setLocale('zh').locale).toBe('zh');
 });
 
 //------

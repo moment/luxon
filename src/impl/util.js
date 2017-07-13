@@ -61,7 +61,7 @@ export class Util {
 
   // DateTime -> JS date such that the date's UTC time is the datetimes's local time
   static asIfUTC(dt) {
-    const ts = dt.ts - dt.offset();
+    const ts = dt.ts - dt.offset;
     return new Date(ts);
   }
 
@@ -116,7 +116,7 @@ export class Util {
   // Only works if offset name is at the end of the string, so probably spews
   // junk for Arabic. Also note that this won't internationalize in Node
   // unless you have an Intl build.
-  static parseZoneInfo(ts, offsetFormat, localeCode, timeZone = null) {
+  static parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     const date = new Date(ts),
       intl = {
         hour12: false,
@@ -132,9 +132,9 @@ export class Util {
       intl.timeZone = timeZone;
     }
 
-    const without = new Intl.DateTimeFormat(localeCode, intl).format(date),
+    const without = new Intl.DateTimeFormat(locale, intl).format(date),
       modified = Object.assign({ timeZoneName: offsetFormat }, intl),
-      included = new Intl.DateTimeFormat(localeCode, modified).format(date),
+      included = new Intl.DateTimeFormat(locale, modified).format(date),
       diffed = included.substring(without.length),
       trimmed = diffed.replace(/^[, ]+/, '');
 

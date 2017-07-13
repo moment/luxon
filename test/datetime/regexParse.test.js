@@ -59,7 +59,7 @@ test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
 
   dt = DateTime.fromISO('1983-10-14T13:30Z', { setZone: true });
   expect(dt.zone.name).toBe('UTC');
-  expect(dt.offset()).toBe(0);
+  expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
     year: 1983,
     month: 10,
@@ -73,7 +73,7 @@ test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
 
 test('DateTime.fromISO() can optionally specify a zone', () => {
   let dt = DateTime.fromISO('2016-05-25T09:08:34.123', { zone: 'utc' });
-  expect(dt.offset()).toEqual(0);
+  expect(dt.offset).toEqual(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -85,7 +85,7 @@ test('DateTime.fromISO() can optionally specify a zone', () => {
   });
 
   dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { zone: 'utc' });
-  expect(dt.offset()).toEqual(0);
+  expect(dt.offset).toEqual(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -304,7 +304,7 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
 });
 
 test('DateTime.fromISO() rejects poop', () => {
-  const rejects = s => expect(DateTime.fromISO(s).isValid()).toBeFalsy();
+  const rejects = s => expect(DateTime.fromISO(s).isValid).toBeFalsy();
 
   rejects(null);
   rejects('');
@@ -333,7 +333,7 @@ test('DateTime.fromISO() rejects poop', () => {
 
 test('DateTime.fromRFC2822() accepts full format', () => {
   const dt = DateTime.fromRFC2822('Tue, 01 Nov 2016 13:23:12 +0630');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -347,12 +347,12 @@ test('DateTime.fromRFC2822() accepts full format', () => {
 
 test('DateTime.fromRFC2822() rejects incorrect days of the week', () => {
   const dt = DateTime.fromRFC2822('Wed, 01 Nov 2016 13:23:12 +0600');
-  expect(dt.isValid()).toBe(false);
+  expect(dt.isValid).toBe(false);
 });
 
 test('DateTime.fromRFC2822() can elide the day of the week', () => {
   const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 +0600');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -366,7 +366,7 @@ test('DateTime.fromRFC2822() can elide the day of the week', () => {
 
 test('DateTime.fromRFC2822() can elide seconds', () => {
   const dt = DateTime.fromRFC2822('01 Nov 2016 13:23 +0600');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -380,7 +380,7 @@ test('DateTime.fromRFC2822() can elide seconds', () => {
 
 test('DateTime.fromRFC2822() can use Z', () => {
   const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 Z');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -394,7 +394,7 @@ test('DateTime.fromRFC2822() can use Z', () => {
 
 test('DateTime.fromRFC2822() can use a weird subset of offset abbreviations', () => {
   const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 EST');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -412,7 +412,7 @@ test('DateTime.fromRFC2822() can use a weird subset of offset abbreviations', ()
 
 test('DateTime.fromHTTP() can parse RFC 1123', () => {
   const dt = DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,
@@ -426,7 +426,7 @@ test('DateTime.fromHTTP() can parse RFC 1123', () => {
 
 test('DateTime.fromHTTP() can parse RFC 850', () => {
   const dt = DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,
@@ -440,7 +440,7 @@ test('DateTime.fromHTTP() can parse RFC 850', () => {
 
 test('DateTime.fromHTTP() can parse ASCII dates with one date digit', () => {
   const dt = DateTime.fromHTTP('Sun Nov  6 08:49:37 1994');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,
@@ -454,7 +454,7 @@ test('DateTime.fromHTTP() can parse ASCII dates with one date digit', () => {
 
 test('DateTime.fromHTTP() can parse ASCII dates with two date digits', () => {
   const dt = DateTime.fromHTTP('Wed Nov 16 08:49:37 1994');
-  expect(dt.isValid()).toBe(true);
+  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,

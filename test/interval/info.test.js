@@ -2,7 +2,7 @@
 import { DateTime, Interval, Duration } from '../../src/luxon';
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
-  todayAt = h => DateTime.local().startOf('day').hour(h);
+  todayAt = h => DateTime.local().startOf('day').set({ hour: h });
 
 //------
 // #length()
@@ -177,13 +177,4 @@ test("Interval#hasSame('day') returns true for durations durations ending at mid
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n, n.plus(1, 'day').startOf('day'));
   expect(i.hasSame('day')).toBeTruthy();
-});
-
-//------
-// locale
-//------
-test('Interval#locale() returns the locale', () => {
-  const dt = DateTime.local().locale('be'),
-    i = Interval.after(dt, 1, 'day');
-  expect(i.locale()).toBe('be');
 });

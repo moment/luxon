@@ -89,12 +89,12 @@ export class Formatter {
   formatDateTimeFromString(dt, fmt) {
     const string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
-        if (dt.isOffsetFixed() && dt.offset() === 0 && opts.allowZ) {
+        if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
           return 'Z';
         }
 
-        const hours = Util.towardZero(dt.offset() / 60),
-          minutes = Math.abs(dt.offset() % 60),
+        const hours = Util.towardZero(dt.offset / 60),
+          minutes = Math.abs(dt.offset % 60),
           sign = hours >= 0 ? '+' : '-',
           base = `${sign}${Math.abs(hours)}`;
 
@@ -116,28 +116,28 @@ export class Formatter {
         switch (token) {
           // ms
           case 'S':
-            return this.num(dt.millisecond());
+            return this.num(dt.millisecond);
           case 'SSS':
-            return this.num(dt.millisecond(), 3);
+            return this.num(dt.millisecond, 3);
           // seconds
           case 's':
-            return this.num(dt.second());
+            return this.num(dt.second);
           case 'ss':
-            return this.num(dt.second(), 2);
+            return this.num(dt.second, 2);
           // minutes
           case 'm':
-            return this.num(dt.minute());
+            return this.num(dt.minute);
           case 'mm':
-            return this.num(dt.minute(), 2);
+            return this.num(dt.minute, 2);
           // hours
           case 'h':
-            return this.num(dt.hour() === 12 ? 12 : dt.hour() % 12);
+            return this.num(dt.hour === 12 ? 12 : dt.hour % 12);
           case 'hh':
-            return this.num(dt.hour() === 12 ? 12 : dt.hour() % 12, 2);
+            return this.num(dt.hour === 12 ? 12 : dt.hour % 12, 2);
           case 'H':
-            return this.num(dt.hour());
+            return this.num(dt.hour);
           case 'HH':
-            return this.num(dt.hour(), 2);
+            return this.num(dt.hour, 2);
           // offset
           case 'Z':
             // like +6
@@ -150,26 +150,26 @@ export class Formatter {
             return formatOffset({ format: 'techie', allowZ: false });
           case 'ZZZZ':
             // like EST
-            return dt.offsetNameShort();
+            return dt.offsetNameShort;
           case 'ZZZZZ':
             // like Eastern Standard Time
-            return dt.offsetNameLong();
+            return dt.offsetNameLong;
           // zone
           case 'z':
-            return dt.timezoneName();
+            return dt.timezoneName;
           // like America/New_York
           // meridiems
           case 'a':
             return string({ hour: 'numeric', hour12: true }, 'dayperiod');
           // dates
           case 'd':
-            return outputCal ? string({ day: 'numeric' }, 'day') : this.num(dt.day());
+            return outputCal ? string({ day: 'numeric' }, 'day') : this.num(dt.day);
           case 'dd':
-            return outputCal ? string({ day: '2-digit' }, 'day') : this.num(dt.day(), 2);
+            return outputCal ? string({ day: '2-digit' }, 'day') : this.num(dt.day, 2);
           // weekdays - format
           case 'c':
             // like 1
-            return this.num(dt.weekday());
+            return this.num(dt.weekday);
           case 'ccc':
             // like 'Tues'
             return string({ weekday: 'short' }, 'weekday');
@@ -182,7 +182,7 @@ export class Formatter {
           // weekdays - standalone
           case 'E':
             // like 1
-            return this.num(dt.weekday());
+            return this.num(dt.weekday);
           case 'EEE':
             // like 'Tues'
             return string({ weekday: 'short', month: 'long', day: 'numeric' }, 'weekday');
@@ -211,10 +211,10 @@ export class Formatter {
           // months - standalone
           case 'M':
             // like 1
-            return outputCal ? string({ month: 'numeric' }, 'month') : this.num(dt.month());
+            return outputCal ? string({ month: 'numeric' }, 'month') : this.num(dt.month);
           case 'MM':
             // like 01
-            return outputCal ? string({ month: '2-digit' }, 'month') : this.num(dt.month(), 2);
+            return outputCal ? string({ month: '2-digit' }, 'month') : this.num(dt.month, 2);
           case 'MMM':
             // like Jan
             return string({ month: 'short', day: 'numeric' }, 'month');
@@ -227,15 +227,15 @@ export class Formatter {
           // years
           case 'y':
             // like 2014
-            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year());
+            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year);
           case 'yy':
             // like 14
             return outputCal
               ? string({ year: '2-digit' }, 'year')
-              : this.num(dt.year().toString().slice(-2), 2);
+              : this.num(dt.year.toString().slice(-2), 2);
           case 'yyyy':
             // like 0012
-            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year(), 4);
+            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year, 4);
           // eras
           case 'G':
             // like AD
@@ -246,17 +246,17 @@ export class Formatter {
           case 'GGGGG':
             return string({ era: 'narrow' }, 'era');
           case 'kk':
-            return this.num(dt.weekYear().toString().slice(-2), 2);
+            return this.num(dt.weekYear.toString().slice(-2), 2);
           case 'kkkk':
-            return this.num(dt.weekYear(), 4);
+            return this.num(dt.weekYear, 4);
           case 'W':
-            return this.num(dt.weekNumber());
+            return this.num(dt.weekNumber);
           case 'WW':
-            return this.num(dt.weekNumber(), 2);
+            return this.num(dt.weekNumber, 2);
           case 'o':
-            return this.num(dt.ordinal());
+            return this.num(dt.ordinal);
           case 'ooo':
-            return this.num(dt.ordinal(), 3);
+            return this.num(dt.ordinal, 3);
           // macros
           case 'D':
             // like 10/14/1983
