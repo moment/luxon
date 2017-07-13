@@ -49,12 +49,11 @@ export class Interval {
   /**
    * Create an Interval from a start DateTime and a Duration to extend to.
    * @param {DateTime|object|Date} start
-   * @param {Duration|number} durationOrNumber - the length of the Interval.
-   * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
+   * @param {Duration|number|object} duration - the length of the Interval.
    * @return {Interval}
    */
-  static after(start, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit),
+  static after(start, duration) {
+    const dur = Util.friendlyDuration(duration),
       dt = Util.friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
   }
@@ -62,12 +61,11 @@ export class Interval {
   /**
    * Create an Interval from an end DateTime and a Duration to extend backwards to.
    * @param {DateTime|object|Date} end
-   * @param {Duration|number} durationOrNumber - the length of the Interval.
-   * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
+   * @param {Duration|number|object} duration - the length of the Interval.
    * @return {Interval}
    */
-  static before(end, durationOrNumber, unit) {
-    const dur = Util.friendlyDuration(durationOrNumber, unit),
+  static before(end, duration) {
+    const dur = Util.friendlyDuration(duration),
       dt = Util.friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
   }
@@ -183,13 +181,12 @@ export class Interval {
   /**
    * Split this Interval into smaller Intervals, each of the specified length.
    * Left over time is grouped into a smaller interval
-   * @param {Duration|number} durationOrNumber - The length of each resulting interval.
-   * @param {string} [unit='milliseconds'] - The unit to interpret the first argument as. Only applicable if the first argument is a number. Can be 'years', 'months', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
+   * @param {Duration|number|object} durationOrNumber - The length of each resulting interval.
    * @return {[Interval]}
    */
-  splitBy(durationOrNumber, unit = 'milliseconds') {
+  splitBy(duration) {
     if (!this.valid) return [];
-    const dur = Util.friendlyDuration(durationOrNumber, unit),
+    const dur = Util.friendlyDuration(duration),
       results = [];
     let s = this.s,
       added,

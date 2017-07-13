@@ -30,49 +30,49 @@ test('Ambiguous dates pick the one with the current offset', () => {
 });
 
 test('Adding an hour to land on the Spring Forward springs forward', () => {
-  const d = local(2017, 3, 12, 1).plus(1, 'hour');
+  const d = local(2017, 3, 12, 1).plus({ hour: 1 });
   expect(d.hour).toBe(3);
   expect(d.offset).toBe(-4 * 60);
 });
 
 test('Subtracting an hour to land on the Spring Forward springs forward', () => {
-  const d = local(2017, 3, 12, 3).minus(1, 'hour');
+  const d = local(2017, 3, 12, 3).minus({ hour: 1 });
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-5 * 60);
 });
 
 test('Adding an hour to land on the Fall Back falls back', () => {
-  const d = local(2017, 11, 5, 1).plus(1, 'hour');
+  const d = local(2017, 11, 5, 1).plus({ hour: 1 });
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-5 * 60);
 });
 
 test('Subtracting an hour to land on the Fall Back falls back', () => {
-  let d = local(2017, 11, 5, 3).minus(2, 'hour');
+  let d = local(2017, 11, 5, 3).minus({ hour: 2 });
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-5 * 60);
 
-  d = d.minus(1, 'hour');
+  d = d.minus({ hour: 1 });
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-4 * 60);
 });
 
 test('Changing a calendar date to land on a hole bumps forward', () => {
-  let d = local(2017, 3, 11, 2).plus(1, 'day');
+  let d = local(2017, 3, 11, 2).plus({ day: 1 });
   expect(d.hour).toBe(3);
   expect(d.offset).toBe(-4 * 60);
 
-  d = local(2017, 3, 13, 2).minus(1, 'day');
+  d = local(2017, 3, 13, 2).minus({ day: 1 });
   expect(d.hour).toBe(3);
   expect(d.offset).toBe(-4 * 60);
 });
 
 test('Changing a calendar date to land on an ambiguous time chooses the closest one', () => {
-  let d = local(2017, 11, 4, 1).plus(1, 'day');
+  let d = local(2017, 11, 4, 1).plus({ day: 1 });
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-4 * 60);
 
-  d = local(2017, 11, 6, 1).minus(1, 'day');
+  d = local(2017, 11, 6, 1).minus({ day: 1 });
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-5 * 60);
 });

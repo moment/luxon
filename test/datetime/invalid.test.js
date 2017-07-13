@@ -16,8 +16,8 @@ test('Invalid creations are invalid', () => {
 });
 
 test('Addition maintains invalidity', () => {
-  expect(organic1.plus(1, 'day').isValid).toBe(false);
-  expect(organic2.plus(1, 'day').isValid).toBe(false);
+  expect(organic1.plus({ day: 1 }).isValid).toBe(false);
+  expect(organic2.plus({ day: 1 }).isValid).toBe(false);
 });
 
 test('Conversion to UTC maintains invalidity', () => {

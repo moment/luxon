@@ -11,13 +11,13 @@ import { Settings } from '../settings';
  */
 
 export class Util {
-  static friendlyDuration(durationOrNumber, type) {
-    if (Util.isNumber(durationOrNumber)) {
-      return Duration.fromLength(durationOrNumber, type);
-    } else if (durationOrNumber instanceof Duration) {
-      return durationOrNumber;
-    } else if (durationOrNumber instanceof Object) {
-      return Duration.fromObject(durationOrNumber);
+  static friendlyDuration(duration) {
+    if (Util.isNumber(duration)) {
+      return Duration.fromMilliseconds(duration);
+    } else if (duration instanceof Duration) {
+      return duration;
+    } else if (duration instanceof Object) {
+      return Duration.fromObject(duration);
     } else {
       throw new Error('Unknown duration argument');
     }

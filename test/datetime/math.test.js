@@ -17,21 +17,21 @@ function createDateTime() {
 //------
 // #plus()
 //------
-test("DateTime#plus(1, 'year') adds a year", () => {
-  const i = createDateTime().plus(1, 'years');
+test('DateTime#plus({ year: 1}) adds a year', () => {
+  const i = createDateTime().plus({ years: 1 });
   expect(i.year).toBe(2011);
 });
 
-test("DateTime#plus(1, 'day') keeps the same time across a DST", () => {
+test('DateTime#plus({ days: 1 }) keeps the same time across a DST', () => {
   const i = DateTime.fromISO('2016-03-12T10:00', { zone: 'America/Los_Angeles' }),
-    later = i.plus(1, 'day');
+    later = i.plus({ days: 1 });
   expect(later.day).toBe(13);
   expect(later.hour).toBe(10);
 });
 
-test("DateTime#plus(24, 'hours') gains an hour to spring forward", () => {
+test('DateTime#plus({ hours: 24 }) gains an hour to spring forward', () => {
   const i = DateTime.fromISO('2016-03-12T10:00', { zone: 'America/Los_Angeles' }),
-    later = i.plus(24, 'hours');
+    later = i.plus({ hours: 24 });
   expect(later.day).toBe(13);
   expect(later.hour).toBe(11);
 });
@@ -44,9 +44,9 @@ test('DateTime#plus(Duration) adds the right amount of time', () => {
   expect(later.minute).toBe(41);
 });
 
-test('DateTime#plus(object) adds the right amount of time', () => {
+test('DateTime#plus(multiple) adds the right amount of time', () => {
   const i = DateTime.fromISO('2016-03-12T10:13'),
-    later = i.plus({ day: 1, hour: 3, minute: 28 });
+    later = i.plus({ days: 1, hours: 3, minutes: 28 });
   expect(later.day).toBe(13);
   expect(later.hour).toBe(13);
   expect(later.minute).toBe(41);
@@ -55,8 +55,8 @@ test('DateTime#plus(object) adds the right amount of time', () => {
 //------
 // #minus()
 //------
-test("DateTime#minus(1, 'year') subtracts a year", () => {
-  const dt = createDateTime().minus(1, 'year');
+test('DateTime#minus({ years: 1 }) subtracts a year', () => {
+  const dt = createDateTime().minus({ years: 1 });
   expect(dt.year).toBe(2009);
 });
 

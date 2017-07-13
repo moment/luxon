@@ -20,7 +20,7 @@
 
             <pre>
                 <code>
-DateTime.local().timezone('America/New_York').minus(1, 'week').endOf('day').toISO();
+DateTime.local().timezone('America/New_York').minus({ weeks: 1}).endOf('day').toISO();
                 </code>
             </pre>
 

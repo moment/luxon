@@ -25,7 +25,6 @@ function demo(luxon) {
   example("DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36})");
   example("DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36}, 'America/New_York')");
   example("DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36}, 'Asia/Singapore')");
-  example("DateTime.local().plus(1, 'minute')");
   example("DateTime.local().plus({minutes: 15, seconds: 8})");
   example("DateTime.local().plus({days: 6})");
   example("DateTime.local().minus({days: 6})");

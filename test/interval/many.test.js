@@ -253,8 +253,8 @@ test('Interval#splitAt breaks up the interval', () => {
 //-------
 // #splitBy()
 //-------
-test('Interval#splitBy accepts a count and unit', () => {
-  const split = todayFrom(8, 13).splitBy(2, 'hours');
+test('Interval#splitBy accepts an object', () => {
+  const split = todayFrom(8, 13).splitBy({ hours: 2 });
   expect(split.length).toBe(3);
   expect(split[0].equals(todayFrom(8, 10))).toBeTruthy();
   expect(split[1].equals(todayFrom(10, 12))).toBeTruthy();
@@ -284,11 +284,11 @@ test('Interval#divideEqually should split a 1m30s into 3 30-second parts', () =>
     split = after(todayAt(9), 1, 30).divideEqually(3);
   expect(split.length).toBe(3);
   expect(split[0].equals(after(todayAt(9), 0, 30))).toBeTruthy();
-  expect(split[2].equals(after(todayAt(9).plus(1, 'minute'), 0, 30))).toBeTruthy();
+  expect(split[2].equals(after(todayAt(9).plus({ minutes: 1 }), 0, 30))).toBeTruthy();
 });
 
 test('Interval#divideEqually always gives you the right number of parts', () => {
-  const int = Interval.after(todayAt(9), 7, 'minutes'),
+  const int = Interval.after(todayAt(9), { minutes: 7 }),
     split = int.divideEqually(17);
   expect(split.length).toBe(17);
 });

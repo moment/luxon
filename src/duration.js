@@ -78,14 +78,12 @@ export class Duration {
   }
 
   /**
-   * Create Duration from number and a unit.
-   * @param {number} count
-   * @param {string} [unit='milliseconds'] - a unit such as 'minutes' or 'days'
+   * Create Duration from a number of milliseconds.
+   * @param {number} number of milliseconds
    * @return {Duration}
    */
-  static fromLength(count, unit = 'milliseconds') {
-    const realUnit = Duration.normalizeUnit(unit);
-    return Duration.fromObject({ [realUnit]: count });
+  static fromMilliseconds(count) {
+    return Duration.fromObject({ milliseconds: count });
   }
 
   /**
@@ -233,14 +231,13 @@ export class Duration {
 
   /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
-   * @param {string} [unit='milliseconds'] - The unit to add. Only applicable if the first argument is a number. Can be 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
+   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
-  plus(durationOrNumber, unit = 'millisecond') {
+  plus(duration) {
     if (!this.valid) return this;
 
-    const dur = Util.friendlyDuration(durationOrNumber, unit),
+    const dur = Util.friendlyDuration(duration),
       result = {};
 
     for (const k of orderedUnits) {
@@ -255,14 +252,13 @@ export class Duration {
 
   /**
    * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
-   * @param {string} [unit='milliseconds'] - The unit to subtract. Only applicable if the first argument is a number. Can be 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', or 'milliseconds'.
+   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
-  minus(durationOrNumber, unit = 'milliseconds') {
+  minus(duration) {
     if (!this.valid) return this;
 
-    const dur = Util.friendlyDuration(durationOrNumber, unit);
+    const dur = Util.friendlyDuration(duration);
     return this.plus(dur.negate());
   }
 
@@ -288,8 +284,8 @@ export class Duration {
    */
   set(values) {
     const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit)),
-          { locale, numberingSystem } = values,
-          loc = this.loc.clone(values);
+      { locale, numberingSystem } = values,
+      loc = this.loc.clone({ locale, numberingSystem });
 
     return clone(this, { values: mixed, loc });
   }

@@ -5,7 +5,7 @@ import { Duration } from '../../src/luxon';
 // #shiftTo()
 //-------
 test('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', () => {
-  const dur = Duration.fromLength(5760000, 'milliseconds');
+  const dur = Duration.fromMilliseconds(5760000);
   expect(dur.shiftTo('hours').hours).toBe(1.6);
 
   const mod = dur.shiftTo('hours', 'minutes');
@@ -15,7 +15,7 @@ test('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', () => {
 });
 
 test('Duration#shiftTo boils hours down shiftTo milliseconds', () => {
-  const dur = Duration.fromLength(1, 'hour').shiftTo('milliseconds');
+  const dur = Duration.fromObject({ hours: 1 }).shiftTo('milliseconds');
   expect(dur.milliseconds).toBe(3600000);
 });
 

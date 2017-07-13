@@ -709,7 +709,7 @@ export class DateTime {
     }
 
     const { locale, numberingSystem, outputCalendar } = values,
-          loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
+      loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
 
     const [ts, o] = objToTS(mixed, this.o, this.zone);
     return clone(this, { ts, o, loc });
@@ -1015,31 +1015,30 @@ export class DateTime {
    * Add a period of time to this DateTime and return the resulting DateTime
    * * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds.
    * * Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way.
-   * Thus, `dt.plus(24, 'hours')` may result in a different time than `dt.plus(1, 'day')` if there's a DST shift in between.
-   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
-   * @param {string} [unit='millisecond'] - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
-   * @example DateTime.local().plus(15, 'minutes') //~> in 15 minutes
-   * @example DateTime.local().plus(1, 'day') //~> this time tomorrow
-   * @example DateTime.local().plus({hours: 3, minutes: 13}) //~> in 1 hr, 13 min
-   * @example DateTime.local().plus(Duration.fromObject({hours: 3, minutes: 13})) //~> in 1 hr, 13 min
+   * Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
+   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @example DateTime.local().plus(123) //~> in 123 milliseconds
+   * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
+   * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
+   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
+   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
    * @return {DateTime}
    */
-  plus(durationOrNumber, unit) {
+  plus(duration) {
     if (!this.valid) return this;
-    const dur = Util.friendlyDuration(durationOrNumber, unit);
+    const dur = Util.friendlyDuration(duration);
     return clone(this, adjustTime(this, dur));
   }
 
   /**
    * Subtract a period of time to this DateTime and return the resulting DateTime
    * See {@link plus}
-   * @param {Duration|number|object} durationOrNumber - The amount to add. Either a Luxon Duration, a number (see next argument for units), or the object argument to Duration.fromObject()
-   * @param {string} unit - The unit to add. Only applicable if the first argument is a number. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
-   * @return {DateTime}
+   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+    @return {DateTime}
    */
-  minus(durationOrNumber, unit) {
+  minus(duration) {
     if (!this.valid) return this;
-    const dur = Util.friendlyDuration(durationOrNumber, unit).negate();
+    const dur = Util.friendlyDuration(duration).negate();
     return clone(this, adjustTime(this, dur));
   }
 
@@ -1090,7 +1089,7 @@ export class DateTime {
    * @return {DateTime}
    */
   endOf(unit) {
-    return this.valid ? this.startOf(unit).plus(1, unit).minus(1, 'milliseconds') : this;
+    return this.valid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
   }
 
   /**
@@ -1128,7 +1127,7 @@ export class DateTime {
       cursor = cursor.set({ year: post.year });
 
       if (cursor > post) {
-        cursor = cursor.minus(1, 'years');
+        cursor = cursor.minus({ years: 1 });
         dYear -= 1;
       }
 
@@ -1143,7 +1142,7 @@ export class DateTime {
       cursor = cursor.set({ year: post.year, month: post.month });
 
       if (cursor > post) {
-        cursor = cursor.minus(1, 'months');
+        cursor = cursor.minus({ months: 1 });
         dMonth -= 1;
       }
 
@@ -1154,16 +1153,16 @@ export class DateTime {
     const computeDayDelta = () => {
       const utcDayStart = dt => dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromLength(ms).shiftTo('days').days);
+      return Math.floor(Duration.fromMilliseconds(ms).shiftTo('days').days);
     };
 
     if (units.indexOf('weeks') >= 0) {
       const days = computeDayDelta();
       let weeks = (days - days % 7) / 7;
-      cursor = cursor.plus(weeks, 'weeks');
+      cursor = cursor.plus({ weeks });
 
       if (cursor > post) {
-        cursor.minus(1, 'week');
+        cursor.minus({ weeks: 1 });
         weeks -= 1;
       }
 
@@ -1176,7 +1175,7 @@ export class DateTime {
       cursor = cursor.set({ year: post.year, month: post.month, day: post.day });
 
       if (cursor > post) {
-        cursor.minus(1, 'day');
+        cursor.minus({ days: 1 });
         days -= 1;
       }
 
@@ -1184,7 +1183,7 @@ export class DateTime {
       lowestOrder = 'days';
     }
 
-    const remaining = Duration.fromLength(post - cursor),
+    const remaining = Duration.fromMilliseconds(post - cursor),
       moreUnits = units.filter(
         u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
       ),

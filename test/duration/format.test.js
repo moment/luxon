@@ -40,7 +40,7 @@ test('Duration#toISO handles mixed negative/positive durations', () => {
 test("Duration#toFormat('S') returns milliseconds", () => {
   expect(dur().toFormat('S')).toBe('36993906007');
 
-  const lil = Duration.fromLength(5, 'milliseconds');
+  const lil = Duration.fromMilliseconds(5);
   expect(lil.toFormat('S')).toBe('5');
   expect(lil.toFormat('SS')).toBe('05');
   expect(lil.toFormat('SSSSS')).toBe('00005');
@@ -86,18 +86,18 @@ test("Duration#toFormat('y') returns years", () => {
   expect(dur().toFormat('y:m')).toBe('1:90965');
   expect(dur().toFormat('y:M:dd:h:mm:ss.SSS')).toBe('1:2:03:4:05:06.007');
 
-  const lil = Duration.fromLength(5, 'years');
+  const lil = Duration.fromObject({ years: 5 });
   expect(lil.toFormat('y')).toBe('5');
   expect(lil.toFormat('yy')).toBe('05');
   expect(lil.toFormat('yyyyy')).toBe('00005');
 });
 
 test('Duration#toFormat leaves in zeros', () => {
-  const tiny = Duration.fromLength(5, 'seconds');
+  const tiny = Duration.fromObject({ seconds: 5 });
   expect(tiny.toFormat('hh:mm:ss')).toBe('00:00:05');
   expect(tiny.toFormat('hh:mm:ss.SSS')).toBe('00:00:05.000');
 });
 
 test('Duration#toFormat localizes the numbers', () => {
-  expect(dur().set({locale: 'bn'}).toFormat('yy:MM:dd:h:mm:ss.SSS')).toBe('০১:০২:০৩:৪:০৫:০৬.০০৭');
+  expect(dur().set({ locale: 'bn' }).toFormat('yy:MM:dd:h:mm:ss.SSS')).toBe('০১:০২:০৩:৪:০৫:০৬.০০৭');
 });

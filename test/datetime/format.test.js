@@ -359,7 +359,7 @@ test("DateTime#toFormat('y') returns the full year", () => {
 
 test("DateTime#toFormat('yy') returns the two-digit year", () => {
   expect(dt.toFormat('yy')).toBe('82');
-  expect(dt.set({ locale: 'bn'}).toFormat('yy')).toBe('৮২');
+  expect(dt.set({ locale: 'bn' }).toFormat('yy')).toBe('৮২');
   expect(dt.set({ year: 3 }).toFormat('yy')).toBe('03');
 });
 
@@ -394,7 +394,7 @@ test("DateTime#toFormat('W') returns the week number", () => {
 
 test("DateTime#toFormat('WW') returns the padded week number", () => {
   expect(dt.toFormat('WW')).toBe('21');
-  expect(dt.set({ weekNumber: 5}).toFormat('WW')).toBe('05');
+  expect(dt.set({ weekNumber: 5 }).toFormat('WW')).toBe('05');
 });
 
 test("DateTime#toFormat('kk') returns the abbreviated week year", () => {

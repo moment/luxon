@@ -39,7 +39,7 @@ test('Duration#plus adds negatives', () => {
 
 test('Duration#plus adds single values', () => {
   const first = Duration.fromObject({ hours: 4, minutes: 12, seconds: 2 }),
-    result = first.plus(5, 'minutes');
+    result = first.plus({ minutes: 5 });
 
   expect(result.hours).toBe(4);
   expect(result.minutes).toBe(17);
@@ -62,7 +62,7 @@ test('Duration#minus subtracts durations', () => {
 
 test('Duration#minus subtracts single values', () => {
   const first = Duration.fromObject({ hours: 4, minutes: 12, seconds: 2 }),
-    result = first.minus(5, 'minutes');
+    result = first.minus({ minutes: 5 });
 
   expect(result.hours).toBe(4);
   expect(result.minutes).toBe(7);
