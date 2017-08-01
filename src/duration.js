@@ -79,7 +79,7 @@ export class Duration {
 
   /**
    * Create Duration from a number of milliseconds.
-   * @param {number} number of milliseconds
+   * @param {number} count of milliseconds
    * @return {Duration}
    */
   static fromMilliseconds(count) {

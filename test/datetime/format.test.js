@@ -6,7 +6,7 @@ const dt = DateTime.fromObject(
     { year: 1982, month: 5, day: 25, hour: 9, minute: 23, second: 54, millisecond: 123 },
     'utc'
   ),
-  ny = dt.timezone('America/New_York', { keepCalendarTime: true });
+  ny = dt.setTimeZone('America/New_York', { keepCalendarTime: true });
 
 //------
 // #toISO()
@@ -59,7 +59,7 @@ test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if 
 });
 
 test('DateTime#toISOTime() handles other offsets', () => {
-  expect(dt.timezone('America/New_York').toISOTime()).toBe('05:23:54.123-04:00');
+  expect(dt.setTimeZone('America/New_York').toISOTime()).toBe('05:23:54.123-04:00');
 });
 
 //------
@@ -68,7 +68,7 @@ test('DateTime#toISOTime() handles other offsets', () => {
 
 test('DateTime#toRFC2822() returns an RFC 2822 date', () => {
   expect(dt.toUTC().toRFC2822()).toBe('Tue, 25 May 1982 09:23:54 +0000');
-  expect(dt.timezone('America/New_York').toRFC2822()).toBe('Tue, 25 May 1982 05:23:54 -0400');
+  expect(dt.setTimeZone('America/New_York').toRFC2822()).toBe('Tue, 25 May 1982 05:23:54 -0400');
 });
 
 //------
@@ -77,7 +77,7 @@ test('DateTime#toRFC2822() returns an RFC 2822 date', () => {
 
 test('DateTime#toHTTP() returns an RFC 1123 date', () => {
   expect(dt.toUTC().toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
-  expect(dt.timezone('America/New_York').toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
+  expect(dt.setTimeZone('America/New_York').toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
 });
 
 //------
@@ -255,17 +255,17 @@ test("DateTime#toFormat('ZZZ') returns a numerical offset", () => {
 });
 
 test("DateTime#toFormat('ZZZZ') returns the short offset name", () => {
-  const zoned = dt.timezone('America/Los_Angeles');
+  const zoned = dt.setTimeZone('America/Los_Angeles');
   expect(zoned.toFormat('ZZZZ')).toBe('PDT');
 });
 
 test("DateTime#toFormat('ZZZZZ') returns the full offset name", () => {
-  const zoned = dt.timezone('America/Los_Angeles');
+  const zoned = dt.setTimeZone('America/Los_Angeles');
   expect(zoned.toFormat('ZZZZZ')).toBe('Pacific Daylight Time');
 });
 
 test("DateTime#toFormat('z') returns the zone name", () => {
-  const zoned = dt.timezone('America/Los_Angeles');
+  const zoned = dt.setTimeZone('America/Los_Angeles');
   expect(zoned.toFormat('z')).toBe('America/Los_Angeles');
 });
 

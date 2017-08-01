@@ -181,7 +181,7 @@ export class Interval {
   /**
    * Split this Interval into smaller Intervals, each of the specified length.
    * Left over time is grouped into a smaller interval
-   * @param {Duration|number|object} durationOrNumber - The length of each resulting interval.
+   * @param {Duration|number|object} duration - The length of each resulting interval.
    * @return {[Interval]}
    */
   splitBy(duration) {

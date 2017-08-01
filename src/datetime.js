@@ -145,7 +145,7 @@ function parseDataToDateTime(parsed, parsedZone, { setZone, zone } = {}) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(parsed, interpretationZone);
-    return setZone ? inst : inst.timezone(zone);
+    return setZone ? inst : inst.setTimeZone(zone);
   } else {
     return DateTime.invalid();
   }
@@ -225,7 +225,23 @@ function normalizeUnit(unit) {
 }
 
 /**
- * A specific millisecond with an associated time zone and locale
+ * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
+ *
+ * A DateTime comprises of:
+ * * A timestamp. Each DateTime instance refers to a specific millisecond of the Unix epoch.
+ * * A time zone. Each instance is considered in the context of a specific zone (by default the local system's zone).
+ * * Properties that effect how output strings are formatted, such as `locale`, `numberingSystem`, and `outputCalendar`.
+ *
+ * Here is a brief overview of the most commonly used functionality it provides:
+ *
+ * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link local}, {@link utc}, and (most flexibly) {@link fromObject}. To create one from a standard string format, use {@link fromISO}, {@link fromHTTP}, and {@link fromRFC2822}. To create one from a custom string format, use {@link fromString}. To create one from a native JS date, use {@link fromJSDate}.
+ * * **Gregorian calendar and time**: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through {@link toObject}), use the {@link year}, {@link month},
+ * {@link day}, {@link hour}, {@link minute}, {@link second}, {@link millisecond} accessors.
+ * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
+ * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link setTimeZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, and {@link valueOf}.
+ *
+ * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, and so on, see the external documentation.
  */
 export class DateTime {
   /**
@@ -330,11 +346,11 @@ export class DateTime {
 
   /**
    * Create an DateTime from a Javascript Date object. Uses the default zone.
-   * @param {Date} date - a Javascript Date object
+   * @param {Date|Any} date - a Javascript Date object
    * @return {DateTime}
    */
   static fromJSDate(date) {
-    return new DateTime({ ts: date.valueOf() });
+    return new DateTime({ ts: new Date(date).valueOf() });
   }
 
   /**
@@ -360,7 +376,7 @@ export class DateTime {
    * @param {number} obj.minute - minute of the hour, 0-59
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
-   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to timezone()
+   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setTimeZone()
    * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
    * @example DateTime.fromObject({year: 1982}).toISODate() //=> '1982-01-01T00'
    * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
@@ -574,37 +590,35 @@ export class DateTime {
   /**
    * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
    *
-   * Equivalent to {@link timezone}('utc')
+   * Equivalent to {@link setTimeZone}('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
-   * @param {object} [opts={}] - options to pass to `timezone()`
+   * @param {object} [opts={}] - options to pass to `setTimeZone()`
    * @return {DateTime}
    */
   toUTC(offset = 0, opts = {}) {
-    return this.timezone(FixedOffsetZone.instance(offset), opts);
+    return this.setTimeZone(FixedOffsetZone.instance(offset), opts);
   }
 
   /**
-   * "Set" the DateTime's zone to the environment's local zone. Returns a newly-constructed DateTime.
+   * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
    *
-   * Equivalent to `timezone('local')`
+   * Equivalent to `setTimeZone('local')`
    * @return {DateTime}
    */
   toLocal() {
-    return this.timezone(new LocalZone());
+    return this.setTimeZone(new LocalZone());
   }
 
   /**
-   * "Set" the DateTime's zone to specified zone. Return a newly-constructed DateTime.
+   * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
    *
-   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will behave differently in these ways:
-   * * getters such as {@link hour} or {@link minute} will report local times in the target zone
-   * * {@link plus} and {@link minus} will use the target zone's DST rules (or their absence) when adding days or larger to the DateTime
-   * * strings will be formatted according to the target zone's offset
-   * You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
-   *
+   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
+   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'utc+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
+   * @param {object} opts - options
+   * @param {boolean} [opts.keepCalendarTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
-  timezone(zone, { keepCalendarTime = false } = {}) {
+  setTimeZone(zone, { keepCalendarTime = false } = {}) {
     zone = Util.normalizeZone(zone);
     if (zone.equals(this.zone)) {
       return this;
@@ -617,7 +631,7 @@ export class DateTime {
   }
 
   /**
-   * Get the name of the timezone
+   * Get the name of the timezone.
    * @return {String}
    */
   get timezoneName() {
@@ -625,7 +639,7 @@ export class DateTime {
   }
 
   /**
-   * Get the short human name for the zone's current offset, for example "EST" or "EDT"
+   * Get the short human name for the zone's current offset, for example "EST" or "EDT".
    * @return {String}
    */
   get offsetNameShort() {
@@ -633,7 +647,8 @@ export class DateTime {
   }
 
   /**
-   * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time". Is locale-aware.
+   * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
+   * Is locale-aware.
    * @return {String}
    */
   get offsetNameLong() {
@@ -641,7 +656,7 @@ export class DateTime {
   }
 
   /**
-   * Get whether this zone's offset ever changes, as in a DST
+   * Get whether this zone's offset ever changes, as in a DST.
    * @return {boolean}
    */
   get isOffsetFixed() {
@@ -649,7 +664,7 @@ export class DateTime {
   }
 
   /**
-   * Get whether the DateTime is in a DST
+   * Get whether the DateTime is in a DST.
    * @return {boolean}
    */
   get isInDST() {
@@ -663,7 +678,7 @@ export class DateTime {
   }
 
   /**
-   * Get the value of unit
+   * Get the value of unit.
    * @param {string} unit - a unit such as 'minute' or 'day'
    * @example DateTime.local(2017, 7, 4).get('month'); //=> 7
    * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
@@ -869,7 +884,7 @@ export class DateTime {
   }
 
   /**
-   * Returns a string representation of this DateTime formatted according to the specified format string
+   * Returns a string representation of this DateTime formatted according to the specified format string.
    * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool.
    * [todo - token definitions here]
    * @param {string} fmt - the format string
@@ -1013,9 +1028,8 @@ export class DateTime {
 
   /**
    * Add a period of time to this DateTime and return the resulting DateTime
-   * * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds.
-   * * Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way.
-   * Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
+   *
+   * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
    * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @example DateTime.local().plus(123) //~> in 123 milliseconds
    * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
@@ -1043,7 +1057,7 @@ export class DateTime {
   }
 
   /**
-   * "Set" this DateTime to the beginning of a unit of time
+   * "Set" this DateTime to the beginning of a unit of time.
    * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
    * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'

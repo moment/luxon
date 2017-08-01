@@ -9,7 +9,7 @@ const millis = 391147200000,
 //------
 // defaults
 //------
-test('timezone defaults to local', () => {
+test('setTimeZone defaults to local', () => {
   expect(dt().isOffsetFixed).toBe(false);
 });
 
@@ -46,10 +46,10 @@ test('DateTime#toLocal() sets the calendar back to local', () => {
 });
 
 //------
-// #timezone()
+// #setTimeZone()
 //------
-test('timezone sets the TZ to the specified zone', () => {
-  const zoned = dt().timezone('America/Los_Angeles');
+test('setTimeZone sets the TZ to the specified zone', () => {
+  const zoned = dt().setTimeZone('America/Los_Angeles');
 
   expect(zoned.timezoneName).toBe('America/Los_Angeles');
   expect(zoned.isOffsetFixed).toBe(false);
@@ -61,23 +61,23 @@ test('timezone sets the TZ to the specified zone', () => {
 });
 
 test('accepts "local"', () => {
-  const zoned = DateTime.utc().timezone('local');
+  const zoned = DateTime.utc().setTimeZone('local');
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 
 test('accepts "utc"', () => {
-  const zoned = DateTime.local().timezone('utc');
+  const zoned = DateTime.local().setTimeZone('utc');
   expect(zoned.offset).toBe(0);
 });
 
 test('accepts "utc+3"', () => {
-  const zoned = DateTime.local().timezone('utc+3');
+  const zoned = DateTime.local().setTimeZone('utc+3');
   expect(zoned.offset).toBe(3 * 60);
 });
 
 test('accepts IANA zone names', () => {
   // this will only work in Chrome/V8 for now
-  const zoned = dt().timezone('Europe/Paris');
+  const zoned = dt().setTimeZone('Europe/Paris');
   expect(zoned.timezoneName).toBe('Europe/Paris');
   // not convinced this is universal. Could also be 'CEDT'
   expect(zoned.offsetNameShort).toBe('GMT+2');
@@ -86,8 +86,8 @@ test('accepts IANA zone names', () => {
   expect(zoned.hour).toBe(6); // cedt is +2
 });
 
-test('timezone accepts a keepCalendarTime option', () => {
-  const zoned = dt().toUTC().timezone('America/Los_Angeles', { keepCalendarTime: true });
+test('setTimeZone accepts a keepCalendarTime option', () => {
+  const zoned = dt().toUTC().setTimeZone('America/Los_Angeles', { keepCalendarTime: true });
   expect(zoned.timezoneName).toBe('America/Los_Angeles');
   expect(zoned.year).toBe(1982);
   expect(zoned.month).toBe(5);
@@ -95,7 +95,7 @@ test('timezone accepts a keepCalendarTime option', () => {
   expect(zoned.hour).toBe(4);
   expect(zoned.isOffsetFixed).toBe(false);
 
-  const zonedMore = zoned.timezone('America/New_York', { keepCalendarTime: true });
+  const zonedMore = zoned.setTimeZone('America/New_York', { keepCalendarTime: true });
   expect(zonedMore.timezoneName).toBe('America/New_York');
   expect(zonedMore.year).toBe(1982);
   expect(zonedMore.month).toBe(5);
@@ -108,16 +108,16 @@ test('timezone accepts a keepCalendarTime option', () => {
 // #isInDST()
 //------
 test('DateTime#isInDST() returns false for pre-DST times', () => {
-  const zoned = dt().timezone('America/Los_Angeles');
+  const zoned = dt().setTimeZone('America/Los_Angeles');
   expect(zoned.set({ month: 1 }).isInDST).toBe(false);
 });
 
 test('DateTime#isInDST() returns true for during-DST times', () => {
-  const zoned = dt().timezone('America/Los_Angeles');
+  const zoned = dt().setTimeZone('America/Los_Angeles');
   expect(zoned.set({ month: 5 }).isInDST).toBe(true);
 });
 
 test('DateTime#isInDST() returns false for post-DST times', () => {
-  const zoned = dt().timezone('America/Los_Angeles');
+  const zoned = dt().setTimeZone('America/Los_Angeles');
   expect(zoned.set({ month: 12 }).isInDST).toBe(false);
 });
