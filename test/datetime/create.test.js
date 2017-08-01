@@ -220,8 +220,8 @@ test('DateTime.fromObject() sets all the fields', () => {
   expect(dateTime.millisecond).toBe(123);
 });
 
-test('DateTime.fromObject() accepts "utc" as the second argument', () => {
-  const dateTime = DateTime.fromObject(baseObject, 'utc');
+test('DateTime.fromObject() accepts a zone option of "utc"', () => {
+  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, {zone: 'utc'}));
 
   expect(dateTime.isOffsetFixed).toBe(true);
   expect(dateTime.year).toBe(1982);
@@ -233,8 +233,8 @@ test('DateTime.fromObject() accepts "utc" as the second argument', () => {
   expect(dateTime.millisecond).toBe(123);
 });
 
-test('DateTime.fromObject() accepts "utc-8" as the second argument', () => {
-  const dateTime = DateTime.fromObject(baseObject, 'utc-8');
+test('DateTime.fromObject() accepts "utc-8" as the zone option', () => {
+  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, {zone: 'utc-8'}));
 
   expect(dateTime.isOffsetFixed).toBe(true);
   expect(dateTime.offset).toBe(-8 * 60);
@@ -247,8 +247,8 @@ test('DateTime.fromObject() accepts "utc-8" as the second argument', () => {
   expect(dateTime.millisecond).toBe(123);
 });
 
-test('DateTime.fromObject() accepts "America/Los_Angeles" as the second argument', () => {
-  const dateTime = DateTime.fromObject(baseObject, 'America/Los_Angeles');
+test('DateTime.fromObject() accepts "America/Los_Angeles" as the zone option', () => {
+  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, {zone: 'America/Los_Angeles'}));
 
   expect(dateTime.isOffsetFixed).toBe(false);
   expect(dateTime.offset).toBe(-7 * 60);
@@ -261,15 +261,9 @@ test('DateTime.fromObject() accepts "America/Los_Angeles" as the second argument
   expect(dateTime.millisecond).toBe(123);
 });
 
-test('DateTime.fromObject() accepts a Zone as the second argument', () => {
-  const daylight = DateTime.fromObject(
-      Object.assign({}, baseObject, { month: 5 }),
-      'America/Los_Angeles'
-    ),
-    standard = DateTime.fromObject(
-      Object.assign({}, baseObject, { month: 12 }),
-      'America/Los_Angeles'
-    );
+test('DateTime.fromObject() accepts a Zone as the zone option', () => {
+  const daylight = DateTime.fromObject(Object.assign({}, baseObject, { month: 5, zone: 'America/Los_Angeles' })),
+        standard = DateTime.fromObject(Object.assign({}, baseObject, { month: 12, zone: 'America/Los_Angeles' }));
 
   expect(daylight.isOffsetFixed).toBe(false);
   expect(daylight.offset).toBe(-7 * 60);

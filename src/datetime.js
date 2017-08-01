@@ -144,7 +144,7 @@ function adjustTime(inst, dur) {
 function parseDataToDateTime(parsed, parsedZone, { setZone, zone } = {}) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
-      inst = DateTime.fromObject(parsed, interpretationZone);
+          inst = DateTime.fromObject(Object.assign(parsed, {zone: interpretationZone}));
     return setZone ? inst : inst.setTimeZone(zone);
   } else {
     return DateTime.invalid();
@@ -302,8 +302,7 @@ export class DateTime {
       return new DateTime({ ts: Settings.now() });
     } else {
       return DateTime.fromObject(
-        { year, month, day, hour, minute, second, millisecond },
-        Settings.defaultZone
+        { year, month, day, hour, minute, second, millisecond, zone: Settings.defaultZone }
       );
     }
   }
@@ -332,36 +331,31 @@ export class DateTime {
       return new DateTime({ ts: Settings.now(), zone: FixedOffsetZone.utcInstance });
     } else {
       return DateTime.fromObject(
-        { year, month, day, hour, minute, second, millisecond },
-        FixedOffsetZone.utcInstance
+        { year, month, day, hour, minute, second, millisecond, zone: FixedOffsetZone.utcInstance}
       );
     }
   }
 
   /**
-   * Create an invalid DateTime.
-   * @return {DateTime}
-   */
-  static invalid() {
-    return new DateTime({ valid: false });
-  }
-
-  /**
    * Create an DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date|Any} date - a Javascript Date object
+   * @param {Object} obj - the object to create the DateTime from
+   * @param {string|Zone} [zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
-  static fromJSDate(date) {
-    return new DateTime({ ts: new Date(date).valueOf() });
+  static fromJSDate(date, { zone = Settings.defaultZone } = {}) {
+    return new DateTime({ ts: new Date(date).valueOf(), zone });
   }
 
   /**
    * Create an DateTime from a count of epoch milliseconds. Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
+   * @param {Object} obj - the object to create the DateTime from
+   * @param {string|Zone} [zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
-  static fromMillis(milliseconds) {
-    return new DateTime({ ts: milliseconds });
+  static fromMillis(milliseconds, { zone = Settings.defaultZone } = {}) {
+    return new DateTime({ ts: milliseconds, zone });
   }
 
   /**
@@ -378,19 +372,19 @@ export class DateTime {
    * @param {number} obj.minute - minute of the hour, 0-59
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
-   * @param {string|Zone} [zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setTimeZone()
-   * @example DateTime.fromObject({year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
-   * @example DateTime.fromObject({year: 1982}).toISODate() //=> '1982-01-01T00'
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}) //~> today at 10:26:06
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'utc')
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'local')
-   * @example DateTime.fromObject({hour: 10, minute: 26, second: 6}, 'America/New_York')
+   * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setTimeZone()
+   * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
+   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01T00'
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'utc' }),
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'local' })
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'America/New_York' })
    * @example DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
    * @return {DateTime}
    */
-  static fromObject(obj, zone) {
+  static fromObject(obj) {
     const tsNow = Settings.now(),
-      zoneToUse = Util.normalizeZone(zone),
+      zoneToUse = Util.normalizeZone(obj.zone),
       offsetProvis = zoneToUse.offset(tsNow),
       normalized = Util.normalizeObject(obj, normalizeUnit),
       containsOrdinal = !Util.isUndefined(normalized.ordinal),
@@ -538,6 +532,14 @@ export class DateTime {
     const parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem })),
       [vals, parsedZone] = parser.parseDateTime(text, fmt);
     return parseDataToDateTime(vals, parsedZone, { setZone, zone });
+  }
+
+  /**
+   * Create an invalid DateTime.
+   * @return {DateTime}
+   */
+  static invalid() {
+    return new DateTime({ valid: false });
   }
 
   // INFO
