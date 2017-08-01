@@ -276,6 +276,8 @@ export class DateTime {
     Object.defineProperty(this, 'o', { value: o });
   }
 
+  // CONSTRUCT
+
   /**
    * Create a local DateTime
    * @param {number} year - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
@@ -538,16 +540,17 @@ export class DateTime {
     return parseDataToDateTime(vals, parsedZone, { setZone, zone });
   }
 
+  // INFO
+
   /**
-   * Explain how a string would be parsed by fromString()
-   * @param {string} text - the string to parse
-   * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {object} options - options taken by fromString()
-   * @return {object}
+   * Get the value of unit.
+   * @param {string} unit - a unit such as 'minute' or 'day'
+   * @example DateTime.local(2017, 7, 4).get('month'); //=> 7
+   * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
+   * @return {number}
    */
-  static fromStringExplain(text, fmt, options = {}) {
-    const parser = new TokenParser(Locale.fromOpts(options));
-    return parser.explainParse(text, fmt);
+  get(unit) {
+    return this[unit];
   }
 
   /**
@@ -583,51 +586,8 @@ export class DateTime {
    *
    * @return {string}
    */
-  outputCalendar() {
+  get outputCalendar() {
     return this.loc.outputCalendar;
-  }
-
-  /**
-   * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
-   *
-   * Equivalent to {@link setTimeZone}('utc')
-   * @param {number} [offset=0] - optionally, an offset from UTC in minutes
-   * @param {object} [opts={}] - options to pass to `setTimeZone()`
-   * @return {DateTime}
-   */
-  toUTC(offset = 0, opts = {}) {
-    return this.setTimeZone(FixedOffsetZone.instance(offset), opts);
-  }
-
-  /**
-   * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
-   *
-   * Equivalent to `setTimeZone('local')`
-   * @return {DateTime}
-   */
-  toLocal() {
-    return this.setTimeZone(new LocalZone());
-  }
-
-  /**
-   * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
-   *
-   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
-   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'utc+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
-   * @param {object} opts - options
-   * @param {boolean} [opts.keepCalendarTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
-   * @return {DateTime}
-   */
-  setTimeZone(zone, { keepCalendarTime = false } = {}) {
-    zone = Util.normalizeZone(zone);
-    if (zone.equals(this.zone)) {
-      return this;
-    } else {
-      const newTS = keepCalendarTime
-        ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
-        : this.ts;
-      return clone(this, { ts: newTS, zone });
-    }
   }
 
   /**
@@ -636,108 +596,6 @@ export class DateTime {
    */
   get timezoneName() {
     return this.zone.name;
-  }
-
-  /**
-   * Get the short human name for the zone's current offset, for example "EST" or "EDT".
-   * @return {String}
-   */
-  get offsetNameShort() {
-    return this.zone.offsetName(this.ts, { format: 'short', locale: this.locale });
-  }
-
-  /**
-   * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
-   * Is locale-aware.
-   * @return {String}
-   */
-  get offsetNameLong() {
-    return this.zone.offsetName(this.ts, { format: 'long', locale: this.locale });
-  }
-
-  /**
-   * Get whether this zone's offset ever changes, as in a DST.
-   * @return {boolean}
-   */
-  get isOffsetFixed() {
-    return this.zone.universal;
-  }
-
-  /**
-   * Get whether the DateTime is in a DST.
-   * @return {boolean}
-   */
-  get isInDST() {
-    if (this.isOffsetFixed) {
-      return false;
-    } else {
-      return (
-        this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
-      );
-    }
-  }
-
-  /**
-   * Get the value of unit.
-   * @param {string} unit - a unit such as 'minute' or 'day'
-   * @example DateTime.local(2017, 7, 4).get('month'); //=> 7
-   * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
-   * @return {number}
-   */
-  get(unit) {
-    return this[unit];
-  }
-
-  /**
-   * "Set" the values of specified units. Returns a newly-constructed DateTime.
-   * @param {object} values - a mapping of units to numbers
-   * @example dt.set({ year: 2017 })
-   * @example dt.set({ hour: 8, minute: 30 })
-   * @example dt.set({ weekday: 5 })
-   * @example dt.set({ year: 2005, ordinal: 234 })
-   * @return {DateTime}
-   */
-  set(values) {
-    const normalized = Util.normalizeObject(values, normalizeUnit),
-      settingWeekStuff =
-        !Util.isUndefined(normalized.weekYear) ||
-        !Util.isUndefined(normalized.weekNumber) ||
-        !Util.isUndefined(normalized.weekday);
-
-    let mixed;
-    if (settingWeekStuff) {
-      mixed = Conversions.weekToGregorian(
-        Object.assign(Conversions.gregorianToWeek(this.c), normalized)
-      );
-    } else if (!Util.isUndefined(normalized.ordinal)) {
-      mixed = Conversions.ordinalToGregorian(
-        Object.assign(Conversions.gregorianToOrdinal(this.c), normalized)
-      );
-    } else {
-      mixed = Object.assign(this.toObject(), normalized);
-
-      // if we didn't set the day but we ended up on an overflow date,
-      // use the last day of the right month
-      if (Util.isUndefined(normalized.day)) {
-        mixed.day = Math.min(Util.daysInMonth(mixed.year, mixed.month), mixed.day);
-      }
-    }
-
-    const { locale, numberingSystem, outputCalendar } = values,
-      loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
-
-    const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o, loc });
-  }
-
-  /**
-   * "Set" the locale  Returns a newly-constructed DateTime.
-   * Just a convenient alias for set({ locale })
-   * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
-   * @return {DateTime}
-   */
-  setLocale(locale) {
-    return this.set({ locale });
   }
 
   /**
@@ -854,6 +712,45 @@ export class DateTime {
   }
 
   /**
+   * Get the short human name for the zone's current offset, for example "EST" or "EDT".
+   * @return {String}
+   */
+  get offsetNameShort() {
+    return this.zone.offsetName(this.ts, { format: 'short', locale: this.locale });
+  }
+
+  /**
+   * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
+   * Is locale-aware.
+   * @return {String}
+   */
+  get offsetNameLong() {
+    return this.zone.offsetName(this.ts, { format: 'long', locale: this.locale });
+  }
+
+  /**
+   * Get whether this zone's offset ever changes, as in a DST.
+   * @return {boolean}
+   */
+  get isOffsetFixed() {
+    return this.zone.universal;
+  }
+
+  /**
+   * Get whether the DateTime is in a DST.
+   * @return {boolean}
+   */
+  get isInDST() {
+    if (this.isOffsetFixed) {
+      return false;
+    } else {
+      return (
+        this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
+      );
+    }
+  }
+
+  /**
    * Returns true if this DateTime is in a leap year, false otherwise
    * @example DateTime.local(2016).isInLeapYear //=> true
    * @example DateTime.local(2013).isInLeapYear //=> false
@@ -882,6 +779,195 @@ export class DateTime {
   get daysInYear() {
     return this.valid ? Util.daysInYear(this.year) : NaN;
   }
+
+  /**
+   * Returns the resolved Intl options for this DateTime.
+   * This is useful in understanding the behavior of parsing and formatting methods
+   * @param {object} opts - the same options as toLocaleString
+   * @return {object}
+   */
+  resolvedLocaleOpts(opts = {}) {
+    return Formatter.create(this.loc.clone(opts), opts).resolvedOptions(this);
+  }
+
+  // TRANSFORM
+
+  /**
+   * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
+   *
+   * Equivalent to {@link setTimeZone}('utc')
+   * @param {number} [offset=0] - optionally, an offset from UTC in minutes
+   * @param {object} [opts={}] - options to pass to `setTimeZone()`
+   * @return {DateTime}
+   */
+  toUTC(offset = 0, opts = {}) {
+    return this.setTimeZone(FixedOffsetZone.instance(offset), opts);
+  }
+
+  /**
+   * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
+   *
+   * Equivalent to `setTimeZone('local')`
+   * @return {DateTime}
+   */
+  toLocal() {
+    return this.setTimeZone(new LocalZone());
+  }
+
+  /**
+   * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
+   *
+   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
+   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'utc+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
+   * @param {object} opts - options
+   * @param {boolean} [opts.keepCalendarTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
+   * @return {DateTime}
+   */
+  setTimeZone(zone, { keepCalendarTime = false } = {}) {
+    zone = Util.normalizeZone(zone);
+    if (zone.equals(this.zone)) {
+      return this;
+    } else {
+      const newTS = keepCalendarTime
+        ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
+        : this.ts;
+      return clone(this, { ts: newTS, zone });
+    }
+  }
+
+  /**
+   * "Set" the values of specified units. Returns a newly-constructed DateTime.
+   * @param {object} values - a mapping of units to numbers
+   * @example dt.set({ year: 2017 })
+   * @example dt.set({ hour: 8, minute: 30 })
+   * @example dt.set({ weekday: 5 })
+   * @example dt.set({ year: 2005, ordinal: 234 })
+   * @return {DateTime}
+   */
+  set(values) {
+    const normalized = Util.normalizeObject(values, normalizeUnit),
+      settingWeekStuff =
+        !Util.isUndefined(normalized.weekYear) ||
+        !Util.isUndefined(normalized.weekNumber) ||
+        !Util.isUndefined(normalized.weekday);
+
+    let mixed;
+    if (settingWeekStuff) {
+      mixed = Conversions.weekToGregorian(
+        Object.assign(Conversions.gregorianToWeek(this.c), normalized)
+      );
+    } else if (!Util.isUndefined(normalized.ordinal)) {
+      mixed = Conversions.ordinalToGregorian(
+        Object.assign(Conversions.gregorianToOrdinal(this.c), normalized)
+      );
+    } else {
+      mixed = Object.assign(this.toObject(), normalized);
+
+      // if we didn't set the day but we ended up on an overflow date,
+      // use the last day of the right month
+      if (Util.isUndefined(normalized.day)) {
+        mixed.day = Math.min(Util.daysInMonth(mixed.year, mixed.month), mixed.day);
+      }
+    }
+
+    const { locale, numberingSystem, outputCalendar } = values,
+      loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
+
+    const [ts, o] = objToTS(mixed, this.o, this.zone);
+    return clone(this, { ts, o, loc });
+  }
+
+  /**
+   * Add a period of time to this DateTime and return the resulting DateTime
+   *
+   * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
+   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @example DateTime.local().plus(123) //~> in 123 milliseconds
+   * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
+   * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
+   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
+   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
+   * @return {DateTime}
+   */
+  plus(duration) {
+    if (!this.valid) return this;
+    const dur = Util.friendlyDuration(duration);
+    return clone(this, adjustTime(this, dur));
+  }
+
+  /**
+   * Subtract a period of time to this DateTime and return the resulting DateTime
+   * See {@link plus}
+   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+    @return {DateTime}
+   */
+  minus(duration) {
+    if (!this.valid) return this;
+    const dur = Util.friendlyDuration(duration).negate();
+    return clone(this, adjustTime(this, dur));
+  }
+
+  /**
+   * "Set" this DateTime to the beginning of a unit of time.
+   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
+   * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
+   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
+   * @return {DateTime}
+   */
+  startOf(unit) {
+    if (!this.valid) return this;
+    const o = {};
+    switch (normalizeUnit(unit)) {
+      case 'year':
+        o.month = 1;
+      // falls through
+      case 'month':
+        o.day = 1;
+      // falls through
+      case 'day':
+        o.hour = 0;
+      // falls through
+      case 'hour':
+        o.minute = 0;
+      // falls through
+      case 'minute':
+        o.second = 0;
+      // falls through
+      case 'second':
+        o.millisecond = 0;
+        break;
+      default:
+        throw new Error(`Can't find the start of ${unit}`);
+    }
+    return this.set(o);
+  }
+
+  /**
+   * "Set" this DateTime to the end (i.e. the last millisecond) of a unit of time
+   * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-03T00:00:00.000-05:00'
+   * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('day').toISO(); //=> '2014-03-03T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
+   * @return {DateTime}
+   */
+  endOf(unit) {
+    return this.valid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
+  }
+
+  /**
+   * "Set" the locale  Returns a newly-constructed DateTime.
+   * Just a convenient alias for set({ locale })
+   * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
+   * @return {DateTime}
+   */
+  setLocale(locale) {
+    return this.set({ locale });
+  }
+
+  // OUTPUT
 
   /**
    * Returns a string representation of this DateTime formatted according to the specified format string.
@@ -1016,95 +1102,7 @@ export class DateTime {
     return new Date(this.valid ? this.ts : NaN);
   }
 
-  /**
-   * Returns the resolved Intl options for this DateTime.
-   * This is useful in understanding the behavior of parsing and formatting methods
-   * @param {object} opts - the same options as toLocaleString
-   * @return {object}
-   */
-  resolvedLocaleOpts(opts = {}) {
-    return Formatter.create(this.loc.clone(opts), opts).resolvedOptions(this);
-  }
-
-  /**
-   * Add a period of time to this DateTime and return the resulting DateTime
-   *
-   * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
-   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
-   * @example DateTime.local().plus(123) //~> in 123 milliseconds
-   * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
-   * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
-   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
-   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
-   * @return {DateTime}
-   */
-  plus(duration) {
-    if (!this.valid) return this;
-    const dur = Util.friendlyDuration(duration);
-    return clone(this, adjustTime(this, dur));
-  }
-
-  /**
-   * Subtract a period of time to this DateTime and return the resulting DateTime
-   * See {@link plus}
-   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
-    @return {DateTime}
-   */
-  minus(duration) {
-    if (!this.valid) return this;
-    const dur = Util.friendlyDuration(duration).negate();
-    return clone(this, adjustTime(this, dur));
-  }
-
-  /**
-   * "Set" this DateTime to the beginning of a unit of time.
-   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
-   * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
-   * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
-   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'
-   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
-   * @return {DateTime}
-   */
-  startOf(unit) {
-    if (!this.valid) return this;
-    const o = {};
-    switch (normalizeUnit(unit)) {
-      case 'year':
-        o.month = 1;
-      // falls through
-      case 'month':
-        o.day = 1;
-      // falls through
-      case 'day':
-        o.hour = 0;
-      // falls through
-      case 'hour':
-        o.minute = 0;
-      // falls through
-      case 'minute':
-        o.second = 0;
-      // falls through
-      case 'second':
-        o.millisecond = 0;
-        break;
-      default:
-        throw new Error(`Can't find the start of ${unit}`);
-    }
-    return this.set(o);
-  }
-
-  /**
-   * "Set" this DateTime to the end (i.e. the last millisecond) of a unit of time
-   * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
-   * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-03T00:00:00.000-05:00'
-   * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
-   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('day').toISO(); //=> '2014-03-03T23:59:59.999-05:00'
-   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
-   * @return {DateTime}
-   */
-  endOf(unit) {
-    return this.valid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
-  }
+  // COMPARE
 
   /**
    * Return the difference between two DateTimes as a Duration.
@@ -1271,5 +1269,19 @@ export class DateTime {
    */
   static max(...dateTimes) {
     return Util.bestBy(dateTimes, i => i.valueOf(), Math.max);
+  }
+
+  // MISC
+
+  /**
+   * Explain how a string would be parsed by fromString()
+   * @param {string} text - the string to parse
+   * @param {string} fmt - the format the string is expected to be in (see description)
+   * @param {object} options - options taken by fromString()
+   * @return {object}
+   */
+  static fromStringExplain(text, fmt, options = {}) {
+    const parser = new TokenParser(Locale.fromOpts(options));
+    return parser.explainParse(text, fmt);
   }
 }
