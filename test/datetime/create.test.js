@@ -184,6 +184,21 @@ test('DateTime.fromJSDate(date) clones the date', () => {
   expect(dateTime.toJSDate().valueOf()).toBe(oldValue);
 });
 
+test('DateTime.fromJSDate(date) accepts anything the date constructor accepts', () => {
+  const d = new Date(),
+    fromMS = DateTime.fromJSDate(d.valueOf());
+
+  expect(fromMS.toJSDate().valueOf()).toBe(d.valueOf());
+});
+
+test('DateTime.fromJSDate(date) accepts a zone option', () => {
+  const date = new Date(1982, 4, 25),
+    dateTime = DateTime.fromJSDate(date, { zone: 'America/Santiago' });
+
+  expect(dateTime.toJSDate().valueOf()).toBe(date.valueOf());
+  expect(dateTime.timezoneName).toBe('America/Santiago');
+});
+
 //------
 // .fromMillis()
 //-------
@@ -192,6 +207,14 @@ test('DateTime.fromMillis(ms) has a value of ms', () => {
     dateTime = DateTime.fromMillis(value);
 
   expect(dateTime.valueOf()).toBe(value);
+});
+
+test('DateTime.fromMillis(ms) accepts a zone option', () => {
+  const value = 391147200000,
+    dateTime = DateTime.fromMillis(value, { zone: 'America/Santiago' });
+
+  expect(dateTime.valueOf()).toBe(value);
+  expect(dateTime.timezoneName).toBe('America/Santiago');
 });
 
 //------

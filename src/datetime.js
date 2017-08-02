@@ -358,7 +358,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromJSDate(date, { zone = Settings.defaultZone } = {}) {
-    return new DateTime({ ts: new Date(date).valueOf(), zone });
+    return new DateTime({ ts: new Date(date).valueOf(), zone: Util.normalizeZone(zone) });
   }
 
   /**
@@ -369,7 +369,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromMillis(milliseconds, { zone = Settings.defaultZone } = {}) {
-    return new DateTime({ ts: milliseconds, zone });
+    return new DateTime({ ts: milliseconds, zone: Util.normalizeZone(zone) });
   }
 
   /**
