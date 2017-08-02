@@ -78,6 +78,6 @@ test('DateTime#ordinal returns the ordinal', () => {
 // locale
 //------
 test('DateTime#locale returns the locale', () => {
-  const dt = DateTime.local().set({ locale: 'be' });
+  const dt = DateTime.local().reconfigure({ locale: 'be' });
   expect(dt.locale).toBe('be');
 });

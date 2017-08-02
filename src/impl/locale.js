@@ -68,6 +68,10 @@ export class Locale {
     }
   }
 
+  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
+    return Locale.create(locale, numberingSystem, outputCalendar);
+  }
+
   constructor(locale, numbering, outputCalendar) {
     Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
     Object.defineProperty(this, 'numberingSystem', { value: numbering || null, enumerable: true });

@@ -88,18 +88,6 @@ test('DateTime#set({ ordinal }) sets the date to the ordinal within the current 
 });
 
 //------
-// locale
-//------
-
-test('DateTime#set({ locale }) sets locale', () => {
-  expect(dt.set({ locale: 'zh' }).locale).toBe('zh');
-});
-
-test('DateTime#setLocale() sets locale', () => {
-  expect(dt.setLocale('zh').locale).toBe('zh');
-});
-
-//------
 // set multiple things
 //------
 

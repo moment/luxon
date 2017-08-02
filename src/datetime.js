@@ -141,10 +141,16 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
-function parseDataToDateTime(parsed, parsedZone, { setZone, zone } = {}) {
+function parseDataToDateTime(parsed, parsedZone, opts = {}) {
+  const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
-      inst = DateTime.fromObject(Object.assign(parsed, { zone: interpretationZone }));
+      inst = DateTime.fromObject(
+        Object.assign(parsed, {
+          zone: interpretationZone,
+          loc: Locale.fromObject(opts)
+        })
+      );
     return setZone ? inst : inst.setTimeZone(zone);
   } else {
     return DateTime.invalid();
@@ -230,7 +236,7 @@ function normalizeUnit(unit) {
  * A DateTime comprises of:
  * * A timestamp. Each DateTime instance refers to a specific millisecond of the Unix epoch.
  * * A time zone. Each instance is considered in the context of a specific zone (by default the local system's zone).
- * * Properties that effect how output strings are formatted, such as `locale`, `numberingSystem`, and `outputCalendar`.
+ * * Configuration properties that effect how output strings are formatted, such as `locale`, `numberingSystem`, and `outputCalendar`.
  *
  * Here is a brief overview of the most commonly used functionality it provides:
  *
@@ -238,7 +244,7 @@ function normalizeUnit(unit) {
  * * **Gregorian calendar and time**: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through {@link toObject}), use the {@link year}, {@link month},
  * {@link day}, {@link hour}, {@link minute}, {@link second}, {@link millisecond} accessors.
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
- * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link setTimeZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
+ * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setTimeZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
  * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, and {@link valueOf}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, and so on, see the external documentation.
@@ -353,23 +359,34 @@ export class DateTime {
   /**
    * Create an DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date|Any} date - a Javascript Date object
-   * @param {Object} obj - the object to create the DateTime from
-   * @param {string|Zone} [zone='local'] - the zone to place the DateTime into
+   * @param {Object} options - configuration options for the DateTime
+   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
-  static fromJSDate(date, { zone = Settings.defaultZone } = {}) {
-    return new DateTime({ ts: new Date(date).valueOf(), zone: Util.normalizeZone(zone) });
+  static fromJSDate(date, options = {}) {
+    return new DateTime({
+      ts: new Date(date).valueOf(),
+      zone: Util.normalizeZone(options.zone),
+      loc: Locale.fromObject(options)
+    });
   }
 
   /**
    * Create an DateTime from a count of epoch milliseconds. Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
-   * @param {Object} obj - the object to create the DateTime from
-   * @param {string|Zone} [zone='local'] - the zone to place the DateTime into
+   * @param {Object} options - configuration options for the DateTime
+   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromMillis(milliseconds, { zone = Settings.defaultZone } = {}) {
-    return new DateTime({ ts: milliseconds, zone: Util.normalizeZone(zone) });
+  static fromMillis(milliseconds, options = {}) {
+    return new DateTime({
+      ts: milliseconds,
+      zone: Util.normalizeZone(options.zone),
+      loc: Locale.fromObject(options)
+    });
   }
 
   /**
@@ -387,6 +404,9 @@ export class DateTime {
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
    * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setTimeZone()
+   * @param {string} [obj.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
    * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01T00'
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
@@ -405,7 +425,8 @@ export class DateTime {
       containsGregorYear = !Util.isUndefined(normalized.year),
       containsGregorMD = !Util.isUndefined(normalized.month) || !Util.isUndefined(normalized.day),
       containsGregor = containsGregorYear || containsGregorMD,
-      definiteWeekDef = normalized.weekYear || normalized.weekNumber;
+      definiteWeekDef = normalized.weekYear || normalized.weekNumber,
+      loc = Locale.fromObject(obj);
 
     // cases:
     // just a weekday -> this week's instance of that weekday, no worries
@@ -467,7 +488,7 @@ export class DateTime {
         ? Conversions.weekToGregorian(normalized)
         : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
-      inst = new DateTime({ ts: tsFinal, zone: zoneToUse, o: offsetFinal });
+      inst = new DateTime({ ts: tsFinal, zone: zoneToUse, o: offsetFinal, loc });
 
     // gregorian data + weekday serves only to validate
     if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
@@ -483,6 +504,9 @@ export class DateTime {
    * @param {Object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
+   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
@@ -490,9 +514,9 @@ export class DateTime {
    * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */
-  static fromISO(text, { setZone = false, zone = Settings.defaultZone } = {}) {
+  static fromISO(text, options = {}) {
     const [vals, parsedZone] = RegexParser.parseISODate(text);
-    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
+    return parseDataToDateTime(vals, parsedZone, options);
   }
 
   /**
@@ -501,14 +525,17 @@ export class DateTime {
    * @param {Object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [options.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
+   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
    * @example DateTime.fromRFC2822('Tue, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
    * @return {DateTime}
    */
-  static fromRFC2822(text, { setZone = false, zone = Settings.defaultZone } = {}) {
+  static fromRFC2822(text, options = {}) {
     const [vals, parsedZone] = RegexParser.parseRFC2822Date(text);
-    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
+    return parseDataToDateTime(vals, parsedZone, options);
   }
 
   /**
@@ -518,14 +545,17 @@ export class DateTime {
    * @param {object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
+   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
    * @return {DateTime}
    */
-  static fromHTTP(text, { setZone = false, zone = Settings.defaultZone } = {}) {
+  static fromHTTP(text, options = {}) {
     const [vals, parsedZone] = RegexParser.parseHTTPDate(text);
-    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
+    return parseDataToDateTime(vals, parsedZone, options);
   }
 
   /**
@@ -535,17 +565,16 @@ export class DateTime {
    * @param {Object} options - options to affect the creation
    * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
-   * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also convert the DateTime to this locale
+   * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+   * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromString(
-    text,
-    fmt,
-    { setZone = false, zone = Settings.defaultZone, locale = null, numberingSystem = null } = {}
-  ) {
-    const parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem })),
+  static fromString(text, fmt, options = {}) {
+    const { locale = null, numberingSystem = null } = options,
+      parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem })),
       [vals, parsedZone] = parser.parseDateTime(text, fmt);
-    return parseDataToDateTime(vals, parsedZone, { setZone, zone });
+    return parseDataToDateTime(vals, parsedZone, options);
   }
 
   /**
@@ -852,12 +881,33 @@ export class DateTime {
   }
 
   /**
+   * "Set" the locale, numberingSystem, or outputCalendar.  Returns a newly-constructed DateTime.
+   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-uk' })
+   * @return {DateTime}
+   */
+  reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
+    const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
+    return clone(this, { loc });
+  }
+
+  /**
+   * "Set" the locale. Returns a newly-constructed DateTime.
+   * Just a convenient alias for reconfigure({ locale })
+   * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
+   * @return {DateTime}
+   */
+  setLocale(locale) {
+    return this.reconfigure({ locale });
+  }
+
+  /**
    * "Set" the values of specified units. Returns a newly-constructed DateTime.
    * @param {object} values - a mapping of units to numbers
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
    * @example dt.set({ weekday: 5 })
    * @example dt.set({ year: 2005, ordinal: 234 })
+   * @example dt.set({ outputCalendar: 'beng', zone: 'utc' })
    * @return {DateTime}
    */
   set(values) {
@@ -886,11 +936,8 @@ export class DateTime {
       }
     }
 
-    const { locale, numberingSystem, outputCalendar } = values,
-      loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
-
     const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o, loc });
+    return clone(this, { ts, o });
   }
 
   /**
@@ -971,16 +1018,6 @@ export class DateTime {
    */
   endOf(unit) {
     return this.valid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
-  }
-
-  /**
-   * "Set" the locale  Returns a newly-constructed DateTime.
-   * Just a convenient alias for set({ locale })
-   * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
-   * @return {DateTime}
-   */
-  setLocale(locale) {
-    return this.set({ locale });
   }
 
   // OUTPUT
