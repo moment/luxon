@@ -144,7 +144,7 @@ function adjustTime(inst, dur) {
 function parseDataToDateTime(parsed, parsedZone, { setZone, zone } = {}) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
-          inst = DateTime.fromObject(Object.assign(parsed, {zone: interpretationZone}));
+      inst = DateTime.fromObject(Object.assign(parsed, { zone: interpretationZone }));
     return setZone ? inst : inst.setTimeZone(zone);
   } else {
     return DateTime.invalid();
@@ -301,9 +301,16 @@ export class DateTime {
     if (Util.isUndefined(year)) {
       return new DateTime({ ts: Settings.now() });
     } else {
-      return DateTime.fromObject(
-        { year, month, day, hour, minute, second, millisecond, zone: Settings.defaultZone }
-      );
+      return DateTime.fromObject({
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        millisecond,
+        zone: Settings.defaultZone
+      });
     }
   }
 
@@ -330,9 +337,16 @@ export class DateTime {
     if (Util.isUndefined(year)) {
       return new DateTime({ ts: Settings.now(), zone: FixedOffsetZone.utcInstance });
     } else {
-      return DateTime.fromObject(
-        { year, month, day, hour, minute, second, millisecond, zone: FixedOffsetZone.utcInstance}
-      );
+      return DateTime.fromObject({
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        millisecond,
+        zone: FixedOffsetZone.utcInstance
+      });
     }
   }
 

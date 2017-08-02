@@ -2,8 +2,16 @@
 
 import { DateTime } from '../../src/luxon';
 
-const dt = DateTime.fromObject(
-  { year: 1982, month: 5, day: 25, hour: 9, minute: 23, second: 54, millisecond: 123, zone: 'utc'}),
+const dt = DateTime.fromObject({
+    year: 1982,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 23,
+    second: 54,
+    millisecond: 123,
+    zone: 'utc'
+  }),
   ny = dt.setTimeZone('America/New_York', { keepCalendarTime: true });
 
 //------
