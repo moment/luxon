@@ -3,7 +3,7 @@
 import { DateTime, Settings } from '../../src/luxon';
 
 const local = (year, month, day, hour) =>
-  DateTime.fromObject({ year, month, day, hour }, 'America/New_York');
+  DateTime.fromObject({ year, month, day, hour, zone: 'America/New_York' });
 
 test('Hole dates are bumped forward', () => {
   const d = local(2017, 3, 12, 2);
