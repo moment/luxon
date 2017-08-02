@@ -33,17 +33,13 @@ function parse(s, ...patterns) {
   return [null, null];
 }
 
-function parse10(inty) {
-  return parseInt(inty, 10);
-}
-
 function simpleParse(...keys) {
   return (match, cursor) => {
     const ret = {};
     let i;
 
     for (i = 0; i < keys.length; i++) {
-      ret[keys[i]] = parse10(match[cursor + i]);
+      ret[keys[i]] = parseInt(match[cursor + i]);
     }
     return [ret, null, cursor + i];
   };
@@ -62,10 +58,10 @@ function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
     fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
     item = {
-      hour: parse10(match[cursor]) || 0,
-      minute: parse10(match[cursor + 1]) || 0,
-      second: parse10(match[cursor + 2]) || 0,
-      millisecond: parse10(match[cursor + 3]) || 0
+      hour: parseInt(match[cursor]) || 0,
+      minute: parseInt(match[cursor + 1]) || 0,
+      second: parseInt(match[cursor + 2]) || 0,
+      millisecond: parseInt(match[cursor + 3]) || 0
     },
     zone = local ? null : new FixedOffsetZone(fullOffset);
 
@@ -80,12 +76,12 @@ function extractISODuration(match) {
   const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match;
 
   return {
-    year: parse10(yearStr),
-    month: parse10(monthStr),
-    day: parse10(dayStr),
-    hour: parse10(hourStr),
-    minute: parse10(minuteStr),
-    second: parse10(secondStr)
+    year: parseInt(yearStr),
+    month: parseInt(monthStr),
+    day: parseInt(dayStr),
+    hour: parseInt(hourStr),
+    minute: parseInt(minuteStr),
+    second: parseInt(secondStr)
   };
 }
 
@@ -106,14 +102,14 @@ const obsOffsets = {
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
-    year: yearStr.length === 2 ? Util.untrucateYear(parse10(yearStr)) : parse10(yearStr),
+    year: yearStr.length === 2 ? Util.untrucateYear(parseInt(yearStr)) : parseInt(yearStr),
     month: English.monthsShort.indexOf(monthStr) + 1,
-    day: parse10(dayStr),
-    hour: parse10(hourStr),
-    minute: parse10(minuteStr)
+    day: parseInt(dayStr),
+    hour: parseInt(hourStr),
+    minute: parseInt(minuteStr)
   };
 
-  if (secondStr) result.second = parse10(secondStr);
+  if (secondStr) result.second = parseInt(secondStr);
   if (weekdayStr) {
     result.weekday =
       weekdayStr.length > 3

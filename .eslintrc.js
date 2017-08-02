@@ -5,6 +5,7 @@ module.exports = {
   extends: ['airbnb-base', 'prettier'],
   plugins: ['import', 'prettier'],
   rules: {
+    'radix': 'off',
     'prettier/prettier': ['error', prettierOptions],
     // the prettier config override for this is broken
     curly: 'off',
