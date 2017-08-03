@@ -65,7 +65,17 @@ function isHighOrderNegative(obj) {
 }
 
 /**
- * An amount of time.
+ * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
+ *
+ * Here is a brief overview of commonly used methods and getters in Duration:
+ *
+ * * **Creation** To create a Duration, use {@link fromMilliseconds}, {@link fromObject}, or {@link fromISO}.
+ * * **Unit values** See the {@link years}, {@link months}, {@link weeks}, {@link days}, {@link hours}, {@link minutes}, {@link seconds}, {@link milliseconds} accessors.
+ * * **Configuration** See  {@link locale} and {@link numberingSystem} accessors.
+ * * **Transformation** To create new Durations out of old ones use {@link plus}, {@link minus}, {@link normalize}, {@link set}, {@link reconfigure}, {@link shiftTo}, and {@link negate}.
+ * * **Output** To convert the Duration into other representations, see {@link as}, {@link toISO}, {@link toFormat}, and {@link toJSON}
+ *
+ * There's are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
  */
 export class Duration {
   /**
@@ -279,15 +289,21 @@ export class Duration {
    * @param {object} values - a mapping of units to numbers
    * @example dur.set({ years: 2017 })
    * @example dur.set({ hours: 8, minutes: 30 })
-   * @example dur.set({ locale: 'en-UK' })
    * @return {Duration}
    */
   set(values) {
-    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit)),
-      { locale, numberingSystem } = values,
-      loc = this.loc.clone({ locale, numberingSystem });
+    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
+    return clone(this, { values: mixed });
+  }
 
-    return clone(this, { values: mixed, loc });
+  /**
+   * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
+   * @example dur.reconfigure({ locale: 'en-UK' })
+   * @return {Duration}
+   */
+  reconfigure({ locale, numberingSystem } = {}) {
+    const loc = this.loc.clone({ locale, numberingSystem });
+    return clone(this, { loc });
   }
 
   /**

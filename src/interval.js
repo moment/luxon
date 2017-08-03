@@ -72,6 +72,8 @@ export class Interval {
 
   /**
    * Create an Interval from an ISO 8601 string
+   * @param {string} string - the ISO string to parse
+   * @param {object} opts - options to pass {@see DateTime.fromISO}
    * @return {Interval}
    */
   static fromISO(string, opts) {
