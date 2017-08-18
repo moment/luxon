@@ -92,12 +92,12 @@ const obsOffsets = {
   GMT: 0,
   EDT: -4 * 60,
   EST: -5 * 60,
-  CDT: 5 * 60,
-  CST: 6 * 60,
-  MDT: 6 * 60,
-  MST: 7 * 60,
-  PDT: 7 * 60,
-  PST: 8 * 60
+  CDT: -5 * 60,
+  CST: -6 * 60,
+  MDT: -6 * 60,
+  MST: -7 * 60,
+  PDT: -7 * 60,
+  PST: -8 * 60
 };
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
