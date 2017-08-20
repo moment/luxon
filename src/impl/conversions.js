@@ -93,17 +93,59 @@ export class Conversions {
     return Object.assign({ year, month, day }, Util.timeObject(ordinalData));
   }
 
-  static validateWeekData(obj) {
+  static hasInvalidWeekData(obj) {
     const validYear = Util.isNumber(obj.weekYear),
       validWeek = Util.numberBetween(obj.weekNumber, 1, lastWeekNumber(obj.weekYear)),
       validWeekday = Util.numberBetween(obj.weekday, 1, 7);
 
-    return validYear && validWeek && validWeekday;
+    if (!validYear) {
+      return 'weekYear out of range';
+    } else if (!validWeek) {
+      return 'week out of range';
+    } else if (!validWeekday) {
+      return 'weekday out of range';
+    } else return false;
   }
 
-  static validateOrdinalData(obj) {
+  static hasInvalidOrdinalData(obj) {
     const validYear = Util.isNumber(obj.year),
       validOrdinal = Util.numberBetween(obj.ordinal, 1, Util.daysInYear(obj.year));
-    return validYear && validOrdinal;
+
+    if (!validYear) {
+      return 'year out of range';
+    } else if (!validOrdinal) {
+      return 'ordinal out of range';
+    } else return false;
+  }
+
+  static hasInvalidGregorianData(obj) {
+    const validYear = Util.isNumber(obj.year),
+      validMonth = Util.numberBetween(obj.month, 1, 12),
+      validDay = Util.numberBetween(obj.day, 1, Util.daysInMonth(obj.year, obj.month));
+
+    if (!validYear) {
+      return 'year out of range';
+    } else if (!validMonth) {
+      return 'month out of range';
+    } else if (!validDay) {
+      return 'day out of range';
+    } else return false;
+  }
+
+  static hasInvalidTimeData(obj) {
+    const validHour = Util.numberBetween(obj.hour, 0, 23),
+      validMinute = Util.numberBetween(obj.minute, 0, 59),
+      validSecond = Util.numberBetween(obj.second, 0, 59),
+      validMillisecond = Util.numberBetween(obj.millisecond, 0, 999);
+
+    if (!validHour) {
+      return 'hour out of range';
+    } else if (!validMinute) {
+      return 'minute out of range';
+    } else if (!validSecond) {
+      return 'second out of range';
+    } else if (!validMillisecond) {
+      return 'millisecond out of range';
+    } else return false;
   }
 }

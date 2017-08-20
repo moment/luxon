@@ -2,6 +2,7 @@ import { Util } from './impl/util';
 import { Locale } from './impl/locale';
 import { Formatter } from './impl/formatter';
 import { RegexParser } from './impl/regexParser';
+import { InvalidUnitError } from './errors';
 
 const INVALID = 'Invalid Duration';
 
@@ -157,7 +158,7 @@ export class Duration {
       milliseconds: 'milliseconds'
     }[unit ? unit.toLowerCase() : unit];
 
-    if (!normalized) throw new Error(`Invalid unit ${unit}`);
+    if (!normalized) throw new InvalidUnitError(unit);
 
     return normalized;
   }

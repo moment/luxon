@@ -5,6 +5,7 @@ import { LocalZone } from '../zones/localZone';
 import { IANAZone } from '../zones/IANAZone';
 import { FixedOffsetZone } from '../zones/fixedOffsetZone';
 import { Settings } from '../settings';
+import { InvalidArgumentError } from '../errors';
 
 /**
  * @private
@@ -19,7 +20,7 @@ export class Util {
     } else if (duration instanceof Object) {
       return Duration.fromObject(duration);
     } else {
-      throw new Error('Unknown duration argument');
+      throw new InvalidArgumentError('Unknown duration argument');
     }
   }
 
@@ -31,7 +32,7 @@ export class Util {
     } else if (dateTimeish instanceof Object) {
       return DateTime.fromObject(dateTimeish);
     } else {
-      throw new Error('Unknown datetime argument');
+      throw new InvalidArgumentError('Unknown datetime argument');
     }
   }
 
