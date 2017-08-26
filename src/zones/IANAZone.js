@@ -18,17 +18,24 @@ function hackyOffset(dtf, date) {
 }
 
 function partsOffset(dtf, date) {
-  const formatted = dtf.formatToParts(date),
-    filled = [];
+  const formatted = dtf.formatToParts(date), filled = [];
   for (let i = 0; i < formatted.length; i++) {
-    const { type, value } = formatted[i],
-      pos = typeToPos[type];
+    const { type, value } = formatted[i], pos = typeToPos[type];
 
     if (!Util.isUndefined(pos)) {
       filled[pos] = parseInt(value, 10);
     }
   }
   return filled;
+}
+
+function isValid(zone) {
+  try {
+    new Intl.DateTimeFormat('en-us', { timeZone: zone }).format();
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 /**
@@ -43,6 +50,7 @@ export class IANAZone extends Zone {
   constructor(name) {
     super();
     this.zoneName = name;
+    this.valid = isValid(name);
   }
 
   get type() {
@@ -84,5 +92,9 @@ export class IANAZone extends Zone {
 
   equals(otherZone) {
     return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;
+  }
+
+  get isValid() {
+    return this.valid;
   }
 }

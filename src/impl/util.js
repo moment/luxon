@@ -70,29 +70,37 @@ export class Util {
   static flatten(arr) {
     return arr.reduce(
       (flat, toFlatten) =>
-        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),
+        flat.concat(
+          Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten
+        ),
       []
     );
   }
 
   static bestBy(arr, by, compare) {
-    return arr.reduce((best, next) => {
-      const pair = [by(next), next];
-      if (!best) {
-        return pair;
-      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
-        return best;
-      } else {
-        return pair;
-      }
-    }, null)[1];
+    return arr.reduce(
+      (best, next) => {
+        const pair = [by(next), next];
+        if (!best) {
+          return pair;
+        } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+          return best;
+        } else {
+          return pair;
+        }
+      },
+      null
+    )[1];
   }
 
   static pick(obj, keys) {
-    return keys.reduce((a, k) => {
-      a[k] = obj[k];
-      return a;
-    }, {});
+    return keys.reduce(
+      (a, k) => {
+        a[k] = obj[k];
+        return a;
+      },
+      {}
+    );
   }
 
   static isLeapYear(year) {
@@ -111,12 +119,6 @@ export class Util {
     }
   }
 
-  // Huge hack. The point of this is to extract the named offset info
-  // WITHOUT using the polyfill OR formatToParts, since the poly doesn't support
-  // zones and real JS doesn't support formatToParts.
-  // Only works if offset name is at the end of the string, so probably spews
-  // junk for Arabic. Also note that this won't internationalize in Node
-  // unless you have an Intl build.
   static parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     const date = new Date(ts),
       intl = {
@@ -133,13 +135,22 @@ export class Util {
       intl.timeZone = timeZone;
     }
 
-    const without = new Intl.DateTimeFormat(locale, intl).format(date),
-      modified = Object.assign({ timeZoneName: offsetFormat }, intl),
-      included = new Intl.DateTimeFormat(locale, modified).format(date),
-      diffed = included.substring(without.length),
-      trimmed = diffed.replace(/^[, ]+/, '');
+    const modified = Object.assign({ timeZoneName: offsetFormat }, intl);
 
-    return trimmed;
+    if (Intl.DateTimeFormat.prototype.formatToParts) {
+      const parsed = new Intl.DateTimeFormat(locale, modified)
+        .formatToParts(date)
+        .find(m => m.type.toLowerCase() === 'timezonename');
+      return parsed ? parsed.value : null;
+    } else {
+      // this probably doesn't work for all locales
+      const without = new Intl.DateTimeFormat(locale, intl).format(date),
+        included = new Intl.DateTimeFormat(locale, modified).format(date),
+        diffed = included.substring(without.length),
+        trimmed = diffed.replace(/^[, ]+/, '');
+
+      return trimmed;
+    }
   }
 
   static normalizeZone(input) {
@@ -150,7 +161,8 @@ export class Util {
       if (lowered === 'local') return LocalZone.instance;
       else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
       else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
-      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
+      else return FixedOffsetZone.parseSpecifier(lowered) ||
+          Settings.defaultZone;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
     } else if (typeof input === 'object' && input.offset) {

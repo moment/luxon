@@ -38,4 +38,8 @@ export class LocalZone extends Zone {
   equals(otherZone) {
     return otherZone.type === 'local';
   }
+
+  get isValid() {
+    return true;
+  }
 }

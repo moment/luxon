@@ -66,4 +66,8 @@ export class Zone {
   equals(otherZone) {
     throw new ZoneIsAbstract();
   }
+
+  get isValid() {
+    throw new ZoneIsAbstract();
+  }
 }
