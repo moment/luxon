@@ -1,8 +1,5 @@
 /* eslint no-unused-vars: "off" */
-
-function ZoneIsAbstract() {
-  this.message = 'Zone is an abstract class';
-}
+import { ZoneIsAbstract } from './errors';
 
 /**
  * @interface
@@ -59,6 +56,7 @@ export class Zone {
   }
 
   /**
+   * Return whether this Zone is equal to another zoner
    * @abstract
    * @param {Zone} otherZone - the zone to compare
    * @return {boolean}
@@ -67,6 +65,11 @@ export class Zone {
     throw new ZoneIsAbstract();
   }
 
+  /**
+   * Return whether this Zone is valid.
+   * @abstract
+   * @return {boolean}
+   */
   get isValid() {
     throw new ZoneIsAbstract();
   }
