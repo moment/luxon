@@ -22,9 +22,7 @@ test('Invalid creations are invalid', () => {
 test('invalid zones result in invalid dates', () => {
   expect(DateTime.local().setTimeZone('America/Lasers').isValid).toBe(false);
   expect(DateTime.fromObject({ zone: 'America/Lasers' }).isValid).toBe(false);
-  expect(
-    DateTime.fromJSDate(new Date(), { zone: 'America/Lasers' }).isValid
-  ).toBe(false);
+  expect(DateTime.fromJSDate(new Date(), { zone: 'America/Lasers' }).isValid).toBe(false);
 });
 
 test('Invalid tell you why', () => {
@@ -62,7 +60,8 @@ test('throwOnInvalid throws', () => {
         year: 1982,
         month: 5,
         day: 25
-      })).toThrow();
+      })
+    ).toThrow();
   } finally {
     Settings.throwOnInvalid = false;
   }

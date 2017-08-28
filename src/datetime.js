@@ -16,7 +16,8 @@ import {
   InvalidDateTimeError
 } from './errors';
 
-const INVALID = 'Invalid DateTime', UNSUPPORTED_ZONE = 'unsupported zone';
+const INVALID = 'Invalid DateTime',
+  UNSUPPORTED_ZONE = 'unsupported zone';
 
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
@@ -150,13 +151,13 @@ function formatMaybe(dt, format) {
 }
 
 const defaultUnitValues = {
-  month: 1,
-  day: 1,
-  hour: 0,
-  minute: 0,
-  second: 0,
-  millisecond: 0
-},
+    month: 1,
+    day: 1,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  },
   defaultWeekUnitValues = {
     weekNumber: 1,
     weekday: 1,
@@ -176,20 +177,10 @@ const defaultUnitValues = {
 function isoTimeFormat(dateTime, suppressSecs, suppressMillis) {
   return suppressSecs && dateTime.second === 0 && dateTime.millisecond === 0
     ? 'HH:mmZ'
-    : suppressMillis && dateTime.millisecond === 0
-        ? 'HH:mm:ssZZ'
-        : 'HH:mm:ss.SSSZZ';
+    : suppressMillis && dateTime.millisecond === 0 ? 'HH:mm:ssZZ' : 'HH:mm:ss.SSSZZ';
 }
 
-const orderedUnits = [
-  'year',
-  'month',
-  'day',
-  'hour',
-  'minute',
-  'second',
-  'millisecond'
-];
+const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 const orderedWeekUnits = [
   'weekYear',
   'weekNumber',
@@ -200,14 +191,7 @@ const orderedWeekUnits = [
   'millisecond'
 ];
 
-const orderedOrdinalUnits = [
-  'year',
-  'ordinal',
-  'hour',
-  'minute',
-  'second',
-  'millisecond'
-];
+const orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
 function normalizeUnit(unit) {
   const normalized = {
@@ -266,8 +250,7 @@ export class DateTime {
    */
   constructor(config = {}) {
     const zone = config.zone || Settings.defaultZone,
-      invalidReason = config.invalidReason ||
-        (zone.isValid ? null : UNSUPPORTED_ZONE);
+      invalidReason = config.invalidReason || (zone.isValid ? null : UNSUPPORTED_ZONE);
 
     Object.defineProperty(this, 'ts', {
       value: config.ts || Settings.now(),
@@ -296,12 +279,9 @@ export class DateTime {
     });
 
     if (!invalidReason) {
-      const unchanged = config.old &&
-        config.old.ts === this.ts &&
-        config.old.zone.equals(this.zone),
-        c = unchanged
-          ? config.old.c
-          : tsToObj(this.ts, this.zone.offset(this.ts)),
+      const unchanged =
+          config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone),
+        c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
         o = unchanged ? config.old.o : this.zone.offset(this.ts);
 
       Object.defineProperty(this, 'c', { value: c });
@@ -457,8 +437,7 @@ export class DateTime {
       normalized = Util.normalizeObject(obj, normalizeUnit),
       containsOrdinal = !Util.isUndefined(normalized.ordinal),
       containsGregorYear = !Util.isUndefined(normalized.year),
-      containsGregorMD = !Util.isUndefined(normalized.month) ||
-        !Util.isUndefined(normalized.day),
+      containsGregorMD = !Util.isUndefined(normalized.month) || !Util.isUndefined(normalized.day),
       containsGregor = containsGregorYear || containsGregorMD,
       definiteWeekDef = normalized.weekYear || normalized.weekNumber,
       loc = Locale.fromObject(obj);
@@ -476,16 +455,15 @@ export class DateTime {
     }
 
     if (containsGregorMD && containsOrdinal) {
-      throw new ConflictingSpecificationError(
-        "Can't mix ordinal dates with month/day"
-      );
+      throw new ConflictingSpecificationError("Can't mix ordinal dates with month/day");
     }
 
-    const useWeekData = definiteWeekDef ||
-      (normalized.weekday && !containsGregor);
+    const useWeekData = definiteWeekDef || (normalized.weekday && !containsGregor);
 
     // configure ourselves to deal with gregorian dates or week stuff
-    let units, defaultValues, objNow = tsToObj(tsNow, offsetProvis);
+    let units,
+      defaultValues,
+      objNow = tsToObj(tsNow, offsetProvis);
     if (useWeekData) {
       units = orderedWeekUnits;
       defaultValues = defaultWeekUnitValues;
@@ -514,12 +492,11 @@ export class DateTime {
 
     // make sure the values we have are in range
     const higherOrderInvalid = useWeekData
-      ? Conversions.hasInvalidWeekData(normalized)
-      : containsOrdinal
+        ? Conversions.hasInvalidWeekData(normalized)
+        : containsOrdinal
           ? Conversions.hasInvalidOrdinalData(normalized)
           : Conversions.hasInvalidGregorianData(normalized),
-      invalidReason = higherOrderInvalid ||
-        Conversions.hasInvalidTimeData(normalized);
+      invalidReason = higherOrderInvalid || Conversions.hasInvalidTimeData(normalized);
 
     if (invalidReason) {
       return DateTime.invalid(invalidReason);
@@ -527,10 +504,8 @@ export class DateTime {
 
     // compute the actual time
     const gregorian = useWeekData
-      ? Conversions.weekToGregorian(normalized)
-      : containsOrdinal
-          ? Conversions.ordinalToGregorian(normalized)
-          : normalized,
+        ? Conversions.weekToGregorian(normalized)
+        : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
       inst = new DateTime({
         ts: tsFinal,
@@ -632,9 +607,7 @@ export class DateTime {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError(
-        'need to specify a reason the DateTime is invalid'
-      );
+      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDateTimeError(reason);
@@ -869,8 +842,9 @@ export class DateTime {
     if (this.isOffsetFixed) {
       return false;
     } else {
-      return this.offset > this.set({ month: 1 }).offset ||
-        this.offset > this.set({ month: 5 }).offset;
+      return (
+        this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
+      );
     }
   }
 
@@ -962,7 +936,8 @@ export class DateTime {
   }
 
   /**
-   * "Set" the locale, numberingSystem, or outputCalendar.  Returns a newly-constructed DateTime.
+   * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
+   * @param {object} properties - the properties to set
    * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-uk' })
    * @return {DateTime}
    */
@@ -993,7 +968,8 @@ export class DateTime {
    */
   set(values) {
     const normalized = Util.normalizeObject(values, normalizeUnit),
-      settingWeekStuff = !Util.isUndefined(normalized.weekYear) ||
+      settingWeekStuff =
+        !Util.isUndefined(normalized.weekYear) ||
         !Util.isUndefined(normalized.weekNumber) ||
         !Util.isUndefined(normalized.weekday);
 
@@ -1012,10 +988,7 @@ export class DateTime {
       // if we didn't set the day but we ended up on an overflow date,
       // use the last day of the right month
       if (Util.isUndefined(normalized.day)) {
-        mixed.day = Math.min(
-          Util.daysInMonth(mixed.year, mixed.month),
-          mixed.day
-        );
+        mixed.day = Math.min(Util.daysInMonth(mixed.year, mixed.month), mixed.day);
       }
     }
 
@@ -1100,9 +1073,7 @@ export class DateTime {
    * @return {DateTime}
    */
   endOf(unit) {
-    return this.isValid
-      ? this.startOf(unit).plus({ [unit]: 1 }).minus(1)
-      : this;
+    return this.isValid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
   }
 
   // OUTPUT
@@ -1177,10 +1148,7 @@ export class DateTime {
    * @return {string}
    */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    return formatMaybe(
-      this,
-      isoTimeFormat(this, suppressSeconds, suppressMilliseconds)
-    );
+    return formatMaybe(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
   }
 
   /**
@@ -1273,7 +1241,8 @@ export class DateTime {
       post = flipped ? otherDateTime : this,
       accum = {};
 
-    let cursor = flipped ? this : otherDateTime, lowestOrder = null;
+    let cursor = flipped ? this : otherDateTime,
+      lowestOrder = null;
 
     if (units.indexOf('years') >= 0) {
       let dYear = post.year - cursor.year;
@@ -1305,8 +1274,7 @@ export class DateTime {
     }
 
     const computeDayDelta = () => {
-      const utcDayStart = dt =>
-        dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
+      const utcDayStart = dt => dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
       return Math.floor(Duration.fromMilliseconds(ms).shiftTo('days').days);
     };
@@ -1397,9 +1365,7 @@ export class DateTime {
    */
   equals(other) {
     // todo - check other stuff?
-    return this.isValid && other.isValid
-      ? this.valueOf() === other.valueOf()
-      : false;
+    return this.isValid && other.isValid ? this.valueOf() === other.valueOf() : false;
   }
 
   /**

@@ -1,6 +1,8 @@
 import { Util } from './impl/util';
 import { DateTime } from './datetime';
 import { Duration } from './duration';
+import { Settings } from './settings';
+import { InvalidArgumentError, InvalidIntervalError } from './errors';
 
 const INVALID = 'Invalid Interval';
 
@@ -18,15 +20,25 @@ export class Interval {
   constructor(config) {
     Object.defineProperty(this, 's', { value: config.start, enumerable: true });
     Object.defineProperty(this, 'e', { value: config.end, enumerable: true });
-    Object.defineProperty(this, 'valid', { value: config.valid, enumerable: true });
+    Object.defineProperty(this, 'invalidReason', {
+      value: config.invalidReason || null,
+      enumerable: false
+    });
   }
 
   /**
    * Create an invalid Interval.
    * @return {Interval}
    */
-  static invalid() {
-    return new Interval({ valid: false });
+  static invalid(reason) {
+    if (!reason) {
+      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
+    }
+    if (Settings.throwOnInvalid) {
+      throw new InvalidIntervalError(reason);
+    } else {
+      return new Interval({ invalidReason: reason });
+    }
   }
 
   /**
@@ -83,7 +95,84 @@ export class Interval {
         return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));
       }
     }
-    return Interval.invalid();
+    return Interval.invalid('invalid ISO format');
+  }
+
+  /**
+   * Get or "set" the start of the Interval
+   * @param {DateTime} start - the start DateTime to set. If omitted, the method operates as a getter.
+   * @return {DateTime|Interval} - If a value is supplied, returns the new Interval, otherwise returns the start DateTime
+   */
+  get start() {
+    return this.isValid ? this.s : DateTime.invalid('missing start time');
+  }
+
+  /**
+   * Get or "set" the end of the Interval
+   * @param {DateTime} end - the end DateTime to set. If omitted, the method operates as a getter.
+   * @return {DateTime|Interval} - If a value is supplied, returns the new Interval, otherwise returns the end DateTime
+   */
+  get end() {
+    return this.isValid ? this.e : DateTime.invalid('missing end time');
+  }
+
+  /**
+   * Return whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
+   * @return {boolean}
+   */
+  get isValid() {
+    return this.invalidReason === null;
+  }
+
+  /**
+   * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
+   * @return {string}
+   */
+  get invalidReason() {
+    return this.invalidReason;
+  }
+
+  /**
+   * Get the length of the Interval in the specified unit.
+   * @param {string} unit - the unit (such as 'hours' or 'days') to return the length in.
+   * @return {number}
+   */
+  length(unit = 'milliseconds') {
+    return this.isValid ? this.toDuration(...[unit]).get(unit) : NaN;
+  }
+
+  /**
+   * Returns whether this Interval's start and end are both in the same unit of time
+   * @param {string} unit - the unit of time to check sameness on
+   * @return {boolean}
+   */
+  hasSame(unit) {
+    return this.isValid ? this.e.minus(1).hasSame(this.s, unit) : false;
+  }
+
+  /**
+   * "Sets" the start and/or end dates. Returns a newly-constructed Interval.
+   * @param {object} values - the values to set
+   * @param {DateTime} values.start - the starting DateTime
+   * @param {DateTime} values.end - the ending DateTime
+   * @return {Interval}
+   */
+  set({ start, end } = {}) {
+    return Interval.fromDateTimes(start || this.s, end || this.e);
+  }
+
+  /**
+   * Returns the count of minutes, hours, days, months, or years included in the Interval, even in part
+   * Unlike {@link length} this counts sections of the calendar, not periods of time, e.g. specifying 'day'
+   * asks 'what dates are included in this interval?', not 'how many days long is this interval?'
+   * @param {string} [unit='milliseconds'] - the unit of time to count.
+   * @return {number}
+   */
+  count(unit = 'milliseconds') {
+    if (!this.isValid) return NaN;
+    const start = this.start.startOf(unit),
+      end = this.end.startOf(unit);
+    return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
   /**
@@ -97,64 +186,10 @@ export class Interval {
    * @return {Duration}
    */
   toDuration(...units) {
-    if (!this.valid) {
-      return Duration.invalid();
+    if (!this.isValid) {
+      return Duration.invalid(this.invalidReason);
     }
     return this.e.diff(this.s, ...units);
-  }
-
-  /**
-   * Get or "set" the start of the Interval
-   * @param {DateTime} start - the start DateTime to set. If omitted, the method operates as a getter.
-   * @return {DateTime|Interval} - If a value is supplied, returns the new Interval, otherwise returns the start DateTime
-   */
-  start(start) {
-    return Util.isUndefined(start)
-      ? this.valid ? this.s : DateTime.invalid()
-      : Interval.fromDateTimes(start, this.e);
-  }
-
-  /**
-   * Get or "set" the end of the Interval
-   * @param {DateTime} end - the end DateTime to set. If omitted, the method operates as a getter.
-   * @return {DateTime|Interval} - If a value is supplied, returns the new Interval, otherwise returns the end DateTime
-   */
-  end(end) {
-    return Util.isUndefined(end)
-      ? this.valid ? this.e : DateTime.invalid()
-      : Interval.fromDateTimes(this.s, end);
-  }
-
-  /**
-   * Get the length of the Interval in the specified unit.
-   * @param {string} unit - the unit (such as 'hours' or 'days') to return the length in.
-   * @return {number}
-   */
-  length(unit = 'milliseconds') {
-    return this.valid ? this.toDuration(...[unit]).get(unit) : NaN;
-  }
-
-  /**
-   * Returns whether this Interval's start and end are both in the same unit of time
-   * @param {string} unit - the unit of time to check sameness on
-   * @return {boolean}
-   */
-  hasSame(unit) {
-    return this.valid ? this.e.minus(1).hasSame(this.s, unit) : false;
-  }
-
-  /**
-   * Returns the count of minutes, hours, days, months, or years included in the Interval, even in part
-   * Unlike {@link length} this counts sections of the calendar, not periods of time, e.g. specifying 'day'
-   * asks 'what dates are included in this interval?', not 'how many days long is this interval?'
-   * @param {string} [unit='milliseconds'] - the unit of time to count.
-   * @return {number}
-   */
-  count(unit = 'milliseconds') {
-    if (!this.valid) return NaN;
-    const start = this.start().startOf(unit),
-      end = this.end().startOf(unit);
-    return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
   /**
@@ -163,7 +198,7 @@ export class Interval {
    * @return {[Interval]}
    */
   splitAt(...dateTimes) {
-    if (!this.valid) return [];
+    if (!this.isValid) return [];
     const sorted = dateTimes.map(Util.friendlyDateTime).sort(),
       results = [];
     let s = this.s,
@@ -187,7 +222,7 @@ export class Interval {
    * @return {[Interval]}
    */
   splitBy(duration) {
-    if (!this.valid) return [];
+    if (!this.isValid) return [];
     const dur = Util.friendlyDuration(duration),
       results = [];
     let s = this.s,
@@ -210,7 +245,7 @@ export class Interval {
    * @return {[Interval]}
    */
   divideEqually(numberOfParts) {
-    if (!this.valid) return [];
+    if (!this.isValid) return [];
     return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
   }
 
@@ -229,7 +264,7 @@ export class Interval {
    * @return {boolean}
    */
   abutsStart(other) {
-    if (!this.valid) return false;
+    if (!this.isValid) return false;
     return +this.e === +other.s;
   }
 
@@ -239,7 +274,7 @@ export class Interval {
    * @return {boolean}
    */
   abutsEnd(other) {
-    if (!this.valid) return false;
+    if (!this.isValid) return false;
     return +other.e === +this.s;
   }
 
@@ -249,7 +284,7 @@ export class Interval {
    * @return {boolean}
    */
   engulfs(other) {
-    if (!this.valid) return false;
+    if (!this.isValid) return false;
     return this.s <= other.s && this.e >= other.e;
   }
 
@@ -260,7 +295,7 @@ export class Interval {
    * @return {Interval}
    */
   intersection(other) {
-    if (!this.valid) return Interval.invalid();
+    if (!this.isValid) return this;
     const s = this.s > other.s ? this.s : other.s,
       e = this.e < other.e ? this.e : other.e;
 
@@ -278,7 +313,7 @@ export class Interval {
    * @return {Interval}
    */
   union(other) {
-    if (!this.valid) return Interval.invalid();
+    if (!this.isValid) return this;
     const s = this.s < other.s ? this.s : other.s,
       e = this.e > other.e ? this.e : other.e;
     return Interval.fromDateTimes(s, e);
@@ -364,20 +399,12 @@ export class Interval {
   }
 
   /**
-   * Return whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
-   * @return {boolean}
-   */
-  get isValid() {
-    return this.valid;
-  }
-
-  /**
    * Return this Interval's start is after the specified DateTime.
    * @param {DateTime} dateTime
    * @return {boolean}
    */
   isAfter(dateTime) {
-    if (!this.valid) return false;
+    if (!this.isValid) return false;
     return this.s > dateTime;
   }
 
@@ -387,7 +414,7 @@ export class Interval {
    * @return {boolean}
    */
   isBefore(dateTime) {
-    if (!this.valid) return false;
+    if (!this.isValid) return false;
     return this.e.plus(1) < dateTime;
   }
 
@@ -397,7 +424,7 @@ export class Interval {
    * @return {boolean}
    */
   contains(dateTime) {
-    if (!this.valid) return false;
+    if (!this.isValid) return false;
     return this.s <= dateTime && this.e > dateTime;
   }
 
@@ -406,7 +433,7 @@ export class Interval {
    * @return {string}
    */
   toString() {
-    if (!this.valid) return INVALID;
+    if (!this.isValid) return INVALID;
     return `[${this.s.toISO()} – ${this.e.toISO()})`;
   }
 
@@ -417,7 +444,7 @@ export class Interval {
    * @return {string}
    */
   toISO(opts) {
-    if (!this.valid) return INVALID;
+    if (!this.isValid) return INVALID;
     return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;
   }
 
@@ -429,7 +456,7 @@ export class Interval {
    * @return {string}
    */
   toFormat(dateFormat, { separator = ' – ' } = {}) {
-    if (!this.valid) return INVALID;
+    if (!this.isValid) return INVALID;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
   }
 }

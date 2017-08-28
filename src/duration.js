@@ -2,7 +2,8 @@ import { Util } from './impl/util';
 import { Locale } from './impl/locale';
 import { Formatter } from './impl/formatter';
 import { RegexParser } from './impl/regexParser';
-import { InvalidUnitError } from './errors';
+import { Settings } from './settings';
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './errors';
 
 const INVALID = 'Invalid Duration';
 
@@ -31,7 +32,12 @@ const matrix = {
     seconds: 7 * 24 * 60 * 60,
     milliseconds: 7 * 24 * 60 * 60 * 1000
   },
-  days: { hours: 24, minutes: 24 * 60, seconds: 24 * 60 * 60, milliseconds: 24 * 60 * 60 * 1000 },
+  days: {
+    hours: 24,
+    minutes: 24 * 60,
+    seconds: 24 * 60 * 60,
+    milliseconds: 24 * 60 * 60 * 1000
+  },
   hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
   minutes: { seconds: 60, milliseconds: 60 * 1000 },
   seconds: { milliseconds: 1000 }
@@ -83,9 +89,18 @@ export class Duration {
    * @private
    */
   constructor(config) {
-    Object.defineProperty(this, 'values', { value: config.values, enumerable: true });
-    Object.defineProperty(this, 'loc', { value: config.loc || Locale.create(), enumerable: true });
-    Object.defineProperty(this, 'valid', { value: config.valid || true, enumerable: false });
+    Object.defineProperty(this, 'values', {
+      value: config.values,
+      enumerable: true
+    });
+    Object.defineProperty(this, 'loc', {
+      value: config.loc || Locale.create(),
+      enumerable: true
+    });
+    Object.defineProperty(this, 'invalidReason', {
+      value: config.invalidReason || null,
+      enumerable: false
+    });
   }
 
   /**
@@ -111,7 +126,9 @@ export class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
-    return new Duration({ values: Util.normalizeObject(obj, Duration.normalizeUnit) });
+    return new Duration({
+      values: Util.normalizeObject(obj, Duration.normalizeUnit)
+    });
   }
 
   /**
@@ -131,8 +148,15 @@ export class Duration {
    * Create an invalid Duration.
    * @return {Duration}
    */
-  static invalid() {
-    return new Duration({ valid: false });
+  static invalid(reason) {
+    if (!reason) {
+      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
+    }
+    if (Settings.throwOnInvalid) {
+      throw new InvalidDurationError(reason);
+    } else {
+      return new Duration({ invalidReason: reason });
+    }
   }
 
   /**
@@ -189,7 +213,7 @@ export class Duration {
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
-    return this.valid
+    return this.isValid
       ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
       : INVALID;
   }
@@ -200,7 +224,7 @@ export class Duration {
    * @return {object}
    */
   toObject() {
-    return this.valid ? Object.assign({}, this.values) : {};
+    return this.isValid ? Object.assign({}, this.values) : {};
   }
 
   /**
@@ -214,7 +238,7 @@ export class Duration {
    */
   toISO() {
     // we could use the formatter, but this is an easier way to get the minimum string
-    if (!this.valid) return null;
+    if (!this.isValid) return null;
 
     let s = 'P',
       norm = this.normalize();
@@ -246,7 +270,7 @@ export class Duration {
    * @return {Duration}
    */
   plus(duration) {
-    if (!this.valid) return this;
+    if (!this.isValid) return this;
 
     const dur = Util.friendlyDuration(duration),
       result = {};
@@ -267,7 +291,7 @@ export class Duration {
    * @return {Duration}
    */
   minus(duration) {
-    if (!this.valid) return this;
+    if (!this.isValid) return this;
 
     const dur = Util.friendlyDuration(duration);
     return this.plus(dur.negate());
@@ -316,7 +340,7 @@ export class Duration {
    * @return {number}
    */
   as(unit) {
-    return this.valid ? this.shiftTo(unit).get(unit) : NaN;
+    return this.isValid ? this.shiftTo(unit).get(unit) : NaN;
   }
 
   /**
@@ -326,7 +350,7 @@ export class Duration {
    * @return {Duration}
    */
   normalize() {
-    if (!this.valid) return this;
+    if (!this.isValid) return this;
 
     const neg = isHighOrderNegative(this.values),
       dur = neg ? this.negate() : this,
@@ -340,7 +364,7 @@ export class Duration {
    * @return {Duration}
    */
   shiftTo(...units) {
-    if (!this.valid) return this;
+    if (!this.isValid) return this;
 
     if (units.length === 0) {
       return this;
@@ -404,7 +428,7 @@ export class Duration {
    * @return {Duration}
    */
   negate() {
-    if (!this.valid) return this;
+    if (!this.isValid) return this;
     const negated = {};
     for (const k of Object.keys(this.values)) {
       negated[k] = -this.values[k];
@@ -417,7 +441,7 @@ export class Duration {
    * @return {number}
    */
   get years() {
-    return this.valid ? this.values.years || 0 : NaN;
+    return this.isValid ? this.values.years || 0 : NaN;
   }
 
   /**
@@ -425,7 +449,7 @@ export class Duration {
    * @return {number}
    */
   get months() {
-    return this.valid ? this.values.months || 0 : NaN;
+    return this.isValid ? this.values.months || 0 : NaN;
   }
 
   /**
@@ -433,7 +457,7 @@ export class Duration {
    * @return {number}
    */
   get weeks() {
-    return this.valid ? this.values.weeks || 0 : NaN;
+    return this.isValid ? this.values.weeks || 0 : NaN;
   }
 
   /**
@@ -441,7 +465,7 @@ export class Duration {
    * @return {number
    */
   get days() {
-    return this.valid ? this.values.days || 0 : NaN;
+    return this.isValid ? this.values.days || 0 : NaN;
   }
 
   /**
@@ -449,7 +473,7 @@ export class Duration {
    * @return {number}
    */
   get hours() {
-    return this.valid ? this.values.hours || 0 : NaN;
+    return this.isValid ? this.values.hours || 0 : NaN;
   }
 
   /**
@@ -457,7 +481,7 @@ export class Duration {
    * @return {number}
    */
   get minutes() {
-    return this.valid ? this.values.minutes || 0 : NaN;
+    return this.isValid ? this.values.minutes || 0 : NaN;
   }
 
   /**
@@ -465,7 +489,7 @@ export class Duration {
    * @return {number}
    */
   get seconds() {
-    return this.valid ? this.values.seconds || 0 : NaN;
+    return this.isValid ? this.values.seconds || 0 : NaN;
   }
 
   /**
@@ -473,7 +497,7 @@ export class Duration {
    * @return {number}
    */
   get milliseconds() {
-    return this.valid ? this.values.milliseconds || 0 : NaN;
+    return this.isValid ? this.values.milliseconds || 0 : NaN;
   }
 
   /**
@@ -482,7 +506,15 @@ export class Duration {
    * @return {boolean}
    */
   get isValid() {
-    return this.valid;
+    return this.invalidReason === null;
+  }
+
+  /**
+   * Returns an explanation of why this Duration became invalid, or null if the Duration is valid
+   * @return {string}
+   */
+  get invalidReason() {
+    return this.invalidReason;
   }
 
   /**
@@ -492,7 +524,7 @@ export class Duration {
    * @return {boolean}
    */
   equals(other) {
-    if (!this.valid || !other.valid) {
+    if (!this.isValid || !other.isValid) {
       return false;
     }
 

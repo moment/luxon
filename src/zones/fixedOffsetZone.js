@@ -16,9 +16,7 @@ export class FixedOffsetZone extends Zone {
   }
 
   static instance(offset) {
-    return offset === 0
-      ? FixedOffsetZone.utcInstance
-      : new FixedOffsetZone(offset);
+    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
   }
 
   static parseSpecifier(s) {

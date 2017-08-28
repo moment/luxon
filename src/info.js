@@ -12,9 +12,11 @@ export class Info {
    * @return {boolean}
    */
   static hasDST(zone = Settings.defaultZone) {
-    return !zone.universal &&
+    return (
+      !zone.universal &&
       DateTime.local().setTimeZone(zone).set({ month: 1 }).offset !==
-        DateTime.local().setTimeZone(zone).set({ month: 5 }).offset;
+        DateTime.local().setTimeZone(zone).set({ month: 5 }).offset
+    );
   }
 
   /**
@@ -56,10 +58,7 @@ export class Info {
     length = 'long',
     { locale = 'en', numberingSystem = null, outputCalendar = 'gregory' } = {}
   ) {
-    return new Locale(locale, numberingSystem, outputCalendar).months(
-      length,
-      true
-    );
+    return new Locale(locale, numberingSystem, outputCalendar).months(length, true);
   }
 
   /**
@@ -76,10 +75,7 @@ export class Info {
    * @example Info.weekdays('short', 'ar')[0] //=> 'الاثنين'
    * @return {[string]}
    */
-  static weekdays(
-    length = 'long',
-    { locale = 'en', numberingSystem = null } = {}
-  ) {
+  static weekdays(length = 'long', { locale = 'en', numberingSystem = null } = {}) {
     return new Locale(locale, numberingSystem, null).weekdays(length);
   }
 
@@ -95,10 +91,7 @@ export class Info {
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
-  static weekdaysFormat(
-    length = 'long',
-    { locale = 'en', numberingSystem = null } = {}
-  ) {
+  static weekdaysFormat(length = 'long', { locale = 'en', numberingSystem = null } = {}) {
     return new Locale(locale, numberingSystem, null).weekdays(length, true);
   }
 
@@ -139,7 +132,9 @@ export class Info {
    * @return {object}
    */
   static features() {
-    let intl = false, intlTokens = false, timezones = false;
+    let intl = false,
+      intlTokens = false,
+      timezones = false;
 
     if (Intl.DateTimeFormat) {
       intl = true;

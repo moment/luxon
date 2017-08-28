@@ -53,7 +53,7 @@ test('Interval#union spans adjacent intervals', () => {
 });
 
 test('Interval#union returns invalid for invalid intervals', () => {
-  expect(Interval.invalid().union(todayFrom(8, 10)).isValid).toBeFalsy();
+  expect(Interval.invalid('any reason').union(todayFrom(8, 10)).isValid).toBeFalsy();
 });
 
 //-------
@@ -73,7 +73,7 @@ test('Interval#intersection returns empty for adjacent intervals', () => {
 });
 
 test('Interval#intersection returns invalid for invalid intervals', () => {
-  expect(Interval.invalid().intersection(todayFrom(8, 10)).isValid).toBeFalsy();
+  expect(Interval.invalid('any reason').intersection(todayFrom(8, 10)).isValid).toBeFalsy();
 });
 
 //-------
