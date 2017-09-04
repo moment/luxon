@@ -5,7 +5,7 @@ let now = () => new Date().valueOf(),
   throwOnInvalid = false;
 
 /**
- * Global settings
+ * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
  */
 export class Settings {
   /**
