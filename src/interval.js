@@ -41,9 +41,7 @@ export class Interval {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError(
-        'need to specify a reason the DateTime is invalid'
-      );
+      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidIntervalError(reason);
@@ -103,10 +101,7 @@ export class Interval {
     if (string) {
       const [s, e] = string.split(/\//);
       if (s && e) {
-        return Interval.fromDateTimes(
-          DateTime.fromISO(s, opts),
-          DateTime.fromISO(e, opts)
-        );
+        return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));
       }
     }
     return Interval.invalid('invalid ISO format');
@@ -162,7 +157,8 @@ export class Interval {
    */
   count(unit = 'milliseconds') {
     if (!this.isValid) return NaN;
-    const start = this.start.startOf(unit), end = this.end.startOf(unit);
+    const start = this.start.startOf(unit),
+      end = this.end.startOf(unit);
     return Math.floor(end.diff(start, unit).get(unit)) + 1;
   }
 
@@ -231,8 +227,10 @@ export class Interval {
    */
   splitAt(...dateTimes) {
     if (!this.isValid) return [];
-    const sorted = dateTimes.map(Util.friendlyDateTime).sort(), results = [];
-    let s = this.s, i = 0;
+    const sorted = dateTimes.map(Util.friendlyDateTime).sort(),
+      results = [];
+    let s = this.s,
+      i = 0;
 
     while (s < this.e) {
       const added = sorted[i] || this.e,
@@ -253,8 +251,11 @@ export class Interval {
    */
   splitBy(duration) {
     if (!this.isValid) return [];
-    const dur = Util.friendlyDuration(duration), results = [];
-    let s = this.s, added, next;
+    const dur = Util.friendlyDuration(duration),
+      results = [];
+    let s = this.s,
+      added,
+      next;
 
     while (s < this.e) {
       added = s.plus(dur);
@@ -362,10 +363,7 @@ export class Interval {
    * @return {[Interval]}
    */
   static merge(intervals) {
-    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce((
-      [sofar, current],
-      item
-    ) => {
+    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(([sofar, current], item) => {
       if (!current) {
         return [sofar, item];
       } else if (current.overlaps(item) || current.abutsStart(item)) {
@@ -386,12 +384,10 @@ export class Interval {
    * @return {[Interval]}
    */
   static xor(intervals) {
-    let start = null, currentCount = 0;
+    let start = null,
+      currentCount = 0;
     const results = [],
-      ends = intervals.map(i => [
-        { time: i.s, type: 's' },
-        { time: i.e, type: 'e' }
-      ]),
+      ends = intervals.map(i => [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }]),
       arr = Util.flatten(ends).sort((a, b) => a.time - b.time);
 
     for (const i of arr) {
