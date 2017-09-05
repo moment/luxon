@@ -1080,8 +1080,7 @@ export class DateTime {
 
   /**
    * Returns a string representation of this DateTime formatted according to the specified format string.
-   * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool.
-   * [todo - token definitions here]
+   * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool. See the documentation for the specific format tokens supported.
    * @param {string} fmt - the format string
    * @param {object} opts - options
    * @param {boolean} opts.round - round numerical values

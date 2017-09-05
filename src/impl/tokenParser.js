@@ -8,7 +8,10 @@ function intUnit(regex, post = i => i) {
 }
 
 function oneOf(strings, startIndex) {
-  return { regex: RegExp(strings.join('|')), deser: ([s]) => strings.indexOf(s) + startIndex };
+  return {
+    regex: RegExp(strings.join('|')),
+    deser: ([s]) => strings.indexOf(s) + startIndex
+  };
 }
 
 function offset(regex, groups) {
@@ -107,11 +110,16 @@ function unitForToken(token, loc) {
           return intUnit(two);
         // weekdays
         case 'E':
+        case 'c':
           return intUnit(one);
         case 'EEE':
-          return oneOf(loc.weekdays('short'), 1);
+          return oneOf(loc.weekdays('short', true), 1);
         case 'EEEE':
-          return oneOf(loc.weekdays('long'), 1);
+          return oneOf(loc.weekdays('long', true), 1);
+        case 'ccc':
+          return oneOf(loc.weekdays('short', false), 1);
+        case 'cccc':
+          return oneOf(loc.weekdays('long', false), 1);
         // offset/zone
         case 'Z':
         case 'ZZ':

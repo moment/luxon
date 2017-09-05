@@ -18,7 +18,12 @@ const babel = require('rollup-plugin-babel'),
 
 function process(inopts) {
   const opts = Object.assign(
-    { entry: inopts.entry, sourceMap: true, format: inopts.format, plugins: [] },
+    {
+      entry: inopts.entry,
+      sourceMap: true,
+      format: inopts.format,
+      plugins: []
+    },
     inopts.rollupOpts || {}
   );
 
@@ -129,7 +134,14 @@ gulp.task('docs', () =>
       manual: {
         globalIndex: true,
         design: ['./docs/install.md', './docs/tour.md'],
-        usage: ['./docs/intl.md', './docs/zones.md', './docs/calendars.md'],
+        usage: [
+          './docs/intl.md',
+          './docs/zones.md',
+          './docs/calendars.md',
+          './docs/formatting.md',
+          './docs/parsing.md',
+          './docs/validity.md'
+        ],
         faq: ['./docs/matrix.md'],
         changelog: ['./changelog.md']
       },
