@@ -74,7 +74,10 @@ export class Locale {
 
   constructor(locale, numbering, outputCalendar) {
     Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
-    Object.defineProperty(this, 'numberingSystem', { value: numbering || null, enumerable: true });
+    Object.defineProperty(this, 'numberingSystem', {
+      value: numbering || null,
+      enumerable: true
+    });
     Object.defineProperty(this, 'outputCalendar', {
       value: outputCalendar || null,
       enumerable: true
@@ -239,5 +242,13 @@ export class Locale {
     }
 
     return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
+  }
+
+  equals(other) {
+    return (
+      this.locale === other.locale &&
+      this.numberingSystem === other.numberingSystem &&
+      this.outputCalendar === other.outputCalendar
+    );
   }
 }

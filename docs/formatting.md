@@ -4,8 +4,8 @@
 
 You should avoid using ad-hoc custom date formats.
 
- * You should generally use ISO 8601 (or similar) when creating machine-parsable dates and Luxon already provides first-class facilities for creating those. See [toISO](../class/src/datetime.js~DateTime.html#instance-method-toISO)
- * You should use [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to create human readable, localized dates. Otherwise, you may put the elements (say, the month and the day) in an order that is wrong in some locales.
+ * You should generally use ISO 8601 (or similar) when creating machine-parsable dates and Luxon already provides first-class facilities for creating those. See the [DateTime#toISO method](../class/src/datetime.js~DateTime.html#instance-method-toISO).
+ * You should use [DateTime#toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to create human readable, localized dates. Otherwise, you may put the elements (say, the month and the day) in an order that is wrong in some locales.
  
 However, Luxon provides method for applying ad-hoc formats to DateTimes for two reasons:
 
@@ -14,7 +14,7 @@ However, Luxon provides method for applying ad-hoc formats to DateTimes for two 
  
 ## toFormat
  
-See [toFormat]("../class/src/datetime.js~DateTime.html#instance-method-toFormat") for the API signature. As a brief motivating example:
+See [DateTime#toFormat]("../class/src/datetime.js~DateTime.html#instance-method-toFormat") for the API signature. As a brief motivating example:
 
 ```js
 DateTime.fromISO('2014-08-06T13:07:04.054').toFormat('yyyy LLL dd') //=> '2014 Aug 06'

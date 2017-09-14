@@ -33,15 +33,15 @@ Generally speaking, Luxon does not support changing a DateTime's offset, just it
 
 ## Support for IANA-specified zones
 
-IANA-specified zones are string identifiers like "America/New_York" or "Asia/Beijing". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can fiddle with the zones. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
+IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can fiddle with the zones. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
 
 ```js
 Info.features().zones; //=> true
 ```
 
-If your unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also polyfill using [todo: polyfill instructions].
+If your unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](faq/matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](faq/matrix.html#zones).
 
-If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](invalid.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason doesn't support that *particular* zone, or because the zone is just bogus. Like this:
+If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](usage/validity.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason doesn't support that *particular* zone, or because the zone is just bogus. Like this:
 
 ```js
 bogus = DateTime.local().setZone('America/Bogus')
@@ -127,11 +127,32 @@ keepZone.toString()            //=> '2017-05-15T09:10:23.000+02:00'
 
 ## Getting information about the current zone and offset
 
+Luxon DateTimes have a few different accessors that let you find out about the zone and offset:
+
+```js
+var dt = DateTime.local();
+
+dt.zoneName          //=> 'America/New_York'
+dt.offset            //=> -240
+dt.offsetNameShort   //=> 'EDT'
+dt.offsetNameLong    //=> 'Eastern Daylight Time'
+dt.isOffsetFixed     //=> false
+dt.isInDST           //=> true
+```
+
+Those are all documented in the [DateTime API docs](../class/src/datetime.js~DateTime.html).
+
+DateTime also has a `zone` property that holds an Luxon Zone object. You don't normally need to interact with it, but don't get it confused with the `zoneName`.
+
+```js
+dt.zone   //=> LocalZone {}
+```
+
 ## Changing zones
 
 ### setZone
 
-Luxon objects are immutable, so when we say "changing zones" we really mean "create a new instance with a different zone". Changing zone generally means "change the zone in which this time is expressed (and according to which rules it is manipulated), but don't change the underlying timestamp." For example:
+Luxon objects are immutable, so when we say "changing zones" we really mean "creating a new instance with a different zone". Changing zone generally means "change the zone in which this DateTime is expressed (and according to which rules it is manipulated), but don't change the underlying timestamp." For example:
 
 
 ```js
@@ -215,7 +236,7 @@ If you're curious, this lack of definition is because Luxon doesn't actually kno
 
 ### Math across DSTs
 
-There's a whole [section](math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher order, variable length durations like days, weeks, months, and years. When working with lower order, exact ones like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
+There's a whole [section](usage/math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher order, variable length durations like days, weeks, months, and years. When working with lower order, exact ones like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
 
 An easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is `America/New_York`, which had a Spring Forward DST in the early hours of March 12.
 
@@ -232,8 +253,8 @@ start.plus({hours: 24}).hour        //=> 11
 By default, Luxon creates DateTimes in the system's local zone. However, you can override this behavior globally:
 
 ```js
-Settings.defaultZoneName = 'Asia/Beijing'
-DateTime.local().zoneName                 //=> 'Asia/Beijing'
+Settings.defaultZoneName = 'Asia/Tokyo'
+DateTime.local().zoneName                 //=> 'Asia/Tokyo'
 
 Settings.defaultZoneName = 'utc'
 DateTime.local().zoneName                 //=> 'UTC'

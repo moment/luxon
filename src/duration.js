@@ -206,7 +206,6 @@ export class Duration {
 
   /**
    * Returns a string representation of this Duration formatted according to the specified format string.
-   * [todo - token definitions here]
    * @param {string} fmt - the format string
    * @param {object} opts - options
    * @param {boolean} opts.round - round numerical values

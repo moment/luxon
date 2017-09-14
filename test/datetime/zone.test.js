@@ -132,8 +132,8 @@ test('Setting the default zone results in a different creation zone', () => {
   try {
     const localZone = Settings.defaultZoneName;
 
-    Settings.defaultZoneName = 'Asia/Beijing';
-    expect(DateTime.local().zoneName).toBe('Asia/Beijing');
+    Settings.defaultZoneName = 'Asia/Tokyo';
+    expect(DateTime.local().zoneName).toBe('Asia/Tokyo');
 
     Settings.defaultZoneName = 'local';
     expect(DateTime.local().zoneName).toBe(localZone);

@@ -1,3 +1,5 @@
 # Changelog
 
-## 0.5 initial release
+## 0.1
+
+Initial release.

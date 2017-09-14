@@ -140,6 +140,7 @@ gulp.task('docs', () =>
           './docs/calendars.md',
           './docs/formatting.md',
           './docs/parsing.md',
+          './docs/math.md',
           './docs/validity.md'
         ],
         faq: ['./docs/matrix.md'],

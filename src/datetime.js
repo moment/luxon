@@ -1363,8 +1363,11 @@ export class DateTime {
    * @return {boolean}
    */
   equals(other) {
-    // todo - check other stuff?
-    return this.isValid && other.isValid ? this.valueOf() === other.valueOf() : false;
+    return this.isValid && other.isValid
+      ? this.valueOf() === other.valueOf() &&
+        this.zone.equals(other.zone) &&
+        this.loc.equals(other.loc)
+      : false;
   }
 
   /**
