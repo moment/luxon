@@ -4,7 +4,7 @@
 
 You should avoid using ad-hoc custom date formats.
 
- * You should generally use ISO 8601 (or similar) when creating machine-parsable dates and Luxon already provides first-class facilities for creating those.
+ * You should generally use ISO 8601 (or similar) when creating machine-parsable dates and Luxon already provides first-class facilities for creating those. See [toISO](../class/src/datetime.js~DateTime.html#instance-method-toISO)
  * You should use [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to create human readable, localized dates. Otherwise, you may put the elements (say, the month and the day) in an order that is wrong in some locales.
  
 However, Luxon provides method for applying ad-hoc formats to DateTimes for two reasons:
@@ -40,7 +40,8 @@ DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 m
 
 ## Standalone vs format tokens
 
-Some tokens have a "standalone" and "format" version. In some languages, you use a different form of a word based on whether it is part of a longer phrase or merely by itself (e.g. "Monday the 22nd" vs "Monday"). Use them accordingly. 
+Some tokens have a "standalone" and "format" version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. "Monday the 22nd" vs "Monday"). Use them accordingly. 
+
 ```js
 var d = DateTime.fromISO('2014-08-06T13:07:04.054').setLocale('ru');
 d.toFormat("MMMM"); //=> 'августа'
