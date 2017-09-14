@@ -24,8 +24,8 @@ test('DateTime#plus({ year: 1}) adds a year', () => {
 
 test('DateTime#plus({ days: 1 }) keeps the same time across a DST', () => {
   const i = DateTime.fromISO('2016-03-12T10:00', {
-    zone: 'America/Los_Angeles'
-  }),
+      zone: 'America/Los_Angeles'
+    }),
     later = i.plus({ days: 1 });
   expect(later.day).toBe(13);
   expect(later.hour).toBe(10);
@@ -33,8 +33,8 @@ test('DateTime#plus({ days: 1 }) keeps the same time across a DST', () => {
 
 test('DateTime#plus({ hours: 24 }) gains an hour to spring forward', () => {
   const i = DateTime.fromISO('2016-03-12T10:00', {
-    zone: 'America/Los_Angeles'
-  }),
+      zone: 'America/Los_Angeles'
+    }),
     later = i.plus({ hours: 24 });
   expect(later.day).toBe(13);
   expect(later.hour).toBe(11);
@@ -140,7 +140,7 @@ test("DateTime#startOf('second') goes to the start of the second", () => {
 });
 
 test("DateTime#startOf('week') goes to the start of the week", () => {
-  //using a different day so that it doesn't end up as the first of the month
+  // using a different day so that it doesn't end up as the first of the month
   const dt = DateTime.fromISO('2016-03-12T10:00').startOf('week');
 
   expect(dt.year).toBe(2016);
@@ -228,7 +228,7 @@ test("DateTime#endOf('second') goes to the start of the second", () => {
 });
 
 test("DateTime#endOf('week') goes to the end of the week", () => {
-  //using a different day so that it doesn't end up as the first of the month
+  // using a different day so that it doesn't end up as the first of the month
   const dt = DateTime.fromISO('2016-03-12T10:00').endOf('week');
 
   expect(dt.year).toBe(2016);
