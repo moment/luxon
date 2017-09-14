@@ -1,6 +1,7 @@
 import { DateTime } from './datetime';
 import { Settings } from './settings';
 import { Locale } from './impl/locale';
+import { Util } from './impl/util';
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
@@ -14,8 +15,8 @@ export class Info {
   static hasDST(zone = Settings.defaultZone) {
     return (
       !zone.universal &&
-      DateTime.local().setTimeZone(zone).set({ month: 1 }).offset !==
-        DateTime.local().setTimeZone(zone).set({ month: 5 }).offset
+      DateTime.local().setZone(zone).set({ month: 1 }).offset !==
+        DateTime.local().setZone(zone).set({ month: 5 }).offset
     );
   }
 
@@ -134,21 +135,21 @@ export class Info {
   static features() {
     let intl = false,
       intlTokens = false,
-      timezones = false;
+      zones = false;
 
-    if (Intl.DateTimeFormat) {
+    if (Util.isUndefined(Intl) && Util.isUndefined(Util.DateTimeFormat)) {
       intl = true;
 
-      intlTokens = Intl.DateTimeFormat.prototype.formatToParts !== 'undefined';
+      intlTokens = Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
 
       try {
         Intl.DateTimeFormat({ timeZone: 'America/New_York' });
-        timezones = true;
+        zones = true;
       } catch (e) {
-        timezones = false;
+        zones = false;
       }
     }
 
-    return { intl, intlTokens, timezones };
+    return { intl, intlTokens, zones };
   }
 }

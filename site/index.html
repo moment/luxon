@@ -20,7 +20,7 @@
 
             <pre>
                 <code>
-DateTime.local().setTimeZone('America/New_York').minus({ weeks: 1}).endOf('day').toISO();
+DateTime.local().setZone('America/New_York').minus({ weeks: 1}).endOf('day').toISO();
                 </code>
             </pre>
 
@@ -30,7 +30,7 @@ DateTime.local().setTimeZone('America/New_York').minus({ weeks: 1}).endOf('day')
                     <li><a href="docs/class/src/datetime.js~DateTime.html">DateTime</a>, <a href="docs/class/src/duration.js~Duration.html">Duration</a>, and <a href="docs/class/src/interval.js~Interval.html">Interval</a> types.</li>
                     <li>Immutable, chainable, unambiguous API.</li>
                     <li>Parsing and formatting for common and custom formats.</li>
-                    <li>Native timezone and Intl support (no locale or tz files).</li>
+                    <li>Native time zone and Intl support (no locale or tz files).</li>
                 </ul>
             </div>
 

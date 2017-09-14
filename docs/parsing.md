@@ -132,4 +132,4 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | D | | localized numeric date | 9/4/2017 
 | DD | | localized date with abbreviated month | Aug 6, 2014
 | DDD | | localized date with full month | August 6, 2014
-| DDD | | localized date with full month and weekday | Wednesday, August 6, 2014
+| DDDD | | localized date with full month and weekday | Wednesday, August 6, 2014

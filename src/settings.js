@@ -1,4 +1,5 @@
 import { LocalZone } from './zones/localZone';
+import { Util } from './impl/util';
 
 let now = () => new Date().valueOf(),
   defaultZone = LocalZone.instance,
@@ -25,19 +26,27 @@ export class Settings {
   }
 
   /**
-   * Get the default time zone to create DateTimes in.
+   * Set the default time zone to create DateTimes in.
    * @type {Zone}
    */
-  static get defaultZone() {
-    return defaultZone;
+  static get defaultZoneName() {
+    return defaultZone.name;
   }
 
   /**
    * Set the default time zone to create DateTimes in.
    * @type {Zone}
    */
-  static set defaultZone(z) {
-    defaultZone = z;
+  static set defaultZoneName(z) {
+    defaultZone = Util.normalizeZone(z);
+  }
+
+  /**
+   * Get the default time zone object to create DateTimes in.
+   * @type {Zone}
+   */
+  static get defaultZone() {
+    return defaultZone;
   }
 
   /**

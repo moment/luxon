@@ -20,7 +20,9 @@ export class LocalZone extends Zone {
   }
 
   get name() {
-    return new Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (Util.isUndefined(Intl) && Util.isUndefined(Intl.DateTimeFormat)) {
+      return new Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } else return 'local';
   }
 
   get universal() {

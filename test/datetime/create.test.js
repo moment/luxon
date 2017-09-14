@@ -196,7 +196,7 @@ test('DateTime.fromJSDate(date) accepts a zone option', () => {
     dateTime = DateTime.fromJSDate(date, { zone: 'America/Santiago' });
 
   expect(dateTime.toJSDate().valueOf()).toBe(date.valueOf());
-  expect(dateTime.timezoneName).toBe('America/Santiago');
+  expect(dateTime.zoneName).toBe('America/Santiago');
 });
 
 //------
@@ -214,7 +214,7 @@ test('DateTime.fromMillis(ms) accepts a zone option', () => {
     dateTime = DateTime.fromMillis(value, { zone: 'America/Santiago' });
 
   expect(dateTime.valueOf()).toBe(value);
-  expect(dateTime.timezoneName).toBe('America/Santiago');
+  expect(dateTime.zoneName).toBe('America/Santiago');
 });
 
 //------

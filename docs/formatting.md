@@ -5,7 +5,7 @@
 You should avoid using ad-hoc custom date formats.
 
  * You should generally use ISO 8601 (or similar) when creating machine-parsable dates and Luxon already provides first-class facilities for creating those.
- * You should use [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to create human readable, localizable, dates. Otherwise, you may put the elements (say, the month and the day) in an order that is wrong in some locales.
+ * You should use [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to create human readable, localized dates. Otherwise, you may put the elements (say, the month and the day) in an order that is wrong in some locales.
  
 However, Luxon provides method for applying ad-hoc formats to DateTimes for two reasons:
 
@@ -49,7 +49,7 @@ d.toFormat("LLLL") //=> 'август'
 
 ## Macro tokens
 
-Some of the formats are "macros" meaning they correspond to multiple components. These use the native Intl API and will order its constituent parts in a locale-friendly way.
+Some of the formats are "macros", meaning they correspond to multiple components. These use the native Intl API and will order their constituent parts in a locale-friendly way.
 
 ```js
 DateTime.fromISO('2014-08-06T13:07:04.054').toFormat('ff') //=> 'Aug 6, 2014, 1:07 PM'
@@ -104,7 +104,7 @@ DateTime.fromISO('2014-08-06T13:07:04.054').toFormat('ff') //=> 'Aug 6, 2014, 1:
 | D | | localized numeric date | 9/4/2017 
 | DD | | localized date with abbreviated month | Aug 6, 2014
 | DDD | | localized date with full month | August 6, 2014
-| DDD | | localized date with full month and weekday | Wednesday, August 6, 2014
+| DDDD | | localized date with full month and weekday | Wednesday, August 6, 2014
 | t | | localized time | 9:07 AM
 | tt | | localized time with seconds | 1:07:04 PM
 | ttt | | localized time with seconds and abbreviated offset | 1:07:04 PM EDT

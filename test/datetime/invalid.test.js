@@ -20,7 +20,7 @@ test('Invalid creations are invalid', () => {
 });
 
 test('invalid zones result in invalid dates', () => {
-  expect(DateTime.local().setTimeZone('America/Lasers').isValid).toBe(false);
+  expect(DateTime.local().setZone('America/Lasers').isValid).toBe(false);
   expect(DateTime.fromObject({ zone: 'America/Lasers' }).isValid).toBe(false);
   expect(DateTime.fromJSDate(new Date(), { zone: 'America/Lasers' }).isValid).toBe(false);
 });

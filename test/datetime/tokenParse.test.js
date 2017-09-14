@@ -86,7 +86,9 @@ test('DateTime.fromString() validates weekday names', () => {
   d = DateTime.fromString('Monday, 05/25/1982', 'EEEE, LL/dd/yyyy');
   expect(d.isValid).toBeFalsy();
 
-  d = DateTime.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', { locale: 'fr' });
+  d = DateTime.fromString('mardi, 05/25/1982', 'EEEE, LL/dd/yyyy', {
+    locale: 'fr'
+  });
   expect(d.isValid).toBe(true);
   expect(d.year).toBe(1982);
   expect(d.month).toBe(5);
@@ -182,7 +184,7 @@ test('DateTime.fromString() accepts a zone argument', () => {
   const d = DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS', {
     zone: 'Asia/Tokyo'
   });
-  expect(d.timezoneName).toBe('Asia/Tokyo');
+  expect(d.zoneName).toBe('Asia/Tokyo');
   expect(d.offset).toBe(9 * 60);
   expect(d.year).toBe(1982);
   expect(d.month).toBe(5);
@@ -207,7 +209,7 @@ test('DateTime.fromString() with setZone parses IANA zones and sets it', () => {
   const d = DateTime.fromString('1982/05/25 09:10:11.445 Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss.SSS z', {
     setZone: true
   });
-  expect(d.timezoneName).toBe('Asia/Tokyo');
+  expect(d.zoneName).toBe('Asia/Tokyo');
   expect(d.offset).toBe(9 * 60);
   expect(d.hour).toBe(9);
   expect(d.minute).toBe(10);

@@ -138,7 +138,7 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
           loc: Locale.fromObject(opts)
         })
       );
-    return setZone ? inst : inst.setTimeZone(zone);
+    return setZone ? inst : inst.setZone(zone);
   } else {
     return DateTime.invalid(UNSUPPORTED_ZONE);
   }
@@ -239,7 +239,7 @@ function normalizeUnit(unit) {
  * {@link day}, {@link hour}, {@link minute}, {@link second}, {@link millisecond} accessors.
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
- * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setTimeZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
+ * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
  * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, and {@link valueOf}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
@@ -413,7 +413,7 @@ export class DateTime {
    * @param {number} obj.minute - minute of the hour, 0-59
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
-   * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setTimeZone()
+   * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
    * @param {string} [obj.locale='en-US'] - a locale to set on the resulting DateTime instance
    * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
@@ -675,10 +675,10 @@ export class DateTime {
   }
 
   /**
-   * Get the name of the timezone.
+   * Get the name of the time zone.
    * @return {String}
    */
-  get timezoneName() {
+  get zoneName() {
     return this.zone.name;
   }
 
@@ -893,23 +893,23 @@ export class DateTime {
   /**
    * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
    *
-   * Equivalent to {@link setTimeZone}('utc')
+   * Equivalent to {@link setZone}('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
-   * @param {object} [opts={}] - options to pass to `setTimeZone()`
+   * @param {object} [opts={}] - options to pass to `setZone()`
    * @return {DateTime}
    */
   toUTC(offset = 0, opts = {}) {
-    return this.setTimeZone(FixedOffsetZone.instance(offset), opts);
+    return this.setZone(FixedOffsetZone.instance(offset), opts);
   }
 
   /**
    * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
    *
-   * Equivalent to `setTimeZone('local')`
+   * Equivalent to `setZone('local')`
    * @return {DateTime}
    */
   toLocal() {
-    return this.setTimeZone(new LocalZone());
+    return this.setZone(new LocalZone());
   }
 
   /**
@@ -921,7 +921,7 @@ export class DateTime {
    * @param {boolean} [opts.keepCalendarTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
-  setTimeZone(zone, { keepCalendarTime = false } = {}) {
+  setZone(zone, { keepCalendarTime = false } = {}) {
     zone = Util.normalizeZone(zone);
     if (zone.equals(this.zone)) {
       return this;

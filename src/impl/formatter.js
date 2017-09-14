@@ -156,7 +156,7 @@ export class Formatter {
             return dt.offsetNameLong;
           // zone
           case 'z':
-            return dt.timezoneName;
+            return dt.zoneName;
           // like America/New_York
           // meridiems
           case 'a':
@@ -260,13 +260,25 @@ export class Formatter {
           // macros
           case 'D':
             // like 10/14/1983
-            return this.formatDateTime(dt, { year: 'numeric', month: 'numeric', day: 'numeric' });
+            return this.formatDateTime(dt, {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric'
+            });
           case 'DD':
             // like Oct 14, 1983
-            return this.formatDateTime(dt, { year: 'numeric', month: 'short', day: 'numeric' });
+            return this.formatDateTime(dt, {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            });
           case 'DDD':
             // like October 14, 1983
-            return this.formatDateTime(dt, { year: 'numeric', month: 'long', day: 'numeric' });
+            return this.formatDateTime(dt, {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
           case 'DDDD':
             // like Tuesday, October 14, 1983
             return this.formatDateTime(dt, {
@@ -276,7 +288,10 @@ export class Formatter {
               weekday: 'long'
             });
           case 't':
-            return this.formatDateTime(dt, { hour: 'numeric', minute: '2-digit' });
+            return this.formatDateTime(dt, {
+              hour: 'numeric',
+              minute: '2-digit'
+            });
           case 'tt':
             return this.formatDateTime(dt, {
               hour: 'numeric',
@@ -298,7 +313,11 @@ export class Formatter {
               timeZoneName: 'long'
             });
           case 'T':
-            return this.formatDateTime(dt, { hour: 'numeric', minute: '2-digit', hour12: false });
+            return this.formatDateTime(dt, {
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: false
+            });
           case 'TT':
             return this.formatDateTime(dt, {
               hour: 'numeric',
