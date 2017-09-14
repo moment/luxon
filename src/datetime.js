@@ -194,7 +194,7 @@ const orderedWeekUnits = [
 
 const orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
-function normalizeUnit(unit) {
+function normalizeUnit(unit, ignoreUnknown = false) {
   const normalized = {
     year: 'year',
     years: 'year',
@@ -220,7 +220,7 @@ function normalizeUnit(unit) {
     ordinal: 'ordinal'
   }[unit ? unit.toLowerCase() : unit];
 
-  if (!normalized) throw new InvalidUnitError(unit);
+  if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
 
   return normalized;
 }
@@ -435,7 +435,7 @@ export class DateTime {
 
     const tsNow = Settings.now(),
       offsetProvis = zoneToUse.offset(tsNow),
-      normalized = Util.normalizeObject(obj, normalizeUnit),
+      normalized = Util.normalizeObject(obj, normalizeUnit, true),
       containsOrdinal = !Util.isUndefined(normalized.ordinal),
       containsGregorYear = !Util.isUndefined(normalized.year),
       containsGregorMD = !Util.isUndefined(normalized.month) || !Util.isUndefined(normalized.day),

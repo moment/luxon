@@ -7,41 +7,70 @@ import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './
 
 const INVALID = 'Invalid Duration';
 
-const matrix = {
-  years: {
-    months: 12,
-    weeks: 52,
-    days: 365,
-    hours: 365 * 24,
-    minutes: 365 * 24 * 60,
-    seconds: 365 * 24 * 60 * 60,
-    milliseconds: 365 * 24 * 60 * 60 * 1000
+const lowOrderMatrix = {
+    weeks: {
+      days: 7,
+      hours: 7 * 24,
+      minutes: 7 * 24 * 60,
+      seconds: 7 * 24 * 60 * 60,
+      milliseconds: 7 * 24 * 60 * 60 * 1000
+    },
+    days: {
+      hours: 24,
+      minutes: 24 * 60,
+      seconds: 24 * 60 * 60,
+      milliseconds: 24 * 60 * 60 * 1000
+    },
+    hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
+    minutes: { seconds: 60, milliseconds: 60 * 1000 },
+    seconds: { milliseconds: 1000 }
   },
-  months: {
-    weeks: 4,
-    days: 30,
-    hours: 30 * 24,
-    minutes: 30 * 24 * 60,
-    seconds: 30 * 24 * 60 * 60,
-    milliseconds: 30 * 24 * 60 * 60 * 1000
-  },
-  weeks: {
-    days: 7,
-    hours: 7 * 24,
-    minutes: 7 * 24 * 60,
-    seconds: 7 * 24 * 60 * 60,
-    milliseconds: 7 * 24 * 60 * 60 * 1000
-  },
-  days: {
-    hours: 24,
-    minutes: 24 * 60,
-    seconds: 24 * 60 * 60,
-    milliseconds: 24 * 60 * 60 * 1000
-  },
-  hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
-  minutes: { seconds: 60, milliseconds: 60 * 1000 },
-  seconds: { milliseconds: 1000 }
-};
+  casualMatrix = Object.assign(
+    {
+      years: {
+        months: 12,
+        weeks: 52,
+        days: 365,
+        hours: 365 * 24,
+        minutes: 365 * 24 * 60,
+        seconds: 365 * 24 * 60 * 60,
+        milliseconds: 365 * 24 * 60 * 60 * 1000
+      },
+      months: {
+        weeks: 4,
+        days: 30,
+        hours: 30 * 24,
+        minutes: 30 * 24 * 60,
+        seconds: 30 * 24 * 60 * 60,
+        milliseconds: 30 * 24 * 60 * 60 * 1000
+      }
+    },
+    lowOrderMatrix
+  ),
+  daysInYearAccurate = 146097.0 / 400,
+  daysInMonthAccurate = 146097.0 / 4800,
+  accurateMatrix = Object.assign(
+    {
+      years: {
+        months: 12,
+        weeks: daysInYearAccurate / 7,
+        days: daysInYearAccurate,
+        hours: daysInYearAccurate * 24,
+        minutes: daysInYearAccurate * 24 * 60,
+        seconds: daysInYearAccurate * 24 * 60 * 60,
+        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
+      },
+      months: {
+        weeks: daysInMonthAccurate / 7,
+        days: daysInMonthAccurate,
+        hours: daysInYearAccurate * 24,
+        minutes: daysInYearAccurate * 24 * 60,
+        seconds: daysInYearAccurate * 24 * 60 * 60,
+        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
+      }
+    },
+    lowOrderMatrix
+  );
 
 const orderedUnits = [
   'years',
@@ -101,15 +130,21 @@ export class Duration {
       value: config.invalidReason || null,
       enumerable: false
     });
+    Object.defineProperty(this, 'matrix', {
+      value: config.longTermAccurate ? accurateMatrix : casualMatrix,
+      enumerable: false
+    });
   }
 
   /**
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
+   * @param {Object} opts - options for parsing
+   * @param {boolean} [obj.longTermAccurate=false]
    * @return {Duration}
    */
-  static fromMilliseconds(count) {
-    return Duration.fromObject({ milliseconds: count });
+  static fromMilliseconds(count, opts) {
+    return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
   }
 
   /**
@@ -123,29 +158,35 @@ export class Duration {
    * @param {number} obj.minutes
    * @param {number} obj.seconds
    * @param {number} obj.milliseconds
+   * @param {boolean} [obj.longTermAccurate=false]
    * @return {Duration}
    */
   static fromObject(obj) {
     return new Duration({
-      values: Util.normalizeObject(obj, Duration.normalizeUnit)
+      values: Util.normalizeObject(obj, Duration.normalizeUnit, true),
+      longTermAccurate: obj.longTermAccurate
     });
   }
 
   /**
    * Create a DateTime from an ISO 8601 duration string.
+   * @param {string} text - text to parse
+   * @param {Object} opts - options for parsing
+   * @param {boolean} [obj.longTermAccurate=false]
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
-   > Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
+   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
    * @return {Duration}
    */
-  static fromISO(text) {
-    const vals = RegexParser.parseISODuration(text);
-    return Duration.fromObject(vals);
+  static fromISO(text, opts) {
+    const obj = Object.assign(RegexParser.parseISODuration(text), opts);
+    return Duration.fromObject(obj);
   }
 
   /**
    * Create an invalid Duration.
+   * @param {string} reason - reason this is invalid
    * @return {Duration}
    */
   static invalid(reason) {
@@ -162,7 +203,7 @@ export class Duration {
   /**
    * @private
    */
-  static normalizeUnit(unit) {
+  static normalizeUnit(unit, ignoreUnknown = false) {
     const normalized = {
       year: 'years',
       years: 'years',
@@ -182,7 +223,7 @@ export class Duration {
       milliseconds: 'milliseconds'
     }[unit ? unit.toLowerCase() : unit];
 
-    if (!normalized) throw new InvalidUnitError(unit);
+    if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
 
     return normalized;
   }
@@ -392,7 +433,7 @@ export class Duration {
         // anything we haven't boiled down yet should get boiled to this unit
         for (const ak in accumulated) {
           if (accumulated.hasOwnProperty(ak)) {
-            built[k] += matrix[ak][k] * accumulated[ak];
+            built[k] += this.matrix[ak][k] * accumulated[ak];
           }
           delete accumulated[ak];
         }
@@ -405,7 +446,7 @@ export class Duration {
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
           if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
-            const conv = matrix[k][down],
+            const conv = this.matrix[k][down],
               added = Math.floor(vals[down] / conv);
             built[k] += added;
             vals[down] -= added * conv;
@@ -421,7 +462,7 @@ export class Duration {
     if (lastUnit) {
       for (const key in accumulated) {
         if (accumulated.hasOwnProperty(key)) {
-          built[lastUnit] += accumulated[key] / matrix[lastUnit][key];
+          built[lastUnit] += accumulated[key] / this.matrix[lastUnit][key];
         }
       }
     }

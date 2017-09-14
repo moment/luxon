@@ -165,13 +165,16 @@ export class Util {
     }
   }
 
-  static normalizeObject(obj, normalizer) {
+  static normalizeObject(obj, normalizer, ignoreUnknown = false) {
     const normalized = {};
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
         const v = obj[u];
         if (v !== null && !Util.isUndefined(v) && !isNaN(v)) {
-          normalized[normalizer(u)] = v;
+          const mapped = normalizer(u, ignoreUnknown);
+          if (mapped) {
+            normalized[mapped] = v;
+          }
         }
       }
     }
