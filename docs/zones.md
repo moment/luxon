@@ -218,9 +218,9 @@ DateTime.local(2017, 3, 11, 2, 30).plus({days: 1}).toString()         //=> '2017
 DateTime.local(2017, 3, 13, 2, 30).minus({days: 1}).toString()        //=> '2017-03-12T03:30:00.000-04:00'
 ```
 
-### Ambiguous time
+### Ambiguous times
 
-Harder to handle are ambiguous times. In the Northern Hemisphere, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017, the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because those correspond to different moments in time.
+Harder to handle are ambiguous times. In the Northern Hemisphere, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because those correspond to different moments in time.
 
 However, Luxon's behavior here is undefined. It makes no promises about which of the two possible timestamps Luxon will represent. Currently, its specific behavior is like this:
 
@@ -232,20 +232,20 @@ DateTime.local(2017, 11, 6, 1, 30).minus({days: 1}).offset / 60  //=> -5
 
 In other words, sometimes it picks one and sometimes the other. Luxon doesn't guarantee the specific behavior above. That's just what it happens to do.
 
-If you're curious, this lack of definition is because Luxon doesn't actually know that any particular DateTime is an ambiguous time. It doesn't know the time zones rules at all. It just knows the local time does not contradict the offset and leaves it at that. To find out the time is ambiguous and define exact rules for how to resolve them, it would have to test nearby times to see if it can find duplicate local time, and it would have to do that on every creation of a DateTime, regardless of whether it was anywhere near a real DST shift. Because that's onerous, Luxon doesn't bother.
+If you're curious, this lack of definition is because Luxon doesn't actually know that any particular DateTime is an ambiguous time. It doesn't know the time zones rules at all. It just knows the local time does not contradict the offset and leaves it at that. To find out the time is ambiguous and define exact rules for how to resolve it, Luxon would have to test nearby times to see if it can find duplicate local time, and it would have to do that on every creation of a DateTime, regardless of whether it was anywhere near a real DST shift. Because that's onerous, Luxon doesn't bother.
 
 ### Math across DSTs
 
-There's a whole [section](usage/math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher order, variable length durations like days, weeks, months, and years. When working with lower order, exact ones like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
+There's a whole [section](usage/math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher order, variable length units like days, weeks, months, and years. When working with lower order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
 
 An easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is `America/New_York`, which had a Spring Forward DST in the early hours of March 12.
 
 
 ```js
 start = DateTime.local(2017, 3, 11, 10);
-start.hour                          //=> 10
-start.plus({days: 1}).hour          //=> 10
-start.plus({hours: 24}).hour        //=> 11
+start.hour                          //=> 10, just for comparison
+start.plus({days: 1}).hour          //=> 10, stayed the same
+start.plus({hours: 24}).hour        //=> 11, DST pushed forward an hour
 ```
 
 ## Changing the default zone
@@ -264,4 +264,3 @@ DateTime.local().zoneName                 //=> 'UTC'
 Settings.defaultZoneName = 'local'
 DateTime.local().zoneName                 //=> 'America/New_York'
 ```
-
