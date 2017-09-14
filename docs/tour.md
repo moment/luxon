@@ -1,12 +1,10 @@
 # A quick tour
 
-## What Luxon does
+This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to [dive into them](../identifiers.html).
 
 Luxon is a library that makes it easier to work with dates and times in Javascript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We're going to talk about the most immediately useful subset of that interface.
 
-The API docs are comprehensive, so if you want to know more, feel free to [dive into them](../identifiers.html).
-
-## What is DateTime?
+## Your first DateTime
 
 The most important class in Luxon is [DateTime](../class/src/datetime.js~DateTime.html). A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here's one that represents May 15, 2017 at 8:30 in the morning:
 
