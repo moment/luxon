@@ -27,7 +27,7 @@ export class Settings {
 
   /**
    * Set the default time zone to create DateTimes in.
-   * @type {Zone}
+   * @type {string}
    */
   static get defaultZoneName() {
     return defaultZone.name;
@@ -35,7 +35,7 @@ export class Settings {
 
   /**
    * Set the default time zone to create DateTimes in.
-   * @type {Zone}
+   * @type {string}
    */
   static set defaultZoneName(z) {
     defaultZone = Util.normalizeZone(z);

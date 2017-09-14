@@ -264,6 +264,14 @@ export class Duration {
   }
 
   /**
+   * Returns an ISO 8601 representation of this Duration appropriate for use in debugging.
+   * @return {string}
+   */
+  toString() {
+    return this.toISO();
+  }
+
+  /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
    * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}

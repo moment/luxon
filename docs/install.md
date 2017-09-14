@@ -1,8 +1,6 @@
 # Install guide
 
-## Get it
-
-Luxon is a simple library, but JS environments are complicated. Luxon works by providing different builds for different environments.
+Luxon provides different builds for different JS environments. See below for a link to the right one and instructions on how to use it.
 
 ## Basic browser setup
 
@@ -26,7 +24,7 @@ var DateTime = luxon.DateTime;
 Install via NPM:
 
 ```
-npm install luxon
+npm install --save luxon
 ```
 
 ```js
@@ -55,4 +53,14 @@ import { DateTime } from 'luxon';
 
 ## Webpack
 
+```
+npm install --save luxon
+```
+
+```js
+import { DateTime } from 'luxon';
+```
+
 ## Meteor
+
+Help wanted.
