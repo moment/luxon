@@ -27,7 +27,7 @@ If all this seems too terse, check out these articles. The terminology in them i
 Luxon's DateTime class supports zones directly. By default, a date created in Luxon is "in" the local time zone of the machine it's running on. By "in" we mean that the DateTime has, as one of its properties, an associated zone. That zone affects its behavior in a number of ways:
 
  1. Times will be formatted as they would be in that zone.
- 1. Transformations to the date (such as `plus` or `startOf`) will obey any DSTs in that zone that affect the calculation (see "Date math vs time math" below)
+ 1. Transformations to the date (such as `plus` or `startOf`) will obey any DSTs in that zone that affect the calculation (see "Math across DSTs" below)
  
 Generally speaking, Luxon does not support changing a DateTime's offset, just its zone. That allows it to enforce the behaviors in the list above. The offset for that DateTime is just whatever the zone says it is. If you are unconcerned with the effects above, then you can always give your DateTime a fixed-offset zone.
 
@@ -242,7 +242,7 @@ An easy way to think of it is that if you add a day to a DateTime, you should al
 
 
 ```js
-start = DateTime.local(2017, 3, 11, 10);
+var start = DateTime.local(2017, 3, 11, 10);
 start.hour                          //=> 10, just for comparison
 start.plus({days: 1}).hour          //=> 10, stayed the same
 start.plus({hours: 24}).hour        //=> 11, DST pushed forward an hour
