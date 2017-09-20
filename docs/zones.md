@@ -9,25 +9,28 @@ The terminology for time zones and offsets isn't well-established. But let's try
  1. An **offset** is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we'll use hours.
  1. A **time zone** is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as "America/New_York". That zone says something to the effect of "The offset is -4, except between March and September, when it's -5".
  1. A **fixed-offset time zone** is any time zone that never changes offsets, such as UTC. Luxon supports fixed-offset zones directly; they're specified like UTC+7, which you can interpret as "always with an offset of +7".
- 1. A **named offset** is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America's EST roughly implies America/New_York) and the current offset (EST means +4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it's always whichever one is right). They are also ambiguous (Australia also calls something EST), unstandardized, and internationalized (what would a Frenchman call the US's EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.
+ 1. A **named offset** is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America's EST roughly implies America/New_York) and the current offset (EST means +4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it's always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US's EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.
  
 Some subtleties:
 
  1. Multiple zones can have the same offset (think about the US's zones and their Canadian equivalents), though they might not have the same offset all the time, depending on when their DSTs are. Thus zones and offsets have a  many-to-many relationship.
- 1. Just because a time zone doesn't have a DST now doesn't mean it's fixed. Perhaps it had one in the past. Regardless, Luxon does not have first class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.
+ 1. Just because a time zone doesn't have a DST now doesn't mean it's fixed. Perhaps it had one in the past. Regardless, Luxon does not have first-class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.
  
 If all this seems too terse, check out these articles. The terminology in them is subtly different but the concepts are the same:
 
  * [Time Zones Aren’t Offsets – Offsets Aren’t Time Zones](https://spin.atomicobject.com/2016/07/06/time-zones-offsets/)
  * [Stack Overflows timezone wiki page](https://stackoverflow.com/tags/timezone/info)
 
-
 ## Luxon works with time zones
 
-Luxon's DateTime class supports zones directly. By default, a date created in Luxon is "in" the local time zone of the machine it's running on. By "in" we mean that the DateTime has, as one of its properties, an associated zone. That zone affects its behavior in a number of ways:
+Luxon's DateTime class supports zones directly. By default, a date created in Luxon is "in" the local time zone of the machine it's running on. By "in" we mean that the DateTime has, as one of its properties, an associated zone.
+
+It's important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you're in; the zone is really piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon's behavior too. It just doesn't change *what time it is*.
+
+Specifically, a DateTime's zone affects its behavior in these ways:
 
  1. Times will be formatted as they would be in that zone.
- 1. Transformations to the date (such as `plus` or `startOf`) will obey any DSTs in that zone that affect the calculation (see "Math across DSTs" below)
+ 1. Transformations to the DateTime (such as `plus` or `startOf`) will obey any DSTs in that zone that affect the calculation (see "Math across DSTs" below)
  
 Generally speaking, Luxon does not support changing a DateTime's offset, just its zone. That allows it to enforce the behaviors in the list above. The offset for that DateTime is just whatever the zone says it is. If you are unconcerned with the effects above, then you can always give your DateTime a fixed-offset zone.
 
@@ -39,7 +42,7 @@ IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tok
 Info.features().zones; //=> true
 ```
 
-If your unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](faq/matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](faq/matrix.html#zones).
+If you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](faq/matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](faq/matrix.html#zones).
 
 If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](usage/validity.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason doesn't support that *particular* zone, or because the zone is just bogus. Like this:
 
