@@ -2,20 +2,18 @@
 
 import { Duration } from '../../src/luxon';
 
-const accurately = (amt, from, to) =>
-  Duration.fromObject({ [from]: amt, longTermAccurate: true }).as(to);
-
-const casually = (amt, from, to) => Duration.fromObject({ [from]: amt }).as(to);
+const convert = (amt, from, to, accuracy) =>
+  Duration.fromObject({ [from]: amt, conversionAccuracy: accuracy }).as(to);
 
 test('There are slightly more than 365 days in a year', () => {
-  expect(casually(1, 'years', 'days')).toBeCloseTo(365, 4);
-  expect(accurately(1, 'years', 'days')).toBeCloseTo(365.2425, 4);
+  expect(convert(1, 'years', 'days', 'casual')).toBeCloseTo(365, 4);
+  expect(convert(1, 'years', 'days', 'longterm')).toBeCloseTo(365.2425, 4);
 
-  expect(casually(365, 'days', 'years')).toBeCloseTo(1, 4);
-  expect(accurately(365.2425, 'days', 'years')).toBeCloseTo(1, 4);
+  expect(convert(365, 'days', 'years', 'casual')).toBeCloseTo(1, 4);
+  expect(convert(365.2425, 'days', 'years', 'longterm')).toBeCloseTo(1, 4);
 });
 
 test('There are slightly more than 30 days in a month', () => {
-  expect(casually(1, 'month', 'days')).toBeCloseTo(30, 4);
-  expect(accurately(1, 'month', 'days')).toBeCloseTo(30.4369, 4);
+  expect(convert(1, 'month', 'days', 'casual')).toBeCloseTo(30, 4);
+  expect(convert(1, 'month', 'days', 'longterm')).toBeCloseTo(30.4369, 4);
 });

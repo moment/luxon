@@ -132,7 +132,7 @@ var diff = end.diff(start);
 diff.toObject() //=> { milliseconds: 2415600000 }
 ```
 
-### Casual vs long-term-accurate conversions
+### Casual vs longterm conversion accuracy
 
 Durations represent bundles of time with specific units, but Luxon allows you to convert between them:
 
@@ -185,19 +185,19 @@ Those are 33 years apart! So Luxon offers an alternative conversion scheme, base
 
 You can see why these are irritating to work with, which is why they're not the default.
 
-Luxon methods that create Durations de novo accept a boolean option called `longTermAccurate`. It's a property of the Duration itself.
+Luxon methods that create Durations de novo accept an option called `conversionAccuracy` You can set it 'casual' or 'longterm'. It's a property of the Duration itself, so any conversions you do use the rule you've picked, and any new Durations you derive from it will retain that property.
 
 ```js
-Duration.fromObject({ years: 23, longTermAccurate: true });
-Duration.parse('PY23', { longTermAccurate: true });
+Duration.fromObject({ years: 23, conversionAccuracy: 'longterm' });
+Duration.parse('PY23', { conversionAccuracy: 'longterm' });
 
-end.diff(start, { longTermAccurate: true })
+end.diff(start, { conversionAccuracy: 'longterm' })
 ```
 
 You can also create an accurate Duration out of an existing one:
 
 ```js
-var pedanticDuration = casualDuration.reconfigure({longTermAccurate: true });
+var pedanticDuration = casualDuration.reconfigure({conversionAccuracy: 'longterm' });
 ```
 
 These Durations will do their conversions differently.
