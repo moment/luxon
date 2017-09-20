@@ -54,15 +54,11 @@ bogus.invalidReason;   //=> 'unsupported zone'
 ```
 
 ## Constructing DateTimes with specific zones
-Luxon's parsing and other creation functions will interpret the times specified as the zone-local expression of that time, unless a) an option is passed to make Luxon consider the string to have been expressed in certain zone or b) the input string itself provides information about how it is to be interpreted (such as an ISO 8601 string of "2017-05-15T09:10:23Z".
 
-Note that the interpretation of the input data is conceptually independent of zone property in the resultant DateTime object. For example, Luxon can interpret a string as specifying a time in `Europe/Paris` but translate the time into the local zone of, say, `America/New_York`. However, Luxon's relevant parsing options typically put the resulting object in the same zone the string was read as. On the other hand, strings that specify their offset or zone directly are always converted to the target zone.
+### Local by default
 
-In addition, one static method, `utc()` specifically interprets the input as being specified in UTC. It also creates a DateTime in UTC.
+By default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's local zone. For example, my computer is configured to use `America/New_York`, which is has an offset of -4 in May:
 
-Here are some examples. I ran these from `America/New_York`, which is has an offset of -4 :
-
-Most methods create local times from local data:
 ```js
 var local = DateTime.local(2017, 05, 15, 09, 10, 23);
 
@@ -75,16 +71,9 @@ iso.zoneName;                  //=> 'America/New_York'
 iso.toString();                //=> '2017-05-15T09:10:23.000-04:00'
 ```
 
-Some other methods allow you to interpret the input as being specified in another zone. These methods convert the DateTime to that zone.
+### Specifying the zone
 
-```js
-var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
-
-utc.zoneName;                  //=> 'UTC'
-utc.toString();                //=> '2017-05-15T09:10:23.000Z'
-```
-
-Many methods allow you to specify the zone. Note that the input time is interpreted in that zone AND the resultant DateTime is in that zone.
+Many of Luxon's factory methods allow you to tell Luxon specifically the zone to create the DateTime in:
 
 ```js
 var overrideZone = DateTime.fromISO("2017-05-15T09:10:23", {zone: 'Europe/Paris'});
@@ -93,7 +82,26 @@ overrideZone.zoneName;         //=> 'Europe/Paris'
 overrideZone.toString();       //=> '2017-05-15T09:10:23.000+02:00'
 ```
 
-Parsed string can sometimes specify an offset or zone. Luxon interprets the time in that zone or with that offset, but converts it to the system's local zone.
+Note two things:
+
+ 1. The date and time specified in the string was interpreted as specifying a Parisian local time (i.e. it's the time that corresponds to what would be called 9:10 *there*).
+ 2. The resulting DateTime object is in Europe/Paris.
+ 
+Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it's more convenient for the same option to govern both.
+
+In addition, one static method, `utc()` specifically interprets the input as being specified in UTC. It also creates a DateTime in UTC:
+
+```js
+var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
+
+utc.zoneName;                  //=> 'UTC'
+utc.toString();                //=> '2017-05-15T09:10:23.000Z'
+```
+
+### Strings that specify an offset
+
+Some input strings may specify an offset as part of the string itself. In these case, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system's local zone:
+
 ```js
 var specifyOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00");
 
@@ -106,7 +114,7 @@ specifyZone.zoneName           //=> 'America/New_York'
 specifyZone.toString()         //=> '2017-05-15T03:10:23.000-04:00'
 ```
 
-...unless a zone is specified as an option, in which case it's converted to *that* zone.
+...unless a zone is specified as an option (see previous section), in which case the DateTime gets converted to *that* zone:
 
 ```js
 var specifyOffsetAndOverrideZone = DateTime.fromISO("2017-05-15T09:10:23-09:00", {zone: 'Europe/Paris'});
@@ -115,7 +123,10 @@ specifyOffsetAndOverrideZone.zoneName;                 //=> 'Europe/Paris'
 specifyOffsetAndOverrideZone.toString();               //=> '2017-05-15T20:10:23.000+02:00'
 ```
 
+### setZone
+
 Finally, some parsing functions allow you to "keep" the zone in the string as the DateTime's zone. Note that if only an offset is provided by the string, the zone will be a fixed-offset one, since Luxon doesn't know which zone is meant, even if you do.
+
 ```js
 var keepOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00", {setZone: true});
 
@@ -127,6 +138,18 @@ var keepZone = DateTime.fromString("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-
 keepZone.zoneName;             //=> 'Europe/Paris'
 keepZone.toString()            //=> '2017-05-15T09:10:23.000+02:00'
 ```
+
+## Specifying a zone
+
+You can specify zones a few different ways. All the methods that take a zone argument support all of these.
+
+| Type | Example | Description |
+| --- | --- | --- |
+| IANA | 'America/New_York' | that zone
+| local | 'local' | the system's local zone
+| UTC | 'utc' | Universal Coordinated Time
+| fixed offset | 'UTC+7' | a fixed offset zone with that offset
+| Zone | new YourZone() | A custom implementation of Luxon's Zone interface (advanced only)
 
 ## Getting information about the current zone and offset
 
@@ -171,18 +194,6 @@ rezoned.toString()   //=> '2017-09-13T15:30:51.141-07:00'
 local.valueOf() === rezoned.valueOf(); //=> true
 ```
 
-### Valid specifiers
-
-You can specify that zone a few different ways. All the methods that take a zone argument support all of these.
-
-| Type | Example | Description |
-| --- | --- | --- |
-| IANA | 'America/New_York' | that zone
-| local | 'local' | the system's local zone
-| UTC | 'utc' | Universal Coordinated Time
-| fixed offset | 'UTC+7' | a fixed offset zone with that offset
-| Zone | new YourZone() | A custom implementation of Luxon's Zone interface (advanced only)
-
 ### keepCalendarTime
 
 Generally, it's best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that's not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:
@@ -201,7 +212,9 @@ If you find that confusing, I recommend just not using it.
 
 ## DST weirdness
 
-Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the equator. This all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and time library has to deal with it.
+Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the equator. This all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and a time library has to deal with it.
+
+Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.
 
 ### Invalid times
 
@@ -214,7 +227,7 @@ If you create such a DateTime from scratch, the missing time will be advanced by
 DateTime.local(2017, 3, 12, 2, 30).toString(); //=> '2017-03-12T03:30:00.000-04:00'
 ```
 
-You can also do date math that lands you in the middle of the shift. These behave the same way:
+You can also do date math that lands you in the middle of the shift. These also push forward:
 
 ```js
 DateTime.local(2017, 3, 11, 2, 30).plus({days: 1}).toString()         //=> '2017-03-12T03:30:00.000-04:00'
