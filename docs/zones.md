@@ -34,7 +34,19 @@ Specifically, a DateTime's zone affects its behavior in these ways:
  
 Generally speaking, Luxon does not support changing a DateTime's offset, just its zone. That allows it to enforce the behaviors in the list above. The offset for that DateTime is just whatever the zone says it is. If you are unconcerned with the effects above, then you can always give your DateTime a fixed-offset zone.
 
-## Support for IANA-specified zones
+## Specifying a zone
+
+Luxon's API methods that take a zone as an argument all let you specify the zone in a few ways.
+
+| Type | Example | Description |
+| --- | --- | --- |
+| IANA | 'America/New_York' | that zone
+| local | 'local' | the system's local zone
+| UTC | 'utc' | Universal Coordinated Time
+| fixed offset | 'UTC+7' | a fixed offset zone
+| Zone | new YourZone() | A custom implementation of Luxon's Zone interface (advanced only)
+
+### IANA support
 
 IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can fiddle with the zones. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
 
@@ -53,7 +65,7 @@ bogus.isValid;         //=> false
 bogus.invalidReason;   //=> 'unsupported zone'
 ```
 
-## Constructing DateTimes with specific zones
+## Creating DateTimes
 
 ### Local by default
 
@@ -71,7 +83,7 @@ iso.zoneName;                  //=> 'America/New_York'
 iso.toString();                //=> '2017-05-15T09:10:23.000-04:00'
 ```
 
-### Specifying the zone
+### Creating DateTimes in a zone
 
 Many of Luxon's factory methods allow you to tell Luxon specifically the zone to create the DateTime in:
 
@@ -139,41 +151,6 @@ keepZone.zoneName;             //=> 'Europe/Paris'
 keepZone.toString()            //=> '2017-05-15T09:10:23.000+02:00'
 ```
 
-## Specifying a zone
-
-You can specify zones a few different ways. All the methods that take a zone argument support all of these.
-
-| Type | Example | Description |
-| --- | --- | --- |
-| IANA | 'America/New_York' | that zone
-| local | 'local' | the system's local zone
-| UTC | 'utc' | Universal Coordinated Time
-| fixed offset | 'UTC+7' | a fixed offset zone with that offset
-| Zone | new YourZone() | A custom implementation of Luxon's Zone interface (advanced only)
-
-## Getting information about the current zone and offset
-
-Luxon DateTimes have a few different accessors that let you find out about the zone and offset:
-
-```js
-var dt = DateTime.local();
-
-dt.zoneName          //=> 'America/New_York'
-dt.offset            //=> -240
-dt.offsetNameShort   //=> 'EDT'
-dt.offsetNameLong    //=> 'Eastern Daylight Time'
-dt.isOffsetFixed     //=> false
-dt.isInDST           //=> true
-```
-
-Those are all documented in the [DateTime API docs](../class/src/datetime.js~DateTime.html).
-
-DateTime also has a `zone` property that holds an Luxon Zone object. You don't normally need to interact with it, but don't get it confused with the `zoneName`.
-
-```js
-dt.zone   //=> LocalZone {}
-```
-
 ## Changing zones
 
 ### setZone
@@ -209,6 +186,29 @@ local.valueOf() === rezoned.valueOf()  //=> false
 ```
 
 If you find that confusing, I recommend just not using it.
+
+## Accessors
+
+Luxon DateTimes have a few different accessors that let you find out about the zone and offset:
+
+```js
+var dt = DateTime.local();
+
+dt.zoneName          //=> 'America/New_York'
+dt.offset            //=> -240
+dt.offsetNameShort   //=> 'EDT'
+dt.offsetNameLong    //=> 'Eastern Daylight Time'
+dt.isOffsetFixed     //=> false
+dt.isInDST           //=> true
+```
+
+Those are all documented in the [DateTime API docs](../class/src/datetime.js~DateTime.html).
+
+DateTime also has a `zone` property that holds an Luxon Zone object. You don't normally need to interact with it, but don't get it confused with the `zoneName`.
+
+```js
+dt.zone   //=> LocalZone {}
+```
 
 ## DST weirdness
 

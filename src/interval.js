@@ -452,18 +452,20 @@ export class Interval {
 
   /**
    * Return a Duration representing the time spanned by this interval.
-   * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration.
+   * @param {string|string[]} [units=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.
+   * @params {Object} opts - options that affect the creation of the Duration
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { milliseconds: 88489257 }
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { days: 1.0241812152777778 }
-   * @example Interval.fromDateTimes(dt1, dt2).toDuration('hours', 'minutes').toObject() //=> { hours: 24, minutes: 34.82095 }
-   * @example Interval.fromDateTimes(dt1, dt2).toDuration('hours', 'minutes', 'seconds').toObject() //=> { hours: 24, minutes: 34, seconds: 49.257 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration(['hours', 'minutes']).toObject() //=> { hours: 24, minutes: 34.82095 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration(['hours', 'minutes', 'seconds']).toObject() //=> { hours: 24, minutes: 34, seconds: 49.257 }
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }
    * @return {Duration}
    */
-  toDuration(...units) {
+  toDuration(unit, opts) {
     if (!this.isValid) {
       return Duration.invalid(this.invalidReason);
     }
-    return this.e.diff(this.s, ...units);
+    return this.e.diff(this.s, unit, opts);
   }
 }

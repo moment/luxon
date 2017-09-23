@@ -1225,24 +1225,22 @@ export class DateTime {
   /**
    * Return the difference between two DateTimes as a Duration.
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
-   * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration.
+   * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
+   * @params {Object} opts - options that affect the creation of the Duration
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @example
    * var i1 = DateTime.fromISO('1982-05-25T09:45'),
    *     i2 = DateTime.fromISO('1983-10-14T10:30');
    * i2.diff(i1).toObject() //=> { milliseconds: 43807500000 }
-   * i2.diff(i1, 'months', 'days').toObject() //=> { months: 16, days: 19.03125 }
-   * i2.diff(i1, 'months', 'days', 'hours').toObject() //=> { months: 16, days: 19, hours: 0.75 }
    * i2.diff(i1, 'hours').toObject() //=> { hours: 12168.75 }
+   * i2.diff(i1, ['months', 'days']).toObject() //=> { months: 16, days: 19.03125 }
+   * i2.diff(i1, ['months', 'days', 'hours']).toObject() //=> { months: 16, days: 19, hours: 0.75 }
    * @return {Duration}
    */
-  diff(otherDateTime, ...units) {
+  diff(otherDateTime, unit = 'milliseconds', opts = {}) {
     if (!this.isValid) return this;
 
-    if (units.length === 0) {
-      units = ['milliseconds'];
-    } else {
-      units = units.map(Duration.normalizeUnit);
-    }
+    const units = Util.maybeArray(unit).map(Duration.normalizeUnit);
 
     const flipped = otherDateTime.valueOf() > this.valueOf(),
       post = flipped ? otherDateTime : this,
@@ -1283,7 +1281,7 @@ export class DateTime {
     const computeDayDelta = () => {
       const utcDayStart = dt => dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromMilliseconds(ms).shiftTo('days').days);
+      return Math.floor(Duration.fromMilliseconds(ms, opts).shiftTo('days').days);
     };
 
     if (units.indexOf('weeks') >= 0) {
@@ -1317,13 +1315,13 @@ export class DateTime {
       lowestOrder = 'days';
     }
 
-    const remaining = Duration.fromMilliseconds(post - cursor),
+    const remaining = Duration.fromMilliseconds(post - cursor, opts),
       moreUnits = units.filter(
         u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
       ),
       shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
       shifted = remaining.shiftTo(...shiftTo),
-      merged = shifted.plus(Duration.fromObject(accum));
+      merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
 
     return flipped ? merged.negate() : merged;
   }
@@ -1331,11 +1329,13 @@ export class DateTime {
   /**
    * Return the difference between this DateTime and right now.
    * See {@link diff}
-   * @param {...string} [units=['milliseconds']] - the units (such as 'hours' or 'days') to include in the duration
+   * @param {string|string[]} [units=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
+   * @params {Object} opts - options that affect the creation of the Duration
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  diffNow(...units) {
-    return this.isValid ? this.diff(DateTime.local(), ...units) : this;
+  diffNow(unit, opts) {
+    return this.isValid ? this.diff(DateTime.local(), unit, opts) : this;
   }
 
   /**

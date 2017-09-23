@@ -132,6 +132,14 @@ var diff = end.diff(start);
 diff.toObject() //=> { milliseconds: 2415600000 }
 ```
 
+Finally, you can diff using multiple units:
+
+```js
+var end = DateTime.fromISO('2017-03-13');
+var start = DateTime.fromISO('2017-02-15');
+end.diff(start, ['months', 'days']) //=> { months: 1, days: 2 }
+```
+
 ### Casual vs longterm conversion accuracy
 
 Durations represent bundles of time with specific units, but Luxon allows you to convert between them:
@@ -205,7 +213,7 @@ These Durations will do their conversions differently.
 
 ### Losing information
 
-Be careful of converting between units. It's easy to lose information. Let's say we converted diff into days:
+Be careful of converting between units. It's easy to lose information. Let's say we converted a diff into days:
 
 
 ```js
@@ -257,5 +265,5 @@ You can even pick multiple units:
 ```js
 end = DateTime.fromISO('2018-05-25');
 i = start.until(end);
-i.toDuration('years', 'months', 'days').toObject(); //=> { years: 1, months: 3, days: 12 }
+i.toDuration(['years', 'months', 'days']).toObject(); //=> { years: 1, months: 3, days: 12 }
 ```

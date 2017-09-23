@@ -36,6 +36,10 @@ export class Util {
     }
   }
 
+  static maybeArray(thing) {
+    return Array.isArray(thing) ? thing : [thing];
+  }
+
   static isUndefined(o) {
     return typeof o === 'undefined';
   }

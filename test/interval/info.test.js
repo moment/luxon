@@ -51,18 +51,33 @@ test("Interval#count('days') returns 2 if the interval crosses the new year", ()
 //------
 // #toDuration()
 //-------
-test('Interval#toDuration(units) creates a duration in those units', () => {
+test('Interval#toDuration creates a duration in those units', () => {
   const int = Interval.fromDateTimes(todayAt(9), todayAt(13));
 
-  expect(int.toDuration().equals(Duration.fromMilliseconds(4 * 3600 * 1000))).toBeTruthy();
-  expect(
-    int.toDuration('milliseconds').equals(Duration.fromMilliseconds(4 * 3600 * 1000))
-  ).toBeTruthy();
-  expect(int.toDuration('seconds').equals(Duration.fromObject({ seconds: 4 * 3600 }))).toBeTruthy();
-  expect(int.toDuration('minutes').equals(Duration.fromObject({ minutes: 4 * 60 }))).toBeTruthy();
-  expect(int.toDuration('hours').equals(Duration.fromObject({ hours: 4 }))).toBeTruthy();
-  expect(int.toDuration('days').equals(Duration.fromObject({ days: 1 / 6 }))).toBeTruthy();
-  expect(int.toDuration('weeks').equals(Duration.fromObject({ weeks: 1 / (6 * 7) }))).toBeTruthy();
+  expect(int.toDuration()).toEqual(Duration.fromMilliseconds(4 * 3600 * 1000));
+  expect(int.toDuration('milliseconds')).toEqual(Duration.fromMilliseconds(4 * 3600 * 1000));
+  expect(int.toDuration('seconds')).toEqual(Duration.fromObject({ seconds: 4 * 3600 }));
+  expect(int.toDuration('minutes')).toEqual(Duration.fromObject({ minutes: 4 * 60 }));
+  expect(int.toDuration('hours')).toEqual(Duration.fromObject({ hours: 4 }));
+  expect(int.toDuration('days')).toEqual(Duration.fromObject({ days: 1 / 6 }));
+  expect(int.toDuration('weeks')).toEqual(Duration.fromObject({ weeks: 1 / (6 * 7) }));
+});
+
+test('Interval#toDuration accepts multiple units', () => {
+  const int = Interval.fromDateTimes(
+    todayAt(9).plus({ minutes: 3 }),
+    todayAt(13).plus({ minutes: 47 })
+  );
+
+  expect(int.toDuration(['hours', 'minutes'])).toEqual(
+    Duration.fromObject({ hours: 4, minutes: 44 })
+  );
+});
+
+test('Interval#toDuration accepts duration options', () => {
+  const int = Interval.fromDateTimes(todayAt(9), todayAt(13)),
+    dur = int.toDuration(['hours'], { conversionAccuracy: 'longterm' });
+  expect(dur.conversionAccuracy).toBe('longterm');
 });
 
 //------
