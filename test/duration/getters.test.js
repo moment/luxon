@@ -3,23 +3,23 @@
 import { Duration } from '../../src/luxon';
 
 const dur = Duration.fromObject({
-    years: 1,
-    months: 2,
-    days: 3,
-    hours: 4,
-    minutes: 5,
-    seconds: 6,
-    milliseconds: 7
-  }),
-  inv = Duration.invalid();
+  years: 1,
+  months: 2,
+  days: 3,
+  hours: 4,
+  minutes: 5,
+  seconds: 6,
+  milliseconds: 7
+}),
+  inv = Duration.invalid('because i say so');
 
 //------
 // years/months/days/hours/minutes/seconds/milliseconds
 //------
 
 test('Duration#years returns the years', () => {
-  expect(dur.year).toBe(1);
-  expect(inv.year).toBeFalsy();
+  expect(dur.years).toBe(1);
+  expect(inv.years).toBeFalsy();
 });
 
 test('Duration#months returns the (1-indexed) months', () => {
