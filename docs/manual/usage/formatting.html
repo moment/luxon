@@ -207,7 +207,7 @@ dt.toHTTP();    //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
 </code></pre>
 <h2 id="tolocalestring-strings-for-humans-">toLocaleString (strings for humans)</h2>
 <h3 id="the-basics">The basics</h3>
-<p>Modern browsers (and other JS environments) provide brought support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../docs/class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p>
+<p>Modern browsers (and other JS environments) provide brought support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString();                                       //=&gt; &apos;4/20/2017&apos;
 dt.toLocaleString(DateTime.DATETIME_FULL);                 //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
 dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;20 avril 2017 &#xE0; 11:32 UTC&#x2212;4&apos;</code>
