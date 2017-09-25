@@ -16,7 +16,8 @@ import {
   InvalidDateTimeError
 } from './errors';
 
-const INVALID = 'Invalid DateTime', UNSUPPORTED_ZONE = 'unsupported zone';
+const INVALID = 'Invalid DateTime',
+  UNSUPPORTED_ZONE = 'unsupported zone';
 
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
@@ -150,13 +151,13 @@ function formatMaybe(dt, format) {
 }
 
 const defaultUnitValues = {
-  month: 1,
-  day: 1,
-  hour: 0,
-  minute: 0,
-  second: 0,
-  millisecond: 0
-},
+    month: 1,
+    day: 1,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  },
   defaultWeekUnitValues = {
     weekNumber: 1,
     weekday: 1,
@@ -176,20 +177,10 @@ const defaultUnitValues = {
 function isoTimeFormat(dateTime, suppressSecs, suppressMillis) {
   return suppressSecs && dateTime.second === 0 && dateTime.millisecond === 0
     ? 'HH:mmZ'
-    : suppressMillis && dateTime.millisecond === 0
-        ? 'HH:mm:ssZZ'
-        : 'HH:mm:ss.SSSZZ';
+    : suppressMillis && dateTime.millisecond === 0 ? 'HH:mm:ssZZ' : 'HH:mm:ss.SSSZZ';
 }
 
-const orderedUnits = [
-  'year',
-  'month',
-  'day',
-  'hour',
-  'minute',
-  'second',
-  'millisecond'
-];
+const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 
 const orderedWeekUnits = [
   'weekYear',
@@ -201,14 +192,7 @@ const orderedWeekUnits = [
   'millisecond'
 ];
 
-const orderedOrdinalUnits = [
-  'year',
-  'ordinal',
-  'hour',
-  'minute',
-  'second',
-  'millisecond'
-];
+const orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
 function normalizeUnit(unit, ignoreUnknown = false) {
   const normalized = {
@@ -267,8 +251,7 @@ export class DateTime {
    */
   constructor(config = {}) {
     const zone = config.zone || Settings.defaultZone,
-      invalidReason = config.invalidReason ||
-        (zone.isValid ? null : UNSUPPORTED_ZONE);
+      invalidReason = config.invalidReason || (zone.isValid ? null : UNSUPPORTED_ZONE);
 
     Object.defineProperty(this, 'ts', {
       value: config.ts || Settings.now(),
@@ -297,12 +280,9 @@ export class DateTime {
     });
 
     if (!invalidReason) {
-      const unchanged = config.old &&
-        config.old.ts === this.ts &&
-        config.old.zone.equals(this.zone),
-        c = unchanged
-          ? config.old.c
-          : tsToObj(this.ts, this.zone.offset(this.ts)),
+      const unchanged =
+          config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone),
+        c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
         o = unchanged ? config.old.o : this.zone.offset(this.ts);
 
       Object.defineProperty(this, 'c', { value: c });
@@ -458,8 +438,7 @@ export class DateTime {
       normalized = Util.normalizeObject(obj, normalizeUnit, true),
       containsOrdinal = !Util.isUndefined(normalized.ordinal),
       containsGregorYear = !Util.isUndefined(normalized.year),
-      containsGregorMD = !Util.isUndefined(normalized.month) ||
-        !Util.isUndefined(normalized.day),
+      containsGregorMD = !Util.isUndefined(normalized.month) || !Util.isUndefined(normalized.day),
       containsGregor = containsGregorYear || containsGregorMD,
       definiteWeekDef = normalized.weekYear || normalized.weekNumber,
       loc = Locale.fromObject(obj);
@@ -477,16 +456,15 @@ export class DateTime {
     }
 
     if (containsGregorMD && containsOrdinal) {
-      throw new ConflictingSpecificationError(
-        "Can't mix ordinal dates with month/day"
-      );
+      throw new ConflictingSpecificationError("Can't mix ordinal dates with month/day");
     }
 
-    const useWeekData = definiteWeekDef ||
-      (normalized.weekday && !containsGregor);
+    const useWeekData = definiteWeekDef || (normalized.weekday && !containsGregor);
 
     // configure ourselves to deal with gregorian dates or week stuff
-    let units, defaultValues, objNow = tsToObj(tsNow, offsetProvis);
+    let units,
+      defaultValues,
+      objNow = tsToObj(tsNow, offsetProvis);
     if (useWeekData) {
       units = orderedWeekUnits;
       defaultValues = defaultWeekUnitValues;
@@ -515,12 +493,11 @@ export class DateTime {
 
     // make sure the values we have are in range
     const higherOrderInvalid = useWeekData
-      ? Conversions.hasInvalidWeekData(normalized)
-      : containsOrdinal
+        ? Conversions.hasInvalidWeekData(normalized)
+        : containsOrdinal
           ? Conversions.hasInvalidOrdinalData(normalized)
           : Conversions.hasInvalidGregorianData(normalized),
-      invalidReason = higherOrderInvalid ||
-        Conversions.hasInvalidTimeData(normalized);
+      invalidReason = higherOrderInvalid || Conversions.hasInvalidTimeData(normalized);
 
     if (invalidReason) {
       return DateTime.invalid(invalidReason);
@@ -528,10 +505,8 @@ export class DateTime {
 
     // compute the actual time
     const gregorian = useWeekData
-      ? Conversions.weekToGregorian(normalized)
-      : containsOrdinal
-          ? Conversions.ordinalToGregorian(normalized)
-          : normalized,
+        ? Conversions.weekToGregorian(normalized)
+        : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
       inst = new DateTime({
         ts: tsFinal,
@@ -633,9 +608,7 @@ export class DateTime {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError(
-        'need to specify a reason the DateTime is invalid'
-      );
+      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDateTimeError(reason);
@@ -870,8 +843,9 @@ export class DateTime {
     if (this.isOffsetFixed) {
       return false;
     } else {
-      return this.offset > this.set({ month: 1 }).offset ||
-        this.offset > this.set({ month: 5 }).offset;
+      return (
+        this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
+      );
     }
   }
 
@@ -995,7 +969,8 @@ export class DateTime {
    */
   set(values) {
     const normalized = Util.normalizeObject(values, normalizeUnit),
-      settingWeekStuff = !Util.isUndefined(normalized.weekYear) ||
+      settingWeekStuff =
+        !Util.isUndefined(normalized.weekYear) ||
         !Util.isUndefined(normalized.weekNumber) ||
         !Util.isUndefined(normalized.weekday);
 
@@ -1014,10 +989,7 @@ export class DateTime {
       // if we didn't set the day but we ended up on an overflow date,
       // use the last day of the right month
       if (Util.isUndefined(normalized.day)) {
-        mixed.day = Math.min(
-          Util.daysInMonth(mixed.year, mixed.month),
-          mixed.day
-        );
+        mixed.day = Math.min(Util.daysInMonth(mixed.year, mixed.month), mixed.day);
       }
     }
 
@@ -1047,8 +1019,8 @@ export class DateTime {
    * Subtract a period of time to this DateTime and return the resulting DateTime
    * See {@link plus}
    * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
-    @return {DateTime}
-   */
+   @return {DateTime}
+  */
   minus(duration) {
     if (!this.isValid) return this;
     const dur = Util.friendlyDuration(duration).negate();
@@ -1066,7 +1038,8 @@ export class DateTime {
    */
   startOf(unit) {
     if (!this.isValid) return this;
-    const o = {}, normalizedUnit = Duration.normalizeUnit(unit);
+    const o = {},
+      normalizedUnit = Duration.normalizeUnit(unit);
     switch (normalizedUnit) {
       case 'years':
         o.month = 1;
@@ -1108,9 +1081,7 @@ export class DateTime {
    * @return {DateTime}
    */
   endOf(unit) {
-    return this.isValid
-      ? this.startOf(unit).plus({ [unit]: 1 }).minus(1)
-      : this;
+    return this.isValid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
   }
 
   // OUTPUT
@@ -1133,15 +1104,18 @@ export class DateTime {
   }
 
   /**
-   * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor.
-   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
-   * of the DateTime in the assigned locale. The options
+   * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
+   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
+   * of the DateTime in the assigned locale.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param opts {object} - Intl.DateTimeFormat constructor options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
    * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
-   * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', date: '2-digit'}); //=> 'Thu, Apr 20'
-   * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', date: '2-digit', hour: '2-digit', minute: '2-digit'}); //=> 'Thu, Apr 20, 11:27'
+   * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
+   * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=> '11:32 AM'
+   * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=> '4/20/2017, 11:32 AM'
+   * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', day: '2-digit'}); //=> 'Thu, Apr 20'
+   * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit'}); //=> 'Thu, Apr 20, 11:27'
    * @example DateTime.local().toLocaleString({hour: '2-digit', minute: '2-digit'}); //=> '11:32'
    * @return {string}
    */
@@ -1184,10 +1158,7 @@ export class DateTime {
    * @return {string}
    */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    return formatMaybe(
-      this,
-      isoTimeFormat(this, suppressSeconds, suppressMilliseconds)
-    );
+    return formatMaybe(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
   }
 
   /**
@@ -1269,7 +1240,7 @@ export class DateTime {
    * Return the difference between two DateTimes as a Duration.
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
    * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
-   * @params {Object} opts - options that affect the creation of the Duration
+   * @param {Object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @example
    * var i1 = DateTime.fromISO('1982-05-25T09:45'),
@@ -1289,7 +1260,8 @@ export class DateTime {
       post = flipped ? otherDateTime : this,
       accum = {};
 
-    let cursor = flipped ? this : otherDateTime, lowestOrder = null;
+    let cursor = flipped ? this : otherDateTime,
+      lowestOrder = null;
 
     if (units.indexOf('years') >= 0) {
       let dYear = post.year - cursor.year;
@@ -1321,12 +1293,9 @@ export class DateTime {
     }
 
     const computeDayDelta = () => {
-      const utcDayStart = dt =>
-        dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
+      const utcDayStart = dt => dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(
-        Duration.fromMilliseconds(ms, opts).shiftTo('days').days
-      );
+      return Math.floor(Duration.fromMilliseconds(ms, opts).shiftTo('days').days);
     };
 
     if (units.indexOf('weeks') >= 0) {
@@ -1374,8 +1343,8 @@ export class DateTime {
   /**
    * Return the difference between this DateTime and right now.
    * See {@link diff}
-   * @param {string|string[]} [units=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
-   * @params {Object} opts - options that affect the creation of the Duration
+   * @param {string|string[]} [unit=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
+   * @param {Object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
@@ -1418,8 +1387,8 @@ export class DateTime {
   equals(other) {
     return this.isValid && other.isValid
       ? this.valueOf() === other.valueOf() &&
-          this.zone.equals(other.zone) &&
-          this.loc.equals(other.loc)
+        this.zone.equals(other.zone) &&
+        this.loc.equals(other.loc)
       : false;
   }
 
@@ -1453,5 +1422,260 @@ export class DateTime {
   static fromStringExplain(text, fmt, options = {}) {
     const parser = new TokenParser(Locale.fromOpts(options));
     return parser.explainParse(text, fmt);
+  }
+
+  // FORMAT PRESETS
+
+  /**
+   * {@link toLocaleString} format like 10/14/1983
+   */
+  static get DATE_SHORT() {
+    return {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'Oct 14, 1983'
+   */
+  static get DATE_MED() {
+    return {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'October 14, 1983'
+   */
+  static get DATE_FULL() {
+    return {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'Tuesday, October 14, 1983'
+   */
+  static get DATE_HUGE() {
+    return {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
+   */
+  static get TIME_SIMPLE() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
+   */
+  static get TIME_WITH_SECONDS() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
+   */
+  static get TIME_WITH_SHORT_OFFSET() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   */
+  static get TIME_WITH_LONG_OFFSET() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'long'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30', always 24-hour.
+   */
+  static get TIME_24_SIMPLE() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: false
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30:23', always 24-hour.
+   */
+  static get TIME_24_WITH_SECONDS() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30:23 EDT', always 24-hour.
+   */
+  static get TIME_24_WITH_SHORT_OFFSET() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZoneName: 'short'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
+   */
+  static get TIME_24_WITH_LONG_OFFSET() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZoneName: 'long'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_SHORT() {
+    return {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_SHORT_WITH_SECONDS() {
+    return {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_MED() {
+    return {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_MED_WITH_SECONDS() {
+    return {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_FULL() {
+    return {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'October 14, 1983, 9:303 AM EDT'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_FULL_WITH_SECONDS() {
+    return {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_HUGE() {
+    return {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZoneName: 'long'
+    };
+  }
+
+  /**
+   * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   */
+  static get DATETIME_HUGE_WITH_SECONDS() {
+    return {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'long'
+    };
   }
 }

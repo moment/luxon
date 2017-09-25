@@ -1,4 +1,5 @@
 import { Util } from './util';
+import { DateTime } from '../datetime';
 
 function stringifyTokens(splits, tokenToString) {
   let s = '';
@@ -259,163 +260,45 @@ export class Formatter {
             return this.num(dt.ordinal, 3);
           // macros
           case 'D':
-            // like 10/14/1983
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric'
-            });
+            return this.formatDateTime(dt, DateTime.DATE_SHORT);
           case 'DD':
-            // like Oct 14, 1983
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            });
+            return this.formatDateTime(dt, DateTime.DATE_MED);
           case 'DDD':
-            // like October 14, 1983
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            });
+            return this.formatDateTime(dt, DateTime.DATE_FULL);
           case 'DDDD':
-            // like Tuesday, October 14, 1983
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              weekday: 'long'
-            });
+            return this.formatDateTime(dt, DateTime.DATE_HUGE);
           case 't':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit'
-            });
+            return this.formatDateTime(dt, DateTime.TIME_SIMPLE);
           case 'tt':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit'
-            });
+            return this.formatDateTime(dt, DateTime.TIME_WITH_SECONDS);
           case 'ttt':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit',
-              timeZoneName: 'short'
-            });
+            return this.formatDateTime(dt, DateTime.TIME_WITH_SHORT_OFFSET);
           case 'tttt':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit',
-              timeZoneName: 'long'
-            });
+            return this.formatDateTime(dt, DateTime.TIME_WITH_LONG_OFFSET);
           case 'T':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit',
-              hour12: false
-            });
+            return this.formatDateTime(dt, DateTime.TIME_24_SIMPLE);
           case 'TT':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false
-            });
+            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SECONDS);
           case 'TTT':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false,
-              timeZoneName: 'short'
-            });
+            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
           case 'TTTT':
-            return this.formatDateTime(dt, {
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false,
-              timeZoneName: 'long'
-            });
+            return this.formatDateTime(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
           case 'f':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit'
-            });
+            return this.formatDateTime(dt, DateTime.DATETIME_SHORT);
           case 'ff':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit'
-            });
+            return this.formatDateTime(dt, DateTime.DATETIME_MED);
           case 'fff':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-              timeZoneName: 'short'
-            });
+            return this.formatDateTime(dt, DateTime.DATETIME_FULL);
           case 'ffff':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              weekday: 'long',
-              hour: 'numeric',
-              minute: '2-digit',
-              timeZoneName: 'long'
-            });
-
+            return this.formatDateTime(dt, DateTime.DATETIME_HUGE);
           case 'F':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit'
-            });
+            return this.formatDateTime(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
           case 'FF':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit'
-            });
+            return this.formatDateTime(dt, DateTime.DATETIME_MED_WITH_SECONDS);
           case 'FFF':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit',
-              timeZoneName: 'short'
-            });
+            return this.formatDateTime(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
           case 'FFFF':
-            return this.formatDateTime(dt, {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              weekday: 'long',
-              hour: 'numeric',
-              minute: '2-digit',
-              second: '2-digit',
-              timeZoneName: 'long'
-            });
+            return this.formatDateTime(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
 
           default:
             return token;

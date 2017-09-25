@@ -1,4 +1,4 @@
-# Ad-hoc parser
+# Ad-hoc parsing
 
 ## Consider alternatives
 
@@ -25,7 +25,7 @@ Luxon supports parsing internationalized strings:
 DateTime.fromString('mai 25 1982', 'LLLL dd yyyy', { locale: 'fr' });
 ```
 
-Note, however, that Luxon derives the list of strings that can match, say, "LLLL" (and their meaning) by introspecting the environment's Intl implementation. Thus the exact strings may in some cases be environment-specific.
+Note, however, that Luxon derives the list of strings that can match, say, "LLLL" (and their meaning) by introspecting the environment's Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the [support matrix](../matrix.html)).
 
 ## Limitations
 
