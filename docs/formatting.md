@@ -34,7 +34,7 @@ dt.toHTTP();    //=> 'Thu, 20 Apr 2017 03:32:00 GMT'
 
 ### The basics
 
-Modern browsers (and other JS environments) provide brought support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use [toLocaleString](../docs/class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to do it:
+Modern browsers (and other JS environments) provide brought support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to do it:
 
 ```js
 dt.toLocaleString();                                       //=> '4/20/2017'

@@ -9,7 +9,7 @@ Luxon is not an NLP tool and isn't suitable for all date parsing jobs. But it ca
 
 ### ISO 8601
 
-Luxon supports a wide range of valid ISO 8601 formats through the [fromISO](../docs/class/src/datetime.js~DateTime.html#static-method-fromISO) method.
+Luxon supports a wide range of valid ISO 8601 formats through the [fromISO](../class/src/datetime.js~DateTime.html#static-method-fromISO) method.
 
 ```js
 DateTime.fromISO('2016-05-25');
