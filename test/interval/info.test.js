@@ -2,7 +2,10 @@
 import { DateTime, Interval, Duration } from '../../src/luxon';
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
-  todayAt = h => DateTime.local().startOf('day').set({ hour: h });
+  todayAt = h =>
+    DateTime.local()
+      .startOf('day')
+      .set({ hour: h });
 
 //------
 // #length()
@@ -14,7 +17,12 @@ test('Interval#length defaults to milliseconds', () => {
 });
 
 test("Interval#length('days') returns 1 for yesterday", () => {
-  expect(todayAt(13).minus({ days: 1 }).until(todayAt(13)).length('days')).toBe(1);
+  expect(
+    todayAt(13)
+      .minus({ days: 1 })
+      .until(todayAt(13))
+      .length('days')
+  ).toBe(1);
 });
 
 test("Interval#length('months') returns the right number of months", () => {

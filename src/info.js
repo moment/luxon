@@ -15,8 +15,12 @@ export class Info {
   static hasDST(zone = Settings.defaultZone) {
     return (
       !zone.universal &&
-      DateTime.local().setZone(zone).set({ month: 1 }).offset !==
-        DateTime.local().setZone(zone).set({ month: 5 }).offset
+      DateTime.local()
+        .setZone(zone)
+        .set({ month: 1 }).offset !==
+        DateTime.local()
+          .setZone(zone)
+          .set({ month: 5 }).offset
     );
   }
 

@@ -174,7 +174,7 @@ export class Util {
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
         const v = obj[u];
-        if (v !== null && !Util.isUndefined(v) && !isNaN(v)) {
+        if (v !== null && !Util.isUndefined(v) && !Number.isNaN(v)) {
           const mapped = normalizer(u, ignoreUnknown);
           if (mapped) {
             normalized[mapped] = v;

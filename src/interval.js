@@ -229,7 +229,7 @@ export class Interval {
     if (!this.isValid) return [];
     const sorted = dateTimes.map(Util.friendlyDateTime).sort(),
       results = [];
-    let s = this.s,
+    let { s } = this,
       i = 0;
 
     while (s < this.e) {
@@ -253,7 +253,7 @@ export class Interval {
     if (!this.isValid) return [];
     const dur = Util.friendlyDuration(duration),
       results = [];
-    let s = this.s,
+    let { s } = this,
       added,
       next;
 

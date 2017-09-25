@@ -99,7 +99,9 @@ test('Duration#toFormat leaves in zeros', () => {
 });
 
 test('Duration#toFormat localizes the numbers', () => {
-  expect(dur().reconfigure({ locale: 'bn' }).toFormat('yy:MM:dd:h:mm:ss.SSS')).toBe(
-    '০১:০২:০৩:৪:০৫:০৬.০০৭'
-  );
+  expect(
+    dur()
+      .reconfigure({ locale: 'bn' })
+      .toFormat('yy:MM:dd:h:mm:ss.SSS')
+  ).toBe('০১:০২:০৩:৪:০৫:০৬.০০৭');
 });

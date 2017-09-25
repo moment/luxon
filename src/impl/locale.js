@@ -111,7 +111,9 @@ export class Locale {
   knownEnglish() {
     return (
       (this.locale === 'en' ||
-        Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) &&
+        Intl.DateTimeFormat(this.intl)
+          .resolvedOptions()
+          .locale.startsWith('en-US')) &&
       this.numberingSystem === null &&
       (this.outputCalendar === null || this.outputCalendar === 'latn')
     );

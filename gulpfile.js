@@ -66,8 +66,9 @@ function processLib(opts) {
 
 function prettify(opts) {
   return through.obj((file, _, callback) => {
-    const str = file.contents.toString(), data = prettier.format(str, opts);
-    file.contents = new Buffer(data);
+    const str = file.contents.toString(),
+      data = prettier.format(str, opts);
+    file.contents = Buffer.from(data);
     callback(null, file);
   });
 }
@@ -114,13 +115,7 @@ gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
 gulp.task('test', () => gulp.src('test').pipe(jest()));
 
-const lintable = [
-  'src/**/*.js',
-  'test/**/*.js',
-  'gulpfile.js',
-  '.eslintrc.js',
-  '.prettier.js'
-],
+const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
   doLint = () =>
     gulp
       .src(lintable)
@@ -135,9 +130,11 @@ gulp.task('format', () =>
   gulp
     .src(lintable, { base: './' })
     .pipe(prettify(prettierOptions))
-    .pipe(gulp.dest('./')));
+    .pipe(gulp.dest('./'))
+);
 
-gulp.task('docs', () => gulp.src('./src').pipe(
+gulp.task('docs', () =>
+  gulp.src('./src').pipe(
     esdoc({
       destination: './build/docs',
       title: 'Luxon',
@@ -163,11 +160,11 @@ gulp.task('docs', () => gulp.src('./src').pipe(
       },
       plugins: [{ name: './site/doc-plugin.js' }]
     })
-  ));
+  )
+);
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
 // build first so the test deps work
 gulp.task('simple', cb => runSequence('build', 'lint', 'test', cb));
-gulp.task('default', cb =>
-  runSequence('format', 'build', 'lint', 'test', 'docs', 'site', cb));
+gulp.task('default', cb => runSequence('format', 'build', 'lint', 'test', 'docs', 'site', cb));

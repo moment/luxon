@@ -38,7 +38,9 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
 // #toLocal()
 //------
 test('DateTime#toLocal() sets the calendar back to local', () => {
-  const relocaled = dt().toUTC().toLocal(),
+  const relocaled = dt()
+      .toUTC()
+      .toLocal(),
     expected = new Date(millis).getHours();
   expect(relocaled.isOffsetFixed).toBe(false);
   expect(relocaled.valueOf()).toBe(millis);
@@ -87,7 +89,9 @@ test('accepts IANA zone names', () => {
 });
 
 test('setZone accepts a keepCalendarTime option', () => {
-  const zoned = dt().toUTC().setZone('America/Los_Angeles', { keepCalendarTime: true });
+  const zoned = dt()
+    .toUTC()
+    .setZone('America/Los_Angeles', { keepCalendarTime: true });
   expect(zoned.zoneName).toBe('America/Los_Angeles');
   expect(zoned.year).toBe(1982);
   expect(zoned.month).toBe(5);
