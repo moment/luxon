@@ -38,6 +38,13 @@ test('DateTime#toISODate() is local to the zone', () => {
 });
 
 //------
+// #toISOWeekDate()
+//------
+test('DateTime#toISOWeekDate() returns ISO 8601 date', () => {
+  expect(dt.toISOWeekDate()).toBe('1982-W21-2');
+});
+
+//------
 // #toISOTime()
 //------
 test('DateTime#toISOTime() returns an ISO 8601 date', () => {

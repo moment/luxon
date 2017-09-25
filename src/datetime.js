@@ -133,9 +133,8 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(
-        Object.assign(parsed, {
-          zone: interpretationZone,
-          loc: Locale.fromObject(opts)
+        Object.assign(parsed, opts, {
+          zone: interpretationZone
         })
       );
     return setZone ? inst : inst.setZone(zone);
@@ -526,12 +525,12 @@ export class DateTime {
   /**
    * Create a DateTime from an ISO 8601 string
    * @param {string} text - the ISO string
-   * @param {Object} options - options to affect the creation
-   * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
-   * @param {boolean} [options.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
-   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {Object} opts - options to affect the creation
+   * @param {boolean} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
+   * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
@@ -539,28 +538,28 @@ export class DateTime {
    * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */
-  static fromISO(text, options = {}) {
+  static fromISO(text, opts = {}) {
     const [vals, parsedZone] = RegexParser.parseISODate(text);
-    return parseDataToDateTime(vals, parsedZone, options);
+    return parseDataToDateTime(vals, parsedZone, opts);
   }
 
   /**
    * Create a DateTime from an RFC 2822 string
    * @param {string} text - the RFC 2822 string
-   * @param {Object} options - options to affect the creation
-   * @param {boolean} [options.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
-   * @param {boolean} [options.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
-   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {Object} opts - options to affect the creation
+   * @param {boolean} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
    * @example DateTime.fromRFC2822('Tue, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
    * @return {DateTime}
    */
-  static fromRFC2822(text, options = {}) {
+  static fromRFC2822(text, opts = {}) {
     const [vals, parsedZone] = RegexParser.parseRFC2822Date(text);
-    return parseDataToDateTime(vals, parsedZone, options);
+    return parseDataToDateTime(vals, parsedZone, opts);
   }
 
   /**
@@ -886,7 +885,11 @@ export class DateTime {
    * @return {object}
    */
   resolvedLocaleOpts(opts = {}) {
-    return Formatter.create(this.loc.clone(opts), opts).resolvedOptions(this);
+    const { locale, numberingSystem, calendar } = Formatter.create(
+      this.loc.clone(opts),
+      opts
+    ).resolvedOptions(this);
+    return { locale, numberingSystem, outputCalendar: calendar };
   }
 
   // TRANSFORM
@@ -1146,6 +1149,15 @@ export class DateTime {
    */
   toISODate() {
     return formatMaybe(this, 'yyyy-MM-dd');
+  }
+
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime's week date
+   * @example DateTime.utc(1982, 5, 25).toISOWeekDate() //=> '1982-W21-2'
+   * @return {string}
+   */
+  toISOWeekDate() {
+    return formatMaybe(this, "kkkk-'W'WW-c");
   }
 
   /**

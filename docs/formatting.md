@@ -13,9 +13,10 @@ This section covers creating strings to represent a DateTime. There are three ty
 [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) is the most widely used set of string formats for dates and times. Luxon can *parse* a wide range of them, but provides direct support for formatting only a few of them:
 
 ```js
-dt.toISO();     //=> '2017-04-20T11:32:00.000-04:00'
-dt.toISODate(); //=> '2017-04-20'
-dt.toISOTime(); //=> '11:32:00.000-04:00'
+dt.toISO();         //=> '2017-04-20T11:32:00.000-04:00'
+dt.toISODate();     //=> '2017-W17-7'
+dt.toISOWeekDate(); //=> '2017-04-20'
+dt.toISOTime();     //=> '11:32:00.000-04:00'
 ```
 
 Generally, you'll want the first one. Use it by default when building or interacting with APIs, communicating times over a wire, etc.

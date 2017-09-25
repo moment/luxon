@@ -63,7 +63,7 @@ export class Interval {
     return new Interval({
       start: builtStart,
       end: builtEnd,
-      valid: validateStartEnd(builtStart, builtEnd)
+      invalidReason: validateStartEnd(builtStart, builtEnd) ? null : 'invalid endpoints'
     });
   }
 
