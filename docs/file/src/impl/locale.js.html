@@ -157,7 +157,9 @@ export class Locale {
   knownEnglish() {
     return (
       (this.locale === &apos;en&apos; ||
-        Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith(&apos;en-US&apos;)) &amp;&amp;
+        Intl.DateTimeFormat(this.intl)
+          .resolvedOptions()
+          .locale.startsWith(&apos;en-US&apos;)) &amp;&amp;
       this.numberingSystem === null &amp;&amp;
       (this.outputCalendar === null || this.outputCalendar === &apos;latn&apos;)
     );

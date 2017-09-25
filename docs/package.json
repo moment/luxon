@@ -9,7 +9,7 @@
   ],
   "repository": "https://github.com/icambron/luxon",
   "devDependencies": {
-    "babel-jest": "latest",
+    "babel-jest": "20.x",
     "babel-polyfill": "latest",
     "babel-preset-es2015": "latest",
     "babel-preset-es2015-rollup": "latest",
@@ -30,7 +30,7 @@
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-uglify": "latest",
-    "jest-cli": "19.x",
+    "jest-cli": "20.x",
     "lazypipe": "latest",
     "prettier": "latest",
     "rollup-plugin-babel": "latest",

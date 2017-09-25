@@ -1130,7 +1130,11 @@ export class DateTime {
    * @return {DateTime}
    */
   endOf(unit) {
-    return this.isValid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
+    return this.isValid
+      ? this.startOf(unit)
+          .plus({ [unit]: 1 })
+          .minus(1)
+      : this;
   }
 
   // OUTPUT
@@ -1351,7 +1355,11 @@ export class DateTime {
     }
 
     const computeDayDelta = () =&gt; {
-      const utcDayStart = dt =&gt; dt.toUTC(0, { keepCalendarTime: true }).startOf(&apos;day&apos;).valueOf(),
+      const utcDayStart = dt =&gt;
+          dt
+            .toUTC(0, { keepCalendarTime: true })
+            .startOf(&apos;day&apos;)
+            .valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
       return Math.floor(Duration.fromMilliseconds(ms, opts).shiftTo(&apos;days&apos;).days);
     };
@@ -1445,8 +1453,8 @@ export class DateTime {
   equals(other) {
     return this.isValid &amp;&amp; other.isValid
       ? this.valueOf() === other.valueOf() &amp;&amp;
-        this.zone.equals(other.zone) &amp;&amp;
-        this.loc.equals(other.loc)
+          this.zone.equals(other.zone) &amp;&amp;
+          this.loc.equals(other.loc)
       : false;
   }
 

@@ -1070,7 +1070,7 @@ var Util = function () {
       for (var u in obj) {
         if (obj.hasOwnProperty(u)) {
           var v = obj[u];
-          if (v !== null && !Util.isUndefined(v) && !isNaN(v)) {
+          if (v !== null && !Util.isUndefined(v) && !Number.isNaN(v)) {
             var mapped = normalizer(u, ignoreUnknown);
             if (mapped) {
               normalized[mapped] = v;
@@ -3157,6 +3157,7 @@ var Interval = function () {
       var s = this.s,
           i = 0;
 
+
       while (s < this.e) {
         var added = sorted[i] || this.e,
             next = +added > +this.e ? this.e : added;
@@ -3184,6 +3185,7 @@ var Interval = function () {
       var s = this.s,
           added = void 0,
           next = void 0;
+
 
       while (s < this.e) {
         added = s.plus(dur);

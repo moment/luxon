@@ -200,7 +200,10 @@ function extractRFC2822(match) {
 
 function preprocessRFC2822(s) {
   // Remove comments and folding whitespace and replace multiple-spaces with a single space
-  return s.replace(/\([^)]*\)|[\n\t]/g, &apos; &apos;).replace(/(\s\s+)/g, &apos; &apos;).trim();
+  return s
+    .replace(/\([^)]*\)|[\n\t]/g, &apos; &apos;)
+    .replace(/(\s\s+)/g, &apos; &apos;)
+    .trim();
 }
 
 // http date

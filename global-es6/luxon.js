@@ -583,7 +583,7 @@ class Util {
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
         const v = obj[u];
-        if (v !== null && !Util.isUndefined(v) && !isNaN(v)) {
+        if (v !== null && !Util.isUndefined(v) && !Number.isNaN(v)) {
           const mapped = normalizer(u, ignoreUnknown);
           if (mapped) {
             normalized[mapped] = v;
@@ -797,7 +797,9 @@ class Locale {
   knownEnglish() {
     return (
       (this.locale === 'en' ||
-        Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) &&
+        Intl.DateTimeFormat(this.intl)
+          .resolvedOptions()
+          .locale.startsWith('en-US')) &&
       this.numberingSystem === null &&
       (this.outputCalendar === null || this.outputCalendar === 'latn')
     );
@@ -1439,7 +1441,10 @@ function extractRFC2822(match) {
 
 function preprocessRFC2822(s) {
   // Remove comments and folding whitespace and replace multiple-spaces with a single space
-  return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').trim();
+  return s
+    .replace(/\([^)]*\)|[\n\t]/g, ' ')
+    .replace(/(\s\s+)/g, ' ')
+    .trim();
 }
 
 // http date
@@ -2334,7 +2339,7 @@ class Interval {
     if (!this.isValid) return [];
     const sorted = dateTimes.map(Util.friendlyDateTime).sort(),
       results = [];
-    let s = this.s,
+    let { s } = this,
       i = 0;
 
     while (s < this.e) {
@@ -2358,7 +2363,7 @@ class Interval {
     if (!this.isValid) return [];
     const dur = Util.friendlyDuration(duration),
       results = [];
-    let s = this.s,
+    let { s } = this,
       added,
       next;
 
@@ -4042,7 +4047,11 @@ class DateTime {
    * @return {DateTime}
    */
   endOf(unit) {
-    return this.isValid ? this.startOf(unit).plus({ [unit]: 1 }).minus(1) : this;
+    return this.isValid
+      ? this.startOf(unit)
+          .plus({ [unit]: 1 })
+          .minus(1)
+      : this;
   }
 
   // OUTPUT
@@ -4263,7 +4272,11 @@ class DateTime {
     }
 
     const computeDayDelta = () => {
-      const utcDayStart = dt => dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf(),
+      const utcDayStart = dt =>
+          dt
+            .toUTC(0, { keepCalendarTime: true })
+            .startOf('day')
+            .valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
       return Math.floor(Duration.fromMilliseconds(ms, opts).shiftTo('days').days);
     };
@@ -4357,8 +4370,8 @@ class DateTime {
   equals(other) {
     return this.isValid && other.isValid
       ? this.valueOf() === other.valueOf() &&
-        this.zone.equals(other.zone) &&
-        this.loc.equals(other.loc)
+          this.zone.equals(other.zone) &&
+          this.loc.equals(other.loc)
       : false;
   }
 
@@ -4662,8 +4675,12 @@ class Info {
   static hasDST(zone = Settings.defaultZone) {
     return (
       !zone.universal &&
-      DateTime.local().setZone(zone).set({ month: 1 }).offset !==
-        DateTime.local().setZone(zone).set({ month: 5 }).offset
+      DateTime.local()
+        .setZone(zone)
+        .set({ month: 1 }).offset !==
+        DateTime.local()
+          .setZone(zone)
+          .set({ month: 5 }).offset
     );
   }
 
