@@ -19,8 +19,8 @@ const babel = require('rollup-plugin-babel'),
 function process(inopts) {
   const opts = Object.assign(
     {
-      entry: inopts.entry,
-      sourceMap: true,
+      input: inopts.input,
+      sourcemap: true,
       format: inopts.format,
       plugins: []
     },
@@ -42,7 +42,7 @@ function process(inopts) {
 
 function processLib(opts) {
   return () => {
-    opts.entry = './src/luxon.js';
+    opts.input = './src/luxon.js';
 
     const dest = `./build/${opts.dest || opts.format}`,
       // confession: I have no idea why piping to lazypipe works
@@ -66,8 +66,7 @@ function processLib(opts) {
 
 function prettify(opts) {
   return through.obj((file, _, callback) => {
-    const str = file.contents.toString(),
-      data = prettier.format(str, opts);
+    const str = file.contents.toString(), data = prettier.format(str, opts);
     file.contents = new Buffer(data);
     callback(null, file);
   });
@@ -88,7 +87,7 @@ gulp.task(
   'amd',
   processLib({
     format: 'amd',
-    rollupOpts: { moduleName: 'luxon' }
+    rollupOpts: { name: 'luxon' }
   })
 );
 
@@ -96,7 +95,7 @@ gulp.task(
   'global-es6',
   processLib({
     format: 'iife',
-    rollupOpts: { moduleName: 'luxon' },
+    rollupOpts: { name: 'luxon' },
     dest: 'global-es6',
     compile: false
   })
@@ -106,7 +105,7 @@ gulp.task(
   'global',
   processLib({
     format: 'iife',
-    rollupOpts: { moduleName: 'luxon' },
+    rollupOpts: { name: 'luxon' },
     dest: 'global'
   })
 );
@@ -115,19 +114,30 @@ gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
 gulp.task('test', () => gulp.src('test').pipe(jest()));
 
-const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
+const lintable = [
+  'src/**/*.js',
+  'test/**/*.js',
+  'gulpfile.js',
+  '.eslintrc.js',
+  '.prettier.js'
+],
   doLint = () =>
-    gulp.src(lintable).pipe(eslint()).pipe(eslint.format()).pipe(eslint.failAfterError());
+    gulp
+      .src(lintable)
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failAfterError());
 
 gulp.task('lint!', ['format'], doLint);
 gulp.task('lint', doLint);
 
 gulp.task('format', () =>
-  gulp.src(lintable, { base: './' }).pipe(prettify(prettierOptions)).pipe(gulp.dest('./'))
-);
+  gulp
+    .src(lintable, { base: './' })
+    .pipe(prettify(prettierOptions))
+    .pipe(gulp.dest('./')));
 
-gulp.task('docs', () =>
-  gulp.src('./src').pipe(
+gulp.task('docs', () => gulp.src('./src').pipe(
     esdoc({
       destination: './build/docs',
       title: 'Luxon',
@@ -153,11 +163,11 @@ gulp.task('docs', () =>
       },
       plugins: [{ name: './site/doc-plugin.js' }]
     })
-  )
-);
+  ));
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
 // build first so the test deps work
 gulp.task('simple', cb => runSequence('build', 'lint', 'test', cb));
-gulp.task('default', cb => runSequence('format', 'build', 'lint', 'test', 'docs', 'site', cb));
+gulp.task('default', cb =>
+  runSequence('format', 'build', 'lint', 'test', 'docs', 'site', cb));
