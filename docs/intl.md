@@ -8,17 +8,24 @@ DateTime.local().setLocale('el').toLocaleString(DateTime.DATE_FULL); //=>  '24 �
 
 ## How locales work
 
-TODO
+Luxon DateTimes can be configured using [BCP 47](https://tools.ietf.org/html/rfc5646) locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a [good description](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation) of how the `locale` argument. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string (i.e. Luxon does the string munging for you).
+
+The rest of this document will concentrate on what Luxon does when provided with locale information.
 
 ## Setting locale
 
-`locale` is a property of Luxon object, and it defaults to 'en-us'. You can generally set it at construction time:
+`locale` is a property of Luxon object, and it defaults to 'en-us'. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.
+
+You can generally set it at construction time:
 
 ```js
-DateTime.fromISO('2017-09-24', { locale: 'fr' }).locale //=> 'fr'
+var dt = DateTime.fromISO('2017-09-24', { locale: 'fr' })
+dt.locale //=> 'fr'
 ```
 
-Or you can change it (meaning, create a clone DateTime with a different locale) using `setLocale`:
+In this case, the specified locale didn't change the how the parsing worked (there's nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as `fromString`, the locale argument *does* affect how the string is parsed. See further down for more.
+
+You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using `setLocale`:
 
 
 ```js
@@ -42,9 +49,46 @@ DateTime.fromObject({locale: 'fr-co'}).resolvedLocaleOpts(); //=> { locale: 'fr'
                                                              //     outputCalendar: 'gregory' }
 ```
 
-## Methods affected by Intl
+## Methods affected by the locale
 
-TODO
+### Formatting
+
+The most important method affected by the locale setting is `toLocaleString`, which allows you to produce internationalized, human-readable strings.
+
+```js
+dt.setLocale('fr').toLocaleString(DateTime.DATE_FULL) //=> '25 septembre 2017'
+```
+
+That's the normal way to do it: set the locale as property of the DateTime itself and let the `toLocaleString` inherit it. But you can specify the locale directly to `toLocaleString` too:
+
+```js
+dt.toLocaleString( Object.assign({ locale: 'es' }, DateTime.DATE_FULL)) //=> '25 de septiembre de 2017'
+```
+
+Ad-hoc formatting also respects the locale:
+
+```js
+dt.setLocale('fr').toFormat('MMMM dd, yyyy GG'); //=> 'septembre 25, 2017 après Jésus-Christ'
+```
+
+### Parsing
+
+You can [parse](parsing.md) localized strings:
+
+```js
+DateTime.fromString('septembre 25, 2017 après Jésus-Christ', 'MMMM dd, yyyy GG', {locale: 'fr'})
+```
+
+### Listing
+
+Some of the methods in the [Info](../docs/class/src/info.js~Info.html) class let you list strings like months, weekdays, and eras, and they can be localized:
+
+
+```js
+Info.months('long', { locale: 'fr' })    //=> [ 'janvier', 'février', ...
+Info.weekdays('long', { locale: 'fr' })  //=> [ 'lundi', 'mardi', ...
+Info.eras('long', { locale: 'fr' })      //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
+```
 
 ## numberingSystem
 
@@ -67,7 +111,3 @@ For this reason, Luxon defaults its own `numberingSystem` property to null, by w
 var dt  = DateTime.local().reconfigure({ locale: 'it', numberingSystem: 'beng' })
 dt.toLocaleString(DateTime.DATE_FULL) //=> '২৪ settembre ২০১৭'
 ```
-
-## Default settings
-
-TODO
