@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header><span class="luxon-title">Luxon</span>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/icambron/luxon" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/info.js~Info.html">Info</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/impl/regexParser.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;./util&apos;;
+import { English } from &apos;./english&apos;;
+import { FixedOffsetZone } from &apos;../zones/fixedOffsetZone&apos;;
+
+function combineRegexes(...regexes) {
+  const full = regexes.reduce((f, r) =&gt; f + r.source, &apos;&apos;);
+  return RegExp(full);
+}
+
+function combineExtractors(...extractors) {
+  return m =&gt;
+    extractors
+      .reduce(
+        ([mergedVals, mergedZone, cursor], ex) =&gt; {
+          const [val, zone, next] = ex(m, cursor);
+          return [Object.assign(mergedVals, val), mergedZone || zone, next];
+        },
+        [{}, null, 1]
+      )
+      .slice(0, 2);
+}
+
+function parse(s, ...patterns) {
+  if (s == null) {
+    return [null, null];
+  }
+  for (const [regex, extractor] of patterns) {
+    const m = regex.exec(s);
+    if (m) {
+      return extractor(m);
+    }
+  }
+  return [null, null];
+}
+
+function simpleParse(...keys) {
+  return (match, cursor) =&gt; {
+    const ret = {};
+    let i;
+
+    for (i = 0; i &lt; keys.length; i++) {
+      ret[keys[i]] = parseInt(match[cursor + i]);
+    }
+    return [ret, null, cursor + i];
+  };
+}
+
+// ISO parsing
+const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
+  extractISOYmd = simpleParse(&apos;year&apos;, &apos;month&apos;, &apos;day&apos;),
+  isoYmdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/,
+  extractISOWeekData = simpleParse(&apos;weekYear&apos;, &apos;weekNumber&apos;, &apos;weekDay&apos;),
+  isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
+  isoOrdinalRegex = /^(\d{4})-?(\d{3})/,
+  extractISOOrdinalData = simpleParse(&apos;year&apos;, &apos;ordinal&apos;);
+
+function extractISOTime(match, cursor) {
+  const local = !match[cursor + 4] &amp;&amp; !match[cursor + 5],
+    fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
+    item = {
+      hour: parseInt(match[cursor]) || 0,
+      minute: parseInt(match[cursor + 1]) || 0,
+      second: parseInt(match[cursor + 2]) || 0,
+      millisecond: parseInt(match[cursor + 3]) || 0
+    },
+    zone = local ? null : new FixedOffsetZone(fullOffset);
+
+  return [item, zone, cursor + 7];
+}
+
+// ISO duration parsing
+
+const isoDuration = /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/;
+
+function extractISODuration(match) {
+  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match;
+
+  return {
+    year: parseInt(yearStr),
+    month: parseInt(monthStr),
+    day: parseInt(dayStr),
+    hour: parseInt(hourStr),
+    minute: parseInt(minuteStr),
+    second: parseInt(secondStr)
+  };
+}
+
+// These are a little braindead. EDT *should* tell us that we&apos;re in, say, America/New_York
+// and not just that we&apos;re in -240 *right now*. But since I don&apos;t think these are used that often
+// I&apos;m just going to ignore that
+const obsOffsets = {
+  GMT: 0,
+  EDT: -4 * 60,
+  EST: -5 * 60,
+  CDT: -5 * 60,
+  CST: -6 * 60,
+  MDT: -6 * 60,
+  MST: -7 * 60,
+  PDT: -7 * 60,
+  PST: -8 * 60
+};
+
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+  const result = {
+    year: yearStr.length === 2 ? Util.untrucateYear(parseInt(yearStr)) : parseInt(yearStr),
+    month: English.monthsShort.indexOf(monthStr) + 1,
+    day: parseInt(dayStr),
+    hour: parseInt(hourStr),
+    minute: parseInt(minuteStr)
+  };
+
+  if (secondStr) result.second = parseInt(secondStr);
+  if (weekdayStr) {
+    result.weekday =
+      weekdayStr.length &gt; 3
+        ? English.weekdaysLong.indexOf(weekdayStr) + 1
+        : English.weekdaysShort.indexOf(weekdayStr) + 1;
+  }
+
+  return result;
+}
+
+// RFC 2822/5322
+const rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/;
+
+function extractRFC2822(match) {
+  const [
+      ,
+      weekdayStr,
+      dayStr,
+      monthStr,
+      yearStr,
+      hourStr,
+      minuteStr,
+      secondStr,
+      obsOffset,
+      milOffset,
+      offHourStr,
+      offMinuteStr
+    ] = match,
+    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+
+  let offset;
+  if (obsOffset) {
+    offset = obsOffsets[obsOffset];
+  } else if (milOffset) {
+    offset = 0;
+  } else {
+    offset = Util.signedOffset(offHourStr, offMinuteStr);
+  }
+
+  return [result, new FixedOffsetZone(offset)];
+}
+
+function preprocessRFC2822(s) {
+  // Remove comments and folding whitespace and replace multiple-spaces with a single space
+  return s.replace(/\([^)]*\)|[\n\t]/g, &apos; &apos;).replace(/(\s\s+)/g, &apos; &apos;).trim();
+}
+
+// http date
+
+const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/,
+  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/,
+  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
+
+function extractRFC1123Or850(match) {
+  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
+    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  return [result, FixedOffsetZone.utcInstance];
+}
+
+function extractASCII(match) {
+  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,
+    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  return [result, FixedOffsetZone.utcInstance];
+}
+
+/**
+ * @private
+ */
+
+export class RegexParser {
+  static parseISODate(s) {
+    return parse(
+      s,
+      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],
+      [
+        combineRegexes(isoWeekRegex, isoTimeRegex),
+        combineExtractors(extractISOWeekData, extractISOTime)
+      ],
+      [
+        combineRegexes(isoOrdinalRegex, isoTimeRegex),
+        combineExtractors(extractISOOrdinalData, extractISOTime)
+      ]
+    );
+  }
+
+  static parseRFC2822Date(s) {
+    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
+  }
+
+  static parseHTTPDate(s) {
+    return parse(
+      s,
+      [rfc1123, extractRFC1123Or850],
+      [rfc850, extractRFC1123Or850],
+      [ascii, extractASCII]
+    );
+  }
+
+  static parseISODuration(s) {
+    return parse(s, [isoDuration, extractISODuration]);
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

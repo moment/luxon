@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="./">
+  <title data-ice="title">Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container manual-root manual-index" data-ice="rootContainer">
+
+<header><span class="luxon-title">Luxon</span>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/icambron/luxon" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual" data-toc-name="design">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-design" data-section-count="&#x25A0;&#x25A0;" data-link="manual/design/install.html"><a href="manual/design/install.html" data-ice="link">Install guide</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#basic-browser-setup" data-ice="link">Basic browser setup</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#node" data-ice="link">Node</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#amd-system-js-requirejs-etc-" data-ice="link">AMD (System.js, RequireJS, etc)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#es6" data-ice="link">ES6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#webpack" data-ice="link">Webpack</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#meteor" data-ice="link">Meteor</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-design" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/design/tour.html"><a href="manual/design/tour.html" data-ice="link">A quick tour</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#tostring" data-ice="link">toString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#getting-at-components" data-ice="link">Getting at components</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#other-fun-accessors" data-ice="link">Other fun accessors</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#formatting-your-datetime" data-ice="link">Formatting your DateTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#transforming-your-datetime" data-ice="link">Transforming your DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#immutability" data-ice="link">Immutability</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#math" data-ice="link">Math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#set" data-ice="link">Set</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#time-zones" data-ice="link">Time zones</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#durations" data-ice="link">Durations</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#intervals" data-ice="link">Intervals</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="usage">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#setting-locale" data-ice="link">Setting locale</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#checking-what-you-got" data-ice="link">Checking what you got</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#methods-affected-by-intl" data-ice="link">Methods affected by Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#numberingsystem" data-ice="link">numberingSystem</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#default-settings" data-ice="link">Default settings</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html" data-ice="link">Time zones and offsets</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#terminology" data-ice="link">Terminology</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#luxon-works-with-time-zones" data-ice="link">Luxon works with time zones</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#specifying-a-zone" data-ice="link">Specifying a zone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#iana-support" data-ice="link">IANA support</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#creating-datetimes" data-ice="link">Creating DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#local-by-default" data-ice="link">Local by default</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#creating-datetimes-in-a-zone" data-ice="link">Creating DateTimes in a zone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#strings-that-specify-an-offset" data-ice="link">Strings that specify an offset</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#setzone" data-ice="link">setZone</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#changing-zones" data-ice="link">Changing zones</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#setzone" data-ice="link">setZone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#keepcalendartime" data-ice="link">keepCalendarTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#accessors" data-ice="link">Accessors</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#dst-weirdness" data-ice="link">DST weirdness</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#invalid-times" data-ice="link">Invalid times</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#ambiguous-times" data-ice="link">Ambiguous times</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#math-across-dsts" data-ice="link">Math across DSTs</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#changing-the-default-zone" data-ice="link">Changing the default zone</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;" data-link="manual/usage/calendars.html"><a href="manual/usage/calendars.html" data-ice="link">Calendars</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/calendars.html"><a href="manual/usage/calendars.html#fully-supported-calendars" data-ice="link">Fully supported calendars</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/calendars.html"><a href="manual/usage/calendars.html#output-calendars" data-ice="link">Output calendars</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html" data-ice="link">Formatting</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#technical-formats-strings-for-computers-" data-ice="link">Technical formats (strings for computers)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#iso-8601" data-ice="link">ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#http-and-rfc-2822" data-ice="link">HTTP and RFC 2822</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#tolocalestring-strings-for-humans-" data-ice="link">toLocaleString (strings for humans)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#the-basics" data-ice="link">The basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#intl-datetimeformat" data-ice="link">Intl.DateTimeFormat</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#presets" data-ice="link">Presets</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#formatting-with-tokens-strings-for-cthulhu-" data-ice="link">Formatting with tokens (strings for Cthulhu)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#toformat" data-ice="link">toFormat</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#escaping" data-ice="link">Escaping</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#standalone-vs-format-tokens" data-ice="link">Standalone vs format tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#macro-tokens" data-ice="link">Macro tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#table-of-tokens" data-ice="link">Table of tokens</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html" data-ice="link">Parsing</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#parsing-technical-formats" data-ice="link">Parsing technical formats</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#iso-8601" data-ice="link">ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#fromstring" data-ice="link">fromString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#limitations" data-ice="link">Limitations</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#debugging" data-ice="link">Debugging</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#table-of-tokens" data-ice="link">Table of tokens</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/math.html"><a href="manual/usage/math.html" data-ice="link">Math</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/math.html"><a href="manual/usage/math.html#calendar-math-vs-time-math" data-ice="link">Calendar math vs time math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#the-basics" data-ice="link">The basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#which-units-use-which-math-" data-ice="link">Which units use which math?</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#how-to-think-about-calendar-math" data-ice="link">How to think about calendar math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#dsts" data-ice="link">DSTs</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#time-math" data-ice="link">Time math</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/math.html"><a href="manual/usage/math.html#math-with-multiple-units" data-ice="link">Math with multiple units</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/math.html"><a href="manual/usage/math.html#duration-math" data-ice="link">Duration math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#basics" data-ice="link">Basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#diffs" data-ice="link">Diffs</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#casual-vs-longterm-conversion-accuracy" data-ice="link">Casual vs longterm conversion accuracy</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#losing-information" data-ice="link">Losing information</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html" data-ice="link">Validity</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalid-datetimes" data-ice="link">Invalid DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#reasons-a-datetimes-can-be-invalid" data-ice="link">Reasons a DateTimes can be invalid</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#debugging-invalid-datetimes" data-ice="link">Debugging invalid DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalidreason" data-ice="link">invalidReason</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#throwoninvalid" data-ice="link">throwOnInvalid</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalid-durations" data-ice="link">Invalid Durations</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalid-intervals" data-ice="link">Invalid Intervals</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="reference">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-reference" data-section-count="&#x25A0;&#x25A0;" data-link="identifiers.html"><a href="identifiers.html" data-ice="link">API reference</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="identifiers.html"><a href="identifiers.html#class" data-ice="link">Class</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="identifiers.html"><a href="identifiers.html#interface" data-ice="link">Interface</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="faq">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-faq" data-section-count="&#x25A0;&#x25A0;" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html" data-ice="link">Support matrix</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#what-works-everywhere" data-ice="link">What works everywhere</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#new-capabilities-and-how-they-re-used" data-ice="link">New capabilities and how they&apos;re used</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#the-matrix" data-ice="link">The matrix</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#what-happens-if-a-feature-isn-t-supported-" data-ice="link">What happens if a feature isn&apos;t supported?</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#polyfills" data-ice="link">Polyfills</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#zones" data-ice="link">Zones</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="changelog">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-1" data-ice="link">0.1</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown">
+  
+
+  
+
+  <div class="manual-cards">
+    
+  <div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-design" data-section-count="&#x25A0;&#x25A0;"><span data-ice="label-inner">Install guide</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Install guide</h1><p>Luxon provides different builds for different JS environments. See below for a link to the right one and instructions on how to use it.</p><h2>Basic browser setup</h2><ul>
+<li><a href="./manual/../../global/luxon.js">Download full</a></li>
+<li><a href="./manual/../../global/luxon.min.js">Download minified</a></li>
+</ul><p>Just include Luxon in a script tag. You can access its various classes through the <code>luxon</code> global.</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;</code>
+</code></pre><p>You may wish to alias the classes you use:</p><pre><code class="lang-js"><code class="source-code prettyprint">var DateTime = luxon.DateTime;</code>
+</code></pre><h2>Node</h2><p>Install via NPM:</p><pre><code><code class="source-code prettyprint">npm install --save luxon</code>
+</code></pre><pre><code class="lang-js"><code class="source-code prettyprint">var luxon = require(&apos;luxon&apos;);</code>
+</code></pre><h2>AMD (System.js, RequireJS, etc)</h2><ul>
+<li><a href="./manual/../../amd/luxon.js">Download full</a></li>
+<li><a href="./manual/../../amd/luxon.min.js">Download minified</a></li>
+</ul><pre><code class="lang-js"><code class="source-code prettyprint">requirejs([&apos;luxon&apos;], function(luxon) {
+  //...
+});</code>
+</code></pre><h2>ES6</h2><ul>
+<li><a href="./manual/../../es6/luxon.js">Download full</a></li>
+<li><a href="./manual/../../es6/luxon.min.js">Download minified</a></li>
+</ul><pre><code class="lang-js"><code class="source-code prettyprint">import { DateTime } from &apos;luxon&apos;;</code>
+</code></pre><h2>Webpack</h2><pre><code><code class="source-code prettyprint">npm install --save luxon</code>
+</code></pre><pre><code class="lang-js"><code class="source-code prettyprint">import { DateTime } from &apos;luxon&apos;;</code>
+</code></pre><h2>Meteor</h2><p>Help wanted.</p></div>
+        <a data-ice="link" href="manual/design/install.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-design" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;"><span data-ice="label-inner">A quick tour</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>A quick tour</h1><p>Luxon is a library that makes it easier to work with dates and times in Javascript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We&apos;re going to talk about the most immediately useful subset of that interface.</p><p>This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to <a href="./manual/../identifiers.html">dive into them</a>.</p><h2>Your first DateTime</h2><p>The most important class in Luxon is <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime</a>. A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here&apos;s one that represents May 15, 2017 at 8:30 in the morning:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local(2017, 5, 15, 8, 30);</code>
+</code></pre><p>To get the current time, just do this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var now = DateTime.local();</code>
+</code></pre><p><a href="./manual/../class/src/datetime.js~DateTime.html#static-method-local">DateTime.local</a> takes any number of arguments, all the way out to milliseconds. Underneath, this is just a Javascript Date object. But we&apos;ve decorated it with lots of useful methods.</p><h2>Creating a DateTime</h2><p>There are lots of ways to create a DateTime by parsing strings or constructing them out of parts. You&apos;ve already seen one, <code>DateTime.local()</code>, but let&apos;s talk about two more.</p><h3>Create from an object</h3><p>The most powerful way to create a DateTime instance is to provide an object containing all the information:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.fromObject({day: 22, hour: 12, zone: &apos;America/Los_Angeles&apos;, numberingSystem: &apos;beng&apos;})</code>
+</code></pre><p>Don&apos;t worry too much about the properties you don&apos;t understand yet; the point is that you can set every attribute of a DateTime when you create it. One thing to notice from the example is that we just set the day and hour; the year and month get defaulted to the current one and the minutes, seconds, and milliseconds get defaulted to 0. So <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromObject">DateTime.fromObject</a> is sort of the power user interface.</p><h3>Parse from ISO 8601</h3><p>Luxon has lots of parsing capabilities, but the most important one is parsing <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> strings, because they&apos;re more-or-less the standard wire format for dates and times. Use <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">DateTime.fromISO</a>.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&quot;2017-05-15&quot;)          //=&gt; May 15, 2017 at midnight
+DateTime.fromISO(&quot;2017-05-15T08:30:00&quot;) //=&gt; May 15, 2017 at 8:30</code>
+</code></pre><p>You can parse a bunch of other formats, including <a href="./manual/usage/parsing.html">your own custom ones</a>.</p><h2>Getting to know your DateTime instance</h2><p>Now that we&apos;ve made some DateTimes, let&apos;s see what we can ask of it.</p><h3>toString</h3><p>The first thing we want to see is the DateTime as a string. Luxon returns ISO 8601 strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toString() //=&gt; &apos;2017-09-14T03:20:34.091-04:00&apos;</code>
+</code></pre><h3>Getting at components</h3><p>We can get at the components of the time individually through getters. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.local()
+dt.year     //=&gt; 2017
+dt.month    //=&gt; 9
+dt.day      //=&gt; 14
+dt.second   //=&gt; 47
+dt.weekday  //=&gt; 4</code>
+</code></pre><h3>Other fun accessors</h3><pre><code class="lang-js"><code class="source-code prettyprint">dt.zoneName     //=&gt; &apos;America/New_York&apos;
+dt.offset       //=&gt; -240
+dt.daysInMonth  //=&gt; 30</code>
+</code></pre><p>There are lots more!</p><h2>Formatting your DateTime</h2><p>You may want to output your DateTime to a string for a machine or a human to read. Luxon has lots of tools for this, but two of them are most important. If you want to format a human-readable string, use <code>toLocaleString</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString()      //=&gt; &apos;9/14/2017&apos;
+dt.toLocaleString({
+  month: &apos;long&apos;,
+  day: &apos;numeric&apos;,
+  hour: &apos;numeric&apos;,
+  minute: &apos;numeric&apos;})    //=&gt; &apos;September 14, 3:21 AM&apos;</code>
+</code></pre><p>This works well across different locales (languages) by letting the browser figure out what order the different parts go in and how to punctuate them.</p><p>If you want the string read by another program, you almost certainly want to use <code>toISO</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO() //=&gt; &apos;2017-09-14T03:21:47.070-04:00&apos;</code>
+</code></pre><p>Custom formats are also supported. See <a href="./manual/usage/formatting.html">formatting</a>.</p><h2>Transforming your DateTime</h2><h3>Immutability</h3><p>Luxon objects are immutable. That means that you can&apos;t alter them in place, just create altered copies. Throughout the documentation, we use terms like &quot;alter&quot;, &quot;change&quot;, and &quot;set&quot; loosely, but rest assured we mean &quot;create a new instance with different properties&quot;.</p><h3>Math</h3><p>This is easier to show than to tell. All of these calls return new DateTime instances:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+dt.plus({hours: 3, minutes: 2});
+dt.minus({days: 7});
+dt.startOf(&apos;day&apos;);
+dt.endOf(&apos;hour&apos;);</code>
+</code></pre><h3>Set</h3><p>You can create new instances by overriding specific properties:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+dt.set({hour: 3}).hour   //=&gt; 3</code>
+</code></pre><h2>Intl</h2><p>Luxon provides several different Intl capabilities, but the most important one is in formatting:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+var f = {month: &apos;long&apos;, day: &apos;numeric&apos;};
+dt.setLocale(&apos;fr&apos;).toLocaleString(f)      //=&gt; &apos;14 septembre&apos; 
+dt.setLocale(&apos;en-gb&apos;).toLocaleString(f)   //=&gt; &apos;14 September&apos;
+dt.setLocale(&apos;en-us&apos;).toLocaleString(f)  //=&gt; &apos;September 14&apos;</code>
+</code></pre><p>Luxon&apos;s Info class can also list months or weekdays for different locales:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&apos;long&apos;, {locale: &apos;fr&apos;}) //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, &apos;mars&apos;, &apos;avril&apos;, ... ]</code>
+</code></pre><h2>Time zones</h2><p>Luxon supports time zones. There&apos;s a whole <a href="./manual/usage/zones.html">big section</a> about it. But briefly, you can create DateTimes in specific zones and change their zones:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({zone: &apos;America/Los_Angeles&apos;}) // now, but expressed in LA&apos;s local time
+DateTime.local().setZone(&apos;America/Los_Angeles&apos;) // same</code>
+</code></pre><p>Luxon also supports UTC directly:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.utc(2017, 5, 15);
+DateTime.utc();
+DateTime.local().toUTC();
+DateTime.utc().toLocal();</code>
+</code></pre><h2>Durations</h2><p>The Duration class represents a quantity of time such as &quot;2 hours and 7 minutes&quot;. You create them like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({hours: 2, minutes: 7});</code>
+</code></pre><p>They can be add or subtracted from DateTimes like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.plus(dur);</code>
+</code></pre><p>They have getters just like DateTime:</p><pre><code class="lang-js"><code class="source-code prettyprint">dur.hours   //=&gt; 2
+dur.minutes //=&gt; 7
+dur.seconds //=&gt; 0</code>
+</code></pre><p>And some other useful stuff:</p><pre><code class="lang-js"><code class="source-code prettyprint">dur.as(&apos;seconds&apos;) //=&gt; 7620
+dur.toObject()    //=&gt; { hours: 2, minutes: 7 }
+dur.toISO()       //=&gt; &apos;PT2H7M&apos;</code>
+</code></pre><p>You can also format, negate, and normalize them. See it all in the <a href="./manual/../class/src/duration.js~Duration.html">Duration API docs</a>.</p><h2>Intervals</h2><p>Intervals are a specific period of time, such as &quot;between now and midnight&quot;. They&apos;re really a wrapper for two DateTimes that form its endpoints. Here&apos;s what you can do with them:</p><pre><code class="lang-js"><code class="source-code prettyprint">now = DateTime.local();
+later = DateTime.local(2020, 10, 12);
+i = Interval.fromDateTimes(now, later);
+
+i.length()                             //=&gt; 97098768468
+i.length(&apos;years&apos;, true)                //=&gt; 3.0762420239726027
+i.contains(DateTime.local(2019))       //=&gt; true
+
+i.toISO()       //=&gt; &apos;2017-09-14T04:07:11.532-04:00/2020-10-12T00:00:00.000-04:00&apos;
+i.toString()    //=&gt; &apos;[2017-09-14T04:07:11.532-04:00 &#x2013; 2020-10-12T00:00:00.000-04:00)</code>
+</code></pre><p>Intervals can be split up into smaller intervals, perform set-like operations with other intervals, and few other handy features. See the <a href="./manual/../class/src/interval.js~Interval.html">Interval API docs</a>.</p></div>
+        <a data-ice="link" href="manual/design/tour.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;"><span data-ice="label-inner">Intl</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;el&apos;).toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
+</code></pre><h2>How locales work</h2><p>TODO</p><h2>Setting locale</h2><p><code>locale</code> is a property of Luxon object, and it defaults to &apos;en-us&apos;. You can generally set it at construction time:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-09-24&apos;, { locale: &apos;fr&apos; }).locale //=&gt; &apos;fr&apos;</code>
+</code></pre><p>Or you can change it (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;fr&apos;).locale //=&gt; &apos;fr&apos;</code>
+</code></pre><p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &apos;fr&apos; }).locale; //=&gt; &apos;fr&apos;</code>
+</code></pre><h2>Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({locale: &apos;fr-co&apos;}).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
+                                                             //     numberingSystem: &apos;latn&apos;,
+                                                             //     outputCalendar: &apos;gregory&apos; }</code>
+</code></pre><h2>Methods affected by Intl</h2><p>TODO</p><h2>numberingSystem</h2><p>DateTimes also have a <code>numberingSystem</code> setting that lets you control what system of numerals is used in formatting. In general, you shouldn&apos;t override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setLocale(&apos;ar&apos;)
+
+
+dt.resolvedLocaleOpts() //=&gt; { locale: &apos;ar&apos;,
+                        //     numberingSystem: &apos;arab&apos;,
+                        //     outputCalendar: &apos;gregory&apos; }
+
+dt.toLocaleString() //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
+</code></pre><p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt  = DateTime.local().reconfigure({ locale: &apos;it&apos;, numberingSystem: &apos;beng&apos; })
+dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
+</code></pre><h2>Default settings</h2><p>TODO</p></div>
+        <a data-ice="link" href="manual/usage/intl.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;"><span data-ice="label-inner">Time zones and offsets</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Time zones and offsets</h1><p>Bear with me here. Time zones are pain in the ass. Luxon has lots of tools to deal with them, but there&apos;s no getting around the fact that they&apos;re complicated.</p><h2>Terminology</h2><p>The terminology for time zones and offsets isn&apos;t well-established. But let&apos;s try to impose some order:</p><ol>
+<li>An <strong>offset</strong> is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we&apos;ll use hours.</li>
+<li>A <strong>time zone</strong> is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as &quot;America/New_York&quot;. That zone says something to the effect of &quot;The offset is -4, except between March and September, when it&apos;s -5&quot;.</li>
+<li>A <strong>fixed-offset time zone</strong> is any time zone that never changes offsets, such as UTC. Luxon supports fixed-offset zones directly; they&apos;re specified like UTC+7, which you can interpret as &quot;always with an offset of +7&quot;.</li>
+<li>A <strong>named offset</strong> is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America&apos;s EST roughly implies America/New_York) and the current offset (EST means +4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it&apos;s always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US&apos;s EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.</li>
+</ol><p>Some subtleties:</p><ol>
+<li>Multiple zones can have the same offset (think about the US&apos;s zones and their Canadian equivalents), though they might not have the same offset all the time, depending on when their DSTs are. Thus zones and offsets have a  many-to-many relationship.</li>
+<li>Just because a time zone doesn&apos;t have a DST now doesn&apos;t mean it&apos;s fixed. Perhaps it had one in the past. Regardless, Luxon does not have first-class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.</li>
+</ol><p>If all this seems too terse, check out these articles. The terminology in them is subtly different but the concepts are the same:</p><ul>
+<li><a href="https://spin.atomicobject.com/2016/07/06/time-zones-offsets/">Time Zones Aren&#x2019;t Offsets &#x2013; Offsets Aren&#x2019;t Time Zones</a></li>
+<li><a href="https://stackoverflow.com/tags/timezone/info">Stack Overflows timezone wiki page</a></li>
+</ul><h2>Luxon works with time zones</h2><p>Luxon&apos;s DateTime class supports zones directly. By default, a date created in Luxon is &quot;in&quot; the local time zone of the machine it&apos;s running on. By &quot;in&quot; we mean that the DateTime has, as one of its properties, an associated zone.</p><p>It&apos;s important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you&apos;re in; the zone is really piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon&apos;s behavior too. It just doesn&apos;t change <em>what time it is</em>.</p><p>Specifically, a DateTime&apos;s zone affects its behavior in these ways:</p><ol>
+<li>Times will be formatted as they would be in that zone.</li>
+<li>Transformations to the DateTime (such as <code>plus</code> or <code>startOf</code>) will obey any DSTs in that zone that affect the calculation (see &quot;Math across DSTs&quot; below)</li>
+</ol><p>Generally speaking, Luxon does not support changing a DateTime&apos;s offset, just its zone. That allows it to enforce the behaviors in the list above. The offset for that DateTime is just whatever the zone says it is. If you are unconcerned with the effects above, then you can always give your DateTime a fixed-offset zone.</p><h2>Specifying a zone</h2><p>Luxon&apos;s API methods that take a zone as an argument all let you specify the zone in a few ways.</p><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IANA</td>
+<td>&apos;America/New_York&apos;</td>
+<td>that zone</td>
+</tr>
+<tr>
+<td>local</td>
+<td>&apos;local&apos;</td>
+<td>the system&apos;s local zone</td>
+</tr>
+<tr>
+<td>UTC</td>
+<td>&apos;utc&apos;</td>
+<td>Universal Coordinated Time</td>
+</tr>
+<tr>
+<td>fixed offset</td>
+<td>&apos;UTC+7&apos;</td>
+<td>a fixed offset zone</td>
+</tr>
+<tr>
+<td>Zone</td>
+<td>new YourZone()</td>
+<td>A custom implementation of Luxon&apos;s Zone interface (advanced only)</td>
+</tr>
+</tbody>
+</table><h3>IANA support</h3><p>IANA-specified zones are string identifiers like &quot;America/New_York&quot; or &quot;Asia/Tokyo&quot;. Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can fiddle with the zones. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features().zones; //=&gt; true</code>
+</code></pre><p>If you&apos;re unsure if all your target environments (browser versions and Node versions) support this, check out the <a href="./manual/faq/matrix.html">Support Matrix</a>. You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also <a href="./manual/faq/matrix.html#zones">polyfill</a>.</p><p>If you specify a zone and your environment doesn&apos;t support that zone, you&apos;ll get an <a href="./manual/usage/validity.html">invalid</a> DateTime. That could be because the environment doesn&apos;t support zones at all, because for whatever reason doesn&apos;t support that <em>particular</em> zone, or because the zone is just bogus. Like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">bogus = DateTime.local().setZone(&apos;America/Bogus&apos;)
+
+bogus.isValid;         //=&gt; false
+bogus.invalidReason;   //=&gt; &apos;unsupported zone&apos;</code>
+</code></pre><h2>Creating DateTimes</h2><h3>Local by default</h3><p>By default, DateTime instances are created in the system&apos;s local zone and parsed strings are interpreted as specifying times in the system&apos;s local zone. For example, my computer is configured to use <code>America/New_York</code>, which is has an offset of -4 in May:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local(2017, 05, 15, 09, 10, 23);
+
+local.zoneName;                //=&gt; &apos;America/New_York&apos;
+local.toString();              //=&gt; &apos;2017-05-15T09:10:23.000-04:00&apos;
+
+var iso = DateTime.fromISO(&quot;2017-05-15T09:10:23&quot;);
+
+iso.zoneName;                  //=&gt; &apos;America/New_York&apos;
+iso.toString();                //=&gt; &apos;2017-05-15T09:10:23.000-04:00&apos;</code>
+</code></pre><h3>Creating DateTimes in a zone</h3><p>Many of Luxon&apos;s factory methods allow you to tell Luxon specifically the zone to create the DateTime in:</p><pre><code class="lang-js"><code class="source-code prettyprint">var overrideZone = DateTime.fromISO(&quot;2017-05-15T09:10:23&quot;, {zone: &apos;Europe/Paris&apos;});
+
+overrideZone.zoneName;         //=&gt; &apos;Europe/Paris&apos;
+overrideZone.toString();       //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
+</code></pre><p>Note two things:</p><ol>
+<li>The date and time specified in the string was interpreted as specifying a Parisian local time (i.e. it&apos;s the time that corresponds to what would be called 9:10 <em>there</em>).</li>
+<li>The resulting DateTime object is in Europe/Paris.</li>
+</ol><p>Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it&apos;s more convenient for the same option to govern both.</p><p>In addition, one static method, <code>utc()</code> specifically interprets the input as being specified in UTC. It also creates a DateTime in UTC:</p><pre><code class="lang-js"><code class="source-code prettyprint">var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
+
+utc.zoneName;                  //=&gt; &apos;UTC&apos;
+utc.toString();                //=&gt; &apos;2017-05-15T09:10:23.000Z&apos;</code>
+</code></pre><h3>Strings that specify an offset</h3><p>Some input strings may specify an offset as part of the string itself. In these case, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system&apos;s local zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var specifyOffset = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;);
+
+specifyOffset.zoneName;         //=&gt; &apos;America/New_York&apos;
+specifyOffset.toString();       //=&gt; &apos;2017-05-15T14:10:23.000-04:00&apos;
+
+var specifyZone = DateTime.fromString(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;);
+
+specifyZone.zoneName           //=&gt; &apos;America/New_York&apos;
+specifyZone.toString()         //=&gt; &apos;2017-05-15T03:10:23.000-04:00&apos;</code>
+</code></pre><p>...unless a zone is specified as an option (see previous section), in which case the DateTime gets converted to <em>that</em> zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var specifyOffsetAndOverrideZone = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;, {zone: &apos;Europe/Paris&apos;});
+
+specifyOffsetAndOverrideZone.zoneName;                 //=&gt; &apos;Europe/Paris&apos;
+specifyOffsetAndOverrideZone.toString();               //=&gt; &apos;2017-05-15T20:10:23.000+02:00&apos;</code>
+</code></pre><h3>setZone</h3><p>Finally, some parsing functions allow you to &quot;keep&quot; the zone in the string as the DateTime&apos;s zone. Note that if only an offset is provided by the string, the zone will be a fixed-offset one, since Luxon doesn&apos;t know which zone is meant, even if you do.</p><pre><code class="lang-js"><code class="source-code prettyprint">var keepOffset = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;, {setZone: true});
+
+keepOffset.zoneName;           //=&gt; &apos;UTC-9&apos;
+keepOffset.toString();         //=&gt; &apos;2017-05-15T09:10:23.000-09:00&apos;
+
+var keepZone = DateTime.fromString(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;, {setZone: true});
+
+keepZone.zoneName;             //=&gt; &apos;Europe/Paris&apos;
+keepZone.toString()            //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
+</code></pre><h2>Changing zones</h2><h3>setZone</h3><p>Luxon objects are immutable, so when we say &quot;changing zones&quot; we really mean &quot;creating a new instance with a different zone&quot;. Changing zone generally means &quot;change the zone in which this DateTime is expressed (and according to which rules it is manipulated), but don&apos;t change the underlying timestamp.&quot; For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local();
+var rezoned = local.setZone(&apos;America/Los_Angeles&apos;);
+
+// different local times with different offsets
+local.toString()     //=&gt; &apos;2017-09-13T18:30:51.141-04:00&apos;
+rezoned.toString()   //=&gt; &apos;2017-09-13T15:30:51.141-07:00&apos;
+
+
+//but actually the same time
+local.valueOf() === rezoned.valueOf(); //=&gt; true</code>
+</code></pre><h3>keepCalendarTime</h3><p>Generally, it&apos;s best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that&apos;s not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local();
+var rezoned = local.setZone(&apos;America/Los_Angeles&apos;, {keepCalendarTime: true});
+
+local.toString();      //=&gt; &apos;2017-09-13T18:36:23.187-04:00&apos;
+rezoned.toString();    //=&gt; &apos;2017-09-13T18:36:23.187-07:00&apos;
+
+local.valueOf() === rezoned.valueOf()  //=&gt; false</code>
+</code></pre><p>If you find that confusing, I recommend just not using it.</p><h2>Accessors</h2><p>Luxon DateTimes have a few different accessors that let you find out about the zone and offset:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+
+dt.zoneName          //=&gt; &apos;America/New_York&apos;
+dt.offset            //=&gt; -240
+dt.offsetNameShort   //=&gt; &apos;EDT&apos;
+dt.offsetNameLong    //=&gt; &apos;Eastern Daylight Time&apos;
+dt.isOffsetFixed     //=&gt; false
+dt.isInDST           //=&gt; true</code>
+</code></pre><p>Those are all documented in the <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime API docs</a>.</p><p>DateTime also has a <code>zone</code> property that holds an Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.zone   //=&gt; LocalZone {}</code>
+</code></pre><h2>DST weirdness</h2><p>Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it&apos;s not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts&apos; timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the equator. This all a tremendous waste of everyone&apos;s energy and, er, time, but it is how the world works and a date and a time library has to deal with it.</p><p>Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.</p><h3>Invalid times</h3><p>Some local times simply don&apos;t exist. In the Northern Hemisphere, Spring Forward involves shifting the local time forward by (usually) one hour. In my zone, <code>America/New_York</code>, on March 12, 2017 the millisecond after 1:59:59.999 became 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don&apos;t exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.</p><p>If you create such a DateTime from scratch, the missing time will be advanced by an hour:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 12, 2, 30).toString(); //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
+</code></pre><p>You can also do date math that lands you in the middle of the shift. These also push forward:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 11, 2, 30).plus({days: 1}).toString()         //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;
+DateTime.local(2017, 3, 13, 2, 30).minus({days: 1}).toString()        //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
+</code></pre><h3>Ambiguous times</h3><p>Harder to handle are ambiguous times. In the Northern Hemisphere, some local times happen twice. In my zone, <code>America/New_York</code>, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It&apos;s an important question, because those correspond to different moments in time.</p><p>However, Luxon&apos;s behavior here is undefined. It makes no promises about which of the two possible timestamps Luxon will represent. Currently, its specific behavior is like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 11, 5, 1, 30).offset / 60                   //=&gt; -4
+DateTime.local(2017, 11, 4, 1, 30).plus({days: 1}).offset / 60   //=&gt; -4
+DateTime.local(2017, 11, 6, 1, 30).minus({days: 1}).offset / 60  //=&gt; -5</code>
+</code></pre><p>In other words, sometimes it picks one and sometimes the other. Luxon doesn&apos;t guarantee the specific behavior above. That&apos;s just what it happens to do.</p><p>If you&apos;re curious, this lack of definition is because Luxon doesn&apos;t actually know that any particular DateTime is an ambiguous time. It doesn&apos;t know the time zones rules at all. It just knows the local time does not contradict the offset and leaves it at that. To find out the time is ambiguous and define exact rules for how to resolve it, Luxon would have to test nearby times to see if it can find duplicate local time, and it would have to do that on every creation of a DateTime, regardless of whether it was anywhere near a real DST shift. Because that&apos;s onerous, Luxon doesn&apos;t bother.</p><h3>Math across DSTs</h3><p>There&apos;s a whole <a href="./manual/usage/math.html">section</a> about date and time math, but it&apos;s worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher order, variable length units like days, weeks, months, and years. When working with lower order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.</p><p>An easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is <code>America/New_York</code>, which had a Spring Forward DST in the early hours of March 12.</p><pre><code class="lang-js"><code class="source-code prettyprint">var start = DateTime.local(2017, 3, 11, 10);
+start.hour                          //=&gt; 10, just for comparison
+start.plus({days: 1}).hour          //=&gt; 10, stayed the same
+start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code>
+</code></pre><h2>Changing the default zone</h2><p>By default, Luxon creates DateTimes in the system&apos;s local zone. However, you can override this behavior globally:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultZoneName = &apos;Asia/Tokyo&apos;
+DateTime.local().zoneName                 //=&gt; &apos;Asia/Tokyo&apos;
+
+Settings.defaultZoneName = &apos;utc&apos;
+DateTime.local().zoneName                 //=&gt; &apos;UTC&apos;
+
+// you can reset by setting to &apos;local&apos;
+
+Settings.defaultZoneName = &apos;local&apos;
+DateTime.local().zoneName                 //=&gt; &apos;America/New_York&apos;</code>
+</code></pre></div>
+        <a data-ice="link" href="manual/usage/zones.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;"><span data-ice="label-inner">Calendars</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Calendars</h1><p>This covers Luxon&apos;s support for various calendar systems. If you don&apos;t need to use non-standard calendars, you don&apos;t need to read any of this.</p><h2>Fully supported calendars</h2><p>Luxon has full support for Gregorian and ISO Week calendars. What I mean by that is that Luxon can parse dates specified in those calendars, format dates into strings using those calendars, and transform dates using the units of those calendars. For example, here is Luxon working directly with an ISO calendar:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-W23-3&apos;).plus({ weeks: 1, days: 2 }).toISOWeekDate(); //=&gt;  &apos;2017-W24-5&apos;</code>
+</code></pre><p>The main reason I bring all this is up is to contrast it with the capabilities for other calendars described below.</p><h2>Output calendars</h2><p>Luxon has limited support for other calendaring systems. Which calendars are supported at all is a platform-dependent, but can generally be expected to be these: Buddhist, Chinese, Coptic, Ethioaa, Ethiopic, Hebrew, Indian, Islamic, Islamicc, Japanese, Persian, and ROC. <strong>Support is limited to formatting strings with them</strong>, hence the qualified name &quot;output calendar&quot;.</p><p>In practice this is pretty useful; you can show users the date in their preferred calendaring system while the software works with dates using Gregorian units or Epoch milliseconds. But the limitations are real enough; Luxon doesn&apos;t know how to do things like &quot;add one Islamic month&quot;.</p><p>The output calendar is a property of the DateTime itself. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dtHebrew = DateTime.local().reconfigure({ outputCalendar: &apos;hebrew&apos; })
+dtHebrew.outputCalendar; //=&gt; &apos;hebrew&apos;
+dtHebrew.toLocaleString() //=&gt; &apos;4 Tishri 5778&apos;</code>
+</code></pre><p>You can modulate the structure of that string with arguments to <code>toLocaleString</code> (see <a href="./manual/formatting.html#tolocalestring-strings-for-humans-">the docs on that</a>), but the point here is just that you got the alternative calendar.</p><p>Here&apos;s a table of the different calendars with examples generated formatting the same date generated like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);</code>
+</code></pre><table>
+<thead>
+<tr>
+<th>Calendar</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buddhist</td>
+<td>September 24, 2560 BE</td>
+</tr>
+<tr>
+<td>chinese</td>
+<td>Eighth Month 5, 2017</td>
+</tr>
+<tr>
+<td>coptic</td>
+<td>Tout 14, 1734 ERA1</td>
+</tr>
+<tr>
+<td>ethioaa</td>
+<td>Meskerem 14, 7510 ERA0</td>
+</tr>
+<tr>
+<td>ethiopic</td>
+<td>Meskerem 14, 2010 ERA1</td>
+</tr>
+<tr>
+<td>hebrew</td>
+<td>4 Tishri 5778</td>
+</tr>
+<tr>
+<td>indian</td>
+<td>Asvina 2, 1939 Saka</td>
+</tr>
+<tr>
+<td>islamic</td>
+<td>Muharram 4, 1439 AH</td>
+</tr>
+<tr>
+<td>islamicc</td>
+<td>Muharram 3, 1439 AH</td>
+</tr>
+<tr>
+<td>japanese</td>
+<td>September 24, 29 Heisei</td>
+</tr>
+<tr>
+<td>persian</td>
+<td>Mehr 2, 1396 AP</td>
+</tr>
+<tr>
+<td>roc</td>
+<td>September 24, 106 Minguo</td>
+</tr>
+</tbody>
+</table></div>
+        <a data-ice="link" href="manual/usage/calendars.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;"><span data-ice="label-inner">Formatting</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Formatting</h1><p>This section covers creating strings to represent a DateTime. There are three types of formatting capabilities:</p><ol>
+<li>Technical formats like ISO 8601 and RFC 2822</li>
+<li>Internationalizable human-readable formats</li>
+<li>Token-based formatting</li>
+</ol><h2>Technical formats (strings for computers)</h2><h3>ISO 8601</h3><p><a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> is the most widely used set of string formats for dates and times. Luxon can <em>parse</em> a wide range of them, but provides direct support for formatting only a few of them:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO();         //=&gt; &apos;2017-04-20T11:32:00.000-04:00&apos;
+dt.toISODate();     //=&gt; &apos;2017-W17-7&apos;
+dt.toISOWeekDate(); //=&gt; &apos;2017-04-20&apos;
+dt.toISOTime();     //=&gt; &apos;11:32:00.000-04:00&apos;</code>
+</code></pre><p>Generally, you&apos;ll want the first one. Use it by default when building or interacting with APIs, communicating times over a wire, etc.</p><h3>HTTP and RFC 2822</h3><p>There are a number of legacy standard date and time formats out there, and Luxon supports some of them. You shouldn&apos;t use them unless you have a specific reason to.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toRFC2822(); //=&gt; &apos;Thu, 20 Apr 2017 11:32:00 -0400&apos;
+dt.toHTTP();    //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
+</code></pre><h2>toLocaleString (strings for humans)</h2><h3>The basics</h3><p>Modern browsers (and other JS environments) provide brought support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../docs/class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString();                                       //=&gt; &apos;4/20/2017&apos;
+dt.toLocaleString(DateTime.DATETIME_FULL);                 //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
+dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;20 avril 2017 &#xE0; 11:32 UTC&#x2212;4&apos;</code>
+</code></pre><h3>Intl.DateTimeFormat</h3><p>In the example above, <code>DateTime.DATETIME_FULL</code> is one of several convenience formats provided by Luxon. But the arguments are really any set of options that can be provided to <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat">Intl.DateTimeFormat</a>. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString({ month: &apos;long&apos;, day: &apos;numeric&apos; }) //=&gt; &apos;April 20&apos;</code>
+</code></pre><p>This also means you can modify the presets as you choose:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(DateTime.DATE_SHORT); //=&gt;  &apos;4/20/2017&apos;
+var newFormat = Object.assign({ weekday: &apos;long&apos; }, DateTime.DATE_SHORT);
+dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
+</code></pre><h3>Presets</h3><p>Here&apos;s the full set of provided presets using the October 10, 1983 at 13:30:23 as an example.</p><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Example in EN_US</th>
+<th>Example in FR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DATE_SHORT</td>
+<td>short date</td>
+<td>10/14/1983</td>
+<td>14/10/1983</td>
+</tr>
+<tr>
+<td>DATE_MED</td>
+<td>abbreviated date</td>
+<td>Oct 14, 1983</td>
+<td>14 oct. 1983</td>
+</tr>
+<tr>
+<td>DATE_FULL</td>
+<td>full date</td>
+<td>October 14, 1983</td>
+<td>14 octobre 1983</td>
+</tr>
+<tr>
+<td>DATE_HUGE</td>
+<td>full date with weekday</td>
+<td>Tuesday, October 14, 1983</td>
+<td>vendredi 14 octobre 1983</td>
+</tr>
+<tr>
+<td>TIME_SIMPLE</td>
+<td>time</td>
+<td>1:30 PM</td>
+<td>13:30</td>
+</tr>
+<tr>
+<td>TIME_WITH_SECONDS</td>
+<td>time with seconds</td>
+<td>1:30:23 PM</td>
+<td>13:30:23</td>
+</tr>
+<tr>
+<td>TIME_WITH_SHORT_OFFSET</td>
+<td>time with seconds and abbreviated named offset</td>
+<td>1:30:23 PM EDT</td>
+<td>13:30:23 UTC&#x2212;4</td>
+</tr>
+<tr>
+<td>TIME_WITH_LONG_OFFSET</td>
+<td>time with seconds and full named offset</td>
+<td>1:30:23 PM Eastern Daylight Time</td>
+<td>13:30:23 heure d&#x2019;&#xE9;t&#xE9; de l&#x2019;Est</td>
+</tr>
+<tr>
+<td>TIME_24_SIMPLE</td>
+<td>24-hour time</td>
+<td>13:30</td>
+<td>13:30</td>
+</tr>
+<tr>
+<td>TIME_24_WITH_SECONDS</td>
+<td>24-hour time with seconds</td>
+<td>13:30:23</td>
+<td>13:30:23</td>
+</tr>
+<tr>
+<td>TIME_24_WITH_SHORT_OFFSET</td>
+<td>24-hour time with seconds and abbreviated named offset</td>
+<td>13:30:23 EDT</td>
+<td>13:30:23 UTC&#x2212;4</td>
+</tr>
+<tr>
+<td>TIME_24_WITH_LONG_OFFSET</td>
+<td>24-hour time with seconds and full named offset</td>
+<td>13:30:23 Eastern Daylight Time</td>
+<td>13:30:23 heure d&#x2019;&#xE9;t&#xE9; de l&#x2019;Est</td>
+</tr>
+<tr>
+<td>DATETIME_SHORT</td>
+<td>short date &amp; time</td>
+<td>10/14/1983, 1:30 PM</td>
+<td>14/10/1983 &#xE0; 13:30</td>
+</tr>
+<tr>
+<td>DATETIME_MED</td>
+<td>abbreviated date &amp; time</td>
+<td>Oct 14, 1983, 1:30 PM</td>
+<td>14 oct. 1983 &#xE0; 13:30</td>
+</tr>
+<tr>
+<td>DATETIME_FULL</td>
+<td>full date and time with abbreviated named offset</td>
+<td>14 octobre 1983 &#xE0; 13:30 UTC&#x2212;4</td>
+<td>14 octobre 1983 &#xE0; 13:30 UTC&#x2212;4</td>
+</tr>
+<tr>
+<td>DATETIME_HUGE</td>
+<td>full date and time with weekday and full named offset</td>
+<td>Friday, October 14, 1983, 1:30 PM Eastern Daylight Time</td>
+<td>vendredi 14 octobre 1983 &#xE0; 13:30 heure d&#x2019;&#xE9;t&#xE9; de l&#x2019;Est</td>
+</tr>
+<tr>
+<td>DATETIME_SHORT_WITH_SECONDS</td>
+<td>short date &amp; time with seconds</td>
+<td>10/14/1983, 1:30:23 PM</td>
+<td>14/10/1983 &#xE0; 13:30:23</td>
+</tr>
+<tr>
+<td>DATETIME_MED_WITH_SECONDS</td>
+<td>abbreviated date &amp; time with seconds</td>
+<td>Oct 14, 1983, 1:30:23 PM</td>
+<td>14 oct. 1983 &#xE0; 13:30:23</td>
+</tr>
+<tr>
+<td>DATETIME_FULL_WITH_SECONDS</td>
+<td>full date and time with abbreviated named offset with seconds</td>
+<td>October 14, 1983, 1:30:23 PM EDT</td>
+<td>14 octobre 1983 &#xE0; 13:30:23 UTC&#x2212;4</td>
+</tr>
+<tr>
+<td>DATETIME_HUGE_WITH_SECONDS</td>
+<td>full date and time with weekday and full named offset with seconds</td>
+<td>Friday, October 14, 1983, 1:30:23 PM Eastern Daylight Time</td>
+<td>vendredi 14 octobre 1983 &#xE0; 13:30:23 heure d&#x2019;&#xE9;t&#xE9; de l&#x2019;Est</td>
+</tr>
+</tbody>
+</table><h3>Intl</h3><p><code>toLocaleString</code>&apos;s behavior is affected by the DateTime&apos;s <code>locale</code>, <code>numberingSystem</code>, and <code>outputCalendar</code> properties. See the <a href="./manual/intl.html">Intl</a> section for more.</p><h2>Formatting with tokens (strings for Cthulhu)</h2><p>This section covers generating strings from DateTimes with programmer-specified formats.</p><h3>Consider alternatives</h3><p>You shouldn&apos;t create ad-hoc string formats if you can avoid it. If you intend for a computer to read the string, prefer ISO 8601. If a human will read it, prefer <code>toLocaleString</code>. Both are covered above. However, if you have some esoteric need where you need some specific format (e.g. because some other software expects it), then <code>toFormat</code> is how you do it.</p><h3>toFormat</h3><p>See <a href="./manual/&quot;../class/src/datetime.js~DateTime.html#instance-method-toFormat&quot;">DateTime#toFormat</a> for the API signature. As a brief motivating example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2014 Aug 06&apos;</code>
+</code></pre><p>The supported tokens are described in the table below.</p><h3>Intl</h3><p>All of the strings (e.g. month names and weekday names) are internationalized by introspecting strings generated by the Intl API. Thus they exact strings you get are implementation-specific.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;fr&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2014 ao&#xFB;t 06&apos;</code>
+</code></pre><h3>Escaping</h3><p>You may escape strings using single quotes:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;) //=&gt; &apos;20 hours and 55 minutes&apos;</code>
+</code></pre><h3>Standalone vs format tokens</h3><p>Some tokens have a &quot;standalone&quot; and &quot;format&quot; version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. &quot;Monday the 22nd&quot; vs &quot;Monday&quot;). Use them accordingly. </p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;ru&apos;);
+d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos;
+d.toFormat(&quot;LLLL&quot;) //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos;</code>
+</code></pre><h3>Macro tokens</h3><p>Some of the formats are &quot;macros&quot;, meaning they correspond to multiple components. These use the native Intl API and will order their constituent parts in a locale-friendly way.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;ff&apos;) //=&gt; &apos;Aug 6, 2014, 1:07 PM&apos;</code>
+</code></pre><h3>Table of tokens</h3><p>(Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).</p><table>
+<thead>
+<tr>
+<th>Standlone token</th>
+<th>Format token</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S</td>
+<td></td>
+<td>millisecond, no padding</td>
+<td>54</td>
+</tr>
+<tr>
+<td>SSS</td>
+<td></td>
+<td>millisecond, padded to 3</td>
+<td>054</td>
+</tr>
+<tr>
+<td>s</td>
+<td></td>
+<td>second, no padding</td>
+<td>4</td>
+</tr>
+<tr>
+<td>ss</td>
+<td></td>
+<td>second, padded to 2 padding</td>
+<td>04</td>
+</tr>
+<tr>
+<td>m</td>
+<td></td>
+<td>minute, no padding</td>
+<td>7</td>
+</tr>
+<tr>
+<td>mm</td>
+<td></td>
+<td>minute, padded to 2</td>
+<td>07</td>
+</tr>
+<tr>
+<td>h</td>
+<td></td>
+<td>hour in 12-hour time, no padding</td>
+<td>1</td>
+</tr>
+<tr>
+<td>hh</td>
+<td></td>
+<td>hour in 12-hour time, padded to 2</td>
+<td>01</td>
+</tr>
+<tr>
+<td>H</td>
+<td></td>
+<td>hour in 24-hour time, padded to 2</td>
+<td>9</td>
+</tr>
+<tr>
+<td>HH</td>
+<td></td>
+<td>hour in 24-hour time, padded to 2</td>
+<td>13</td>
+</tr>
+<tr>
+<td>Z</td>
+<td></td>
+<td>narrow offset</td>
+<td>+5</td>
+</tr>
+<tr>
+<td>ZZ</td>
+<td></td>
+<td>short offset</td>
+<td>+05:00</td>
+</tr>
+<tr>
+<td>ZZZ</td>
+<td></td>
+<td>techie offset</td>
+<td>+0500</td>
+</tr>
+<tr>
+<td>ZZZZ</td>
+<td></td>
+<td>abbreviated named offset</td>
+<td>EST</td>
+</tr>
+<tr>
+<td>ZZZZZ</td>
+<td></td>
+<td>unabbreviated named offset</td>
+<td>Eastern Standard Time</td>
+</tr>
+<tr>
+<td>z</td>
+<td></td>
+<td>IANA zone</td>
+<td>America/New_York</td>
+</tr>
+<tr>
+<td>a</td>
+<td></td>
+<td>meridiem</td>
+<td>AM</td>
+</tr>
+<tr>
+<td>d</td>
+<td></td>
+<td>day of the month, no padding</td>
+<td>6</td>
+</tr>
+<tr>
+<td>dd</td>
+<td></td>
+<td>day of the month, padded to 2</td>
+<td>06</td>
+</tr>
+<tr>
+<td>E</td>
+<td>c</td>
+<td>day of the week, as number from 1-7 (Monday is 1, Sunday is 7)</td>
+<td>3</td>
+</tr>
+<tr>
+<td>EEE</td>
+<td>ccc</td>
+<td>day of the week, as an abbreviate localized string</td>
+<td>Wed</td>
+</tr>
+<tr>
+<td>EEEE</td>
+<td>cccc</td>
+<td>day of the week, as an unabbreviated localized string</td>
+<td>Wednesday</td>
+</tr>
+<tr>
+<td>EEEEE</td>
+<td>ccccc</td>
+<td>day of the week, as a single localized letter</td>
+<td>W</td>
+</tr>
+<tr>
+<td>M</td>
+<td>L</td>
+<td>month as an unpadded number</td>
+<td>8</td>
+</tr>
+<tr>
+<td>MM</td>
+<td>LL</td>
+<td>month as an padded number</td>
+<td>08</td>
+</tr>
+<tr>
+<td>MMM</td>
+<td>LLL</td>
+<td>month as an abbreviated localized string</td>
+<td>Aug</td>
+</tr>
+<tr>
+<td>MMMM</td>
+<td>LLLL</td>
+<td>month as an unabbreviated localized string</td>
+<td>August</td>
+</tr>
+<tr>
+<td>MMMMM</td>
+<td>LLLLL</td>
+<td>month as a single localized letter</td>
+<td>A</td>
+</tr>
+<tr>
+<td>y</td>
+<td></td>
+<td>year, unpadded</td>
+<td>2014</td>
+</tr>
+<tr>
+<td>yy</td>
+<td></td>
+<td>two-digit year</td>
+<td>14</td>
+</tr>
+<tr>
+<td>yyyy</td>
+<td></td>
+<td>four-digit year</td>
+<td>2014</td>
+</tr>
+<tr>
+<td>G</td>
+<td></td>
+<td>abbreviated localized era</td>
+<td>AD</td>
+</tr>
+<tr>
+<td>GG</td>
+<td></td>
+<td>unabbreviated localized era</td>
+<td>Anno Domini</td>
+</tr>
+<tr>
+<td>GGGGG</td>
+<td></td>
+<td>one-letter localized era</td>
+<td>A</td>
+</tr>
+<tr>
+<td>kk</td>
+<td></td>
+<td>ISO week year, unpadded</td>
+<td>17</td>
+</tr>
+<tr>
+<td>kkkk</td>
+<td></td>
+<td>ISO week year, padded to 4</td>
+<td>2014</td>
+</tr>
+<tr>
+<td>W</td>
+<td></td>
+<td>ISO week number, unpadded</td>
+<td>32</td>
+</tr>
+<tr>
+<td>WW</td>
+<td></td>
+<td>ISO week number, padded to 2</td>
+<td>32</td>
+</tr>
+<tr>
+<td>o</td>
+<td></td>
+<td>ordinal (day of year), unpadded</td>
+<td>218</td>
+</tr>
+<tr>
+<td>ooo</td>
+<td></td>
+<td>ordinal (day of year), padded to 3</td>
+<td>218</td>
+</tr>
+<tr>
+<td>D</td>
+<td></td>
+<td>localized numeric date</td>
+<td>9/4/2017</td>
+</tr>
+<tr>
+<td>DD</td>
+<td></td>
+<td>localized date with abbreviated month</td>
+<td>Aug 6, 2014</td>
+</tr>
+<tr>
+<td>DDD</td>
+<td></td>
+<td>localized date with full month</td>
+<td>August 6, 2014</td>
+</tr>
+<tr>
+<td>DDDD</td>
+<td></td>
+<td>localized date with full month and weekday</td>
+<td>Wednesday, August 6, 2014</td>
+</tr>
+<tr>
+<td>t</td>
+<td></td>
+<td>localized time</td>
+<td>9:07 AM</td>
+</tr>
+<tr>
+<td>tt</td>
+<td></td>
+<td>localized time with seconds</td>
+<td>1:07:04 PM</td>
+</tr>
+<tr>
+<td>ttt</td>
+<td></td>
+<td>localized time with seconds and abbreviated offset</td>
+<td>1:07:04 PM EDT</td>
+</tr>
+<tr>
+<td>tttt</td>
+<td></td>
+<td>localized time with seconds and full offset</td>
+<td>1:07:04 PM Eastern Daylight Time</td>
+</tr>
+<tr>
+<td>T</td>
+<td></td>
+<td>localized 24-hour time</td>
+<td>13:07</td>
+</tr>
+<tr>
+<td>TT</td>
+<td></td>
+<td>localized 24-hour time with seconds</td>
+<td>13:07:04</td>
+</tr>
+<tr>
+<td>TTT</td>
+<td></td>
+<td>localized 24-hour time with seconds and abbreviated offset</td>
+<td>13:07:04 EDT</td>
+</tr>
+<tr>
+<td>TTTT</td>
+<td></td>
+<td>localized 24-hour time with seconds and full offset</td>
+<td>13:07:04 Eastern Daylight Time</td>
+</tr>
+<tr>
+<td>f</td>
+<td></td>
+<td>short localized date and time</td>
+<td>8/6/2014, 1:07 PM</td>
+</tr>
+<tr>
+<td>ff</td>
+<td></td>
+<td>less short localized date and time</td>
+<td>Aug 6, 2014, 1:07 PM</td>
+</tr>
+<tr>
+<td>fff</td>
+<td></td>
+<td>verbose localized date and time</td>
+<td>August 6, 2014, 1:07 PM EDT</td>
+</tr>
+<tr>
+<td>ffff</td>
+<td></td>
+<td>extra verbose localized date and time</td>
+<td>Wednesday, August 6, 2014, 1:07 PM Eastern Daylight Time</td>
+</tr>
+<tr>
+<td>F</td>
+<td></td>
+<td>short localized date and time with seconds</td>
+<td>8/6/2014, 1:07:04 PM</td>
+</tr>
+<tr>
+<td>FF</td>
+<td></td>
+<td>less short localized date and time with seconds</td>
+<td>Aug 6, 2014, 1:07:04 PM</td>
+</tr>
+<tr>
+<td>FFF</td>
+<td></td>
+<td>verbose localized date and time with seconds</td>
+<td>August 6, 2014, 1:07:04 PM EDT</td>
+</tr>
+<tr>
+<td>FFFF</td>
+<td></td>
+<td>extra verbose localized date and time with seconds</td>
+<td>Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time</td>
+</tr>
+</tbody>
+</table></div>
+        <a data-ice="link" href="manual/usage/formatting.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;"><span data-ice="label-inner">Parsing</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Parsing</h1><p>Luxon is not an NLP tool and isn&apos;t suitable for all date parsing jobs. But it can do some parsing:</p><ol>
+<li>Direct support for several well-known formats, including most valid ISO 8601 formats</li>
+<li>An ad-hoc parser for parsing specific formats</li>
+</ol><h2>Parsing technical formats</h2><h3>ISO 8601</h3><p>Luxon supports a wide range of valid ISO 8601 formats through the <a href="./manual/../docs/class/src/datetime.js~DateTime.html#static-method-fromISO">fromISO</a> method.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2016-05-25&apos;);</code>
+</code></pre><p>All of these are parsable by <code>fromISO</code>:</p><pre><code><code class="source-code prettyprint">2016-05-25
+20160525
+2016-05-25T09
+2016-05-25T09:24
+2016-05-25T09:24:15
+2016-05-25T09:24:15.123
+2016-05-25T0924
+2016-05-25T092415
+2016-05-25T092415.123
+2016-05-25T09:24:15,123
+2016-W21-3
+2016W213
+2016-W21-3T09:24:15.123
+2016W213T09:24:15.123
+2016-200
+2016200
+2016-200T09:24:15.123</code>
+</code></pre><p>Dates without times are parsed as that day&apos;s midnight.</p><h3>HTTP and RFC2822</h3><p>Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&apos;Tue, 01 Nov 2016 13:23:12 +0630&apos;);
+DateTime.fromHTTP(&apos;Sunday, 06-Nov-94 08:49:37 GMT&apos;);
+DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;);</code>
+</code></pre><h2>Ad-hoc parsing</h2><h3>Consider alternatives</h3><p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p><ol>
+<li>If the string was generated by a computer for programmatic access, use a standard format like ISO 8601. Then you can parse it using <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">DateTime.fromISO</a>.</li>
+<li>If the string is typed out by a human, it may not conform to the format you specify when asking Luxon to parse it. Luxon is quite strict about the format matching the string exactly.</li>
+</ol><p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p><h3>fromString</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromString">DateTime.fromString</a> for the method signature. A brief example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
+</code></pre><h3>Intl</h3><p>Luxon supports parsing internationalized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
+</code></pre><p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/../matrix.html">support matrix</a>).</p><h3>Limitations</h3><p>Not every token supported by <code>DateTime#toFormat</code> is supported in the parser. For example, there&apos;s no <code>ZZZZ</code> or <code>ZZZZZ</code> tokens. This is for a few reasons:</p><ul>
+<li>Luxon relies on natively-available functionality that only provides the mapping in one way. We can ask what the named offset is and get &quot;Eastern Standard Time&quot; but not ask what &quot;Eastern Standard Time&quot; is most likely to mean.</li>
+<li>Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can&apos;t be parsed because ambiguity.</li>
+<li>Luxon doesn&apos;t yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.</li>
+</ul><h3>Debugging</h3><p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date.</p><p>Luxon provides a method called <a href="./manual/class/src/datetime.js~DateTime.html#static-method-fromStringExplain">fromStringExplain</a>. It takes the same arguments as <code>fromString</code> but returns a map of information about the parse that can be useful in debugging.</p><p>For example, here the code is using &quot;MMMM&quot; where &quot;MMM&quot; was needed. You can see the regex Luxon uses and see that it didn&apos;t match anything:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromStringExplain(&quot;Aug 6 1982&quot;, &quot;MMMM d yyyy&quot;)
+
+{ input: &apos;Aug 6 1982&apos;,
+  tokens:
+   [ { literal: false, val: &apos;MMMM&apos; },
+     { literal: false, val: &apos; &apos; },
+     { literal: false, val: &apos;d&apos; },
+     { literal: false, val: &apos; &apos; },
+     { literal: false, val: &apos;yyyy&apos; } ],
+  regex: &apos;(January|February|March|April|May|June|July|August|September|October|November|December)( )(\\d\\d?)( )(\\d{4})&apos;,
+  matches: {},
+  result: {},
+  zone: null }</code>
+</code></pre><p>If you parse something and get an invalid date, the debugging steps are slightly different. Here, we&apos;re attempting to parse August 32nd, which doesn&apos;t exist:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromString(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
+d.isValid //=&gt; false
+d.invalidReason //=&gt; &apos;day out of range&apos;</code>
+</code></pre><p>For more on validity and how to debug it, see <a href="./manual/usage/validity.html">validity</a>. You may find more comprehensive tips there. But as it applies specifically to <code>fromString</code>, again try <code>fromStringExplain</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromStringExplain(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
+
+{ input: &apos;August 32 1982&apos;,
+  tokens:
+   [ { literal: false, val: &apos;MMMM&apos; },
+     { literal: false, val: &apos; &apos; },
+     { literal: false, val: &apos;d&apos; },
+     { literal: false, val: &apos; &apos; },
+     { literal: false, val: &apos;yyyy&apos; } ],
+  regex: &apos;(January|February|March|April|May|June|July|August|September|October|November|December)( )(\\d\\d?)( )(\\d{4})&apos;,
+  matches: { M: 8, d: 32, y: 1982 },
+  result: { month: 8, day: 32, year: 1982 },
+  zone: null }</code>
+</code></pre><p>Because Luxon was able to parse the string without difficulty, the output is a lot richer. And you can see that the &quot;day&quot; field is set to 32. Combined with the &quot;out of range&quot; explanation above, that should clear up the situation.</p><h3>Table of tokens</h3><p>(Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).</p><table>
+<thead>
+<tr>
+<th>Standlone token</th>
+<th>Format token</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S</td>
+<td></td>
+<td>millisecond, no padding</td>
+<td>54</td>
+</tr>
+<tr>
+<td>SSS</td>
+<td></td>
+<td>millisecond, padded to 3</td>
+<td>054</td>
+</tr>
+<tr>
+<td>s</td>
+<td></td>
+<td>second, no padding</td>
+<td>4</td>
+</tr>
+<tr>
+<td>ss</td>
+<td></td>
+<td>second, padded to 2 padding</td>
+<td>04</td>
+</tr>
+<tr>
+<td>m</td>
+<td></td>
+<td>minute, no padding</td>
+<td>7</td>
+</tr>
+<tr>
+<td>mm</td>
+<td></td>
+<td>minute, padded to 2</td>
+<td>07</td>
+</tr>
+<tr>
+<td>h</td>
+<td></td>
+<td>hour in 12-hour time, no padding</td>
+<td>1</td>
+</tr>
+<tr>
+<td>hh</td>
+<td></td>
+<td>hour in 12-hour time, padded to 2</td>
+<td>01</td>
+</tr>
+<tr>
+<td>H</td>
+<td></td>
+<td>hour in 24-hour time, padded to 2</td>
+<td>9</td>
+</tr>
+<tr>
+<td>HH</td>
+<td></td>
+<td>hour in 24-hour time, padded to 2</td>
+<td>13</td>
+</tr>
+<tr>
+<td>Z</td>
+<td></td>
+<td>narrow offset</td>
+<td>+5</td>
+</tr>
+<tr>
+<td>ZZ</td>
+<td></td>
+<td>short offset</td>
+<td>+05:00</td>
+</tr>
+<tr>
+<td>ZZZ</td>
+<td></td>
+<td>techie offset</td>
+<td>+0500</td>
+</tr>
+<tr>
+<td>z</td>
+<td></td>
+<td>IANA zone</td>
+<td>America/New_York</td>
+</tr>
+<tr>
+<td>a</td>
+<td></td>
+<td>meridiem</td>
+<td>AM</td>
+</tr>
+<tr>
+<td>d</td>
+<td></td>
+<td>day of the month, no padding</td>
+<td>6</td>
+</tr>
+<tr>
+<td>dd</td>
+<td></td>
+<td>day of the month, padded to 2</td>
+<td>06</td>
+</tr>
+<tr>
+<td>E</td>
+<td>c</td>
+<td>day of the week, as number from 1-7 (Monday is 1, Sunday is 7)</td>
+<td>3</td>
+</tr>
+<tr>
+<td>EEE</td>
+<td>ccc</td>
+<td>day of the week, as an abbreviate localized string</td>
+<td>Wed</td>
+</tr>
+<tr>
+<td>EEEE</td>
+<td>cccc</td>
+<td>day of the week, as an unabbreviated localized string</td>
+<td>Wednesday</td>
+</tr>
+<tr>
+<td>M</td>
+<td>L</td>
+<td>month as an unpadded number</td>
+<td>8</td>
+</tr>
+<tr>
+<td>MM</td>
+<td>LL</td>
+<td>month as an padded number</td>
+<td>08</td>
+</tr>
+<tr>
+<td>MMM</td>
+<td>LLL</td>
+<td>month as an abbreviated localized string</td>
+<td>Aug</td>
+</tr>
+<tr>
+<td>MMMM</td>
+<td>LLLL</td>
+<td>month as an unabbreviated localized string</td>
+<td>August</td>
+</tr>
+<tr>
+<td>y</td>
+<td></td>
+<td>year, unpadded</td>
+<td>2014</td>
+</tr>
+<tr>
+<td>yy</td>
+<td></td>
+<td>two-digit year</td>
+<td>14</td>
+</tr>
+<tr>
+<td>yyyy</td>
+<td></td>
+<td>four-digit year</td>
+<td>2014</td>
+</tr>
+<tr>
+<td>G</td>
+<td></td>
+<td>abbreviated localized era</td>
+<td>AD</td>
+</tr>
+<tr>
+<td>GG</td>
+<td></td>
+<td>unabbreviated localized era</td>
+<td>Anno Domini</td>
+</tr>
+<tr>
+<td>GGGGG</td>
+<td></td>
+<td>one-letter localized era</td>
+<td>A</td>
+</tr>
+<tr>
+<td>kk</td>
+<td></td>
+<td>ISO week year, unpadded</td>
+<td>17 </td>
+</tr>
+<tr>
+<td>kkkk</td>
+<td></td>
+<td>ISO week year, padded to 4</td>
+<td>2014</td>
+</tr>
+<tr>
+<td>W</td>
+<td></td>
+<td>ISO week number, unpadded</td>
+<td>32</td>
+</tr>
+<tr>
+<td>WW</td>
+<td></td>
+<td>ISO week number, padded to 2</td>
+<td>32</td>
+</tr>
+<tr>
+<td>o</td>
+<td></td>
+<td>ordinal (day of year), unpadded</td>
+<td>218</td>
+</tr>
+<tr>
+<td>ooo</td>
+<td></td>
+<td>ordinal (day of year), padded to 3</td>
+<td>218</td>
+</tr>
+<tr>
+<td>D</td>
+<td></td>
+<td>localized numeric date</td>
+<td>9/4/2017 </td>
+</tr>
+<tr>
+<td>DD</td>
+<td></td>
+<td>localized date with abbreviated month</td>
+<td>Aug 6, 2014</td>
+</tr>
+<tr>
+<td>DDD</td>
+<td></td>
+<td>localized date with full month</td>
+<td>August 6, 2014</td>
+</tr>
+<tr>
+<td>DDDD</td>
+<td></td>
+<td>localized date with full month and weekday</td>
+<td>Wednesday, August 6, 2014</td>
+</tr>
+</tbody>
+</table></div>
+        <a data-ice="link" href="manual/usage/parsing.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;"><span data-ice="label-inner">Math</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Math</h1><p>This covers some oddball topics with date and time math, which has some quirky corner cases. This page tries document those corners.</p><h2>Calendar math vs time math</h2><h3>The basics</h3><p>Math with dates and times can be unintuitive to programmers. If it&apos;s Feb 13, 2017 and I say &quot;in exactly one month&quot;, you know I mean March 13. Exactly one month after than is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said &quot;30 days from February 13&quot;, you&apos;d try to figure out what day that landed on in March. Here it is in Luxon:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 2, 13).plus({months: 1}).toISODate() //=&gt; &apos;2017-03-13&apos;
+
+DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=&gt; &apos;2017-03-15&apos;</code>
+</code></pre><p>More generally we can differentiate to modes of math:</p><ul>
+<li>Calendar math works with higher-order, variable-length units like years and months</li>
+<li>Time math works with lower-order, constant-length units such as hours, minutes, and seconds.</li>
+</ul><h3>Which units use which math?</h3><p>These units use calendar math:</p><ul>
+<li><strong>Years</strong> vary because of leap years.</li>
+<li><strong>Months</strong> vary because they&apos;re just different lengths.</li>
+<li><strong>Days</strong> vary because DST transitions mean some days are 23 or 25 hours long.</li>
+<li><strong>Weeks</strong> are always the same number of days, but days vary so weeks do too.</li>
+</ul><p>These units use time math:</p><ul>
+<li><strong>Hours</strong> are always 60 minutes</li>
+<li><strong>Minutes</strong> are always 60 seconds</li>
+<li><strong>Seconds</strong> are always 1000 milliseconds</li>
+</ul><p>Don&apos;t worry about leap seconds. Javascript and most other programming environments don&apos;t account for them; they just happen as abrupt, invisible changes to the underlying system&apos;s time.</p><h3>How to think about calendar math</h3><p>It&apos;s best not to think of calendar math as requiring arcane checks for what variability is required. Instead, think of them as <strong>adjusting that unit directly and keeping lower order date components constant</strong>. Let&apos;s go back to the Feb 13 + 1 month example. If you didn&apos;t have Luxon, you would do something like this to accomplish that:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = new Date(&apos;2017-02-13&apos;)
+d.setMonth(d.getMonth() + 1)
+d.toLocaleString() //=&gt; &apos;3/13/2017, 12:00:00 AM&apos;</code>
+</code></pre><p>And under the covers, that&apos;s more or less what Luxon does too. It doesn&apos;t boil the operation down to a milliseconds delta because that&apos;s not what&apos;s being asked. Instead, it fiddles with what it thinks the date should be and then uses the built-in Gregorian calendar to compute the new timestamp.</p><h3>DSTs</h3><p>There&apos;s a whole section about this in the <a href="./manual/usage/zones#math-across-dsts">time zones documentation</a>. But here&apos;s a quick example (Spring Forward is early on March 12 in my time zone):</p><pre><code><code class="source-code prettyprint">var start = DateTime.local(2017, 3, 11, 10);
+start.hour                          //=&gt; 10, just for comparison
+start.plus({days: 1}).hour          //=&gt; 10, stayed the same
+start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code>
+</code></pre><p>So in adding a day, we kept the hour at 10, even though that&apos;s only 23 hours later.</p><h3>Time math</h3><p>Time math is different. In time math, we&apos;re just adjusting the clock, adding or subtracting from the epoch timestamp. Adding 63 hours is really the same as adding 63 hours&apos; worth of milliseconds. Under the covers, Luxon does this exactly the opposite of how it does calendar math; it boils the operation down to milliseconds, computes the new timestamp, and then computes the date out of that.</p><h2>Math with multiple units</h2><p>Of course, maybe you want to do math with multiple units:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-05-15&apos;).plus({months: 2, days: 6}).toISODate(); //=&gt; &apos;2017-07-21&apos;</code>
+</code></pre><p>This isn&apos;t as simple as it looks. For example, but should you expect this to do?</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate() //=&gt; &apos;2017-05-31&apos;</code>
+</code></pre><p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p><p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({days: 1}).plus({months: 1}).toISODate() //=&gt; &apos;2017-06-01&apos;</code>
+</code></pre><p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p><h2>Duration math</h2><h3>Basics</h3><p><a href="./manual/../class/src/duration.js~Duration.html">Durations</a> are quantities of time, like &quot;3 days and 6 hours&quot;. They are completely unmoored from the timeline, it has no idea <em>which</em> 3 days and 6 hours they represent; it&apos;s just how Luxon represents those quantities in abstract. This is both tremendously useful and occasionally confusing. I&apos;m not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.</p><p>Here&apos;s some very basic stuff to get us going anyway:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ days: 3, hours: 6})
+
+// examine it
+dur.toObject()          //=&gt; { days: 3, hours: 6 }
+
+// express in minutes
+dur.as(&apos;minutes&apos;)       //=&gt; 4680
+
+// convert to minutes
+dur.shiftTo(&apos;minutes&apos;).toObject() //=&gt; { minutes: 4680 }
+
+// add to a DateTime
+DateTime.fromISO(&quot;2017-05-15&quot;).plus(dur).toISO() //=&gt; &apos;2017-05-18T06:00:00.000-04:00&apos;</code>
+</code></pre><h3>Diffs</h3><p>You can subtract one time from another to find out how much time there is between them. Luxon&apos;s <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-diff">diff</a> method does this and it returns a Duration. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-13&apos;);
+
+var diffInMonths = end.diff(start, &apos;months&apos;);
+diffInMonths.toObject(); //=&gt; { months: 1 }</code>
+</code></pre><p>Notice we had to pick the unit to keep track of the diff in. The default is milliseconds:</p><pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start);
+diff.toObject() //=&gt; { milliseconds: 2415600000 }</code>
+</code></pre><p>Finally, you can diff using multiple units:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-15&apos;);
+end.diff(start, [&apos;months&apos;, &apos;days&apos;]) //=&gt; { months: 1, days: 2 }</code>
+</code></pre><h3>Casual vs longterm conversion accuracy</h3><p>Durations represent bundles of time with specific units, but Luxon allows you to convert between them:</p><ul>
+<li><code>shiftTo</code> returns a new Duration denominated in the specified units.</li>
+<li><code>as</code> converts the duration to just that unit and returns its value</li>
+</ul><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ months: 4, weeks: 2, days: 6 })
+
+dur.as(&apos;days&apos;)                            //=&gt; 140
+dur.shiftTo(&apos;days&apos;).toObject()            //=&gt; { days: 140 }
+dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 18, hours: 144 }</code>
+</code></pre><p>But how do those conversions actually work? First, uncontroversially:</p><ul>
+<li>1 week = 7 days</li>
+<li>1 day = 24 hours</li>
+<li>1 hour = 60 minutes</li>
+<li>1 minute = 60 seconds</li>
+<li>1 second = 1000 milliseconds</li>
+</ul><p>These are always true and you can roll them up and down with consistency (e.g. <code>1 hour = 60 * 60 * 1000 milliseconds</code>). However, this isn&apos;t really true for the higher order units, which vary in length, even putting DSTs aside. A year is sometimes 365 days long and sometimes 366. Months are 28, 29, 30, or 31 days. By default Luxon converts between these units using what you might call &quot;casual&quot; conversions:</p><table>
+<thead>
+<tr>
+<th></th>
+<th>Month</th>
+<th>Week</th>
+<th>Day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Year</td>
+<td>12</td>
+<td>365</td>
+<td>365</td>
+</tr>
+<tr>
+<td>Month</td>
+<td></td>
+<td>30</td>
+<td>4</td>
+</tr>
+</tbody>
+</table><p>These should match your intuition and for most purposes they work well. But they&apos;re not just wrong; they&apos;re not even self-consistent:</p><pre><code class="lang-js"><code class="source-code prettyprint">dur.shiftTo(&apos;months&apos;).shiftTo(&apos;days&apos;).as(&apos;years&apos;) //=&gt; 0.9863013698630136</code>
+</code></pre><p>This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ years: 50000 });
+DateTime.local().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
+DateTime.local().plus(dur).year                         //=&gt; 52017</code>
+</code></pre><p>Those are 33 years apart! So Luxon offers an alternative conversion scheme, based on the 400-year calendar cycle:</p><table>
+<thead>
+<tr>
+<th></th>
+<th>Month</th>
+<th>Week</th>
+<th>Day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Year</td>
+<td>12</td>
+<td>52.1775</td>
+<td>365.2425</td>
+</tr>
+<tr>
+<td>Month</td>
+<td></td>
+<td>30.436875</td>
+<td>4.348125</td>
+</tr>
+</tbody>
+</table><p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p><p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code> You can set it &apos;casual&apos; or &apos;longterm&apos;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p><pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
+Duration.parse(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
+
+end.diff(start, { conversionAccuracy: &apos;longterm&apos; })</code>
+</code></pre><p>You can also create an accurate Duration out of an existing one:</p><pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({conversionAccuracy: &apos;longterm&apos; });</code>
+</code></pre><p>These Durations will do their conversions differently.</p><h3>Losing information</h3><p>Be careful of converting between units. It&apos;s easy to lose information. Let&apos;s say we converted a diff into days:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-13&apos;);
+diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
+</code></pre><p>That&apos;s our conversion between months and days (you could also do a long-term-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 15 and March 15!</p><pre><code><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
+diffInDays.toObject(); //=&gt; { days: 28 }</code>
+</code></pre><p>It&apos;s important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units that got spat out by our computation. Unlike an Interval, a Duration doesn&apos;t &quot;remember&quot; what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:</p><pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start) //default unit is milliseconds
+
+// wtf, that&apos;s not a month!
+diff.as(&apos;months&apos;); //=&gt; 0.9319444 
+
+// it&apos;s not even the right number of days! (hint: my time zone has a DST)
+diff.shiftTo(&apos;hours&apos;).as(&apos;days&apos;); //=&gt; 27.958333333333332</code>
+</code></pre><p>Normally you won&apos;t run into this problem if you think clearly about what you want to do with a diff. But sometimes you really do want an object that represents the subtraction itself, not the result. <a href="./manual/../class/src/interval.js~Interval.html">Intervals</a> can help. Intervals are mostly use to keep track of ranges of time, but they make for &quot;anchored&quot; diffs too. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-13&apos;);
+var i = Interval.fromDateTimes(start, end);
+
+i.length(&apos;days&apos;);       //=&gt; 28
+i.length(&apos;months&apos;)      //=&gt; 1</code>
+</code></pre><p>Because the Interval stores its endpoints and computes <code>length</code> on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval <em>isn&apos;t</em> an abstract bundle of time, it can&apos;t be used in places where diffs can. For example, you can add them to DateTime via <code>plus()</code> because Luxon wouldn&apos;t know what units to do the math in (see &quot;Calendar vs time math&quot; above). But you can convert the interval into a Duration by picking the units:</p><pre><code class="lang-js"><code class="source-code prettyprint">i.toDuration(&apos;months&apos;).toObject(); //=&gt; { months: 1 }
+i.toDuration(&apos;days&apos;).toObject(); //=&gt; { days: 28 }</code>
+</code></pre><p>You can even pick multiple units:</p><pre><code class="lang-js"><code class="source-code prettyprint">end = DateTime.fromISO(&apos;2018-05-25&apos;);
+i = start.until(end);
+i.toDuration([&apos;years&apos;, &apos;months&apos;, &apos;days&apos;]).toObject(); //=&gt; { years: 1, months: 3, days: 12 }</code>
+</code></pre></div>
+        <a data-ice="link" href="manual/usage/math.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;"><span data-ice="label-inner">Validity</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Validity</h1><h2>Invalid DateTimes</h2><p>One of the most irritating aspects of programming with time is that it&apos;s possible to end up with invalid dates. This is a bit subtle: barring integer overflows, there&apos;s no count of milliseconds that don&apos;t correspond to a valid DateTime, but when working with calendar units, it&apos;s pretty easy to say something like &quot;June 400th&quot;. Luxon considers that invalid and will mark it accordingly.</p><p>Unless if you&apos;ve asked Luxon to throw an exception when it creates an invalid DateTime (see more on that below), it will fail silently, creating an instance that doesn&apos;t know how to do anything. You can check validity with <code>isValid</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; var dt = DateTime.fromObject({ month: 6, day: 400 });
+dt.isValid //=&gt; false</code>
+</code></pre><p>All of the methods or getters that return primitives return degenerate ones:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.year; //=&gt;  NaN
+dt.toString(); //=&gt; &apos;Invalid DateTime&apos;
+dt.toObject(); //=&gt; {}</code>
+</code></pre><p>Methods that return other Luxon objects will return invalid ones:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.plus({ days: 4 }).isValid; //=&gt; false</code>
+</code></pre><h2>Reasons a DateTimes can be invalid</h2><p>The most common way to do that is to over or underflow some unit:</p><ul>
+<li>February 40th</li>
+<li>28:00</li>
+<li>-4 pm</li>
+<li>etc</li>
+</ul><p>But there are other ways to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">// specify a time zone that doesn&apos;t exist
+DateTime.local().setZone(&apos;America/Blorp&apos;).isValid //=&gt; false
+
+// provide contradictory information (here, this date is not a Wedensday)
+DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3}).isValid //=&gt; false</code>
+</code></pre><p>Note that some other kinds of mistakes throw, based on our judgment that they are more likely programmer errors than data issues:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().set({ blorp: 7 }); //=&gt; kerplosion</code>
+</code></pre><h2>Debugging invalid DateTimes</h2><p>Because DateTimes fail silently, they can be a pain to debug. There are two features that can help.</p><h3>invalidReason</h3><p>Invalid DateTime objects are happy to tell you why they&apos;re invalid. Like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setZone(&apos;America/Blorp&apos;).invalidReason; //=&gt;  &apos;unsupported zone&apos;</code>
+</code></pre><h3>throwOnInvalid</h3><p>You can make Luxon throw whenever it creates an invalid DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.throwOnInvalid = true
+DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime: unsupported zone</code>
+</code></pre><p>You can of course leave this on in production too, but be sure to try/catch it appropriately.</p><h2>Invalid Durations</h2><p>Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime. </p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 28).diffNow().isValid //=&gt; false</code>
+</code></pre><h2>Invalid Intervals</h2><p>Intervals can be invalid. This can happen a few different ways:</p><ul>
+<li>The end time is before the start time</li>
+<li>It was created from invalid DateTime or Duration</li>
+</ul></div>
+        <a data-ice="link" href="manual/usage/validity.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-reference" data-section-count="&#x25A0;&#x25A0;"><span data-ice="label-inner">API reference</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>References</h1>
+<div data-ice="classSummary"><h2 id="class">Class Summary</h2><table class="summary" data-ice="summary">
+  <thead><tr><td data-ice="title" colspan="3">Static Public Class Summary</td></tr></thead>
+  <tbody>
+  
+  <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>A DateTime is an immutable data structure representing a specific date and time and accompanying methods.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>A Duration object represents a period of time, like &quot;2 months&quot; or &quot;1 day, 1 hour&quot;.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="class/src/info.js~Info.html">Info</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>The Info class contains static methods for retrieving general time and date related data.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>An Interval object represents a half-open interval of time, where each endpoint is a <span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span>.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Settings contains static getters and setters that control Luxon&apos;s overall behavior. Luxon is a simple library with few options, but the ones it does have live here.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+</tbody>
+</table>
+</div>
+<div data-ice="interfaceSummary"><h2 id="interface">Interface Summary</h2><table class="summary" data-ice="summary">
+  <thead><tr><td data-ice="title" colspan="3">Static Public Interface Summary</td></tr></thead>
+  <tbody>
+  
+  <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+</div>
+        <a data-ice="link" href="identifiers.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-faq" data-section-count="&#x25A0;&#x25A0;"><span data-ice="label-inner">Support matrix</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Support matrix</h1><p>Luxon uses a slew of new browser Intl capabilities to tackle some of the tricker parts of dates and times. This means that not everything works in every environment.</p><h2>What works everywhere</h2><p>Fortunately, most of Luxon works in anything remotely recent. A non-exhaustive list:</p><ul>
+<li>Create DateTime instances in the local or UTC time zones</li>
+<li>Parse and output known formats</li>
+<li>Parse and output using ad-hoc English formats</li>
+<li>All the transformations like <code>plus</code> and <code>minus</code></li>
+<li>All of <code>Duration</code> and <code>Interval</code></li>
+</ul><h2>New capabilities and how they&apos;re used</h2><p>Here are the areas that need help from newish browser capabilities:</p><ul>
+<li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>.</li>
+<li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is relatively recent. So you could have the Intl API without having that.</li>
+<li>Zones. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are in some platforms a recent addition</li>
+</ul><p>You can check whether your environment supports these capabilities using Luxon&apos;s <code>Info</code> class:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features() //=&gt; { intl: true, intlTokens: true, zones: true }</code>
+</code></pre><h2>The matrix</h2><p>Here&apos;s the level of support for these features in different environments:</p><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Chrome</th>
+<th>FF</th>
+<th>IE</th>
+<th>Edge</th>
+<th>Safari</th>
+<th>Node</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intl</td>
+<td>24+</td>
+<td>29+</td>
+<td>11+</td>
+<td>12+</td>
+<td>10+</td>
+<td>0.11_ w/ICU&#x2020;</td>
+</tr>
+<tr>
+<td>Intl tokens</td>
+<td>56+</td>
+<td>51+</td>
+<td>None</td>
+<td>15+&#x2021;</td>
+<td>11+</td>
+<td>8+ w/ICU</td>
+</tr>
+<tr>
+<td>Zones</td>
+<td>24+&#x2020;</td>
+<td>52+</td>
+<td>None</td>
+<td>15+&#x2021;</td>
+<td>10+</td>
+<td>6+</td>
+</tr>
+</tbody>
+</table><p>&#x2020; This is an educated guess. I haven&apos;t tested this or found a definitive reference.</p><p>&#x2021; Earlier versions may also support this, but I haven&apos;t been able to test them.</p><p>Notes:</p><ul>
+<li>Node w/ICU refers to providing Node with ICU data. See <a href="https://github.com/nodejs/node/wiki/Intl">here</a> for more info</li>
+<li>Safari 11 is still in tech preview as of Sept 2017</li>
+<li>IE is terrible and it&apos;s weird that anyone uses it</li>
+</ul><h2>What happens if a feature isn&apos;t supported?</h2><p>You shouldn&apos;t use features of Luxon on projects that might be run on environments that don&apos;t support those features. Luxon tries to degrade gracefully if you don&apos;t, though.</p><p>[todo: outline the behavior here, with reference to <a href="https://github.com/icambron/luxon/issues/23">https://github.com/icambron/luxon/issues/23</a>]</p><h2>Polyfills</h2><p>There are a couple of different polyfills available.</p><h3>Intl</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p></div>
+        <a data-ice="link" href="manual/faq/matrix.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <h1 data-ice="label" class="manual-color manual-color-changelog" data-section-count="&#x25A0;"><span data-ice="label-inner">Changelog</span></h1>
+      <div class="manual-card">
+        <div data-ice="card"><h1>Changelog</h1><h2>0.1</h2><p>Initial release.</p></div>
+        <a data-ice="link" href="manual/changelog/changelog.html"></a>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

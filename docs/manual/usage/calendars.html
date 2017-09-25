@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container manual-root" data-ice="rootContainer">
+
+<header><span class="luxon-title">Luxon</span>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/icambron/luxon" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual" data-toc-name="design">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-design" data-section-count="&#x25A0;&#x25A0;" data-link="manual/design/install.html"><a href="manual/design/install.html" data-ice="link">Install guide</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#basic-browser-setup" data-ice="link">Basic browser setup</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#node" data-ice="link">Node</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#amd-system-js-requirejs-etc-" data-ice="link">AMD (System.js, RequireJS, etc)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#es6" data-ice="link">ES6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#webpack" data-ice="link">Webpack</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/install.html"><a href="manual/design/install.html#meteor" data-ice="link">Meteor</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-design" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/design/tour.html"><a href="manual/design/tour.html" data-ice="link">A quick tour</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#tostring" data-ice="link">toString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#getting-at-components" data-ice="link">Getting at components</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#other-fun-accessors" data-ice="link">Other fun accessors</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#formatting-your-datetime" data-ice="link">Formatting your DateTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#transforming-your-datetime" data-ice="link">Transforming your DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#immutability" data-ice="link">Immutability</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#math" data-ice="link">Math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/design/tour.html"><a href="manual/design/tour.html#set" data-ice="link">Set</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#time-zones" data-ice="link">Time zones</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#durations" data-ice="link">Durations</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/design/tour.html"><a href="manual/design/tour.html#intervals" data-ice="link">Intervals</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="usage">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#setting-locale" data-ice="link">Setting locale</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#checking-what-you-got" data-ice="link">Checking what you got</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#methods-affected-by-intl" data-ice="link">Methods affected by Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#numberingsystem" data-ice="link">numberingSystem</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#default-settings" data-ice="link">Default settings</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html" data-ice="link">Time zones and offsets</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#terminology" data-ice="link">Terminology</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#luxon-works-with-time-zones" data-ice="link">Luxon works with time zones</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#specifying-a-zone" data-ice="link">Specifying a zone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#iana-support" data-ice="link">IANA support</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#creating-datetimes" data-ice="link">Creating DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#local-by-default" data-ice="link">Local by default</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#creating-datetimes-in-a-zone" data-ice="link">Creating DateTimes in a zone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#strings-that-specify-an-offset" data-ice="link">Strings that specify an offset</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#setzone" data-ice="link">setZone</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#changing-zones" data-ice="link">Changing zones</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#setzone" data-ice="link">setZone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#keepcalendartime" data-ice="link">keepCalendarTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#accessors" data-ice="link">Accessors</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#dst-weirdness" data-ice="link">DST weirdness</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#invalid-times" data-ice="link">Invalid times</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#ambiguous-times" data-ice="link">Ambiguous times</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#math-across-dsts" data-ice="link">Math across DSTs</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#changing-the-default-zone" data-ice="link">Changing the default zone</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;" data-link="manual/usage/calendars.html"><a href="manual/usage/calendars.html" data-ice="link">Calendars</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/calendars.html"><a href="manual/usage/calendars.html#fully-supported-calendars" data-ice="link">Fully supported calendars</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/calendars.html"><a href="manual/usage/calendars.html#output-calendars" data-ice="link">Output calendars</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html" data-ice="link">Formatting</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#technical-formats-strings-for-computers-" data-ice="link">Technical formats (strings for computers)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#iso-8601" data-ice="link">ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#http-and-rfc-2822" data-ice="link">HTTP and RFC 2822</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#tolocalestring-strings-for-humans-" data-ice="link">toLocaleString (strings for humans)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#the-basics" data-ice="link">The basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#intl-datetimeformat" data-ice="link">Intl.DateTimeFormat</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#presets" data-ice="link">Presets</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#formatting-with-tokens-strings-for-cthulhu-" data-ice="link">Formatting with tokens (strings for Cthulhu)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#toformat" data-ice="link">toFormat</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#escaping" data-ice="link">Escaping</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#standalone-vs-format-tokens" data-ice="link">Standalone vs format tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#macro-tokens" data-ice="link">Macro tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/formatting.html"><a href="manual/usage/formatting.html#table-of-tokens" data-ice="link">Table of tokens</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html" data-ice="link">Parsing</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#parsing-technical-formats" data-ice="link">Parsing technical formats</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#iso-8601" data-ice="link">ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#fromstring" data-ice="link">fromString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#limitations" data-ice="link">Limitations</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#debugging" data-ice="link">Debugging</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#table-of-tokens" data-ice="link">Table of tokens</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/math.html"><a href="manual/usage/math.html" data-ice="link">Math</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/math.html"><a href="manual/usage/math.html#calendar-math-vs-time-math" data-ice="link">Calendar math vs time math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#the-basics" data-ice="link">The basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#which-units-use-which-math-" data-ice="link">Which units use which math?</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#how-to-think-about-calendar-math" data-ice="link">How to think about calendar math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#dsts" data-ice="link">DSTs</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#time-math" data-ice="link">Time math</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/math.html"><a href="manual/usage/math.html#math-with-multiple-units" data-ice="link">Math with multiple units</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/math.html"><a href="manual/usage/math.html#duration-math" data-ice="link">Duration math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#basics" data-ice="link">Basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#diffs" data-ice="link">Diffs</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#casual-vs-longterm-conversion-accuracy" data-ice="link">Casual vs longterm conversion accuracy</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/math.html"><a href="manual/usage/math.html#losing-information" data-ice="link">Losing information</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html" data-ice="link">Validity</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalid-datetimes" data-ice="link">Invalid DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#reasons-a-datetimes-can-be-invalid" data-ice="link">Reasons a DateTimes can be invalid</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#debugging-invalid-datetimes" data-ice="link">Debugging invalid DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalidreason" data-ice="link">invalidReason</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#throwoninvalid" data-ice="link">throwOnInvalid</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalid-durations" data-ice="link">Invalid Durations</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/validity.html"><a href="manual/usage/validity.html#invalid-intervals" data-ice="link">Invalid Intervals</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="reference">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-reference" data-section-count="&#x25A0;&#x25A0;" data-link="identifiers.html"><a href="identifiers.html" data-ice="link">API reference</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="identifiers.html"><a href="identifiers.html#class" data-ice="link">Class</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="identifiers.html"><a href="identifiers.html#interface" data-ice="link">Interface</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="faq">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-faq" data-section-count="&#x25A0;&#x25A0;" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html" data-ice="link">Support matrix</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#what-works-everywhere" data-ice="link">What works everywhere</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#new-capabilities-and-how-they-re-used" data-ice="link">New capabilities and how they&apos;re used</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#the-matrix" data-ice="link">The matrix</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#what-happens-if-a-feature-isn-t-supported-" data-ice="link">What happens if a feature isn&apos;t supported?</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#polyfills" data-ice="link">Polyfills</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#zones" data-ice="link">Zones</a></li>
+</ul>
+  </div>
+<div data-ice="manual" data-toc-name="changelog">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-1" data-ice="link">0.1</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown">
+  <div class="manual-breadcrumb-list">
+    <a href="./manual/./index.html">Manual</a>
+    <span>&#xBB;</span>
+    <span data-ice="title">Usage</span>
+  </div>
+  <div data-ice="content"><h1 id="calendars">Calendars</h1>
+<p>This covers Luxon&apos;s support for various calendar systems. If you don&apos;t need to use non-standard calendars, you don&apos;t need to read any of this.</p>
+<h2 id="fully-supported-calendars">Fully supported calendars</h2>
+<p>Luxon has full support for Gregorian and ISO Week calendars. What I mean by that is that Luxon can parse dates specified in those calendars, format dates into strings using those calendars, and transform dates using the units of those calendars. For example, here is Luxon working directly with an ISO calendar:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-W23-3&apos;).plus({ weeks: 1, days: 2 }).toISOWeekDate(); //=&gt;  &apos;2017-W24-5&apos;</code>
+</code></pre>
+<p>The main reason I bring all this is up is to contrast it with the capabilities for other calendars described below.</p>
+<h2 id="output-calendars">Output calendars</h2>
+<p>Luxon has limited support for other calendaring systems. Which calendars are supported at all is a platform-dependent, but can generally be expected to be these: Buddhist, Chinese, Coptic, Ethioaa, Ethiopic, Hebrew, Indian, Islamic, Islamicc, Japanese, Persian, and ROC. <strong>Support is limited to formatting strings with them</strong>, hence the qualified name &quot;output calendar&quot;.</p>
+<p>In practice this is pretty useful; you can show users the date in their preferred calendaring system while the software works with dates using Gregorian units or Epoch milliseconds. But the limitations are real enough; Luxon doesn&apos;t know how to do things like &quot;add one Islamic month&quot;.</p>
+<p>The output calendar is a property of the DateTime itself. For example:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var dtHebrew = DateTime.local().reconfigure({ outputCalendar: &apos;hebrew&apos; })
+dtHebrew.outputCalendar; //=&gt; &apos;hebrew&apos;
+dtHebrew.toLocaleString() //=&gt; &apos;4 Tishri 5778&apos;</code>
+</code></pre>
+<p>You can modulate the structure of that string with arguments to <code>toLocaleString</code> (see <a href="./manual/formatting.html#tolocalestring-strings-for-humans-">the docs on that</a>), but the point here is just that you got the alternative calendar.</p>
+<p>Here&apos;s a table of the different calendars with examples generated formatting the same date generated like this:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);</code>
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Calendar</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buddhist</td>
+<td>September 24, 2560 BE</td>
+</tr>
+<tr>
+<td>chinese</td>
+<td>Eighth Month 5, 2017</td>
+</tr>
+<tr>
+<td>coptic</td>
+<td>Tout 14, 1734 ERA1</td>
+</tr>
+<tr>
+<td>ethioaa</td>
+<td>Meskerem 14, 7510 ERA0</td>
+</tr>
+<tr>
+<td>ethiopic</td>
+<td>Meskerem 14, 2010 ERA1</td>
+</tr>
+<tr>
+<td>hebrew</td>
+<td>4 Tishri 5778</td>
+</tr>
+<tr>
+<td>indian</td>
+<td>Asvina 2, 1939 Saka</td>
+</tr>
+<tr>
+<td>islamic</td>
+<td>Muharram 4, 1439 AH</td>
+</tr>
+<tr>
+<td>islamicc</td>
+<td>Muharram 3, 1439 AH</td>
+</tr>
+<tr>
+<td>japanese</td>
+<td>September 24, 29 Heisei</td>
+</tr>
+<tr>
+<td>persian</td>
+<td>Mehr 2, 1396 AP</td>
+</tr>
+<tr>
+<td>roc</td>
+<td>September 24, 106 Minguo</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

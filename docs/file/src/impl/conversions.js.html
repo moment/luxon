@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header><span class="luxon-title">Luxon</span>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/icambron/luxon" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/info.js~Info.html">Info</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/impl/conversions.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;./util&apos;;
+
+const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
+  leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+
+function dayOfWeek(year, month, day) {
+  const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  return js === 0 ? 7 : js;
+}
+
+function lastWeekNumber(weekYear) {
+  const p1 =
+      (weekYear +
+        Math.floor(weekYear / 4) -
+        Math.floor(weekYear / 100) +
+        Math.floor(weekYear / 400)) %
+      7,
+    last = weekYear - 1,
+    p2 = (last + Math.floor(last / 4) - Math.floor(last / 100) + Math.floor(last / 400)) % 7;
+  return p1 === 4 || p2 === 3 ? 53 : 52;
+}
+
+function computeOrdinal(year, month, day) {
+  return day + (Util.isLeapYear(year) ? leapLadder : nonLeapLadder)[month - 1];
+}
+
+function uncomputeOrdinal(year, ordinal) {
+  const table = Util.isLeapYear(year) ? leapLadder : nonLeapLadder,
+    month0 = table.findIndex(i =&gt; i &lt; ordinal),
+    day = ordinal - table[month0];
+  return { month: month0 + 1, day };
+}
+
+/**
+ * @private
+ */
+
+export class Conversions {
+  static gregorianToWeek(gregObj) {
+    const { year, month, day } = gregObj,
+      ordinal = computeOrdinal(year, month, day),
+      weekday = dayOfWeek(year, month, day);
+
+    let weekNumber = Math.floor((ordinal - weekday + 10) / 7),
+      weekYear;
+
+    if (weekNumber &lt; 1) {
+      weekYear = year - 1;
+      weekNumber = lastWeekNumber(weekYear);
+    } else if (weekNumber &gt; lastWeekNumber(year)) {
+      weekYear = year + 1;
+      weekNumber = 1;
+    } else {
+      weekYear = year;
+    }
+
+    return Object.assign({ weekYear, weekNumber, weekday }, Util.timeObject(gregObj));
+  }
+
+  static weekToGregorian(weekData) {
+    const { weekYear, weekNumber, weekday } = weekData,
+      weekdayOfJan4 = dayOfWeek(weekYear, 1, 4),
+      daysInYear = Util.daysInYear(weekYear);
+    let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 3,
+      year;
+
+    if (ordinal &lt; 1) {
+      year = weekYear - 1;
+      ordinal += Util.daysInYear(year);
+    } else if (ordinal &gt; daysInYear) {
+      year = weekYear + 1;
+      ordinal -= Util.daysInYear(year);
+    } else {
+      year = weekYear;
+    }
+
+    const { month, day } = uncomputeOrdinal(year, ordinal);
+
+    return Object.assign({ year, month, day }, Util.timeObject(weekData));
+  }
+
+  static gregorianToOrdinal(gregData) {
+    const { year, month, day } = gregData,
+      ordinal = computeOrdinal(year, month, day);
+
+    return Object.assign({ year, ordinal }, Util.timeObject(gregData));
+  }
+
+  static ordinalToGregorian(ordinalData) {
+    const { year, ordinal } = ordinalData,
+      { month, day } = uncomputeOrdinal(year, ordinal);
+
+    return Object.assign({ year, month, day }, Util.timeObject(ordinalData));
+  }
+
+  static hasInvalidWeekData(obj) {
+    const validYear = Util.isNumber(obj.weekYear),
+      validWeek = Util.numberBetween(obj.weekNumber, 1, lastWeekNumber(obj.weekYear)),
+      validWeekday = Util.numberBetween(obj.weekday, 1, 7);
+
+    if (!validYear) {
+      return &apos;weekYear out of range&apos;;
+    } else if (!validWeek) {
+      return &apos;week out of range&apos;;
+    } else if (!validWeekday) {
+      return &apos;weekday out of range&apos;;
+    } else return false;
+  }
+
+  static hasInvalidOrdinalData(obj) {
+    const validYear = Util.isNumber(obj.year),
+      validOrdinal = Util.numberBetween(obj.ordinal, 1, Util.daysInYear(obj.year));
+
+    if (!validYear) {
+      return &apos;year out of range&apos;;
+    } else if (!validOrdinal) {
+      return &apos;ordinal out of range&apos;;
+    } else return false;
+  }
+
+  static hasInvalidGregorianData(obj) {
+    const validYear = Util.isNumber(obj.year),
+      validMonth = Util.numberBetween(obj.month, 1, 12),
+      validDay = Util.numberBetween(obj.day, 1, Util.daysInMonth(obj.year, obj.month));
+
+    if (!validYear) {
+      return &apos;year out of range&apos;;
+    } else if (!validMonth) {
+      return &apos;month out of range&apos;;
+    } else if (!validDay) {
+      return &apos;day out of range&apos;;
+    } else return false;
+  }
+
+  static hasInvalidTimeData(obj) {
+    const validHour = Util.numberBetween(obj.hour, 0, 23),
+      validMinute = Util.numberBetween(obj.minute, 0, 59),
+      validSecond = Util.numberBetween(obj.second, 0, 59),
+      validMillisecond = Util.numberBetween(obj.millisecond, 0, 999);
+
+    if (!validHour) {
+      return &apos;hour out of range&apos;;
+    } else if (!validMinute) {
+      return &apos;minute out of range&apos;;
+    } else if (!validSecond) {
+      return &apos;second out of range&apos;;
+    } else if (!validMillisecond) {
+      return &apos;millisecond out of range&apos;;
+    } else return false;
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header><span class="luxon-title">Luxon</span>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/icambron/luxon" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/info.js~Info.html">Info</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/info.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { DateTime } from &apos;./datetime&apos;;
+import { Settings } from &apos;./settings&apos;;
+import { Locale } from &apos;./impl/locale&apos;;
+import { Util } from &apos;./impl/util&apos;;
+
+/**
+ * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
+ */
+export class Info {
+  /**
+   * Return whether the specified zone contains a DST.
+   * @param {string|Zone} [zone=&apos;local&apos;] - Zone to check. Defaults to the environment&apos;s local zone.
+   * @return {boolean}
+   */
+  static hasDST(zone = Settings.defaultZone) {
+    return (
+      !zone.universal &amp;&amp;
+      DateTime.local().setZone(zone).set({ month: 1 }).offset !==
+        DateTime.local().setZone(zone).set({ month: 5 }).offset
+    );
+  }
+
+  /**
+   * Return an array of standalone month names.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;numeric&quot;, &quot;2-digit&quot;, &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;
+   * @param {object} opts - options
+   * @param {string} [opts.locale=&apos;en&apos;] - the locale code
+   * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
+   * @example Info.months()[0] //=&gt; &apos;January&apos;
+   * @example Info.months(&apos;short&apos;)[0] //=&gt; &apos;Jan&apos;
+   * @example Info.months(&apos;numeric&apos;)[0] //=&gt; &apos;1&apos;
+   * @example Info.months(&apos;short&apos;, { locale: &apos;fr-CA&apos; } )[0] //=&gt; &apos;janv.&apos;
+   * @example Info.months(&apos;numeric&apos;, { locale: &apos;ar&apos; })[0] //=&gt; &apos;&#x661;&apos;
+   * @example Info.months(&apos;long&apos;, { outputCalendar: &apos;islamic&apos; })[0] //=&gt; &apos;Rabi&#x2BB; I&apos;
+   * @return {[string]}
+   */
+  static months(
+    length = &apos;long&apos;,
+    { locale = &apos;en&apos;, numberingSystem = null, outputCalendar = &apos;gregory&apos; } = {}
+  ) {
+    return new Locale(locale, numberingSystem, outputCalendar).months(length);
+  }
+
+  /**
+   * Return an array of format month names.
+   * Format months differ from standalone months in that they&apos;re meant to appear next to the day of the month. In some languages, that
+   * changes the string.
+   * See {@link months}
+   * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;numeric&quot;, &quot;2-digit&quot;, &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;
+   * @param {object} opts - options
+   * @param {string} [opts.locale=&apos;en&apos;] - the locale code
+   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
+   * @return {[string]}
+   */
+  static monthsFormat(
+    length = &apos;long&apos;,
+    { locale = &apos;en&apos;, numberingSystem = null, outputCalendar = &apos;gregory&apos; } = {}
+  ) {
+    return new Locale(locale, numberingSystem, outputCalendar).months(length, true);
+  }
+
+  /**
+   * Return an array of standalone week names.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;.
+   * @param {object} opts - options
+   * @param {string} [opts.locale=&apos;en&apos;] - the locale code
+   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
+   * @example Info.weekdays()[0] //=&gt; &apos;Monday&apos;
+   * @example Info.weekdays(&apos;short&apos;)[0] //=&gt; &apos;Mon&apos;
+   * @example Info.weekdays(&apos;short&apos;, &apos;fr-CA&apos;)[0] //=&gt; &apos;lun.&apos;
+   * @example Info.weekdays(&apos;short&apos;, &apos;ar&apos;)[0] //=&gt; &apos;&#x627;&#x644;&#x627;&#x62B;&#x646;&#x64A;&#x646;&apos;
+   * @return {[string]}
+   */
+  static weekdays(length = &apos;long&apos;, { locale = &apos;en&apos;, numberingSystem = null } = {}) {
+    return new Locale(locale, numberingSystem, null).weekdays(length);
+  }
+
+  /**
+   * Return an array of format week names.
+   * Format weekdays differ from standalone weekdays in that they&apos;re meant to appear next to more date information. In some languages, that
+   * changes the string.
+   * See {@link weekdays}
+   * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;.
+   * @param {object} opts - options
+   * @param {string} [opts.locale=&apos;en&apos;] - the locale code
+   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
+   * @return {[string]}
+   */
+  static weekdaysFormat(length = &apos;long&apos;, { locale = &apos;en&apos;, numberingSystem = null } = {}) {
+    return new Locale(locale, numberingSystem, null).weekdays(length, true);
+  }
+
+  /**
+   * Return an array of meridiems.
+   * @param {object} opts - options
+   * @param {string} [opts.locale=&apos;en&apos;] - the locale code
+   * @example Info.meridiems() //=&gt; [ &apos;AM&apos;, &apos;PM&apos; ]
+   * @example Info.meridiems(&apos;de&apos;) //=&gt; [ &apos;vorm.&apos;, &apos;nachm.&apos; ]
+   * @return {[string]}
+   */
+  static meridiems({ locale = &apos;en&apos; } = {}) {
+    return new Locale(locale).meridiems();
+  }
+
+  /**
+   * Return an array of eras, such as [&apos;BC&apos;, &apos;AD&apos;]. The locale can be specified, but the calendar system is always Gregorian.
+   * @param {string} [length=&apos;short&apos;] - the length of the era representation, such as &quot;short&quot; or &quot;long&quot;.
+   * @param {object} opts - options
+   * @param {string} [opts.locale=&apos;en&apos;] - the locale code
+   * @example Info.eras() //=&gt; [ &apos;BC&apos;, &apos;AD&apos; ]
+   * @example Info.eras(&apos;long&apos;) //=&gt; [ &apos;Before Christ&apos;, &apos;Anno Domini&apos; ]
+   * @example Info.eras(&apos;long&apos;, &apos;fr&apos;) //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]
+   * @return {[string]}
+   */
+  static eras(length = &apos;short&apos;, { locale = &apos;en&apos; } = {}) {
+    return new Locale(locale, null, &apos;gregory&apos;).eras(length);
+  }
+
+  /**
+   * Return the set of available features in this environment.
+   * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that&apos;s the case.
+   * Keys:
+   * * `timezones`: whether this environment supports IANA timezones
+   * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
+   * * `intl`: whether this environment supports general internationalization
+   * @example Info.feature() //=&gt; { intl: true, intlTokens: false, timezones: true }
+   * @return {object}
+   */
+  static features() {
+    let intl = false,
+      intlTokens = false,
+      zones = false;
+
+    if (Util.isUndefined(Intl) &amp;&amp; Util.isUndefined(Util.DateTimeFormat)) {
+      intl = true;
+
+      intlTokens = Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
+
+      try {
+        Intl.DateTimeFormat({ timeZone: &apos;America/New_York&apos; });
+        zones = true;
+      } catch (e) {
+        zones = false;
+      }
+    }
+
+    return { intl, intlTokens, zones };
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header><span class="luxon-title">Luxon</span>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/icambron/luxon" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/info.js~Info.html">Info</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/duration.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;./impl/util&apos;;
+import { Locale } from &apos;./impl/locale&apos;;
+import { Formatter } from &apos;./impl/formatter&apos;;
+import { RegexParser } from &apos;./impl/regexParser&apos;;
+import { Settings } from &apos;./settings&apos;;
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &apos;./errors&apos;;
+
+const INVALID = &apos;Invalid Duration&apos;;
+
+const lowOrderMatrix = {
+    weeks: {
+      days: 7,
+      hours: 7 * 24,
+      minutes: 7 * 24 * 60,
+      seconds: 7 * 24 * 60 * 60,
+      milliseconds: 7 * 24 * 60 * 60 * 1000
+    },
+    days: {
+      hours: 24,
+      minutes: 24 * 60,
+      seconds: 24 * 60 * 60,
+      milliseconds: 24 * 60 * 60 * 1000
+    },
+    hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
+    minutes: { seconds: 60, milliseconds: 60 * 1000 },
+    seconds: { milliseconds: 1000 }
+  },
+  casualMatrix = Object.assign(
+    {
+      years: {
+        months: 12,
+        weeks: 52,
+        days: 365,
+        hours: 365 * 24,
+        minutes: 365 * 24 * 60,
+        seconds: 365 * 24 * 60 * 60,
+        milliseconds: 365 * 24 * 60 * 60 * 1000
+      },
+      months: {
+        weeks: 4,
+        days: 30,
+        hours: 30 * 24,
+        minutes: 30 * 24 * 60,
+        seconds: 30 * 24 * 60 * 60,
+        milliseconds: 30 * 24 * 60 * 60 * 1000
+      }
+    },
+    lowOrderMatrix
+  ),
+  daysInYearAccurate = 146097.0 / 400,
+  daysInMonthAccurate = 146097.0 / 4800,
+  accurateMatrix = Object.assign(
+    {
+      years: {
+        months: 12,
+        weeks: daysInYearAccurate / 7,
+        days: daysInYearAccurate,
+        hours: daysInYearAccurate * 24,
+        minutes: daysInYearAccurate * 24 * 60,
+        seconds: daysInYearAccurate * 24 * 60 * 60,
+        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
+      },
+      months: {
+        weeks: daysInMonthAccurate / 7,
+        days: daysInMonthAccurate,
+        hours: daysInYearAccurate * 24,
+        minutes: daysInYearAccurate * 24 * 60,
+        seconds: daysInYearAccurate * 24 * 60 * 60,
+        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
+      }
+    },
+    lowOrderMatrix
+  );
+
+const orderedUnits = [
+  &apos;years&apos;,
+  &apos;months&apos;,
+  &apos;weeks&apos;,
+  &apos;days&apos;,
+  &apos;hours&apos;,
+  &apos;minutes&apos;,
+  &apos;seconds&apos;,
+  &apos;milliseconds&apos;
+];
+
+function clone(dur, alts, clear = false) {
+  // deep merge for vals
+  const conf = {
+    values: clear ? alts.values : Object.assign(dur.values, alts.values || {}),
+    loc: dur.loc.clone(alts.loc),
+    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
+  };
+  return new Duration(conf);
+}
+
+function isHighOrderNegative(obj) {
+  // only rule is that the highest-order part must be non-negative
+  for (const k of orderedUnits) {
+    if (obj[k]) return obj[k] &lt; 0;
+  }
+  return false;
+}
+
+/**
+ * A Duration object represents a period of time, like &quot;2 months&quot; or &quot;1 day, 1 hour&quot;. Conceptually, it&apos;s just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
+ *
+ * Here is a brief overview of commonly used methods and getters in Duration:
+ *
+ * * **Creation** To create a Duration, use {@link fromMilliseconds}, {@link fromObject}, or {@link fromISO}.
+ * * **Unit values** See the {@link years}, {@link months}, {@link weeks}, {@link days}, {@link hours}, {@link minutes}, {@link seconds}, {@link milliseconds} accessors.
+ * * **Configuration** See  {@link locale} and {@link numberingSystem} accessors.
+ * * **Transformation** To create new Durations out of old ones use {@link plus}, {@link minus}, {@link normalize}, {@link set}, {@link reconfigure}, {@link shiftTo}, and {@link negate}.
+ * * **Output** To convert the Duration into other representations, see {@link as}, {@link toISO}, {@link toFormat}, and {@link toJSON}
+ *
+ * There&apos;s are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
+ */
+export class Duration {
+  /**
+   * @private
+   */
+  constructor(config) {
+    const accurate = config.conversionAccuracy === &apos;longterm&apos; || false;
+
+    Object.defineProperty(this, &apos;values&apos;, {
+      value: config.values,
+      enumerable: true
+    });
+    Object.defineProperty(this, &apos;loc&apos;, {
+      value: config.loc || Locale.create(),
+      enumerable: true
+    });
+    Object.defineProperty(this, &apos;conversionAccuracy&apos;, {
+      value: accurate ? &apos;longterm&apos; : &apos;casual&apos;,
+      enumerable: true
+    });
+    Object.defineProperty(this, &apos;invalidReason&apos;, {
+      value: config.invalidReason || null,
+      enumerable: false
+    });
+    Object.defineProperty(this, &apos;matrix&apos;, {
+      value: accurate ? accurateMatrix : casualMatrix,
+      enumerable: false
+    });
+  }
+
+  /**
+   * Create Duration from a number of milliseconds.
+   * @param {number} count of milliseconds
+   * @param {Object} opts - options for parsing
+   * @param {string} [obj.locale=&apos;en-US&apos;] - the locale to use
+   * @param {string} obj.numberingSystem - the numbering system to use
+   * @param {string} [obj.conversionAccuracy=&apos;casual&apos;] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromMilliseconds(count, opts) {
+    return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
+  }
+
+  /**
+   * Create an DateTime from a Javascript object with keys like &apos;years&apos; and &apos;hours&apos;.
+   * @param {Object} obj - the object to create the DateTime from
+   * @param {number} obj.years
+   * @param {number} obj.months
+   * @param {number} obj.weeks
+   * @param {number} obj.days
+   * @param {number} obj.hours
+   * @param {number} obj.minutes
+   * @param {number} obj.seconds
+   * @param {number} obj.milliseconds
+   * @param {string} [obj.locale=&apos;en-US&apos;] - the locale to use
+   * @param {string} obj.numberingSystem - the numbering system to use
+   * @param {string} [obj.conversionAccuracy=&apos;casual&apos;] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromObject(obj) {
+    return new Duration({
+      values: Util.normalizeObject(obj, Duration.normalizeUnit, true),
+      loc: Locale.fromObject(obj),
+      conversionAccuracy: obj.conversionAccuracy
+    });
+  }
+
+  /**
+   * Create a DateTime from an ISO 8601 duration string.
+   * @param {string} text - text to parse
+   * @param {Object} opts - options for parsing
+   * @param {string} [obj.locale=&apos;en-US&apos;] - the locale to use
+   * @param {string} obj.numberingSystem - the numbering system to use
+   * @param {string} [obj.conversionAccuracy=&apos;casual&apos;] - the conversion system to use
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
+   * @example Duration.fromISO(&apos;P3Y6M4DT12H30M5S&apos;).toObject() //=&gt; { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
+   * @example Duration.fromISO(&apos;PT23H&apos;).toObject() //=&gt; { hours: 23 }
+   * @example Duration.fromISO(&apos;P5Y3M&apos;).toObject() //=&gt; { years: 5, months: 3 }
+   * @return {Duration}
+   */
+  static fromISO(text, opts) {
+    const obj = Object.assign(RegexParser.parseISODuration(text), opts);
+    return Duration.fromObject(obj);
+  }
+
+  /**
+   * Create an invalid Duration.
+   * @param {string} reason - reason this is invalid
+   * @return {Duration}
+   */
+  static invalid(reason) {
+    if (!reason) {
+      throw new InvalidArgumentError(&apos;need to specify a reason the DateTime is invalid&apos;);
+    }
+    if (Settings.throwOnInvalid) {
+      throw new InvalidDurationError(reason);
+    } else {
+      return new Duration({ invalidReason: reason });
+    }
+  }
+
+  /**
+   * @private
+   */
+  static normalizeUnit(unit, ignoreUnknown = false) {
+    const normalized = {
+      year: &apos;years&apos;,
+      years: &apos;years&apos;,
+      month: &apos;months&apos;,
+      months: &apos;months&apos;,
+      week: &apos;weeks&apos;,
+      weeks: &apos;weeks&apos;,
+      day: &apos;days&apos;,
+      days: &apos;days&apos;,
+      hour: &apos;hours&apos;,
+      hours: &apos;hours&apos;,
+      minute: &apos;minutes&apos;,
+      minutes: &apos;minutes&apos;,
+      second: &apos;seconds&apos;,
+      seconds: &apos;seconds&apos;,
+      millisecond: &apos;milliseconds&apos;,
+      milliseconds: &apos;milliseconds&apos;
+    }[unit ? unit.toLowerCase() : unit];
+
+    if (!ignoreUnknown &amp;&amp; !normalized) throw new InvalidUnitError(unit);
+
+    return normalized;
+  }
+
+  /**
+   * Get  the locale of a Duration, such &apos;en-UK&apos;
+   * @return {string}
+   */
+  get locale() {
+    return this.loc.locale;
+  }
+
+  /**
+   * Get the numbering system of a Duration, such &apos;beng&apos;. The numbering system is used when formatting the Duration
+   *
+   * @return {string}
+   */
+  get numberingSystem() {
+    return this.loc.numberingSystem;
+  }
+
+  /**
+   * Returns a string representation of this Duration formatted according to the specified format string.
+   * @param {string} fmt - the format string
+   * @param {object} opts - options
+   * @param {boolean} opts.round - round numerical values
+   * @return {string}
+   */
+  toFormat(fmt, opts = {}) {
+    return this.isValid
+      ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
+      : INVALID;
+  }
+
+  /**
+   * Returns a Javascript object with this Duration&apos;s values.
+   * @param opts - options for generating the object
+   * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
+   * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=&gt; { years: 1, days: 6, seconds: 2 }
+   * @return {object}
+   */
+  toObject(opts = {}) {
+    if (!this.isValid) return {};
+
+    const base = Object.assign({}, this.values);
+
+    if (opts.includeConfig) {
+      base.conversionAccuracy = this.conversionAccuracy;
+      base.numberingSystem = this.loc.numberingSystem;
+      base.locale = this.loc.locale;
+    }
+    return base;
+  }
+
+  /**
+   * Returns an ISO 8601-compliant string representation of this Duration.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
+   * Duration.fromObject({ years: 3, seconds: 45 }).toISO() //=&gt; &apos;P3YT45S&apos;
+   * Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=&gt; &apos;P4MT45S&apos;
+   * Duration.fromObject({ months: 5 }).toISO() //=&gt; &apos;P5M&apos;
+   * Duration.fromObject({ minutes: 5 }).toISO() //=&gt; &apos;PT5M&apos;
+   * @return {string}
+   */
+  toISO() {
+    // we could use the formatter, but this is an easier way to get the minimum string
+    if (!this.isValid) return null;
+
+    let s = &apos;P&apos;,
+      norm = this.normalize();
+
+    // ISO durations are always positive, so take the absolute value
+    norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
+
+    if (norm.years &gt; 0) s += norm.years + &apos;Y&apos;;
+    if (norm.months &gt; 0) s += norm.months + &apos;M&apos;;
+    if (norm.days &gt; 0 || norm.weeks &gt; 0) s += norm.days + norm.weeks * 7 + &apos;D&apos;;
+    if (norm.hours &gt; 0 || norm.minutes &gt; 0 || norm.seconds &gt; 0 || norm.milliseconds &gt; 0) s += &apos;T&apos;;
+    if (norm.hours &gt; 0) s += norm.hours + &apos;H&apos;;
+    if (norm.minutes &gt; 0) s += norm.minutes + &apos;M&apos;;
+    if (norm.seconds &gt; 0) s += norm.seconds + &apos;S&apos;;
+    return s;
+  }
+
+  /**
+   * Returns an ISO 8601 representation of this Duration appropriate for use in JSON.
+   * @return {string}
+   */
+  toJSON() {
+    return this.toISO();
+  }
+
+  /**
+   * Returns an ISO 8601 representation of this Duration appropriate for use in debugging.
+   * @return {string}
+   */
+  toString() {
+    return this.toISO();
+  }
+
+  /**
+   * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
+   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @return {Duration}
+   */
+  plus(duration) {
+    if (!this.isValid) return this;
+
+    const dur = Util.friendlyDuration(duration),
+      result = {};
+
+    for (const k of orderedUnits) {
+      const val = dur.get(k) + this.get(k);
+      if (val !== 0) {
+        result[k] = val;
+      }
+    }
+
+    return clone(this, { values: result }, true);
+  }
+
+  /**
+   * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
+   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @return {Duration}
+   */
+  minus(duration) {
+    if (!this.isValid) return this;
+
+    const dur = Util.friendlyDuration(duration);
+    return this.plus(dur.negate());
+  }
+
+  /**
+   * Get the value of unit.
+   * @param {string} unit - a unit such as &apos;minute&apos; or &apos;day&apos;
+   * @example Duration.fromObject({years: 2, days: 3}).years //=&gt; 2
+   * @example Duration.fromObject({years: 2, days: 3}).months //=&gt; 0
+   * @example Duration.fromObject({years: 2, days: 3}).days //=&gt; 3
+   * @return {number}
+   */
+  get(unit) {
+    return this[Duration.normalizeUnit(unit)];
+  }
+
+  /**
+   * &quot;Set&quot; the values of specified units. Return a newly-constructed Duration.
+   * @param {object} values - a mapping of units to numbers
+   * @example dur.set({ years: 2017 })
+   * @example dur.set({ hours: 8, minutes: 30 })
+   * @return {Duration}
+   */
+  set(values) {
+    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
+    return clone(this, { values: mixed });
+  }
+
+  /**
+   * &quot;Set&quot; the locale and/or numberingSystem.  Returns a newly-constructed Duration.
+   * @example dur.reconfigure({ locale: &apos;en-UK&apos; })
+   * @return {Duration}
+   */
+  reconfigure({ locale, numberingSystem, conversionAccuracy } = {}) {
+    const loc = this.loc.clone({ locale, numberingSystem }),
+      opts = { loc };
+
+    if (conversionAccuracy) {
+      opts.conversionAccuracy = conversionAccuracy;
+    }
+
+    return clone(this, opts);
+  }
+
+  /**
+   * Return the length of the duration in the specified unit.
+   * @param {string} unit - a unit such as &apos;minutes&apos; or &apos;days&apos;
+   * @example Duration.fromObject({years: 1}).as(&apos;days&apos;) //=&gt; 365
+   * @example Duration.fromObject({years: 1}).as(&apos;months&apos;) //=&gt; 12
+   * @example Duration.fromObject({hours: 60}).as(&apos;days&apos;) //=&gt; 2.5
+   * @return {number}
+   */
+  as(unit) {
+    return this.isValid ? this.shiftTo(unit).get(unit) : NaN;
+  }
+
+  /**
+   * Reduce this Duration to its canonical representation in its current units.
+   * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=&gt; { years: 15, days: 255 }
+   * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=&gt; { hours: 11, minutes: 15 }
+   * @return {Duration}
+   */
+  normalize() {
+    if (!this.isValid) return this;
+
+    const neg = isHighOrderNegative(this.values),
+      dur = neg ? this.negate() : this,
+      shifted = dur.shiftTo(...Object.keys(this.values));
+    return neg ? shifted.negate() : shifted;
+  }
+
+  /**
+   * Convert this Duration into its representation in a different set of units.
+   * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo(&apos;minutes&apos;, &apos;milliseconds&apos;).toObject() //=&gt; { minutes: 60, milliseconds: 30000 }
+   * @return {Duration}
+   */
+  shiftTo(...units) {
+    if (!this.isValid) return this;
+
+    if (units.length === 0) {
+      return this;
+    }
+
+    units = units.map(Duration.normalizeUnit);
+
+    const built = {},
+      accumulated = {},
+      vals = this.toObject();
+    let lastUnit;
+
+    for (const k of orderedUnits) {
+      if (units.indexOf(k) &gt;= 0) {
+        built[k] = 0;
+        lastUnit = k;
+
+        // anything we haven&apos;t boiled down yet should get boiled to this unit
+        for (const ak in accumulated) {
+          if (accumulated.hasOwnProperty(ak)) {
+            built[k] += this.matrix[ak][k] * accumulated[ak];
+          }
+          delete accumulated[ak];
+        }
+
+        // plus anything that&apos;s already in this unit
+        if (Util.isNumber(vals[k])) {
+          built[k] += vals[k];
+        }
+
+        // plus anything further down the chain that should be rolled up in to this
+        for (const down in vals) {
+          if (orderedUnits.indexOf(down) &gt; orderedUnits.indexOf(k)) {
+            const conv = this.matrix[k][down],
+              added = Math.floor(vals[down] / conv);
+            built[k] += added;
+            vals[down] -= added * conv;
+          }
+        }
+        // otherwise, keep it in the wings to boil it later
+      } else if (Util.isNumber(vals[k])) {
+        accumulated[k] = vals[k];
+      }
+    }
+
+    // anything leftover becomes the decimal for the last unit
+    if (lastUnit) {
+      for (const key in accumulated) {
+        if (accumulated.hasOwnProperty(key)) {
+          built[lastUnit] += accumulated[key] / this.matrix[lastUnit][key];
+        }
+      }
+    }
+
+    return clone(this, { values: built }, true);
+  }
+
+  /**
+   * Return the negative of this Duration.
+   * @example Duration.fromObject({ hours: 1, seconds: 30 }).negate().toObject() //=&gt; { hours: -1, seconds: -30 }
+   * @return {Duration}
+   */
+  negate() {
+    if (!this.isValid) return this;
+    const negated = {};
+    for (const k of Object.keys(this.values)) {
+      negated[k] = -this.values[k];
+    }
+    return Duration.fromObject(negated);
+  }
+
+  /**
+   * Get the years.
+   * @return {number}
+   */
+  get years() {
+    return this.isValid ? this.values.years || 0 : NaN;
+  }
+
+  /**
+   * Get the months.
+   * @return {number}
+   */
+  get months() {
+    return this.isValid ? this.values.months || 0 : NaN;
+  }
+
+  /**
+   * Get the weeks
+   * @return {number}
+   */
+  get weeks() {
+    return this.isValid ? this.values.weeks || 0 : NaN;
+  }
+
+  /**
+   * Get the days.
+   * @return {number
+   */
+  get days() {
+    return this.isValid ? this.values.days || 0 : NaN;
+  }
+
+  /**
+   * Get the hours.
+   * @return {number}
+   */
+  get hours() {
+    return this.isValid ? this.values.hours || 0 : NaN;
+  }
+
+  /**
+   * Get the minutes.
+   * @return {number}
+   */
+  get minutes() {
+    return this.isValid ? this.values.minutes || 0 : NaN;
+  }
+
+  /**
+   * Get the seconds.
+   * @return {number}
+   */
+  get seconds() {
+    return this.isValid ? this.values.seconds || 0 : NaN;
+  }
+
+  /**
+   * Get the milliseconds.
+   * @return {number}
+   */
+  get milliseconds() {
+    return this.isValid ? this.values.milliseconds || 0 : NaN;
+  }
+
+  /**
+   * Returns whether the Duration is invalid. Invalid durations are returned by diff operations
+   * on invalid DateTimes or Intervals.
+   * @return {boolean}
+   */
+  get isValid() {
+    return this.invalidReason === null;
+  }
+
+  /**
+   * Returns an explanation of why this Duration became invalid, or null if the Duration is valid
+   * @return {string}
+   */
+  get invalidReason() {
+    return this.invalidReason;
+  }
+
+  /**
+   * Equality check
+   * Two Durations are equal iff they have the same units and the same values for each unit.
+   * @param {Duration} other
+   * @return {boolean}
+   */
+  equals(other) {
+    if (!this.isValid || !other.isValid) {
+      return false;
+    }
+
+    for (const u of orderedUnits) {
+      if (this.values[u] !== other.values[u]) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

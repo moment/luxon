@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header><span class="luxon-title">Luxon</span>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/icambron/luxon" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/info.js~Info.html">Info</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/impl/locale.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;./util&apos;;
+import { English } from &apos;./english&apos;;
+import { DateTime } from &apos;../datetime&apos;;
+
+const localeCache = new Map();
+
+function intlConfigString(locale, numberingSystem, outputCalendar) {
+  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
+  loc = Array.isArray(locale) ? locale : [locale];
+
+  if (outputCalendar || numberingSystem) {
+    loc = loc.map(l =&gt; {
+      l += &apos;-u&apos;;
+
+      if (outputCalendar) {
+        l += &apos;-ca-&apos; + outputCalendar;
+      }
+
+      if (numberingSystem) {
+        l += &apos;-nu-&apos; + numberingSystem;
+      }
+      return l;
+    });
+  }
+  return loc;
+}
+
+function mapMonths(f) {
+  const ms = [];
+  for (let i = 1; i &lt;= 12; i++) {
+    const dt = DateTime.utc(2016, i, 1);
+    ms.push(f(dt));
+  }
+  return ms;
+}
+
+function mapWeekdays(f) {
+  const ms = [];
+  for (let i = 1; i &lt;= 7; i++) {
+    const dt = DateTime.utc(2016, 11, 13 + i);
+    ms.push(f(dt));
+  }
+  return ms;
+}
+
+/**
+ * @private
+ */
+
+export class Locale {
+  static fromOpts(opts) {
+    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
+  }
+
+  static create(locale, numberingSystem, outputCalendar) {
+    const localeR = locale || &apos;en-us&apos;,
+      numberingSystemR = numberingSystem || null,
+      outputCalendarR = outputCalendar || null,
+      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
+      cached = localeCache.get(cacheKey);
+
+    if (cached) {
+      return cached;
+    } else {
+      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
+      localeCache.set(cacheKey, fresh);
+      return fresh;
+    }
+  }
+
+  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
+    return Locale.create(locale, numberingSystem, outputCalendar);
+  }
+
+  constructor(locale, numbering, outputCalendar) {
+    Object.defineProperty(this, &apos;locale&apos;, { value: locale, enumerable: true });
+    Object.defineProperty(this, &apos;numberingSystem&apos;, {
+      value: numbering || null,
+      enumerable: true
+    });
+    Object.defineProperty(this, &apos;outputCalendar&apos;, {
+      value: outputCalendar || null,
+      enumerable: true
+    });
+    Object.defineProperty(this, &apos;intl&apos;, {
+      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
+      enumerable: false
+    });
+
+    // cached usefulness
+    Object.defineProperty(this, &apos;weekdaysCache&apos;, {
+      value: { format: {}, standalone: {} },
+      enumerable: false
+    });
+    Object.defineProperty(this, &apos;monthsCache&apos;, {
+      value: { format: {}, standalone: {} },
+      enumerable: false
+    });
+    Object.defineProperty(this, &apos;meridiemCache&apos;, {
+      value: null,
+      enumerable: false,
+      writable: true
+    });
+    Object.defineProperty(this, &apos;eraCache&apos;, {
+      value: {},
+      enumerable: false,
+      writable: true
+    });
+  }
+
+  knownEnglish() {
+    return (
+      (this.locale === &apos;en&apos; ||
+        Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith(&apos;en-US&apos;)) &amp;&amp;
+      this.numberingSystem === null &amp;&amp;
+      (this.outputCalendar === null || this.outputCalendar === &apos;latn&apos;)
+    );
+  }
+
+  clone(alts) {
+    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
+      return this;
+    } else {
+      return Locale.create(
+        alts.locale || this.locale,
+        alts.numberingSystem || this.numberingSystem,
+        alts.outputCalendar || this.outputCalendar
+      );
+    }
+  }
+
+  months(length, format = false) {
+    if (this.knownEnglish()) {
+      const english = English.months(length);
+      if (english) {
+        return english;
+      }
+    }
+
+    const intl = format ? { month: length, day: &apos;numeric&apos; } : { month: length },
+      formatStr = format ? &apos;format&apos; : &apos;standalone&apos;;
+    if (!this.monthsCache[formatStr][length]) {
+      this.monthsCache[formatStr][length] = mapMonths(dt =&gt; this.extract(dt, intl, &apos;month&apos;));
+    }
+    return this.monthsCache[formatStr][length];
+  }
+
+  weekdays(length, format = false) {
+    if (this.knownEnglish()) {
+      const english = English.weekdays(length);
+      if (english) {
+        return english;
+      }
+    }
+
+    const intl = format
+        ? { weekday: length, year: &apos;numeric&apos;, month: &apos;long&apos;, day: &apos;numeric&apos; }
+        : { weekday: length },
+      formatStr = format ? &apos;format&apos; : &apos;standalone&apos;;
+    if (!this.weekdaysCache[formatStr][length]) {
+      this.weekdaysCache[formatStr][length] = mapWeekdays(dt =&gt; this.extract(dt, intl, &apos;weekday&apos;));
+    }
+    return this.weekdaysCache[formatStr][length];
+  }
+
+  meridiems() {
+    if (this.knownEnglish()) {
+      return English.meridiems;
+    }
+
+    // In theory there could be aribitrary day periods. We&apos;re gonna assume there are exactly two
+    // for AM and PM. This is probably wrong, but it&apos;s makes parsing way easier.
+    if (!this.meridiemCache) {
+      const intl = { hour: &apos;numeric&apos;, hour12: true };
+      this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(dt =&gt;
+        this.extract(dt, intl, &apos;dayperiod&apos;)
+      );
+    }
+
+    return this.meridiemCache;
+  }
+
+  eras(length) {
+    if (this.knownEnglish()) {
+      return English.eras(length);
+    }
+
+    const intl = { era: length };
+
+    // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
+    // to definitely enumerate them.
+    if (!this.eraCache[length]) {
+      this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =&gt;
+        this.extract(dt, intl, &apos;era&apos;)
+      );
+    }
+
+    return this.eraCache[length];
+  }
+
+  extract(dt, intlOpts, field) {
+    const [df, d] = this.dtFormatter(dt, intlOpts),
+      results = df.formatToParts(d),
+      matching = results.find(m =&gt; m.type.toLowerCase() === field);
+
+    return matching ? matching.value : null;
+  }
+
+  numberFormatter(opts = {}, intlOpts = {}) {
+    const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+
+    if (opts.padTo &gt; 0) {
+      realIntlOpts.minimumIntegerDigits = opts.padTo;
+    }
+
+    if (opts.round) {
+      realIntlOpts.maximumFractionDigits = 0;
+    }
+
+    return new Intl.NumberFormat(this.intl, realIntlOpts);
+  }
+
+  dtFormatter(dt, intlOpts = {}) {
+    let d, z;
+
+    if (dt.zone.universal) {
+      // if we have a fixed-offset zone that isn&apos;t actually UTC,
+      // (like UTC+8), we need to make do with just displaying
+      // the time in UTC; the formatter how to handle UTC+8
+      d = Util.asIfUTC(dt);
+      z = &apos;UTC&apos;;
+    } else if (dt.zone.type === &apos;local&apos;) {
+      d = dt.toJSDate();
+    } else {
+      d = dt.toJSDate();
+      z = dt.zone.name;
+    }
+
+    const realIntlOpts = Object.assign({}, intlOpts);
+    if (z) {
+      realIntlOpts.timeZone = z;
+    }
+
+    return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
+  }
+
+  equals(other) {
+    return (
+      this.locale === other.locale &amp;&amp;
+      this.numberingSystem === other.numberingSystem &amp;&amp;
+      this.outputCalendar === other.outputCalendar
+    );
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
