@@ -38,7 +38,7 @@ Don't worry about leap seconds. Javascript and most other programming environmen
 
 ### How to think about calendar math
 
-It's best not to think of calendar math as requiring arcane checks for what variability is required. Instead, think of them as **adjusting that unit directly and keeping lower order date components constant**. Let's go back to the Feb 13 + 1 month example. If you didn't have Luxon, you would do something like this to accomplish this:
+It's best not to think of calendar math as requiring arcane checks for what variability is required. Instead, think of them as **adjusting that unit directly and keeping lower order date components constant**. Let's go back to the Feb 13 + 1 month example. If you didn't have Luxon, you would do something like this to accomplish that:
 
 ```js
 var d = new Date('2017-02-13')

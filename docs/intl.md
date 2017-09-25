@@ -38,8 +38,8 @@ The local environment may not support the exact locale you asked for. The native
 
 ```js
 DateTime.fromObject({locale: 'fr-co'}).resolvedLocaleOpts(); //=> { locale: 'fr',
-                                                                    numberingSystem: 'latn',
-                                                                    outputCalendar: 'gregory' }
+                                                             //     numberingSystem: 'latn',
+                                                             //     outputCalendar: 'gregory' }
 ```
 
 ## Methods affected by Intl
