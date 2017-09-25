@@ -1,5 +1,6 @@
 function demo(luxon) {
   let DateTime = luxon.DateTime,
+    examples = [],
     run = function(code) {
       try {
         return JSON.stringify(eval(code));
@@ -8,7 +9,7 @@ function demo(luxon) {
       }
     },
     example = function(code) {
-      document.write(
+      examples.push(
         "<tr class='example'><td class='code'>" +
           code +
           "</td><td class='divider'>//=> </td><td class='result'>" +
@@ -17,12 +18,6 @@ function demo(luxon) {
       );
     };
 
-  document.write('<h1>Some Luxon examples</h1>');
-  document.write(
-    "<p>This is not meant to be a comprehensive showcase of Luxon's capabilities, just a quick flavoring.</p>"
-  );
-
-  document.write('<table>');
   example('DateTime.local()');
   example('DateTime.local(2017, 5, 15, 17, 36)');
   example('DateTime.utc(2017, 5, 15, 17, 36)');
@@ -48,14 +43,10 @@ function demo(luxon) {
   );
   example('DateTime.local().toLocaleString()');
   example("DateTime.local().setLocale('zh').toLocaleString()");
+  example('DateTime.local().toLocaleString(DateTime.DATE_MED)');
+  example("DateTime.local().setLocale('zh').toLocaleString(DateTime.DATE_MED)");
   example(
-    "DateTime.local().toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})"
-  );
-  example(
-    "DateTime.local().setLocale('zh').toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})"
-  );
-  example(
-    "DateTime.local().setLocale('fr').toLocaleString({weekday: 'short', month: 'long', year: 'numeric'})"
+    "DateTime.local().setLocale('fr').toLocaleString(DateTime.DATE_FULL)"
   );
   example("DateTime.fromISO('2017-05-15')");
   example("DateTime.fromISO('2017-05-15T17:36')");
@@ -66,7 +57,13 @@ function demo(luxon) {
   example("DateTime.local().toFormat('MMMM dd, yyyy')");
   example("DateTime.local().setLocale('fr').toFormat('MMMM dd, yyyy')");
 
-  document.write('</table>');
+  let all = '<h1>Some Luxon examples</h1>';
+  all += "<p>This is not meant to be a comprehensive showcase of Luxon's capabilities, just a quick flavoring.</p>";
+  all += '<table>';
+  all += examples.join('');
+  all += '</table>';
+
+  document.body.innerHTML = all;
 }
 
 if (typeof define !== 'undefined') {
