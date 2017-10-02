@@ -39,7 +39,7 @@ function demo(luxon) {
   example('DateTime.local().diff(DateTime.local(1982, 5, 25)).milliseconds');
   example("DateTime.local().diff(DateTime.local(1982, 5, 25), 'days').days");
   example(
-    "DateTime.local().diff(DateTime.local(1982, 5, 25), 'days', 'hours').toObject()"
+    "DateTime.local().diff(DateTime.local(1982, 5, 25), ['days', 'hours']).toObject()"
   );
   example('DateTime.local().toLocaleString()');
   example("DateTime.local().setLocale('zh').toLocaleString()");
