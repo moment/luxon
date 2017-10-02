@@ -262,7 +262,7 @@
 </tbody>
 </table>
 <h3 id="iana-support">IANA support</h3>
-<p>IANA-specified zones are string identifiers like &quot;America/New_York&quot; or &quot;Asia/Tokyo&quot;. Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can fiddle with the zones. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:</p>
+<p>IANA-specified zones are string identifiers like &quot;America/New_York&quot; or &quot;Asia/Tokyo&quot;. Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can&apos;t fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Info.features().zones; //=&gt; true</code>
 </code></pre>
 <p>If you&apos;re unsure if all your target environments (browser versions and Node versions) support this, check out the <a href="./manual/faq/matrix.html">Support Matrix</a>. You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also <a href="./manual/faq/matrix.html#zones">polyfill</a>.</p>
