@@ -44,10 +44,24 @@ dt.setLocale('fr').toLocaleString(DateTime.DATETIME_FULL); //=> '20 avril 2017 Ã
 
 ### Intl.DateTimeFormat
 
-In the example above, `DateTime.DATETIME_FULL` is one of several convenience formats provided by Luxon. But the arguments are really any set of options that can be provided to [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). For example:
+In the example above, `DateTime.DATETIME_FULL` is one of several convenience formats provided by Luxon. But the arguments are really any object of options that can be provided to [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). For example:
 
 ```js
 dt.toLocaleString({ month: 'long', day: 'numeric' }) //=> 'April 20'
+```
+
+And that's all the preset is:
+
+```
+DateTime.DATETIME_FULL;  //=> {
+                         //     year: 'numeric',
+                         //     month: 'long',
+                         //     day: 'numeric',
+                         //     hour: 'numeric',
+                         //     minute: '2-digit',
+                         //     timeZoneName: 'short'
+                         //   }
+
 ```
 
 This also means you can modify the presets as you choose:
@@ -60,7 +74,7 @@ dt.toLocaleString(newFormat); //=>  'Thursday, 4/20/2017'
 
 ### Presets
 
-Here's the full set of provided presets using the October 10, 1983 at 13:30:23 as an example.
+Here's the full set of provided presets using the October 14, 1983 at 13:30:23 as an example.
 
 | Name                        | Description                                                        | Example in EN_US                                           | Example in FR                                            |
 | ---                         | ---                                                                | ---                                                        | ---                                                      |
@@ -140,6 +154,8 @@ Some of the formats are "macros", meaning they correspond to multiple components
 ```js
 DateTime.fromISO('2014-08-06T13:07:04.054').toFormat('ff') //=> 'Aug 6, 2014, 1:07 PM'
 ```
+
+The macro options available correspond one-to-one with the preset formats defined for `toLocaleString`.
 
 ### Table of tokens
 

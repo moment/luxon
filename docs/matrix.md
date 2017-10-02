@@ -41,7 +41,7 @@ Here's the level of support for these features in different environments:
 ‡ Earlier versions may also support this, but I haven't been able to test them.
 
 Notes:
- * Node w/ICU refers to providing Node with ICU data. See [here](https://github.com/nodejs/node/wiki/Intl) for more info
+ * "w/ICU" refers to providing Node with ICU data. See [here](https://github.com/nodejs/node/wiki/Intl) for more info
  * Safari 11 is still in tech preview as of Sept 2017
  * IE is terrible and it's weird that anyone uses it
 
