@@ -1,10 +1,21 @@
 # Time zones and offsets
 
-Bear with me here. Time zones are pain in the ass. Luxon has lots of tools to deal with them, but there's no getting around the fact that they're complicated.
+Luxon has support for time zones. This page explains how to use them.
+
+## Don't worry!
+
+You *usually* don't need to worry about time zones. Your code runs on a computer with a particular time zone and everything will work consistently in that zone without you doing anything. It's when you want to do complicated stuff *across* zones that you have to think about it. Even then, here are some pointers to help you avoid situations where you have to think carefully about time zones:
+
+ 1. Don't make servers think about *local* times. Configure them to use UTC and write your server's code to work in UTC. Times can often be thought of a count of epoch milliseconds; what you would call that time (e.g. 9:30) in what zone doesn't (again, often) matter.
+ 2. Communicate times between systems in ISO 8601, like "2017-05-15T13:30:34Z" where possible (it doesn't matter if you use Z or some local offset; the point is that it precisely identifies the millisecond on the global timeline).
+ 3. Where possible, only think of time zones as formatting concern; your application ideally never knows that the time it's working with is called "9:00" until it's being rendered to the user.
+ 4. Barring 3, do as much manipulation of the time (say, adding an hour to the current time) in the client code that's already running in the time zone where the results will matter.
+ 
+All those things will make it less likely you ever need to work explicitly with time zones and may also save you plenty of other headaches. But those aren't possible for some applications; you might need to work with times in zones other than the one the program is running in, for any number of reasons. And that's where Luxon's time zone support comes in.
 
 ## Terminology
 
-The terminology for time zones and offsets isn't well-established. But let's try to impose some order:
+Bear with me here. Time zones are pain in the ass. Luxon has lots of tools to deal with them, but there's no getting around the fact that they're complicated. The terminology for time zones and offsets isn't well-established. But let's try to impose some order:
 
  1. An **offset** is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we'll use hours.
  1. A **time zone** is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as "America/New_York". That zone says something to the effect of "The offset is -4, except between March and September, when it's -5".
