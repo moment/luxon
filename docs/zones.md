@@ -65,7 +65,7 @@ IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tok
 Info.features().zones; //=> true
 ```
 
-If you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](faq/matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](faq/matrix.html#zones).
+If you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](faq/matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](faq/matrix.html#zones) your environment.
 
 If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](usage/validity.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason doesn't support that *particular* zone, or because the zone is just bogus. Like this:
 
@@ -80,7 +80,7 @@ bogus.invalidReason;   //=> 'unsupported zone'
 
 ### Local by default
 
-By default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's local zone. For example, my computer is configured to use `America/New_York`, which is has an offset of -4 in May:
+By default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's local zone. For example, my computer is configured to use `America/New_York`, which has an offset of -4 in May:
 
 ```js
 var local = DateTime.local(2017, 05, 15, 09, 10, 23);
@@ -96,10 +96,10 @@ iso.toString();                //=> '2017-05-15T09:10:23.000-04:00'
 
 ### Creating DateTimes in a zone
 
-Many of Luxon's factory methods allow you to tell Luxon specifically the zone to create the DateTime in:
+Many of Luxon's factory methods allow you to tell it specifically what zone to create the DateTime in:
 
 ```js
-var overrideZone = DateTime.fromISO("2017-05-15T09:10:23", {zone: 'Europe/Paris'});
+var overrideZone = DateTime.fromISO("2017-05-15T09:10:23", { zone: 'Europe/Paris' });
 
 overrideZone.zoneName;         //=> 'Europe/Paris'
 overrideZone.toString();       //=> '2017-05-15T09:10:23.000+02:00'
@@ -112,7 +112,7 @@ Note two things:
  
 Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it's more convenient for the same option to govern both.
 
-In addition, one static method, `utc()` specifically interprets the input as being specified in UTC. It also creates a DateTime in UTC:
+In addition, one static method, `utc()`, specifically interprets the input as being specified in UTC. It also creates a DateTime in UTC:
 
 ```js
 var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
@@ -140,7 +140,7 @@ specifyZone.toString()         //=> '2017-05-15T03:10:23.000-04:00'
 ...unless a zone is specified as an option (see previous section), in which case the DateTime gets converted to *that* zone:
 
 ```js
-var specifyOffsetAndOverrideZone = DateTime.fromISO("2017-05-15T09:10:23-09:00", {zone: 'Europe/Paris'});
+var specifyOffsetAndOverrideZone = DateTime.fromISO("2017-05-15T09:10:23-09:00", { zone: 'Europe/Paris' });
 
 specifyOffsetAndOverrideZone.zoneName;                 //=> 'Europe/Paris'
 specifyOffsetAndOverrideZone.toString();               //=> '2017-05-15T20:10:23.000+02:00'
@@ -151,12 +151,12 @@ specifyOffsetAndOverrideZone.toString();               //=> '2017-05-15T20:10:23
 Finally, some parsing functions allow you to "keep" the zone in the string as the DateTime's zone. Note that if only an offset is provided by the string, the zone will be a fixed-offset one, since Luxon doesn't know which zone is meant, even if you do.
 
 ```js
-var keepOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00", {setZone: true});
+var keepOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00", { setZone: true });
 
 keepOffset.zoneName;           //=> 'UTC-9'
 keepOffset.toString();         //=> '2017-05-15T09:10:23.000-09:00'
 
-var keepZone = DateTime.fromString("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-dd'T'HH:mm:ss z", {setZone: true});
+var keepZone = DateTime.fromString("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-dd'T'HH:mm:ss z", { setZone: true });
 
 keepZone.zoneName;             //=> 'Europe/Paris'
 keepZone.toString()            //=> '2017-05-15T09:10:23.000+02:00'
@@ -178,7 +178,7 @@ local.toString()     //=> '2017-09-13T18:30:51.141-04:00'
 rezoned.toString()   //=> '2017-09-13T15:30:51.141-07:00'
 
 
-//but actually the same time
+// but actually the same time
 local.valueOf() === rezoned.valueOf(); //=> true
 ```
 
@@ -188,7 +188,7 @@ Generally, it's best to think of the zone as a sort of metadata that you slide a
 
 ```js
 var local = DateTime.local();
-var rezoned = local.setZone('America/Los_Angeles', {keepCalendarTime: true});
+var rezoned = local.setZone('America/Los_Angeles', { keepCalendarTime: true });
 
 local.toString();      //=> '2017-09-13T18:36:23.187-04:00'
 rezoned.toString();    //=> '2017-09-13T18:36:23.187-07:00'
@@ -223,7 +223,7 @@ dt.zone   //=> LocalZone {}
 
 ## DST weirdness
 
-Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the equator. This all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and a time library has to deal with it.
+Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and a time library has to deal with it.
 
 Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.
 
@@ -249,7 +249,7 @@ DateTime.local(2017, 3, 13, 2, 30).minus({days: 1}).toString()        //=> '2017
 
 Harder to handle are ambiguous times. In the Northern Hemisphere, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because those correspond to different moments in time.
 
-However, Luxon's behavior here is undefined. It makes no promises about which of the two possible timestamps Luxon will represent. Currently, its specific behavior is like this:
+However, Luxon's behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:
 
 ```js
 DateTime.local(2017, 11, 5, 1, 30).offset / 60                   //=> -4
@@ -263,7 +263,7 @@ If you're curious, this lack of definition is because Luxon doesn't actually kno
 
 ### Math across DSTs
 
-There's a whole [section](usage/math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher order, variable length units like days, weeks, months, and years. When working with lower order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
+There's a whole [section](usage/math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher-order, variable-length units like days, weeks, months, and years. When working with lower-order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
 
 An easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is `America/New_York`, which had a Spring Forward DST in the early hours of March 12.
 
