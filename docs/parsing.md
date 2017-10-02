@@ -83,14 +83,12 @@ Note, however, that Luxon derives the list of strings that can match, say, "LLLL
 Not every token supported by `DateTime#toFormat` is supported in the parser. For example, there's no `ZZZZ` or `ZZZZZ` tokens. This is for a few reasons:
 
  * Luxon relies on natively-available functionality that only provides the mapping in one way. We can ask what the named offset is and get "Eastern Standard Time" but not ask what "Eastern Standard Time" is most likely to mean.
- * Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can't be parsed because ambiguity.
+ * Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can't be parsed because of their ambiguity.
  * Luxon doesn't yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.
 
 ### Debugging
 
-There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date.
-
-Luxon provides a method called [fromStringExplain](class/src/datetime.js~DateTime.html#static-method-fromStringExplain). It takes the same arguments as `fromString` but returns a map of information about the parse that can be useful in debugging.
+There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called [fromStringExplain](class/src/datetime.js~DateTime.html#static-method-fromStringExplain). It takes the same arguments as `fromString` but returns a map of information about the parse that can be useful in debugging.
 
 For example, here the code is using "MMMM" where "MMM" was needed. You can see the regex Luxon uses and see that it didn't match anything:
 
