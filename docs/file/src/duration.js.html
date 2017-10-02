@@ -49,28 +49,32 @@ import { Locale } from &apos;./impl/locale&apos;;
 import { Formatter } from &apos;./impl/formatter&apos;;
 import { RegexParser } from &apos;./impl/regexParser&apos;;
 import { Settings } from &apos;./settings&apos;;
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &apos;./errors&apos;;
+import {
+  InvalidArgumentError,
+  InvalidDurationError,
+  InvalidUnitError
+} from &apos;./errors&apos;;
 
 const INVALID = &apos;Invalid Duration&apos;;
 
 const lowOrderMatrix = {
-    weeks: {
-      days: 7,
-      hours: 7 * 24,
-      minutes: 7 * 24 * 60,
-      seconds: 7 * 24 * 60 * 60,
-      milliseconds: 7 * 24 * 60 * 60 * 1000
-    },
-    days: {
-      hours: 24,
-      minutes: 24 * 60,
-      seconds: 24 * 60 * 60,
-      milliseconds: 24 * 60 * 60 * 1000
-    },
-    hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
-    minutes: { seconds: 60, milliseconds: 60 * 1000 },
-    seconds: { milliseconds: 1000 }
+  weeks: {
+    days: 7,
+    hours: 7 * 24,
+    minutes: 7 * 24 * 60,
+    seconds: 7 * 24 * 60 * 60,
+    milliseconds: 7 * 24 * 60 * 60 * 1000
   },
+  days: {
+    hours: 24,
+    minutes: 24 * 60,
+    seconds: 24 * 60 * 60,
+    milliseconds: 24 * 60 * 60 * 1000
+  },
+  hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
+  minutes: { seconds: 60, milliseconds: 60 * 1000 },
+  seconds: { milliseconds: 1000 }
+},
   casualMatrix = Object.assign(
     {
       years: {
@@ -251,7 +255,9 @@ export class Duration {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError(&apos;need to specify a reason the DateTime is invalid&apos;);
+      throw new InvalidArgumentError(
+        &apos;need to specify a reason the DateTime is invalid&apos;
+      );
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDurationError(reason);
@@ -341,18 +347,17 @@ export class Duration {
   /**
    * Returns an ISO 8601-compliant string representation of this Duration.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
-   * Duration.fromObject({ years: 3, seconds: 45 }).toISO() //=&gt; &apos;P3YT45S&apos;
-   * Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=&gt; &apos;P4MT45S&apos;
-   * Duration.fromObject({ months: 5 }).toISO() //=&gt; &apos;P5M&apos;
-   * Duration.fromObject({ minutes: 5 }).toISO() //=&gt; &apos;PT5M&apos;
+   * @example Duration.fromObject({ years: 3, seconds: 45 }).toISO() //=&gt; &apos;P3YT45S&apos;
+   * @example Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=&gt; &apos;P4MT45S&apos;
+   * @example Duration.fromObject({ months: 5 }).toISO() //=&gt; &apos;P5M&apos;
+   * @example Duration.fromObject({ minutes: 5 }).toISO() //=&gt; &apos;PT5M&apos;
    * @return {string}
    */
   toISO() {
     // we could use the formatter, but this is an easier way to get the minimum string
     if (!this.isValid) return null;
 
-    let s = &apos;P&apos;,
-      norm = this.normalize();
+    let s = &apos;P&apos;, norm = this.normalize();
 
     // ISO durations are always positive, so take the absolute value
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
@@ -360,7 +365,13 @@ export class Duration {
     if (norm.years &gt; 0) s += norm.years + &apos;Y&apos;;
     if (norm.months &gt; 0) s += norm.months + &apos;M&apos;;
     if (norm.days &gt; 0 || norm.weeks &gt; 0) s += norm.days + norm.weeks * 7 + &apos;D&apos;;
-    if (norm.hours &gt; 0 || norm.minutes &gt; 0 || norm.seconds &gt; 0 || norm.milliseconds &gt; 0) s += &apos;T&apos;;
+    if (
+      norm.hours &gt; 0 ||
+      norm.minutes &gt; 0 ||
+      norm.seconds &gt; 0 ||
+      norm.milliseconds &gt; 0
+    )
+      s += &apos;T&apos;;
     if (norm.hours &gt; 0) s += norm.hours + &apos;H&apos;;
     if (norm.minutes &gt; 0) s += norm.minutes + &apos;M&apos;;
     if (norm.seconds &gt; 0) s += norm.seconds + &apos;S&apos;;
@@ -391,8 +402,7 @@ export class Duration {
   plus(duration) {
     if (!this.isValid) return this;
 
-    const dur = Util.friendlyDuration(duration),
-      result = {};
+    const dur = Util.friendlyDuration(duration), result = {};
 
     for (const k of orderedUnits) {
       const val = dur.get(k) + this.get(k);
@@ -436,7 +446,10 @@ export class Duration {
    * @return {Duration}
    */
   set(values) {
-    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
+    const mixed = Object.assign(
+      this.values,
+      Util.normalizeObject(values, Duration.normalizeUnit)
+    );
     return clone(this, { values: mixed });
   }
 
@@ -446,8 +459,7 @@ export class Duration {
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy } = {}) {
-    const loc = this.loc.clone({ locale, numberingSystem }),
-      opts = { loc };
+    const loc = this.loc.clone({ locale, numberingSystem }), opts = { loc };
 
     if (conversionAccuracy) {
       opts.conversionAccuracy = conversionAccuracy;
@@ -497,9 +509,7 @@ export class Duration {
 
     units = units.map(Duration.normalizeUnit);
 
-    const built = {},
-      accumulated = {},
-      vals = this.toObject();
+    const built = {}, accumulated = {}, vals = this.toObject();
     let lastUnit;
 
     for (const k of orderedUnits) {
