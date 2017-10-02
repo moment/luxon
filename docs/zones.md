@@ -59,7 +59,7 @@ Luxon's API methods that take a zone as an argument all let you specify the zone
 
 ### IANA support
 
-IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can fiddle with the zones. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
+IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
 
 ```js
 Info.features().zones; //=> true
