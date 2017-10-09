@@ -1793,10 +1793,10 @@ class Duration {
   /**
    * Returns an ISO 8601-compliant string representation of this Duration.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
-   * Duration.fromObject({ years: 3, seconds: 45 }).toISO() //=> 'P3YT45S'
-   * Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=> 'P4MT45S'
-   * Duration.fromObject({ months: 5 }).toISO() //=> 'P5M'
-   * Duration.fromObject({ minutes: 5 }).toISO() //=> 'PT5M'
+   * @example Duration.fromObject({ years: 3, seconds: 45 }).toISO() //=> 'P3YT45S'
+   * @example Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=> 'P4MT45S'
+   * @example Duration.fromObject({ months: 5 }).toISO() //=> 'P5M'
+   * @example Duration.fromObject({ minutes: 5 }).toISO() //=> 'PT5M'
    * @return {string}
    */
   toISO() {
@@ -2481,7 +2481,8 @@ class Interval {
       } else {
         return [sofar.concat([current]), item];
       }
-    }, [[], null]);
+    },
+    [[], null]);
     if (final) {
       found.push(final);
     }
