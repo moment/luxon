@@ -140,45 +140,45 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 
 (Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).
 
-| Standlone token | Format token | Description | Example |
-| --- | --- | --- | --- |
-| S | | millisecond, no padding | 54 |
-| SSS | | millisecond, padded to 3 | 054 |
-| s | | second, no padding | 4 |
-| ss | | second, padded to 2 padding | 04 |
-| m | | minute, no padding | 7 |
-| mm | | minute, padded to 2 | 07 |
-| h | | hour in 12-hour time, no padding | 1 |
-| hh | | hour in 12-hour time, padded to 2 | 01 |
-| H | | hour in 24-hour time, padded to 2 | 9 |
-| HH | | hour in 24-hour time, padded to 2 | 13 |
-| Z | | narrow offset | +5 |
-| ZZ | | short offset | +05:00 |
-| ZZZ | | techie offset | +0500 |
-| z | | IANA zone | America/New_York |
-| a | | meridiem | AM |
-| d | | day of the month, no padding | 6 |
-| dd | | day of the month, padded to 2 | 06 |
-| E | c | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | 3 |
-| EEE | ccc | day of the week, as an abbreviate localized string | Wed |
-| EEEE | cccc | day of the week, as an unabbreviated localized string | Wednesday |
-| M | L | month as an unpadded number | 8 |
-| MM | LL | month as an padded number | 08 |
-| MMM | LLL | month as an abbreviated localized string | Aug |
-| MMMM | LLLL | month as an unabbreviated localized string | August |
-| y | | year, unpadded | 2014 |
-| yy | | two-digit year | 14 |
-| yyyy | | four-digit year | 2014 |
-| G | | abbreviated localized era | AD
-| GG | | unabbreviated localized era | Anno Domini
-| GGGGG | | one-letter localized era | A
-| kk | | ISO week year, unpadded | 17 
-| kkkk | | ISO week year, padded to 4 | 2014
-| W | | ISO week number, unpadded | 32
-| WW | | ISO week number, padded to 2 | 32
-| o | | ordinal (day of year), unpadded | 218
-| ooo | | ordinal (day of year), padded to 3 | 218
-| D | | localized numeric date | 9/4/2017 
-| DD | | localized date with abbreviated month | Aug 6, 2014
-| DDD | | localized date with full month | August 6, 2014
-| DDDD | | localized date with full month and weekday | Wednesday, August 6, 2014
+| Standlone token | Format token | Description                                                    |                   Example |
+| ---             | ---          | ---                                                            |                       --- |
+| S               |              | millisecond, no padding                                        |                        54 |
+| SSS             |              | millisecond, padded to 3                                       |                       054 |
+| s               |              | second, no padding                                             |                         4 |
+| ss              |              | second, padded to 2 padding                                    |                        04 |
+| m               |              | minute, no padding                                             |                         7 |
+| mm              |              | minute, padded to 2                                            |                        07 |
+| h               |              | hour in 12-hour time, no padding                               |                         1 |
+| hh              |              | hour in 12-hour time, padded to 2                              |                        01 |
+| H               |              | hour in 24-hour time, padded to 2                              |                         9 |
+| HH              |              | hour in 24-hour time, padded to 2                              |                        13 |
+| Z               |              | narrow offset                                                  |                        +5 |
+| ZZ              |              | short offset                                                   |                    +05:00 |
+| ZZZ             |              | techie offset                                                  |                     +0500 |
+| z               |              | IANA zone                                                      |          America/New_York |
+| a               |              | meridiem                                                       |                        AM |
+| d               |              | day of the month, no padding                                   |                         6 |
+| dd              |              | day of the month, padded to 2                                  |                        06 |
+| E               | c            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) |                         3 |
+| EEE             | ccc          | day of the week, as an abbreviate localized string             |                       Wed |
+| EEEE            | cccc         | day of the week, as an unabbreviated localized string          |                 Wednesday |
+| M               | L            | month as an unpadded number                                    |                         8 |
+| MM              | LL           | month as an padded number                                      |                        08 |
+| MMM             | LLL          | month as an abbreviated localized string                       |                       Aug |
+| MMMM            | LLLL         | month as an unabbreviated localized string                     |                    August |
+| y               |              | year, unpadded                                                 |                      2014 |
+| yy              |              | two-digit year                                                 |                        14 |
+| yyyy            |              | four-digit year                                                |                      2014 |
+| G               |              | abbreviated localized era                                      |                        AD |
+| GG              |              | unabbreviated localized era                                    |               Anno Domini |
+| GGGGG           |              | one-letter localized era                                       |                         A |
+| kk              |              | ISO week year, unpadded                                        |                        17 |
+| kkkk            |              | ISO week year, padded to 4                                     |                      2014 |
+| W               |              | ISO week number, unpadded                                      |                        32 |
+| WW              |              | ISO week number, padded to 2                                   |                        32 |
+| o               |              | ordinal (day of year), unpadded                                |                       218 |
+| ooo             |              | ordinal (day of year), padded to 3                             |                       218 |
+| D               |              | localized numeric date                                         |                  9/4/2017 |
+| DD              |              | localized date with abbreviated month                          |               Aug 6, 2014 |
+| DDD             |              | localized date with full month                                 |            August 6, 2014 |
+| DDDD            |              | localized date with full month and weekday                     | Wednesday, August 6, 2014 |

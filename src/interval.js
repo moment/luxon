@@ -371,7 +371,8 @@ export class Interval {
       } else {
         return [sofar.concat([current]), item];
       }
-    }, [[], null]);
+    },
+    [[], null]);
     if (final) {
       found.push(final);
     }
