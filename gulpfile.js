@@ -46,7 +46,7 @@ function processLib(opts) {
 
     const dest = `./build/${opts.dest || opts.format}`,
       // confession: I have no idea why piping to lazypipe works
-      // after dest, but you can't pipe directly but it does so...
+      // after dest, but you can't pipe directly so...
       minify = lazypipe()
         .pipe(filter, ['**/*.js'])
         .pipe(babili, { mangle: { keepClassNames: true } })

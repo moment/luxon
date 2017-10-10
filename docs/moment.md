@@ -12,7 +12,7 @@ var m2 = m1.add(1, 'hours');
 m1.valueOf() === m2.valueOf(); //=> true
 ```
 
-This happens because `m1` and `m2` are really the same object; `add()` *mutated* the object to be an hour later. Compare this to Luxon:
+This happens because `m1` and `m2` are really the same object; `add()` *mutated* the object to be an hour later. Compare that to Luxon:
 
 ```js
 var d1 = DateTime.local();
