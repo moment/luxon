@@ -123,6 +123,7 @@ For programmatic getting and setting, Luxon and Moment are very similar here:
 | Is this time's year a leap year?           | `isInLeapYear()`        | `isInLeapYear`                                   |                                                                                                 |
 | How many days are in this time's month?    | `daysInMonth()`         | `daysInMonth`                                    |                                                                                                 |
 | How many days are in this time's year?     | None                    | `daysInYear`                                     |                                                                                                 |
+|--------------------------------------------|-------------------------|--------------------------------------------------|-------------------------------------------------------------------------------------------------|
 
 ### Output
 
