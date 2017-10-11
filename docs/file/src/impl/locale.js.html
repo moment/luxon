@@ -255,7 +255,7 @@ export class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+    const realIntlOpts = Util.assign({ useGrouping: false }, intlOpts);
 
     if (opts.padTo &gt; 0) {
       realIntlOpts.minimumIntegerDigits = opts.padTo;
@@ -284,7 +284,7 @@ export class Locale {
       z = dt.zone.name;
     }
 
-    const realIntlOpts = Object.assign({}, intlOpts);
+    const realIntlOpts = Util.assign({}, intlOpts);
     if (z) {
       realIntlOpts.timeZone = z;
     }

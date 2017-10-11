@@ -81,7 +81,7 @@ function clone(inst, alts = {}) {
     loc: inst.loc,
     invalidReason: inst.invalidReason
   };
-  return new DateTime(Object.assign({}, current, alts, { old: current }));
+  return new DateTime(Util.assign({}, current, alts, { old: current }));
 }
 
 function fixOffset(localTS, o, tz) {
@@ -150,7 +150,7 @@ function objToTS(obj, offset, zone) {
 
 function adjustTime(inst, dur) {
   const oPre = inst.o,
-    c = Object.assign({}, inst.c, {
+    c = Util.assign({}, inst.c, {
       year: inst.c.year + dur.years,
       month: inst.c.month + dur.months,
       day: inst.c.day + dur.days + dur.weeks * 7
@@ -179,7 +179,7 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
   if (parsed &amp;&amp; Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(
-        Object.assign(parsed, opts, {
+        Util.assign(parsed, opts, {
           zone: interpretationZone
         })
       );
@@ -1026,14 +1026,14 @@ export class DateTime {
     let mixed;
     if (settingWeekStuff) {
       mixed = Conversions.weekToGregorian(
-        Object.assign(Conversions.gregorianToWeek(this.c), normalized)
+        Util.assign(Conversions.gregorianToWeek(this.c), normalized)
       );
     } else if (!Util.isUndefined(normalized.ordinal)) {
       mixed = Conversions.ordinalToGregorian(
-        Object.assign(Conversions.gregorianToOrdinal(this.c), normalized)
+        Util.assign(Conversions.gregorianToOrdinal(this.c), normalized)
       );
     } else {
-      mixed = Object.assign(this.toObject(), normalized);
+      mixed = Util.assign(this.toObject(), normalized);
 
       // if we didn&apos;t set the day but we ended up on an overflow date,
       // use the last day of the right month
@@ -1278,7 +1278,7 @@ export class DateTime {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Object.assign({}, this.c);
+    const base = Util.assign({}, this.c);
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
@@ -1401,7 +1401,7 @@ export class DateTime {
       ),
       shiftTo = moreUnits.length &gt; 0 ? moreUnits : [lowestOrder],
       shifted = remaining.shiftTo(...shiftTo),
-      merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
+      merged = shifted.plus(Duration.fromObject(Util.assign(accum, opts)));
 
     return flipped ? merged.negate() : merged;
   }

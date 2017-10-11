@@ -100,7 +100,7 @@ export class Conversions {
       weekYear = year;
     }
 
-    return Object.assign({ weekYear, weekNumber, weekday }, Util.timeObject(gregObj));
+    return Util.assign({ weekYear, weekNumber, weekday }, Util.timeObject(gregObj));
   }
 
   static weekToGregorian(weekData) {
@@ -122,21 +122,21 @@ export class Conversions {
 
     const { month, day } = uncomputeOrdinal(year, ordinal);
 
-    return Object.assign({ year, month, day }, Util.timeObject(weekData));
+    return Util.assign({ year, month, day }, Util.timeObject(weekData));
   }
 
   static gregorianToOrdinal(gregData) {
     const { year, month, day } = gregData,
       ordinal = computeOrdinal(year, month, day);
 
-    return Object.assign({ year, ordinal }, Util.timeObject(gregData));
+    return Util.assign({ year, ordinal }, Util.timeObject(gregData));
   }
 
   static ordinalToGregorian(ordinalData) {
     const { year, ordinal } = ordinalData,
       { month, day } = uncomputeOrdinal(year, ordinal);
 
-    return Object.assign({ year, month, day }, Util.timeObject(ordinalData));
+    return Util.assign({ year, month, day }, Util.timeObject(ordinalData));
   }
 
   static hasInvalidWeekData(obj) {

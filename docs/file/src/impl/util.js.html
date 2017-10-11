@@ -177,7 +177,7 @@ export class Util {
       intl.timeZone = timeZone;
     }
 
-    const modified = Object.assign({ timeZoneName: offsetFormat }, intl);
+    const modified = Util.assign({ timeZoneName: offsetFormat }, intl);
 
     if (Intl.DateTimeFormat.prototype.formatToParts) {
       const parsed = new Intl.DateTimeFormat(locale, modified)
@@ -220,7 +220,7 @@ export class Util {
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
         const v = obj[u];
-        if (v !== null &amp;&amp; !Util.isUndefined(v) &amp;&amp; !Number.isNaN(v)) {
+        if (v !== null &amp;&amp; !Util.isUndefined(v) &amp;&amp; !Util.isNaN(v)) {
           const mapped = normalizer(u, ignoreUnknown);
           if (mapped) {
             normalized[mapped] = v;
@@ -245,6 +245,37 @@ export class Util {
       offMin = parseInt(offMinuteStr, 10) || 0,
       offMinSigned = offHour &lt; 0 ? -offMin : offMin;
     return offHour * 60 + offMinSigned;
+  }
+
+  // adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+  static assign(target, ...args) {
+    if (typeof Object.assign === &apos;function&apos;) {
+      return Object.assign(target, ...args);
+    } else {
+      const to = Object(target);
+
+      for (let index = 1; index &lt; args.length; index++) {
+        const nextSource = args[index];
+
+        if (nextSource != null) {
+          // Skip over if undefined or null
+          for (const nextKey in nextSource) {
+            if (Object.hasOwnProperty(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey];
+            }
+          }
+        }
+      }
+      return to;
+    }
+  }
+
+  static isNaN(thing) {
+    if (typeof Number.isNaN === &apos;function&apos;) {
+      return Number.isNaN(thing);
+    } else {
+      return thing !== thing; // eslint-disable-line no-self-compare
+    }
   }
 }
 </code></pre>
