@@ -3109,7 +3109,7 @@ var Locale = function () {
   createClass(Locale, [{
     key: 'knownEnglish',
     value: function knownEnglish() {
-      return (this.locale === 'en' || this.locale === 'en-us' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) && this.numberingSystem === null && this.numberingSystem === 'latn' && (this.outputCalendar === null || this.outputCalendar === 'gregory');
+      return (this.locale === 'en' || this.locale === 'en-us' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) && (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
     }
   }, {
     key: 'clone',
