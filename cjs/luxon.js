@@ -1530,6 +1530,190 @@ _export(_export.S, 'Number', {
   }
 });
 
+// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
+
+
+_export(_export.S, 'Array', { isArray: _isArray });
+
+// call something on iterator step with safe closing on error
+
+var _iterCall = function _iterCall(iterator, fn, value, entries) {
+  try {
+    return entries ? fn(_anObject(value)[0], value[1]) : fn(value);
+    // 7.4.6 IteratorClose(iterator, completion)
+  } catch (e) {
+    var ret = iterator['return'];
+    if (ret !== undefined) _anObject(ret.call(iterator));
+    throw e;
+  }
+};
+
+// check on default Array iterator
+
+var ITERATOR$2 = _wks('iterator');
+var ArrayProto$1 = Array.prototype;
+
+var _isArrayIter = function _isArrayIter(it) {
+  return it !== undefined && (_iterators.Array === it || ArrayProto$1[ITERATOR$2] === it);
+};
+
+'use strict';
+
+var _createProperty = function _createProperty(object, index, value) {
+  if (index in object) _objectDp.f(object, index, _propertyDesc(0, value));else object[index] = value;
+};
+
+var ITERATOR$3 = _wks('iterator');
+
+var core_getIteratorMethod = _core.getIteratorMethod = function (it) {
+  if (it != undefined) return it[ITERATOR$3] || it['@@iterator'] || _iterators[_classof(it)];
+};
+
+var ITERATOR$4 = _wks('iterator');
+var SAFE_CLOSING = false;
+
+try {
+  var riter = [7][ITERATOR$4]();
+  riter['return'] = function () {
+    SAFE_CLOSING = true;
+  };
+  // eslint-disable-next-line no-throw-literal
+  
+} catch (e) {/* empty */}
+
+var _iterDetect = function _iterDetect(exec, skipClosing) {
+  if (!skipClosing && !SAFE_CLOSING) return false;
+  var safe = false;
+  try {
+    var arr = [7];
+    var iter = arr[ITERATOR$4]();
+    iter.next = function () {
+      return { done: safe = true };
+    };
+    arr[ITERATOR$4] = function () {
+      return iter;
+    };
+    exec(arr);
+  } catch (e) {/* empty */}
+  return safe;
+};
+
+'use strict';
+
+_export(_export.S + _export.F * !_iterDetect(function (iter) {
+  
+}), 'Array', {
+  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
+  from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
+    var O = _toObject(arrayLike);
+    var C = typeof this == 'function' ? this : Array;
+    var aLen = arguments.length;
+    var mapfn = aLen > 1 ? arguments[1] : undefined;
+    var mapping = mapfn !== undefined;
+    var index = 0;
+    var iterFn = core_getIteratorMethod(O);
+    var length, result, step, iterator;
+    if (mapping) mapfn = _ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
+    // if object isn't iterable or it's array with default iterator - use simple case
+    if (iterFn != undefined && !(C == Array && _isArrayIter(iterFn))) {
+      for (iterator = iterFn.call(O), result = new C(); !(step = iterator.next()).done; index++) {
+        _createProperty(result, index, mapping ? _iterCall(iterator, mapfn, [step.value, index], true) : step.value);
+      }
+    } else {
+      length = _toLength(O.length);
+      for (result = new C(length); length > index; index++) {
+        _createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
+      }
+    }
+    result.length = index;
+    return result;
+  }
+});
+
+'use strict';
+
+// WebKit Array.of isn't generic
+_export(_export.S + _export.F * _fails(function () {
+  function F() {/* empty */}
+  return !(Array.of.call(F) instanceof F);
+}), 'Array', {
+  // 22.1.2.3 Array.of( ...items)
+  of: function of() /* ...args */{
+    var index = 0;
+    var aLen = arguments.length;
+    var result = new (typeof this == 'function' ? this : Array)(aLen);
+    while (aLen > index) {
+      _createProperty(result, index, arguments[index++]);
+    }result.length = aLen;
+    return result;
+  }
+});
+
+'use strict';
+
+var _strictMethod = function _strictMethod(method, arg) {
+  return !!method && _fails(function () {
+    // eslint-disable-next-line no-useless-call
+    arg ? method.call(null, function () {/* empty */}, 1) : method.call(null);
+  });
+};
+
+'use strict';
+// 22.1.3.13 Array.prototype.join(separator)
+
+
+var arrayJoin = [].join;
+
+// fallback for not array-like strings
+_export(_export.P + _export.F * (_iobject != Object || !_strictMethod(arrayJoin)), 'Array', {
+  join: function join(separator) {
+    return arrayJoin.call(_toIobject(this), separator === undefined ? ',' : separator);
+  }
+});
+
+'use strict';
+
+var arraySlice = [].slice;
+
+// fallback for not array-like ES3 strings and DOM objects
+_export(_export.P + _export.F * _fails(function () {
+  if (_html) arraySlice.call(_html);
+}), 'Array', {
+  slice: function slice(begin, end) {
+    var len = _toLength(this.length);
+    var klass = _cof(this);
+    end = end === undefined ? len : end;
+    if (klass == 'Array') return arraySlice.call(this, begin, end);
+    var start = _toAbsoluteIndex(begin, len);
+    var upTo = _toAbsoluteIndex(end, len);
+    var size = _toLength(upTo - start);
+    var cloned = Array(size);
+    var i = 0;
+    for (; i < size; i++) {
+      cloned[i] = klass == 'String' ? this.charAt(start + i) : this[start + i];
+    }return cloned;
+  }
+});
+
+'use strict';
+
+var $sort = [].sort;
+var test$1 = [1, 2, 3];
+
+_export(_export.P + _export.F * (_fails(function () {
+  // IE8-
+  test$1.sort(undefined);
+}) || !_fails(function () {
+  // V8 bug
+  test$1.sort(null);
+  // Old WebKit
+}) || !_strictMethod($sort)), 'Array', {
+  // 22.1.3.25 Array.prototype.sort(comparefn)
+  sort: function sort(comparefn) {
+    return comparefn === undefined ? $sort.call(_toObject(this)) : $sort.call(_toObject(this), _aFunction(comparefn));
+  }
+});
+
 var SPECIES = _wks('species');
 
 var _arraySpeciesConstructor = function _arraySpeciesConstructor(original) {
@@ -1600,21 +1784,241 @@ var _arrayMethods = function _arrayMethods(TYPE, $create) {
 };
 
 'use strict';
-// 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
 
-var $find = _arrayMethods(6);
-var KEY = 'findIndex';
+var $forEach = _arrayMethods(0);
+var STRICT = _strictMethod([].forEach, true);
+
+_export(_export.P + _export.F * !STRICT, 'Array', {
+  // 22.1.3.10 / 15.4.4.18 Array.prototype.forEach(callbackfn [, thisArg])
+  forEach: function forEach(callbackfn /* , thisArg */) {
+    return $forEach(this, callbackfn, arguments[1]);
+  }
+});
+
+'use strict';
+
+var $map = _arrayMethods(1);
+
+_export(_export.P + _export.F * !_strictMethod([].map, true), 'Array', {
+  // 22.1.3.15 / 15.4.4.19 Array.prototype.map(callbackfn [, thisArg])
+  map: function map(callbackfn /* , thisArg */) {
+    return $map(this, callbackfn, arguments[1]);
+  }
+});
+
+'use strict';
+
+var $filter = _arrayMethods(2);
+
+_export(_export.P + _export.F * !_strictMethod([].filter, true), 'Array', {
+  // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
+  filter: function filter(callbackfn /* , thisArg */) {
+    return $filter(this, callbackfn, arguments[1]);
+  }
+});
+
+'use strict';
+
+var $some = _arrayMethods(3);
+
+_export(_export.P + _export.F * !_strictMethod([].some, true), 'Array', {
+  // 22.1.3.23 / 15.4.4.17 Array.prototype.some(callbackfn [, thisArg])
+  some: function some(callbackfn /* , thisArg */) {
+    return $some(this, callbackfn, arguments[1]);
+  }
+});
+
+'use strict';
+
+var $every = _arrayMethods(4);
+
+_export(_export.P + _export.F * !_strictMethod([].every, true), 'Array', {
+  // 22.1.3.5 / 15.4.4.16 Array.prototype.every(callbackfn [, thisArg])
+  every: function every(callbackfn /* , thisArg */) {
+    return $every(this, callbackfn, arguments[1]);
+  }
+});
+
+var _arrayReduce = function _arrayReduce(that, callbackfn, aLen, memo, isRight) {
+  _aFunction(callbackfn);
+  var O = _toObject(that);
+  var self = _iobject(O);
+  var length = _toLength(O.length);
+  var index = isRight ? length - 1 : 0;
+  var i = isRight ? -1 : 1;
+  if (aLen < 2) for (;;) {
+    if (index in self) {
+      memo = self[index];
+      index += i;
+      break;
+    }
+    index += i;
+    if (isRight ? index < 0 : length <= index) {
+      throw TypeError('Reduce of empty array with no initial value');
+    }
+  }
+  for (; isRight ? index >= 0 : length > index; index += i) {
+    if (index in self) {
+      memo = callbackfn(memo, self[index], index, O);
+    }
+  }return memo;
+};
+
+'use strict';
+
+_export(_export.P + _export.F * !_strictMethod([].reduce, true), 'Array', {
+  // 22.1.3.18 / 15.4.4.21 Array.prototype.reduce(callbackfn [, initialValue])
+  reduce: function reduce(callbackfn /* , initialValue */) {
+    return _arrayReduce(this, callbackfn, arguments.length, arguments[1], false);
+  }
+});
+
+'use strict';
+
+_export(_export.P + _export.F * !_strictMethod([].reduceRight, true), 'Array', {
+  // 22.1.3.19 / 15.4.4.22 Array.prototype.reduceRight(callbackfn [, initialValue])
+  reduceRight: function reduceRight(callbackfn /* , initialValue */) {
+    return _arrayReduce(this, callbackfn, arguments.length, arguments[1], true);
+  }
+});
+
+'use strict';
+
+var $indexOf = _arrayIncludes(false);
+var $native = [].indexOf;
+var NEGATIVE_ZERO = !!$native && 1 / [1].indexOf(1, -0) < 0;
+
+_export(_export.P + _export.F * (NEGATIVE_ZERO || !_strictMethod($native)), 'Array', {
+  // 22.1.3.11 / 15.4.4.14 Array.prototype.indexOf(searchElement [, fromIndex])
+  indexOf: function indexOf(searchElement /* , fromIndex = 0 */) {
+    return NEGATIVE_ZERO
+    // convert -0 to +0
+    ? $native.apply(this, arguments) || 0 : $indexOf(this, searchElement, arguments[1]);
+  }
+});
+
+'use strict';
+
+var $native$1 = [].lastIndexOf;
+var NEGATIVE_ZERO$1 = !!$native$1 && 1 / [1].lastIndexOf(1, -0) < 0;
+
+_export(_export.P + _export.F * (NEGATIVE_ZERO$1 || !_strictMethod($native$1)), 'Array', {
+  // 22.1.3.14 / 15.4.4.15 Array.prototype.lastIndexOf(searchElement [, fromIndex])
+  lastIndexOf: function lastIndexOf(searchElement /* , fromIndex = @[*-1] */) {
+    // convert -0 to +0
+    if (NEGATIVE_ZERO$1) return $native$1.apply(this, arguments) || 0;
+    var O = _toIobject(this);
+    var length = _toLength(O.length);
+    var index = length - 1;
+    if (arguments.length > 1) index = Math.min(index, _toInteger(arguments[1]));
+    if (index < 0) index = length + index;
+    for (; index >= 0; index--) {
+      if (index in O) if (O[index] === searchElement) return index || 0;
+    }return -1;
+  }
+});
+
+// 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
+'use strict';
+
+var _arrayCopyWithin = [].copyWithin || function copyWithin(target /* = 0 */, start /* = 0, end = @length */) {
+  var O = _toObject(this);
+  var len = _toLength(O.length);
+  var to = _toAbsoluteIndex(target, len);
+  var from = _toAbsoluteIndex(start, len);
+  var end = arguments.length > 2 ? arguments[2] : undefined;
+  var count = Math.min((end === undefined ? len : _toAbsoluteIndex(end, len)) - from, len - to);
+  var inc = 1;
+  if (from < to && to < from + count) {
+    inc = -1;
+    from += count - 1;
+    to += count - 1;
+  }
+  while (count-- > 0) {
+    if (from in O) O[to] = O[from];else delete O[to];
+    to += inc;
+    from += inc;
+  }return O;
+};
+
+// 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
+
+
+_export(_export.P, 'Array', { copyWithin: _arrayCopyWithin });
+
+_addToUnscopables('copyWithin');
+
+// 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
+'use strict';
+
+var _arrayFill = function fill(value /* , start = 0, end = @length */) {
+  var O = _toObject(this);
+  var length = _toLength(O.length);
+  var aLen = arguments.length;
+  var index = _toAbsoluteIndex(aLen > 1 ? arguments[1] : undefined, length);
+  var end = aLen > 2 ? arguments[2] : undefined;
+  var endPos = end === undefined ? length : _toAbsoluteIndex(end, length);
+  while (endPos > index) {
+    O[index++] = value;
+  }return O;
+};
+
+// 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
+
+
+_export(_export.P, 'Array', { fill: _arrayFill });
+
+_addToUnscopables('fill');
+
+'use strict';
+// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+
+var $find = _arrayMethods(5);
+var KEY = 'find';
 var forced = true;
 // Shouldn't skip holes
 if (KEY in []) Array(1)[KEY](function () {
   forced = false;
 });
 _export(_export.P + _export.F * forced, 'Array', {
-  findIndex: function findIndex(callbackfn /* , that = undefined */) {
+  find: function find(callbackfn /* , that = undefined */) {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
 _addToUnscopables(KEY);
+
+'use strict';
+// 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
+
+var $find$1 = _arrayMethods(6);
+var KEY$1 = 'findIndex';
+var forced$1 = true;
+// Shouldn't skip holes
+if (KEY$1 in []) Array(1)[KEY$1](function () {
+  forced$1 = false;
+});
+_export(_export.P + _export.F * forced$1, 'Array', {
+  findIndex: function findIndex(callbackfn /* , that = undefined */) {
+    return $find$1(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+_addToUnscopables(KEY$1);
+
+'use strict';
+
+var SPECIES$1 = _wks('species');
+
+var _setSpecies = function _setSpecies(KEY) {
+  var C = _global[KEY];
+  if (_descriptors && C && !C[SPECIES$1]) _objectDp.f(C, SPECIES$1, {
+    configurable: true,
+    get: function get() {
+      return this;
+    }
+  });
+};
+
+_setSpecies('Array');
 
 // these aren't really private, but nor are they really useful to document
 
@@ -2391,7 +2795,9 @@ var Util = function () {
   }, {
     key: 'normalizeZone',
     value: function normalizeZone(input) {
-      if (input instanceof Zone) {
+      if (input === null) {
+        return LocalZone.instance;
+      } else if (input instanceof Zone) {
         return input;
       } else if (Util.isString(input)) {
         var lowered = input.toLowerCase();
@@ -4988,7 +5394,9 @@ function oneOf(strings, startIndex) {
       var _ref4 = slicedToArray(_ref3, 1),
           s = _ref4[0];
 
-      return strings.indexOf(s) + startIndex;
+      return strings.findIndex(function (i) {
+        return s.toLowerCase() === i.toLowerCase();
+      }) + startIndex;
     }
   };
 }
@@ -5252,7 +5660,7 @@ var TokenParser = function () {
           _buildRegex2 = slicedToArray(_buildRegex, 2),
           regex = _buildRegex2[0],
           handlers = _buildRegex2[1],
-          matches = match(input, regex, handlers),
+          matches = match(input, RegExp(regex, 'i'), handlers),
           _ref11 = matches ? dateTimeFromMatches(matches) : [null, null],
           _ref12 = slicedToArray(_ref11, 2),
           result = _ref12[0],
@@ -5452,6 +5860,7 @@ var Conversions = function () {
 
 var INVALID = 'Invalid DateTime';
 var UNSUPPORTED_ZONE = 'unsupported zone';
+var UNPARSABLE = 'unparsable';
 
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
@@ -5571,7 +5980,7 @@ function parseDataToDateTime(parsed, parsedZone) {
     }));
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(UNSUPPORTED_ZONE);
+    return DateTime.invalid(UNPARSABLE);
   }
 }
 
