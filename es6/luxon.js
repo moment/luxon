@@ -480,37 +480,29 @@ class Util {
   static flatten(arr) {
     return arr.reduce(
       (flat, toFlatten) =>
-        flat.concat(
-          Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten
-        ),
+        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),
       []
     );
   }
 
   static bestBy(arr, by, compare) {
-    return arr.reduce(
-      (best, next) => {
-        const pair = [by(next), next];
-        if (!best) {
-          return pair;
-        } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
-          return best;
-        } else {
-          return pair;
-        }
-      },
-      null
-    )[1];
+    return arr.reduce((best, next) => {
+      const pair = [by(next), next];
+      if (!best) {
+        return pair;
+      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+        return best;
+      } else {
+        return pair;
+      }
+    }, null)[1];
   }
 
   static pick(obj, keys) {
-    return keys.reduce(
-      (a, k) => {
-        a[k] = obj[k];
-        return a;
-      },
-      {}
-    );
+    return keys.reduce((a, k) => {
+      a[k] = obj[k];
+      return a;
+    }, {});
   }
 
   static isLeapYear(year) {
@@ -571,8 +563,7 @@ class Util {
       if (lowered === 'local') return LocalZone.instance;
       else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
       else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
-      else return FixedOffsetZone.parseSpecifier(lowered) ||
-          Settings.defaultZone;
+      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
     } else if (typeof input === 'object' && input.offset) {
@@ -589,7 +580,7 @@ class Util {
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
         const v = obj[u];
-        if (v !== null && !Util.isUndefined(v) && !Number.isNaN(v)) {
+        if (v !== null && !Util.isUndefined(v) && !Util.isNaN(v)) {
           const mapped = normalizer(u, ignoreUnknown);
           if (mapped) {
             normalized[mapped] = v;
@@ -636,6 +627,14 @@ class Util {
         }
       }
       return to;
+    }
+  }
+
+  static isNaN(thing) {
+    if (typeof Number.isNaN === 'function') {
+      return Number.isNaN(thing);
+    } else {
+      return thing !== thing; // eslint-disable-line no-self-compare
     }
   }
 }

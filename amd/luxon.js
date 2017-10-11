@@ -1069,7 +1069,7 @@ var Util = function () {
       for (var u in obj) {
         if (obj.hasOwnProperty(u)) {
           var v = obj[u];
-          if (v !== null && !Util.isUndefined(v) && !Number.isNaN(v)) {
+          if (v !== null && !Util.isUndefined(v) && !Util.isNaN(v)) {
             var mapped = normalizer(u, ignoreUnknown);
             if (mapped) {
               normalized[mapped] = v;
@@ -1128,6 +1128,15 @@ var Util = function () {
           }
         }
         return to;
+      }
+    }
+  }, {
+    key: 'isNaN',
+    value: function isNaN(thing) {
+      if (typeof Number.isNaN === 'function') {
+        return Number.isNaN(thing);
+      } else {
+        return thing !== thing; // eslint-disable-line no-self-compare
       }
     }
   }]);
