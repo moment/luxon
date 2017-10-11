@@ -14,7 +14,7 @@ DateTime.local(2017, 2, 13).plus({months: 1}).toISODate() //=> '2017-03-13'
 DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=> '2017-03-15'
 ```
 
-More generally we can differentiate to modes of math:
+More generally we can differentiate two modes of math:
 
  * Calendar math works with higher-order, variable-length units like years and months
  * Time math works with lower-order, constant-length units such as hours, minutes, and seconds.

@@ -53,7 +53,7 @@ export class Locale {
   }
 
   static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || 'en-us',
+    const localeR = locale || 'en-US',
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
@@ -111,11 +111,12 @@ export class Locale {
   knownEnglish() {
     return (
       (this.locale === 'en' ||
+        this.locale.toLowerCase() === 'en-us' ||
         Intl.DateTimeFormat(this.intl)
           .resolvedOptions()
           .locale.startsWith('en-US')) &&
-      this.numberingSystem === null &&
-      (this.outputCalendar === null || this.outputCalendar === 'latn')
+      (this.numberingSystem === null || this.numberingSystem === 'latn') &&
+      (this.outputCalendar === null || this.outputCalendar === 'gregory')
     );
   }
 

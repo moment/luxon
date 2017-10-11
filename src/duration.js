@@ -243,7 +243,7 @@ export class Duration {
   }
 
   /**
-   * Get  the locale of a Duration, such 'en-UK'
+   * Get  the locale of a Duration, such 'en-GB'
    * @return {string}
    */
   get locale() {
@@ -396,7 +396,7 @@ export class Duration {
 
   /**
    * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
-   * @example dur.reconfigure({ locale: 'en-UK' })
+   * @example dur.reconfigure({ locale: 'en-GB' })
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy } = {}) {

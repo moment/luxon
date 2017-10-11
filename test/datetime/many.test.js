@@ -23,10 +23,10 @@ test('DateTime.min returns the min dateTime', () => {
 test('DateTime.min is stable', () => {
   const m = DateTime.min(
     DateTime.fromJSDate(new Date(1982, 5, 25)),
-    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-uk' }),
-    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-us' })
+    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-GB' }),
+    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-US' })
   );
-  expect(m.locale).toBe('en-uk');
+  expect(m.locale).toBe('en-GB');
 });
 
 //------
@@ -50,8 +50,8 @@ test('DateTime.max returns the max dateTime', () => {
 test('DateTime.max is stable', () => {
   const m = DateTime.max(
     DateTime.fromJSDate(new Date(1982, 2, 25)),
-    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-uk' }),
-    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-us' })
+    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-GB' }),
+    DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: 'en-US' })
   );
-  expect(m.locale).toBe('en-uk');
+  expect(m.locale).toBe('en-GB');
 });

@@ -14,7 +14,7 @@ The rest of this document will concentrate on what Luxon does when provided with
 
 ## Setting locale
 
-`locale` is a property of Luxon object, and it defaults to 'en-us'. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.
+`locale` is a property of Luxon object, and it defaults to 'en-US'. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.
 
 You can generally set it at construction time:
 

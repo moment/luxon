@@ -17,7 +17,8 @@ import {
 } from './errors';
 
 const INVALID = 'Invalid DateTime',
-  UNSUPPORTED_ZONE = 'unsupported zone';
+  UNSUPPORTED_ZONE = 'unsupported zone',
+  UNPARSABLE = 'unparsable';
 
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
@@ -139,7 +140,7 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
       );
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(UNSUPPORTED_ZONE);
+    return DateTime.invalid(UNPARSABLE);
   }
 }
 
@@ -648,7 +649,7 @@ export class DateTime {
   }
 
   /**
-   * Get the locale of a DateTime, such 'en-UK'. The locale is used when formatting the DateTime
+   * Get the locale of a DateTime, such 'en-GB'. The locale is used when formatting the DateTime
    *
    * @return {string}
    */
@@ -942,7 +943,7 @@ export class DateTime {
   /**
    * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
    * @param {object} properties - the properties to set
-   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-uk' })
+   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
    * @return {DateTime}
    */
   reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
@@ -953,7 +954,7 @@ export class DateTime {
   /**
    * "Set" the locale. Returns a newly-constructed DateTime.
    * Just a convenient alias for reconfigure({ locale })
-   * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
+   * @example DateTime.local(2017, 5, 25).setLocale('en-GB')
    * @return {DateTime}
    */
   setLocale(locale) {

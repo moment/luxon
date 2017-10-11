@@ -41,7 +41,7 @@ export class Zone {
    * @param {string} options.localeCode - What locale to return the offset name in. Defaults to us-en
    * @return {string}
    */
-  static offsetName(ts, { format = 'long', localeCode = 'en-us' } = {}) {
+  static offsetName(ts, { format = 'long', localeCode = 'en-US' } = {}) {
     throw new ZoneIsAbstract();
   }
 

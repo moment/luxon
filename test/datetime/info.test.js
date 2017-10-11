@@ -28,7 +28,7 @@ test('DateTime#toObject accepts a flag to return config', () => {
     minute: 23,
     second: 54,
     millisecond: 123,
-    locale: 'en-us',
+    locale: 'en-US',
     numberingSystem: null,
     outputCalendar: null
   });

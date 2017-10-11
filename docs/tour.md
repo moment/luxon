@@ -139,8 +139,8 @@ Luxon provides several different Intl capabilities, but the most important one i
 var dt = DateTime.local();
 var f = {month: 'long', day: 'numeric'};
 dt.setLocale('fr').toLocaleString(f)      //=> '14 septembre' 
-dt.setLocale('en-gb').toLocaleString(f)   //=> '14 September'
-dt.setLocale('en-us').toLocaleString(f)  //=> 'September 14'
+dt.setLocale('en-GB).toLocaleString(f)   //=> '14 September'
+dt.setLocale('en-US).toLocaleString(f)  //=> 'September 14'
  ```
  
 Luxon's Info class can also list months or weekdays for different locales:

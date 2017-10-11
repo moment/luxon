@@ -62,6 +62,15 @@ test('DateTime.fromString() parses month names', () => {
   expect(i.day).toBe(25);
 });
 
+test('DateTime.fromString() uses case-insensitive matching', () => {
+  const i = DateTime.fromString('Janv. 25 1982', 'LLL dd yyyy', {
+    locale: 'fr'
+  });
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(1);
+  expect(i.day).toBe(25);
+});
+
 test('DateTime.fromString() defaults yy to the right century', () => {});
 
 test('DateTime.fromString() parses offsets', () => {});

@@ -104,7 +104,7 @@ test('DateTime#toString() returns the ISO time', () => {
 // #toLocaleString()
 //-------
 test('DateTime#toLocaleString returns a sensible string by default', () => {
-  expect(dt.reconfigure({ locale: 'en-us' }).toLocaleString()).toBe('5/25/1982');
+  expect(dt.reconfigure({ locale: 'en-US' }).toLocaleString()).toBe('5/25/1982');
 });
 
 test('DateTime#toLocaleString accepts locale settings from the dateTime', () => {

@@ -33,7 +33,7 @@ function partsOffset(dtf, date) {
 
 function isValid(zone) {
   try {
-    new Intl.DateTimeFormat('en-us', { timeZone: zone }).format();
+    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
     return true;
   } catch (e) {
     return false;
@@ -67,13 +67,13 @@ export class IANAZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', locale = 'en-us' } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || 'en-us', this.zoneName);
+  offsetName(ts, { format = 'long', locale = 'en-US' } = {}) {
+    return Util.parseZoneInfo(ts, format, locale || 'en-US', this.zoneName);
   }
 
   offset(ts) {
     const date = new Date(ts),
-      dtf = new Intl.DateTimeFormat('en-us', {
+      dtf = new Intl.DateTimeFormat('en-US', {
         hour12: false,
         timeZone: this.zoneName,
         year: 'numeric',

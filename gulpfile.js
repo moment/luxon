@@ -10,6 +10,8 @@ const babel = require('rollup-plugin-babel'),
   prettierOptions = require('./.prettier.js'),
   prettier = require('prettier'),
   rename = require('gulp-rename'),
+  rollupNode = require('rollup-plugin-node-resolve'),
+  rollupCommonJS = require('rollup-plugin-commonjs'),
   rollup = require('rollup-stream'),
   runSequence = require('run-sequence'),
   source = require('vinyl-source-stream'),
@@ -22,7 +24,12 @@ function process(inopts) {
       input: inopts.input,
       sourcemap: true,
       format: inopts.format,
-      plugins: []
+      plugins: [
+        rollupNode(),
+        rollupCommonJS({
+          include: 'node_modules/**'
+        })
+      ]
     },
     inopts.rollupOpts || {}
   );
@@ -31,12 +38,10 @@ function process(inopts) {
     opts.plugins.push(
       babel({
         babelrc: false,
-        presets: [['es2015', { modules: false }]],
-        plugins: ['external-helpers']
+        presets: ['es2015-rollup']
       })
     );
   }
-
   return rollup(opts);
 }
 
@@ -113,7 +118,15 @@ gulp.task(
 
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
-gulp.task('test', () => gulp.src('test').pipe(jest()));
+gulp.task('test', () =>
+  gulp.src('test').pipe(
+    jest({
+      config: {
+        preprocessorIgnorePatterns: '<rootDir>/build/'
+      }
+    })
+  )
+);
 
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
   doLint = () =>

@@ -10,7 +10,7 @@ function intUnit(regex, post = i => i) {
 function oneOf(strings, startIndex) {
   return {
     regex: RegExp(strings.join('|')),
-    deser: ([s]) => strings.indexOf(s) + startIndex
+    deser: ([s]) => strings.findIndex(i => s.toLowerCase() === i.toLowerCase()) + startIndex
   };
 }
 
@@ -240,7 +240,7 @@ export class TokenParser {
     const tokens = Formatter.parseFormat(format),
       units = tokens.map(t => unitForToken(t, this.loc)),
       [regex, handlers] = buildRegex(units),
-      matches = match(input, regex, handlers),
+      matches = match(input, RegExp(regex, 'i'), handlers),
       [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
 
     return { input, tokens, regex, matches, result, zone };

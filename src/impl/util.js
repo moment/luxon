@@ -150,7 +150,9 @@ export class Util {
   }
 
   static normalizeZone(input) {
-    if (input instanceof Zone) {
+    if (input === null) {
+      return LocalZone.instance;
+    } else if (input instanceof Zone) {
       return input;
     } else if (Util.isString(input)) {
       const lowered = input.toLowerCase();
