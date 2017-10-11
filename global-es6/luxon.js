@@ -1936,7 +1936,7 @@ class Zone {
    * @param {string} options.localeCode - What locale to return the offset name in. Defaults to us-en
    * @return {string}
    */
-  static offsetName(ts, { format = 'long', localeCode = 'en-us' } = {}) {
+  static offsetName(ts, { format = 'long', localeCode = 'en-US' } = {}) {
     throw new ZoneIsAbstract();
   }
 
@@ -1991,15 +1991,16 @@ class LocalZone extends Zone {
   get name() {
     if (Util.isUndefined(Intl) && Util.isUndefined(Intl.DateTimeFormat)) {
       return new Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } else return 'local';
+    } else
+      return 'local';
   }
 
   get universal() {
     return false;
   }
 
-  offsetName(ts, { format = 'long', locale = 'en-us' } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || 'en-us');
+  offsetName(ts, { format = 'long', locale = 'en-US' } = {}) {
+    return Util.parseZoneInfo(ts, format, locale || 'en-US');
   }
 
   offset(ts) {
@@ -2032,11 +2033,9 @@ function hackyOffset(dtf, date) {
 }
 
 function partsOffset(dtf, date) {
-  const formatted = dtf.formatToParts(date),
-    filled = [];
+  const formatted = dtf.formatToParts(date), filled = [];
   for (let i = 0; i < formatted.length; i++) {
-    const { type, value } = formatted[i],
-      pos = typeToPos[type];
+    const { type, value } = formatted[i], pos = typeToPos[type];
 
     if (!Util.isUndefined(pos)) {
       filled[pos] = parseInt(value, 10);
@@ -2047,7 +2046,7 @@ function partsOffset(dtf, date) {
 
 function isValid(zone) {
   try {
-    new Intl.DateTimeFormat('en-us', { timeZone: zone }).format();
+    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
     return true;
   } catch (e) {
     return false;
@@ -2081,13 +2080,13 @@ class IANAZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', locale = 'en-us' } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || 'en-us', this.zoneName);
+  offsetName(ts, { format = 'long', locale = 'en-US' } = {}) {
+    return Util.parseZoneInfo(ts, format, locale || 'en-US', this.zoneName);
   }
 
   offset(ts) {
     const date = new Date(ts),
-      dtf = new Intl.DateTimeFormat('en-us', {
+      dtf = new Intl.DateTimeFormat('en-US', {
         hour12: false,
         timeZone: this.zoneName,
         year: 'numeric',
@@ -2586,7 +2585,7 @@ class Locale {
   }
 
   static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || 'en-us',
+    const localeR = locale || 'en-US',
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
@@ -2647,7 +2646,7 @@ class Locale {
 
   knownEnglish() {
     return (this.locale === 'en' ||
-      this.locale === 'en-us' ||
+      this.locale.toLowerCase() === 'en-us' ||
       Intl.DateTimeFormat(this.intl)
         .resolvedOptions()
         .locale.startsWith('en-US')) &&
@@ -3629,7 +3628,7 @@ class Duration {
   }
 
   /**
-   * Get  the locale of a Duration, such 'en-UK'
+   * Get  the locale of a Duration, such 'en-GB'
    * @return {string}
    */
   get locale() {
@@ -3789,7 +3788,7 @@ class Duration {
 
   /**
    * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
-   * @example dur.reconfigure({ locale: 'en-UK' })
+   * @example dur.reconfigure({ locale: 'en-GB' })
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy } = {}) {
@@ -5561,7 +5560,7 @@ class DateTime {
   }
 
   /**
-   * Get the locale of a DateTime, such 'en-UK'. The locale is used when formatting the DateTime
+   * Get the locale of a DateTime, such 'en-GB'. The locale is used when formatting the DateTime
    *
    * @return {string}
    */
@@ -5854,7 +5853,7 @@ class DateTime {
   /**
    * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
    * @param {object} properties - the properties to set
-   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-uk' })
+   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
    * @return {DateTime}
    */
   reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
@@ -5865,7 +5864,7 @@ class DateTime {
   /**
    * "Set" the locale. Returns a newly-constructed DateTime.
    * Just a convenient alias for reconfigure({ locale })
-   * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
+   * @example DateTime.local(2017, 5, 25).setLocale('en-GB')
    * @return {DateTime}
    */
   setLocale(locale) {

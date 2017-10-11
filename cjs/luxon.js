@@ -2311,9 +2311,9 @@ var LocalZone = function (_Zone) {
           _ref$format = _ref.format,
           format = _ref$format === undefined ? 'long' : _ref$format,
           _ref$locale = _ref.locale,
-          locale = _ref$locale === undefined ? 'en-us' : _ref$locale;
+          locale = _ref$locale === undefined ? 'en-US' : _ref$locale;
 
-      return Util.parseZoneInfo(ts, format, locale || 'en-us');
+      return Util.parseZoneInfo(ts, format, locale || 'en-US');
     }
   }, {
     key: 'offset',
@@ -2401,7 +2401,7 @@ function partsOffset(dtf, date) {
 
 function isValid(zone) {
   try {
-    new Intl.DateTimeFormat('en-us', { timeZone: zone }).format();
+    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
     return true;
   } catch (e) {
     return false;
@@ -2438,15 +2438,15 @@ var IANAZone = function (_Zone) {
           _ref$format = _ref.format,
           format = _ref$format === undefined ? 'long' : _ref$format,
           _ref$locale = _ref.locale,
-          locale = _ref$locale === undefined ? 'en-us' : _ref$locale;
+          locale = _ref$locale === undefined ? 'en-US' : _ref$locale;
 
-      return Util.parseZoneInfo(ts, format, locale || 'en-us', this.zoneName);
+      return Util.parseZoneInfo(ts, format, locale || 'en-US', this.zoneName);
     }
   }, {
     key: 'offset',
     value: function offset(ts) {
       var date = new Date(ts),
-          dtf = new Intl.DateTimeFormat('en-us', {
+          dtf = new Intl.DateTimeFormat('en-US', {
         hour12: false,
         timeZone: this.zoneName,
         year: 'numeric',
@@ -3043,7 +3043,7 @@ var Locale = function () {
   }, {
     key: 'create',
     value: function create(locale, numberingSystem, outputCalendar) {
-      var localeR = locale || 'en-us',
+      var localeR = locale || 'en-US',
           numberingSystemR = numberingSystem || null,
           outputCalendarR = outputCalendar || null,
           cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR,
@@ -3110,7 +3110,7 @@ var Locale = function () {
   createClass(Locale, [{
     key: 'knownEnglish',
     value: function knownEnglish() {
-      return (this.locale === 'en' || this.locale === 'en-us' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) && (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
+      return (this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) && (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
     }
   }, {
     key: 'clone',
@@ -4314,7 +4314,7 @@ var Duration = function () {
 
     /**
      * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
-     * @example dur.reconfigure({ locale: 'en-UK' })
+     * @example dur.reconfigure({ locale: 'en-GB' })
      * @return {Duration}
      */
 
@@ -4555,7 +4555,7 @@ var Duration = function () {
 
 
     /**
-     * Get  the locale of a Duration, such 'en-UK'
+     * Get  the locale of a Duration, such 'en-GB'
      * @return {string}
      */
     get: function get$$1() {
@@ -6306,7 +6306,7 @@ var DateTime = function () {
     /**
      * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
      * @param {object} properties - the properties to set
-     * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-uk' })
+     * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
      * @return {DateTime}
      */
 
@@ -6325,7 +6325,7 @@ var DateTime = function () {
     /**
      * "Set" the locale. Returns a newly-constructed DateTime.
      * Just a convenient alias for reconfigure({ locale })
-     * @example DateTime.local(2017, 5, 25).setLocale('en-uk')
+     * @example DateTime.local(2017, 5, 25).setLocale('en-GB')
      * @return {DateTime}
      */
 
@@ -6884,7 +6884,7 @@ var DateTime = function () {
     }
 
     /**
-     * Get the locale of a DateTime, such 'en-UK'. The locale is used when formatting the DateTime
+     * Get the locale of a DateTime, such 'en-GB'. The locale is used when formatting the DateTime
      *
      * @return {string}
      */
