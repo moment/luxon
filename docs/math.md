@@ -193,11 +193,11 @@ Those are 33 years apart! So Luxon offers an alternative conversion scheme, base
 
 You can see why these are irritating to work with, which is why they're not the default.
 
-Luxon methods that create Durations de novo accept an option called `conversionAccuracy` You can set it 'casual' or 'longterm'. It's a property of the Duration itself, so any conversions you do use the rule you've picked, and any new Durations you derive from it will retain that property.
+Luxon methods that create Durations de novo accept an option called `conversionAccuracy` You can set it to 'casual' or 'longterm'. It's a property of the Duration itself, so any conversions you do use the rule you've picked, and any new Durations you derive from it will retain that property.
 
 ```js
 Duration.fromObject({ years: 23, conversionAccuracy: 'longterm' });
-Duration.parse('PY23', { conversionAccuracy: 'longterm' });
+Duration.fromISO('PY23', { conversionAccuracy: 'longterm' });
 
 end.diff(start, { conversionAccuracy: 'longterm' })
 ```
@@ -222,7 +222,7 @@ var start = DateTime.fromISO('2017-02-13');
 diffInMonths.as('days'); //=> 30
 ```
 
-That's our conversion between months and days (you could also do a long-term-accurate conversion; it wouldn't fix the issue ahead). But this isn't the number of days between February 15 and March 15!
+That's our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn't fix the issue ahead). But this isn't the number of days between February 15 and March 15!
 
 ```
 var diffInDays = end.diff(start, 'days');
@@ -242,7 +242,7 @@ diff.as('months'); //=> 0.9319444
 diff.shiftTo('hours').as('days'); //=> 27.958333333333332
 ```
 
-Normally you won't run into this problem if you think clearly about what you want to do with a diff. But sometimes you really do want an object that represents the subtraction itself, not the result. [Intervals](../class/src/interval.js~Interval.html) can help. Intervals are mostly use to keep track of ranges of time, but they make for "anchored" diffs too. For example:
+Normally you won't run into this problem if you think clearly about what you want to do with a diff. But sometimes you really do want an object that represents the subtraction itself, not the result. [Intervals](../class/src/interval.js~Interval.html) can help. Intervals are mostly used to keep track of ranges of time, but they make for "anchored" diffs too. For example:
 
 ```js
 var end = DateTime.fromISO('2017-03-13');
@@ -253,7 +253,7 @@ i.length('days');       //=> 28
 i.length('months')      //=> 1
 ```
 
-Because the Interval stores its endpoints and computes `length` on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval *isn't* an abstract bundle of time, it can't be used in places where diffs can. For example, you can add them to DateTime via `plus()` because Luxon wouldn't know what units to do the math in (see "Calendar vs time math" above). But you can convert the interval into a Duration by picking the units:
+Because the Interval stores its endpoints and computes `length` on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval *isn't* an abstract bundle of time, it can't be used in places where Durations can. For example, you can add them to DateTime via `plus()` because Luxon wouldn't know what units to do the math in (see "Calendar vs time math" above). But you can convert the interval into a Duration by picking the units:
 
 ```js
 i.toDuration('months').toObject(); //=> { months: 1 }

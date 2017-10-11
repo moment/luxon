@@ -56,9 +56,9 @@ function demo(luxon) {
   example("DateTime.local().toFormat('MM-dd-yyyy')");
   example("DateTime.local().toFormat('MMMM dd, yyyy')");
   example("DateTime.local().setLocale('fr').toFormat('MMMM dd, yyyy')");
-  example("DateTime.fromString('May 25, 1982', 'MMMM dd, yyyy').toISO()");
+  example("DateTime.fromString('May 25, 1982', 'MMMM dd, yyyy')");
   example(
-    "DateTime.fromString('mai 25, 1982', 'MMMM dd, yyyy', { locale: 'fr' }).toISO()"
+    "DateTime.fromString('mai 25, 1982', 'MMMM dd, yyyy', { locale: 'fr' })"
   );
 
   let all = '<h1>Some Luxon examples</h1>';
