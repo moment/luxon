@@ -480,29 +480,37 @@ class Util {
   static flatten(arr) {
     return arr.reduce(
       (flat, toFlatten) =>
-        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),
+        flat.concat(
+          Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten
+        ),
       []
     );
   }
 
   static bestBy(arr, by, compare) {
-    return arr.reduce((best, next) => {
-      const pair = [by(next), next];
-      if (!best) {
-        return pair;
-      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
-        return best;
-      } else {
-        return pair;
-      }
-    }, null)[1];
+    return arr.reduce(
+      (best, next) => {
+        const pair = [by(next), next];
+        if (!best) {
+          return pair;
+        } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+          return best;
+        } else {
+          return pair;
+        }
+      },
+      null
+    )[1];
   }
 
   static pick(obj, keys) {
-    return keys.reduce((a, k) => {
-      a[k] = obj[k];
-      return a;
-    }, {});
+    return keys.reduce(
+      (a, k) => {
+        a[k] = obj[k];
+        return a;
+      },
+      {}
+    );
   }
 
   static isLeapYear(year) {
@@ -537,7 +545,7 @@ class Util {
       intl.timeZone = timeZone;
     }
 
-    const modified = Object.assign({ timeZoneName: offsetFormat }, intl);
+    const modified = Util.assign({ timeZoneName: offsetFormat }, intl);
 
     if (Intl.DateTimeFormat.prototype.formatToParts) {
       const parsed = new Intl.DateTimeFormat(locale, modified)
@@ -563,7 +571,8 @@ class Util {
       if (lowered === 'local') return LocalZone.instance;
       else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
       else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
-      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
+      else return FixedOffsetZone.parseSpecifier(lowered) ||
+          Settings.defaultZone;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
     } else if (typeof input === 'object' && input.offset) {
@@ -605,6 +614,29 @@ class Util {
       offMin = parseInt(offMinuteStr, 10) || 0,
       offMinSigned = offHour < 0 ? -offMin : offMin;
     return offHour * 60 + offMinSigned;
+  }
+
+  // adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+  static assign(target, ...args) {
+    if (typeof Object.assign === 'function') {
+      return Object.assign(target, ...args);
+    } else {
+      const to = Object(target);
+
+      for (let index = 1; index < args.length; index++) {
+        const nextSource = args[index];
+
+        if (nextSource != null) {
+          // Skip over if undefined or null
+          for (const nextKey in nextSource) {
+            if (Object.hasOwnProperty(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey];
+            }
+          }
+        }
+      }
+      return to;
+    }
   }
 }
 
@@ -892,7 +924,7 @@ class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+    const realIntlOpts = Util.assign({ useGrouping: false }, intlOpts);
 
     if (opts.padTo > 0) {
       realIntlOpts.minimumIntegerDigits = opts.padTo;
@@ -921,7 +953,7 @@ class Locale {
       z = dt.zone.name;
     }
 
-    const realIntlOpts = Object.assign({}, intlOpts);
+    const realIntlOpts = Util.assign({}, intlOpts);
     if (z) {
       realIntlOpts.timeZone = z;
     }
@@ -956,7 +988,7 @@ function stringifyTokens(splits, tokenToString) {
 
 class Formatter {
   static create(locale, opts = {}) {
-    const formatOpts = Object.assign({}, { round: true }, opts);
+    const formatOpts = Util.assign({}, { round: true }, opts);
     return new Formatter(locale, formatOpts);
   }
 
@@ -1000,22 +1032,22 @@ class Formatter {
   }
 
   formatDateTime(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   formatDateTimeParts(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   resolvedOptions(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts));
     return df.resolvedOptions(d);
   }
 
   num(n, p = 0) {
-    const opts = Object.assign({}, this.opts);
+    const opts = Util.assign({}, this.opts);
 
     if (p > 0) {
       opts.padTo = p;
@@ -1520,7 +1552,7 @@ const lowOrderMatrix = {
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
     seconds: { milliseconds: 1000 }
   };
-const casualMatrix = Object.assign(
+const casualMatrix = Util.assign(
     {
       years: {
         months: 12,
@@ -1544,7 +1576,7 @@ const casualMatrix = Object.assign(
   );
 const daysInYearAccurate = 146097.0 / 400;
 const daysInMonthAccurate = 146097.0 / 4800;
-const accurateMatrix = Object.assign(
+const accurateMatrix = Util.assign(
     {
       years: {
         months: 12,
@@ -1581,7 +1613,7 @@ const orderedUnits$1 = [
 function clone$1(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
-    values: clear ? alts.values : Object.assign(dur.values, alts.values || {}),
+    values: clear ? alts.values : Util.assign(dur.values, alts.values || {}),
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
   };
@@ -1648,7 +1680,7 @@ class Duration {
    * @return {Duration}
    */
   static fromMilliseconds(count, opts) {
-    return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
+    return Duration.fromObject(Util.assign({ milliseconds: count }, opts));
   }
 
   /**
@@ -1689,7 +1721,7 @@ class Duration {
    * @return {Duration}
    */
   static fromISO(text, opts) {
-    const obj = Object.assign(RegexParser.parseISODuration(text), opts);
+    const obj = Util.assign(RegexParser.parseISODuration(text), opts);
     return Duration.fromObject(obj);
   }
 
@@ -1777,7 +1809,7 @@ class Duration {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Object.assign({}, this.values);
+    const base = Util.assign({}, this.values);
 
     if (opts.includeConfig) {
       base.conversionAccuracy = this.conversionAccuracy;
@@ -1885,7 +1917,7 @@ class Duration {
    * @return {Duration}
    */
   set(values) {
-    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
+    const mixed = Util.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
     return clone$1(this, { values: mixed });
   }
 
@@ -2881,7 +2913,7 @@ class Conversions {
       weekYear = year;
     }
 
-    return Object.assign({ weekYear, weekNumber, weekday }, Util.timeObject(gregObj));
+    return Util.assign({ weekYear, weekNumber, weekday }, Util.timeObject(gregObj));
   }
 
   static weekToGregorian(weekData) {
@@ -2903,21 +2935,21 @@ class Conversions {
 
     const { month, day } = uncomputeOrdinal(year, ordinal);
 
-    return Object.assign({ year, month, day }, Util.timeObject(weekData));
+    return Util.assign({ year, month, day }, Util.timeObject(weekData));
   }
 
   static gregorianToOrdinal(gregData) {
     const { year, month, day } = gregData,
       ordinal = computeOrdinal(year, month, day);
 
-    return Object.assign({ year, ordinal }, Util.timeObject(gregData));
+    return Util.assign({ year, ordinal }, Util.timeObject(gregData));
   }
 
   static ordinalToGregorian(ordinalData) {
     const { year, ordinal } = ordinalData,
       { month, day } = uncomputeOrdinal(year, ordinal);
 
-    return Object.assign({ year, month, day }, Util.timeObject(ordinalData));
+    return Util.assign({ year, month, day }, Util.timeObject(ordinalData));
   }
 
   static hasInvalidWeekData(obj) {
@@ -2996,7 +3028,7 @@ function clone(inst, alts = {}) {
     loc: inst.loc,
     invalidReason: inst.invalidReason
   };
-  return new DateTime(Object.assign({}, current, alts, { old: current }));
+  return new DateTime(Util.assign({}, current, alts, { old: current }));
 }
 
 function fixOffset(localTS, o, tz) {
@@ -3065,7 +3097,7 @@ function objToTS(obj, offset, zone) {
 
 function adjustTime(inst, dur) {
   const oPre = inst.o,
-    c = Object.assign({}, inst.c, {
+    c = Util.assign({}, inst.c, {
       year: inst.c.year + dur.years,
       month: inst.c.month + dur.months,
       day: inst.c.day + dur.days + dur.weeks * 7
@@ -3094,7 +3126,7 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(
-        Object.assign(parsed, opts, {
+        Util.assign(parsed, opts, {
           zone: interpretationZone
         })
       );
@@ -3941,14 +3973,14 @@ class DateTime {
     let mixed;
     if (settingWeekStuff) {
       mixed = Conversions.weekToGregorian(
-        Object.assign(Conversions.gregorianToWeek(this.c), normalized)
+        Util.assign(Conversions.gregorianToWeek(this.c), normalized)
       );
     } else if (!Util.isUndefined(normalized.ordinal)) {
       mixed = Conversions.ordinalToGregorian(
-        Object.assign(Conversions.gregorianToOrdinal(this.c), normalized)
+        Util.assign(Conversions.gregorianToOrdinal(this.c), normalized)
       );
     } else {
-      mixed = Object.assign(this.toObject(), normalized);
+      mixed = Util.assign(this.toObject(), normalized);
 
       // if we didn't set the day but we ended up on an overflow date,
       // use the last day of the right month
@@ -4193,7 +4225,7 @@ class DateTime {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Object.assign({}, this.c);
+    const base = Util.assign({}, this.c);
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
@@ -4316,7 +4348,7 @@ class DateTime {
       ),
       shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
       shifted = remaining.shiftTo(...shiftTo),
-      merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
+      merged = shifted.plus(Duration.fromObject(Util.assign(accum, opts)));
 
     return flipped ? merged.negate() : merged;
   }

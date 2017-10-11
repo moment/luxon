@@ -1026,7 +1026,7 @@ var Util = function () {
         intl.timeZone = timeZone;
       }
 
-      var modified = Object.assign({ timeZoneName: offsetFormat }, intl);
+      var modified = Util.assign({ timeZoneName: offsetFormat }, intl);
 
       if (Intl.DateTimeFormat.prototype.formatToParts) {
         var parsed = new Intl.DateTimeFormat(locale, modified).formatToParts(date).find(function (m) {
@@ -1100,6 +1100,36 @@ var Util = function () {
           offMin = parseInt(offMinuteStr, 10) || 0,
           offMinSigned = offHour < 0 ? -offMin : offMin;
       return offHour * 60 + offMinSigned;
+    }
+
+    // adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+
+  }, {
+    key: 'assign',
+    value: function assign(target) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (typeof Object.assign === 'function') {
+        return Object.assign.apply(Object, [target].concat(args));
+      } else {
+        var to = Object(target);
+
+        for (var index = 1; index < args.length; index++) {
+          var nextSource = args[index];
+
+          if (nextSource != null) {
+            // Skip over if undefined or null
+            for (var nextKey in nextSource) {
+              if (Object.hasOwnProperty(nextSource, nextKey)) {
+                to[nextKey] = nextSource[nextKey];
+              }
+            }
+          }
+        }
+        return to;
+      }
     }
   }]);
   return Util;
@@ -1425,7 +1455,7 @@ var Locale = function () {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var intlOpts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+      var realIntlOpts = Util.assign({ useGrouping: false }, intlOpts);
 
       if (opts.padTo > 0) {
         realIntlOpts.minimumIntegerDigits = opts.padTo;
@@ -1458,7 +1488,7 @@ var Locale = function () {
         z = dt.zone.name;
       }
 
-      var realIntlOpts = Object.assign({}, intlOpts);
+      var realIntlOpts = Util.assign({}, intlOpts);
       if (z) {
         realIntlOpts.timeZone = z;
       }
@@ -1518,7 +1548,7 @@ var Formatter = function () {
     value: function create(locale) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var formatOpts = Object.assign({}, { round: true }, opts);
+      var formatOpts = Util.assign({}, { round: true }, opts);
       return new Formatter(locale, formatOpts);
     }
   }, {
@@ -1570,7 +1600,7 @@ var Formatter = function () {
     value: function formatDateTime(dt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var _loc$dtFormatter = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts)),
+      var _loc$dtFormatter = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts)),
           _loc$dtFormatter2 = slicedToArray(_loc$dtFormatter, 2),
           df = _loc$dtFormatter2[0],
           d = _loc$dtFormatter2[1];
@@ -1582,7 +1612,7 @@ var Formatter = function () {
     value: function formatDateTimeParts(dt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var _loc$dtFormatter3 = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts)),
+      var _loc$dtFormatter3 = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts)),
           _loc$dtFormatter4 = slicedToArray(_loc$dtFormatter3, 2),
           df = _loc$dtFormatter4[0],
           d = _loc$dtFormatter4[1];
@@ -1594,7 +1624,7 @@ var Formatter = function () {
     value: function resolvedOptions(dt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var _loc$dtFormatter5 = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts)),
+      var _loc$dtFormatter5 = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts)),
           _loc$dtFormatter6 = slicedToArray(_loc$dtFormatter5, 2),
           df = _loc$dtFormatter6[0],
           d = _loc$dtFormatter6[1];
@@ -1606,7 +1636,7 @@ var Formatter = function () {
     value: function num(n) {
       var p = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-      var opts = Object.assign({}, this.opts);
+      var opts = Util.assign({}, this.opts);
 
       if (p > 0) {
         opts.padTo = p;
@@ -2183,7 +2213,7 @@ var lowOrderMatrix = {
   minutes: { seconds: 60, milliseconds: 60 * 1000 },
   seconds: { milliseconds: 1000 }
 };
-var casualMatrix = Object.assign({
+var casualMatrix = Util.assign({
   years: {
     months: 12,
     weeks: 52,
@@ -2204,7 +2234,7 @@ var casualMatrix = Object.assign({
 }, lowOrderMatrix);
 var daysInYearAccurate = 146097.0 / 400;
 var daysInMonthAccurate = 146097.0 / 4800;
-var accurateMatrix = Object.assign({
+var accurateMatrix = Util.assign({
   years: {
     months: 12,
     weeks: daysInYearAccurate / 7,
@@ -2231,7 +2261,7 @@ function clone$1(dur, alts) {
 
   // deep merge for vals
   var conf = {
-    values: clear ? alts.values : Object.assign(dur.values, alts.values || {}),
+    values: clear ? alts.values : Util.assign(dur.values, alts.values || {}),
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
   };
@@ -2355,7 +2385,7 @@ var Duration = function () {
 
       if (!this.isValid) return {};
 
-      var base = Object.assign({}, this.values);
+      var base = Util.assign({}, this.values);
 
       if (opts.includeConfig) {
         base.conversionAccuracy = this.conversionAccuracy;
@@ -2505,7 +2535,7 @@ var Duration = function () {
   }, {
     key: 'set',
     value: function set$$1(values) {
-      var mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
+      var mixed = Util.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
       return clone$1(this, { values: mixed });
     }
 
@@ -2878,7 +2908,7 @@ var Duration = function () {
   }], [{
     key: 'fromMilliseconds',
     value: function fromMilliseconds(count, opts) {
-      return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
+      return Duration.fromObject(Util.assign({ milliseconds: count }, opts));
     }
 
     /**
@@ -2925,7 +2955,7 @@ var Duration = function () {
   }, {
     key: 'fromISO',
     value: function fromISO(text, opts) {
-      var obj = Object.assign(RegexParser.parseISODuration(text), opts);
+      var obj = Util.assign(RegexParser.parseISODuration(text), opts);
       return Duration.fromObject(obj);
     }
 
@@ -3989,7 +4019,7 @@ var Conversions = function () {
         weekYear = year;
       }
 
-      return Object.assign({ weekYear: weekYear, weekNumber: weekNumber, weekday: weekday }, Util.timeObject(gregObj));
+      return Util.assign({ weekYear: weekYear, weekNumber: weekNumber, weekday: weekday }, Util.timeObject(gregObj));
     }
   }, {
     key: 'weekToGregorian',
@@ -4017,7 +4047,7 @@ var Conversions = function () {
           month = _uncomputeOrdinal.month,
           day = _uncomputeOrdinal.day;
 
-      return Object.assign({ year: year, month: month, day: day }, Util.timeObject(weekData));
+      return Util.assign({ year: year, month: month, day: day }, Util.timeObject(weekData));
     }
   }, {
     key: 'gregorianToOrdinal',
@@ -4028,7 +4058,7 @@ var Conversions = function () {
           ordinal = computeOrdinal(year, month, day);
 
 
-      return Object.assign({ year: year, ordinal: ordinal }, Util.timeObject(gregData));
+      return Util.assign({ year: year, ordinal: ordinal }, Util.timeObject(gregData));
     }
   }, {
     key: 'ordinalToGregorian',
@@ -4039,7 +4069,7 @@ var Conversions = function () {
           month = _uncomputeOrdinal2.month,
           day = _uncomputeOrdinal2.day;
 
-      return Object.assign({ year: year, month: month, day: day }, Util.timeObject(ordinalData));
+      return Util.assign({ year: year, month: month, day: day }, Util.timeObject(ordinalData));
     }
   }, {
     key: 'hasInvalidWeekData',
@@ -4126,7 +4156,7 @@ function clone(inst) {
     loc: inst.loc,
     invalidReason: inst.invalidReason
   };
-  return new DateTime(Object.assign({}, current, alts, { old: current }));
+  return new DateTime(Util.assign({}, current, alts, { old: current }));
 }
 
 function fixOffset(localTS, o, tz) {
@@ -4187,7 +4217,7 @@ function objToTS(obj, offset, zone) {
 
 function adjustTime(inst, dur) {
   var oPre = inst.o,
-      c = Object.assign({}, inst.c, {
+      c = Util.assign({}, inst.c, {
     year: inst.c.year + dur.years,
     month: inst.c.month + dur.months,
     day: inst.c.day + dur.days + dur.weeks * 7
@@ -4221,7 +4251,7 @@ function parseDataToDateTime(parsed, parsedZone) {
 
   if (parsed && Object.keys(parsed).length !== 0) {
     var interpretationZone = parsedZone || zone,
-        inst = DateTime.fromObject(Object.assign(parsed, opts, {
+        inst = DateTime.fromObject(Util.assign(parsed, opts, {
       zone: interpretationZone
     }));
     return setZone ? inst : inst.setZone(zone);
@@ -4548,11 +4578,11 @@ var DateTime = function () {
 
       var mixed = void 0;
       if (settingWeekStuff) {
-        mixed = Conversions.weekToGregorian(Object.assign(Conversions.gregorianToWeek(this.c), normalized));
+        mixed = Conversions.weekToGregorian(Util.assign(Conversions.gregorianToWeek(this.c), normalized));
       } else if (!Util.isUndefined(normalized.ordinal)) {
-        mixed = Conversions.ordinalToGregorian(Object.assign(Conversions.gregorianToOrdinal(this.c), normalized));
+        mixed = Conversions.ordinalToGregorian(Util.assign(Conversions.gregorianToOrdinal(this.c), normalized));
       } else {
-        mixed = Object.assign(this.toObject(), normalized);
+        mixed = Util.assign(this.toObject(), normalized);
 
         // if we didn't set the day but we ended up on an overflow date,
         // use the last day of the right month
@@ -4859,7 +4889,7 @@ var DateTime = function () {
 
       if (!this.isValid) return {};
 
-      var base = Object.assign({}, this.c);
+      var base = Util.assign({}, this.c);
 
       if (opts.includeConfig) {
         base.outputCalendar = this.outputCalendar;
@@ -4989,7 +5019,7 @@ var DateTime = function () {
       }),
           shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
           shifted = remaining.shiftTo.apply(remaining, toConsumableArray(shiftTo)),
-          merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
+          merged = shifted.plus(Duration.fromObject(Util.assign(accum, opts)));
 
       return flipped ? merged.negate() : merged;
     }
