@@ -1,5 +1,4 @@
 const prettierOptions = require('./.prettier.js');
-const maxWidth = prettierOptions.printWidth;
 
 module.exports = {
   extends: ['airbnb-base', 'prettier'],
