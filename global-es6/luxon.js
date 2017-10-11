@@ -2647,6 +2647,7 @@ class Locale {
 
   knownEnglish() {
     return (this.locale === 'en' ||
+      this.locale === 'en-us' ||
       Intl.DateTimeFormat(this.intl)
         .resolvedOptions()
         .locale.startsWith('en-US')) &&

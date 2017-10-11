@@ -3110,7 +3110,7 @@ var Locale = function () {
   createClass(Locale, [{
     key: 'knownEnglish',
     value: function knownEnglish() {
-      return (this.locale === 'en' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) && this.numberingSystem === null && (this.outputCalendar === null || this.outputCalendar === 'latn');
+      return (this.locale === 'en' || this.locale === 'en-us' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) && this.numberingSystem === null && (this.outputCalendar === null || this.outputCalendar === 'latn');
     }
   }, {
     key: 'clone',
