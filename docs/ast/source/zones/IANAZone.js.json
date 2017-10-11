@@ -2549,10 +2549,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "en-us",
-                                "raw": "'en-us'"
+                                "rawValue": "en-US",
+                                "raw": "'en-US'"
                               },
-                              "value": "en-us"
+                              "value": "en-US"
                             },
                             {
                               "type": "ObjectExpression",
@@ -3985,10 +3985,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "en-us",
-                                "raw": "'en-us'"
+                                "rawValue": "en-US",
+                                "raw": "'en-US'"
                               },
-                              "value": "en-us"
+                              "value": "en-US"
                             }
                           },
                           "extra": {
@@ -4190,10 +4190,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "en-us",
-                                "raw": "'en-us'"
+                                "rawValue": "en-US",
+                                "raw": "'en-US'"
                               },
-                              "value": "en-us"
+                              "value": "en-US"
                             }
                           },
                           {
@@ -4532,10 +4532,10 @@
                                   }
                                 },
                                 "extra": {
-                                  "rawValue": "en-us",
-                                  "raw": "'en-us'"
+                                  "rawValue": "en-US",
+                                  "raw": "'en-US'"
                                 },
-                                "value": "en-us"
+                                "value": "en-US"
                               },
                               {
                                 "type": "ObjectExpression",
@@ -11786,7 +11786,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "en-us",
+      "value": "en-US",
       "start": 810,
       "end": 817,
       "loc": {
@@ -14798,7 +14798,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "en-us",
+      "value": "en-US",
       "start": 1316,
       "end": 1323,
       "loc": {
@@ -15265,7 +15265,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "en-us",
+      "value": "en-US",
       "start": 1386,
       "end": 1393,
       "loc": {
@@ -16022,7 +16022,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "en-us",
+      "value": "en-US",
       "start": 1498,
       "end": 1505,
       "loc": {

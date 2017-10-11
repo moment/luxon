@@ -79,7 +79,7 @@ function partsOffset(dtf, date) {
 
 function isValid(zone) {
   try {
-    new Intl.DateTimeFormat(&apos;en-us&apos;, { timeZone: zone }).format();
+    new Intl.DateTimeFormat(&apos;en-US&apos;, { timeZone: zone }).format();
     return true;
   } catch (e) {
     return false;
@@ -113,13 +113,13 @@ export class IANAZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = &apos;long&apos;, locale = &apos;en-us&apos; } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || &apos;en-us&apos;, this.zoneName);
+  offsetName(ts, { format = &apos;long&apos;, locale = &apos;en-US&apos; } = {}) {
+    return Util.parseZoneInfo(ts, format, locale || &apos;en-US&apos;, this.zoneName);
   }
 
   offset(ts) {
     const date = new Date(ts),
-      dtf = new Intl.DateTimeFormat(&apos;en-us&apos;, {
+      dtf = new Intl.DateTimeFormat(&apos;en-US&apos;, {
         hour12: false,
         timeZone: this.zoneName,
         year: &apos;numeric&apos;,

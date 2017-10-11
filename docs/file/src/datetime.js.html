@@ -63,7 +63,8 @@ import {
 } from &apos;./errors&apos;;
 
 const INVALID = &apos;Invalid DateTime&apos;,
-  UNSUPPORTED_ZONE = &apos;unsupported zone&apos;;
+  UNSUPPORTED_ZONE = &apos;unsupported zone&apos;,
+  UNPARSABLE = &apos;unparsable&apos;;
 
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
@@ -81,7 +82,7 @@ function clone(inst, alts = {}) {
     loc: inst.loc,
     invalidReason: inst.invalidReason
   };
-  return new DateTime(Util.assign({}, current, alts, { old: current }));
+  return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
 
 function fixOffset(localTS, o, tz) {
@@ -150,7 +151,7 @@ function objToTS(obj, offset, zone) {
 
 function adjustTime(inst, dur) {
   const oPre = inst.o,
-    c = Util.assign({}, inst.c, {
+    c = Object.assign({}, inst.c, {
       year: inst.c.year + dur.years,
       month: inst.c.month + dur.months,
       day: inst.c.day + dur.days + dur.weeks * 7
@@ -179,13 +180,13 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
   if (parsed &amp;&amp; Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(
-        Util.assign(parsed, opts, {
+        Object.assign(parsed, opts, {
           zone: interpretationZone
         })
       );
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(UNSUPPORTED_ZONE);
+    return DateTime.invalid(UNPARSABLE);
   }
 }
 
@@ -694,7 +695,7 @@ export class DateTime {
   }
 
   /**
-   * Get the locale of a DateTime, such &apos;en-UK&apos;. The locale is used when formatting the DateTime
+   * Get the locale of a DateTime, such &apos;en-GB&apos;. The locale is used when formatting the DateTime
    *
    * @return {string}
    */
@@ -988,7 +989,7 @@ export class DateTime {
   /**
    * &quot;Set&quot; the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
    * @param {object} properties - the properties to set
-   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: &apos;en-uk&apos; })
+   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: &apos;en-GB&apos; })
    * @return {DateTime}
    */
   reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
@@ -999,7 +1000,7 @@ export class DateTime {
   /**
    * &quot;Set&quot; the locale. Returns a newly-constructed DateTime.
    * Just a convenient alias for reconfigure({ locale })
-   * @example DateTime.local(2017, 5, 25).setLocale(&apos;en-uk&apos;)
+   * @example DateTime.local(2017, 5, 25).setLocale(&apos;en-GB&apos;)
    * @return {DateTime}
    */
   setLocale(locale) {
@@ -1026,14 +1027,14 @@ export class DateTime {
     let mixed;
     if (settingWeekStuff) {
       mixed = Conversions.weekToGregorian(
-        Util.assign(Conversions.gregorianToWeek(this.c), normalized)
+        Object.assign(Conversions.gregorianToWeek(this.c), normalized)
       );
     } else if (!Util.isUndefined(normalized.ordinal)) {
       mixed = Conversions.ordinalToGregorian(
-        Util.assign(Conversions.gregorianToOrdinal(this.c), normalized)
+        Object.assign(Conversions.gregorianToOrdinal(this.c), normalized)
       );
     } else {
-      mixed = Util.assign(this.toObject(), normalized);
+      mixed = Object.assign(this.toObject(), normalized);
 
       // if we didn&apos;t set the day but we ended up on an overflow date,
       // use the last day of the right month
@@ -1278,7 +1279,7 @@ export class DateTime {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Util.assign({}, this.c);
+    const base = Object.assign({}, this.c);
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
@@ -1401,7 +1402,7 @@ export class DateTime {
       ),
       shiftTo = moreUnits.length &gt; 0 ? moreUnits : [lowestOrder],
       shifted = remaining.shiftTo(...shiftTo),
-      merged = shifted.plus(Duration.fromObject(Util.assign(accum, opts)));
+      merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
 
     return flipped ? merged.negate() : merged;
   }

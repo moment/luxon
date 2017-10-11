@@ -900,10 +900,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "en-us",
-                                "raw": "'en-us'"
+                                "rawValue": "en-US",
+                                "raw": "'en-US'"
                               },
-                              "value": "en-us"
+                              "value": "en-US"
                             }
                           },
                           "extra": {
@@ -3315,7 +3315,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "en-us",
+      "value": "en-US",
       "start": 1066,
       "end": 1073,
       "loc": {

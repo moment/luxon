@@ -1559,10 +1559,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "en-us",
-                                "raw": "'en-us'"
+                                "rawValue": "en-US",
+                                "raw": "'en-US'"
                               },
-                              "value": "en-us"
+                              "value": "en-US"
                             }
                           },
                           "extra": {
@@ -1764,10 +1764,10 @@
                                 }
                               },
                               "extra": {
-                                "rawValue": "en-us",
-                                "raw": "'en-us'"
+                                "rawValue": "en-US",
+                                "raw": "'en-US'"
                               },
-                              "value": "en-us"
+                              "value": "en-US"
                             }
                           }
                         ]
@@ -5552,7 +5552,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "en-us",
+      "value": "en-US",
       "start": 593,
       "end": 600,
       "loc": {
@@ -6019,7 +6019,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "en-us",
+      "value": "en-US",
       "start": 663,
       "end": 670,
       "loc": {

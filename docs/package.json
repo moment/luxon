@@ -8,6 +8,9 @@
     "immutable"
   ],
   "repository": "https://github.com/icambron/luxon",
+  "dependencies": {
+    "core-js": "latest"
+  },
   "devDependencies": {
     "babel-jest": "latest",
     "babel-preset-es2015": "latest",
@@ -33,6 +36,8 @@
     "lazypipe": "latest",
     "prettier": "latest",
     "rollup-plugin-babel": "latest",
+    "rollup-plugin-node-resolve": "latest",
+    "rollup-plugin-commonjs": "latest",
     "rollup-stream": "latest",
     "run-sequence": "latest",
     "tap-min": "latest",

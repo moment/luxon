@@ -282,8 +282,8 @@ dt.set({hour: 3}).hour   //=&gt; 3</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
 var f = {month: &apos;long&apos;, day: &apos;numeric&apos;};
 dt.setLocale(&apos;fr&apos;).toLocaleString(f)      //=&gt; &apos;14 septembre&apos; 
-dt.setLocale(&apos;en-gb&apos;).toLocaleString(f)   //=&gt; &apos;14 September&apos;
-dt.setLocale(&apos;en-us&apos;).toLocaleString(f)  //=&gt; &apos;September 14&apos;</code>
+dt.setLocale(&apos;en-GB).toLocaleString(f)   //=&gt; &apos;14 September&apos;
+dt.setLocale(&apos;en-US).toLocaleString(f)  //=&gt; &apos;September 14&apos;</code>
 </code></pre>
 <p>Luxon&apos;s Info class can also list months or weekdays for different locales:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&apos;long&apos;, {locale: &apos;fr&apos;}) //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, &apos;mars&apos;, &apos;avril&apos;, ... ]</code>

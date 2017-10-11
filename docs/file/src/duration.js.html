@@ -71,7 +71,7 @@ const lowOrderMatrix = {
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
     seconds: { milliseconds: 1000 }
   },
-  casualMatrix = Util.assign(
+  casualMatrix = Object.assign(
     {
       years: {
         months: 12,
@@ -95,7 +95,7 @@ const lowOrderMatrix = {
   ),
   daysInYearAccurate = 146097.0 / 400,
   daysInMonthAccurate = 146097.0 / 4800,
-  accurateMatrix = Util.assign(
+  accurateMatrix = Object.assign(
     {
       years: {
         months: 12,
@@ -132,7 +132,7 @@ const orderedUnits = [
 function clone(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
-    values: clear ? alts.values : Util.assign(dur.values, alts.values || {}),
+    values: clear ? alts.values : Object.assign(dur.values, alts.values || {}),
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
   };
@@ -199,7 +199,7 @@ export class Duration {
    * @return {Duration}
    */
   static fromMilliseconds(count, opts) {
-    return Duration.fromObject(Util.assign({ milliseconds: count }, opts));
+    return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
   }
 
   /**
@@ -240,7 +240,7 @@ export class Duration {
    * @return {Duration}
    */
   static fromISO(text, opts) {
-    const obj = Util.assign(RegexParser.parseISODuration(text), opts);
+    const obj = Object.assign(RegexParser.parseISODuration(text), opts);
     return Duration.fromObject(obj);
   }
 
@@ -289,7 +289,7 @@ export class Duration {
   }
 
   /**
-   * Get  the locale of a Duration, such &apos;en-UK&apos;
+   * Get  the locale of a Duration, such &apos;en-GB&apos;
    * @return {string}
    */
   get locale() {
@@ -328,7 +328,7 @@ export class Duration {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Util.assign({}, this.values);
+    const base = Object.assign({}, this.values);
 
     if (opts.includeConfig) {
       base.conversionAccuracy = this.conversionAccuracy;
@@ -436,13 +436,13 @@ export class Duration {
    * @return {Duration}
    */
   set(values) {
-    const mixed = Util.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
+    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
     return clone(this, { values: mixed });
   }
 
   /**
    * &quot;Set&quot; the locale and/or numberingSystem.  Returns a newly-constructed Duration.
-   * @example dur.reconfigure({ locale: &apos;en-UK&apos; })
+   * @example dur.reconfigure({ locale: &apos;en-GB&apos; })
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy } = {}) {

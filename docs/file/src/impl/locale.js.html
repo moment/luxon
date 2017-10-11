@@ -99,7 +99,7 @@ export class Locale {
   }
 
   static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || &apos;en-us&apos;,
+    const localeR = locale || &apos;en-US&apos;,
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
@@ -157,11 +157,12 @@ export class Locale {
   knownEnglish() {
     return (
       (this.locale === &apos;en&apos; ||
+        this.locale.toLowerCase() === &apos;en-us&apos; ||
         Intl.DateTimeFormat(this.intl)
           .resolvedOptions()
           .locale.startsWith(&apos;en-US&apos;)) &amp;&amp;
-      this.numberingSystem === null &amp;&amp;
-      (this.outputCalendar === null || this.outputCalendar === &apos;latn&apos;)
+      (this.numberingSystem === null || this.numberingSystem === &apos;latn&apos;) &amp;&amp;
+      (this.outputCalendar === null || this.outputCalendar === &apos;gregory&apos;)
     );
   }
 
@@ -255,7 +256,7 @@ export class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    const realIntlOpts = Util.assign({ useGrouping: false }, intlOpts);
+    const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
     if (opts.padTo &gt; 0) {
       realIntlOpts.minimumIntegerDigits = opts.padTo;
@@ -284,7 +285,7 @@ export class Locale {
       z = dt.zone.name;
     }
 
-    const realIntlOpts = Util.assign({}, intlOpts);
+    const realIntlOpts = Object.assign({}, intlOpts);
     if (z) {
       realIntlOpts.timeZone = z;
     }

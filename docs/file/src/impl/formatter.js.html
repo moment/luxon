@@ -65,7 +65,7 @@ function stringifyTokens(splits, tokenToString) {
 
 export class Formatter {
   static create(locale, opts = {}) {
-    const formatOpts = Util.assign({}, { round: true }, opts);
+    const formatOpts = Object.assign({}, { round: true }, opts);
     return new Formatter(locale, formatOpts);
   }
 
@@ -109,22 +109,22 @@ export class Formatter {
   }
 
   formatDateTime(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   formatDateTimeParts(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   resolvedOptions(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Util.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.resolvedOptions(d);
   }
 
   num(n, p = 0) {
-    const opts = Util.assign({}, this.opts);
+    const opts = Object.assign({}, this.opts);
 
     if (p &gt; 0) {
       opts.padTo = p;
