@@ -2648,8 +2648,8 @@ class Locale {
       Intl.DateTimeFormat(this.intl)
         .resolvedOptions()
         .locale.startsWith('en-US')) &&
-      this.numberingSystem === null &&
-      (this.outputCalendar === null || this.outputCalendar === 'latn');
+      (this.numberingSystem === null && this.numberingSystem === 'latn') &&
+      (this.outputCalendar === null || this.outputCalendar === 'gregory');
   }
 
   clone(alts) {
