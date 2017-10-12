@@ -24,7 +24,7 @@ Here are some vague notes on Luxon's design philosophy:
 Once you're sure your bugfix or feature makes sense for Luxon, make sure you take these steps:
 
  1. Be sure to add tests and run them with `gulp test`
- 1. Be sure you run `gulp lint!` before you commit.
+ 1. Be sure you run `gulp lint!` before you commit. Note this will modify your source files to line up with the style guidelines.
  1. Make sure you add or ESDoc annotations appropriately. You can run `gulp docs` to generate the HTML for them. They land in the `build/docs` directory.
  1. To test in your browser, run `gulp site` and then open `build/demo/global.html`. You can access Luxon classes in the console like `window.luxon.DateTime`.
  1. To test in Node, run `gulp cjs` and then run something like `var DateTime = require('./build/cjs/luxon).DateTime`.
@@ -43,4 +43,3 @@ Once you're sure your bugfix or feature makes sense for Luxon, make sure you tak
 | `gulp es6`    | Build just the ES6 distributable            |
 | `gulp amd`    | Build just the AMD distributable            |
 | `gulp global` | Build just the browser global distributable |
-|---------------|---------------------------------------------|
