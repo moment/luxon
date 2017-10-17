@@ -47,6 +47,18 @@ function mapWeekdays(f) {
  * @private
  */
 
+class PolyFormatter {
+  constructor(opts) {
+    this.padTo = opts.padTo || 0;
+    this.round = opts.round || false;
+  }
+
+  format(i) {
+    const maybeRounded = this.round ? Math.round(i) : i;
+    return maybeRounded.toString().padStart(this.padTo, '0');
+  }
+}
+
 export class Locale {
   static fromOpts(opts) {
     return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
@@ -210,17 +222,21 @@ export class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+    if (Intl && Intl.NumberFormat) {
+      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
-    if (opts.padTo > 0) {
-      realIntlOpts.minimumIntegerDigits = opts.padTo;
+      if (opts.padTo > 0) {
+        realIntlOpts.minimumIntegerDigits = opts.padTo;
+      }
+
+      if (opts.round) {
+        realIntlOpts.maximumFractionDigits = 0;
+      }
+
+      return new Intl.NumberFormat(this.intl, realIntlOpts);
+    } else {
+      return new PolyFormatter(opts);
     }
-
-    if (opts.round) {
-      realIntlOpts.maximumFractionDigits = 0;
-    }
-
-    return new Intl.NumberFormat(this.intl, realIntlOpts);
   }
 
   dtFormatter(dt, intlOpts = {}) {
@@ -229,7 +245,7 @@ export class Locale {
     if (dt.zone.universal) {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make do with just displaying
-      // the time in UTC; the formatter how to handle UTC+8
+      // the time in UTC; the formatter doesn't know how to handle UTC+8
       d = Util.asIfUTC(dt);
       z = 'UTC';
     } else if (dt.zone.type === 'local') {

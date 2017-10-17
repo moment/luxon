@@ -143,8 +143,8 @@ Some tokens have a "standalone" and "format" version. Some languages require dif
 
 ```js
 var d = DateTime.fromISO('2014-08-06T13:07:04.054').setLocale('ru');
-d.toFormat("MMMM"); //=> 'августа'
-d.toFormat("LLLL") //=> 'август'
+d.toFormat("LLLL") //=> 'август' (format)
+d.toFormat("MMMM"); //=> 'августа' (standalone)
 ```
 
 ### Macro tokens
@@ -182,15 +182,15 @@ The macro options available correspond one-to-one with the preset formats define
 | a               |              | meridiem                                                       | AM                                                          |
 | d               |              | day of the month, no padding                                   | 6                                                           |
 | dd              |              | day of the month, padded to 2                                  | 06                                                          |
-| E               | c            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | 3                                                           |
-| EEE             | ccc          | day of the week, as an abbreviate localized string             | Wed                                                         |
-| EEEE            | cccc         | day of the week, as an unabbreviated localized string          | Wednesday                                                   |
-| EEEEE           | ccccc        | day of the week, as a single localized letter                  | W                                                           |
-| M               | L            | month as an unpadded number                                    | 8                                                           |
-| MM              | LL           | month as an padded number                                      | 08                                                          |
-| MMM             | LLL          | month as an abbreviated localized string                       | Aug                                                         |
-| MMMM            | LLLL         | month as an unabbreviated localized string                     | August                                                      |
-| MMMMM           | LLLLL        | month as a single localized letter                             | A                                                           |
+| c               | E            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | 3                                                           |
+| ccc             | EEE          | day of the week, as an abbreviate localized string             | Wed                                                         |
+| cccc            | EEEE         | day of the week, as an unabbreviated localized string          | Wednesday                                                   |
+| ccccc           | EEEEE        | day of the week, as a single localized letter                  | W                                                           |
+| L               | M            | month as an unpadded number                                    | 8                                                           |
+| LL              | MM           | month as an padded number                                      | 08                                                          |
+| LLL             | MMM          | month as an abbreviated localized string                       | Aug                                                         |
+| LLLL            | MMMM         | month as an unabbreviated localized string                     | August                                                      |
+| LLLLL           | MMMMM        | month as a single localized letter                             | A                                                           |
 | y               |              | year, unpadded                                                 | 2014                                                        |
 | yy              |              | two-digit year                                                 | 14                                                          |
 | yyyy            |              | four-digit year                                                | 2014                                                        |

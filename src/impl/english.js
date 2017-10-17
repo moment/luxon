@@ -70,7 +70,44 @@ export class English {
     return ['AM', 'PM'];
   }
 
+  static get erasLong() {
+    return ['Before Christ', 'Anno Domini'];
+  }
+
+  static get erasShort() {
+    return ['BC', 'AD'];
+  }
+
+  static get erasNarrow() {
+    return ['B', 'A'];
+  }
+
   static eras(length) {
-    return length === 'short' ? ['BC', 'AD'] : ['Before Christ', 'Anno Domini'];
+    switch (length) {
+      case 'narrow':
+        return English.erasNarrow;
+      case 'short':
+        return English.erasShort;
+      case 'long':
+        return English.erasLong;
+      default:
+        return null;
+    }
+  }
+
+  static meridiemForDateTime(dt) {
+    return English.meridiems[dt.hour < 12 ? 0 : 1];
+  }
+
+  static weekdayForDateTime(dt, length) {
+    return English.weekdays(length)[dt.weekday - 1];
+  }
+
+  static monthForDateTime(dt, length) {
+    return English.months(length)[dt.month - 1];
+  }
+
+  static eraForDateTime(dt, length) {
+    return English.eras(length)[dt.year < 0 ? 0 : 1];
   }
 }

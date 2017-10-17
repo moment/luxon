@@ -1,5 +1,6 @@
 import { Util } from './util';
 import { DateTime } from '../datetime';
+import { English } from './english';
 
 function stringifyTokens(splits, tokenToString) {
   let s = '';
@@ -88,6 +89,7 @@ export class Formatter {
   }
 
   formatDateTimeFromString(dt, fmt) {
+    const knownEnglish = this.loc.knownEnglish();
     const string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
         if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
@@ -110,6 +112,23 @@ export class Formatter {
             throw new RangeError(`Value format ${opts.format} is out of range for property format`);
         }
       },
+      meridiem = () =>
+        knownEnglish
+          ? English.meridiemForDateTime(dt)
+          : string({ hour: 'numeric', hour12: true }, 'dayperiod'),
+      month = (length, standalone) =>
+        knownEnglish
+          ? English.monthForDateTime(dt, length)
+          : string(standalone ? { month: length } : { month: length, day: 'numeric' }, 'month'),
+      weekday = (length, standalone) =>
+        knownEnglish
+          ? English.weekdayForDateTime(dt, length)
+          : string(
+              standalone ? { weekday: length } : { weekday: length, month: 'long', day: 'numeric' },
+              'weekday'
+            ),
+      era = length =>
+        knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, 'era'),
       tokenToString = token => {
         const outputCal = this.loc.outputCalendar;
 
@@ -161,55 +180,59 @@ export class Formatter {
           // like America/New_York
           // meridiems
           case 'a':
-            return string({ hour: 'numeric', hour12: true }, 'dayperiod');
+            return meridiem();
           // dates
           case 'd':
             return outputCal ? string({ day: 'numeric' }, 'day') : this.num(dt.day);
           case 'dd':
             return outputCal ? string({ day: '2-digit' }, 'day') : this.num(dt.day, 2);
-          // weekdays - format
+          // weekdays - standalone
           case 'c':
             // like 1
             return this.num(dt.weekday);
           case 'ccc':
             // like 'Tues'
-            return string({ weekday: 'short' }, 'weekday');
+            return weekday('short', true);
           case 'cccc':
             // like 'Tuesday'
-            return string({ weekday: 'long' }, 'weekday');
+            return weekday('long', true);
           case 'ccccc':
             // like 'T'
-            return string({ weekday: 'narrow' }, 'weekday');
-          // weekdays - standalone
+            return weekday('narrow', true);
+          // weekdays - format
           case 'E':
             // like 1
             return this.num(dt.weekday);
           case 'EEE':
             // like 'Tues'
-            return string({ weekday: 'short', month: 'long', day: 'numeric' }, 'weekday');
+            return weekday('short', false);
           case 'EEEE':
             // like 'Tuesday'
-            return string({ weekday: 'long', month: 'long', day: 'numeric' }, 'weekday');
+            return weekday('long', false);
           case 'EEEEE':
             // like 'T'
-            return string({ weekday: 'narrow', month: 'long', day: 'numeric' }, 'weekday');
-          // months - format
+            return weekday('narrow', false);
+          // months - standalone
           case 'L':
             // like 1
-            return string({ month: 'numeric', day: 'numeric' }, 'month');
+            return outputCal
+              ? string({ month: 'numeric', day: 'numeric' }, 'month')
+              : this.num(dt.month);
           case 'LL':
             // like 01, doesn't seem to work
-            return string({ month: '2-digit', day: 'numeric' }, 'month');
+            return outputCal
+              ? string({ month: '2-digit', day: 'numeric' }, 'month')
+              : this.num(dt.month, 2);
           case 'LLL':
             // like Jan
-            return string({ month: 'short', day: 'numeric' }, 'month');
+            return month('short', true);
           case 'LLLL':
             // like January
-            return string({ month: 'long' }, 'month');
+            return month('long', true);
           case 'LLLLL':
             // like J
-            return string({ month: 'narrow' }, 'month');
-          // months - standalone
+            return month('narrow', true);
+          // months - format
           case 'M':
             // like 1
             return outputCal ? string({ month: 'numeric' }, 'month') : this.num(dt.month);
@@ -218,13 +241,13 @@ export class Formatter {
             return outputCal ? string({ month: '2-digit' }, 'month') : this.num(dt.month, 2);
           case 'MMM':
             // like Jan
-            return string({ month: 'short', day: 'numeric' }, 'month');
+            return month('short', false);
           case 'MMMM':
             // like January
-            return string({ month: 'long', day: 'numeric' }, 'month');
+            return month('long', false);
           case 'MMMMM':
             // like J
-            return string({ month: 'narrow' }, 'month');
+            return month('narrow', false);
           // years
           case 'y':
             // like 2014
@@ -240,12 +263,12 @@ export class Formatter {
           // eras
           case 'G':
             // like AD
-            return string({ era: 'short' }, 'era');
+            return era('short');
           case 'GG':
             // like Anno Domini
-            return string({ era: 'long' }, 'era');
+            return era('long');
           case 'GGGGG':
-            return string({ era: 'narrow' }, 'era');
+            return era('narrow');
           case 'kk':
             return this.num(dt.weekYear.toString().slice(-2), 2);
           case 'kkkk':
