@@ -39,6 +39,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">impl</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/impl/locale.js~Locale.html">Locale</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -67,7 +68,20 @@ export class English {
   }
 
   static get monthsShort() {
-    return [&apos;Jan&apos;, &apos;Feb&apos;, &apos;Mar&apos;, &apos;Apr&apos;, &apos;May&apos;, &apos;Jun&apos;, &apos;Jul&apos;, &apos;Aug&apos;, &apos;Sep&apos;, &apos;Oct&apos;, &apos;Nov&apos;, &apos;Dec&apos;];
+    return [
+      &apos;Jan&apos;,
+      &apos;Feb&apos;,
+      &apos;Mar&apos;,
+      &apos;Apr&apos;,
+      &apos;May&apos;,
+      &apos;Jun&apos;,
+      &apos;Jul&apos;,
+      &apos;Aug&apos;,
+      &apos;Sep&apos;,
+      &apos;Oct&apos;,
+      &apos;Nov&apos;,
+      &apos;Dec&apos;
+    ];
   }
 
   static get monthsNarrow() {
@@ -88,7 +102,15 @@ export class English {
   }
 
   static get weekdaysLong() {
-    return [&apos;Monday&apos;, &apos;Tuesday&apos;, &apos;Wednesday&apos;, &apos;Thursday&apos;, &apos;Friday&apos;, &apos;Saturday&apos;, &apos;Sunday&apos;];
+    return [
+      &apos;Monday&apos;,
+      &apos;Tuesday&apos;,
+      &apos;Wednesday&apos;,
+      &apos;Thursday&apos;,
+      &apos;Friday&apos;,
+      &apos;Saturday&apos;,
+      &apos;Sunday&apos;
+    ];
   }
 
   static get weekdaysShort() {
@@ -116,8 +138,45 @@ export class English {
     return [&apos;AM&apos;, &apos;PM&apos;];
   }
 
+  static get erasLong() {
+    return [&apos;Before Christ&apos;, &apos;Anno Domini&apos;];
+  }
+
+  static get erasShort() {
+    return [&apos;BC&apos;, &apos;AD&apos;];
+  }
+
+  static get erasNarrow() {
+    return [&apos;B&apos;, &apos;A&apos;];
+  }
+
   static eras(length) {
-    return length === &apos;short&apos; ? [&apos;BC&apos;, &apos;AD&apos;] : [&apos;Before Christ&apos;, &apos;Anno Domini&apos;];
+    switch (length) {
+      case &apos;narrow&apos;:
+        return English.erasNarrow;
+      case &apos;short&apos;:
+        return English.erasShort;
+      case &apos;long&apos;:
+        return English.erasLong;
+      default:
+        return null;
+    }
+  }
+
+  static meridiemForDateTime(dt) {
+    return English.meridiems[dt.hour &lt; 12 ? 0 : 1];
+  }
+
+  static weekdayForDateTime(dt, length) {
+    return English.weekdays(length)[dt.weekday - 1];
+  }
+
+  static monthForDateTime(dt, length) {
+    return English.months(length)[dt.month - 1];
+  }
+
+  static eraForDateTime(dt, length) {
+    return English.eras(length)[dt.year &lt; 0 ? 0 : 1];
   }
 }
 </code></pre>

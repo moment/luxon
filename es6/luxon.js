@@ -1830,6 +1830,49 @@ var _entryVirtual = function (CONSTRUCTOR) {
 
 var startsWith = _entryVirtual('String').startsWith;
 
+'use strict';
+
+
+
+var _stringRepeat = function repeat(count) {
+  var str = String(_defined(this));
+  var res = '';
+  var n = _toInteger(count);
+  if (n < 0 || n == Infinity) throw RangeError("Count can't be negative");
+  for (;n > 0; (n >>>= 1) && (str += str)) if (n & 1) res += str;
+  return res;
+};
+
+// https://github.com/tc39/proposal-string-pad-start-end
+
+
+
+
+var _stringPad = function (that, maxLength, fillString, left) {
+  var S = String(_defined(that));
+  var stringLength = S.length;
+  var fillStr = fillString === undefined ? ' ' : String(fillString);
+  var intMaxLength = _toLength(maxLength);
+  if (intMaxLength <= stringLength || fillStr == '') return S;
+  var fillLen = intMaxLength - stringLength;
+  var stringFiller = _stringRepeat.call(fillStr, Math.ceil(fillLen / fillStr.length));
+  if (stringFiller.length > fillLen) stringFiller = stringFiller.slice(0, fillLen);
+  return left ? stringFiller + S : S + stringFiller;
+};
+
+'use strict';
+// https://github.com/tc39/proposal-string-pad-start-end
+
+
+
+_export(_export.P, 'String', {
+  padStart: function padStart(maxLength /* , fillString = ' ' */) {
+    return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
+  }
+});
+
+var padStart = _entryVirtual('String').padStart;
+
 // these aren't really private, but nor are they really useful to document
 
 /**
@@ -2465,7 +2508,20 @@ class English {
   }
 
   static get monthsShort() {
-    return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
   }
 
   static get monthsNarrow() {
@@ -2486,7 +2542,15 @@ class English {
   }
 
   static get weekdaysLong() {
-    return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    return [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
   }
 
   static get weekdaysShort() {
@@ -2514,8 +2578,45 @@ class English {
     return ['AM', 'PM'];
   }
 
+  static get erasLong() {
+    return ['Before Christ', 'Anno Domini'];
+  }
+
+  static get erasShort() {
+    return ['BC', 'AD'];
+  }
+
+  static get erasNarrow() {
+    return ['B', 'A'];
+  }
+
   static eras(length) {
-    return length === 'short' ? ['BC', 'AD'] : ['Before Christ', 'Anno Domini'];
+    switch (length) {
+      case 'narrow':
+        return English.erasNarrow;
+      case 'short':
+        return English.erasShort;
+      case 'long':
+        return English.erasLong;
+      default:
+        return null;
+    }
+  }
+
+  static meridiemForDateTime(dt) {
+    return English.meridiems[dt.hour < 12 ? 0 : 1];
+  }
+
+  static weekdayForDateTime(dt, length) {
+    return English.weekdays(length)[dt.weekday - 1];
+  }
+
+  static monthForDateTime(dt, length) {
+    return English.months(length)[dt.month - 1];
+  }
+
+  static eraForDateTime(dt, length) {
+    return English.eras(length)[dt.year < 0 ? 0 : 1];
   }
 }
 
@@ -2564,9 +2665,25 @@ function mapWeekdays(f) {
  * @private
  */
 
+class PolyFormatter {
+  constructor(opts) {
+    this.padTo = opts.padTo || 0;
+    this.round = opts.round || false;
+  }
+
+  format(i) {
+    const maybeRounded = this.round ? Math.round(i) : i;
+    return maybeRounded.toString().padStart(this.padTo, '0');
+  }
+}
+
 class Locale {
   static fromOpts(opts) {
-    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
+    return Locale.create(
+      opts.locale,
+      opts.numberingSystem,
+      opts.outputCalendar
+    );
   }
 
   static create(locale, numberingSystem, outputCalendar) {
@@ -2600,7 +2717,11 @@ class Locale {
       enumerable: true
     });
     Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
+      value: intlConfigString(
+        this.locale,
+        this.numberingSystem,
+        this.outputCalendar
+      ),
       enumerable: false
     });
 
@@ -2626,15 +2747,13 @@ class Locale {
   }
 
   knownEnglish() {
-    return (
-      (this.locale === 'en' ||
-        this.locale.toLowerCase() === 'en-us' ||
-        Intl.DateTimeFormat(this.intl)
-          .resolvedOptions()
-          .locale.startsWith('en-US')) &&
+    return (this.locale === 'en' ||
+      this.locale.toLowerCase() === 'en-us' ||
+      Intl.DateTimeFormat(this.intl)
+        .resolvedOptions()
+        .locale.startsWith('en-US')) &&
       (this.numberingSystem === null || this.numberingSystem === 'latn') &&
-      (this.outputCalendar === null || this.outputCalendar === 'gregory')
-    );
+      (this.outputCalendar === null || this.outputCalendar === 'gregory');
   }
 
   clone(alts) {
@@ -2660,7 +2779,8 @@ class Locale {
     const intl = format ? { month: length, day: 'numeric' } : { month: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.monthsCache[formatStr][length]) {
-      this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));
+      this.monthsCache[formatStr][length] = mapMonths(dt =>
+        this.extract(dt, intl, 'month'));
     }
     return this.monthsCache[formatStr][length];
   }
@@ -2674,11 +2794,12 @@ class Locale {
     }
 
     const intl = format
-        ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
-        : { weekday: length },
+      ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
+      : { weekday: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.weekdaysCache[formatStr][length]) {
-      this.weekdaysCache[formatStr][length] = mapWeekdays(dt => this.extract(dt, intl, 'weekday'));
+      this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>
+        this.extract(dt, intl, 'weekday'));
     }
     return this.weekdaysCache[formatStr][length];
   }
@@ -2692,9 +2813,10 @@ class Locale {
     // for AM and PM. This is probably wrong, but it's makes parsing way easier.
     if (!this.meridiemCache) {
       const intl = { hour: 'numeric', hour12: true };
-      this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(dt =>
-        this.extract(dt, intl, 'dayperiod')
-      );
+      this.meridiemCache = [
+        DateTime.utc(2016, 11, 13, 9),
+        DateTime.utc(2016, 11, 13, 19)
+      ].map(dt => this.extract(dt, intl, 'dayperiod'));
     }
 
     return this.meridiemCache;
@@ -2710,9 +2832,10 @@ class Locale {
     // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
     // to definitely enumerate them.
     if (!this.eraCache[length]) {
-      this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
-        this.extract(dt, intl, 'era')
-      );
+      this.eraCache[length] = [
+        DateTime.utc(-40, 1, 1),
+        DateTime.utc(2017, 1, 1)
+      ].map(dt => this.extract(dt, intl, 'era'));
     }
 
     return this.eraCache[length];
@@ -2727,17 +2850,21 @@ class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+    if (Intl && Intl.NumberFormat) {
+      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
-    if (opts.padTo > 0) {
-      realIntlOpts.minimumIntegerDigits = opts.padTo;
+      if (opts.padTo > 0) {
+        realIntlOpts.minimumIntegerDigits = opts.padTo;
+      }
+
+      if (opts.round) {
+        realIntlOpts.maximumFractionDigits = 0;
+      }
+
+      return new Intl.NumberFormat(this.intl, realIntlOpts);
+    } else {
+      return new PolyFormatter(opts);
     }
-
-    if (opts.round) {
-      realIntlOpts.maximumFractionDigits = 0;
-    }
-
-    return new Intl.NumberFormat(this.intl, realIntlOpts);
   }
 
   dtFormatter(dt, intlOpts = {}) {
@@ -2765,11 +2892,9 @@ class Locale {
   }
 
   equals(other) {
-    return (
-      this.locale === other.locale &&
+    return this.locale === other.locale &&
       this.numberingSystem === other.numberingSystem &&
-      this.outputCalendar === other.outputCalendar
-    );
+      this.outputCalendar === other.outputCalendar;
   }
 }
 
@@ -2796,9 +2921,7 @@ class Formatter {
   }
 
   static parseFormat(fmt) {
-    let current = null,
-      currentFull = '',
-      bracketed = false;
+    let current = null, currentFull = '', bracketed = false;
     const splits = [];
     for (let i = 0; i < fmt.length; i++) {
       const c = fmt.charAt(i);
@@ -2835,17 +2958,26 @@ class Formatter {
   }
 
   formatDateTime(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(
+      dt,
+      Object.assign({}, this.opts, opts)
+    );
     return df.format(d);
   }
 
   formatDateTimeParts(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(
+      dt,
+      Object.assign({}, this.opts, opts)
+    );
     return df.format(d);
   }
 
   resolvedOptions(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const [df, d] = this.loc.dtFormatter(
+      dt,
+      Object.assign({}, this.opts, opts)
+    );
     return df.resolvedOptions(d);
   }
 
@@ -2860,6 +2992,7 @@ class Formatter {
   }
 
   formatDateTimeFromString(dt, fmt) {
+    const knownEnglish = this.loc.knownEnglish();
     const string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
         if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
@@ -2879,9 +3012,37 @@ class Formatter {
           case 'techie':
             return `${sign}${this.num(Math.abs(hours), 2)}${this.num(minutes, 2)}`;
           default:
-            throw new RangeError(`Value format ${opts.format} is out of range for property format`);
+            throw new RangeError(
+              `Value format ${opts.format} is out of range for property format`
+            );
         }
       },
+      meridiem = () =>
+        knownEnglish
+          ? English.meridiemForDateTime(dt)
+          : string({ hour: 'numeric', hour12: true }, 'dayperiod'),
+      month = (length, standalone) =>
+        knownEnglish
+          ? English.monthForDateTime(dt, length)
+          : string(
+              standalone
+                ? { month: length }
+                : { month: length, day: 'numeric' },
+              'month'
+            ),
+      weekday = (length, standalone) =>
+        knownEnglish
+          ? English.weekdayForDateTime(dt, length)
+          : string(
+              standalone
+                ? { weekday: length }
+                : { weekday: length, month: 'long', day: 'numeric' },
+              'weekday'
+            ),
+      era = length =>
+        knownEnglish
+          ? English.eraForDateTime(dt, length)
+          : string({ era: length }, 'era'),
       tokenToString = token => {
         const outputCal = this.loc.outputCalendar;
 
@@ -2933,74 +3094,88 @@ class Formatter {
           // like America/New_York
           // meridiems
           case 'a':
-            return string({ hour: 'numeric', hour12: true }, 'dayperiod');
+            return meridiem();
           // dates
           case 'd':
-            return outputCal ? string({ day: 'numeric' }, 'day') : this.num(dt.day);
+            return outputCal
+              ? string({ day: 'numeric' }, 'day')
+              : this.num(dt.day);
           case 'dd':
-            return outputCal ? string({ day: '2-digit' }, 'day') : this.num(dt.day, 2);
-          // weekdays - format
+            return outputCal
+              ? string({ day: '2-digit' }, 'day')
+              : this.num(dt.day, 2);
+          // weekdays - standalone
           case 'c':
             // like 1
             return this.num(dt.weekday);
           case 'ccc':
             // like 'Tues'
-            return string({ weekday: 'short' }, 'weekday');
+            return weekday('short', true);
           case 'cccc':
             // like 'Tuesday'
-            return string({ weekday: 'long' }, 'weekday');
+            return weekday('long', true);
           case 'ccccc':
             // like 'T'
-            return string({ weekday: 'narrow' }, 'weekday');
-          // weekdays - standalone
+            return weekday('narrow', true);
+          // weekdays - format
           case 'E':
             // like 1
             return this.num(dt.weekday);
           case 'EEE':
             // like 'Tues'
-            return string({ weekday: 'short', month: 'long', day: 'numeric' }, 'weekday');
+            return weekday('short', false);
           case 'EEEE':
             // like 'Tuesday'
-            return string({ weekday: 'long', month: 'long', day: 'numeric' }, 'weekday');
+            return weekday('long', false);
           case 'EEEEE':
             // like 'T'
-            return string({ weekday: 'narrow', month: 'long', day: 'numeric' }, 'weekday');
-          // months - format
+            return weekday('narrow', false);
+          // months - standalone
           case 'L':
             // like 1
-            return string({ month: 'numeric', day: 'numeric' }, 'month');
+            return outputCal
+              ? string({ month: 'numeric', day: 'numeric' }, 'month')
+              : this.num(dt.month);
           case 'LL':
             // like 01, doesn't seem to work
-            return string({ month: '2-digit', day: 'numeric' }, 'month');
+            return outputCal
+              ? string({ month: '2-digit', day: 'numeric' }, 'month')
+              : this.num(dt.month, 2);
           case 'LLL':
             // like Jan
-            return string({ month: 'short', day: 'numeric' }, 'month');
+            return month('short', true);
           case 'LLLL':
             // like January
-            return string({ month: 'long' }, 'month');
+            return month('long', true);
           case 'LLLLL':
             // like J
-            return string({ month: 'narrow' }, 'month');
-          // months - standalone
+            return month('narrow', true);
+          // months - format
           case 'M':
             // like 1
-            return outputCal ? string({ month: 'numeric' }, 'month') : this.num(dt.month);
+            return outputCal
+              ? string({ month: 'numeric' }, 'month')
+              : this.num(dt.month);
           case 'MM':
             // like 01
-            return outputCal ? string({ month: '2-digit' }, 'month') : this.num(dt.month, 2);
+            return outputCal
+              ? string({ month: '2-digit' }, 'month')
+              : this.num(dt.month, 2);
           case 'MMM':
             // like Jan
-            return string({ month: 'short', day: 'numeric' }, 'month');
+            return month('short', false);
           case 'MMMM':
             // like January
-            return string({ month: 'long', day: 'numeric' }, 'month');
+            return month('long', false);
           case 'MMMMM':
             // like J
-            return string({ month: 'narrow' }, 'month');
+            return month('narrow', false);
           // years
           case 'y':
             // like 2014
-            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year);
+            return outputCal
+              ? string({ year: 'numeric' }, 'year')
+              : this.num(dt.year);
           case 'yy':
             // like 14
             return outputCal
@@ -3008,16 +3183,18 @@ class Formatter {
               : this.num(dt.year.toString().slice(-2), 2);
           case 'yyyy':
             // like 0012
-            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year, 4);
+            return outputCal
+              ? string({ year: 'numeric' }, 'year')
+              : this.num(dt.year, 4);
           // eras
           case 'G':
             // like AD
-            return string({ era: 'short' }, 'era');
+            return era('short');
           case 'GG':
             // like Anno Domini
-            return string({ era: 'long' }, 'era');
+            return era('long');
           case 'GGGGG':
-            return string({ era: 'narrow' }, 'era');
+            return era('narrow');
           case 'kk':
             return this.num(dt.weekYear.toString().slice(-2), 2);
           case 'kkkk':
@@ -3064,7 +3241,10 @@ class Formatter {
           case 'ffff':
             return this.formatDateTime(dt, DateTime.DATETIME_HUGE);
           case 'F':
-            return this.formatDateTime(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
+            return this.formatDateTime(
+              dt,
+              DateTime.DATETIME_SHORT_WITH_SECONDS
+            );
           case 'FF':
             return this.formatDateTime(dt, DateTime.DATETIME_MED_WITH_SECONDS);
           case 'FFF':
@@ -3084,36 +3264,37 @@ class Formatter {
 
   formatDurationFromString(dur, fmt) {
     const tokenToField = token => {
-        switch (token[0]) {
-          case 'S':
-            return 'millisecond';
-          case 's':
-            return 'second';
-          case 'm':
-            return 'minute';
-          case 'h':
-            return 'hour';
-          case 'd':
-            return 'day';
-          case 'M':
-            return 'month';
-          case 'y':
-            return 'year';
-          default:
-            return null;
-        }
-      },
-      tokenToString = lildur => token => {
-        const mapped = tokenToField(token);
-        if (mapped) {
-          return this.num(lildur.get(mapped), token.length);
-        } else {
-          return token;
-        }
-      },
+      switch (token[0]) {
+        case 'S':
+          return 'millisecond';
+        case 's':
+          return 'second';
+        case 'm':
+          return 'minute';
+        case 'h':
+          return 'hour';
+        case 'd':
+          return 'day';
+        case 'M':
+          return 'month';
+        case 'y':
+          return 'year';
+        default:
+          return null;
+      }
+    },
+      tokenToString = lildur =>
+        token => {
+          const mapped = tokenToField(token);
+          if (mapped) {
+            return this.num(lildur.get(mapped), token.length);
+          } else {
+            return token;
+          }
+        },
       tokens = Formatter.parseFormat(fmt),
       realTokens = tokens.reduce(
-        (found, { literal, val }) => (literal ? found : found.concat(val)),
+        (found, { literal, val }) => literal ? found : found.concat(val),
         []
       ),
       collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter(t => t));

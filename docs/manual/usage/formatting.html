@@ -404,8 +404,8 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 <h3 id="standalone-vs-format-tokens">Standalone vs format tokens</h3>
 <p>Some tokens have a &quot;standalone&quot; and &quot;format&quot; version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. &quot;Monday the 22nd&quot; vs &quot;Monday&quot;). Use them accordingly. </p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;ru&apos;);
-d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos;
-d.toFormat(&quot;LLLL&quot;) //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos;</code>
+d.toFormat(&quot;LLLL&quot;) //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos; (format)
+d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos; (standalone)</code>
 </code></pre>
 <h3 id="macro-tokens">Macro tokens</h3>
 <p>Some of the formats are &quot;macros&quot;, meaning they correspond to multiple components. These use the native Intl API and will order their constituent parts in a locale-friendly way.</p>
@@ -539,56 +539,56 @@ d.toFormat(&quot;LLLL&quot;) //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#
 <td>06</td>
 </tr>
 <tr>
-<td>E</td>
 <td>c</td>
+<td>E</td>
 <td>day of the week, as number from 1-7 (Monday is 1, Sunday is 7)</td>
 <td>3</td>
 </tr>
 <tr>
-<td>EEE</td>
 <td>ccc</td>
+<td>EEE</td>
 <td>day of the week, as an abbreviate localized string</td>
 <td>Wed</td>
 </tr>
 <tr>
-<td>EEEE</td>
 <td>cccc</td>
+<td>EEEE</td>
 <td>day of the week, as an unabbreviated localized string</td>
 <td>Wednesday</td>
 </tr>
 <tr>
-<td>EEEEE</td>
 <td>ccccc</td>
+<td>EEEEE</td>
 <td>day of the week, as a single localized letter</td>
 <td>W</td>
 </tr>
 <tr>
-<td>M</td>
 <td>L</td>
+<td>M</td>
 <td>month as an unpadded number</td>
 <td>8</td>
 </tr>
 <tr>
-<td>MM</td>
 <td>LL</td>
+<td>MM</td>
 <td>month as an padded number</td>
 <td>08</td>
 </tr>
 <tr>
-<td>MMM</td>
 <td>LLL</td>
+<td>MMM</td>
 <td>month as an abbreviated localized string</td>
 <td>Aug</td>
 </tr>
 <tr>
-<td>MMMM</td>
 <td>LLLL</td>
+<td>MMMM</td>
 <td>month as an unabbreviated localized string</td>
 <td>August</td>
 </tr>
 <tr>
-<td>MMMMM</td>
 <td>LLLLL</td>
+<td>MMMMM</td>
 <td>month as a single localized letter</td>
 <td>A</td>
 </tr>

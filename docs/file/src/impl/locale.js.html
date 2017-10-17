@@ -39,6 +39,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">impl</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/impl/locale.js~Locale.html">Locale</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -93,9 +94,25 @@ function mapWeekdays(f) {
  * @private
  */
 
+class PolyFormatter {
+  constructor(opts) {
+    this.padTo = opts.padTo || 0;
+    this.round = opts.round || false;
+  }
+
+  format(i) {
+    const maybeRounded = this.round ? Math.round(i) : i;
+    return maybeRounded.toString().padStart(this.padTo, &apos;0&apos;);
+  }
+}
+
 export class Locale {
   static fromOpts(opts) {
-    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
+    return Locale.create(
+      opts.locale,
+      opts.numberingSystem,
+      opts.outputCalendar
+    );
   }
 
   static create(locale, numberingSystem, outputCalendar) {
@@ -129,7 +146,11 @@ export class Locale {
       enumerable: true
     });
     Object.defineProperty(this, &apos;intl&apos;, {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
+      value: intlConfigString(
+        this.locale,
+        this.numberingSystem,
+        this.outputCalendar
+      ),
       enumerable: false
     });
 
@@ -155,15 +176,13 @@ export class Locale {
   }
 
   knownEnglish() {
-    return (
-      (this.locale === &apos;en&apos; ||
-        this.locale.toLowerCase() === &apos;en-us&apos; ||
-        Intl.DateTimeFormat(this.intl)
-          .resolvedOptions()
-          .locale.startsWith(&apos;en-US&apos;)) &amp;&amp;
+    return (this.locale === &apos;en&apos; ||
+      this.locale.toLowerCase() === &apos;en-us&apos; ||
+      Intl.DateTimeFormat(this.intl)
+        .resolvedOptions()
+        .locale.startsWith(&apos;en-US&apos;)) &amp;&amp;
       (this.numberingSystem === null || this.numberingSystem === &apos;latn&apos;) &amp;&amp;
-      (this.outputCalendar === null || this.outputCalendar === &apos;gregory&apos;)
-    );
+      (this.outputCalendar === null || this.outputCalendar === &apos;gregory&apos;);
   }
 
   clone(alts) {
@@ -189,7 +208,8 @@ export class Locale {
     const intl = format ? { month: length, day: &apos;numeric&apos; } : { month: length },
       formatStr = format ? &apos;format&apos; : &apos;standalone&apos;;
     if (!this.monthsCache[formatStr][length]) {
-      this.monthsCache[formatStr][length] = mapMonths(dt =&gt; this.extract(dt, intl, &apos;month&apos;));
+      this.monthsCache[formatStr][length] = mapMonths(dt =&gt;
+        this.extract(dt, intl, &apos;month&apos;));
     }
     return this.monthsCache[formatStr][length];
   }
@@ -203,11 +223,12 @@ export class Locale {
     }
 
     const intl = format
-        ? { weekday: length, year: &apos;numeric&apos;, month: &apos;long&apos;, day: &apos;numeric&apos; }
-        : { weekday: length },
+      ? { weekday: length, year: &apos;numeric&apos;, month: &apos;long&apos;, day: &apos;numeric&apos; }
+      : { weekday: length },
       formatStr = format ? &apos;format&apos; : &apos;standalone&apos;;
     if (!this.weekdaysCache[formatStr][length]) {
-      this.weekdaysCache[formatStr][length] = mapWeekdays(dt =&gt; this.extract(dt, intl, &apos;weekday&apos;));
+      this.weekdaysCache[formatStr][length] = mapWeekdays(dt =&gt;
+        this.extract(dt, intl, &apos;weekday&apos;));
     }
     return this.weekdaysCache[formatStr][length];
   }
@@ -221,9 +242,10 @@ export class Locale {
     // for AM and PM. This is probably wrong, but it&apos;s makes parsing way easier.
     if (!this.meridiemCache) {
       const intl = { hour: &apos;numeric&apos;, hour12: true };
-      this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(dt =&gt;
-        this.extract(dt, intl, &apos;dayperiod&apos;)
-      );
+      this.meridiemCache = [
+        DateTime.utc(2016, 11, 13, 9),
+        DateTime.utc(2016, 11, 13, 19)
+      ].map(dt =&gt; this.extract(dt, intl, &apos;dayperiod&apos;));
     }
 
     return this.meridiemCache;
@@ -239,9 +261,10 @@ export class Locale {
     // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
     // to definitely enumerate them.
     if (!this.eraCache[length]) {
-      this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =&gt;
-        this.extract(dt, intl, &apos;era&apos;)
-      );
+      this.eraCache[length] = [
+        DateTime.utc(-40, 1, 1),
+        DateTime.utc(2017, 1, 1)
+      ].map(dt =&gt; this.extract(dt, intl, &apos;era&apos;));
     }
 
     return this.eraCache[length];
@@ -256,17 +279,21 @@ export class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+    if (Intl &amp;&amp; Intl.NumberFormat) {
+      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
-    if (opts.padTo &gt; 0) {
-      realIntlOpts.minimumIntegerDigits = opts.padTo;
+      if (opts.padTo &gt; 0) {
+        realIntlOpts.minimumIntegerDigits = opts.padTo;
+      }
+
+      if (opts.round) {
+        realIntlOpts.maximumFractionDigits = 0;
+      }
+
+      return new Intl.NumberFormat(this.intl, realIntlOpts);
+    } else {
+      return new PolyFormatter(opts);
     }
-
-    if (opts.round) {
-      realIntlOpts.maximumFractionDigits = 0;
-    }
-
-    return new Intl.NumberFormat(this.intl, realIntlOpts);
   }
 
   dtFormatter(dt, intlOpts = {}) {
@@ -275,7 +302,7 @@ export class Locale {
     if (dt.zone.universal) {
       // if we have a fixed-offset zone that isn&apos;t actually UTC,
       // (like UTC+8), we need to make do with just displaying
-      // the time in UTC; the formatter how to handle UTC+8
+      // the time in UTC; the formatter doesn&apos;t know how to handle UTC+8
       d = Util.asIfUTC(dt);
       z = &apos;UTC&apos;;
     } else if (dt.zone.type === &apos;local&apos;) {
@@ -294,11 +321,9 @@ export class Locale {
   }
 
   equals(other) {
-    return (
-      this.locale === other.locale &amp;&amp;
+    return this.locale === other.locale &amp;&amp;
       this.numberingSystem === other.numberingSystem &amp;&amp;
-      this.outputCalendar === other.outputCalendar
-    );
+      this.outputCalendar === other.outputCalendar;
   }
 }
 </code></pre>
