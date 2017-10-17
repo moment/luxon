@@ -65,11 +65,7 @@ class PolyFormatter {
 
 export class Locale {
   static fromOpts(opts) {
-    return Locale.create(
-      opts.locale,
-      opts.numberingSystem,
-      opts.outputCalendar
-    );
+    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
   }
 
   static create(locale, numberingSystem, outputCalendar) {
@@ -103,11 +99,7 @@ export class Locale {
       enumerable: true
     });
     Object.defineProperty(this, 'intl', {
-      value: intlConfigString(
-        this.locale,
-        this.numberingSystem,
-        this.outputCalendar
-      ),
+      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
       enumerable: false
     });
 
@@ -133,13 +125,15 @@ export class Locale {
   }
 
   knownEnglish() {
-    return (this.locale === 'en' ||
-      this.locale.toLowerCase() === 'en-us' ||
-      Intl.DateTimeFormat(this.intl)
-        .resolvedOptions()
-        .locale.startsWith('en-US')) &&
+    return (
+      (this.locale === 'en' ||
+        this.locale.toLowerCase() === 'en-us' ||
+        Intl.DateTimeFormat(this.intl)
+          .resolvedOptions()
+          .locale.startsWith('en-US')) &&
       (this.numberingSystem === null || this.numberingSystem === 'latn') &&
-      (this.outputCalendar === null || this.outputCalendar === 'gregory');
+      (this.outputCalendar === null || this.outputCalendar === 'gregory')
+    );
   }
 
   clone(alts) {
@@ -165,8 +159,7 @@ export class Locale {
     const intl = format ? { month: length, day: 'numeric' } : { month: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.monthsCache[formatStr][length]) {
-      this.monthsCache[formatStr][length] = mapMonths(dt =>
-        this.extract(dt, intl, 'month'));
+      this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));
     }
     return this.monthsCache[formatStr][length];
   }
@@ -180,12 +173,11 @@ export class Locale {
     }
 
     const intl = format
-      ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
-      : { weekday: length },
+        ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
+        : { weekday: length },
       formatStr = format ? 'format' : 'standalone';
     if (!this.weekdaysCache[formatStr][length]) {
-      this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>
-        this.extract(dt, intl, 'weekday'));
+      this.weekdaysCache[formatStr][length] = mapWeekdays(dt => this.extract(dt, intl, 'weekday'));
     }
     return this.weekdaysCache[formatStr][length];
   }
@@ -199,10 +191,9 @@ export class Locale {
     // for AM and PM. This is probably wrong, but it's makes parsing way easier.
     if (!this.meridiemCache) {
       const intl = { hour: 'numeric', hour12: true };
-      this.meridiemCache = [
-        DateTime.utc(2016, 11, 13, 9),
-        DateTime.utc(2016, 11, 13, 19)
-      ].map(dt => this.extract(dt, intl, 'dayperiod'));
+      this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(dt =>
+        this.extract(dt, intl, 'dayperiod')
+      );
     }
 
     return this.meridiemCache;
@@ -218,10 +209,9 @@ export class Locale {
     // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
     // to definitely enumerate them.
     if (!this.eraCache[length]) {
-      this.eraCache[length] = [
-        DateTime.utc(-40, 1, 1),
-        DateTime.utc(2017, 1, 1)
-      ].map(dt => this.extract(dt, intl, 'era'));
+      this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
+        this.extract(dt, intl, 'era')
+      );
     }
 
     return this.eraCache[length];
@@ -278,8 +268,10 @@ export class Locale {
   }
 
   equals(other) {
-    return this.locale === other.locale &&
+    return (
+      this.locale === other.locale &&
       this.numberingSystem === other.numberingSystem &&
-      this.outputCalendar === other.outputCalendar;
+      this.outputCalendar === other.outputCalendar
+    );
   }
 }

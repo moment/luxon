@@ -5,7 +5,7 @@ import { Duration } from '../../src/luxon';
 // #shiftTo()
 //-------
 test('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', () => {
-  const dur = Duration.fromMilliseconds(5760000);
+  const dur = Duration.fromMillis(5760000);
   expect(dur.shiftTo('hours').hours).toBe(1.6);
 
   const mod = dur.shiftTo('hours', 'minutes');

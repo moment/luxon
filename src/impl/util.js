@@ -14,7 +14,7 @@ import { InvalidArgumentError } from '../errors';
 export class Util {
   static friendlyDuration(duration) {
     if (Util.isNumber(duration)) {
-      return Duration.fromMilliseconds(duration);
+      return Duration.fromMillis(duration);
     } else if (duration instanceof Duration) {
       return duration;
     } else if (duration instanceof Object) {

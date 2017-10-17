@@ -62,8 +62,8 @@ test("Interval#count('days') returns 2 if the interval crosses the new year", ()
 test('Interval#toDuration creates a duration in those units', () => {
   const int = Interval.fromDateTimes(todayAt(9), todayAt(13));
 
-  expect(int.toDuration()).toEqual(Duration.fromMilliseconds(4 * 3600 * 1000));
-  expect(int.toDuration('milliseconds')).toEqual(Duration.fromMilliseconds(4 * 3600 * 1000));
+  expect(int.toDuration()).toEqual(Duration.fromMillis(4 * 3600 * 1000));
+  expect(int.toDuration('milliseconds')).toEqual(Duration.fromMillis(4 * 3600 * 1000));
   expect(int.toDuration('seconds')).toEqual(Duration.fromObject({ seconds: 4 * 3600 }));
   expect(int.toDuration('minutes')).toEqual(Duration.fromObject({ minutes: 4 * 60 }));
   expect(int.toDuration('hours')).toEqual(Duration.fromObject({ hours: 4 }));

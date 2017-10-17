@@ -106,7 +106,7 @@ function isHighOrderNegative(obj) {
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
  *
- * * **Creation** To create a Duration, use {@link fromMilliseconds}, {@link fromObject}, or {@link fromISO}.
+ * * **Creation** To create a Duration, use {@link fromMillis}, {@link fromObject}, or {@link fromISO}.
  * * **Unit values** See the {@link years}, {@link months}, {@link weeks}, {@link days}, {@link hours}, {@link minutes}, {@link seconds}, {@link milliseconds} accessors.
  * * **Configuration** See  {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation** To create new Durations out of old ones use {@link plus}, {@link minus}, {@link normalize}, {@link set}, {@link reconfigure}, {@link shiftTo}, and {@link negate}.
@@ -152,7 +152,7 @@ export class Duration {
    * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  static fromMilliseconds(count, opts) {
+  static fromMillis(count, opts) {
     return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
   }
 

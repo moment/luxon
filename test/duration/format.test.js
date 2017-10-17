@@ -40,7 +40,7 @@ test('Duration#toISO handles mixed negative/positive durations', () => {
 test("Duration#toFormat('S') returns milliseconds", () => {
   expect(dur().toFormat('S')).toBe('36993906007');
 
-  const lil = Duration.fromMilliseconds(5);
+  const lil = Duration.fromMillis(5);
   expect(lil.toFormat('S')).toBe('5');
   expect(lil.toFormat('SS')).toBe('05');
   expect(lil.toFormat('SSSSS')).toBe('00005');

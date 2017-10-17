@@ -1316,7 +1316,7 @@ export class DateTime {
             .startOf('day')
             .valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromMilliseconds(ms, opts).shiftTo('days').days);
+      return Math.floor(Duration.fromMillis(ms, opts).shiftTo('days').days);
     };
 
     if (units.indexOf('weeks') >= 0) {
@@ -1350,7 +1350,7 @@ export class DateTime {
       lowestOrder = 'days';
     }
 
-    const remaining = Duration.fromMilliseconds(post - cursor, opts),
+    const remaining = Duration.fromMillis(post - cursor, opts),
       moreUnits = units.filter(
         u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
       ),
