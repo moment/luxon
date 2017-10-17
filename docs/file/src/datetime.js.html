@@ -39,7 +39,6 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
-<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">impl</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/impl/locale.js~Locale.html">Locale</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -1363,7 +1362,7 @@ export class DateTime {
             .startOf(&apos;day&apos;)
             .valueOf(),
         ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromMilliseconds(ms, opts).shiftTo(&apos;days&apos;).days);
+      return Math.floor(Duration.fromMillis(ms, opts).shiftTo(&apos;days&apos;).days);
     };
 
     if (units.indexOf(&apos;weeks&apos;) &gt;= 0) {
@@ -1397,7 +1396,7 @@ export class DateTime {
       lowestOrder = &apos;days&apos;;
     }
 
-    const remaining = Duration.fromMilliseconds(post - cursor, opts),
+    const remaining = Duration.fromMillis(post - cursor, opts),
       moreUnits = units.filter(
         u =&gt; [&apos;hours&apos;, &apos;minutes&apos;, &apos;seconds&apos;, &apos;milliseconds&apos;].indexOf(u) &gt;= 0
       ),

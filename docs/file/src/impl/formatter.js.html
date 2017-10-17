@@ -39,7 +39,6 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
-<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">impl</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/impl/locale.js~Locale.html">Locale</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -72,7 +71,9 @@ export class Formatter {
   }
 
   static parseFormat(fmt) {
-    let current = null, currentFull = &apos;&apos;, bracketed = false;
+    let current = null,
+      currentFull = &apos;&apos;,
+      bracketed = false;
     const splits = [];
     for (let i = 0; i &lt; fmt.length; i++) {
       const c = fmt.charAt(i);
@@ -109,26 +110,17 @@ export class Formatter {
   }
 
   formatDateTime(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(
-      dt,
-      Object.assign({}, this.opts, opts)
-    );
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   formatDateTimeParts(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(
-      dt,
-      Object.assign({}, this.opts, opts)
-    );
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.format(d);
   }
 
   resolvedOptions(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(
-      dt,
-      Object.assign({}, this.opts, opts)
-    );
+    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
     return df.resolvedOptions(d);
   }
 
@@ -163,9 +155,7 @@ export class Formatter {
           case &apos;techie&apos;:
             return `${sign}${this.num(Math.abs(hours), 2)}${this.num(minutes, 2)}`;
           default:
-            throw new RangeError(
-              `Value format ${opts.format} is out of range for property format`
-            );
+            throw new RangeError(`Value format ${opts.format} is out of range for property format`);
         }
       },
       meridiem = () =&gt;
@@ -175,25 +165,16 @@ export class Formatter {
       month = (length, standalone) =&gt;
         knownEnglish
           ? English.monthForDateTime(dt, length)
-          : string(
-              standalone
-                ? { month: length }
-                : { month: length, day: &apos;numeric&apos; },
-              &apos;month&apos;
-            ),
+          : string(standalone ? { month: length } : { month: length, day: &apos;numeric&apos; }, &apos;month&apos;),
       weekday = (length, standalone) =&gt;
         knownEnglish
           ? English.weekdayForDateTime(dt, length)
           : string(
-              standalone
-                ? { weekday: length }
-                : { weekday: length, month: &apos;long&apos;, day: &apos;numeric&apos; },
+              standalone ? { weekday: length } : { weekday: length, month: &apos;long&apos;, day: &apos;numeric&apos; },
               &apos;weekday&apos;
             ),
       era = length =&gt;
-        knownEnglish
-          ? English.eraForDateTime(dt, length)
-          : string({ era: length }, &apos;era&apos;),
+        knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, &apos;era&apos;),
       tokenToString = token =&gt; {
         const outputCal = this.loc.outputCalendar;
 
@@ -248,13 +229,9 @@ export class Formatter {
             return meridiem();
           // dates
           case &apos;d&apos;:
-            return outputCal
-              ? string({ day: &apos;numeric&apos; }, &apos;day&apos;)
-              : this.num(dt.day);
+            return outputCal ? string({ day: &apos;numeric&apos; }, &apos;day&apos;) : this.num(dt.day);
           case &apos;dd&apos;:
-            return outputCal
-              ? string({ day: &apos;2-digit&apos; }, &apos;day&apos;)
-              : this.num(dt.day, 2);
+            return outputCal ? string({ day: &apos;2-digit&apos; }, &apos;day&apos;) : this.num(dt.day, 2);
           // weekdays - standalone
           case &apos;c&apos;:
             // like 1
@@ -304,14 +281,10 @@ export class Formatter {
           // months - format
           case &apos;M&apos;:
             // like 1
-            return outputCal
-              ? string({ month: &apos;numeric&apos; }, &apos;month&apos;)
-              : this.num(dt.month);
+            return outputCal ? string({ month: &apos;numeric&apos; }, &apos;month&apos;) : this.num(dt.month);
           case &apos;MM&apos;:
             // like 01
-            return outputCal
-              ? string({ month: &apos;2-digit&apos; }, &apos;month&apos;)
-              : this.num(dt.month, 2);
+            return outputCal ? string({ month: &apos;2-digit&apos; }, &apos;month&apos;) : this.num(dt.month, 2);
           case &apos;MMM&apos;:
             // like Jan
             return month(&apos;short&apos;, false);
@@ -324,9 +297,7 @@ export class Formatter {
           // years
           case &apos;y&apos;:
             // like 2014
-            return outputCal
-              ? string({ year: &apos;numeric&apos; }, &apos;year&apos;)
-              : this.num(dt.year);
+            return outputCal ? string({ year: &apos;numeric&apos; }, &apos;year&apos;) : this.num(dt.year);
           case &apos;yy&apos;:
             // like 14
             return outputCal
@@ -334,9 +305,7 @@ export class Formatter {
               : this.num(dt.year.toString().slice(-2), 2);
           case &apos;yyyy&apos;:
             // like 0012
-            return outputCal
-              ? string({ year: &apos;numeric&apos; }, &apos;year&apos;)
-              : this.num(dt.year, 4);
+            return outputCal ? string({ year: &apos;numeric&apos; }, &apos;year&apos;) : this.num(dt.year, 4);
           // eras
           case &apos;G&apos;:
             // like AD
@@ -392,10 +361,7 @@ export class Formatter {
           case &apos;ffff&apos;:
             return this.formatDateTime(dt, DateTime.DATETIME_HUGE);
           case &apos;F&apos;:
-            return this.formatDateTime(
-              dt,
-              DateTime.DATETIME_SHORT_WITH_SECONDS
-            );
+            return this.formatDateTime(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
           case &apos;FF&apos;:
             return this.formatDateTime(dt, DateTime.DATETIME_MED_WITH_SECONDS);
           case &apos;FFF&apos;:
@@ -415,37 +381,36 @@ export class Formatter {
 
   formatDurationFromString(dur, fmt) {
     const tokenToField = token =&gt; {
-      switch (token[0]) {
-        case &apos;S&apos;:
-          return &apos;millisecond&apos;;
-        case &apos;s&apos;:
-          return &apos;second&apos;;
-        case &apos;m&apos;:
-          return &apos;minute&apos;;
-        case &apos;h&apos;:
-          return &apos;hour&apos;;
-        case &apos;d&apos;:
-          return &apos;day&apos;;
-        case &apos;M&apos;:
-          return &apos;month&apos;;
-        case &apos;y&apos;:
-          return &apos;year&apos;;
-        default:
-          return null;
-      }
-    },
-      tokenToString = lildur =&gt;
-        token =&gt; {
-          const mapped = tokenToField(token);
-          if (mapped) {
-            return this.num(lildur.get(mapped), token.length);
-          } else {
-            return token;
-          }
-        },
+        switch (token[0]) {
+          case &apos;S&apos;:
+            return &apos;millisecond&apos;;
+          case &apos;s&apos;:
+            return &apos;second&apos;;
+          case &apos;m&apos;:
+            return &apos;minute&apos;;
+          case &apos;h&apos;:
+            return &apos;hour&apos;;
+          case &apos;d&apos;:
+            return &apos;day&apos;;
+          case &apos;M&apos;:
+            return &apos;month&apos;;
+          case &apos;y&apos;:
+            return &apos;year&apos;;
+          default:
+            return null;
+        }
+      },
+      tokenToString = lildur =&gt; token =&gt; {
+        const mapped = tokenToField(token);
+        if (mapped) {
+          return this.num(lildur.get(mapped), token.length);
+        } else {
+          return token;
+        }
+      },
       tokens = Formatter.parseFormat(fmt),
       realTokens = tokens.reduce(
-        (found, { literal, val }) =&gt; literal ? found : found.concat(val),
+        (found, { literal, val }) =&gt; (literal ? found : found.concat(val)),
         []
       ),
       collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter(t =&gt; t));

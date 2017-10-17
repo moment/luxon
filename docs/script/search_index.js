@@ -24,12 +24,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "luxon/src/impl/locale.js~locale",
-    "class/src/impl/locale.js~Locale.html",
-    "<span>Locale</span> <span class=\"search-result-import-path\">luxon/src/impl/locale.js</span>",
-    "class"
-  ],
-  [
     "luxon/src/settings.js~settings",
     "class/src/settings.js~Settings.html",
     "<span>Settings</span> <span class=\"search-result-import-path\">luxon/src/settings.js</span>",
@@ -1080,9 +1074,9 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/duration.js~duration.frommilliseconds",
-    "class/src/duration.js~Duration.html#static-method-fromMilliseconds",
-    "src/duration.js~Duration.fromMilliseconds",
+    "src/duration.js~duration.frommillis",
+    "class/src/duration.js~Duration.html#static-method-fromMillis",
+    "src/duration.js~Duration.fromMillis",
     "method"
   ],
   [
@@ -1126,96 +1120,6 @@ window.esdocSearchIndex = [
     "file/src/impl/locale.js.html",
     "src/impl/locale.js",
     "file"
-  ],
-  [
-    "src/impl/locale.js~locale#clone",
-    "class/src/impl/locale.js~Locale.html#instance-method-clone",
-    "src/impl/locale.js~Locale#clone",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#constructor",
-    "class/src/impl/locale.js~Locale.html#instance-constructor-constructor",
-    "src/impl/locale.js~Locale#constructor",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#dtformatter",
-    "class/src/impl/locale.js~Locale.html#instance-method-dtFormatter",
-    "src/impl/locale.js~Locale#dtFormatter",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#equals",
-    "class/src/impl/locale.js~Locale.html#instance-method-equals",
-    "src/impl/locale.js~Locale#equals",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#eras",
-    "class/src/impl/locale.js~Locale.html#instance-method-eras",
-    "src/impl/locale.js~Locale#eras",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#extract",
-    "class/src/impl/locale.js~Locale.html#instance-method-extract",
-    "src/impl/locale.js~Locale#extract",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#knownenglish",
-    "class/src/impl/locale.js~Locale.html#instance-method-knownEnglish",
-    "src/impl/locale.js~Locale#knownEnglish",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#meridiemcache",
-    "class/src/impl/locale.js~Locale.html#instance-member-meridiemCache",
-    "src/impl/locale.js~Locale#meridiemCache",
-    "member"
-  ],
-  [
-    "src/impl/locale.js~locale#meridiems",
-    "class/src/impl/locale.js~Locale.html#instance-method-meridiems",
-    "src/impl/locale.js~Locale#meridiems",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#months",
-    "class/src/impl/locale.js~Locale.html#instance-method-months",
-    "src/impl/locale.js~Locale#months",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#numberformatter",
-    "class/src/impl/locale.js~Locale.html#instance-method-numberFormatter",
-    "src/impl/locale.js~Locale#numberFormatter",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale#weekdays",
-    "class/src/impl/locale.js~Locale.html#instance-method-weekdays",
-    "src/impl/locale.js~Locale#weekdays",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale.create",
-    "class/src/impl/locale.js~Locale.html#static-method-create",
-    "src/impl/locale.js~Locale.create",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale.fromobject",
-    "class/src/impl/locale.js~Locale.html#static-method-fromObject",
-    "src/impl/locale.js~Locale.fromObject",
-    "method"
-  ],
-  [
-    "src/impl/locale.js~locale.fromopts",
-    "class/src/impl/locale.js~Locale.html#static-method-fromOpts",
-    "src/impl/locale.js~Locale.fromOpts",
-    "method"
   ],
   [
     "src/impl/regexparser.js",
@@ -1519,20 +1423,14 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
-    "src/settings.js~Settings.defaultZoneName",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultzonename",
     "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
-    "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-get-now",
-    "src/settings.js~Settings.now",
+    "src/settings.js~settings.defaultzonename",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
@@ -1542,14 +1440,20 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
-    "src/settings.js~Settings.throwOnInvalid",
+    "src/settings.js~settings.now",
+    "class/src/settings.js~Settings.html#static-get-now",
+    "src/settings.js~Settings.now",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
     "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "src/settings.js~Settings.throwOnInvalid",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.throwoninvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],

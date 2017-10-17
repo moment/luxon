@@ -1,6 +1,6 @@
 {
-  "coverage": "91.87%",
-  "expectCount": 197,
+  "coverage": "100%",
+  "expectCount": 181,
   "actualCount": 181,
   "files": {
     "src/datetime.js": {
@@ -22,28 +22,6 @@
       "expectCount": 35,
       "actualCount": 35,
       "undocumentLines": []
-    },
-    "src/impl/locale.js": {
-      "expectCount": 16,
-      "actualCount": 0,
-      "undocumentLines": [
-        62,
-        141,
-        91,
-        71,
-        252,
-        276,
-        207,
-        226,
-        87,
-        63,
-        131,
-        198,
-        189,
-        153,
-        234,
-        170
-      ]
     },
     "src/settings.js": {
       "expectCount": 8,
