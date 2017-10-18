@@ -2214,15 +2214,15 @@ var InvalidArgumentError = function (_LuxonError6) {
 /**
  * @private
  */
-var ZoneIsAbstract = function (_LuxonError7) {
-  inherits(ZoneIsAbstract, _LuxonError7);
+var ZoneIsAbstractError = function (_LuxonError7) {
+  inherits(ZoneIsAbstractError, _LuxonError7);
 
-  function ZoneIsAbstract() {
-    classCallCheck(this, ZoneIsAbstract);
-    return possibleConstructorReturn(this, (ZoneIsAbstract.__proto__ || Object.getPrototypeOf(ZoneIsAbstract)).call(this, 'Zone is an abstract class'));
+  function ZoneIsAbstractError() {
+    classCallCheck(this, ZoneIsAbstractError);
+    return possibleConstructorReturn(this, (ZoneIsAbstractError.__proto__ || Object.getPrototypeOf(ZoneIsAbstractError)).call(this, 'Zone is an abstract class'));
   }
 
-  return ZoneIsAbstract;
+  return ZoneIsAbstractError;
 }(LuxonError);
 
 /* eslint no-unused-vars: "off" */
@@ -2245,7 +2245,7 @@ var Zone = function () {
      * @return {number}
      */
     value: function offset(ts) {
-      throw new ZoneIsAbstract();
+      throw new ZoneIsAbstractError();
     }
 
     /**
@@ -2258,7 +2258,7 @@ var Zone = function () {
   }, {
     key: 'equals',
     value: function equals(otherZone) {
-      throw new ZoneIsAbstract();
+      throw new ZoneIsAbstractError();
     }
 
     /**
@@ -2276,7 +2276,7 @@ var Zone = function () {
      * @return {string}
      */
     get: function get$$1() {
-      throw new ZoneIsAbstract();
+      throw new ZoneIsAbstractError();
     }
 
     /**
@@ -2288,7 +2288,7 @@ var Zone = function () {
   }, {
     key: 'name',
     get: function get$$1() {
-      throw new ZoneIsAbstract();
+      throw new ZoneIsAbstractError();
     }
 
     /**
@@ -2300,7 +2300,7 @@ var Zone = function () {
   }, {
     key: 'universal',
     get: function get$$1() {
-      throw new ZoneIsAbstract();
+      throw new ZoneIsAbstractError();
     }
 
     /**
@@ -2316,12 +2316,12 @@ var Zone = function () {
   }, {
     key: 'isValid',
     get: function get$$1() {
-      throw new ZoneIsAbstract();
+      throw new ZoneIsAbstractError();
     }
   }], [{
     key: 'offsetName',
     value: function offsetName(ts) {
-      throw new ZoneIsAbstract();
+      throw new ZoneIsAbstractError();
     }
   }]);
   return Zone;
@@ -2725,7 +2725,7 @@ var Util = function () {
     key: 'friendlyDuration',
     value: function friendlyDuration(duration) {
       if (Util.isNumber(duration)) {
-        return Duration.fromMilliseconds(duration);
+        return Duration.fromMillis(duration);
       } else if (duration instanceof Duration) {
         return duration;
       } else if (duration instanceof Object) {
@@ -2964,6 +2964,10 @@ var English = function () {
           return English.monthsShort;
         case 'long':
           return English.monthsLong;
+        case 'numeric':
+          return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+        case '2-digit':
+          return ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
         default:
           return null;
       }
@@ -2978,6 +2982,8 @@ var English = function () {
           return English.weekdaysShort;
         case 'long':
           return English.weekdaysLong;
+        case 'numeric':
+          return ['1', '2', '3', '4', '5', '6', '7'];
         default:
           return null;
       }
@@ -3070,7 +3076,7 @@ var English = function () {
   return English;
 }();
 
-var localeCache = new Map();
+var localeCache = {};
 
 function intlConfigString(locale, numberingSystem, outputCalendar) {
   var loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
@@ -3111,6 +3117,18 @@ function mapWeekdays(f) {
   return ms;
 }
 
+function listStuff(loc, length, defaultOK, englishFn, intlFn) {
+  var mode = loc.listingMode(defaultOK);
+
+  if (mode === 'error') {
+    return null;
+  } else if (mode === 'en') {
+    return englishFn(length);
+  } else {
+    return intlFn(length);
+  }
+}
+
 /**
  * @private
  */
@@ -3133,6 +3151,10 @@ var PolyFormatter = function () {
   return PolyFormatter;
 }();
 
+/**
+ * @private
+ */
+
 var Locale = function () {
   createClass(Locale, null, [{
     key: 'fromOpts',
@@ -3146,13 +3168,13 @@ var Locale = function () {
           numberingSystemR = numberingSystem || null,
           outputCalendarR = outputCalendar || null,
           cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR,
-          cached = localeCache.get(cacheKey);
+          cached = localeCache[cacheKey];
 
       if (cached) {
         return cached;
       } else {
         var fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
-        localeCache.set(cacheKey, fresh);
+        localeCache[cacheKey] = fresh;
         return fresh;
       }
     }
@@ -3206,10 +3228,26 @@ var Locale = function () {
     });
   }
 
+  // todo: cache me
+
+
   createClass(Locale, [{
-    key: 'knownEnglish',
-    value: function knownEnglish() {
-      return (this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US')) && (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
+    key: 'listingMode',
+    value: function listingMode() {
+      var defaultOk = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      var hasIntl = Intl && Intl.DateTimeFormat,
+          hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
+          isActuallyEn = this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || hasIntl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US'),
+          hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
+
+      if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
+        return 'error';
+      } else if (!hasFTP || isActuallyEn && hasNoWeirdness) {
+        return 'en';
+      } else {
+        return 'intl';
+      }
     }
   }, {
     key: 'clone',
@@ -3226,22 +3264,18 @@ var Locale = function () {
       var _this = this;
 
       var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var defaultOK = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-      if (this.knownEnglish()) {
-        var english = English.months(length);
-        if (english) {
-          return english;
+      return listStuff(this, length, defaultOK, English.months, function () {
+        var intl = format ? { month: length, day: 'numeric' } : { month: length },
+            formatStr = format ? 'format' : 'standalone';
+        if (!_this.monthsCache[formatStr][length]) {
+          _this.monthsCache[formatStr][length] = mapMonths(function (dt) {
+            return _this.extract(dt, intl, 'month');
+          });
         }
-      }
-
-      var intl = format ? { month: length, day: 'numeric' } : { month: length },
-          formatStr = format ? 'format' : 'standalone';
-      if (!this.monthsCache[formatStr][length]) {
-        this.monthsCache[formatStr][length] = mapMonths(function (dt) {
-          return _this.extract(dt, intl, 'month');
-        });
-      }
-      return this.monthsCache[formatStr][length];
+        return _this.monthsCache[formatStr][length];
+      });
     }
   }, {
     key: 'weekdays',
@@ -3249,63 +3283,61 @@ var Locale = function () {
       var _this2 = this;
 
       var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var defaultOK = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-      if (this.knownEnglish()) {
-        var english = English.weekdays(length);
-        if (english) {
-          return english;
+      return listStuff(this, length, defaultOK, English.weekdays, function () {
+        var intl = format ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' } : { weekday: length },
+            formatStr = format ? 'format' : 'standalone';
+        if (!_this2.weekdaysCache[formatStr][length]) {
+          _this2.weekdaysCache[formatStr][length] = mapWeekdays(function (dt) {
+            return _this2.extract(dt, intl, 'weekday');
+          });
         }
-      }
-
-      var intl = format ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' } : { weekday: length },
-          formatStr = format ? 'format' : 'standalone';
-      if (!this.weekdaysCache[formatStr][length]) {
-        this.weekdaysCache[formatStr][length] = mapWeekdays(function (dt) {
-          return _this2.extract(dt, intl, 'weekday');
-        });
-      }
-      return this.weekdaysCache[formatStr][length];
+        return _this2.weekdaysCache[formatStr][length];
+      });
     }
   }, {
     key: 'meridiems',
     value: function meridiems() {
       var _this3 = this;
 
-      if (this.knownEnglish()) {
+      var defaultOK = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      return listStuff(this, undefined, defaultOK, function () {
         return English.meridiems;
-      }
+      }, function () {
+        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
+        // for AM and PM. This is probably wrong, but it's makes parsing way easier.
+        if (!_this3.meridiemCache) {
+          var intl = { hour: 'numeric', hour12: true };
+          _this3.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(function (dt) {
+            return _this3.extract(dt, intl, 'dayperiod');
+          });
+        }
 
-      // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
-      // for AM and PM. This is probably wrong, but it's makes parsing way easier.
-      if (!this.meridiemCache) {
-        var intl = { hour: 'numeric', hour12: true };
-        this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(function (dt) {
-          return _this3.extract(dt, intl, 'dayperiod');
-        });
-      }
-
-      return this.meridiemCache;
+        return _this3.meridiemCache;
+      });
     }
   }, {
     key: 'eras',
     value: function eras(length) {
       var _this4 = this;
 
-      if (this.knownEnglish()) {
-        return English.eras(length);
-      }
+      var defaultOK = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-      var intl = { era: length };
+      return listStuff(this, length, defaultOK, English.eras, function () {
+        var intl = { era: length };
 
-      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
-      // to definitely enumerate them.
-      if (!this.eraCache[length]) {
-        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(function (dt) {
-          return _this4.extract(dt, intl, 'era');
-        });
-      }
+        // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
+        // to definitely enumerate them.
+        if (!_this4.eraCache[length]) {
+          _this4.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(function (dt) {
+            return _this4.extract(dt, intl, 'era');
+          });
+        }
 
-      return this.eraCache[length];
+        return _this4.eraCache[length];
+      });
     }
   }, {
     key: 'extract',
@@ -3354,7 +3386,7 @@ var Locale = function () {
       if (dt.zone.universal) {
         // if we have a fixed-offset zone that isn't actually UTC,
         // (like UTC+8), we need to make do with just displaying
-        // the time in UTC; the formatter how to handle UTC+8
+        // the time in UTC; the formatter doesn't know how to handle UTC+8
         d = Util.asIfUTC(dt);
         z = 'UTC';
       } else if (dt.zone.type === 'local') {
@@ -3525,7 +3557,7 @@ var Formatter = function () {
     value: function formatDateTimeFromString(dt, fmt) {
       var _this = this;
 
-      var knownEnglish = this.loc.knownEnglish();
+      var knownEnglish = this.loc.listingMode() === 'en';
       var string = function string(opts, extract) {
         return _this.loc.extract(dt, opts, extract);
       },
@@ -4192,7 +4224,7 @@ function isHighOrderNegative(obj) {
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
  *
- * * **Creation** To create a Duration, use {@link fromMilliseconds}, {@link fromObject}, or {@link fromISO}.
+ * * **Creation** To create a Duration, use {@link fromMillis}, {@link fromObject}, or {@link fromISO}.
  * * **Unit values** See the {@link years}, {@link months}, {@link weeks}, {@link days}, {@link hours}, {@link minutes}, {@link seconds}, {@link milliseconds} accessors.
  * * **Configuration** See  {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation** To create new Durations out of old ones use {@link plus}, {@link minus}, {@link normalize}, {@link set}, {@link reconfigure}, {@link shiftTo}, and {@link negate}.
@@ -4795,8 +4827,8 @@ var Duration = function () {
       return this.invalidReason;
     }
   }], [{
-    key: 'fromMilliseconds',
-    value: function fromMilliseconds(count, opts) {
+    key: 'fromMillis',
+    value: function fromMillis(count, opts) {
       return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
     }
 
@@ -5542,6 +5574,8 @@ var Interval = function () {
   return Interval;
 }();
 
+var MISSING_FTP = 'missing Intl.DateTimeFormat.formatToParts support';
+
 function intUnit(regex) {
   var post = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (i) {
     return i;
@@ -5556,17 +5590,21 @@ function intUnit(regex) {
 }
 
 function oneOf(strings, startIndex) {
-  return {
-    regex: RegExp(strings.join('|')),
-    deser: function deser(_ref3) {
-      var _ref4 = slicedToArray(_ref3, 1),
-          s = _ref4[0];
+  if (strings === null) {
+    return null;
+  } else {
+    return {
+      regex: RegExp(strings.join('|')),
+      deser: function deser(_ref3) {
+        var _ref4 = slicedToArray(_ref3, 1),
+            s = _ref4[0];
 
-      return strings.findIndex(function (i) {
-        return s.toLowerCase() === i.toLowerCase();
-      }) + startIndex;
-    }
-  };
+        return strings.findIndex(function (i) {
+          return s.toLowerCase() === i.toLowerCase();
+        }) + startIndex;
+      }
+    };
+  }
 }
 
 function offset(regex, groups) {
@@ -5612,9 +5650,9 @@ function unitForToken(token, loc) {
     switch (t.val) {
       // era
       case 'G':
-        return oneOf(loc.eras('short'), 0);
+        return oneOf(loc.eras('short', false), 0);
       case 'GG':
-        return oneOf(loc.eras('long'), 0);
+        return oneOf(loc.eras('long', false), 0);
       // years
       case 'yyyy':
         return intUnit(four);
@@ -5626,17 +5664,17 @@ function unitForToken(token, loc) {
       case 'MM':
         return intUnit(two);
       case 'MMM':
-        return oneOf(loc.months('short', true), 1);
+        return oneOf(loc.months('short', false, false), 1);
       case 'MMMM':
-        return oneOf(loc.months('long', true), 1);
+        return oneOf(loc.months('long', false, false), 1);
       case 'L':
         return intUnit(oneOrTwo);
       case 'LL':
         return intUnit(two);
       case 'LLL':
-        return oneOf(loc.months('short', false), 1);
+        return oneOf(loc.months('short', true, false), 1);
       case 'LLLL':
-        return oneOf(loc.months('long', false), 1);
+        return oneOf(loc.months('long', true, false), 1);
       // dates
       case 'd':
         return intUnit(oneOrTwo);
@@ -5686,13 +5724,13 @@ function unitForToken(token, loc) {
       case 'c':
         return intUnit(one);
       case 'EEE':
-        return oneOf(loc.weekdays('short', true), 1);
+        return oneOf(loc.weekdays('short', false, false), 1);
       case 'EEEE':
-        return oneOf(loc.weekdays('long', true), 1);
+        return oneOf(loc.weekdays('long', false, false), 1);
       case 'ccc':
-        return oneOf(loc.weekdays('short', false), 1);
+        return oneOf(loc.weekdays('short', true, false), 1);
       case 'cccc':
-        return oneOf(loc.weekdays('long', false), 1);
+        return oneOf(loc.weekdays('long', true, false), 1);
       // offset/zone
       case 'Z':
       case 'ZZ':
@@ -5706,9 +5744,14 @@ function unitForToken(token, loc) {
       default:
         return literal(t);
     }
-  },
-      unit = unitate(token);
+  };
+
+  var unit = unitate(token) || {
+    invalidReason: MISSING_FTP
+  };
+
   unit.token = token;
+
   return unit;
 }
 
@@ -5824,27 +5867,35 @@ var TokenParser = function () {
           units = tokens.map(function (t) {
         return unitForToken(t, _this.loc);
       }),
-          _buildRegex = buildRegex(units),
-          _buildRegex2 = slicedToArray(_buildRegex, 2),
-          regex = _buildRegex2[0],
-          handlers = _buildRegex2[1],
-          matches = match(input, RegExp(regex, 'i'), handlers),
-          _ref11 = matches ? dateTimeFromMatches(matches) : [null, null],
-          _ref12 = slicedToArray(_ref11, 2),
-          result = _ref12[0],
-          zone = _ref12[1];
+          disqualifyingUnit = units.find(function (t) {
+        return t.invalidReason;
+      });
 
+      if (disqualifyingUnit) {
+        return { input: input, tokens: tokens, invalidReason: disqualifyingUnit.invalidReason };
+      } else {
+        var _buildRegex = buildRegex(units),
+            _buildRegex2 = slicedToArray(_buildRegex, 2),
+            regex = _buildRegex2[0],
+            handlers = _buildRegex2[1],
+            matches = match(input, RegExp(regex, 'i'), handlers),
+            _ref11 = matches ? dateTimeFromMatches(matches) : [null, null],
+            _ref12 = slicedToArray(_ref11, 2),
+            result = _ref12[0],
+            zone = _ref12[1];
 
-      return { input: input, tokens: tokens, regex: regex, matches: matches, result: result, zone: zone };
+        return { input: input, tokens: tokens, regex: regex, matches: matches, result: result, zone: zone };
+      }
     }
   }, {
     key: 'parseDateTime',
     value: function parseDateTime(input, format) {
       var _explainParse = this.explainParse(input, format),
           result = _explainParse.result,
-          zone = _explainParse.zone;
+          zone = _explainParse.zone,
+          invalidReason = _explainParse.invalidReason;
 
-      return [result, zone];
+      return [result, zone, invalidReason];
     }
   }]);
   return TokenParser;
@@ -6871,7 +6922,7 @@ var DateTime = function () {
           return dt.toUTC(0, { keepCalendarTime: true }).startOf('day').valueOf();
         },
             ms = utcDayStart(post) - utcDayStart(cursor);
-        return Math.floor(Duration.fromMilliseconds(ms, opts).shiftTo('days').days);
+        return Math.floor(Duration.fromMillis(ms, opts).shiftTo('days').days);
       };
 
       if (units.indexOf('weeks') >= 0) {
@@ -6905,7 +6956,7 @@ var DateTime = function () {
         lowestOrder = 'days';
       }
 
-      var remaining = Duration.fromMilliseconds(post - cursor, opts),
+      var remaining = Duration.fromMillis(post - cursor, opts),
           moreUnits = units.filter(function (u) {
         return ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0;
       }),
@@ -7654,11 +7705,16 @@ var DateTime = function () {
           numberingSystem = _options$numberingSys === undefined ? null : _options$numberingSys,
           parser = new TokenParser(Locale.fromOpts({ locale: locale, numberingSystem: numberingSystem })),
           _parser$parseDateTime = parser.parseDateTime(text, fmt),
-          _parser$parseDateTime2 = slicedToArray(_parser$parseDateTime, 2),
+          _parser$parseDateTime2 = slicedToArray(_parser$parseDateTime, 3),
           vals = _parser$parseDateTime2[0],
-          parsedZone = _parser$parseDateTime2[1];
+          parsedZone = _parser$parseDateTime2[1],
+          invalidReason = _parser$parseDateTime2[2];
 
-      return parseDataToDateTime(vals, parsedZone, options);
+      if (invalidReason) {
+        return DateTime.invalid(invalidReason);
+      } else {
+        return parseDataToDateTime(vals, parsedZone, options);
+      }
     }
 
     /**
@@ -8245,10 +8301,10 @@ var Info = function () {
           intlTokens = false,
           zones = false;
 
-      if (Util.isUndefined(Intl) && Util.isUndefined(Util.DateTimeFormat)) {
+      if (!Util.isUndefined(Intl) && !Util.isUndefined(Intl.DateTimeFormat)) {
         intl = true;
 
-        intlTokens = Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
+        intlTokens = !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
 
         try {
           zones = true;
