@@ -36,6 +36,10 @@ export class English {
         return English.monthsShort;
       case 'long':
         return English.monthsLong;
+      case 'numeric':
+        return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+      case '2-digit':
+        return ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
       default:
         return null;
     }
@@ -61,6 +65,8 @@ export class English {
         return English.weekdaysShort;
       case 'long':
         return English.weekdaysLong;
+      case 'numeric':
+        return ['1', '2', '3', '4', '5', '6', '7'];
       default:
         return null;
     }

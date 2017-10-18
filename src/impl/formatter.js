@@ -89,7 +89,7 @@ export class Formatter {
   }
 
   formatDateTimeFromString(dt, fmt) {
-    const knownEnglish = this.loc.knownEnglish();
+    const knownEnglish = this.loc.listingMode() === 'en';
     const string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
         if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {

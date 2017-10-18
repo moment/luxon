@@ -40,7 +40,9 @@ test('No Intl support at all', () => {
     expect(DateTime.fromString('05/15/2017', 'LL/dd/yyyy', { locale: 'fr' }).isValid).toBe(true);
 
     // parsing names in French errors
-    expect(() => DateTime.fromString('mai 15, 2017', 'LLLL dd, yyyy', { locale: 'fr' })).toThrow();
+    expect(DateTime.fromString('mai 15, 2017', 'LLLL dd, yyyy', { locale: 'fr' }).isValid).toBe(
+      false
+    );
 
     // setting the time zone results in an invalid DateTime
     expect(DateTime.local().setZone('America/New_York').isValid).toBe(false);
@@ -83,7 +85,9 @@ test('No formatToParts support', () => {
     expect(DateTime.fromString('05/15/2017', 'LL/dd/yyyy', { locale: 'fr' }).isValid).toBe(true);
 
     // parsing names in French errors
-    expect(() => DateTime.fromString('mai 15, 2017', 'LLLL dd, yyyy', { locale: 'fr' })).toThrow();
+    expect(DateTime.fromString('mai 15, 2017', 'LLLL dd, yyyy', { locale: 'fr' }).isValid).toBe(
+      false
+    );
 
     // setting the time zone works fine
     expect(DateTime.local().setZone('America/New_York').isValid).toBe(true);

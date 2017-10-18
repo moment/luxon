@@ -1,7 +1,6 @@
 import { Util } from './util';
 import { English } from './english';
 import { DateTime } from '../datetime';
-import { MissingPlatformFeatureError } from '../errors';
 
 const localeCache = new Map();
 
@@ -42,6 +41,18 @@ function mapWeekdays(f) {
     ms.push(f(dt));
   }
   return ms;
+}
+
+function listStuff(loc, length, defaultOK, englishFn, intlFn) {
+  const mode = loc.listingMode(defaultOK);
+
+  if (mode === 'error') {
+    return null;
+  } else if (mode === 'en') {
+    return englishFn(length);
+  } else {
+    return intlFn(length);
+  }
 }
 
 /**
@@ -125,7 +136,8 @@ export class Locale {
     });
   }
 
-  knownEnglish(defaultOk = true) {
+  // todo: cache me
+  listingMode(defaultOk = true) {
     const hasIntl = Intl && Intl.DateTimeFormat,
       hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
       isActuallyEn =
@@ -140,10 +152,12 @@ export class Locale {
         (this.outputCalendar === null || this.outputCalendar === 'gregory');
 
     if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
-      throw new MissingPlatformFeatureError('Intl.DateTimeFormat.formatToParts');
+      return 'error';
+    } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {
+      return 'en';
+    } else {
+      return 'intl';
     }
-
-    return !hasFTP || (isActuallyEn && hasNoWeirdness);
   }
 
   clone(alts) {
@@ -159,72 +173,67 @@ export class Locale {
   }
 
   months(length, format = false, defaultOK = true) {
-    if (this.knownEnglish(defaultOK)) {
-      const english = English.months(length);
-      if (english) {
-        return english;
+    return listStuff(this, length, defaultOK, English.months, () => {
+      const intl = format ? { month: length, day: 'numeric' } : { month: length },
+        formatStr = format ? 'format' : 'standalone';
+      if (!this.monthsCache[formatStr][length]) {
+        this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));
       }
-    }
-
-    const intl = format ? { month: length, day: 'numeric' } : { month: length },
-      formatStr = format ? 'format' : 'standalone';
-    if (!this.monthsCache[formatStr][length]) {
-      this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));
-    }
-    return this.monthsCache[formatStr][length];
+      return this.monthsCache[formatStr][length];
+    });
   }
 
   weekdays(length, format = false, defaultOK = true) {
-    if (this.knownEnglish(defaultOK)) {
-      const english = English.weekdays(length);
-      if (english) {
-        return english;
+    return listStuff(this, length, defaultOK, English.weekdays, () => {
+      const intl = format
+          ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
+          : { weekday: length },
+        formatStr = format ? 'format' : 'standalone';
+      if (!this.weekdaysCache[formatStr][length]) {
+        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>
+          this.extract(dt, intl, 'weekday')
+        );
       }
-    }
-
-    const intl = format
-        ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
-        : { weekday: length },
-      formatStr = format ? 'format' : 'standalone';
-    if (!this.weekdaysCache[formatStr][length]) {
-      this.weekdaysCache[formatStr][length] = mapWeekdays(dt => this.extract(dt, intl, 'weekday'));
-    }
-    return this.weekdaysCache[formatStr][length];
+      return this.weekdaysCache[formatStr][length];
+    });
   }
 
   meridiems(defaultOK = true) {
-    if (this.knownEnglish(defaultOK)) {
-      return English.meridiems;
-    }
+    return listStuff(
+      this,
+      undefined,
+      defaultOK,
+      () => English.meridiems,
+      () => {
+        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
+        // for AM and PM. This is probably wrong, but it's makes parsing way easier.
+        if (!this.meridiemCache) {
+          const intl = { hour: 'numeric', hour12: true };
+          this.meridiemCache = [
+            DateTime.utc(2016, 11, 13, 9),
+            DateTime.utc(2016, 11, 13, 19)
+          ].map(dt => this.extract(dt, intl, 'dayperiod'));
+        }
 
-    // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
-    // for AM and PM. This is probably wrong, but it's makes parsing way easier.
-    if (!this.meridiemCache) {
-      const intl = { hour: 'numeric', hour12: true };
-      this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(dt =>
-        this.extract(dt, intl, 'dayperiod')
-      );
-    }
-
-    return this.meridiemCache;
+        return this.meridiemCache;
+      }
+    );
   }
 
   eras(length, defaultOK = true) {
-    if (this.knownEnglish(defaultOK)) {
-      return English.eras(length);
-    }
+    return listStuff(this, length, defaultOK, English.eras, () => {
+      const intl = { era: length };
 
-    const intl = { era: length };
+      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
+      // to definitely enumerate them.
+      if (!this.eraCache[length]) {
+        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
+          this.extract(dt, intl, 'era')
+        );
+      }
 
-    // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
-    // to definitely enumerate them.
-    if (!this.eraCache[length]) {
-      this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
-        this.extract(dt, intl, 'era')
-      );
-    }
-
-    return this.eraCache[length];
+      return this.eraCache[length];
+    });
   }
 
   extract(dt, intlOpts, field) {
@@ -255,10 +264,6 @@ export class Locale {
 
   dtFormatter(dt, intlOpts = {}) {
     let d, z;
-
-    if (!Intl || !Intl.DateTimeFormat) {
-      throw new MissingPlatformFeatureError('Intl.DateTimeFormat');
-    }
 
     if (dt.zone.universal) {
       // if we have a fixed-offset zone that isn't actually UTC,

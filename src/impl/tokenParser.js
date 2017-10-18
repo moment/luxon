@@ -3,15 +3,21 @@ import { Formatter } from './formatter';
 import { FixedOffsetZone } from '../zones/fixedOffsetZone';
 import { IANAZone } from '../zones/IANAZone';
 
+const MISSING_FTP = 'missing Intl.DateTimeFormat.formatToParts support';
+
 function intUnit(regex, post = i => i) {
   return { regex, deser: ([s]) => post(parseInt(s, 10)) };
 }
 
 function oneOf(strings, startIndex) {
-  return {
-    regex: RegExp(strings.join('|')),
-    deser: ([s]) => strings.findIndex(i => s.toLowerCase() === i.toLowerCase()) + startIndex
-  };
+  if (strings === null) {
+    return null;
+  } else {
+    return {
+      regex: RegExp(strings.join('|')),
+      deser: ([s]) => strings.findIndex(i => s.toLowerCase() === i.toLowerCase()) + startIndex
+    };
+  }
 }
 
 function offset(regex, groups) {
@@ -39,9 +45,9 @@ function unitForToken(token, loc) {
       switch (t.val) {
         // era
         case 'G':
-          return oneOf(loc.eras('short'), 0);
+          return oneOf(loc.eras('short', false), 0);
         case 'GG':
-          return oneOf(loc.eras('long'), 0);
+          return oneOf(loc.eras('long', false), 0);
         // years
         case 'yyyy':
           return intUnit(four);
@@ -133,9 +139,14 @@ function unitForToken(token, loc) {
         default:
           return literal(t);
       }
-    },
-    unit = unitate(token);
+    };
+
+  const unit = unitate(token) || {
+    invalidReason: MISSING_FTP
+  };
+
   unit.token = token;
+
   return unit;
 }
 
@@ -239,15 +250,21 @@ export class TokenParser {
   explainParse(input, format) {
     const tokens = Formatter.parseFormat(format),
       units = tokens.map(t => unitForToken(t, this.loc)),
-      [regex, handlers] = buildRegex(units),
-      matches = match(input, RegExp(regex, 'i'), handlers),
-      [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+      disqualifyingUnit = units.find(t => t.invalidReason);
 
-    return { input, tokens, regex, matches, result, zone };
+    if (disqualifyingUnit) {
+      return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
+    } else {
+      const [regex, handlers] = buildRegex(units),
+        matches = match(input, RegExp(regex, 'i'), handlers),
+        [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+
+      return { input, tokens, regex, matches, result, zone };
+    }
   }
 
   parseDateTime(input, format) {
-    const { result, zone } = this.explainParse(input, format);
-    return [result, zone];
+    const { result, zone, invalidReason } = this.explainParse(input, format);
+    return [result, zone, invalidReason];
   }
 }

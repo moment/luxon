@@ -598,8 +598,12 @@ export class DateTime {
   static fromString(text, fmt, options = {}) {
     const { locale = null, numberingSystem = null } = options,
       parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem })),
-      [vals, parsedZone] = parser.parseDateTime(text, fmt);
-    return parseDataToDateTime(vals, parsedZone, options);
+      [vals, parsedZone, invalidReason] = parser.parseDateTime(text, fmt);
+    if (invalidReason) {
+      return DateTime.invalid(invalidReason);
+    } else {
+      return parseDataToDateTime(vals, parsedZone, options);
+    }
   }
 
   /**
