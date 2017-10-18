@@ -1,5 +1,5 @@
 /* eslint no-unused-vars: "off" */
-import { ZoneIsAbstract } from './errors';
+import { ZoneIsAbstractError } from './errors';
 
 /**
  * @interface
@@ -11,7 +11,7 @@ export class Zone {
    * @return {string}
    */
   get type() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -20,7 +20,7 @@ export class Zone {
    * @return {string}
    */
   get name() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -29,7 +29,7 @@ export class Zone {
    * @return {boolean}
    */
   get universal() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -42,7 +42,7 @@ export class Zone {
    * @return {string}
    */
   static offsetName(ts, { format = 'long', localeCode = 'en-US' } = {}) {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -52,7 +52,7 @@ export class Zone {
    * @return {number}
    */
   offset(ts) {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -62,7 +62,7 @@ export class Zone {
    * @return {boolean}
    */
   equals(otherZone) {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -71,6 +71,6 @@ export class Zone {
    * @return {boolean}
    */
   get isValid() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 }

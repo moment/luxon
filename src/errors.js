@@ -54,8 +54,17 @@ export class InvalidArgumentError extends LuxonError {}
 /**
  * @private
  */
-export class ZoneIsAbstract extends LuxonError {
+export class ZoneIsAbstractError extends LuxonError {
   constructor() {
     super('Zone is an abstract class');
+  }
+}
+
+/**
+ * @private
+ */
+export class MissingPlatformFeatureError extends LuxonError {
+  constructor(feature) {
+    super(`Missing platform feature: ${feature}`);
   }
 }

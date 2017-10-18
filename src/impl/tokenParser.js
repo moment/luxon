@@ -53,17 +53,17 @@ function unitForToken(token, loc) {
         case 'MM':
           return intUnit(two);
         case 'MMM':
-          return oneOf(loc.months('short', true), 1);
+          return oneOf(loc.months('short', false, false), 1);
         case 'MMMM':
-          return oneOf(loc.months('long', true), 1);
+          return oneOf(loc.months('long', false, false), 1);
         case 'L':
           return intUnit(oneOrTwo);
         case 'LL':
           return intUnit(two);
         case 'LLL':
-          return oneOf(loc.months('short', false), 1);
+          return oneOf(loc.months('short', true, false), 1);
         case 'LLLL':
-          return oneOf(loc.months('long', false), 1);
+          return oneOf(loc.months('long', true, false), 1);
         // dates
         case 'd':
           return intUnit(oneOrTwo);
@@ -113,13 +113,13 @@ function unitForToken(token, loc) {
         case 'c':
           return intUnit(one);
         case 'EEE':
-          return oneOf(loc.weekdays('short', true), 1);
+          return oneOf(loc.weekdays('short', false, false), 1);
         case 'EEEE':
-          return oneOf(loc.weekdays('long', true), 1);
+          return oneOf(loc.weekdays('long', false, false), 1);
         case 'ccc':
-          return oneOf(loc.weekdays('short', false), 1);
+          return oneOf(loc.weekdays('short', true, false), 1);
         case 'cccc':
-          return oneOf(loc.weekdays('long', false), 1);
+          return oneOf(loc.weekdays('long', true, false), 1);
         // offset/zone
         case 'Z':
         case 'ZZ':

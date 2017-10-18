@@ -1,6 +1,7 @@
 import { Util } from './util';
 import { English } from './english';
 import { DateTime } from '../datetime';
+import { MissingPlatformFeatureError } from '../errors';
 
 const localeCache = new Map();
 
@@ -124,16 +125,25 @@ export class Locale {
     });
   }
 
-  knownEnglish() {
-    return (
-      (this.locale === 'en' ||
+  knownEnglish(defaultOk = true) {
+    const hasIntl = Intl && Intl.DateTimeFormat,
+      hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
+      isActuallyEn =
+        this.locale === 'en' ||
         this.locale.toLowerCase() === 'en-us' ||
-        Intl.DateTimeFormat(this.intl)
-          .resolvedOptions()
-          .locale.startsWith('en-US')) &&
-      (this.numberingSystem === null || this.numberingSystem === 'latn') &&
-      (this.outputCalendar === null || this.outputCalendar === 'gregory')
-    );
+        (hasIntl &&
+          Intl.DateTimeFormat(this.intl)
+            .resolvedOptions()
+            .locale.startsWith('en-US')),
+      hasNoWeirdness =
+        (this.numberingSystem === null || this.numberingSystem === 'latn') &&
+        (this.outputCalendar === null || this.outputCalendar === 'gregory');
+
+    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
+      throw new MissingPlatformFeatureError('Intl.DateTimeFormat.formatToParts');
+    }
+
+    return !hasFTP || (isActuallyEn && hasNoWeirdness);
   }
 
   clone(alts) {
@@ -148,8 +158,8 @@ export class Locale {
     }
   }
 
-  months(length, format = false) {
-    if (this.knownEnglish()) {
+  months(length, format = false, defaultOK = true) {
+    if (this.knownEnglish(defaultOK)) {
       const english = English.months(length);
       if (english) {
         return english;
@@ -164,8 +174,8 @@ export class Locale {
     return this.monthsCache[formatStr][length];
   }
 
-  weekdays(length, format = false) {
-    if (this.knownEnglish()) {
+  weekdays(length, format = false, defaultOK = true) {
+    if (this.knownEnglish(defaultOK)) {
       const english = English.weekdays(length);
       if (english) {
         return english;
@@ -182,8 +192,8 @@ export class Locale {
     return this.weekdaysCache[formatStr][length];
   }
 
-  meridiems() {
-    if (this.knownEnglish()) {
+  meridiems(defaultOK = true) {
+    if (this.knownEnglish(defaultOK)) {
       return English.meridiems;
     }
 
@@ -199,8 +209,8 @@ export class Locale {
     return this.meridiemCache;
   }
 
-  eras(length) {
-    if (this.knownEnglish()) {
+  eras(length, defaultOK = true) {
+    if (this.knownEnglish(defaultOK)) {
       return English.eras(length);
     }
 
@@ -245,6 +255,10 @@ export class Locale {
 
   dtFormatter(dt, intlOpts = {}) {
     let d, z;
+
+    if (!Intl || !Intl.DateTimeFormat) {
+      throw new MissingPlatformFeatureError('Intl.DateTimeFormat');
+    }
 
     if (dt.zone.universal) {
       // if we have a fixed-offset zone that isn't actually UTC,
