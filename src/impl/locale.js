@@ -2,7 +2,7 @@ import { Util } from './util';
 import { English } from './english';
 import { DateTime } from '../datetime';
 
-const localeCache = new Map();
+const localeCache = {};
 
 function intlConfigString(locale, numberingSystem, outputCalendar) {
   let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
@@ -85,13 +85,13 @@ export class Locale {
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
-      cached = localeCache.get(cacheKey);
+      cached = localeCache[cacheKey];
 
     if (cached) {
       return cached;
     } else {
       const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
-      localeCache.set(cacheKey, fresh);
+      localeCache[cacheKey] = fresh;
       return fresh;
     }
   }
