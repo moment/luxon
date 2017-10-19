@@ -45,7 +45,7 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/zone.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/* eslint no-unused-vars: &quot;off&quot; */
-import { ZoneIsAbstract } from &apos;./errors&apos;;
+import { ZoneIsAbstractError } from &apos;./errors&apos;;
 
 /**
  * @interface
@@ -57,7 +57,7 @@ export class Zone {
    * @return {string}
    */
   get type() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -66,7 +66,7 @@ export class Zone {
    * @return {string}
    */
   get name() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -75,7 +75,7 @@ export class Zone {
    * @return {boolean}
    */
   get universal() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -88,7 +88,7 @@ export class Zone {
    * @return {string}
    */
   static offsetName(ts, { format = &apos;long&apos;, localeCode = &apos;en-US&apos; } = {}) {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -98,7 +98,7 @@ export class Zone {
    * @return {number}
    */
   offset(ts) {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -108,7 +108,7 @@ export class Zone {
    * @return {boolean}
    */
   equals(otherZone) {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 
   /**
@@ -117,7 +117,7 @@ export class Zone {
    * @return {boolean}
    */
   get isValid() {
-    throw new ZoneIsAbstract();
+    throw new ZoneIsAbstractError();
   }
 }
 </code></pre>

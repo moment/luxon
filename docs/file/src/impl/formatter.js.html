@@ -135,7 +135,7 @@ export class Formatter {
   }
 
   formatDateTimeFromString(dt, fmt) {
-    const knownEnglish = this.loc.knownEnglish();
+    const knownEnglish = this.loc.listingMode() === &apos;en&apos;;
     const string = (opts, extract) =&gt; this.loc.extract(dt, opts, extract),
       formatOffset = opts =&gt; {
         if (dt.isOffsetFixed &amp;&amp; dt.offset === 0 &amp;&amp; opts.allowZ) {

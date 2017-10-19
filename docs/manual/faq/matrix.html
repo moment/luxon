@@ -277,7 +277,84 @@
 </ul>
 <h2 id="what-happens-if-a-feature-isn-t-supported-">What happens if a feature isn&apos;t supported?</h2>
 <p>You shouldn&apos;t use features of Luxon on projects that might be run on environments that don&apos;t support those features. Luxon tries to degrade gracefully if you don&apos;t, though.</p>
-<p>[todo: outline the behavior here, with reference to <a href="https://github.com/icambron/luxon/issues/23">https://github.com/icambron/luxon/issues/23</a>]</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Full support</th>
+<th>No Intl at all</th>
+<th>Intl but no formatToParts</th>
+<th>No IANA zone support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Most things</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>Explicit time zones</td>
+<td>OK</td>
+<td>Invalid DateTime</td>
+<td>Caution&#x2020;</td>
+<td>Invalid DateTime</td>
+</tr>
+<tr>
+<td><code>toLocaleString</code></td>
+<td>OK</td>
+<td>Native Date&apos;s <code>toString</code></td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>toFormat</code> in en-US</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>toFormat</code> in other locales</td>
+<td>OK</td>
+<td>Uses English</td>
+<td>Uses English if uses localized strings</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>fromString</code> in en-US</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>fromString</code> in other locales</td>
+<td>OK</td>
+<td>Invalid DateTime if uses localized strings&#x2021;</td>
+<td>Uses English if uses localized strings&#x2021;</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>Info.months</code>, etc in en-US</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>Info.months</code>, etc in other locales</td>
+<td>OK</td>
+<td>Uses English</td>
+<td>Uses English</td>
+<td>OK</td>
+</tr>
+</tbody>
+</table>
+<p>&#x2020; Luxon uses a hack that may not work in all locales, though it works in the ones I&apos;ve tested.</p>
+<p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers.</p>
 <h2 id="polyfills">Polyfills</h2>
 <p>There are a couple of different polyfills available.</p>
 <h3 id="intl">Intl</h3>

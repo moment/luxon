@@ -1,6 +1,6 @@
 {
   "name": "luxon",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": [

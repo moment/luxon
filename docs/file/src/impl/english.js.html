@@ -82,6 +82,10 @@ export class English {
         return English.monthsShort;
       case &apos;long&apos;:
         return English.monthsLong;
+      case &apos;numeric&apos;:
+        return [&apos;1&apos;, &apos;2&apos;, &apos;3&apos;, &apos;4&apos;, &apos;5&apos;, &apos;6&apos;, &apos;7&apos;, &apos;8&apos;, &apos;9&apos;, &apos;10&apos;, &apos;11&apos;, &apos;12&apos;];
+      case &apos;2-digit&apos;:
+        return [&apos;01&apos;, &apos;02&apos;, &apos;03&apos;, &apos;04&apos;, &apos;05&apos;, &apos;06&apos;, &apos;07&apos;, &apos;08&apos;, &apos;09&apos;, &apos;10&apos;, &apos;11&apos;, &apos;12&apos;];
       default:
         return null;
     }
@@ -107,6 +111,8 @@ export class English {
         return English.weekdaysShort;
       case &apos;long&apos;:
         return English.weekdaysLong;
+      case &apos;numeric&apos;:
+        return [&apos;1&apos;, &apos;2&apos;, &apos;3&apos;, &apos;4&apos;, &apos;5&apos;, &apos;6&apos;, &apos;7&apos;];
       default:
         return null;
     }

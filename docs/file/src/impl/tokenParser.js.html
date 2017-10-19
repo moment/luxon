@@ -49,15 +49,21 @@ import { Formatter } from &apos;./formatter&apos;;
 import { FixedOffsetZone } from &apos;../zones/fixedOffsetZone&apos;;
 import { IANAZone } from &apos;../zones/IANAZone&apos;;
 
+const MISSING_FTP = &apos;missing Intl.DateTimeFormat.formatToParts support&apos;;
+
 function intUnit(regex, post = i =&gt; i) {
   return { regex, deser: ([s]) =&gt; post(parseInt(s, 10)) };
 }
 
 function oneOf(strings, startIndex) {
-  return {
-    regex: RegExp(strings.join(&apos;|&apos;)),
-    deser: ([s]) =&gt; strings.findIndex(i =&gt; s.toLowerCase() === i.toLowerCase()) + startIndex
-  };
+  if (strings === null) {
+    return null;
+  } else {
+    return {
+      regex: RegExp(strings.join(&apos;|&apos;)),
+      deser: ([s]) =&gt; strings.findIndex(i =&gt; s.toLowerCase() === i.toLowerCase()) + startIndex
+    };
+  }
 }
 
 function offset(regex, groups) {
@@ -85,9 +91,9 @@ function unitForToken(token, loc) {
       switch (t.val) {
         // era
         case &apos;G&apos;:
-          return oneOf(loc.eras(&apos;short&apos;), 0);
+          return oneOf(loc.eras(&apos;short&apos;, false), 0);
         case &apos;GG&apos;:
-          return oneOf(loc.eras(&apos;long&apos;), 0);
+          return oneOf(loc.eras(&apos;long&apos;, false), 0);
         // years
         case &apos;yyyy&apos;:
           return intUnit(four);
@@ -99,17 +105,17 @@ function unitForToken(token, loc) {
         case &apos;MM&apos;:
           return intUnit(two);
         case &apos;MMM&apos;:
-          return oneOf(loc.months(&apos;short&apos;, true), 1);
+          return oneOf(loc.months(&apos;short&apos;, false, false), 1);
         case &apos;MMMM&apos;:
-          return oneOf(loc.months(&apos;long&apos;, true), 1);
+          return oneOf(loc.months(&apos;long&apos;, false, false), 1);
         case &apos;L&apos;:
           return intUnit(oneOrTwo);
         case &apos;LL&apos;:
           return intUnit(two);
         case &apos;LLL&apos;:
-          return oneOf(loc.months(&apos;short&apos;, false), 1);
+          return oneOf(loc.months(&apos;short&apos;, true, false), 1);
         case &apos;LLLL&apos;:
-          return oneOf(loc.months(&apos;long&apos;, false), 1);
+          return oneOf(loc.months(&apos;long&apos;, true, false), 1);
         // dates
         case &apos;d&apos;:
           return intUnit(oneOrTwo);
@@ -159,13 +165,13 @@ function unitForToken(token, loc) {
         case &apos;c&apos;:
           return intUnit(one);
         case &apos;EEE&apos;:
-          return oneOf(loc.weekdays(&apos;short&apos;, true), 1);
+          return oneOf(loc.weekdays(&apos;short&apos;, false, false), 1);
         case &apos;EEEE&apos;:
-          return oneOf(loc.weekdays(&apos;long&apos;, true), 1);
+          return oneOf(loc.weekdays(&apos;long&apos;, false, false), 1);
         case &apos;ccc&apos;:
-          return oneOf(loc.weekdays(&apos;short&apos;, false), 1);
+          return oneOf(loc.weekdays(&apos;short&apos;, true, false), 1);
         case &apos;cccc&apos;:
-          return oneOf(loc.weekdays(&apos;long&apos;, false), 1);
+          return oneOf(loc.weekdays(&apos;long&apos;, true, false), 1);
         // offset/zone
         case &apos;Z&apos;:
         case &apos;ZZ&apos;:
@@ -179,9 +185,14 @@ function unitForToken(token, loc) {
         default:
           return literal(t);
       }
-    },
-    unit = unitate(token);
+    };
+
+  const unit = unitate(token) || {
+    invalidReason: MISSING_FTP
+  };
+
   unit.token = token;
+
   return unit;
 }
 
@@ -285,16 +296,22 @@ export class TokenParser {
   explainParse(input, format) {
     const tokens = Formatter.parseFormat(format),
       units = tokens.map(t =&gt; unitForToken(t, this.loc)),
-      [regex, handlers] = buildRegex(units),
-      matches = match(input, RegExp(regex, &apos;i&apos;), handlers),
-      [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+      disqualifyingUnit = units.find(t =&gt; t.invalidReason);
 
-    return { input, tokens, regex, matches, result, zone };
+    if (disqualifyingUnit) {
+      return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
+    } else {
+      const [regex, handlers] = buildRegex(units),
+        matches = match(input, RegExp(regex, &apos;i&apos;), handlers),
+        [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+
+      return { input, tokens, regex, matches, result, zone };
+    }
   }
 
   parseDateTime(input, format) {
-    const { result, zone } = this.explainParse(input, format);
-    return [result, zone];
+    const { result, zone, invalidReason } = this.explainParse(input, format);
+    return [result, zone, invalidReason];
   }
 }
 </code></pre>
