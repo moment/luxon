@@ -59,7 +59,7 @@ function listStuff(loc, length, defaultOK, englishFn, intlFn) {
  * @private
  */
 
-class PolyFormatter {
+class PolyNumberFormatter {
   constructor(opts) {
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
@@ -68,6 +68,20 @@ class PolyFormatter {
   format(i) {
     const maybeRounded = this.round ? Math.round(i) : i;
     return maybeRounded.toString().padStart(this.padTo, '0');
+  }
+}
+
+class PolyDateFormatter {
+  format(d) {
+    return d.toString();
+  }
+
+  resolvedOptions() {
+    return {
+      locale: 'en-US',
+      numberingSystem: 'latn',
+      outputCalendar: 'gregory'
+    };
   }
 }
 
@@ -258,7 +272,7 @@ export class Locale {
 
       return new Intl.NumberFormat(this.intl, realIntlOpts);
     } else {
-      return new PolyFormatter(opts);
+      return new PolyNumberFormatter(opts);
     }
   }
 
@@ -278,12 +292,15 @@ export class Locale {
       z = dt.zone.name;
     }
 
-    const realIntlOpts = Object.assign({}, intlOpts);
-    if (z) {
-      realIntlOpts.timeZone = z;
+    if (Intl && Intl.DateTimeFormat) {
+      const realIntlOpts = Object.assign({}, intlOpts);
+      if (z) {
+        realIntlOpts.timeZone = z;
+      }
+      return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
+    } else {
+      return [new PolyDateFormatter(), d];
     }
-
-    return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
   }
 
   equals(other) {

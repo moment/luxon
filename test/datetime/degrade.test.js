@@ -26,15 +26,20 @@ test('No Intl support at all', () => {
     // parsing in English works
     expect(DateTime.fromString('May 15, 2017', 'LLLL dd, yyyy').isValid).toBe(true);
 
-    // toLocaleString in English errors
-    expect(() => DateTime.local(2014, 8, 6).toLocaleString()).toThrow();
+    // toLocaleString in English returns the Date's native toString()
+    expect(
+      DateTime.local(2014, 8, 6)
+        .toString()
+        .startsWith('2014-08-06T00:00:00.000')
+    ).toBe(true);
 
-    // toLocaleString in French errors
-    expect(() =>
+    // toLocaleString in French returns the Date's native toString()
+    expect(
       DateTime.local(2014, 8, 6)
         .setLocale('fr')
-        .toLocaleString()
-    ).toThrow();
+        .toString()
+        .startsWith('2014-08-06T00:00:00.000')
+    ).toBe(true);
 
     // parsing numbers in French works
     expect(DateTime.fromString('05/15/2017', 'LL/dd/yyyy', { locale: 'fr' }).isValid).toBe(true);
