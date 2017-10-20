@@ -7245,7 +7245,7 @@
     "__docId__": 210,
     "kind": "file",
     "name": "src/impl/locale.js",
-    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { DateTime } from '../datetime';\n\nconst localeCache = {};\n\nfunction intlConfigString(locale, numberingSystem, outputCalendar) {\n  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;\n  loc = Array.isArray(locale) ? locale : [locale];\n\n  if (outputCalendar || numberingSystem) {\n    loc = loc.map(l => {\n      l += '-u';\n\n      if (outputCalendar) {\n        l += '-ca-' + outputCalendar;\n      }\n\n      if (numberingSystem) {\n        l += '-nu-' + numberingSystem;\n      }\n      return l;\n    });\n  }\n  return loc;\n}\n\nfunction mapMonths(f) {\n  const ms = [];\n  for (let i = 1; i <= 12; i++) {\n    const dt = DateTime.utc(2016, i, 1);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction mapWeekdays(f) {\n  const ms = [];\n  for (let i = 1; i <= 7; i++) {\n    const dt = DateTime.utc(2016, 11, 13 + i);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction listStuff(loc, length, defaultOK, englishFn, intlFn) {\n  const mode = loc.listingMode(defaultOK);\n\n  if (mode === 'error') {\n    return null;\n  } else if (mode === 'en') {\n    return englishFn(length);\n  } else {\n    return intlFn(length);\n  }\n}\n\n/**\n * @private\n */\n\nclass PolyNumberFormatter {\n  constructor(opts) {\n    this.padTo = opts.padTo || 0;\n    this.round = opts.round || false;\n  }\n\n  format(i) {\n    const maybeRounded = this.round ? Math.round(i) : i;\n    return maybeRounded.toString().padStart(this.padTo, '0');\n  }\n}\n\nclass PolyDateFormatter {\n  format(d) {\n    return d.toString();\n  }\n\n  resolvedOptions() {\n    return {\n      locale: 'en-US',\n      numberingSystem: 'latn',\n      outputCalendar: 'gregory'\n    };\n  }\n}\n\n/**\n * @private\n */\n\nexport class Locale {\n  static fromOpts(opts) {\n    return Locale.create(\n      opts.locale,\n      opts.numberingSystem,\n      opts.outputCalendar\n    );\n  }\n\n  static create(locale, numberingSystem, outputCalendar) {\n    const localeR = locale || 'en-US',\n      numberingSystemR = numberingSystem || null,\n      outputCalendarR = outputCalendar || null,\n      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,\n      cached = localeCache[cacheKey];\n\n    if (cached) {\n      return cached;\n    } else {\n      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);\n      localeCache[cacheKey] = fresh;\n      return fresh;\n    }\n  }\n\n  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {\n    return Locale.create(locale, numberingSystem, outputCalendar);\n  }\n\n  constructor(locale, numbering, outputCalendar) {\n    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });\n    Object.defineProperty(this, 'numberingSystem', {\n      value: numbering || null,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'outputCalendar', {\n      value: outputCalendar || null,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'intl', {\n      value: intlConfigString(\n        this.locale,\n        this.numberingSystem,\n        this.outputCalendar\n      ),\n      enumerable: false\n    });\n\n    // cached usefulness\n    Object.defineProperty(this, 'weekdaysCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'monthsCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'meridiemCache', {\n      value: null,\n      enumerable: false,\n      writable: true\n    });\n    Object.defineProperty(this, 'eraCache', {\n      value: {},\n      enumerable: false,\n      writable: true\n    });\n  }\n\n  // todo: cache me\n  listingMode(defaultOk = true) {\n    const hasIntl = Intl && Intl.DateTimeFormat,\n      hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,\n      isActuallyEn =\n        this.locale === 'en' ||\n        this.locale.toLowerCase() === 'en-us' ||\n        (hasIntl &&\n          Intl.DateTimeFormat(this.intl)\n            .resolvedOptions()\n            .locale.startsWith('en-US')),\n      hasNoWeirdness =\n        (this.numberingSystem === null || this.numberingSystem === 'latn') &&\n        (this.outputCalendar === null || this.outputCalendar === 'gregory');\n\n    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {\n      return 'error';\n    } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {\n      return 'en';\n    } else {\n      return 'intl';\n    }\n  }\n\n  clone(alts) {\n    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {\n      return this;\n    } else {\n      return Locale.create(\n        alts.locale || this.locale,\n        alts.numberingSystem || this.numberingSystem,\n        alts.outputCalendar || this.outputCalendar\n      );\n    }\n  }\n\n  months(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.months, () => {\n      const intl = format\n          ? { month: length, day: 'numeric' }\n          : { month: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.monthsCache[formatStr][length]) {\n        this.monthsCache[formatStr][length] = mapMonths(dt =>\n          this.extract(dt, intl, 'month')\n        );\n      }\n      return this.monthsCache[formatStr][length];\n    });\n  }\n\n  weekdays(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.weekdays, () => {\n      const intl = format\n          ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }\n          : { weekday: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.weekdaysCache[formatStr][length]) {\n        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>\n          this.extract(dt, intl, 'weekday')\n        );\n      }\n      return this.weekdaysCache[formatStr][length];\n    });\n  }\n\n  meridiems(defaultOK = true) {\n    return listStuff(\n      this,\n      undefined,\n      defaultOK,\n      () => English.meridiems,\n      () => {\n        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two\n        // for AM and PM. This is probably wrong, but it's makes parsing way easier.\n        if (!this.meridiemCache) {\n          const intl = { hour: 'numeric', hour12: true };\n          this.meridiemCache = [\n            DateTime.utc(2016, 11, 13, 9),\n            DateTime.utc(2016, 11, 13, 19)\n          ].map(dt => this.extract(dt, intl, 'dayperiod'));\n        }\n\n        return this.meridiemCache;\n      }\n    );\n  }\n\n  eras(length, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.eras, () => {\n      const intl = { era: length };\n\n      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates\n      // to definitely enumerate them.\n      if (!this.eraCache[length]) {\n        this.eraCache[length] = [\n          DateTime.utc(-40, 1, 1),\n          DateTime.utc(2017, 1, 1)\n        ].map(dt => this.extract(dt, intl, 'era'));\n      }\n\n      return this.eraCache[length];\n    });\n  }\n\n  extract(dt, intlOpts, field) {\n    const [df, d] = this.dtFormatter(dt, intlOpts),\n      results = df.formatToParts(d),\n      matching = results.find(m => m.type.toLowerCase() === field);\n\n    return matching ? matching.value : null;\n  }\n\n  numberFormatter(opts = {}, intlOpts = {}) {\n    if (Intl && Intl.NumberFormat) {\n      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);\n\n      if (opts.padTo > 0) {\n        realIntlOpts.minimumIntegerDigits = opts.padTo;\n      }\n\n      if (opts.round) {\n        realIntlOpts.maximumFractionDigits = 0;\n      }\n\n      return new Intl.NumberFormat(this.intl, realIntlOpts);\n    } else {\n      return new PolyNumberFormatter(opts);\n    }\n  }\n\n  dtFormatter(dt, intlOpts = {}) {\n    let d, z;\n\n    if (dt.zone.universal) {\n      // if we have a fixed-offset zone that isn't actually UTC,\n      // (like UTC+8), we need to make do with just displaying\n      // the time in UTC; the formatter doesn't know how to handle UTC+8\n      d = Util.asIfUTC(dt);\n      z = 'UTC';\n    } else if (dt.zone.type === 'local') {\n      d = dt.toJSDate();\n    } else {\n      d = dt.toJSDate();\n      z = dt.zone.name;\n    }\n\n    if (Intl && Intl.DateTimeFormat) {\n      const realIntlOpts = Object.assign({}, intlOpts);\n      if (z) {\n        realIntlOpts.timeZone = z;\n      }\n      return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];\n    } else {\n      return [new PolyDateFormatter(), d];\n    }\n  }\n\n  equals(other) {\n    return (\n      this.locale === other.locale &&\n      this.numberingSystem === other.numberingSystem &&\n      this.outputCalendar === other.outputCalendar\n    );\n  }\n}\n",
+    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { DateTime } from '../datetime';\n\nconst localeCache = {};\n\nfunction intlConfigString(locale, numberingSystem, outputCalendar) {\n  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;\n  loc = Array.isArray(locale) ? locale : [locale];\n\n  if (outputCalendar || numberingSystem) {\n    loc = loc.map(l => {\n      l += '-u';\n\n      if (outputCalendar) {\n        l += '-ca-' + outputCalendar;\n      }\n\n      if (numberingSystem) {\n        l += '-nu-' + numberingSystem;\n      }\n      return l;\n    });\n  }\n  return loc;\n}\n\nfunction mapMonths(f) {\n  const ms = [];\n  for (let i = 1; i <= 12; i++) {\n    const dt = DateTime.utc(2016, i, 1);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction mapWeekdays(f) {\n  const ms = [];\n  for (let i = 1; i <= 7; i++) {\n    const dt = DateTime.utc(2016, 11, 13 + i);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction listStuff(loc, length, defaultOK, englishFn, intlFn) {\n  const mode = loc.listingMode(defaultOK);\n\n  if (mode === 'error') {\n    return null;\n  } else if (mode === 'en') {\n    return englishFn(length);\n  } else {\n    return intlFn(length);\n  }\n}\n\n/**\n * @private\n */\n\nclass PolyNumberFormatter {\n  constructor(opts) {\n    this.padTo = opts.padTo || 0;\n    this.round = opts.round || false;\n  }\n\n  format(i) {\n    const maybeRounded = this.round ? Math.round(i) : i;\n    return maybeRounded.toString().padStart(this.padTo, '0');\n  }\n}\n\nclass PolyDateFormatter {\n  format(d) {\n    return d.toString();\n  }\n\n  resolvedOptions() {\n    return {\n      locale: 'en-US',\n      numberingSystem: 'latn',\n      outputCalendar: 'gregory'\n    };\n  }\n}\n\n/**\n * @private\n */\n\nexport class Locale {\n  static fromOpts(opts) {\n    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);\n  }\n\n  static create(locale, numberingSystem, outputCalendar) {\n    const localeR = locale || 'en-US',\n      numberingSystemR = numberingSystem || null,\n      outputCalendarR = outputCalendar || null,\n      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,\n      cached = localeCache[cacheKey];\n\n    if (cached) {\n      return cached;\n    } else {\n      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);\n      localeCache[cacheKey] = fresh;\n      return fresh;\n    }\n  }\n\n  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {\n    return Locale.create(locale, numberingSystem, outputCalendar);\n  }\n\n  constructor(locale, numbering, outputCalendar) {\n    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });\n    Object.defineProperty(this, 'numberingSystem', {\n      value: numbering || null,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'outputCalendar', {\n      value: outputCalendar || null,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'intl', {\n      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),\n      enumerable: false\n    });\n\n    // cached usefulness\n    Object.defineProperty(this, 'weekdaysCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'monthsCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'meridiemCache', {\n      value: null,\n      enumerable: false,\n      writable: true\n    });\n    Object.defineProperty(this, 'eraCache', {\n      value: {},\n      enumerable: false,\n      writable: true\n    });\n  }\n\n  // todo: cache me\n  listingMode(defaultOk = true) {\n    const hasIntl = Intl && Intl.DateTimeFormat,\n      hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,\n      isActuallyEn =\n        this.locale === 'en' ||\n        this.locale.toLowerCase() === 'en-us' ||\n        (hasIntl &&\n          Intl.DateTimeFormat(this.intl)\n            .resolvedOptions()\n            .locale.startsWith('en-US')),\n      hasNoWeirdness =\n        (this.numberingSystem === null || this.numberingSystem === 'latn') &&\n        (this.outputCalendar === null || this.outputCalendar === 'gregory');\n\n    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {\n      return 'error';\n    } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {\n      return 'en';\n    } else {\n      return 'intl';\n    }\n  }\n\n  clone(alts) {\n    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {\n      return this;\n    } else {\n      return Locale.create(\n        alts.locale || this.locale,\n        alts.numberingSystem || this.numberingSystem,\n        alts.outputCalendar || this.outputCalendar\n      );\n    }\n  }\n\n  months(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.months, () => {\n      const intl = format ? { month: length, day: 'numeric' } : { month: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.monthsCache[formatStr][length]) {\n        this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));\n      }\n      return this.monthsCache[formatStr][length];\n    });\n  }\n\n  weekdays(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.weekdays, () => {\n      const intl = format\n          ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }\n          : { weekday: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.weekdaysCache[formatStr][length]) {\n        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>\n          this.extract(dt, intl, 'weekday')\n        );\n      }\n      return this.weekdaysCache[formatStr][length];\n    });\n  }\n\n  meridiems(defaultOK = true) {\n    return listStuff(\n      this,\n      undefined,\n      defaultOK,\n      () => English.meridiems,\n      () => {\n        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two\n        // for AM and PM. This is probably wrong, but it's makes parsing way easier.\n        if (!this.meridiemCache) {\n          const intl = { hour: 'numeric', hour12: true };\n          this.meridiemCache = [\n            DateTime.utc(2016, 11, 13, 9),\n            DateTime.utc(2016, 11, 13, 19)\n          ].map(dt => this.extract(dt, intl, 'dayperiod'));\n        }\n\n        return this.meridiemCache;\n      }\n    );\n  }\n\n  eras(length, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.eras, () => {\n      const intl = { era: length };\n\n      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates\n      // to definitely enumerate them.\n      if (!this.eraCache[length]) {\n        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>\n          this.extract(dt, intl, 'era')\n        );\n      }\n\n      return this.eraCache[length];\n    });\n  }\n\n  extract(dt, intlOpts, field) {\n    const [df, d] = this.dtFormatter(dt, intlOpts),\n      results = df.formatToParts(d),\n      matching = results.find(m => m.type.toLowerCase() === field);\n\n    return matching ? matching.value : null;\n  }\n\n  numberFormatter(opts = {}, intlOpts = {}) {\n    if (Intl && Intl.NumberFormat) {\n      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);\n\n      if (opts.padTo > 0) {\n        realIntlOpts.minimumIntegerDigits = opts.padTo;\n      }\n\n      if (opts.round) {\n        realIntlOpts.maximumFractionDigits = 0;\n      }\n\n      return new Intl.NumberFormat(this.intl, realIntlOpts);\n    } else {\n      return new PolyNumberFormatter(opts);\n    }\n  }\n\n  dtFormatter(dt, intlOpts = {}) {\n    let d, z;\n\n    if (dt.zone.universal) {\n      // if we have a fixed-offset zone that isn't actually UTC,\n      // (like UTC+8), we need to make do with just displaying\n      // the time in UTC; the formatter doesn't know how to handle UTC+8\n      d = Util.asIfUTC(dt);\n      z = 'UTC';\n    } else if (dt.zone.type === 'local') {\n      d = dt.toJSDate();\n    } else {\n      d = dt.toJSDate();\n      z = dt.zone.name;\n    }\n\n    if (Intl && Intl.DateTimeFormat) {\n      const realIntlOpts = Object.assign({}, intlOpts);\n      if (z) {\n        realIntlOpts.timeZone = z;\n      }\n      return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];\n    } else {\n      return [new PolyDateFormatter(), d];\n    }\n  }\n\n  equals(other) {\n    return (\n      this.locale === other.locale &&\n      this.numberingSystem === other.numberingSystem &&\n      this.outputCalendar === other.outputCalendar\n    );\n  }\n}\n",
     "static": true,
     "longname": "src/impl/locale.js",
     "access": null,
@@ -7720,7 +7720,7 @@
     "longname": "src/impl/locale.js~Locale.create",
     "access": null,
     "description": null,
-    "lineNumber": 101,
+    "lineNumber": 97,
     "undocument": true,
     "unknown": [
       {
@@ -7765,7 +7765,7 @@
     "longname": "src/impl/locale.js~Locale.fromObject",
     "access": null,
     "description": null,
-    "lineNumber": 117,
+    "lineNumber": 113,
     "undocument": true,
     "unknown": [
       {
@@ -7801,7 +7801,7 @@
     "longname": "src/impl/locale.js~Locale#constructor",
     "access": null,
     "description": null,
-    "lineNumber": 121,
+    "lineNumber": 117,
     "undocument": true,
     "unknown": [
       {
@@ -7841,7 +7841,7 @@
     "longname": "src/impl/locale.js~Locale#listingMode",
     "access": null,
     "description": null,
-    "lineNumber": 162,
+    "lineNumber": 154,
     "undocument": true,
     "unknown": [
       {
@@ -7877,7 +7877,7 @@
     "longname": "src/impl/locale.js~Locale#clone",
     "access": null,
     "description": null,
-    "lineNumber": 185,
+    "lineNumber": 177,
     "undocument": true,
     "unknown": [
       {
@@ -7910,7 +7910,7 @@
     "longname": "src/impl/locale.js~Locale#months",
     "access": null,
     "description": null,
-    "lineNumber": 197,
+    "lineNumber": 189,
     "undocument": true,
     "unknown": [
       {
@@ -7961,7 +7961,7 @@
     "longname": "src/impl/locale.js~Locale#weekdays",
     "access": null,
     "description": null,
-    "lineNumber": 212,
+    "lineNumber": 200,
     "undocument": true,
     "unknown": [
       {
@@ -8012,7 +8012,7 @@
     "longname": "src/impl/locale.js~Locale#meridiems",
     "access": null,
     "description": null,
-    "lineNumber": 227,
+    "lineNumber": 215,
     "undocument": true,
     "unknown": [
       {
@@ -8046,7 +8046,7 @@
     "longname": "src/impl/locale.js~Locale#meridiemCache",
     "access": null,
     "description": null,
-    "lineNumber": 238,
+    "lineNumber": 226,
     "undocument": true,
     "unknown": [
       {
@@ -8071,7 +8071,7 @@
     "longname": "src/impl/locale.js~Locale#eras",
     "access": null,
     "description": null,
-    "lineNumber": 249,
+    "lineNumber": 237,
     "undocument": true,
     "unknown": [
       {
@@ -8113,7 +8113,7 @@
     "longname": "src/impl/locale.js~Locale#extract",
     "access": null,
     "description": null,
-    "lineNumber": 266,
+    "lineNumber": 253,
     "undocument": true,
     "unknown": [
       {
@@ -8158,7 +8158,7 @@
     "longname": "src/impl/locale.js~Locale#numberFormatter",
     "access": null,
     "description": null,
-    "lineNumber": 274,
+    "lineNumber": 261,
     "undocument": true,
     "unknown": [
       {
@@ -8203,7 +8203,7 @@
     "longname": "src/impl/locale.js~Locale#dtFormatter",
     "access": null,
     "description": null,
-    "lineNumber": 292,
+    "lineNumber": 279,
     "undocument": true,
     "unknown": [
       {
@@ -8245,7 +8245,7 @@
     "longname": "src/impl/locale.js~Locale#equals",
     "access": null,
     "description": null,
-    "lineNumber": 319,
+    "lineNumber": 306,
     "undocument": true,
     "unknown": [
       {

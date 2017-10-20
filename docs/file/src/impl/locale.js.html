@@ -137,11 +137,7 @@ class PolyDateFormatter {
 
 export class Locale {
   static fromOpts(opts) {
-    return Locale.create(
-      opts.locale,
-      opts.numberingSystem,
-      opts.outputCalendar
-    );
+    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
   }
 
   static create(locale, numberingSystem, outputCalendar) {
@@ -175,11 +171,7 @@ export class Locale {
       enumerable: true
     });
     Object.defineProperty(this, &apos;intl&apos;, {
-      value: intlConfigString(
-        this.locale,
-        this.numberingSystem,
-        this.outputCalendar
-      ),
+      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
       enumerable: false
     });
 
@@ -242,14 +234,10 @@ export class Locale {
 
   months(length, format = false, defaultOK = true) {
     return listStuff(this, length, defaultOK, English.months, () =&gt; {
-      const intl = format
-          ? { month: length, day: &apos;numeric&apos; }
-          : { month: length },
+      const intl = format ? { month: length, day: &apos;numeric&apos; } : { month: length },
         formatStr = format ? &apos;format&apos; : &apos;standalone&apos;;
       if (!this.monthsCache[formatStr][length]) {
-        this.monthsCache[formatStr][length] = mapMonths(dt =&gt;
-          this.extract(dt, intl, &apos;month&apos;)
-        );
+        this.monthsCache[formatStr][length] = mapMonths(dt =&gt; this.extract(dt, intl, &apos;month&apos;));
       }
       return this.monthsCache[formatStr][length];
     });
@@ -299,10 +287,9 @@ export class Locale {
       // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
       // to definitely enumerate them.
       if (!this.eraCache[length]) {
-        this.eraCache[length] = [
-          DateTime.utc(-40, 1, 1),
-          DateTime.utc(2017, 1, 1)
-        ].map(dt =&gt; this.extract(dt, intl, &apos;era&apos;));
+        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =&gt;
+          this.extract(dt, intl, &apos;era&apos;)
+        );
       }
 
       return this.eraCache[length];
