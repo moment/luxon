@@ -3,13 +3,16 @@
   "version": "0.0.5",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
-  "keywords": [
-    "date",
-    "immutable"
-  ],
+  "keywords": ["date", "immutable"],
   "repository": "https://github.com/icambron/luxon",
   "dependencies": {
     "core-js": "latest"
+  },
+  "scripts": {
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,json,css}": ["prettier --config .prettier.js --write", "git add"]
   },
   "devDependencies": {
     "babel-jest": "latest",
@@ -32,12 +35,14 @@
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-uglify": "latest",
+    "husky": "^0.14.3",
     "jest-cli": "latest",
     "lazypipe": "latest",
+    "lint-staged": "^4.3.0",
     "prettier": "latest",
     "rollup-plugin-babel": "latest",
-    "rollup-plugin-node-resolve": "latest",
     "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-node-resolve": "latest",
     "rollup-stream": "latest",
     "run-sequence": "latest",
     "tap-min": "latest",
