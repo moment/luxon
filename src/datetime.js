@@ -17,6 +17,7 @@ import {
 } from './errors';
 
 const INVALID = 'Invalid DateTime',
+  INVALID_INPUT = 'invalid input',
   UNSUPPORTED_ZONE = 'unsupported zone',
   UNPARSABLE = 'unparsable';
 
@@ -251,7 +252,10 @@ export class DateTime {
    */
   constructor(config = {}) {
     const zone = config.zone || Settings.defaultZone,
-      invalidReason = config.invalidReason || (zone.isValid ? null : UNSUPPORTED_ZONE);
+      invalidReason =
+        config.invalidReason ||
+        (isNaN(config.ts) ? INVALID_INPUT : null) ||
+        (!zone.isValid ? UNSUPPORTED_ZONE : null);
 
     Object.defineProperty(this, 'ts', {
       value: config.ts || Settings.now(),
@@ -369,14 +373,14 @@ export class DateTime {
 
   /**
    * Create an DateTime from a Javascript Date object. Uses the default zone.
-   * @param {Date|Any} date - a Javascript Date object
+   * @param {Date} date - a Javascript Date object
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
   static fromJSDate(date, options = {}) {
     return new DateTime({
-      ts: new Date(date).valueOf(),
+      ts: Util.isDate(date) ? date.valueOf() : NaN,
       zone: Util.normalizeZone(options.zone),
       loc: Locale.fromObject(options)
     });

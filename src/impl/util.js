@@ -52,6 +52,10 @@ export class Util {
     return typeof o === 'string';
   }
 
+  static isDate(o) {
+    return Object.prototype.toString.call(o) === '[object Date]';
+  }
+
   static numberBetween(thing, bottom, top) {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
