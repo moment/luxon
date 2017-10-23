@@ -254,7 +254,7 @@ export class DateTime {
     const zone = config.zone || Settings.defaultZone,
       invalidReason =
         config.invalidReason ||
-        (isNaN(config.ts) ? INVALID_INPUT : null) ||
+        (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
         (!zone.isValid ? UNSUPPORTED_ZONE : null);
 
     Object.defineProperty(this, 'ts', {
