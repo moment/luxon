@@ -2333,6 +2333,10 @@ class Util {
     return typeof o === 'string';
   }
 
+  static isDate(o) {
+    return Object.prototype.toString.call(o) === '[object Date]';
+  }
+
   static numberBetween(thing, bottom, top) {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
@@ -2662,7 +2666,7 @@ function listStuff(loc, length, defaultOK, englishFn, intlFn) {
  * @private
  */
 
-class PolyFormatter {
+class PolyNumberFormatter {
   constructor(opts) {
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
@@ -2671,6 +2675,20 @@ class PolyFormatter {
   format(i) {
     const maybeRounded = this.round ? Math.round(i) : i;
     return maybeRounded.toString().padStart(this.padTo, '0');
+  }
+}
+
+class PolyDateFormatter {
+  format(d) {
+    return d.toString();
+  }
+
+  resolvedOptions() {
+    return {
+      locale: 'en-US',
+      numberingSystem: 'latn',
+      outputCalendar: 'gregory'
+    };
   }
 }
 
@@ -2861,7 +2879,7 @@ class Locale {
 
       return new Intl.NumberFormat(this.intl, realIntlOpts);
     } else {
-      return new PolyFormatter(opts);
+      return new PolyNumberFormatter(opts);
     }
   }
 
@@ -2881,12 +2899,15 @@ class Locale {
       z = dt.zone.name;
     }
 
-    const realIntlOpts = Object.assign({}, intlOpts);
-    if (z) {
-      realIntlOpts.timeZone = z;
+    if (Intl && Intl.DateTimeFormat) {
+      const realIntlOpts = Object.assign({}, intlOpts);
+      if (z) {
+        realIntlOpts.timeZone = z;
+      }
+      return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
+    } else {
+      return [new PolyDateFormatter(), d];
     }
-
-    return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
   }
 
   equals(other) {
@@ -3313,12 +3334,21 @@ function simpleParse(...keys) {
 
 // ISO parsing
 const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
-const extractISOYmd = simpleParse('year', 'month', 'day');
-const isoYmdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/;
-const extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
+const isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 const isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/;
 const isoOrdinalRegex = /^(\d{4})-?(\d{3})/;
+const extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
 const extractISOOrdinalData = simpleParse('year', 'ordinal');
+
+function extractISOYmd(match, cursor) {
+  const item = {
+    year: parseInt(match[cursor]),
+    month: parseInt(match[cursor + 1]) || 1,
+    day: parseInt(match[cursor + 2]) || 1
+  };
+
+  return [item, null, cursor + 3];
+}
 
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
@@ -4977,6 +5007,7 @@ class Conversions {
 }
 
 const INVALID = 'Invalid DateTime';
+const INVALID_INPUT = 'invalid input';
 const UNSUPPORTED_ZONE = 'unsupported zone';
 const UNPARSABLE = 'unparsable';
 
@@ -5211,7 +5242,10 @@ class DateTime {
    */
   constructor(config = {}) {
     const zone = config.zone || Settings.defaultZone,
-      invalidReason = config.invalidReason || (zone.isValid ? null : UNSUPPORTED_ZONE);
+      invalidReason =
+        config.invalidReason ||
+        (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
+        (!zone.isValid ? UNSUPPORTED_ZONE : null);
 
     Object.defineProperty(this, 'ts', {
       value: config.ts || Settings.now(),
@@ -5329,14 +5363,14 @@ class DateTime {
 
   /**
    * Create an DateTime from a Javascript Date object. Uses the default zone.
-   * @param {Date|Any} date - a Javascript Date object
+   * @param {Date} date - a Javascript Date object
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
   static fromJSDate(date, options = {}) {
     return new DateTime({
-      ts: new Date(date).valueOf(),
+      ts: Util.isDate(date) ? date.valueOf() : NaN,
       zone: Util.normalizeZone(options.zone),
       loc: Locale.fromObject(options)
     });

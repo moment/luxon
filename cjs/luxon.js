@@ -2770,6 +2770,11 @@ var Util = function () {
       return typeof o === 'string';
     }
   }, {
+    key: 'isDate',
+    value: function isDate(o) {
+      return Object.prototype.toString.call(o) === '[object Date]';
+    }
+  }, {
     key: 'numberBetween',
     value: function numberBetween(thing, bottom, top) {
       return Util.isNumber(thing) && thing >= bottom && thing <= top;
@@ -3135,22 +3140,45 @@ function listStuff(loc, length, defaultOK, englishFn, intlFn) {
  * @private
  */
 
-var PolyFormatter = function () {
-  function PolyFormatter(opts) {
-    classCallCheck(this, PolyFormatter);
+var PolyNumberFormatter = function () {
+  function PolyNumberFormatter(opts) {
+    classCallCheck(this, PolyNumberFormatter);
 
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
   }
 
-  createClass(PolyFormatter, [{
+  createClass(PolyNumberFormatter, [{
     key: 'format',
     value: function format(i) {
       var maybeRounded = this.round ? Math.round(i) : i;
       return maybeRounded.toString().padStart(this.padTo, '0');
     }
   }]);
-  return PolyFormatter;
+  return PolyNumberFormatter;
+}();
+
+var PolyDateFormatter = function () {
+  function PolyDateFormatter() {
+    classCallCheck(this, PolyDateFormatter);
+  }
+
+  createClass(PolyDateFormatter, [{
+    key: 'format',
+    value: function format(d) {
+      return d.toString();
+    }
+  }, {
+    key: 'resolvedOptions',
+    value: function resolvedOptions() {
+      return {
+        locale: 'en-US',
+        numberingSystem: 'latn',
+        outputCalendar: 'gregory'
+      };
+    }
+  }]);
+  return PolyDateFormatter;
 }();
 
 /**
@@ -3374,7 +3402,7 @@ var Locale = function () {
 
         return new Intl.NumberFormat(this.intl, realIntlOpts);
       } else {
-        return new PolyFormatter(opts);
+        return new PolyNumberFormatter(opts);
       }
     }
   }, {
@@ -3398,12 +3426,15 @@ var Locale = function () {
         z = dt.zone.name;
       }
 
-      var realIntlOpts = Object.assign({}, intlOpts);
-      if (z) {
-        realIntlOpts.timeZone = z;
+      if (Intl && Intl.DateTimeFormat) {
+        var realIntlOpts = Object.assign({}, intlOpts);
+        if (z) {
+          realIntlOpts.timeZone = z;
+        }
+        return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
+      } else {
+        return [new PolyDateFormatter(), d];
       }
-
-      return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
     }
   }, {
     key: 'equals',
@@ -3938,12 +3969,21 @@ function simpleParse() {
 
 // ISO parsing
 var isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
-var extractISOYmd = simpleParse('year', 'month', 'day');
-var isoYmdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/;
-var extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
+var isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 var isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/;
 var isoOrdinalRegex = /^(\d{4})-?(\d{3})/;
+var extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
 var extractISOOrdinalData = simpleParse('year', 'ordinal');
+
+function extractISOYmd(match, cursor) {
+  var item = {
+    year: parseInt(match[cursor]),
+    month: parseInt(match[cursor + 1]) || 1,
+    day: parseInt(match[cursor + 2]) || 1
+  };
+
+  return [item, null, cursor + 3];
+}
 
 function extractISOTime(match, cursor) {
   var local = !match[cursor + 4] && !match[cursor + 5],
@@ -6080,6 +6120,7 @@ var Conversions = function () {
 }();
 
 var INVALID = 'Invalid DateTime';
+var INVALID_INPUT = 'invalid input';
 var UNSUPPORTED_ZONE = 'unsupported zone';
 var UNPARSABLE = 'unparsable';
 
@@ -6305,7 +6346,7 @@ var DateTime = function () {
     classCallCheck(this, DateTime);
 
     var zone = config.zone || Settings.defaultZone,
-        invalidReason = config.invalidReason || (zone.isValid ? null : UNSUPPORTED_ZONE);
+        invalidReason = config.invalidReason || (Number.isNaN(config.ts) ? INVALID_INPUT : null) || (!zone.isValid ? UNSUPPORTED_ZONE : null);
 
     Object.defineProperty(this, 'ts', {
       value: config.ts || Settings.now(),
@@ -7412,7 +7453,7 @@ var DateTime = function () {
 
     /**
      * Create an DateTime from a Javascript Date object. Uses the default zone.
-     * @param {Date|Any} date - a Javascript Date object
+     * @param {Date} date - a Javascript Date object
      * @param {Object} options - configuration options for the DateTime
      * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
      * @return {DateTime}
@@ -7424,7 +7465,7 @@ var DateTime = function () {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       return new DateTime({
-        ts: new Date(date).valueOf(),
+        ts: Util.isDate(date) ? date.valueOf() : NaN,
         zone: Util.normalizeZone(options.zone),
         loc: Locale.fromObject(options)
       });
