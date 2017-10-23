@@ -32,6 +32,8 @@ module.exports = {
     'no-mixed-operators': 'off',
     // modern browsers only
     'no-prototype-builtins': 'off',
+    //this is a dumb rule
+    'no-else-return': 'off',
     'import/no-extraneous-dependencies': [
       'error',
       { devDependencies: ['test/**/*.js', 'benchmarks/*.js', 'gulpfile.js'] }
