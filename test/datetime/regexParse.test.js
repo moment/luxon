@@ -97,8 +97,7 @@ test('DateTime.fromISO() can optionally specify a zone', () => {
   });
 });
 
-const isSame = (s, expected) =>
-  expect(DateTime.fromISO(s).toObject()).toEqual(expected);
+const isSame = (s, expected) => expect(DateTime.fromISO(s).toObject()).toEqual(expected);
 
 test('DateTime.fromISO() accepts just the year', () => {
   isSame('2016', {
@@ -134,7 +133,9 @@ test('DateTime.fromISO() accepts year-month-day', () => {
     second: 0,
     millisecond: 0
   });
+});
 
+test('DateTime.fromISO() accepts yearmonthday', () => {
   isSame('20160525', {
     year: 2016,
     month: 5,
