@@ -97,9 +97,34 @@ test('DateTime.fromISO() can optionally specify a zone', () => {
   });
 });
 
-test('DateTime.fromISO() accepts a variety of ISO formats', () => {
-  const isSame = (s, expected) => expect(DateTime.fromISO(s).toObject()).toEqual(expected);
+const isSame = (s, expected) =>
+  expect(DateTime.fromISO(s).toObject()).toEqual(expected);
 
+test('DateTime.fromISO() accepts just the year', () => {
+  isSame('2016', {
+    year: 2016,
+    month: 1,
+    day: 1,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromISO() accepts year-month', () => {
+  isSame('2016-05', {
+    year: 2016,
+    month: 5,
+    day: 1,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromISO() accepts year-month-day', () => {
   isSame('2016-05-25', {
     year: 2016,
     month: 5,
@@ -119,7 +144,31 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+});
 
+test('DateTime.fromISO() accepts extend years', () => {
+  isSame('+002016-05-25', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+
+  isSame('-002016-05-25', {
+    year: -2016,
+    month: 5,
+    day: 25,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromISO() accepts year-moth-dayThour', () => {
   isSame('2016-05-25T09', {
     year: 2016,
     month: 5,
@@ -129,7 +178,9 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+});
 
+test('DateTime.fromISO() accepts year-moth-dayThour:minute', () => {
   isSame('2016-05-25T09:24', {
     year: 2016,
     month: 5,
@@ -138,26 +189,6 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     minute: 24,
     second: 0,
     millisecond: 0
-  });
-
-  isSame('2016-05-25T09:24:15', {
-    year: 2016,
-    month: 5,
-    day: 25,
-    hour: 9,
-    minute: 24,
-    second: 15,
-    millisecond: 0
-  });
-
-  isSame('2016-05-25T09:24:15.123', {
-    year: 2016,
-    month: 5,
-    day: 25,
-    hour: 9,
-    minute: 24,
-    second: 15,
-    millisecond: 123
   });
 
   isSame('2016-05-25T0924', {
@@ -169,6 +200,18 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+});
+
+test('DateTime.fromISO() accepts year-moth-dayThour:minute:second', () => {
+  isSame('2016-05-25T09:24:15', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 0
+  });
 
   isSame('2016-05-25T092415', {
     year: 2016,
@@ -178,6 +221,18 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     minute: 24,
     second: 15,
     millisecond: 0
+  });
+});
+
+test('DateTime.fromISO() accepts year-moth-dayThour:minute:second.millisecond', () => {
+  isSame('2016-05-25T09:24:15.123', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
   });
 
   isSame('2016-05-25T092415.123', {
@@ -199,7 +254,9 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 123
   });
+});
 
+test('DateTime.fromISO() accepts year-week-day', () => {
   isSame('2016-W21-3', {
     year: 2016,
     month: 5,
@@ -219,7 +276,9 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+});
 
+test('DateTime.fromISO() accepts year-week-dayTtime', () => {
   isSame('2016-W21-3T09:24:15.123', {
     year: 2016,
     month: 5,
@@ -239,7 +298,9 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 123
   });
+});
 
+test('DateTime.fromISO() accepts year-ordinal', () => {
   isSame('2016-200', {
     year: 2016,
     month: 7,
@@ -259,7 +320,9 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 0,
     millisecond: 0
   });
+});
 
+test('DateTime.fromISO() accepts year-ordinalTtime', () => {
   isSame('2016-200T09:24:15.123', {
     year: 2016,
     month: 7,
@@ -269,7 +332,9 @@ test('DateTime.fromISO() accepts a variety of ISO formats', () => {
     second: 15,
     millisecond: 123
   });
+});
 
+test('DateTime.fromISO() accepts some technically incorrect stuff', () => {
   // these are formats that aren't technically valid but we parse anyway.
   // Testing them more to document them than anything else
   isSame('2016-05-25T0924:15.123', {
@@ -309,7 +374,6 @@ test('DateTime.fromISO() rejects poop', () => {
   rejects(null);
   rejects('');
   rejects(' ');
-  rejects('2016');
   rejects('2016-1');
   rejects('2016-1-15');
   rejects('2016-01-5');
@@ -323,7 +387,6 @@ test('DateTime.fromISO() rejects poop', () => {
   rejects('2016-W32-02');
 
   // some of these are actually valid iso we don't take (yet)
-  rejects('2016-08');
   rejects('2016-W32');
 });
 

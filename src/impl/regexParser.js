@@ -47,12 +47,21 @@ function simpleParse(...keys) {
 
 // ISO parsing
 const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
-  extractISOYmd = simpleParse('year', 'month', 'day'),
-  isoYmdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/,
-  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),
+  isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
   isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
   isoOrdinalRegex = /^(\d{4})-?(\d{3})/,
+  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),
   extractISOOrdinalData = simpleParse('year', 'ordinal');
+
+function extractISOYmd(match, cursor) {
+  const item = {
+    year: parseInt(match[cursor]),
+    month: parseInt(match[cursor + 1]) || 1,
+    day: parseInt(match[cursor + 2]) || 1
+  };
+
+  return [item, null, cursor + 3];
+}
 
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
@@ -100,9 +109,20 @@ const obsOffsets = {
   PST: -8 * 60
 };
 
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+function fromStrings(
+  weekdayStr,
+  yearStr,
+  monthStr,
+  dayStr,
+  hourStr,
+  minuteStr,
+  secondStr
+) {
   const result = {
-    year: yearStr.length === 2 ? Util.untrucateYear(parseInt(yearStr)) : parseInt(yearStr),
+    year:
+      yearStr.length === 2
+        ? Util.untrucateYear(parseInt(yearStr))
+        : parseInt(yearStr),
     month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
@@ -138,7 +158,15 @@ function extractRFC2822(match) {
       offHourStr,
       offMinuteStr
     ] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    result = fromStrings(
+      weekdayStr,
+      yearStr,
+      monthStr,
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr
+    );
 
   let offset;
   if (obsOffset) {
@@ -167,14 +195,48 @@ const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun
   ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
 
 function extractRFC1123Or850(match) {
-  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  const [
+      ,
+      weekdayStr,
+      dayStr,
+      monthStr,
+      yearStr,
+      hourStr,
+      minuteStr,
+      secondStr
+    ] = match,
+    result = fromStrings(
+      weekdayStr,
+      yearStr,
+      monthStr,
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr
+    );
   return [result, FixedOffsetZone.utcInstance];
 }
 
 function extractASCII(match) {
-  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  const [
+      ,
+      weekdayStr,
+      monthStr,
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr,
+      yearStr
+    ] = match,
+    result = fromStrings(
+      weekdayStr,
+      yearStr,
+      monthStr,
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr
+    );
   return [result, FixedOffsetZone.utcInstance];
 }
 
@@ -186,7 +248,10 @@ export class RegexParser {
   static parseISODate(s) {
     return parse(
       s,
-      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],
+      [
+        combineRegexes(isoYmdRegex, isoTimeRegex),
+        combineExtractors(extractISOYmd, extractISOTime)
+      ],
       [
         combineRegexes(isoWeekRegex, isoTimeRegex),
         combineExtractors(extractISOWeekData, extractISOTime)
