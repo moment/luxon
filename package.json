@@ -1,6 +1,6 @@
 {
   "name": "luxon",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
@@ -12,7 +12,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js,json,css}": ["prettier --config .prettier.js --write", "git add"]
+    "*.{js,json}": ["prettier --config .prettier.js --write", "git add"]
   },
   "devDependencies": {
     "babel-jest": "latest",
