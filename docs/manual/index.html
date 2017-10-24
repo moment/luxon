@@ -1496,18 +1496,38 @@ dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 1
 <tr>
 <td>Month</td>
 <td></td>
-<td>30</td>
 <td>4</td>
+<td>30</td>
 </tr>
 </tbody>
 </table><p>These should match your intuition and for most purposes they work well. But they&apos;re not just wrong; they&apos;re not even self-consistent:</p><pre><code class="lang-js"><code class="source-code prettyprint">dur.shiftTo(&apos;months&apos;).shiftTo(&apos;days&apos;).as(&apos;years&apos;) //=&gt; 0.9863013698630136</code>
 </code></pre><p>This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ years: 50000 });
 DateTime.local().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
 DateTime.local().plus(dur).year                         //=&gt; 52017</code>
-</code></pre><p>Those are 33 years apart! So Luxon offers an alternative conversion scheme, based on the 400-year calendar cycle:</p><p>|       | Month |     Week |       Day |
-|-------+-------+----------+-----------|
-| Year  |    12 |  52.1775 |  365.2425 |
-| Month |       | 4.348125 | 30.436875 |</p><p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p><p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code> You can set it to &apos;casual&apos; or &apos;longterm&apos;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p><pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
+</code></pre><p>Those are 33 years apart! So Luxon offers an alternative conversion scheme, based on the 400-year calendar cycle:</p><table>
+<thead>
+<tr>
+<th></th>
+<th>Month</th>
+<th>Week</th>
+<th>Day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Year</td>
+<td>12</td>
+<td>52.1775</td>
+<td>365.2425</td>
+</tr>
+<tr>
+<td>Month</td>
+<td></td>
+<td>4.348125</td>
+<td>30.436875</td>
+</tr>
+</tbody>
+</table><p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p><p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code> You can set it to &apos;casual&apos; or &apos;longterm&apos;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p><pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
 Duration.fromISO(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
 
 end.diff(start, { conversionAccuracy: &apos;longterm&apos; })</code>
