@@ -165,10 +165,10 @@ But how do those conversions actually work? First, uncontroversially:
  
 These are always true and you can roll them up and down with consistency (e.g. `1 hour = 60 * 60 * 1000 milliseconds`). However, this isn't really true for the higher order units, which vary in length, even putting DSTs aside. A year is sometimes 365 days long and sometimes 366. Months are 28, 29, 30, or 31 days. By default Luxon converts between these units using what you might call "casual" conversions:
 
-|         |  Month | Week | Day |
-| ---     |  ---   | ---  | --- |
-| Year    |     12 |  365 | 365 |
-| Month   |        |   30 |   4 |
+|       | Month | Week | Day |
+| ---   | ---   |  --- | --- |
+| Year  | 12    |  365 | 365 |
+| Month |       |    4 |  30 |
 
 These should match your intuition and for most purposes they work well. But they're not just wrong; they're not even self-consistent:
 
@@ -186,10 +186,10 @@ DateTime.local().plus(dur).year                         //=> 52017
 
 Those are 33 years apart! So Luxon offers an alternative conversion scheme, based on the 400-year calendar cycle:
 
-|         |  Month | Week       | Day       |
-| ---     |  ---   | ---        | ---       |
-| Year    |     12 |  52.1775   | 365.2425  |
-| Month   |        |  30.436875 |  4.348125 |
+|       | Month |     Week |       Day |
+|----   | ---   |      --- |       --- |
+| Year  | 12    |  52.1775 |  365.2425 |
+| Month |       | 4.348125 | 30.436875 |
 
 You can see why these are irritating to work with, which is why they're not the default.
 
