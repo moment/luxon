@@ -1,12 +1,12 @@
 # Math
 
-This covers some oddball topics with date and time math, which has some quirky corner cases. This page tries document those corners.
+This page covers some oddball topics with date and time math, which has some quirky corner cases.
 
 ## Calendar math vs time math
 
 ### The basics
 
-Math with dates and times can be unintuitive to programmers. If it's Feb 13, 2017 and I say "in exactly one month", you know I mean March 13. Exactly one month after than is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said "30 days from February 13", you'd try to figure out what day that landed on in March. Here it is in Luxon:
+Math with dates and times can be unintuitive to programmers. If it's Feb 13, 2017 and I say "in exactly one month", you know I mean March 13. Exactly one month after that is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said "30 days from February 13", you'd try to figure out what day that landed on in March. Here it is in Luxon:
 
 ```js
 DateTime.local(2017, 2, 13).plus({months: 1}).toISODate() //=> '2017-03-13'
@@ -38,7 +38,7 @@ Don't worry about leap seconds. Javascript and most other programming environmen
 
 ### How to think about calendar math
 
-It's best not to think of calendar math as requiring arcane checks for what variability is required. Instead, think of them as **adjusting that unit directly and keeping lower order date components constant**. Let's go back to the Feb 13 + 1 month example. If you didn't have Luxon, you would do something like this to accomplish that:
+It's best not to think of calendar math as requiring arcane checks on the lengths of intervening periods. Instead, think of them as **adjusting that unit directly and keeping lower order date components constant**. Let's go back to the Feb 13 + 1 month example. If you didn't have Luxon, you would do something like this to accomplish that:
 
 ```js
 var d = new Date('2017-02-13')
@@ -67,7 +67,7 @@ Time math is different. In time math, we're just adjusting the clock, adding or 
 
 ## Math with multiple units
 
-Of course, maybe you want to do math with multiple units:
+It's possible to do math with multiple units:
 
 ```js
 DateTime.fromISO('2017-05-15').plus({months: 2, days: 6}).toISODate(); //=> '2017-07-21'
@@ -79,7 +79,7 @@ This isn't as simple as it looks. For example, but should you expect this to do?
 DateTime.fromISO('2017-04-30').plus({months: 1, days: 1}).toISODate() //=> '2017-05-31'
 ```
 
-If the day is added first, we'll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we'll an intermediate May 30 and day after that is May 31. (See "Calendar math vs time math above if this is confusing.) So the order matters.
+If the day is added first, we'll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we'll an intermediate value of May 30 and day after that is May 31. (See "Calendar math vs time math above if this is confusing.) So the order matters.
 
 Luxon has a simple rule for this: **math is done from highest order to lowest order**. So the result of the example above is May 31. This rule isn't logically necessary, but it does seem reflect what people mean. Of course, Luxon can't enforce this rule if you do the math in separate operations:
 
@@ -93,9 +93,9 @@ It's not a coincidence that Luxon's interface makes it awkward to do this wrong.
 
 ### Basics
 
-[Durations](../class/src/duration.js~Duration.html) are quantities of time, like "3 days and 6 hours". They are completely unmoored from the timeline, it has no idea *which* 3 days and 6 hours they represent; it's just how Luxon represents those quantities in abstract. This is both tremendously useful and occasionally confusing. I'm not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.
+[Durations](../class/src/duration.js~Duration.html) are quantities of time, like "3 days and 6 hours". Luxon has no idea *which* 3 days and 6 hours they represent; it's just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I'm not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.
 
-Here's some very basic stuff to get us going anyway:
+Here's some very basic stuff to get us going:
 
 ```js
 var dur = Duration.fromObject({ days: 3, hours: 6})
@@ -233,7 +233,7 @@ It's important to remember that diffs are Duration objects, and a Duration is ju
 
 
 ```js
-var diff = end.diff(start) //default unit is milliseconds
+var diff = end.diff(start) // default unit is milliseconds
 
 // wtf, that's not a month!
 diff.as('months'); //=> 0.9319444 
