@@ -98,6 +98,10 @@ export class Util {
     return typeof o === &apos;string&apos;;
   }
 
+  static isDate(o) {
+    return Object.prototype.toString.call(o) === &apos;[object Date]&apos;;
+  }
+
   static numberBetween(thing, bottom, top) {
     return Util.isNumber(thing) &amp;&amp; thing &gt;= bottom &amp;&amp; thing &lt;= top;
   }

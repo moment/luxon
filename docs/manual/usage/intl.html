@@ -190,7 +190,8 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-4" data-ice="link">0.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-6" data-ice="link">0.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-5" data-ice="link">0.5</a></li>
 </ul>
   </div>
 </div>
@@ -207,7 +208,7 @@
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;el&apos;).toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
 </code></pre>
 <h2 id="how-locales-work">How locales work</h2>
-<p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string (i.e. Luxon does the string munging for you).</p>
+<p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument works. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string.</p>
 <p>The rest of this document will concentrate on what Luxon does when provided with locale information.</p>
 <h2 id="setting-locale">Setting locale</h2>
 <p><code>locale</code> is a property of Luxon object, and it defaults to &apos;en-US&apos;. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.</p>

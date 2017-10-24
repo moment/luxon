@@ -93,12 +93,21 @@ function simpleParse(...keys) {
 
 // ISO parsing
 const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
-  extractISOYmd = simpleParse(&apos;year&apos;, &apos;month&apos;, &apos;day&apos;),
-  isoYmdRegex = /^([+-]?\d{6}|\d{4})-?(\d\d)-?(\d\d)/,
-  extractISOWeekData = simpleParse(&apos;weekYear&apos;, &apos;weekNumber&apos;, &apos;weekDay&apos;),
+  isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
   isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
   isoOrdinalRegex = /^(\d{4})-?(\d{3})/,
+  extractISOWeekData = simpleParse(&apos;weekYear&apos;, &apos;weekNumber&apos;, &apos;weekDay&apos;),
   extractISOOrdinalData = simpleParse(&apos;year&apos;, &apos;ordinal&apos;);
+
+function extractISOYmd(match, cursor) {
+  const item = {
+    year: parseInt(match[cursor]),
+    month: parseInt(match[cursor + 1]) || 1,
+    day: parseInt(match[cursor + 2]) || 1
+  };
+
+  return [item, null, cursor + 3];
+}
 
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] &amp;&amp; !match[cursor + 5],

@@ -190,7 +190,8 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-4" data-ice="link">0.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-6" data-ice="link">0.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-5" data-ice="link">0.5</a></li>
 </ul>
   </div>
 </div>
@@ -203,10 +204,10 @@
     <span data-ice="title">Usage</span>
   </div>
   <div data-ice="content"><h1 id="math">Math</h1>
-<p>This covers some oddball topics with date and time math, which has some quirky corner cases. This page tries document those corners.</p>
+<p>This page covers some oddball topics with date and time math, which has some quirky corner cases.</p>
 <h2 id="calendar-math-vs-time-math">Calendar math vs time math</h2>
 <h3 id="the-basics">The basics</h3>
-<p>Math with dates and times can be unintuitive to programmers. If it&apos;s Feb 13, 2017 and I say &quot;in exactly one month&quot;, you know I mean March 13. Exactly one month after than is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said &quot;30 days from February 13&quot;, you&apos;d try to figure out what day that landed on in March. Here it is in Luxon:</p>
+<p>Math with dates and times can be unintuitive to programmers. If it&apos;s Feb 13, 2017 and I say &quot;in exactly one month&quot;, you know I mean March 13. Exactly one month after that is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said &quot;30 days from February 13&quot;, you&apos;d try to figure out what day that landed on in March. Here it is in Luxon:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 2, 13).plus({months: 1}).toISODate() //=&gt; &apos;2017-03-13&apos;
 
 DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=&gt; &apos;2017-03-15&apos;</code>
@@ -232,7 +233,7 @@ DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=&gt; &apos;2017-03-1
 </ul>
 <p>Don&apos;t worry about leap seconds. Javascript and most other programming environments don&apos;t account for them; they just happen as abrupt, invisible changes to the underlying system&apos;s time.</p>
 <h3 id="how-to-think-about-calendar-math">How to think about calendar math</h3>
-<p>It&apos;s best not to think of calendar math as requiring arcane checks for what variability is required. Instead, think of them as <strong>adjusting that unit directly and keeping lower order date components constant</strong>. Let&apos;s go back to the Feb 13 + 1 month example. If you didn&apos;t have Luxon, you would do something like this to accomplish that:</p>
+<p>It&apos;s best not to think of calendar math as requiring arcane checks on the lengths of intervening periods. Instead, think of them as <strong>adjusting that unit directly and keeping lower order date components constant</strong>. Let&apos;s go back to the Feb 13 + 1 month example. If you didn&apos;t have Luxon, you would do something like this to accomplish that:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var d = new Date(&apos;2017-02-13&apos;)
 d.setMonth(d.getMonth() + 1)
 d.toLocaleString() //=&gt; &apos;3/13/2017, 12:00:00 AM&apos;</code>
@@ -248,21 +249,21 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 <h3 id="time-math">Time math</h3>
 <p>Time math is different. In time math, we&apos;re just adjusting the clock, adding or subtracting from the epoch timestamp. Adding 63 hours is really the same as adding 63 hours&apos; worth of milliseconds. Under the covers, Luxon does this exactly the opposite of how it does calendar math; it boils the operation down to milliseconds, computes the new timestamp, and then computes the date out of that.</p>
 <h2 id="math-with-multiple-units">Math with multiple units</h2>
-<p>Of course, maybe you want to do math with multiple units:</p>
+<p>It&apos;s possible to do math with multiple units:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-05-15&apos;).plus({months: 2, days: 6}).toISODate(); //=&gt; &apos;2017-07-21&apos;</code>
 </code></pre>
 <p>This isn&apos;t as simple as it looks. For example, but should you expect this to do?</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate() //=&gt; &apos;2017-05-31&apos;</code>
 </code></pre>
-<p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p>
+<p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p>
 <p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({days: 1}).plus({months: 1}).toISODate() //=&gt; &apos;2017-06-01&apos;</code>
 </code></pre>
 <p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p>
 <h2 id="duration-math">Duration math</h2>
 <h3 id="basics">Basics</h3>
-<p><a href="./manual/../class/src/duration.js~Duration.html">Durations</a> are quantities of time, like &quot;3 days and 6 hours&quot;. They are completely unmoored from the timeline, it has no idea <em>which</em> 3 days and 6 hours they represent; it&apos;s just how Luxon represents those quantities in abstract. This is both tremendously useful and occasionally confusing. I&apos;m not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.</p>
-<p>Here&apos;s some very basic stuff to get us going anyway:</p>
+<p><a href="./manual/../class/src/duration.js~Duration.html">Durations</a> are quantities of time, like &quot;3 days and 6 hours&quot;. Luxon has no idea <em>which</em> 3 days and 6 hours they represent; it&apos;s just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I&apos;m not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.</p>
+<p>Here&apos;s some very basic stuff to get us going:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ days: 3, hours: 6})
 
 // examine it
@@ -393,7 +394,7 @@ diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
 <pre><code><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
 diffInDays.toObject(); //=&gt; { days: 28 }</code>
 </code></pre><p>It&apos;s important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units that got spat out by our computation. Unlike an Interval, a Duration doesn&apos;t &quot;remember&quot; what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start) //default unit is milliseconds
+<pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start) // default unit is milliseconds
 
 // wtf, that&apos;s not a month!
 diff.as(&apos;months&apos;); //=&gt; 0.9319444 

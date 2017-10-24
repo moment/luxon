@@ -190,7 +190,8 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-4" data-ice="link">0.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-6" data-ice="link">0.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-5" data-ice="link">0.5</a></li>
 </ul>
   </div>
 </div>
@@ -224,7 +225,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li>Luxon uses getters instead of accessor methods, so <code>dateTime.year</code> instead of <code>dateTime.year()</code></li>
 <li>Luxon centralizes its &quot;setters&quot;, like <code>dateTime.set({year: 2016, month: 4})</code> instead of <code>dateTime.year(2016).month(4)</code> like in Moment.</li>
 <li>Luxon&apos;s Durations are a separate top-level class.</li>
-<li>Arguments to Luxon&apos;s methods are not automatically coerced into Moment instances. E.g. <code>m.diff(&apos;2017-04-01&apos;)</code> would be <code>dt.diff(DateTime.fromISO(&apos;2017-04-01&apos;))</code>.</li>
+<li>Arguments to Luxon&apos;s methods are not automatically coerced into Luxon instances. E.g. <code>m.diff(&apos;2017-04-01&apos;)</code> would be <code>dt.diff(DateTime.fromISO(&apos;2017-04-01&apos;))</code>.</li>
 </ol>
 <h2 id="major-functional-differences">Major functional differences</h2>
 <ol>
