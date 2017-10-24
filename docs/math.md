@@ -167,7 +167,7 @@ These are always true and you can roll them up and down with consistency (e.g. `
 
 |       | Month | Week | Day |
 | ---   | ---   |  --- | --- |
-| Year  | 12    |  365 | 365 |
+| Year  | 12    |   52 | 365 |
 | Month |       |    4 |  30 |
 
 These should match your intuition and for most purposes they work well. But they're not just wrong; they're not even self-consistent:
