@@ -46,6 +46,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/zones/localZone.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;../impl/util&apos;;
 import { Zone } from &apos;../zone&apos;;
+import { Settings } from &apos;../settings&apos;;
 
 let singleton = null;
 
@@ -75,8 +76,8 @@ export class LocalZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = &apos;long&apos;, locale = &apos;en-US&apos; } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || &apos;en-US&apos;);
+  offsetName(ts, { format = &apos;long&apos;, locale = Settings.defaultLocale } = {}) {
+    return Util.parseZoneInfo(ts, format, locale);
   }
 
   offset(ts) {

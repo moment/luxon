@@ -46,6 +46,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/impl/locale.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;./util&apos;;
 import { English } from &apos;./english&apos;;
+import { Settings } from &apos;../settings&apos;;
 import { DateTime } from &apos;../datetime&apos;;
 
 const localeCache = {};
@@ -141,7 +142,7 @@ export class Locale {
   }
 
   static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || &apos;en-US&apos;,
+    const localeR = locale || Settings.defaultLocale,
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,

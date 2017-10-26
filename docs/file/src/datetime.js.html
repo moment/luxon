@@ -191,9 +191,9 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
   }
 }
 
-function formatMaybe(dt, format) {
+function techFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create(&apos;en&apos;)).formatDateTimeFromString(dt, format)
+    ? Formatter.create(Locale.create(&apos;en-US&apos;)).formatDateTimeFromString(dt, format)
     : null;
 }
 
@@ -1188,6 +1188,24 @@ export class DateTime {
   }
 
   /**
+   * Returns an array of format &quot;parts&quot;, i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
+   * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
+   * @example DateTime.local().toLocaleString(); //=&gt; [
+   *                                    //=&gt;   { type: &apos;day&apos;, value: &apos;25&apos; },
+   *                                    //=&gt;   { type: &apos;literal&apos;, value: &apos;/&apos; },
+   *                                    //=&gt;   { type: &apos;month&apos;, value: &apos;05&apos; },
+   *                                    //=&gt;   { type: &apos;literal&apos;, value: &apos;/&apos; },
+   *                                    //=&gt;   { type: &apos;year&apos;, value: &apos;1982&apos; }
+   *                                    //=&gt; ]
+   */
+  toLocaleParts(opts = {}) {
+    return this.isValid
+      ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this)
+      : [];
+  }
+
+  /**
    * Returns an ISO 8601-compliant string representation of this DateTime
    * @param {object} opts - options
    * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they&apos;re 0
@@ -1198,7 +1216,7 @@ export class DateTime {
    */
   toISO({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
     const f = `yyyy-MM-dd&apos;T&apos;${isoTimeFormat(this, suppressSeconds, suppressMilliseconds)}`;
-    return formatMaybe(this, f);
+    return techFormat(this, f);
   }
 
   /**
@@ -1207,7 +1225,7 @@ export class DateTime {
    * @return {string}
    */
   toISODate() {
-    return formatMaybe(this, &apos;yyyy-MM-dd&apos;);
+    return techFormat(this, &apos;yyyy-MM-dd&apos;);
   }
 
   /**
@@ -1216,7 +1234,7 @@ export class DateTime {
    * @return {string}
    */
   toISOWeekDate() {
-    return formatMaybe(this, &quot;kkkk-&apos;W&apos;WW-c&quot;);
+    return techFormat(this, &quot;kkkk-&apos;W&apos;WW-c&quot;);
   }
 
   /**
@@ -1229,7 +1247,7 @@ export class DateTime {
    * @return {string}
    */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    return formatMaybe(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
+    return techFormat(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
   }
 
   /**
@@ -1239,7 +1257,7 @@ export class DateTime {
    * @return {string}
    */
   toRFC2822() {
-    return formatMaybe(this, &apos;EEE, dd LLL yyyy hh:mm:ss ZZZ&apos;);
+    return techFormat(this, &apos;EEE, dd LLL yyyy hh:mm:ss ZZZ&apos;);
   }
 
   /**
@@ -1250,7 +1268,7 @@ export class DateTime {
    * @return {string}
    */
   toHTTP() {
-    return formatMaybe(this.toUTC(), &quot;EEE, dd LLL yyyy hh:mm:ss &apos;GMT&apos;&quot;);
+    return techFormat(this.toUTC(), &quot;EEE, dd LLL yyyy hh:mm:ss &apos;GMT&apos;&quot;);
   }
 
   /**

@@ -2309,9 +2309,9 @@ var Zone = function () {
      * Returns the offset's common name (such as EST) at the specified timestamp
      * @abstract
      * @param {number} ts - Epoch milliseconds for which to get the name
-     * @param {Object} options - Options to affect the format
-     * @param {string} options.format - What style of offset to return. Accepts 'long' or 'short'.
-     * @param {string} options.localeCode - What locale to return the offset name in. Defaults to us-en
+     * @param {Object} opts - Options to affect the format
+     * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
+     * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
      * @return {string}
      */
 
@@ -2322,11 +2322,120 @@ var Zone = function () {
     }
   }], [{
     key: 'offsetName',
-    value: function offsetName(ts) {
+    value: function offsetName(ts, opts) {
       throw new ZoneIsAbstractError();
     }
   }]);
   return Zone;
+}();
+
+var now = function now() {
+  return new Date().valueOf();
+};
+var defaultZone = null;
+var throwOnInvalid = false;
+var defaultLocale = 'en-US';
+
+/**
+ * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
+ */
+var Settings = function () {
+  function Settings() {
+    classCallCheck(this, Settings);
+  }
+
+  createClass(Settings, null, [{
+    key: 'now',
+
+    /**
+     * Get the callback for returning the current timestamp.
+     * @type {function}
+     */
+    get: function get$$1() {
+      return now;
+    }
+
+    /**
+     * Set the callback for returning the current timestamp.
+     * @type {function}
+     */
+    ,
+    set: function set$$1(n) {
+      now = n;
+    }
+
+    /**
+     * Set the default time zone to create DateTimes in.
+     * @type {string}
+     */
+
+  }, {
+    key: 'defaultZoneName',
+    get: function get$$1() {
+      return (defaultZone || LocalZone.instance).name;
+    }
+
+    /**
+     * Set the default time zone to create DateTimes in. Does not affect existing instances.
+     * @type {string}
+     */
+    ,
+    set: function set$$1(z) {
+      defaultZone = Util.normalizeZone(z);
+    }
+
+    /**
+     * Get the default time zone object to create DateTimes in. Does not affect existing instances.
+     * @type {Zone}
+     */
+
+  }, {
+    key: 'defaultZone',
+    get: function get$$1() {
+      return defaultZone || LocalZone.instance;
+    }
+
+    /**
+     * Get the default locale to create DateTimes with. Does not affect existing instances.
+     * @type {string}
+     */
+
+  }, {
+    key: 'defaultLocale',
+    get: function get$$1() {
+      return defaultLocale;
+    }
+
+    /**
+     * Set the default locale to create DateTimes with. Does not affect existing instances.
+     * @type {string}
+     */
+    ,
+    set: function set$$1(locale) {
+      defaultLocale = locale;
+    }
+
+    /**
+     * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+     * @type {Zone}
+     */
+
+  }, {
+    key: 'throwOnInvalid',
+    get: function get$$1() {
+      return throwOnInvalid;
+    }
+
+    /**
+     * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+     * @type {Zone}
+     */
+    ,
+    set: function set$$1(t) {
+      throwOnInvalid = t;
+    }
+  }]);
+  return Settings;
 }();
 
 var singleton = null;
@@ -2350,9 +2459,9 @@ var LocalZone = function (_Zone) {
           _ref$format = _ref.format,
           format = _ref$format === undefined ? 'long' : _ref$format,
           _ref$locale = _ref.locale,
-          locale = _ref$locale === undefined ? 'en-US' : _ref$locale;
+          locale = _ref$locale === undefined ? Settings.defaultLocale : _ref$locale;
 
-      return Util.parseZoneInfo(ts, format, locale || 'en-US');
+      return Util.parseZoneInfo(ts, format, locale);
     }
   }, {
     key: 'offset',
@@ -2477,9 +2586,9 @@ var IANAZone = function (_Zone) {
           _ref$format = _ref.format,
           format = _ref$format === undefined ? 'long' : _ref$format,
           _ref$locale = _ref.locale,
-          locale = _ref$locale === undefined ? 'en-US' : _ref$locale;
+          locale = _ref$locale === undefined ? Settings.defaultLocale : _ref$locale;
 
-      return Util.parseZoneInfo(ts, format, locale || 'en-US', this.zoneName);
+      return Util.parseZoneInfo(ts, format, locale, this.zoneName);
     }
   }, {
     key: 'offset',
@@ -2625,94 +2734,6 @@ var FixedOffsetZone = function (_Zone) {
   }]);
   return FixedOffsetZone;
 }(Zone);
-
-var now = function now() {
-  return new Date().valueOf();
-};
-var defaultZone = LocalZone.instance;
-var throwOnInvalid = false;
-
-/**
- * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
- */
-var Settings = function () {
-  function Settings() {
-    classCallCheck(this, Settings);
-  }
-
-  createClass(Settings, null, [{
-    key: 'now',
-
-    /**
-     * Get the callback for returning the current timestamp.
-     * @type {function}
-     */
-    get: function get$$1() {
-      return now;
-    }
-
-    /**
-     * Set the callback for returning the current timestamp.
-     * @type {function}
-     */
-    ,
-    set: function set$$1(n) {
-      now = n;
-    }
-
-    /**
-     * Set the default time zone to create DateTimes in.
-     * @type {string}
-     */
-
-  }, {
-    key: 'defaultZoneName',
-    get: function get$$1() {
-      return defaultZone.name;
-    }
-
-    /**
-     * Set the default time zone to create DateTimes in.
-     * @type {string}
-     */
-    ,
-    set: function set$$1(z) {
-      defaultZone = Util.normalizeZone(z);
-    }
-
-    /**
-     * Get the default time zone object to create DateTimes in.
-     * @type {Zone}
-     */
-
-  }, {
-    key: 'defaultZone',
-    get: function get$$1() {
-      return defaultZone;
-    }
-
-    /**
-     * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-     * @type {Zone}
-     */
-
-  }, {
-    key: 'throwOnInvalid',
-    get: function get$$1() {
-      return throwOnInvalid;
-    }
-
-    /**
-     * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-     * @type {Zone}
-     */
-    ,
-    set: function set$$1(t) {
-      throwOnInvalid = t;
-    }
-  }]);
-  return Settings;
-}();
 
 /**
  * @private
@@ -3194,7 +3215,7 @@ var Locale = function () {
   }, {
     key: 'create',
     value: function create(locale, numberingSystem, outputCalendar) {
-      var localeR = locale || 'en-US',
+      var localeR = locale || Settings.defaultLocale,
           numberingSystemR = numberingSystem || null,
           outputCalendarR = outputCalendar || null,
           cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR,
@@ -3558,7 +3579,7 @@ var Formatter = function () {
           df = _loc$dtFormatter4[0],
           d = _loc$dtFormatter4[1];
 
-      return df.format(d);
+      return df.formatToParts(d);
     }
   }, {
     key: 'resolvedOptions',
@@ -5631,18 +5652,27 @@ function intUnit(regex) {
     } };
 }
 
+function fixListRegex(s) {
+  // make dots optional and also make them literal
+  return s.replace(/\./, '\\.?');
+}
+
+function stripInsensitivities(s) {
+  return s.replace(/\./, '').toLowerCase();
+}
+
 function oneOf(strings, startIndex) {
   if (strings === null) {
     return null;
   } else {
     return {
-      regex: RegExp(strings.join('|')),
+      regex: RegExp(strings.map(fixListRegex).join('|')),
       deser: function deser(_ref3) {
         var _ref4 = slicedToArray(_ref3, 1),
             s = _ref4[0];
 
         return strings.findIndex(function (i) {
-          return s.toLowerCase() === i.toLowerCase();
+          return stripInsensitivities(s) === stripInsensitivities(i);
         }) + startIndex;
       }
     };
@@ -5821,9 +5851,9 @@ function match(input, regex, handlers) {
         matchIndex += groups;
       }
     }
-    return all;
+    return [matches, all];
   } else {
-    return {};
+    return [matches, {}];
   }
 }
 
@@ -5920,13 +5950,16 @@ var TokenParser = function () {
             _buildRegex2 = slicedToArray(_buildRegex, 2),
             regex = _buildRegex2[0],
             handlers = _buildRegex2[1],
-            matches = match(input, RegExp(regex, 'i'), handlers),
+            _match = match(input, RegExp(regex, 'i'), handlers),
+            _match2 = slicedToArray(_match, 2),
+            rawMatches = _match2[0],
+            matches = _match2[1],
             _ref11 = matches ? dateTimeFromMatches(matches) : [null, null],
             _ref12 = slicedToArray(_ref11, 2),
             result = _ref12[0],
             zone = _ref12[1];
 
-        return { input: input, tokens: tokens, regex: regex, matches: matches, result: result, zone: zone };
+        return { input: input, tokens: tokens, regex: regex, rawMatches: rawMatches, matches: matches, result: result, zone: zone };
       }
     }
   }, {
@@ -6246,8 +6279,8 @@ function parseDataToDateTime(parsed, parsedZone) {
   }
 }
 
-function formatMaybe(dt, format) {
-  return dt.isValid ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format) : null;
+function techFormat(dt, format) {
+  return dt.isValid ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format) : null;
 }
 
 var defaultUnitValues = {
@@ -6732,6 +6765,27 @@ var DateTime = function () {
     }
 
     /**
+     * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
+     * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
+     * @example DateTime.local().toLocaleString(); //=> [
+     *                                    //=>   { type: 'day', value: '25' },
+     *                                    //=>   { type: 'literal', value: '/' },
+     *                                    //=>   { type: 'month', value: '05' },
+     *                                    //=>   { type: 'literal', value: '/' },
+     *                                    //=>   { type: 'year', value: '1982' }
+     *                                    //=> ]
+     */
+
+  }, {
+    key: 'toLocaleParts',
+    value: function toLocaleParts() {
+      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this) : [];
+    }
+
+    /**
      * Returns an ISO 8601-compliant string representation of this DateTime
      * @param {object} opts - options
      * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
@@ -6751,7 +6805,7 @@ var DateTime = function () {
           suppressSeconds = _ref3$suppressSeconds === undefined ? false : _ref3$suppressSeconds;
 
       var f = 'yyyy-MM-dd\'T\'' + isoTimeFormat(this, suppressSeconds, suppressMilliseconds);
-      return formatMaybe(this, f);
+      return techFormat(this, f);
     }
 
     /**
@@ -6763,7 +6817,7 @@ var DateTime = function () {
   }, {
     key: 'toISODate',
     value: function toISODate() {
-      return formatMaybe(this, 'yyyy-MM-dd');
+      return techFormat(this, 'yyyy-MM-dd');
     }
 
     /**
@@ -6775,7 +6829,7 @@ var DateTime = function () {
   }, {
     key: 'toISOWeekDate',
     value: function toISOWeekDate() {
-      return formatMaybe(this, "kkkk-'W'WW-c");
+      return techFormat(this, "kkkk-'W'WW-c");
     }
 
     /**
@@ -6797,7 +6851,7 @@ var DateTime = function () {
           _ref4$suppressSeconds = _ref4.suppressSeconds,
           suppressSeconds = _ref4$suppressSeconds === undefined ? false : _ref4$suppressSeconds;
 
-      return formatMaybe(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
+      return techFormat(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
     }
 
     /**
@@ -6810,7 +6864,7 @@ var DateTime = function () {
   }, {
     key: 'toRFC2822',
     value: function toRFC2822() {
-      return formatMaybe(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
+      return techFormat(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
     }
 
     /**
@@ -6824,7 +6878,7 @@ var DateTime = function () {
   }, {
     key: 'toHTTP',
     value: function toHTTP() {
-      return formatMaybe(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
+      return techFormat(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
     }
 
     /**

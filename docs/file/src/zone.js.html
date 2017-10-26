@@ -82,12 +82,12 @@ export class Zone {
    * Returns the offset&apos;s common name (such as EST) at the specified timestamp
    * @abstract
    * @param {number} ts - Epoch milliseconds for which to get the name
-   * @param {Object} options - Options to affect the format
-   * @param {string} options.format - What style of offset to return. Accepts &apos;long&apos; or &apos;short&apos;.
-   * @param {string} options.localeCode - What locale to return the offset name in. Defaults to us-en
+   * @param {Object} opts - Options to affect the format
+   * @param {string} opts.format - What style of offset to return. Accepts &apos;long&apos; or &apos;short&apos;.
+   * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
    * @return {string}
    */
-  static offsetName(ts, { format = &apos;long&apos;, localeCode = &apos;en-US&apos; } = {}) {
+  static offsetName(ts, opts) {
     throw new ZoneIsAbstractError();
   }
 

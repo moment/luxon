@@ -630,6 +630,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime#tolocaleparts",
+    "class/src/datetime.js~DateTime.html#instance-method-toLocaleParts",
+    "src/datetime.js~DateTime#toLocaleParts",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime#tolocalestring",
     "class/src/datetime.js~DateTime.html#instance-method-toLocaleString",
     "src/datetime.js~DateTime#toLocaleString",
@@ -1416,6 +1422,18 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/settings.js~settings.defaultlocale",
+    "class/src/settings.js~Settings.html#static-set-defaultLocale",
+    "src/settings.js~Settings.defaultLocale",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultlocale",
+    "class/src/settings.js~Settings.html#static-get-defaultLocale",
+    "src/settings.js~Settings.defaultLocale",
+    "member"
+  ],
+  [
     "src/settings.js~settings.defaultzone",
     "class/src/settings.js~Settings.html#static-get-defaultZone",
     "src/settings.js~Settings.defaultZone",
@@ -1435,13 +1453,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
+    "class/src/settings.js~Settings.html#static-get-now",
     "src/settings.js~Settings.now",
     "member"
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-get-now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],

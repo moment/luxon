@@ -190,6 +190,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-7" data-ice="link">0.7</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-6" data-ice="link">0.6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-5" data-ice="link">0.5</a></li>
 </ul>
@@ -1864,7 +1865,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td>Explicit time zones</td>
 <td>OK</td>
 <td>Invalid DateTime</td>
-<td>Caution&#x2020;</td>
+<td>OK</td>
 <td>Invalid DateTime</td>
 </tr>
 <tr>
@@ -1917,7 +1918,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td>OK</td>
 </tr>
 </tbody>
-</table><p>&#x2020; Luxon uses a hack that may not work in all locales, though it works in the ones I&apos;ve tested.</p><p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers.</p><h2>Polyfills</h2><p>There are a couple of different polyfills available.</p><h3>Intl</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p></div>
+</table><p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers.</p><h2>Polyfills</h2><p>There are a couple of different polyfills available.</p><h3>Intl</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p></div>
         <a data-ice="link" href="manual/faq/matrix.html"></a>
       </div>
     </div>
@@ -2424,7 +2425,11 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <div class="manual-card-wrap" data-ice="cards">
       <h1 data-ice="label" class="manual-color manual-color-changelog" data-section-count="&#x25A0;"><span data-ice="label-inner">Changelog</span></h1>
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.6</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.7</h2><ul>
+<li>Added <code>toLocaleParts</code></li>
+<li>Slighly more friendly month/weekday parsing</li>
+<li>Default locale setting</li>
+</ul><h2>0.6</h2><ul>
 <li>Stricter <code>toJSDate</code></li>
 <li><code>fromISO</code> now supports <code>year</code> and <code>year-month</code> formats</li>
 <li>More graceful degradation in the absence of platform features</li>

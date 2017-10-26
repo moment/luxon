@@ -1974,12 +1974,12 @@ class Zone {
    * Returns the offset's common name (such as EST) at the specified timestamp
    * @abstract
    * @param {number} ts - Epoch milliseconds for which to get the name
-   * @param {Object} options - Options to affect the format
-   * @param {string} options.format - What style of offset to return. Accepts 'long' or 'short'.
-   * @param {string} options.localeCode - What locale to return the offset name in. Defaults to us-en
+   * @param {Object} opts - Options to affect the format
+   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
+   * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
    * @return {string}
    */
-  static offsetName(ts, { format = 'long', localeCode = 'en-US' } = {}) {
+  static offsetName(ts, opts) {
     throw new ZoneIsAbstractError();
   }
 
@@ -2013,6 +2013,88 @@ class Zone {
   }
 }
 
+let now = () => new Date().valueOf();
+let defaultZone = null;
+let throwOnInvalid = false;
+let defaultLocale = 'en-US';
+
+/**
+ * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
+ */
+class Settings {
+  /**
+   * Get the callback for returning the current timestamp.
+   * @type {function}
+   */
+  static get now() {
+    return now;
+  }
+
+  /**
+   * Set the callback for returning the current timestamp.
+   * @type {function}
+   */
+  static set now(n) {
+    now = n;
+  }
+
+  /**
+   * Set the default time zone to create DateTimes in.
+   * @type {string}
+   */
+  static get defaultZoneName() {
+    return (defaultZone || LocalZone.instance).name;
+  }
+
+  /**
+   * Set the default time zone to create DateTimes in. Does not affect existing instances.
+   * @type {string}
+   */
+  static set defaultZoneName(z) {
+    defaultZone = Util.normalizeZone(z);
+  }
+
+  /**
+   * Get the default time zone object to create DateTimes in. Does not affect existing instances.
+   * @type {Zone}
+   */
+  static get defaultZone() {
+    return defaultZone || LocalZone.instance;
+  }
+
+  /**
+   * Get the default locale to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static get defaultLocale() {
+    return defaultLocale;
+  }
+
+  /**
+   * Set the default locale to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static set defaultLocale(locale) {
+    defaultLocale = locale;
+  }
+
+  /**
+   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+   * @type {Zone}
+   */
+  static get throwOnInvalid() {
+    return throwOnInvalid;
+  }
+
+  /**
+   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+   * @type {Zone}
+   */
+  static set throwOnInvalid(t) {
+    throwOnInvalid = t;
+  }
+}
+
 let singleton = null;
 
 /**
@@ -2041,8 +2123,8 @@ class LocalZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', locale = 'en-US' } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || 'en-US');
+  offsetName(ts, { format = 'long', locale = Settings.defaultLocale } = {}) {
+    return Util.parseZoneInfo(ts, format, locale);
   }
 
   offset(ts) {
@@ -2124,8 +2206,8 @@ class IANAZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', locale = 'en-US' } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || 'en-US', this.zoneName);
+  offsetName(ts, { format = 'long', locale = Settings.defaultLocale } = {}) {
+    return Util.parseZoneInfo(ts, format, locale, this.zoneName);
   }
 
   offset(ts) {
@@ -2223,71 +2305,6 @@ class FixedOffsetZone extends Zone {
 
   get isValid() {
     return true;
-  }
-}
-
-let now = () => new Date().valueOf();
-let defaultZone = LocalZone.instance;
-let throwOnInvalid = false;
-
-/**
- * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
- */
-class Settings {
-  /**
-   * Get the callback for returning the current timestamp.
-   * @type {function}
-   */
-  static get now() {
-    return now;
-  }
-
-  /**
-   * Set the callback for returning the current timestamp.
-   * @type {function}
-   */
-  static set now(n) {
-    now = n;
-  }
-
-  /**
-   * Set the default time zone to create DateTimes in.
-   * @type {string}
-   */
-  static get defaultZoneName() {
-    return defaultZone.name;
-  }
-
-  /**
-   * Set the default time zone to create DateTimes in.
-   * @type {string}
-   */
-  static set defaultZoneName(z) {
-    defaultZone = Util.normalizeZone(z);
-  }
-
-  /**
-   * Get the default time zone object to create DateTimes in.
-   * @type {Zone}
-   */
-  static get defaultZone() {
-    return defaultZone;
-  }
-
-  /**
-   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {Zone}
-   */
-  static get throwOnInvalid() {
-    return throwOnInvalid;
-  }
-
-  /**
-   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {Zone}
-   */
-  static set throwOnInvalid(t) {
-    throwOnInvalid = t;
   }
 }
 
@@ -2705,7 +2722,7 @@ class Locale {
   }
 
   static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || 'en-US',
+    const localeR = locale || Settings.defaultLocale,
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
@@ -2990,7 +3007,7 @@ class Formatter {
 
   formatDateTimeParts(dt, opts = {}) {
     const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.format(d);
+    return df.formatToParts(d);
   }
 
   resolvedOptions(dt, opts = {}) {
@@ -4599,13 +4616,23 @@ function intUnit(regex, post = i => i) {
   return { regex, deser: ([s]) => post(parseInt(s, 10)) };
 }
 
+function fixListRegex(s) {
+  // make dots optional and also make them literal
+  return s.replace(/\./, '\\.?');
+}
+
+function stripInsensitivities(s) {
+  return s.replace(/\./, '').toLowerCase();
+}
+
 function oneOf(strings, startIndex) {
   if (strings === null) {
     return null;
   } else {
     return {
-      regex: RegExp(strings.join('|')),
-      deser: ([s]) => strings.findIndex(i => s.toLowerCase() === i.toLowerCase()) + startIndex
+      regex: RegExp(strings.map(fixListRegex).join('|')),
+      deser: ([s]) =>
+        strings.findIndex(i => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex
     };
   }
 }
@@ -4760,9 +4787,9 @@ function match(input, regex, handlers) {
         matchIndex += groups;
       }
     }
-    return all;
+    return [matches, all];
   } else {
-    return {};
+    return [matches, {}];
   }
 }
 
@@ -4846,10 +4873,10 @@ class TokenParser {
       return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
     } else {
       const [regex, handlers] = buildRegex(units),
-        matches = match(input, RegExp(regex, 'i'), handlers),
+        [rawMatches, matches] = match(input, RegExp(regex, 'i'), handlers),
         [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
 
-      return { input, tokens, regex, matches, result, zone };
+      return { input, tokens, regex, rawMatches, matches, result, zone };
     }
   }
 
@@ -5138,9 +5165,9 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
   }
 }
 
-function formatMaybe(dt, format) {
+function techFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format)
+    ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format)
     : null;
 }
 
@@ -6135,6 +6162,24 @@ class DateTime {
   }
 
   /**
+   * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
+   * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
+   * @example DateTime.local().toLocaleString(); //=> [
+   *                                    //=>   { type: 'day', value: '25' },
+   *                                    //=>   { type: 'literal', value: '/' },
+   *                                    //=>   { type: 'month', value: '05' },
+   *                                    //=>   { type: 'literal', value: '/' },
+   *                                    //=>   { type: 'year', value: '1982' }
+   *                                    //=> ]
+   */
+  toLocaleParts(opts = {}) {
+    return this.isValid
+      ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this)
+      : [];
+  }
+
+  /**
    * Returns an ISO 8601-compliant string representation of this DateTime
    * @param {object} opts - options
    * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
@@ -6145,7 +6190,7 @@ class DateTime {
    */
   toISO({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
     const f = `yyyy-MM-dd'T'${isoTimeFormat(this, suppressSeconds, suppressMilliseconds)}`;
-    return formatMaybe(this, f);
+    return techFormat(this, f);
   }
 
   /**
@@ -6154,7 +6199,7 @@ class DateTime {
    * @return {string}
    */
   toISODate() {
-    return formatMaybe(this, 'yyyy-MM-dd');
+    return techFormat(this, 'yyyy-MM-dd');
   }
 
   /**
@@ -6163,7 +6208,7 @@ class DateTime {
    * @return {string}
    */
   toISOWeekDate() {
-    return formatMaybe(this, "kkkk-'W'WW-c");
+    return techFormat(this, "kkkk-'W'WW-c");
   }
 
   /**
@@ -6176,7 +6221,7 @@ class DateTime {
    * @return {string}
    */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    return formatMaybe(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
+    return techFormat(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
   }
 
   /**
@@ -6186,7 +6231,7 @@ class DateTime {
    * @return {string}
    */
   toRFC2822() {
-    return formatMaybe(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
+    return techFormat(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
   }
 
   /**
@@ -6197,7 +6242,7 @@ class DateTime {
    * @return {string}
    */
   toHTTP() {
-    return formatMaybe(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
+    return techFormat(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
   }
 
   /**
