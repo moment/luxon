@@ -1813,30 +1813,30 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <tbody>
 <tr>
 <td>Intl</td>
-<td>24+</td>
-<td>29+</td>
-<td>11+</td>
-<td>12+</td>
-<td>10+</td>
-<td>0.11_ w/ICU&#x2020;</td>
+<td>24</td>
+<td>29</td>
+<td>11</td>
+<td>12</td>
+<td>10</td>
+<td>0.11 w/ICU&#x2020;</td>
 </tr>
 <tr>
 <td>Intl tokens</td>
-<td>56+</td>
-<td>51+</td>
+<td>55</td>
+<td>51</td>
 <td>None</td>
-<td>15+&#x2021;</td>
-<td>11+</td>
-<td>8+ w/ICU</td>
+<td>15</td>
+<td>11</td>
+<td>8 w/ICU</td>
 </tr>
 <tr>
 <td>Zones</td>
-<td>24+&#x2020;</td>
-<td>52+</td>
+<td>24&#x2020;</td>
+<td>52</td>
 <td>None</td>
-<td>15+&#x2021;</td>
-<td>10+</td>
-<td>6+</td>
+<td>15&#x2021;</td>
+<td>10</td>
+<td>6</td>
 </tr>
 </tbody>
 </table><p>&#x2020; This is an educated guess. I haven&apos;t tested this or found a definitive reference.</p><p>&#x2021; Earlier versions may also support this, but I haven&apos;t been able to test them.</p><p>Notes:</p><ul>
@@ -1886,7 +1886,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td><code>toFormat</code> in other locales</td>
 <td>OK</td>
 <td>Uses English</td>
-<td>Uses English if uses localized strings</td>
+<td>Uses English if format contains localized strings&#x2020;</td>
 <td>OK</td>
 </tr>
 <tr>
@@ -1900,7 +1900,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td><code>fromString</code> in other locales</td>
 <td>OK</td>
 <td>Invalid DateTime if uses localized strings&#x2021;</td>
-<td>Uses English if uses localized strings&#x2021;</td>
+<td>Uses English if format contains localized strings&#x2020;</td>
 <td>OK</td>
 </tr>
 <tr>
@@ -1918,7 +1918,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td>OK</td>
 </tr>
 </tbody>
-</table><p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers.</p><h2>Polyfills</h2><p>There are a couple of different polyfills available.</p><h3>Intl</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p></div>
+</table><p>&#x2020; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers.</p><h2>Polyfills</h2><p>There are a couple of different polyfills available.</p><h3>Intl</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p></div>
         <a data-ice="link" href="manual/faq/matrix.html"></a>
       </div>
     </div>
