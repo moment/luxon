@@ -62,6 +62,22 @@ test('DateTime.fromString() parses month names', () => {
   expect(i.day).toBe(25);
 });
 
+test('DateTime.fromString() makes trailing periods in month names optional', () => {
+  const i = DateTime.fromString('janv 25 1982', 'LLL dd yyyy', {
+    locale: 'fr'
+  });
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(1);
+  expect(i.day).toBe(25);
+});
+
+test('DateTime.fromString() does not match arbitrary stuff with those periods', () => {
+  const i = DateTime.fromString('janvQ 25 1982', 'LLL dd yyyy', {
+    locale: 'fr'
+  });
+  expect(i.isValid).toBe(false);
+});
+
 test('DateTime.fromString() uses case-insensitive matching', () => {
   const i = DateTime.fromString('Janv. 25 1982', 'LLL dd yyyy', {
     locale: 'fr'

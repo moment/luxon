@@ -9,13 +9,23 @@ function intUnit(regex, post = i => i) {
   return { regex, deser: ([s]) => post(parseInt(s, 10)) };
 }
 
+function fixListRegex(s) {
+  // make dots optional and also make them literal
+  return s.replace(/\./, '\\.?');
+}
+
+function stripInsensitivities(s) {
+  return s.replace(/\./, '').toLowerCase();
+}
+
 function oneOf(strings, startIndex) {
   if (strings === null) {
     return null;
   } else {
     return {
-      regex: RegExp(strings.join('|')),
-      deser: ([s]) => strings.findIndex(i => s.toLowerCase() === i.toLowerCase()) + startIndex
+      regex: RegExp(strings.map(fixListRegex).join('|')),
+      deser: ([s]) =>
+        strings.findIndex(i => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex
     };
   }
 }
@@ -170,9 +180,9 @@ function match(input, regex, handlers) {
         matchIndex += groups;
       }
     }
-    return all;
+    return [matches, all];
   } else {
-    return {};
+    return [matches, {}];
   }
 }
 
@@ -256,10 +266,10 @@ export class TokenParser {
       return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
     } else {
       const [regex, handlers] = buildRegex(units),
-        matches = match(input, RegExp(regex, 'i'), handlers),
+        [rawMatches, matches] = match(input, RegExp(regex, 'i'), handlers),
         [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
 
-      return { input, tokens, regex, matches, result, zone };
+      return { input, tokens, regex, rawMatches, matches, result, zone };
     }
   }
 
