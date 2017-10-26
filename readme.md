@@ -16,6 +16,7 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
 
 * [Guide](http://isaaccambron.com/luxon/docs/)
 * [API docs](http://isaaccambron.com/luxon/docs/identifiers.html)
+* [Guide for Moment users](http://isaaccambron.com/luxon/docs/manual/faq/moment.html)
 
 ## Development
 
