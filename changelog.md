@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7
+
+ * Added `toLocaleParts`
+ * Slighly more friendly month/weekday parsing
+ * Default locale setting
+
 ## 0.6
 
  * Stricter `toJSDate`
