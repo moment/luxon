@@ -70,7 +70,7 @@ export class Formatter {
 
   formatDateTimeParts(dt, opts = {}) {
     const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.format(d);
+    return df.formatToParts(d);
   }
 
   resolvedOptions(dt, opts = {}) {

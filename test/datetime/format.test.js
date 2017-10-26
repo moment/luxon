@@ -178,6 +178,40 @@ test('DateTime#resolvedLocaleOpts can override with options', () => {
 });
 
 //------
+// #toLocaleParts()
+//------
+
+test('DateTime#toLocaleParts returns a en-US by default', () => {
+  expect(dt.reconfigure({ locale: 'en-US' }).toLocaleParts()).toEqual([
+    { type: 'month', value: '5' },
+    { type: 'literal', value: '/' },
+    { type: 'day', value: '25' },
+    { type: 'literal', value: '/' },
+    { type: 'year', value: '1982' }
+  ]);
+});
+
+test('DateTime#toLocaleParts accepts locale settings from the dateTime', () => {
+  expect(dt.reconfigure({ locale: 'be' }).toLocaleParts()).toEqual([
+    { type: 'day', value: '25' },
+    { type: 'literal', value: '.' },
+    { type: 'month', value: '5' },
+    { type: 'literal', value: '.' },
+    { type: 'year', value: '1982' }
+  ]);
+});
+
+test("DateTime#toLocaleParts can override the dateTime's locale", () => {
+  expect(dt.reconfigure({ locale: 'be' }).toLocaleParts({ locale: 'fr' })).toEqual([
+    { type: 'day', value: '25' },
+    { type: 'literal', value: '/' },
+    { type: 'month', value: '05' },
+    { type: 'literal', value: '/' },
+    { type: 'year', value: '1982' }
+  ]);
+});
+
+//------
 // #toFormat()
 //------
 test("DateTime#toFormat('S') returns the millisecond", () => {

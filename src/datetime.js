@@ -1142,6 +1142,24 @@ export class DateTime {
   }
 
   /**
+   * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
+   * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
+   * @example DateTime.local().toLocaleString(); //=> [
+   *                                    //=>   { type: 'day', value: '25' },
+   *                                    //=>   { type: 'literal', value: '/' },
+   *                                    //=>   { type: 'month', value: '05' },
+   *                                    //=>   { type: 'literal', value: '/' },
+   *                                    //=>   { type: 'year', value: '1982' }
+   *                                    //=> ]
+   */
+  toLocaleParts(opts = {}) {
+    return this.isValid
+      ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this)
+      : [];
+  }
+
+  /**
    * Returns an ISO 8601-compliant string representation of this DateTime
    * @param {object} opts - options
    * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
