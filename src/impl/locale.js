@@ -1,5 +1,6 @@
 import { Util } from './util';
 import { English } from './english';
+import { Settings } from '../settings';
 import { DateTime } from '../datetime';
 
 const localeCache = {};
@@ -95,7 +96,7 @@ export class Locale {
   }
 
   static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || 'en-US',
+    const localeR = locale || Settings.defaultLocale,
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,

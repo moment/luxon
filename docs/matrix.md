@@ -52,7 +52,7 @@ You shouldn't use features of Luxon on projects that might be run on environment
 | Feature                             | Full support | No Intl at all                              | Intl but no formatToParts               | No IANA zone support |
 |-------------------------------------|--------------|---------------------------------------------|-----------------------------------------|----------------------|
 | Most things                         | OK           | OK                                          | OK                                      | OK                   |
-| Explicit time zones                 | OK           | Invalid DateTime                            | Caution†                                | Invalid DateTime     |
+| Explicit time zones                 | OK           | Invalid DateTime                            | OK                                      | Invalid DateTime     |
 | `toLocaleString`                    | OK           | Native Date's `toString`                    | OK                                      | OK                   |
 | `toFormat` in en-US                 | OK           | OK                                          | OK                                      | OK                   |
 | `toFormat` in other locales         | OK           | Uses English                                | Uses English if uses localized strings  | OK                   |
@@ -60,8 +60,6 @@ You shouldn't use features of Luxon on projects that might be run on environment
 | `fromString` in other locales       | OK           | Invalid DateTime if uses localized strings‡ | Uses English if uses localized strings‡ | OK                   |
 | `Info.months`, etc in en-US         | OK           | OK                                          | OK                                      | OK                   |
 | `Info.months`, etc in other locales | OK           | Uses English                                | Uses English                            | OK                   |
-
-† Luxon uses a hack that may not work in all locales, though it works in the ones I've tested.
 
 ‡ This means that Luxon can't parse anything with a word in it like localized versions of "January" or "Tuesday". It's fine with numbers.
 

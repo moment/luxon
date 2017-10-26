@@ -2,16 +2,18 @@
 
 import { DateTime } from '../../src/luxon';
 
-const dt = DateTime.fromObject({
-    year: 1982,
-    month: 5,
-    day: 25,
-    hour: 9,
-    minute: 23,
-    second: 54,
-    millisecond: 123,
-    zone: 'utc'
-  }),
+const dtMaker = () =>
+    DateTime.fromObject({
+      year: 1982,
+      month: 5,
+      day: 25,
+      hour: 9,
+      minute: 23,
+      second: 54,
+      millisecond: 123,
+      zone: 'utc'
+    }),
+  dt = dtMaker(),
   ny = dt.setZone('America/New_York', { keepCalendarTime: true });
 
 //------
@@ -483,23 +485,6 @@ test("DateTime#toFormat('ooo') returns an unpadded ordinal", () => {
   expect(dt.set({ month: 1, day: 8 }).toFormat('ooo')).toBe('008');
 });
 
-test('DateTime#toFormat returns a full formatted string', () => {
-  expect(dt.toFormat('MM/yyyy GG')).toBe('05/1982 Anno Domini');
-});
-
-test('DateTime#toFormat() accepts literals in single quotes', () => {
-  expect(dt.toFormat("dd/MM/yyyy 'at' hh:mm")).toBe('25/05/1982 at 09:23');
-  expect(dt.toFormat("MMdd'T'hh")).toBe('0525T09');
-});
-
-test('DateTime#numberingSystem() overides the numbering system from the locale', () => {
-  expect(dt.reconfigure({ numberingSystem: 'beng' }).toFormat('S')).toBe('১২৩');
-});
-
-test('DateTime#outputCalendar() overides the output calendar from the locale', () => {
-  expect(dt.reconfigure({ outputCalendar: 'islamic' }).toFormat('MMMM yyyy')).toBe('Shaʻban 1402');
-});
-
 test("DateTime#toFormat('D') returns a short date representation", () => {
   expect(dt.toFormat('D')).toBe('5/25/1982');
   expect(dt.reconfigure({ locale: 'fr' }).toFormat('D')).toBe('25/05/1982');
@@ -753,4 +738,21 @@ test("DateTime#toFormat('FFFF') returns a long date/time representation without 
       .reconfigure({ locale: 'fr' })
       .toFormat('FFFF')
   ).toBe('mardi 25 mai 1982 à 13:23:54 heure d’été de l’Est');
+});
+
+test('DateTime#toFormat returns a full formatted string', () => {
+  expect(dt.toFormat('MM/yyyy GG')).toBe('05/1982 Anno Domini');
+});
+
+test('DateTime#toFormat() accepts literals in single quotes', () => {
+  expect(dt.toFormat("dd/MM/yyyy 'at' hh:mm")).toBe('25/05/1982 at 09:23');
+  expect(dt.toFormat("MMdd'T'hh")).toBe('0525T09');
+});
+
+test('DateTime#toFormat() uses the numbering system', () => {
+  expect(dt.reconfigure({ numberingSystem: 'beng' }).toFormat('S')).toBe('১২৩');
+});
+
+test('DateTime#toFormat() uses the output calendar', () => {
+  expect(dt.reconfigure({ outputCalendar: 'islamic' }).toFormat('MMMM yyyy')).toBe('Shaʻban 1402');
 });

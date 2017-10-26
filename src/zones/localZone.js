@@ -1,5 +1,6 @@
 import { Util } from '../impl/util';
 import { Zone } from '../zone';
+import { Settings } from '../settings';
 
 let singleton = null;
 
@@ -29,8 +30,8 @@ export class LocalZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', locale = 'en-US' } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || 'en-US');
+  offsetName(ts, { format = 'long', locale = Settings.defaultLocale } = {}) {
+    return Util.parseZoneInfo(ts, format, locale);
   }
 
   offset(ts) {

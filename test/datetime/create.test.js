@@ -1,6 +1,16 @@
 /* global test expect */
 
-import { DateTime } from '../../src/luxon';
+import { DateTime, Settings } from '../../src/luxon';
+
+function withDefaultLocale(locale, f) {
+  const existing = Settings.defaultLocale;
+  try {
+    Settings.defaultLocale = locale;
+    f();
+  } finally {
+    Settings.defaultLocale = existing;
+  }
+}
 
 //------
 // .local()
@@ -85,6 +95,10 @@ test('DateTime.local(2017, 3, 12, 5, 25, 16, 255) is right down to the milliseco
   expect(dt.minute).toBe(25);
   expect(dt.second).toBe(16);
   expect(dt.millisecond).toBe(255);
+});
+
+test('DateTime.local accepts the default locale', () => {
+  withDefaultLocale('fr', () => expect(DateTime.local().locale).toBe('fr'));
 });
 
 //------
@@ -172,6 +186,10 @@ test('DateTime.utc(2017, 3, 12, 5, 25, 16, 255) is right down to the millisecond
   expect(dt.millisecond).toBe(255);
 });
 
+test('DateTime.utc accepts the default locale', () => {
+  withDefaultLocale('fr', () => expect(DateTime.utc().locale).toBe('fr'));
+});
+
 //------
 // .fromJSDate()
 //-------
@@ -198,6 +216,10 @@ test('DateTime.fromJSDate(date) returns invalid for invalid values', () => {
   expect(DateTime.fromJSDate(new Date().valueOf()).isValid).toBe(false);
 });
 
+test('DateTime.fromJSDate accepts the default locale', () => {
+  withDefaultLocale('fr', () => expect(DateTime.fromJSDate(new Date()).locale).toBe('fr'));
+});
+
 //------
 // .fromMillis()
 //-------
@@ -214,6 +236,10 @@ test('DateTime.fromMillis(ms) accepts a zone option', () => {
 
   expect(dateTime.valueOf()).toBe(value);
   expect(dateTime.zoneName).toBe('America/Santiago');
+});
+
+test('DateTime.fromMillis accepts the default locale', () => {
+  withDefaultLocale('fr', () => expect(DateTime.fromMillis(391147200000).locale).toBe('fr'));
 });
 
 //------
@@ -416,4 +442,8 @@ test('DateTime.fromObject() w/ordinal defaults to the current year', () => {
 test('DateTime.fromObject() returns invalid for invalid values', () => {
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid).toBe(false);
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid).toBe(false);
+});
+
+test('DateTime.fromObject accepts the default locale', () => {
+  withDefaultLocale('fr', () => expect(DateTime.fromObject({}).locale).toBe('fr'));
 });

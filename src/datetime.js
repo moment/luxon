@@ -145,9 +145,9 @@ function parseDataToDateTime(parsed, parsedZone, opts = {}) {
   }
 }
 
-function formatMaybe(dt, format) {
+function techFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en')).formatDateTimeFromString(dt, format)
+    ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format)
     : null;
 }
 
@@ -1170,7 +1170,7 @@ export class DateTime {
    */
   toISO({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
     const f = `yyyy-MM-dd'T'${isoTimeFormat(this, suppressSeconds, suppressMilliseconds)}`;
-    return formatMaybe(this, f);
+    return techFormat(this, f);
   }
 
   /**
@@ -1179,7 +1179,7 @@ export class DateTime {
    * @return {string}
    */
   toISODate() {
-    return formatMaybe(this, 'yyyy-MM-dd');
+    return techFormat(this, 'yyyy-MM-dd');
   }
 
   /**
@@ -1188,7 +1188,7 @@ export class DateTime {
    * @return {string}
    */
   toISOWeekDate() {
-    return formatMaybe(this, "kkkk-'W'WW-c");
+    return techFormat(this, "kkkk-'W'WW-c");
   }
 
   /**
@@ -1201,7 +1201,7 @@ export class DateTime {
    * @return {string}
    */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    return formatMaybe(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
+    return techFormat(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
   }
 
   /**
@@ -1211,7 +1211,7 @@ export class DateTime {
    * @return {string}
    */
   toRFC2822() {
-    return formatMaybe(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
+    return techFormat(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
   }
 
   /**
@@ -1222,7 +1222,7 @@ export class DateTime {
    * @return {string}
    */
   toHTTP() {
-    return formatMaybe(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
+    return techFormat(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
   }
 
   /**

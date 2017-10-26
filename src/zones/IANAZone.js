@@ -1,5 +1,6 @@
 import { Util } from '../impl/util';
 import { Zone } from '../zone';
+import { Settings } from '../settings';
 
 const typeToPos = {
   year: 0,
@@ -67,8 +68,8 @@ export class IANAZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = 'long', locale = 'en-US' } = {}) {
-    return Util.parseZoneInfo(ts, format, locale || 'en-US', this.zoneName);
+  offsetName(ts, { format = 'long', locale = Settings.defaultLocale } = {}) {
+    return Util.parseZoneInfo(ts, format, locale, this.zoneName);
   }
 
   offset(ts) {
