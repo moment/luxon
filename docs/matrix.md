@@ -30,11 +30,11 @@ Info.features() //=> { intl: true, intlTokens: true, zones: true }
 
 Here's the level of support for these features in different environments:
 
-| Area        | Chrome |  FF | IE   | Edge | Safari | Node         |
-|-------------|--------|-----|------|------|--------|--------------|
-| Intl        |    24+ | 29+ | 11+  | 12+  |    10+ | 0.11_ w/ICU† |
-| Intl tokens |    56+ | 51+ | None | 15+‡ |    11+ | 8+ w/ICU     |
-| Zones       |   24+† | 52+ | None | 15+‡ |    10+ | 6+           |
+| Area        | Chrome | FF | IE   | Edge | Safari | Node        |
+|-------------|--------|----|------|------|--------|-------------|
+| Intl        |     24 | 29 | 11   |   12 |     10 | 0.11 w/ICU† |
+| Intl tokens |     55 | 51 | None |   15 |     11 | 8 w/ICU     |
+| Zones       |    24† | 52 | None |  15‡ |     10 | 6           |
 
 † This is an educated guess. I haven't tested this or found a definitive reference.
 
@@ -49,19 +49,19 @@ Notes:
 
 You shouldn't use features of Luxon on projects that might be run on environments that don't support those features. Luxon tries to degrade gracefully if you don't, though.
 
-| Feature                             | Full support | No Intl at all                              | Intl but no formatToParts               | No IANA zone support |
-|-------------------------------------|--------------|---------------------------------------------|-----------------------------------------|----------------------|
-| Most things                         | OK           | OK                                          | OK                                      | OK                   |
-| Explicit time zones                 | OK           | Invalid DateTime                            | OK                                      | Invalid DateTime     |
-| `toLocaleString`                    | OK           | Native Date's `toString`                    | OK                                      | OK                   |
-| `toFormat` in en-US                 | OK           | OK                                          | OK                                      | OK                   |
-| `toFormat` in other locales         | OK           | Uses English                                | Uses English if uses localized strings  | OK                   |
-| `fromString` in en-US               | OK           | OK                                          | OK                                      | OK                   |
-| `fromString` in other locales       | OK           | Invalid DateTime if uses localized strings‡ | Uses English if uses localized strings‡ | OK                   |
-| `Info.months`, etc in en-US         | OK           | OK                                          | OK                                      | OK                   |
-| `Info.months`, etc in other locales | OK           | Uses English                                | Uses English                            | OK                   |
+| Feature                             | Full support | No Intl at all                              | Intl but no formatToParts                          | No IANA zone support |
+|-------------------------------------|--------------|---------------------------------------------|----------------------------------------------------|----------------------|
+| Most things                         | OK           | OK                                          | OK                                                 | OK                   |
+| Explicit time zones                 | OK           | Invalid DateTime                            | OK                                                 | Invalid DateTime     |
+| `toLocaleString`                    | OK           | Native Date's `toString`                    | OK                                                 | OK                   |
+| `toFormat` in en-US                 | OK           | OK                                          | OK                                                 | OK                   |
+| `toFormat` in other locales         | OK           | Uses English                                | Uses English if format contains localized strings† | OK                   |
+| `fromString` in en-US               | OK           | OK                                          | OK                                                 | OK                   |
+| `fromString` in other locales       | OK           | Invalid DateTime if uses localized strings‡ | Uses English if format contains localized strings† | OK                   |
+| `Info.months`, etc in en-US         | OK           | OK                                          | OK                                                 | OK                   |
+| `Info.months`, etc in other locales | OK           | Uses English                                | Uses English                                       | OK                   |
 
-‡ This means that Luxon can't parse anything with a word in it like localized versions of "January" or "Tuesday". It's fine with numbers.
+† This means that Luxon can't parse anything with a word in it like localized versions of "January" or "Tuesday". It's fine with numbers.
 
 ## Polyfills
 
