@@ -123,7 +123,6 @@ For programmatic getting and setting, Luxon and Moment are very similar here:
 | Is this time's year a leap year?           | `isInLeapYear()`        | `isInLeapYear`                                   |                                                                                                 |
 | How many days are in this time's month?    | `daysInMonth()`         | `daysInMonth`                                    |                                                                                                 |
 | How many days are in this time's year?     | None                    | `daysInYear`                                     |                                                                                                 |
-|--------------------------------------------|-------------------------|--------------------------------------------------|-------------------------------------------------------------------------------------------------|
 
 ### Output
 
@@ -154,7 +153,7 @@ Luxon doesn't support these, and won't until the [Relative Time Format](https://
 | Time from now        | `fromNow()`    | None  |
 | Time from other time | `from(Moment)` | None  |
 | Time to now          | `toNow()`      | None  |
-| Time to other time   | `to(Moment)    | None  |
+| Time to other time   | `to(Moment)`   | None  |
 | "Calendar time"      | `calendar()`   | None  |
 
 ## Durations
