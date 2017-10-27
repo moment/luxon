@@ -184,8 +184,7 @@ gulp.task('coveralls', () => gulp.src('build/coverage/lcov.info').pipe(coveralls
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
-// build first so the test deps work
-gulp.task('simple', cb => runSequence('cjs', 'lint', 'test', cb));
+gulp.task('ci', cb => runSequence('cjs', 'lint', 'test', cb));
 
 gulp.task('default', cb => runSequence('format', 'build', 'lint', 'test', 'docs', 'site', cb));
 

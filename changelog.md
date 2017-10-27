@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8
+
+ * The local zone can now report its IANA name
+ * Fixed parsing bug for `yy` and `kk`
+ * Improved test coverage
+
 ## 0.7
 
  * Added `toLocaleParts`
