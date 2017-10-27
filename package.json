@@ -6,7 +6,8 @@
   "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
   "dependencies": {
-    "core-js": "latest"
+    "core-js": "latest",
+    "gulp-cli": "^1.4.0"
   },
   "scripts": {
     "precommit": "lint-staged"
