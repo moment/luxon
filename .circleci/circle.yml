@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  build:
+    filters:
+      tags:
+        ignore: gh-pages
+
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:8.8.1
+      
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run: npm install
+      - run: npm install full-icu
+      - run: npm install -g gulp-cli
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+        
+      - run: NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp ci
+      - run: NODE_ICU_DATA="$(pwd)/node_modules/full-icu" CODE_COVERAGE=yes TZ=America/New_York gulp test
+      - run: gulp coveralls
+      - gulp docs
