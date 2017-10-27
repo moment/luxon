@@ -10,6 +10,7 @@ const babel = require('rollup-plugin-babel'),
   lazypipe = require('lazypipe'),
   prettierOptions = require('./.prettier.js'),
   prettier = require('prettier'),
+  process = require('process'),
   rename = require('gulp-rename'),
   rollupNode = require('rollup-plugin-node-resolve'),
   rollupCommonJS = require('rollup-plugin-commonjs'),
@@ -19,7 +20,7 @@ const babel = require('rollup-plugin-babel'),
   sourcemaps = require('gulp-sourcemaps'),
   through = require('through2');
 
-function process(inopts) {
+function rollupLib(inopts) {
   const opts = Object.assign(
     {
       input: inopts.input,
@@ -60,7 +61,7 @@ function processLib(opts) {
         .pipe(sourcemaps.write, '.')
         .pipe(gulp.dest, dest);
 
-    return process(opts)
+    return rollupLib(opts)
       .pipe(source('luxon.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
@@ -122,7 +123,7 @@ gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 gulp.task('test', () =>
   gulp.src('test').pipe(
     jest({
-      collectCoverage: true,
+      collectCoverage: !!process.env.CODE_COVERAGE,
       coverageDirectory: 'build/coverage',
       config: {
         preprocessorIgnorePatterns: '<rootDir>/build/'

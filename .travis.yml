@@ -6,7 +6,7 @@ before_script:
   - npm install -g gulp-cli
 script:
   - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp simple
-  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" TZ=America/New_York gulp test
+  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" CODE_COVERAGE=yes TZ=America/New_York gulp test
   - gulp coveralls
   - gulp docs
 branches:
