@@ -14,7 +14,15 @@ const dtMaker = () =>
       zone: 'utc'
     }),
   dt = dtMaker(),
-  ny = dt.setZone('America/New_York', { keepCalendarTime: true });
+  ny = dt.setZone('America/New_York', { keepCalendarTime: true }),
+  invalid = DateTime.invalid('because');
+
+//------
+// #toJSON()
+//------
+test('DateTime#toJSON() just does toISO', () => {
+  expect(dt.toJSON()).toBe('1982-05-25T09:23:54.123Z');
+});
 
 //------
 // #toISO()
@@ -28,6 +36,10 @@ test('DateTime#toISO() shows the offset', () => {
   expect(offsetted.toISO()).toBe('1982-05-25T03:23:54.123-06:00');
 });
 
+test('DateTime#toISO() returns null for invalid DateTimes', () => {
+  expect(invalid.toISO()).toBe(null);
+});
+
 //------
 // #toISODate()
 //------
@@ -39,11 +51,19 @@ test('DateTime#toISODate() is local to the zone', () => {
   expect(dt.toUTC(-10 * 60).toISODate()).toBe('1982-05-24');
 });
 
+test('DateTime#toISODate() returns null for invalid DateTimes', () => {
+  expect(invalid.toISODate()).toBe(null);
+});
+
 //------
 // #toISOWeekDate()
 //------
 test('DateTime#toISOWeekDate() returns ISO 8601 date', () => {
   expect(dt.toISOWeekDate()).toBe('1982-W21-2');
+});
+
+test('DateTime#toISOWeekDate() returns null for invalid DateTimes', () => {
+  expect(invalid.toISOWeekDate()).toBe(null);
 });
 
 //------
@@ -77,6 +97,10 @@ test('DateTime#toISOTime() handles other offsets', () => {
   expect(dt.setZone('America/New_York').toISOTime()).toBe('05:23:54.123-04:00');
 });
 
+test('DateTime#toISOTime() returns null for invalid DateTimes', () => {
+  expect(invalid.toISOTime()).toBe(null);
+});
+
 //------
 // #toRFC2822()
 //------
@@ -84,6 +108,10 @@ test('DateTime#toISOTime() handles other offsets', () => {
 test('DateTime#toRFC2822() returns an RFC 2822 date', () => {
   expect(dt.toUTC().toRFC2822()).toBe('Tue, 25 May 1982 09:23:54 +0000');
   expect(dt.setZone('America/New_York').toRFC2822()).toBe('Tue, 25 May 1982 05:23:54 -0400');
+});
+
+test('DateTime#toRFC2822() returns null for invalid DateTimes', () => {
+  expect(invalid.toRFC2822()).toBe(null);
 });
 
 //------
@@ -95,11 +123,19 @@ test('DateTime#toHTTP() returns an RFC 1123 date', () => {
   expect(dt.setZone('America/New_York').toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
 });
 
+test('DateTime#toHTTP() returns null for invalid DateTimes', () => {
+  expect(invalid.toHTTP()).toBe(null);
+});
+
 //------
 // #toString()
 //-------
 test('DateTime#toString() returns the ISO time', () => {
   expect(dt.toUTC(-6 * 60).toString()).toBe('1982-05-25T03:23:54.123-06:00');
+});
+
+test('DateTime#toString() returns something different for invalid DateTimes', () => {
+  expect(invalid.toString()).toBe('Invalid DateTime');
 });
 
 //------
@@ -139,6 +175,10 @@ test("DateTime#toLocaleString can override the dateTime's output calendar", () =
   expect(
     dt.reconfigure({ outputCalendar: 'islamic' }).toLocaleString({ outputCalendar: 'coptic' })
   ).toBe('9/17/1698 ERA1');
+});
+
+test('DateTime#toLocaleString() returns something different for invalid DateTimes', () => {
+  expect(invalid.toLocaleString()).toBe('Invalid DateTime');
 });
 
 //------
@@ -211,6 +251,10 @@ test("DateTime#toLocaleParts can override the dateTime's locale", () => {
     { type: 'literal', value: '/' },
     { type: 'year', value: '1982' }
   ]);
+});
+
+test('DateTime#toLocaleParts returns empty for invalid DateTimes', () => {
+  expect(invalid.toLocaleParts()).toEqual([]);
 });
 
 //------
@@ -755,4 +799,8 @@ test('DateTime#toFormat() uses the numbering system', () => {
 
 test('DateTime#toFormat() uses the output calendar', () => {
   expect(dt.reconfigure({ outputCalendar: 'islamic' }).toFormat('MMMM yyyy')).toBe('Shaʻban 1402');
+});
+
+test('DateTime#toFormat() returns something different for invalid DateTimes', () => {
+  expect(invalid.toFormat('dd MM yyyy')).toBe('Invalid DateTime');
 });

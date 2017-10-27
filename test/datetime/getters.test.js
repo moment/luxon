@@ -56,22 +56,37 @@ test('DateTime#millisecond returns the millisecond', () => {
 //------
 test('DateTime#weekYear returns the weekYear', () => {
   expect(dateTime.weekYear).toBe(1982);
+  // test again bc caching
+  expect(dateTime.weekYear).toBe(1982);
 });
 
 test('DateTime#weekNumber returns the weekNumber', () => {
+  expect(dateTime.weekNumber).toBe(21);
+  // test again bc caching
   expect(dateTime.weekNumber).toBe(21);
 });
 
 test('DateTime#weekday returns the weekday', () => {
   expect(dateTime.weekday).toBe(2);
+  // test again bc caching
+  expect(dateTime.weekday).toBe(2);
 });
 
 //------
-// year/ordinal
+// ordinal
 //------
 
 test('DateTime#ordinal returns the ordinal', () => {
   expect(dateTime.ordinal).toBe(145);
+});
+
+//------
+// get
+//------
+test('DateTime#get can retrieve any unit', () => {
+  expect(dateTime.get('ordinal')).toBe(145);
+  expect(dateTime.get('year')).toBe(1982);
+  expect(dateTime.get('weekNumber')).toBe(21);
 });
 
 //------

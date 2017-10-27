@@ -1295,7 +1295,8 @@ export class DateTime {
    * @return {Duration}
    */
   diff(otherDateTime, unit = 'milliseconds', opts = {}) {
-    if (!this.isValid) return this;
+    if (!this.isValid || !otherDateTime.isValid)
+      return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
     const units = Util.maybeArray(unit).map(Duration.normalizeUnit);
 

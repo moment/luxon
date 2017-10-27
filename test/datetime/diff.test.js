@@ -141,3 +141,9 @@ test('DateTime#diff is precise for lower order units', () => {
     diffObjs({ year: 2016, month: 5, day: 5 }, { year: 2016, month: 1, day: 1 }, 'hours')
   ).toEqual({ hours: expected });
 });
+
+test('DateTime#diff returns invalid Durations if the DateTimes are invalid', () => {
+  const i = DateTime.invalid('because');
+  expect(i.diff(DateTime.local()).isValid).toBe(false);
+  expect(DateTime.local().diff(i).isValid).toBe(false);
+});

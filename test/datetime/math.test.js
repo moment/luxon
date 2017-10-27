@@ -7,6 +7,7 @@ function createDateTime() {
     year: 2010,
     month: 2,
     day: 3,
+
     hour: 4,
     minute: 5,
     second: 6,
@@ -56,12 +57,20 @@ test('DateTime#plus(multiple) adds the right amount of time', () => {
   expect(later.minute).toBe(41);
 });
 
+test('DateTime#plus maintains invalidity', () => {
+  expect(DateTime.invalid('because').plus({ day: 1 }).isValid).toBe(false);
+});
+
 //------
 // #minus()
 //------
 test('DateTime#minus({ years: 1 }) subtracts a year', () => {
   const dt = createDateTime().minus({ years: 1 });
   expect(dt.year).toBe(2009);
+});
+
+test('DateTime#minus maintains invalidity', () => {
+  expect(DateTime.invalid('because').minus({ day: 1 }).isValid).toBe(false);
 });
 
 //------
@@ -152,6 +161,10 @@ test("DateTime#startOf('week') goes to the start of the week", () => {
   expect(dt.millisecond).toBe(0);
 });
 
+test('DateTime#startOf maintains invalidity', () => {
+  expect(DateTime.invalid('because').startOf('day').isValid).toBe(false);
+});
+
 //------
 // #endOf()
 //------
@@ -238,4 +251,8 @@ test("DateTime#endOf('week') goes to the end of the week", () => {
   expect(dt.minute).toBe(59);
   expect(dt.second).toBe(59);
   expect(dt.millisecond).toBe(999);
+});
+
+test('DateTime#endOf maintains invalidity', () => {
+  expect(DateTime.invalid('because').endOf('day').isValid).toBe(false);
 });

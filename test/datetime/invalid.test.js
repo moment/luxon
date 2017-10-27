@@ -36,9 +36,19 @@ test('Addition maintains invalidity', () => {
   expect(organic2.plus({ day: 1 }).isValid).toBe(false);
 });
 
-test('Addition maintains invalidity', () => {
-  expect(organic1.plus({ day: 1 }).isValid).toBe(false);
-  expect(organic2.plus({ day: 1 }).isValid).toBe(false);
+test('Subtraction maintains invalidity', () => {
+  expect(organic1.minus({ day: 1 }).isValid).toBe(false);
+  expect(organic2.minus({ day: 1 }).isValid).toBe(false);
+});
+
+test('endOf maintains invalidity', () => {
+  expect(organic1.endOf('day').isValid).toBe(false);
+  expect(organic2.endOf('day').isValid).toBe(false);
+});
+
+test('startOf maintains invalidity', () => {
+  expect(organic1.startOf('day').isValid).toBe(false);
+  expect(organic2.startOf('day').isValid).toBe(false);
 });
 
 test('Conversion to UTC maintains invalidity', () => {
@@ -49,6 +59,42 @@ test('Conversion to UTC maintains invalidity', () => {
 test('startOf() maintains invalidity', () => {
   expect(organic1.startOf('month').isValid).toBe(false);
   expect(organic2.startOf('month').isValid).toBe(false);
+});
+
+test('Invalid DateTimes format to nothing', () => {
+  expect(organic1.toHTTP()).toBe(null);
+  expect(organic1.toRFC2822()).toBe(null);
+  expect(organic1.toISO()).toBe(null);
+  expect(organic1.toFormat('MMM yyyy')).toBe('Invalid DateTime');
+  expect(organic1.toLocaleString()).toBe('Invalid DateTime');
+  expect(organic1.toString()).toBe('Invalid DateTime');
+});
+
+test('Invalid DateTimes return invalid Dates', () => {
+  expect(organic1.toJSDate().valueOf()).toBeFalsy();
+});
+
+test('Invalid DateTimes have unhelpful getters', () => {
+  expect(organic1.year).toBeFalsy();
+  expect(organic1.month).toBeFalsy();
+  expect(organic1.day).toBeFalsy();
+  expect(organic1.hour).toBeFalsy();
+  expect(organic1.minute).toBeFalsy();
+  expect(organic1.second).toBeFalsy();
+  expect(organic1.millisecond).toBeFalsy();
+  expect(organic1.weekYear).toBeFalsy();
+  expect(organic1.weekNumber).toBeFalsy();
+  expect(organic1.weekday).toBeFalsy();
+  expect(organic1.ordinal).toBeFalsy();
+  expect(organic1.offset).toBeFalsy();
+  expect(organic1.offsetNameShort).toBeFalsy();
+  expect(organic1.offsetNameLong).toBeFalsy();
+  expect(organic1.valueOf()).toBeFalsy();
+});
+
+test('Diffing invalid DateTimes creates invalid Durations', () => {
+  expect(organic1.diff(DateTime.local()).isValid).toBe(false);
+  expect(DateTime.local().diff(organic1).isValid).toBe(false);
 });
 
 test('throwOnInvalid throws', () => {
