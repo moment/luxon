@@ -4,9 +4,7 @@ jobs:
   setup:
     docker:
       - image: circleci/node:8.8.1
-      
     working_directory: ~/repo
-
     steps:
       - checkout
       - restore_cache:
@@ -29,15 +27,16 @@ jobs:
 
   build:
       - run:
+          name: Lint
+          command: ./node_modules/gulp-cli/bin/gulp.js lint
+      - run:
           name: Build
           command: ./node_modules/gulp-cli/bin/gulp.js build
 
   utc:
     docker:
       - image: circleci/node:8.8.1
-
     working_directory: ~/repo
-
     steps:
       - restore_cache:
           keys:
@@ -50,9 +49,7 @@ jobs:
   ny:
     docker:
       - image: circleci/node:8.8.1
-
     working_directory: ~/repo
-
     steps:
       - restore_cache:
           keys:
@@ -67,7 +64,6 @@ jobs:
 
   docs:
     working_directory: ~/repo
-
     steps:
       - restore_cache:
           keys:
@@ -81,7 +77,7 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
+      - setup
       - build:
           requires:
             - setup
