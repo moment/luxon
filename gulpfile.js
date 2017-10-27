@@ -1,6 +1,7 @@
 const babel = require('rollup-plugin-babel'),
   babili = require('gulp-babili'),
   buffer = require('vinyl-buffer'),
+  coveralls = require('gulp-coveralls'),
   esdoc = require('gulp-esdoc'),
   eslint = require('gulp-eslint'),
   filter = require('gulp-filter'),
@@ -121,6 +122,8 @@ gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 gulp.task('test', () =>
   gulp.src('test').pipe(
     jest({
+      collectCoverage: true,
+      coverageDirectory: 'build/coverage',
       config: {
         preprocessorIgnorePatterns: '<rootDir>/build/'
       }
@@ -175,6 +178,8 @@ gulp.task('docs', () =>
     })
   )
 );
+
+gulp.task('coveralls', () => gulp.src('build/coverage/lcov.info').pipe(coveralls()));
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
