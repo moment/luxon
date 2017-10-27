@@ -1,12 +1,13 @@
 sudo: false
+language: javascript
 before_script:
   - nvm install 8.8.1
   - npm install
   - npm install full-icu
   - npm install -g gulp-cli
 script:
-  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp ci
-  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" CODE_COVERAGE=yes TZ=America/New_York gulp test
+  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" LIMIT_JEST=yes gulp ci
+  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" LIMIT_JEST=yes CODE_COVERAGE=yes TZ=America/New_York gulp test
   - gulp coveralls
   - gulp docs
 branches:

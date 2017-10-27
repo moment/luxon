@@ -120,17 +120,21 @@ gulp.task(
 
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
-gulp.task('test', () =>
-  gulp.src('test').pipe(
-    jest({
-      collectCoverage: !!process.env.CODE_COVERAGE,
-      coverageDirectory: 'build/coverage',
-      config: {
-        preprocessorIgnorePatterns: '<rootDir>/build/'
-      }
-    })
-  )
-);
+gulp.task('test', () => {
+  const opts = {
+    collectCoverage: !!process.env.CODE_COVERAGE,
+    coverageDirectory: 'build/coverage',
+    config: {
+      preprocessorIgnorePatterns: '<rootDir>/build/'
+    }
+  };
+
+  if (process.env.LIMIT_JEST) {
+    opts.maxWorkers = 4;
+  }
+
+  gulp.src('test').pipe(jest(opts));
+});
 
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
   doLint = () =>
