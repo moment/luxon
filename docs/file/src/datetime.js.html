@@ -1026,6 +1026,8 @@ export class DateTime {
    * @return {DateTime}
    */
   set(values) {
+    if (!this.isValid) return this;
+
     const normalized = Util.normalizeObject(values, normalizeUnit),
       settingWeekStuff =
         !Util.isUndefined(normalized.weekYear) ||
@@ -1341,7 +1343,8 @@ export class DateTime {
    * @return {Duration}
    */
   diff(otherDateTime, unit = &apos;milliseconds&apos;, opts = {}) {
-    if (!this.isValid) return this;
+    if (!this.isValid || !otherDateTime.isValid)
+      return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
     const units = Util.maybeArray(unit).map(Duration.normalizeUnit);
 

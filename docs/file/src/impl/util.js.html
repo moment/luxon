@@ -241,8 +241,10 @@ export class Util {
     return Util.pick(obj, [&apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, &apos;millisecond&apos;]);
   }
 
-  static untrucateYear(year) {
-    return year &gt; 60 ? 1900 + year : 2000 + year;
+  static untruncateYear(year) {
+    if (year &gt; 99) {
+      return year;
+    } else return year &gt; 60 ? 1900 + year : 2000 + year;
   }
 
   // signedOffset(&apos;-5&apos;, &apos;30&apos;) -&gt; -330

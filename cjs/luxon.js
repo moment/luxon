@@ -2481,7 +2481,7 @@ var LocalZone = function (_Zone) {
   }, {
     key: 'name',
     get: function get$$1() {
-      if (Util.isUndefined(Intl) && Util.isUndefined(Intl.DateTimeFormat)) {
+      if (!Util.isUndefined(Intl) && !Util.isUndefined(Intl.DateTimeFormat)) {
         return new Intl.DateTimeFormat().resolvedOptions().timeZone;
       } else return 'local';
     }
@@ -2954,9 +2954,11 @@ var Util = function () {
       return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
     }
   }, {
-    key: 'untrucateYear',
-    value: function untrucateYear(year) {
-      return year > 60 ? 1900 + year : 2000 + year;
+    key: 'untruncateYear',
+    value: function untruncateYear(year) {
+      if (year > 99) {
+        return year;
+      } else return year > 60 ? 1900 + year : 2000 + year;
     }
 
     // signedOffset('-5', '30') -> -330
@@ -4060,7 +4062,7 @@ var obsOffsets = {
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   var result = {
-    year: yearStr.length === 2 ? Util.untrucateYear(parseInt(yearStr)) : parseInt(yearStr),
+    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
@@ -5648,7 +5650,7 @@ function intUnit(regex) {
       var _ref2 = slicedToArray(_ref, 1),
           s = _ref2[0];
 
-      return post(parseInt(s, 10));
+      return post(parseInt(s));
     } };
 }
 
@@ -5704,8 +5706,8 @@ function unitForToken(token, loc) {
       three = /\d{3}/,
       four = /\d{4}/,
       oneOrTwo = /\d\d?/,
-      oneToThree = /\d\d{2}?/,
-      twoToFour = /\d\d\d{2}?/,
+      oneToThree = /\d(?:\d{2})?/,
+      twoToFour = /\d\d(?:\d{2})?/,
       literal = function literal(t) {
     return { regex: RegExp(t.val), deser: function deser(_ref9) {
         var _ref10 = slicedToArray(_ref9, 1),
@@ -5948,9 +5950,10 @@ var TokenParser = function () {
       } else {
         var _buildRegex = buildRegex(units),
             _buildRegex2 = slicedToArray(_buildRegex, 2),
-            regex = _buildRegex2[0],
+            regexString = _buildRegex2[0],
             handlers = _buildRegex2[1],
-            _match = match(input, RegExp(regex, 'i'), handlers),
+            regex = RegExp(regexString, 'i'),
+            _match = match(input, regex, handlers),
             _match2 = slicedToArray(_match, 2),
             rawMatches = _match2[0],
             matches = _match2[1],
@@ -6592,6 +6595,8 @@ var DateTime = function () {
   }, {
     key: 'set',
     value: function set$$1(values) {
+      if (!this.isValid) return this;
+
       var normalized = Util.normalizeObject(values, normalizeUnit),
           settingWeekStuff = !Util.isUndefined(normalized.weekYear) || !Util.isUndefined(normalized.weekNumber) || !Util.isUndefined(normalized.weekday);
 
@@ -6974,7 +6979,7 @@ var DateTime = function () {
       var unit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'milliseconds';
       var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-      if (!this.isValid) return this;
+      if (!this.isValid || !otherDateTime.isValid) return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
       var units = Util.maybeArray(unit).map(Duration.normalizeUnit);
 

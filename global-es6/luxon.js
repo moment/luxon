@@ -2114,7 +2114,7 @@ class LocalZone extends Zone {
   }
 
   get name() {
-    if (Util.isUndefined(Intl) && Util.isUndefined(Intl.DateTimeFormat)) {
+    if (!Util.isUndefined(Intl) && !Util.isUndefined(Intl.DateTimeFormat)) {
       return new Intl.DateTimeFormat().resolvedOptions().timeZone;
     } else return 'local';
   }
@@ -2496,8 +2496,10 @@ class Util {
     return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
   }
 
-  static untrucateYear(year) {
-    return year > 60 ? 1900 + year : 2000 + year;
+  static untruncateYear(year) {
+    if (year > 99) {
+      return year;
+    } else return year > 60 ? 1900 + year : 2000 + year;
   }
 
   // signedOffset('-5', '30') -> -330
@@ -3418,7 +3420,7 @@ const obsOffsets = {
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
-    year: yearStr.length === 2 ? Util.untrucateYear(parseInt(yearStr)) : parseInt(yearStr),
+    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
@@ -4613,7 +4615,7 @@ class Interval {
 const MISSING_FTP = 'missing Intl.DateTimeFormat.formatToParts support';
 
 function intUnit(regex, post = i => i) {
-  return { regex, deser: ([s]) => post(parseInt(s, 10)) };
+  return { regex, deser: ([s]) => post(parseInt(s)) };
 }
 
 function fixListRegex(s) {
@@ -4651,8 +4653,8 @@ function unitForToken(token, loc) {
     three = /\d{3}/,
     four = /\d{4}/,
     oneOrTwo = /\d\d?/,
-    oneToThree = /\d\d{2}?/,
-    twoToFour = /\d\d\d{2}?/,
+    oneToThree = /\d(?:\d{2})?/,
+    twoToFour = /\d\d(?:\d{2})?/,
     literal = t => ({ regex: RegExp(t.val), deser: ([s]) => s, literal: true }),
     unitate = t => {
       if (token.literal) {
@@ -4872,8 +4874,9 @@ class TokenParser {
     if (disqualifyingUnit) {
       return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
     } else {
-      const [regex, handlers] = buildRegex(units),
-        [rawMatches, matches] = match(input, RegExp(regex, 'i'), handlers),
+      const [regexString, handlers] = buildRegex(units),
+        regex = RegExp(regexString, 'i'),
+        [rawMatches, matches] = match(input, regex, handlers),
         [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
 
       return { input, tokens, regex, rawMatches, matches, result, zone };
@@ -6000,6 +6003,8 @@ class DateTime {
    * @return {DateTime}
    */
   set(values) {
+    if (!this.isValid) return this;
+
     const normalized = Util.normalizeObject(values, normalizeUnit),
       settingWeekStuff =
         !Util.isUndefined(normalized.weekYear) ||
@@ -6315,7 +6320,8 @@ class DateTime {
    * @return {Duration}
    */
   diff(otherDateTime, unit = 'milliseconds', opts = {}) {
-    if (!this.isValid) return this;
+    if (!this.isValid || !otherDateTime.isValid)
+      return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
     const units = Util.maybeArray(unit).map(Duration.normalizeUnit);
 
