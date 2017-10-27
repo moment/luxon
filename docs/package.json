@@ -1,10 +1,10 @@
 {
   "name": "luxon",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
-  "repository": "https://github.com/icambron/luxon",
+  "repository": "https://github.com/moment/luxon",
   "dependencies": {
     "core-js": "latest"
   },
