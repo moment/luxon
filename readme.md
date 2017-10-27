@@ -1,6 +1,8 @@
 # Luxon
 
-[![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] ![Doc coverage][doc-coverage-image]
+[![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] ![Doc coverage][doc-coverage-image]
+
+
 
 Luxon is an experimental library for working with dates and times in Javascript. For a brief intro, see the [homepage](http://isaaccambron.com/luxon). There's a demo [here](http://isaaccambron.com/luxon/demo/global.html).
 
@@ -35,5 +37,8 @@ See [contributing](contributing.md).
 
 [doc-url]: http://isaaccambron.com/luxon/docs/
 [doc-coverage-image]: http://isaaccambron.com/luxon/docs/badge.svg
+
+[test-coverage-url]: https://coveralls.io/github/icambron/luxon?branch=master
+[test-coverage-image]: https://coveralls.io/repos/github/icambron/luxon/badge.svg?branch=master
 
 [phasers-image]: https://img.shields.io/badge/phasers-stun-brightgreen.svg
