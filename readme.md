@@ -29,16 +29,16 @@ See [contributing](contributing.md).
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg
 [license]: license.md
 
-[travis-url]: http://travis-ci.org/icambron/luxon
-[travis-image]: https://api.travis-ci.org/icambron/luxon.svg?branch=master
+[travis-url]: http://travis-ci.org/moment/luxon
+[travis-image]: https://api.travis-ci.org/moment/luxon.svg?branch=master
 
 [npm-url]: https://npmjs.org/package/luxon
 [npm-version-image]: https://badge.fury.io/js/luxon.svg
 
-[doc-url]: http://isaaccambron.com/luxon/docs/
-[doc-coverage-image]: http://isaaccambron.com/luxon/docs/badge.svg
+[doc-url]: http://moment.github.io/luxon/docs/
+[doc-coverage-image]: http://moment.github.io/luxon/docs/badge.svg
 
-[test-coverage-url]: https://coveralls.io/github/icambron/luxon?branch=master
-[test-coverage-image]: https://coveralls.io/repos/github/icambron/luxon/badge.svg?branch=master
+[test-coverage-url]: https://coveralls.io/github/moment/luxon?branch=master
+[test-coverage-image]: https://coveralls.io/repos/github/moment/luxon/badge.svg?branch=master
 
 [phasers-image]: https://img.shields.io/badge/phasers-stun-brightgreen.svg
