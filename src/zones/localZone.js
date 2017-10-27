@@ -21,7 +21,7 @@ export class LocalZone extends Zone {
   }
 
   get name() {
-    if (Util.isUndefined(Intl) && Util.isUndefined(Intl.DateTimeFormat)) {
+    if (!Util.isUndefined(Intl) && !Util.isUndefined(Intl.DateTimeFormat)) {
       return new Intl.DateTimeFormat().resolvedOptions().timeZone;
     } else return 'local';
   }

@@ -89,10 +89,31 @@ test('DateTime#get can retrieve any unit', () => {
   expect(dateTime.get('weekNumber')).toBe(21);
 });
 
+test('DateTime#get returns undefined for invalid units', () => {
+  expect(dateTime.get('plurp')).toBeUndefined();
+});
+
 //------
 // locale
 //------
 test('DateTime#locale returns the locale', () => {
   const dt = DateTime.local().reconfigure({ locale: 'be' });
   expect(dt.locale).toBe('be');
+});
+
+//------
+// Misc
+//------
+test('Invalid DateTimes have unhelpful getters', () => {
+  const i = DateTime.invalid('because');
+  expect(i.year).toBeFalsy();
+  expect(i.month).toBeFalsy();
+  expect(i.day).toBeFalsy();
+  expect(i.hour).toBeFalsy();
+  expect(i.minute).toBeFalsy();
+  expect(i.second).toBeFalsy();
+  expect(i.millisecond).toBeFalsy();
+  expect(i.weekYear).toBeFalsy();
+  expect(i.weekNumber).toBeFalsy();
+  expect(i.weekday).toBeFalsy();
 });

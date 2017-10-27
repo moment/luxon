@@ -15,6 +15,26 @@ test('DateTime.fromString() parses basic times', () => {
   expect(i.millisecond).toBe(445);
 });
 
+test('DateTime.fromString() parses with variable-length inpus', () => {
+  let i = DateTime.fromString('1982/05/03 09:07:05.004', 'yy/M/d H:m:s.S');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(3);
+  expect(i.hour).toBe(9);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(5);
+  expect(i.millisecond).toBe(4);
+
+  i = DateTime.fromString('82/5/3 9:7:5.4', 'yy/M/d H:m:s.S');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(3);
+  expect(i.hour).toBe(9);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(5);
+  expect(i.millisecond).toBe(4);
+});
+
 test('DateTime.fromString() parses meridiems', () => {
   let i = DateTime.fromString('1982/05/25 9 PM', 'yyyy/MM/dd h a');
   expect(i.year).toBe(1982);
@@ -134,7 +154,11 @@ test('DateTime.fromString() defaults weekday to this week', () => {
 });
 
 test('DateTime.fromString() parses ordinals', () => {
-  const d = DateTime.fromString('2016 200', 'yyyy ooo');
+  let d = DateTime.fromString('2016 200', 'yyyy ooo');
+  expect(d.year).toBe(2016);
+  expect(d.ordinal).toBe(200);
+
+  d = DateTime.fromString('2016 200', 'yyyy ooo');
   expect(d.year).toBe(2016);
   expect(d.ordinal).toBe(200);
 });

@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime, Interval, Duration } from '../../src/luxon';
+import { DateTime, Interval, Duration, Settings } from '../../src/luxon';
 
 //------
 // .fromObject()
@@ -71,4 +71,20 @@ test('Interval.before takes a number and unit', () => {
 
   expect(int.start.day).toBe(22);
   expect(int.end).toBe(end);
+});
+
+//------
+// .invalid()
+//-------
+test('Interval.invalid produces invalid Intervals', () => {
+  expect(Interval.invalid('because').isValid).toBe(false);
+});
+
+test('Interval.invalid throws if throwOnInvalid is set', () => {
+  try {
+    Settings.throwOnInvalid = true;
+    expect(() => Interval.invalid('because')).toThrow();
+  } finally {
+    Settings.throwOnInvalid = false;
+  }
 });

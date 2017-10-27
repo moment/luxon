@@ -980,6 +980,8 @@ export class DateTime {
    * @return {DateTime}
    */
   set(values) {
+    if (!this.isValid) return this;
+
     const normalized = Util.normalizeObject(values, normalizeUnit),
       settingWeekStuff =
         !Util.isUndefined(normalized.weekYear) ||

@@ -51,6 +51,9 @@ test('No Intl support at all', () => {
 
     // setting the time zone results in an invalid DateTime
     expect(DateTime.local().setZone('America/New_York').isValid).toBe(false);
+
+    // the local time zone calls itself 'local'
+    expect(DateTime.local().zoneName).toBe('local');
   } finally {
     Intl = intl;
   }
@@ -96,6 +99,16 @@ test('No formatToParts support', () => {
 
     // setting the time zone works fine
     expect(DateTime.local().setZone('America/New_York').isValid).toBe(true);
+
+    // can still generate offset name
+    expect(
+      DateTime.fromObject({
+        year: 2014,
+        month: 8,
+        day: 6,
+        zone: 'America/New_York'
+      }).offsetNameLong
+    ).toBe('Eastern Daylight Time');
   } finally {
     Intl.DateTimeFormat.prototype.formatToParts = formatToParts;
   }

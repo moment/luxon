@@ -6,7 +6,7 @@ import { IANAZone } from '../zones/IANAZone';
 const MISSING_FTP = 'missing Intl.DateTimeFormat.formatToParts support';
 
 function intUnit(regex, post = i => i) {
-  return { regex, deser: ([s]) => post(parseInt(s, 10)) };
+  return { regex, deser: ([s]) => post(parseInt(s)) };
 }
 
 function fixListRegex(s) {
@@ -44,8 +44,8 @@ function unitForToken(token, loc) {
     three = /\d{3}/,
     four = /\d{4}/,
     oneOrTwo = /\d\d?/,
-    oneToThree = /\d\d{2}?/,
-    twoToFour = /\d\d\d{2}?/,
+    oneToThree = /\d(?:\d{2})?/,
+    twoToFour = /\d\d(?:\d{2})?/,
     literal = t => ({ regex: RegExp(t.val), deser: ([s]) => s, literal: true }),
     unitate = t => {
       if (token.literal) {
@@ -265,8 +265,9 @@ export class TokenParser {
     if (disqualifyingUnit) {
       return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
     } else {
-      const [regex, handlers] = buildRegex(units),
-        [rawMatches, matches] = match(input, RegExp(regex, 'i'), handlers),
+      const [regexString, handlers] = buildRegex(units),
+        regex = RegExp(regexString, 'i'),
+        [rawMatches, matches] = match(input, regex, handlers),
         [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
 
       return { input, tokens, regex, rawMatches, matches, result, zone };

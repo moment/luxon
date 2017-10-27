@@ -129,6 +129,17 @@ test('DateTime#isInDST() returns false for post-DST times', () => {
 });
 
 //------
+// local zone
+//------
+
+test('The local zone does local stuff', () => {
+  if (DateTime.local().zoneName === 'America/New_York') {
+    expect(DateTime.local(2016, 8, 6).offsetNameLong).toBe('Eastern Daylight Time');
+    expect(DateTime.local(2016, 8, 6).offsetNameShort).toBe('EDT');
+  }
+});
+
+//------
 // default zone
 //------
 

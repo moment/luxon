@@ -91,6 +91,19 @@ test('DateTime#set({ ordinal }) sets the date to the ordinal within the current 
 // set multiple things
 //------
 
+test('DateTime.set does units in increasing size', () => {
+  const modified = dt.set({ day: 31, month: 3 });
+  expect(modified.month).toBe(3);
+  expect(modified.day).toBe(31);
+});
+
 //------
 // set invalid things
 //------
+test('DateTime#set throws for invalid units', () => {
+  expect(() => dt.set({ glorb: 200 })).toThrow();
+});
+
+test('DateTime#set maintains invalidity', () => {
+  expect(DateTime.invalid('because').set({ ordinal: 200 }).isValid).toBe(false);
+});

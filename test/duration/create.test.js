@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Duration } from '../../src/luxon';
+import { Duration, Settings } from '../../src/luxon';
 
 //------
 // .fromObject()
@@ -22,4 +22,20 @@ test('Duration.fromObject sets all the values', () => {
   expect(dur.minutes).toBe(5);
   expect(dur.seconds).toBe(6);
   expect(dur.milliseconds).toBe(7);
+});
+
+//------
+// .invalid()
+//-------
+test('Duration.invalid produces invalid Intervals', () => {
+  expect(Duration.invalid('because').isValid).toBe(false);
+});
+
+test('Duration.invalid throws if throwOnInvalid is set', () => {
+  try {
+    Settings.throwOnInvalid = true;
+    expect(() => Duration.invalid('because')).toThrow();
+  } finally {
+    Settings.throwOnInvalid = false;
+  }
 });
