@@ -2,13 +2,16 @@
 
 [![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] ![Doc coverage][doc-coverage-image]
 
-
-
 Luxon is an experimental library for working with dates and times in Javascript. For a brief intro, see the [homepage](http://moment.github.io/luxon). There's a demo [here](http://moment.github.io/luxon/demo/global.html).
 
 ```js
 DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
 ```
+## Features
+ * DateTime, Duration, and Interval types.
+ * Immutable, chainable, unambiguous API.
+ * Parsing and formatting for common and custom formats.
+ * Native time zone and Intl support (no locale or tz files).
 
 ## Download/install
 
