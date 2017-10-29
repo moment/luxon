@@ -386,13 +386,13 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 </tbody>
 </table>
 <h3 id="intl">Intl</h3>
-<p><code>toLocaleString</code>&apos;s behavior is affected by the DateTime&apos;s <code>locale</code>, <code>numberingSystem</code>, and <code>outputCalendar</code> properties. See the <a href="./manual/intl.html">Intl</a> section for more.</p>
+<p><code>toLocaleString</code>&apos;s behavior is affected by the DateTime&apos;s <code>locale</code>, <code>numberingSystem</code>, and <code>outputCalendar</code> properties. See the <a href="./manual/usage/intl.html">Intl</a> section for more.</p>
 <h2 id="formatting-with-tokens-strings-for-cthulhu-">Formatting with tokens (strings for Cthulhu)</h2>
 <p>This section covers generating strings from DateTimes with programmer-specified formats.</p>
 <h3 id="consider-alternatives">Consider alternatives</h3>
 <p>You shouldn&apos;t create ad-hoc string formats if you can avoid it. If you intend for a computer to read the string, prefer ISO 8601. If a human will read it, prefer <code>toLocaleString</code>. Both are covered above. However, if you have some esoteric need where you need some specific format (e.g. because some other software expects it), then <code>toFormat</code> is how you do it.</p>
 <h3 id="toformat">toFormat</h3>
-<p>See <a href="./manual/&quot;../class/src/datetime.js~DateTime.html#instance-method-toFormat&quot;">DateTime#toFormat</a> for the API signature. As a brief motivating example:</p>
+<p>See <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toFormat">DateTime#toFormat</a> for the API signature. As a brief motivating example:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2014 Aug 06&apos;</code>
 </code></pre>
 <p>The supported tokens are described in the table below.</p>
@@ -405,7 +405,7 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;) //=&gt; &apos;20 hours and 55 minutes&apos;</code>
 </code></pre>
 <h3 id="standalone-vs-format-tokens">Standalone vs format tokens</h3>
-<p>Some tokens have a &quot;standalone&quot; and &quot;format&quot; version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. &quot;Monday the 22nd&quot; vs &quot;Monday&quot;). Use them accordingly. </p>
+<p>Some tokens have a &quot;standalone&quot; and &quot;format&quot; version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. &quot;Monday the 22nd&quot; vs &quot;Monday&quot;). Use them accordingly.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;ru&apos;);
 d.toFormat(&quot;LLLL&quot;) //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos; (format)
 d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos; (standalone)</code>

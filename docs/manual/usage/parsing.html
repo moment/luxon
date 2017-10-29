@@ -257,7 +257,7 @@ DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;);</code>
 <p>Luxon supports parsing internationalized strings:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
 </code></pre>
-<p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/../matrix.html">support matrix</a>).</p>
+<p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/faq/matrix.html">support matrix</a>).</p>
 <h3 id="limitations">Limitations</h3>
 <p>Not every token supported by <code>DateTime#toFormat</code> is supported in the parser. For example, there&apos;s no <code>ZZZZ</code> or <code>ZZZZZ</code> tokens. This is for a few reasons:</p>
 <ul>
@@ -266,7 +266,7 @@ DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;);</code>
 <li>Luxon doesn&apos;t yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.</li>
 </ul>
 <h3 id="debugging">Debugging</h3>
-<p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/class/src/datetime.js~DateTime.html#static-method-fromStringExplain">fromStringExplain</a>. It takes the same arguments as <code>fromString</code> but returns a map of information about the parse that can be useful in debugging.</p>
+<p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromStringExplain">fromStringExplain</a>. It takes the same arguments as <code>fromString</code> but returns a map of information about the parse that can be useful in debugging.</p>
 <p>For example, here the code is using &quot;MMMM&quot; where &quot;MMM&quot; was needed. You can see the regex Luxon uses and see that it didn&apos;t match anything:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromStringExplain(&quot;Aug 6 1982&quot;, &quot;MMMM d yyyy&quot;)
 

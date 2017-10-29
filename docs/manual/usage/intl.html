@@ -243,11 +243,11 @@ dt.locale //=&gt; &apos;fr&apos;</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&apos;fr&apos;).toFormat(&apos;MMMM dd, yyyy GG&apos;); //=&gt; &apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;</code>
 </code></pre>
 <h3 id="parsing">Parsing</h3>
-<p>You can <a href="./manual/parsing.md">parse</a> localized strings:</p>
+<p>You can <a href="./manual/usage/parsing.html">parse</a> localized strings:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;, &apos;MMMM dd, yyyy GG&apos;, {locale: &apos;fr&apos;})</code>
 </code></pre>
 <h3 id="listing">Listing</h3>
-<p>Some of the methods in the <a href="./manual/../docs/class/src/info.js~Info.html">Info</a> class let you list strings like months, weekdays, and eras, and they can be localized:</p>
+<p>Some of the methods in the <a href="./manual/../class/src/info.js~Info.html">Info</a> class let you list strings like months, weekdays, and eras, and they can be localized:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&apos;long&apos;, { locale: &apos;fr&apos; })    //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, ...
 Info.weekdays(&apos;long&apos;, { locale: &apos;fr&apos; })  //=&gt; [ &apos;lundi&apos;, &apos;mardi&apos;, ...
 Info.eras(&apos;long&apos;, { locale: &apos;fr&apos; })      //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
