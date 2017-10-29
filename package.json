@@ -57,5 +57,6 @@
   "engines": {
     "node": "*"
   },
+  "files": ["build/cjs/luxon.js"],
   "license": "MIT"
 }
