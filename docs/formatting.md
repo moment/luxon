@@ -102,7 +102,7 @@ Here's the full set of provided presets using the October 14, 1983 at 13:30:23 a
 
 ### Intl
 
-`toLocaleString`'s behavior is affected by the DateTime's `locale`, `numberingSystem`, and `outputCalendar` properties. See the [Intl](intl.html) section for more.
+`toLocaleString`'s behavior is affected by the DateTime's `locale`, `numberingSystem`, and `outputCalendar` properties. See the [Intl](usage/intl.html) section for more.
 
 ## Formatting with tokens (strings for Cthulhu)
 
@@ -110,10 +110,10 @@ This section covers generating strings from DateTimes with programmer-specified 
 
 ### Consider alternatives
 You shouldn't create ad-hoc string formats if you can avoid it. If you intend for a computer to read the string, prefer ISO 8601. If a human will read it, prefer `toLocaleString`. Both are covered above. However, if you have some esoteric need where you need some specific format (e.g. because some other software expects it), then `toFormat` is how you do it.
- 
+
 ### toFormat
- 
-See [DateTime#toFormat]("../class/src/datetime.js~DateTime.html#instance-method-toFormat") for the API signature. As a brief motivating example:
+
+See [DateTime#toFormat](../class/src/datetime.js~DateTime.html#instance-method-toFormat) for the API signature. As a brief motivating example:
 
 ```js
 DateTime.fromISO('2014-08-06T13:07:04.054').toFormat('yyyy LLL dd') //=> '2014 Aug 06'
@@ -139,7 +139,7 @@ DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 m
 
 ### Standalone vs format tokens
 
-Some tokens have a "standalone" and "format" version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. "Monday the 22nd" vs "Monday"). Use them accordingly. 
+Some tokens have a "standalone" and "format" version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. "Monday the 22nd" vs "Monday"). Use them accordingly.
 
 ```js
 var d = DateTime.fromISO('2014-08-06T13:07:04.054').setLocale('ru');
