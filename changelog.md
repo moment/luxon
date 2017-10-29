@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10
+
+ * Only include build dir in NPM module
+
+## 0.9
+
+ * Move to Moment Github org
+
 ## 0.8
 
  * The local zone can now report its IANA name
