@@ -73,7 +73,7 @@ dt.setLocale('fr').toFormat('MMMM dd, yyyy GG'); //=> 'septembre 25, 2017 après
 
 ### Parsing
 
-You can [parse](parsing.md) localized strings:
+You can [parse](usage/parsing.html) localized strings:
 
 ```js
 DateTime.fromString('septembre 25, 2017 après Jésus-Christ', 'MMMM dd, yyyy GG', {locale: 'fr'})
@@ -81,7 +81,7 @@ DateTime.fromString('septembre 25, 2017 après Jésus-Christ', 'MMMM dd, yyyy GG
 
 ### Listing
 
-Some of the methods in the [Info](../docs/class/src/info.js~Info.html) class let you list strings like months, weekdays, and eras, and they can be localized:
+Some of the methods in the [Info](../class/src/info.js~Info.html) class let you list strings like months, weekdays, and eras, and they can be localized:
 
 
 ```js

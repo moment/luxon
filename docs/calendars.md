@@ -26,7 +26,7 @@ dtHebrew.outputCalendar; //=> 'hebrew'
 dtHebrew.toLocaleString() //=> '4 Tishri 5778'
 ```
 
-You can modulate the structure of that string with arguments to `toLocaleString` (see [the docs on that](formatting.html#tolocalestring-strings-for-humans-)), but the point here is just that you got the alternative calendar.
+You can modulate the structure of that string with arguments to `toLocaleString` (see [the docs on that](usage/formatting.html#tolocalestring-strings-for-humans-)), but the point here is just that you got the alternative calendar.
 
 Here's a table of the different calendars with examples generated formatting the same date generated like this:
 
