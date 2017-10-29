@@ -11,7 +11,7 @@ Here are some vague notes on Luxon's design philosophy:
  1. Luxon shouldn't contain simple conveniences that bloat the library to save callers a couple lines of code. Write those lines in your own code.
  1. Most of the complexity of JS module loading compatibility is left to the build. If you have a "this can't be loaded in my bespoke JS module loader" problems, this isn't something you should be solving with changes to the `src` directory. If it's a common use case and is possible to generate with Rollup, it can get its own build command.
  1. We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don't want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.
- 
+
 ## How to build and test
 
  1. Clone the repository
@@ -27,16 +27,16 @@ Once you're sure your bugfix or feature makes sense for Luxon, make sure you tak
  1. Be sure you run `gulp lint!` before you commit. Note this will modify your source files to line up with the style guidelines.
  1. Make sure you add or ESDoc annotations appropriately. You can run `gulp docs` to generate the HTML for them. They land in the `build/docs` directory.
  1. To test in your browser, run `gulp site` and then open `build/demo/global.html`. You can access Luxon classes in the console like `window.luxon.DateTime`.
- 1. To test in Node, run `gulp cjs` and then run something like `var DateTime = require('./build/cjs/luxon).DateTime`.
- 
+ 1. To test in Node, run `gulp cjs` and then run something like `var DateTime = require('./build/cjs/luxon').DateTime`.
+
 Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on your code as a pre-commit hook. You should still run `gulp lint!` yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.
- 
+
 ## Gulp command reference
 
 | Command       | Function                                    |
 |---------------|---------------------------------------------|
 | `gulp build`  | Build all the distributable files           |
-| `gulp tests`  | Run the test suite                          |
+| `gulp test`  | Run the test suite                          |
 | `gulp format` | Run the Prettier formatter                  |
 | `gulp lint!`  | Run the formatter and the linter            |
 | `gulp docs`   | Build the doc pages                         |
