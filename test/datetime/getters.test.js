@@ -73,6 +73,13 @@ test('DateTime#weekday returns the weekday', () => {
 });
 
 //------
+// weekdayShort/weekdayLong
+//
+test('DateTime#weekdayShort returns the human readable weekday', () => {
+  expect(dateTime.weekdayShort).toBe('Tue');
+});
+
+//------
 // ordinal
 //------
 

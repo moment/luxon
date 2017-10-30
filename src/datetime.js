@@ -1,6 +1,7 @@
 import { Duration } from './duration';
 import { Interval } from './interval';
 import { Settings } from './settings';
+import { Info } from './info';
 import { Formatter } from './impl/formatter';
 import { FixedOffsetZone } from './zones/fixedOffsetZone';
 import { LocalZone } from './zones/localZone';
@@ -795,6 +796,21 @@ export class DateTime {
     return this.isValid ? Conversions.gregorianToOrdinal(this.c).ordinal : NaN;
   }
 
+  get monthShort() {
+    return this.isValid ? Info.months('short', { locale: this.locale })[this.month - 1] : null;
+  }
+
+  get monthLong() {
+    return this.isValid ? Info.months('long', { locale: this.locale })[this.month - 1] : null;
+  }
+
+  get weekdayShort() {
+    return this.isValid ? Info.weekdays('short', { locale: this.locale })[this.weekday - 1] : null;
+  }
+
+  get weekdayLong() {
+    return this.isValid ? Info.weekdays('long', { locale: this.locale })[this.weekday - 1] : null;
+  }
   /**
    * Get the UTC offset of this DateTime in minutes
    * @example DateTime.local().offset //=> -240
