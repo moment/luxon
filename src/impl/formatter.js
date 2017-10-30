@@ -64,18 +64,18 @@ export class Formatter {
   }
 
   formatDateTime(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.format(d);
+    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.format();
   }
 
   formatDateTimeParts(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.formatToParts(d);
+    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.formatToParts();
   }
 
   resolvedOptions(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.resolvedOptions(d);
+    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.resolvedOptions();
   }
 
   num(n, p = 0) {
@@ -330,8 +330,6 @@ export class Formatter {
 
     return stringifyTokens(Formatter.parseFormat(fmt), tokenToString);
   }
-
-  formatDuration() {}
 
   formatDurationFromString(dur, fmt) {
     const tokenToField = token => {

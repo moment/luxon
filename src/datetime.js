@@ -9,6 +9,7 @@ import { Util } from './impl/util';
 import { RegexParser } from './impl/regexParser';
 import { TokenParser } from './impl/tokenParser';
 import { Conversions } from './impl/conversions';
+import { Formats } from './impl/formats';
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
@@ -1137,7 +1138,7 @@ export class DateTime {
    * @example DateTime.local().toLocaleString({hour: '2-digit', minute: '2-digit'}); //=> '11:32'
    * @return {string}
    */
-  toLocaleString(opts = {}) {
+  toLocaleString(opts = Formats.DATE_SHORT) {
     return this.isValid
       ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this)
       : INVALID;
@@ -1480,252 +1481,139 @@ export class DateTime {
    * {@link toLocaleString} format like 10/14/1983
    */
   static get DATE_SHORT() {
-    return {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric'
-    };
+    return Formats.DATE_SHORT;
   }
 
   /**
    * {@link toLocaleString} format like 'Oct 14, 1983'
    */
   static get DATE_MED() {
-    return {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    };
+    return Formats.DATE_MED;
   }
 
   /**
    * {@link toLocaleString} format like 'October 14, 1983'
    */
   static get DATE_FULL() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    };
+    return Formats.DATE_FULL;
   }
 
   /**
    * {@link toLocaleString} format like 'Tuesday, October 14, 1983'
    */
   static get DATE_HUGE() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    };
+    return Formats.DATE_HUGE;
   }
 
   /**
    * {@link toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
    */
   static get TIME_SIMPLE() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit'
-    };
+    return Formats.TIME_SIMPLE;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
    */
   static get TIME_WITH_SECONDS() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit'
-    };
+    return Formats.TIME_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
    */
   static get TIME_WITH_SHORT_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short'
-    };
+    return Formats.TIME_WITH_SHORT_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    */
   static get TIME_WITH_LONG_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long'
-    };
+    return Formats.TIME_WITH_LONG_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '09:30', always 24-hour.
    */
   static get TIME_24_SIMPLE() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: false
-    };
+    return Formats.TIME_24_SIMPLE;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23', always 24-hour.
    */
   static get TIME_24_WITH_SECONDS() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    };
+    return Formats.TIME_24_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 EDT', always 24-hour.
    */
   static get TIME_24_WITH_SHORT_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZoneName: 'short'
-    };
+    return Formats.TIME_24_WITH_SHORT_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
    */
   static get TIME_24_WITH_LONG_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZoneName: 'long'
-    };
+    return Formats.TIME_24_WITH_LONG_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_SHORT() {
-    return {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    };
+    return Formats.DATETIME_SHORT;
   }
 
   /**
    * {@link toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_SHORT_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit'
-    };
+    return Formats.DATETIME_SHORT_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_MED() {
-    return {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    };
+    return Formats.DATETIME_MED;
   }
 
   /**
    * {@link toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_MED_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit'
-    };
+    return Formats.DATETIME_MED_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
    */
   static get DATETIME_FULL() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZoneName: 'short'
-    };
+    return Formats.DATETIME_FULL;
   }
 
   /**
    * {@link toLocaleString} format like 'October 14, 1983, 9:303 AM EDT'. Only 12-hour if the locale is.
    */
   static get DATETIME_FULL_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short'
-    };
+    return Formats.DATETIME_FULL_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    */
   static get DATETIME_HUGE() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZoneName: 'long'
-    };
+    return Formats.DATETIME_HUGE;
   }
 
   /**
    * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    */
   static get DATETIME_HUGE_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long'
-    };
+    return Formats.DATETIME_HUGE_WITH_SECONDS;
   }
 }

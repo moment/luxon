@@ -2,6 +2,7 @@ import { Util } from './util';
 import { English } from './english';
 import { Settings } from '../settings';
 import { DateTime } from '../datetime';
+import { Formatter } from './formatter';
 
 const localeCache = {};
 
@@ -73,16 +74,63 @@ class PolyNumberFormatter {
 }
 
 class PolyDateFormatter {
-  format(d) {
-    return d.toString();
+  constructor(dt, intl, opts) {
+    this.opts = opts;
+    this.hasIntl = Intl && Intl.DateTimeFormat;
+
+    let z;
+    if (dt.zone.universal) {
+      // if we have a fixed-offset zone that isn't actually UTC,
+      // (like UTC+8), we need to make do with just displaying
+      // the time in UTC; the formatter doesn't know how to handle UTC+8
+      this.dt = Util.asIfUTC(dt);
+      z = 'UTC';
+    } else if (dt.zone.type === 'local') {
+      this.dt = dt;
+    } else {
+      this.dt = dt;
+      z = dt.zone.name;
+    }
+
+    if (this.hasIntl) {
+      const realIntlOpts = Object.assign({}, this.opts);
+      if (z) {
+        realIntlOpts.timeZone = z;
+      }
+      this.dtf = new Intl.DateTimeFormat(intl, realIntlOpts);
+    }
+  }
+
+  format() {
+    if (this.hasIntl) {
+      return this.dtf.format(this.dt.toJSDate());
+    } else {
+      const tokenFormat = English.formatString(this.opts),
+        loc = Locale.create('en-US');
+      return Formatter.create(loc).formatDateTimeFromString(this.dt, tokenFormat);
+    }
+  }
+
+  formatToParts() {
+    if (this.hasIntl && Intl.DateTimeFormat.prototype.formatToParts) {
+      return this.dtf.formatToParts(this.dt.toJSDate());
+    } else {
+      // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings
+      // and IMO it's too weird to have an uncanny valley like that
+      return [];
+    }
   }
 
   resolvedOptions() {
-    return {
-      locale: 'en-US',
-      numberingSystem: 'latn',
-      outputCalendar: 'gregory'
-    };
+    if (this.hasIntl) {
+      return this.dtf.resolvedOptions();
+    } else {
+      return {
+        locale: 'en-US',
+        numberingSystem: 'latn',
+        outputCalendar: 'gregory'
+      };
+    }
   }
 }
 
@@ -252,8 +300,8 @@ export class Locale {
   }
 
   extract(dt, intlOpts, field) {
-    const [df, d] = this.dtFormatter(dt, intlOpts),
-      results = df.formatToParts(d),
+    const df = this.dtFormatter(dt, intlOpts),
+      results = df.formatToParts(),
       matching = results.find(m => m.type.toLowerCase() === field);
 
     return matching ? matching.value : null;
@@ -278,30 +326,7 @@ export class Locale {
   }
 
   dtFormatter(dt, intlOpts = {}) {
-    let d, z;
-
-    if (dt.zone.universal) {
-      // if we have a fixed-offset zone that isn't actually UTC,
-      // (like UTC+8), we need to make do with just displaying
-      // the time in UTC; the formatter doesn't know how to handle UTC+8
-      d = Util.asIfUTC(dt);
-      z = 'UTC';
-    } else if (dt.zone.type === 'local') {
-      d = dt.toJSDate();
-    } else {
-      d = dt.toJSDate();
-      z = dt.zone.name;
-    }
-
-    if (Intl && Intl.DateTimeFormat) {
-      const realIntlOpts = Object.assign({}, intlOpts);
-      if (z) {
-        realIntlOpts.timeZone = z;
-      }
-      return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
-    } else {
-      return [new PolyDateFormatter(), d];
-    }
+    return new PolyDateFormatter(dt, this.intl, intlOpts);
   }
 
   equals(other) {

@@ -68,10 +68,10 @@ export class Util {
     return input < 0 ? Math.ceil(input) : Math.floor(input);
   }
 
-  // DateTime -> JS date such that the date's UTC time is the datetimes's local time
+  // DateTime -> DateTime such that the date's UTC time is the datetimes's local time
   static asIfUTC(dt) {
     const ts = dt.ts - dt.offset;
-    return new Date(ts);
+    return DateTime.fromMillis(ts);
   }
 
   // http://stackoverflow.com/a/15030117

@@ -1,3 +1,10 @@
+import { Formats } from './formats';
+import { Util } from './util';
+
+function stringify(obj) {
+  return JSON.stringify(obj, Object.keys(obj).sort());
+}
+
 /**
  * @private
  */
@@ -115,5 +122,66 @@ export class English {
 
   static eraForDateTime(dt, length) {
     return English.eras(length)[dt.year < 0 ? 0 : 1];
+  }
+
+  static formatString(knownFormat) {
+    // these all have the offsets removed because we don't have access to them
+    // without all the intl stuff this is backfilling
+    const filtered = Util.pick(knownFormat, [
+        'weekday',
+        'era',
+        'year',
+        'month',
+        'day',
+        'hour',
+        'minute',
+        'second',
+        'timeZoneName'
+      ]),
+      key = stringify(filtered);
+    switch (key) {
+      case stringify(Formats.DATE_SHORT):
+        return 'M/d/yyyy';
+      case stringify(Formats.DATE_MED):
+        return 'LLL d, yyyy';
+      case stringify(Formats.DATE_FULL):
+        return 'LLLL d, yyyy';
+      case stringify(Formats.DATE_HUGE):
+        return 'EEEE, LLLL d, yyyy';
+      case stringify(Formats.TIME_SIMPLE):
+        return 'h:mm a';
+      case stringify(Formats.TIME_WITH_SECONDS):
+        return 'h:mm:ss a';
+      case stringify(Formats.TIME_WITH_SHORT_OFFSET):
+        return 'h:mm a';
+      case stringify(Formats.TIME_WITH_LONG_OFFSET):
+        return 'h:mm a';
+      case stringify(Formats.TIME_24_SIMPLE):
+        return 'HH:mm';
+      case stringify(Formats.TIME_24_WITH_SECONDS):
+        return 'HH:mm:ss';
+      case stringify(Formats.TIME_24_WITH_SHORT_OFFSET):
+        return 'HH:mm a';
+      case stringify(Formats.TIME_24_WITH_LONG_OFFSET):
+        return 'HH:mm a';
+      case stringify(Formats.DATETIME_SHORT):
+        return 'M/d/yyyy, h:mm a';
+      case stringify(Formats.DATETIME_MED):
+        return 'LLL d, yyyy, h:mm a';
+      case stringify(Formats.DATETIME_FULL):
+        return 'LLLL d, yyyy, h:mm a';
+      case stringify(Formats.DATETIME_HUGE):
+        return 'EEEE, LLLL d, yyyy, h:mm a';
+      case stringify(Formats.DATETIME_SHORT_WITH_SECONDS):
+        return 'M/d/yyyy, h:mm:ss a';
+      case stringify(Formats.DATETIME_MED_WITH_SECONDS):
+        return 'LLL d, yyyy, h:mm:ss a';
+      case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
+        return 'LLLL d, yyyy, h:mm:ss';
+      case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
+        return 'EEEE, LLLL d, yyyy, h:mm:ss a';
+      default:
+        return 'EEEE, LLLL d, yyyy, h:mm a';
+    }
   }
 }

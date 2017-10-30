@@ -252,6 +252,16 @@ test("DateTime#toLocaleParts can override the dateTime's locale", () => {
   ]);
 });
 
+test('DateTime#toLocaleParts accepts date formatting options', () => {
+  expect(dt.toLocaleParts(DateTime.TIME_SIMPLE)).toEqual([
+    { type: 'hour', value: '9' },
+    { type: 'literal', value: ':' },
+    { type: 'minute', value: '23' },
+    { type: 'literal', value: ' ' },
+    { type: 'dayperiod', value: 'AM' }
+  ]);
+});
+
 test('DateTime#toLocaleParts returns empty for invalid DateTimes', () => {
   expect(invalid.toLocaleParts()).toEqual([]);
 });

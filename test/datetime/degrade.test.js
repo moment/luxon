@@ -26,20 +26,33 @@ test('No Intl support at all', () => {
     // parsing in English works
     expect(DateTime.fromString('May 15, 2017', 'LLLL dd, yyyy').isValid).toBe(true);
 
-    // toLocaleString in English returns the Date's native toString()
-    expect(
-      DateTime.local(2014, 8, 6)
-        .toString()
-        .startsWith('2014-08-06T00:00:00.000')
-    ).toBe(true);
+    // toLocaleString in English tries its best
+    expect(DateTime.local(2014, 8, 6, 9, 15).toLocaleString()).toBe('8/6/2014');
 
-    // toLocaleString in French returns the Date's native toString()
+    expect(DateTime.local(2014, 8, 6, 9, 15).toLocaleString(DateTime.DATE_FULL)).toBe(
+      'August 6, 2014'
+    );
+
+    // if toLocaleString doesn't understand the input, it does something very verbose
+    expect(DateTime.local(2014, 8, 6, 9, 15).toLocaleString({})).toBe(
+      'Wednesday, August 6, 2014, 9:15 AM'
+    );
+
+    // toLocaleString in French uses English
     expect(
       DateTime.local(2014, 8, 6)
         .setLocale('fr')
-        .toString()
-        .startsWith('2014-08-06T00:00:00.000')
-    ).toBe(true);
+        .toLocaleString()
+    ).toBe('8/6/2014');
+
+    expect(
+      DateTime.local(2014, 8, 6, 9, 15)
+        .setLocale('fr')
+        .toLocaleString(DateTime.DATE_FULL)
+    ).toBe('August 6, 2014');
+
+    // toLocaleParts returns an empty array
+    expect(DateTime.local().toLocaleParts()).toEqual([]);
 
     // parsing numbers in French works
     expect(DateTime.fromString('05/15/2017', 'LL/dd/yyyy', { locale: 'fr' }).isValid).toBe(true);
@@ -109,6 +122,9 @@ test('No formatToParts support', () => {
         zone: 'America/New_York'
       }).offsetNameLong
     ).toBe('Eastern Daylight Time');
+
+    // toLocaleParts returns an empty array
+    expect(DateTime.local().toLocaleParts()).toEqual([]);
   } finally {
     Intl.DateTimeFormat.prototype.formatToParts = formatToParts;
   }
