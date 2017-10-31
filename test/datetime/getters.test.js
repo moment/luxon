@@ -75,8 +75,31 @@ test('DateTime#weekday returns the weekday', () => {
 //------
 // weekdayShort/weekdayLong
 //
-test('DateTime#weekdayShort returns the human readable weekday', () => {
-  expect(dateTime.weekdayShort).toBe('Tue');
+test('DateTime#weekdayShort returns the short human readable weekday', () => {
+  expect(dateTime.setLocale('en-US').weekdayShort).toBe('Tue');
+});
+
+test('DateTime#weekdayLong returns the human readable weekday', () => {
+  expect(dateTime.setLocale('en-US').weekdayLong).toBe('Tuesday');
+});
+
+//------
+// monthShort/monthLong
+//
+test('DateTime#weekdayShort returns the short human readable month', () => {
+  expect(dateTime.setLocale('en-US').monthShort).toBe('May');
+});
+
+test('DateTime#weekdayLong returns the human readable month', () => {
+  expect(dateTime.setLocale('en-US').monthLong).toBe('May');
+});
+
+test('DateTime#weekdayShort returns the short human readable month', () => {
+  expect(dateTime.minus({ months: 1 }).setLocale('en-US').monthShort).toBe('Apr');
+});
+
+test('DateTime#weekdayLong returns the human readable month', () => {
+  expect(dateTime.minus({ months: 1 }).setLocale('en-US').monthLong).toBe('April');
 });
 
 //------
