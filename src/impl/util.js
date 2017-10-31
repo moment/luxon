@@ -142,14 +142,15 @@ export class Util {
         .formatToParts(date)
         .find(m => m.type.toLowerCase() === 'timezonename');
       return parsed ? parsed.value : null;
-    } else {
+    } else if (Intl && Intl.DateTimeFormat) {
       // this probably doesn't work for all locales
       const without = new Intl.DateTimeFormat(locale, intl).format(date),
         included = new Intl.DateTimeFormat(locale, modified).format(date),
         diffed = included.substring(without.length),
         trimmed = diffed.replace(/^[, ]+/, '');
-
       return trimmed;
+    } else {
+      return null;
     }
   }
 

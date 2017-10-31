@@ -67,6 +67,16 @@ test('No Intl support at all', () => {
 
     // the local time zone calls itself 'local'
     expect(DateTime.local().zoneName).toBe('local');
+
+    // offset names return null
+    expect(
+      DateTime.fromObject({
+        year: 2014,
+        month: 8,
+        day: 6,
+        zone: 'America/New_York'
+      }).offsetNameLong
+    ).toBe(null);
   } finally {
     Intl = intl;
   }

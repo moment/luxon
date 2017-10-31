@@ -138,7 +138,8 @@ export class English {
         'second',
         'timeZoneName'
       ]),
-      key = stringify(filtered);
+      key = stringify(filtered),
+      dateTimeHuge = 'EEEE, LLLL d, yyyy, h:mm a';
     switch (key) {
       case stringify(Formats.DATE_SHORT):
         return 'M/d/yyyy';
@@ -171,7 +172,7 @@ export class English {
       case stringify(Formats.DATETIME_FULL):
         return 'LLLL d, yyyy, h:mm a';
       case stringify(Formats.DATETIME_HUGE):
-        return 'EEEE, LLLL d, yyyy, h:mm a';
+        return dateTimeHuge;
       case stringify(Formats.DATETIME_SHORT_WITH_SECONDS):
         return 'M/d/yyyy, h:mm:ss a';
       case stringify(Formats.DATETIME_MED_WITH_SECONDS):
@@ -181,7 +182,7 @@ export class English {
       case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
         return 'EEEE, LLLL d, yyyy, h:mm:ss a';
       default:
-        return 'EEEE, LLLL d, yyyy, h:mm a';
+        return dateTimeHuge;
     }
   }
 }

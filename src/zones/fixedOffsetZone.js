@@ -49,6 +49,7 @@ export class FixedOffsetZone extends Zone {
   }
 
   offsetName() {
+    // todo: this doesn't localize (even possible?) and isn't sensitive to a `format` argument
     return this.name();
   }
 
