@@ -1,6 +1,7 @@
 import { Duration } from './duration';
 import { Interval } from './interval';
 import { Settings } from './settings';
+import { Info } from './info';
 import { Formatter } from './impl/formatter';
 import { FixedOffsetZone } from './zones/fixedOffsetZone';
 import { LocalZone } from './zones/localZone';
@@ -793,6 +794,42 @@ export class DateTime {
    */
   get ordinal() {
     return this.isValid ? Conversions.gregorianToOrdinal(this.c).ordinal : NaN;
+  }
+
+  /**
+   * Get the human readable short month name, such as 'Oct'.
+   * @example DateTime.local(2017, 10, 30) //=> Oct
+   * @return {string}
+   */
+  get monthShort() {
+    return this.isValid ? Info.months('short', { locale: this.locale })[this.month - 1] : null;
+  }
+
+  /**
+   * Get the human readable long month name, such as 'October'.
+   * @example DateTime.local(2017, 10, 30) //=> October
+   * @return {string}
+   */
+  get monthLong() {
+    return this.isValid ? Info.months('long', { locale: this.locale })[this.month - 1] : null;
+  }
+
+  /**
+   * Get the human readable short weekday, such as 'Mon'.
+   * @example DateTime.local(2017, 10, 30) //=> Mon
+   * @return {string}
+   */
+  get weekdayShort() {
+    return this.isValid ? Info.weekdays('short', { locale: this.locale })[this.weekday - 1] : null;
+  }
+
+  /**
+   * Get the human readable long weekday, such as 'Monday'.
+   * @example DateTime.local(2017, 10, 30) //=> Monday
+   * @return {string}
+   */
+  get weekdayLong() {
+    return this.isValid ? Info.weekdays('long', { locale: this.locale })[this.weekday - 1] : null;
   }
 
   /**
