@@ -492,6 +492,18 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/datetime.js~datetime#monthlong",
+    "class/src/datetime.js~DateTime.html#instance-get-monthLong",
+    "src/datetime.js~DateTime#monthLong",
+    "member"
+  ],
+  [
+    "src/datetime.js~datetime#monthshort",
+    "class/src/datetime.js~DateTime.html#instance-get-monthShort",
+    "src/datetime.js~DateTime#monthShort",
+    "member"
+  ],
+  [
     "src/datetime.js~datetime#numberingsystem",
     "class/src/datetime.js~DateTime.html#instance-get-numberingSystem",
     "src/datetime.js~DateTime#numberingSystem",
@@ -693,6 +705,18 @@ window.esdocSearchIndex = [
     "src/datetime.js~datetime#weekday",
     "class/src/datetime.js~DateTime.html#instance-get-weekday",
     "src/datetime.js~DateTime#weekday",
+    "member"
+  ],
+  [
+    "src/datetime.js~datetime#weekdaylong",
+    "class/src/datetime.js~DateTime.html#instance-get-weekdayLong",
+    "src/datetime.js~DateTime#weekdayLong",
+    "member"
+  ],
+  [
+    "src/datetime.js~datetime#weekdayshort",
+    "class/src/datetime.js~DateTime.html#instance-get-weekdayShort",
+    "src/datetime.js~DateTime#weekdayShort",
     "member"
   ],
   [
@@ -1447,13 +1471,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
@@ -1471,13 +1495,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
