@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11
+
+ * Improve non-Intl fallbacks for toLocaleString
+ * Fix `offsetNameShort` and `offsetNameLong` for non-Intl environments 
+ * Added `weekdayShort`, `weekdayLong`, `monthShort`, `monthLong` DateTime getters
+
 ## 0.10
 
  * Only include build dir in NPM module
