@@ -114,10 +114,10 @@ export class Util {
     return input &lt; 0 ? Math.ceil(input) : Math.floor(input);
   }
 
-  // DateTime -&gt; JS date such that the date&apos;s UTC time is the datetimes&apos;s local time
+  // DateTime -&gt; DateTime such that the date&apos;s UTC time is the datetimes&apos;s local time
   static asIfUTC(dt) {
     const ts = dt.ts - dt.offset;
-    return new Date(ts);
+    return DateTime.fromMillis(ts);
   }
 
   // http://stackoverflow.com/a/15030117
@@ -188,14 +188,15 @@ export class Util {
         .formatToParts(date)
         .find(m =&gt; m.type.toLowerCase() === &apos;timezonename&apos;);
       return parsed ? parsed.value : null;
-    } else {
+    } else if (Intl &amp;&amp; Intl.DateTimeFormat) {
       // this probably doesn&apos;t work for all locales
       const without = new Intl.DateTimeFormat(locale, intl).format(date),
         included = new Intl.DateTimeFormat(locale, modified).format(date),
         diffed = included.substring(without.length),
         trimmed = diffed.replace(/^[, ]+/, &apos;&apos;);
-
       return trimmed;
+    } else {
+      return null;
     }
   }
 

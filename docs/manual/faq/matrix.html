@@ -190,6 +190,9 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-11" data-ice="link">0.11</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-10" data-ice="link">0.10</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-9" data-ice="link">0.9</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-8" data-ice="link">0.8</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-7" data-ice="link">0.7</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-6" data-ice="link">0.6</a></li>
@@ -206,7 +209,7 @@
     <span data-ice="title">FAQ</span>
   </div>
   <div data-ice="content"><h1 id="support-matrix">Support matrix</h1>
-<p>Luxon uses a slew of new browser Intl capabilities to tackle some of the tricker parts of dates and times. This means that not everything works in every environment.</p>
+<p>Luxon uses a slew of new browser Intl capabilities to tackle some of the tricker parts of dates and times. This means that not everything works in every environment, especially things concerning explicit use of time zones and internationalization.</p>
 <h2 id="what-works-everywhere">What works everywhere</h2>
 <p>Fortunately, most of Luxon works in anything remotely recent. A non-exhaustive list:</p>
 <ul>
@@ -218,11 +221,11 @@
 </ul>
 <h2 id="new-capabilities-and-how-they-re-used">New capabilities and how they&apos;re used</h2>
 <p>Here are the areas that need help from newish browser capabilities:</p>
-<ul>
-<li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>.</li>
+<ol>
+<li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>. Most browsers and recent versions of Node support this.</li>
 <li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.</li>
-<li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are in some platforms a recent addition</li>
-</ul>
+<li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</li>
+</ol>
 <p>You can check whether your environment supports these capabilities using Luxon&apos;s <code>Info</code> class:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Info.features() //=&gt; { intl: true, intlTokens: true, zones: true }</code>
 </code></pre>
@@ -278,8 +281,134 @@
 <li>Safari 11 is still in tech preview as of Sept 2017</li>
 <li>IE is terrible and it&apos;s weird that anyone uses it</li>
 </ul>
+<p>Here is the matrix pivoted, with some basic assumptions like &quot;no one runs really old versions of Chrome&quot;:</p>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Versions</th>
+<th>Intl</th>
+<th>Intl tokens</th>
+<th>Zones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chrome</td>
+<td>&gt;= 55</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td></td>
+<td>&lt; 55</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td>FF</td>
+<td>&gt;= 52</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td></td>
+<td>51</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+</tr>
+<tr>
+<td></td>
+<td>&lt; 51</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+</tr>
+<tr>
+<td>Edge</td>
+<td>&gt;= 15</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td></td>
+<td>&lt; 15</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+</tr>
+<tr>
+<td>IE</td>
+<td>&gt;= 11</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+</tr>
+<tr>
+<td></td>
+<td>&lt; 11</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+</tr>
+<tr>
+<td>Safari</td>
+<td>&gt;= 11</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td></td>
+<td>10</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+</tr>
+<tr>
+<td>Node w/ICU</td>
+<td>8</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td></td>
+<td>&gt;= 6</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td></td>
+<td>&lt; 6</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td>Node w/o ICU</td>
+<td>&gt;= 6</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+<td>&#x2713;</td>
+</tr>
+<tr>
+<td></td>
+<td>&lt; 6</td>
+<td>&#x2713;</td>
+<td>&#x2715;</td>
+<td>&#x2715;</td>
+</tr>
+</tbody>
+</table>
 <h2 id="what-happens-if-a-feature-isn-t-supported-">What happens if a feature isn&apos;t supported?</h2>
-<p>You shouldn&apos;t use features of Luxon on projects that might be run on environments that don&apos;t support those features. Luxon tries to degrade gracefully if you don&apos;t, though.</p>
+<p>You shouldn&apos;t use features of Luxon on projects that might be run on environments that don&apos;t support those features. Luxon tries to degrade gracefully if you don&apos;t, though. Specifically, Luxon hardcodes the set of English strings it needs, and falls back to them if it needs them. Here&apos;s a (possibly incomplete) list of Luxon features affected by platform features without universal support:</p>
 <table>
 <thead>
 <tr>
@@ -299,45 +428,59 @@
 <td>OK</td>
 </tr>
 <tr>
-<td>Explicit time zones</td>
+<td>Using explicit time zones</td>
 <td>OK</td>
 <td>Invalid DateTime</td>
 <td>OK</td>
 <td>Invalid DateTime</td>
 </tr>
 <tr>
-<td><code>toLocaleString</code></td>
+<td><code>DateTime#toLocaleString</code></td>
 <td>OK</td>
-<td>Native Date&apos;s <code>toString</code></td>
-<td>OK</td>
-<td>OK</td>
-</tr>
-<tr>
-<td><code>toFormat</code> in en-US</td>
-<td>OK</td>
-<td>OK</td>
+<td>Uses English with caveats&#x2020;</td>
 <td>OK</td>
 <td>OK</td>
 </tr>
 <tr>
-<td><code>toFormat</code> in other locales</td>
+<td><code>DateTime#toLocaleParts</code></td>
+<td>OK</td>
+<td>Empty array</td>
+<td>Empty array</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>DateTime#toFormat</code> in en-US</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>DateTime#toFormat</code> in other locales</td>
 <td>OK</td>
 <td>Uses English</td>
-<td>Uses English if format contains localized strings&#x2020;</td>
+<td>Uses English if format contains localized strings&#x2021;</td>
 <td>OK</td>
 </tr>
 <tr>
-<td><code>fromString</code> in en-US</td>
+<td><code>DateTime#fromString</code> in en-US</td>
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
+</tr>
+<tr>
+<td><code>DateTime#offsetNameShort</code>, etc</td>
+<td>OK</td>
+<td>Returns null</td>
+<td>OK in most locales&#xA7;</td>
+<td></td>
 </tr>
 <tr>
 <td><code>fromString</code> in other locales</td>
 <td>OK</td>
 <td>Invalid DateTime if uses localized strings&#x2021;</td>
-<td>Uses English if format contains localized strings&#x2020;</td>
+<td>Uses English if format contains localized strings&#x2021;</td>
 <td>OK</td>
 </tr>
 <tr>
@@ -356,7 +499,9 @@
 </tr>
 </tbody>
 </table>
-<p>&#x2020; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers.</p>
+<p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. It won&apos;t work if you provide your own, modify for the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p>
+<p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as their in Latin (i.e. Western) numbers.</p>
+<p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning null if it fails.</p>
 <h2 id="polyfills">Polyfills</h2>
 <p>There are a couple of different polyfills available.</p>
 <h3 id="intl">Intl</h3>

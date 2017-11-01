@@ -2288,6 +2288,7 @@ class FixedOffsetZone extends Zone {
   }
 
   offsetName() {
+    // todo: this doesn't localize (even possible?) and isn't sensitive to a `format` argument
     return this.name();
   }
 
@@ -2369,10 +2370,10 @@ class Util {
     return input < 0 ? Math.ceil(input) : Math.floor(input);
   }
 
-  // DateTime -> JS date such that the date's UTC time is the datetimes's local time
+  // DateTime -> DateTime such that the date's UTC time is the datetimes's local time
   static asIfUTC(dt) {
     const ts = dt.ts - dt.offset;
-    return new Date(ts);
+    return DateTime.fromMillis(ts);
   }
 
   // http://stackoverflow.com/a/15030117
@@ -2443,14 +2444,15 @@ class Util {
         .formatToParts(date)
         .find(m => m.type.toLowerCase() === 'timezonename');
       return parsed ? parsed.value : null;
-    } else {
+    } else if (Intl && Intl.DateTimeFormat) {
       // this probably doesn't work for all locales
       const without = new Intl.DateTimeFormat(locale, intl).format(date),
         included = new Intl.DateTimeFormat(locale, modified).format(date),
         diffed = included.substring(without.length),
         trimmed = diffed.replace(/^[, ]+/, '');
-
       return trimmed;
+    } else {
+      return null;
     }
   }
 
@@ -2509,6 +2511,184 @@ class Util {
       offMinSigned = offHour < 0 ? -offMin : offMin;
     return offHour * 60 + offMinSigned;
   }
+}
+
+/**
+ * @private
+ */
+
+class Formats {}
+
+Formats.DATE_SHORT = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric'
+};
+
+Formats.DATE_MED = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+};
+
+Formats.DATE_FULL = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+};
+
+Formats.DATE_HUGE = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long'
+};
+
+Formats.TIME_SIMPLE = {
+  hour: 'numeric',
+  minute: '2-digit'
+};
+
+Formats.TIME_WITH_SECONDS = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+Formats.TIME_WITH_SHORT_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'short'
+};
+
+Formats.TIME_WITH_LONG_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'long'
+};
+
+Formats.TIME_24_SIMPLE = {
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: false
+};
+
+/**
+ * {@link toLocaleString}; format like '09:30:23', always 24-hour.
+ */
+Formats.TIME_24_WITH_SECONDS = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false
+};
+
+/**
+ * {@link toLocaleString}; format like '09:30:23 EDT', always 24-hour.
+ */
+Formats.TIME_24_WITH_SHORT_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+  timeZoneName: 'short'
+};
+
+/**
+ * {@link toLocaleString}; format like '09:30:23 Eastern Daylight Time', always 24-hour.
+ */
+Formats.TIME_24_WITH_LONG_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+  timeZoneName: 'long'
+};
+
+/**
+ * {@link toLocaleString}; format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
+ */
+Formats.DATETIME_SHORT = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit'
+};
+
+/**
+ * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
+ */
+Formats.DATETIME_SHORT_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+Formats.DATETIME_MED = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit'
+};
+
+Formats.DATETIME_MED_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+Formats.DATETIME_FULL = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  timeZoneName: 'short'
+};
+
+Formats.DATETIME_FULL_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'short'
+};
+
+Formats.DATETIME_HUGE = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long',
+  hour: 'numeric',
+  minute: '2-digit',
+  timeZoneName: 'long'
+};
+
+Formats.DATETIME_HUGE_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'long'
+};
+
+function stringify(obj) {
+  return JSON.stringify(obj, Object.keys(obj).sort());
 }
 
 /**
@@ -2629,315 +2809,67 @@ class English {
   static eraForDateTime(dt, length) {
     return English.eras(length)[dt.year < 0 ? 0 : 1];
   }
-}
 
-const localeCache = {};
-
-function intlConfigString(locale, numberingSystem, outputCalendar) {
-  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
-  loc = Array.isArray(locale) ? locale : [locale];
-
-  if (outputCalendar || numberingSystem) {
-    loc = loc.map(l => {
-      l += '-u';
-
-      if (outputCalendar) {
-        l += '-ca-' + outputCalendar;
-      }
-
-      if (numberingSystem) {
-        l += '-nu-' + numberingSystem;
-      }
-      return l;
-    });
-  }
-  return loc;
-}
-
-function mapMonths(f) {
-  const ms = [];
-  for (let i = 1; i <= 12; i++) {
-    const dt = DateTime.utc(2016, i, 1);
-    ms.push(f(dt));
-  }
-  return ms;
-}
-
-function mapWeekdays(f) {
-  const ms = [];
-  for (let i = 1; i <= 7; i++) {
-    const dt = DateTime.utc(2016, 11, 13 + i);
-    ms.push(f(dt));
-  }
-  return ms;
-}
-
-function listStuff(loc, length, defaultOK, englishFn, intlFn) {
-  const mode = loc.listingMode(defaultOK);
-
-  if (mode === 'error') {
-    return null;
-  } else if (mode === 'en') {
-    return englishFn(length);
-  } else {
-    return intlFn(length);
-  }
-}
-
-/**
- * @private
- */
-
-class PolyNumberFormatter {
-  constructor(opts) {
-    this.padTo = opts.padTo || 0;
-    this.round = opts.round || false;
-  }
-
-  format(i) {
-    const maybeRounded = this.round ? Math.round(i) : i;
-    return maybeRounded.toString().padStart(this.padTo, '0');
-  }
-}
-
-class PolyDateFormatter {
-  format(d) {
-    return d.toString();
-  }
-
-  resolvedOptions() {
-    return {
-      locale: 'en-US',
-      numberingSystem: 'latn',
-      outputCalendar: 'gregory'
-    };
-  }
-}
-
-/**
- * @private
- */
-
-class Locale {
-  static fromOpts(opts) {
-    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
-  }
-
-  static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || Settings.defaultLocale,
-      numberingSystemR = numberingSystem || null,
-      outputCalendarR = outputCalendar || null,
-      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
-      cached = localeCache[cacheKey];
-
-    if (cached) {
-      return cached;
-    } else {
-      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
-      localeCache[cacheKey] = fresh;
-      return fresh;
+  static formatString(knownFormat) {
+    // these all have the offsets removed because we don't have access to them
+    // without all the intl stuff this is backfilling
+    const filtered = Util.pick(knownFormat, [
+        'weekday',
+        'era',
+        'year',
+        'month',
+        'day',
+        'hour',
+        'minute',
+        'second',
+        'timeZoneName'
+      ]),
+      key = stringify(filtered),
+      dateTimeHuge = 'EEEE, LLLL d, yyyy, h:mm a';
+    switch (key) {
+      case stringify(Formats.DATE_SHORT):
+        return 'M/d/yyyy';
+      case stringify(Formats.DATE_MED):
+        return 'LLL d, yyyy';
+      case stringify(Formats.DATE_FULL):
+        return 'LLLL d, yyyy';
+      case stringify(Formats.DATE_HUGE):
+        return 'EEEE, LLLL d, yyyy';
+      case stringify(Formats.TIME_SIMPLE):
+        return 'h:mm a';
+      case stringify(Formats.TIME_WITH_SECONDS):
+        return 'h:mm:ss a';
+      case stringify(Formats.TIME_WITH_SHORT_OFFSET):
+        return 'h:mm a';
+      case stringify(Formats.TIME_WITH_LONG_OFFSET):
+        return 'h:mm a';
+      case stringify(Formats.TIME_24_SIMPLE):
+        return 'HH:mm';
+      case stringify(Formats.TIME_24_WITH_SECONDS):
+        return 'HH:mm:ss';
+      case stringify(Formats.TIME_24_WITH_SHORT_OFFSET):
+        return 'HH:mm a';
+      case stringify(Formats.TIME_24_WITH_LONG_OFFSET):
+        return 'HH:mm a';
+      case stringify(Formats.DATETIME_SHORT):
+        return 'M/d/yyyy, h:mm a';
+      case stringify(Formats.DATETIME_MED):
+        return 'LLL d, yyyy, h:mm a';
+      case stringify(Formats.DATETIME_FULL):
+        return 'LLLL d, yyyy, h:mm a';
+      case stringify(Formats.DATETIME_HUGE):
+        return dateTimeHuge;
+      case stringify(Formats.DATETIME_SHORT_WITH_SECONDS):
+        return 'M/d/yyyy, h:mm:ss a';
+      case stringify(Formats.DATETIME_MED_WITH_SECONDS):
+        return 'LLL d, yyyy, h:mm:ss a';
+      case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
+        return 'LLLL d, yyyy, h:mm:ss';
+      case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
+        return 'EEEE, LLLL d, yyyy, h:mm:ss a';
+      default:
+        return dateTimeHuge;
     }
-  }
-
-  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
-    return Locale.create(locale, numberingSystem, outputCalendar);
-  }
-
-  constructor(locale, numbering, outputCalendar) {
-    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
-    Object.defineProperty(this, 'numberingSystem', {
-      value: numbering || null,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'outputCalendar', {
-      value: outputCalendar || null,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
-      enumerable: false
-    });
-
-    // cached usefulness
-    Object.defineProperty(this, 'weekdaysCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'monthsCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'meridiemCache', {
-      value: null,
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'eraCache', {
-      value: {},
-      enumerable: false,
-      writable: true
-    });
-  }
-
-  // todo: cache me
-  listingMode(defaultOk = true) {
-    const hasIntl = Intl && Intl.DateTimeFormat,
-      hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
-      isActuallyEn =
-        this.locale === 'en' ||
-        this.locale.toLowerCase() === 'en-us' ||
-        (hasIntl &&
-          Intl.DateTimeFormat(this.intl)
-            .resolvedOptions()
-            .locale.startsWith('en-US')),
-      hasNoWeirdness =
-        (this.numberingSystem === null || this.numberingSystem === 'latn') &&
-        (this.outputCalendar === null || this.outputCalendar === 'gregory');
-
-    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
-      return 'error';
-    } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {
-      return 'en';
-    } else {
-      return 'intl';
-    }
-  }
-
-  clone(alts) {
-    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
-      return this;
-    } else {
-      return Locale.create(
-        alts.locale || this.locale,
-        alts.numberingSystem || this.numberingSystem,
-        alts.outputCalendar || this.outputCalendar
-      );
-    }
-  }
-
-  months(length, format = false, defaultOK = true) {
-    return listStuff(this, length, defaultOK, English.months, () => {
-      const intl = format ? { month: length, day: 'numeric' } : { month: length },
-        formatStr = format ? 'format' : 'standalone';
-      if (!this.monthsCache[formatStr][length]) {
-        this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));
-      }
-      return this.monthsCache[formatStr][length];
-    });
-  }
-
-  weekdays(length, format = false, defaultOK = true) {
-    return listStuff(this, length, defaultOK, English.weekdays, () => {
-      const intl = format
-          ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
-          : { weekday: length },
-        formatStr = format ? 'format' : 'standalone';
-      if (!this.weekdaysCache[formatStr][length]) {
-        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>
-          this.extract(dt, intl, 'weekday')
-        );
-      }
-      return this.weekdaysCache[formatStr][length];
-    });
-  }
-
-  meridiems(defaultOK = true) {
-    return listStuff(
-      this,
-      undefined,
-      defaultOK,
-      () => English.meridiems,
-      () => {
-        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
-        // for AM and PM. This is probably wrong, but it's makes parsing way easier.
-        if (!this.meridiemCache) {
-          const intl = { hour: 'numeric', hour12: true };
-          this.meridiemCache = [
-            DateTime.utc(2016, 11, 13, 9),
-            DateTime.utc(2016, 11, 13, 19)
-          ].map(dt => this.extract(dt, intl, 'dayperiod'));
-        }
-
-        return this.meridiemCache;
-      }
-    );
-  }
-
-  eras(length, defaultOK = true) {
-    return listStuff(this, length, defaultOK, English.eras, () => {
-      const intl = { era: length };
-
-      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
-      // to definitely enumerate them.
-      if (!this.eraCache[length]) {
-        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
-          this.extract(dt, intl, 'era')
-        );
-      }
-
-      return this.eraCache[length];
-    });
-  }
-
-  extract(dt, intlOpts, field) {
-    const [df, d] = this.dtFormatter(dt, intlOpts),
-      results = df.formatToParts(d),
-      matching = results.find(m => m.type.toLowerCase() === field);
-
-    return matching ? matching.value : null;
-  }
-
-  numberFormatter(opts = {}, intlOpts = {}) {
-    if (Intl && Intl.NumberFormat) {
-      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
-
-      if (opts.padTo > 0) {
-        realIntlOpts.minimumIntegerDigits = opts.padTo;
-      }
-
-      if (opts.round) {
-        realIntlOpts.maximumFractionDigits = 0;
-      }
-
-      return new Intl.NumberFormat(this.intl, realIntlOpts);
-    } else {
-      return new PolyNumberFormatter(opts);
-    }
-  }
-
-  dtFormatter(dt, intlOpts = {}) {
-    let d, z;
-
-    if (dt.zone.universal) {
-      // if we have a fixed-offset zone that isn't actually UTC,
-      // (like UTC+8), we need to make do with just displaying
-      // the time in UTC; the formatter doesn't know how to handle UTC+8
-      d = Util.asIfUTC(dt);
-      z = 'UTC';
-    } else if (dt.zone.type === 'local') {
-      d = dt.toJSDate();
-    } else {
-      d = dt.toJSDate();
-      z = dt.zone.name;
-    }
-
-    if (Intl && Intl.DateTimeFormat) {
-      const realIntlOpts = Object.assign({}, intlOpts);
-      if (z) {
-        realIntlOpts.timeZone = z;
-      }
-      return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
-    } else {
-      return [new PolyDateFormatter(), d];
-    }
-  }
-
-  equals(other) {
-    return (
-      this.locale === other.locale &&
-      this.numberingSystem === other.numberingSystem &&
-      this.outputCalendar === other.outputCalendar
-    );
   }
 }
 
@@ -3003,18 +2935,18 @@ class Formatter {
   }
 
   formatDateTime(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.format(d);
+    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.format();
   }
 
   formatDateTimeParts(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.formatToParts(d);
+    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.formatToParts();
   }
 
   resolvedOptions(dt, opts = {}) {
-    const [df, d] = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
-    return df.resolvedOptions(d);
+    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.resolvedOptions();
   }
 
   num(n, p = 0) {
@@ -3270,8 +3202,6 @@ class Formatter {
     return stringifyTokens(Formatter.parseFormat(fmt), tokenToString);
   }
 
-  formatDuration() {}
-
   formatDurationFromString(dur, fmt) {
     const tokenToField = token => {
         switch (token[0]) {
@@ -3308,6 +3238,340 @@ class Formatter {
       ),
       collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter(t => t));
     return stringifyTokens(tokens, tokenToString(collapsed));
+  }
+}
+
+const localeCache = {};
+
+function intlConfigString(locale, numberingSystem, outputCalendar) {
+  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
+  loc = Array.isArray(locale) ? locale : [locale];
+
+  if (outputCalendar || numberingSystem) {
+    loc = loc.map(l => {
+      l += '-u';
+
+      if (outputCalendar) {
+        l += '-ca-' + outputCalendar;
+      }
+
+      if (numberingSystem) {
+        l += '-nu-' + numberingSystem;
+      }
+      return l;
+    });
+  }
+  return loc;
+}
+
+function mapMonths(f) {
+  const ms = [];
+  for (let i = 1; i <= 12; i++) {
+    const dt = DateTime.utc(2016, i, 1);
+    ms.push(f(dt));
+  }
+  return ms;
+}
+
+function mapWeekdays(f) {
+  const ms = [];
+  for (let i = 1; i <= 7; i++) {
+    const dt = DateTime.utc(2016, 11, 13 + i);
+    ms.push(f(dt));
+  }
+  return ms;
+}
+
+function listStuff(loc, length, defaultOK, englishFn, intlFn) {
+  const mode = loc.listingMode(defaultOK);
+
+  if (mode === 'error') {
+    return null;
+  } else if (mode === 'en') {
+    return englishFn(length);
+  } else {
+    return intlFn(length);
+  }
+}
+
+/**
+ * @private
+ */
+
+class PolyNumberFormatter {
+  constructor(opts) {
+    this.padTo = opts.padTo || 0;
+    this.round = opts.round || false;
+  }
+
+  format(i) {
+    const maybeRounded = this.round ? Math.round(i) : i;
+    return maybeRounded.toString().padStart(this.padTo, '0');
+  }
+}
+
+class PolyDateFormatter {
+  constructor(dt, intl, opts) {
+    this.opts = opts;
+    this.hasIntl = Intl && Intl.DateTimeFormat;
+
+    let z;
+    if (dt.zone.universal) {
+      // if we have a fixed-offset zone that isn't actually UTC,
+      // (like UTC+8), we need to make do with just displaying
+      // the time in UTC; the formatter doesn't know how to handle UTC+8
+      this.dt = Util.asIfUTC(dt);
+      z = 'UTC';
+    } else if (dt.zone.type === 'local') {
+      this.dt = dt;
+    } else {
+      this.dt = dt;
+      z = dt.zone.name;
+    }
+
+    if (this.hasIntl) {
+      const realIntlOpts = Object.assign({}, this.opts);
+      if (z) {
+        realIntlOpts.timeZone = z;
+      }
+      this.dtf = new Intl.DateTimeFormat(intl, realIntlOpts);
+    }
+  }
+
+  format() {
+    if (this.hasIntl) {
+      return this.dtf.format(this.dt.toJSDate());
+    } else {
+      const tokenFormat = English.formatString(this.opts),
+        loc = Locale.create('en-US');
+      return Formatter.create(loc).formatDateTimeFromString(this.dt, tokenFormat);
+    }
+  }
+
+  formatToParts() {
+    if (this.hasIntl && Intl.DateTimeFormat.prototype.formatToParts) {
+      return this.dtf.formatToParts(this.dt.toJSDate());
+    } else {
+      // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings
+      // and IMO it's too weird to have an uncanny valley like that
+      return [];
+    }
+  }
+
+  resolvedOptions() {
+    if (this.hasIntl) {
+      return this.dtf.resolvedOptions();
+    } else {
+      return {
+        locale: 'en-US',
+        numberingSystem: 'latn',
+        outputCalendar: 'gregory'
+      };
+    }
+  }
+}
+
+/**
+ * @private
+ */
+
+class Locale {
+  static fromOpts(opts) {
+    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
+  }
+
+  static create(locale, numberingSystem, outputCalendar) {
+    const localeR = locale || Settings.defaultLocale,
+      numberingSystemR = numberingSystem || null,
+      outputCalendarR = outputCalendar || null,
+      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
+      cached = localeCache[cacheKey];
+
+    if (cached) {
+      return cached;
+    } else {
+      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
+      localeCache[cacheKey] = fresh;
+      return fresh;
+    }
+  }
+
+  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
+    return Locale.create(locale, numberingSystem, outputCalendar);
+  }
+
+  constructor(locale, numbering, outputCalendar) {
+    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
+    Object.defineProperty(this, 'numberingSystem', {
+      value: numbering || null,
+      enumerable: true
+    });
+    Object.defineProperty(this, 'outputCalendar', {
+      value: outputCalendar || null,
+      enumerable: true
+    });
+    Object.defineProperty(this, 'intl', {
+      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
+      enumerable: false
+    });
+
+    // cached usefulness
+    Object.defineProperty(this, 'weekdaysCache', {
+      value: { format: {}, standalone: {} },
+      enumerable: false
+    });
+    Object.defineProperty(this, 'monthsCache', {
+      value: { format: {}, standalone: {} },
+      enumerable: false
+    });
+    Object.defineProperty(this, 'meridiemCache', {
+      value: null,
+      enumerable: false,
+      writable: true
+    });
+    Object.defineProperty(this, 'eraCache', {
+      value: {},
+      enumerable: false,
+      writable: true
+    });
+  }
+
+  // todo: cache me
+  listingMode(defaultOk = true) {
+    const hasIntl = Intl && Intl.DateTimeFormat,
+      hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
+      isActuallyEn =
+        this.locale === 'en' ||
+        this.locale.toLowerCase() === 'en-us' ||
+        (hasIntl &&
+          Intl.DateTimeFormat(this.intl)
+            .resolvedOptions()
+            .locale.startsWith('en-US')),
+      hasNoWeirdness =
+        (this.numberingSystem === null || this.numberingSystem === 'latn') &&
+        (this.outputCalendar === null || this.outputCalendar === 'gregory');
+
+    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
+      return 'error';
+    } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {
+      return 'en';
+    } else {
+      return 'intl';
+    }
+  }
+
+  clone(alts) {
+    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
+      return this;
+    } else {
+      return Locale.create(
+        alts.locale || this.locale,
+        alts.numberingSystem || this.numberingSystem,
+        alts.outputCalendar || this.outputCalendar
+      );
+    }
+  }
+
+  months(length, format = false, defaultOK = true) {
+    return listStuff(this, length, defaultOK, English.months, () => {
+      const intl = format ? { month: length, day: 'numeric' } : { month: length },
+        formatStr = format ? 'format' : 'standalone';
+      if (!this.monthsCache[formatStr][length]) {
+        this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));
+      }
+      return this.monthsCache[formatStr][length];
+    });
+  }
+
+  weekdays(length, format = false, defaultOK = true) {
+    return listStuff(this, length, defaultOK, English.weekdays, () => {
+      const intl = format
+          ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }
+          : { weekday: length },
+        formatStr = format ? 'format' : 'standalone';
+      if (!this.weekdaysCache[formatStr][length]) {
+        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>
+          this.extract(dt, intl, 'weekday')
+        );
+      }
+      return this.weekdaysCache[formatStr][length];
+    });
+  }
+
+  meridiems(defaultOK = true) {
+    return listStuff(
+      this,
+      undefined,
+      defaultOK,
+      () => English.meridiems,
+      () => {
+        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
+        // for AM and PM. This is probably wrong, but it's makes parsing way easier.
+        if (!this.meridiemCache) {
+          const intl = { hour: 'numeric', hour12: true };
+          this.meridiemCache = [
+            DateTime.utc(2016, 11, 13, 9),
+            DateTime.utc(2016, 11, 13, 19)
+          ].map(dt => this.extract(dt, intl, 'dayperiod'));
+        }
+
+        return this.meridiemCache;
+      }
+    );
+  }
+
+  eras(length, defaultOK = true) {
+    return listStuff(this, length, defaultOK, English.eras, () => {
+      const intl = { era: length };
+
+      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
+      // to definitely enumerate them.
+      if (!this.eraCache[length]) {
+        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
+          this.extract(dt, intl, 'era')
+        );
+      }
+
+      return this.eraCache[length];
+    });
+  }
+
+  extract(dt, intlOpts, field) {
+    const df = this.dtFormatter(dt, intlOpts),
+      results = df.formatToParts(),
+      matching = results.find(m => m.type.toLowerCase() === field);
+
+    return matching ? matching.value : null;
+  }
+
+  numberFormatter(opts = {}, intlOpts = {}) {
+    if (Intl && Intl.NumberFormat) {
+      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+
+      if (opts.padTo > 0) {
+        realIntlOpts.minimumIntegerDigits = opts.padTo;
+      }
+
+      if (opts.round) {
+        realIntlOpts.maximumFractionDigits = 0;
+      }
+
+      return new Intl.NumberFormat(this.intl, realIntlOpts);
+    } else {
+      return new PolyNumberFormatter(opts);
+    }
+  }
+
+  dtFormatter(dt, intlOpts = {}) {
+    return new PolyDateFormatter(dt, this.intl, intlOpts);
+  }
+
+  equals(other) {
+    return (
+      this.locale === other.locale &&
+      this.numberingSystem === other.numberingSystem &&
+      this.outputCalendar === other.outputCalendar
+    );
   }
 }
 
@@ -6160,7 +6424,7 @@ class DateTime {
    * @example DateTime.local().toLocaleString({hour: '2-digit', minute: '2-digit'}); //=> '11:32'
    * @return {string}
    */
-  toLocaleString(opts = {}) {
+  toLocaleString(opts = Formats.DATE_SHORT) {
     return this.isValid
       ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this)
       : INVALID;
@@ -6503,253 +6767,140 @@ class DateTime {
    * {@link toLocaleString} format like 10/14/1983
    */
   static get DATE_SHORT() {
-    return {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric'
-    };
+    return Formats.DATE_SHORT;
   }
 
   /**
    * {@link toLocaleString} format like 'Oct 14, 1983'
    */
   static get DATE_MED() {
-    return {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    };
+    return Formats.DATE_MED;
   }
 
   /**
    * {@link toLocaleString} format like 'October 14, 1983'
    */
   static get DATE_FULL() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    };
+    return Formats.DATE_FULL;
   }
 
   /**
    * {@link toLocaleString} format like 'Tuesday, October 14, 1983'
    */
   static get DATE_HUGE() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    };
+    return Formats.DATE_HUGE;
   }
 
   /**
    * {@link toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
    */
   static get TIME_SIMPLE() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit'
-    };
+    return Formats.TIME_SIMPLE;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
    */
   static get TIME_WITH_SECONDS() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit'
-    };
+    return Formats.TIME_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
    */
   static get TIME_WITH_SHORT_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short'
-    };
+    return Formats.TIME_WITH_SHORT_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    */
   static get TIME_WITH_LONG_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long'
-    };
+    return Formats.TIME_WITH_LONG_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '09:30', always 24-hour.
    */
   static get TIME_24_SIMPLE() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: false
-    };
+    return Formats.TIME_24_SIMPLE;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23', always 24-hour.
    */
   static get TIME_24_WITH_SECONDS() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    };
+    return Formats.TIME_24_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 EDT', always 24-hour.
    */
   static get TIME_24_WITH_SHORT_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZoneName: 'short'
-    };
+    return Formats.TIME_24_WITH_SHORT_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
    */
   static get TIME_24_WITH_LONG_OFFSET() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-      timeZoneName: 'long'
-    };
+    return Formats.TIME_24_WITH_LONG_OFFSET;
   }
 
   /**
    * {@link toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_SHORT() {
-    return {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    };
+    return Formats.DATETIME_SHORT;
   }
 
   /**
    * {@link toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_SHORT_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit'
-    };
+    return Formats.DATETIME_SHORT_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_MED() {
-    return {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    };
+    return Formats.DATETIME_MED;
   }
 
   /**
    * {@link toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
    */
   static get DATETIME_MED_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit'
-    };
+    return Formats.DATETIME_MED_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
    */
   static get DATETIME_FULL() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZoneName: 'short'
-    };
+    return Formats.DATETIME_FULL;
   }
 
   /**
    * {@link toLocaleString} format like 'October 14, 1983, 9:303 AM EDT'. Only 12-hour if the locale is.
    */
   static get DATETIME_FULL_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short'
-    };
+    return Formats.DATETIME_FULL_WITH_SECONDS;
   }
 
   /**
    * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    */
   static get DATETIME_HUGE() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZoneName: 'long'
-    };
+    return Formats.DATETIME_HUGE;
   }
 
   /**
    * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    */
   static get DATETIME_HUGE_WITH_SECONDS() {
-    return {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long'
-    };
+    return Formats.DATETIME_HUGE_WITH_SECONDS;
   }
 }
 

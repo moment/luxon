@@ -2691,6 +2691,7 @@ var FixedOffsetZone = function (_Zone) {
   createClass(FixedOffsetZone, [{
     key: 'offsetName',
     value: function offsetName() {
+      // todo: this doesn't localize (even possible?) and isn't sensitive to a `format` argument
       return this.name();
     }
   }, {
@@ -2811,13 +2812,13 @@ var Util = function () {
       return input < 0 ? Math.ceil(input) : Math.floor(input);
     }
 
-    // DateTime -> JS date such that the date's UTC time is the datetimes's local time
+    // DateTime -> DateTime such that the date's UTC time is the datetimes's local time
 
   }, {
     key: 'asIfUTC',
     value: function asIfUTC(dt) {
       var ts = dt.ts - dt.offset;
-      return new Date(ts);
+      return DateTime.fromMillis(ts);
     }
 
     // http://stackoverflow.com/a/15030117
@@ -2897,14 +2898,15 @@ var Util = function () {
           return m.type.toLowerCase() === 'timezonename';
         });
         return parsed ? parsed.value : null;
-      } else {
+      } else if (Intl && Intl.DateTimeFormat) {
         // this probably doesn't work for all locales
         var without = new Intl.DateTimeFormat(locale, intl).format(date),
             included = new Intl.DateTimeFormat(locale, modified).format(date),
             diffed = included.substring(without.length),
             trimmed = diffed.replace(/^[, ]+/, '');
-
         return trimmed;
+      } else {
+        return null;
       }
     }
   }, {
@@ -2972,6 +2974,186 @@ var Util = function () {
   }]);
   return Util;
 }();
+
+/**
+ * @private
+ */
+
+var Formats = function Formats() {
+  classCallCheck(this, Formats);
+};
+
+Formats.DATE_SHORT = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric'
+};
+
+Formats.DATE_MED = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+};
+
+Formats.DATE_FULL = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+};
+
+Formats.DATE_HUGE = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long'
+};
+
+Formats.TIME_SIMPLE = {
+  hour: 'numeric',
+  minute: '2-digit'
+};
+
+Formats.TIME_WITH_SECONDS = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+Formats.TIME_WITH_SHORT_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'short'
+};
+
+Formats.TIME_WITH_LONG_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'long'
+};
+
+Formats.TIME_24_SIMPLE = {
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: false
+};
+
+/**
+ * {@link toLocaleString}; format like '09:30:23', always 24-hour.
+ */
+Formats.TIME_24_WITH_SECONDS = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false
+};
+
+/**
+ * {@link toLocaleString}; format like '09:30:23 EDT', always 24-hour.
+ */
+Formats.TIME_24_WITH_SHORT_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+  timeZoneName: 'short'
+};
+
+/**
+ * {@link toLocaleString}; format like '09:30:23 Eastern Daylight Time', always 24-hour.
+ */
+Formats.TIME_24_WITH_LONG_OFFSET = {
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+  timeZoneName: 'long'
+};
+
+/**
+ * {@link toLocaleString}; format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
+ */
+Formats.DATETIME_SHORT = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit'
+};
+
+/**
+ * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
+ */
+Formats.DATETIME_SHORT_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+Formats.DATETIME_MED = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit'
+};
+
+Formats.DATETIME_MED_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
+Formats.DATETIME_FULL = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  timeZoneName: 'short'
+};
+
+Formats.DATETIME_FULL_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'short'
+};
+
+Formats.DATETIME_HUGE = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long',
+  hour: 'numeric',
+  minute: '2-digit',
+  timeZoneName: 'long'
+};
+
+Formats.DATETIME_HUGE_WITH_SECONDS = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'long'
+};
+
+function stringify(obj) {
+  return JSON.stringify(obj, Object.keys(obj).sort());
+}
 
 /**
  * @private
@@ -3051,6 +3233,59 @@ var English = function () {
       return English.eras(length)[dt.year < 0 ? 0 : 1];
     }
   }, {
+    key: 'formatString',
+    value: function formatString(knownFormat) {
+      // these all have the offsets removed because we don't have access to them
+      // without all the intl stuff this is backfilling
+      var filtered = Util.pick(knownFormat, ['weekday', 'era', 'year', 'month', 'day', 'hour', 'minute', 'second', 'timeZoneName']),
+          key = stringify(filtered),
+          dateTimeHuge = 'EEEE, LLLL d, yyyy, h:mm a';
+      switch (key) {
+        case stringify(Formats.DATE_SHORT):
+          return 'M/d/yyyy';
+        case stringify(Formats.DATE_MED):
+          return 'LLL d, yyyy';
+        case stringify(Formats.DATE_FULL):
+          return 'LLLL d, yyyy';
+        case stringify(Formats.DATE_HUGE):
+          return 'EEEE, LLLL d, yyyy';
+        case stringify(Formats.TIME_SIMPLE):
+          return 'h:mm a';
+        case stringify(Formats.TIME_WITH_SECONDS):
+          return 'h:mm:ss a';
+        case stringify(Formats.TIME_WITH_SHORT_OFFSET):
+          return 'h:mm a';
+        case stringify(Formats.TIME_WITH_LONG_OFFSET):
+          return 'h:mm a';
+        case stringify(Formats.TIME_24_SIMPLE):
+          return 'HH:mm';
+        case stringify(Formats.TIME_24_WITH_SECONDS):
+          return 'HH:mm:ss';
+        case stringify(Formats.TIME_24_WITH_SHORT_OFFSET):
+          return 'HH:mm a';
+        case stringify(Formats.TIME_24_WITH_LONG_OFFSET):
+          return 'HH:mm a';
+        case stringify(Formats.DATETIME_SHORT):
+          return 'M/d/yyyy, h:mm a';
+        case stringify(Formats.DATETIME_MED):
+          return 'LLL d, yyyy, h:mm a';
+        case stringify(Formats.DATETIME_FULL):
+          return 'LLLL d, yyyy, h:mm a';
+        case stringify(Formats.DATETIME_HUGE):
+          return dateTimeHuge;
+        case stringify(Formats.DATETIME_SHORT_WITH_SECONDS):
+          return 'M/d/yyyy, h:mm:ss a';
+        case stringify(Formats.DATETIME_MED_WITH_SECONDS):
+          return 'LLL d, yyyy, h:mm:ss a';
+        case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
+          return 'LLLL d, yyyy, h:mm:ss';
+        case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
+          return 'EEEE, LLLL d, yyyy, h:mm:ss a';
+        default:
+          return dateTimeHuge;
+      }
+    }
+  }, {
     key: 'monthsLong',
     get: function get$$1() {
       return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -3102,368 +3337,6 @@ var English = function () {
     }
   }]);
   return English;
-}();
-
-var localeCache = {};
-
-function intlConfigString(locale, numberingSystem, outputCalendar) {
-  var loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
-  loc = Array.isArray(locale) ? locale : [locale];
-
-  if (outputCalendar || numberingSystem) {
-    loc = loc.map(function (l) {
-      l += '-u';
-
-      if (outputCalendar) {
-        l += '-ca-' + outputCalendar;
-      }
-
-      if (numberingSystem) {
-        l += '-nu-' + numberingSystem;
-      }
-      return l;
-    });
-  }
-  return loc;
-}
-
-function mapMonths(f) {
-  var ms = [];
-  for (var i = 1; i <= 12; i++) {
-    var dt = DateTime.utc(2016, i, 1);
-    ms.push(f(dt));
-  }
-  return ms;
-}
-
-function mapWeekdays(f) {
-  var ms = [];
-  for (var i = 1; i <= 7; i++) {
-    var dt = DateTime.utc(2016, 11, 13 + i);
-    ms.push(f(dt));
-  }
-  return ms;
-}
-
-function listStuff(loc, length, defaultOK, englishFn, intlFn) {
-  var mode = loc.listingMode(defaultOK);
-
-  if (mode === 'error') {
-    return null;
-  } else if (mode === 'en') {
-    return englishFn(length);
-  } else {
-    return intlFn(length);
-  }
-}
-
-/**
- * @private
- */
-
-var PolyNumberFormatter = function () {
-  function PolyNumberFormatter(opts) {
-    classCallCheck(this, PolyNumberFormatter);
-
-    this.padTo = opts.padTo || 0;
-    this.round = opts.round || false;
-  }
-
-  createClass(PolyNumberFormatter, [{
-    key: 'format',
-    value: function format(i) {
-      var maybeRounded = this.round ? Math.round(i) : i;
-      return maybeRounded.toString().padStart(this.padTo, '0');
-    }
-  }]);
-  return PolyNumberFormatter;
-}();
-
-var PolyDateFormatter = function () {
-  function PolyDateFormatter() {
-    classCallCheck(this, PolyDateFormatter);
-  }
-
-  createClass(PolyDateFormatter, [{
-    key: 'format',
-    value: function format(d) {
-      return d.toString();
-    }
-  }, {
-    key: 'resolvedOptions',
-    value: function resolvedOptions() {
-      return {
-        locale: 'en-US',
-        numberingSystem: 'latn',
-        outputCalendar: 'gregory'
-      };
-    }
-  }]);
-  return PolyDateFormatter;
-}();
-
-/**
- * @private
- */
-
-var Locale = function () {
-  createClass(Locale, null, [{
-    key: 'fromOpts',
-    value: function fromOpts(opts) {
-      return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
-    }
-  }, {
-    key: 'create',
-    value: function create(locale, numberingSystem, outputCalendar) {
-      var localeR = locale || Settings.defaultLocale,
-          numberingSystemR = numberingSystem || null,
-          outputCalendarR = outputCalendar || null,
-          cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR,
-          cached = localeCache[cacheKey];
-
-      if (cached) {
-        return cached;
-      } else {
-        var fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
-        localeCache[cacheKey] = fresh;
-        return fresh;
-      }
-    }
-  }, {
-    key: 'fromObject',
-    value: function fromObject() {
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          locale = _ref.locale,
-          numberingSystem = _ref.numberingSystem,
-          outputCalendar = _ref.outputCalendar;
-
-      return Locale.create(locale, numberingSystem, outputCalendar);
-    }
-  }]);
-
-  function Locale(locale, numbering, outputCalendar) {
-    classCallCheck(this, Locale);
-
-    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
-    Object.defineProperty(this, 'numberingSystem', {
-      value: numbering || null,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'outputCalendar', {
-      value: outputCalendar || null,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
-      enumerable: false
-    });
-
-    // cached usefulness
-    Object.defineProperty(this, 'weekdaysCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'monthsCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'meridiemCache', {
-      value: null,
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'eraCache', {
-      value: {},
-      enumerable: false,
-      writable: true
-    });
-  }
-
-  // todo: cache me
-
-
-  createClass(Locale, [{
-    key: 'listingMode',
-    value: function listingMode() {
-      var defaultOk = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-      var hasIntl = Intl && Intl.DateTimeFormat,
-          hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
-          isActuallyEn = this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || hasIntl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US'),
-          hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
-
-      if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
-        return 'error';
-      } else if (!hasFTP || isActuallyEn && hasNoWeirdness) {
-        return 'en';
-      } else {
-        return 'intl';
-      }
-    }
-  }, {
-    key: 'clone',
-    value: function clone(alts) {
-      if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
-        return this;
-      } else {
-        return Locale.create(alts.locale || this.locale, alts.numberingSystem || this.numberingSystem, alts.outputCalendar || this.outputCalendar);
-      }
-    }
-  }, {
-    key: 'months',
-    value: function months(length) {
-      var _this = this;
-
-      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var defaultOK = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-      return listStuff(this, length, defaultOK, English.months, function () {
-        var intl = format ? { month: length, day: 'numeric' } : { month: length },
-            formatStr = format ? 'format' : 'standalone';
-        if (!_this.monthsCache[formatStr][length]) {
-          _this.monthsCache[formatStr][length] = mapMonths(function (dt) {
-            return _this.extract(dt, intl, 'month');
-          });
-        }
-        return _this.monthsCache[formatStr][length];
-      });
-    }
-  }, {
-    key: 'weekdays',
-    value: function weekdays(length) {
-      var _this2 = this;
-
-      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var defaultOK = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-      return listStuff(this, length, defaultOK, English.weekdays, function () {
-        var intl = format ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' } : { weekday: length },
-            formatStr = format ? 'format' : 'standalone';
-        if (!_this2.weekdaysCache[formatStr][length]) {
-          _this2.weekdaysCache[formatStr][length] = mapWeekdays(function (dt) {
-            return _this2.extract(dt, intl, 'weekday');
-          });
-        }
-        return _this2.weekdaysCache[formatStr][length];
-      });
-    }
-  }, {
-    key: 'meridiems',
-    value: function meridiems() {
-      var _this3 = this;
-
-      var defaultOK = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-      return listStuff(this, undefined, defaultOK, function () {
-        return English.meridiems;
-      }, function () {
-        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
-        // for AM and PM. This is probably wrong, but it's makes parsing way easier.
-        if (!_this3.meridiemCache) {
-          var intl = { hour: 'numeric', hour12: true };
-          _this3.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(function (dt) {
-            return _this3.extract(dt, intl, 'dayperiod');
-          });
-        }
-
-        return _this3.meridiemCache;
-      });
-    }
-  }, {
-    key: 'eras',
-    value: function eras(length) {
-      var _this4 = this;
-
-      var defaultOK = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-      return listStuff(this, length, defaultOK, English.eras, function () {
-        var intl = { era: length };
-
-        // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
-        // to definitely enumerate them.
-        if (!_this4.eraCache[length]) {
-          _this4.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(function (dt) {
-            return _this4.extract(dt, intl, 'era');
-          });
-        }
-
-        return _this4.eraCache[length];
-      });
-    }
-  }, {
-    key: 'extract',
-    value: function extract(dt, intlOpts, field) {
-      var _dtFormatter = this.dtFormatter(dt, intlOpts),
-          _dtFormatter2 = slicedToArray(_dtFormatter, 2),
-          df = _dtFormatter2[0],
-          d = _dtFormatter2[1],
-          results = df.formatToParts(d),
-          matching = results.find(function (m) {
-        return m.type.toLowerCase() === field;
-      });
-
-      return matching ? matching.value : null;
-    }
-  }, {
-    key: 'numberFormatter',
-    value: function numberFormatter() {
-      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var intlOpts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      if (Intl && Intl.NumberFormat) {
-        var realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
-
-        if (opts.padTo > 0) {
-          realIntlOpts.minimumIntegerDigits = opts.padTo;
-        }
-
-        if (opts.round) {
-          realIntlOpts.maximumFractionDigits = 0;
-        }
-
-        return new Intl.NumberFormat(this.intl, realIntlOpts);
-      } else {
-        return new PolyNumberFormatter(opts);
-      }
-    }
-  }, {
-    key: 'dtFormatter',
-    value: function dtFormatter(dt) {
-      var intlOpts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      var d = void 0,
-          z = void 0;
-
-      if (dt.zone.universal) {
-        // if we have a fixed-offset zone that isn't actually UTC,
-        // (like UTC+8), we need to make do with just displaying
-        // the time in UTC; the formatter doesn't know how to handle UTC+8
-        d = Util.asIfUTC(dt);
-        z = 'UTC';
-      } else if (dt.zone.type === 'local') {
-        d = dt.toJSDate();
-      } else {
-        d = dt.toJSDate();
-        z = dt.zone.name;
-      }
-
-      if (Intl && Intl.DateTimeFormat) {
-        var realIntlOpts = Object.assign({}, intlOpts);
-        if (z) {
-          realIntlOpts.timeZone = z;
-        }
-        return [new Intl.DateTimeFormat(this.intl, realIntlOpts), d];
-      } else {
-        return [new PolyDateFormatter(), d];
-      }
-    }
-  }, {
-    key: 'equals',
-    value: function equals(other) {
-      return this.locale === other.locale && this.numberingSystem === other.numberingSystem && this.outputCalendar === other.outputCalendar;
-    }
-  }]);
-  return Locale;
 }();
 
 function stringifyTokens(splits, tokenToString) {
@@ -3562,36 +3435,24 @@ var Formatter = function () {
     value: function formatDateTime(dt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var _loc$dtFormatter = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts)),
-          _loc$dtFormatter2 = slicedToArray(_loc$dtFormatter, 2),
-          df = _loc$dtFormatter2[0],
-          d = _loc$dtFormatter2[1];
-
-      return df.format(d);
+      var df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+      return df.format();
     }
   }, {
     key: 'formatDateTimeParts',
     value: function formatDateTimeParts(dt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var _loc$dtFormatter3 = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts)),
-          _loc$dtFormatter4 = slicedToArray(_loc$dtFormatter3, 2),
-          df = _loc$dtFormatter4[0],
-          d = _loc$dtFormatter4[1];
-
-      return df.formatToParts(d);
+      var df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+      return df.formatToParts();
     }
   }, {
     key: 'resolvedOptions',
     value: function resolvedOptions(dt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var _loc$dtFormatter5 = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts)),
-          _loc$dtFormatter6 = slicedToArray(_loc$dtFormatter5, 2),
-          df = _loc$dtFormatter6[0],
-          d = _loc$dtFormatter6[1];
-
-      return df.resolvedOptions(d);
+      var df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+      return df.resolvedOptions();
     }
   }, {
     key: 'num',
@@ -3844,9 +3705,6 @@ var Formatter = function () {
       return stringifyTokens(Formatter.parseFormat(fmt), tokenToString);
     }
   }, {
-    key: 'formatDuration',
-    value: function formatDuration() {}
-  }, {
     key: 'formatDurationFromString',
     value: function formatDurationFromString(dur, fmt) {
       var _this2 = this;
@@ -3894,6 +3752,387 @@ var Formatter = function () {
     }
   }]);
   return Formatter;
+}();
+
+var localeCache = {};
+
+function intlConfigString(locale, numberingSystem, outputCalendar) {
+  var loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
+  loc = Array.isArray(locale) ? locale : [locale];
+
+  if (outputCalendar || numberingSystem) {
+    loc = loc.map(function (l) {
+      l += '-u';
+
+      if (outputCalendar) {
+        l += '-ca-' + outputCalendar;
+      }
+
+      if (numberingSystem) {
+        l += '-nu-' + numberingSystem;
+      }
+      return l;
+    });
+  }
+  return loc;
+}
+
+function mapMonths(f) {
+  var ms = [];
+  for (var i = 1; i <= 12; i++) {
+    var dt = DateTime.utc(2016, i, 1);
+    ms.push(f(dt));
+  }
+  return ms;
+}
+
+function mapWeekdays(f) {
+  var ms = [];
+  for (var i = 1; i <= 7; i++) {
+    var dt = DateTime.utc(2016, 11, 13 + i);
+    ms.push(f(dt));
+  }
+  return ms;
+}
+
+function listStuff(loc, length, defaultOK, englishFn, intlFn) {
+  var mode = loc.listingMode(defaultOK);
+
+  if (mode === 'error') {
+    return null;
+  } else if (mode === 'en') {
+    return englishFn(length);
+  } else {
+    return intlFn(length);
+  }
+}
+
+/**
+ * @private
+ */
+
+var PolyNumberFormatter = function () {
+  function PolyNumberFormatter(opts) {
+    classCallCheck(this, PolyNumberFormatter);
+
+    this.padTo = opts.padTo || 0;
+    this.round = opts.round || false;
+  }
+
+  createClass(PolyNumberFormatter, [{
+    key: 'format',
+    value: function format(i) {
+      var maybeRounded = this.round ? Math.round(i) : i;
+      return maybeRounded.toString().padStart(this.padTo, '0');
+    }
+  }]);
+  return PolyNumberFormatter;
+}();
+
+var PolyDateFormatter = function () {
+  function PolyDateFormatter(dt, intl, opts) {
+    classCallCheck(this, PolyDateFormatter);
+
+    this.opts = opts;
+    this.hasIntl = Intl && Intl.DateTimeFormat;
+
+    var z = void 0;
+    if (dt.zone.universal) {
+      // if we have a fixed-offset zone that isn't actually UTC,
+      // (like UTC+8), we need to make do with just displaying
+      // the time in UTC; the formatter doesn't know how to handle UTC+8
+      this.dt = Util.asIfUTC(dt);
+      z = 'UTC';
+    } else if (dt.zone.type === 'local') {
+      this.dt = dt;
+    } else {
+      this.dt = dt;
+      z = dt.zone.name;
+    }
+
+    if (this.hasIntl) {
+      var realIntlOpts = Object.assign({}, this.opts);
+      if (z) {
+        realIntlOpts.timeZone = z;
+      }
+      this.dtf = new Intl.DateTimeFormat(intl, realIntlOpts);
+    }
+  }
+
+  createClass(PolyDateFormatter, [{
+    key: 'format',
+    value: function format() {
+      if (this.hasIntl) {
+        return this.dtf.format(this.dt.toJSDate());
+      } else {
+        var tokenFormat = English.formatString(this.opts),
+            loc = Locale.create('en-US');
+        return Formatter.create(loc).formatDateTimeFromString(this.dt, tokenFormat);
+      }
+    }
+  }, {
+    key: 'formatToParts',
+    value: function formatToParts() {
+      if (this.hasIntl && Intl.DateTimeFormat.prototype.formatToParts) {
+        return this.dtf.formatToParts(this.dt.toJSDate());
+      } else {
+        // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings
+        // and IMO it's too weird to have an uncanny valley like that
+        return [];
+      }
+    }
+  }, {
+    key: 'resolvedOptions',
+    value: function resolvedOptions() {
+      if (this.hasIntl) {
+        return this.dtf.resolvedOptions();
+      } else {
+        return {
+          locale: 'en-US',
+          numberingSystem: 'latn',
+          outputCalendar: 'gregory'
+        };
+      }
+    }
+  }]);
+  return PolyDateFormatter;
+}();
+
+/**
+ * @private
+ */
+
+var Locale = function () {
+  createClass(Locale, null, [{
+    key: 'fromOpts',
+    value: function fromOpts(opts) {
+      return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
+    }
+  }, {
+    key: 'create',
+    value: function create(locale, numberingSystem, outputCalendar) {
+      var localeR = locale || Settings.defaultLocale,
+          numberingSystemR = numberingSystem || null,
+          outputCalendarR = outputCalendar || null,
+          cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR,
+          cached = localeCache[cacheKey];
+
+      if (cached) {
+        return cached;
+      } else {
+        var fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
+        localeCache[cacheKey] = fresh;
+        return fresh;
+      }
+    }
+  }, {
+    key: 'fromObject',
+    value: function fromObject() {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          locale = _ref.locale,
+          numberingSystem = _ref.numberingSystem,
+          outputCalendar = _ref.outputCalendar;
+
+      return Locale.create(locale, numberingSystem, outputCalendar);
+    }
+  }]);
+
+  function Locale(locale, numbering, outputCalendar) {
+    classCallCheck(this, Locale);
+
+    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
+    Object.defineProperty(this, 'numberingSystem', {
+      value: numbering || null,
+      enumerable: true
+    });
+    Object.defineProperty(this, 'outputCalendar', {
+      value: outputCalendar || null,
+      enumerable: true
+    });
+    Object.defineProperty(this, 'intl', {
+      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
+      enumerable: false
+    });
+
+    // cached usefulness
+    Object.defineProperty(this, 'weekdaysCache', {
+      value: { format: {}, standalone: {} },
+      enumerable: false
+    });
+    Object.defineProperty(this, 'monthsCache', {
+      value: { format: {}, standalone: {} },
+      enumerable: false
+    });
+    Object.defineProperty(this, 'meridiemCache', {
+      value: null,
+      enumerable: false,
+      writable: true
+    });
+    Object.defineProperty(this, 'eraCache', {
+      value: {},
+      enumerable: false,
+      writable: true
+    });
+  }
+
+  // todo: cache me
+
+
+  createClass(Locale, [{
+    key: 'listingMode',
+    value: function listingMode() {
+      var defaultOk = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      var hasIntl = Intl && Intl.DateTimeFormat,
+          hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
+          isActuallyEn = this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || hasIntl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US'),
+          hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
+
+      if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
+        return 'error';
+      } else if (!hasFTP || isActuallyEn && hasNoWeirdness) {
+        return 'en';
+      } else {
+        return 'intl';
+      }
+    }
+  }, {
+    key: 'clone',
+    value: function clone(alts) {
+      if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
+        return this;
+      } else {
+        return Locale.create(alts.locale || this.locale, alts.numberingSystem || this.numberingSystem, alts.outputCalendar || this.outputCalendar);
+      }
+    }
+  }, {
+    key: 'months',
+    value: function months(length) {
+      var _this = this;
+
+      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var defaultOK = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+      return listStuff(this, length, defaultOK, English.months, function () {
+        var intl = format ? { month: length, day: 'numeric' } : { month: length },
+            formatStr = format ? 'format' : 'standalone';
+        if (!_this.monthsCache[formatStr][length]) {
+          _this.monthsCache[formatStr][length] = mapMonths(function (dt) {
+            return _this.extract(dt, intl, 'month');
+          });
+        }
+        return _this.monthsCache[formatStr][length];
+      });
+    }
+  }, {
+    key: 'weekdays',
+    value: function weekdays(length) {
+      var _this2 = this;
+
+      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var defaultOK = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+      return listStuff(this, length, defaultOK, English.weekdays, function () {
+        var intl = format ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' } : { weekday: length },
+            formatStr = format ? 'format' : 'standalone';
+        if (!_this2.weekdaysCache[formatStr][length]) {
+          _this2.weekdaysCache[formatStr][length] = mapWeekdays(function (dt) {
+            return _this2.extract(dt, intl, 'weekday');
+          });
+        }
+        return _this2.weekdaysCache[formatStr][length];
+      });
+    }
+  }, {
+    key: 'meridiems',
+    value: function meridiems() {
+      var _this3 = this;
+
+      var defaultOK = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      return listStuff(this, undefined, defaultOK, function () {
+        return English.meridiems;
+      }, function () {
+        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
+        // for AM and PM. This is probably wrong, but it's makes parsing way easier.
+        if (!_this3.meridiemCache) {
+          var intl = { hour: 'numeric', hour12: true };
+          _this3.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(function (dt) {
+            return _this3.extract(dt, intl, 'dayperiod');
+          });
+        }
+
+        return _this3.meridiemCache;
+      });
+    }
+  }, {
+    key: 'eras',
+    value: function eras(length) {
+      var _this4 = this;
+
+      var defaultOK = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      return listStuff(this, length, defaultOK, English.eras, function () {
+        var intl = { era: length };
+
+        // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
+        // to definitely enumerate them.
+        if (!_this4.eraCache[length]) {
+          _this4.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(function (dt) {
+            return _this4.extract(dt, intl, 'era');
+          });
+        }
+
+        return _this4.eraCache[length];
+      });
+    }
+  }, {
+    key: 'extract',
+    value: function extract(dt, intlOpts, field) {
+      var df = this.dtFormatter(dt, intlOpts),
+          results = df.formatToParts(),
+          matching = results.find(function (m) {
+        return m.type.toLowerCase() === field;
+      });
+
+      return matching ? matching.value : null;
+    }
+  }, {
+    key: 'numberFormatter',
+    value: function numberFormatter() {
+      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var intlOpts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      if (Intl && Intl.NumberFormat) {
+        var realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
+
+        if (opts.padTo > 0) {
+          realIntlOpts.minimumIntegerDigits = opts.padTo;
+        }
+
+        if (opts.round) {
+          realIntlOpts.maximumFractionDigits = 0;
+        }
+
+        return new Intl.NumberFormat(this.intl, realIntlOpts);
+      } else {
+        return new PolyNumberFormatter(opts);
+      }
+    }
+  }, {
+    key: 'dtFormatter',
+    value: function dtFormatter(dt) {
+      var intlOpts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      return new PolyDateFormatter(dt, this.intl, intlOpts);
+    }
+  }, {
+    key: 'equals',
+    value: function equals(other) {
+      return this.locale === other.locale && this.numberingSystem === other.numberingSystem && this.outputCalendar === other.outputCalendar;
+    }
+  }]);
+  return Locale;
 }();
 
 function combineRegexes() {
@@ -6762,7 +7001,7 @@ var DateTime = function () {
   }, {
     key: 'toLocaleString',
     value: function toLocaleString() {
-      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Formats.DATE_SHORT;
 
       return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID;
     }
@@ -7892,11 +8131,7 @@ var DateTime = function () {
   }, {
     key: 'DATE_SHORT',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric'
-      };
+      return Formats.DATE_SHORT;
     }
 
     /**
@@ -7906,11 +8141,7 @@ var DateTime = function () {
   }, {
     key: 'DATE_MED',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      };
+      return Formats.DATE_MED;
     }
 
     /**
@@ -7920,11 +8151,7 @@ var DateTime = function () {
   }, {
     key: 'DATE_FULL',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      };
+      return Formats.DATE_FULL;
     }
 
     /**
@@ -7934,12 +8161,7 @@ var DateTime = function () {
   }, {
     key: 'DATE_HUGE',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'long'
-      };
+      return Formats.DATE_HUGE;
     }
 
     /**
@@ -7949,10 +8171,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_SIMPLE',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit'
-      };
+      return Formats.TIME_SIMPLE;
     }
 
     /**
@@ -7962,11 +8181,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_WITH_SECONDS',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-      };
+      return Formats.TIME_WITH_SECONDS;
     }
 
     /**
@@ -7976,12 +8191,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_WITH_SHORT_OFFSET',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'short'
-      };
+      return Formats.TIME_WITH_SHORT_OFFSET;
     }
 
     /**
@@ -7991,12 +8201,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_WITH_LONG_OFFSET',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'long'
-      };
+      return Formats.TIME_WITH_LONG_OFFSET;
     }
 
     /**
@@ -8006,11 +8211,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_24_SIMPLE',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: false
-      };
+      return Formats.TIME_24_SIMPLE;
     }
 
     /**
@@ -8020,12 +8221,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_24_WITH_SECONDS',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      };
+      return Formats.TIME_24_WITH_SECONDS;
     }
 
     /**
@@ -8035,13 +8231,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_24_WITH_SHORT_OFFSET',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        timeZoneName: 'short'
-      };
+      return Formats.TIME_24_WITH_SHORT_OFFSET;
     }
 
     /**
@@ -8051,13 +8241,7 @@ var DateTime = function () {
   }, {
     key: 'TIME_24_WITH_LONG_OFFSET',
     get: function get$$1() {
-      return {
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        timeZoneName: 'long'
-      };
+      return Formats.TIME_24_WITH_LONG_OFFSET;
     }
 
     /**
@@ -8067,13 +8251,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_SHORT',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-      };
+      return Formats.DATETIME_SHORT;
     }
 
     /**
@@ -8083,14 +8261,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_SHORT_WITH_SECONDS',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-      };
+      return Formats.DATETIME_SHORT_WITH_SECONDS;
     }
 
     /**
@@ -8100,13 +8271,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_MED',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-      };
+      return Formats.DATETIME_MED;
     }
 
     /**
@@ -8116,14 +8281,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_MED_WITH_SECONDS',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-      };
+      return Formats.DATETIME_MED_WITH_SECONDS;
     }
 
     /**
@@ -8133,14 +8291,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_FULL',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZoneName: 'short'
-      };
+      return Formats.DATETIME_FULL;
     }
 
     /**
@@ -8150,15 +8301,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_FULL_WITH_SECONDS',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'short'
-      };
+      return Formats.DATETIME_FULL_WITH_SECONDS;
     }
 
     /**
@@ -8168,15 +8311,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_HUGE',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'long',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZoneName: 'long'
-      };
+      return Formats.DATETIME_HUGE;
     }
 
     /**
@@ -8186,16 +8321,7 @@ var DateTime = function () {
   }, {
     key: 'DATETIME_HUGE_WITH_SECONDS',
     get: function get$$1() {
-      return {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'long',
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'long'
-      };
+      return Formats.DATETIME_HUGE_WITH_SECONDS;
     }
   }]);
   return DateTime;
