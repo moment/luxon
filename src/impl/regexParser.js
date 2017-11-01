@@ -79,14 +79,15 @@ function extractISOTime(match, cursor) {
 
 // ISO duration parsing
 
-const isoDuration = /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/;
+const isoDuration = /^P(?:(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?|(\d+)W)$/;
 
 function extractISODuration(match) {
-  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match;
+  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;
 
   return {
     year: parseInt(yearStr),
     month: parseInt(monthStr),
+    week: parseInt(weekStr),
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
     minute: parseInt(minuteStr),

@@ -15,6 +15,7 @@ test('Duration.fromISO can parse a variety of ISO formats', () => {
   check('PT54M32S', { minutes: 54, seconds: 32 });
   check('P3DT54M32S', { days: 3, minutes: 54, seconds: 32 });
   check('P1YT34000S', { years: 1, seconds: 34000 });
+  check('P2W', { weeks: 2 });
 });
 
 test('Duration.fromISO rejects junk', () => {
@@ -27,4 +28,5 @@ test('Duration.fromISO rejects junk', () => {
   rejects('5Y');
   rejects('P34S');
   rejects('P34K');
+  rejects('P5D2W');
 });
