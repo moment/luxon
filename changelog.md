@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.11
+## 0.12
 
  * Improve non-Intl fallbacks for toLocaleString
  * Fix `offsetNameShort` and `offsetNameLong` for non-Intl environments 
