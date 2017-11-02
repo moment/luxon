@@ -83,3 +83,9 @@ Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on yo
 | `gulp es6`    | Build just the ES6 distributable            |
 | `gulp amd`    | Build just the AMD distributable            |
 | `gulp global` | Build just the browser global distributable |
+
+Note that the tests need the `icu-full` package to work and assume the time zone to be `America/New_York`.
+
+If you have installed the `icu-full` package into `node_modules` you can run gulp like this:
+
+    NODE_ICU_DATA="$(pwd)/node_modules/full-icu" TZ="America/New_York" gulp test
