@@ -69,4 +69,4 @@ import { DateTime } from 'luxon';
 
 [This section is a bit of a placeholder because I know little about RN. So contributions welcome!]
 
-Luxon works in React Native but there's a catch. In RN the Intl API isn't there by default. Luxon works without Intl but a lot of its features work as you expect, especially regarding time zones and internationalization. You can use [this](https://github.com/SoftwareMansion/jsc-android-buildscripts).
+Luxon works in React Native. On Android, the Intl API isn't provided out of the box. Luxon works without Intl support but a lot of its features work as you expect, especially regarding time zones and internationalization. You can use the international variant of [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to Intl support.
