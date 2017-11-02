@@ -12,20 +12,9 @@ Here are some vague notes on Luxon's design philosophy:
  1. Most of the complexity of JS module loading compatibility is left to the build. If you have a "this can't be loaded in my bespoke JS module loader" problems, this isn't something you should be solving with changes to the `src` directory. If it's a common use case and is possible to generate with Rollup, it can get its own build command.
  1. We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don't want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.
  
-## Getting set up
+## Building and testing
 
-The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. Unfortunately, it's a bit of pain to get ICU working smoothly.
-
-### Docker native
-
-Because getting ICU set up is annoying on some platforms, we've provided a Docker container. You'll need a functioning Docker environment, but the rest is easy:
-
-```
-scripts/install
-scripts/gulp test
-```
-
-where `scripts/install` is a convenience wrapper for `npm install` and `scripts/gulp` just wraps `gulp`.
+Building and testing is done through Gulp tasks. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you're good to go; just run Gulp commands like `gulp test`.
 
 ### OSX
 
@@ -38,24 +27,35 @@ npm install -g gulp-cli
 gulp test
 ```
 
+If that's for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.
+
 ### Linux
 
-In Linux you seem to need to install full-icu and then set an env var to make Node see it. As far as I can tell the tricks for making Node auto-detect the presence of the ICU data don't work. So:
+There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We'll cover the latter. Assuming you've installed Node 8:
 
 ```
-apt-get install node
 npm install
 npm install full-icu
 npm install gulp-cli
-NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp test
+./scripts/test
 ```
 
-## How to build and test
+Where `scripts/test` is just `NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp test`, which is required for making Node load the full-icu module you just installed. You can run all the other Gulp commands (e.g. `gulp docs`) directly; they don't require Intl support.
 
- 1. Clone the repository
- 1. Run `npm install`. Wait.
- 1. Unless you're using Docker, install gulp using ``
- 1. Use gulp commands to do developy stuff
+### Windows
+
+[Help wanted.]
+
+### Docker
+
+In case messing with your Node environment just to run Luxon's tests is too much to ask, we've provided a Docker container. You'll need a functioning Docker environment, but the rest is easy:
+
+```
+./docker/install
+./docker/gulp test
+```
+
+where `docker/install` is a convenience wrapper for `npm install` in the container and `docker/gulp` just wraps `gulp`.
 
 ## Patch basics
 

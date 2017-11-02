@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp test
