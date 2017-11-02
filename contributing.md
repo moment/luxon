@@ -11,12 +11,50 @@ Here are some vague notes on Luxon's design philosophy:
  1. Luxon shouldn't contain simple conveniences that bloat the library to save callers a couple lines of code. Write those lines in your own code.
  1. Most of the complexity of JS module loading compatibility is left to the build. If you have a "this can't be loaded in my bespoke JS module loader" problems, this isn't something you should be solving with changes to the `src` directory. If it's a common use case and is possible to generate with Rollup, it can get its own build command.
  1. We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don't want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.
+ 
+## Getting set up
+
+The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. Unfortunately, it's a bit of pain to get ICU working smoothly.
+
+### Docker native
+
+Because getting ICU set up is annoying on some platforms, we've provided a Docker container. You'll need a functioning Docker environment, but the rest is easy:
+
+```
+scripts/install
+scripts/gulp test
+```
+
+where `scripts/install` is a convenience wrapper for `npm install` and `scripts/gulp` just wraps `gulp`.
+
+### OSX
+
+Mac is easy:
+
+```
+brew install node --with-full-icu
+npm install
+npm install -g gulp-cli
+gulp test
+```
+
+### Linux
+
+In Linux you seem to need to install full-icu and then set an env var to make Node see it. As far as I can tell the tricks for making Node auto-detect the presence of the ICU data don't work. So:
+
+```
+apt-get install node
+npm install
+npm install full-icu
+npm install gulp-cli
+NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp test
+```
 
 ## How to build and test
 
  1. Clone the repository
  1. Run `npm install`. Wait.
- 1. Install gulp using `npm install -g gulp-cli`
+ 1. Unless you're using Docker, install gulp using ``
  1. Use gulp commands to do developy stuff
 
 ## Patch basics
