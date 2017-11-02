@@ -63,4 +63,10 @@ import { DateTime } from 'luxon';
 
 ## Meteor
 
-Help wanted.
+[Help wanted.]
+
+## React Native
+
+[This section is a bit of a placeholder because I know little about RN. So contributions welcome!]
+
+Luxon works in React Native but there's a catch. In RN the Intl API isn't there by default. Luxon works without Intl but a lot of its features work as you expect, especially regarding time zones and internationalization. You can use [this](https://github.com/SoftwareMansion/jsc-android-buildscripts).
