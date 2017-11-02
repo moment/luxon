@@ -37,7 +37,7 @@ DateTime.local().setLocale('fr').locale //=> 'fr'
 ```js
 DateTime.local().reconfigure({ locale: 'fr' }).locale; //=> 'fr'
 ```
-
+ 
 ## Checking what you got
 
 The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use `resolvedLocaleOpts`:
@@ -111,3 +111,27 @@ For this reason, Luxon defaults its own `numberingSystem` property to null, by w
 var dt  = DateTime.local().reconfigure({ locale: 'it', numberingSystem: 'beng' })
 dt.toLocaleString(DateTime.DATE_FULL) //=> '২৪ settembre ২০১৭'
 ```
+
+## Locale defaults
+
+You can set the default locale:
+
+```js
+Settings.defaultLocale = 'fr';
+DateTime.locale().locale; //=> 'fr'
+```
+
+This only effects newly created instances, not existing ones. It also affects what language `DateTime.fromString` expects the string to be in.
+
+If you *haven't* set the default locale, the locale used varies by method:
+
+ 1. `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that always means en-US.
+ 2. `DateTime.fromString` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.
+ 
+On that second point: you really should be using `toLocaleString` anywhere this might come up, and `fromString` won't make sense in locales that order their date stings differently anyway. But if you really want `toFormat` or `fromString` to be sensitive to the environment's locale, you can always do this:
+ 
+ ```js
+ Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;
+ ```
+
+You currently can't change the default numbering system or output calendar, though this may change.

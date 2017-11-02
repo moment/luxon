@@ -933,7 +933,7 @@ export class DateTime {
 
   /**
    * Returns the resolved Intl options for this DateTime.
-   * This is useful in understanding the behavior of parsing and formatting methods
+   * This is useful in understanding the behavior of formatting methods
    * @param {object} opts - the same options as toLocaleString
    * @return {object}
    */
