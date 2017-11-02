@@ -4263,20 +4263,22 @@ function extractISOTime(match, cursor) {
 
 // ISO duration parsing
 
-var isoDuration = /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/;
+var isoDuration = /^P(?:(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?|(\d+)W)$/;
 
 function extractISODuration(match) {
-  var _match = slicedToArray(match, 7),
+  var _match = slicedToArray(match, 8),
       yearStr = _match[1],
       monthStr = _match[2],
       dayStr = _match[3],
       hourStr = _match[4],
       minuteStr = _match[5],
-      secondStr = _match[6];
+      secondStr = _match[6],
+      weekStr = _match[7];
 
   return {
     year: parseInt(yearStr),
     month: parseInt(monthStr),
+    week: parseInt(weekStr),
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
     minute: parseInt(minuteStr),

@@ -8693,7 +8693,7 @@
     "__docId__": 256,
     "kind": "file",
     "name": "src/impl/regexParser.js",
-    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { FixedOffsetZone } from '../zones/fixedOffsetZone';\n\nfunction combineRegexes(...regexes) {\n  const full = regexes.reduce((f, r) => f + r.source, '');\n  return RegExp(full);\n}\n\nfunction combineExtractors(...extractors) {\n  return m =>\n    extractors\n      .reduce(\n        ([mergedVals, mergedZone, cursor], ex) => {\n          const [val, zone, next] = ex(m, cursor);\n          return [Object.assign(mergedVals, val), mergedZone || zone, next];\n        },\n        [{}, null, 1]\n      )\n      .slice(0, 2);\n}\n\nfunction parse(s, ...patterns) {\n  if (s == null) {\n    return [null, null];\n  }\n  for (const [regex, extractor] of patterns) {\n    const m = regex.exec(s);\n    if (m) {\n      return extractor(m);\n    }\n  }\n  return [null, null];\n}\n\nfunction simpleParse(...keys) {\n  return (match, cursor) => {\n    const ret = {};\n    let i;\n\n    for (i = 0; i < keys.length; i++) {\n      ret[keys[i]] = parseInt(match[cursor + i]);\n    }\n    return [ret, null, cursor + i];\n  };\n}\n\n// ISO parsing\nconst isoTimeRegex = /(?:T(\\d\\d)(?::?(\\d\\d)(?::?(\\d\\d)(?:[.,](\\d\\d\\d))?)?)?(?:(Z)|([+-]\\d\\d)(?::?(\\d\\d))?)?)?$/,\n  isoYmdRegex = /^([+-]\\d{6}|\\d{4})(?:-?(\\d\\d)(?:-?(\\d\\d))?)?/,\n  isoWeekRegex = /^(\\d{4})-?W(\\d\\d)-?(\\d)/,\n  isoOrdinalRegex = /^(\\d{4})-?(\\d{3})/,\n  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),\n  extractISOOrdinalData = simpleParse('year', 'ordinal');\n\nfunction extractISOYmd(match, cursor) {\n  const item = {\n    year: parseInt(match[cursor]),\n    month: parseInt(match[cursor + 1]) || 1,\n    day: parseInt(match[cursor + 2]) || 1\n  };\n\n  return [item, null, cursor + 3];\n}\n\nfunction extractISOTime(match, cursor) {\n  const local = !match[cursor + 4] && !match[cursor + 5],\n    fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),\n    item = {\n      hour: parseInt(match[cursor]) || 0,\n      minute: parseInt(match[cursor + 1]) || 0,\n      second: parseInt(match[cursor + 2]) || 0,\n      millisecond: parseInt(match[cursor + 3]) || 0\n    },\n    zone = local ? null : new FixedOffsetZone(fullOffset);\n\n  return [item, zone, cursor + 7];\n}\n\n// ISO duration parsing\n\nconst isoDuration = /^P(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)D)?(?:T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?)?$/;\n\nfunction extractISODuration(match) {\n  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match;\n\n  return {\n    year: parseInt(yearStr),\n    month: parseInt(monthStr),\n    day: parseInt(dayStr),\n    hour: parseInt(hourStr),\n    minute: parseInt(minuteStr),\n    second: parseInt(secondStr)\n  };\n}\n\n// These are a little braindead. EDT *should* tell us that we're in, say, America/New_York\n// and not just that we're in -240 *right now*. But since I don't think these are used that often\n// I'm just going to ignore that\nconst obsOffsets = {\n  GMT: 0,\n  EDT: -4 * 60,\n  EST: -5 * 60,\n  CDT: -5 * 60,\n  CST: -6 * 60,\n  MDT: -6 * 60,\n  MST: -7 * 60,\n  PDT: -7 * 60,\n  PST: -8 * 60\n};\n\nfunction fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {\n  const result = {\n    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),\n    month: English.monthsShort.indexOf(monthStr) + 1,\n    day: parseInt(dayStr),\n    hour: parseInt(hourStr),\n    minute: parseInt(minuteStr)\n  };\n\n  if (secondStr) result.second = parseInt(secondStr);\n  if (weekdayStr) {\n    result.weekday =\n      weekdayStr.length > 3\n        ? English.weekdaysLong.indexOf(weekdayStr) + 1\n        : English.weekdaysShort.indexOf(weekdayStr) + 1;\n  }\n\n  return result;\n}\n\n// RFC 2822/5322\nconst rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s)?(\\d{1,2})\\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s(\\d{2,4})\\s(\\d\\d):(\\d\\d)(?::(\\d\\d))?\\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\\d\\d)(\\d\\d)))$/;\n\nfunction extractRFC2822(match) {\n  const [\n      ,\n      weekdayStr,\n      dayStr,\n      monthStr,\n      yearStr,\n      hourStr,\n      minuteStr,\n      secondStr,\n      obsOffset,\n      milOffset,\n      offHourStr,\n      offMinuteStr\n    ] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n\n  let offset;\n  if (obsOffset) {\n    offset = obsOffsets[obsOffset];\n  } else if (milOffset) {\n    offset = 0;\n  } else {\n    offset = Util.signedOffset(offHourStr, offMinuteStr);\n  }\n\n  return [result, new FixedOffsetZone(offset)];\n}\n\nfunction preprocessRFC2822(s) {\n  // Remove comments and folding whitespace and replace multiple-spaces with a single space\n  return s\n    .replace(/\\([^)]*\\)|[\\n\\t]/g, ' ')\n    .replace(/(\\s\\s+)/g, ' ')\n    .trim();\n}\n\n// http date\n\nconst rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\\d\\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\\d{4}) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\\d\\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \\d|\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) (\\d{4})$/;\n\nfunction extractRFC1123Or850(match) {\n  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\nfunction extractASCII(match) {\n  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\n/**\n * @private\n */\n\nexport class RegexParser {\n  static parseISODate(s) {\n    return parse(\n      s,\n      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],\n      [\n        combineRegexes(isoWeekRegex, isoTimeRegex),\n        combineExtractors(extractISOWeekData, extractISOTime)\n      ],\n      [\n        combineRegexes(isoOrdinalRegex, isoTimeRegex),\n        combineExtractors(extractISOOrdinalData, extractISOTime)\n      ]\n    );\n  }\n\n  static parseRFC2822Date(s) {\n    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);\n  }\n\n  static parseHTTPDate(s) {\n    return parse(\n      s,\n      [rfc1123, extractRFC1123Or850],\n      [rfc850, extractRFC1123Or850],\n      [ascii, extractASCII]\n    );\n  }\n\n  static parseISODuration(s) {\n    return parse(s, [isoDuration, extractISODuration]);\n  }\n}\n",
+    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { FixedOffsetZone } from '../zones/fixedOffsetZone';\n\nfunction combineRegexes(...regexes) {\n  const full = regexes.reduce((f, r) => f + r.source, '');\n  return RegExp(full);\n}\n\nfunction combineExtractors(...extractors) {\n  return m =>\n    extractors\n      .reduce(\n        ([mergedVals, mergedZone, cursor], ex) => {\n          const [val, zone, next] = ex(m, cursor);\n          return [Object.assign(mergedVals, val), mergedZone || zone, next];\n        },\n        [{}, null, 1]\n      )\n      .slice(0, 2);\n}\n\nfunction parse(s, ...patterns) {\n  if (s == null) {\n    return [null, null];\n  }\n  for (const [regex, extractor] of patterns) {\n    const m = regex.exec(s);\n    if (m) {\n      return extractor(m);\n    }\n  }\n  return [null, null];\n}\n\nfunction simpleParse(...keys) {\n  return (match, cursor) => {\n    const ret = {};\n    let i;\n\n    for (i = 0; i < keys.length; i++) {\n      ret[keys[i]] = parseInt(match[cursor + i]);\n    }\n    return [ret, null, cursor + i];\n  };\n}\n\n// ISO parsing\nconst isoTimeRegex = /(?:T(\\d\\d)(?::?(\\d\\d)(?::?(\\d\\d)(?:[.,](\\d\\d\\d))?)?)?(?:(Z)|([+-]\\d\\d)(?::?(\\d\\d))?)?)?$/,\n  isoYmdRegex = /^([+-]\\d{6}|\\d{4})(?:-?(\\d\\d)(?:-?(\\d\\d))?)?/,\n  isoWeekRegex = /^(\\d{4})-?W(\\d\\d)-?(\\d)/,\n  isoOrdinalRegex = /^(\\d{4})-?(\\d{3})/,\n  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),\n  extractISOOrdinalData = simpleParse('year', 'ordinal');\n\nfunction extractISOYmd(match, cursor) {\n  const item = {\n    year: parseInt(match[cursor]),\n    month: parseInt(match[cursor + 1]) || 1,\n    day: parseInt(match[cursor + 2]) || 1\n  };\n\n  return [item, null, cursor + 3];\n}\n\nfunction extractISOTime(match, cursor) {\n  const local = !match[cursor + 4] && !match[cursor + 5],\n    fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),\n    item = {\n      hour: parseInt(match[cursor]) || 0,\n      minute: parseInt(match[cursor + 1]) || 0,\n      second: parseInt(match[cursor + 2]) || 0,\n      millisecond: parseInt(match[cursor + 3]) || 0\n    },\n    zone = local ? null : new FixedOffsetZone(fullOffset);\n\n  return [item, zone, cursor + 7];\n}\n\n// ISO duration parsing\n\nconst isoDuration = /^P(?:(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)D)?(?:T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?)?|(\\d+)W)$/;\n\nfunction extractISODuration(match) {\n  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;\n\n  return {\n    year: parseInt(yearStr),\n    month: parseInt(monthStr),\n    week: parseInt(weekStr),\n    day: parseInt(dayStr),\n    hour: parseInt(hourStr),\n    minute: parseInt(minuteStr),\n    second: parseInt(secondStr)\n  };\n}\n\n// These are a little braindead. EDT *should* tell us that we're in, say, America/New_York\n// and not just that we're in -240 *right now*. But since I don't think these are used that often\n// I'm just going to ignore that\nconst obsOffsets = {\n  GMT: 0,\n  EDT: -4 * 60,\n  EST: -5 * 60,\n  CDT: -5 * 60,\n  CST: -6 * 60,\n  MDT: -6 * 60,\n  MST: -7 * 60,\n  PDT: -7 * 60,\n  PST: -8 * 60\n};\n\nfunction fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {\n  const result = {\n    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),\n    month: English.monthsShort.indexOf(monthStr) + 1,\n    day: parseInt(dayStr),\n    hour: parseInt(hourStr),\n    minute: parseInt(minuteStr)\n  };\n\n  if (secondStr) result.second = parseInt(secondStr);\n  if (weekdayStr) {\n    result.weekday =\n      weekdayStr.length > 3\n        ? English.weekdaysLong.indexOf(weekdayStr) + 1\n        : English.weekdaysShort.indexOf(weekdayStr) + 1;\n  }\n\n  return result;\n}\n\n// RFC 2822/5322\nconst rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s)?(\\d{1,2})\\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s(\\d{2,4})\\s(\\d\\d):(\\d\\d)(?::(\\d\\d))?\\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\\d\\d)(\\d\\d)))$/;\n\nfunction extractRFC2822(match) {\n  const [\n      ,\n      weekdayStr,\n      dayStr,\n      monthStr,\n      yearStr,\n      hourStr,\n      minuteStr,\n      secondStr,\n      obsOffset,\n      milOffset,\n      offHourStr,\n      offMinuteStr\n    ] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n\n  let offset;\n  if (obsOffset) {\n    offset = obsOffsets[obsOffset];\n  } else if (milOffset) {\n    offset = 0;\n  } else {\n    offset = Util.signedOffset(offHourStr, offMinuteStr);\n  }\n\n  return [result, new FixedOffsetZone(offset)];\n}\n\nfunction preprocessRFC2822(s) {\n  // Remove comments and folding whitespace and replace multiple-spaces with a single space\n  return s\n    .replace(/\\([^)]*\\)|[\\n\\t]/g, ' ')\n    .replace(/(\\s\\s+)/g, ' ')\n    .trim();\n}\n\n// http date\n\nconst rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\\d\\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\\d{4}) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\\d\\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \\d|\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) (\\d{4})$/;\n\nfunction extractRFC1123Or850(match) {\n  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\nfunction extractASCII(match) {\n  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\n/**\n * @private\n */\n\nexport class RegexParser {\n  static parseISODate(s) {\n    return parse(\n      s,\n      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],\n      [\n        combineRegexes(isoWeekRegex, isoTimeRegex),\n        combineExtractors(extractISOWeekData, extractISOTime)\n      ],\n      [\n        combineRegexes(isoOrdinalRegex, isoTimeRegex),\n        combineExtractors(extractISOOrdinalData, extractISOTime)\n      ]\n    );\n  }\n\n  static parseRFC2822Date(s) {\n    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);\n  }\n\n  static parseHTTPDate(s) {\n    return parse(\n      s,\n      [rfc1123, extractRFC1123Or850],\n      [rfc850, extractRFC1123Or850],\n      [ascii, extractASCII]\n    );\n  }\n\n  static parseISODuration(s) {\n    return parse(s, [isoDuration, extractISODuration]);\n  }\n}\n",
     "static": true,
     "longname": "src/impl/regexParser.js",
     "access": null,
@@ -9022,7 +9022,7 @@
     ],
     "return": {
       "types": [
-        "{\"year\": *, \"month\": *, \"day\": *, \"hour\": *, \"minute\": *, \"second\": *}"
+        "{\"year\": *, \"month\": *, \"week\": *, \"day\": *, \"hour\": *, \"minute\": *, \"second\": *}"
       ]
     }
   },
@@ -9038,7 +9038,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 100,
+    "lineNumber": 101,
     "undocument": true,
     "unknown": [
       {
@@ -9066,7 +9066,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 112,
+    "lineNumber": 113,
     "undocument": true,
     "unknown": [
       {
@@ -9136,7 +9136,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 133,
+    "lineNumber": 134,
     "undocument": true,
     "unknown": [
       {
@@ -9164,7 +9164,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 135,
+    "lineNumber": 136,
     "undocument": true,
     "unknown": [
       {
@@ -9200,7 +9200,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 164,
+    "lineNumber": 165,
     "undocument": true,
     "unknown": [
       {
@@ -9234,7 +9234,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 174,
+    "lineNumber": 175,
     "undocument": true,
     "unknown": [
       {
@@ -9262,7 +9262,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 178,
+    "lineNumber": 179,
     "undocument": true,
     "unknown": [
       {
@@ -9298,7 +9298,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 184,
+    "lineNumber": 185,
     "undocument": true,
     "unknown": [
       {
@@ -9332,7 +9332,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": "{RegexParser}",
     "description": "",
-    "lineNumber": 194,
+    "lineNumber": 195,
     "interface": false
   },
   {
@@ -9346,7 +9346,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseISODate",
     "access": null,
     "description": null,
-    "lineNumber": 195,
+    "lineNumber": 196,
     "undocument": true,
     "unknown": [
       {
@@ -9379,7 +9379,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseRFC2822Date",
     "access": null,
     "description": null,
-    "lineNumber": 210,
+    "lineNumber": 211,
     "undocument": true,
     "unknown": [
       {
@@ -9412,7 +9412,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseHTTPDate",
     "access": null,
     "description": null,
-    "lineNumber": 214,
+    "lineNumber": 215,
     "undocument": true,
     "unknown": [
       {
@@ -9445,7 +9445,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseISODuration",
     "access": null,
     "description": null,
-    "lineNumber": 223,
+    "lineNumber": 224,
     "undocument": true,
     "unknown": [
       {
