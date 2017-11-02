@@ -29,7 +29,7 @@ export class Info {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
    * @param {object} opts - options
-   * @param {string} [opts.locale='en'] - the locale code
+   * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.months()[0] //=> 'January'
@@ -42,9 +42,9 @@ export class Info {
    */
   static months(
     length = 'long',
-    { locale = 'en', numberingSystem = null, outputCalendar = 'gregory' } = {}
+    { locale = null, numberingSystem = null, outputCalendar = 'gregory' } = {}
   ) {
-    return new Locale(locale, numberingSystem, outputCalendar).months(length);
+    return Locale.create(locale, numberingSystem, outputCalendar).months(length);
   }
 
   /**
@@ -54,16 +54,16 @@ export class Info {
    * See {@link months}
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
    * @param {object} opts - options
-   * @param {string} [opts.locale='en'] - the locale code
+   * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numbering=null] - the numbering system
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
   static monthsFormat(
     length = 'long',
-    { locale = 'en', numberingSystem = null, outputCalendar = 'gregory' } = {}
+    { locale = null, numberingSystem = null, outputCalendar = 'gregory' } = {}
   ) {
-    return new Locale(locale, numberingSystem, outputCalendar).months(length, true);
+    return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);
   }
 
   /**
@@ -71,7 +71,7 @@ export class Info {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
    * @param {object} opts - options
-   * @param {string} [opts.locale='en'] - the locale code
+   * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numbering=null] - the numbering system
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.weekdays()[0] //=> 'Monday'
@@ -80,8 +80,8 @@ export class Info {
    * @example Info.weekdays('short', 'ar')[0] //=> 'الاثنين'
    * @return {[string]}
    */
-  static weekdays(length = 'long', { locale = 'en', numberingSystem = null } = {}) {
-    return new Locale(locale, numberingSystem, null).weekdays(length);
+  static weekdays(length = 'long', { locale = null, numberingSystem = null } = {}) {
+    return Locale.create(locale, numberingSystem, null).weekdays(length);
   }
 
   /**
@@ -91,39 +91,39 @@ export class Info {
    * See {@link weekdays}
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
    * @param {object} opts - options
-   * @param {string} [opts.locale='en'] - the locale code
+   * @param {string} [opts.locale=null] - the locale code
    * @param {string} [opts.numbering=null] - the numbering system
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
-  static weekdaysFormat(length = 'long', { locale = 'en', numberingSystem = null } = {}) {
-    return new Locale(locale, numberingSystem, null).weekdays(length, true);
+  static weekdaysFormat(length = 'long', { locale = null, numberingSystem = null } = {}) {
+    return Locale.create(locale, numberingSystem, null).weekdays(length, true);
   }
 
   /**
    * Return an array of meridiems.
    * @param {object} opts - options
-   * @param {string} [opts.locale='en'] - the locale code
+   * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
    * @example Info.meridiems('de') //=> [ 'vorm.', 'nachm.' ]
    * @return {[string]}
    */
-  static meridiems({ locale = 'en' } = {}) {
-    return new Locale(locale).meridiems();
+  static meridiems({ locale = null } = {}) {
+    return Locale.create(locale).meridiems();
   }
 
   /**
    * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.
    * @param {string} [length='short'] - the length of the era representation, such as "short" or "long".
    * @param {object} opts - options
-   * @param {string} [opts.locale='en'] - the locale code
+   * @param {string} [opts.locale] - the locale code
    * @example Info.eras() //=> [ 'BC', 'AD' ]
    * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
    * @example Info.eras('long', 'fr') //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
    * @return {[string]}
    */
-  static eras(length = 'short', { locale = 'en' } = {}) {
-    return new Locale(locale, null, 'gregory').eras(length);
+  static eras(length = 'short', { locale = null } = {}) {
+    return Locale.create(locale, null, 'gregory').eras(length);
   }
 
   /**

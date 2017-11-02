@@ -6,6 +6,19 @@ import { Formatter } from './formatter';
 
 const localeCache = {};
 
+let sysLocaleCache = null;
+function systemLocale() {
+  if (sysLocaleCache) {
+    return sysLocaleCache;
+  } else if (Intl && Intl.DateTimeFormat) {
+    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
+    return sysLocaleCache;
+  } else {
+    sysLocaleCache = 'en-US';
+    return sysLocaleCache;
+  }
+}
+
 function intlConfigString(locale, numberingSystem, outputCalendar) {
   let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
   loc = Array.isArray(locale) ? locale : [locale];
@@ -140,20 +153,22 @@ class PolyDateFormatter {
 
 export class Locale {
   static fromOpts(opts) {
-    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
+    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar, opts.defaultToEN);
   }
 
-  static create(locale, numberingSystem, outputCalendar) {
-    const localeR = locale || Settings.defaultLocale,
+  static create(locale, numberingSystem, outputCalendar, defaultToEN = false) {
+    const specifiedLocale = locale || Settings.defaultLocale,
+      // the system locale is useful for human readable strings but annoying for parsing known formats
+      localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),
       numberingSystemR = numberingSystem || null,
       outputCalendarR = outputCalendar || null,
-      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}`,
+      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}|${specifiedLocale}`,
       cached = localeCache[cacheKey];
 
     if (cached) {
       return cached;
     } else {
-      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
+      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
       localeCache[cacheKey] = fresh;
       return fresh;
     }
@@ -163,7 +178,7 @@ export class Locale {
     return Locale.create(locale, numberingSystem, outputCalendar);
   }
 
-  constructor(locale, numbering, outputCalendar) {
+  constructor(locale, numbering, outputCalendar, specifiedLocale) {
     Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
     Object.defineProperty(this, 'numberingSystem', {
       value: numbering || null,
@@ -197,6 +212,7 @@ export class Locale {
       enumerable: false,
       writable: true
     });
+    Object.defineProperty(this, 'specifiedLocale', { value: specifiedLocale, enumerable: true });
   }
 
   // todo: cache me
@@ -209,7 +225,7 @@ export class Locale {
         (hasIntl &&
           Intl.DateTimeFormat(this.intl)
             .resolvedOptions()
-            .locale.startsWith('en-US')),
+            .locale.startsWith('en-us')),
       hasNoWeirdness =
         (this.numberingSystem === null || this.numberingSystem === 'latn') &&
         (this.outputCalendar === null || this.outputCalendar === 'gregory');
@@ -228,11 +244,16 @@ export class Locale {
       return this;
     } else {
       return Locale.create(
-        alts.locale || this.locale,
+        alts.locale || this.specifiedLocale,
         alts.numberingSystem || this.numberingSystem,
-        alts.outputCalendar || this.outputCalendar
+        alts.outputCalendar || this.outputCalendar,
+        alts.defaultToEN || false
       );
     }
+  }
+
+  redefaultToEN(alts = {}) {
+    return this.clone(Object.assign({}, alts, { defaultToEN: true }));
   }
 
   months(length, format = false, defaultOK = true) {

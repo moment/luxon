@@ -4,7 +4,7 @@ import { Util } from './impl/util';
 let now = () => new Date().valueOf(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
   throwOnInvalid = false,
-  defaultLocale = 'en-US';
+  defaultLocale = null;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.

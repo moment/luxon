@@ -393,7 +393,7 @@ export class DateTime {
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
-   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @return {DateTime}
@@ -591,6 +591,7 @@ export class DateTime {
 
   /**
    * Create a DateTime from an input string and format string
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
    * @param {Object} options - options to affect the creation
@@ -603,7 +604,7 @@ export class DateTime {
    */
   static fromString(text, fmt, options = {}) {
     const { locale = null, numberingSystem = null } = options,
-      parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem })),
+      parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem, defaultToEN: true })),
       [vals, parsedZone, invalidReason] = parser.parseDateTime(text, fmt);
     if (invalidReason) {
       return DateTime.invalid(invalidReason);
@@ -798,6 +799,7 @@ export class DateTime {
 
   /**
    * Get the human readable short month name, such as 'Oct'.
+   * Defaults to the system's locale if no locale has been specified
    * @example DateTime.local(2017, 10, 30) //=> Oct
    * @return {string}
    */
@@ -807,6 +809,7 @@ export class DateTime {
 
   /**
    * Get the human readable long month name, such as 'October'.
+   * Defaults to the system's locale if no locale has been specified
    * @example DateTime.local(2017, 10, 30) //=> October
    * @return {string}
    */
@@ -816,6 +819,7 @@ export class DateTime {
 
   /**
    * Get the human readable short weekday, such as 'Mon'.
+   * Defaults to the system's locale if no locale has been specified
    * @example DateTime.local(2017, 10, 30) //=> Mon
    * @return {string}
    */
@@ -825,6 +829,7 @@ export class DateTime {
 
   /**
    * Get the human readable long weekday, such as 'Monday'.
+   * Defaults to the system's locale if no locale has been specified
    * @example DateTime.local(2017, 10, 30) //=> Monday
    * @return {string}
    */
@@ -844,6 +849,7 @@ export class DateTime {
 
   /**
    * Get the short human name for the zone's current offset, for example "EST" or "EDT".
+   * Defaults to the system's locale if no locale has been specified
    * @return {String}
    */
   get offsetNameShort() {
@@ -859,7 +865,7 @@ export class DateTime {
 
   /**
    * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
-   * Is locale-aware.
+   * Defaults to the system's locale if no locale has been specified
    * @return {String}
    */
   get offsetNameLong() {
@@ -1145,6 +1151,7 @@ export class DateTime {
   /**
    * Returns a string representation of this DateTime formatted according to the specified format string.
    * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool. See the documentation for the specific format tokens supported.
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} fmt - the format string
    * @param {object} opts - options
    * @param {boolean} opts.round - round numerical values
@@ -1155,7 +1162,7 @@ export class DateTime {
    */
   toFormat(fmt, opts = {}) {
     return this.isValid
-      ? Formatter.create(this.loc, opts).formatDateTimeFromString(this, fmt)
+      ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 
@@ -1163,6 +1170,7 @@ export class DateTime {
    * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
    * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
    * of the DateTime in the assigned locale.
+   * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param opts {object} - Intl.DateTimeFormat constructor options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
@@ -1183,6 +1191,7 @@ export class DateTime {
 
   /**
    * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+   * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
    * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
    * @example DateTime.local().toLocaleString(); //=> [
