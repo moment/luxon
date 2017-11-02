@@ -85,13 +85,13 @@ function extractISODuration(match) {
   const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;
 
   return {
-    year: parseInt(yearStr),
-    month: parseInt(monthStr),
-    week: parseInt(weekStr),
-    day: parseInt(dayStr),
-    hour: parseInt(hourStr),
-    minute: parseInt(minuteStr),
-    second: parseInt(secondStr)
+    years: parseInt(yearStr),
+    months: parseInt(monthStr),
+    weeks: parseInt(weekStr),
+    days: parseInt(dayStr),
+    hours: parseInt(hourStr),
+    minutes: parseInt(minuteStr),
+    seconds: parseInt(secondStr)
   };
 }
 
