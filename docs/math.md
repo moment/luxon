@@ -224,12 +224,12 @@ diffInMonths.as('days'); //=> 30
 
 That's our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn't fix the issue ahead). But this isn't the number of days between February 15 and March 15!
 
-```
+```js
 var diffInDays = end.diff(start, 'days');
 diffInDays.toObject(); //=> { days: 28 }
 ```
 
-It's important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units that got spat out by our computation. Unlike an Interval, a Duration doesn't "remember" what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:
+It's important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units our computation spat out. Unlike an Interval, a Duration doesn't "remember" what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:
 
 
 ```js
@@ -253,7 +253,7 @@ i.length('days');       //=> 28
 i.length('months')      //=> 1
 ```
 
-Because the Interval stores its endpoints and computes `length` on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval *isn't* an abstract bundle of time, it can't be used in places where Durations can. For example, you can add them to DateTime via `plus()` because Luxon wouldn't know what units to do the math in (see "Calendar vs time math" above). But you can convert the interval into a Duration by picking the units:
+Because the Interval stores its endpoints and computes `length` on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval *isn't* an abstract bundle of time, it can't be used in places where Durations can. For example, you can't add them to DateTime via `plus()` because Luxon wouldn't know what units to do the math in (see "Calendar vs time math" above). But you can convert the interval into a Duration by picking the units:
 
 ```js
 i.toDuration('months').toObject(); //=> { months: 1 }
