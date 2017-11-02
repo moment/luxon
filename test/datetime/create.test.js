@@ -2,15 +2,21 @@
 
 import { DateTime, Settings } from '../../src/luxon';
 
-function withDefaultLocale(locale, f) {
-  const existing = Settings.defaultLocale;
-  try {
-    Settings.defaultLocale = locale;
-    f();
-  } finally {
-    Settings.defaultLocale = existing;
-  }
+function setUnset(prop) {
+  return (value, f) => {
+    const existing = Settings[prop];
+    try {
+      Settings[prop] = value;
+      f();
+    } finally {
+      Settings[prop] = existing;
+    }
+  };
 }
+
+const withDefaultLocale = setUnset('defaultLocale'),
+  withDefaultNumberingSystem = setUnset('defaultNumberingSystem'),
+  withDefaultOutputCalendar = setUnset('defaultOutputCalendar');
 
 //------
 // .local()
@@ -99,6 +105,14 @@ test('DateTime.local(2017, 3, 12, 5, 25, 16, 255) is right down to the milliseco
 
 test('DateTime.local accepts the default locale', () => {
   withDefaultLocale('fr', () => expect(DateTime.local().locale).toBe('fr'));
+});
+
+test('DateTime.local accepts the default numbering system', () => {
+  withDefaultNumberingSystem('beng', () => expect(DateTime.local().numberingSystem).toBe('beng'));
+});
+
+test('DateTime.local accepts the default output calendar', () => {
+  withDefaultOutputCalendar('hebrew', () => expect(DateTime.local().outputCalendar).toBe('hebrew'));
 });
 
 //------

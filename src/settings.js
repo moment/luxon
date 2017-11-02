@@ -3,8 +3,10 @@ import { Util } from './impl/util';
 
 let now = () => new Date().valueOf(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
-  throwOnInvalid = false,
-  defaultLocale = null;
+  defaultLocale = null,
+  defaultNumberingSystem = null,
+  defaultOutputCalendar = null,
+  throwOnInvalid = false;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -27,7 +29,7 @@ export class Settings {
   }
 
   /**
-   * Set the default time zone to create DateTimes in.
+   * Get the default time zone to create DateTimes in.
    * @type {string}
    */
   static get defaultZoneName() {
@@ -64,6 +66,38 @@ export class Settings {
    */
   static set defaultLocale(locale) {
     defaultLocale = locale;
+  }
+
+  /**
+   * Get the default numbering system to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static get defaultNumberingSystem() {
+    return defaultNumberingSystem;
+  }
+
+  /**
+   * Set the default numbering system to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static set defaultNumberingSystem(numberingSystem) {
+    defaultNumberingSystem = numberingSystem;
+  }
+
+  /**
+   * Get the default output calendar to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static get defaultOutputCalendar() {
+    return defaultOutputCalendar;
+  }
+
+  /**
+   * Set the default output calendar to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static set defaultOutputCalendar(outputCalendar) {
+    defaultOutputCalendar = outputCalendar;
   }
 
   /**

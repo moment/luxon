@@ -160,8 +160,8 @@ export class Locale {
     const specifiedLocale = locale || Settings.defaultLocale,
       // the system locale is useful for human readable strings but annoying for parsing known formats
       localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),
-      numberingSystemR = numberingSystem || null,
-      outputCalendarR = outputCalendar || null,
+      numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
+      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,
       cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}|${specifiedLocale}`,
       cached = localeCache[cacheKey];
 
@@ -181,11 +181,11 @@ export class Locale {
   constructor(locale, numbering, outputCalendar, specifiedLocale) {
     Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
     Object.defineProperty(this, 'numberingSystem', {
-      value: numbering || null,
+      value: numbering,
       enumerable: true
     });
     Object.defineProperty(this, 'outputCalendar', {
-      value: outputCalendar || null,
+      value: outputCalendar,
       enumerable: true
     });
     Object.defineProperty(this, 'intl', {
