@@ -279,3 +279,23 @@ test('Info.eras lists both eras', () => {
   expect(Info.eras('short', { locale: 'fr' })).toEqual(['av. J.-C.', 'ap. J.-C.']);
   expect(Info.eras('long', { locale: 'fr' })).toEqual(['avant Jésus-Christ', 'après Jésus-Christ']);
 });
+
+//------
+// .hasDST()
+//------
+
+test('Info.hasDST returns true for America/New_York', () => {
+  expect(Info.hasDST('America/New_York')).toBe(true);
+});
+
+test('Info.hasDST returns false for America/Aruba', () => {
+  expect(Info.hasDST('America/Aruba')).toBe(false);
+});
+
+test('Info.hasDST returns false for America/Cancun', () => {
+  expect(Info.hasDST('America/Cancun')).toBe(false);
+});
+
+test('Info.hasDST returns true for Africa/Windhoek', () => {
+  expect(Info.hasDST('Africa/Windhoek')).toBe(true);
+});

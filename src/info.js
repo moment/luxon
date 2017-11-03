@@ -13,15 +13,11 @@ export class Info {
    * @return {boolean}
    */
   static hasDST(zone = Settings.defaultZone) {
-    return (
-      !zone.universal &&
-      DateTime.local()
-        .setZone(zone)
-        .set({ month: 1 }).offset !==
-        DateTime.local()
-          .setZone(zone)
-          .set({ month: 5 }).offset
-    );
+    const proto = DateTime.local()
+      .setZone(zone)
+      .set({ month: 12 });
+
+    return !zone.universal && proto.offset !== proto.set({ month: 6 }).offset;
   }
 
   /**

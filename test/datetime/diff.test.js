@@ -24,19 +24,19 @@ test('DateTime#diff makes simple diffs', () => {
   });
 
   expect(
-    diffObjs({ year: 2016, month: 3, day: 28 }, { year: 2016, month: 2, day: 28 }, 'months')
+    diffObjs({ year: 2016, month: 6, day: 28 }, { year: 2016, month: 5, day: 28 }, 'months')
   ).toEqual({ months: 1 });
 
   expect(
-    diffObjs({ year: 2016, month: 3, day: 28 }, { year: 2016, month: 3, day: 25 }, 'days')
+    diffObjs({ year: 2016, month: 6, day: 28 }, { year: 2016, month: 6, day: 25 }, 'days')
   ).toEqual({ days: 3 });
 
   expect(
-    diffObjs({ year: 2016, month: 3, day: 1 }, { year: 2016, month: 2, day: 28 }, 'days')
-  ).toEqual({ days: 2 });
+    diffObjs({ year: 2016, month: 6, day: 1 }, { year: 2016, month: 5, day: 28 }, 'days')
+  ).toEqual({ days: 4 });
 
   expect(
-    diffObjs({ year: 2016, month: 3, day: 29 }, { year: 2016, month: 3, day: 1 }, 'weeks')
+    diffObjs({ year: 2016, month: 6, day: 29 }, { year: 2016, month: 6, day: 1 }, 'weeks')
   ).toEqual({ weeks: 4 });
 
   expect(
@@ -105,17 +105,17 @@ test('DateTime#diff accepts multiple units', () => {
 
 test('DateTime#diff puts fractional parts in the lowest order unit', () => {
   expect(
-    diffObjs({ year: 2017, month: 5, day: 14 }, { year: 2016, month: 3, day: 16 }, [
+    diffObjs({ year: 2017, month: 7, day: 14 }, { year: 2016, month: 6, day: 16 }, [
       'years',
       'months'
     ])
-  ).toEqual({ years: 1, months: 2 - 2 / 30 });
+  ).toEqual({ years: 1, months: 1 - 2 / 30 });
 });
 
 test('DateTime#diff is calendary for years, months, day', () => {
   // respecting the leap year
   expect(
-    diffObjs({ year: 2016, month: 3, day: 14 }, { year: 2010, month: 3, day: 14 }, [
+    diffObjs({ year: 2016, month: 6, day: 14 }, { year: 2010, month: 6, day: 14 }, [
       'years',
       'days'
     ])
@@ -135,11 +135,12 @@ test('DateTime#diff is calendary for years, months, day', () => {
 });
 
 test('DateTime#diff is precise for lower order units', () => {
-  const expected = Info.hasDST() ? 2999 : 3000;
-  // spring forward skips one hour
-  expect(
-    diffObjs({ year: 2016, month: 5, day: 5 }, { year: 2016, month: 1, day: 1 }, 'hours')
-  ).toEqual({ hours: expected });
+  if (DateTime.local().zoneName === 'America/New_York') {
+    // spring forward skips one hour
+    expect(
+      diffObjs({ year: 2016, month: 5, day: 5 }, { year: 2016, month: 1, day: 1 }, 'hours')
+    ).toEqual({ hours: 2999 });
+  }
 });
 
 test('DateTime#diff returns invalid Durations if the DateTimes are invalid', () => {
