@@ -2521,7 +2521,7 @@ var LocalZone = function (_Zone) {
   }, {
     key: 'name',
     get: function get$$1() {
-      if (!Util.isUndefined(Intl) && !Util.isUndefined(Intl.DateTimeFormat)) {
+      if (Util.hasIntl()) {
         return new Intl.DateTimeFormat().resolvedOptions().timeZone;
       } else return 'local';
     }
@@ -2933,14 +2933,15 @@ var Util = function () {
         intl.timeZone = timeZone;
       }
 
-      var modified = Object.assign({ timeZoneName: offsetFormat }, intl);
+      var modified = Object.assign({ timeZoneName: offsetFormat }, intl),
+          hasIntl = Util.hasIntl();
 
-      if (Intl.DateTimeFormat.prototype.formatToParts) {
+      if (hasIntl && Util.hasFormatToParts()) {
         var parsed = new Intl.DateTimeFormat(locale, modified).formatToParts(date).find(function (m) {
           return m.type.toLowerCase() === 'timezonename';
         });
         return parsed ? parsed.value : null;
-      } else if (Intl && Intl.DateTimeFormat) {
+      } else if (hasIntl) {
         // this probably doesn't work for all locales
         var without = new Intl.DateTimeFormat(locale, intl).format(date),
             included = new Intl.DateTimeFormat(locale, modified).format(date),
@@ -3012,6 +3013,16 @@ var Util = function () {
           offMin = parseInt(offMinuteStr, 10) || 0,
           offMinSigned = offHour < 0 ? -offMin : offMin;
       return offHour * 60 + offMinSigned;
+    }
+  }, {
+    key: 'hasIntl',
+    value: function hasIntl() {
+      return !Util.isUndefined(Intl) && Intl.DateTimeFormat;
+    }
+  }, {
+    key: 'hasFormatToParts',
+    value: function hasFormatToParts() {
+      return !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
     }
   }]);
   return Util;
@@ -3802,7 +3813,7 @@ var sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
-  } else if (Intl && Intl.DateTimeFormat) {
+  } else if (Util.hasIntl()) {
     sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
     return sysLocaleCache;
   } else {
@@ -3889,7 +3900,7 @@ var PolyDateFormatter = function () {
     classCallCheck(this, PolyDateFormatter);
 
     this.opts = opts;
-    this.hasIntl = Intl && Intl.DateTimeFormat;
+    this.hasIntl = Util.hasIntl();
 
     var z = void 0;
     if (dt.zone.universal) {
@@ -3928,7 +3939,7 @@ var PolyDateFormatter = function () {
   }, {
     key: 'formatToParts',
     value: function formatToParts() {
-      if (this.hasIntl && Intl.DateTimeFormat.prototype.formatToParts) {
+      if (this.hasIntl && Util.hasFormatToParts()) {
         return this.dtf.formatToParts(this.dt.toJSDate());
       } else {
         // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings
@@ -4044,8 +4055,8 @@ var Locale = function () {
     value: function listingMode() {
       var defaultOk = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
-      var hasIntl = Intl && Intl.DateTimeFormat,
-          hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
+      var hasIntl = Util.hasIntl(),
+          hasFTP = hasIntl && Util.hasFormatToParts(),
           isActuallyEn = this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || hasIntl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-us'),
           hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
 
@@ -4171,7 +4182,7 @@ var Locale = function () {
       var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var intlOpts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      if (Intl && Intl.NumberFormat) {
+      if (Util.hasIntl()) {
         var realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
         if (opts.padTo > 0) {
@@ -6148,10 +6159,9 @@ var Info = function () {
           intlTokens = false,
           zones = false;
 
-      if (!Util.isUndefined(Intl) && !Util.isUndefined(Intl.DateTimeFormat)) {
+      if (Util.hasIntl()) {
         intl = true;
-
-        intlTokens = !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
+        intlTokens = Util.hasFormatToParts();
 
         try {
           zones = true;
