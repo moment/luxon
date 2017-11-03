@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14
+
+ * Fixes for IE 9 & 10
+
 ## 0.13
 
  * toLocaleString() and others default to the system's locale
