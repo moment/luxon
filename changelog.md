@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13
+
+ * toLocaleString() and others default to the system's locale
+ * support for ISO week durations in `Duration.fromISO`
+
 ## 0.12
 
  * Improve non-Intl fallbacks for toLocaleString
