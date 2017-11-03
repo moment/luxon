@@ -2333,8 +2333,10 @@ var now = function now() {
   return new Date().valueOf();
 };
 var defaultZone = null;
+var defaultLocale = null;
+var defaultNumberingSystem = null;
+var defaultOutputCalendar = null;
 var throwOnInvalid = false;
-var defaultLocale = 'en-US';
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -2365,7 +2367,7 @@ var Settings = function () {
     }
 
     /**
-     * Set the default time zone to create DateTimes in.
+     * Get the default time zone to create DateTimes in.
      * @type {string}
      */
 
@@ -2413,6 +2415,46 @@ var Settings = function () {
     ,
     set: function set$$1(locale) {
       defaultLocale = locale;
+    }
+
+    /**
+     * Get the default numbering system to create DateTimes with. Does not affect existing instances.
+     * @type {string}
+     */
+
+  }, {
+    key: 'defaultNumberingSystem',
+    get: function get$$1() {
+      return defaultNumberingSystem;
+    }
+
+    /**
+     * Set the default numbering system to create DateTimes with. Does not affect existing instances.
+     * @type {string}
+     */
+    ,
+    set: function set$$1(numberingSystem) {
+      defaultNumberingSystem = numberingSystem;
+    }
+
+    /**
+     * Get the default output calendar to create DateTimes with. Does not affect existing instances.
+     * @type {string}
+     */
+
+  }, {
+    key: 'defaultOutputCalendar',
+    get: function get$$1() {
+      return defaultOutputCalendar;
+    }
+
+    /**
+     * Set the default output calendar to create DateTimes with. Does not affect existing instances.
+     * @type {string}
+     */
+    ,
+    set: function set$$1(outputCalendar) {
+      defaultOutputCalendar = outputCalendar;
     }
 
     /**
@@ -3758,6 +3800,19 @@ var Formatter = function () {
 
 var localeCache = {};
 
+var sysLocaleCache = null;
+function systemLocale() {
+  if (sysLocaleCache) {
+    return sysLocaleCache;
+  } else if (Intl && Intl.DateTimeFormat) {
+    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
+    return sysLocaleCache;
+  } else {
+    sysLocaleCache = 'en-US';
+    return sysLocaleCache;
+  }
+}
+
 function intlConfigString(locale, numberingSystem, outputCalendar) {
   var loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
   loc = Array.isArray(locale) ? locale : [locale];
@@ -3908,21 +3963,26 @@ var Locale = function () {
   createClass(Locale, null, [{
     key: 'fromOpts',
     value: function fromOpts(opts) {
-      return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar);
+      return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar, opts.defaultToEN);
     }
   }, {
     key: 'create',
     value: function create(locale, numberingSystem, outputCalendar) {
-      var localeR = locale || Settings.defaultLocale,
-          numberingSystemR = numberingSystem || null,
-          outputCalendarR = outputCalendar || null,
-          cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR,
+      var defaultToEN = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+      var specifiedLocale = locale || Settings.defaultLocale,
+
+      // the system locale is useful for human readable strings but annoying for parsing known formats
+      localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),
+          numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
+          outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,
+          cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR + '|' + specifiedLocale,
           cached = localeCache[cacheKey];
 
       if (cached) {
         return cached;
       } else {
-        var fresh = new Locale(localeR, numberingSystemR, outputCalendarR);
+        var fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
         localeCache[cacheKey] = fresh;
         return fresh;
       }
@@ -3939,16 +3999,16 @@ var Locale = function () {
     }
   }]);
 
-  function Locale(locale, numbering, outputCalendar) {
+  function Locale(locale, numbering, outputCalendar, specifiedLocale) {
     classCallCheck(this, Locale);
 
     Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
     Object.defineProperty(this, 'numberingSystem', {
-      value: numbering || null,
+      value: numbering,
       enumerable: true
     });
     Object.defineProperty(this, 'outputCalendar', {
-      value: outputCalendar || null,
+      value: outputCalendar,
       enumerable: true
     });
     Object.defineProperty(this, 'intl', {
@@ -3975,6 +4035,7 @@ var Locale = function () {
       enumerable: false,
       writable: true
     });
+    Object.defineProperty(this, 'specifiedLocale', { value: specifiedLocale, enumerable: true });
   }
 
   // todo: cache me
@@ -3987,7 +4048,7 @@ var Locale = function () {
 
       var hasIntl = Intl && Intl.DateTimeFormat,
           hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
-          isActuallyEn = this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || hasIntl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-US'),
+          isActuallyEn = this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || hasIntl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-us'),
           hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
 
       if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
@@ -4004,8 +4065,15 @@ var Locale = function () {
       if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
         return this;
       } else {
-        return Locale.create(alts.locale || this.locale, alts.numberingSystem || this.numberingSystem, alts.outputCalendar || this.outputCalendar);
+        return Locale.create(alts.locale || this.specifiedLocale, alts.numberingSystem || this.numberingSystem, alts.outputCalendar || this.outputCalendar, alts.defaultToEN || false);
       }
+    }
+  }, {
+    key: 'redefaultToEN',
+    value: function redefaultToEN() {
+      var alts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return this.clone(Object.assign({}, alts, { defaultToEN: true }));
     }
   }, {
     key: 'months',
@@ -4276,13 +4344,13 @@ function extractISODuration(match) {
       weekStr = _match[7];
 
   return {
-    year: parseInt(yearStr),
-    month: parseInt(monthStr),
-    week: parseInt(weekStr),
-    day: parseInt(dayStr),
-    hour: parseInt(hourStr),
-    minute: parseInt(minuteStr),
-    second: parseInt(secondStr)
+    years: parseInt(yearStr),
+    months: parseInt(monthStr),
+    weeks: parseInt(weekStr),
+    days: parseInt(dayStr),
+    hours: parseInt(hourStr),
+    minutes: parseInt(minuteStr),
+    seconds: parseInt(secondStr)
   };
 }
 
@@ -5899,7 +5967,9 @@ var Info = function () {
     value: function hasDST() {
       var zone = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Settings.defaultZone;
 
-      return !zone.universal && DateTime.local().setZone(zone).set({ month: 1 }).offset !== DateTime.local().setZone(zone).set({ month: 5 }).offset;
+      var proto = DateTime.local().setZone(zone).set({ month: 12 });
+
+      return !zone.universal && proto.offset !== proto.set({ month: 6 }).offset;
     }
 
     /**
@@ -5907,7 +5977,7 @@ var Info = function () {
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
      * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
      * @param {object} opts - options
-     * @param {string} [opts.locale='en'] - the locale code
+     * @param {string} [opts.locale] - the locale code
      * @param {string} [opts.numberingSystem=null] - the numbering system
      * @param {string} [opts.outputCalendar='gregory'] - the calendar
      * @example Info.months()[0] //=> 'January'
@@ -5926,13 +5996,13 @@ var Info = function () {
 
       var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref$locale = _ref.locale,
-          locale = _ref$locale === undefined ? 'en' : _ref$locale,
+          locale = _ref$locale === undefined ? null : _ref$locale,
           _ref$numberingSystem = _ref.numberingSystem,
           numberingSystem = _ref$numberingSystem === undefined ? null : _ref$numberingSystem,
           _ref$outputCalendar = _ref.outputCalendar,
           outputCalendar = _ref$outputCalendar === undefined ? 'gregory' : _ref$outputCalendar;
 
-      return new Locale(locale, numberingSystem, outputCalendar).months(length);
+      return Locale.create(locale, numberingSystem, outputCalendar).months(length);
     }
 
     /**
@@ -5942,7 +6012,7 @@ var Info = function () {
      * See {@link months}
      * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
      * @param {object} opts - options
-     * @param {string} [opts.locale='en'] - the locale code
+     * @param {string} [opts.locale] - the locale code
      * @param {string} [opts.numbering=null] - the numbering system
      * @param {string} [opts.outputCalendar='gregory'] - the calendar
      * @return {[string]}
@@ -5955,13 +6025,13 @@ var Info = function () {
 
       var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref2$locale = _ref2.locale,
-          locale = _ref2$locale === undefined ? 'en' : _ref2$locale,
+          locale = _ref2$locale === undefined ? null : _ref2$locale,
           _ref2$numberingSystem = _ref2.numberingSystem,
           numberingSystem = _ref2$numberingSystem === undefined ? null : _ref2$numberingSystem,
           _ref2$outputCalendar = _ref2.outputCalendar,
           outputCalendar = _ref2$outputCalendar === undefined ? 'gregory' : _ref2$outputCalendar;
 
-      return new Locale(locale, numberingSystem, outputCalendar).months(length, true);
+      return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);
     }
 
     /**
@@ -5969,7 +6039,7 @@ var Info = function () {
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
      * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
      * @param {object} opts - options
-     * @param {string} [opts.locale='en'] - the locale code
+     * @param {string} [opts.locale] - the locale code
      * @param {string} [opts.numbering=null] - the numbering system
      * @param {string} [opts.outputCalendar='gregory'] - the calendar
      * @example Info.weekdays()[0] //=> 'Monday'
@@ -5986,11 +6056,11 @@ var Info = function () {
 
       var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref3$locale = _ref3.locale,
-          locale = _ref3$locale === undefined ? 'en' : _ref3$locale,
+          locale = _ref3$locale === undefined ? null : _ref3$locale,
           _ref3$numberingSystem = _ref3.numberingSystem,
           numberingSystem = _ref3$numberingSystem === undefined ? null : _ref3$numberingSystem;
 
-      return new Locale(locale, numberingSystem, null).weekdays(length);
+      return Locale.create(locale, numberingSystem, null).weekdays(length);
     }
 
     /**
@@ -6000,7 +6070,7 @@ var Info = function () {
      * See {@link weekdays}
      * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
      * @param {object} opts - options
-     * @param {string} [opts.locale='en'] - the locale code
+     * @param {string} [opts.locale=null] - the locale code
      * @param {string} [opts.numbering=null] - the numbering system
      * @param {string} [opts.outputCalendar='gregory'] - the calendar
      * @return {[string]}
@@ -6013,17 +6083,17 @@ var Info = function () {
 
       var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref4$locale = _ref4.locale,
-          locale = _ref4$locale === undefined ? 'en' : _ref4$locale,
+          locale = _ref4$locale === undefined ? null : _ref4$locale,
           _ref4$numberingSystem = _ref4.numberingSystem,
           numberingSystem = _ref4$numberingSystem === undefined ? null : _ref4$numberingSystem;
 
-      return new Locale(locale, numberingSystem, null).weekdays(length, true);
+      return Locale.create(locale, numberingSystem, null).weekdays(length, true);
     }
 
     /**
      * Return an array of meridiems.
      * @param {object} opts - options
-     * @param {string} [opts.locale='en'] - the locale code
+     * @param {string} [opts.locale] - the locale code
      * @example Info.meridiems() //=> [ 'AM', 'PM' ]
      * @example Info.meridiems('de') //=> [ 'vorm.', 'nachm.' ]
      * @return {[string]}
@@ -6034,16 +6104,16 @@ var Info = function () {
     value: function meridiems() {
       var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           _ref5$locale = _ref5.locale,
-          locale = _ref5$locale === undefined ? 'en' : _ref5$locale;
+          locale = _ref5$locale === undefined ? null : _ref5$locale;
 
-      return new Locale(locale).meridiems();
+      return Locale.create(locale).meridiems();
     }
 
     /**
      * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.
      * @param {string} [length='short'] - the length of the era representation, such as "short" or "long".
      * @param {object} opts - options
-     * @param {string} [opts.locale='en'] - the locale code
+     * @param {string} [opts.locale] - the locale code
      * @example Info.eras() //=> [ 'BC', 'AD' ]
      * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
      * @example Info.eras('long', 'fr') //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
@@ -6057,9 +6127,9 @@ var Info = function () {
 
       var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           _ref6$locale = _ref6.locale,
-          locale = _ref6$locale === undefined ? 'en' : _ref6$locale;
+          locale = _ref6$locale === undefined ? null : _ref6$locale;
 
-      return new Locale(locale, null, 'gregory').eras(length);
+      return Locale.create(locale, null, 'gregory').eras(length);
     }
 
     /**
@@ -6932,7 +7002,7 @@ var DateTime = function () {
 
     /**
      * Returns the resolved Intl options for this DateTime.
-     * This is useful in understanding the behavior of parsing and formatting methods
+     * This is useful in understanding the behavior of formatting methods
      * @param {object} opts - the same options as toLocaleString
      * @return {object}
      */
@@ -7186,6 +7256,7 @@ var DateTime = function () {
     /**
      * Returns a string representation of this DateTime formatted according to the specified format string.
      * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool. See the documentation for the specific format tokens supported.
+     * Defaults to en-US if no locale has been specified, regardless of the system's locale
      * @param {string} fmt - the format string
      * @param {object} opts - options
      * @param {boolean} opts.round - round numerical values
@@ -7200,13 +7271,14 @@ var DateTime = function () {
     value: function toFormat(fmt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      return this.isValid ? Formatter.create(this.loc, opts).formatDateTimeFromString(this, fmt) : INVALID;
+      return this.isValid ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt) : INVALID;
     }
 
     /**
      * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
      * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
      * of the DateTime in the assigned locale.
+     * Defaults to the system's locale if no locale has been specified
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
      * @param opts {object} - Intl.DateTimeFormat constructor options
      * @example DateTime.local().toLocaleString(); //=> 4/20/2017
@@ -7230,6 +7302,7 @@ var DateTime = function () {
 
     /**
      * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+     * Defaults to the system's locale if no locale has been specified
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
      * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
      * @example DateTime.local().toLocaleString(); //=> [
@@ -7796,6 +7869,7 @@ var DateTime = function () {
 
     /**
      * Get the human readable short month name, such as 'Oct'.
+     * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30) //=> Oct
      * @return {string}
      */
@@ -7808,6 +7882,7 @@ var DateTime = function () {
 
     /**
      * Get the human readable long month name, such as 'October'.
+     * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30) //=> October
      * @return {string}
      */
@@ -7820,6 +7895,7 @@ var DateTime = function () {
 
     /**
      * Get the human readable short weekday, such as 'Mon'.
+     * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30) //=> Mon
      * @return {string}
      */
@@ -7832,6 +7908,7 @@ var DateTime = function () {
 
     /**
      * Get the human readable long weekday, such as 'Monday'.
+     * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30) //=> Monday
      * @return {string}
      */
@@ -7857,6 +7934,7 @@ var DateTime = function () {
 
     /**
      * Get the short human name for the zone's current offset, for example "EST" or "EDT".
+     * Defaults to the system's locale if no locale has been specified
      * @return {String}
      */
 
@@ -7875,7 +7953,7 @@ var DateTime = function () {
 
     /**
      * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
-     * Is locale-aware.
+     * Defaults to the system's locale if no locale has been specified
      * @return {String}
      */
 
@@ -8042,7 +8120,7 @@ var DateTime = function () {
      * @param {number} milliseconds - a number of milliseconds since 1970 UTC
      * @param {Object} options - configuration options for the DateTime
      * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
-     * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
+     * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
      * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @return {DateTime}
@@ -8292,6 +8370,7 @@ var DateTime = function () {
 
     /**
      * Create a DateTime from an input string and format string
+     * Defaults to en-US if no locale has been specified, regardless of the system's locale
      * @param {string} text - the string to parse
      * @param {string} fmt - the format the string is expected to be in (see description)
      * @param {Object} options - options to affect the creation
@@ -8312,7 +8391,7 @@ var DateTime = function () {
           locale = _options$locale === undefined ? null : _options$locale,
           _options$numberingSys = options.numberingSystem,
           numberingSystem = _options$numberingSys === undefined ? null : _options$numberingSys,
-          parser = new TokenParser(Locale.fromOpts({ locale: locale, numberingSystem: numberingSystem })),
+          parser = new TokenParser(Locale.fromOpts({ locale: locale, numberingSystem: numberingSystem, defaultToEN: true })),
           _parser$parseDateTime = parser.parseDateTime(text, fmt),
           _parser$parseDateTime2 = slicedToArray(_parser$parseDateTime, 3),
           vals = _parser$parseDateTime2[0],

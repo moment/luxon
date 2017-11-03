@@ -66,7 +66,7 @@
 <div data-ice="manual" data-toc-name="usage">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html" data-ice="link">Intl</a></li>
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#setting-locale" data-ice="link">Setting locale</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#checking-what-you-got" data-ice="link">Checking what you got</a></li>
@@ -75,6 +75,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#parsing" data-ice="link">Parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#listing" data-ice="link">Listing</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#numberingsystem" data-ice="link">numberingSystem</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#locale-defaults" data-ice="link">Locale defaults</a></li>
 <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html" data-ice="link">Time zones and offsets</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#don-t-worry-" data-ice="link">Don&apos;t worry!</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#terminology" data-ice="link">Terminology</a></li>
@@ -191,6 +192,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-13" data-ice="link">0.13</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-12" data-ice="link">0.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-10" data-ice="link">0.10</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-9" data-ice="link">0.9</a></li>
@@ -303,7 +305,7 @@ i.toString()    //=&gt; &apos;[2017-09-14T04:07:11.532-04:00 &#x2013; 2020-10-12
       </div>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
-      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;"><span data-ice="label-inner">Intl</span></h1>
+      <h1 data-ice="label" class="manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;"><span data-ice="label-inner">Intl</span></h1>
       <div class="manual-card">
         <div data-ice="card"><h1>Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;el&apos;).toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
 </code></pre><h2>How locales work</h2><p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument works. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string.</p><p>The rest of this document will concentrate on what Luxon does when provided with locale information.</p><h2>Setting locale</h2><p><code>locale</code> is a property of Luxon object, and it defaults to &apos;en-US&apos;. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.</p><p>You can generally set it at construction time:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.fromISO(&apos;2017-09-24&apos;, { locale: &apos;fr&apos; })
@@ -330,7 +332,13 @@ dt.resolvedLocaleOpts() //=&gt; { locale: &apos;ar&apos;,
 dt.toLocaleString() //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
 </code></pre><p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt  = DateTime.local().reconfigure({ locale: &apos;it&apos;, numberingSystem: &apos;beng&apos; })
 dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
-</code></pre></div>
+</code></pre><h2>Locale defaults</h2><p>You can set the default locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &apos;fr&apos;;
+DateTime.locale().locale; //=&gt; &apos;fr&apos;</code>
+</code></pre><p>This only effects newly created instances, not existing ones. It also affects what language <code>DateTime.fromString</code> expects the string to be in.</p><p>If you <em>haven&apos;t</em> set the default locale, the locale used varies by method:</p><ol>
+<li><code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that always means en-US.</li>
+<li><code>DateTime.fromString</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
+</ol><p>On that second point: you really should be using <code>toLocaleString</code> anywhere this might come up, and <code>fromString</code> won&apos;t make sense in locales that order their date stings differently anyway. But if you really want <code>toFormat</code> or <code>fromString</code> to be sensitive to the environment&apos;s locale, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint"> Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
+</code></pre><p>You currently can&apos;t change the default numbering system or output calendar, though this may change.</p></div>
         <a data-ice="link" href="manual/usage/intl.html"></a>
       </div>
     </div>
@@ -1541,9 +1549,9 @@ end.diff(start, { conversionAccuracy: &apos;longterm&apos; })</code>
 </code></pre><p>These Durations will do their conversions differently.</p><h3>Losing information</h3><p>Be careful of converting between units. It&apos;s easy to lose information. Let&apos;s say we converted a diff into days:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
 var start = DateTime.fromISO(&apos;2017-02-13&apos;);
 diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
-</code></pre><p>That&apos;s our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 15 and March 15!</p><pre><code><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
+</code></pre><p>That&apos;s our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 15 and March 15!</p><pre><code class="lang-js"><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
 diffInDays.toObject(); //=&gt; { days: 28 }</code>
-</code></pre><p>It&apos;s important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units that got spat out by our computation. Unlike an Interval, a Duration doesn&apos;t &quot;remember&quot; what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:</p><pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start) // default unit is milliseconds
+</code></pre><p>It&apos;s important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units our computation spat out. Unlike an Interval, a Duration doesn&apos;t &quot;remember&quot; what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:</p><pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start) // default unit is milliseconds
 
 // wtf, that&apos;s not a month!
 diff.as(&apos;months&apos;); //=&gt; 0.9319444 
@@ -1556,7 +1564,7 @@ var i = Interval.fromDateTimes(start, end);
 
 i.length(&apos;days&apos;);       //=&gt; 28
 i.length(&apos;months&apos;)      //=&gt; 1</code>
-</code></pre><p>Because the Interval stores its endpoints and computes <code>length</code> on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval <em>isn&apos;t</em> an abstract bundle of time, it can&apos;t be used in places where Durations can. For example, you can add them to DateTime via <code>plus()</code> because Luxon wouldn&apos;t know what units to do the math in (see &quot;Calendar vs time math&quot; above). But you can convert the interval into a Duration by picking the units:</p><pre><code class="lang-js"><code class="source-code prettyprint">i.toDuration(&apos;months&apos;).toObject(); //=&gt; { months: 1 }
+</code></pre><p>Because the Interval stores its endpoints and computes <code>length</code> on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval <em>isn&apos;t</em> an abstract bundle of time, it can&apos;t be used in places where Durations can. For example, you can&apos;t add them to DateTime via <code>plus()</code> because Luxon wouldn&apos;t know what units to do the math in (see &quot;Calendar vs time math&quot; above). But you can convert the interval into a Duration by picking the units:</p><pre><code class="lang-js"><code class="source-code prettyprint">i.toDuration(&apos;months&apos;).toObject(); //=&gt; { months: 1 }
 i.toDuration(&apos;days&apos;).toObject(); //=&gt; { days: 28 }</code>
 </code></pre><p>You can even pick multiple units:</p><pre><code class="lang-js"><code class="source-code prettyprint">end = DateTime.fromISO(&apos;2018-05-25&apos;);
 i = start.until(end);
@@ -2561,7 +2569,10 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <div class="manual-card-wrap" data-ice="cards">
       <h1 data-ice="label" class="manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;"><span data-ice="label-inner">Changelog</span></h1>
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.12</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.13</h2><ul>
+<li>toLocaleString() and others default to the system&apos;s locale</li>
+<li>support for ISO week durations in <code>Duration.fromISO</code></li>
+</ul><h2>0.12</h2><ul>
 <li>Improve non-Intl fallbacks for toLocaleString</li>
 <li>Fix <code>offsetNameShort</code> and <code>offsetNameLong</code> for non-Intl environments </li>
 <li>Added <code>weekdayShort</code>, <code>weekdayLong</code>, <code>monthShort</code>, <code>monthLong</code> DateTime getters</li>

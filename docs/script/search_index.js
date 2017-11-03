@@ -1453,14 +1453,38 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-set-defaultLocale",
+    "class/src/settings.js~Settings.html#static-get-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-get-defaultLocale",
+    "class/src/settings.js~Settings.html#static-set-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultoutputcalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "src/settings.js~Settings.defaultOutputCalendar",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultoutputcalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
   [
@@ -1471,25 +1495,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
-    "src/settings.js~Settings.defaultZoneName",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultzonename",
     "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
-    "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-get-now",
-    "src/settings.js~Settings.now",
+    "src/settings.js~settings.defaultzonename",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.now",
     "class/src/settings.js~Settings.html#static-set-now",
+    "src/settings.js~Settings.now",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.now",
+    "class/src/settings.js~Settings.html#static-get-now",
     "src/settings.js~Settings.now",
     "member"
   ],

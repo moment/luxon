@@ -66,7 +66,7 @@
 <div data-ice="manual" data-toc-name="usage">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html" data-ice="link">Intl</a></li>
+    <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#setting-locale" data-ice="link">Setting locale</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#checking-what-you-got" data-ice="link">Checking what you got</a></li>
@@ -75,6 +75,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#parsing" data-ice="link">Parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#listing" data-ice="link">Listing</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#numberingsystem" data-ice="link">numberingSystem</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage/intl.html"><a href="manual/usage/intl.html#locale-defaults" data-ice="link">Locale defaults</a></li>
 <li data-ice="manualNav" class="indent-h1 manual-color manual-color-usage" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html" data-ice="link">Time zones and offsets</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#don-t-worry-" data-ice="link">Don&apos;t worry!</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/zones.html"><a href="manual/usage/zones.html#terminology" data-ice="link">Terminology</a></li>
@@ -191,6 +192,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-13" data-ice="link">0.13</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-12" data-ice="link">0.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-10" data-ice="link">0.10</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-9" data-ice="link">0.9</a></li>
@@ -271,6 +273,21 @@ dt.toLocaleString() //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;
 <pre><code class="lang-js"><code class="source-code prettyprint">var dt  = DateTime.local().reconfigure({ locale: &apos;it&apos;, numberingSystem: &apos;beng&apos; })
 dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
 </code></pre>
+<h2 id="locale-defaults">Locale defaults</h2>
+<p>You can set the default locale:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &apos;fr&apos;;
+DateTime.locale().locale; //=&gt; &apos;fr&apos;</code>
+</code></pre>
+<p>This only effects newly created instances, not existing ones. It also affects what language <code>DateTime.fromString</code> expects the string to be in.</p>
+<p>If you <em>haven&apos;t</em> set the default locale, the locale used varies by method:</p>
+<ol>
+<li><code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that always means en-US.</li>
+<li><code>DateTime.fromString</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
+</ol>
+<p>On that second point: you really should be using <code>toLocaleString</code> anywhere this might come up, and <code>fromString</code> won&apos;t make sense in locales that order their date stings differently anyway. But if you really want <code>toFormat</code> or <code>fromString</code> to be sensitive to the environment&apos;s locale, you can always do this:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint"> Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
+</code></pre>
+<p>You currently can&apos;t change the default numbering system or output calendar, though this may change.</p>
 </div>
 </div>
 </div>
