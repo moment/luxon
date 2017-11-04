@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.15
+ * Fix Intl brokenness
+
 ## 0.13
 
  * toLocaleString() and others default to the system's locale
