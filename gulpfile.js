@@ -18,7 +18,8 @@ const babel = require('rollup-plugin-babel'),
   runSequence = require('run-sequence'),
   source = require('vinyl-source-stream'),
   sourcemaps = require('gulp-sourcemaps'),
-  through = require('through2');
+  through = require('through2'),
+  util = require('gulp-util');
 
 function rollupLib(inopts) {
   const opts = Object.assign(
@@ -77,6 +78,23 @@ function prettify(opts) {
       data = prettier.format(str, opts);
     file.contents = Buffer.from(data);
     callback(null, file);
+  });
+}
+
+function checkForDocCoverage() {
+  return through.obj(function(file, enc, cb) {
+    const content = file.contents.toString(enc),
+      parsed = JSON.parse(content);
+    if (parsed.coverage === '100%') {
+      this.push(file);
+      cb();
+    } else {
+      this.emit(
+        'error',
+        new util.PluginError('check-for-coverage', { message: 'Doc coverage not 100%' })
+      );
+      this.emit('end');
+    }
   });
 }
 
@@ -152,7 +170,7 @@ gulp.task('format', () =>
     .pipe(gulp.dest('./'))
 );
 
-gulp.task('docs', () =>
+gulp.task('generate-docs', () =>
   gulp.src('./src').pipe(
     esdoc({
       destination: './build/docs',
@@ -181,6 +199,12 @@ gulp.task('docs', () =>
     })
   )
 );
+
+gulp.task('check-doc-coverage', () =>
+  gulp.src('build/docs/coverage.json').pipe(checkForDocCoverage())
+);
+
+gulp.task('docs', cb => runSequence('generate-docs', 'check-doc-coverage', cb));
 
 gulp.task('coveralls', () => gulp.src('build/coverage/lcov.info').pipe(coveralls()));
 
