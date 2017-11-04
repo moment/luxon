@@ -1,5 +1,6 @@
 import { LocalZone } from './zones/localZone';
 import { Util } from './impl/util';
+import { Locale } from './impl/locale';
 
 let now = () => new Date().valueOf(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
@@ -114,5 +115,13 @@ export class Settings {
    */
   static set throwOnInvalid(t) {
     throwOnInvalid = t;
+  }
+
+  /**
+   * Reset Luxon's global caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCaches() {
+    Locale.resetCache();
   }
 }

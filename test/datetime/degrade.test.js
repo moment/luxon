@@ -1,13 +1,14 @@
 /* global test expect Intl */
 /* eslint no-global-assign: "off" */
 
-import { DateTime, Info } from '../../src/luxon';
+import { DateTime, Info, Settings } from '../../src/luxon';
 
 test('No Intl support at all', () => {
   const intl = Intl;
 
   try {
     Intl = undefined;
+    Settings.resetCaches();
 
     // Info.features returns the right thing
     expect(Info.features().intl).toBe(false);
@@ -87,8 +88,10 @@ test('No formatToParts support', () => {
 
   try {
     Intl.DateTimeFormat.prototype.formatToParts = undefined;
+    Settings.resetCaches();
 
     // Info.features returns the right thing
+    // todo: move these to the Info dir
     expect(Info.features().intl).toBe(true);
     expect(Info.features().intlTokens).toBe(false);
 
@@ -142,9 +145,10 @@ test('No formatToParts support', () => {
 
 test('No zone support', () => {
   const { DateTimeFormat } = Intl;
+  Settings.resetCaches();
 
   try {
-    Intl.DateTimeFormat = (locale, opts) => {
+    Intl.DateTimeFormat = (locale, opts = {}) => {
       if (opts.timeZone) {
         // eslint-disable-next-line no-throw-literal
         throw `Unsupported time zone specified ${opts.timeZone}`;
@@ -153,6 +157,7 @@ test('No zone support', () => {
     };
 
     // Info.features returns the right thing
+    // todo: move this to Info dir
     expect(Info.features().zones).toBe(false);
 
     // regular Intl works fine

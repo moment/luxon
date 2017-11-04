@@ -142,8 +142,9 @@ export class Info {
       intlTokens = Util.hasFormatToParts();
 
       try {
-        Intl.DateTimeFormat({ timeZone: 'America/New_York' });
-        zones = true;
+        zones =
+          new Intl.DateTimeFormat('en', { timeZone: 'America/New_York' }).resolvedOptions()
+            .timeZone === 'America/New_York';
       } catch (e) {
         zones = false;
       }

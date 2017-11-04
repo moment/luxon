@@ -2,8 +2,14 @@ function demo(luxon) {
   var DateTime = luxon.DateTime,
     examples = [],
     run = function(code) {
+      var result;
       try {
-        return JSON.stringify(eval(code));
+        result = eval(code);
+        if (result.isValid === false) {
+          return 'Invalid';
+        } else {
+          return JSON.stringify(result);
+        }
       } catch (e) {
         return '[error]';
       }

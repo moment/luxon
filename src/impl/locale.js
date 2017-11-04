@@ -4,9 +4,9 @@ import { Settings } from '../settings';
 import { DateTime } from '../datetime';
 import { Formatter } from './formatter';
 
-const localeCache = {};
+let localeCache = {},
+  sysLocaleCache = null;
 
-let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
@@ -21,11 +21,10 @@ function systemLocale() {
 
 function intlConfigString(locale, numberingSystem, outputCalendar) {
   if (Util.hasIntl()) {
-    let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
-    loc = Array.isArray(locale) ? locale : [locale];
+    locale = Array.isArray(locale) ? locale : [locale];
 
     if (outputCalendar || numberingSystem) {
-      loc = loc.map(l => {
+      locale = locale.map(l => {
         l += '-u';
 
         if (outputCalendar) {
@@ -38,9 +37,9 @@ function intlConfigString(locale, numberingSystem, outputCalendar) {
         return l;
       });
     }
-    return loc;
+    return locale;
   } else {
-    return null;
+    return [];
   }
 }
 
@@ -176,6 +175,11 @@ export class Locale {
       localeCache[cacheKey] = fresh;
       return fresh;
     }
+  }
+
+  static resetCache() {
+    sysLocaleCache = null;
+    localeCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
