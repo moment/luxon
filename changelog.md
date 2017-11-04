@@ -14,7 +14,7 @@
 ## 0.0.12
 
  * Improve non-Intl fallbacks for toLocaleString
- * Fix `offsetNameShort` and `offsetNameLong` for non-Intl environments 
+ * Fix `offsetNameShort` and `offsetNameLong` for non-Intl environments
  * Added `weekdayShort`, `weekdayLong`, `monthShort`, `monthLong` DateTime getters
 
 ## 0.0.10
