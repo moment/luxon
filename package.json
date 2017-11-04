@@ -34,7 +34,7 @@
     "gulp-esdoc": "latest",
     "gulp-eslint": "latest",
     "gulp-filter": "latest",
-    "gulp-jest": "latest",
+    "gulp-jest": "2.0.0",
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-uglify": "latest",

@@ -124,9 +124,7 @@ gulp.task('test', () => {
   const opts = {
     collectCoverage: !!process.env.CODE_COVERAGE,
     coverageDirectory: 'build/coverage',
-    config: {
-      preprocessorIgnorePatterns: '<rootDir>/build/'
-    }
+    collectCoverageFrom: ['src/**']
   };
 
   if (process.env.LIMIT_JEST) {
