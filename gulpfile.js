@@ -82,6 +82,7 @@ function prettify(opts) {
 }
 
 function checkForDocCoverage() {
+  // eslint-disable-next-line func-names
   return through.obj(function(file, enc, cb) {
     const content = file.contents.toString(enc),
       parsed = JSON.parse(content);
