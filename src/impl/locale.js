@@ -10,7 +10,7 @@ let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
-  } else if (Util.hasIntl()) {
+  } else if (Intl && Intl.DateTimeFormat) {
     sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
     return sysLocaleCache;
   } else {
@@ -20,28 +20,24 @@ function systemLocale() {
 }
 
 function intlConfigString(locale, numberingSystem, outputCalendar) {
-  if (Util.hasIntl()) {
-    let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
-    loc = Array.isArray(locale) ? locale : [locale];
+  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
+  loc = Array.isArray(locale) ? locale : [locale];
 
-    if (outputCalendar || numberingSystem) {
-      loc = loc.map(l => {
-        l += '-u';
+  if (outputCalendar || numberingSystem) {
+    loc = loc.map(l => {
+      l += '-u';
 
-        if (outputCalendar) {
-          l += '-ca-' + outputCalendar;
-        }
+      if (outputCalendar) {
+        l += '-ca-' + outputCalendar;
+      }
 
-        if (numberingSystem) {
-          l += '-nu-' + numberingSystem;
-        }
-        return l;
-      });
-    }
-    return loc;
-  } else {
-    return null;
+      if (numberingSystem) {
+        l += '-nu-' + numberingSystem;
+      }
+      return l;
+    });
   }
+  return loc;
 }
 
 function mapMonths(f) {
@@ -93,7 +89,7 @@ class PolyNumberFormatter {
 class PolyDateFormatter {
   constructor(dt, intl, opts) {
     this.opts = opts;
-    this.hasIntl = Util.hasIntl();
+    this.hasIntl = Intl && Intl.DateTimeFormat;
 
     let z;
     if (dt.zone.universal) {
@@ -129,7 +125,7 @@ class PolyDateFormatter {
   }
 
   formatToParts() {
-    if (this.hasIntl && Util.hasFormatToParts()) {
+    if (this.hasIntl && Intl.DateTimeFormat.prototype.formatToParts) {
       return this.dtf.formatToParts(this.dt.toJSDate());
     } else {
       // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings
@@ -221,8 +217,8 @@ export class Locale {
 
   // todo: cache me
   listingMode(defaultOk = true) {
-    const hasIntl = Util.hasIntl(),
-      hasFTP = hasIntl && Util.hasFormatToParts(),
+    const hasIntl = Intl && Intl.DateTimeFormat,
+      hasFTP = hasIntl && Intl.DateTimeFormat.prototype.formatToParts,
       isActuallyEn =
         this.locale === 'en' ||
         this.locale.toLowerCase() === 'en-us' ||
@@ -333,7 +329,7 @@ export class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    if (Util.hasIntl()) {
+    if (Intl && Intl.NumberFormat) {
       const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
       if (opts.padTo > 0) {

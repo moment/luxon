@@ -135,15 +135,14 @@ export class Util {
       intl.timeZone = timeZone;
     }
 
-    const modified = Object.assign({ timeZoneName: offsetFormat }, intl),
-      hasIntl = Util.hasIntl();
+    const modified = Object.assign({ timeZoneName: offsetFormat }, intl);
 
-    if (hasIntl && Util.hasFormatToParts()) {
+    if (Intl.DateTimeFormat.prototype.formatToParts) {
       const parsed = new Intl.DateTimeFormat(locale, modified)
         .formatToParts(date)
         .find(m => m.type.toLowerCase() === 'timezonename');
       return parsed ? parsed.value : null;
-    } else if (hasIntl) {
+    } else if (Intl && Intl.DateTimeFormat) {
       // this probably doesn't work for all locales
       const without = new Intl.DateTimeFormat(locale, intl).format(date),
         included = new Intl.DateTimeFormat(locale, modified).format(date),
@@ -156,7 +155,7 @@ export class Util {
   }
 
   static normalizeZone(input) {
-    if (Util.isUndefined(input) || input === null) {
+    if (input === null) {
       return LocalZone.instance;
     } else if (input instanceof Zone) {
       return input;
@@ -209,13 +208,5 @@ export class Util {
       offMin = parseInt(offMinuteStr, 10) || 0,
       offMinSigned = offHour < 0 ? -offMin : offMin;
     return offHour * 60 + offMinSigned;
-  }
-
-  static hasIntl() {
-    return !Util.isUndefined(Intl) && Intl.DateTimeFormat;
-  }
-
-  static hasFormatToParts() {
-    return !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
   }
 }
