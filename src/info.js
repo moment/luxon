@@ -137,10 +137,9 @@ export class Info {
       intlTokens = false,
       zones = false;
 
-    if (!Util.isUndefined(Intl) && !Util.isUndefined(Intl.DateTimeFormat)) {
+    if (Util.hasIntl()) {
       intl = true;
-
-      intlTokens = !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
+      intlTokens = Util.hasFormatToParts();
 
       try {
         Intl.DateTimeFormat({ timeZone: 'America/New_York' });
