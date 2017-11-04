@@ -50,13 +50,13 @@ import { Settings } from &apos;../settings&apos;;
 import { DateTime } from &apos;../datetime&apos;;
 import { Formatter } from &apos;./formatter&apos;;
 
-const localeCache = {};
+let localeCache = {},
+  sysLocaleCache = null;
 
-let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
-  } else if (Intl &amp;&amp; Intl.DateTimeFormat) {
+  } else if (Util.hasIntl()) {
     sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
     return sysLocaleCache;
   } else {
@@ -66,24 +66,27 @@ function systemLocale() {
 }
 
 function intlConfigString(locale, numberingSystem, outputCalendar) {
-  let loc = locale || new Intl.DateTimeFormat().resolvedOptions().locale;
-  loc = Array.isArray(locale) ? locale : [locale];
+  if (Util.hasIntl()) {
+    locale = Array.isArray(locale) ? locale : [locale];
 
-  if (outputCalendar || numberingSystem) {
-    loc = loc.map(l =&gt; {
-      l += &apos;-u&apos;;
+    if (outputCalendar || numberingSystem) {
+      locale = locale.map(l =&gt; {
+        l += &apos;-u&apos;;
 
-      if (outputCalendar) {
-        l += &apos;-ca-&apos; + outputCalendar;
-      }
+        if (outputCalendar) {
+          l += &apos;-ca-&apos; + outputCalendar;
+        }
 
-      if (numberingSystem) {
-        l += &apos;-nu-&apos; + numberingSystem;
-      }
-      return l;
-    });
+        if (numberingSystem) {
+          l += &apos;-nu-&apos; + numberingSystem;
+        }
+        return l;
+      });
+    }
+    return locale;
+  } else {
+    return [];
   }
-  return loc;
 }
 
 function mapMonths(f) {
@@ -135,7 +138,7 @@ class PolyNumberFormatter {
 class PolyDateFormatter {
   constructor(dt, intl, opts) {
     this.opts = opts;
-    this.hasIntl = Intl &amp;&amp; Intl.DateTimeFormat;
+    this.hasIntl = Util.hasIntl();
 
     let z;
     if (dt.zone.universal) {
@@ -171,7 +174,7 @@ class PolyDateFormatter {
   }
 
   formatToParts() {
-    if (this.hasIntl &amp;&amp; Intl.DateTimeFormat.prototype.formatToParts) {
+    if (this.hasIntl &amp;&amp; Util.hasFormatToParts()) {
       return this.dtf.formatToParts(this.dt.toJSDate());
     } else {
       // This is kind of a cop out. We actually could do this for English. However, we couldn&apos;t do it for intl strings
@@ -220,6 +223,11 @@ export class Locale {
     }
   }
 
+  static resetCache() {
+    sysLocaleCache = null;
+    localeCache = {};
+  }
+
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
     return Locale.create(locale, numberingSystem, outputCalendar);
   }
@@ -263,8 +271,8 @@ export class Locale {
 
   // todo: cache me
   listingMode(defaultOk = true) {
-    const hasIntl = Intl &amp;&amp; Intl.DateTimeFormat,
-      hasFTP = hasIntl &amp;&amp; Intl.DateTimeFormat.prototype.formatToParts,
+    const hasIntl = Util.hasIntl(),
+      hasFTP = hasIntl &amp;&amp; Util.hasFormatToParts(),
       isActuallyEn =
         this.locale === &apos;en&apos; ||
         this.locale.toLowerCase() === &apos;en-us&apos; ||
@@ -375,7 +383,7 @@ export class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    if (Intl &amp;&amp; Intl.NumberFormat) {
+    if (Util.hasIntl()) {
       const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
       if (opts.padTo &gt; 0) {

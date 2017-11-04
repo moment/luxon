@@ -46,6 +46,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/settings.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { LocalZone } from &apos;./zones/localZone&apos;;
 import { Util } from &apos;./impl/util&apos;;
+import { Locale } from &apos;./impl/locale&apos;;
 
 let now = () =&gt; new Date().valueOf(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
@@ -160,6 +161,14 @@ export class Settings {
    */
   static set throwOnInvalid(t) {
     throwOnInvalid = t;
+  }
+
+  /**
+   * Reset Luxon&apos;s global caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCaches() {
+    Locale.resetCache();
   }
 }
 </code></pre>

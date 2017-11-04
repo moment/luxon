@@ -183,14 +183,14 @@ export class Info {
       intlTokens = false,
       zones = false;
 
-    if (!Util.isUndefined(Intl) &amp;&amp; !Util.isUndefined(Intl.DateTimeFormat)) {
+    if (Util.hasIntl()) {
       intl = true;
-
-      intlTokens = !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
+      intlTokens = Util.hasFormatToParts();
 
       try {
-        Intl.DateTimeFormat({ timeZone: &apos;America/New_York&apos; });
-        zones = true;
+        zones =
+          new Intl.DateTimeFormat(&apos;en&apos;, { timeZone: &apos;America/New_York&apos; }).resolvedOptions()
+            .timeZone === &apos;America/New_York&apos;;
       } catch (e) {
         zones = false;
       }
