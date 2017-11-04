@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.16
+ * Fixes for IE 9 & 10
+
 ## 0.15
  * Fix Intl brokenness
 

@@ -1,9 +1,15 @@
 function demo(luxon) {
-  let DateTime = luxon.DateTime,
+  var DateTime = luxon.DateTime,
     examples = [],
     run = function(code) {
+      var result;
       try {
-        return JSON.stringify(eval(code));
+        result = eval(code);
+        if (result.isValid === false) {
+          return 'Invalid';
+        } else {
+          return JSON.stringify(result);
+        }
       } catch (e) {
         return '[error]';
       }
@@ -24,9 +30,7 @@ function demo(luxon) {
   example('DateTime.local().toUTC()');
   example('DateTime.utc(2017, 5, 15, 17, 36).toLocal()');
   example('DateTime.local().toObject()');
-  example(
-    'DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36})'
-  );
+  example('DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36})');
   example(
     "DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36, zone: 'America/New_York' })"
   );
@@ -38,16 +42,12 @@ function demo(luxon) {
   example('DateTime.local().minus({days: 6})');
   example('DateTime.local().diff(DateTime.local(1982, 5, 25)).milliseconds');
   example("DateTime.local().diff(DateTime.local(1982, 5, 25), 'days').days");
-  example(
-    "DateTime.local().diff(DateTime.local(1982, 5, 25), ['days', 'hours']).toObject()"
-  );
+  example("DateTime.local().diff(DateTime.local(1982, 5, 25), ['days', 'hours']).toObject()");
   example('DateTime.local().toLocaleString()');
   example("DateTime.local().setLocale('zh').toLocaleString()");
   example('DateTime.local().toLocaleString(DateTime.DATE_MED)');
   example("DateTime.local().setLocale('zh').toLocaleString(DateTime.DATE_MED)");
-  example(
-    "DateTime.local().setLocale('fr').toLocaleString(DateTime.DATE_FULL)"
-  );
+  example("DateTime.local().setLocale('fr').toLocaleString(DateTime.DATE_FULL)");
   example("DateTime.fromISO('2017-05-15')");
   example("DateTime.fromISO('2017-05-15T17:36')");
   example("DateTime.fromISO('2017-W33-4')");
@@ -57,12 +57,11 @@ function demo(luxon) {
   example("DateTime.local().toFormat('MMMM dd, yyyy')");
   example("DateTime.local().setLocale('fr').toFormat('MMMM dd, yyyy')");
   example("DateTime.fromString('May 25, 1982', 'MMMM dd, yyyy')");
-  example(
-    "DateTime.fromString('mai 25, 1982', 'MMMM dd, yyyy', { locale: 'fr' })"
-  );
+  example("DateTime.fromString('mai 25, 1982', 'MMMM dd, yyyy', { locale: 'fr' })");
 
-  let all = '<h1>Some Luxon examples</h1>';
-  all += "<p>This is not meant to be a comprehensive showcase of Luxon's capabilities, just a quick flavoring.</p>";
+  var all = '<h1>Some Luxon examples</h1>';
+  all +=
+    "<p>This is not meant to be a comprehensive showcase of Luxon's capabilities, just a quick flavoring.</p>";
   all += '<table>';
   all += examples.join('');
   all += '</table>';
