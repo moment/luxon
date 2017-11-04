@@ -19,9 +19,11 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
 
 ## Documentation
 
-* [Guide][doc-url]
+* [General documentation][doc-url]
 * [API docs](https://moment.github.io/luxon/docs/identifiers.html)
-* [Guide for Moment users](https://moment.github.io/luxon/docs/manual/faq/moment.html)
+* [Install](https://moment.github.io/luxon/docs/manual/design/install.html)
+* [Quick tour](https://moment.github.io/luxon/docs/manual/design/tour.html)
+* [For Moment users](https://moment.github.io/luxon/docs/manual/faq/moment.html)
 * [A quick demo](https://moment.github.io/luxon/demo/global.html)
 
 ## Development
