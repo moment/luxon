@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 gulp build docs site
 npm publish
-./scripts/deploy-site.sh
+./scripts/deploy-site
