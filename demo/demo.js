@@ -1,17 +1,24 @@
 function demo(luxon) {
   var DateTime = luxon.DateTime,
+    Duration = luxon.Duration,
     examples = [],
     run = function(code) {
       var result;
       try {
         result = eval(code);
-        if (result.isValid === false) {
-          return 'Invalid';
-        } else {
-          return JSON.stringify(result);
-        }
       } catch (e) {
         return '[error]';
+      }
+
+      switch (true) {
+        case result.isValid === false:
+          return 'Invalid';
+        case result instanceof DateTime:
+          return '[ DateTime ' + result.toISO() + ' ]';
+        case result instanceof Duration:
+          return '[ Duration ' + JSON.stringify(result.toObject()) + ' ]';
+        default:
+          return JSON.stringify(result);
       }
     },
     example = function(code) {
@@ -42,7 +49,7 @@ function demo(luxon) {
   example('DateTime.local().minus({days: 6})');
   example('DateTime.local().diff(DateTime.local(1982, 5, 25)).milliseconds');
   example("DateTime.local().diff(DateTime.local(1982, 5, 25), 'days').days");
-  example("DateTime.local().diff(DateTime.local(1982, 5, 25), ['days', 'hours']).toObject()");
+  example("DateTime.local().diff(DateTime.local(1982, 5, 25), ['days', 'hours'])");
   example('DateTime.local().toLocaleString()');
   example("DateTime.local().setLocale('zh').toLocaleString()");
   example('DateTime.local().toLocaleString(DateTime.DATE_MED)');
