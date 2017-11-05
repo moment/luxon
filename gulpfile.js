@@ -48,11 +48,9 @@ function rollupLib(inopts) {
   return rollup(opts);
 }
 
-function processLib(opts) {
+function processLib(dest, opts) {
   return () => {
-    opts.input = './src/luxon.js';
-
-    const dest = `./build/${opts.dest || opts.format}`,
+    const fullDest = `./build/${dest}`,
       // confession: I have no idea why piping to lazypipe works
       // after dest, but you can't pipe directly so...
       minify = lazypipe()
@@ -60,16 +58,26 @@ function processLib(opts) {
         .pipe(babili, { mangle: { keepClassNames: true } })
         .pipe(rename, { extname: '.min.js' })
         .pipe(sourcemaps.write, '.')
-        .pipe(gulp.dest, dest);
+        .pipe(gulp.dest, fullDest);
 
     return rollupLib(opts)
       .pipe(source('luxon.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest(dest))
+      .pipe(gulp.dest(fullDest))
       .pipe(minify());
   };
+}
+
+function processLibLegacy(dest, opts) {
+  const realOpts = Object.assign({}, opts, { input: './src/luxonFilled.js' });
+  return processLib(dest, realOpts);
+}
+
+function processLibModern(dest, opts) {
+  const realOpts = Object.assign({}, opts, { input: './src/luxon.js' });
+  return processLib(dest, realOpts);
 }
 
 function prettify(opts) {
@@ -99,43 +107,34 @@ function checkForDocCoverage() {
   });
 }
 
-gulp.task('cjs', processLib({ format: 'cjs' }));
-
-gulp.task(
-  'es6',
-  processLib({
+const cjsOpts = { format: 'cjs' },
+  es6Opts = {
     format: 'es',
-    dest: 'es6',
     compile: false
-  })
-);
-
-gulp.task(
-  'amd',
-  processLib({
+  },
+  amdOpts = {
     format: 'amd',
     rollupOpts: { name: 'luxon' }
-  })
-);
-
-gulp.task(
-  'global-es6',
-  processLib({
+  },
+  es6GlobalOpts = {
     format: 'iife',
     rollupOpts: { name: 'luxon' },
-    dest: 'global-es6',
     compile: false
-  })
-);
-
-gulp.task(
-  'global',
-  processLib({
+  },
+  globalOpts = {
     format: 'iife',
-    rollupOpts: { name: 'luxon' },
-    dest: 'global'
-  })
-);
+    rollupOpts: { name: 'luxon' }
+  };
+
+// build these with the corejs polyfills
+// todo: is this the right thing to do?
+gulp.task('global', processLibLegacy('global', globalOpts));
+gulp.task('amd', processLibLegacy('amd', amdOpts));
+gulp.task('cjs', processLibLegacy('cjs', cjsOpts));
+
+// build these without the corejs polyfills
+gulp.task('es6', processLibModern('es6', es6Opts));
+gulp.task('global-es6', processLibModern('global-es6', es6GlobalOpts));
 
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
