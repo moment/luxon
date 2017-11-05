@@ -2,7 +2,7 @@
 
 [![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![Doc coverage][doc-coverage-image]][doc-url]
 
-Luxon is an experimental library for working with dates and times in Javascript. For a brief intro, see the [homepage](https://moment.github.io/luxon). There's a demo [here](https://moment.github.io/luxon/demo/global.html).
+Luxon is an experimental library for working with dates and times in Javascript.
 
 ```js
 DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
