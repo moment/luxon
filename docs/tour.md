@@ -87,11 +87,7 @@ You may want to output your DateTime to a string for a machine or a human to rea
 
 ```js
 dt.toLocaleString()      //=> '9/14/2017'
-dt.toLocaleString({
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric'})    //=> 'September 14, 3:21 AM'
+dt.toLocaleString(DateTime.DATETIME_MED) //=> 'September 14, 3:21 AM'
 ```
 
 This works well across different locales (languages) by letting the browser figure out what order the different parts go in and how to punctuate them.
