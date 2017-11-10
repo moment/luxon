@@ -3,6 +3,14 @@ import { Zone } from '../zone';
 
 let singleton = null;
 
+function hoursMinutesOffset(z) {
+  const hours = z.fixed / 60,
+    minutes = Math.abs(z.fixed % 60),
+    sign = hours > 0 ? '+' : '-',
+    base = sign + Math.abs(hours);
+  return minutes > 0 ? `${base}:${Util.pad(minutes, 2)}` : base;
+}
+
 /**
  * @private
  */
@@ -39,13 +47,7 @@ export class FixedOffsetZone extends Zone {
   }
 
   get name() {
-    const hours = this.fixed / 60,
-      minutes = Math.abs(this.fixed % 60),
-      sign = hours > 0 ? '+' : '-',
-      base = sign + Math.abs(hours),
-      number = minutes > 0 ? `${base}:${Util.pad(minutes, 2)}` : base;
-
-    return this.fixed === 0 ? 'UTC' : `UTC${number}`;
+    return this.fixed === 0 ? 'UTC' : `UTC${hoursMinutesOffset(this)}`;
   }
 
   offsetName() {

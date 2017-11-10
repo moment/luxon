@@ -48,7 +48,7 @@ Notes:
 Here is the matrix pivoted, with some basic assumptions like "no one runs really old versions of Chrome":
 
 | Browser      | Versions | Intl | Intl tokens | Zones |
-|--------------+----------+------+-------------+-------|
+|--------------|----------|------|-------------|-------|
 | Chrome       | >= 56    | ✓    | ✓           | ✓     |
 |              | < 56     | ✓    | ✕           | ✓     |
 | FF           | >= 52    | ✓    | ✓           | ✓     |

@@ -180,6 +180,16 @@ test('DateTime#toLocaleString() returns something different for invalid DateTime
   expect(invalid.toLocaleString()).toBe('Invalid DateTime');
 });
 
+test('DateTime#toLocaleString() shows things in the right IANA zone', () => {
+  expect(dt.setZone('America/New_York').toLocaleString(DateTime.DATETIME_SHORT)).toBe(
+    '5/25/1982, 5:23 AM'
+  );
+});
+
+test('DateTime#toLocaleString() shows things in the right fixed-offset zone', () => {
+  expect(dt.setZone('UTC-8').toLocaleString(DateTime.DATETIME_SHORT)).toBe('5/25/1982, 1:23 AM');
+});
+
 //------
 // #resolvedLocaleOpts()
 //------

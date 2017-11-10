@@ -74,6 +74,7 @@ test('accepts "utc"', () => {
 
 test('accepts "utc+3"', () => {
   const zoned = DateTime.local().setZone('utc+3');
+  expect(zoned.zone.name).toBe('UTC+3');
   expect(zoned.offset).toBe(3 * 60);
 });
 

@@ -99,7 +99,7 @@ class PolyDateFormatter {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make do with just displaying
       // the time in UTC; the formatter doesn't know how to handle UTC+8
-      this.dt = Util.asIfUTC(dt);
+      this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);
       z = 'UTC';
     } else if (dt.zone.type === 'local') {
       this.dt = dt;
