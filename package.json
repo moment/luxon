@@ -42,7 +42,7 @@
     "jest-cli": "latest",
     "lazypipe": "latest",
     "lint-staged": "^4.3.0",
-    "prettier": "latest",
+    "prettier": "1.7.4",
     "rollup-plugin-babel": "latest",
     "rollup-plugin-commonjs": "latest",
     "rollup-plugin-node-resolve": "latest",
