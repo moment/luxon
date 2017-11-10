@@ -42,7 +42,7 @@ test('Subtracting an hour to land on the Spring Forward springs forward', () => 
 });
 
 test('Adding an hour to land on the Fall Back falls back', () => {
-  const d = local(2017, 11, 5, 1).plus({ hour: 1 });
+  const d = local(2017, 11, 5, 0).plus({ hour: 2 });
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-5 * 60);
 });
