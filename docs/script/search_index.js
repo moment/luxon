@@ -1446,6 +1446,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/luxonfilled.js",
+    "file/src/luxonFilled.js.html",
+    "src/luxonFilled.js",
+    "file"
+  ],
+  [
     "src/settings.js",
     "file/src/settings.js.html",
     "src/settings.js",
@@ -1495,13 +1501,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
@@ -1525,13 +1531,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],

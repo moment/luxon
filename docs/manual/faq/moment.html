@@ -192,16 +192,17 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-16" data-ice="link">0.16</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-15" data-ice="link">0.15</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-13" data-ice="link">0.13</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-12" data-ice="link">0.12</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-10" data-ice="link">0.10</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-9" data-ice="link">0.9</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-8" data-ice="link">0.8</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-7" data-ice="link">0.7</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-6" data-ice="link">0.6</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-5" data-ice="link">0.5</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-17" data-ice="link">0.0.17</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-16" data-ice="link">0.0.16</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-15" data-ice="link">0.0.15</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-13" data-ice="link">0.0.13</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-12" data-ice="link">0.0.12</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-10" data-ice="link">0.0.10</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-9" data-ice="link">0.0.9</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-8" data-ice="link">0.0.8</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-7" data-ice="link">0.0.7</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-6" data-ice="link">0.0.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-5" data-ice="link">0.0.5</a></li>
 </ul>
   </div>
 </div>
@@ -241,7 +242,8 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <ol>
 <li>Months in Luxon are 1-indexed instead of 0-indexed like in Moment and the native Date type.</li>
 <li>Localizations and time zones are implemented by the native Intl API (or a polyfill of it), instead of by the library itself.</li>
-<li>Luxon has both a Duration type and an Interval type</li>
+<li>Luxon has both a Duration type and an Interval type. The Interval type is like Twix.</li>
+<li>Luxon lacks the relative time features of Moment and will until the required <a href="./manual/(https://github.com/tc39/proposal-intl-relative-time">facilities</a> are provided by the browser.</li>
 </ol>
 <h2 id="datetime-method-equivalence">DateTime method equivalence</h2>
 <p>Here&apos;s a rough mapping of DateTime methods in Moment to ones in Luxon. I haven&apos;t comprehensively documented stuff that&apos;s in Luxon but not in Moment, just a few odds and ends that seemed obvious for inclusion; there are more. I&apos;ve probably missed a few things too.</p>

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl" href="../../../">
+  <base data-ice="baseUrl" href="../../">
   <title data-ice="title">Luxon</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
@@ -43,79 +43,16 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/zones/fixedOffsetZone.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;../impl/util&apos;;
-import { Zone } from &apos;../zone&apos;;
+<div class="content" data-ice="content"><h1 data-ice="title">src/luxonFilled.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import &apos;core-js/es6/symbol&apos;;
+import &apos;core-js/es6/object&apos;;
+import &apos;core-js/fn/symbol/iterator&apos;;
+import &apos;core-js/fn/number/is-nan&apos;;
+import &apos;core-js/es6/array&apos;;
+import &apos;core-js/fn/string/virtual/starts-with&apos;;
+import &apos;core-js/fn/string/virtual/pad-start&apos;;
 
-let singleton = null;
-
-function hoursMinutesOffset(z) {
-  const hours = z.fixed / 60,
-    minutes = Math.abs(z.fixed % 60),
-    sign = hours &gt; 0 ? &apos;+&apos; : &apos;-&apos;,
-    base = sign + Math.abs(hours);
-  return minutes &gt; 0 ? `${base}:${Util.pad(minutes, 2)}` : base;
-}
-
-/**
- * @private
- */
-
-export class FixedOffsetZone extends Zone {
-  static get utcInstance() {
-    if (singleton === null) {
-      singleton = new FixedOffsetZone(0);
-    }
-    return singleton;
-  }
-
-  static instance(offset) {
-    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
-  }
-
-  static parseSpecifier(s) {
-    if (s) {
-      const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
-      if (r) {
-        return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));
-      }
-    }
-    return null;
-  }
-
-  constructor(offset) {
-    super();
-    this.fixed = offset;
-  }
-
-  get type() {
-    return &apos;fixed&apos;;
-  }
-
-  get name() {
-    return this.fixed === 0 ? &apos;UTC&apos; : `UTC${hoursMinutesOffset(this)}`;
-  }
-
-  offsetName() {
-    return this.name();
-  }
-
-  get universal() {
-    return true;
-  }
-
-  offset() {
-    return this.fixed;
-  }
-
-  equals(otherZone) {
-    return otherZone.type === &apos;fixed&apos; &amp;&amp; otherZone.fixed === this.fixed;
-  }
-
-  get isValid() {
-    return true;
-  }
-}
+export * from &apos;./luxon&apos;;
 </code></pre>
 
 </div>

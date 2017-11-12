@@ -114,12 +114,6 @@ export class Util {
     return input &lt; 0 ? Math.ceil(input) : Math.floor(input);
   }
 
-  // DateTime -&gt; DateTime such that the date&apos;s UTC time is the datetimes&apos;s local time
-  static asIfUTC(dt) {
-    const ts = dt.ts - dt.offset;
-    return DateTime.fromMillis(ts);
-  }
-
   // http://stackoverflow.com/a/15030117
   static flatten(arr) {
     return arr.reduce(

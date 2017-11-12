@@ -192,16 +192,17 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-16" data-ice="link">0.16</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-15" data-ice="link">0.15</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-13" data-ice="link">0.13</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-12" data-ice="link">0.12</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-10" data-ice="link">0.10</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-9" data-ice="link">0.9</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-8" data-ice="link">0.8</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-7" data-ice="link">0.7</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-6" data-ice="link">0.6</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-5" data-ice="link">0.5</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-17" data-ice="link">0.0.17</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-16" data-ice="link">0.0.16</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-15" data-ice="link">0.0.15</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-13" data-ice="link">0.0.13</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-12" data-ice="link">0.0.12</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-10" data-ice="link">0.0.10</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-9" data-ice="link">0.0.9</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-8" data-ice="link">0.0.8</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-7" data-ice="link">0.0.7</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-6" data-ice="link">0.0.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-5" data-ice="link">0.0.5</a></li>
 </ul>
   </div>
 </div>
@@ -261,11 +262,7 @@ dt.daysInMonth  //=&gt; 30</code>
 <h2 id="formatting-your-datetime">Formatting your DateTime</h2>
 <p>You may want to output your DateTime to a string for a machine or a human to read. Luxon has lots of tools for this, but two of them are most important. If you want to format a human-readable string, use <code>toLocaleString</code>:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString()      //=&gt; &apos;9/14/2017&apos;
-dt.toLocaleString({
-  month: &apos;long&apos;,
-  day: &apos;numeric&apos;,
-  hour: &apos;numeric&apos;,
-  minute: &apos;numeric&apos;})    //=&gt; &apos;September 14, 3:21 AM&apos;</code>
+dt.toLocaleString(DateTime.DATETIME_MED) //=&gt; &apos;September 14, 3:21 AM&apos;</code>
 </code></pre>
 <p>This works well across different locales (languages) by letting the browser figure out what order the different parts go in and how to punctuate them.</p>
 <p>If you want the string read by another program, you almost certainly want to use <code>toISO</code>:</p>

@@ -3211,7 +3211,7 @@ var PolyDateFormatter = function () {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make do with just displaying
       // the time in UTC; the formatter doesn't know how to handle UTC+8
-      this.dt = Util.asIfUTC(dt);
+      this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);
       z = 'UTC';
     } else if (dt.zone.type === 'local') {
       this.dt = dt;
@@ -3897,6 +3897,14 @@ var IANAZone = function (_Zone) {
 
 var singleton$1 = null;
 
+function hoursMinutesOffset(z) {
+  var hours = z.fixed / 60,
+      minutes = Math.abs(z.fixed % 60),
+      sign = hours > 0 ? '+' : '-',
+      base = sign + Math.abs(hours);
+  return minutes > 0 ? base + ':' + Util.pad(minutes, 2) : base;
+}
+
 /**
  * @private
  */
@@ -3941,7 +3949,6 @@ var FixedOffsetZone = function (_Zone) {
   createClass(FixedOffsetZone, [{
     key: 'offsetName',
     value: function offsetName() {
-      // todo: this doesn't localize (even possible?) and isn't sensitive to a `format` argument
       return this.name();
     }
   }, {
@@ -3962,13 +3969,7 @@ var FixedOffsetZone = function (_Zone) {
   }, {
     key: 'name',
     get: function get$$1() {
-      var hours = this.fixed / 60,
-          minutes = Math.abs(this.fixed % 60),
-          sign = hours > 0 ? '+' : '-',
-          base = sign + Math.abs(hours),
-          number = minutes > 0 ? base + ':' + Util.pad(minutes, 2) : base;
-
-      return this.fixed === 0 ? 'UTC' : 'UTC' + number;
+      return this.fixed === 0 ? 'UTC' : 'UTC' + hoursMinutesOffset(this);
     }
   }, {
     key: 'universal',
@@ -4060,15 +4061,6 @@ var Util = function () {
     key: 'towardZero',
     value: function towardZero(input) {
       return input < 0 ? Math.ceil(input) : Math.floor(input);
-    }
-
-    // DateTime -> DateTime such that the date's UTC time is the datetimes's local time
-
-  }, {
-    key: 'asIfUTC',
-    value: function asIfUTC(dt) {
-      var ts = dt.ts - dt.offset;
-      return DateTime.fromMillis(ts);
     }
 
     // http://stackoverflow.com/a/15030117
