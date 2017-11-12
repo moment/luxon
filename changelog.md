@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.17
+ * Fixing formatting for fixed-offset zones
+
 ## 0.0.16
  * Fixes for IE 9 & 10
 
