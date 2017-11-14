@@ -28,7 +28,7 @@ npm install --save luxon
 ```
 
 ```js
-var luxon = require('luxon');
+const { DateTime } = require('luxon');
 ```
 
 ## AMD (System.js, RequireJS, etc)
