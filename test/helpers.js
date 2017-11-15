@@ -52,4 +52,15 @@ export class Helpers {
       }
     });
   }
+
+  // not a tester!
+  static withDefaultZone(zone, f) {
+    const localZone = Settings.defaultZoneName;
+    try {
+      Settings.defaultZoneName = zone;
+      f();
+    } finally {
+      Settings.defaultZoneName = localZone;
+    }
+  }
 }

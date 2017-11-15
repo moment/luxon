@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime, Settings } from '../../src/luxon';
+import { Helpers } from '../helpers';
 
 const millis = 391147200000,
   // 1982-05-25T04:00:00.000Z
@@ -145,15 +146,15 @@ test('The local zone does local stuff', () => {
 //------
 
 test('Setting the default zone results in a different creation zone', () => {
-  try {
-    const localZone = Settings.defaultZoneName;
-
-    Settings.defaultZoneName = 'Asia/Tokyo';
+  Helpers.withDefaultZone('Asia/Tokyo', () => {
     expect(DateTime.local().zoneName).toBe('Asia/Tokyo');
+  });
+});
 
+test("Setting the default zone to 'local' gives you back a local zone", () => {
+  const localZone = Settings.defaultZoneName;
+  Helpers.withDefaultZone('Asia/Tokyo', () => {
     Settings.defaultZoneName = 'local';
     expect(DateTime.local().zoneName).toBe(localZone);
-  } finally {
-    Settings.defaultZoneName = 'local';
-  }
+  });
 });

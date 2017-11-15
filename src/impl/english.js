@@ -136,7 +136,8 @@ export class English {
         'hour',
         'minute',
         'second',
-        'timeZoneName'
+        'timeZoneName',
+        'hour12'
       ]),
       key = stringify(filtered),
       dateTimeHuge = 'EEEE, LLLL d, yyyy, h:mm a';
@@ -162,9 +163,9 @@ export class English {
       case stringify(Formats.TIME_24_WITH_SECONDS):
         return 'HH:mm:ss';
       case stringify(Formats.TIME_24_WITH_SHORT_OFFSET):
-        return 'HH:mm a';
+        return 'HH:mm';
       case stringify(Formats.TIME_24_WITH_LONG_OFFSET):
-        return 'HH:mm a';
+        return 'HH:mm';
       case stringify(Formats.DATETIME_SHORT):
         return 'M/d/yyyy, h:mm a';
       case stringify(Formats.DATETIME_MED):
@@ -178,7 +179,7 @@ export class English {
       case stringify(Formats.DATETIME_MED_WITH_SECONDS):
         return 'LLL d, yyyy, h:mm:ss a';
       case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
-        return 'LLLL d, yyyy, h:mm:ss';
+        return 'LLLL d, yyyy, h:mm:ss a';
       case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
         return 'EEEE, LLLL d, yyyy, h:mm:ss a';
       default:

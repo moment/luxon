@@ -5,6 +5,7 @@ import { Info } from '../../src/luxon';
 //------
 // .months()
 //------
+
 test('Info.months lists all the months', () => {
   expect(Info.months('long')).toEqual([
     'January',
@@ -61,6 +62,21 @@ test('Info.months lists all the months', () => {
     '7',
     '8',
     '9',
+    '10',
+    '11',
+    '12'
+  ]);
+
+  expect(Info.months('2-digit', { locale: 'en' })).toEqual([
+    '01',
+    '02',
+    '03',
+    '04',
+    '05',
+    '06',
+    '07',
+    '08',
+    '09',
     '10',
     '11',
     '12'
@@ -132,6 +148,23 @@ test('Info.months respects the locale', () => {
   ]);
 });
 
+test('Info.months defaults to long names', () => {
+  expect(Info.months()).toEqual([
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]);
+});
+
 //------
 // .monthsFormat()
 //------
@@ -198,6 +231,23 @@ test('Info.monthsFormat lists all the months', () => {
   ]);
 });
 
+test('Info.monthsFormat defaults to long names', () => {
+  expect(Info.monthsFormat()).toEqual([
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]);
+});
+
 //------
 // .weekdays()
 //------
@@ -235,6 +285,18 @@ test('Info.weekdays lists all the weekdays', () => {
   ]);
 });
 
+test('Info.weekdays defaults to long names', () => {
+  expect(Info.weekdays()).toEqual([
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ]);
+});
+
 //------
 // .weekdaysFormat()
 //------
@@ -260,12 +322,28 @@ test('Info.weekdaysFormat lists all the weekdays', () => {
   ]);
 });
 
+test('Info.weekdaysFormat defaults to long names', () => {
+  expect(Info.weekdaysFormat()).toEqual([
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ]);
+});
+
 //------
 // .meridiems()
 //------
-test('Info.weekdaysFormat lists all the weekdays', () => {
+test('Info.meridiems lists the meridiems', () => {
   expect(Info.meridiems({ locale: 'en' })).toEqual(['AM', 'PM']);
   expect(Info.meridiems({ locale: 'de' })).toEqual(['vorm.', 'nachm.']);
+});
+
+test('Info.meridiems defaults to the current locale', () => {
+  expect(Info.meridiems()).toEqual(['AM', 'PM']);
 });
 
 //------
@@ -278,24 +356,4 @@ test('Info.eras lists both eras', () => {
   expect(Info.eras('long')).toEqual(['Before Christ', 'Anno Domini']);
   expect(Info.eras('short', { locale: 'fr' })).toEqual(['av. J.-C.', 'ap. J.-C.']);
   expect(Info.eras('long', { locale: 'fr' })).toEqual(['avant Jésus-Christ', 'après Jésus-Christ']);
-});
-
-//------
-// .hasDST()
-//------
-
-test('Info.hasDST returns true for America/New_York', () => {
-  expect(Info.hasDST('America/New_York')).toBe(true);
-});
-
-test('Info.hasDST returns false for America/Aruba', () => {
-  expect(Info.hasDST('America/Aruba')).toBe(false);
-});
-
-test('Info.hasDST returns false for America/Cancun', () => {
-  expect(Info.hasDST('America/Cancun')).toBe(false);
-});
-
-test('Info.hasDST returns true for Africa/Windhoek', () => {
-  expect(Info.hasDST('Africa/Windhoek')).toBe(true);
 });
