@@ -58,3 +58,9 @@ test('Interval.fromISO can parse a variety of ISO formats', () => {
     }
   );
 });
+
+test('Interval.fromISO will return invalid for junk', () => {
+  const i = Interval.fromISO('hello');
+  expect(i.isValid).toBe(false);
+  expect(i.invalidReason).toBe('invalid ISO format');
+});

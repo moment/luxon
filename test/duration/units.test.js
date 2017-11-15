@@ -33,6 +33,24 @@ test('Duration#shiftTo boils down and then rolls up', () => {
   expect(dur.minutes).toBe(8 * 60);
 });
 
+test('Duration#shiftTo throws on invalid units', () => {
+  expect(() => {
+    Duration.fromObject({ years: 2, hours: 5000 }).shiftTo('months', 'glorp');
+  }).toThrow();
+});
+
+test('Duration#shiftTo maintains invalidity', () => {
+  const dur = Duration.invalid('because').shiftTo('years');
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe('because');
+});
+
+test('Duration#shiftTo without any units no-ops', () => {
+  const dur = Duration.fromObject({ years: 3 }).shiftTo();
+  expect(dur.isValid).toBe(true);
+  expect(dur.toObject()).toEqual({ years: 3 });
+});
+
 //------
 // #normalize()
 //-------
@@ -52,4 +70,23 @@ test('Duration#normalize handles fully negative durations', () => {
   const dur = Duration.fromObject({ years: -2, days: -5000 }).normalize();
   expect(dur.years).toBe(-15);
   expect(dur.days).toBe(-255);
+});
+
+test('Duration#normalize maintains invalidity', () => {
+  const dur = Duration.invalid('because').normalize();
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe('because');
+});
+
+//------
+// #as()
+//-------
+
+test('Duration#as shifts to one unit and returns it', () => {
+  const dur = Duration.fromMillis(5760000);
+  expect(dur.as('hours')).toBe(1.6);
+});
+
+test('Duration#as returns null for invalid durations', () => {
+  expect(Duration.invalid('because').as('hours')).toBeFalsy();
 });

@@ -39,3 +39,7 @@ test('Duration.invalid throws if throwOnInvalid is set', () => {
     Settings.throwOnInvalid = false;
   }
 });
+
+test('Duration.invalid throws if no reason is specified', () => {
+  expect(() => Duration.invalid()).toThrow();
+});

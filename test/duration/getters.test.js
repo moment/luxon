@@ -9,7 +9,8 @@ const dur = Duration.fromObject({
     hours: 4,
     minutes: 5,
     seconds: 6,
-    milliseconds: 7
+    milliseconds: 7,
+    weeks: 8
   }),
   inv = Duration.invalid('because i say so');
 
@@ -50,4 +51,9 @@ test('Duration#seconds returns the seconds', () => {
 test('Duration#milliseconds returns the milliseconds', () => {
   expect(dur.milliseconds).toBe(7);
   expect(inv.milliseconds).toBeFalsy();
+});
+
+test('Duration#weeks returns the weeks', () => {
+  expect(dur.weeks).toBe(8);
+  expect(inv.weeks).toBeFalsy();
 });

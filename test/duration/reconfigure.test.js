@@ -30,7 +30,14 @@ test('Duration#reconfigure() sets the numberingSystem', () => {
 });
 
 test('Duration#reconfigure() sets the conversion accuracy', () => {
-  const recon = dur.reconfigure({ conversionAccuracy: 'longterm' });
+  const recon = dur.reconfigure({ conversionAccuracy: 'casual' });
+  expect(recon.locale).toBe('fr');
+  expect(recon.numberingSystem).toBe('beng');
+  expect(recon.conversionAccuracy).toBe('casual');
+});
+
+test('Duration#reconfigure() with no arguments does nothing', () => {
+  const recon = dur.reconfigure();
   expect(recon.locale).toBe('fr');
   expect(recon.numberingSystem).toBe('beng');
   expect(recon.conversionAccuracy).toBe('longterm');

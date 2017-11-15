@@ -449,7 +449,7 @@ export class Duration {
       return this;
     }
 
-    units = units.map(Duration.normalizeUnit);
+    units = units.map(u => Duration.normalizeUnit(u));
 
     const built = {},
       accumulated = {},
@@ -604,6 +604,10 @@ export class Duration {
    */
   equals(other) {
     if (!this.isValid || !other.isValid) {
+      return false;
+    }
+
+    if (!this.loc.equals(other.loc)) {
       return false;
     }
 

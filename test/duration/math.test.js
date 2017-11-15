@@ -46,6 +46,12 @@ test('Duration#plus adds single values', () => {
   expect(result.seconds).toBe(2);
 });
 
+test('Duration#plus maintains invalidity', () => {
+  const dur = Duration.invalid('because').plus({ minutes: 5 });
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe('because');
+});
+
 //------
 // #minus()
 //------
@@ -67,4 +73,29 @@ test('Duration#minus subtracts single values', () => {
   expect(result.hours).toBe(4);
   expect(result.minutes).toBe(7);
   expect(result.seconds).toBe(2);
+});
+
+test('Duration#minus maintains invalidity', () => {
+  const dur = Duration.invalid('because').minus({ minutes: 5 });
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe('because');
+});
+
+//------
+// #negate()
+//------
+
+test('Duration#negate flips all the signs', () => {
+  const dur = Duration.fromObject({ hours: 4, minutes: -12, seconds: 2 }),
+    result = dur.negate();
+  expect(result.hours).toBe(-4);
+  expect(result.minutes).toBe(12);
+  expect(result.seconds).toBe(-2);
+});
+
+test('Duration#negate maintains invalidity', () => {
+  const dur = Duration.invalid('because'),
+    result = dur.negate();
+  expect(result.isValid).toBe(false);
+  expect(result.invalidReason).toBe('because');
 });

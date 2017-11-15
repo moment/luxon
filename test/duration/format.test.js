@@ -34,6 +34,26 @@ test('Duration#toISO handles mixed negative/positive durations', () => {
   expect(Duration.fromObject({ years: 3, seconds: -45 }).toISO()).toBe('P2YT31535955S');
 });
 
+test('Duration#toISO returns null for invalid durations', () => {
+  expect(Duration.invalid('because').toISO()).toBe(null);
+});
+
+//------
+// #toJSON()
+//------
+
+test('Duration#toJSON returns the ISO representation', () => {
+  expect(dur().toJSON()).toBe(dur().toISO());
+});
+
+//------
+// #toString()
+//------
+
+test('Duration#toString returns the ISO representation', () => {
+  expect(dur().toString()).toBe(dur().toISO());
+});
+
 //------
 // #toFormat()
 //------
@@ -104,4 +124,8 @@ test('Duration#toFormat localizes the numbers', () => {
       .reconfigure({ locale: 'bn' })
       .toFormat('yy:MM:dd:h:mm:ss.SSS')
   ).toBe('০১:০২:০৩:৪:০৫:০৬.০০৭');
+});
+
+test('Duration#toFormat returns a lame string for invalid durations', () => {
+  expect(Duration.invalid('because').toFormat('yy')).toBe('Invalid Duration');
 });

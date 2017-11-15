@@ -1118,6 +1118,8 @@ export class DateTime {
       case 'seconds':
         o.millisecond = 0;
         break;
+      case 'milliseconds':
+        break;
       default:
         throw new InvalidUnitError(unit);
     }

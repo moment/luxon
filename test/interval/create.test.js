@@ -4,7 +4,7 @@ import { DateTime, Interval, Duration, Settings } from '../../src/luxon';
 //------
 // .fromObject()
 //-------
-test('Interval.fromObject creates an interval from datetimes', () => {
+test('Interval.fromDateTimes creates an interval from datetimes', () => {
   const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }),
     int = Interval.fromDateTimes(start, end);
@@ -13,7 +13,7 @@ test('Interval.fromObject creates an interval from datetimes', () => {
   expect(int.end).toBe(end);
 });
 
-test('Interval.fromObject creates an interval from objects', () => {
+test('Interval.fromDateTimes creates an interval from objects', () => {
   const start = { year: 2016, month: 5, day: 25 },
     end = { year: 2016, month: 5, day: 27 },
     int = Interval.fromDateTimes(start, end);
@@ -22,7 +22,7 @@ test('Interval.fromObject creates an interval from objects', () => {
   expect(int.end).toEqual(DateTime.fromObject(end));
 });
 
-test('Interval.fromObject creates an interval from Dates', () => {
+test('Interval.fromDateTimes creates an interval from Dates', () => {
   const start = DateTime.fromObject({
       year: 2016,
       month: 5,
@@ -33,6 +33,15 @@ test('Interval.fromObject creates an interval from Dates', () => {
 
   expect(int.start.toJSDate()).toEqual(start);
   expect(int.end.toJSDate()).toEqual(end);
+});
+
+test('Interval.fromDateTimes results in an invalid Interval if the endpoints are invalid', () => {
+  const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
+    end = DateTime.invalid('because'),
+    int = Interval.fromDateTimes(start, end);
+
+  expect(int.isValid).toBe(false);
+  expect(int.invalidReason).toBe('invalid endpoints');
 });
 
 //------
@@ -87,4 +96,8 @@ test('Interval.invalid throws if throwOnInvalid is set', () => {
   } finally {
     Settings.throwOnInvalid = false;
   }
+});
+
+test('Interval.invalid throws if no reason is specified', () => {
+  expect(() => Interval.invalid()).toThrow();
 });
