@@ -18,6 +18,8 @@ DateTime.fromISO('2016-05-25');
 All of these are parsable by `fromISO`:
 
 ```
+2016
+2016-05
 2016-05-25
 20160525
 2016-05-25T09
@@ -37,7 +39,7 @@ All of these are parsable by `fromISO`:
 2016-200T09:24:15.123
 ```
 
-Dates without times are parsed as that day's midnight.
+Missing lower-order values are always set to the minimum possible value. Midnight if the hours aren't specified, the first of the month if the day isn't, January if the month isn't, etc.
 
 ### HTTP and RFC2822
 
