@@ -227,7 +227,9 @@
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2016-05-25&apos;);</code>
 </code></pre>
 <p>All of these are parsable by <code>fromISO</code>:</p>
-<pre><code><code class="source-code prettyprint">2016-05-25
+<pre><code><code class="source-code prettyprint">2016
+2016-05
+2016-05-25
 20160525
 2016-05-25T09
 2016-05-25T09:24
@@ -244,7 +246,7 @@
 2016-200
 2016200
 2016-200T09:24:15.123</code>
-</code></pre><p>Dates without times are parsed as that day&apos;s midnight.</p>
+</code></pre><p>Missing lower-order values are always set to the minimum possible value. Midnight if the hours aren&apos;t specified, the first of the month if the day isn&apos;t, January if the month isn&apos;t, etc.</p>
 <h3 id="http-and-rfc2822">HTTP and RFC2822</h3>
 <p>Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&apos;Tue, 01 Nov 2016 13:23:12 +0630&apos;);

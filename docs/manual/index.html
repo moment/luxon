@@ -1113,7 +1113,9 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 <li>Direct support for several well-known formats, including most valid ISO 8601 formats</li>
 <li>An ad-hoc parser for parsing specific formats</li>
 </ol><h2>Parsing technical formats</h2><h3>ISO 8601</h3><p>Luxon supports a wide range of valid ISO 8601 formats through the <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">fromISO</a> method.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2016-05-25&apos;);</code>
-</code></pre><p>All of these are parsable by <code>fromISO</code>:</p><pre><code><code class="source-code prettyprint">2016-05-25
+</code></pre><p>All of these are parsable by <code>fromISO</code>:</p><pre><code><code class="source-code prettyprint">2016
+2016-05
+2016-05-25
 20160525
 2016-05-25T09
 2016-05-25T09:24
@@ -1130,7 +1132,7 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 2016-200
 2016200
 2016-200T09:24:15.123</code>
-</code></pre><p>Dates without times are parsed as that day&apos;s midnight.</p><h3>HTTP and RFC2822</h3><p>Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&apos;Tue, 01 Nov 2016 13:23:12 +0630&apos;);
+</code></pre><p>Missing lower-order values are always set to the minimum possible value. Midnight if the hours aren&apos;t specified, the first of the month if the day isn&apos;t, January if the month isn&apos;t, etc.</p><h3>HTTP and RFC2822</h3><p>Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&apos;Tue, 01 Nov 2016 13:23:12 +0630&apos;);
 DateTime.fromHTTP(&apos;Sunday, 06-Nov-94 08:49:37 GMT&apos;);
 DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;);</code>
 </code></pre><h2>Ad-hoc parsing</h2><h3>Consider alternatives</h3><p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p><ol>
