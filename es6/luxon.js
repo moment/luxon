@@ -135,6 +135,221 @@ class Zone {
   }
 }
 
+let singleton = null;
+
+/**
+ * @private
+ */
+
+class LocalZone extends Zone {
+  static get instance() {
+    if (singleton === null) {
+      singleton = new LocalZone();
+    }
+    return singleton;
+  }
+
+  get type() {
+    return 'local';
+  }
+
+  get name() {
+    if (Util.hasIntl()) {
+      return new Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } else return 'local';
+  }
+
+  get universal() {
+    return false;
+  }
+
+  offsetName(ts, { format, locale }) {
+    return Util.parseZoneInfo(ts, format, locale);
+  }
+
+  offset(ts) {
+    return -new Date(ts).getTimezoneOffset();
+  }
+
+  equals(otherZone) {
+    return otherZone.type === 'local';
+  }
+
+  get isValid() {
+    return true;
+  }
+}
+
+const typeToPos = {
+  year: 0,
+  month: 1,
+  day: 2,
+  hour: 3,
+  minute: 4,
+  second: 5
+};
+
+function hackyOffset(dtf, date) {
+  const formatted = dtf.format(date),
+    parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
+    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
+  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
+}
+
+function partsOffset(dtf, date) {
+  const formatted = dtf.formatToParts(date),
+    filled = [];
+  for (let i = 0; i < formatted.length; i++) {
+    const { type, value } = formatted[i],
+      pos = typeToPos[type];
+
+    if (!Util.isUndefined(pos)) {
+      filled[pos] = parseInt(value, 10);
+    }
+  }
+  return filled;
+}
+
+function isValid(zone) {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * @private
+ */
+
+class IANAZone extends Zone {
+  static isValidSpecier(s) {
+    return s && s.match(/[a-z_]+\/[a-z_]+/i);
+  }
+
+  constructor(name) {
+    super();
+    this.zoneName = name;
+    this.valid = isValid(name);
+  }
+
+  get type() {
+    return 'iana';
+  }
+
+  get name() {
+    return this.zoneName;
+  }
+
+  get universal() {
+    return false;
+  }
+
+  offsetName(ts, { format, locale }) {
+    return Util.parseZoneInfo(ts, format, locale, this.zoneName);
+  }
+
+  offset(ts) {
+    const date = new Date(ts),
+      dtf = new Intl.DateTimeFormat('en-US', {
+        hour12: false,
+        timeZone: this.zoneName,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }),
+      [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts
+        ? partsOffset(dtf, date)
+        : hackyOffset(dtf, date),
+      asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
+    let asTS = date.valueOf();
+    asTS -= asTS % 1000;
+    return (asUTC - asTS) / (60 * 1000);
+  }
+
+  equals(otherZone) {
+    return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;
+  }
+
+  get isValid() {
+    return this.valid;
+  }
+}
+
+let singleton$1 = null;
+
+function hoursMinutesOffset(z) {
+  const hours = Math.trunc(z.fixed / 60),
+    minutes = Math.abs(z.fixed % 60),
+    sign = hours > 0 ? '+' : '-',
+    base = sign + Math.abs(hours);
+  return minutes > 0 ? `${base}:${Util.pad(minutes, 2)}` : base;
+}
+
+/**
+ * @private
+ */
+
+class FixedOffsetZone extends Zone {
+  static get utcInstance() {
+    if (singleton$1 === null) {
+      singleton$1 = new FixedOffsetZone(0);
+    }
+    return singleton$1;
+  }
+
+  static instance(offset) {
+    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
+  }
+
+  static parseSpecifier(s) {
+    if (s) {
+      const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
+      if (r) {
+        return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));
+      }
+    }
+    return null;
+  }
+
+  constructor(offset) {
+    super();
+    this.fixed = offset;
+  }
+
+  get type() {
+    return 'fixed';
+  }
+
+  get name() {
+    return this.fixed === 0 ? 'UTC' : `UTC${hoursMinutesOffset(this)}`;
+  }
+
+  offsetName() {
+    return this.name;
+  }
+
+  get universal() {
+    return true;
+  }
+
+  offset() {
+    return this.fixed;
+  }
+
+  equals(otherZone) {
+    return otherZone.type === 'fixed' && otherZone.fixed === this.fixed;
+  }
+
+  get isValid() {
+    return true;
+  }
+}
+
 /**
  * @private
  */
@@ -444,7 +659,8 @@ class English {
         'hour',
         'minute',
         'second',
-        'timeZoneName'
+        'timeZoneName',
+        'hour12'
       ]),
       key = stringify(filtered),
       dateTimeHuge = 'EEEE, LLLL d, yyyy, h:mm a';
@@ -470,9 +686,9 @@ class English {
       case stringify(Formats.TIME_24_WITH_SECONDS):
         return 'HH:mm:ss';
       case stringify(Formats.TIME_24_WITH_SHORT_OFFSET):
-        return 'HH:mm a';
+        return 'HH:mm';
       case stringify(Formats.TIME_24_WITH_LONG_OFFSET):
-        return 'HH:mm a';
+        return 'HH:mm';
       case stringify(Formats.DATETIME_SHORT):
         return 'M/d/yyyy, h:mm a';
       case stringify(Formats.DATETIME_MED):
@@ -486,7 +702,7 @@ class English {
       case stringify(Formats.DATETIME_MED_WITH_SECONDS):
         return 'LLL d, yyyy, h:mm:ss a';
       case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
-        return 'LLLL d, yyyy, h:mm:ss';
+        return 'LLLL d, yyyy, h:mm:ss a';
       case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
         return 'EEEE, LLLL d, yyyy, h:mm:ss a';
       default:
@@ -1347,221 +1563,6 @@ class Settings {
    */
   static resetCaches() {
     Locale.resetCache();
-  }
-}
-
-let singleton = null;
-
-/**
- * @private
- */
-
-class LocalZone extends Zone {
-  static get instance() {
-    if (singleton === null) {
-      singleton = new LocalZone();
-    }
-    return singleton;
-  }
-
-  get type() {
-    return 'local';
-  }
-
-  get name() {
-    if (Util.hasIntl()) {
-      return new Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } else return 'local';
-  }
-
-  get universal() {
-    return false;
-  }
-
-  offsetName(ts, { format = 'long', locale = Settings.defaultLocale } = {}) {
-    return Util.parseZoneInfo(ts, format, locale);
-  }
-
-  offset(ts) {
-    return -new Date(ts).getTimezoneOffset();
-  }
-
-  equals(otherZone) {
-    return otherZone.type === 'local';
-  }
-
-  get isValid() {
-    return true;
-  }
-}
-
-const typeToPos = {
-  year: 0,
-  month: 1,
-  day: 2,
-  hour: 3,
-  minute: 4,
-  second: 5
-};
-
-function hackyOffset(dtf, date) {
-  const formatted = dtf.format(date),
-    parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
-    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
-  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
-}
-
-function partsOffset(dtf, date) {
-  const formatted = dtf.formatToParts(date),
-    filled = [];
-  for (let i = 0; i < formatted.length; i++) {
-    const { type, value } = formatted[i],
-      pos = typeToPos[type];
-
-    if (!Util.isUndefined(pos)) {
-      filled[pos] = parseInt(value, 10);
-    }
-  }
-  return filled;
-}
-
-function isValid(zone) {
-  try {
-    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-/**
- * @private
- */
-
-class IANAZone extends Zone {
-  static isValidSpecier(s) {
-    return s && s.match(/[a-z_]+\/[a-z_]+/i);
-  }
-
-  constructor(name) {
-    super();
-    this.zoneName = name;
-    this.valid = isValid(name);
-  }
-
-  get type() {
-    return 'iana';
-  }
-
-  get name() {
-    return this.zoneName;
-  }
-
-  get universal() {
-    return false;
-  }
-
-  offsetName(ts, { format = 'long', locale = Settings.defaultLocale } = {}) {
-    return Util.parseZoneInfo(ts, format, locale, this.zoneName);
-  }
-
-  offset(ts) {
-    const date = new Date(ts),
-      dtf = new Intl.DateTimeFormat('en-US', {
-        hour12: false,
-        timeZone: this.zoneName,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }),
-      [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts
-        ? partsOffset(dtf, date)
-        : hackyOffset(dtf, date),
-      asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
-    let asTS = date.valueOf();
-    asTS -= asTS % 1000;
-    return (asUTC - asTS) / (60 * 1000);
-  }
-
-  equals(otherZone) {
-    return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;
-  }
-
-  get isValid() {
-    return this.valid;
-  }
-}
-
-let singleton$1 = null;
-
-function hoursMinutesOffset(z) {
-  const hours = z.fixed / 60,
-    minutes = Math.abs(z.fixed % 60),
-    sign = hours > 0 ? '+' : '-',
-    base = sign + Math.abs(hours);
-  return minutes > 0 ? `${base}:${Util.pad(minutes, 2)}` : base;
-}
-
-/**
- * @private
- */
-
-class FixedOffsetZone extends Zone {
-  static get utcInstance() {
-    if (singleton$1 === null) {
-      singleton$1 = new FixedOffsetZone(0);
-    }
-    return singleton$1;
-  }
-
-  static instance(offset) {
-    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
-  }
-
-  static parseSpecifier(s) {
-    if (s) {
-      const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
-      if (r) {
-        return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));
-      }
-    }
-    return null;
-  }
-
-  constructor(offset) {
-    super();
-    this.fixed = offset;
-  }
-
-  get type() {
-    return 'fixed';
-  }
-
-  get name() {
-    return this.fixed === 0 ? 'UTC' : `UTC${hoursMinutesOffset(this)}`;
-  }
-
-  offsetName() {
-    return this.name();
-  }
-
-  get universal() {
-    return true;
-  }
-
-  offset() {
-    return this.fixed;
-  }
-
-  equals(otherZone) {
-    return otherZone.type === 'fixed' && otherZone.fixed === this.fixed;
-  }
-
-  get isValid() {
-    return true;
   }
 }
 
@@ -2440,7 +2441,7 @@ class Duration {
       return this;
     }
 
-    units = units.map(Duration.normalizeUnit);
+    units = units.map(u => Duration.normalizeUnit(u));
 
     const built = {},
       accumulated = {},
@@ -2503,7 +2504,7 @@ class Duration {
     for (const k of Object.keys(this.values)) {
       negated[k] = -this.values[k];
     }
-    return Duration.fromObject(negated);
+    return clone$1(this, { values: negated });
   }
 
   /**
@@ -2595,6 +2596,10 @@ class Duration {
    */
   equals(other) {
     if (!this.isValid || !other.isValid) {
+      return false;
+    }
+
+    if (!this.loc.equals(other.loc)) {
       return false;
     }
 
@@ -2820,6 +2825,7 @@ class Interval {
    * @return {Interval}
    */
   set({ start, end } = {}) {
+    if (!this.isValid) return this;
     return Interval.fromDateTimes(start || this.s, end || this.e);
   }
 
@@ -3664,7 +3670,7 @@ function possiblyCachedWeekData(dt) {
   return dt.weekData;
 }
 
-function clone(inst, alts = {}) {
+function clone(inst, alts) {
   const current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -3766,7 +3772,7 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
-function parseDataToDateTime(parsed, parsedZone, opts = {}) {
+function parseDataToDateTime(parsed, parsedZone, opts) {
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
@@ -3886,7 +3892,7 @@ class DateTime {
   /**
    * @access private
    */
-  constructor(config = {}) {
+  constructor(config) {
     const zone = config.zone || Settings.defaultZone,
       invalidReason =
         config.invalidReason ||
@@ -4752,6 +4758,8 @@ class DateTime {
       case 'seconds':
         o.millisecond = 0;
         break;
+      case 'milliseconds':
+        break;
       default:
         throw new InvalidUnitError(unit);
     }
@@ -5079,8 +5087,8 @@ class DateTime {
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  diffNow(unit, opts) {
-    return this.isValid ? this.diff(DateTime.local(), unit, opts) : this;
+  diffNow(unit = 'milliseconds', opts = {}) {
+    return this.diff(DateTime.local(), unit, opts);
   }
 
   /**

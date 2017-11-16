@@ -46,7 +46,6 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/zones/IANAZone.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;../impl/util&apos;;
 import { Zone } from &apos;../zone&apos;;
-import { Settings } from &apos;../settings&apos;;
 
 const typeToPos = {
   year: 0,
@@ -114,7 +113,7 @@ export class IANAZone extends Zone {
     return false;
   }
 
-  offsetName(ts, { format = &apos;long&apos;, locale = Settings.defaultLocale } = {}) {
+  offsetName(ts, { format, locale }) {
     return Util.parseZoneInfo(ts, format, locale, this.zoneName);
   }
 

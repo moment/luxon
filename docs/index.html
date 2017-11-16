@@ -192,6 +192,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-18" data-ice="link">0.0.18</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-17" data-ice="link">0.0.17</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-16" data-ice="link">0.0.16</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-15" data-ice="link">0.0.15</a></li>
@@ -224,7 +225,7 @@
 </ul><p>Just include Luxon in a script tag. You can access its various classes through the <code>luxon</code> global.</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;</code>
 </code></pre><p>You may wish to alias the classes you use:</p><pre><code class="lang-js"><code class="source-code prettyprint">var DateTime = luxon.DateTime;</code>
 </code></pre><h2>Node</h2><p>Install via NPM:</p><pre><code><code class="source-code prettyprint">npm install --save luxon</code>
-</code></pre><pre><code class="lang-js"><code class="source-code prettyprint">var luxon = require(&apos;luxon&apos;);</code>
+</code></pre><pre><code class="lang-js"><code class="source-code prettyprint">const { DateTime } = require(&apos;luxon&apos;);</code>
 </code></pre><h2>AMD (System.js, RequireJS, etc)</h2><ul>
 <li><a href="./manual/../../amd/luxon.js">Download full</a></li>
 <li><a href="./manual/../../amd/luxon.min.js">Download minified</a></li>
@@ -2569,7 +2570,11 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <div class="manual-card-wrap" data-ice="cards">
       <h1 data-ice="label" class="manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;&#x25A0;"><span data-ice="label-inner">Changelog</span></h1>
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.0.17</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.0.18</h2><ul>
+<li>Fixed formatting for non-hour aligned fixed-offset zones</li>
+<li>Fixed longterm conversion accuracy option in diffs</li>
+<li>Fixed invalid handling in <code>Interval#set</code></li>
+</ul><h2>0.0.17</h2><ul>
 <li>Fixing formatting for fixed-offset zones</li>
 </ul><h2>0.0.16</h2><ul>
 <li>Fixes for IE 9 &amp; 10</li>

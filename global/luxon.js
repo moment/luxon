@@ -2110,6 +2110,15 @@ _export(_export.P, 'String', {
 
 var padStart = _entryVirtual('String').padStart;
 
+// 20.2.2.34 Math.trunc(x)
+
+
+_export(_export.S, 'Math', {
+  trunc: function trunc(it) {
+    return (it > 0 ? Math.floor : Math.ceil)(it);
+  }
+});
+
 // these aren't really private, but nor are they really useful to document
 
 /**
@@ -2327,6 +2336,299 @@ var Zone = function () {
   }]);
   return Zone;
 }();
+
+var singleton = null;
+
+/**
+ * @private
+ */
+
+var LocalZone = function (_Zone) {
+  inherits(LocalZone, _Zone);
+
+  function LocalZone() {
+    classCallCheck(this, LocalZone);
+    return possibleConstructorReturn(this, (LocalZone.__proto__ || Object.getPrototypeOf(LocalZone)).apply(this, arguments));
+  }
+
+  createClass(LocalZone, [{
+    key: 'offsetName',
+    value: function offsetName(ts, _ref) {
+      var format = _ref.format,
+          locale = _ref.locale;
+
+      return Util.parseZoneInfo(ts, format, locale);
+    }
+  }, {
+    key: 'offset',
+    value: function offset(ts) {
+      return -new Date(ts).getTimezoneOffset();
+    }
+  }, {
+    key: 'equals',
+    value: function equals(otherZone) {
+      return otherZone.type === 'local';
+    }
+  }, {
+    key: 'type',
+    get: function get$$1() {
+      return 'local';
+    }
+  }, {
+    key: 'name',
+    get: function get$$1() {
+      if (Util.hasIntl()) {
+        return new Intl.DateTimeFormat().resolvedOptions().timeZone;
+      } else return 'local';
+    }
+  }, {
+    key: 'universal',
+    get: function get$$1() {
+      return false;
+    }
+  }, {
+    key: 'isValid',
+    get: function get$$1() {
+      return true;
+    }
+  }], [{
+    key: 'instance',
+    get: function get$$1() {
+      if (singleton === null) {
+        singleton = new LocalZone();
+      }
+      return singleton;
+    }
+  }]);
+  return LocalZone;
+}(Zone);
+
+var typeToPos = {
+  year: 0,
+  month: 1,
+  day: 2,
+  hour: 3,
+  minute: 4,
+  second: 5
+};
+
+function hackyOffset(dtf, date) {
+  var formatted = dtf.format(date),
+      parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
+      _parsed = slicedToArray(parsed, 7),
+      fMonth = _parsed[1],
+      fDay = _parsed[2],
+      fYear = _parsed[3],
+      fHour = _parsed[4],
+      fMinute = _parsed[5],
+      fSecond = _parsed[6];
+
+  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
+}
+
+function partsOffset(dtf, date) {
+  var formatted = dtf.formatToParts(date),
+      filled = [];
+  for (var i = 0; i < formatted.length; i++) {
+    var _formatted$i = formatted[i],
+        type = _formatted$i.type,
+        value = _formatted$i.value,
+        pos = typeToPos[type];
+
+
+    if (!Util.isUndefined(pos)) {
+      filled[pos] = parseInt(value, 10);
+    }
+  }
+  return filled;
+}
+
+function isValid(zone) {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * @private
+ */
+
+var IANAZone = function (_Zone) {
+  inherits(IANAZone, _Zone);
+  createClass(IANAZone, null, [{
+    key: 'isValidSpecier',
+    value: function isValidSpecier(s) {
+      return s && s.match(/[a-z_]+\/[a-z_]+/i);
+    }
+  }]);
+
+  function IANAZone(name) {
+    classCallCheck(this, IANAZone);
+
+    var _this = possibleConstructorReturn(this, (IANAZone.__proto__ || Object.getPrototypeOf(IANAZone)).call(this));
+
+    _this.zoneName = name;
+    _this.valid = isValid(name);
+    return _this;
+  }
+
+  createClass(IANAZone, [{
+    key: 'offsetName',
+    value: function offsetName(ts, _ref) {
+      var format = _ref.format,
+          locale = _ref.locale;
+
+      return Util.parseZoneInfo(ts, format, locale, this.zoneName);
+    }
+  }, {
+    key: 'offset',
+    value: function offset(ts) {
+      var date = new Date(ts),
+          dtf = new Intl.DateTimeFormat('en-US', {
+        hour12: false,
+        timeZone: this.zoneName,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }),
+          _ref2 = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
+          _ref3 = slicedToArray(_ref2, 6),
+          fYear = _ref3[0],
+          fMonth = _ref3[1],
+          fDay = _ref3[2],
+          fHour = _ref3[3],
+          fMinute = _ref3[4],
+          fSecond = _ref3[5],
+          asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
+
+      var asTS = date.valueOf();
+      asTS -= asTS % 1000;
+      return (asUTC - asTS) / (60 * 1000);
+    }
+  }, {
+    key: 'equals',
+    value: function equals(otherZone) {
+      return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;
+    }
+  }, {
+    key: 'type',
+    get: function get$$1() {
+      return 'iana';
+    }
+  }, {
+    key: 'name',
+    get: function get$$1() {
+      return this.zoneName;
+    }
+  }, {
+    key: 'universal',
+    get: function get$$1() {
+      return false;
+    }
+  }, {
+    key: 'isValid',
+    get: function get$$1() {
+      return this.valid;
+    }
+  }]);
+  return IANAZone;
+}(Zone);
+
+var singleton$1 = null;
+
+function hoursMinutesOffset(z) {
+  var hours = Math.trunc(z.fixed / 60),
+      minutes = Math.abs(z.fixed % 60),
+      sign = hours > 0 ? '+' : '-',
+      base = sign + Math.abs(hours);
+  return minutes > 0 ? base + ':' + Util.pad(minutes, 2) : base;
+}
+
+/**
+ * @private
+ */
+
+var FixedOffsetZone = function (_Zone) {
+  inherits(FixedOffsetZone, _Zone);
+  createClass(FixedOffsetZone, null, [{
+    key: 'instance',
+    value: function instance(offset) {
+      return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
+    }
+  }, {
+    key: 'parseSpecifier',
+    value: function parseSpecifier(s) {
+      if (s) {
+        var r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
+        if (r) {
+          return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));
+        }
+      }
+      return null;
+    }
+  }, {
+    key: 'utcInstance',
+    get: function get$$1() {
+      if (singleton$1 === null) {
+        singleton$1 = new FixedOffsetZone(0);
+      }
+      return singleton$1;
+    }
+  }]);
+
+  function FixedOffsetZone(offset) {
+    classCallCheck(this, FixedOffsetZone);
+
+    var _this = possibleConstructorReturn(this, (FixedOffsetZone.__proto__ || Object.getPrototypeOf(FixedOffsetZone)).call(this));
+
+    _this.fixed = offset;
+    return _this;
+  }
+
+  createClass(FixedOffsetZone, [{
+    key: 'offsetName',
+    value: function offsetName() {
+      return this.name;
+    }
+  }, {
+    key: 'offset',
+    value: function offset() {
+      return this.fixed;
+    }
+  }, {
+    key: 'equals',
+    value: function equals(otherZone) {
+      return otherZone.type === 'fixed' && otherZone.fixed === this.fixed;
+    }
+  }, {
+    key: 'type',
+    get: function get$$1() {
+      return 'fixed';
+    }
+  }, {
+    key: 'name',
+    get: function get$$1() {
+      return this.fixed === 0 ? 'UTC' : 'UTC' + hoursMinutesOffset(this);
+    }
+  }, {
+    key: 'universal',
+    get: function get$$1() {
+      return true;
+    }
+  }, {
+    key: 'isValid',
+    get: function get$$1() {
+      return true;
+    }
+  }]);
+  return FixedOffsetZone;
+}(Zone);
 
 /**
  * @private
@@ -2590,7 +2892,7 @@ var English = function () {
     value: function formatString(knownFormat) {
       // these all have the offsets removed because we don't have access to them
       // without all the intl stuff this is backfilling
-      var filtered = Util.pick(knownFormat, ['weekday', 'era', 'year', 'month', 'day', 'hour', 'minute', 'second', 'timeZoneName']),
+      var filtered = Util.pick(knownFormat, ['weekday', 'era', 'year', 'month', 'day', 'hour', 'minute', 'second', 'timeZoneName', 'hour12']),
           key = stringify(filtered),
           dateTimeHuge = 'EEEE, LLLL d, yyyy, h:mm a';
       switch (key) {
@@ -2615,9 +2917,9 @@ var English = function () {
         case stringify(Formats.TIME_24_WITH_SECONDS):
           return 'HH:mm:ss';
         case stringify(Formats.TIME_24_WITH_SHORT_OFFSET):
-          return 'HH:mm a';
+          return 'HH:mm';
         case stringify(Formats.TIME_24_WITH_LONG_OFFSET):
-          return 'HH:mm a';
+          return 'HH:mm';
         case stringify(Formats.DATETIME_SHORT):
           return 'M/d/yyyy, h:mm a';
         case stringify(Formats.DATETIME_MED):
@@ -2631,7 +2933,7 @@ var English = function () {
         case stringify(Formats.DATETIME_MED_WITH_SECONDS):
           return 'LLL d, yyyy, h:mm:ss a';
         case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
-          return 'LLLL d, yyyy, h:mm:ss';
+          return 'LLLL d, yyyy, h:mm:ss a';
         case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
           return 'EEEE, LLLL d, yyyy, h:mm:ss a';
         default:
@@ -3685,305 +3987,6 @@ var Settings = function () {
   return Settings;
 }();
 
-var singleton = null;
-
-/**
- * @private
- */
-
-var LocalZone = function (_Zone) {
-  inherits(LocalZone, _Zone);
-
-  function LocalZone() {
-    classCallCheck(this, LocalZone);
-    return possibleConstructorReturn(this, (LocalZone.__proto__ || Object.getPrototypeOf(LocalZone)).apply(this, arguments));
-  }
-
-  createClass(LocalZone, [{
-    key: 'offsetName',
-    value: function offsetName(ts) {
-      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-          _ref$format = _ref.format,
-          format = _ref$format === undefined ? 'long' : _ref$format,
-          _ref$locale = _ref.locale,
-          locale = _ref$locale === undefined ? Settings.defaultLocale : _ref$locale;
-
-      return Util.parseZoneInfo(ts, format, locale);
-    }
-  }, {
-    key: 'offset',
-    value: function offset(ts) {
-      return -new Date(ts).getTimezoneOffset();
-    }
-  }, {
-    key: 'equals',
-    value: function equals(otherZone) {
-      return otherZone.type === 'local';
-    }
-  }, {
-    key: 'type',
-    get: function get$$1() {
-      return 'local';
-    }
-  }, {
-    key: 'name',
-    get: function get$$1() {
-      if (Util.hasIntl()) {
-        return new Intl.DateTimeFormat().resolvedOptions().timeZone;
-      } else return 'local';
-    }
-  }, {
-    key: 'universal',
-    get: function get$$1() {
-      return false;
-    }
-  }, {
-    key: 'isValid',
-    get: function get$$1() {
-      return true;
-    }
-  }], [{
-    key: 'instance',
-    get: function get$$1() {
-      if (singleton === null) {
-        singleton = new LocalZone();
-      }
-      return singleton;
-    }
-  }]);
-  return LocalZone;
-}(Zone);
-
-var typeToPos = {
-  year: 0,
-  month: 1,
-  day: 2,
-  hour: 3,
-  minute: 4,
-  second: 5
-};
-
-function hackyOffset(dtf, date) {
-  var formatted = dtf.format(date),
-      parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
-      _parsed = slicedToArray(parsed, 7),
-      fMonth = _parsed[1],
-      fDay = _parsed[2],
-      fYear = _parsed[3],
-      fHour = _parsed[4],
-      fMinute = _parsed[5],
-      fSecond = _parsed[6];
-
-  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
-}
-
-function partsOffset(dtf, date) {
-  var formatted = dtf.formatToParts(date),
-      filled = [];
-  for (var i = 0; i < formatted.length; i++) {
-    var _formatted$i = formatted[i],
-        type = _formatted$i.type,
-        value = _formatted$i.value,
-        pos = typeToPos[type];
-
-
-    if (!Util.isUndefined(pos)) {
-      filled[pos] = parseInt(value, 10);
-    }
-  }
-  return filled;
-}
-
-function isValid(zone) {
-  try {
-    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-/**
- * @private
- */
-
-var IANAZone = function (_Zone) {
-  inherits(IANAZone, _Zone);
-  createClass(IANAZone, null, [{
-    key: 'isValidSpecier',
-    value: function isValidSpecier(s) {
-      return s && s.match(/[a-z_]+\/[a-z_]+/i);
-    }
-  }]);
-
-  function IANAZone(name) {
-    classCallCheck(this, IANAZone);
-
-    var _this = possibleConstructorReturn(this, (IANAZone.__proto__ || Object.getPrototypeOf(IANAZone)).call(this));
-
-    _this.zoneName = name;
-    _this.valid = isValid(name);
-    return _this;
-  }
-
-  createClass(IANAZone, [{
-    key: 'offsetName',
-    value: function offsetName(ts) {
-      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-          _ref$format = _ref.format,
-          format = _ref$format === undefined ? 'long' : _ref$format,
-          _ref$locale = _ref.locale,
-          locale = _ref$locale === undefined ? Settings.defaultLocale : _ref$locale;
-
-      return Util.parseZoneInfo(ts, format, locale, this.zoneName);
-    }
-  }, {
-    key: 'offset',
-    value: function offset(ts) {
-      var date = new Date(ts),
-          dtf = new Intl.DateTimeFormat('en-US', {
-        hour12: false,
-        timeZone: this.zoneName,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }),
-          _ref2 = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
-          _ref3 = slicedToArray(_ref2, 6),
-          fYear = _ref3[0],
-          fMonth = _ref3[1],
-          fDay = _ref3[2],
-          fHour = _ref3[3],
-          fMinute = _ref3[4],
-          fSecond = _ref3[5],
-          asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
-
-      var asTS = date.valueOf();
-      asTS -= asTS % 1000;
-      return (asUTC - asTS) / (60 * 1000);
-    }
-  }, {
-    key: 'equals',
-    value: function equals(otherZone) {
-      return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;
-    }
-  }, {
-    key: 'type',
-    get: function get$$1() {
-      return 'iana';
-    }
-  }, {
-    key: 'name',
-    get: function get$$1() {
-      return this.zoneName;
-    }
-  }, {
-    key: 'universal',
-    get: function get$$1() {
-      return false;
-    }
-  }, {
-    key: 'isValid',
-    get: function get$$1() {
-      return this.valid;
-    }
-  }]);
-  return IANAZone;
-}(Zone);
-
-var singleton$1 = null;
-
-function hoursMinutesOffset(z) {
-  var hours = z.fixed / 60,
-      minutes = Math.abs(z.fixed % 60),
-      sign = hours > 0 ? '+' : '-',
-      base = sign + Math.abs(hours);
-  return minutes > 0 ? base + ':' + Util.pad(minutes, 2) : base;
-}
-
-/**
- * @private
- */
-
-var FixedOffsetZone = function (_Zone) {
-  inherits(FixedOffsetZone, _Zone);
-  createClass(FixedOffsetZone, null, [{
-    key: 'instance',
-    value: function instance(offset) {
-      return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
-    }
-  }, {
-    key: 'parseSpecifier',
-    value: function parseSpecifier(s) {
-      if (s) {
-        var r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
-        if (r) {
-          return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));
-        }
-      }
-      return null;
-    }
-  }, {
-    key: 'utcInstance',
-    get: function get$$1() {
-      if (singleton$1 === null) {
-        singleton$1 = new FixedOffsetZone(0);
-      }
-      return singleton$1;
-    }
-  }]);
-
-  function FixedOffsetZone(offset) {
-    classCallCheck(this, FixedOffsetZone);
-
-    var _this = possibleConstructorReturn(this, (FixedOffsetZone.__proto__ || Object.getPrototypeOf(FixedOffsetZone)).call(this));
-
-    _this.fixed = offset;
-    return _this;
-  }
-
-  createClass(FixedOffsetZone, [{
-    key: 'offsetName',
-    value: function offsetName() {
-      return this.name();
-    }
-  }, {
-    key: 'offset',
-    value: function offset() {
-      return this.fixed;
-    }
-  }, {
-    key: 'equals',
-    value: function equals(otherZone) {
-      return otherZone.type === 'fixed' && otherZone.fixed === this.fixed;
-    }
-  }, {
-    key: 'type',
-    get: function get$$1() {
-      return 'fixed';
-    }
-  }, {
-    key: 'name',
-    get: function get$$1() {
-      return this.fixed === 0 ? 'UTC' : 'UTC' + hoursMinutesOffset(this);
-    }
-  }, {
-    key: 'universal',
-    get: function get$$1() {
-      return true;
-    }
-  }, {
-    key: 'isValid',
-    get: function get$$1() {
-      return true;
-    }
-  }]);
-  return FixedOffsetZone;
-}(Zone);
-
 /**
  * @private
  */
@@ -4932,7 +4935,9 @@ var Duration = function () {
         return this;
       }
 
-      units = units.map(Duration.normalizeUnit);
+      units = units.map(function (u) {
+        return Duration.normalizeUnit(u);
+      });
 
       var built = {},
           accumulated = {},
@@ -5042,7 +5047,7 @@ var Duration = function () {
         }
       }
 
-      return Duration.fromObject(negated);
+      return clone$1(this, { values: negated });
     }
 
     /**
@@ -5062,6 +5067,10 @@ var Duration = function () {
      */
     value: function equals(other) {
       if (!this.isValid || !other.isValid) {
+        return false;
+      }
+
+      if (!this.loc.equals(other.loc)) {
         return false;
       }
 
@@ -5481,6 +5490,7 @@ var Interval = function () {
           start = _ref.start,
           end = _ref.end;
 
+      if (!this.isValid) return this;
       return Interval.fromDateTimes(start || this.s, end || this.e);
     }
 
@@ -6717,9 +6727,7 @@ function possiblyCachedWeekData(dt) {
   return dt.weekData;
 }
 
-function clone(inst) {
-  var alts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+function clone(inst, alts) {
   var current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -6816,8 +6824,7 @@ function adjustTime(inst, dur) {
   return { ts: ts, o: o };
 }
 
-function parseDataToDateTime(parsed, parsedZone) {
-  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+function parseDataToDateTime(parsed, parsedZone, opts) {
   var setZone = opts.setZone,
       zone = opts.zone;
 
@@ -6927,8 +6934,7 @@ var DateTime = function () {
   /**
    * @access private
    */
-  function DateTime() {
-    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function DateTime(config) {
     classCallCheck(this, DateTime);
 
     var zone = config.zone || Settings.defaultZone,
@@ -7244,6 +7250,8 @@ var DateTime = function () {
         // falls through
         case 'seconds':
           o.millisecond = 0;
+          break;
+        case 'milliseconds':
           break;
         default:
           throw new InvalidUnitError(unit);
@@ -7633,8 +7641,11 @@ var DateTime = function () {
 
   }, {
     key: 'diffNow',
-    value: function diffNow(unit, opts) {
-      return this.isValid ? this.diff(DateTime.local(), unit, opts) : this;
+    value: function diffNow() {
+      var unit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'milliseconds';
+      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      return this.diff(DateTime.local(), unit, opts);
     }
 
     /**

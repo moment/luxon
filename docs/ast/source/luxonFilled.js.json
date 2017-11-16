@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 278,
+  "end": 310,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 10,
+      "line": 11,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 278,
+    "end": 310,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 10,
+        "line": 11,
         "column": 0
       }
     },
@@ -281,30 +281,66 @@
         }
       },
       {
-        "type": "ExportAllDeclaration",
-        "start": 253,
-        "end": 277,
+        "type": "ImportDeclaration",
+        "start": 252,
+        "end": 283,
         "loc": {
           "start": {
-            "line": 9,
+            "line": 8,
             "column": 0
           },
           "end": {
-            "line": 9,
+            "line": 8,
+            "column": 31
+          }
+        },
+        "specifiers": [],
+        "source": {
+          "type": "StringLiteral",
+          "start": 259,
+          "end": 282,
+          "loc": {
+            "start": {
+              "line": 8,
+              "column": 7
+            },
+            "end": {
+              "line": 8,
+              "column": 30
+            }
+          },
+          "extra": {
+            "rawValue": "core-js/fn/math/trunc",
+            "raw": "'core-js/fn/math/trunc'"
+          },
+          "value": "core-js/fn/math/trunc"
+        }
+      },
+      {
+        "type": "ExportAllDeclaration",
+        "start": 285,
+        "end": 309,
+        "loc": {
+          "start": {
+            "line": 10,
+            "column": 0
+          },
+          "end": {
+            "line": 10,
             "column": 24
           }
         },
         "source": {
           "type": "StringLiteral",
-          "start": 267,
-          "end": 276,
+          "start": 299,
+          "end": 308,
           "loc": {
             "start": {
-              "line": 9,
+              "line": 10,
               "column": 14
             },
             "end": {
-              "line": 9,
+              "line": 10,
               "column": 23
             }
           },
@@ -889,6 +925,87 @@
     },
     {
       "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 252,
+      "end": 258,
+      "loc": {
+        "start": {
+          "line": 8,
+          "column": 0
+        },
+        "end": {
+          "line": 8,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "core-js/fn/math/trunc",
+      "start": 259,
+      "end": 282,
+      "loc": {
+        "start": {
+          "line": 8,
+          "column": 7
+        },
+        "end": {
+          "line": 8,
+          "column": 30
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ";",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 282,
+      "end": 283,
+      "loc": {
+        "start": {
+          "line": 8,
+          "column": 30
+        },
+        "end": {
+          "line": 8,
+          "column": 31
+        }
+      }
+    },
+    {
+      "type": {
         "label": "export",
         "keyword": "export",
         "beforeExpr": false,
@@ -902,15 +1019,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 253,
-      "end": 259,
+      "start": 285,
+      "end": 291,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 0
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 6
         }
       }
@@ -929,15 +1046,15 @@
         "updateContext": null
       },
       "value": "*",
-      "start": 260,
-      "end": 261,
+      "start": 292,
+      "end": 293,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 7
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 8
         }
       }
@@ -955,15 +1072,15 @@
         "binop": null
       },
       "value": "from",
-      "start": 262,
-      "end": 266,
+      "start": 294,
+      "end": 298,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 9
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 13
         }
       }
@@ -982,15 +1099,15 @@
         "updateContext": null
       },
       "value": "./luxon",
-      "start": 267,
-      "end": 276,
+      "start": 299,
+      "end": 308,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 14
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 23
         }
       }
@@ -1008,15 +1125,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 276,
-      "end": 277,
+      "start": 308,
+      "end": 309,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 23
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 24
         }
       }
@@ -1034,15 +1151,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 278,
-      "end": 278,
+      "start": 310,
+      "end": 310,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 11,
           "column": 0
         },
         "end": {
-          "line": 10,
+          "line": 11,
           "column": 0
         }
       }
