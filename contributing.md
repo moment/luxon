@@ -44,7 +44,7 @@ Where `scripts/test` is just `NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp 
 
 ### Windows
 
-[Help wanted.]
+If you have Bash, the Linux instructions seem to work fine.
 
 ### Docker
 
