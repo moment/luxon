@@ -229,7 +229,7 @@ Most of the time, DST shifts will happen without you having to do anything about
 
 ### Invalid times
 
-Some local times simply don't exist. In the Northern Hemisphere, Spring Forward involves shifting the local time forward by (usually) one hour. In my zone, `America/New_York`, on March 12, 2017 the millisecond after 1:59:59.999 became 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don't exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.
+Some local times simply don't exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, `America/New_York`, on March 12, 2017 the millisecond after 1:59:59.999 became 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don't exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.
 
 If you create such a DateTime from scratch, the missing time will be advanced by an hour:
 
@@ -247,7 +247,7 @@ DateTime.local(2017, 3, 13, 2, 30).minus({days: 1}).toString()        //=> '2017
 
 ### Ambiguous times
 
-Harder to handle are ambiguous times. In the Northern Hemisphere, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because those correspond to different moments in time.
+Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because those correspond to different moments in time.
 
 However, Luxon's behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:
 
