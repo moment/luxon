@@ -176,8 +176,8 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/faq/matrix.html"><a href="manual/faq/matrix.html#zones" data-ice="link">Zones</a></li>
 <li data-ice="manualNav" class="indent-h1 manual-color manual-color-faq" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html" data-ice="link">For Moment users</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#immutability" data-ice="link">Immutability</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#other-api-style-differences" data-ice="link">Other API style differences</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#major-functional-differences" data-ice="link">Major functional differences</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#other-api-style-differences" data-ice="link">Other API style differences</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#datetime-method-equivalence" data-ice="link">DateTime method equivalence</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#creation" data-ice="link">Creation</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#getters-and-setters" data-ice="link">Getters and setters</a></li>
@@ -191,6 +191,11 @@
 <li data-ice="manualNav" class="indent-h4" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#humanization" data-ice="link">Humanization</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#durations" data-ice="link">Durations</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/faq/moment.html"><a href="manual/faq/moment.html#intervals" data-ice="link">Intervals</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-faq" data-section-count="&#x25A0;&#x25A0;" data-link="manual/faq/why.html"><a href="manual/faq/why.html" data-ice="link">Why does Luxon exist?</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/why.html"><a href="manual/faq/why.html#origin" data-ice="link">Origin</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/why.html"><a href="manual/faq/why.html#ideas-in-luxon" data-ice="link">Ideas in Luxon</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/why.html"><a href="manual/faq/why.html#place-in-the-moment-project" data-ice="link">Place in the Moment project</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/faq/why.html"><a href="manual/faq/why.html#future-plans" data-ice="link">Future plans</a></li>
 </ul>
   </div>
 <div data-ice="manual" data-toc-name="changelog">
@@ -235,6 +240,13 @@ var d2 = d1.plus({ hours: 1 });
 d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 </code></pre>
 <p>This happens because the <code>plus</code> method returns a new instance, leaving <code>d1</code> unmodified. It also means that Luxon doesn&apos;t require copy constructors or clone methods.</p>
+<h2 id="major-functional-differences">Major functional differences</h2>
+<ol>
+<li>Months in Luxon are 1-indexed instead of 0-indexed like in Moment and the native Date type.</li>
+<li>Localizations and time zones are implemented by the native Intl API (or a polyfill of it), instead of by the library itself.</li>
+<li>Luxon has both a Duration type and an Interval type. The Interval type is like Twix.</li>
+<li>Luxon lacks the relative time features of Moment and will until the required <a href="./manual/(https://github.com/tc39/proposal-intl-relative-time">facilities</a> are provided by the browser.</li>
+</ol>
 <h2 id="other-api-style-differences">Other API style differences</h2>
 <ol>
 <li>Luxon methods often take option objects as their last parameter</li>
@@ -243,16 +255,9 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li>Luxon uses getters instead of accessor methods, so <code>dateTime.year</code> instead of <code>dateTime.year()</code></li>
 <li>Luxon centralizes its &quot;setters&quot;, like <code>dateTime.set({year: 2016, month: 4})</code> instead of <code>dateTime.year(2016).month(4)</code> like in Moment.</li>
 <li>Luxon&apos;s Durations are a separate top-level class.</li>
-<li>Arguments to Luxon&apos;s methods are not automatically coerced into Luxon instances. E.g. <code>m.diff(&apos;2017-04-01&apos;)</code> would be <code>dt.diff(DateTime.fromISO(&apos;2017-04-01&apos;))</code>.</li>
+<li>Arguments to Luxon&apos;s methods are not automatically coerced into Luxon instances. E.g. <code>m.diff(&apos;2017-04-01&apos;)</code> would be <code>dt.diff(DateTime.fromISO(&apos;2017-04-01&apos;))</code>.<h2 id="datetime-method-equivalence">DateTime method equivalence</h2>
+</li>
 </ol>
-<h2 id="major-functional-differences">Major functional differences</h2>
-<ol>
-<li>Months in Luxon are 1-indexed instead of 0-indexed like in Moment and the native Date type.</li>
-<li>Localizations and time zones are implemented by the native Intl API (or a polyfill of it), instead of by the library itself.</li>
-<li>Luxon has both a Duration type and an Interval type. The Interval type is like Twix.</li>
-<li>Luxon lacks the relative time features of Moment and will until the required <a href="./manual/(https://github.com/tc39/proposal-intl-relative-time">facilities</a> are provided by the browser.</li>
-</ol>
-<h2 id="datetime-method-equivalence">DateTime method equivalence</h2>
 <p>Here&apos;s a rough mapping of DateTime methods in Moment to ones in Luxon. I haven&apos;t comprehensively documented stuff that&apos;s in Luxon but not in Moment, just a few odds and ends that seemed obvious for inclusion; there are more. I&apos;ve probably missed a few things too.</p>
 <h3 id="creation">Creation</h3>
 <table>
