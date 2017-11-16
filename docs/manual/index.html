@@ -586,8 +586,8 @@ dtHebrew.toLocaleString() //=&gt; &apos;4 Tishri 5778&apos;</code>
 <li>Internationalizable human-readable formats</li>
 <li>Token-based formatting</li>
 </ol><h2>Technical formats (strings for computers)</h2><h3>ISO 8601</h3><p><a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> is the most widely used set of string formats for dates and times. Luxon can <em>parse</em> a wide range of them, but provides direct support for formatting only a few of them:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO();         //=&gt; &apos;2017-04-20T11:32:00.000-04:00&apos;
-dt.toISODate();     //=&gt; &apos;2017-W17-7&apos;
-dt.toISOWeekDate(); //=&gt; &apos;2017-04-20&apos;
+dt.toISODate();     //=&gt; &apos;2017-04-20&apos;
+dt.toISOWeekDate(); //=&gt; &apos;2017-W17-7&apos;
 dt.toISOTime();     //=&gt; &apos;11:32:00.000-04:00&apos;</code>
 </code></pre><p>Generally, you&apos;ll want the first one. Use it by default when building or interacting with APIs, communicating times over a wire, etc.</p><h3>HTTP and RFC 2822</h3><p>There are a number of legacy standard date and time formats out there, and Luxon supports some of them. You shouldn&apos;t use them unless you have a specific reason to.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toRFC2822(); //=&gt; &apos;Thu, 20 Apr 2017 11:32:00 -0400&apos;
 dt.toHTTP();    //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
