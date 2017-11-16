@@ -28,6 +28,8 @@ dtHebrew.toLocaleString() //=> '4 Tishri 5778'
 
 You can modulate the structure of that string with arguments to `toLocaleString` (see [the docs on that](usage/formatting.html#tolocalestring-strings-for-humans-)), but the point here is just that you got the alternative calendar.
 
+### Generally supported calendars
+
 Here's a table of the different calendars with examples generated formatting the same date generated like this:
 
 ```js
@@ -48,3 +50,12 @@ DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);
 | japanese | September 24, 29 Heisei  |
 | persian  | Mehr 2, 1396 AP          |
 | roc      | September 24, 106 Minguo |
+
+
+### Default output calendar
+
+You can set the default output calendar for new DateTime instances like this:
+
+```js
+Settings.defaultOuputCalendar = 'persian';
+```
