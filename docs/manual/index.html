@@ -2109,9 +2109,8 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li>Luxon uses getters instead of accessor methods, so <code>dateTime.year</code> instead of <code>dateTime.year()</code></li>
 <li>Luxon centralizes its &quot;setters&quot;, like <code>dateTime.set({year: 2016, month: 4})</code> instead of <code>dateTime.year(2016).month(4)</code> like in Moment.</li>
 <li>Luxon&apos;s Durations are a separate top-level class.</li>
-<li>Arguments to Luxon&apos;s methods are not automatically coerced into Luxon instances. E.g. <code>m.diff(&apos;2017-04-01&apos;)</code> would be <code>dt.diff(DateTime.fromISO(&apos;2017-04-01&apos;))</code>.<h2 id="datetime-method-equivalence">DateTime method equivalence</h2>
-</li>
-</ol><p>Here&apos;s a rough mapping of DateTime methods in Moment to ones in Luxon. I haven&apos;t comprehensively documented stuff that&apos;s in Luxon but not in Moment, just a few odds and ends that seemed obvious for inclusion; there are more. I&apos;ve probably missed a few things too.</p><h3>Creation</h3><table>
+<li>Arguments to Luxon&apos;s methods are not automatically coerced into Luxon instances. E.g. <code>m.diff(&apos;2017-04-01&apos;)</code> would be <code>dt.diff(DateTime.fromISO(&apos;2017-04-01&apos;))</code>.</li>
+</ol><h2>DateTime method equivalence</h2><p>Here&apos;s a rough mapping of DateTime methods in Moment to ones in Luxon. I haven&apos;t comprehensively documented stuff that&apos;s in Luxon but not in Moment, just a few odds and ends that seemed obvious for inclusion; there are more. I&apos;ve probably missed a few things too.</p><h3>Creation</h3><table>
 <thead>
 <tr>
 <th>Operation</th>
