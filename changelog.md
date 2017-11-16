@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.19
+ * Fixed parsing for ordinals
+ * Made parsing stricter
+
 ## 0.0.18
  * Fixed formatting for non-hour aligned fixed-offset zones
  * Fixed longterm conversion accuracy option in diffs
