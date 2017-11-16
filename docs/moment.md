@@ -22,6 +22,13 @@ d1.valueOf() === d2.valueOf(); //=> false
 
 This happens because the `plus` method returns a new instance, leaving `d1` unmodified. It also means that Luxon doesn't require copy constructors or clone methods.
 
+## Major functional differences
+
+1. Months in Luxon are 1-indexed instead of 0-indexed like in Moment and the native Date type.
+1. Localizations and time zones are implemented by the native Intl API (or a polyfill of it), instead of by the library itself.
+1. Luxon has both a Duration type and an Interval type. The Interval type is like Twix.
+1. Luxon lacks the relative time features of Moment and will until the required [facilities]((https://github.com/tc39/proposal-intl-relative-time) are provided by the browser.
+
 ## Other API style differences
 
 1. Luxon methods often take option objects as their last parameter
@@ -31,14 +38,6 @@ This happens because the `plus` method returns a new instance, leaving `d1` unmo
 1. Luxon centralizes its "setters", like `dateTime.set({year: 2016, month: 4})` instead of `dateTime.year(2016).month(4)` like in Moment.
 1. Luxon's Durations are a separate top-level class.
 1. Arguments to Luxon's methods are not automatically coerced into Luxon instances. E.g. `m.diff('2017-04-01')` would be `dt.diff(DateTime.fromISO('2017-04-01'))`.
-
-## Major functional differences
-
-1. Months in Luxon are 1-indexed instead of 0-indexed like in Moment and the native Date type.
-1. Localizations and time zones are implemented by the native Intl API (or a polyfill of it), instead of by the library itself.
-1. Luxon has both a Duration type and an Interval type. The Interval type is like Twix.
-1. Luxon lacks the relative time features of Moment and will until the required [facilities]((https://github.com/tc39/proposal-intl-relative-time) are provided by the browser.
-
 ## DateTime method equivalence
 
 Here's a rough mapping of DateTime methods in Moment to ones in Luxon. I haven't comprehensively documented stuff that's in Luxon but not in Moment, just a few odds and ends that seemed obvious for inclusion; there are more. I've probably missed a few things too.

@@ -187,7 +187,7 @@ gulp.task('generate-docs', () =>
           './docs/math.md',
           './docs/validity.md'
         ],
-        faq: ['./docs/matrix.md', './docs/moment.md'],
+        faq: ['./docs/matrix.md', './docs/moment.md', './docs/why.md'],
         changelog: ['./changelog.md']
       },
       styles: ['./site/styles.css'],
