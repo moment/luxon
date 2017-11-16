@@ -800,7 +800,7 @@ export class DateTime {
   /**
    * Get the human readable short month name, such as 'Oct'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> Oct
+   * @example DateTime.local(2017, 10, 30).monthShort //=> Oct
    * @return {string}
    */
   get monthShort() {
@@ -810,7 +810,7 @@ export class DateTime {
   /**
    * Get the human readable long month name, such as 'October'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> October
+   * @example DateTime.local(2017, 10, 30).monthLong //=> October
    * @return {string}
    */
   get monthLong() {
@@ -820,7 +820,7 @@ export class DateTime {
   /**
    * Get the human readable short weekday, such as 'Mon'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> Mon
+   * @example DateTime.local(2017, 10, 30).weekdayShort //=> Mon
    * @return {string}
    */
   get weekdayShort() {
@@ -830,7 +830,7 @@ export class DateTime {
   /**
    * Get the human readable long weekday, such as 'Monday'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> Monday
+   * @example DateTime.local(2017, 10, 30).weekdayLong //=> Monday
    * @return {string}
    */
   get weekdayLong() {
