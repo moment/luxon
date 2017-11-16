@@ -44,7 +44,7 @@ function unitForToken(token, loc) {
     three = /\d{3}/,
     four = /\d{4}/,
     oneOrTwo = /\d\d?/,
-    oneToThree = /\d(?:\d{2})?/,
+    oneToThree = /\d\d?\d?/,
     twoToFour = /\d\d(?:\d{2})?/,
     literal = t => ({ regex: RegExp(t.val), deser: ([s]) => s, literal: true }),
     unitate = t => {
@@ -161,7 +161,8 @@ function unitForToken(token, loc) {
 }
 
 function buildRegex(units) {
-  return [units.map(u => u.regex).reduce((f, r) => `${f}(${r.source})`, ''), units];
+  const re = units.map(u => u.regex).reduce((f, r) => `${f}(${r.source})`, '');
+  return [`^${re}$`, units];
 }
 
 function match(input, regex, handlers) {

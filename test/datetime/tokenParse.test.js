@@ -49,6 +49,28 @@ test('DateTime.fromString() parses meridiems', () => {
   expect(i.hour).toBe(9);
 });
 
+test('DateTime.fromString() parses hours', () => {
+  expect(DateTime.fromString('5', 'h').hour).toBe(5);
+  expect(DateTime.fromString('12', 'h').hour).toBe(12);
+  expect(DateTime.fromString('05', 'hh').hour).toBe(5);
+  expect(DateTime.fromString('12', 'hh').hour).toBe(12);
+  expect(DateTime.fromString('5', 'H').hour).toBe(5);
+  expect(DateTime.fromString('13', 'H').hour).toBe(13);
+  expect(DateTime.fromString('05', 'HH').hour).toBe(5);
+  expect(DateTime.fromString('13', 'HH').hour).toBe(13);
+});
+
+test('DateTime.fromString() parses weekdays', () => {
+  expect(DateTime.fromString('5', 'E').weekday).toBe(5);
+  expect(DateTime.fromString('5', 'c').weekday).toBe(5);
+
+  expect(DateTime.fromString('Fri', 'EEE').weekday).toBe(5);
+  expect(DateTime.fromString('Fri', 'ccc').weekday).toBe(5);
+
+  expect(DateTime.fromString('Friday', 'EEEE').weekday).toBe(5);
+  expect(DateTime.fromString('Friday', 'cccc').weekday).toBe(5);
+});
+
 test('DateTime.fromString() parses eras', () => {
   let dt = DateTime.fromString('0206 AD', 'yyyy G');
   expect(dt.year).toEqual(206);
@@ -60,7 +82,7 @@ test('DateTime.fromString() parses eras', () => {
   expect(dt.year).toEqual(-206);
 });
 
-test('DateTime.fromString() parses month names', () => {
+test('DateTime.fromString() parses standalone month names', () => {
   let i = DateTime.fromString('May 25 1982', 'LLLL dd yyyy');
   expect(i.year).toBe(1982);
   expect(i.month).toBe(5);
@@ -71,12 +93,54 @@ test('DateTime.fromString() parses month names', () => {
   expect(i.month).toBe(9);
   expect(i.day).toBe(25);
 
+  i = DateTime.fromString('5 25 1982', 'L dd yyyy');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+
+  i = DateTime.fromString('05 25 1982', 'LL dd yyyy');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+
   i = DateTime.fromString('mai 25 1982', 'LLLL dd yyyy', { locale: 'fr' });
   expect(i.year).toBe(1982);
   expect(i.month).toBe(5);
   expect(i.day).toBe(25);
 
   i = DateTime.fromString('janv. 25 1982', 'LLL dd yyyy', { locale: 'fr' });
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(1);
+  expect(i.day).toBe(25);
+});
+
+test('DateTime.fromString() parses format month names', () => {
+  let i = DateTime.fromString('May 25 1982', 'MMMM dd yyyy');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+
+  i = DateTime.fromString('Sep 25 1982', 'MMM dd yyyy');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(9);
+  expect(i.day).toBe(25);
+
+  i = DateTime.fromString('5 25 1982', 'M dd yyyy');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+
+  i = DateTime.fromString('05 25 1982', 'MM dd yyyy');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+
+  i = DateTime.fromString('mai 25 1982', 'MMMM dd yyyy', { locale: 'fr' });
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+
+  i = DateTime.fromString('janv. 25 1982', 'MMM dd yyyy', { locale: 'fr' });
   expect(i.year).toBe(1982);
   expect(i.month).toBe(1);
   expect(i.day).toBe(25);
@@ -161,6 +225,18 @@ test('DateTime.fromString() parses ordinals', () => {
   d = DateTime.fromString('2016 200', 'yyyy ooo');
   expect(d.year).toBe(2016);
   expect(d.ordinal).toBe(200);
+
+  d = DateTime.fromString('2016 016', 'yyyy ooo');
+  expect(d.year).toBe(2016);
+  expect(d.ordinal).toBe(16);
+
+  d = DateTime.fromString('2016 200', 'yyyy o');
+  expect(d.year).toBe(2016);
+  expect(d.ordinal).toBe(200);
+
+  d = DateTime.fromString('2016 16', 'yyyy o');
+  expect(d.year).toBe(2016);
+  expect(d.ordinal).toBe(16);
 });
 
 test('DateTime.fromString() throws on mixed units', () => {
@@ -174,15 +250,26 @@ test('DateTime.fromString() throws on mixed units', () => {
 });
 
 test('DateTime.fromString() accepts weekYear by itself', () => {
-  const d = DateTime.fromString('2004', 'kkkk');
+  let d = DateTime.fromString('2004', 'kkkk');
+  expect(d.weekYear).toBe(2004);
+  expect(d.weekNumber).toBe(1);
+  expect(d.weekday).toBe(1);
+
+  d = DateTime.fromString('04', 'kk');
   expect(d.weekYear).toBe(2004);
   expect(d.weekNumber).toBe(1);
   expect(d.weekday).toBe(1);
 });
 
 test('DateTime.fromString() accepts weekNumber by itself', () => {
-  const d = DateTime.fromString('17', 'WW'),
-    now = DateTime.local();
+  const now = DateTime.local();
+
+  let d = DateTime.fromString('17', 'WW');
+  expect(d.weekYear).toBe(now.weekYear);
+  expect(d.weekNumber).toBe(17);
+  expect(d.weekday).toBe(1);
+
+  d = DateTime.fromString('17', 'W');
   expect(d.weekYear).toBe(now.weekYear);
   expect(d.weekNumber).toBe(17);
   expect(d.weekday).toBe(1);
@@ -223,6 +310,7 @@ test('DateTime.fromString() returns invalid for out-of-range values', () => {
   const rejects = (s, fmt, opts = {}) =>
     expect(DateTime.fromString(s, fmt, opts).isValid).toBeFalsy();
 
+  rejects('8, 05/25/1982', 'E, MM/dd/yyyy', { locale: 'fr' });
   rejects('Tuesday, 05/25/1982', 'EEEE, MM/dd/yyyy', { locale: 'fr' });
   rejects('Giberish, 05/25/1982', 'EEEE, MM/dd/yyyy');
   rejects('14/25/1982', 'MM/dd/yyyy');
