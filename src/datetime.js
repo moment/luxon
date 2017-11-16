@@ -30,7 +30,7 @@ function possiblyCachedWeekData(dt) {
   return dt.weekData;
 }
 
-function clone(inst, alts = {}) {
+function clone(inst, alts) {
   const current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -132,7 +132,7 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
-function parseDataToDateTime(parsed, parsedZone, opts = {}) {
+function parseDataToDateTime(parsed, parsedZone, opts) {
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
@@ -252,7 +252,7 @@ export class DateTime {
   /**
    * @access private
    */
-  constructor(config = {}) {
+  constructor(config) {
     const zone = config.zone || Settings.defaultZone,
       invalidReason =
         config.invalidReason ||
@@ -1447,8 +1447,8 @@ export class DateTime {
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  diffNow(unit, opts) {
-    return this.isValid ? this.diff(DateTime.local(), unit, opts) : this;
+  diffNow(unit = 'milliseconds', opts = {}) {
+    return this.diff(DateTime.local(), unit, opts);
   }
 
   /**

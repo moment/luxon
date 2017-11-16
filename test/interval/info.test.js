@@ -1,11 +1,8 @@
 /* global test expect */
 import { DateTime, Interval, Duration } from '../../src/luxon';
+import { Helpers } from '../helpers';
 
-const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
-  todayAt = h =>
-    DateTime.local()
-      .startOf('day')
-      .set({ hour: h });
+const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e));
 
 //------
 // #length()
@@ -18,9 +15,9 @@ test('Interval#length defaults to milliseconds', () => {
 
 test("Interval#length('days') returns 1 for yesterday", () => {
   expect(
-    todayAt(13)
+    Helpers.todayAt(13)
       .minus({ days: 1 })
-      .until(todayAt(13))
+      .until(Helpers.todayAt(13))
       .length('days')
   ).toBe(1);
 });
@@ -75,7 +72,7 @@ test('Interval#count() returns NaN for invalid intervals', () => {
 // #toDuration()
 //-------
 test('Interval#toDuration creates a duration in those units', () => {
-  const int = Interval.fromDateTimes(todayAt(9), todayAt(13));
+  const int = Interval.fromDateTimes(Helpers.todayAt(9), Helpers.todayAt(13));
 
   expect(int.toDuration()).toEqual(Duration.fromMillis(4 * 3600 * 1000));
   expect(int.toDuration('milliseconds')).toEqual(Duration.fromMillis(4 * 3600 * 1000));
@@ -88,8 +85,8 @@ test('Interval#toDuration creates a duration in those units', () => {
 
 test('Interval#toDuration accepts multiple units', () => {
   const int = Interval.fromDateTimes(
-    todayAt(9).plus({ minutes: 3 }),
-    todayAt(13).plus({ minutes: 47 })
+    Helpers.todayAt(9).plus({ minutes: 3 }),
+    Helpers.todayAt(13).plus({ minutes: 47 })
   );
 
   expect(int.toDuration(['hours', 'minutes'])).toEqual(
@@ -98,9 +95,15 @@ test('Interval#toDuration accepts multiple units', () => {
 });
 
 test('Interval#toDuration accepts duration options', () => {
-  const int = Interval.fromDateTimes(todayAt(9), todayAt(13)),
+  const int = Interval.fromDateTimes(Helpers.todayAt(9), Helpers.todayAt(13)),
     dur = int.toDuration(['hours'], { conversionAccuracy: 'longterm' });
   expect(dur.conversionAccuracy).toBe('longterm');
+});
+
+test('Interval#toDuration returns an invalid duration for invalid intervals', () => {
+  const int = Interval.invalid('because'),
+    dur = int.toDuration(['hours']);
+  expect(dur.isValid).toBe(false);
 });
 
 //------

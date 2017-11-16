@@ -217,6 +217,7 @@ export class Interval {
    * @return {Interval}
    */
   set({ start, end } = {}) {
+    if (!this.isValid) return this;
     return Interval.fromDateTimes(start || this.s, end || this.e);
   }
 

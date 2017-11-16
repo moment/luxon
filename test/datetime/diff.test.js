@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime } from '../../src/luxon';
+import { Helpers } from '../helpers';
 
 //------
 // diff
@@ -143,8 +144,44 @@ test('DateTime#diff is precise for lower order units', () => {
   }
 });
 
+test('DateTime#diff passes through options', () => {
+  const dt1 = DateTime.fromObject({ year: 2016, month: 5, day: 5 }),
+    dt2 = DateTime.fromObject({ year: 2016, month: 1, day: 1 }),
+    dur1 = dt1.diff(dt2, 'hours', { conversionAccuracy: 'longterm' }),
+    dur2 = dt1.diff(dt2, 'days', { conversionAccuracy: 'longterm' });
+  expect(dur1.conversionAccuracy).toBe('longterm');
+  expect(dur2.conversionAccuracy).toBe('longterm');
+});
+
 test('DateTime#diff returns invalid Durations if the DateTimes are invalid', () => {
   const i = DateTime.invalid('because');
   expect(i.diff(DateTime.local()).isValid).toBe(false);
   expect(DateTime.local().diff(i).isValid).toBe(false);
+});
+
+//------
+// diffNow
+//-------
+
+Helpers.withNow('DateTime#diffNow defaults to milliseconds', DateTime.local(2017, 5, 15), () => {
+  const dt = DateTime.local(2014, 8, 6),
+    dur = dt.diffNow();
+  expect(dur.milliseconds).toBe(-87523200000);
+});
+
+Helpers.withNow('DateTime#diffNow accepts units', DateTime.local(2017, 5, 15), () => {
+  const dt = DateTime.local(2014, 8, 6),
+    dur = dt.diffNow('days');
+  expect(dur.days).toBe(-1013);
+});
+
+Helpers.withNow('DateTime#diffNow passes through options', DateTime.local(2017, 5, 15), () => {
+  const dt = DateTime.local(2014, 8, 6),
+    dur = dt.diffNow('days', { conversionAccuracy: 'longterm' });
+  expect(dur.conversionAccuracy).toBe('longterm');
+});
+
+test('DateTime#diffNow returns invalid Durations if the DateTime is invalid', () => {
+  const i = DateTime.invalid('because');
+  expect(i.diffNow().isValid).toBe(false);
 });

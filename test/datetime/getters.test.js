@@ -91,6 +91,14 @@ test('DateTime#weekdayLong returns the human readable weekday for fr locale', ()
   expect(dateTime.setLocale('fr').weekdayLong).toBe('mardi');
 });
 
+test('DateTime#weekdayShort returns null for invalid DateTimes', () => {
+  expect(inv.weekdayShort).toBe(null);
+});
+
+test('DateTime#weekdayLong returns null for invalid DateTimes', () => {
+  expect(inv.weekdayLong).toBe(null);
+});
+
 //------
 // monthShort/monthLong
 //------
@@ -116,6 +124,14 @@ test('DateTime#monthShort returns the short human readable month for fr locale',
 
 test('DateTime#monthLong returns the human readable month for fr locale', () => {
   expect(dateTime.minus({ months: 1 }).setLocale('fr').monthLong).toBe('avril');
+});
+
+test('DateTime#monthLong returns null for invalid DateTimes', () => {
+  expect(inv.monthLong).toBe(null);
+});
+
+test('DateTime#monthShort returns null for invalid DateTimes', () => {
+  expect(inv.monthShort).toBe(null);
 });
 
 //------

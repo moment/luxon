@@ -1,6 +1,6 @@
 /* global test */
 /* eslint no-global-assign: "off" */
-import { Settings } from '../src/luxon';
+import { DateTime, Settings } from '../src/luxon';
 
 export class Helpers {
   static withoutIntl(name, f) {
@@ -53,6 +53,19 @@ export class Helpers {
     });
   }
 
+  static withNow(name, dt, f) {
+    test(name, () => {
+      const oldNow = Settings.now;
+
+      try {
+        Settings.now = () => dt.valueOf();
+        f();
+      } finally {
+        Settings.now = oldNow;
+      }
+    });
+  }
+
   // not a tester!
   static withDefaultZone(zone, f) {
     const localZone = Settings.defaultZoneName;
@@ -62,5 +75,11 @@ export class Helpers {
     } finally {
       Settings.defaultZoneName = localZone;
     }
+  }
+
+  static todayAt(hour) {
+    return DateTime.local()
+      .startOf('day')
+      .set({ hour });
   }
 }

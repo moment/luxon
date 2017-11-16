@@ -24,6 +24,11 @@ test('Duration.fromObject sets all the values', () => {
   expect(dur.milliseconds).toBe(7);
 });
 
+test('Duration.fromObject accepts a conversionAccuracy', () => {
+  const dur = Duration.fromObject({ days: 1, conversionAccuracy: 'longterm' });
+  expect(dur.conversionAccuracy).toBe('longterm');
+});
+
 //------
 // .invalid()
 //-------

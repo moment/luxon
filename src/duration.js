@@ -512,7 +512,7 @@ export class Duration {
     for (const k of Object.keys(this.values)) {
       negated[k] = -this.values[k];
     }
-    return Duration.fromObject(negated);
+    return clone(this, { values: negated });
   }
 
   /**

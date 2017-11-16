@@ -31,3 +31,10 @@ test('DateTime#reconfigure() sets the numberingSystem', () => {
   expect(recon.numberingSystem).toBe('thai');
   expect(recon.outputCalendar).toBe('coptic');
 });
+
+test('DateTime#reconfigure() with no arguments no opts', () => {
+  const recon = dt.reconfigure();
+  expect(recon.locale).toBe('fr');
+  expect(recon.numberingSystem).toBe('beng');
+  expect(recon.outputCalendar).toBe('coptic');
+});

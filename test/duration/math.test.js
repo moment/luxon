@@ -93,9 +93,20 @@ test('Duration#negate flips all the signs', () => {
   expect(result.seconds).toBe(-2);
 });
 
-test('Duration#negate maintains invalidity', () => {
+test('Duration#negate preserves invalidity', () => {
   const dur = Duration.invalid('because'),
     result = dur.negate();
   expect(result.isValid).toBe(false);
   expect(result.invalidReason).toBe('because');
+});
+
+test('Duration#negate preserves conversionAccuracy', () => {
+  const dur = Duration.fromObject({
+      hours: 4,
+      minutes: -12,
+      seconds: 2,
+      conversionAccuracy: 'longterm'
+    }),
+    result = dur.negate();
+  expect(result.conversionAccuracy).toBe('longterm');
 });

@@ -35,6 +35,10 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
   expect(zoned.isInDST).toBe(false);
 });
 
+test('DateTime#utc maintains invalidity', () => {
+  expect(DateTime.invalid('because').toUTC().isValid).toBe(false);
+});
+
 //------
 // #toLocal()
 //------
@@ -71,12 +75,38 @@ test('accepts "local"', () => {
 test('accepts "utc"', () => {
   const zoned = DateTime.local().setZone('utc');
   expect(zoned.offset).toBe(0);
+  expect(zoned.offsetNameShort).toBe('UTC');
+  expect(zoned.offsetNameLong).toBe('UTC');
 });
 
 test('accepts "utc+3"', () => {
   const zoned = DateTime.local().setZone('utc+3');
   expect(zoned.zone.name).toBe('UTC+3');
   expect(zoned.offset).toBe(3 * 60);
+  expect(zoned.offsetNameShort).toBe('UTC+3');
+  expect(zoned.offsetNameLong).toBe('UTC+3');
+});
+
+test('accepts "utc-3"', () => {
+  const zoned = DateTime.local().setZone('utc-3');
+  expect(zoned.zone.name).toBe('UTC-3');
+  expect(zoned.offset).toBe(-3 * 60);
+  expect(zoned.offsetNameShort).toBe('UTC-3');
+  expect(zoned.offsetNameLong).toBe('UTC-3');
+});
+
+test('accepts "utc-3:30"', () => {
+  const zoned = DateTime.local().setZone('utc-3:30');
+  expect(zoned.zone.name).toBe('UTC-3:30');
+  expect(zoned.offset).toBe(-3 * 60 - 30);
+  expect(zoned.offsetNameShort).toBe('UTC-3:30');
+  expect(zoned.offsetNameLong).toBe('UTC-3:30');
+});
+
+test('does not accept dumb things', () => {
+  const zoned = DateTime.local().setZone('utc-yo');
+  // this is questionable; should this be invalid instead?
+  expect(zoned.zone.type).toBe('local');
 });
 
 test('accepts IANA zone names', () => {
@@ -128,6 +158,27 @@ test('DateTime#isInDST() returns true for during-DST times', () => {
 test('DateTime#isInDST() returns false for post-DST times', () => {
   const zoned = dt().setZone('America/Los_Angeles');
   expect(zoned.set({ month: 12 }).isInDST).toBe(false);
+});
+
+//------
+// #invalid
+//------
+
+// these functions got tested in the individual zones, but let's do invalid DateTimes
+
+test('DateTime#offset returns NaN for invalid times', () => {
+  const zoned = DateTime.invalid('because');
+  expect(zoned.isInDST).toBeFalsy();
+});
+
+test('DateTime#offsetNameLong returns null for invalid times', () => {
+  const zoned = DateTime.invalid('because');
+  expect(zoned.offsetNameLong).toBe(null);
+});
+
+test('DateTime#offsetNameShort returns null for invalid times', () => {
+  const zoned = DateTime.invalid('because');
+  expect(zoned.offsetNameShort).toBe(null);
 });
 
 //------

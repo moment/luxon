@@ -4,7 +4,7 @@ import { Zone } from '../zone';
 let singleton = null;
 
 function hoursMinutesOffset(z) {
-  const hours = z.fixed / 60,
+  const hours = Math.trunc(z.fixed / 60),
     minutes = Math.abs(z.fixed % 60),
     sign = hours > 0 ? '+' : '-',
     base = sign + Math.abs(hours);
@@ -51,7 +51,7 @@ export class FixedOffsetZone extends Zone {
   }
 
   offsetName() {
-    return this.name();
+    return this.name;
   }
 
   get universal() {

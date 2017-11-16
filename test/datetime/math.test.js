@@ -165,6 +165,10 @@ test('DateTime#startOf maintains invalidity', () => {
   expect(DateTime.invalid('because').startOf('day').isValid).toBe(false);
 });
 
+test('DateTime#startOf throws on invalid units', () => {
+  expect(() => DateTime.fromISO('2016-03-12T10:00').startOf('splork')).toThrow();
+});
+
 //------
 // #endOf()
 //------
@@ -255,4 +259,8 @@ test("DateTime#endOf('week') goes to the end of the week", () => {
 
 test('DateTime#endOf maintains invalidity', () => {
   expect(DateTime.invalid('because').endOf('day').isValid).toBe(false);
+});
+
+test('DateTime#endOf throws on invalid units', () => {
+  expect(() => DateTime.fromISO('2016-03-12T10:00').endOf('splork')).toThrow();
 });
