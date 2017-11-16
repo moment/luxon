@@ -14,8 +14,8 @@ This section covers creating strings to represent a DateTime. There are three ty
 
 ```js
 dt.toISO();         //=> '2017-04-20T11:32:00.000-04:00'
-dt.toISODate();     //=> '2017-W17-7'
-dt.toISOWeekDate(); //=> '2017-04-20'
+dt.toISODate();     //=> '2017-04-20'
+dt.toISOWeekDate(); //=> '2017-W17-7'
 dt.toISOTime();     //=> '11:32:00.000-04:00'
 ```
 
