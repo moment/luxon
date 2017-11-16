@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.18
+ * Fixed formatting for non-hour aligned fixed-offset zones
+ * Fixed longterm conversion accuracy option in diffs
+ * Fixed invalid handling in `Interval#set`
+
 ## 0.0.17
  * Fixing formatting for fixed-offset zones
 
