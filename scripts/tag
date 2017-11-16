@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+PACKAGE_VERSION=$(node -p "require('./package.json').version")
+
+if [ $(git tag -l "$PACKAGE_VERSION") ]; then
+  echo "tag already exists"
+else
+  git tag $PACKAGE_VERSION
+  git push origin master $PACKAGE_VERSION 
+fi
