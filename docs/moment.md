@@ -38,6 +38,7 @@ This happens because the `plus` method returns a new instance, leaving `d1` unmo
 1. Luxon centralizes its "setters", like `dateTime.set({year: 2016, month: 4})` instead of `dateTime.year(2016).month(4)` like in Moment.
 1. Luxon's Durations are a separate top-level class.
 1. Arguments to Luxon's methods are not automatically coerced into Luxon instances. E.g. `m.diff('2017-04-01')` would be `dt.diff(DateTime.fromISO('2017-04-01'))`.
+
 ## DateTime method equivalence
 
 Here's a rough mapping of DateTime methods in Moment to ones in Luxon. I haven't comprehensively documented stuff that's in Luxon but not in Moment, just a few odds and ends that seemed obvious for inclusion; there are more. I've probably missed a few things too.
