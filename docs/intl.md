@@ -12,9 +12,9 @@ Luxon DateTimes can be configured using [BCP 47](https://tools.ietf.org/html/rfc
 
 The rest of this document will concentrate on what Luxon does when provided with locale information.
 
-## Setting locale
+## Setting the locale
 
-`locale` is a property of Luxon object, and it defaults to 'en-US'. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.
+`locale` is a property of Luxon object. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.
 
 You can generally set it at construction time:
 
@@ -37,6 +37,34 @@ DateTime.local().setLocale('fr').locale //=> 'fr'
 ```js
 DateTime.local().reconfigure({ locale: 'fr' }).locale; //=> 'fr'
 ```
+
+## Default locale
+
+### Out-of-the-box behavior
+
+By default the `locale` property of a new DateTime or Duration is `null`. This means different things in different contexts:
+
+ 1. `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.
+ 2. `DateTime.fromString` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.
+ 
+### Setting the default
+
+You can set a default locale so that news instances will always be created with the specified locale:
+
+```js
+Settings.defaultLocale = 'fr';
+DateTime.local().locale; //=> 'fr'
+```
+
+Note that this also alters the behavior of `DateTime#toFormat` and `DateTime#fromString`.
+
+### Using the system locale in string parsing
+
+You generally don't want `DateTime#fromString` and `DateTime#toFormat` to use the system's locale, since your format won't be sensitive to the locale's string ordering. That's why Luxon doesn't behave that way by default. But if you really want that behavior, you can always do this:
+
+ ```js
+ Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;
+ ```
  
 ## Checking what you got
 
@@ -112,26 +140,8 @@ var dt  = DateTime.local().reconfigure({ locale: 'it', numberingSystem: 'beng' }
 dt.toLocaleString(DateTime.DATE_FULL) //=> '২৪ settembre ২০১৭'
 ```
 
-## Locale defaults
-
-You can set the default locale:
+Similar to `locale`, you can set the default numbering system for new instances:
 
 ```js
-Settings.defaultLocale = 'fr';
-DateTime.locale().locale; //=> 'fr'
+Settings.defaultNumberingSystem = 'beng';
 ```
-
-This only effects newly created instances, not existing ones. It also affects what language `DateTime.fromString` expects the string to be in.
-
-If you *haven't* set the default locale, the locale used varies by method:
-
- 1. `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that always means en-US.
- 2. `DateTime.fromString` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.
- 
-On that second point: you really should be using `toLocaleString` anywhere this might come up, and `fromString` won't make sense in locales that order their date stings differently anyway. But if you really want `toFormat` or `fromString` to be sensitive to the environment's locale, you can always do this:
- 
- ```js
- Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;
- ```
-
-You currently can't change the default numbering system or output calendar, though this may change.
