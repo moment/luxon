@@ -52,4 +52,4 @@ There, now you know as much as I do.
 
 ## Future plans
 
-Luxon is fully usable and I plan to support it indefinitely. It's also largely complete. It will certainly add relative time formatting (and an English-only fallback) when that becomes possible. Luxon will also eventually strip out its fallbacks for missing platform features. But overall I expect the core functionality to stay basically as it is, adding mostly minor tweeks and bugfixes.
+Luxon is fully usable and I plan to support it indefinitely. It's also largely complete. It will certainly add relative time formatting (and an English-only fallback) when that becomes possible. Luxon will also eventually strip out its fallbacks for missing platform features. But overall I expect the core functionality to stay basically as it is, adding mostly minor tweaks and bugfixes.
