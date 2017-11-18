@@ -10,7 +10,7 @@ Luxon started because I had a bunch of ideas on how to improve Moment but kept f
  * I had an idea on how to provide out-of-the-box, no-data-files-required support for time zones, but Moment's design made that difficult.
  * I wanted to completely rethink how internationalization worked by using the Intl API that comes packaged in browsers.
  * I wanted to use a modern JS toolchain, which would require a major retrofit to Moment.
- 
+
 So I decided to write something from scratch, a sort of modernized Moment. It's a combination of all the things I learned maintaining Moment and Twix, plus a bunch of fresh ideas. I worked on it in little slivers of spare time for about two years. But now it's ready to actually use, and the Moment team likes it enough that we pulled it under the organization's umbrella.
 
 ## Ideas in Luxon
@@ -25,15 +25,15 @@ Luxon is built around a few core ideas:
  1. Provide more comprehensive duration support.
  1. Directly provide interval support.
  1. Write inline docs for everything.
- 
-These ideas has some big advantages:
+
+These ideas have some big advantages:
 
  1. It's much easier to understand and debug code that uses Luxon.
  1. Using native browser capabilities for internationalization leads to a much better behavior and is dramatically easier to maintain.
  1. Luxon has the best time zone support of any JS date library.
  1. Luxon's durations are both flexible and easy to use.
  1. The documentation is very good.
- 
+
 They also have some disadvantages:
 
  1. Using modern browser capabilities means that the fallback behavior introduces complexity for the programmer.
