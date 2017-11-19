@@ -603,6 +603,10 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromString(text, fmt, options = {}) {
+    if (Util.isUndefined(text) || Util.isUndefined(fmt)) {
+      throw new InvalidArgumentError('fromString requires an input string and a format');
+    }
+
     const { locale = null, numberingSystem = null } = options,
       parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem, defaultToEN: true })),
       [vals, parsedZone, invalidReason] = parser.parseDateTime(text, fmt);

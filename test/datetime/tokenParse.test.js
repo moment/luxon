@@ -1,5 +1,6 @@
 /* global test expect */
 import { DateTime } from '../../src/luxon';
+import { InvalidArgumentError } from '../../src/luxon';
 
 //------
 // .fromString
@@ -384,4 +385,8 @@ test('DateTime.fromString() with setZone parses fixed offsets and sets it', () =
       expect(dt.toUTC().minute).toBe(10);
     }
   }
+});
+
+test("DateTime.fromString() throws if you don't provide a format", () => {
+  expect(() => DateTime.fromString('yo')).toThrowError(InvalidArgumentError);
 });
