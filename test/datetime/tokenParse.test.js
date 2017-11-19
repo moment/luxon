@@ -1,6 +1,5 @@
 /* global test expect */
-import { DateTime } from '../../src/luxon';
-import { InvalidArgumentError } from '../../src/luxon';
+import { DateTime, InvalidArgumentError } from '../../src/luxon';
 
 //------
 // .fromString
