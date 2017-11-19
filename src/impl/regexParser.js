@@ -46,7 +46,7 @@ function simpleParse(...keys) {
 }
 
 // ISO parsing
-const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
+const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
   isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
   isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
   isoOrdinalRegex = /^(\d{4})-?(\d{3})/,
@@ -66,11 +66,12 @@ function extractISOYmd(match, cursor) {
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
     fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
+    nanosecond = Util.padEnd(match[cursor + 3] || '0'),
     item = {
       hour: parseInt(match[cursor]) || 0,
       minute: parseInt(match[cursor + 1]) || 0,
       second: parseInt(match[cursor + 2]) || 0,
-      millisecond: parseInt(match[cursor + 3]) || 0
+      millisecond: Math.round(parseInt(nanosecond) / 1000000)
     },
     zone = local ? null : new FixedOffsetZone(fullOffset);
 
