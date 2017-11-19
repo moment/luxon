@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.20
+ * Fix `fromISO` to accept various levels of subsecond precision
+
 ## 0.0.19
  * Fixed parsing for ordinals
  * Made parsing stricter
