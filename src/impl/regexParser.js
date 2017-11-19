@@ -67,12 +67,11 @@ function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
     fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
     nanosecond = Util.padEnd(match[cursor + 3] || '0'),
-    millisecond = Math.round(parseInt(nanosecond) / 1000000),
     item = {
       hour: parseInt(match[cursor]) || 0,
       minute: parseInt(match[cursor + 1]) || 0,
       second: parseInt(match[cursor + 2]) || 0,
-      millisecond
+      millisecond: Math.round(parseInt(nanosecond) / 1000000)
     },
     zone = local ? null : new FixedOffsetZone(fullOffset);
 
