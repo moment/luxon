@@ -541,7 +541,7 @@ export class Duration {
 
   /**
    * Get the days.
-   * @return {number
+   * @return {number}
    */
   get days() {
     return this.isValid ? this.values.days || 0 : NaN;
