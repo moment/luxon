@@ -8,7 +8,7 @@ function hoursMinutesOffset(z) {
     minutes = Math.abs(z.fixed % 60),
     sign = hours > 0 ? '+' : '-',
     base = sign + Math.abs(hours);
-  return minutes > 0 ? `${base}:${Util.pad(minutes, 2)}` : base;
+  return minutes > 0 ? `${base}:${Util.padStart(minutes, 2)}` : base;
 }
 
 /**

@@ -85,7 +85,7 @@ class PolyNumberFormatter {
 
   format(i) {
     const maybeRounded = this.round ? Math.round(i) : i;
-    return maybeRounded.toString().padStart(this.padTo, '0');
+    return Util.padStart(maybeRounded.toString(), this.padTo);
   }
 }
 

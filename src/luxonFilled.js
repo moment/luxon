@@ -4,7 +4,6 @@ import 'core-js/fn/symbol/iterator';
 import 'core-js/fn/number/is-nan';
 import 'core-js/es6/array';
 import 'core-js/fn/string/virtual/starts-with';
-import 'core-js/fn/string/virtual/pad-start';
 import 'core-js/fn/math/trunc';
 
 export * from './luxon';

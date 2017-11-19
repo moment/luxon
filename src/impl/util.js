@@ -60,7 +60,7 @@ export class Util {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
 
-  static pad(input, n = 2) {
+  static padStart(input, n = 2) {
     return ('0'.repeat(n) + input).slice(-n);
   }
 
