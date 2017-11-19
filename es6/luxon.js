@@ -287,7 +287,7 @@ function hoursMinutesOffset(z) {
     minutes = Math.abs(z.fixed % 60),
     sign = hours > 0 ? '+' : '-',
     base = sign + Math.abs(hours);
-  return minutes > 0 ? `${base}:${Util.pad(minutes, 2)}` : base;
+  return minutes > 0 ? `${base}:${Util.padStart(minutes, 2)}` : base;
 }
 
 /**
@@ -1160,7 +1160,7 @@ class PolyNumberFormatter {
 
   format(i) {
     const maybeRounded = this.round ? Math.round(i) : i;
-    return maybeRounded.toString().padStart(this.padTo, '0');
+    return Util.padStart(maybeRounded.toString(), this.padTo);
   }
 }
 
@@ -1619,8 +1619,12 @@ class Util {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
 
-  static pad(input, n = 2) {
+  static padStart(input, n = 2) {
     return ('0'.repeat(n) + input).slice(-n);
+  }
+
+  static padEnd(input, n = 9) {
+    return (input + '0'.repeat(n)).slice(0, n);
   }
 
   static towardZero(input) {
@@ -1817,7 +1821,7 @@ function simpleParse(...keys) {
 }
 
 // ISO parsing
-const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
+const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
 const isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 const isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/;
 const isoOrdinalRegex = /^(\d{4})-?(\d{3})/;
@@ -1837,11 +1841,12 @@ function extractISOYmd(match, cursor) {
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
     fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
+    nanosecond = Util.padEnd(match[cursor + 3] || '0'),
     item = {
       hour: parseInt(match[cursor]) || 0,
       minute: parseInt(match[cursor + 1]) || 0,
       second: parseInt(match[cursor + 2]) || 0,
-      millisecond: parseInt(match[cursor + 3]) || 0
+      millisecond: Math.round(parseInt(nanosecond) / 1000000)
     },
     zone = local ? null : new FixedOffsetZone(fullOffset);
 
@@ -4441,7 +4446,7 @@ class DateTime {
   /**
    * Get the human readable short month name, such as 'Oct'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> Oct
+   * @example DateTime.local(2017, 10, 30).monthShort //=> Oct
    * @return {string}
    */
   get monthShort() {
@@ -4451,7 +4456,7 @@ class DateTime {
   /**
    * Get the human readable long month name, such as 'October'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> October
+   * @example DateTime.local(2017, 10, 30).monthLong //=> October
    * @return {string}
    */
   get monthLong() {
@@ -4461,7 +4466,7 @@ class DateTime {
   /**
    * Get the human readable short weekday, such as 'Mon'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> Mon
+   * @example DateTime.local(2017, 10, 30).weekdayShort //=> Mon
    * @return {string}
    */
   get weekdayShort() {
@@ -4471,7 +4476,7 @@ class DateTime {
   /**
    * Get the human readable long weekday, such as 'Monday'.
    * Defaults to the system's locale if no locale has been specified
-   * @example DateTime.local(2017, 10, 30) //=> Monday
+   * @example DateTime.local(2017, 10, 30).weekdayLong //=> Monday
    * @return {string}
    */
   get weekdayLong() {

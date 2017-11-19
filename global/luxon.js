@@ -2071,45 +2071,6 @@ var _entryVirtual = function _entryVirtual(CONSTRUCTOR) {
 
 var startsWith = _entryVirtual('String').startsWith;
 
-'use strict';
-
-var _stringRepeat = function repeat(count) {
-  var str = String(_defined(this));
-  var res = '';
-  var n = _toInteger(count);
-  if (n < 0 || n == Infinity) throw RangeError("Count can't be negative");
-  for (; n > 0; (n >>>= 1) && (str += str)) {
-    if (n & 1) res += str;
-  }return res;
-};
-
-// https://github.com/tc39/proposal-string-pad-start-end
-
-
-var _stringPad = function _stringPad(that, maxLength, fillString, left) {
-  var S = String(_defined(that));
-  var stringLength = S.length;
-  var fillStr = fillString === undefined ? ' ' : String(fillString);
-  var intMaxLength = _toLength(maxLength);
-  if (intMaxLength <= stringLength || fillStr == '') return S;
-  var fillLen = intMaxLength - stringLength;
-  var stringFiller = _stringRepeat.call(fillStr, Math.ceil(fillLen / fillStr.length));
-  if (stringFiller.length > fillLen) stringFiller = stringFiller.slice(0, fillLen);
-  return left ? stringFiller + S : S + stringFiller;
-};
-
-'use strict';
-// https://github.com/tc39/proposal-string-pad-start-end
-
-
-_export(_export.P, 'String', {
-  padStart: function padStart(maxLength /* , fillString = ' ' */) {
-    return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
-  }
-});
-
-var padStart = _entryVirtual('String').padStart;
-
 // 20.2.2.34 Math.trunc(x)
 
 
@@ -2547,7 +2508,7 @@ function hoursMinutesOffset(z) {
       minutes = Math.abs(z.fixed % 60),
       sign = hours > 0 ? '+' : '-',
       base = sign + Math.abs(hours);
-  return minutes > 0 ? base + ':' + Util.pad(minutes, 2) : base;
+  return minutes > 0 ? base + ':' + Util.padStart(minutes, 2) : base;
 }
 
 /**
@@ -3494,7 +3455,7 @@ var PolyNumberFormatter = function () {
     key: 'format',
     value: function format(i) {
       var maybeRounded = this.round ? Math.round(i) : i;
-      return maybeRounded.toString().padStart(this.padTo, '0');
+      return Util.padStart(maybeRounded.toString(), this.padTo);
     }
   }]);
   return PolyNumberFormatter;
@@ -4053,11 +4014,18 @@ var Util = function () {
       return Util.isNumber(thing) && thing >= bottom && thing <= top;
     }
   }, {
-    key: 'pad',
-    value: function pad(input) {
+    key: 'padStart',
+    value: function padStart(input) {
       var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
 
       return ('0'.repeat(n) + input).slice(-n);
+    }
+  }, {
+    key: 'padEnd',
+    value: function padEnd(input) {
+      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
+
+      return (input + '0'.repeat(n)).slice(0, n);
     }
   }, {
     key: 'towardZero',
@@ -4323,7 +4291,7 @@ function simpleParse() {
 }
 
 // ISO parsing
-var isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d\d\d))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
+var isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
 var isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 var isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/;
 var isoOrdinalRegex = /^(\d{4})-?(\d{3})/;
@@ -4343,11 +4311,12 @@ function extractISOYmd(match, cursor) {
 function extractISOTime(match, cursor) {
   var local = !match[cursor + 4] && !match[cursor + 5],
       fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
+      nanosecond = Util.padEnd(match[cursor + 3] || '0'),
       item = {
     hour: parseInt(match[cursor]) || 0,
     minute: parseInt(match[cursor + 1]) || 0,
     second: parseInt(match[cursor + 2]) || 0,
-    millisecond: parseInt(match[cursor + 3]) || 0
+    millisecond: Math.round(parseInt(nanosecond) / 1000000)
   },
       zone = local ? null : new FixedOffsetZone(fullOffset);
 
@@ -7903,7 +7872,7 @@ var DateTime = function () {
     /**
      * Get the human readable short month name, such as 'Oct'.
      * Defaults to the system's locale if no locale has been specified
-     * @example DateTime.local(2017, 10, 30) //=> Oct
+     * @example DateTime.local(2017, 10, 30).monthShort //=> Oct
      * @return {string}
      */
 
@@ -7916,7 +7885,7 @@ var DateTime = function () {
     /**
      * Get the human readable long month name, such as 'October'.
      * Defaults to the system's locale if no locale has been specified
-     * @example DateTime.local(2017, 10, 30) //=> October
+     * @example DateTime.local(2017, 10, 30).monthLong //=> October
      * @return {string}
      */
 
@@ -7929,7 +7898,7 @@ var DateTime = function () {
     /**
      * Get the human readable short weekday, such as 'Mon'.
      * Defaults to the system's locale if no locale has been specified
-     * @example DateTime.local(2017, 10, 30) //=> Mon
+     * @example DateTime.local(2017, 10, 30).weekdayShort //=> Mon
      * @return {string}
      */
 
@@ -7942,7 +7911,7 @@ var DateTime = function () {
     /**
      * Get the human readable long weekday, such as 'Monday'.
      * Defaults to the system's locale if no locale has been specified
-     * @example DateTime.local(2017, 10, 30) //=> Monday
+     * @example DateTime.local(2017, 10, 30).weekdayLong //=> Monday
      * @return {string}
      */
 

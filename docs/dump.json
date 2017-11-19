@@ -7459,7 +7459,7 @@
     "__docId__": 218,
     "kind": "file",
     "name": "src/impl/locale.js",
-    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { Settings } from '../settings';\nimport { DateTime } from '../datetime';\nimport { Formatter } from './formatter';\n\nlet localeCache = {},\n  sysLocaleCache = null;\n\nfunction systemLocale() {\n  if (sysLocaleCache) {\n    return sysLocaleCache;\n  } else if (Util.hasIntl()) {\n    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;\n    return sysLocaleCache;\n  } else {\n    sysLocaleCache = 'en-US';\n    return sysLocaleCache;\n  }\n}\n\nfunction intlConfigString(locale, numberingSystem, outputCalendar) {\n  if (Util.hasIntl()) {\n    locale = Array.isArray(locale) ? locale : [locale];\n\n    if (outputCalendar || numberingSystem) {\n      locale = locale.map(l => {\n        l += '-u';\n\n        if (outputCalendar) {\n          l += '-ca-' + outputCalendar;\n        }\n\n        if (numberingSystem) {\n          l += '-nu-' + numberingSystem;\n        }\n        return l;\n      });\n    }\n    return locale;\n  } else {\n    return [];\n  }\n}\n\nfunction mapMonths(f) {\n  const ms = [];\n  for (let i = 1; i <= 12; i++) {\n    const dt = DateTime.utc(2016, i, 1);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction mapWeekdays(f) {\n  const ms = [];\n  for (let i = 1; i <= 7; i++) {\n    const dt = DateTime.utc(2016, 11, 13 + i);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction listStuff(loc, length, defaultOK, englishFn, intlFn) {\n  const mode = loc.listingMode(defaultOK);\n\n  if (mode === 'error') {\n    return null;\n  } else if (mode === 'en') {\n    return englishFn(length);\n  } else {\n    return intlFn(length);\n  }\n}\n\n/**\n * @private\n */\n\nclass PolyNumberFormatter {\n  constructor(opts) {\n    this.padTo = opts.padTo || 0;\n    this.round = opts.round || false;\n  }\n\n  format(i) {\n    const maybeRounded = this.round ? Math.round(i) : i;\n    return maybeRounded.toString().padStart(this.padTo, '0');\n  }\n}\n\nclass PolyDateFormatter {\n  constructor(dt, intl, opts) {\n    this.opts = opts;\n    this.hasIntl = Util.hasIntl();\n\n    let z;\n    if (dt.zone.universal) {\n      // if we have a fixed-offset zone that isn't actually UTC,\n      // (like UTC+8), we need to make do with just displaying\n      // the time in UTC; the formatter doesn't know how to handle UTC+8\n      this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);\n      z = 'UTC';\n    } else if (dt.zone.type === 'local') {\n      this.dt = dt;\n    } else {\n      this.dt = dt;\n      z = dt.zone.name;\n    }\n\n    if (this.hasIntl) {\n      const realIntlOpts = Object.assign({}, this.opts);\n      if (z) {\n        realIntlOpts.timeZone = z;\n      }\n      this.dtf = new Intl.DateTimeFormat(intl, realIntlOpts);\n    }\n  }\n\n  format() {\n    if (this.hasIntl) {\n      return this.dtf.format(this.dt.toJSDate());\n    } else {\n      const tokenFormat = English.formatString(this.opts),\n        loc = Locale.create('en-US');\n      return Formatter.create(loc).formatDateTimeFromString(this.dt, tokenFormat);\n    }\n  }\n\n  formatToParts() {\n    if (this.hasIntl && Util.hasFormatToParts()) {\n      return this.dtf.formatToParts(this.dt.toJSDate());\n    } else {\n      // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings\n      // and IMO it's too weird to have an uncanny valley like that\n      return [];\n    }\n  }\n\n  resolvedOptions() {\n    if (this.hasIntl) {\n      return this.dtf.resolvedOptions();\n    } else {\n      return {\n        locale: 'en-US',\n        numberingSystem: 'latn',\n        outputCalendar: 'gregory'\n      };\n    }\n  }\n}\n\n/**\n * @private\n */\n\nexport class Locale {\n  static fromOpts(opts) {\n    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar, opts.defaultToEN);\n  }\n\n  static create(locale, numberingSystem, outputCalendar, defaultToEN = false) {\n    const specifiedLocale = locale || Settings.defaultLocale,\n      // the system locale is useful for human readable strings but annoying for parsing known formats\n      localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),\n      numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,\n      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,\n      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}|${specifiedLocale}`,\n      cached = localeCache[cacheKey];\n\n    if (cached) {\n      return cached;\n    } else {\n      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);\n      localeCache[cacheKey] = fresh;\n      return fresh;\n    }\n  }\n\n  static resetCache() {\n    sysLocaleCache = null;\n    localeCache = {};\n  }\n\n  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {\n    return Locale.create(locale, numberingSystem, outputCalendar);\n  }\n\n  constructor(locale, numbering, outputCalendar, specifiedLocale) {\n    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });\n    Object.defineProperty(this, 'numberingSystem', {\n      value: numbering,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'outputCalendar', {\n      value: outputCalendar,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'intl', {\n      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),\n      enumerable: false\n    });\n\n    // cached usefulness\n    Object.defineProperty(this, 'weekdaysCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'monthsCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'meridiemCache', {\n      value: null,\n      enumerable: false,\n      writable: true\n    });\n    Object.defineProperty(this, 'eraCache', {\n      value: {},\n      enumerable: false,\n      writable: true\n    });\n    Object.defineProperty(this, 'specifiedLocale', { value: specifiedLocale, enumerable: true });\n  }\n\n  // todo: cache me\n  listingMode(defaultOk = true) {\n    const hasIntl = Util.hasIntl(),\n      hasFTP = hasIntl && Util.hasFormatToParts(),\n      isActuallyEn =\n        this.locale === 'en' ||\n        this.locale.toLowerCase() === 'en-us' ||\n        (hasIntl &&\n          Intl.DateTimeFormat(this.intl)\n            .resolvedOptions()\n            .locale.startsWith('en-us')),\n      hasNoWeirdness =\n        (this.numberingSystem === null || this.numberingSystem === 'latn') &&\n        (this.outputCalendar === null || this.outputCalendar === 'gregory');\n\n    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {\n      return 'error';\n    } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {\n      return 'en';\n    } else {\n      return 'intl';\n    }\n  }\n\n  clone(alts) {\n    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {\n      return this;\n    } else {\n      return Locale.create(\n        alts.locale || this.specifiedLocale,\n        alts.numberingSystem || this.numberingSystem,\n        alts.outputCalendar || this.outputCalendar,\n        alts.defaultToEN || false\n      );\n    }\n  }\n\n  redefaultToEN(alts = {}) {\n    return this.clone(Object.assign({}, alts, { defaultToEN: true }));\n  }\n\n  months(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.months, () => {\n      const intl = format ? { month: length, day: 'numeric' } : { month: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.monthsCache[formatStr][length]) {\n        this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));\n      }\n      return this.monthsCache[formatStr][length];\n    });\n  }\n\n  weekdays(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.weekdays, () => {\n      const intl = format\n          ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }\n          : { weekday: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.weekdaysCache[formatStr][length]) {\n        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>\n          this.extract(dt, intl, 'weekday')\n        );\n      }\n      return this.weekdaysCache[formatStr][length];\n    });\n  }\n\n  meridiems(defaultOK = true) {\n    return listStuff(\n      this,\n      undefined,\n      defaultOK,\n      () => English.meridiems,\n      () => {\n        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two\n        // for AM and PM. This is probably wrong, but it's makes parsing way easier.\n        if (!this.meridiemCache) {\n          const intl = { hour: 'numeric', hour12: true };\n          this.meridiemCache = [\n            DateTime.utc(2016, 11, 13, 9),\n            DateTime.utc(2016, 11, 13, 19)\n          ].map(dt => this.extract(dt, intl, 'dayperiod'));\n        }\n\n        return this.meridiemCache;\n      }\n    );\n  }\n\n  eras(length, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.eras, () => {\n      const intl = { era: length };\n\n      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates\n      // to definitely enumerate them.\n      if (!this.eraCache[length]) {\n        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>\n          this.extract(dt, intl, 'era')\n        );\n      }\n\n      return this.eraCache[length];\n    });\n  }\n\n  extract(dt, intlOpts, field) {\n    const df = this.dtFormatter(dt, intlOpts),\n      results = df.formatToParts(),\n      matching = results.find(m => m.type.toLowerCase() === field);\n\n    return matching ? matching.value : null;\n  }\n\n  numberFormatter(opts = {}, intlOpts = {}) {\n    if (Util.hasIntl()) {\n      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);\n\n      if (opts.padTo > 0) {\n        realIntlOpts.minimumIntegerDigits = opts.padTo;\n      }\n\n      if (opts.round) {\n        realIntlOpts.maximumFractionDigits = 0;\n      }\n\n      return new Intl.NumberFormat(this.intl, realIntlOpts);\n    } else {\n      return new PolyNumberFormatter(opts);\n    }\n  }\n\n  dtFormatter(dt, intlOpts = {}) {\n    return new PolyDateFormatter(dt, this.intl, intlOpts);\n  }\n\n  equals(other) {\n    return (\n      this.locale === other.locale &&\n      this.numberingSystem === other.numberingSystem &&\n      this.outputCalendar === other.outputCalendar\n    );\n  }\n}\n",
+    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { Settings } from '../settings';\nimport { DateTime } from '../datetime';\nimport { Formatter } from './formatter';\n\nlet localeCache = {},\n  sysLocaleCache = null;\n\nfunction systemLocale() {\n  if (sysLocaleCache) {\n    return sysLocaleCache;\n  } else if (Util.hasIntl()) {\n    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;\n    return sysLocaleCache;\n  } else {\n    sysLocaleCache = 'en-US';\n    return sysLocaleCache;\n  }\n}\n\nfunction intlConfigString(locale, numberingSystem, outputCalendar) {\n  if (Util.hasIntl()) {\n    locale = Array.isArray(locale) ? locale : [locale];\n\n    if (outputCalendar || numberingSystem) {\n      locale = locale.map(l => {\n        l += '-u';\n\n        if (outputCalendar) {\n          l += '-ca-' + outputCalendar;\n        }\n\n        if (numberingSystem) {\n          l += '-nu-' + numberingSystem;\n        }\n        return l;\n      });\n    }\n    return locale;\n  } else {\n    return [];\n  }\n}\n\nfunction mapMonths(f) {\n  const ms = [];\n  for (let i = 1; i <= 12; i++) {\n    const dt = DateTime.utc(2016, i, 1);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction mapWeekdays(f) {\n  const ms = [];\n  for (let i = 1; i <= 7; i++) {\n    const dt = DateTime.utc(2016, 11, 13 + i);\n    ms.push(f(dt));\n  }\n  return ms;\n}\n\nfunction listStuff(loc, length, defaultOK, englishFn, intlFn) {\n  const mode = loc.listingMode(defaultOK);\n\n  if (mode === 'error') {\n    return null;\n  } else if (mode === 'en') {\n    return englishFn(length);\n  } else {\n    return intlFn(length);\n  }\n}\n\n/**\n * @private\n */\n\nclass PolyNumberFormatter {\n  constructor(opts) {\n    this.padTo = opts.padTo || 0;\n    this.round = opts.round || false;\n  }\n\n  format(i) {\n    const maybeRounded = this.round ? Math.round(i) : i;\n    return Util.padStart(maybeRounded.toString(), this.padTo);\n  }\n}\n\nclass PolyDateFormatter {\n  constructor(dt, intl, opts) {\n    this.opts = opts;\n    this.hasIntl = Util.hasIntl();\n\n    let z;\n    if (dt.zone.universal) {\n      // if we have a fixed-offset zone that isn't actually UTC,\n      // (like UTC+8), we need to make do with just displaying\n      // the time in UTC; the formatter doesn't know how to handle UTC+8\n      this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);\n      z = 'UTC';\n    } else if (dt.zone.type === 'local') {\n      this.dt = dt;\n    } else {\n      this.dt = dt;\n      z = dt.zone.name;\n    }\n\n    if (this.hasIntl) {\n      const realIntlOpts = Object.assign({}, this.opts);\n      if (z) {\n        realIntlOpts.timeZone = z;\n      }\n      this.dtf = new Intl.DateTimeFormat(intl, realIntlOpts);\n    }\n  }\n\n  format() {\n    if (this.hasIntl) {\n      return this.dtf.format(this.dt.toJSDate());\n    } else {\n      const tokenFormat = English.formatString(this.opts),\n        loc = Locale.create('en-US');\n      return Formatter.create(loc).formatDateTimeFromString(this.dt, tokenFormat);\n    }\n  }\n\n  formatToParts() {\n    if (this.hasIntl && Util.hasFormatToParts()) {\n      return this.dtf.formatToParts(this.dt.toJSDate());\n    } else {\n      // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings\n      // and IMO it's too weird to have an uncanny valley like that\n      return [];\n    }\n  }\n\n  resolvedOptions() {\n    if (this.hasIntl) {\n      return this.dtf.resolvedOptions();\n    } else {\n      return {\n        locale: 'en-US',\n        numberingSystem: 'latn',\n        outputCalendar: 'gregory'\n      };\n    }\n  }\n}\n\n/**\n * @private\n */\n\nexport class Locale {\n  static fromOpts(opts) {\n    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar, opts.defaultToEN);\n  }\n\n  static create(locale, numberingSystem, outputCalendar, defaultToEN = false) {\n    const specifiedLocale = locale || Settings.defaultLocale,\n      // the system locale is useful for human readable strings but annoying for parsing known formats\n      localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),\n      numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,\n      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,\n      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}|${specifiedLocale}`,\n      cached = localeCache[cacheKey];\n\n    if (cached) {\n      return cached;\n    } else {\n      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);\n      localeCache[cacheKey] = fresh;\n      return fresh;\n    }\n  }\n\n  static resetCache() {\n    sysLocaleCache = null;\n    localeCache = {};\n  }\n\n  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {\n    return Locale.create(locale, numberingSystem, outputCalendar);\n  }\n\n  constructor(locale, numbering, outputCalendar, specifiedLocale) {\n    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });\n    Object.defineProperty(this, 'numberingSystem', {\n      value: numbering,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'outputCalendar', {\n      value: outputCalendar,\n      enumerable: true\n    });\n    Object.defineProperty(this, 'intl', {\n      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),\n      enumerable: false\n    });\n\n    // cached usefulness\n    Object.defineProperty(this, 'weekdaysCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'monthsCache', {\n      value: { format: {}, standalone: {} },\n      enumerable: false\n    });\n    Object.defineProperty(this, 'meridiemCache', {\n      value: null,\n      enumerable: false,\n      writable: true\n    });\n    Object.defineProperty(this, 'eraCache', {\n      value: {},\n      enumerable: false,\n      writable: true\n    });\n    Object.defineProperty(this, 'specifiedLocale', { value: specifiedLocale, enumerable: true });\n  }\n\n  // todo: cache me\n  listingMode(defaultOk = true) {\n    const hasIntl = Util.hasIntl(),\n      hasFTP = hasIntl && Util.hasFormatToParts(),\n      isActuallyEn =\n        this.locale === 'en' ||\n        this.locale.toLowerCase() === 'en-us' ||\n        (hasIntl &&\n          Intl.DateTimeFormat(this.intl)\n            .resolvedOptions()\n            .locale.startsWith('en-us')),\n      hasNoWeirdness =\n        (this.numberingSystem === null || this.numberingSystem === 'latn') &&\n        (this.outputCalendar === null || this.outputCalendar === 'gregory');\n\n    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {\n      return 'error';\n    } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {\n      return 'en';\n    } else {\n      return 'intl';\n    }\n  }\n\n  clone(alts) {\n    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {\n      return this;\n    } else {\n      return Locale.create(\n        alts.locale || this.specifiedLocale,\n        alts.numberingSystem || this.numberingSystem,\n        alts.outputCalendar || this.outputCalendar,\n        alts.defaultToEN || false\n      );\n    }\n  }\n\n  redefaultToEN(alts = {}) {\n    return this.clone(Object.assign({}, alts, { defaultToEN: true }));\n  }\n\n  months(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.months, () => {\n      const intl = format ? { month: length, day: 'numeric' } : { month: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.monthsCache[formatStr][length]) {\n        this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, 'month'));\n      }\n      return this.monthsCache[formatStr][length];\n    });\n  }\n\n  weekdays(length, format = false, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.weekdays, () => {\n      const intl = format\n          ? { weekday: length, year: 'numeric', month: 'long', day: 'numeric' }\n          : { weekday: length },\n        formatStr = format ? 'format' : 'standalone';\n      if (!this.weekdaysCache[formatStr][length]) {\n        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>\n          this.extract(dt, intl, 'weekday')\n        );\n      }\n      return this.weekdaysCache[formatStr][length];\n    });\n  }\n\n  meridiems(defaultOK = true) {\n    return listStuff(\n      this,\n      undefined,\n      defaultOK,\n      () => English.meridiems,\n      () => {\n        // In theory there could be aribitrary day periods. We're gonna assume there are exactly two\n        // for AM and PM. This is probably wrong, but it's makes parsing way easier.\n        if (!this.meridiemCache) {\n          const intl = { hour: 'numeric', hour12: true };\n          this.meridiemCache = [\n            DateTime.utc(2016, 11, 13, 9),\n            DateTime.utc(2016, 11, 13, 19)\n          ].map(dt => this.extract(dt, intl, 'dayperiod'));\n        }\n\n        return this.meridiemCache;\n      }\n    );\n  }\n\n  eras(length, defaultOK = true) {\n    return listStuff(this, length, defaultOK, English.eras, () => {\n      const intl = { era: length };\n\n      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates\n      // to definitely enumerate them.\n      if (!this.eraCache[length]) {\n        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>\n          this.extract(dt, intl, 'era')\n        );\n      }\n\n      return this.eraCache[length];\n    });\n  }\n\n  extract(dt, intlOpts, field) {\n    const df = this.dtFormatter(dt, intlOpts),\n      results = df.formatToParts(),\n      matching = results.find(m => m.type.toLowerCase() === field);\n\n    return matching ? matching.value : null;\n  }\n\n  numberFormatter(opts = {}, intlOpts = {}) {\n    if (Util.hasIntl()) {\n      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);\n\n      if (opts.padTo > 0) {\n        realIntlOpts.minimumIntegerDigits = opts.padTo;\n      }\n\n      if (opts.round) {\n        realIntlOpts.maximumFractionDigits = 0;\n      }\n\n      return new Intl.NumberFormat(this.intl, realIntlOpts);\n    } else {\n      return new PolyNumberFormatter(opts);\n    }\n  }\n\n  dtFormatter(dt, intlOpts = {}) {\n    return new PolyDateFormatter(dt, this.intl, intlOpts);\n  }\n\n  equals(other) {\n    return (\n      this.locale === other.locale &&\n      this.numberingSystem === other.numberingSystem &&\n      this.outputCalendar === other.outputCalendar\n    );\n  }\n}\n",
     "static": true,
     "longname": "src/impl/locale.js",
     "access": null,
@@ -8783,7 +8783,7 @@
     "__docId__": 259,
     "kind": "file",
     "name": "src/impl/regexParser.js",
-    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { FixedOffsetZone } from '../zones/fixedOffsetZone';\n\nfunction combineRegexes(...regexes) {\n  const full = regexes.reduce((f, r) => f + r.source, '');\n  return RegExp(full);\n}\n\nfunction combineExtractors(...extractors) {\n  return m =>\n    extractors\n      .reduce(\n        ([mergedVals, mergedZone, cursor], ex) => {\n          const [val, zone, next] = ex(m, cursor);\n          return [Object.assign(mergedVals, val), mergedZone || zone, next];\n        },\n        [{}, null, 1]\n      )\n      .slice(0, 2);\n}\n\nfunction parse(s, ...patterns) {\n  if (s == null) {\n    return [null, null];\n  }\n  for (const [regex, extractor] of patterns) {\n    const m = regex.exec(s);\n    if (m) {\n      return extractor(m);\n    }\n  }\n  return [null, null];\n}\n\nfunction simpleParse(...keys) {\n  return (match, cursor) => {\n    const ret = {};\n    let i;\n\n    for (i = 0; i < keys.length; i++) {\n      ret[keys[i]] = parseInt(match[cursor + i]);\n    }\n    return [ret, null, cursor + i];\n  };\n}\n\n// ISO parsing\nconst isoTimeRegex = /(?:T(\\d\\d)(?::?(\\d\\d)(?::?(\\d\\d)(?:[.,](\\d\\d\\d))?)?)?(?:(Z)|([+-]\\d\\d)(?::?(\\d\\d))?)?)?$/,\n  isoYmdRegex = /^([+-]\\d{6}|\\d{4})(?:-?(\\d\\d)(?:-?(\\d\\d))?)?/,\n  isoWeekRegex = /^(\\d{4})-?W(\\d\\d)-?(\\d)/,\n  isoOrdinalRegex = /^(\\d{4})-?(\\d{3})/,\n  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),\n  extractISOOrdinalData = simpleParse('year', 'ordinal');\n\nfunction extractISOYmd(match, cursor) {\n  const item = {\n    year: parseInt(match[cursor]),\n    month: parseInt(match[cursor + 1]) || 1,\n    day: parseInt(match[cursor + 2]) || 1\n  };\n\n  return [item, null, cursor + 3];\n}\n\nfunction extractISOTime(match, cursor) {\n  const local = !match[cursor + 4] && !match[cursor + 5],\n    fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),\n    item = {\n      hour: parseInt(match[cursor]) || 0,\n      minute: parseInt(match[cursor + 1]) || 0,\n      second: parseInt(match[cursor + 2]) || 0,\n      millisecond: parseInt(match[cursor + 3]) || 0\n    },\n    zone = local ? null : new FixedOffsetZone(fullOffset);\n\n  return [item, zone, cursor + 7];\n}\n\n// ISO duration parsing\n\nconst isoDuration = /^P(?:(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)D)?(?:T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?)?|(\\d+)W)$/;\n\nfunction extractISODuration(match) {\n  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;\n\n  return {\n    years: parseInt(yearStr),\n    months: parseInt(monthStr),\n    weeks: parseInt(weekStr),\n    days: parseInt(dayStr),\n    hours: parseInt(hourStr),\n    minutes: parseInt(minuteStr),\n    seconds: parseInt(secondStr)\n  };\n}\n\n// These are a little braindead. EDT *should* tell us that we're in, say, America/New_York\n// and not just that we're in -240 *right now*. But since I don't think these are used that often\n// I'm just going to ignore that\nconst obsOffsets = {\n  GMT: 0,\n  EDT: -4 * 60,\n  EST: -5 * 60,\n  CDT: -5 * 60,\n  CST: -6 * 60,\n  MDT: -6 * 60,\n  MST: -7 * 60,\n  PDT: -7 * 60,\n  PST: -8 * 60\n};\n\nfunction fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {\n  const result = {\n    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),\n    month: English.monthsShort.indexOf(monthStr) + 1,\n    day: parseInt(dayStr),\n    hour: parseInt(hourStr),\n    minute: parseInt(minuteStr)\n  };\n\n  if (secondStr) result.second = parseInt(secondStr);\n  if (weekdayStr) {\n    result.weekday =\n      weekdayStr.length > 3\n        ? English.weekdaysLong.indexOf(weekdayStr) + 1\n        : English.weekdaysShort.indexOf(weekdayStr) + 1;\n  }\n\n  return result;\n}\n\n// RFC 2822/5322\nconst rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s)?(\\d{1,2})\\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s(\\d{2,4})\\s(\\d\\d):(\\d\\d)(?::(\\d\\d))?\\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\\d\\d)(\\d\\d)))$/;\n\nfunction extractRFC2822(match) {\n  const [\n      ,\n      weekdayStr,\n      dayStr,\n      monthStr,\n      yearStr,\n      hourStr,\n      minuteStr,\n      secondStr,\n      obsOffset,\n      milOffset,\n      offHourStr,\n      offMinuteStr\n    ] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n\n  let offset;\n  if (obsOffset) {\n    offset = obsOffsets[obsOffset];\n  } else if (milOffset) {\n    offset = 0;\n  } else {\n    offset = Util.signedOffset(offHourStr, offMinuteStr);\n  }\n\n  return [result, new FixedOffsetZone(offset)];\n}\n\nfunction preprocessRFC2822(s) {\n  // Remove comments and folding whitespace and replace multiple-spaces with a single space\n  return s\n    .replace(/\\([^)]*\\)|[\\n\\t]/g, ' ')\n    .replace(/(\\s\\s+)/g, ' ')\n    .trim();\n}\n\n// http date\n\nconst rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\\d\\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\\d{4}) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\\d\\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \\d|\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) (\\d{4})$/;\n\nfunction extractRFC1123Or850(match) {\n  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\nfunction extractASCII(match) {\n  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\n/**\n * @private\n */\n\nexport class RegexParser {\n  static parseISODate(s) {\n    return parse(\n      s,\n      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],\n      [\n        combineRegexes(isoWeekRegex, isoTimeRegex),\n        combineExtractors(extractISOWeekData, extractISOTime)\n      ],\n      [\n        combineRegexes(isoOrdinalRegex, isoTimeRegex),\n        combineExtractors(extractISOOrdinalData, extractISOTime)\n      ]\n    );\n  }\n\n  static parseRFC2822Date(s) {\n    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);\n  }\n\n  static parseHTTPDate(s) {\n    return parse(\n      s,\n      [rfc1123, extractRFC1123Or850],\n      [rfc850, extractRFC1123Or850],\n      [ascii, extractASCII]\n    );\n  }\n\n  static parseISODuration(s) {\n    return parse(s, [isoDuration, extractISODuration]);\n  }\n}\n",
+    "content": "import { Util } from './util';\nimport { English } from './english';\nimport { FixedOffsetZone } from '../zones/fixedOffsetZone';\n\nfunction combineRegexes(...regexes) {\n  const full = regexes.reduce((f, r) => f + r.source, '');\n  return RegExp(full);\n}\n\nfunction combineExtractors(...extractors) {\n  return m =>\n    extractors\n      .reduce(\n        ([mergedVals, mergedZone, cursor], ex) => {\n          const [val, zone, next] = ex(m, cursor);\n          return [Object.assign(mergedVals, val), mergedZone || zone, next];\n        },\n        [{}, null, 1]\n      )\n      .slice(0, 2);\n}\n\nfunction parse(s, ...patterns) {\n  if (s == null) {\n    return [null, null];\n  }\n  for (const [regex, extractor] of patterns) {\n    const m = regex.exec(s);\n    if (m) {\n      return extractor(m);\n    }\n  }\n  return [null, null];\n}\n\nfunction simpleParse(...keys) {\n  return (match, cursor) => {\n    const ret = {};\n    let i;\n\n    for (i = 0; i < keys.length; i++) {\n      ret[keys[i]] = parseInt(match[cursor + i]);\n    }\n    return [ret, null, cursor + i];\n  };\n}\n\n// ISO parsing\nconst isoTimeRegex = /(?:T(\\d\\d)(?::?(\\d\\d)(?::?(\\d\\d)(?:[.,](\\d{1,9}))?)?)?(?:(Z)|([+-]\\d\\d)(?::?(\\d\\d))?)?)?$/,\n  isoYmdRegex = /^([+-]\\d{6}|\\d{4})(?:-?(\\d\\d)(?:-?(\\d\\d))?)?/,\n  isoWeekRegex = /^(\\d{4})-?W(\\d\\d)-?(\\d)/,\n  isoOrdinalRegex = /^(\\d{4})-?(\\d{3})/,\n  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),\n  extractISOOrdinalData = simpleParse('year', 'ordinal');\n\nfunction extractISOYmd(match, cursor) {\n  const item = {\n    year: parseInt(match[cursor]),\n    month: parseInt(match[cursor + 1]) || 1,\n    day: parseInt(match[cursor + 2]) || 1\n  };\n\n  return [item, null, cursor + 3];\n}\n\nfunction extractISOTime(match, cursor) {\n  const local = !match[cursor + 4] && !match[cursor + 5],\n    fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),\n    nanosecond = Util.padEnd(match[cursor + 3] || '0'),\n    item = {\n      hour: parseInt(match[cursor]) || 0,\n      minute: parseInt(match[cursor + 1]) || 0,\n      second: parseInt(match[cursor + 2]) || 0,\n      millisecond: Math.round(parseInt(nanosecond) / 1000000)\n    },\n    zone = local ? null : new FixedOffsetZone(fullOffset);\n\n  return [item, zone, cursor + 7];\n}\n\n// ISO duration parsing\n\nconst isoDuration = /^P(?:(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)D)?(?:T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?)?|(\\d+)W)$/;\n\nfunction extractISODuration(match) {\n  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;\n\n  return {\n    years: parseInt(yearStr),\n    months: parseInt(monthStr),\n    weeks: parseInt(weekStr),\n    days: parseInt(dayStr),\n    hours: parseInt(hourStr),\n    minutes: parseInt(minuteStr),\n    seconds: parseInt(secondStr)\n  };\n}\n\n// These are a little braindead. EDT *should* tell us that we're in, say, America/New_York\n// and not just that we're in -240 *right now*. But since I don't think these are used that often\n// I'm just going to ignore that\nconst obsOffsets = {\n  GMT: 0,\n  EDT: -4 * 60,\n  EST: -5 * 60,\n  CDT: -5 * 60,\n  CST: -6 * 60,\n  MDT: -6 * 60,\n  MST: -7 * 60,\n  PDT: -7 * 60,\n  PST: -8 * 60\n};\n\nfunction fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {\n  const result = {\n    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),\n    month: English.monthsShort.indexOf(monthStr) + 1,\n    day: parseInt(dayStr),\n    hour: parseInt(hourStr),\n    minute: parseInt(minuteStr)\n  };\n\n  if (secondStr) result.second = parseInt(secondStr);\n  if (weekdayStr) {\n    result.weekday =\n      weekdayStr.length > 3\n        ? English.weekdaysLong.indexOf(weekdayStr) + 1\n        : English.weekdaysShort.indexOf(weekdayStr) + 1;\n  }\n\n  return result;\n}\n\n// RFC 2822/5322\nconst rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s)?(\\d{1,2})\\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s(\\d{2,4})\\s(\\d\\d):(\\d\\d)(?::(\\d\\d))?\\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\\d\\d)(\\d\\d)))$/;\n\nfunction extractRFC2822(match) {\n  const [\n      ,\n      weekdayStr,\n      dayStr,\n      monthStr,\n      yearStr,\n      hourStr,\n      minuteStr,\n      secondStr,\n      obsOffset,\n      milOffset,\n      offHourStr,\n      offMinuteStr\n    ] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n\n  let offset;\n  if (obsOffset) {\n    offset = obsOffsets[obsOffset];\n  } else if (milOffset) {\n    offset = 0;\n  } else {\n    offset = Util.signedOffset(offHourStr, offMinuteStr);\n  }\n\n  return [result, new FixedOffsetZone(offset)];\n}\n\nfunction preprocessRFC2822(s) {\n  // Remove comments and folding whitespace and replace multiple-spaces with a single space\n  return s\n    .replace(/\\([^)]*\\)|[\\n\\t]/g, ' ')\n    .replace(/(\\s\\s+)/g, ' ')\n    .trim();\n}\n\n// http date\n\nconst rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\\d\\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\\d{4}) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\\d\\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) GMT$/,\n  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \\d|\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) (\\d{4})$/;\n\nfunction extractRFC1123Or850(match) {\n  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\nfunction extractASCII(match) {\n  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,\n    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);\n  return [result, FixedOffsetZone.utcInstance];\n}\n\n/**\n * @private\n */\n\nexport class RegexParser {\n  static parseISODate(s) {\n    return parse(\n      s,\n      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],\n      [\n        combineRegexes(isoWeekRegex, isoTimeRegex),\n        combineExtractors(extractISOWeekData, extractISOTime)\n      ],\n      [\n        combineRegexes(isoOrdinalRegex, isoTimeRegex),\n        combineExtractors(extractISOOrdinalData, extractISOTime)\n      ]\n    );\n  }\n\n  static parseRFC2822Date(s) {\n    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);\n  }\n\n  static parseHTTPDate(s) {\n    return parse(\n      s,\n      [rfc1123, extractRFC1123Or850],\n      [rfc850, extractRFC1123Or850],\n      [ascii, extractASCII]\n    );\n  }\n\n  static parseISODuration(s) {\n    return parse(s, [isoDuration, extractISODuration]);\n  }\n}\n",
     "static": true,
     "longname": "src/impl/regexParser.js",
     "access": null,
@@ -9066,7 +9066,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 82,
+    "lineNumber": 83,
     "undocument": true,
     "unknown": [
       {
@@ -9094,7 +9094,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 84,
+    "lineNumber": 85,
     "undocument": true,
     "unknown": [
       {
@@ -9128,7 +9128,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 101,
+    "lineNumber": 102,
     "undocument": true,
     "unknown": [
       {
@@ -9156,7 +9156,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 113,
+    "lineNumber": 114,
     "undocument": true,
     "unknown": [
       {
@@ -9226,7 +9226,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 134,
+    "lineNumber": 135,
     "undocument": true,
     "unknown": [
       {
@@ -9254,7 +9254,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 136,
+    "lineNumber": 137,
     "undocument": true,
     "unknown": [
       {
@@ -9290,7 +9290,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 165,
+    "lineNumber": 166,
     "undocument": true,
     "unknown": [
       {
@@ -9324,7 +9324,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 175,
+    "lineNumber": 176,
     "undocument": true,
     "unknown": [
       {
@@ -9352,7 +9352,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 179,
+    "lineNumber": 180,
     "undocument": true,
     "unknown": [
       {
@@ -9388,7 +9388,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 185,
+    "lineNumber": 186,
     "undocument": true,
     "unknown": [
       {
@@ -9422,7 +9422,7 @@
     "importPath": "luxon/src/impl/regexParser.js",
     "importStyle": "{RegexParser}",
     "description": "",
-    "lineNumber": 195,
+    "lineNumber": 196,
     "interface": false
   },
   {
@@ -9436,7 +9436,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseISODate",
     "access": null,
     "description": null,
-    "lineNumber": 196,
+    "lineNumber": 197,
     "undocument": true,
     "unknown": [
       {
@@ -9469,7 +9469,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseRFC2822Date",
     "access": null,
     "description": null,
-    "lineNumber": 211,
+    "lineNumber": 212,
     "undocument": true,
     "unknown": [
       {
@@ -9502,7 +9502,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseHTTPDate",
     "access": null,
     "description": null,
-    "lineNumber": 215,
+    "lineNumber": 216,
     "undocument": true,
     "unknown": [
       {
@@ -9535,7 +9535,7 @@
     "longname": "src/impl/regexParser.js~RegexParser.parseISODuration",
     "access": null,
     "description": null,
-    "lineNumber": 224,
+    "lineNumber": 225,
     "undocument": true,
     "unknown": [
       {
@@ -10116,7 +10116,7 @@
     "__docId__": 298,
     "kind": "file",
     "name": "src/impl/util.js",
-    "content": "import { Duration } from '../duration';\nimport { DateTime } from '../datetime';\nimport { Zone } from '../zone';\nimport { LocalZone } from '../zones/localZone';\nimport { IANAZone } from '../zones/IANAZone';\nimport { FixedOffsetZone } from '../zones/fixedOffsetZone';\nimport { Settings } from '../settings';\nimport { InvalidArgumentError } from '../errors';\n\n/**\n * @private\n */\n\nexport class Util {\n  static friendlyDuration(duration) {\n    if (Util.isNumber(duration)) {\n      return Duration.fromMillis(duration);\n    } else if (duration instanceof Duration) {\n      return duration;\n    } else if (duration instanceof Object) {\n      return Duration.fromObject(duration);\n    } else {\n      throw new InvalidArgumentError('Unknown duration argument');\n    }\n  }\n\n  static friendlyDateTime(dateTimeish) {\n    if (dateTimeish instanceof DateTime) {\n      return dateTimeish;\n    } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {\n      return DateTime.fromJSDate(dateTimeish);\n    } else if (dateTimeish instanceof Object) {\n      return DateTime.fromObject(dateTimeish);\n    } else {\n      throw new InvalidArgumentError('Unknown datetime argument');\n    }\n  }\n\n  static maybeArray(thing) {\n    return Array.isArray(thing) ? thing : [thing];\n  }\n\n  static isUndefined(o) {\n    return typeof o === 'undefined';\n  }\n\n  static isNumber(o) {\n    return typeof o === 'number';\n  }\n\n  static isString(o) {\n    return typeof o === 'string';\n  }\n\n  static isDate(o) {\n    return Object.prototype.toString.call(o) === '[object Date]';\n  }\n\n  static numberBetween(thing, bottom, top) {\n    return Util.isNumber(thing) && thing >= bottom && thing <= top;\n  }\n\n  static pad(input, n = 2) {\n    return ('0'.repeat(n) + input).slice(-n);\n  }\n\n  static towardZero(input) {\n    return input < 0 ? Math.ceil(input) : Math.floor(input);\n  }\n\n  // http://stackoverflow.com/a/15030117\n  static flatten(arr) {\n    return arr.reduce(\n      (flat, toFlatten) =>\n        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),\n      []\n    );\n  }\n\n  static bestBy(arr, by, compare) {\n    return arr.reduce((best, next) => {\n      const pair = [by(next), next];\n      if (!best) {\n        return pair;\n      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {\n        return best;\n      } else {\n        return pair;\n      }\n    }, null)[1];\n  }\n\n  static pick(obj, keys) {\n    return keys.reduce((a, k) => {\n      a[k] = obj[k];\n      return a;\n    }, {});\n  }\n\n  static isLeapYear(year) {\n    return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);\n  }\n\n  static daysInYear(year) {\n    return Util.isLeapYear(year) ? 366 : 365;\n  }\n\n  static daysInMonth(year, month) {\n    if (month === 2) {\n      return Util.isLeapYear(year) ? 29 : 28;\n    } else {\n      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];\n    }\n  }\n\n  static parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {\n    const date = new Date(ts),\n      intl = {\n        hour12: false,\n        // avoid AM/PM\n        year: 'numeric',\n        month: '2-digit',\n        day: '2-digit',\n        hour: '2-digit',\n        minute: '2-digit'\n      };\n\n    if (timeZone) {\n      intl.timeZone = timeZone;\n    }\n\n    const modified = Object.assign({ timeZoneName: offsetFormat }, intl),\n      hasIntl = Util.hasIntl();\n\n    if (hasIntl && Util.hasFormatToParts()) {\n      const parsed = new Intl.DateTimeFormat(locale, modified)\n        .formatToParts(date)\n        .find(m => m.type.toLowerCase() === 'timezonename');\n      return parsed ? parsed.value : null;\n    } else if (hasIntl) {\n      // this probably doesn't work for all locales\n      const without = new Intl.DateTimeFormat(locale, intl).format(date),\n        included = new Intl.DateTimeFormat(locale, modified).format(date),\n        diffed = included.substring(without.length),\n        trimmed = diffed.replace(/^[, ]+/, '');\n      return trimmed;\n    } else {\n      return null;\n    }\n  }\n\n  static normalizeZone(input) {\n    if (Util.isUndefined(input) || input === null) {\n      return LocalZone.instance;\n    } else if (input instanceof Zone) {\n      return input;\n    } else if (Util.isString(input)) {\n      const lowered = input.toLowerCase();\n      if (lowered === 'local') return LocalZone.instance;\n      else if (lowered === 'utc') return FixedOffsetZone.utcInstance;\n      else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);\n      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;\n    } else if (Util.isNumber(input)) {\n      return FixedOffsetZone.instance(input);\n    } else if (typeof input === 'object' && input.offset) {\n      // This is dumb, but the instanceof check above doesn't seem to really work\n      // so we're duck checking it\n      return input;\n    } else {\n      return Settings.defaultZone;\n    }\n  }\n\n  static normalizeObject(obj, normalizer, ignoreUnknown = false) {\n    const normalized = {};\n    for (const u in obj) {\n      if (obj.hasOwnProperty(u)) {\n        const v = obj[u];\n        if (v !== null && !Util.isUndefined(v) && !Number.isNaN(v)) {\n          const mapped = normalizer(u, ignoreUnknown);\n          if (mapped) {\n            normalized[mapped] = v;\n          }\n        }\n      }\n    }\n    return normalized;\n  }\n\n  static timeObject(obj) {\n    return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);\n  }\n\n  static untruncateYear(year) {\n    if (year > 99) {\n      return year;\n    } else return year > 60 ? 1900 + year : 2000 + year;\n  }\n\n  // signedOffset('-5', '30') -> -330\n  static signedOffset(offHourStr, offMinuteStr) {\n    const offHour = parseInt(offHourStr, 10) || 0,\n      offMin = parseInt(offMinuteStr, 10) || 0,\n      offMinSigned = offHour < 0 ? -offMin : offMin;\n    return offHour * 60 + offMinSigned;\n  }\n\n  static hasIntl() {\n    return typeof Intl !== 'undefined' && Intl.DateTimeFormat;\n  }\n\n  static hasFormatToParts() {\n    return !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);\n  }\n}\n",
+    "content": "import { Duration } from '../duration';\nimport { DateTime } from '../datetime';\nimport { Zone } from '../zone';\nimport { LocalZone } from '../zones/localZone';\nimport { IANAZone } from '../zones/IANAZone';\nimport { FixedOffsetZone } from '../zones/fixedOffsetZone';\nimport { Settings } from '../settings';\nimport { InvalidArgumentError } from '../errors';\n\n/**\n * @private\n */\n\nexport class Util {\n  static friendlyDuration(duration) {\n    if (Util.isNumber(duration)) {\n      return Duration.fromMillis(duration);\n    } else if (duration instanceof Duration) {\n      return duration;\n    } else if (duration instanceof Object) {\n      return Duration.fromObject(duration);\n    } else {\n      throw new InvalidArgumentError('Unknown duration argument');\n    }\n  }\n\n  static friendlyDateTime(dateTimeish) {\n    if (dateTimeish instanceof DateTime) {\n      return dateTimeish;\n    } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {\n      return DateTime.fromJSDate(dateTimeish);\n    } else if (dateTimeish instanceof Object) {\n      return DateTime.fromObject(dateTimeish);\n    } else {\n      throw new InvalidArgumentError('Unknown datetime argument');\n    }\n  }\n\n  static maybeArray(thing) {\n    return Array.isArray(thing) ? thing : [thing];\n  }\n\n  static isUndefined(o) {\n    return typeof o === 'undefined';\n  }\n\n  static isNumber(o) {\n    return typeof o === 'number';\n  }\n\n  static isString(o) {\n    return typeof o === 'string';\n  }\n\n  static isDate(o) {\n    return Object.prototype.toString.call(o) === '[object Date]';\n  }\n\n  static numberBetween(thing, bottom, top) {\n    return Util.isNumber(thing) && thing >= bottom && thing <= top;\n  }\n\n  static padStart(input, n = 2) {\n    return ('0'.repeat(n) + input).slice(-n);\n  }\n\n  static padEnd(input, n = 9) {\n    return (input + '0'.repeat(n)).slice(0, n);\n  }\n\n  static towardZero(input) {\n    return input < 0 ? Math.ceil(input) : Math.floor(input);\n  }\n\n  // http://stackoverflow.com/a/15030117\n  static flatten(arr) {\n    return arr.reduce(\n      (flat, toFlatten) =>\n        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),\n      []\n    );\n  }\n\n  static bestBy(arr, by, compare) {\n    return arr.reduce((best, next) => {\n      const pair = [by(next), next];\n      if (!best) {\n        return pair;\n      } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {\n        return best;\n      } else {\n        return pair;\n      }\n    }, null)[1];\n  }\n\n  static pick(obj, keys) {\n    return keys.reduce((a, k) => {\n      a[k] = obj[k];\n      return a;\n    }, {});\n  }\n\n  static isLeapYear(year) {\n    return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);\n  }\n\n  static daysInYear(year) {\n    return Util.isLeapYear(year) ? 366 : 365;\n  }\n\n  static daysInMonth(year, month) {\n    if (month === 2) {\n      return Util.isLeapYear(year) ? 29 : 28;\n    } else {\n      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];\n    }\n  }\n\n  static parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {\n    const date = new Date(ts),\n      intl = {\n        hour12: false,\n        // avoid AM/PM\n        year: 'numeric',\n        month: '2-digit',\n        day: '2-digit',\n        hour: '2-digit',\n        minute: '2-digit'\n      };\n\n    if (timeZone) {\n      intl.timeZone = timeZone;\n    }\n\n    const modified = Object.assign({ timeZoneName: offsetFormat }, intl),\n      hasIntl = Util.hasIntl();\n\n    if (hasIntl && Util.hasFormatToParts()) {\n      const parsed = new Intl.DateTimeFormat(locale, modified)\n        .formatToParts(date)\n        .find(m => m.type.toLowerCase() === 'timezonename');\n      return parsed ? parsed.value : null;\n    } else if (hasIntl) {\n      // this probably doesn't work for all locales\n      const without = new Intl.DateTimeFormat(locale, intl).format(date),\n        included = new Intl.DateTimeFormat(locale, modified).format(date),\n        diffed = included.substring(without.length),\n        trimmed = diffed.replace(/^[, ]+/, '');\n      return trimmed;\n    } else {\n      return null;\n    }\n  }\n\n  static normalizeZone(input) {\n    if (Util.isUndefined(input) || input === null) {\n      return LocalZone.instance;\n    } else if (input instanceof Zone) {\n      return input;\n    } else if (Util.isString(input)) {\n      const lowered = input.toLowerCase();\n      if (lowered === 'local') return LocalZone.instance;\n      else if (lowered === 'utc') return FixedOffsetZone.utcInstance;\n      else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);\n      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;\n    } else if (Util.isNumber(input)) {\n      return FixedOffsetZone.instance(input);\n    } else if (typeof input === 'object' && input.offset) {\n      // This is dumb, but the instanceof check above doesn't seem to really work\n      // so we're duck checking it\n      return input;\n    } else {\n      return Settings.defaultZone;\n    }\n  }\n\n  static normalizeObject(obj, normalizer, ignoreUnknown = false) {\n    const normalized = {};\n    for (const u in obj) {\n      if (obj.hasOwnProperty(u)) {\n        const v = obj[u];\n        if (v !== null && !Util.isUndefined(v) && !Number.isNaN(v)) {\n          const mapped = normalizer(u, ignoreUnknown);\n          if (mapped) {\n            normalized[mapped] = v;\n          }\n        }\n      }\n    }\n    return normalized;\n  }\n\n  static timeObject(obj) {\n    return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);\n  }\n\n  static untruncateYear(year) {\n    if (year > 99) {\n      return year;\n    } else return year > 60 ? 1900 + year : 2000 + year;\n  }\n\n  // signedOffset('-5', '30') -> -330\n  static signedOffset(offHourStr, offMinuteStr) {\n    const offHour = parseInt(offHourStr, 10) || 0,\n      offMin = parseInt(offMinuteStr, 10) || 0,\n      offMinSigned = offHour < 0 ? -offMin : offMin;\n    return offHour * 60 + offMinSigned;\n  }\n\n  static hasIntl() {\n    return typeof Intl !== 'undefined' && Intl.DateTimeFormat;\n  }\n\n  static hasFormatToParts() {\n    return !Util.isUndefined(Intl.DateTimeFormat.prototype.formatToParts);\n  }\n}\n",
     "static": true,
     "longname": "src/impl/util.js",
     "access": null,
@@ -10417,12 +10417,12 @@
   {
     "__docId__": 308,
     "kind": "method",
-    "name": "pad",
+    "name": "padStart",
     "memberof": "src/impl/util.js~Util",
     "generator": false,
     "async": false,
     "static": true,
-    "longname": "src/impl/util.js~Util.pad",
+    "longname": "src/impl/util.js~Util.padStart",
     "access": null,
     "description": null,
     "lineNumber": 63,
@@ -10459,6 +10459,48 @@
   {
     "__docId__": 309,
     "kind": "method",
+    "name": "padEnd",
+    "memberof": "src/impl/util.js~Util",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/impl/util.js~Util.padEnd",
+    "access": null,
+    "description": null,
+    "lineNumber": 67,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "input",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "n",
+        "optional": true,
+        "types": [
+          "number"
+        ],
+        "defaultRaw": 9,
+        "defaultValue": "9"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 310,
+    "kind": "method",
     "name": "towardZero",
     "memberof": "src/impl/util.js~Util",
     "generator": false,
@@ -10467,7 +10509,7 @@
     "longname": "src/impl/util.js~Util.towardZero",
     "access": null,
     "description": null,
-    "lineNumber": 67,
+    "lineNumber": 71,
     "undocument": true,
     "unknown": [
       {
@@ -10490,7 +10532,7 @@
     }
   },
   {
-    "__docId__": 310,
+    "__docId__": 311,
     "kind": "method",
     "name": "flatten",
     "memberof": "src/impl/util.js~Util",
@@ -10500,7 +10542,7 @@
     "longname": "src/impl/util.js~Util.flatten",
     "access": null,
     "description": null,
-    "lineNumber": 72,
+    "lineNumber": 76,
     "undocument": true,
     "unknown": [
       {
@@ -10523,7 +10565,7 @@
     }
   },
   {
-    "__docId__": 311,
+    "__docId__": 312,
     "kind": "method",
     "name": "bestBy",
     "memberof": "src/impl/util.js~Util",
@@ -10533,7 +10575,7 @@
     "longname": "src/impl/util.js~Util.bestBy",
     "access": null,
     "description": null,
-    "lineNumber": 80,
+    "lineNumber": 84,
     "undocument": true,
     "unknown": [
       {
@@ -10568,7 +10610,7 @@
     }
   },
   {
-    "__docId__": 312,
+    "__docId__": 313,
     "kind": "method",
     "name": "pick",
     "memberof": "src/impl/util.js~Util",
@@ -10578,7 +10620,7 @@
     "longname": "src/impl/util.js~Util.pick",
     "access": null,
     "description": null,
-    "lineNumber": 93,
+    "lineNumber": 97,
     "undocument": true,
     "unknown": [
       {
@@ -10607,7 +10649,7 @@
     }
   },
   {
-    "__docId__": 313,
+    "__docId__": 314,
     "kind": "method",
     "name": "isLeapYear",
     "memberof": "src/impl/util.js~Util",
@@ -10615,39 +10657,6 @@
     "async": false,
     "static": true,
     "longname": "src/impl/util.js~Util.isLeapYear",
-    "access": null,
-    "description": null,
-    "lineNumber": 100,
-    "undocument": true,
-    "unknown": [
-      {
-        "tagName": "@_undocument",
-        "tagValue": ""
-      }
-    ],
-    "params": [
-      {
-        "name": "year",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 314,
-    "kind": "method",
-    "name": "daysInYear",
-    "memberof": "src/impl/util.js~Util",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/impl/util.js~Util.daysInYear",
     "access": null,
     "description": null,
     "lineNumber": 104,
@@ -10675,6 +10684,39 @@
   {
     "__docId__": 315,
     "kind": "method",
+    "name": "daysInYear",
+    "memberof": "src/impl/util.js~Util",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/impl/util.js~Util.daysInYear",
+    "access": null,
+    "description": null,
+    "lineNumber": 108,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "year",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 316,
+    "kind": "method",
     "name": "daysInMonth",
     "memberof": "src/impl/util.js~Util",
     "generator": false,
@@ -10683,7 +10725,7 @@
     "longname": "src/impl/util.js~Util.daysInMonth",
     "access": null,
     "description": null,
-    "lineNumber": 108,
+    "lineNumber": 112,
     "undocument": true,
     "unknown": [
       {
@@ -10712,7 +10754,7 @@
     }
   },
   {
-    "__docId__": 316,
+    "__docId__": 317,
     "kind": "method",
     "name": "parseZoneInfo",
     "memberof": "src/impl/util.js~Util",
@@ -10722,7 +10764,7 @@
     "longname": "src/impl/util.js~Util.parseZoneInfo",
     "access": null,
     "description": null,
-    "lineNumber": 116,
+    "lineNumber": 120,
     "undocument": true,
     "unknown": [
       {
@@ -10765,7 +10807,7 @@
     }
   },
   {
-    "__docId__": 317,
+    "__docId__": 318,
     "kind": "method",
     "name": "normalizeZone",
     "memberof": "src/impl/util.js~Util",
@@ -10775,7 +10817,7 @@
     "longname": "src/impl/util.js~Util.normalizeZone",
     "access": null,
     "description": null,
-    "lineNumber": 152,
+    "lineNumber": 156,
     "undocument": true,
     "unknown": [
       {
@@ -10798,7 +10840,7 @@
     }
   },
   {
-    "__docId__": 318,
+    "__docId__": 319,
     "kind": "method",
     "name": "normalizeObject",
     "memberof": "src/impl/util.js~Util",
@@ -10808,7 +10850,7 @@
     "longname": "src/impl/util.js~Util.normalizeObject",
     "access": null,
     "description": null,
-    "lineNumber": 174,
+    "lineNumber": 178,
     "undocument": true,
     "unknown": [
       {
@@ -10846,7 +10888,7 @@
     }
   },
   {
-    "__docId__": 319,
+    "__docId__": 320,
     "kind": "method",
     "name": "timeObject",
     "memberof": "src/impl/util.js~Util",
@@ -10856,7 +10898,7 @@
     "longname": "src/impl/util.js~Util.timeObject",
     "access": null,
     "description": null,
-    "lineNumber": 190,
+    "lineNumber": 194,
     "undocument": true,
     "unknown": [
       {
@@ -10879,7 +10921,7 @@
     }
   },
   {
-    "__docId__": 320,
+    "__docId__": 321,
     "kind": "method",
     "name": "untruncateYear",
     "memberof": "src/impl/util.js~Util",
@@ -10889,7 +10931,7 @@
     "longname": "src/impl/util.js~Util.untruncateYear",
     "access": null,
     "description": null,
-    "lineNumber": 194,
+    "lineNumber": 198,
     "undocument": true,
     "unknown": [
       {
@@ -10912,7 +10954,7 @@
     }
   },
   {
-    "__docId__": 321,
+    "__docId__": 322,
     "kind": "method",
     "name": "signedOffset",
     "memberof": "src/impl/util.js~Util",
@@ -10922,7 +10964,7 @@
     "longname": "src/impl/util.js~Util.signedOffset",
     "access": null,
     "description": null,
-    "lineNumber": 201,
+    "lineNumber": 205,
     "undocument": true,
     "unknown": [
       {
@@ -10951,7 +10993,7 @@
     }
   },
   {
-    "__docId__": 322,
+    "__docId__": 323,
     "kind": "method",
     "name": "hasIntl",
     "memberof": "src/impl/util.js~Util",
@@ -10959,32 +11001,6 @@
     "async": false,
     "static": true,
     "longname": "src/impl/util.js~Util.hasIntl",
-    "access": null,
-    "description": null,
-    "lineNumber": 208,
-    "undocument": true,
-    "unknown": [
-      {
-        "tagName": "@_undocument",
-        "tagValue": ""
-      }
-    ],
-    "params": [],
-    "return": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 323,
-    "kind": "method",
-    "name": "hasFormatToParts",
-    "memberof": "src/impl/util.js~Util",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/impl/util.js~Util.hasFormatToParts",
     "access": null,
     "description": null,
     "lineNumber": 212,
@@ -11004,6 +11020,32 @@
   },
   {
     "__docId__": 324,
+    "kind": "method",
+    "name": "hasFormatToParts",
+    "memberof": "src/impl/util.js~Util",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/impl/util.js~Util.hasFormatToParts",
+    "access": null,
+    "description": null,
+    "lineNumber": 216,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 325,
     "kind": "file",
     "name": "src/info.js",
     "content": "import { DateTime } from './datetime';\nimport { Settings } from './settings';\nimport { Locale } from './impl/locale';\nimport { Util } from './impl/util';\n\n/**\n * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.\n */\nexport class Info {\n  /**\n   * Return whether the specified zone contains a DST.\n   * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.\n   * @return {boolean}\n   */\n  static hasDST(zone = Settings.defaultZone) {\n    const proto = DateTime.local()\n      .setZone(zone)\n      .set({ month: 12 });\n\n    return !zone.universal && proto.offset !== proto.set({ month: 6 }).offset;\n  }\n\n  /**\n   * Return an array of standalone month names.\n   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat\n   * @param {string} [length='long'] - the length of the month representation, such as \"numeric\", \"2-digit\", \"narrow\", \"short\", \"long\"\n   * @param {object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @param {string} [opts.numberingSystem=null] - the numbering system\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\n   * @example Info.months()[0] //=> 'January'\n   * @example Info.months('short')[0] //=> 'Jan'\n   * @example Info.months('numeric')[0] //=> '1'\n   * @example Info.months('short', { locale: 'fr-CA' } )[0] //=> 'janv.'\n   * @example Info.months('numeric', { locale: 'ar' })[0] //=> '١'\n   * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'\n   * @return {[string]}\n   */\n  static months(\n    length = 'long',\n    { locale = null, numberingSystem = null, outputCalendar = 'gregory' } = {}\n  ) {\n    return Locale.create(locale, numberingSystem, outputCalendar).months(length);\n  }\n\n  /**\n   * Return an array of format month names.\n   * Format months differ from standalone months in that they're meant to appear next to the day of the month. In some languages, that\n   * changes the string.\n   * See {@link months}\n   * @param {string} [length='long'] - the length of the month representation, such as \"numeric\", \"2-digit\", \"narrow\", \"short\", \"long\"\n   * @param {object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @param {string} [opts.numbering=null] - the numbering system\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\n   * @return {[string]}\n   */\n  static monthsFormat(\n    length = 'long',\n    { locale = null, numberingSystem = null, outputCalendar = 'gregory' } = {}\n  ) {\n    return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);\n  }\n\n  /**\n   * Return an array of standalone week names.\n   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat\n   * @param {string} [length='long'] - the length of the month representation, such as \"narrow\", \"short\", \"long\".\n   * @param {object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @param {string} [opts.numbering=null] - the numbering system\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\n   * @example Info.weekdays()[0] //=> 'Monday'\n   * @example Info.weekdays('short')[0] //=> 'Mon'\n   * @example Info.weekdays('short', 'fr-CA')[0] //=> 'lun.'\n   * @example Info.weekdays('short', 'ar')[0] //=> 'الاثنين'\n   * @return {[string]}\n   */\n  static weekdays(length = 'long', { locale = null, numberingSystem = null } = {}) {\n    return Locale.create(locale, numberingSystem, null).weekdays(length);\n  }\n\n  /**\n   * Return an array of format week names.\n   * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that\n   * changes the string.\n   * See {@link weekdays}\n   * @param {string} [length='long'] - the length of the month representation, such as \"narrow\", \"short\", \"long\".\n   * @param {object} opts - options\n   * @param {string} [opts.locale=null] - the locale code\n   * @param {string} [opts.numbering=null] - the numbering system\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\n   * @return {[string]}\n   */\n  static weekdaysFormat(length = 'long', { locale = null, numberingSystem = null } = {}) {\n    return Locale.create(locale, numberingSystem, null).weekdays(length, true);\n  }\n\n  /**\n   * Return an array of meridiems.\n   * @param {object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @example Info.meridiems() //=> [ 'AM', 'PM' ]\n   * @example Info.meridiems('de') //=> [ 'vorm.', 'nachm.' ]\n   * @return {[string]}\n   */\n  static meridiems({ locale = null } = {}) {\n    return Locale.create(locale).meridiems();\n  }\n\n  /**\n   * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.\n   * @param {string} [length='short'] - the length of the era representation, such as \"short\" or \"long\".\n   * @param {object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @example Info.eras() //=> [ 'BC', 'AD' ]\n   * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]\n   * @example Info.eras('long', 'fr') //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]\n   * @return {[string]}\n   */\n  static eras(length = 'short', { locale = null } = {}) {\n    return Locale.create(locale, null, 'gregory').eras(length);\n  }\n\n  /**\n   * Return the set of available features in this environment.\n   * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.\n   * Keys:\n   * * `timezones`: whether this environment supports IANA timezones\n   * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing\n   * * `intl`: whether this environment supports general internationalization\n   * @example Info.feature() //=> { intl: true, intlTokens: false, timezones: true }\n   * @return {object}\n   */\n  static features() {\n    let intl = false,\n      intlTokens = false,\n      zones = false;\n\n    if (Util.hasIntl()) {\n      intl = true;\n      intlTokens = Util.hasFormatToParts();\n\n      try {\n        zones =\n          new Intl.DateTimeFormat('en', { timeZone: 'America/New_York' }).resolvedOptions()\n            .timeZone === 'America/New_York';\n      } catch (e) {\n        zones = false;\n      }\n    }\n\n    return { intl, intlTokens, zones };\n  }\n}\n",
@@ -11014,7 +11056,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 325,
+    "__docId__": 326,
     "kind": "class",
     "name": "Info",
     "memberof": "src/info.js",
@@ -11029,7 +11071,7 @@
     "interface": false
   },
   {
-    "__docId__": 326,
+    "__docId__": 327,
     "kind": "method",
     "name": "hasDST",
     "memberof": "src/info.js~Info",
@@ -11065,7 +11107,7 @@
     }
   },
   {
-    "__docId__": 327,
+    "__docId__": 328,
     "kind": "method",
     "name": "months",
     "memberof": "src/info.js~Info",
@@ -11155,7 +11197,7 @@
     }
   },
   {
-    "__docId__": 328,
+    "__docId__": 329,
     "kind": "method",
     "name": "monthsFormat",
     "memberof": "src/info.js~Info",
@@ -11234,7 +11276,7 @@
     }
   },
   {
-    "__docId__": 329,
+    "__docId__": 330,
     "kind": "method",
     "name": "weekdays",
     "memberof": "src/info.js~Info",
@@ -11322,7 +11364,7 @@
     }
   },
   {
-    "__docId__": 330,
+    "__docId__": 331,
     "kind": "method",
     "name": "weekdaysFormat",
     "memberof": "src/info.js~Info",
@@ -11403,7 +11445,7 @@
     }
   },
   {
-    "__docId__": 331,
+    "__docId__": 332,
     "kind": "method",
     "name": "meridiems",
     "memberof": "src/info.js~Info",
@@ -11450,7 +11492,7 @@
     }
   },
   {
-    "__docId__": 332,
+    "__docId__": 333,
     "kind": "method",
     "name": "eras",
     "memberof": "src/info.js~Info",
@@ -11510,7 +11552,7 @@
     }
   },
   {
-    "__docId__": 333,
+    "__docId__": 334,
     "kind": "method",
     "name": "features",
     "memberof": "src/info.js~Info",
@@ -11535,7 +11577,7 @@
     }
   },
   {
-    "__docId__": 334,
+    "__docId__": 335,
     "kind": "file",
     "name": "src/interval.js",
     "content": "import { Util } from './impl/util';\nimport { DateTime } from './datetime';\nimport { Duration } from './duration';\nimport { Settings } from './settings';\nimport { InvalidArgumentError, InvalidIntervalError } from './errors';\n\nconst INVALID = 'Invalid Interval';\n\nfunction validateStartEnd(start, end) {\n  return !!start && !!end && start.isValid && end.isValid && start <= end;\n}\n\n/**\n * An Interval object represents a half-open interval of time, where each endpoint is a {@link DateTime}. Conceptually, it's a container for those two endpoints, accompanied by methods for creating, parsing, interrogating, comparing, transforming, and formatting them.\n *\n * Here is a brief overview of the most commonly used methods and getters in Interval:\n *\n * * **Creation** To create an Interval, use {@link fromDateTimes}, {@link after}, {@link before}, or {@link fromISO}.\n * * **Accessors** Use {@link start} and {@link end} to get the start and end.\n * * **Interogation** To analyze the Interval, use {@link count}, {@link length}, {@link hasSame}, {@link contains}, {@link isAfter}, or {@link isBefore}.\n * * **Transformation** To create other Intervals out of this one, use {@link set}, {@link splitAt}, {@link splitBy}, {@link divideEqually}, {@link merge}, {@link xor}, {@link union}, {@link intersection}, or {@link difference}.\n * * **Comparison** To compare this Interval to another one, use {@link equals}, {@link overlaps}, {@link abutsStart}, {@link abutsEnd}, {@link engulfs}\n * * **Output*** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toFormat}, and {@link toDuration}.\n */\nexport class Interval {\n  /**\n   * @private\n   */\n  constructor(config) {\n    Object.defineProperty(this, 's', { value: config.start, enumerable: true });\n    Object.defineProperty(this, 'e', { value: config.end, enumerable: true });\n    Object.defineProperty(this, 'invalidReason', {\n      value: config.invalidReason || null,\n      enumerable: false\n    });\n  }\n\n  /**\n   * Create an invalid Interval.\n   * @return {Interval}\n   */\n  static invalid(reason) {\n    if (!reason) {\n      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');\n    }\n    if (Settings.throwOnInvalid) {\n      throw new InvalidIntervalError(reason);\n    } else {\n      return new Interval({ invalidReason: reason });\n    }\n  }\n\n  /**\n   * Create an Interval from a start DateTime and an end DateTime. Inclusive of the start but not the end.\n   * @param {DateTime|object|Date} start\n   * @param {DateTime|object|Date} end\n   * @return {Interval}\n   */\n  static fromDateTimes(start, end) {\n    const builtStart = Util.friendlyDateTime(start),\n      builtEnd = Util.friendlyDateTime(end);\n\n    return new Interval({\n      start: builtStart,\n      end: builtEnd,\n      invalidReason: validateStartEnd(builtStart, builtEnd) ? null : 'invalid endpoints'\n    });\n  }\n\n  /**\n   * Create an Interval from a start DateTime and a Duration to extend to.\n   * @param {DateTime|object|Date} start\n   * @param {Duration|number|object} duration - the length of the Interval.\n   * @return {Interval}\n   */\n  static after(start, duration) {\n    const dur = Util.friendlyDuration(duration),\n      dt = Util.friendlyDateTime(start);\n    return Interval.fromDateTimes(dt, dt.plus(dur));\n  }\n\n  /**\n   * Create an Interval from an end DateTime and a Duration to extend backwards to.\n   * @param {DateTime|object|Date} end\n   * @param {Duration|number|object} duration - the length of the Interval.\n   * @return {Interval}\n   */\n  static before(end, duration) {\n    const dur = Util.friendlyDuration(duration),\n      dt = Util.friendlyDateTime(end);\n    return Interval.fromDateTimes(dt.minus(dur), dt);\n  }\n\n  /**\n   * Create an Interval from an ISO 8601 string\n   * @param {string} string - the ISO string to parse\n   * @param {object} opts - options to pass {@see DateTime.fromISO}\n   * @return {Interval}\n   */\n  static fromISO(string, opts) {\n    if (string) {\n      const [s, e] = string.split(/\\//);\n      if (s && e) {\n        return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));\n      }\n    }\n    return Interval.invalid('invalid ISO format');\n  }\n\n  /**\n   * Returns the start of the Interval\n   * @return {DateTime}\n   */\n  get start() {\n    return this.isValid ? this.s : null;\n  }\n\n  /**\n   * Returns the end of the Interval\n   * @return {DateTime}\n   */\n  get end() {\n    return this.isValid ? this.e : null;\n  }\n\n  /**\n   * Returns whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.\n   * @return {boolean}\n   */\n  get isValid() {\n    return this.invalidReason === null;\n  }\n\n  /**\n   * Returns an explanation of why this Interval became invalid, or null if the Interval is valid\n   * @return {string}\n   */\n  get invalidReason() {\n    return this.invalidReason;\n  }\n\n  /**\n   * Returns the length of the Interval in the specified unit.\n   * @param {string} unit - the unit (such as 'hours' or 'days') to return the length in.\n   * @return {number}\n   */\n  length(unit = 'milliseconds') {\n    return this.isValid ? this.toDuration(...[unit]).get(unit) : NaN;\n  }\n\n  /**\n   * Returns the count of minutes, hours, days, months, or years included in the Interval, even in part.\n   * Unlike {@link length} this counts sections of the calendar, not periods of time, e.g. specifying 'day'\n   * asks 'what dates are included in this interval?', not 'how many days long is this interval?'\n   * @param {string} [unit='milliseconds'] - the unit of time to count.\n   * @return {number}\n   */\n  count(unit = 'milliseconds') {\n    if (!this.isValid) return NaN;\n    const start = this.start.startOf(unit),\n      end = this.end.startOf(unit);\n    return Math.floor(end.diff(start, unit).get(unit)) + 1;\n  }\n\n  /**\n   * Returns whether this Interval's start and end are both in the same unit of time\n   * @param {string} unit - the unit of time to check sameness on\n   * @return {boolean}\n   */\n  hasSame(unit) {\n    return this.isValid ? this.e.minus(1).hasSame(this.s, unit) : false;\n  }\n\n  /**\n   * Return whether this Interval has the same start and end DateTimes.\n   * @return {boolean}\n   */\n  isEmpty() {\n    return this.s.valueOf() === this.e.valueOf();\n  }\n\n  /**\n   * Return this Interval's start is after the specified DateTime.\n   * @param {DateTime} dateTime\n   * @return {boolean}\n   */\n  isAfter(dateTime) {\n    if (!this.isValid) return false;\n    return this.s > dateTime;\n  }\n\n  /**\n   * Return this Interval's end is before the specified DateTime.\n   * @param {Datetime} dateTime\n   * @return {boolean}\n   */\n  isBefore(dateTime) {\n    if (!this.isValid) return false;\n    return this.e.plus(1) < dateTime;\n  }\n\n  /**\n   * Return this Interval contains the specified DateTime.\n   * @param {DateTime} dateTime\n   * @return {boolean}\n   */\n  contains(dateTime) {\n    if (!this.isValid) return false;\n    return this.s <= dateTime && this.e > dateTime;\n  }\n\n  /**\n   * \"Sets\" the start and/or end dates. Returns a newly-constructed Interval.\n   * @param {object} values - the values to set\n   * @param {DateTime} values.start - the starting DateTime\n   * @param {DateTime} values.end - the ending DateTime\n   * @return {Interval}\n   */\n  set({ start, end } = {}) {\n    if (!this.isValid) return this;\n    return Interval.fromDateTimes(start || this.s, end || this.e);\n  }\n\n  /**\n   * Split this Interval at each of the specified DateTimes\n   * @param {...DateTimes} dateTimes - the unit of time to count.\n   * @return {[Interval]}\n   */\n  splitAt(...dateTimes) {\n    if (!this.isValid) return [];\n    const sorted = dateTimes.map(Util.friendlyDateTime).sort(),\n      results = [];\n    let { s } = this,\n      i = 0;\n\n    while (s < this.e) {\n      const added = sorted[i] || this.e,\n        next = +added > +this.e ? this.e : added;\n      results.push(Interval.fromDateTimes(s, next));\n      s = next;\n      i += 1;\n    }\n\n    return results;\n  }\n\n  /**\n   * Split this Interval into smaller Intervals, each of the specified length.\n   * Left over time is grouped into a smaller interval\n   * @param {Duration|number|object} duration - The length of each resulting interval.\n   * @return {[Interval]}\n   */\n  splitBy(duration) {\n    if (!this.isValid) return [];\n    const dur = Util.friendlyDuration(duration),\n      results = [];\n    let { s } = this,\n      added,\n      next;\n\n    while (s < this.e) {\n      added = s.plus(dur);\n      next = +added > +this.e ? this.e : added;\n      results.push(Interval.fromDateTimes(s, next));\n      s = next;\n    }\n\n    return results;\n  }\n\n  /**\n   * Split this Interval into the specified number of smaller intervals.\n   * @param {number} numberOfParts - The number of Intervals to divide the Interval into.\n   * @return {[Interval]}\n   */\n  divideEqually(numberOfParts) {\n    if (!this.isValid) return [];\n    return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);\n  }\n\n  /**\n   * Return whether this Interval overlaps with the specified Interval\n   * @param {Interval} other\n   * @return {boolean}\n   */\n  overlaps(other) {\n    return this.e > other.s && this.s < other.e;\n  }\n\n  /**\n   * Return whether this Interval's end is adjacent to the specified Interval's start.\n   * @param {Interval} other\n   * @return {boolean}\n   */\n  abutsStart(other) {\n    if (!this.isValid) return false;\n    return +this.e === +other.s;\n  }\n\n  /**\n   * Return whether this Interval's start is adjacent to the specified Interval's end.\n   * @param {Interval} other\n   * @return {boolean}\n   */\n  abutsEnd(other) {\n    if (!this.isValid) return false;\n    return +other.e === +this.s;\n  }\n\n  /**\n   * Return whether this Interval engulfs the start and end of the specified Interval.\n   * @param {Interval} other\n   * @return {boolean}\n   */\n  engulfs(other) {\n    if (!this.isValid) return false;\n    return this.s <= other.s && this.e >= other.e;\n  }\n\n  /**\n   * Return whether this Interval has the same start and end as the specified Interval.\n   * @param {Interval} other\n   * @return {boolean}\n   */\n  equals(other) {\n    return this.s.equals(other.s) && this.e.equals(other.e);\n  }\n\n  /**\n   * Return an Interval representing the intersection of this Interval and the specified Interval.\n   * Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.\n   * @param {Interval} other\n   * @return {Interval}\n   */\n  intersection(other) {\n    if (!this.isValid) return this;\n    const s = this.s > other.s ? this.s : other.s,\n      e = this.e < other.e ? this.e : other.e;\n\n    if (s > e) {\n      return null;\n    } else {\n      return Interval.fromDateTimes(s, e);\n    }\n  }\n\n  /**\n   * Return an Interval representing the union of this Interval and the specified Interval.\n   * Specifically, the resulting Interval has the minimum start time and the maximum end time of the two Intervals.\n   * @param {Interval} other\n   * @return {Interval}\n   */\n  union(other) {\n    if (!this.isValid) return this;\n    const s = this.s < other.s ? this.s : other.s,\n      e = this.e > other.e ? this.e : other.e;\n    return Interval.fromDateTimes(s, e);\n  }\n\n  /**\n   * Merge an array of Intervals into a equivalent minimal set of Intervals.\n   * Combines overlapping and adjacent Intervals.\n   * @param {[Interval]} intervals\n   * @return {[Interval]}\n   */\n  static merge(intervals) {\n    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(([sofar, current], item) => {\n      if (!current) {\n        return [sofar, item];\n      } else if (current.overlaps(item) || current.abutsStart(item)) {\n        return [sofar, current.union(item)];\n      } else {\n        return [sofar.concat([current]), item];\n      }\n    },\n    [[], null]);\n    if (final) {\n      found.push(final);\n    }\n    return found;\n  }\n\n  /**\n   * Return an array of Intervals representing the spans of time that only appear in one of the specified Intervals.\n   * @param {[Interval]} intervals\n   * @return {[Interval]}\n   */\n  static xor(intervals) {\n    let start = null,\n      currentCount = 0;\n    const results = [],\n      ends = intervals.map(i => [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }]),\n      arr = Util.flatten(ends).sort((a, b) => a.time - b.time);\n\n    for (const i of arr) {\n      currentCount += i.type === 's' ? 1 : -1;\n\n      if (currentCount === 1) {\n        start = i.time;\n      } else {\n        if (start && +start !== +i.time) {\n          results.push(Interval.fromDateTimes(start, i.time));\n        }\n\n        start = null;\n      }\n    }\n\n    return Interval.merge(results);\n  }\n\n  /**\n   * Return an Interval representing the span of time in this Interval that doesn't overlap with any of the specified Intervals.\n   * @param {...Interval} intervals\n   * @return {Interval}\n   */\n  difference(...intervals) {\n    return Interval.xor([this].concat(intervals))\n      .map(i => this.intersection(i))\n      .filter(i => i && !i.isEmpty());\n  }\n\n  /**\n   * Returns a string representation of this Interval appropriate for debugging.\n   * @return {string}\n   */\n  toString() {\n    if (!this.isValid) return INVALID;\n    return `[${this.s.toISO()} – ${this.e.toISO()})`;\n  }\n\n  /**\n   * Returns an ISO 8601-compliant string representation of this Interval.\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals\n   * @param {object} opts - The same options as {@link DateTime.toISO}\n   * @return {string}\n   */\n  toISO(opts) {\n    if (!this.isValid) return INVALID;\n    return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;\n  }\n\n  /**\n   * Returns a string representation of this Interval formatted according to the specified format string.\n   * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime.toFormat} for details.\n   * @param {object} opts - options\n   * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations\n   * @return {string}\n   */\n  toFormat(dateFormat, { separator = ' – ' } = {}) {\n    if (!this.isValid) return INVALID;\n    return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;\n  }\n\n  /**\n   * Return a Duration representing the time spanned by this interval.\n   * @param {string|string[]} [unit=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.\n   * @param {Object} opts - options that affect the creation of the Duration\n   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use\n   * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { milliseconds: 88489257 }\n   * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { days: 1.0241812152777778 }\n   * @example Interval.fromDateTimes(dt1, dt2).toDuration(['hours', 'minutes']).toObject() //=> { hours: 24, minutes: 34.82095 }\n   * @example Interval.fromDateTimes(dt1, dt2).toDuration(['hours', 'minutes', 'seconds']).toObject() //=> { hours: 24, minutes: 34, seconds: 49.257 }\n   * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }\n   * @return {Duration}\n   */\n  toDuration(unit, opts) {\n    if (!this.isValid) {\n      return Duration.invalid(this.invalidReason);\n    }\n    return this.e.diff(this.s, unit, opts);\n  }\n}\n",
@@ -11546,7 +11588,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 335,
+    "__docId__": 336,
     "kind": "variable",
     "name": "INVALID",
     "memberof": "src/interval.js",
@@ -11572,7 +11614,7 @@
     }
   },
   {
-    "__docId__": 336,
+    "__docId__": 337,
     "kind": "function",
     "name": "validateStartEnd",
     "memberof": "src/interval.js",
@@ -11614,7 +11656,7 @@
     }
   },
   {
-    "__docId__": 337,
+    "__docId__": 338,
     "kind": "class",
     "name": "Interval",
     "memberof": "src/interval.js",
@@ -11629,7 +11671,7 @@
     "interface": false
   },
   {
-    "__docId__": 338,
+    "__docId__": 339,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/interval.js~Interval",
@@ -11650,7 +11692,7 @@
     ]
   },
   {
-    "__docId__": 339,
+    "__docId__": 340,
     "kind": "method",
     "name": "invalid",
     "memberof": "src/interval.js~Interval",
@@ -11679,7 +11721,7 @@
     }
   },
   {
-    "__docId__": 340,
+    "__docId__": 341,
     "kind": "method",
     "name": "fromDateTimes",
     "memberof": "src/interval.js~Interval",
@@ -11726,7 +11768,7 @@
     }
   },
   {
-    "__docId__": 341,
+    "__docId__": 342,
     "kind": "method",
     "name": "after",
     "memberof": "src/interval.js~Interval",
@@ -11773,7 +11815,7 @@
     }
   },
   {
-    "__docId__": 342,
+    "__docId__": 343,
     "kind": "method",
     "name": "before",
     "memberof": "src/interval.js~Interval",
@@ -11820,7 +11862,7 @@
     }
   },
   {
-    "__docId__": 343,
+    "__docId__": 344,
     "kind": "method",
     "name": "fromISO",
     "memberof": "src/interval.js~Interval",
@@ -11863,7 +11905,7 @@
     }
   },
   {
-    "__docId__": 344,
+    "__docId__": 345,
     "kind": "get",
     "name": "start",
     "memberof": "src/interval.js~Interval",
@@ -11889,7 +11931,7 @@
     }
   },
   {
-    "__docId__": 345,
+    "__docId__": 346,
     "kind": "get",
     "name": "end",
     "memberof": "src/interval.js~Interval",
@@ -11915,7 +11957,7 @@
     }
   },
   {
-    "__docId__": 346,
+    "__docId__": 347,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/interval.js~Interval",
@@ -11941,7 +11983,7 @@
     }
   },
   {
-    "__docId__": 347,
+    "__docId__": 348,
     "kind": "get",
     "name": "invalidReason",
     "memberof": "src/interval.js~Interval",
@@ -11967,7 +12009,7 @@
     }
   },
   {
-    "__docId__": 348,
+    "__docId__": 349,
     "kind": "method",
     "name": "length",
     "memberof": "src/interval.js~Interval",
@@ -12000,7 +12042,7 @@
     }
   },
   {
-    "__docId__": 349,
+    "__docId__": 350,
     "kind": "method",
     "name": "count",
     "memberof": "src/interval.js~Interval",
@@ -12035,7 +12077,7 @@
     }
   },
   {
-    "__docId__": 350,
+    "__docId__": 351,
     "kind": "method",
     "name": "hasSame",
     "memberof": "src/interval.js~Interval",
@@ -12068,7 +12110,7 @@
     }
   },
   {
-    "__docId__": 351,
+    "__docId__": 352,
     "kind": "method",
     "name": "isEmpty",
     "memberof": "src/interval.js~Interval",
@@ -12090,7 +12132,7 @@
     }
   },
   {
-    "__docId__": 352,
+    "__docId__": 353,
     "kind": "method",
     "name": "isAfter",
     "memberof": "src/interval.js~Interval",
@@ -12123,7 +12165,7 @@
     }
   },
   {
-    "__docId__": 353,
+    "__docId__": 354,
     "kind": "method",
     "name": "isBefore",
     "memberof": "src/interval.js~Interval",
@@ -12156,7 +12198,7 @@
     }
   },
   {
-    "__docId__": 354,
+    "__docId__": 355,
     "kind": "method",
     "name": "contains",
     "memberof": "src/interval.js~Interval",
@@ -12189,7 +12231,7 @@
     }
   },
   {
-    "__docId__": 355,
+    "__docId__": 356,
     "kind": "method",
     "name": "set",
     "memberof": "src/interval.js~Interval",
@@ -12242,7 +12284,7 @@
     }
   },
   {
-    "__docId__": 356,
+    "__docId__": 357,
     "kind": "method",
     "name": "splitAt",
     "memberof": "src/interval.js~Interval",
@@ -12275,7 +12317,7 @@
     }
   },
   {
-    "__docId__": 357,
+    "__docId__": 358,
     "kind": "method",
     "name": "splitBy",
     "memberof": "src/interval.js~Interval",
@@ -12310,7 +12352,7 @@
     }
   },
   {
-    "__docId__": 358,
+    "__docId__": 359,
     "kind": "method",
     "name": "divideEqually",
     "memberof": "src/interval.js~Interval",
@@ -12343,7 +12385,7 @@
     }
   },
   {
-    "__docId__": 359,
+    "__docId__": 360,
     "kind": "method",
     "name": "overlaps",
     "memberof": "src/interval.js~Interval",
@@ -12376,7 +12418,7 @@
     }
   },
   {
-    "__docId__": 360,
+    "__docId__": 361,
     "kind": "method",
     "name": "abutsStart",
     "memberof": "src/interval.js~Interval",
@@ -12409,7 +12451,7 @@
     }
   },
   {
-    "__docId__": 361,
+    "__docId__": 362,
     "kind": "method",
     "name": "abutsEnd",
     "memberof": "src/interval.js~Interval",
@@ -12442,7 +12484,7 @@
     }
   },
   {
-    "__docId__": 362,
+    "__docId__": 363,
     "kind": "method",
     "name": "engulfs",
     "memberof": "src/interval.js~Interval",
@@ -12475,7 +12517,7 @@
     }
   },
   {
-    "__docId__": 363,
+    "__docId__": 364,
     "kind": "method",
     "name": "equals",
     "memberof": "src/interval.js~Interval",
@@ -12508,7 +12550,7 @@
     }
   },
   {
-    "__docId__": 364,
+    "__docId__": 365,
     "kind": "method",
     "name": "intersection",
     "memberof": "src/interval.js~Interval",
@@ -12541,7 +12583,7 @@
     }
   },
   {
-    "__docId__": 365,
+    "__docId__": 366,
     "kind": "method",
     "name": "union",
     "memberof": "src/interval.js~Interval",
@@ -12574,7 +12616,7 @@
     }
   },
   {
-    "__docId__": 366,
+    "__docId__": 367,
     "kind": "method",
     "name": "merge",
     "memberof": "src/interval.js~Interval",
@@ -12607,7 +12649,7 @@
     }
   },
   {
-    "__docId__": 367,
+    "__docId__": 368,
     "kind": "method",
     "name": "xor",
     "memberof": "src/interval.js~Interval",
@@ -12640,7 +12682,7 @@
     }
   },
   {
-    "__docId__": 368,
+    "__docId__": 369,
     "kind": "method",
     "name": "difference",
     "memberof": "src/interval.js~Interval",
@@ -12673,7 +12715,7 @@
     }
   },
   {
-    "__docId__": 369,
+    "__docId__": 370,
     "kind": "method",
     "name": "toString",
     "memberof": "src/interval.js~Interval",
@@ -12695,7 +12737,7 @@
     }
   },
   {
-    "__docId__": 370,
+    "__docId__": 371,
     "kind": "method",
     "name": "toISO",
     "memberof": "src/interval.js~Interval",
@@ -12731,7 +12773,7 @@
     }
   },
   {
-    "__docId__": 371,
+    "__docId__": 372,
     "kind": "method",
     "name": "toFormat",
     "memberof": "src/interval.js~Interval",
@@ -12786,7 +12828,7 @@
     }
   },
   {
-    "__docId__": 372,
+    "__docId__": 373,
     "kind": "method",
     "name": "toDuration",
     "memberof": "src/interval.js~Interval",
@@ -12851,7 +12893,7 @@
     }
   },
   {
-    "__docId__": 373,
+    "__docId__": 374,
     "kind": "file",
     "name": "src/luxon.js",
     "content": "export { DateTime } from './datetime';\nexport { Duration } from './duration';\nexport { Interval } from './interval';\nexport { Info } from './info';\nexport { Zone } from './zone';\nexport { Settings } from './settings';\n",
@@ -12862,10 +12904,10 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 374,
+    "__docId__": 375,
     "kind": "file",
     "name": "src/luxonFilled.js",
-    "content": "import 'core-js/es6/symbol';\nimport 'core-js/es6/object';\nimport 'core-js/fn/symbol/iterator';\nimport 'core-js/fn/number/is-nan';\nimport 'core-js/es6/array';\nimport 'core-js/fn/string/virtual/starts-with';\nimport 'core-js/fn/string/virtual/pad-start';\nimport 'core-js/fn/math/trunc';\n\nexport * from './luxon';\n",
+    "content": "import 'core-js/es6/symbol';\nimport 'core-js/es6/object';\nimport 'core-js/fn/symbol/iterator';\nimport 'core-js/fn/number/is-nan';\nimport 'core-js/es6/array';\nimport 'core-js/fn/string/virtual/starts-with';\nimport 'core-js/fn/math/trunc';\n\nexport * from './luxon';\n",
     "static": true,
     "longname": "src/luxonFilled.js",
     "access": null,
@@ -12873,7 +12915,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 375,
+    "__docId__": 376,
     "kind": "file",
     "name": "src/settings.js",
     "content": "import { LocalZone } from './zones/localZone';\nimport { Util } from './impl/util';\nimport { Locale } from './impl/locale';\n\nlet now = () => new Date().valueOf(),\n  defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues\n  defaultLocale = null,\n  defaultNumberingSystem = null,\n  defaultOutputCalendar = null,\n  throwOnInvalid = false;\n\n/**\n * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.\n */\nexport class Settings {\n  /**\n   * Get the callback for returning the current timestamp.\n   * @type {function}\n   */\n  static get now() {\n    return now;\n  }\n\n  /**\n   * Set the callback for returning the current timestamp.\n   * @type {function}\n   */\n  static set now(n) {\n    now = n;\n  }\n\n  /**\n   * Get the default time zone to create DateTimes in.\n   * @type {string}\n   */\n  static get defaultZoneName() {\n    return (defaultZone || LocalZone.instance).name;\n  }\n\n  /**\n   * Set the default time zone to create DateTimes in. Does not affect existing instances.\n   * @type {string}\n   */\n  static set defaultZoneName(z) {\n    defaultZone = Util.normalizeZone(z);\n  }\n\n  /**\n   * Get the default time zone object to create DateTimes in. Does not affect existing instances.\n   * @type {Zone}\n   */\n  static get defaultZone() {\n    return defaultZone || LocalZone.instance;\n  }\n\n  /**\n   * Get the default locale to create DateTimes with. Does not affect existing instances.\n   * @type {string}\n   */\n  static get defaultLocale() {\n    return defaultLocale;\n  }\n\n  /**\n   * Set the default locale to create DateTimes with. Does not affect existing instances.\n   * @type {string}\n   */\n  static set defaultLocale(locale) {\n    defaultLocale = locale;\n  }\n\n  /**\n   * Get the default numbering system to create DateTimes with. Does not affect existing instances.\n   * @type {string}\n   */\n  static get defaultNumberingSystem() {\n    return defaultNumberingSystem;\n  }\n\n  /**\n   * Set the default numbering system to create DateTimes with. Does not affect existing instances.\n   * @type {string}\n   */\n  static set defaultNumberingSystem(numberingSystem) {\n    defaultNumberingSystem = numberingSystem;\n  }\n\n  /**\n   * Get the default output calendar to create DateTimes with. Does not affect existing instances.\n   * @type {string}\n   */\n  static get defaultOutputCalendar() {\n    return defaultOutputCalendar;\n  }\n\n  /**\n   * Set the default output calendar to create DateTimes with. Does not affect existing instances.\n   * @type {string}\n   */\n  static set defaultOutputCalendar(outputCalendar) {\n    defaultOutputCalendar = outputCalendar;\n  }\n\n  /**\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   */\n  static get throwOnInvalid() {\n    return throwOnInvalid;\n  }\n\n  /**\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   */\n  static set throwOnInvalid(t) {\n    throwOnInvalid = t;\n  }\n\n  /**\n   * Reset Luxon's global caches. Should only be necessary in testing scenarios.\n   * @return {void}\n   */\n  static resetCaches() {\n    Locale.resetCache();\n  }\n}\n",
@@ -12884,7 +12926,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 376,
+    "__docId__": 377,
     "kind": "function",
     "name": "now",
     "memberof": "src/settings.js",
@@ -12908,7 +12950,7 @@
     "params": []
   },
   {
-    "__docId__": 377,
+    "__docId__": 378,
     "kind": "class",
     "name": "Settings",
     "memberof": "src/settings.js",
@@ -12923,7 +12965,7 @@
     "interface": false
   },
   {
-    "__docId__": 378,
+    "__docId__": 379,
     "kind": "get",
     "name": "now",
     "memberof": "src/settings.js~Settings",
@@ -12944,7 +12986,7 @@
     }
   },
   {
-    "__docId__": 379,
+    "__docId__": 380,
     "kind": "set",
     "name": "now",
     "memberof": "src/settings.js~Settings",
@@ -12965,7 +13007,7 @@
     }
   },
   {
-    "__docId__": 380,
+    "__docId__": 381,
     "kind": "get",
     "name": "defaultZoneName",
     "memberof": "src/settings.js~Settings",
@@ -12986,7 +13028,7 @@
     }
   },
   {
-    "__docId__": 381,
+    "__docId__": 382,
     "kind": "set",
     "name": "defaultZoneName",
     "memberof": "src/settings.js~Settings",
@@ -13007,7 +13049,7 @@
     }
   },
   {
-    "__docId__": 382,
+    "__docId__": 383,
     "kind": "get",
     "name": "defaultZone",
     "memberof": "src/settings.js~Settings",
@@ -13028,7 +13070,7 @@
     }
   },
   {
-    "__docId__": 383,
+    "__docId__": 384,
     "kind": "get",
     "name": "defaultLocale",
     "memberof": "src/settings.js~Settings",
@@ -13049,7 +13091,7 @@
     }
   },
   {
-    "__docId__": 384,
+    "__docId__": 385,
     "kind": "set",
     "name": "defaultLocale",
     "memberof": "src/settings.js~Settings",
@@ -13070,7 +13112,7 @@
     }
   },
   {
-    "__docId__": 385,
+    "__docId__": 386,
     "kind": "get",
     "name": "defaultNumberingSystem",
     "memberof": "src/settings.js~Settings",
@@ -13091,7 +13133,7 @@
     }
   },
   {
-    "__docId__": 386,
+    "__docId__": 387,
     "kind": "set",
     "name": "defaultNumberingSystem",
     "memberof": "src/settings.js~Settings",
@@ -13112,7 +13154,7 @@
     }
   },
   {
-    "__docId__": 387,
+    "__docId__": 388,
     "kind": "get",
     "name": "defaultOutputCalendar",
     "memberof": "src/settings.js~Settings",
@@ -13133,7 +13175,7 @@
     }
   },
   {
-    "__docId__": 388,
+    "__docId__": 389,
     "kind": "set",
     "name": "defaultOutputCalendar",
     "memberof": "src/settings.js~Settings",
@@ -13154,7 +13196,7 @@
     }
   },
   {
-    "__docId__": 389,
+    "__docId__": 390,
     "kind": "get",
     "name": "throwOnInvalid",
     "memberof": "src/settings.js~Settings",
@@ -13175,7 +13217,7 @@
     }
   },
   {
-    "__docId__": 390,
+    "__docId__": 391,
     "kind": "set",
     "name": "throwOnInvalid",
     "memberof": "src/settings.js~Settings",
@@ -13196,7 +13238,7 @@
     }
   },
   {
-    "__docId__": 391,
+    "__docId__": 392,
     "kind": "method",
     "name": "resetCaches",
     "memberof": "src/settings.js~Settings",
@@ -13218,7 +13260,7 @@
     }
   },
   {
-    "__docId__": 392,
+    "__docId__": 393,
     "kind": "file",
     "name": "src/zone.js",
     "content": "/* eslint no-unused-vars: \"off\" */\nimport { ZoneIsAbstractError } from './errors';\n\n/**\n * @interface\n*/\nexport class Zone {\n  /**\n   * The type of zone\n   * @abstract\n   * @return {string}\n   */\n  get type() {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * The name of this zone.\n   * @abstract\n   * @return {string}\n   */\n  get name() {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Returns whether the offset is known to be fixed for the whole year.\n   * @abstract\n   * @return {boolean}\n   */\n  get universal() {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Returns the offset's common name (such as EST) at the specified timestamp\n   * @abstract\n   * @param {number} ts - Epoch milliseconds for which to get the name\n   * @param {Object} opts - Options to affect the format\n   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.\n   * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en\n   * @return {string}\n   */\n  static offsetName(ts, opts) {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Return the offset in minutes for this zone at the specified timestamp.\n   * @abstract\n   * @param {number} ts - Epoch milliseconds for which to compute the offset\n   * @return {number}\n   */\n  offset(ts) {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Return whether this Zone is equal to another zoner\n   * @abstract\n   * @param {Zone} otherZone - the zone to compare\n   * @return {boolean}\n   */\n  equals(otherZone) {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Return whether this Zone is valid.\n   * @abstract\n   * @return {boolean}\n   */\n  get isValid() {\n    throw new ZoneIsAbstractError();\n  }\n}\n",
@@ -13229,7 +13271,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 393,
+    "__docId__": 394,
     "kind": "class",
     "name": "Zone",
     "memberof": "src/zone.js",
@@ -13244,7 +13286,7 @@
     "interface": true
   },
   {
-    "__docId__": 394,
+    "__docId__": 395,
     "kind": "get",
     "name": "type",
     "memberof": "src/zone.js~Zone",
@@ -13266,7 +13308,7 @@
     "abstract": true
   },
   {
-    "__docId__": 395,
+    "__docId__": 396,
     "kind": "get",
     "name": "name",
     "memberof": "src/zone.js~Zone",
@@ -13288,7 +13330,7 @@
     "abstract": true
   },
   {
-    "__docId__": 396,
+    "__docId__": 397,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zone.js~Zone",
@@ -13310,7 +13352,7 @@
     "abstract": true
   },
   {
-    "__docId__": 397,
+    "__docId__": 398,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zone.js~Zone",
@@ -13374,7 +13416,7 @@
     "abstract": true
   },
   {
-    "__docId__": 398,
+    "__docId__": 399,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zone.js~Zone",
@@ -13408,7 +13450,7 @@
     "abstract": true
   },
   {
-    "__docId__": 399,
+    "__docId__": 400,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zone.js~Zone",
@@ -13442,7 +13484,7 @@
     "abstract": true
   },
   {
-    "__docId__": 400,
+    "__docId__": 401,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zone.js~Zone",
@@ -13464,7 +13506,7 @@
     "abstract": true
   },
   {
-    "__docId__": 401,
+    "__docId__": 402,
     "kind": "file",
     "name": "src/zones/IANAZone.js",
     "content": "import { Util } from '../impl/util';\nimport { Zone } from '../zone';\n\nconst typeToPos = {\n  year: 0,\n  month: 1,\n  day: 2,\n  hour: 3,\n  minute: 4,\n  second: 5\n};\n\nfunction hackyOffset(dtf, date) {\n  const formatted = dtf.format(date),\n    parsed = /(\\d+)\\/(\\d+)\\/(\\d+), (\\d+):(\\d+):(\\d+)/.exec(formatted),\n    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;\n  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];\n}\n\nfunction partsOffset(dtf, date) {\n  const formatted = dtf.formatToParts(date),\n    filled = [];\n  for (let i = 0; i < formatted.length; i++) {\n    const { type, value } = formatted[i],\n      pos = typeToPos[type];\n\n    if (!Util.isUndefined(pos)) {\n      filled[pos] = parseInt(value, 10);\n    }\n  }\n  return filled;\n}\n\nfunction isValid(zone) {\n  try {\n    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();\n    return true;\n  } catch (e) {\n    return false;\n  }\n}\n\n/**\n * @private\n */\n\nexport class IANAZone extends Zone {\n  static isValidSpecier(s) {\n    return s && s.match(/[a-z_]+\\/[a-z_]+/i);\n  }\n\n  constructor(name) {\n    super();\n    this.zoneName = name;\n    this.valid = isValid(name);\n  }\n\n  get type() {\n    return 'iana';\n  }\n\n  get name() {\n    return this.zoneName;\n  }\n\n  get universal() {\n    return false;\n  }\n\n  offsetName(ts, { format, locale }) {\n    return Util.parseZoneInfo(ts, format, locale, this.zoneName);\n  }\n\n  offset(ts) {\n    const date = new Date(ts),\n      dtf = new Intl.DateTimeFormat('en-US', {\n        hour12: false,\n        timeZone: this.zoneName,\n        year: 'numeric',\n        month: '2-digit',\n        day: '2-digit',\n        hour: '2-digit',\n        minute: '2-digit',\n        second: '2-digit'\n      }),\n      [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts\n        ? partsOffset(dtf, date)\n        : hackyOffset(dtf, date),\n      asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);\n    let asTS = date.valueOf();\n    asTS -= asTS % 1000;\n    return (asUTC - asTS) / (60 * 1000);\n  }\n\n  equals(otherZone) {\n    return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;\n  }\n\n  get isValid() {\n    return this.valid;\n  }\n}\n",
@@ -13475,7 +13517,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 402,
+    "__docId__": 403,
     "kind": "variable",
     "name": "typeToPos",
     "memberof": "src/zones/IANAZone.js",
@@ -13501,7 +13543,7 @@
     }
   },
   {
-    "__docId__": 403,
+    "__docId__": 404,
     "kind": "function",
     "name": "hackyOffset",
     "memberof": "src/zones/IANAZone.js",
@@ -13543,7 +13585,7 @@
     }
   },
   {
-    "__docId__": 404,
+    "__docId__": 405,
     "kind": "function",
     "name": "partsOffset",
     "memberof": "src/zones/IANAZone.js",
@@ -13585,7 +13627,7 @@
     }
   },
   {
-    "__docId__": 405,
+    "__docId__": 406,
     "kind": "function",
     "name": "isValid",
     "memberof": "src/zones/IANAZone.js",
@@ -13621,7 +13663,7 @@
     }
   },
   {
-    "__docId__": 406,
+    "__docId__": 407,
     "kind": "class",
     "name": "IANAZone",
     "memberof": "src/zones/IANAZone.js",
@@ -13639,7 +13681,7 @@
     ]
   },
   {
-    "__docId__": 407,
+    "__docId__": 408,
     "kind": "method",
     "name": "isValidSpecier",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13672,7 +13714,7 @@
     }
   },
   {
-    "__docId__": 408,
+    "__docId__": 409,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13700,7 +13742,7 @@
     ]
   },
   {
-    "__docId__": 409,
+    "__docId__": 410,
     "kind": "member",
     "name": "zoneName",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13723,7 +13765,7 @@
     }
   },
   {
-    "__docId__": 410,
+    "__docId__": 411,
     "kind": "member",
     "name": "valid",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13746,7 +13788,7 @@
     }
   },
   {
-    "__docId__": 411,
+    "__docId__": 412,
     "kind": "get",
     "name": "type",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13771,7 +13813,7 @@
     }
   },
   {
-    "__docId__": 412,
+    "__docId__": 413,
     "kind": "get",
     "name": "name",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13796,7 +13838,7 @@
     }
   },
   {
-    "__docId__": 413,
+    "__docId__": 414,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13821,7 +13863,7 @@
     }
   },
   {
-    "__docId__": 414,
+    "__docId__": 415,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13865,7 +13907,7 @@
     }
   },
   {
-    "__docId__": 415,
+    "__docId__": 416,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13898,7 +13940,7 @@
     }
   },
   {
-    "__docId__": 416,
+    "__docId__": 417,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13931,7 +13973,7 @@
     }
   },
   {
-    "__docId__": 417,
+    "__docId__": 418,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -13956,10 +13998,10 @@
     }
   },
   {
-    "__docId__": 418,
+    "__docId__": 419,
     "kind": "file",
     "name": "src/zones/fixedOffsetZone.js",
-    "content": "import { Util } from '../impl/util';\nimport { Zone } from '../zone';\n\nlet singleton = null;\n\nfunction hoursMinutesOffset(z) {\n  const hours = Math.trunc(z.fixed / 60),\n    minutes = Math.abs(z.fixed % 60),\n    sign = hours > 0 ? '+' : '-',\n    base = sign + Math.abs(hours);\n  return minutes > 0 ? `${base}:${Util.pad(minutes, 2)}` : base;\n}\n\n/**\n * @private\n */\n\nexport class FixedOffsetZone extends Zone {\n  static get utcInstance() {\n    if (singleton === null) {\n      singleton = new FixedOffsetZone(0);\n    }\n    return singleton;\n  }\n\n  static instance(offset) {\n    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);\n  }\n\n  static parseSpecifier(s) {\n    if (s) {\n      const r = s.match(/^utc(?:([+-]\\d{1,2})(?::(\\d{2}))?)?$/i);\n      if (r) {\n        return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));\n      }\n    }\n    return null;\n  }\n\n  constructor(offset) {\n    super();\n    this.fixed = offset;\n  }\n\n  get type() {\n    return 'fixed';\n  }\n\n  get name() {\n    return this.fixed === 0 ? 'UTC' : `UTC${hoursMinutesOffset(this)}`;\n  }\n\n  offsetName() {\n    return this.name;\n  }\n\n  get universal() {\n    return true;\n  }\n\n  offset() {\n    return this.fixed;\n  }\n\n  equals(otherZone) {\n    return otherZone.type === 'fixed' && otherZone.fixed === this.fixed;\n  }\n\n  get isValid() {\n    return true;\n  }\n}\n",
+    "content": "import { Util } from '../impl/util';\nimport { Zone } from '../zone';\n\nlet singleton = null;\n\nfunction hoursMinutesOffset(z) {\n  const hours = Math.trunc(z.fixed / 60),\n    minutes = Math.abs(z.fixed % 60),\n    sign = hours > 0 ? '+' : '-',\n    base = sign + Math.abs(hours);\n  return minutes > 0 ? `${base}:${Util.padStart(minutes, 2)}` : base;\n}\n\n/**\n * @private\n */\n\nexport class FixedOffsetZone extends Zone {\n  static get utcInstance() {\n    if (singleton === null) {\n      singleton = new FixedOffsetZone(0);\n    }\n    return singleton;\n  }\n\n  static instance(offset) {\n    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);\n  }\n\n  static parseSpecifier(s) {\n    if (s) {\n      const r = s.match(/^utc(?:([+-]\\d{1,2})(?::(\\d{2}))?)?$/i);\n      if (r) {\n        return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));\n      }\n    }\n    return null;\n  }\n\n  constructor(offset) {\n    super();\n    this.fixed = offset;\n  }\n\n  get type() {\n    return 'fixed';\n  }\n\n  get name() {\n    return this.fixed === 0 ? 'UTC' : `UTC${hoursMinutesOffset(this)}`;\n  }\n\n  offsetName() {\n    return this.name;\n  }\n\n  get universal() {\n    return true;\n  }\n\n  offset() {\n    return this.fixed;\n  }\n\n  equals(otherZone) {\n    return otherZone.type === 'fixed' && otherZone.fixed === this.fixed;\n  }\n\n  get isValid() {\n    return true;\n  }\n}\n",
     "static": true,
     "longname": "src/zones/fixedOffsetZone.js",
     "access": null,
@@ -13967,7 +14009,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 419,
+    "__docId__": 420,
     "kind": "variable",
     "name": "singleton",
     "memberof": "src/zones/fixedOffsetZone.js",
@@ -13993,7 +14035,7 @@
     }
   },
   {
-    "__docId__": 420,
+    "__docId__": 421,
     "kind": "function",
     "name": "hoursMinutesOffset",
     "memberof": "src/zones/fixedOffsetZone.js",
@@ -14029,7 +14071,7 @@
     }
   },
   {
-    "__docId__": 421,
+    "__docId__": 422,
     "kind": "class",
     "name": "FixedOffsetZone",
     "memberof": "src/zones/fixedOffsetZone.js",
@@ -14047,7 +14089,7 @@
     ]
   },
   {
-    "__docId__": 422,
+    "__docId__": 423,
     "kind": "get",
     "name": "utcInstance",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14072,7 +14114,7 @@
     }
   },
   {
-    "__docId__": 423,
+    "__docId__": 424,
     "kind": "method",
     "name": "instance",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14105,7 +14147,7 @@
     }
   },
   {
-    "__docId__": 424,
+    "__docId__": 425,
     "kind": "method",
     "name": "parseSpecifier",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14138,7 +14180,7 @@
     }
   },
   {
-    "__docId__": 425,
+    "__docId__": 426,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14166,7 +14208,7 @@
     ]
   },
   {
-    "__docId__": 426,
+    "__docId__": 427,
     "kind": "member",
     "name": "fixed",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14189,7 +14231,7 @@
     }
   },
   {
-    "__docId__": 427,
+    "__docId__": 428,
     "kind": "get",
     "name": "type",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14214,7 +14256,7 @@
     }
   },
   {
-    "__docId__": 428,
+    "__docId__": 429,
     "kind": "get",
     "name": "name",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14239,7 +14281,7 @@
     }
   },
   {
-    "__docId__": 429,
+    "__docId__": 430,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14265,7 +14307,7 @@
     }
   },
   {
-    "__docId__": 430,
+    "__docId__": 431,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14290,7 +14332,7 @@
     }
   },
   {
-    "__docId__": 431,
+    "__docId__": 432,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14316,7 +14358,7 @@
     }
   },
   {
-    "__docId__": 432,
+    "__docId__": 433,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14349,7 +14391,7 @@
     }
   },
   {
-    "__docId__": 433,
+    "__docId__": 434,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -14374,7 +14416,7 @@
     }
   },
   {
-    "__docId__": 434,
+    "__docId__": 435,
     "kind": "file",
     "name": "src/zones/localZone.js",
     "content": "import { Util } from '../impl/util';\nimport { Zone } from '../zone';\n\nlet singleton = null;\n\n/**\n * @private\n */\n\nexport class LocalZone extends Zone {\n  static get instance() {\n    if (singleton === null) {\n      singleton = new LocalZone();\n    }\n    return singleton;\n  }\n\n  get type() {\n    return 'local';\n  }\n\n  get name() {\n    if (Util.hasIntl()) {\n      return new Intl.DateTimeFormat().resolvedOptions().timeZone;\n    } else return 'local';\n  }\n\n  get universal() {\n    return false;\n  }\n\n  offsetName(ts, { format, locale }) {\n    return Util.parseZoneInfo(ts, format, locale);\n  }\n\n  offset(ts) {\n    return -new Date(ts).getTimezoneOffset();\n  }\n\n  equals(otherZone) {\n    return otherZone.type === 'local';\n  }\n\n  get isValid() {\n    return true;\n  }\n}\n",
@@ -14385,7 +14427,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 435,
+    "__docId__": 436,
     "kind": "variable",
     "name": "singleton",
     "memberof": "src/zones/localZone.js",
@@ -14411,7 +14453,7 @@
     }
   },
   {
-    "__docId__": 436,
+    "__docId__": 437,
     "kind": "class",
     "name": "LocalZone",
     "memberof": "src/zones/localZone.js",
@@ -14429,7 +14471,7 @@
     ]
   },
   {
-    "__docId__": 437,
+    "__docId__": 438,
     "kind": "get",
     "name": "instance",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14454,7 +14496,7 @@
     }
   },
   {
-    "__docId__": 438,
+    "__docId__": 439,
     "kind": "get",
     "name": "type",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14479,7 +14521,7 @@
     }
   },
   {
-    "__docId__": 439,
+    "__docId__": 440,
     "kind": "get",
     "name": "name",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14504,7 +14546,7 @@
     }
   },
   {
-    "__docId__": 440,
+    "__docId__": 441,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14529,7 +14571,7 @@
     }
   },
   {
-    "__docId__": 441,
+    "__docId__": 442,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14573,7 +14615,7 @@
     }
   },
   {
-    "__docId__": 442,
+    "__docId__": 443,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14606,7 +14648,7 @@
     }
   },
   {
-    "__docId__": 443,
+    "__docId__": 444,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14639,7 +14681,7 @@
     }
   },
   {
-    "__docId__": 444,
+    "__docId__": 445,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -14664,7 +14706,7 @@
     }
   },
   {
-    "__docId__": 446,
+    "__docId__": 447,
     "kind": "external",
     "name": "Infinity",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
@@ -14676,7 +14718,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 447,
+    "__docId__": 448,
     "kind": "external",
     "name": "NaN",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
@@ -14688,7 +14730,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 448,
+    "__docId__": 449,
     "kind": "external",
     "name": "undefined",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
@@ -14700,7 +14742,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 449,
+    "__docId__": 450,
     "kind": "external",
     "name": "null",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
@@ -14712,7 +14754,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 450,
+    "__docId__": 451,
     "kind": "external",
     "name": "Object",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
@@ -14724,7 +14766,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 451,
+    "__docId__": 452,
     "kind": "external",
     "name": "object",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
@@ -14736,7 +14778,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 452,
+    "__docId__": 453,
     "kind": "external",
     "name": "Function",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
@@ -14748,7 +14790,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 453,
+    "__docId__": 454,
     "kind": "external",
     "name": "function",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
@@ -14760,7 +14802,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 454,
+    "__docId__": 455,
     "kind": "external",
     "name": "Boolean",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
@@ -14772,7 +14814,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 455,
+    "__docId__": 456,
     "kind": "external",
     "name": "boolean",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
@@ -14784,7 +14826,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 456,
+    "__docId__": 457,
     "kind": "external",
     "name": "Symbol",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
@@ -14796,7 +14838,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 457,
+    "__docId__": 458,
     "kind": "external",
     "name": "Error",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
@@ -14808,7 +14850,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 458,
+    "__docId__": 459,
     "kind": "external",
     "name": "EvalError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
@@ -14820,7 +14862,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 459,
+    "__docId__": 460,
     "kind": "external",
     "name": "InternalError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
@@ -14832,7 +14874,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 460,
+    "__docId__": 461,
     "kind": "external",
     "name": "RangeError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
@@ -14844,7 +14886,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 461,
+    "__docId__": 462,
     "kind": "external",
     "name": "ReferenceError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
@@ -14856,7 +14898,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 462,
+    "__docId__": 463,
     "kind": "external",
     "name": "SyntaxError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
@@ -14868,7 +14910,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 463,
+    "__docId__": 464,
     "kind": "external",
     "name": "TypeError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
@@ -14880,7 +14922,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 464,
+    "__docId__": 465,
     "kind": "external",
     "name": "URIError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
@@ -14892,7 +14934,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 465,
+    "__docId__": 466,
     "kind": "external",
     "name": "Number",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
@@ -14904,7 +14946,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 466,
+    "__docId__": 467,
     "kind": "external",
     "name": "number",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
@@ -14916,7 +14958,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 467,
+    "__docId__": 468,
     "kind": "external",
     "name": "Date",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
@@ -14928,7 +14970,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 468,
+    "__docId__": 469,
     "kind": "external",
     "name": "String",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -14940,7 +14982,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 469,
+    "__docId__": 470,
     "kind": "external",
     "name": "string",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -14952,7 +14994,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 470,
+    "__docId__": 471,
     "kind": "external",
     "name": "RegExp",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
@@ -14964,7 +15006,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 471,
+    "__docId__": 472,
     "kind": "external",
     "name": "Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
@@ -14976,7 +15018,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 472,
+    "__docId__": 473,
     "kind": "external",
     "name": "Int8Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
@@ -14988,7 +15030,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 473,
+    "__docId__": 474,
     "kind": "external",
     "name": "Uint8Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
@@ -15000,7 +15042,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 474,
+    "__docId__": 475,
     "kind": "external",
     "name": "Uint8ClampedArray",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
@@ -15012,7 +15054,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 475,
+    "__docId__": 476,
     "kind": "external",
     "name": "Int16Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
@@ -15024,7 +15066,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 476,
+    "__docId__": 477,
     "kind": "external",
     "name": "Uint16Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
@@ -15036,7 +15078,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 477,
+    "__docId__": 478,
     "kind": "external",
     "name": "Int32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
@@ -15048,7 +15090,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 478,
+    "__docId__": 479,
     "kind": "external",
     "name": "Uint32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
@@ -15060,7 +15102,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 479,
+    "__docId__": 480,
     "kind": "external",
     "name": "Float32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
@@ -15072,7 +15114,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 480,
+    "__docId__": 481,
     "kind": "external",
     "name": "Float64Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
@@ -15084,7 +15126,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 481,
+    "__docId__": 482,
     "kind": "external",
     "name": "Map",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
@@ -15096,7 +15138,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 482,
+    "__docId__": 483,
     "kind": "external",
     "name": "Set",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
@@ -15108,7 +15150,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 483,
+    "__docId__": 484,
     "kind": "external",
     "name": "WeakMap",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
@@ -15120,7 +15162,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 484,
+    "__docId__": 485,
     "kind": "external",
     "name": "WeakSet",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
@@ -15132,7 +15174,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 485,
+    "__docId__": 486,
     "kind": "external",
     "name": "ArrayBuffer",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
@@ -15144,7 +15186,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 486,
+    "__docId__": 487,
     "kind": "external",
     "name": "DataView",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
@@ -15156,7 +15198,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 487,
+    "__docId__": 488,
     "kind": "external",
     "name": "JSON",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
@@ -15168,7 +15210,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 488,
+    "__docId__": 489,
     "kind": "external",
     "name": "Promise",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
@@ -15180,7 +15222,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 489,
+    "__docId__": 490,
     "kind": "external",
     "name": "Generator",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
@@ -15192,7 +15234,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 490,
+    "__docId__": 491,
     "kind": "external",
     "name": "GeneratorFunction",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
@@ -15204,7 +15246,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 491,
+    "__docId__": 492,
     "kind": "external",
     "name": "Reflect",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
@@ -15216,7 +15258,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 492,
+    "__docId__": 493,
     "kind": "external",
     "name": "Proxy",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
@@ -15229,7 +15271,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 494,
+    "__docId__": 495,
     "kind": "external",
     "name": "CanvasRenderingContext2D",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
@@ -15241,7 +15283,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 495,
+    "__docId__": 496,
     "kind": "external",
     "name": "DocumentFragment",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
@@ -15253,7 +15295,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 496,
+    "__docId__": 497,
     "kind": "external",
     "name": "Element",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
@@ -15265,7 +15307,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 497,
+    "__docId__": 498,
     "kind": "external",
     "name": "Event",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
@@ -15277,7 +15319,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 498,
+    "__docId__": 499,
     "kind": "external",
     "name": "Node",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
@@ -15289,7 +15331,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 499,
+    "__docId__": 500,
     "kind": "external",
     "name": "NodeList",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
@@ -15301,7 +15343,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 500,
+    "__docId__": 501,
     "kind": "external",
     "name": "XMLHttpRequest",
     "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
@@ -15313,7 +15355,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 501,
+    "__docId__": 502,
     "kind": "external",
     "name": "AudioContext",
     "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
