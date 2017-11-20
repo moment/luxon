@@ -194,7 +194,7 @@ const typeToPos = {
 
 function hackyOffset(dtf, date) {
   const formatted = dtf.format(date),
-    parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
+    parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
     [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
   return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
 }
@@ -4252,6 +4252,10 @@ class DateTime {
    * @return {DateTime}
    */
   static fromString(text, fmt, options = {}) {
+    if (Util.isUndefined(text) || Util.isUndefined(fmt)) {
+      throw new InvalidArgumentError('fromString requires an input string and a format');
+    }
+
     const { locale = null, numberingSystem = null } = options,
       parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem, defaultToEN: true })),
       [vals, parsedZone, invalidReason] = parser.parseDateTime(text, fmt);
@@ -4712,6 +4716,7 @@ class DateTime {
    * @example DateTime.local().plus(123) //~> in 123 milliseconds
    * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
    * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
+   * @example DateTime.local().plus({ days: -1 }) //~> this time yesterday
    * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
    * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
    * @return {DateTime}

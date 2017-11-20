@@ -2376,7 +2376,7 @@ var typeToPos = {
 
 function hackyOffset(dtf, date) {
   var formatted = dtf.format(date),
-      parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
+      parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
       _parsed = slicedToArray(parsed, 7),
       fMonth = _parsed[1],
       fDay = _parsed[2],
@@ -7158,6 +7158,7 @@ var DateTime = function () {
      * @example DateTime.local().plus(123) //~> in 123 milliseconds
      * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
      * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
+     * @example DateTime.local().plus({ days: -1 }) //~> this time yesterday
      * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
      * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
      * @return {DateTime}
@@ -8389,6 +8390,10 @@ var DateTime = function () {
     key: 'fromString',
     value: function fromString(text, fmt) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      if (Util.isUndefined(text) || Util.isUndefined(fmt)) {
+        throw new InvalidArgumentError('fromString requires an input string and a format');
+      }
 
       var _options$locale = options.locale,
           locale = _options$locale === undefined ? null : _options$locale,
