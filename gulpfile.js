@@ -153,13 +153,8 @@ gulp.task('global-es6', processLibModern('global-es6', es6GlobalOpts));
 
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
-gulp.task('test-with-coverage', () => {
-  return test(true);
-});
-
-gulp.task('test', () => {
-  return test(false);
-});
+gulp.task('test-with-coverage', () => test(true));
+gulp.task('test', () => test(false));
 
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
   doLint = () =>
