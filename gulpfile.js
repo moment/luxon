@@ -142,7 +142,8 @@ gulp.task('test', () => {
   const opts = {
     collectCoverage: !!process.env.CODE_COVERAGE,
     coverageDirectory: 'build/coverage',
-    collectCoverageFrom: ['src/**', '!src/zone.js', '!src/luxonFilled.js']
+    collectCoverageFrom: ['src/**', '!src/zone.js', '!src/luxonFilled.js'],
+    ci: !!process.env.CI
   };
 
   if (process.env.LIMIT_JEST) {
