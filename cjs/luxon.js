@@ -5126,7 +5126,7 @@ var Duration = function () {
 
     /**
      * Get the days.
-     * @return {number
+     * @return {number}
      */
 
   }, {
