@@ -126,6 +126,21 @@ const cjsOpts = { format: 'cjs' },
     rollupOpts: { name: 'luxon' }
   };
 
+function test(includeCoverage) {
+  const opts = {
+    collectCoverage: includeCoverage,
+    coverageDirectory: 'build/coverage',
+    collectCoverageFrom: ['src/**', '!src/zone.js', '!src/luxonFilled.js'],
+    ci: !!process.env.CI
+  };
+
+  if (process.env.LIMIT_JEST) {
+    opts.maxWorkers = 4;
+  }
+
+  return gulp.src('test').pipe(jest(opts));
+}
+
 // build these with the corejs polyfills
 // todo: is this the right thing to do?
 gulp.task('global', processLibLegacy('global', globalOpts));
@@ -138,19 +153,8 @@ gulp.task('global-es6', processLibModern('global-es6', es6GlobalOpts));
 
 gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
 
-gulp.task('test', () => {
-  const opts = {
-    collectCoverage: !!process.env.CODE_COVERAGE,
-    coverageDirectory: 'build/coverage',
-    collectCoverageFrom: ['src/**', '!src/zone.js', '!src/luxonFilled.js']
-  };
-
-  if (process.env.LIMIT_JEST) {
-    opts.maxWorkers = 4;
-  }
-
-  return gulp.src('test').pipe(jest(opts));
-});
+gulp.task('test-with-coverage', () => test(true));
+gulp.task('test', () => test(false));
 
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
   doLint = () =>
@@ -210,8 +214,10 @@ gulp.task('coveralls', () => gulp.src('build/coverage/lcov.info').pipe(coveralls
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
-gulp.task('ci', cb => runSequence('cjs', 'lint', 'test', cb));
+gulp.task('ci', cb => runSequence('cjs', 'lint', 'test-with-coverage', 'docs', cb));
 
-gulp.task('default', cb => runSequence('format', 'build', 'lint', 'test', 'docs', 'site', cb));
+gulp.task('default', cb =>
+  runSequence('format', 'build', 'lint', 'test', 'coveralls', 'docs', 'site', cb)
+);
 
 gulp.task('prerelease', cb => runSequence('format', 'build', 'lint', 'docs', 'site', cb));

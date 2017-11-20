@@ -5,4 +5,5 @@ RUN npm install -g gulp-cli
 
 ENV NODE_ICU_DATA=/node_modules/full-icu
 ENV LIMIT_JEST=yes
+ENV CI=yes
 ENV TZ=America/New_York

@@ -1,15 +1,12 @@
-sudo: false
+sudo: true
 language: javascript
-before_script:
-  - nvm install 8.9.1
-  - npm install
-  - npm install full-icu
-  - npm install -g gulp-cli
+services:
+ - docker
+before_install:
+  - docker pull icambron/luxon
+  - ./docker/install
 script:
-  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" LIMIT_JEST=yes gulp ci
-  - NODE_ICU_DATA="$(pwd)/node_modules/full-icu" LIMIT_JEST=yes CODE_COVERAGE=yes TZ=America/New_York gulp test
-  - gulp coveralls
-  - gulp docs
+  - ./docker/gulp ci
 branches:
   only:
     - master
