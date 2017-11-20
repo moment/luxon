@@ -97,7 +97,6 @@ function unitForToken(token, loc) {
       if (token.literal) {
         return literal(t);
       }
-
       switch (t.val) {
         // era
         case &apos;G&apos;:
@@ -105,10 +104,16 @@ function unitForToken(token, loc) {
         case &apos;GG&apos;:
           return oneOf(loc.eras(&apos;long&apos;, false), 0);
         // years
-        case &apos;yyyy&apos;:
-          return intUnit(four);
+        case &apos;y&apos;:
+          return intUnit(/\d{1,6}/);
         case &apos;yy&apos;:
           return intUnit(twoToFour, Util.untruncateYear);
+        case &apos;yyyy&apos;:
+          return intUnit(four);
+        case &apos;yyyyy&apos;:
+          return intUnit(/\d{4,6}/);
+        case &apos;yyyyyy&apos;:
+          return intUnit(/\d{6}/);
         // months
         case &apos;M&apos;:
           return intUnit(oneOrTwo);
@@ -157,6 +162,8 @@ function unitForToken(token, loc) {
           return intUnit(oneToThree);
         case &apos;SSS&apos;:
           return intUnit(three);
+        case &apos;u&apos;:
+          return simple(/\d{1,9}/);
         // meridiem
         case &apos;a&apos;:
           return oneOf(loc.meridiems(), 0);
@@ -281,6 +288,11 @@ function dateTimeFromMatches(matches) {
 
   if (matches.G === 0 &amp;&amp; matches.y) {
     matches.y = -matches.y;
+  }
+
+  if (!Util.isUndefined(matches.u)) {
+    const nanoseconds = parseInt(Util.padEnd(matches.u, 9));
+    matches.S = Math.round(nanoseconds / 1000000);
   }
 
   const vals = Object.keys(matches).reduce((r, k) =&gt; {

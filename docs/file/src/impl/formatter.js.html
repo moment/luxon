@@ -183,6 +183,8 @@ export class Formatter {
           // ms
           case &apos;S&apos;:
             return this.num(dt.millisecond);
+          case &apos;u&apos;:
+          // falls through
           case &apos;SSS&apos;:
             return this.num(dt.millisecond, 3);
           // seconds
@@ -306,6 +308,9 @@ export class Formatter {
           case &apos;yyyy&apos;:
             // like 0012
             return outputCal ? string({ year: &apos;numeric&apos; }, &apos;year&apos;) : this.num(dt.year, 4);
+          case &apos;yyyyyy&apos;:
+            // like 000012
+            return outputCal ? string({ year: &apos;numeric&apos; }, &apos;year&apos;) : this.num(dt.year, 6);
           // eras
           case &apos;G&apos;:
             // like AD

@@ -3133,6 +3133,8 @@ var Formatter = function () {
           // ms
           case 'S':
             return _this.num(dt.millisecond);
+          case 'u':
+          // falls through
           case 'SSS':
             return _this.num(dt.millisecond, 3);
           // seconds
@@ -3250,6 +3252,9 @@ var Formatter = function () {
           case 'yyyy':
             // like 0012
             return outputCal ? string({ year: 'numeric' }, 'year') : _this.num(dt.year, 4);
+          case 'yyyyyy':
+            // like 000012
+            return outputCal ? string({ year: 'numeric' }, 'year') : _this.num(dt.year, 6);
           // eras
           case 'G':
             // like AD
@@ -6249,7 +6254,6 @@ function unitForToken(token, loc) {
     if (token.literal) {
       return literal(t);
     }
-
     switch (t.val) {
       // era
       case 'G':
@@ -6257,10 +6261,16 @@ function unitForToken(token, loc) {
       case 'GG':
         return oneOf(loc.eras('long', false), 0);
       // years
-      case 'yyyy':
-        return intUnit(four);
+      case 'y':
+        return intUnit(/\d{1,6}/);
       case 'yy':
         return intUnit(twoToFour, Util.untruncateYear);
+      case 'yyyy':
+        return intUnit(four);
+      case 'yyyyy':
+        return intUnit(/\d{4,6}/);
+      case 'yyyyyy':
+        return intUnit(/\d{6}/);
       // months
       case 'M':
         return intUnit(oneOrTwo);
@@ -6309,6 +6319,8 @@ function unitForToken(token, loc) {
         return intUnit(oneToThree);
       case 'SSS':
         return intUnit(three);
+      case 'u':
+        return simple(/\d{1,9}/);
       // meridiem
       case 'a':
         return oneOf(loc.meridiems(), 0);
@@ -6437,6 +6449,11 @@ function dateTimeFromMatches(matches) {
 
   if (matches.G === 0 && matches.y) {
     matches.y = -matches.y;
+  }
+
+  if (!Util.isUndefined(matches.u)) {
+    var nanoseconds = parseInt(Util.padEnd(matches.u, 9));
+    matches.S = Math.round(nanoseconds / 1000000);
   }
 
   var vals = Object.keys(matches).reduce(function (r, k) {
@@ -6756,7 +6773,7 @@ function objToLocalTS(obj) {
   // javascript is stupid and i hate it
   if (obj.year < 100 && obj.year >= 0) {
     d = new Date(d);
-    d.setFullYear(obj.year);
+    d.setUTCFullYear(obj.year);
   }
   return +d;
 }

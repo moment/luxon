@@ -202,6 +202,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-22" data-ice="link">0.0.22</a></li>
 <li data-ice="manualNav" class="indent-h1 manual-color manual-color-changelog" data-section-count="&#x25A0;&#x25A0;&#x25A0;&#x25A0;" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-21" data-ice="link">0.0.21</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-20" data-ice="link">0.0.20</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog/changelog.html"><a href="manual/changelog/changelog.html#0-0-19" data-ice="link">0.0.19</a></li>
@@ -353,6 +354,12 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
 <td>054</td>
 </tr>
 <tr>
+<td>u</td>
+<td></td>
+<td>fractional seconds, (5 is a half second, 54 is slightly more)</td>
+<td>54</td>
+</tr>
+<tr>
 <td>s</td>
 <td></td>
 <td>second, no padding</td>
@@ -487,13 +494,13 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
 <tr>
 <td>y</td>
 <td></td>
-<td>year, unpadded</td>
+<td>year, 1-6 digits, very literally</td>
 <td>2014</td>
 </tr>
 <tr>
 <td>yy</td>
 <td></td>
-<td>two-digit year</td>
+<td>two-digit year, interpreted as &gt; 1960</td>
 <td>14</td>
 </tr>
 <tr>
@@ -501,6 +508,18 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
 <td></td>
 <td>four-digit year</td>
 <td>2014</td>
+</tr>
+<tr>
+<td>yyyyy</td>
+<td></td>
+<td>four- to six-digit years</td>
+<td>10340</td>
+</tr>
+<tr>
+<td>yyyyyy</td>
+<td></td>
+<td>six-digit years</td>
+<td>010340</td>
 </tr>
 <tr>
 <td>G</td>
