@@ -1,5 +1,8 @@
 # Changelog
 
+# 0.0.21
+ * Fix zones for Edge
+
 ## 0.0.20
  * Fix `fromISO` to accept various levels of subsecond precision
 
