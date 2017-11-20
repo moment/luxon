@@ -6,7 +6,8 @@
   "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
   "dependencies": {
-    "core-js": "latest"
+    "core-js": "latest",
+    "jest": "^21.2.1"
   },
   "scripts": {
     "precommit": "lint-staged"
@@ -32,7 +33,7 @@
     "gulp-esdoc": "latest",
     "gulp-eslint": "latest",
     "gulp-filter": "latest",
-    "gulp-jest": "2.0.0",
+    "gulp-jest": "3.0.1",
     "gulp-rename": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-uglify": "latest",
