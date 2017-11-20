@@ -11,8 +11,8 @@ const typeToPos = {
 };
 
 function hackyOffset(dtf, date) {
-  const formatted = dtf.format(date),
-    parsed = /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/.exec(formatted),
+  const formatted = dtf.format(date).replace(/\u200E/g, ''),
+    parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
     [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
   return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
 }
