@@ -97,7 +97,7 @@ function objToLocalTS(obj) {
   // javascript is stupid and i hate it
   if (obj.year < 100 && obj.year >= 0) {
     d = new Date(d);
-    d.setFullYear(obj.year);
+    d.setUTCFullYear(obj.year);
   }
   return +d;
 }

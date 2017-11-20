@@ -168,9 +168,11 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | MM              | LL           | month as an padded number                                      |                        08 |
 | MMM             | LLL          | month as an abbreviated localized string                       |                       Aug |
 | MMMM            | LLLL         | month as an unabbreviated localized string                     |                    August |
-| y               |              | year, unpadded                                                 |                      2014 |
-| yy              |              | two-digit year                                                 |                        14 |
+| y               |              | year, 1-6 digits, very literally                               |                      2014 |
+| yy              |              | two-digit year, interpreted as > 1960                          |                        14 |
 | yyyy            |              | four-digit year                                                |                      2014 |
+| yyyyy           |              | four- to six-digit years                                       |                     10340 |
+| yyyyyy          |              | six-digit years                                                |                    010340 |
 | G               |              | abbreviated localized era                                      |                        AD |
 | GG              |              | unabbreviated localized era                                    |               Anno Domini |
 | GGGGG           |              | one-letter localized era                                       |                         A |

@@ -51,7 +51,6 @@ function unitForToken(token, loc) {
       if (token.literal) {
         return literal(t);
       }
-
       switch (t.val) {
         // era
         case 'G':
@@ -59,10 +58,16 @@ function unitForToken(token, loc) {
         case 'GG':
           return oneOf(loc.eras('long', false), 0);
         // years
-        case 'yyyy':
-          return intUnit(four);
+        case 'y':
+          return intUnit(/\d{1,6}/);
         case 'yy':
           return intUnit(twoToFour, Util.untruncateYear);
+        case 'yyyy':
+          return intUnit(four);
+        case 'yyyyy':
+          return intUnit(/\d{4,6}/);
+        case 'yyyyyy':
+          return intUnit(/\d{6}/);
         // months
         case 'M':
           return intUnit(oneOrTwo);

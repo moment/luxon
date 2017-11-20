@@ -49,6 +49,37 @@ test('DateTime.fromString() parses meridiems', () => {
   expect(i.hour).toBe(9);
 });
 
+test('DateTime.fromString() parses variable-digit years', () => {
+  expect(DateTime.fromString('', 'y').isValid).toBe(false);
+  expect(DateTime.fromString('2', 'y').year).toBe(2);
+  expect(DateTime.fromString('22', 'y').year).toBe(22);
+  expect(DateTime.fromString('222', 'y').year).toBe(222);
+  expect(DateTime.fromString('2222', 'y').year).toBe(2222);
+  expect(DateTime.fromString('22222', 'y').year).toBe(22222);
+  expect(DateTime.fromString('222222', 'y').year).toBe(222222);
+  expect(DateTime.fromString('2222222', 'y').isValid).toBe(false);
+});
+
+test('DateTime.fromString() with yyyyy optionally parses extended years', () => {
+  expect(DateTime.fromString('222', 'yyyyy').isValid).toBe(false);
+  expect(DateTime.fromString('2222', 'yyyyy').year).toBe(2222);
+  expect(DateTime.fromString('22222', 'yyyyy').year).toBe(22222);
+  expect(DateTime.fromString('222222', 'yyyyy').year).toBe(222222);
+  expect(DateTime.fromString('2222222', 'yyyyy').isValid).toBe(false);
+});
+
+test('DateTime.fromString() with yyyyyy strictly parses extended years', () => {
+  //expect(DateTime.fromString('2222', 'yyyyyy').isValid).toBe(false);
+  //expect(DateTime.fromString('222222', 'yyyyyy').year).toBe(222222);
+  expect(DateTime.fromString('022222', 'yyyyyy').year).toBe(22222);
+  //expect(DateTime.fromString('2222222', 'yyyyyy').isValid).toBe(false);
+});
+
+test('DateTime.fromString() defaults yy to the right century', () => {
+  expect(DateTime.fromString('55', 'yy').year).toBe(2055);
+  expect(DateTime.fromString('70', 'yy').year).toBe(1970);
+});
+
 test('DateTime.fromString() parses hours', () => {
   expect(DateTime.fromString('5', 'h').hour).toBe(5);
   expect(DateTime.fromString('12', 'h').hour).toBe(12);
@@ -170,8 +201,6 @@ test('DateTime.fromString() uses case-insensitive matching', () => {
   expect(i.month).toBe(1);
   expect(i.day).toBe(25);
 });
-
-test('DateTime.fromString() defaults yy to the right century', () => {});
 
 test('DateTime.fromString() parses offsets', () => {});
 

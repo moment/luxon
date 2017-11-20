@@ -461,3 +461,10 @@ test('DateTime.fromObject() returns invalid for invalid values', () => {
 test('DateTime.fromObject accepts the default locale', () => {
   withDefaultLocale('fr', () => expect(DateTime.fromObject({}).locale).toBe('fr'));
 });
+
+test('DateTime.fromObject accepts really low year numbers', () => {
+  const dt = DateTime.fromObject({ year: 5 });
+  expect(dt.year).toBe(5);
+  expect(dt.month).toBe(1);
+  expect(dt.day).toBe(1);
+});
