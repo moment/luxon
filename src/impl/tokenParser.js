@@ -40,12 +40,12 @@ function simple(regex) {
 
 function unitForToken(token, loc) {
   const one = /\d/,
-    two = /\d\d/,
+    two = /\d{2}/,
     three = /\d{3}/,
     four = /\d{4}/,
-    oneOrTwo = /\d\d?/,
-    oneToThree = /\d\d?\d?/,
-    twoToFour = /\d\d(?:\d{2})?/,
+    oneOrTwo = /\d{1,2}/,
+    oneToThree = /\d{1,3}/,
+    twoToFour = /\d{2,4}/,
     literal = t => ({ regex: RegExp(t.val), deser: ([s]) => s, literal: true }),
     unitate = t => {
       if (token.literal) {
