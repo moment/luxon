@@ -149,7 +149,7 @@ gulp.task('test', () => {
     opts.maxWorkers = 4;
   }
 
-  gulp.src('test').pipe(jest(opts));
+  return gulp.src('test').pipe(jest(opts));
 });
 
 const lintable = ['src/**/*.js', 'test/**/*.js', 'gulpfile.js', '.eslintrc.js', '.prettier.js'],
