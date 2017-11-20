@@ -146,6 +146,7 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | ---             | ---          | ---                                                            |                       --- |
 | S               |              | millisecond, no padding                                        |                        54 |
 | SSS             |              | millisecond, padded to 3                                       |                       054 |
+| u               |              | fractional seconds, (5 is a half second, 54 is slightly more)  |                        54 |
 | s               |              | second, no padding                                             |                         4 |
 | ss              |              | second, padded to 2 padding                                    |                        04 |
 | m               |              | minute, no padding                                             |                         7 |

@@ -266,6 +266,16 @@ test('DateTime.fromISO() accepts year-moth-dayThour:minute:second.millisecond', 
     millisecond: 123
   });
 
+  isSame('2016-05-25T09:24:15.023', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 23
+  });
+
   isSame('2016-05-25T09:24:15.3456', {
     year: 2016,
     month: 5,

@@ -17,6 +17,13 @@ const dt = DateTime.fromObject({
 //------
 // #toFormat()
 //------
+test("DateTime#toFormat('u') returns fractional seconds", () => {
+  expect(dt.toFormat('u')).toBe('123');
+  expect(dt.set({ millisecond: 82 }).toFormat('u')).toBe('082');
+  expect(dt.set({ millisecond: 2 }).toFormat('u')).toBe('002');
+  expect(dt.set({ millisecond: 80 }).toFormat('u')).toBe('080'); // I think this is OK
+});
+
 test("DateTime#toFormat('S') returns the millisecond", () => {
   expect(dt.toFormat('S')).toBe('123');
   expect(dt.reconfigure({ locale: 'bn' }).toFormat('S')).toBe('১২৩');
@@ -232,6 +239,27 @@ test("DateTime#toFormat('yyyy') returns the padded full year", () => {
       .reconfigure({ locale: 'bn' })
       .toFormat('yyyy')
   ).toBe('০০০৩');
+});
+
+test("DateTime#toFormat('yyyy') returns the padded full year", () => {
+  const bigDt = DateTime.fromObject({ year: 36000 });
+  expect(bigDt.toFormat('yyyy')).toBe('36000');
+
+  const lilDt = DateTime.fromObject({ year: 17 });
+  expect(lilDt.toFormat('yyyy')).toBe('0017');
+});
+
+test("DateTime#toFormat('yyyyyy') returns the padded extended year", () => {
+  const hugeDt = DateTime.fromObject({ year: 136000 });
+  expect(hugeDt.toFormat('yyyyyy')).toBe('136000');
+
+  const bigDt = DateTime.fromObject({ year: 36000 });
+  expect(bigDt.toFormat('yyyyyy')).toBe('036000');
+
+  expect(dt.toFormat('yyyyyy')).toBe('001982');
+
+  const lilDt = DateTime.fromObject({ year: 17 });
+  expect(lilDt.toFormat('yyyyyy')).toBe('000017');
 });
 
 test("DateTime#toFormat('G') returns the short era", () => {

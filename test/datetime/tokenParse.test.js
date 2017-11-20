@@ -69,10 +69,10 @@ test('DateTime.fromString() with yyyyy optionally parses extended years', () => 
 });
 
 test('DateTime.fromString() with yyyyyy strictly parses extended years', () => {
-  //expect(DateTime.fromString('2222', 'yyyyyy').isValid).toBe(false);
-  //expect(DateTime.fromString('222222', 'yyyyyy').year).toBe(222222);
+  expect(DateTime.fromString('2222', 'yyyyyy').isValid).toBe(false);
+  expect(DateTime.fromString('222222', 'yyyyyy').year).toBe(222222);
   expect(DateTime.fromString('022222', 'yyyyyy').year).toBe(22222);
-  //expect(DateTime.fromString('2222222', 'yyyyyy').isValid).toBe(false);
+  expect(DateTime.fromString('2222222', 'yyyyyy').isValid).toBe(false);
 });
 
 test('DateTime.fromString() defaults yy to the right century', () => {
@@ -89,6 +89,33 @@ test('DateTime.fromString() parses hours', () => {
   expect(DateTime.fromString('13', 'H').hour).toBe(13);
   expect(DateTime.fromString('05', 'HH').hour).toBe(5);
   expect(DateTime.fromString('13', 'HH').hour).toBe(13);
+});
+
+test('DateTime.fromString() parses milliseconds', () => {
+  expect(DateTime.fromString('1', 'S').millisecond).toBe(1);
+  expect(DateTime.fromString('12', 'S').millisecond).toBe(12);
+  expect(DateTime.fromString('123', 'S').millisecond).toBe(123);
+  expect(DateTime.fromString('1234', 'S').isValid).toBe(false);
+
+  expect(DateTime.fromString('1', 'S').millisecond).toBe(1);
+  expect(DateTime.fromString('12', 'S').millisecond).toBe(12);
+  expect(DateTime.fromString('123', 'S').millisecond).toBe(123);
+
+  expect(DateTime.fromString('1', 'SSS').isValid).toBe(false);
+  expect(DateTime.fromString('12', 'SSS').isValid).toBe(false);
+  expect(DateTime.fromString('123', 'SSS').millisecond).toBe(123);
+  expect(DateTime.fromString('023', 'SSS').millisecond).toBe(23);
+  expect(DateTime.fromString('1234', 'SSS').isValid).toBe(false);
+});
+
+test('DateTime.fromString() parses fractional seconds', () => {
+  expect(DateTime.fromString('1', 'u').millisecond).toBe(100);
+  expect(DateTime.fromString('12', 'u').millisecond).toBe(120);
+  expect(DateTime.fromString('123', 'u').millisecond).toBe(123);
+  expect(DateTime.fromString('023', 'u').millisecond).toBe(23);
+  expect(DateTime.fromString('003', 'u').millisecond).toBe(3);
+  expect(DateTime.fromString('1234', 'u').millisecond).toBe(123);
+  expect(DateTime.fromString('1235', 'u').millisecond).toBe(124);
 });
 
 test('DateTime.fromString() parses weekdays', () => {

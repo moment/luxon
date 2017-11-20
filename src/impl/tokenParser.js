@@ -116,6 +116,8 @@ function unitForToken(token, loc) {
           return intUnit(oneToThree);
         case 'SSS':
           return intUnit(three);
+        case 'u':
+          return simple(/\d{1,9}/);
         // meridiem
         case 'a':
           return oneOf(loc.meridiems(), 0);
@@ -240,6 +242,11 @@ function dateTimeFromMatches(matches) {
 
   if (matches.G === 0 && matches.y) {
     matches.y = -matches.y;
+  }
+
+  if (!Util.isUndefined(matches.u)) {
+    const nanoseconds = parseInt(Util.padEnd(matches.u, 9));
+    matches.S = Math.round(nanoseconds / 1000000);
   }
 
   const vals = Object.keys(matches).reduce((r, k) => {

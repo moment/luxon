@@ -165,6 +165,7 @@ The macro options available correspond one-to-one with the preset formats define
 | ---             | ---          | ---                                                            | ---                                                         |
 | S               |              | millisecond, no padding                                        | 54                                                          |
 | SSS             |              | millisecond, padded to 3                                       | 054                                                         |
+| u               |              | fractional seconds, functionally identical to SSS              | 054                                                         |
 | s               |              | second, no padding                                             | 4                                                           |
 | ss              |              | second, padded to 2 padding                                    | 04                                                          |
 | m               |              | minute, no padding                                             | 7                                                           |
@@ -193,7 +194,7 @@ The macro options available correspond one-to-one with the preset formats define
 | LLLLL           | MMMMM        | month as a single localized letter                             | A                                                           |
 | y               |              | year, unpadded                                                 | 2014                                                        |
 | yy              |              | two-digit year                                                 | 14                                                          |
-| yyyy            |              | four-digit year                                                | 2014                                                        |
+| yyyy            |              | four- to six- digit year, pads to 4                            | 2014                                                        |
 | G               |              | abbreviated localized era                                      | AD                                                          |
 | GG              |              | unabbreviated localized era                                    | Anno Domini                                                 |
 | GGGGG           |              | one-letter localized era                                       | A                                                           |
