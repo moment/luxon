@@ -1,7 +1,7 @@
 sudo: false
 language: javascript
 before_script:
-  - nvm install 8.8.1
+  - nvm install 8.9.1
   - npm install
   - npm install full-icu
   - npm install -g gulp-cli
