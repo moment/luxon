@@ -27,7 +27,7 @@ This happens because the `plus` method returns a new instance, leaving `d1` unmo
 1. Months in Luxon are 1-indexed instead of 0-indexed like in Moment and the native Date type.
 1. Localizations and time zones are implemented by the native Intl API (or a polyfill of it), instead of by the library itself.
 1. Luxon has both a Duration type and an Interval type. The Interval type is like Twix.
-1. Luxon lacks the relative time features of Moment and will until the required [facilities](https://github.com/tc39/proposal-intl-relative-time) are provided by the browser.
+1. Luxon lacks the relative time features of Moment and won't support it until the required [facilities](https://github.com/tc39/proposal-intl-relative-time) are provided by the browser.
 
 ## Other API style differences
 
