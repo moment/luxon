@@ -2374,7 +2374,7 @@ var typeToPos = {
 };
 
 function hackyOffset(dtf, date) {
-  var formatted = dtf.format(date),
+  var formatted = dtf.format(date).replace(/\u200E/g, ''),
       parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
       _parsed = slicedToArray(parsed, 7),
       fMonth = _parsed[1],
