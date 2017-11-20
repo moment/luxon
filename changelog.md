@@ -1,5 +1,12 @@
 # Changelog
 
+# 0.0.22
+
+ * Add 'u' formatting and parsing
+ * Add 'y', 'yyyyy', and 'yyyyyy' parsing tokens
+ * Add 'yyyyyy' formatting token
+ * Better error messages for missing arguments to `DateTime.fromString`
+
 # 0.0.21
  * Fix zones for Edge
 
