@@ -2,6 +2,10 @@
 
 What's the deal with this whole Luxon thing anyway? Why did I write it? How is it related to the Moment project? What's different about it? This page tries to hash all that out.
 
+## A disclaimer
+
+I should clarify here that I'm just one of Moment's maintainers; I'm not in charge and I'm not Moment's creator. The opinions here are solely mine. Finally, none of this is meant to bash Moment, a project I've spent a lot of time on and whose other developers I respect.
+
 ## Origin
 
 Luxon started because I had a bunch of ideas on how to improve Moment but kept finding Moment wasn't a good codebase to explore them with. Namely:

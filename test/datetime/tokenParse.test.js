@@ -16,7 +16,7 @@ test('DateTime.fromString() parses basic times', () => {
 });
 
 test('DateTime.fromString() parses with variable-length inpus', () => {
-  let i = DateTime.fromString('1982/05/03 09:07:05.004', 'yy/M/d H:m:s.S');
+  let i = DateTime.fromString('1982/05/03 09:07:05.004', 'y/M/d H:m:s.S');
   expect(i.year).toBe(1982);
   expect(i.month).toBe(5);
   expect(i.day).toBe(3);
@@ -78,6 +78,7 @@ test('DateTime.fromString() with yyyyyy strictly parses extended years', () => {
 test('DateTime.fromString() defaults yy to the right century', () => {
   expect(DateTime.fromString('55', 'yy').year).toBe(2055);
   expect(DateTime.fromString('70', 'yy').year).toBe(1970);
+  expect(DateTime.fromString('1970', 'yy').year).toBe(1970);
 });
 
 test('DateTime.fromString() parses hours', () => {
