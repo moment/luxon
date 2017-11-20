@@ -7,9 +7,6 @@ before_install:
   - ./docker/install
 script:
   - ./docker/gulp ci
-  - ./docker/gulp test
-  - ./docker/gulp coveralls
-  - ./docker/gulp docs
 branches:
   only:
     - master
