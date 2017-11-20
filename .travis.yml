@@ -6,10 +6,10 @@ before_install:
   - docker pull icambron/luxon
   - ./docker/install
 script:
-  - gulp ci
-  - gulp test
-  - gulp coveralls
-  - gulp docs
+  - ./docker/gulp ci
+  - ./docker/gulp test
+  - ./docker/gulp coveralls
+  - ./docker/gulp docs
 branches:
   only:
     - master
