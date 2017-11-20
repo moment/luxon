@@ -1,12 +1,9 @@
 {
   "name": "luxon",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
-  "keywords": [
-    "date",
-    "immutable"
-  ],
+  "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
   "dependencies": {
     "core-js": "latest"
@@ -15,10 +12,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js,json}": [
-      "prettier --config .prettier.js --write",
-      "git add"
-    ]
+    "*.{js,json}": ["prettier --config .prettier.js --write", "git add"]
   },
   "devDependencies": {
     "babel-jest": "latest",
@@ -62,8 +56,6 @@
   "engines": {
     "node": "*"
   },
-  "files": [
-    "build/cjs/luxon.js"
-  ],
+  "files": ["build/cjs/luxon.js"],
   "license": "MIT"
 }
