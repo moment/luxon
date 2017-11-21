@@ -618,7 +618,7 @@ export class DateTime {
   }
 
   static fromSQL(text) {
-    const [vals, parsedZone] = RegexParser.parseSql(text);
+    const [vals, parsedZone] = RegexParser.parseSQL(text);
     return parseDataToDateTime(vals, parsedZone, {});
   }
 
