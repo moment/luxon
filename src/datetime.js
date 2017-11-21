@@ -1288,7 +1288,7 @@ export class DateTime {
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Date
-   * @example DateTime.utc(2014, 7, 13).toHTTP() //=> '2014-07-13'
+   * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
    * @return {string}
    */
   toSQLDate() {
@@ -1297,7 +1297,7 @@ export class DateTime {
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Time
-   * @example DateTime.utc(2014, 7, 13).toHTTP() //=> '2014-07-13'
+   * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=> '07:34:19.361'
    * @return {string}
    */
   toSQLTime() {
@@ -1306,7 +1306,7 @@ export class DateTime {
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL DateTime
-   * @example DateTime.utc(2014, 7, 13).toHTTP() //=> '2014-07-13'
+   * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000'
    * @return {string}
    */
   toSQL() {
