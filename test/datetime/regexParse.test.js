@@ -2,9 +2,9 @@
 
 import { DateTime } from '../../src/luxon';
 
-//------
-// .fromISO
-//-------
+////------
+//// .fromISO
+////-------
 test('DateTime.fromISO() parses as local by default', () => {
   const dt = DateTime.fromISO('2016-05-25T09:08:34.123');
   expect(dt.toObject()).toEqual({
@@ -368,6 +368,19 @@ test('DateTime.fromISO() accepts year-ordinalTtime', () => {
     year: 2016,
     month: 7,
     day: 18,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+});
+
+test('DateTime.fromISO() accepts time', () => {
+  const { year, month, day } = DateTime.local();
+  isSame('09:24:15.123', {
+    year,
+    month,
+    day,
     hour: 9,
     minute: 24,
     second: 15,

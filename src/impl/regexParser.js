@@ -4,7 +4,7 @@ import { FixedOffsetZone } from '../zones/fixedOffsetZone';
 
 function combineRegexes(...regexes) {
   const full = regexes.reduce((f, r) => f + r.source, '');
-  return RegExp(full);
+  return RegExp(`^${full}$`);
 }
 
 function combineExtractors(...extractors) {
@@ -46,13 +46,16 @@ function simpleParse(...keys) {
   };
 }
 
-// ISO parsing
-const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
-  isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
-  isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
-  isoOrdinalRegex = /^(\d{4})-?(\d{3})/,
+// ISO and SQL parsing
+const isoTimeRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?/,
+  isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`),
+  isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
+  isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/,
+  isoOrdinalRegex = /(\d{4})-?(\d{3})/,
   extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),
-  extractISOOrdinalData = simpleParse('year', 'ordinal');
+  extractISOOrdinalData = simpleParse('year', 'ordinal'),
+  sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/, // dumbed-down version of the ISO one
+  sqlTimeExtensionRegex = RegExp(`(?: ${isoTimeRegex.source})?`);
 
 function extractISOYmd(match, cursor) {
   const item = {
@@ -206,10 +209,6 @@ function extractASCII(match) {
   return [result, FixedOffsetZone.utcInstance];
 }
 
-const sqlDateRegex = /^(\d{4})-(\d\d)-(\d\d)$/,
-  sqlTimeRegex = /^(\d\d):(\d\d):(\d\d)(?:\.(\d{1,9}))?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?$/,
-  sqlDateTimeRegex = /^(\d{4})-(\d\d)-(\d\d)\s(\d\d):(\d\d):(\d\d)(?:\.(\d{1,9}))?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?$/;
-
 /**
  * @private
  */
@@ -218,15 +217,19 @@ export class RegexParser {
   static parseISODate(s) {
     return parse(
       s,
-      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],
       [
-        combineRegexes(isoWeekRegex, isoTimeRegex),
+        combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
+        combineExtractors(extractISOYmd, extractISOTime)
+      ],
+      [
+        combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
         combineExtractors(extractISOWeekData, extractISOTime)
       ],
       [
-        combineRegexes(isoOrdinalRegex, isoTimeRegex),
+        combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
         combineExtractors(extractISOOrdinalData, extractISOTime)
-      ]
+      ],
+      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]
     );
   }
 
@@ -250,9 +253,11 @@ export class RegexParser {
   static parseSQL(s) {
     return parse(
       s,
-      [sqlDateRegex, combineExtractors(extractISOYmd)],
-      [sqlTimeRegex, combineExtractors(extractISOTime)],
-      [sqlDateTimeRegex, combineExtractors(extractISOYmd, extractISOTime)]
+      [
+        combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
+        combineExtractors(extractISOYmd, extractISOTime)
+      ],
+      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]
     );
   }
 }
