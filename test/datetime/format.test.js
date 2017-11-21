@@ -127,6 +127,45 @@ test('DateTime#toHTTP() returns null for invalid DateTimes', () => {
 });
 
 //------
+// #toSQLDate()
+//------
+
+test('DateTime#toSQLDate() returns SQL date', () => {
+  expect(dt.toUTC().toSQLDate()).toBe('1982-05-25');
+  expect(dt.setZone('America/New_York').toSQLDate()).toBe('1982-05-25');
+});
+
+test('DateTime#toSQLDate() returns null for invalid DateTimes', () => {
+  expect(invalid.toSQLDate()).toBe(null);
+});
+
+//------
+// #toSQLTime()
+//------
+
+test('DateTime#toSQLTime() returns SQL date', () => {
+  expect(dt.toUTC().toSQLTime()).toBe('09:23:54.123');
+  expect(dt.setZone('America/New_York').toSQLTime()).toBe('09:23:54.123');
+});
+
+test('DateTime#toSQLTime() returns null for invalid DateTimes', () => {
+  expect(invalid.toSQLTime()).toBe(null);
+});
+
+//------
+// #toSQL()
+//------
+
+test('DateTime#toSQL() returns SQL DateTime', () => {
+  expect(dt.toUTC().toSQL()).toBe('1982-05-25 09:23:54.123');
+  expect(dt.setZone('America/New_York').toSQL()).toBe('1982-05-25 09:23:54.123');
+});
+
+test('DateTime#toSQL() returns null for invalid DateTimes', () => {
+  expect(invalid.toSQL()).toBe(null);
+});
+
+//------
 // #toString()
 //-------
 test('DateTime#toString() returns the ISO time', () => {

@@ -114,7 +114,8 @@ const obsOffsets = {
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-    month: English.monthsShort.indexOf(monthStr) + 1,
+    month:
+      monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
     minute: parseInt(minuteStr)
@@ -189,6 +190,34 @@ function extractASCII(match) {
   return [result, FixedOffsetZone.utcInstance];
 }
 
+const sqlDateRegex = /^(\d{4})-(\d\d)-(\d\d)$/,
+  sqlTimeRegex = /^(\d|\d\d):(\d\d):(\d\d)\.(\d\d\d)$/,
+  sqlDateTimeRegex = /^(\d{4})-(\d\d)-(\d\d) (\d|\d\d):(\d\d):(\d\d)\.(\d\d\d)$/;
+
+function extractSqlDate(match) {
+  const [, yearStr, monthStr, dayStr] = match,
+    result = fromStrings(0, yearStr, monthStr, dayStr, 0, 0, 0);
+  return [result, FixedOffsetZone.utcInstance];
+}
+
+function extractSqlTime(match) {
+  const now = new Date(),
+    yearStr = now.getUTCFullYear().toString(),
+    monthStr = (now.getUTCMonth() + 1).toString(),
+    dayStr = now.getUTCDate().toString(),
+    [, hourStr, minuteStr, secondStr] = match,
+    result = fromStrings(0, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+
+  return [result, FixedOffsetZone.utcInstance];
+}
+
+function extractSqlDateTime(match) {
+  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match,
+    result = fromStrings(0, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+
+  return [result, FixedOffsetZone.utcInstance];
+}
+
 /**
  * @private
  */
@@ -224,5 +253,14 @@ export class RegexParser {
 
   static parseISODuration(s) {
     return parse(s, [isoDuration, extractISODuration]);
+  }
+
+  static parseSql(s) {
+    return parse(
+      s,
+      [sqlTimeRegex, extractSqlTime],
+      [sqlDateRegex, extractSqlDate],
+      [sqlDateTimeRegex, extractSqlDateTime]
+    );
   }
 }
