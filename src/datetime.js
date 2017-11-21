@@ -636,9 +636,9 @@ export class DateTime {
    * @example DateTime.fromSQL('09:12:34.342')
    * @return {DateTime}
    */
-  static fromSQL(text, opts = {}) {
+  static fromSQL(text, options = {}) {
     const [vals, parsedZone] = RegexParser.parseSQL(text);
-    return parseDataToDateTime(vals, parsedZone, opts);
+    return parseDataToDateTime(vals, parsedZone, options);
   }
 
   /**
