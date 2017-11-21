@@ -594,10 +594,14 @@ test('DateTime.fromHTTP() can parse ASCII dates with two date digits', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse SQL Date YYYY-MM-DD', () => {
+//------
+// .fromSQL
+//-------
+
+test('DateTime.fromSQL() can parse SQL dates', () => {
   const dt = DateTime.fromSQL('2016-05-14');
   expect(dt.isValid).toBe(true);
-  expect(dt.toUTC().toObject()).toEqual({
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 14,
@@ -608,14 +612,14 @@ test('DateTime.fromSQL() can parse SQL Date YYYY-MM-DD', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse SQL Time 04:12:00.123', () => {
+test('DateTime.fromSQL() can parse SQL times', () => {
   const dt = DateTime.fromSQL('04:12:00.123');
   expect(dt.isValid).toBe(true);
   const now = new Date();
-  expect(dt.toUTC().toObject()).toEqual({
-    year: now.getUTCFullYear(),
-    month: now.getUTCMonth() + 1,
-    day: now.getUTCDate(),
+  expect(dt.toObject()).toEqual({
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate(),
     hour: 4,
     minute: 12,
     second: 0,
@@ -623,10 +627,25 @@ test('DateTime.fromSQL() can parse SQL Time 04:12:00.123', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse SQL DateTime 2016-05-14 10:23:54.2346', () => {
+test('DateTime.fromSQL() handles times without fractional seconds', () => {
+  const dt = DateTime.fromSQL('04:12:00');
+  expect(dt.isValid).toBe(true);
+  const now = new Date();
+  expect(dt.toObject()).toEqual({
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+    hour: 4,
+    minute: 12,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromSQL() can parse SQL datetimes', () => {
   const dt = DateTime.fromSQL('2016-05-14 10:23:54.2346');
   expect(dt.isValid).toBe(true);
-  expect(dt.toUTC().toObject()).toEqual({
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 14,
@@ -637,10 +656,10 @@ test('DateTime.fromSQL() can parse SQL DateTime 2016-05-14 10:23:54.2346', () =>
   });
 });
 
-test('DateTime.fromSQL() parse second fraction .1 should equal 100', () => {
+test('DateTime.fromSQL() handles deciseconds in SQL datetimes', () => {
   const dt = DateTime.fromSQL('2016-05-14 10:23:54.1');
   expect(dt.isValid).toBe(true);
-  expect(dt.toUTC().toObject()).toEqual({
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 14,
@@ -651,10 +670,25 @@ test('DateTime.fromSQL() parse second fraction .1 should equal 100', () => {
   });
 });
 
-test('DateTime.fromSQL() parse second fraction .023 should equal 23', () => {
-  const dt = DateTime.fromSQL('2016-05-14 10:23:54.023');
+test('DateTime.fromSQL() handles datetimes without fractional seconds', () => {
+  const dt = DateTime.fromSQL('2016-05-14 10:23:54');
   expect(dt.isValid).toBe(true);
-  expect(dt.toUTC().toObject()).toEqual({
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromSQL() accepts a zone to default to', () => {
+  const dt = DateTime.fromSQL('2016-05-14 10:23:54.023', { zone: 'utc' });
+  expect(dt.isValid).toBe(true);
+  expect(dt.offset).toBe(0);
+  expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 14,
@@ -662,5 +696,31 @@ test('DateTime.fromSQL() parse second fraction .023 should equal 23', () => {
     minute: 23,
     second: 54,
     millisecond: 23
+  });
+});
+
+test('DateTime.fromSQL() can parse an optional offset', () => {
+  let dt = DateTime.fromSQL('2016-05-14 10:23:54.023+06:00');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 4,
+    minute: 23,
+    second: 54,
+    millisecond: 23
+  });
+
+  dt = DateTime.fromSQL('2016-05-14 10:23:54+06:00');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 4,
+    minute: 23,
+    second: 54,
+    millisecond: 0
   });
 });

@@ -24,6 +24,7 @@ function parse(s, ...patterns) {
   if (s == null) {
     return [null, null];
   }
+
   for (const [regex, extractor] of patterns) {
     const m = regex.exec(s);
     if (m) {
@@ -206,34 +207,8 @@ function extractASCII(match) {
 }
 
 const sqlDateRegex = /^(\d{4})-(\d\d)-(\d\d)$/,
-  sqlTimeRegex = /^(\d|\d\d):(\d\d):(\d\d)\.(\d\d\d)$/,
-  sqlDateTimeRegex = /^(\d{4})-(\d\d)-(\d\d)\s(\d|\d\d):(\d\d):(\d\d)\.(\d{1,9})$/;
-
-function extractSQLDate(match) {
-  const [, yearStr, monthStr, dayStr] = match,
-    result = fromStrings(0, yearStr, monthStr, dayStr, 0, 0, 0);
-
-  return [result, FixedOffsetZone.utcInstance];
-}
-
-function extractSQLTime(match) {
-  const [, hourStr, minuteStr, secondStr, fractionStr] = match,
-    result = {
-      hour: parseInt(hourStr),
-      minute: parseInt(minuteStr),
-      second: parseInt(secondStr),
-      millisecond: parseSecondFraction(fractionStr)
-    };
-
-  return [result, FixedOffsetZone.utcInstance];
-}
-
-function extractSQLDateTime(match) {
-  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, fractionStr] = match,
-    result = fromStrings(0, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, fractionStr);
-
-  return [result, FixedOffsetZone.utcInstance];
-}
+  sqlTimeRegex = /^(\d\d):(\d\d):(\d\d)(?:\.(\d{1,9}))?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?$/,
+  sqlDateTimeRegex = /^(\d{4})-(\d\d)-(\d\d)\s(\d\d):(\d\d):(\d\d)(?:\.(\d{1,9}))?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?$/;
 
 /**
  * @private
@@ -275,9 +250,9 @@ export class RegexParser {
   static parseSQL(s) {
     return parse(
       s,
-      [sqlDateRegex, extractSQLDate],
-      [sqlTimeRegex, extractSQLTime],
-      [sqlDateTimeRegex, extractSQLDateTime]
+      [sqlDateRegex, combineExtractors(extractISOYmd)],
+      [sqlTimeRegex, combineExtractors(extractISOTime)],
+      [sqlDateTimeRegex, combineExtractors(extractISOYmd, extractISOTime)]
     );
   }
 }
