@@ -593,3 +593,74 @@ test('DateTime.fromHTTP() can parse ASCII dates with two date digits', () => {
     millisecond: 0
   });
 });
+
+test('DateTime.fromSQL() can parse SQL Date YYYY-MM-DD', () => {
+  const dt = DateTime.fromSQL('2016-05-14');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromSQL() can parse SQL Time 04:12:00.123', () => {
+  const dt = DateTime.fromSQL('04:12:00.123');
+  expect(dt.isValid).toBe(true);
+  const now = new Date();
+  expect(dt.toUTC().toObject()).toEqual({
+    year: now.getUTCFullYear(),
+    month: now.getUTCMonth() + 1,
+    day: now.getUTCDate(),
+    hour: 4,
+    minute: 12,
+    second: 0,
+    millisecond: 123
+  });
+});
+
+test('DateTime.fromSQL() can parse SQL DateTime 2016-05-14 10:23:54.2346', () => {
+  const dt = DateTime.fromSQL('2016-05-14 10:23:54.2346');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 235
+  });
+});
+
+test('DateTime.fromSQL() parse second fraction .1 should equal 100', () => {
+  const dt = DateTime.fromSQL('2016-05-14 10:23:54.1');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 100
+  });
+});
+
+test('DateTime.fromSQL() parse second fraction .023 should equal 23', () => {
+  const dt = DateTime.fromSQL('2016-05-14 10:23:54.023');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 23
+  });
+});

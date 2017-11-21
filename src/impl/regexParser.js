@@ -111,13 +111,29 @@ const obsOffsets = {
   PST: -8 * 60
 };
 
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+function parseSecondFraction(fraction) {
+  const f = parseFloat('0.' + fraction) * 1000;
+  return Math.ceil(f);
+}
+
+function fromStrings(
+  weekdayStr,
+  yearStr,
+  monthStr,
+  dayStr,
+  hourStr,
+  minuteStr,
+  secondStr,
+  fractionStr
+) {
   const result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-    month: English.monthsShort.indexOf(monthStr) + 1,
+    month:
+      monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr)
+    minute: parseInt(minuteStr),
+    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
   };
 
   if (secondStr) result.second = parseInt(secondStr);
@@ -189,6 +205,36 @@ function extractASCII(match) {
   return [result, FixedOffsetZone.utcInstance];
 }
 
+const sqlDateRegex = /^(\d{4})-(\d\d)-(\d\d)$/,
+  sqlTimeRegex = /^(\d|\d\d):(\d\d):(\d\d)\.(\d\d\d)$/,
+  sqlDateTimeRegex = /^(\d{4})-(\d\d)-(\d\d)\s(\d|\d\d):(\d\d):(\d\d)\.(\d{1,9})$/;
+
+function extractSQLDate(match) {
+  const [, yearStr, monthStr, dayStr] = match,
+    result = fromStrings(0, yearStr, monthStr, dayStr, 0, 0, 0);
+
+  return [result, FixedOffsetZone.utcInstance];
+}
+
+function extractSQLTime(match) {
+  const [, hourStr, minuteStr, secondStr, fractionStr] = match,
+    result = {
+      hour: parseInt(hourStr),
+      minute: parseInt(minuteStr),
+      second: parseInt(secondStr),
+      millisecond: parseSecondFraction(fractionStr)
+    };
+
+  return [result, FixedOffsetZone.utcInstance];
+}
+
+function extractSQLDateTime(match) {
+  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, fractionStr] = match,
+    result = fromStrings(0, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, fractionStr);
+
+  return [result, FixedOffsetZone.utcInstance];
+}
+
 /**
  * @private
  */
@@ -224,5 +270,14 @@ export class RegexParser {
 
   static parseISODuration(s) {
     return parse(s, [isoDuration, extractISODuration]);
+  }
+
+  static parseSQL(s) {
+    return parse(
+      s,
+      [sqlDateRegex, extractSQLDate],
+      [sqlTimeRegex, extractSQLTime],
+      [sqlDateTimeRegex, extractSQLDateTime]
+    );
   }
 }

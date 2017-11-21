@@ -617,6 +617,11 @@ export class DateTime {
     }
   }
 
+  static fromSQL(text) {
+    const [vals, parsedZone] = RegexParser.parseSQL(text);
+    return parseDataToDateTime(vals, parsedZone, {});
+  }
+
   /**
    * Create an invalid DateTime.
    * @return {DateTime}
@@ -1279,6 +1284,33 @@ export class DateTime {
    */
   toHTTP() {
     return techFormat(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Date
+   * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
+   * @return {string}
+   */
+  toSQLDate() {
+    return techFormat(this.toUTC(), 'yyyy-MM-dd');
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Time
+   * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=> '07:34:19.361'
+   * @return {string}
+   */
+  toSQLTime() {
+    return techFormat(this.toUTC(), 'hh:mm:ss.SSS');
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL DateTime
+   * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000'
+   * @return {string}
+   */
+  toSQL() {
+    return techFormat(this.toUTC(), 'yyyy-MM-dd hh:mm:ss.SSS');
   }
 
   /**
