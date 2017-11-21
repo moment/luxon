@@ -2,9 +2,9 @@
 
 import { DateTime } from '../../src/luxon';
 
-////------
-//// .fromISO
-////-------
+//------
+// .fromISO
+//-------
 test('DateTime.fromISO() parses as local by default', () => {
   const dt = DateTime.fromISO('2016-05-25T09:08:34.123');
   expect(dt.toObject()).toEqual({
