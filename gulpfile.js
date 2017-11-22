@@ -159,7 +159,7 @@ gulp.task('cjs-browser', processLib('cjs-browser', cjsBrowserOpts));
 gulp.task('es6', processLib('es6', es6Opts));
 gulp.task('global-es6', processLib('global-es6', es6GlobalOpts));
 
-gulp.task('build', ['node', 'cjs-browser', 'es6', 'amd', 'global', 'global-es6']);
+gulp.task('build', ['node', 'cjs-browser', 'es6', 'amd', 'global', 'global-es6', 'global-filled']);
 
 gulp.task('test-with-coverage', () => test(true));
 gulp.task('test', () => test(false));
