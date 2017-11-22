@@ -61,6 +61,15 @@ export class Formatter {
   constructor(locale, formatOpts) {
     this.opts = formatOpts;
     this.loc = locale;
+    this.systemLoc = null;
+  }
+
+  formatWithSystemDefault(dt, opts) {
+    if (this.systemLoc === null) {
+      this.systemLoc = this.loc.redefaultToSystem();
+    }
+    const df = this.systemLoc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.format();
   }
 
   formatDateTime(dt, opts = {}) {
@@ -288,45 +297,45 @@ export class Formatter {
             return this.num(dt.ordinal, 3);
           // macros
           case 'D':
-            return this.formatDateTime(dt, DateTime.DATE_SHORT);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_SHORT);
           case 'DD':
-            return this.formatDateTime(dt, DateTime.DATE_MED);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_MED);
           case 'DDD':
-            return this.formatDateTime(dt, DateTime.DATE_FULL);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_FULL);
           case 'DDDD':
-            return this.formatDateTime(dt, DateTime.DATE_HUGE);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_HUGE);
           case 't':
-            return this.formatDateTime(dt, DateTime.TIME_SIMPLE);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_SIMPLE);
           case 'tt':
-            return this.formatDateTime(dt, DateTime.TIME_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SECONDS);
           case 'ttt':
-            return this.formatDateTime(dt, DateTime.TIME_WITH_SHORT_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SHORT_OFFSET);
           case 'tttt':
-            return this.formatDateTime(dt, DateTime.TIME_WITH_LONG_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_LONG_OFFSET);
           case 'T':
-            return this.formatDateTime(dt, DateTime.TIME_24_SIMPLE);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_SIMPLE);
           case 'TT':
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SECONDS);
           case 'TTT':
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
           case 'TTTT':
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
           case 'f':
-            return this.formatDateTime(dt, DateTime.DATETIME_SHORT);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT);
           case 'ff':
-            return this.formatDateTime(dt, DateTime.DATETIME_MED);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_MED);
           case 'fff':
-            return this.formatDateTime(dt, DateTime.DATETIME_FULL);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL);
           case 'ffff':
-            return this.formatDateTime(dt, DateTime.DATETIME_HUGE);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE);
           case 'F':
-            return this.formatDateTime(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
           case 'FF':
-            return this.formatDateTime(dt, DateTime.DATETIME_MED_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_MED_WITH_SECONDS);
           case 'FFF':
-            return this.formatDateTime(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
           case 'FFFF':
-            return this.formatDateTime(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
 
           default:
             return token;

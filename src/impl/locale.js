@@ -161,7 +161,7 @@ export class Locale {
 
   static create(locale, numberingSystem, outputCalendar, defaultToEN = false) {
     const specifiedLocale = locale || Settings.defaultLocale,
-      // the system locale is useful for human readable strings but annoying for parsing known formats
+      // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
       localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),
       numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
       outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,
@@ -262,6 +262,10 @@ export class Locale {
 
   redefaultToEN(alts = {}) {
     return this.clone(Object.assign({}, alts, { defaultToEN: true }));
+  }
+
+  redefaultToSystem(alts = {}) {
+    return this.clone(Object.assign({}, alts, { defaultToEN: false }));
   }
 
   months(length, format = false, defaultOK = true) {

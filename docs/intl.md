@@ -46,6 +46,7 @@ By default the `locale` property of a new DateTime or Duration is `null`. This m
 
  1. `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.
  2. `DateTime.fromString` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.
+ 3. There's an exception, though: DateTime#toFormat can take "macro" formats like "D" that produce localized strings as part of a larger string. These *do* default to the system locale because their entire purpose is to be localized.
  
 ### Setting the default
 
