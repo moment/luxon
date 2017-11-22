@@ -8,8 +8,11 @@ var Benchmark = require('benchmark');
 var DateTime = require('../build/cjs/luxon').DateTime;
 
 new Benchmark.Suite()
+  .add('now', () => DateTime.local())
+  .add('local with numbers', () => DateTime.local(2017, 5, 15))
   .add('fromString', () =>
-    DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS'))
-  .add('local', () => DateTime.local())
+    DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS')
+  )
+  .add('add', () => DateTime.local().plus({ milliseconds: 3434 }))
   .on('cycle', event => console.log(String(event.target)))
   .run();

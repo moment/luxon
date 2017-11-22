@@ -228,6 +228,34 @@ function normalizeUnit(unit, ignoreUnknown = false) {
   return normalized;
 }
 
+// this is a dumbed down version of fromObject() that runs about 60% faster
+// but doesn't do any validation, makes a bunch of assumptions about what units
+// are present, and so on.
+function quickDT(obj, zone) {
+  // assume we have the higher-order units
+  for (const u of orderedUnits) {
+    const v = obj[u];
+    if (Util.isUndefined(v)) {
+      obj[u] = defaultUnitValues[u];
+    }
+  }
+
+  const invalidReason =
+    Conversions.hasInvalidGregorianData(obj) || Conversions.hasInvalidTimeData(obj);
+  if (invalidReason) {
+    return DateTime.invalid(invalidReason);
+  }
+
+  const tsNow = Settings.now(),
+    offsetProvis = zone.offset(tsNow),
+    [ts, o] = objToTS(obj, offsetProvis, zone);
+  return new DateTime({
+    ts,
+    zone,
+    o
+  });
+}
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -257,43 +285,24 @@ export class DateTime {
       invalidReason =
         config.invalidReason ||
         (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
-        (!zone.isValid ? UNSUPPORTED_ZONE : null);
+        (!zone.isValid ? UNSUPPORTED_ZONE : null),
+      ts = config.ts || Settings.now();
 
-    Object.defineProperty(this, 'ts', {
-      value: config.ts || Settings.now(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'zone', {
-      value: zone,
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'invalidReason', {
-      value: invalidReason,
-      enumerable: false
-    });
-
-    Object.defineProperty(this, 'weekData', {
-      writable: true, // !!!
-      value: null,
-      enumerable: false
-    });
-
+    let c = null,
+      o = null;
     if (!invalidReason) {
-      const unchanged =
-          config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone),
-        c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
-        o = unchanged ? config.old.o : this.zone.offset(this.ts);
-
-      Object.defineProperty(this, 'c', { value: c });
-      Object.defineProperty(this, 'o', { value: o });
+      const unchanged = config.old && config.old.ts === ts && config.old.zone.equals(zone);
+      c = unchanged ? config.old.c : tsToObj(ts, zone.offset(ts));
+      o = unchanged ? config.old.o : zone.offset(ts);
     }
+
+    this.ts = config.ts || Settings.now();
+    this.zone = zone;
+    this.loc = config.loc || Locale.create();
+    this.invalid = invalidReason;
+    this.weekData = null;
+    this.c = c;
+    this.o = o;
   }
 
   // CONSTRUCT
@@ -321,16 +330,18 @@ export class DateTime {
     if (Util.isUndefined(year)) {
       return new DateTime({ ts: Settings.now() });
     } else {
-      return DateTime.fromObject({
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        millisecond,
-        zone: Settings.defaultZone
-      });
+      return quickDT(
+        {
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          second,
+          millisecond
+        },
+        Settings.defaultZone
+      );
     }
   }
 
@@ -360,16 +371,18 @@ export class DateTime {
         zone: FixedOffsetZone.utcInstance
       });
     } else {
-      return DateTime.fromObject({
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        millisecond,
-        zone: FixedOffsetZone.utcInstance
-      });
+      return quickDT(
+        {
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          second,
+          millisecond
+        },
+        FixedOffsetZone.utcInstance
+      );
     }
   }
 
@@ -684,7 +697,7 @@ export class DateTime {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -1338,6 +1351,19 @@ export class DateTime {
    */
   toString() {
     return this.isValid ? this.toISO() : INVALID;
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
+        .locale} }`;
+    } else {
+      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**

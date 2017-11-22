@@ -27,12 +27,9 @@ export class Interval {
    * @private
    */
   constructor(config) {
-    Object.defineProperty(this, 's', { value: config.start, enumerable: true });
-    Object.defineProperty(this, 'e', { value: config.end, enumerable: true });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
+    this.s = config.start;
+    this.e = config.end;
+    this.invalid = config.invalidReason || null;
   }
 
   /**
@@ -136,7 +133,7 @@ export class Interval {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -427,6 +424,19 @@ export class Interval {
   toString() {
     if (!this.isValid) return INVALID;
     return `[${this.s.toISO()} – ${this.e.toISO()})`;
+  }
+
+  /**
+   * Returns a string representation of this Interval appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
+        .start.zone.name},\n  locale:   ${this.start.locale} }`;
+    } else {
+      return `Interval { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**

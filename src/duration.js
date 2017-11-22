@@ -120,27 +120,11 @@ export class Duration {
    */
   constructor(config) {
     const accurate = config.conversionAccuracy === 'longterm' || false;
-
-    Object.defineProperty(this, 'values', {
-      value: config.values,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-    Object.defineProperty(this, 'conversionAccuracy', {
-      value: accurate ? 'longterm' : 'casual',
-      enumerable: true
-    });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
-    Object.defineProperty(this, 'matrix', {
-      value: accurate ? accurateMatrix : casualMatrix,
-      enumerable: false
-    });
+    this.values = config.values;
+    this.loc = config.loc || Locale.create();
+    this.conversionAccuracy = accurate ? 'longterm' : 'casual';
+    this.invalid = config.invalidReason || null;
+    this.matrix = accurate ? accurateMatrix : casualMatrix;
   }
 
   /**
@@ -335,6 +319,19 @@ export class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns a string representation of this Duration appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `Duration {\n  values: ${this.toObject().inspect()},\n  locale: ${this
+        .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
+    } else {
+      return `Duration { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**
@@ -593,7 +590,7 @@ export class Duration {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**

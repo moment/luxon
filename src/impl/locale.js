@@ -4,9 +4,7 @@ import { Settings } from '../settings';
 import { DateTime } from '../datetime';
 import { Formatter } from './formatter';
 
-let localeCache = {},
-  sysLocaleCache = null;
-
+let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
@@ -164,22 +162,12 @@ export class Locale {
       // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
       localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),
       numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
-      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,
-      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}|${specifiedLocale}`,
-      cached = localeCache[cacheKey];
-
-    if (cached) {
-      return cached;
-    } else {
-      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
-      localeCache[cacheKey] = fresh;
-      return fresh;
-    }
+      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
+    return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
   }
 
   static resetCache() {
     sysLocaleCache = null;
-    localeCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
@@ -187,40 +175,17 @@ export class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, specifiedLocale) {
-    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
-    Object.defineProperty(this, 'numberingSystem', {
-      value: numbering,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'outputCalendar', {
-      value: outputCalendar,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
-      enumerable: false
-    });
+    this.locale = locale;
+    this.numberingSystem = numbering;
+    this.outputCalendar = outputCalendar;
+    this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 
-    // cached usefulness
-    Object.defineProperty(this, 'weekdaysCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'monthsCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'meridiemCache', {
-      value: null,
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'eraCache', {
-      value: {},
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'specifiedLocale', { value: specifiedLocale, enumerable: true });
+    this.weekdaysCache = { format: {}, standalone: {} };
+    this.monthsCache = { format: {}, standalone: {} };
+    this.meridiemCache = null;
+    this.eraCache = {};
+
+    this.specifiedLocale = specifiedLocale;
   }
 
   // todo: cache me

@@ -267,7 +267,7 @@ function dateTimeFromMatches(matches) {
 
 export class TokenParser {
   constructor(loc) {
-    Object.defineProperty(this, 'loc', { value: loc, enumerable: true });
+    this.loc = loc;
   }
 
   explainParse(input, format) {
