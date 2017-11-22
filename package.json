@@ -5,10 +5,7 @@
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
-  "dependencies": {
-    "core-js": "latest",
-    "jest": "^21.2.1"
-  },
+  "dependencies": {},
   "scripts": {
     "precommit": "lint-staged"
   },
@@ -17,8 +14,8 @@
   },
   "devDependencies": {
     "babel-jest": "latest",
-    "babel-preset-es2015": "latest",
-    "babel-preset-es2015-rollup": "latest",
+    "babel-plugin-external-helpers": "latest",
+    "babel-preset-env": "latest",
     "benchmark": "latest",
     "coveralls": "latest",
     "eslint": "latest",
@@ -39,13 +36,12 @@
     "gulp-uglify": "latest",
     "gulp-util": "latest",
     "husky": "^0.14.3",
+    "jest": "^21.2.1",
     "jest-cli": "latest",
     "lazypipe": "latest",
     "lint-staged": "^4.3.0",
     "prettier": "1.7.4",
     "rollup-plugin-babel": "latest",
-    "rollup-plugin-commonjs": "latest",
-    "rollup-plugin-node-resolve": "latest",
     "rollup-stream": "latest",
     "run-sequence": "latest",
     "tap-min": "latest",

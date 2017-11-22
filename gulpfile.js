@@ -12,8 +12,6 @@ const babel = require('rollup-plugin-babel'),
   prettier = require('prettier'),
   process = require('process'),
   rename = require('gulp-rename'),
-  rollupNode = require('rollup-plugin-node-resolve'),
-  rollupCommonJS = require('rollup-plugin-commonjs'),
   rollup = require('rollup-stream'),
   runSequence = require('run-sequence'),
   source = require('vinyl-source-stream'),
@@ -23,25 +21,28 @@ const babel = require('rollup-plugin-babel'),
 
 function rollupLib(inopts) {
   const opts = Object.assign(
-    {
-      input: inopts.input,
-      sourcemap: true,
-      format: inopts.format,
-      plugins: [
-        rollupNode(),
-        rollupCommonJS({
-          include: 'node_modules/**'
-        })
-      ]
-    },
-    inopts.rollupOpts || {}
-  );
+      {
+        input: './src/luxon.js',
+        sourcemap: true,
+        format: inopts.format,
+        plugins: []
+      },
+      inopts.rollupOpts || {}
+    ),
+    presetOpts = {
+      modules: false
+    };
+
+  if (inopts.target) {
+    presetOpts.targets = [inopts.target];
+  }
 
   if (inopts.compile || typeof inopts.compile === 'undefined') {
     opts.plugins.push(
       babel({
         babelrc: false,
-        presets: ['es2015-rollup']
+        presets: [['env', presetOpts]],
+        plugins: ['external-helpers']
       })
     );
   }
@@ -68,16 +69,6 @@ function processLib(dest, opts) {
       .pipe(gulp.dest(fullDest))
       .pipe(minify());
   };
-}
-
-function processLibLegacy(dest, opts) {
-  const realOpts = Object.assign({}, opts, { input: './src/luxonFilled.js' });
-  return processLib(dest, realOpts);
-}
-
-function processLibModern(dest, opts) {
-  const realOpts = Object.assign({}, opts, { input: './src/luxon.js' });
-  return processLib(dest, realOpts);
 }
 
 function prettify(opts) {
@@ -107,14 +98,16 @@ function checkForDocCoverage() {
   });
 }
 
-const cjsOpts = { format: 'cjs' },
+const nodeOpts = { format: 'cjs', target: 'node >= 6' },
+  cjsBrowserOpts = { format: 'cjs', target: 'last 2 major versions' },
   es6Opts = {
     format: 'es',
     compile: false
   },
   amdOpts = {
     format: 'amd',
-    rollupOpts: { name: 'luxon' }
+    rollupOpts: { name: 'luxon' },
+    target: 'last 2 major versions'
   },
   es6GlobalOpts = {
     format: 'iife',
@@ -123,7 +116,8 @@ const cjsOpts = { format: 'cjs' },
   },
   globalOpts = {
     format: 'iife',
-    rollupOpts: { name: 'luxon' }
+    rollupOpts: { name: 'luxon' },
+    target: 'last 2 major versions'
   };
 
 function test(includeCoverage) {
@@ -141,17 +135,14 @@ function test(includeCoverage) {
   return gulp.src('test').pipe(jest(opts));
 }
 
-// build these with the corejs polyfills
-// todo: is this the right thing to do?
-gulp.task('global', processLibLegacy('global', globalOpts));
-gulp.task('amd', processLibLegacy('amd', amdOpts));
-gulp.task('cjs', processLibLegacy('cjs', cjsOpts));
+gulp.task('global', processLib('global', globalOpts));
+gulp.task('amd', processLib('amd', amdOpts));
+gulp.task('node', processLib('node', nodeOpts));
+gulp.task('cjs-browser', processLib('cjs-browser', cjsBrowserOpts));
+gulp.task('es6', processLib('es6', es6Opts));
+gulp.task('global-es6', processLib('global-es6', es6GlobalOpts));
 
-// build these without the corejs polyfills
-gulp.task('es6', processLibModern('es6', es6Opts));
-gulp.task('global-es6', processLibModern('global-es6', es6GlobalOpts));
-
-gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
+gulp.task('build', ['node', 'cjs-browser', 'es6', 'amd', 'global', 'global-es6']);
 
 gulp.task('test-with-coverage', () => test(true));
 gulp.task('test', () => test(false));
