@@ -120,10 +120,25 @@ export class Duration {
    */
   constructor(config) {
     const accurate = config.conversionAccuracy === 'longterm' || false;
+    /**
+     * @access private
+     */
     this.values = config.values;
+    /**
+     * @access private
+     */
     this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
     this.conversionAccuracy = accurate ? 'longterm' : 'casual';
+    /**
+     * @access private
+     */
     this.invalid = config.invalidReason || null;
+    /**
+     * @access private
+     */
     this.matrix = accurate ? accurateMatrix : casualMatrix;
   }
 

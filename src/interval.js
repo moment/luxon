@@ -27,8 +27,17 @@ export class Interval {
    * @private
    */
   constructor(config) {
+    /**
+     * @access private
+     */
     this.s = config.start;
+    /**
+     * @access private
+     */
     this.e = config.end;
+    /**
+     * @access private
+     */
     this.invalid = config.invalidReason || null;
   }
 

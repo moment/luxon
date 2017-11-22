@@ -296,12 +296,33 @@ export class DateTime {
       o = unchanged ? config.old.o : zone.offset(ts);
     }
 
+    /**
+     * @access private
+     */
     this.ts = config.ts || Settings.now();
+    /**
+     * @access private
+     */
     this.zone = zone;
+    /**
+     * @access private
+     */
     this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
     this.invalid = invalidReason;
+    /**
+     * @access private
+     */
     this.weekData = null;
+    /**
+     * @access private
+     */
     this.c = c;
+    /**
+     * @access private
+     */
     this.o = o;
   }
 
