@@ -17,6 +17,7 @@
     "babel-plugin-external-helpers": "latest",
     "babel-preset-env": "latest",
     "benchmark": "latest",
+    "core-js": "latest",
     "coveralls": "latest",
     "eslint": "latest",
     "eslint-config-airbnb-base": "12.0.2",
@@ -42,6 +43,8 @@
     "lint-staged": "^4.3.0",
     "prettier": "1.7.4",
     "rollup-plugin-babel": "latest",
+    "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-node-resolve": "latest",
     "rollup-stream": "latest",
     "run-sequence": "latest",
     "tap-min": "latest",
@@ -50,9 +53,10 @@
     "vinyl-source-stream": "latest"
   },
   "main": "build/cjs/luxon.js",
+  "browser": "build/cjs-browser/luxon.js",
   "engines": {
     "node": "*"
   },
-  "files": ["build/cjs/luxon.js"],
+  "files": ["build/cjs/luxon.js", "build/cjs-browser/luxon.js"],
   "license": "MIT"
 }

@@ -13,6 +13,8 @@ const babel = require('rollup-plugin-babel'),
   process = require('process'),
   rename = require('gulp-rename'),
   rollup = require('rollup-stream'),
+  rollupNode = require('rollup-plugin-node-resolve'),
+  rollupCommonJS = require('rollup-plugin-commonjs'),
   runSequence = require('run-sequence'),
   source = require('vinyl-source-stream'),
   sourcemaps = require('gulp-sourcemaps'),
@@ -22,10 +24,15 @@ const babel = require('rollup-plugin-babel'),
 function rollupLib(inopts) {
   const opts = Object.assign(
       {
-        input: './src/luxon.js',
+        input: inopts.src || './src/luxon.js',
         sourcemap: true,
         format: inopts.format,
-        plugins: []
+        plugins: [
+          rollupNode(),
+          rollupCommonJS({
+            include: 'node_modules/**'
+          })
+        ]
       },
       inopts.rollupOpts || {}
     ),
@@ -62,10 +69,11 @@ function processLib(dest, opts) {
         .pipe(gulp.dest, fullDest);
 
     return rollupLib(opts)
-      .pipe(source('luxon.js'))
+      .pipe(source(opts.src || './src/luxon.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('.'))
+      .pipe(rename({ basename: 'luxon', dirname: '' }))
       .pipe(gulp.dest(fullDest))
       .pipe(minify());
   };
@@ -98,8 +106,10 @@ function checkForDocCoverage() {
   });
 }
 
+const browsersOld = { browsers: 'last 2 major versions' };
+
 const nodeOpts = { format: 'cjs', target: 'node >= 6' },
-  cjsBrowserOpts = { format: 'cjs', target: 'last 2 major versions' },
+  cjsBrowserOpts = { format: 'cjs', browsersOld },
   es6Opts = {
     format: 'es',
     compile: false
@@ -107,7 +117,7 @@ const nodeOpts = { format: 'cjs', target: 'node >= 6' },
   amdOpts = {
     format: 'amd',
     rollupOpts: { name: 'luxon' },
-    target: 'last 2 major versions'
+    target: browsersOld
   },
   es6GlobalOpts = {
     format: 'iife',
@@ -117,7 +127,13 @@ const nodeOpts = { format: 'cjs', target: 'node >= 6' },
   globalOpts = {
     format: 'iife',
     rollupOpts: { name: 'luxon' },
-    target: 'last 2 major versions'
+    target: browsersOld
+  },
+  globalFilledOpts = {
+    format: 'iife',
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld,
+    src: './src/luxonFilled.js'
   };
 
 function test(includeCoverage) {
@@ -136,6 +152,7 @@ function test(includeCoverage) {
 }
 
 gulp.task('global', processLib('global', globalOpts));
+gulp.task('global-filled', processLib('global-filled', globalFilledOpts));
 gulp.task('amd', processLib('amd', amdOpts));
 gulp.task('node', processLib('node', nodeOpts));
 gulp.task('cjs-browser', processLib('cjs-browser', cjsBrowserOpts));
