@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0
+
+ * Add `.fromSQL`, `#toSQL`, `#toSQLTime`, `#toSQLDate`
+ * Fix AM/PM parsing
+ * Major perf improvements
+ * Default to system locale when using macro formats in `#toFormat`
+ * `.fromISO` accepts standalone times
+ * See https://github.com/moment/luxon/issues/93 for important news concerning field accessibility
+
 ## 0.0.22
 
  * Add 'u' formatting and parsing
