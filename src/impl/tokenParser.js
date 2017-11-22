@@ -236,8 +236,12 @@ function dateTimeFromMatches(matches) {
     zone = null;
   }
 
-  if (!Util.isUndefined(matches.h) && matches.a === 1) {
-    matches.h += 12;
+  if (!Util.isUndefined(matches.h)) {
+    if (matches.h < 12 && matches.a === 1) {
+      matches.h += 12;
+    } else if (matches.h === 12 && matches.a === 0) {
+      matches.h = 0;
+    }
   }
 
   if (matches.G === 0 && matches.y) {

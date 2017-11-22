@@ -47,6 +47,18 @@ test('DateTime.fromString() parses meridiems', () => {
   expect(i.month).toBe(5);
   expect(i.day).toBe(25);
   expect(i.hour).toBe(9);
+
+  i = DateTime.fromString('1982/05/25 12 AM', 'yyyy/MM/dd h a');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+  expect(i.hour).toBe(0);
+
+  i = DateTime.fromString('1982/05/25 12 PM', 'yyyy/MM/dd h a');
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(5);
+  expect(i.day).toBe(25);
+  expect(i.hour).toBe(12);
 });
 
 test('DateTime.fromString() parses variable-digit years', () => {
