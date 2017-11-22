@@ -773,6 +773,15 @@ class Formatter {
   constructor(locale, formatOpts) {
     this.opts = formatOpts;
     this.loc = locale;
+    this.systemLoc = null;
+  }
+
+  formatWithSystemDefault(dt, opts) {
+    if (this.systemLoc === null) {
+      this.systemLoc = this.loc.redefaultToSystem();
+    }
+    const df = this.systemLoc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.format();
   }
 
   formatDateTime(dt, opts = {}) {
@@ -1000,45 +1009,45 @@ class Formatter {
             return this.num(dt.ordinal, 3);
           // macros
           case 'D':
-            return this.formatDateTime(dt, DateTime.DATE_SHORT);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_SHORT);
           case 'DD':
-            return this.formatDateTime(dt, DateTime.DATE_MED);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_MED);
           case 'DDD':
-            return this.formatDateTime(dt, DateTime.DATE_FULL);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_FULL);
           case 'DDDD':
-            return this.formatDateTime(dt, DateTime.DATE_HUGE);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_HUGE);
           case 't':
-            return this.formatDateTime(dt, DateTime.TIME_SIMPLE);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_SIMPLE);
           case 'tt':
-            return this.formatDateTime(dt, DateTime.TIME_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SECONDS);
           case 'ttt':
-            return this.formatDateTime(dt, DateTime.TIME_WITH_SHORT_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SHORT_OFFSET);
           case 'tttt':
-            return this.formatDateTime(dt, DateTime.TIME_WITH_LONG_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_LONG_OFFSET);
           case 'T':
-            return this.formatDateTime(dt, DateTime.TIME_24_SIMPLE);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_SIMPLE);
           case 'TT':
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SECONDS);
           case 'TTT':
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
           case 'TTTT':
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
           case 'f':
-            return this.formatDateTime(dt, DateTime.DATETIME_SHORT);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT);
           case 'ff':
-            return this.formatDateTime(dt, DateTime.DATETIME_MED);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_MED);
           case 'fff':
-            return this.formatDateTime(dt, DateTime.DATETIME_FULL);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL);
           case 'ffff':
-            return this.formatDateTime(dt, DateTime.DATETIME_HUGE);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE);
           case 'F':
-            return this.formatDateTime(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
           case 'FF':
-            return this.formatDateTime(dt, DateTime.DATETIME_MED_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_MED_WITH_SECONDS);
           case 'FFF':
-            return this.formatDateTime(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
           case 'FFFF':
-            return this.formatDateTime(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
 
           default:
             return token;
@@ -1087,9 +1096,7 @@ class Formatter {
   }
 }
 
-let localeCache = {};
 let sysLocaleCache = null;
-
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
@@ -1244,25 +1251,15 @@ class Locale {
 
   static create(locale, numberingSystem, outputCalendar, defaultToEN = false) {
     const specifiedLocale = locale || Settings.defaultLocale,
-      // the system locale is useful for human readable strings but annoying for parsing known formats
+      // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
       localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),
       numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
-      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,
-      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}|${specifiedLocale}`,
-      cached = localeCache[cacheKey];
-
-    if (cached) {
-      return cached;
-    } else {
-      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
-      localeCache[cacheKey] = fresh;
-      return fresh;
-    }
+      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
+    return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
   }
 
   static resetCache() {
     sysLocaleCache = null;
-    localeCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
@@ -1270,40 +1267,17 @@ class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, specifiedLocale) {
-    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
-    Object.defineProperty(this, 'numberingSystem', {
-      value: numbering,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'outputCalendar', {
-      value: outputCalendar,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
-      enumerable: false
-    });
+    this.locale = locale;
+    this.numberingSystem = numbering;
+    this.outputCalendar = outputCalendar;
+    this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 
-    // cached usefulness
-    Object.defineProperty(this, 'weekdaysCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'monthsCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'meridiemCache', {
-      value: null,
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'eraCache', {
-      value: {},
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'specifiedLocale', { value: specifiedLocale, enumerable: true });
+    this.weekdaysCache = { format: {}, standalone: {} };
+    this.monthsCache = { format: {}, standalone: {} };
+    this.meridiemCache = null;
+    this.eraCache = {};
+
+    this.specifiedLocale = specifiedLocale;
   }
 
   // todo: cache me
@@ -1345,6 +1319,10 @@ class Locale {
 
   redefaultToEN(alts = {}) {
     return this.clone(Object.assign({}, alts, { defaultToEN: true }));
+  }
+
+  redefaultToSystem(alts = {}) {
+    return this.clone(Object.assign({}, alts, { defaultToEN: false }));
   }
 
   months(length, format = false, defaultOK = true) {
@@ -1785,9 +1763,19 @@ class Util {
   }
 }
 
+/*
+This file handles parsing for well-specified formats. Here's how it works:
+ * Two things go into parsing: a regex to match with and an extractor to take apart the groups in the match.
+ * An extractor is just a function that takes a regex match array and returns a { year: ..., month: ... } object
+ * parse() does the work of executing the regex and applying the extractor. It takes multiple regex/extractor pairs to try in sequence.
+ * Extractors can take a "cursor" representing the offset in the match to look at. This makes it easy to combine extractors.
+ * combineExtractors() does the work of combining them, keeping track of the cursor through multiple extractions.
+ * Some extractions are super dumb and simpleParse and fromStrings help DRY them.
+*/
+
 function combineRegexes(...regexes) {
   const full = regexes.reduce((f, r) => f + r.source, '');
-  return RegExp(full);
+  return RegExp(`^${full}$`);
 }
 
 function combineExtractors(...extractors) {
@@ -1807,6 +1795,7 @@ function parse(s, ...patterns) {
   if (s == null) {
     return [null, null];
   }
+
   for (const [regex, extractor] of patterns) {
     const m = regex.exec(s);
     if (m) {
@@ -1828,13 +1817,16 @@ function simpleParse(...keys) {
   };
 }
 
-// ISO parsing
-const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
-const isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
-const isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/;
-const isoOrdinalRegex = /^(\d{4})-?(\d{3})/;
+// ISO and SQL parsing
+const isoTimeRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?/;
+const isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`);
+const isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
+const isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/;
+const isoOrdinalRegex = /(\d{4})-?(\d{3})/;
 const extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
 const extractISOOrdinalData = simpleParse('year', 'ordinal');
+const sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
+const sqlTimeExtensionRegex = RegExp(`(?: ${isoTimeRegex.source})?`);
 
 function extractISOYmd(match, cursor) {
   const item = {
@@ -1894,13 +1886,29 @@ const obsOffsets = {
   PST: -8 * 60
 };
 
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+function parseSecondFraction(fraction) {
+  const f = parseFloat('0.' + fraction) * 1000;
+  return Math.ceil(f);
+}
+
+function fromStrings(
+  weekdayStr,
+  yearStr,
+  monthStr,
+  dayStr,
+  hourStr,
+  minuteStr,
+  secondStr,
+  fractionStr
+) {
   const result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-    month: English.monthsShort.indexOf(monthStr) + 1,
+    month:
+      monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr)
+    minute: parseInt(minuteStr),
+    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
   };
 
   if (secondStr) result.second = parseInt(secondStr);
@@ -1980,15 +1988,19 @@ class RegexParser {
   static parseISODate(s) {
     return parse(
       s,
-      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],
       [
-        combineRegexes(isoWeekRegex, isoTimeRegex),
+        combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
+        combineExtractors(extractISOYmd, extractISOTime)
+      ],
+      [
+        combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
         combineExtractors(extractISOWeekData, extractISOTime)
       ],
       [
-        combineRegexes(isoOrdinalRegex, isoTimeRegex),
+        combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
         combineExtractors(extractISOOrdinalData, extractISOTime)
-      ]
+      ],
+      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]
     );
   }
 
@@ -2007,6 +2019,17 @@ class RegexParser {
 
   static parseISODuration(s) {
     return parse(s, [isoDuration, extractISODuration]);
+  }
+
+  static parseSQL(s) {
+    return parse(
+      s,
+      [
+        combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
+        combineExtractors(extractISOYmd, extractISOTime)
+      ],
+      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]
+    );
   }
 }
 
@@ -2125,27 +2148,26 @@ class Duration {
    */
   constructor(config) {
     const accurate = config.conversionAccuracy === 'longterm' || false;
-
-    Object.defineProperty(this, 'values', {
-      value: config.values,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-    Object.defineProperty(this, 'conversionAccuracy', {
-      value: accurate ? 'longterm' : 'casual',
-      enumerable: true
-    });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
-    Object.defineProperty(this, 'matrix', {
-      value: accurate ? accurateMatrix : casualMatrix,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.values = config.values;
+    /**
+     * @access private
+     */
+    this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
+    this.conversionAccuracy = accurate ? 'longterm' : 'casual';
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
+    /**
+     * @access private
+     */
+    this.matrix = accurate ? accurateMatrix : casualMatrix;
   }
 
   /**
@@ -2340,6 +2362,19 @@ class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns a string representation of this Duration appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `Duration {\n  values: ${this.toObject().inspect()},\n  locale: ${this
+        .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
+    } else {
+      return `Duration { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**
@@ -2598,7 +2633,7 @@ class Duration {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -2648,12 +2683,18 @@ class Interval {
    * @private
    */
   constructor(config) {
-    Object.defineProperty(this, 's', { value: config.start, enumerable: true });
-    Object.defineProperty(this, 'e', { value: config.end, enumerable: true });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.s = config.start;
+    /**
+     * @access private
+     */
+    this.e = config.end;
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
   }
 
   /**
@@ -2757,7 +2798,7 @@ class Interval {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -3051,6 +3092,19 @@ class Interval {
   }
 
   /**
+   * Returns a string representation of this Interval appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
+        .start.zone.name},\n  locale:   ${this.start.locale} }`;
+    } else {
+      return `Interval { Invalid, reason: ${this.invalidReason} }`;
+    }
+  }
+
+  /**
    * Returns an ISO 8601-compliant string representation of this Interval.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @param {object} opts - The same options as {@link DateTime.toISO}
@@ -3281,12 +3335,12 @@ function simple(regex) {
 
 function unitForToken(token, loc) {
   const one = /\d/,
-    two = /\d\d/,
+    two = /\d{2}/,
     three = /\d{3}/,
     four = /\d{4}/,
-    oneOrTwo = /\d\d?/,
-    oneToThree = /\d\d?\d?/,
-    twoToFour = /\d\d(?:\d{2})?/,
+    oneOrTwo = /\d{1,2}/,
+    oneToThree = /\d{1,3}/,
+    twoToFour = /\d{2,4}/,
     literal = t => ({ regex: RegExp(t.val), deser: ([s]) => s, literal: true }),
     unitate = t => {
       if (token.literal) {
@@ -3477,8 +3531,12 @@ function dateTimeFromMatches(matches) {
     zone = null;
   }
 
-  if (!Util.isUndefined(matches.h) && matches.a === 1) {
-    matches.h += 12;
+  if (!Util.isUndefined(matches.h)) {
+    if (matches.h < 12 && matches.a === 1) {
+      matches.h += 12;
+    } else if (matches.h === 12 && matches.a === 0) {
+      matches.h = 0;
+    }
   }
 
   if (matches.G === 0 && matches.y) {
@@ -3508,7 +3566,7 @@ function dateTimeFromMatches(matches) {
 
 class TokenParser {
   constructor(loc) {
-    Object.defineProperty(this, 'loc', { value: loc, enumerable: true });
+    this.loc = loc;
   }
 
   explainParse(input, format) {
@@ -3894,6 +3952,34 @@ function normalizeUnit(unit, ignoreUnknown = false) {
   return normalized;
 }
 
+// this is a dumbed down version of fromObject() that runs about 60% faster
+// but doesn't do any validation, makes a bunch of assumptions about what units
+// are present, and so on.
+function quickDT(obj, zone) {
+  // assume we have the higher-order units
+  for (const u of orderedUnits) {
+    const v = obj[u];
+    if (Util.isUndefined(v)) {
+      obj[u] = defaultUnitValues[u];
+    }
+  }
+
+  const invalidReason =
+    Conversions.hasInvalidGregorianData(obj) || Conversions.hasInvalidTimeData(obj);
+  if (invalidReason) {
+    return DateTime.invalid(invalidReason);
+  }
+
+  const tsNow = Settings.now(),
+    offsetProvis = zone.offset(tsNow),
+    [ts, o] = objToTS(obj, offsetProvis, zone);
+  return new DateTime({
+    ts,
+    zone,
+    o
+  });
+}
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -3923,43 +4009,45 @@ class DateTime {
       invalidReason =
         config.invalidReason ||
         (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
-        (!zone.isValid ? UNSUPPORTED_ZONE : null);
+        (!zone.isValid ? UNSUPPORTED_ZONE : null),
+      ts = config.ts || Settings.now();
 
-    Object.defineProperty(this, 'ts', {
-      value: config.ts || Settings.now(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'zone', {
-      value: zone,
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'invalidReason', {
-      value: invalidReason,
-      enumerable: false
-    });
-
-    Object.defineProperty(this, 'weekData', {
-      writable: true, // !!!
-      value: null,
-      enumerable: false
-    });
-
+    let c = null,
+      o = null;
     if (!invalidReason) {
-      const unchanged =
-          config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone),
-        c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
-        o = unchanged ? config.old.o : this.zone.offset(this.ts);
-
-      Object.defineProperty(this, 'c', { value: c });
-      Object.defineProperty(this, 'o', { value: o });
+      const unchanged = config.old && config.old.ts === ts && config.old.zone.equals(zone);
+      c = unchanged ? config.old.c : tsToObj(ts, zone.offset(ts));
+      o = unchanged ? config.old.o : zone.offset(ts);
     }
+
+    /**
+     * @access private
+     */
+    this.ts = config.ts || Settings.now();
+    /**
+     * @access private
+     */
+    this.zone = zone;
+    /**
+     * @access private
+     */
+    this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
+    this.invalid = invalidReason;
+    /**
+     * @access private
+     */
+    this.weekData = null;
+    /**
+     * @access private
+     */
+    this.c = c;
+    /**
+     * @access private
+     */
+    this.o = o;
   }
 
   // CONSTRUCT
@@ -3987,16 +4075,18 @@ class DateTime {
     if (Util.isUndefined(year)) {
       return new DateTime({ ts: Settings.now() });
     } else {
-      return DateTime.fromObject({
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        millisecond,
-        zone: Settings.defaultZone
-      });
+      return quickDT(
+        {
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          second,
+          millisecond
+        },
+        Settings.defaultZone
+      );
     }
   }
 
@@ -4026,16 +4116,18 @@ class DateTime {
         zone: FixedOffsetZone.utcInstance
       });
     } else {
-      return DateTime.fromObject({
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        millisecond,
-        zone: FixedOffsetZone.utcInstance
-      });
+      return quickDT(
+        {
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          second,
+          millisecond
+        },
+        FixedOffsetZone.utcInstance
+      );
     }
   }
 
@@ -4284,6 +4376,30 @@ class DateTime {
   }
 
   /**
+   * Create a DateTime from a SQL date, time, or datetime
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale
+   * @param {string} text - the string to parse
+   * @param {Object} options - options to affect the creation
+   * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+   * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+   * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @example DateTime.fromSQL('2017-05-15')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342', { zone: 'America/Los_Angeles' })
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342+06:00')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342+06:00', { setZone: true })
+   * @example DateTime.fromSQL('09:12:34.342')
+   * @return {DateTime}
+   */
+  static fromSQL(text, options = {}) {
+    const [vals, parsedZone] = RegexParser.parseSQL(text);
+    return parseDataToDateTime(vals, parsedZone, options);
+  }
+
+  /**
    * Create an invalid DateTime.
    * @return {DateTime}
    */
@@ -4326,7 +4442,7 @@ class DateTime {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -4948,11 +5064,51 @@ class DateTime {
   }
 
   /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Date
+   * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
+   * @return {string}
+   */
+  toSQLDate() {
+    return techFormat(this.toUTC(), 'yyyy-MM-dd');
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Time
+   * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=> '07:34:19.361'
+   * @return {string}
+   */
+  toSQLTime() {
+    return techFormat(this.toUTC(), 'hh:mm:ss.SSS');
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL DateTime
+   * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000'
+   * @return {string}
+   */
+  toSQL() {
+    return techFormat(this.toUTC(), 'yyyy-MM-dd hh:mm:ss.SSS');
+  }
+
+  /**
    * Returns a string representation of this DateTime appropriate for debugging
    * @return {string}
    */
   toString() {
     return this.isValid ? this.toISO() : INVALID;
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
+        .locale} }`;
+    } else {
+      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**

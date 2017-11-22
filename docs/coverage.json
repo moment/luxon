@@ -1,16 +1,16 @@
 {
   "coverage": "100%",
-  "expectCount": 193,
-  "actualCount": 193,
+  "expectCount": 200,
+  "actualCount": 200,
   "files": {
     "src/datetime.js": {
-      "expectCount": 94,
-      "actualCount": 94,
+      "expectCount": 99,
+      "actualCount": 99,
       "undocumentLines": []
     },
     "src/duration.js": {
-      "expectCount": 32,
-      "actualCount": 32,
+      "expectCount": 33,
+      "actualCount": 33,
       "undocumentLines": []
     },
     "src/info.js": {
@@ -19,8 +19,8 @@
       "undocumentLines": []
     },
     "src/interval.js": {
-      "expectCount": 35,
-      "actualCount": 35,
+      "expectCount": 36,
+      "actualCount": 36,
       "undocumentLines": []
     },
     "src/settings.js": {

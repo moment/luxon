@@ -1,12 +1,13 @@
 {
   "name": "luxon",
-  "version": "0.0.22",
+  "version": "0.1.0",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
   "dependencies": {
-    "core-js": "latest"
+    "core-js": "latest",
+    "jest": "^21.2.1"
   },
   "scripts": {
     "precommit": "lint-staged"

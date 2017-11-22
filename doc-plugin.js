@@ -1,12 +1,14 @@
 const cheerio = require('cheerio'),
-      path = require('path');
+  path = require('path');
 
 exports.onHandleHTML = function(ev) {
- if (path.extname(ev.data.fileName) !== '.html') return;
+  if (path.extname(ev.data.fileName) !== '.html') return;
 
   const $ = cheerio.load(ev.data.html);
 
   $('head title').text('Luxon');
+
+  $('body').append("<script src='https://moment.github.io/luxon/global/luxon.js'/>");
 
   $('p.manual-badge').remove();
 

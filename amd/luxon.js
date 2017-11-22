@@ -3043,9 +3043,19 @@ var Formatter = function () {
 
     this.opts = formatOpts;
     this.loc = locale;
+    this.systemLoc = null;
   }
 
   createClass(Formatter, [{
+    key: 'formatWithSystemDefault',
+    value: function formatWithSystemDefault(dt, opts) {
+      if (this.systemLoc === null) {
+        this.systemLoc = this.loc.redefaultToSystem();
+      }
+      var df = this.systemLoc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+      return df.format();
+    }
+  }, {
     key: 'formatDateTime',
     value: function formatDateTime(dt) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -3277,45 +3287,45 @@ var Formatter = function () {
             return _this.num(dt.ordinal, 3);
           // macros
           case 'D':
-            return _this.formatDateTime(dt, DateTime.DATE_SHORT);
+            return _this.formatWithSystemDefault(dt, DateTime.DATE_SHORT);
           case 'DD':
-            return _this.formatDateTime(dt, DateTime.DATE_MED);
+            return _this.formatWithSystemDefault(dt, DateTime.DATE_MED);
           case 'DDD':
-            return _this.formatDateTime(dt, DateTime.DATE_FULL);
+            return _this.formatWithSystemDefault(dt, DateTime.DATE_FULL);
           case 'DDDD':
-            return _this.formatDateTime(dt, DateTime.DATE_HUGE);
+            return _this.formatWithSystemDefault(dt, DateTime.DATE_HUGE);
           case 't':
-            return _this.formatDateTime(dt, DateTime.TIME_SIMPLE);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_SIMPLE);
           case 'tt':
-            return _this.formatDateTime(dt, DateTime.TIME_WITH_SECONDS);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SECONDS);
           case 'ttt':
-            return _this.formatDateTime(dt, DateTime.TIME_WITH_SHORT_OFFSET);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SHORT_OFFSET);
           case 'tttt':
-            return _this.formatDateTime(dt, DateTime.TIME_WITH_LONG_OFFSET);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_WITH_LONG_OFFSET);
           case 'T':
-            return _this.formatDateTime(dt, DateTime.TIME_24_SIMPLE);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_SIMPLE);
           case 'TT':
-            return _this.formatDateTime(dt, DateTime.TIME_24_WITH_SECONDS);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SECONDS);
           case 'TTT':
-            return _this.formatDateTime(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
           case 'TTTT':
-            return _this.formatDateTime(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
+            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
           case 'f':
-            return _this.formatDateTime(dt, DateTime.DATETIME_SHORT);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT);
           case 'ff':
-            return _this.formatDateTime(dt, DateTime.DATETIME_MED);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_MED);
           case 'fff':
-            return _this.formatDateTime(dt, DateTime.DATETIME_FULL);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL);
           case 'ffff':
-            return _this.formatDateTime(dt, DateTime.DATETIME_HUGE);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE);
           case 'F':
-            return _this.formatDateTime(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
           case 'FF':
-            return _this.formatDateTime(dt, DateTime.DATETIME_MED_WITH_SECONDS);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_MED_WITH_SECONDS);
           case 'FFF':
-            return _this.formatDateTime(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
           case 'FFFF':
-            return _this.formatDateTime(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
+            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
 
           default:
             return token;
@@ -3374,9 +3384,7 @@ var Formatter = function () {
   return Formatter;
 }();
 
-var localeCache = {};
 var sysLocaleCache = null;
-
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
@@ -3551,26 +3559,16 @@ var Locale = function () {
 
       var specifiedLocale = locale || Settings.defaultLocale,
 
-      // the system locale is useful for human readable strings but annoying for parsing known formats
+      // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
       localeR = specifiedLocale || (defaultToEN ? 'en-US' : systemLocale()),
           numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
-          outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,
-          cacheKey = localeR + '|' + numberingSystemR + '|' + outputCalendarR + '|' + specifiedLocale,
-          cached = localeCache[cacheKey];
-
-      if (cached) {
-        return cached;
-      } else {
-        var fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
-        localeCache[cacheKey] = fresh;
-        return fresh;
-      }
+          outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
+      return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
     }
   }, {
     key: 'resetCache',
     value: function resetCache() {
       sysLocaleCache = null;
-      localeCache = {};
     }
   }, {
     key: 'fromObject',
@@ -3587,40 +3585,17 @@ var Locale = function () {
   function Locale(locale, numbering, outputCalendar, specifiedLocale) {
     classCallCheck(this, Locale);
 
-    Object.defineProperty(this, 'locale', { value: locale, enumerable: true });
-    Object.defineProperty(this, 'numberingSystem', {
-      value: numbering,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'outputCalendar', {
-      value: outputCalendar,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'intl', {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
-      enumerable: false
-    });
+    this.locale = locale;
+    this.numberingSystem = numbering;
+    this.outputCalendar = outputCalendar;
+    this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 
-    // cached usefulness
-    Object.defineProperty(this, 'weekdaysCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'monthsCache', {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, 'meridiemCache', {
-      value: null,
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'eraCache', {
-      value: {},
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, 'specifiedLocale', { value: specifiedLocale, enumerable: true });
+    this.weekdaysCache = { format: {}, standalone: {} };
+    this.monthsCache = { format: {}, standalone: {} };
+    this.meridiemCache = null;
+    this.eraCache = {};
+
+    this.specifiedLocale = specifiedLocale;
   }
 
   // todo: cache me
@@ -3659,6 +3634,13 @@ var Locale = function () {
       var alts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       return this.clone(Object.assign({}, alts, { defaultToEN: true }));
+    }
+  }, {
+    key: 'redefaultToSystem',
+    value: function redefaultToSystem() {
+      var alts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return this.clone(Object.assign({}, alts, { defaultToEN: false }));
     }
   }, {
     key: 'months',
@@ -4202,6 +4184,16 @@ var Util = function () {
   return Util;
 }();
 
+/*
+This file handles parsing for well-specified formats. Here's how it works:
+ * Two things go into parsing: a regex to match with and an extractor to take apart the groups in the match.
+ * An extractor is just a function that takes a regex match array and returns a { year: ..., month: ... } object
+ * parse() does the work of executing the regex and applying the extractor. It takes multiple regex/extractor pairs to try in sequence.
+ * Extractors can take a "cursor" representing the offset in the match to look at. This makes it easy to combine extractors.
+ * combineExtractors() does the work of combining them, keeping track of the cursor through multiple extractions.
+ * Some extractions are super dumb and simpleParse and fromStrings help DRY them.
+*/
+
 function combineRegexes() {
   for (var _len = arguments.length, regexes = Array(_len), _key = 0; _key < _len; _key++) {
     regexes[_key] = arguments[_key];
@@ -4210,7 +4202,7 @@ function combineRegexes() {
   var full = regexes.reduce(function (f, r) {
     return f + r.source;
   }, '');
-  return RegExp(full);
+  return RegExp('^' + full + '$');
 }
 
 function combineExtractors() {
@@ -4294,13 +4286,16 @@ function simpleParse() {
   };
 }
 
-// ISO parsing
-var isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/;
-var isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
-var isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/;
-var isoOrdinalRegex = /^(\d{4})-?(\d{3})/;
+// ISO and SQL parsing
+var isoTimeRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?/;
+var isoTimeExtensionRegex = RegExp('(?:T' + isoTimeRegex.source + ')?');
+var isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
+var isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/;
+var isoOrdinalRegex = /(\d{4})-?(\d{3})/;
 var extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
 var extractISOOrdinalData = simpleParse('year', 'ordinal');
+var sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
+var sqlTimeExtensionRegex = RegExp('(?: ' + isoTimeRegex.source + ')?');
 
 function extractISOYmd(match, cursor) {
   var item = {
@@ -4367,13 +4362,19 @@ var obsOffsets = {
   PST: -8 * 60
 };
 
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+function parseSecondFraction(fraction) {
+  var f = parseFloat('0.' + fraction) * 1000;
+  return Math.ceil(f);
+}
+
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, fractionStr) {
   var result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-    month: English.monthsShort.indexOf(monthStr) + 1,
+    month: monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr)
+    minute: parseInt(minuteStr),
+    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
   };
 
   if (secondStr) result.second = parseInt(secondStr);
@@ -4465,7 +4466,7 @@ var RegexParser = function () {
   createClass(RegexParser, null, [{
     key: 'parseISODate',
     value: function parseISODate(s) {
-      return parse(s, [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)], [combineRegexes(isoWeekRegex, isoTimeRegex), combineExtractors(extractISOWeekData, extractISOTime)], [combineRegexes(isoOrdinalRegex, isoTimeRegex), combineExtractors(extractISOOrdinalData, extractISOTime)]);
+      return parse(s, [combineRegexes(isoYmdRegex, isoTimeExtensionRegex), combineExtractors(extractISOYmd, extractISOTime)], [combineRegexes(isoWeekRegex, isoTimeExtensionRegex), combineExtractors(extractISOWeekData, extractISOTime)], [combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex), combineExtractors(extractISOOrdinalData, extractISOTime)], [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]);
     }
   }, {
     key: 'parseRFC2822Date',
@@ -4481,6 +4482,11 @@ var RegexParser = function () {
     key: 'parseISODuration',
     value: function parseISODuration(s) {
       return parse(s, [isoDuration, extractISODuration]);
+    }
+  }, {
+    key: 'parseSQL',
+    value: function parseSQL(s) {
+      return parse(s, [combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex), combineExtractors(extractISOYmd, extractISOTime)], [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]);
     }
   }]);
   return RegexParser;
@@ -4612,27 +4618,26 @@ var Duration = function () {
     classCallCheck(this, Duration);
 
     var accurate = config.conversionAccuracy === 'longterm' || false;
-
-    Object.defineProperty(this, 'values', {
-      value: config.values,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-    Object.defineProperty(this, 'conversionAccuracy', {
-      value: accurate ? 'longterm' : 'casual',
-      enumerable: true
-    });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
-    Object.defineProperty(this, 'matrix', {
-      value: accurate ? accurateMatrix : casualMatrix,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.values = config.values;
+    /**
+     * @access private
+     */
+    this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
+    this.conversionAccuracy = accurate ? 'longterm' : 'casual';
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
+    /**
+     * @access private
+     */
+    this.matrix = accurate ? accurateMatrix : casualMatrix;
   }
 
   /**
@@ -4740,6 +4745,21 @@ var Duration = function () {
     key: 'toString',
     value: function toString() {
       return this.toISO();
+    }
+
+    /**
+     * Returns a string representation of this Duration appropriate for the REPL.
+     * @return {string}
+     */
+
+  }, {
+    key: 'inspect',
+    value: function inspect() {
+      if (this.isValid) {
+        return 'Duration {\n  values: ' + this.toObject().inspect() + ',\n  locale: ' + this.locale + ',\n  conversionAccuracy: ' + this.conversionAccuracy + ' }';
+      } else {
+        return 'Duration { Invalid, reason: ' + this.invalidReason + ' }';
+      }
     }
 
     /**
@@ -5202,7 +5222,7 @@ var Duration = function () {
   }, {
     key: 'invalidReason',
     get: function get$$1() {
-      return this.invalidReason;
+      return this.invalid;
     }
   }], [{
     key: 'fromMillis',
@@ -5338,12 +5358,18 @@ var Interval = function () {
   function Interval(config) {
     classCallCheck(this, Interval);
 
-    Object.defineProperty(this, 's', { value: config.start, enumerable: true });
-    Object.defineProperty(this, 'e', { value: config.end, enumerable: true });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.s = config.start;
+    /**
+     * @access private
+     */
+    this.e = config.end;
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
   }
 
   /**
@@ -5683,6 +5709,21 @@ var Interval = function () {
     }
 
     /**
+     * Returns a string representation of this Interval appropriate for the REPL.
+     * @return {string}
+     */
+
+  }, {
+    key: 'inspect',
+    value: function inspect() {
+      if (this.isValid) {
+        return 'Interval {\n  start: ' + this.start.toISO() + ',\n  end: ' + this.end.toISO() + ',\n  zone:   ' + this.start.zone.name + ',\n  locale:   ' + this.start.locale + ' }';
+      } else {
+        return 'Interval { Invalid, reason: ' + this.invalidReason + ' }';
+      }
+    }
+
+    /**
      * Returns an ISO 8601-compliant string representation of this Interval.
      * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
      * @param {object} opts - The same options as {@link DateTime.toISO}
@@ -5778,7 +5819,7 @@ var Interval = function () {
   }, {
     key: 'invalidReason',
     get: function get$$1() {
-      return this.invalidReason;
+      return this.invalid;
     }
   }], [{
     key: 'invalid',
@@ -6235,12 +6276,12 @@ function simple(regex) {
 
 function unitForToken(token, loc) {
   var one = /\d/,
-      two = /\d\d/,
+      two = /\d{2}/,
       three = /\d{3}/,
       four = /\d{4}/,
-      oneOrTwo = /\d\d?/,
-      oneToThree = /\d\d?\d?/,
-      twoToFour = /\d\d(?:\d{2})?/,
+      oneOrTwo = /\d{1,2}/,
+      oneToThree = /\d{1,3}/,
+      twoToFour = /\d{2,4}/,
       literal = function literal(t) {
     return { regex: RegExp(t.val), deser: function deser(_ref9) {
         var _ref10 = slicedToArray(_ref9, 1),
@@ -6442,8 +6483,12 @@ function dateTimeFromMatches(matches) {
     zone = null;
   }
 
-  if (!Util.isUndefined(matches.h) && matches.a === 1) {
-    matches.h += 12;
+  if (!Util.isUndefined(matches.h)) {
+    if (matches.h < 12 && matches.a === 1) {
+      matches.h += 12;
+    } else if (matches.h === 12 && matches.a === 0) {
+      matches.h = 0;
+    }
   }
 
   if (matches.G === 0 && matches.y) {
@@ -6475,7 +6520,7 @@ var TokenParser = function () {
   function TokenParser(loc) {
     classCallCheck(this, TokenParser);
 
-    Object.defineProperty(this, 'loc', { value: loc, enumerable: true });
+    this.loc = loc;
   }
 
   createClass(TokenParser, [{
@@ -6896,6 +6941,58 @@ function normalizeUnit(unit) {
   return normalized;
 }
 
+// this is a dumbed down version of fromObject() that runs about 60% faster
+// but doesn't do any validation, makes a bunch of assumptions about what units
+// are present, and so on.
+function quickDT(obj, zone) {
+  // assume we have the higher-order units
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = orderedUnits[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var u = _step.value;
+
+      var v = obj[u];
+      if (Util.isUndefined(v)) {
+        obj[u] = defaultUnitValues[u];
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  var invalidReason = Conversions.hasInvalidGregorianData(obj) || Conversions.hasInvalidTimeData(obj);
+  if (invalidReason) {
+    return DateTime.invalid(invalidReason);
+  }
+
+  var tsNow = Settings.now(),
+      offsetProvis = zone.offset(tsNow),
+      _objToTS = objToTS(obj, offsetProvis, zone),
+      _objToTS2 = slicedToArray(_objToTS, 2),
+      ts = _objToTS2[0],
+      o = _objToTS2[1];
+
+  return new DateTime({
+    ts: ts,
+    zone: zone,
+    o: o
+  });
+}
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -6924,42 +7021,45 @@ var DateTime = function () {
     classCallCheck(this, DateTime);
 
     var zone = config.zone || Settings.defaultZone,
-        invalidReason = config.invalidReason || (Number.isNaN(config.ts) ? INVALID_INPUT : null) || (!zone.isValid ? UNSUPPORTED_ZONE : null);
+        invalidReason = config.invalidReason || (Number.isNaN(config.ts) ? INVALID_INPUT : null) || (!zone.isValid ? UNSUPPORTED_ZONE : null),
+        ts = config.ts || Settings.now();
 
-    Object.defineProperty(this, 'ts', {
-      value: config.ts || Settings.now(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'zone', {
-      value: zone,
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, 'invalidReason', {
-      value: invalidReason,
-      enumerable: false
-    });
-
-    Object.defineProperty(this, 'weekData', {
-      writable: true, // !!!
-      value: null,
-      enumerable: false
-    });
-
+    var c = null,
+        o = null;
     if (!invalidReason) {
-      var unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(this.zone),
-          c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
-          o = unchanged ? config.old.o : this.zone.offset(this.ts);
-
-      Object.defineProperty(this, 'c', { value: c });
-      Object.defineProperty(this, 'o', { value: o });
+      var unchanged = config.old && config.old.ts === ts && config.old.zone.equals(zone);
+      c = unchanged ? config.old.c : tsToObj(ts, zone.offset(ts));
+      o = unchanged ? config.old.o : zone.offset(ts);
     }
+
+    /**
+     * @access private
+     */
+    this.ts = config.ts || Settings.now();
+    /**
+     * @access private
+     */
+    this.zone = zone;
+    /**
+     * @access private
+     */
+    this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
+    this.invalid = invalidReason;
+    /**
+     * @access private
+     */
+    this.weekData = null;
+    /**
+     * @access private
+     */
+    this.c = c;
+    /**
+     * @access private
+     */
+    this.o = o;
   }
 
   // CONSTRUCT
@@ -7157,10 +7257,10 @@ var DateTime = function () {
         }
       }
 
-      var _objToTS = objToTS(mixed, this.o, this.zone),
-          _objToTS2 = slicedToArray(_objToTS, 2),
-          ts = _objToTS2[0],
-          o = _objToTS2[1];
+      var _objToTS3 = objToTS(mixed, this.o, this.zone),
+          _objToTS4 = slicedToArray(_objToTS3, 2),
+          ts = _objToTS4[0],
+          o = _objToTS4[1];
 
       return clone(this, { ts: ts, o: o });
     }
@@ -7435,6 +7535,42 @@ var DateTime = function () {
     }
 
     /**
+     * Returns a string representation of this DateTime appropriate for use in SQL Date
+     * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
+     * @return {string}
+     */
+
+  }, {
+    key: 'toSQLDate',
+    value: function toSQLDate() {
+      return techFormat(this.toUTC(), 'yyyy-MM-dd');
+    }
+
+    /**
+     * Returns a string representation of this DateTime appropriate for use in SQL Time
+     * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=> '07:34:19.361'
+     * @return {string}
+     */
+
+  }, {
+    key: 'toSQLTime',
+    value: function toSQLTime() {
+      return techFormat(this.toUTC(), 'hh:mm:ss.SSS');
+    }
+
+    /**
+     * Returns a string representation of this DateTime appropriate for use in SQL DateTime
+     * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000'
+     * @return {string}
+     */
+
+  }, {
+    key: 'toSQL',
+    value: function toSQL() {
+      return techFormat(this.toUTC(), 'yyyy-MM-dd hh:mm:ss.SSS');
+    }
+
+    /**
      * Returns a string representation of this DateTime appropriate for debugging
      * @return {string}
      */
@@ -7443,6 +7579,21 @@ var DateTime = function () {
     key: 'toString',
     value: function toString() {
       return this.isValid ? this.toISO() : INVALID;
+    }
+
+    /**
+     * Returns a string representation of this DateTime appropriate for the REPL.
+     * @return {string}
+     */
+
+  }, {
+    key: 'inspect',
+    value: function inspect() {
+      if (this.isValid) {
+        return 'DateTime {\n  ts: ' + this.toISO() + ',\n  zone: ' + this.zone.name + ',\n  locale: ' + this.locale + ' }';
+      } else {
+        return 'DateTime { Invalid, reason: ' + this.invalidReason + ' }';
+      }
     }
 
     /**
@@ -7700,7 +7851,7 @@ var DateTime = function () {
   }, {
     key: 'invalidReason',
     get: function get$$1() {
-      return this.invalidReason;
+      return this.invalid;
     }
 
     /**
@@ -8059,16 +8210,15 @@ var DateTime = function () {
       if (Util.isUndefined(year)) {
         return new DateTime({ ts: Settings.now() });
       } else {
-        return DateTime.fromObject({
+        return quickDT({
           year: year,
           month: month,
           day: day,
           hour: hour,
           minute: minute,
           second: second,
-          millisecond: millisecond,
-          zone: Settings.defaultZone
-        });
+          millisecond: millisecond
+        }, Settings.defaultZone);
       }
     }
 
@@ -8101,16 +8251,15 @@ var DateTime = function () {
           zone: FixedOffsetZone.utcInstance
         });
       } else {
-        return DateTime.fromObject({
+        return quickDT({
           year: year,
           month: month,
           day: day,
           hour: hour,
           minute: minute,
           second: second,
-          millisecond: millisecond,
-          zone: FixedOffsetZone.utcInstance
-        });
+          millisecond: millisecond
+        }, FixedOffsetZone.utcInstance);
       }
     }
 
@@ -8238,13 +8387,13 @@ var DateTime = function () {
 
       // set default values for missing stuff
       var foundFirst = false;
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator = units[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var u = _step.value;
+        for (var _iterator2 = units[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var u = _step2.value;
 
           var v = normalized[u];
           if (!Util.isUndefined(v)) {
@@ -8258,16 +8407,16 @@ var DateTime = function () {
 
         // make sure the values we have are in range
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
           }
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          if (_didIteratorError2) {
+            throw _iteratorError2;
           }
         }
       }
@@ -8281,10 +8430,10 @@ var DateTime = function () {
 
       // compute the actual time
       var gregorian = useWeekData ? Conversions.weekToGregorian(normalized) : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
-          _objToTS3 = objToTS(gregorian, offsetProvis, zoneToUse),
-          _objToTS4 = slicedToArray(_objToTS3, 2),
-          tsFinal = _objToTS4[0],
-          offsetFinal = _objToTS4[1],
+          _objToTS5 = objToTS(gregorian, offsetProvis, zoneToUse),
+          _objToTS6 = slicedToArray(_objToTS5, 2),
+          tsFinal = _objToTS6[0],
+          offsetFinal = _objToTS6[1],
           inst = new DateTime({
         ts: tsFinal,
         zone: zoneToUse,
@@ -8426,6 +8575,39 @@ var DateTime = function () {
       } else {
         return parseDataToDateTime(vals, parsedZone, options);
       }
+    }
+
+    /**
+     * Create a DateTime from a SQL date, time, or datetime
+     * Defaults to en-US if no locale has been specified, regardless of the system's locale
+     * @param {string} text - the string to parse
+     * @param {Object} options - options to affect the creation
+     * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+     * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+     * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+     * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+     * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+     * @example DateTime.fromSQL('2017-05-15')
+     * @example DateTime.fromSQL('2017-05-15 09:12:34')
+     * @example DateTime.fromSQL('2017-05-15 09:12:34.342')
+     * @example DateTime.fromSQL('2017-05-15 09:12:34.342', { zone: 'America/Los_Angeles' })
+     * @example DateTime.fromSQL('2017-05-15 09:12:34.342+06:00')
+     * @example DateTime.fromSQL('2017-05-15 09:12:34.342+06:00', { setZone: true })
+     * @example DateTime.fromSQL('09:12:34.342')
+     * @return {DateTime}
+     */
+
+  }, {
+    key: 'fromSQL',
+    value: function fromSQL(text) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      var _RegexParser$parseSQL = RegexParser.parseSQL(text),
+          _RegexParser$parseSQL2 = slicedToArray(_RegexParser$parseSQL, 2),
+          vals = _RegexParser$parseSQL2[0],
+          parsedZone = _RegexParser$parseSQL2[1];
+
+      return parseDataToDateTime(vals, parsedZone, options);
     }
 
     /**

@@ -73,12 +73,18 @@ export class Interval {
    * @private
    */
   constructor(config) {
-    Object.defineProperty(this, &apos;s&apos;, { value: config.start, enumerable: true });
-    Object.defineProperty(this, &apos;e&apos;, { value: config.end, enumerable: true });
-    Object.defineProperty(this, &apos;invalidReason&apos;, {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.s = config.start;
+    /**
+     * @access private
+     */
+    this.e = config.end;
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
   }
 
   /**
@@ -182,7 +188,7 @@ export class Interval {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -476,6 +482,19 @@ export class Interval {
   }
 
   /**
+   * Returns a string representation of this Interval appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
+        .start.zone.name},\n  locale:   ${this.start.locale} }`;
+    } else {
+      return `Interval { Invalid, reason: ${this.invalidReason} }`;
+    }
+  }
+
+  /**
    * Returns an ISO 8601-compliant string representation of this Interval.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @param {object} opts - The same options as {@link DateTime.toISO}
@@ -532,5 +551,5 @@ export class Interval {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-</body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
 </html>

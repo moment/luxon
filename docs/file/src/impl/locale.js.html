@@ -50,9 +50,7 @@ import { Settings } from &apos;../settings&apos;;
 import { DateTime } from &apos;../datetime&apos;;
 import { Formatter } from &apos;./formatter&apos;;
 
-let localeCache = {},
-  sysLocaleCache = null;
-
+let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
@@ -207,25 +205,15 @@ export class Locale {
 
   static create(locale, numberingSystem, outputCalendar, defaultToEN = false) {
     const specifiedLocale = locale || Settings.defaultLocale,
-      // the system locale is useful for human readable strings but annoying for parsing known formats
+      // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
       localeR = specifiedLocale || (defaultToEN ? &apos;en-US&apos; : systemLocale()),
       numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
-      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar,
-      cacheKey = `${localeR}|${numberingSystemR}|${outputCalendarR}|${specifiedLocale}`,
-      cached = localeCache[cacheKey];
-
-    if (cached) {
-      return cached;
-    } else {
-      const fresh = new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
-      localeCache[cacheKey] = fresh;
-      return fresh;
-    }
+      outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
+    return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
   }
 
   static resetCache() {
     sysLocaleCache = null;
-    localeCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
@@ -233,40 +221,17 @@ export class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, specifiedLocale) {
-    Object.defineProperty(this, &apos;locale&apos;, { value: locale, enumerable: true });
-    Object.defineProperty(this, &apos;numberingSystem&apos;, {
-      value: numbering,
-      enumerable: true
-    });
-    Object.defineProperty(this, &apos;outputCalendar&apos;, {
-      value: outputCalendar,
-      enumerable: true
-    });
-    Object.defineProperty(this, &apos;intl&apos;, {
-      value: intlConfigString(this.locale, this.numberingSystem, this.outputCalendar),
-      enumerable: false
-    });
+    this.locale = locale;
+    this.numberingSystem = numbering;
+    this.outputCalendar = outputCalendar;
+    this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 
-    // cached usefulness
-    Object.defineProperty(this, &apos;weekdaysCache&apos;, {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, &apos;monthsCache&apos;, {
-      value: { format: {}, standalone: {} },
-      enumerable: false
-    });
-    Object.defineProperty(this, &apos;meridiemCache&apos;, {
-      value: null,
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, &apos;eraCache&apos;, {
-      value: {},
-      enumerable: false,
-      writable: true
-    });
-    Object.defineProperty(this, &apos;specifiedLocale&apos;, { value: specifiedLocale, enumerable: true });
+    this.weekdaysCache = { format: {}, standalone: {} };
+    this.monthsCache = { format: {}, standalone: {} };
+    this.meridiemCache = null;
+    this.eraCache = {};
+
+    this.specifiedLocale = specifiedLocale;
   }
 
   // todo: cache me
@@ -308,6 +273,10 @@ export class Locale {
 
   redefaultToEN(alts = {}) {
     return this.clone(Object.assign({}, alts, { defaultToEN: true }));
+  }
+
+  redefaultToSystem(alts = {}) {
+    return this.clone(Object.assign({}, alts, { defaultToEN: false }));
   }
 
   months(length, format = false, defaultOK = true) {
@@ -427,5 +396,5 @@ export class Locale {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-</body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
 </html>

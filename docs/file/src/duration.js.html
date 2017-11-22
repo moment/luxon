@@ -166,27 +166,26 @@ export class Duration {
    */
   constructor(config) {
     const accurate = config.conversionAccuracy === &apos;longterm&apos; || false;
-
-    Object.defineProperty(this, &apos;values&apos;, {
-      value: config.values,
-      enumerable: true
-    });
-    Object.defineProperty(this, &apos;loc&apos;, {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-    Object.defineProperty(this, &apos;conversionAccuracy&apos;, {
-      value: accurate ? &apos;longterm&apos; : &apos;casual&apos;,
-      enumerable: true
-    });
-    Object.defineProperty(this, &apos;invalidReason&apos;, {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
-    Object.defineProperty(this, &apos;matrix&apos;, {
-      value: accurate ? accurateMatrix : casualMatrix,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.values = config.values;
+    /**
+     * @access private
+     */
+    this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
+    this.conversionAccuracy = accurate ? &apos;longterm&apos; : &apos;casual&apos;;
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
+    /**
+     * @access private
+     */
+    this.matrix = accurate ? accurateMatrix : casualMatrix;
   }
 
   /**
@@ -381,6 +380,19 @@ export class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns a string representation of this Duration appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `Duration {\n  values: ${this.toObject().inspect()},\n  locale: ${this
+        .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
+    } else {
+      return `Duration { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**
@@ -639,7 +651,7 @@ export class Duration {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -680,5 +692,5 @@ export class Duration {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-</body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
 </html>

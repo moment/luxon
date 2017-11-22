@@ -48,9 +48,19 @@
 import { English } from &apos;./english&apos;;
 import { FixedOffsetZone } from &apos;../zones/fixedOffsetZone&apos;;
 
+/*
+This file handles parsing for well-specified formats. Here&apos;s how it works:
+ * Two things go into parsing: a regex to match with and an extractor to take apart the groups in the match.
+ * An extractor is just a function that takes a regex match array and returns a { year: ..., month: ... } object
+ * parse() does the work of executing the regex and applying the extractor. It takes multiple regex/extractor pairs to try in sequence.
+ * Extractors can take a &quot;cursor&quot; representing the offset in the match to look at. This makes it easy to combine extractors.
+ * combineExtractors() does the work of combining them, keeping track of the cursor through multiple extractions.
+ * Some extractions are super dumb and simpleParse and fromStrings help DRY them.
+*/
+
 function combineRegexes(...regexes) {
   const full = regexes.reduce((f, r) =&gt; f + r.source, &apos;&apos;);
-  return RegExp(full);
+  return RegExp(`^${full}$`);
 }
 
 function combineExtractors(...extractors) {
@@ -70,6 +80,7 @@ function parse(s, ...patterns) {
   if (s == null) {
     return [null, null];
   }
+
   for (const [regex, extractor] of patterns) {
     const m = regex.exec(s);
     if (m) {
@@ -91,13 +102,16 @@ function simpleParse(...keys) {
   };
 }
 
-// ISO parsing
-const isoTimeRegex = /(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?)?$/,
-  isoYmdRegex = /^([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
-  isoWeekRegex = /^(\d{4})-?W(\d\d)-?(\d)/,
-  isoOrdinalRegex = /^(\d{4})-?(\d{3})/,
+// ISO and SQL parsing
+const isoTimeRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?/,
+  isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`),
+  isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
+  isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/,
+  isoOrdinalRegex = /(\d{4})-?(\d{3})/,
   extractISOWeekData = simpleParse(&apos;weekYear&apos;, &apos;weekNumber&apos;, &apos;weekDay&apos;),
-  extractISOOrdinalData = simpleParse(&apos;year&apos;, &apos;ordinal&apos;);
+  extractISOOrdinalData = simpleParse(&apos;year&apos;, &apos;ordinal&apos;),
+  sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/, // dumbed-down version of the ISO one
+  sqlTimeExtensionRegex = RegExp(`(?: ${isoTimeRegex.source})?`);
 
 function extractISOYmd(match, cursor) {
   const item = {
@@ -157,13 +171,29 @@ const obsOffsets = {
   PST: -8 * 60
 };
 
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+function parseSecondFraction(fraction) {
+  const f = parseFloat(&apos;0.&apos; + fraction) * 1000;
+  return Math.ceil(f);
+}
+
+function fromStrings(
+  weekdayStr,
+  yearStr,
+  monthStr,
+  dayStr,
+  hourStr,
+  minuteStr,
+  secondStr,
+  fractionStr
+) {
   const result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-    month: English.monthsShort.indexOf(monthStr) + 1,
+    month:
+      monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr)
+    minute: parseInt(minuteStr),
+    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
   };
 
   if (secondStr) result.second = parseInt(secondStr);
@@ -243,15 +273,19 @@ export class RegexParser {
   static parseISODate(s) {
     return parse(
       s,
-      [combineRegexes(isoYmdRegex, isoTimeRegex), combineExtractors(extractISOYmd, extractISOTime)],
       [
-        combineRegexes(isoWeekRegex, isoTimeRegex),
+        combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
+        combineExtractors(extractISOYmd, extractISOTime)
+      ],
+      [
+        combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
         combineExtractors(extractISOWeekData, extractISOTime)
       ],
       [
-        combineRegexes(isoOrdinalRegex, isoTimeRegex),
+        combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
         combineExtractors(extractISOOrdinalData, extractISOTime)
-      ]
+      ],
+      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]
     );
   }
 
@@ -271,6 +305,17 @@ export class RegexParser {
   static parseISODuration(s) {
     return parse(s, [isoDuration, extractISODuration]);
   }
+
+  static parseSQL(s) {
+    return parse(
+      s,
+      [
+        combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
+        combineExtractors(extractISOYmd, extractISOTime)
+      ],
+      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]
+    );
+  }
 }
 </code></pre>
 
@@ -287,5 +332,5 @@ export class RegexParser {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-</body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
 </html>

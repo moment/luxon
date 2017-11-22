@@ -107,6 +107,15 @@ export class Formatter {
   constructor(locale, formatOpts) {
     this.opts = formatOpts;
     this.loc = locale;
+    this.systemLoc = null;
+  }
+
+  formatWithSystemDefault(dt, opts) {
+    if (this.systemLoc === null) {
+      this.systemLoc = this.loc.redefaultToSystem();
+    }
+    const df = this.systemLoc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    return df.format();
   }
 
   formatDateTime(dt, opts = {}) {
@@ -334,45 +343,45 @@ export class Formatter {
             return this.num(dt.ordinal, 3);
           // macros
           case &apos;D&apos;:
-            return this.formatDateTime(dt, DateTime.DATE_SHORT);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_SHORT);
           case &apos;DD&apos;:
-            return this.formatDateTime(dt, DateTime.DATE_MED);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_MED);
           case &apos;DDD&apos;:
-            return this.formatDateTime(dt, DateTime.DATE_FULL);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_FULL);
           case &apos;DDDD&apos;:
-            return this.formatDateTime(dt, DateTime.DATE_HUGE);
+            return this.formatWithSystemDefault(dt, DateTime.DATE_HUGE);
           case &apos;t&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_SIMPLE);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_SIMPLE);
           case &apos;tt&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SECONDS);
           case &apos;ttt&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_WITH_SHORT_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SHORT_OFFSET);
           case &apos;tttt&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_WITH_LONG_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_WITH_LONG_OFFSET);
           case &apos;T&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_24_SIMPLE);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_SIMPLE);
           case &apos;TT&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SECONDS);
           case &apos;TTT&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
           case &apos;TTTT&apos;:
-            return this.formatDateTime(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
+            return this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
           case &apos;f&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_SHORT);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT);
           case &apos;ff&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_MED);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_MED);
           case &apos;fff&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_FULL);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL);
           case &apos;ffff&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_HUGE);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE);
           case &apos;F&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
           case &apos;FF&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_MED_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_MED_WITH_SECONDS);
           case &apos;FFF&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
           case &apos;FFFF&apos;:
-            return this.formatDateTime(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
+            return this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
 
           default:
             return token;
@@ -435,5 +444,5 @@ export class Formatter {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-</body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
 </html>

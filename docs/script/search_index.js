@@ -432,6 +432,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/datetime.js~datetime#inspect",
+    "class/src/datetime.js~DateTime.html#instance-method-inspect",
+    "src/datetime.js~DateTime#inspect",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime#invalidreason",
     "class/src/datetime.js~DateTime.html#instance-get-invalidReason",
     "src/datetime.js~DateTime#invalidReason",
@@ -666,6 +672,24 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime#tosql",
+    "class/src/datetime.js~DateTime.html#instance-method-toSQL",
+    "src/datetime.js~DateTime#toSQL",
+    "method"
+  ],
+  [
+    "src/datetime.js~datetime#tosqldate",
+    "class/src/datetime.js~DateTime.html#instance-method-toSQLDate",
+    "src/datetime.js~DateTime#toSQLDate",
+    "method"
+  ],
+  [
+    "src/datetime.js~datetime#tosqltime",
+    "class/src/datetime.js~DateTime.html#instance-method-toSQLTime",
+    "src/datetime.js~DateTime#toSQLTime",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime#tostring",
     "class/src/datetime.js~DateTime.html#instance-method-toString",
     "src/datetime.js~DateTime#toString",
@@ -888,6 +912,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime.fromsql",
+    "class/src/datetime.js~DateTime.html#static-method-fromSQL",
+    "src/datetime.js~DateTime.fromSQL",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime.fromstring",
     "class/src/datetime.js~DateTime.html#static-method-fromString",
     "src/datetime.js~DateTime.fromString",
@@ -964,6 +994,12 @@ window.esdocSearchIndex = [
     "class/src/duration.js~Duration.html#instance-get-hours",
     "src/duration.js~Duration#hours",
     "member"
+  ],
+  [
+    "src/duration.js~duration#inspect",
+    "class/src/duration.js~Duration.html#instance-method-inspect",
+    "src/duration.js~Duration#inspect",
+    "method"
   ],
   [
     "src/duration.js~duration#invalidreason",
@@ -1296,6 +1332,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/interval.js~interval#inspect",
+    "class/src/interval.js~Interval.html#instance-method-inspect",
+    "src/interval.js~Interval#inspect",
+    "method"
+  ],
+  [
     "src/interval.js~interval#intersection",
     "class/src/interval.js~Interval.html#instance-method-intersection",
     "src/interval.js~Interval#intersection",
@@ -1483,13 +1525,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1501,13 +1543,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
@@ -1531,13 +1573,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],

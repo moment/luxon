@@ -274,6 +274,34 @@ function normalizeUnit(unit, ignoreUnknown = false) {
   return normalized;
 }
 
+// this is a dumbed down version of fromObject() that runs about 60% faster
+// but doesn&apos;t do any validation, makes a bunch of assumptions about what units
+// are present, and so on.
+function quickDT(obj, zone) {
+  // assume we have the higher-order units
+  for (const u of orderedUnits) {
+    const v = obj[u];
+    if (Util.isUndefined(v)) {
+      obj[u] = defaultUnitValues[u];
+    }
+  }
+
+  const invalidReason =
+    Conversions.hasInvalidGregorianData(obj) || Conversions.hasInvalidTimeData(obj);
+  if (invalidReason) {
+    return DateTime.invalid(invalidReason);
+  }
+
+  const tsNow = Settings.now(),
+    offsetProvis = zone.offset(tsNow),
+    [ts, o] = objToTS(obj, offsetProvis, zone);
+  return new DateTime({
+    ts,
+    zone,
+    o
+  });
+}
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -303,43 +331,45 @@ export class DateTime {
       invalidReason =
         config.invalidReason ||
         (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
-        (!zone.isValid ? UNSUPPORTED_ZONE : null);
+        (!zone.isValid ? UNSUPPORTED_ZONE : null),
+      ts = config.ts || Settings.now();
 
-    Object.defineProperty(this, &apos;ts&apos;, {
-      value: config.ts || Settings.now(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, &apos;zone&apos;, {
-      value: zone,
-      enumerable: true
-    });
-
-    Object.defineProperty(this, &apos;loc&apos;, {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-
-    Object.defineProperty(this, &apos;invalidReason&apos;, {
-      value: invalidReason,
-      enumerable: false
-    });
-
-    Object.defineProperty(this, &apos;weekData&apos;, {
-      writable: true, // !!!
-      value: null,
-      enumerable: false
-    });
-
+    let c = null,
+      o = null;
     if (!invalidReason) {
-      const unchanged =
-          config.old &amp;&amp; config.old.ts === this.ts &amp;&amp; config.old.zone.equals(this.zone),
-        c = unchanged ? config.old.c : tsToObj(this.ts, this.zone.offset(this.ts)),
-        o = unchanged ? config.old.o : this.zone.offset(this.ts);
-
-      Object.defineProperty(this, &apos;c&apos;, { value: c });
-      Object.defineProperty(this, &apos;o&apos;, { value: o });
+      const unchanged = config.old &amp;&amp; config.old.ts === ts &amp;&amp; config.old.zone.equals(zone);
+      c = unchanged ? config.old.c : tsToObj(ts, zone.offset(ts));
+      o = unchanged ? config.old.o : zone.offset(ts);
     }
+
+    /**
+     * @access private
+     */
+    this.ts = config.ts || Settings.now();
+    /**
+     * @access private
+     */
+    this.zone = zone;
+    /**
+     * @access private
+     */
+    this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
+    this.invalid = invalidReason;
+    /**
+     * @access private
+     */
+    this.weekData = null;
+    /**
+     * @access private
+     */
+    this.c = c;
+    /**
+     * @access private
+     */
+    this.o = o;
   }
 
   // CONSTRUCT
@@ -367,16 +397,18 @@ export class DateTime {
     if (Util.isUndefined(year)) {
       return new DateTime({ ts: Settings.now() });
     } else {
-      return DateTime.fromObject({
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        millisecond,
-        zone: Settings.defaultZone
-      });
+      return quickDT(
+        {
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          second,
+          millisecond
+        },
+        Settings.defaultZone
+      );
     }
   }
 
@@ -406,16 +438,18 @@ export class DateTime {
         zone: FixedOffsetZone.utcInstance
       });
     } else {
-      return DateTime.fromObject({
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        millisecond,
-        zone: FixedOffsetZone.utcInstance
-      });
+      return quickDT(
+        {
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          second,
+          millisecond
+        },
+        FixedOffsetZone.utcInstance
+      );
     }
   }
 
@@ -664,6 +698,30 @@ export class DateTime {
   }
 
   /**
+   * Create a DateTime from a SQL date, time, or datetime
+   * Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale
+   * @param {string} text - the string to parse
+   * @param {Object} options - options to affect the creation
+   * @param {boolean} [options.zone=&apos;local&apos;] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+   * @param {string} [options.locale=&apos;en-US&apos;] - a locale string to use when parsing. Will also set the DateTime to this locale
+   * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @example DateTime.fromSQL(&apos;2017-05-15&apos;)
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34&apos;)
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342&apos;)
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342&apos;, { zone: &apos;America/Los_Angeles&apos; })
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342+06:00&apos;)
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342+06:00&apos;, { setZone: true })
+   * @example DateTime.fromSQL(&apos;09:12:34.342&apos;)
+   * @return {DateTime}
+   */
+  static fromSQL(text, options = {}) {
+    const [vals, parsedZone] = RegexParser.parseSQL(text);
+    return parseDataToDateTime(vals, parsedZone, options);
+  }
+
+  /**
    * Create an invalid DateTime.
    * @return {DateTime}
    */
@@ -706,7 +764,7 @@ export class DateTime {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalidReason;
+    return this.invalid;
   }
 
   /**
@@ -1328,11 +1386,51 @@ export class DateTime {
   }
 
   /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Date
+   * @example DateTime.utc(2014, 7, 13).toSQLDate() //=&gt; &apos;2014-07-13&apos;
+   * @return {string}
+   */
+  toSQLDate() {
+    return techFormat(this.toUTC(), &apos;yyyy-MM-dd&apos;);
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Time
+   * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=&gt; &apos;07:34:19.361&apos;
+   * @return {string}
+   */
+  toSQLTime() {
+    return techFormat(this.toUTC(), &apos;hh:mm:ss.SSS&apos;);
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL DateTime
+   * @example DateTime.utc(2014, 7, 13).toSQL() //=&gt; &apos;2014-07-13 00:00:00.000&apos;
+   * @return {string}
+   */
+  toSQL() {
+    return techFormat(this.toUTC(), &apos;yyyy-MM-dd hh:mm:ss.SSS&apos;);
+  }
+
+  /**
    * Returns a string representation of this DateTime appropriate for debugging
    * @return {string}
    */
   toString() {
     return this.isValid ? this.toISO() : INVALID;
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for the REPL.
+   * @return {string}
+   */
+  inspect() {
+    if (this.isValid) {
+      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
+        .locale} }`;
+    } else {
+      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**
@@ -1731,5 +1829,5 @@ export class DateTime {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-</body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
 </html>

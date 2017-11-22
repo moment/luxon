@@ -86,12 +86,12 @@ function simple(regex) {
 
 function unitForToken(token, loc) {
   const one = /\d/,
-    two = /\d\d/,
+    two = /\d{2}/,
     three = /\d{3}/,
     four = /\d{4}/,
-    oneOrTwo = /\d\d?/,
-    oneToThree = /\d\d?\d?/,
-    twoToFour = /\d\d(?:\d{2})?/,
+    oneOrTwo = /\d{1,2}/,
+    oneToThree = /\d{1,3}/,
+    twoToFour = /\d{2,4}/,
     literal = t =&gt; ({ regex: RegExp(t.val), deser: ([s]) =&gt; s, literal: true }),
     unitate = t =&gt; {
       if (token.literal) {
@@ -282,8 +282,12 @@ function dateTimeFromMatches(matches) {
     zone = null;
   }
 
-  if (!Util.isUndefined(matches.h) &amp;&amp; matches.a === 1) {
-    matches.h += 12;
+  if (!Util.isUndefined(matches.h)) {
+    if (matches.h &lt; 12 &amp;&amp; matches.a === 1) {
+      matches.h += 12;
+    } else if (matches.h === 12 &amp;&amp; matches.a === 0) {
+      matches.h = 0;
+    }
   }
 
   if (matches.G === 0 &amp;&amp; matches.y) {
@@ -313,7 +317,7 @@ function dateTimeFromMatches(matches) {
 
 export class TokenParser {
   constructor(loc) {
-    Object.defineProperty(this, &apos;loc&apos;, { value: loc, enumerable: true });
+    this.loc = loc;
   }
 
   explainParse(input, format) {
@@ -353,5 +357,5 @@ export class TokenParser {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-</body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
 </html>
