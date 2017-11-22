@@ -1,5 +1,4 @@
 const babel = require('rollup-plugin-babel'),
-  babili = require('gulp-babili'),
   buffer = require('vinyl-buffer'),
   coveralls = require('gulp-coveralls'),
   esdoc = require('gulp-esdoc'),
@@ -8,6 +7,7 @@ const babel = require('rollup-plugin-babel'),
   gulp = require('gulp'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
+  minify = require('gulp-babel-minify'),
   prettierOptions = require('./.prettier.js'),
   prettier = require('prettier'),
   process = require('process'),
@@ -61,9 +61,9 @@ function processLib(dest, opts) {
     const fullDest = `./build/${dest}`,
       // confession: I have no idea why piping to lazypipe works
       // after dest, but you can't pipe directly so...
-      minify = lazypipe()
+      minifyLib = lazypipe()
         .pipe(filter, ['**/*.js'])
-        .pipe(babili, { mangle: { keepClassNames: true } })
+        .pipe(minify, { mangle: { keepClassNames: true } })
         .pipe(rename, { extname: '.min.js' })
         .pipe(sourcemaps.write, '.')
         .pipe(gulp.dest, fullDest);
@@ -75,7 +75,7 @@ function processLib(dest, opts) {
       .pipe(sourcemaps.write('.'))
       .pipe(rename({ basename: 'luxon', dirname: '' }))
       .pipe(gulp.dest(fullDest))
-      .pipe(minify());
+      .pipe(minifyLib());
   };
 }
 
