@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">98.66% </span>
+        <span class="strong">97.37% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>147/149</span>
+        <span class='fraction'>148/152</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">97.12% </span>
+        <span class="strong">95.74% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>135/139</span>
+        <span class='fraction'>135/141</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">97.22% </span>
+        <span class="strong">97.3% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>35/36</span>
+        <span class='fraction'>36/37</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">98.48% </span>
+        <span class="strong">97.04% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>130/132</span>
+        <span class='fraction'>131/135</span>
       </div>
     </div>
   </div>
@@ -664,7 +664,19 @@
 619
 620
 621
-622</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -787,12 +799,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">854x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">854x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">854x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">854x</span>
@@ -807,6 +813,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">854x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">854x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1001,6 +1012,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1259,7 +1283,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3209x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1407,27 +1431,26 @@ export class Duration {
    */
   constructor(config) {
     const accurate = config.conversionAccuracy === 'longterm' || false;
-&nbsp;
-    Object.defineProperty(this, 'values', {
-      value: config.values,
-      enumerable: true
-    });
-    Object.defineProperty(this, 'loc', {
-      value: config.loc || Locale.create(),
-      enumerable: true
-    });
-    Object.defineProperty(this, 'conversionAccuracy', {
-      value: accurate ? 'longterm' : 'casual',
-      enumerable: true
-    });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
-    Object.defineProperty(this, 'matrix', {
-      value: accurate ? accurateMatrix : casualMatrix,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.values = config.values;
+    /**
+     * @access private
+     */
+    this.loc = config.loc || Locale.create();
+    /**
+     * @access private
+     */
+    this.conversionAccuracy = accurate ? 'longterm' : 'casual';
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
+    /**
+     * @access private
+     */
+    this.matrix = accurate ? accurateMatrix : casualMatrix;
   }
 &nbsp;
   /**
@@ -1622,6 +1645,19 @@ export class Duration {
    */
   toString() {
     return this.toISO();
+  }
+&nbsp;
+  /**
+   * Returns a string representation of this Duration appropriate for the REPL.
+   * @return {string}
+   */
+<span class="fstat-no" title="function not covered" >  in</span>spect() {
+<span class="cstat-no" title="statement not covered" >    if (this.isValid) {</span>
+<span class="cstat-no" title="statement not covered" >      return `Duration {\n  values: ${this.toObject().inspect()},\n  locale: ${this</span>
+        .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
+    } else {
+<span class="cstat-no" title="statement not covered" >      return `Duration { Invalid, reason: ${this.invalidReason} }`;</span>
+    }
   }
 &nbsp;
   /**
@@ -1879,8 +1915,8 @@ export class Duration {
    * Returns an explanation of why this Duration became invalid, or null if the Duration is valid
    * @return {string}
    */
-<span class="fstat-no" title="function not covered" >  ge</span>t invalidReason() {
-<span class="cstat-no" title="statement not covered" >    return this.invalidReason;</span>
+  get invalidReason() {
+    return this.invalid;
   }
 &nbsp;
   /**
@@ -1912,7 +1948,7 @@ export class Duration {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Nov 21 2017 09:38:25 GMT-0500 (EST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Nov 22 2017 18:04:40 GMT-0500 (EST)
 </div>
 </div>
 <script src="../prettify.js"></script>

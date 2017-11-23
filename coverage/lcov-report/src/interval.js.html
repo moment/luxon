@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">99.28% </span>
+        <span class="strong">97.87% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>137/138</span>
+        <span class='fraction'>138/141</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">97.32% </span>
+        <span class="strong">95.61% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>109/112</span>
+        <span class='fraction'>109/114</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">97.62% </span>
+        <span class="strong">97.67% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>41/42</span>
+        <span class='fraction'>42/43</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">99.16% </span>
+        <span class="strong">97.54% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>118/119</span>
+        <span class='fraction'>119/122</span>
       </div>
     </div>
   </div>
@@ -516,7 +516,26 @@
 471
 472
 473
-474</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -545,12 +564,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">339x</span>
-<span class="cline-any cline-yes">339x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">339x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">339x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">339x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -654,7 +679,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">194x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -952,6 +977,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -1018,12 +1056,18 @@ export class Interval {
    * @private
    */
   constructor(config) {
-    Object.defineProperty(this, 's', { value: config.start, enumerable: true });
-    Object.defineProperty(this, 'e', { value: config.end, enumerable: true });
-    Object.defineProperty(this, 'invalidReason', {
-      value: config.invalidReason || null,
-      enumerable: false
-    });
+    /**
+     * @access private
+     */
+    this.s = config.start;
+    /**
+     * @access private
+     */
+    this.e = config.end;
+    /**
+     * @access private
+     */
+    this.invalid = config.invalidReason || null;
   }
 &nbsp;
   /**
@@ -1126,8 +1170,8 @@ export class Interval {
    * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
    * @return {string}
    */
-<span class="fstat-no" title="function not covered" >  ge</span>t invalidReason() {
-<span class="cstat-no" title="statement not covered" >    return this.invalidReason;</span>
+  get invalidReason() {
+    return this.invalid;
   }
 &nbsp;
   /**
@@ -1421,6 +1465,19 @@ export class Interval {
   }
 &nbsp;
   /**
+   * Returns a string representation of this Interval appropriate for the REPL.
+   * @return {string}
+   */
+<span class="fstat-no" title="function not covered" >  in</span>spect() {
+<span class="cstat-no" title="statement not covered" >    if (this.isValid) {</span>
+<span class="cstat-no" title="statement not covered" >      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this</span>
+        .start.zone.name},\n  locale:   ${this.start.locale} }`;
+    } else {
+<span class="cstat-no" title="statement not covered" >      return `Interval { Invalid, reason: ${this.invalidReason} }`;</span>
+    }
+  }
+&nbsp;
+  /**
    * Returns an ISO 8601-compliant string representation of this Interval.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @param {object} opts - The same options as {@link DateTime.toISO}
@@ -1468,7 +1525,7 @@ export class Interval {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Nov 21 2017 09:38:25 GMT-0500 (EST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Nov 22 2017 18:04:40 GMT-0500 (EST)
 </div>
 </div>
 <script src="../prettify.js"></script>

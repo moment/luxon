@@ -13865,7 +13865,7 @@
     "__docId__": 414,
     "kind": "file",
     "name": "src/luxonFilled.js",
-    "content": "import 'core-js/es6/symbol';\nimport 'core-js/es6/object';\nimport 'core-js/fn/symbol/iterator';\nimport 'core-js/fn/number/is-nan';\nimport 'core-js/es6/array';\nimport 'core-js/fn/string/virtual/starts-with';\nimport 'core-js/fn/math/trunc';\n\nexport * from './luxon';\n",
+    "content": "/* eslint import/no-extraneous-dependencies: off */\n\nimport 'core-js/es6/symbol';\nimport 'core-js/es6/object';\nimport 'core-js/fn/symbol/iterator';\nimport 'core-js/fn/number/is-nan';\nimport 'core-js/es6/array';\nimport 'core-js/fn/string/virtual/starts-with';\nimport 'core-js/fn/string/virtual/repeat';\nimport 'core-js/fn/math/trunc';\n\nexport * from './luxon';\n",
     "static": true,
     "longname": "src/luxonFilled.js",
     "access": null,

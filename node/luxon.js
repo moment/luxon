@@ -1,5 +1,6 @@
-var luxon = (function (exports) {
 'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -7082,8 +7083,4 @@ exports.Interval = Interval;
 exports.Info = Info;
 exports.Zone = Zone;
 exports.Settings = Settings;
-
-return exports;
-
-}({}));
 //# sourceMappingURL=luxon.js.map
