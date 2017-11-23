@@ -143,8 +143,8 @@ Some tokens have a "standalone" and "format" version. Some languages require dif
 
 ```js
 var d = DateTime.fromISO('2014-08-06T13:07:04.054').setLocale('ru');
-d.toFormat("LLLL") //=> 'август' (format)
-d.toFormat("MMMM"); //=> 'августа' (standalone)
+d.toFormat("LLLL") //=> 'август' (standalone)
+d.toFormat("MMMM"); //=> 'августа' (format)
 ```
 
 ### Macro tokens
