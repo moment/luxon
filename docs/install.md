@@ -1,6 +1,6 @@
 # Install guide
 
-Luxon provides different builds for different JS environments. See below for a link to the right one and instructions on how to use it.
+Luxon provides different builds for different JS environments. See below for a link to the right one and instructions on how to use it. Luxon supports all modern platforms, but see [the support matrix](../faq/matrix.html) for additional details.
 
 ## Basic browser setup
 
@@ -19,9 +19,9 @@ You may wish to alias the classes you use:
 var DateTime = luxon.DateTime;
 ```
 
-### Older browsers
+### Internet Explorer
 
-If you're running an old browser (including IE 11), you need some polyfills. You have two options: use a polyfilled build or apply the polyfills yourself. The polyfilled builds are here:
+If you're supporting IE 10 or 11, you need some polyfills. You have two options: use a polyfilled build or apply the polyfills yourself. The polyfilled builds are here:
 
 * [Download full polyfilled](../../global-filled/luxon.js)
 * [Download minified polyfilled](../../global-filled/luxon.min.js)
@@ -77,7 +77,3 @@ import { DateTime } from 'luxon';
 ## Meteor
 
 [Help wanted.]
-
-## React Native
-
-Luxon works in React Native. On Android, the Intl API isn't provided out of the box. Luxon works without Intl support but a lot of its features work as you expect, especially regarding time zones and internationalization. You can use the international variant of [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to Intl support.
