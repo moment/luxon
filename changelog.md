@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+ * Remove polyfills from main builds
+ * Update compilation toolchain to target builds more exactly
+ * Fix IE in polyfill build
+
 ## 0.1.0
 
  * Add `.fromSQL`, `#toSQL`, `#toSQLTime`, `#toSQLDate`
