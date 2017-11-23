@@ -5,10 +5,7 @@
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
-  "dependencies": {
-    "core-js": "latest",
-    "jest": "^21.2.1"
-  },
+  "dependencies": {},
   "scripts": {
     "precommit": "lint-staged"
   },
@@ -17,9 +14,10 @@
   },
   "devDependencies": {
     "babel-jest": "latest",
-    "babel-preset-es2015": "latest",
-    "babel-preset-es2015-rollup": "latest",
+    "babel-plugin-external-helpers": "latest",
+    "babel-preset-env": "latest",
     "benchmark": "latest",
+    "core-js": "latest",
     "coveralls": "latest",
     "eslint": "latest",
     "eslint-config-airbnb-base": "12.0.2",
@@ -27,7 +25,7 @@
     "eslint-plugin-import": "latest",
     "eslint-plugin-prettier": "latest",
     "gulp": "latest",
-    "gulp-babili": "latest",
+    "gulp-babel-minify": "latest",
     "gulp-bench": "latest",
     "gulp-coveralls": "latest",
     "gulp-esdoc": "latest",
@@ -39,6 +37,7 @@
     "gulp-uglify": "latest",
     "gulp-util": "latest",
     "husky": "^0.14.3",
+    "jest": "^21.2.1",
     "jest-cli": "latest",
     "lazypipe": "latest",
     "lint-staged": "^4.3.0",
@@ -53,10 +52,11 @@
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest"
   },
-  "main": "build/cjs/luxon.js",
+  "main": "build/node/luxon.js",
+  "browser": "build/cjs-browser/luxon.js",
   "engines": {
     "node": "*"
   },
-  "files": ["build/cjs/luxon.js"],
+  "files": ["build/node/luxon.js", "build/cjs-browser/luxon.js"],
   "license": "MIT"
 }

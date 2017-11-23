@@ -1,5 +1,4 @@
 const babel = require('rollup-plugin-babel'),
-  babili = require('gulp-babili'),
   buffer = require('vinyl-buffer'),
   coveralls = require('gulp-coveralls'),
   esdoc = require('gulp-esdoc'),
@@ -8,13 +7,14 @@ const babel = require('rollup-plugin-babel'),
   gulp = require('gulp'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
+  minify = require('gulp-babel-minify'),
   prettierOptions = require('./.prettier.js'),
   prettier = require('prettier'),
   process = require('process'),
   rename = require('gulp-rename'),
+  rollup = require('rollup-stream'),
   rollupNode = require('rollup-plugin-node-resolve'),
   rollupCommonJS = require('rollup-plugin-commonjs'),
-  rollup = require('rollup-stream'),
   runSequence = require('run-sequence'),
   source = require('vinyl-source-stream'),
   sourcemaps = require('gulp-sourcemaps'),
@@ -23,25 +23,33 @@ const babel = require('rollup-plugin-babel'),
 
 function rollupLib(inopts) {
   const opts = Object.assign(
-    {
-      input: inopts.input,
-      sourcemap: true,
-      format: inopts.format,
-      plugins: [
-        rollupNode(),
-        rollupCommonJS({
-          include: 'node_modules/**'
-        })
-      ]
-    },
-    inopts.rollupOpts || {}
-  );
+      {
+        input: inopts.src || './src/luxon.js',
+        sourcemap: true,
+        format: inopts.format,
+        plugins: [
+          rollupNode(),
+          rollupCommonJS({
+            include: 'node_modules/**'
+          })
+        ]
+      },
+      inopts.rollupOpts || {}
+    ),
+    presetOpts = {
+      modules: false
+    };
+
+  if (inopts.target) {
+    presetOpts.targets = [inopts.target];
+  }
 
   if (inopts.compile || typeof inopts.compile === 'undefined') {
     opts.plugins.push(
       babel({
         babelrc: false,
-        presets: ['es2015-rollup']
+        presets: [['env', presetOpts]],
+        plugins: ['external-helpers']
       })
     );
   }
@@ -53,31 +61,22 @@ function processLib(dest, opts) {
     const fullDest = `./build/${dest}`,
       // confession: I have no idea why piping to lazypipe works
       // after dest, but you can't pipe directly so...
-      minify = lazypipe()
+      minifyLib = lazypipe()
         .pipe(filter, ['**/*.js'])
-        .pipe(babili, { mangle: { keepClassNames: true } })
+        .pipe(minify, { mangle: { keepClassNames: true } })
         .pipe(rename, { extname: '.min.js' })
         .pipe(sourcemaps.write, '.')
         .pipe(gulp.dest, fullDest);
 
     return rollupLib(opts)
-      .pipe(source('luxon.js'))
+      .pipe(source(opts.src || './src/luxon.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('.'))
+      .pipe(rename({ basename: 'luxon', dirname: '' }))
       .pipe(gulp.dest(fullDest))
-      .pipe(minify());
+      .pipe(minifyLib());
   };
-}
-
-function processLibLegacy(dest, opts) {
-  const realOpts = Object.assign({}, opts, { input: './src/luxonFilled.js' });
-  return processLib(dest, realOpts);
-}
-
-function processLibModern(dest, opts) {
-  const realOpts = Object.assign({}, opts, { input: './src/luxon.js' });
-  return processLib(dest, realOpts);
 }
 
 function prettify(opts) {
@@ -107,14 +106,18 @@ function checkForDocCoverage() {
   });
 }
 
-const cjsOpts = { format: 'cjs' },
+const browsersOld = { browsers: 'last 2 major versions' };
+
+const nodeOpts = { format: 'cjs', target: 'node >= 6' },
+  cjsBrowserOpts = { format: 'cjs', browsersOld },
   es6Opts = {
     format: 'es',
     compile: false
   },
   amdOpts = {
     format: 'amd',
-    rollupOpts: { name: 'luxon' }
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld
   },
   es6GlobalOpts = {
     format: 'iife',
@@ -123,7 +126,14 @@ const cjsOpts = { format: 'cjs' },
   },
   globalOpts = {
     format: 'iife',
-    rollupOpts: { name: 'luxon' }
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld
+  },
+  globalFilledOpts = {
+    format: 'iife',
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld,
+    src: './src/luxonFilled.js'
   };
 
 function test(includeCoverage) {
@@ -141,17 +151,15 @@ function test(includeCoverage) {
   return gulp.src('test').pipe(jest(opts));
 }
 
-// build these with the corejs polyfills
-// todo: is this the right thing to do?
-gulp.task('global', processLibLegacy('global', globalOpts));
-gulp.task('amd', processLibLegacy('amd', amdOpts));
-gulp.task('cjs', processLibLegacy('cjs', cjsOpts));
+gulp.task('global', processLib('global', globalOpts));
+gulp.task('global-filled', processLib('global-filled', globalFilledOpts));
+gulp.task('amd', processLib('amd', amdOpts));
+gulp.task('node', processLib('node', nodeOpts));
+gulp.task('cjs-browser', processLib('cjs-browser', cjsBrowserOpts));
+gulp.task('es6', processLib('es6', es6Opts));
+gulp.task('global-es6', processLib('global-es6', es6GlobalOpts));
 
-// build these without the corejs polyfills
-gulp.task('es6', processLibModern('es6', es6Opts));
-gulp.task('global-es6', processLibModern('global-es6', es6GlobalOpts));
-
-gulp.task('build', ['cjs', 'es6', 'amd', 'global', 'global-es6']);
+gulp.task('build', ['node', 'cjs-browser', 'es6', 'amd', 'global', 'global-es6', 'global-filled']);
 
 gulp.task('test-with-coverage', () => test(true));
 gulp.task('test', () => test(false));
@@ -214,7 +222,7 @@ gulp.task('coveralls', () => gulp.src('build/coverage/lcov.info').pipe(coveralls
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
-gulp.task('ci', cb => runSequence('cjs', 'lint', 'test-with-coverage', 'docs', cb));
+gulp.task('ci', cb => runSequence('node', 'lint', 'test-with-coverage', 'docs', cb));
 
 gulp.task('default', cb =>
   runSequence('format', 'build', 'lint', 'test', 'coveralls', 'docs', 'site', cb)
