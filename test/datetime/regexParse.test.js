@@ -123,6 +123,18 @@ test('DateTime.fromISO() accepts year-month', () => {
   });
 });
 
+test('DateTime.fromISO() accepts yearmonth', () => {
+  isSame('201605', {
+    year: 2016,
+    month: 5,
+    day: 1,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
 test('DateTime.fromISO() accepts year-month-day', () => {
   isSame('2016-05-25', {
     year: 2016,
@@ -375,7 +387,7 @@ test('DateTime.fromISO() accepts year-ordinalTtime', () => {
   });
 });
 
-test('DateTime.fromISO() accepts time', () => {
+test('DateTime.fromISO() accepts hour:minute:second.millisecond', () => {
   const { year, month, day } = DateTime.local();
   isSame('09:24:15.123', {
     year,
@@ -385,6 +397,58 @@ test('DateTime.fromISO() accepts time', () => {
     minute: 24,
     second: 15,
     millisecond: 123
+  });
+});
+
+test('DateTime.fromISO() accepts hour:minute:second,millisecond', () => {
+  const { year, month, day } = DateTime.local();
+  isSame('09:24:15,123', {
+    year,
+    month,
+    day,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+});
+
+test('DateTime.fromISO() accepts hour:minute:second', () => {
+  const { year, month, day } = DateTime.local();
+  isSame('09:24:15', {
+    year,
+    month,
+    day,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromISO() accepts hour:minute', () => {
+  const { year, month, day } = DateTime.local();
+  isSame('09:24', {
+    year,
+    month,
+    day,
+    hour: 9,
+    minute: 24,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromISO() accepts hour:minute', () => {
+  const { year, month, day } = DateTime.local();
+  isSame('09:24', {
+    year,
+    month,
+    day,
+    hour: 9,
+    minute: 24,
+    second: 0,
+    millisecond: 0
   });
 });
 

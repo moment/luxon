@@ -20,6 +20,7 @@ All of these are parsable by `fromISO`:
 ```
 2016
 2016-05
+201605
 2016-05-25
 20160525
 2016-05-25T09
@@ -37,9 +38,15 @@ All of these are parsable by `fromISO`:
 2016-200
 2016200
 2016-200T09:24:15.123
+09:24
+09:24:15
+09:24:15.123
+09:24:15,123
 ```
 
-Missing lower-order values are always set to the minimum possible value. Midnight if the hours aren't specified, the first of the month if the day isn't, January if the month isn't, etc.
+ * In addition, all the times support offset arguments like "Z" and "+06:00".
+ * Missing lower-order values are always set to the minimum possible value; i.e. it always parses to a full DateTime. For example, "2016-05-25" parses to midnight of that day. "2016-05" parses to the first of the month, etc.
+ * The time is parsed as a local time if no offset is specified, but see the method docs to see your options,and also check out [time zone docs](zones.html) for more details.
 
 ### HTTP and RFC2822
 
@@ -50,6 +57,18 @@ DateTime.fromRFC2822('Tue, 01 Nov 2016 13:23:12 +0630');
 DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT');
 DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
 ```
+
+### SQL
+
+Luxon accepts SQL dates, times, and datetimes, via [fromSQL](../class/src/datetime.js~DateTime.html#static-method-fromSQL):
+
+```js
+DateTime.fromSQL('2017-05-15');
+DateTime.fromSQL('2017-05-15 09:24:15');
+DateTime.fromSQL('09:24:15');
+```
+
+It works similarly to `fromISO`, so see above for additional notes.
 
 ## Ad-hoc parsing
 
