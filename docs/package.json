@@ -1,6 +1,6 @@
 {
   "name": "luxon",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
@@ -53,10 +53,11 @@
     "vinyl-source-stream": "latest"
   },
   "main": "build/node/luxon.js",
+  "module": "src/luxon.js",
   "browser": "build/cjs-browser/luxon.js",
   "engines": {
     "node": "*"
   },
-  "files": ["build/node/luxon.js", "build/cjs-browser/luxon.js"],
+  "files": ["build/node/luxon.js", "build/cjs-browser/luxon.js", "src"],
   "license": "MIT"
 }
