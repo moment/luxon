@@ -789,7 +789,7 @@ test('DateTime.fromSQL() accepts a zone to default to', () => {
 });
 
 test('DateTime.fromSQL() can parse an optional offset', () => {
-  let dt = DateTime.fromSQL('2016-05-14 10:23:54.023+06:00');
+  let dt = DateTime.fromSQL('2016-05-14 10:23:54.023 +06:00');
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -801,13 +801,42 @@ test('DateTime.fromSQL() can parse an optional offset', () => {
     millisecond: 23
   });
 
-  dt = DateTime.fromSQL('2016-05-14 10:23:54+06:00');
+  // no space before the zone
+  dt = DateTime.fromSQL('2016-05-14 10:23:54.023+06:00');
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
     day: 14,
     hour: 4,
+    minute: 23,
+    second: 54,
+    millisecond: 23
+  });
+
+  // no milliseconds
+  dt = DateTime.fromSQL('2016-05-14 10:23:54 +06:00');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 4,
+    minute: 23,
+    second: 54,
+    millisecond: 0
+  });
+});
+
+test('DateTime.fromSQL() can parse an optional zone', () => {
+  const dt = DateTime.fromSQL('2016-05-14 10:23:54 Europe/Paris', { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe('Europe/Paris');
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
     minute: 23,
     second: 54,
     millisecond: 0

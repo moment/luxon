@@ -186,8 +186,8 @@ export class Formatter {
             return dt.offsetNameLong;
           // zone
           case 'z':
+            // like America/New_York
             return dt.zoneName;
-          // like America/New_York
           // meridiems
           case 'a':
             return meridiem();

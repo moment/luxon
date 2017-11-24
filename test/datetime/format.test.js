@@ -72,6 +72,14 @@ test('DateTime#toISOTime() returns an ISO 8601 date', () => {
   expect(dt.toISOTime()).toBe('09:23:54.123Z');
 });
 
+test("DateTime#toISOTime() won't suppress seconds by default", () => {
+  expect(dt.startOf('minute').toISOTime()).toBe('09:23:00.000Z');
+});
+
+test("DateTime#toISOTime() won't suppress milliseconds by default", () => {
+  expect(dt.startOf('second').toISOTime()).toBe('09:23:54.000Z');
+});
+
 test("DateTime#toISOTime({suppressMilliseconds: true}) won't suppress milliseconds if they're nonzero", () => {
   expect(dt.toISOTime({ suppressMilliseconds: true })).toBe('09:23:54.123Z');
 });
@@ -143,9 +151,21 @@ test('DateTime#toSQLDate() returns null for invalid DateTimes', () => {
 // #toSQLTime()
 //------
 
-test('DateTime#toSQLTime() returns SQL date', () => {
-  expect(dt.toUTC().toSQLTime()).toBe('09:23:54.123');
-  expect(dt.setZone('America/New_York').toSQLTime()).toBe('09:23:54.123');
+test('DateTime#toSQLTime() returns SQL time', () => {
+  expect(dt.toUTC().toSQLTime()).toBe('09:23:54.123 Z');
+  expect(dt.setZone('America/New_York').toSQLTime()).toBe('05:23:54.123 -04:00');
+});
+
+test('DateTime#toSQLTime() accepts an includeOffset option', () => {
+  expect(dt.toUTC().toSQLTime({ includeOffset: false })).toBe('09:23:54.123');
+  expect(dt.setZone('America/New_York').toSQLTime({ includeOffset: false })).toBe('05:23:54.123');
+});
+
+test('DateTime#toSQLTime() accepts an includeZone option', () => {
+  expect(dt.toUTC().toSQLTime({ includeZone: true })).toBe('09:23:54.123 UTC');
+  expect(dt.setZone('America/New_York').toSQLTime({ includeZone: true })).toBe(
+    '05:23:54.123 America/New_York'
+  );
 });
 
 test('DateTime#toSQLTime() returns null for invalid DateTimes', () => {
@@ -156,9 +176,23 @@ test('DateTime#toSQLTime() returns null for invalid DateTimes', () => {
 // #toSQL()
 //------
 
-test('DateTime#toSQL() returns SQL DateTime', () => {
-  expect(dt.toUTC().toSQL()).toBe('1982-05-25 09:23:54.123');
-  expect(dt.setZone('America/New_York').toSQL()).toBe('1982-05-25 09:23:54.123');
+test('DateTime#toSQL() returns SQL date time', () => {
+  expect(dt.toUTC().toSQL()).toBe('1982-05-25 09:23:54.123 Z');
+  expect(dt.setZone('America/New_York').toSQL()).toBe('1982-05-25 05:23:54.123 -04:00');
+});
+
+test('DateTime#toSQL() accepts an includeOffset option', () => {
+  expect(dt.toUTC().toSQL({ includeOffset: false })).toBe('1982-05-25 09:23:54.123');
+  expect(dt.setZone('America/New_York').toSQL({ includeOffset: false })).toBe(
+    '1982-05-25 05:23:54.123'
+  );
+});
+
+test('DateTime#toSQL() accepts an includeZone option', () => {
+  expect(dt.toUTC().toSQL({ includeZone: true })).toBe('1982-05-25 09:23:54.123 UTC');
+  expect(dt.setZone('America/New_York').toSQL({ includeZone: true })).toBe(
+    '1982-05-25 05:23:54.123 America/New_York'
+  );
 });
 
 test('DateTime#toSQL() returns null for invalid DateTimes', () => {
