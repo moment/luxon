@@ -53,10 +53,11 @@
     "vinyl-source-stream": "latest"
   },
   "main": "build/node/luxon.js",
+  "module": "src/luxon.js",
   "browser": "build/cjs-browser/luxon.js",
   "engines": {
     "node": "*"
   },
-  "files": ["build/node/luxon.js", "build/cjs-browser/luxon.js"],
+  "files": ["build/node/luxon.js", "build/cjs-browser/luxon.js", "src"],
   "license": "MIT"
 }
