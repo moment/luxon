@@ -396,7 +396,8 @@ export class Interval {
       currentCount = 0;
     const results = [],
       ends = intervals.map(i => [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }]),
-      arr = Util.flatten(ends).sort((a, b) => a.time - b.time);
+      flattened = Array.prototype.concat(...ends),
+      arr = flattened.sort((a, b) => a.time - b.time);
 
     for (const i of arr) {
       currentCount += i.type === 's' ? 1 : -1;

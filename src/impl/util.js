@@ -7,38 +7,18 @@ import { FixedOffsetZone } from '../zones/fixedOffsetZone';
 import { Settings } from '../settings';
 import { InvalidArgumentError } from '../errors';
 
+/*
+  This is just a junk drawer, containing anything used across multiple classes.
+  Because Luxon is small(ish), this should stay small and we won't worry about splitting
+  it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
+*/
+
 /**
  * @private
  */
 
 export class Util {
-  static friendlyDuration(duration) {
-    if (Util.isNumber(duration)) {
-      return Duration.fromMillis(duration);
-    } else if (duration instanceof Duration) {
-      return duration;
-    } else if (duration instanceof Object) {
-      return Duration.fromObject(duration);
-    } else {
-      throw new InvalidArgumentError('Unknown duration argument');
-    }
-  }
-
-  static friendlyDateTime(dateTimeish) {
-    if (dateTimeish instanceof DateTime) {
-      return dateTimeish;
-    } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
-      return DateTime.fromJSDate(dateTimeish);
-    } else if (dateTimeish instanceof Object) {
-      return DateTime.fromObject(dateTimeish);
-    } else {
-      throw new InvalidArgumentError('Unknown datetime argument');
-    }
-  }
-
-  static maybeArray(thing) {
-    return Array.isArray(thing) ? thing : [thing];
-  }
+  // TYPES
 
   static isUndefined(o) {
     return typeof o === 'undefined';
@@ -56,30 +36,10 @@ export class Util {
     return Object.prototype.toString.call(o) === '[object Date]';
   }
 
-  static numberBetween(thing, bottom, top) {
-    return Util.isNumber(thing) && thing >= bottom && thing <= top;
-  }
+  // OBJECTS AND ARRAYS
 
-  static padStart(input, n = 2) {
-    return ('0'.repeat(n) + input).slice(-n);
-  }
-
-  static parseMillis(fraction) {
-    if (fraction) {
-      const f = parseFloat('0.' + fraction) * 1000;
-      return Math.round(f);
-    } else {
-      return 0;
-    }
-  }
-
-  // http://stackoverflow.com/a/15030117
-  static flatten(arr) {
-    return arr.reduce(
-      (flat, toFlatten) =>
-        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),
-      []
-    );
+  static maybeArray(thing) {
+    return Array.isArray(thing) ? thing : [thing];
   }
 
   static bestBy(arr, by, compare) {
@@ -102,6 +62,27 @@ export class Util {
     }, {});
   }
 
+  // NUMBERS AND STRINGS
+
+  static numberBetween(thing, bottom, top) {
+    return Util.isNumber(thing) && thing >= bottom && thing <= top;
+  }
+
+  static padStart(input, n = 2) {
+    return ('0'.repeat(n) + input).slice(-n);
+  }
+
+  static parseMillis(fraction) {
+    if (fraction) {
+      const f = parseFloat('0.' + fraction) * 1000;
+      return Math.round(f);
+    } else {
+      return 0;
+    }
+  }
+
+  // DATE BASICS
+
   static isLeapYear(year) {
     return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
   }
@@ -118,11 +99,18 @@ export class Util {
     }
   }
 
+  static untruncateYear(year) {
+    if (year > 99) {
+      return year;
+    } else return year > 60 ? 1900 + year : 2000 + year;
+  }
+
+  // PARSING
+
   static parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     const date = new Date(ts),
       intl = {
         hour12: false,
-        // avoid AM/PM
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -151,6 +139,40 @@ export class Util {
       return trimmed;
     } else {
       return null;
+    }
+  }
+
+  // signedOffset('-5', '30') -> -330
+  static signedOffset(offHourStr, offMinuteStr) {
+    const offHour = parseInt(offHourStr, 10) || 0,
+      offMin = parseInt(offMinuteStr, 10) || 0,
+      offMinSigned = offHour < 0 ? -offMin : offMin;
+    return offHour * 60 + offMinSigned;
+  }
+
+  // COERCION
+
+  static friendlyDuration(duration) {
+    if (Util.isNumber(duration)) {
+      return Duration.fromMillis(duration);
+    } else if (duration instanceof Duration) {
+      return duration;
+    } else if (duration instanceof Object) {
+      return Duration.fromObject(duration);
+    } else {
+      throw new InvalidArgumentError('Unknown duration argument');
+    }
+  }
+
+  static friendlyDateTime(dateTimeish) {
+    if (dateTimeish instanceof DateTime) {
+      return dateTimeish;
+    } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
+      return DateTime.fromJSDate(dateTimeish);
+    } else if (dateTimeish instanceof Object) {
+      return DateTime.fromObject(dateTimeish);
+    } else {
+      throw new InvalidArgumentError('Unknown datetime argument');
     }
   }
 
@@ -196,19 +218,7 @@ export class Util {
     return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
   }
 
-  static untruncateYear(year) {
-    if (year > 99) {
-      return year;
-    } else return year > 60 ? 1900 + year : 2000 + year;
-  }
-
-  // signedOffset('-5', '30') -> -330
-  static signedOffset(offHourStr, offMinuteStr) {
-    const offHour = parseInt(offHourStr, 10) || 0,
-      offMin = parseInt(offMinuteStr, 10) || 0,
-      offMinSigned = offHour < 0 ? -offMin : offMin;
-    return offHour * 60 + offMinSigned;
-  }
+  // CAPABILITIES
 
   static hasIntl() {
     return typeof Intl !== 'undefined' && Intl.DateTimeFormat;
