@@ -64,12 +64,13 @@ export class Util {
     return ('0'.repeat(n) + input).slice(-n);
   }
 
-  static padEnd(input, n = 9) {
-    return (input + '0'.repeat(n)).slice(0, n);
-  }
-
-  static towardZero(input) {
-    return input < 0 ? Math.ceil(input) : Math.floor(input);
+  static parseMillis(fraction) {
+    if (fraction) {
+      const f = parseFloat('0.' + fraction) * 1000;
+      return Math.round(f);
+    } else {
+      return 0;
+    }
   }
 
   // http://stackoverflow.com/a/15030117

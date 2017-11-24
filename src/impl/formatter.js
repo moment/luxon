@@ -105,7 +105,7 @@ export class Formatter {
           return 'Z';
         }
 
-        const hours = Util.towardZero(dt.offset / 60),
+        const hours = Math.trunc(dt.offset / 60),
           minutes = Math.abs(dt.offset % 60),
           sign = hours >= 0 ? '+' : '-',
           base = `${sign}${Math.abs(hours)}`;

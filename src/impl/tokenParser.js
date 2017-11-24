@@ -249,8 +249,7 @@ function dateTimeFromMatches(matches) {
   }
 
   if (!Util.isUndefined(matches.u)) {
-    const nanoseconds = parseInt(Util.padEnd(matches.u, 9));
-    matches.S = Math.round(nanoseconds / 1000000);
+    matches.S = Util.parseMillis(matches.u);
   }
 
   const vals = Object.keys(matches).reduce((r, k) => {

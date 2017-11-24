@@ -655,8 +655,8 @@ test('DateTime.fromSQL() handles times without fractional seconds', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse SQL datetimes', () => {
-  const dt = DateTime.fromSQL('2016-05-14 10:23:54.2346');
+test('DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision', () => {
+  let dt = DateTime.fromSQL('2016-05-14 10:23:54.2346');
   expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -666,6 +666,18 @@ test('DateTime.fromSQL() can parse SQL datetimes', () => {
     minute: 23,
     second: 54,
     millisecond: 235
+  });
+
+  dt = DateTime.fromSQL('2016-05-14 10:23:54.2341');
+  expect(dt.isValid).toBe(true);
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 234
   });
 });
 

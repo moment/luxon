@@ -80,12 +80,11 @@ function extractISOYmd(match, cursor) {
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
     fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
-    nanosecond = Util.padEnd(match[cursor + 3] || '0'),
     item = {
       hour: parseInt(match[cursor]) || 0,
       minute: parseInt(match[cursor + 1]) || 0,
       second: parseInt(match[cursor + 2]) || 0,
-      millisecond: Math.round(parseInt(nanosecond) / 1000000)
+      millisecond: Util.parseMillis(match[cursor + 3])
     },
     zone = local ? null : new FixedOffsetZone(fullOffset);
 
@@ -125,29 +124,14 @@ const obsOffsets = {
   PST: -8 * 60
 };
 
-function parseSecondFraction(fraction) {
-  const f = parseFloat('0.' + fraction) * 1000;
-  return Math.ceil(f);
-}
-
-function fromStrings(
-  weekdayStr,
-  yearStr,
-  monthStr,
-  dayStr,
-  hourStr,
-  minuteStr,
-  secondStr,
-  fractionStr
-) {
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month:
       monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr),
-    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
+    minute: parseInt(minuteStr)
   };
 
   if (secondStr) result.second = parseInt(secondStr);
