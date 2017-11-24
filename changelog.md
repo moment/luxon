@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+ * Add `module` field to package.json
+
 ## 0.2.0
 
  * Remove polyfills from main builds
