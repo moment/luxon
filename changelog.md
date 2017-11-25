@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.22
+
+ * Fixes for `fromSQL`, `toSQL`, `toSQLTime`, and `toSQLDate`
+ * Add `includeOffset` option to `toISO` and `toISOTime`
+
 ## 0.2.1
 
  * Add `module` field to package.json
