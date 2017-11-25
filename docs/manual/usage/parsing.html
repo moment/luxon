@@ -125,6 +125,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#parsing-technical-formats" data-ice="link">Parsing technical formats</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#iso-8601" data-ice="link">ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage/parsing.html"><a href="manual/usage/parsing.html#fromstring" data-ice="link">fromString</a></li>
@@ -248,6 +249,7 @@
 <p>All of these are parsable by <code>fromISO</code>:</p>
 <pre><code><code class="source-code prettyprint">2016
 2016-05
+201605
 2016-05-25
 20160525
 2016-05-25T09
@@ -264,14 +266,29 @@
 2016W213T09:24:15.123
 2016-200
 2016200
-2016-200T09:24:15.123</code>
-</code></pre><p>Missing lower-order values are always set to the minimum possible value. Midnight if the hours aren&apos;t specified, the first of the month if the day isn&apos;t, January if the month isn&apos;t, etc.</p>
+2016-200T09:24:15.123
+09:24
+09:24:15
+09:24:15.123
+09:24:15,123</code>
+</code></pre><ul>
+<li>In addition, all the times support offset arguments like &quot;Z&quot; and &quot;+06:00&quot;.</li>
+<li>Missing lower-order values are always set to the minimum possible value; i.e. it always parses to a full DateTime. For example, &quot;2016-05-25&quot; parses to midnight of that day. &quot;2016-05&quot; parses to the first of the month, etc.</li>
+<li>The time is parsed as a local time if no offset is specified, but see the method docs to see your options,and also check out <a href="./manual/zones.html">time zone docs</a> for more details.</li>
+</ul>
 <h3 id="http-and-rfc2822">HTTP and RFC2822</h3>
 <p>Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&apos;Tue, 01 Nov 2016 13:23:12 +0630&apos;);
 DateTime.fromHTTP(&apos;Sunday, 06-Nov-94 08:49:37 GMT&apos;);
 DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;);</code>
 </code></pre>
+<h3 id="sql">SQL</h3>
+<p>Luxon accepts SQL dates, times, and datetimes, via <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromSQL">fromSQL</a>:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromSQL(&apos;2017-05-15&apos;);
+DateTime.fromSQL(&apos;2017-05-15 09:24:15&apos;);
+DateTime.fromSQL(&apos;09:24:15&apos;);</code>
+</code></pre>
+<p>It works similarly to <code>fromISO</code>, so see above for additional notes.</p>
 <h2 id="ad-hoc-parsing">Ad-hoc parsing</h2>
 <h3 id="consider-alternatives">Consider alternatives</h3>
 <p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p>

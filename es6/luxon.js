@@ -814,7 +814,7 @@ class Formatter {
           return 'Z';
         }
 
-        const hours = Util.towardZero(dt.offset / 60),
+        const hours = Math.trunc(dt.offset / 60),
           minutes = Math.abs(dt.offset % 60),
           sign = hours >= 0 ? '+' : '-',
           base = `${sign}${Math.abs(hours)}`;
@@ -1549,38 +1549,18 @@ class Settings {
   }
 }
 
+/*
+  This is just a junk drawer, containing anything used across multiple classes.
+  Because Luxon is small(ish), this should stay small and we won't worry about splitting
+  it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
+*/
+
 /**
  * @private
  */
 
 class Util {
-  static friendlyDuration(duration) {
-    if (Util.isNumber(duration)) {
-      return Duration.fromMillis(duration);
-    } else if (duration instanceof Duration) {
-      return duration;
-    } else if (duration instanceof Object) {
-      return Duration.fromObject(duration);
-    } else {
-      throw new InvalidArgumentError('Unknown duration argument');
-    }
-  }
-
-  static friendlyDateTime(dateTimeish) {
-    if (dateTimeish instanceof DateTime) {
-      return dateTimeish;
-    } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
-      return DateTime.fromJSDate(dateTimeish);
-    } else if (dateTimeish instanceof Object) {
-      return DateTime.fromObject(dateTimeish);
-    } else {
-      throw new InvalidArgumentError('Unknown datetime argument');
-    }
-  }
-
-  static maybeArray(thing) {
-    return Array.isArray(thing) ? thing : [thing];
-  }
+  // TYPES
 
   static isUndefined(o) {
     return typeof o === 'undefined';
@@ -1598,29 +1578,10 @@ class Util {
     return Object.prototype.toString.call(o) === '[object Date]';
   }
 
-  static numberBetween(thing, bottom, top) {
-    return Util.isNumber(thing) && thing >= bottom && thing <= top;
-  }
+  // OBJECTS AND ARRAYS
 
-  static padStart(input, n = 2) {
-    return ('0'.repeat(n) + input).slice(-n);
-  }
-
-  static padEnd(input, n = 9) {
-    return (input + '0'.repeat(n)).slice(0, n);
-  }
-
-  static towardZero(input) {
-    return input < 0 ? Math.ceil(input) : Math.floor(input);
-  }
-
-  // http://stackoverflow.com/a/15030117
-  static flatten(arr) {
-    return arr.reduce(
-      (flat, toFlatten) =>
-        flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten),
-      []
-    );
+  static maybeArray(thing) {
+    return Array.isArray(thing) ? thing : [thing];
   }
 
   static bestBy(arr, by, compare) {
@@ -1643,6 +1604,27 @@ class Util {
     }, {});
   }
 
+  // NUMBERS AND STRINGS
+
+  static numberBetween(thing, bottom, top) {
+    return Util.isNumber(thing) && thing >= bottom && thing <= top;
+  }
+
+  static padStart(input, n = 2) {
+    return ('0'.repeat(n) + input).slice(-n);
+  }
+
+  static parseMillis(fraction) {
+    if (fraction) {
+      const f = parseFloat('0.' + fraction) * 1000;
+      return Math.round(f);
+    } else {
+      return 0;
+    }
+  }
+
+  // DATE BASICS
+
   static isLeapYear(year) {
     return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
   }
@@ -1659,11 +1641,18 @@ class Util {
     }
   }
 
+  static untruncateYear(year) {
+    if (year > 99) {
+      return year;
+    } else return year > 60 ? 1900 + year : 2000 + year;
+  }
+
+  // PARSING
+
   static parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     const date = new Date(ts),
       intl = {
         hour12: false,
-        // avoid AM/PM
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -1692,6 +1681,40 @@ class Util {
       return trimmed;
     } else {
       return null;
+    }
+  }
+
+  // signedOffset('-5', '30') -> -330
+  static signedOffset(offHourStr, offMinuteStr) {
+    const offHour = parseInt(offHourStr, 10) || 0,
+      offMin = parseInt(offMinuteStr, 10) || 0,
+      offMinSigned = offHour < 0 ? -offMin : offMin;
+    return offHour * 60 + offMinSigned;
+  }
+
+  // COERCION
+
+  static friendlyDuration(duration) {
+    if (Util.isNumber(duration)) {
+      return Duration.fromMillis(duration);
+    } else if (duration instanceof Duration) {
+      return duration;
+    } else if (duration instanceof Object) {
+      return Duration.fromObject(duration);
+    } else {
+      throw new InvalidArgumentError('Unknown duration argument');
+    }
+  }
+
+  static friendlyDateTime(dateTimeish) {
+    if (dateTimeish instanceof DateTime) {
+      return dateTimeish;
+    } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
+      return DateTime.fromJSDate(dateTimeish);
+    } else if (dateTimeish instanceof Object) {
+      return DateTime.fromObject(dateTimeish);
+    } else {
+      throw new InvalidArgumentError('Unknown datetime argument');
     }
   }
 
@@ -1737,19 +1760,7 @@ class Util {
     return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
   }
 
-  static untruncateYear(year) {
-    if (year > 99) {
-      return year;
-    } else return year > 60 ? 1900 + year : 2000 + year;
-  }
-
-  // signedOffset('-5', '30') -> -330
-  static signedOffset(offHourStr, offMinuteStr) {
-    const offHour = parseInt(offHourStr, 10) || 0,
-      offMin = parseInt(offMinuteStr, 10) || 0,
-      offMinSigned = offHour < 0 ? -offMin : offMin;
-    return offHour * 60 + offMinSigned;
-  }
+  // CAPABILITIES
 
   static hasIntl() {
     return typeof Intl !== 'undefined' && Intl.DateTimeFormat;
@@ -1838,12 +1849,11 @@ function extractISOYmd(match, cursor) {
 function extractISOTime(match, cursor) {
   const local = !match[cursor + 4] && !match[cursor + 5],
     fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
-    nanosecond = Util.padEnd(match[cursor + 3] || '0'),
     item = {
       hour: parseInt(match[cursor]) || 0,
       minute: parseInt(match[cursor + 1]) || 0,
       second: parseInt(match[cursor + 2]) || 0,
-      millisecond: Math.round(parseInt(nanosecond) / 1000000)
+      millisecond: Util.parseMillis(match[cursor + 3])
     },
     zone = local ? null : new FixedOffsetZone(fullOffset);
 
@@ -1883,29 +1893,14 @@ const obsOffsets = {
   PST: -8 * 60
 };
 
-function parseSecondFraction(fraction) {
-  const f = parseFloat('0.' + fraction) * 1000;
-  return Math.ceil(f);
-}
-
-function fromStrings(
-  weekdayStr,
-  yearStr,
-  monthStr,
-  dayStr,
-  hourStr,
-  minuteStr,
-  secondStr,
-  fractionStr
-) {
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month:
       monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr),
-    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
+    minute: parseInt(minuteStr)
   };
 
   if (secondStr) result.second = parseInt(secondStr);
@@ -3049,7 +3044,8 @@ class Interval {
       currentCount = 0;
     const results = [],
       ends = intervals.map(i => [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }]),
-      arr = Util.flatten(ends).sort((a, b) => a.time - b.time);
+      flattened = Array.prototype.concat(...ends),
+      arr = flattened.sort((a, b) => a.time - b.time);
 
     for (const i of arr) {
       currentCount += i.type === 's' ? 1 : -1;
@@ -3541,8 +3537,7 @@ function dateTimeFromMatches(matches) {
   }
 
   if (!Util.isUndefined(matches.u)) {
-    const nanoseconds = parseInt(Util.padEnd(matches.u, 9));
-    matches.S = Math.round(nanoseconds / 1000000);
+    matches.S = Util.parseMillis(matches.u);
   }
 
   const vals = Object.keys(matches).reduce((r, k) => {

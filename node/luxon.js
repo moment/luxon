@@ -1299,7 +1299,7 @@ var Formatter = function () {
           return 'Z';
         }
 
-        var hours = Util.towardZero(dt.offset / 60),
+        var hours = Math.trunc(dt.offset / 60),
             minutes = Math.abs(dt.offset % 60),
             sign = hours >= 0 ? '+' : '-',
             base = '' + sign + Math.abs(hours);
@@ -1376,8 +1376,8 @@ var Formatter = function () {
             return dt.offsetNameLong;
           // zone
           case 'z':
+            // like America/New_York
             return dt.zoneName;
-          // like America/New_York
           // meridiems
           case 'a':
             return meridiem();
@@ -2127,6 +2127,12 @@ var Settings = function () {
   return Settings;
 }();
 
+/*
+  This is just a junk drawer, containing anything used across multiple classes.
+  Because Luxon is small(ish), this should stay small and we won't worry about splitting
+  it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
+*/
+
 /**
  * @private
  */
@@ -2137,38 +2143,10 @@ var Util = function () {
   }
 
   createClass(Util, null, [{
-    key: 'friendlyDuration',
-    value: function friendlyDuration(duration) {
-      if (Util.isNumber(duration)) {
-        return Duration.fromMillis(duration);
-      } else if (duration instanceof Duration) {
-        return duration;
-      } else if (duration instanceof Object) {
-        return Duration.fromObject(duration);
-      } else {
-        throw new InvalidArgumentError('Unknown duration argument');
-      }
-    }
-  }, {
-    key: 'friendlyDateTime',
-    value: function friendlyDateTime(dateTimeish) {
-      if (dateTimeish instanceof DateTime) {
-        return dateTimeish;
-      } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
-        return DateTime.fromJSDate(dateTimeish);
-      } else if (dateTimeish instanceof Object) {
-        return DateTime.fromObject(dateTimeish);
-      } else {
-        throw new InvalidArgumentError('Unknown datetime argument');
-      }
-    }
-  }, {
-    key: 'maybeArray',
-    value: function maybeArray(thing) {
-      return Array.isArray(thing) ? thing : [thing];
-    }
-  }, {
     key: 'isUndefined',
+
+    // TYPES
+
     value: function isUndefined(o) {
       return typeof o === 'undefined';
     }
@@ -2187,39 +2165,13 @@ var Util = function () {
     value: function isDate(o) {
       return Object.prototype.toString.call(o) === '[object Date]';
     }
-  }, {
-    key: 'numberBetween',
-    value: function numberBetween(thing, bottom, top) {
-      return Util.isNumber(thing) && thing >= bottom && thing <= top;
-    }
-  }, {
-    key: 'padStart',
-    value: function padStart(input) {
-      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
 
-      return ('0'.repeat(n) + input).slice(-n);
-    }
-  }, {
-    key: 'padEnd',
-    value: function padEnd(input) {
-      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-
-      return (input + '0'.repeat(n)).slice(0, n);
-    }
-  }, {
-    key: 'towardZero',
-    value: function towardZero(input) {
-      return input < 0 ? Math.ceil(input) : Math.floor(input);
-    }
-
-    // http://stackoverflow.com/a/15030117
+    // OBJECTS AND ARRAYS
 
   }, {
-    key: 'flatten',
-    value: function flatten(arr) {
-      return arr.reduce(function (flat, toFlatten) {
-        return flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten);
-      }, []);
+    key: 'maybeArray',
+    value: function maybeArray(thing) {
+      return Array.isArray(thing) ? thing : [thing];
     }
   }, {
     key: 'bestBy',
@@ -2243,6 +2195,34 @@ var Util = function () {
         return a;
       }, {});
     }
+
+    // NUMBERS AND STRINGS
+
+  }, {
+    key: 'numberBetween',
+    value: function numberBetween(thing, bottom, top) {
+      return Util.isNumber(thing) && thing >= bottom && thing <= top;
+    }
+  }, {
+    key: 'padStart',
+    value: function padStart(input) {
+      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+
+      return ('0'.repeat(n) + input).slice(-n);
+    }
+  }, {
+    key: 'parseMillis',
+    value: function parseMillis(fraction) {
+      if (fraction) {
+        var f = parseFloat('0.' + fraction) * 1000;
+        return Math.round(f);
+      } else {
+        return 0;
+      }
+    }
+
+    // DATE BASICS
+
   }, {
     key: 'isLeapYear',
     value: function isLeapYear(year) {
@@ -2263,6 +2243,16 @@ var Util = function () {
       }
     }
   }, {
+    key: 'untruncateYear',
+    value: function untruncateYear(year) {
+      if (year > 99) {
+        return year;
+      } else return year > 60 ? 1900 + year : 2000 + year;
+    }
+
+    // PARSING
+
+  }, {
     key: 'parseZoneInfo',
     value: function parseZoneInfo(ts, offsetFormat, locale) {
       var timeZone = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
@@ -2270,7 +2260,6 @@ var Util = function () {
       var date = new Date(ts),
           intl = {
         hour12: false,
-        // avoid AM/PM
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -2299,6 +2288,46 @@ var Util = function () {
         return trimmed;
       } else {
         return null;
+      }
+    }
+
+    // signedOffset('-5', '30') -> -330
+
+  }, {
+    key: 'signedOffset',
+    value: function signedOffset(offHourStr, offMinuteStr) {
+      var offHour = parseInt(offHourStr, 10) || 0,
+          offMin = parseInt(offMinuteStr, 10) || 0,
+          offMinSigned = offHour < 0 ? -offMin : offMin;
+      return offHour * 60 + offMinSigned;
+    }
+
+    // COERCION
+
+  }, {
+    key: 'friendlyDuration',
+    value: function friendlyDuration(duration) {
+      if (Util.isNumber(duration)) {
+        return Duration.fromMillis(duration);
+      } else if (duration instanceof Duration) {
+        return duration;
+      } else if (duration instanceof Object) {
+        return Duration.fromObject(duration);
+      } else {
+        throw new InvalidArgumentError('Unknown duration argument');
+      }
+    }
+  }, {
+    key: 'friendlyDateTime',
+    value: function friendlyDateTime(dateTimeish) {
+      if (dateTimeish instanceof DateTime) {
+        return dateTimeish;
+      } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
+        return DateTime.fromJSDate(dateTimeish);
+      } else if (dateTimeish instanceof Object) {
+        return DateTime.fromObject(dateTimeish);
+      } else {
+        throw new InvalidArgumentError('Unknown datetime argument');
       }
     }
   }, {
@@ -2345,24 +2374,9 @@ var Util = function () {
     value: function timeObject(obj) {
       return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
     }
-  }, {
-    key: 'untruncateYear',
-    value: function untruncateYear(year) {
-      if (year > 99) {
-        return year;
-      } else return year > 60 ? 1900 + year : 2000 + year;
-    }
 
-    // signedOffset('-5', '30') -> -330
+    // CAPABILITIES
 
-  }, {
-    key: 'signedOffset',
-    value: function signedOffset(offHourStr, offMinuteStr) {
-      var offHour = parseInt(offHourStr, 10) || 0,
-          offMin = parseInt(offMinuteStr, 10) || 0,
-          offMinSigned = offHour < 0 ? -offMin : offMin;
-      return offHour * 60 + offMinSigned;
-    }
   }, {
     key: 'hasIntl',
     value: function hasIntl() {
@@ -2506,12 +2520,11 @@ function extractISOYmd(match, cursor) {
 function extractISOTime(match, cursor) {
   var local = !match[cursor + 4] && !match[cursor + 5],
       fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
-      nanosecond = Util.padEnd(match[cursor + 3] || '0'),
       item = {
     hour: parseInt(match[cursor]) || 0,
     minute: parseInt(match[cursor + 1]) || 0,
     second: parseInt(match[cursor + 2]) || 0,
-    millisecond: Math.round(parseInt(nanosecond) / 1000000)
+    millisecond: Util.parseMillis(match[cursor + 3])
   },
       zone = local ? null : new FixedOffsetZone(fullOffset);
 
@@ -2558,19 +2571,13 @@ var obsOffsets = {
   PST: -8 * 60
 };
 
-function parseSecondFraction(fraction) {
-  var f = parseFloat('0.' + fraction) * 1000;
-  return Math.ceil(f);
-}
-
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, fractionStr) {
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   var result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month: monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr),
-    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
+    minute: parseInt(minuteStr)
   };
 
   if (secondStr) result.second = parseInt(secondStr);
@@ -4139,13 +4146,16 @@ var Interval = function () {
   }, {
     key: 'xor',
     value: function xor(intervals) {
+      var _Array$prototype;
+
       var start = null,
           currentCount = 0;
       var results = [],
           ends = intervals.map(function (i) {
         return [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }];
       }),
-          arr = Util.flatten(ends).sort(function (a, b) {
+          flattened = (_Array$prototype = Array.prototype).concat.apply(_Array$prototype, toConsumableArray(ends)),
+          arr = flattened.sort(function (a, b) {
         return a.time - b.time;
       });
 
@@ -4692,8 +4702,7 @@ function dateTimeFromMatches(matches) {
   }
 
   if (!Util.isUndefined(matches.u)) {
-    var nanoseconds = parseInt(Util.padEnd(matches.u, 9));
-    matches.S = Math.round(nanoseconds / 1000000);
+    matches.S = Util.parseMillis(matches.u);
   }
 
   var vals = Object.keys(matches).reduce(function (r, k) {
@@ -5637,8 +5646,8 @@ var DateTime = function () {
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime
      * @param {object} opts - options
-     * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
-     * @param {boolean} opts.supressSeconds - exclude seconds from the format if they're 0
+     * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+     * @param {boolean} [opts.supressSeconds=false] - exclude seconds from the format if they're 0
      * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
      * @example DateTime.local().toISO() //=> '2017-04-22T20:47:05.335-04:00'
      * @return {string}
@@ -5684,8 +5693,8 @@ var DateTime = function () {
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's time component
      * @param {object} opts - options
-     * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
-     * @param {boolean} opts.supressSeconds - exclude seconds from the format if they're 0
+     * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+     * @param {boolean} [opts.supressSeconds=false] - exclude seconds from the format if they're 0
      * @example DateTime.utc().hour(7).minute(34).toISOTime() //=> '07:34:19.361Z'
      * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
      * @return {string}
@@ -5739,31 +5748,61 @@ var DateTime = function () {
   }, {
     key: 'toSQLDate',
     value: function toSQLDate() {
-      return techFormat(this.toUTC(), 'yyyy-MM-dd');
+      return techFormat(this, 'yyyy-MM-dd');
     }
 
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL Time
-     * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=> '07:34:19.361'
+     * @param {object} opts - options
+     * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overides includeOffset.
+     * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '+06:00'
+     * @example DateTime.utc().toSQL() //=> '05:15:16.345'
+     * @example DateTime.local().toSQL() //=> '05:15:16.345 -04:00'
+     * @example DateTime.local().toSQL({ includeOffset: false }) //=> '05:15:16.345'
+     * @example DateTime.local().toSQL({ includeZone: false }) //=> '05:15:16.345 America/New_York'
      * @return {string}
      */
 
   }, {
     key: 'toSQLTime',
     value: function toSQLTime() {
-      return techFormat(this.toUTC(), 'hh:mm:ss.SSS');
+      var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref5$includeOffset = _ref5.includeOffset,
+          includeOffset = _ref5$includeOffset === undefined ? true : _ref5$includeOffset,
+          _ref5$includeZone = _ref5.includeZone,
+          includeZone = _ref5$includeZone === undefined ? false : _ref5$includeZone;
+
+      var fmt = 'HH:mm:ss.SSS';
+      if (includeZone) {
+        fmt += ' z';
+      } else if (includeOffset) {
+        fmt += ' ZZ';
+      }
+      return techFormat(this, fmt);
     }
 
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL DateTime
-     * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000'
+     * @param {object} opts - options
+     * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
+     * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+     * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 Z'
+     * @example DateTime.local(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 -04:00'
+     * @example DateTime.local(2014, 7, 13).toSQL({ includeOffset: false }) //=> '2014-07-13 00:00:00.000'
+     * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: false }) //=> '2014-07-13 00:00:00.000 America/New_York'
      * @return {string}
      */
 
   }, {
     key: 'toSQL',
     value: function toSQL() {
-      return techFormat(this.toUTC(), 'yyyy-MM-dd hh:mm:ss.SSS');
+      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      if (!this.isValid) {
+        return null;
+      }
+
+      return this.toSQLDate() + ' ' + this.toSQLTime(opts);
     }
 
     /**

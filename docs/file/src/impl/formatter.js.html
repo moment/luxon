@@ -44,8 +44,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/impl/formatter.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;./util&apos;;
-import { DateTime } from &apos;../datetime&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { DateTime } from &apos;../datetime&apos;;
 import { English } from &apos;./english&apos;;
 
 function stringifyTokens(splits, tokenToString) {
@@ -151,7 +150,7 @@ export class Formatter {
           return &apos;Z&apos;;
         }
 
-        const hours = Util.towardZero(dt.offset / 60),
+        const hours = Math.trunc(dt.offset / 60),
           minutes = Math.abs(dt.offset % 60),
           sign = hours &gt;= 0 ? &apos;+&apos; : &apos;-&apos;,
           base = `${sign}${Math.abs(hours)}`;

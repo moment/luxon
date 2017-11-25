@@ -1322,8 +1322,8 @@ export class DateTime {
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime
    * @param {object} opts - options
-   * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they&apos;re 0
-   * @param {boolean} opts.supressSeconds - exclude seconds from the format if they&apos;re 0
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
+   * @param {boolean} [opts.supressSeconds=false] - exclude seconds from the format if they&apos;re 0
    * @example DateTime.utc(1982, 5, 25).toISO() //=&gt; &apos;1982-05-25T00:00:00.000Z&apos;
    * @example DateTime.local().toISO() //=&gt; &apos;2017-04-22T20:47:05.335-04:00&apos;
    * @return {string}
@@ -1354,8 +1354,8 @@ export class DateTime {
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime&apos;s time component
    * @param {object} opts - options
-   * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they&apos;re 0
-   * @param {boolean} opts.supressSeconds - exclude seconds from the format if they&apos;re 0
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
+   * @param {boolean} [opts.supressSeconds=false] - exclude seconds from the format if they&apos;re 0
    * @example DateTime.utc().hour(7).minute(34).toISOTime() //=&gt; &apos;07:34:19.361Z&apos;
    * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=&gt; &apos;07:34Z&apos;
    * @return {string}
@@ -1391,25 +1391,43 @@ export class DateTime {
    * @return {string}
    */
   toSQLDate() {
-    return techFormat(this.toUTC(), &apos;yyyy-MM-dd&apos;);
+    return techFormat(this, &apos;yyyy-MM-dd&apos;);
   }
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Time
-   * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=&gt; &apos;07:34:19.361&apos;
+   * @param {object} opts - options
+   * @param {boolean} [opts.includeZone=false] - include the zone, such as &apos;America/New_York&apos;. Overides includeOffset.
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;+06:00&apos;
+   * @example DateTime.utc().toSQL() //=&gt; &apos;05:15:16.345&apos;
+   * @example DateTime.local().toSQL() //=&gt; &apos;05:15:16.345 -04:00&apos;
+   * @example DateTime.local().toSQL({ includeOffset: false }) //=&gt; &apos;05:15:16.345&apos;
+   * @example DateTime.local().toSQL({ includeZone: false }) //=&gt; &apos;05:15:16.345 America/New_York&apos;
    * @return {string}
    */
-  toSQLTime() {
-    return techFormat(this.toUTC(), &apos;hh:mm:ss.SSS&apos;);
+  toSQLTime({ includeOffset = true, includeZone = false } = {}) {
+    let fmt = &apos;yyyy-MM-dd HH:mm:ss.SSS&apos;;
+    if (includeZone) {
+      fmt += &apos; z&apos;;
+    } else if (includeOffset) {
+      fmt += &apos; ZZ&apos;;
+    }
+    return techFormat(this, fmt);
   }
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL DateTime
-   * @example DateTime.utc(2014, 7, 13).toSQL() //=&gt; &apos;2014-07-13 00:00:00.000&apos;
+   * @param {object} opts - options
+   * @param {boolean} [opts.includeZone=false] - include the zone, such as &apos;America/New_York&apos;. Overrides includeOffset.
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
+   * @example DateTime.utc(2014, 7, 13).toSQL() //=&gt; &apos;2014-07-13 00:00:00.000 Z&apos;
+   * @example DateTime.local(2014, 7, 13).toSQL() //=&gt; &apos;2014-07-13 00:00:00.000 -04:00&apos;
+   * @example DateTime.local(2014, 7, 13).toSQL({ includeOffset: false }) //=&gt; &apos;2014-07-13 00:00:00.000&apos;
+   * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: false }) //=&gt; &apos;2014-07-13 00:00:00.000 America/New_York&apos;
    * @return {string}
    */
-  toSQL() {
-    return techFormat(this.toUTC(), &apos;yyyy-MM-dd hh:mm:ss.SSS&apos;);
+  toSQL(opts = {}) {
+    return `${this.toSQLDate()} ${this.toSQLTime(opts)}`;
   }
 
   /**
