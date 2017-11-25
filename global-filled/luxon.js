@@ -3126,7 +3126,7 @@ var Formatter = function () {
           return 'Z';
         }
 
-        var hours = Util.towardZero(dt.offset / 60),
+        var hours = Math.trunc(dt.offset / 60),
             minutes = Math.abs(dt.offset % 60),
             sign = hours >= 0 ? '+' : '-',
             base = '' + sign + Math.abs(hours);
@@ -3203,8 +3203,8 @@ var Formatter = function () {
             return dt.offsetNameLong;
           // zone
           case 'z':
+            // like America/New_York
             return dt.zoneName;
-          // like America/New_York
           // meridiems
           case 'a':
             return meridiem();
@@ -3954,6 +3954,12 @@ var Settings = function () {
   return Settings;
 }();
 
+/*
+  This is just a junk drawer, containing anything used across multiple classes.
+  Because Luxon is small(ish), this should stay small and we won't worry about splitting
+  it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
+*/
+
 /**
  * @private
  */
@@ -3964,38 +3970,10 @@ var Util = function () {
   }
 
   createClass(Util, null, [{
-    key: 'friendlyDuration',
-    value: function friendlyDuration(duration) {
-      if (Util.isNumber(duration)) {
-        return Duration.fromMillis(duration);
-      } else if (duration instanceof Duration) {
-        return duration;
-      } else if (duration instanceof Object) {
-        return Duration.fromObject(duration);
-      } else {
-        throw new InvalidArgumentError('Unknown duration argument');
-      }
-    }
-  }, {
-    key: 'friendlyDateTime',
-    value: function friendlyDateTime(dateTimeish) {
-      if (dateTimeish instanceof DateTime) {
-        return dateTimeish;
-      } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
-        return DateTime.fromJSDate(dateTimeish);
-      } else if (dateTimeish instanceof Object) {
-        return DateTime.fromObject(dateTimeish);
-      } else {
-        throw new InvalidArgumentError('Unknown datetime argument');
-      }
-    }
-  }, {
-    key: 'maybeArray',
-    value: function maybeArray(thing) {
-      return Array.isArray(thing) ? thing : [thing];
-    }
-  }, {
     key: 'isUndefined',
+
+    // TYPES
+
     value: function isUndefined(o) {
       return typeof o === 'undefined';
     }
@@ -4014,39 +3992,13 @@ var Util = function () {
     value: function isDate(o) {
       return Object.prototype.toString.call(o) === '[object Date]';
     }
-  }, {
-    key: 'numberBetween',
-    value: function numberBetween(thing, bottom, top) {
-      return Util.isNumber(thing) && thing >= bottom && thing <= top;
-    }
-  }, {
-    key: 'padStart',
-    value: function padStart(input) {
-      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
 
-      return ('0'.repeat(n) + input).slice(-n);
-    }
-  }, {
-    key: 'padEnd',
-    value: function padEnd(input) {
-      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-
-      return (input + '0'.repeat(n)).slice(0, n);
-    }
-  }, {
-    key: 'towardZero',
-    value: function towardZero(input) {
-      return input < 0 ? Math.ceil(input) : Math.floor(input);
-    }
-
-    // http://stackoverflow.com/a/15030117
+    // OBJECTS AND ARRAYS
 
   }, {
-    key: 'flatten',
-    value: function flatten(arr) {
-      return arr.reduce(function (flat, toFlatten) {
-        return flat.concat(Array.isArray(toFlatten) ? Util.flatten(toFlatten) : toFlatten);
-      }, []);
+    key: 'maybeArray',
+    value: function maybeArray(thing) {
+      return Array.isArray(thing) ? thing : [thing];
     }
   }, {
     key: 'bestBy',
@@ -4070,6 +4022,34 @@ var Util = function () {
         return a;
       }, {});
     }
+
+    // NUMBERS AND STRINGS
+
+  }, {
+    key: 'numberBetween',
+    value: function numberBetween(thing, bottom, top) {
+      return Util.isNumber(thing) && thing >= bottom && thing <= top;
+    }
+  }, {
+    key: 'padStart',
+    value: function padStart(input) {
+      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+
+      return ('0'.repeat(n) + input).slice(-n);
+    }
+  }, {
+    key: 'parseMillis',
+    value: function parseMillis(fraction) {
+      if (fraction) {
+        var f = parseFloat('0.' + fraction) * 1000;
+        return Math.round(f);
+      } else {
+        return 0;
+      }
+    }
+
+    // DATE BASICS
+
   }, {
     key: 'isLeapYear',
     value: function isLeapYear(year) {
@@ -4090,6 +4070,16 @@ var Util = function () {
       }
     }
   }, {
+    key: 'untruncateYear',
+    value: function untruncateYear(year) {
+      if (year > 99) {
+        return year;
+      } else return year > 60 ? 1900 + year : 2000 + year;
+    }
+
+    // PARSING
+
+  }, {
     key: 'parseZoneInfo',
     value: function parseZoneInfo(ts, offsetFormat, locale) {
       var timeZone = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
@@ -4097,7 +4087,6 @@ var Util = function () {
       var date = new Date(ts),
           intl = {
         hour12: false,
-        // avoid AM/PM
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -4126,6 +4115,46 @@ var Util = function () {
         return trimmed;
       } else {
         return null;
+      }
+    }
+
+    // signedOffset('-5', '30') -> -330
+
+  }, {
+    key: 'signedOffset',
+    value: function signedOffset(offHourStr, offMinuteStr) {
+      var offHour = parseInt(offHourStr, 10) || 0,
+          offMin = parseInt(offMinuteStr, 10) || 0,
+          offMinSigned = offHour < 0 ? -offMin : offMin;
+      return offHour * 60 + offMinSigned;
+    }
+
+    // COERCION
+
+  }, {
+    key: 'friendlyDuration',
+    value: function friendlyDuration(duration) {
+      if (Util.isNumber(duration)) {
+        return Duration.fromMillis(duration);
+      } else if (duration instanceof Duration) {
+        return duration;
+      } else if (duration instanceof Object) {
+        return Duration.fromObject(duration);
+      } else {
+        throw new InvalidArgumentError('Unknown duration argument');
+      }
+    }
+  }, {
+    key: 'friendlyDateTime',
+    value: function friendlyDateTime(dateTimeish) {
+      if (dateTimeish instanceof DateTime) {
+        return dateTimeish;
+      } else if (dateTimeish.valueOf && Util.isNumber(dateTimeish.valueOf())) {
+        return DateTime.fromJSDate(dateTimeish);
+      } else if (dateTimeish instanceof Object) {
+        return DateTime.fromObject(dateTimeish);
+      } else {
+        throw new InvalidArgumentError('Unknown datetime argument');
       }
     }
   }, {
@@ -4172,24 +4201,9 @@ var Util = function () {
     value: function timeObject(obj) {
       return Util.pick(obj, ['hour', 'minute', 'second', 'millisecond']);
     }
-  }, {
-    key: 'untruncateYear',
-    value: function untruncateYear(year) {
-      if (year > 99) {
-        return year;
-      } else return year > 60 ? 1900 + year : 2000 + year;
-    }
 
-    // signedOffset('-5', '30') -> -330
+    // CAPABILITIES
 
-  }, {
-    key: 'signedOffset',
-    value: function signedOffset(offHourStr, offMinuteStr) {
-      var offHour = parseInt(offHourStr, 10) || 0,
-          offMin = parseInt(offMinuteStr, 10) || 0,
-          offMinSigned = offHour < 0 ? -offMin : offMin;
-      return offHour * 60 + offMinSigned;
-    }
   }, {
     key: 'hasIntl',
     value: function hasIntl() {
@@ -4310,7 +4324,9 @@ function simpleParse() {
 }
 
 // ISO and SQL parsing
-var isoTimeRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?(?:(Z)|([+-]\d\d)(?::?(\d\d))?)?/;
+var offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/;
+var isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/;
+var isoTimeRegex = RegExp('' + isoTimeBaseRegex.source + offsetRegex.source + '?');
 var isoTimeExtensionRegex = RegExp('(?:T' + isoTimeRegex.source + ')?');
 var isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 var isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/;
@@ -4318,7 +4334,8 @@ var isoOrdinalRegex = /(\d{4})-?(\d{3})/;
 var extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
 var extractISOOrdinalData = simpleParse('year', 'ordinal');
 var sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
-var sqlTimeExtensionRegex = RegExp('(?: ' + isoTimeRegex.source + ')?');
+var sqlTimeRegex = RegExp(isoTimeBaseRegex.source + ' ?(?:' + offsetRegex.source + '|([a-zA-Z_]+/[a-zA-Z_]+))?');
+var sqlTimeExtensionRegex = RegExp('(?: ' + sqlTimeRegex.source + ')?');
 
 function extractISOYmd(match, cursor) {
   var item = {
@@ -4331,18 +4348,26 @@ function extractISOYmd(match, cursor) {
 }
 
 function extractISOTime(match, cursor) {
-  var local = !match[cursor + 4] && !match[cursor + 5],
-      fullOffset = Util.signedOffset(match[cursor + 5], match[cursor + 6]),
-      nanosecond = Util.padEnd(match[cursor + 3] || '0'),
-      item = {
+  var item = {
     hour: parseInt(match[cursor]) || 0,
     minute: parseInt(match[cursor + 1]) || 0,
     second: parseInt(match[cursor + 2]) || 0,
-    millisecond: Math.round(parseInt(nanosecond) / 1000000)
-  },
-      zone = local ? null : new FixedOffsetZone(fullOffset);
+    millisecond: Util.parseMillis(match[cursor + 3])
+  };
 
-  return [item, zone, cursor + 7];
+  return [item, null, cursor + 4];
+}
+
+function extractISOOffset(match, cursor) {
+  var local = !match[cursor] && !match[cursor + 1],
+      fullOffset = Util.signedOffset(match[cursor + 1], match[cursor + 2]),
+      zone = local ? null : FixedOffsetZone.instance(fullOffset);
+  return [{}, zone, cursor + 3];
+}
+
+function extractIANAZone(match, cursor) {
+  var zone = match[cursor] ? new IANAZone(match[cursor]) : null;
+  return [{}, zone, cursor + 1];
 }
 
 // ISO duration parsing
@@ -4385,19 +4410,13 @@ var obsOffsets = {
   PST: -8 * 60
 };
 
-function parseSecondFraction(fraction) {
-  var f = parseFloat('0.' + fraction) * 1000;
-  return Math.ceil(f);
-}
-
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, fractionStr) {
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   var result = {
     year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month: monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
     hour: parseInt(hourStr),
-    minute: parseInt(minuteStr),
-    millisecond: fractionStr ? parseSecondFraction(fractionStr) : 0
+    minute: parseInt(minuteStr)
   };
 
   if (secondStr) result.second = parseInt(secondStr);
@@ -4489,7 +4508,7 @@ var RegexParser = function () {
   createClass(RegexParser, null, [{
     key: 'parseISODate',
     value: function parseISODate(s) {
-      return parse(s, [combineRegexes(isoYmdRegex, isoTimeExtensionRegex), combineExtractors(extractISOYmd, extractISOTime)], [combineRegexes(isoWeekRegex, isoTimeExtensionRegex), combineExtractors(extractISOWeekData, extractISOTime)], [combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex), combineExtractors(extractISOOrdinalData, extractISOTime)], [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]);
+      return parse(s, [combineRegexes(isoYmdRegex, isoTimeExtensionRegex), combineExtractors(extractISOYmd, extractISOTime, extractISOOffset)], [combineRegexes(isoWeekRegex, isoTimeExtensionRegex), combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset)], [combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex), combineExtractors(extractISOOrdinalData, extractISOTime)], [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime, extractISOOffset)]);
     }
   }, {
     key: 'parseRFC2822Date',
@@ -4509,7 +4528,7 @@ var RegexParser = function () {
   }, {
     key: 'parseSQL',
     value: function parseSQL(s) {
-      return parse(s, [combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex), combineExtractors(extractISOYmd, extractISOTime)], [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime)]);
+      return parse(s, [combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex), combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)], [combineRegexes(sqlTimeRegex), combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)]);
     }
   }]);
   return RegexParser;
@@ -5966,13 +5985,16 @@ var Interval = function () {
   }, {
     key: 'xor',
     value: function xor(intervals) {
+      var _Array$prototype;
+
       var start = null,
           currentCount = 0;
       var results = [],
           ends = intervals.map(function (i) {
         return [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }];
       }),
-          arr = Util.flatten(ends).sort(function (a, b) {
+          flattened = (_Array$prototype = Array.prototype).concat.apply(_Array$prototype, toConsumableArray(ends)),
+          arr = flattened.sort(function (a, b) {
         return a.time - b.time;
       });
 
@@ -6519,8 +6541,7 @@ function dateTimeFromMatches(matches) {
   }
 
   if (!Util.isUndefined(matches.u)) {
-    var nanoseconds = parseInt(Util.padEnd(matches.u, 9));
-    matches.S = Math.round(nanoseconds / 1000000);
+    matches.S = Util.parseMillis(matches.u);
   }
 
   var vals = Object.keys(matches).reduce(function (r, k) {
@@ -6893,8 +6914,42 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
   }
 }
 
-function techFormat(dt, format) {
+function toTechFormat(dt, format) {
   return dt.isValid ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format) : null;
+}
+
+function toTechTimeFormat(dt, _ref) {
+  var _ref$suppressSeconds = _ref.suppressSeconds,
+      suppressSeconds = _ref$suppressSeconds === undefined ? false : _ref$suppressSeconds,
+      _ref$suppressMillisec = _ref.suppressMilliseconds,
+      suppressMilliseconds = _ref$suppressMillisec === undefined ? false : _ref$suppressMillisec,
+      _ref$includeOffset = _ref.includeOffset,
+      includeOffset = _ref$includeOffset === undefined ? true : _ref$includeOffset,
+      _ref$includeZone = _ref.includeZone,
+      includeZone = _ref$includeZone === undefined ? false : _ref$includeZone,
+      _ref$spaceZone = _ref.spaceZone,
+      spaceZone = _ref$spaceZone === undefined ? false : _ref$spaceZone;
+
+  var fmt = 'HH:mm';
+
+  if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
+    fmt += ':ss';
+    if (!suppressMilliseconds || dt.millisecond !== 0) {
+      fmt += '.SSS';
+    }
+  }
+
+  if ((includeZone || includeOffset) && spaceZone) {
+    fmt += ' ';
+  }
+
+  if (includeZone) {
+    fmt += 'z';
+  } else if (includeOffset) {
+    fmt += 'ZZ';
+  }
+
+  return toTechFormat(dt, fmt);
 }
 
 var defaultUnitValues = {
@@ -6920,10 +6975,6 @@ var defaultOrdinalUnitValues = {
   second: 0,
   millisecond: 0
 };
-
-function isoTimeFormat(dateTime, suppressSecs, suppressMillis) {
-  return suppressSecs && dateTime.second === 0 && dateTime.millisecond === 0 ? 'HH:mmZ' : suppressMillis && dateTime.millisecond === 0 ? 'HH:mm:ssZZ' : 'HH:mm:ss.SSSZZ';
-}
 
 var orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 
@@ -7199,9 +7250,9 @@ var DateTime = function () {
   }, {
     key: 'setZone',
     value: function setZone(zone) {
-      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-          _ref$keepCalendarTime = _ref.keepCalendarTime,
-          keepCalendarTime = _ref$keepCalendarTime === undefined ? false : _ref$keepCalendarTime;
+      var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          _ref2$keepCalendarTim = _ref2.keepCalendarTime,
+          keepCalendarTime = _ref2$keepCalendarTim === undefined ? false : _ref2$keepCalendarTim;
 
       zone = Util.normalizeZone(zone);
       if (zone.equals(this.zone)) {
@@ -7224,10 +7275,10 @@ var DateTime = function () {
   }, {
     key: 'reconfigure',
     value: function reconfigure() {
-      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          locale = _ref2.locale,
-          numberingSystem = _ref2.numberingSystem,
-          outputCalendar = _ref2.outputCalendar;
+      var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          locale = _ref3.locale,
+          numberingSystem = _ref3.numberingSystem,
+          outputCalendar = _ref3.outputCalendar;
 
       var loc = this.loc.clone({ locale: locale, numberingSystem: numberingSystem, outputCalendar: outputCalendar });
       return clone(this, { loc: loc });
@@ -7464,24 +7515,25 @@ var DateTime = function () {
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime
      * @param {object} opts - options
-     * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
-     * @param {boolean} opts.supressSeconds - exclude seconds from the format if they're 0
+     * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+     * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+     * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
      * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
      * @example DateTime.local().toISO() //=> '2017-04-22T20:47:05.335-04:00'
+     * @example DateTime.local().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
      * @return {string}
      */
 
   }, {
     key: 'toISO',
     value: function toISO() {
-      var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          _ref3$suppressMillise = _ref3.suppressMilliseconds,
-          suppressMilliseconds = _ref3$suppressMillise === undefined ? false : _ref3$suppressMillise,
-          _ref3$suppressSeconds = _ref3.suppressSeconds,
-          suppressSeconds = _ref3$suppressSeconds === undefined ? false : _ref3$suppressSeconds;
+      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      var f = 'yyyy-MM-dd\'T\'' + isoTimeFormat(this, suppressSeconds, suppressMilliseconds);
-      return techFormat(this, f);
+      if (!this.isValid) {
+        return null;
+      }
+
+      return this.toISODate() + 'T' + this.toISOTime(opts);
     }
 
     /**
@@ -7493,7 +7545,7 @@ var DateTime = function () {
   }, {
     key: 'toISODate',
     value: function toISODate() {
-      return techFormat(this, 'yyyy-MM-dd');
+      return toTechFormat(this, 'yyyy-MM-dd');
     }
 
     /**
@@ -7505,14 +7557,15 @@ var DateTime = function () {
   }, {
     key: 'toISOWeekDate',
     value: function toISOWeekDate() {
-      return techFormat(this, "kkkk-'W'WW-c");
+      return toTechFormat(this, "kkkk-'W'WW-c");
     }
 
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's time component
      * @param {object} opts - options
-     * @param {boolean} opts.suppressMilliseconds - exclude milliseconds from the format if they're 0
-     * @param {boolean} opts.supressSeconds - exclude seconds from the format if they're 0
+     * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+     * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+     * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
      * @example DateTime.utc().hour(7).minute(34).toISOTime() //=> '07:34:19.361Z'
      * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
      * @return {string}
@@ -7525,9 +7578,11 @@ var DateTime = function () {
           _ref4$suppressMillise = _ref4.suppressMilliseconds,
           suppressMilliseconds = _ref4$suppressMillise === undefined ? false : _ref4$suppressMillise,
           _ref4$suppressSeconds = _ref4.suppressSeconds,
-          suppressSeconds = _ref4$suppressSeconds === undefined ? false : _ref4$suppressSeconds;
+          suppressSeconds = _ref4$suppressSeconds === undefined ? false : _ref4$suppressSeconds,
+          _ref4$includeOffset = _ref4.includeOffset,
+          includeOffset = _ref4$includeOffset === undefined ? true : _ref4$includeOffset;
 
-      return techFormat(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
+      return toTechTimeFormat(this, { suppressSeconds: suppressSeconds, suppressMilliseconds: suppressMilliseconds, includeOffset: includeOffset });
     }
 
     /**
@@ -7540,7 +7595,7 @@ var DateTime = function () {
   }, {
     key: 'toRFC2822',
     value: function toRFC2822() {
-      return techFormat(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
+      return toTechFormat(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
     }
 
     /**
@@ -7554,7 +7609,7 @@ var DateTime = function () {
   }, {
     key: 'toHTTP',
     value: function toHTTP() {
-      return techFormat(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
+      return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
     }
 
     /**
@@ -7566,31 +7621,55 @@ var DateTime = function () {
   }, {
     key: 'toSQLDate',
     value: function toSQLDate() {
-      return techFormat(this.toUTC(), 'yyyy-MM-dd');
+      return toTechFormat(this, 'yyyy-MM-dd');
     }
 
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL Time
-     * @example DateTime.utc().hour(7).minute(34).toSQLTime() //=> '07:34:19.361'
+     * @param {object} opts - options
+     * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overides includeOffset.
+     * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+     * @example DateTime.utc().toSQL() //=> '05:15:16.345'
+     * @example DateTime.local().toSQL() //=> '05:15:16.345 -04:00'
+     * @example DateTime.local().toSQL({ includeOffset: false }) //=> '05:15:16.345'
+     * @example DateTime.local().toSQL({ includeZone: false }) //=> '05:15:16.345 America/New_York'
      * @return {string}
      */
 
   }, {
     key: 'toSQLTime',
     value: function toSQLTime() {
-      return techFormat(this.toUTC(), 'hh:mm:ss.SSS');
+      var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref5$includeOffset = _ref5.includeOffset,
+          includeOffset = _ref5$includeOffset === undefined ? true : _ref5$includeOffset,
+          _ref5$includeZone = _ref5.includeZone,
+          includeZone = _ref5$includeZone === undefined ? false : _ref5$includeZone;
+
+      return toTechTimeFormat(this, { includeOffset: includeOffset, includeZone: includeZone, spaceZone: true });
     }
 
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL DateTime
-     * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000'
+     * @param {object} opts - options
+     * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
+     * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+     * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 Z'
+     * @example DateTime.local(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 -04:00'
+     * @example DateTime.local(2014, 7, 13).toSQL({ includeOffset: false }) //=> '2014-07-13 00:00:00.000'
+     * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: false }) //=> '2014-07-13 00:00:00.000 America/New_York'
      * @return {string}
      */
 
   }, {
     key: 'toSQL',
     value: function toSQL() {
-      return techFormat(this.toUTC(), 'yyyy-MM-dd hh:mm:ss.SSS');
+      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      if (!this.isValid) {
+        return null;
+      }
+
+      return this.toSQLDate() + ' ' + this.toSQLTime(opts);
     }
 
     /**
@@ -8613,9 +8692,10 @@ var DateTime = function () {
      * @example DateTime.fromSQL('2017-05-15')
      * @example DateTime.fromSQL('2017-05-15 09:12:34')
      * @example DateTime.fromSQL('2017-05-15 09:12:34.342')
-     * @example DateTime.fromSQL('2017-05-15 09:12:34.342', { zone: 'America/Los_Angeles' })
      * @example DateTime.fromSQL('2017-05-15 09:12:34.342+06:00')
-     * @example DateTime.fromSQL('2017-05-15 09:12:34.342+06:00', { setZone: true })
+     * @example DateTime.fromSQL('2017-05-15 09:12:34.342 America/Los_Angeles')
+     * @example DateTime.fromSQL('2017-05-15 09:12:34.342 America/Los_Angeles', { setZone: true })
+     * @example DateTime.fromSQL('2017-05-15 09:12:34.342', { zone: 'America/Los_Angeles' })
      * @example DateTime.fromSQL('09:12:34.342')
      * @return {DateTime}
      */

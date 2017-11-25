@@ -193,10 +193,42 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
   }
 }
 
-function techFormat(dt, format) {
+function toTechFormat(dt, format) {
   return dt.isValid
     ? Formatter.create(Locale.create(&apos;en-US&apos;)).formatDateTimeFromString(dt, format)
     : null;
+}
+
+function toTechTimeFormat(
+  dt,
+  {
+    suppressSeconds = false,
+    suppressMilliseconds = false,
+    includeOffset = true,
+    includeZone = false,
+    spaceZone = false
+  }
+) {
+  let fmt = &apos;HH:mm&apos;;
+
+  if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
+    fmt += &apos;:ss&apos;;
+    if (!suppressMilliseconds || dt.millisecond !== 0) {
+      fmt += &apos;.SSS&apos;;
+    }
+  }
+
+  if ((includeZone || includeOffset) &amp;&amp; spaceZone) {
+    fmt += &apos; &apos;;
+  }
+
+  if (includeZone) {
+    fmt += &apos;z&apos;;
+  } else if (includeOffset) {
+    fmt += &apos;ZZ&apos;;
+  }
+
+  return toTechFormat(dt, fmt);
 }
 
 const defaultUnitValues = {
@@ -222,12 +254,6 @@ const defaultUnitValues = {
     second: 0,
     millisecond: 0
   };
-
-function isoTimeFormat(dateTime, suppressSecs, suppressMillis) {
-  return suppressSecs &amp;&amp; dateTime.second === 0 &amp;&amp; dateTime.millisecond === 0
-    ? &apos;HH:mmZ&apos;
-    : suppressMillis &amp;&amp; dateTime.millisecond === 0 ? &apos;HH:mm:ssZZ&apos; : &apos;HH:mm:ss.SSSZZ&apos;;
-}
 
 const orderedUnits = [&apos;year&apos;, &apos;month&apos;, &apos;day&apos;, &apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, &apos;millisecond&apos;];
 
@@ -710,9 +736,10 @@ export class DateTime {
    * @example DateTime.fromSQL(&apos;2017-05-15&apos;)
    * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34&apos;)
    * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342&apos;)
-   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342&apos;, { zone: &apos;America/Los_Angeles&apos; })
    * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342+06:00&apos;)
-   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342+06:00&apos;, { setZone: true })
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342 America/Los_Angeles&apos;)
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342 America/Los_Angeles&apos;, { setZone: true })
+   * @example DateTime.fromSQL(&apos;2017-05-15 09:12:34.342&apos;, { zone: &apos;America/Los_Angeles&apos; })
    * @example DateTime.fromSQL(&apos;09:12:34.342&apos;)
    * @return {DateTime}
    */
@@ -1323,14 +1350,19 @@ export class DateTime {
    * Returns an ISO 8601-compliant string representation of this DateTime
    * @param {object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
-   * @param {boolean} [opts.supressSeconds=false] - exclude seconds from the format if they&apos;re 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they&apos;re 0
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
    * @example DateTime.utc(1982, 5, 25).toISO() //=&gt; &apos;1982-05-25T00:00:00.000Z&apos;
    * @example DateTime.local().toISO() //=&gt; &apos;2017-04-22T20:47:05.335-04:00&apos;
+   * @example DateTime.local().toISO({ includeOffset: false }) //=&gt; &apos;2017-04-22T20:47:05.335&apos;
    * @return {string}
    */
-  toISO({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    const f = `yyyy-MM-dd&apos;T&apos;${isoTimeFormat(this, suppressSeconds, suppressMilliseconds)}`;
-    return techFormat(this, f);
+  toISO(opts = {}) {
+    if (!this.isValid) {
+      return null;
+    }
+
+    return `${this.toISODate()}T${this.toISOTime(opts)}`;
   }
 
   /**
@@ -1339,7 +1371,7 @@ export class DateTime {
    * @return {string}
    */
   toISODate() {
-    return techFormat(this, &apos;yyyy-MM-dd&apos;);
+    return toTechFormat(this, &apos;yyyy-MM-dd&apos;);
   }
 
   /**
@@ -1348,20 +1380,21 @@ export class DateTime {
    * @return {string}
    */
   toISOWeekDate() {
-    return techFormat(this, &quot;kkkk-&apos;W&apos;WW-c&quot;);
+    return toTechFormat(this, &quot;kkkk-&apos;W&apos;WW-c&quot;);
   }
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime&apos;s time component
    * @param {object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
-   * @param {boolean} [opts.supressSeconds=false] - exclude seconds from the format if they&apos;re 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they&apos;re 0
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
    * @example DateTime.utc().hour(7).minute(34).toISOTime() //=&gt; &apos;07:34:19.361Z&apos;
    * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=&gt; &apos;07:34Z&apos;
    * @return {string}
    */
-  toISOTime({ suppressMilliseconds = false, suppressSeconds = false } = {}) {
-    return techFormat(this, isoTimeFormat(this, suppressSeconds, suppressMilliseconds));
+  toISOTime({ suppressMilliseconds = false, suppressSeconds = false, includeOffset = true } = {}) {
+    return toTechTimeFormat(this, { suppressSeconds, suppressMilliseconds, includeOffset });
   }
 
   /**
@@ -1371,7 +1404,7 @@ export class DateTime {
    * @return {string}
    */
   toRFC2822() {
-    return techFormat(this, &apos;EEE, dd LLL yyyy hh:mm:ss ZZZ&apos;);
+    return toTechFormat(this, &apos;EEE, dd LLL yyyy hh:mm:ss ZZZ&apos;);
   }
 
   /**
@@ -1382,7 +1415,7 @@ export class DateTime {
    * @return {string}
    */
   toHTTP() {
-    return techFormat(this.toUTC(), &quot;EEE, dd LLL yyyy hh:mm:ss &apos;GMT&apos;&quot;);
+    return toTechFormat(this.toUTC(), &quot;EEE, dd LLL yyyy hh:mm:ss &apos;GMT&apos;&quot;);
   }
 
   /**
@@ -1391,14 +1424,14 @@ export class DateTime {
    * @return {string}
    */
   toSQLDate() {
-    return techFormat(this, &apos;yyyy-MM-dd&apos;);
+    return toTechFormat(this, &apos;yyyy-MM-dd&apos;);
   }
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Time
    * @param {object} opts - options
    * @param {boolean} [opts.includeZone=false] - include the zone, such as &apos;America/New_York&apos;. Overides includeOffset.
-   * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;+06:00&apos;
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
    * @example DateTime.utc().toSQL() //=&gt; &apos;05:15:16.345&apos;
    * @example DateTime.local().toSQL() //=&gt; &apos;05:15:16.345 -04:00&apos;
    * @example DateTime.local().toSQL({ includeOffset: false }) //=&gt; &apos;05:15:16.345&apos;
@@ -1406,13 +1439,7 @@ export class DateTime {
    * @return {string}
    */
   toSQLTime({ includeOffset = true, includeZone = false } = {}) {
-    let fmt = &apos;yyyy-MM-dd HH:mm:ss.SSS&apos;;
-    if (includeZone) {
-      fmt += &apos; z&apos;;
-    } else if (includeOffset) {
-      fmt += &apos; ZZ&apos;;
-    }
-    return techFormat(this, fmt);
+    return toTechTimeFormat(this, { includeOffset, includeZone, spaceZone: true });
   }
 
   /**
@@ -1427,6 +1454,10 @@ export class DateTime {
    * @return {string}
    */
   toSQL(opts = {}) {
+    if (!this.isValid) {
+      return null;
+    }
+
     return `${this.toSQLDate()} ${this.toSQLTime(opts)}`;
   }
 
