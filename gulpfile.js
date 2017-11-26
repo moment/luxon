@@ -7,8 +7,9 @@ const babel = require('rollup-plugin-babel'),
   gulp = require('gulp'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
+  manual = require('./docs/index'),
   minify = require('gulp-babel-minify'),
-  prettierOptions = require('./.prettier.js'),
+  prettierOptions = require('./.prettier'),
   prettier = require('prettier'),
   process = require('process'),
   rename = require('gulp-rename'),
@@ -187,27 +188,13 @@ gulp.task('generate-docs', () =>
     esdoc({
       destination: './build/docs',
       title: 'Luxon',
-      manual: {
-        globalIndex: true,
-        design: ['./docs/install.md', './docs/tour.md'],
-        usage: [
-          './docs/intl.md',
-          './docs/zones.md',
-          './docs/calendars.md',
-          './docs/formatting.md',
-          './docs/parsing.md',
-          './docs/math.md',
-          './docs/validity.md'
-        ],
-        faq: ['./docs/matrix.md', './docs/moment.md', './docs/why.md'],
-        changelog: ['./changelog.md']
-      },
+      manual,
       styles: ['./site/styles.css'],
       experimentalProposal: {
         classProperties: true,
         objectRestSpread: true
       },
-      plugins: [{ name: './site/doc-plugin.js' }]
+      plugins: [{ name: './docs/plugin.js' }]
     })
   )
 );
