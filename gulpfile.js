@@ -107,36 +107,6 @@ function checkForDocCoverage() {
   });
 }
 
-const browsersOld = { browsers: 'last 2 major versions' };
-
-const nodeOpts = { format: 'cjs', target: 'node >= 6' },
-  cjsBrowserOpts = { format: 'cjs', browsersOld },
-  es6Opts = {
-    format: 'es',
-    compile: false
-  },
-  amdOpts = {
-    format: 'amd',
-    rollupOpts: { name: 'luxon' },
-    target: browsersOld
-  },
-  es6GlobalOpts = {
-    format: 'iife',
-    rollupOpts: { name: 'luxon' },
-    compile: false
-  },
-  globalOpts = {
-    format: 'iife',
-    rollupOpts: { name: 'luxon' },
-    target: browsersOld
-  },
-  globalFilledOpts = {
-    format: 'iife',
-    rollupOpts: { name: 'luxon' },
-    target: browsersOld,
-    src: './src/luxonFilled.js'
-  };
-
 function test(includeCoverage) {
   const opts = {
     collectCoverage: includeCoverage,
@@ -152,13 +122,56 @@ function test(includeCoverage) {
   return gulp.src('test').pipe(jest(opts));
 }
 
-gulp.task('global', processLib('global', globalOpts));
-gulp.task('global-filled', processLib('global-filled', globalFilledOpts));
-gulp.task('amd', processLib('amd', amdOpts));
-gulp.task('node', processLib('node', nodeOpts));
-gulp.task('cjs-browser', processLib('cjs-browser', cjsBrowserOpts));
-gulp.task('es6', processLib('es6', es6Opts));
-gulp.task('global-es6', processLib('global-es6', es6GlobalOpts));
+const browsersOld = { browsers: 'last 2 major versions' };
+
+gulp.task(
+  'global',
+  processLib('global', {
+    format: 'iife',
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld
+  })
+);
+
+gulp.task(
+  'global-filled',
+  processLib('global-filled', {
+    format: 'iife',
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld,
+    src: './src/luxonFilled.js'
+  })
+);
+
+gulp.task(
+  'amd',
+  processLib('amd', {
+    format: 'amd',
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld
+  })
+);
+
+gulp.task('node', processLib('node', { format: 'cjs', target: 'node >= 6' }));
+
+gulp.task('cjs-browser', processLib('cjs-browser', { format: 'cjs', browsersOld }));
+
+gulp.task(
+  'es6',
+  processLib('es6', {
+    format: 'es',
+    compile: false
+  })
+);
+
+gulp.task(
+  'global-es6',
+  processLib('global-es6', {
+    format: 'iife',
+    rollupOpts: { name: 'luxon' },
+    compile: false
+  })
+);
 
 gulp.task('build', ['node', 'cjs-browser', 'es6', 'amd', 'global', 'global-es6', 'global-filled']);
 
