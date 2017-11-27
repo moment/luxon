@@ -342,7 +342,7 @@ export class Duration {
    */
   inspect() {
     if (this.isValid) {
-      return `Duration {\n  values: ${this.toObject().inspect()},\n  locale: ${this
+      return `Duration {\n  values: ${this.toISO()},\n  locale: ${this
         .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
     } else {
       return `Duration { Invalid, reason: ${this.invalidReason} }`;
