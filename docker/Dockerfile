@@ -1,5 +1,7 @@
 FROM bitnami/node:8.9.1-r0-prod
 
+RUN install_packages git
+
 RUN npm install full-icu
 RUN npm install -g gulp-cli
 
