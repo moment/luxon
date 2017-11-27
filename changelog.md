@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.22
+## 0.2.3
+
+ * Fixes for `diff` with multiple units
+
+## 0.2.2
 
  * Fixes for `fromSQL`, `toSQL`, `toSQLTime`, and `toSQLDate`
  * Add `includeOffset` option to `toISO` and `toISOTime`
