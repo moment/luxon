@@ -102,6 +102,14 @@ test('DateTime#diff accepts multiple units', () => {
       'hours'
     ])
   ).toEqual({ years: 5, days: 363 });
+
+  expect(
+    diffObjs(
+      { year: 2017, month: 11, day: 27, hour: 21 },
+      { year: 2017, month: 11, day: 26, hour: 22 },
+      ['days', 'hours']
+    )
+  ).toEqual({ hours: 23 });
 });
 
 test('DateTime#diff puts fractional parts in the lowest order unit', () => {

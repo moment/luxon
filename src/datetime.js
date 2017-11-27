@@ -1555,7 +1555,7 @@ export class DateTime {
       cursor = cursor.plus({ weeks });
 
       if (cursor > post) {
-        cursor.minus({ weeks: 1 });
+        cursor = cursor.minus({ weeks: 1 });
         weeks -= 1;
       }
 
@@ -1572,7 +1572,7 @@ export class DateTime {
       });
 
       if (cursor > post) {
-        cursor.minus({ days: 1 });
+        cursor = cursor.minus({ days: 1 });
         days -= 1;
       }
 
