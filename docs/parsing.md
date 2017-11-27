@@ -97,7 +97,7 @@ Luxon supports parsing internationalized strings:
 DateTime.fromString('mai 25 1982', 'LLLL dd yyyy', { locale: 'fr' });
 ```
 
-Note, however, that Luxon derives the list of strings that can match, say, "LLLL" (and their meaning) by introspecting the environment's Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the [support matrix](faq/matrix.html)).
+Note, however, that Luxon derives the list of strings that can match, say, "LLLL" (and their meaning) by introspecting the environment's Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the [support matrix](matrix.html)).
 
 ### Limitations
 
@@ -137,7 +137,7 @@ d.isValid //=> false
 d.invalidReason //=> 'day out of range'
 ```
 
-For more on validity and how to debug it, see [validity](usage/validity.html). You may find more comprehensive tips there. But as it applies specifically to `fromString`, again try `fromStringExplain`:
+For more on validity and how to debug it, see [validity](validity.html). You may find more comprehensive tips there. But as it applies specifically to `fromString`, again try `fromStringExplain`:
 
 ```js
 > DateTime.fromStringExplain("August 32 1982", "MMMM d yyyy")

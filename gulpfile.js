@@ -1,13 +1,13 @@
 const babel = require('rollup-plugin-babel'),
   buffer = require('vinyl-buffer'),
   coveralls = require('gulp-coveralls'),
+  docConfig = require('./docs/index'),
   esdoc = require('gulp-esdoc'),
   eslint = require('gulp-eslint'),
   filter = require('gulp-filter'),
   gulp = require('gulp'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
-  manual = require('./docs/index'),
   minify = require('gulp-babel-minify'),
   prettierOptions = require('./.prettier'),
   prettier = require('prettier'),
@@ -183,21 +183,7 @@ gulp.task('format', () =>
     .pipe(gulp.dest('./'))
 );
 
-gulp.task('generate-docs', () =>
-  gulp.src('./src').pipe(
-    esdoc({
-      destination: './build/docs',
-      title: 'Luxon',
-      manual,
-      styles: ['./site/styles.css'],
-      experimentalProposal: {
-        classProperties: true,
-        objectRestSpread: true
-      },
-      plugins: [{ name: './docs/plugin.js' }]
-    })
-  )
-);
+gulp.task('generate-docs', () => gulp.src('./src').pipe(esdoc(docConfig)));
 
 gulp.task('check-doc-coverage', () =>
   gulp.src('build/docs/coverage.json').pipe(checkForDocCoverage())

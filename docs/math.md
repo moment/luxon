@@ -50,7 +50,7 @@ And under the covers, that's more or less what Luxon does too. It doesn't boil t
 
 ### DSTs
 
-There's a whole section about this in the [time zones documentation](usage/zones#math-across-dsts). But here's a quick example (Spring Forward is early on March 12 in my time zone):
+There's a whole section about this in the [time zones documentation](zones.html#math-across-dsts). But here's a quick example (Spring Forward is early on March 12 in my time zone):
 
 ```
 var start = DateTime.local(2017, 3, 11, 10);

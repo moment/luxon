@@ -44,7 +44,7 @@ DateTime.fromISO("2017-05-15")          //=> May 15, 2017 at midnight
 DateTime.fromISO("2017-05-15T08:30:00") //=> May 15, 2017 at 8:30
 ```
 
-You can parse a bunch of other formats, including [your own custom ones](usage/parsing.html).
+You can parse a bunch of other formats, including [your own custom ones](parsing.html).
 
 ## Getting to know your DateTime instance
 
@@ -98,7 +98,7 @@ If you want the string read by another program, you almost certainly want to use
 dt.toISO() //=> '2017-09-14T03:21:47.070-04:00'
 ```
 
-Custom formats are also supported. See [formatting](usage/formatting.html).
+Custom formats are also supported. See [formatting](formatting).
 
 ## Transforming your DateTime
 
@@ -147,7 +147,7 @@ Info.months('long', {locale: 'fr'}) //=> [ 'janvier', 'février', 'mars', 'avril
 
 ## Time zones
 
-Luxon supports time zones. There's a whole [big section](usage/zones.html) about it. But briefly, you can create DateTimes in specific zones and change their zones:
+Luxon supports time zones. There's a whole [big section](zones) about it. But briefly, you can create DateTimes in specific zones and change their zones:
 
 ```js
 DateTime.fromObject({zone: 'America/Los_Angeles'}) // now, but expressed in LA's local time

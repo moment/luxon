@@ -102,7 +102,7 @@ Here's the full set of provided presets using the October 14, 1983 at 13:30:23 a
 
 ### Intl
 
-`toLocaleString`'s behavior is affected by the DateTime's `locale`, `numberingSystem`, and `outputCalendar` properties. See the [Intl](usage/intl.html) section for more.
+`toLocaleString`'s behavior is affected by the DateTime's `locale`, `numberingSystem`, and `outputCalendar` properties. See the [Intl](intl.html) section for more.
 
 ## Formatting with tokens (strings for Cthulhu)
 

@@ -102,7 +102,7 @@ dt.setLocale('fr').toFormat('MMMM dd, yyyy GG'); //=> 'septembre 25, 2017 après
 
 ### Parsing
 
-You can [parse](usage/parsing.html) localized strings:
+You can [parse](parsing.html) localized strings:
 
 ```js
 DateTime.fromString('septembre 25, 2017 après Jésus-Christ', 'MMMM dd, yyyy GG', {locale: 'fr'})
