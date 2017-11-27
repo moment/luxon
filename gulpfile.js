@@ -208,7 +208,7 @@ gulp.task('coveralls', () => gulp.src('build/coverage/lcov.info').pipe(coveralls
 
 gulp.task('site', () => gulp.src('./site/**').pipe(gulp.dest('./build')));
 
-gulp.task('ci', cb => runSequence('node', 'lint', 'test-with-coverage', 'docs', cb));
+gulp.task('ci', cb => runSequence('node', 'lint', 'test-with-coverage', 'coveralls', 'docs', cb));
 
 gulp.task('default', cb =>
   runSequence('format', 'build', 'lint', 'test', 'coveralls', 'docs', 'site', cb)
