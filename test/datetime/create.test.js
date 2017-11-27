@@ -468,3 +468,10 @@ test('DateTime.fromObject accepts really low year numbers', () => {
   expect(dt.month).toBe(1);
   expect(dt.day).toBe(1);
 });
+
+test('DateTime.fromObject accepts plurals and weird capitalization', () => {
+  const dt = DateTime.fromObject({ Year: 2005, months: 12, dAy: 13 });
+  expect(dt.year).toBe(2005);
+  expect(dt.month).toBe(12);
+  expect(dt.day).toBe(13);
+});
