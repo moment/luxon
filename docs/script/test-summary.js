@@ -3,7 +3,7 @@
     var button = ev.target;
     var parent = ev.target.parentElement;
     while(parent) {
-      if (parent.tagName === 'TR' && parent.classList.contains('test-describe')) break;
+      if (parent.tagName === 'TR' && parent.classList.contains('test-interface')) break;
       parent = parent.parentElement;
     }
 
@@ -42,7 +42,7 @@
     }
   }
 
-  var buttons = document.querySelectorAll('.test-summary tr.test-describe .toggle');
+  var buttons = document.querySelectorAll('.test-summary tr.test-interface .toggle');
   for (var i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', toggle);
   }

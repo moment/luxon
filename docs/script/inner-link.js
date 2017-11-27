@@ -24,8 +24,9 @@
 
 (function(){
   var els = document.querySelectorAll('[href^="#"]');
+  var href = location.href.replace(/#.*$/, ''); // remove existed hash
   for (var i = 0; i < els.length; i++) {
     var el = els[i];
-    el.href = location.href + el.getAttribute('href'); // because el.href is absolute path
+    el.href = href + el.getAttribute('href'); // because el.href is absolute path
   }
 })();

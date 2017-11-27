@@ -2969,7 +2969,7 @@ var Duration = function () {
     key: 'inspect',
     value: function inspect() {
       if (this.isValid) {
-        return 'Duration {\n  values: ' + this.toObject().inspect() + ',\n  locale: ' + this.locale + ',\n  conversionAccuracy: ' + this.conversionAccuracy + ' }';
+        return 'Duration {\n  values: ' + this.toISO() + ',\n  locale: ' + this.locale + ',\n  conversionAccuracy: ' + this.conversionAccuracy + ' }';
       } else {
         return 'Duration { Invalid, reason: ' + this.invalidReason + ' }';
       }
@@ -6005,7 +6005,7 @@ var DateTime = function () {
         cursor = cursor.plus({ weeks: weeks });
 
         if (cursor > post) {
-          cursor.minus({ weeks: 1 });
+          cursor = cursor.minus({ weeks: 1 });
           weeks -= 1;
         }
 
@@ -6022,7 +6022,7 @@ var DateTime = function () {
         });
 
         if (cursor > post) {
-          cursor.minus({ days: 1 });
+          cursor = cursor.minus({ days: 1 });
           _days -= 1;
         }
 

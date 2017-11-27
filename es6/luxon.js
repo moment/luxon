@@ -2379,7 +2379,7 @@ class Duration {
    */
   inspect() {
     if (this.isValid) {
-      return `Duration {\n  values: ${this.toObject().inspect()},\n  locale: ${this
+      return `Duration {\n  values: ${this.toISO()},\n  locale: ${this
         .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
     } else {
       return `Duration { Invalid, reason: ${this.invalidReason} }`;
@@ -5288,7 +5288,7 @@ class DateTime {
       cursor = cursor.plus({ weeks });
 
       if (cursor > post) {
-        cursor.minus({ weeks: 1 });
+        cursor = cursor.minus({ weeks: 1 });
         weeks -= 1;
       }
 
@@ -5305,7 +5305,7 @@ class DateTime {
       });
 
       if (cursor > post) {
-        cursor.minus({ days: 1 });
+        cursor = cursor.minus({ days: 1 });
         days -= 1;
       }
 

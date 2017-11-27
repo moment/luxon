@@ -805,6 +805,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -823,7 +824,6 @@
                   },
                   "name": "now"
                 },
-                "static": true,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -932,6 +932,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -950,7 +951,6 @@
                   },
                   "name": "now"
                 },
-                "static": true,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -1110,6 +1110,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1128,7 +1129,6 @@
                   },
                   "name": "defaultZoneName"
                 },
-                "static": true,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -1340,6 +1340,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1358,7 +1359,6 @@
                   },
                   "name": "defaultZoneName"
                 },
-                "static": true,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -1585,6 +1585,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1603,7 +1604,6 @@
                   },
                   "name": "defaultZone"
                 },
-                "static": true,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -1778,6 +1778,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1796,7 +1797,6 @@
                   },
                   "name": "defaultLocale"
                 },
-                "static": true,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -1905,6 +1905,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -1923,7 +1924,6 @@
                   },
                   "name": "defaultLocale"
                 },
-                "static": true,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -2083,6 +2083,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2101,7 +2102,6 @@
                   },
                   "name": "defaultNumberingSystem"
                 },
-                "static": true,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -2210,6 +2210,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2228,7 +2229,6 @@
                   },
                   "name": "defaultNumberingSystem"
                 },
-                "static": true,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -2388,6 +2388,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2406,7 +2407,6 @@
                   },
                   "name": "defaultOutputCalendar"
                 },
-                "static": true,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -2515,6 +2515,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2533,7 +2534,6 @@
                   },
                   "name": "defaultOutputCalendar"
                 },
-                "static": true,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -2693,6 +2693,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2711,7 +2712,6 @@
                   },
                   "name": "throwOnInvalid"
                 },
-                "static": true,
                 "kind": "get",
                 "id": null,
                 "generator": false,
@@ -2820,6 +2820,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -2838,7 +2839,6 @@
                   },
                   "name": "throwOnInvalid"
                 },
-                "static": true,
                 "kind": "set",
                 "id": null,
                 "generator": false,
@@ -2998,6 +2998,7 @@
                     "column": 3
                   }
                 },
+                "static": true,
                 "computed": false,
                 "key": {
                   "type": "Identifier",
@@ -3016,7 +3017,6 @@
                   },
                   "name": "resetCaches"
                 },
-                "static": true,
                 "kind": "method",
                 "id": null,
                 "generator": false,
@@ -3449,7 +3449,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,
@@ -3632,7 +3632,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,
@@ -3815,7 +3815,7 @@
         "label": "import",
         "keyword": "import",
         "beforeExpr": false,
-        "startsExpr": false,
+        "startsExpr": true,
         "rightAssociative": false,
         "isLoop": false,
         "isAssign": false,

@@ -3,24 +3,20 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">Luxon</title>
+  <title data-ice="title">Duration | Luxon</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-<link data-ice="userStyle" rel="stylesheet" href="user/css/0-styles.css">
-</head>
+<style>.luxon-title {font-size: 22px; color: black;}</style><meta name="description" content="Immutable date wrapper"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="Luxon"><meta property="twitter:description" content="Immutable date wrapper"></head>
 <body class="layout-container" data-ice="rootContainer">
 
-<header><span class="luxon-title">Luxon</span>
-  <a href="./">Home</a>
+<header><a href="../index.html" class="luxon-title">Luxon</a>
+  <a href="./">Manual</a>
   
   <a href="identifiers.html">Reference</a>
-  <a href="source.html">Source</a>
   
-  <a data-ice="repoURL" href="https://github.com/moment/luxon" class="repo-url-github">Repository</a>
+  
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -28,13 +24,21 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/moment/luxon"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~ConflictingSpecificationError.html">ConflictingSpecificationError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~InvalidArgumentError.html">InvalidArgumentError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~InvalidDateTimeError.html">InvalidDateTimeError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~InvalidDurationError.html">InvalidDurationError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~InvalidIntervalError.html">InvalidIntervalError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~InvalidUnitError.html">InvalidUnitError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~LuxonError.html">LuxonError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/errors.js~ZoneIsAbstractError.html">ZoneIsAbstractError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/info.js~Info.html">Info</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
@@ -110,7 +114,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromISO">fromISO</a></span></span><span data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromISO">fromISO</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -138,7 +143,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromMillis">fromMillis</a></span></span><span data-ice="signature">(count: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromMillis">fromMillis</a></span></span><span class="code" data-ice="signature">(count: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -166,7 +172,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromObject">fromObject</a></span></span><span data-ice="signature">(obj: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromObject">fromObject</a></span></span><span class="code" data-ice="signature">(obj: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -194,7 +201,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-invalid">invalid</a></span></span><span data-ice="signature">(reason: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-invalid">invalid</a></span></span><span class="code" data-ice="signature">(reason: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -211,8 +219,76 @@
   </tr>
 </tbody>
 </table>
+<table class="summary" data-ice="summary">
+  <thead><tr><td data-ice="title" colspan="3">Static Private Methods</td></tr></thead>
+  <tbody>
+  
+  <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-normalizeUnit">normalizeUnit</a></span></span><span class="code" data-ice="signature">(unit: <span>*</span>, ignoreUnknown: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+</tbody>
+</table>
 </div>
-
+<div data-ice="constructorSummary"><h2>Constructor Summary</h2><table class="summary" data-ice="summary">
+  <thead><tr><td data-ice="title" colspan="3">Private Constructor</td></tr></thead>
+  <tbody>
+  
+  <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">()</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+</tbody>
+</table>
+</div>
 <div data-ice="memberSummary"><h2>Member Summary</h2><table class="summary" data-ice="summary">
   <thead><tr><td data-ice="title" colspan="3">Public Members</td></tr></thead>
   <tbody>
@@ -230,7 +306,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-days">days</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-days">days</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -258,7 +335,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-hours">hours</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-hours">hours</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -286,7 +364,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-invalidReason">invalidReason</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-invalidReason">invalidReason</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -314,7 +393,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-isValid">isValid</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-isValid">isValid</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -342,7 +422,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-locale">locale</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-locale">locale</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -370,7 +451,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-milliseconds">milliseconds</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-milliseconds">milliseconds</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -398,7 +480,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-minutes">minutes</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-minutes">minutes</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -426,7 +509,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-months">months</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-months">months</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -454,7 +538,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-numberingSystem">numberingSystem</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-numberingSystem">numberingSystem</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -482,7 +567,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-seconds">seconds</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-seconds">seconds</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -510,7 +596,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-weeks">weeks</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-weeks">weeks</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -538,7 +625,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-years">years</a></span></span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-get-years">years</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -546,6 +634,152 @@
         
         <div data-ice="description"><p>Get the years.</p>
 </div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+</tbody>
+</table>
+<table class="summary" data-ice="summary">
+  <thead><tr><td data-ice="title" colspan="3">Private Members</td></tr></thead>
+  <tbody>
+  
+  <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-member-conversionAccuracy">conversionAccuracy</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-member-invalid">invalid</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-member-loc">loc</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-member-matrix">matrix</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-member-values">values</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
       </div>
     </td>
     <td>
@@ -573,7 +807,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-as">as</a></span></span><span data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-as">as</a></span></span><span class="code" data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
         </p>
       </div>
       <div>
@@ -601,7 +836,8 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-equals">equals</a></span></span><span data-ice="signature">(other: <span><a href="class/src/duration.js~Duration.html">Duration</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-equals">equals</a></span></span><span class="code" data-ice="signature">(other: <span><a href="class/src/duration.js~Duration.html">Duration</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
         </p>
       </div>
       <div>
@@ -630,7 +866,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-get">get</a></span></span><span data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-get">get</a></span></span><span class="code" data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
         </p>
       </div>
       <div>
@@ -658,7 +895,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-inspect">inspect</a></span></span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-inspect">inspect</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
@@ -686,7 +924,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-minus">minus</a></span></span><span data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-minus">minus</a></span></span><span class="code" data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -714,7 +953,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-negate">negate</a></span></span><span data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-negate">negate</a></span></span><span class="code" data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -742,7 +982,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-normalize">normalize</a></span></span><span data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-normalize">normalize</a></span></span><span class="code" data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -770,7 +1011,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-plus">plus</a></span></span><span data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-plus">plus</a></span></span><span class="code" data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -798,7 +1040,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-reconfigure">reconfigure</a></span></span><span data-ice="signature">(objectPattern: {&quot;locale&quot;: <span>*</span>, &quot;numberingSystem&quot;: <span>*</span>, &quot;conversionAccuracy&quot;: <span>*</span>}): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-reconfigure">reconfigure</a></span></span><span class="code" data-ice="signature">(objectPattern: {&quot;locale&quot;: <span>*</span>, &quot;numberingSystem&quot;: <span>*</span>, &quot;conversionAccuracy&quot;: <span>*</span>}): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -826,7 +1069,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-set">set</a></span></span><span data-ice="signature">(values: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-set">set</a></span></span><span class="code" data-ice="signature">(values: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -854,7 +1098,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-shiftTo">shiftTo</a></span></span><span data-ice="signature">(units: ...<span>*</span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-shiftTo">shiftTo</a></span></span><span class="code" data-ice="signature">(units: ...<span>*</span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
       <div>
@@ -882,7 +1127,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toFormat">toFormat</a></span></span><span data-ice="signature">(fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toFormat">toFormat</a></span></span><span class="code" data-ice="signature">(fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
@@ -910,7 +1156,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toISO">toISO</a></span></span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toISO">toISO</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
@@ -938,7 +1185,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toJSON">toJSON</a></span></span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toJSON">toJSON</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
@@ -966,7 +1214,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toObject">toObject</a></span></span><span data-ice="signature">(opts: <span>*</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toObject">toObject</a></span></span><span class="code" data-ice="signature">(opts: <span>*</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
         </p>
       </div>
       <div>
@@ -994,7 +1243,8 @@ Two Durations are equal iff they have the same units and the same values for eac
         <p>
           
           
-          <span data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toString">toString</a></span></span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toString">toString</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
@@ -1026,7 +1276,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">fromISO</span><span data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">fromISO</span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -1051,37 +1301,37 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">text</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">text</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>text to parse</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">opts</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>options for parsing</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.locale</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.locale</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;en-US&apos;</li></ul></td>
       <td data-ice="description"><p>the locale to use</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.numberingSystem</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.numberingSystem</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>the numbering system to use</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.conversionAccuracy</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.conversionAccuracy</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;casual&apos;</li></ul></td>
       <td data-ice="description"><p>the conversion system to use</p>
@@ -1097,7 +1347,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -1144,7 +1394,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">fromMillis</span><span data-ice="signature">(count: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">fromMillis</span><span class="code" data-ice="signature">(count: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -1169,37 +1419,37 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">count</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">count</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>of milliseconds</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">opts</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>options for parsing</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.locale</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.locale</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;en-US&apos;</li></ul></td>
       <td data-ice="description"><p>the locale to use</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.numberingSystem</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.numberingSystem</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>the numbering system to use</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.conversionAccuracy</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.conversionAccuracy</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;casual&apos;</li></ul></td>
       <td data-ice="description"><p>the conversion system to use</p>
@@ -1215,7 +1465,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -1247,7 +1497,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">fromObject</span><span data-ice="signature">(obj: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">fromObject</span><span class="code" data-ice="signature">(obj: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -1272,78 +1522,78 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">obj</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">obj</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>the object to create the DateTime from</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.years</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.years</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.months</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.months</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.weeks</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.weeks</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.days</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.days</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.hours</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.hours</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.minutes</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.minutes</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.seconds</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.seconds</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.milliseconds</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.milliseconds</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.locale</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.locale</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;en-US&apos;</li></ul></td>
       <td data-ice="description"><p>the locale to use</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.numberingSystem</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.numberingSystem</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>the numbering system to use</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">obj.conversionAccuracy</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">obj.conversionAccuracy</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;casual&apos;</li></ul></td>
       <td data-ice="description"><p>the conversion system to use</p>
@@ -1359,7 +1609,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -1391,7 +1641,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">invalid</span><span data-ice="signature">(reason: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">invalid</span><span class="code" data-ice="signature">(reason: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -1416,8 +1666,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">reason</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">reason</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>reason this is invalid</p>
 </td>
@@ -1432,7 +1682,87 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<h2 data-ice="title">Static Private Methods</h2>
+
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-normalizeUnit">
+    <span class="access" data-ice="access">private</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">normalizeUnit</span><span class="code" data-ice="signature">(unit: <span>*</span>, ignoreUnknown: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber219">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">unit</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">ignoreUnknown</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: false</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
           
         </tr>
       </tbody>
@@ -1457,7 +1787,52 @@ Two Durations are equal iff they have the same units and the same values for eac
   
 </div>
 </div>
+<div data-ice="constructorDetails"><h2 data-ice="title">Private Constructors</h2>
 
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-constructor-constructor">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">()</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber121">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+</div>
 <div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
 
 <div class="detail" data-ice="detail">
@@ -1468,7 +1843,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">days</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">days</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1492,7 +1867,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -1524,7 +1899,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">hours</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">hours</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1548,7 +1923,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -1580,7 +1955,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">invalidReason</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">invalidReason</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1604,7 +1979,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -1636,7 +2011,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">isValid</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">isValid</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1661,7 +2036,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
           
         </tr>
       </tbody>
@@ -1693,7 +2068,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">locale</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">locale</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1717,7 +2092,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -1749,7 +2124,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">milliseconds</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">milliseconds</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1773,7 +2148,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -1805,7 +2180,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">minutes</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">minutes</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1829,7 +2204,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -1861,7 +2236,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">months</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">months</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1885,7 +2260,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -1917,7 +2292,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">numberingSystem</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">numberingSystem</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1941,7 +2316,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -1973,7 +2348,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">seconds</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">seconds</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -1997,7 +2372,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -2029,7 +2404,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">weeks</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">weeks</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -2053,7 +2428,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -2085,7 +2460,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">years</span><span data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="code" data-ice="name">years</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
@@ -2109,7 +2484,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -2117,6 +2492,223 @@ on invalid DateTimes or Intervals.</p>
     <div data-ice="returnProperties">
 </div>
   </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<h2 data-ice="title">Private Members</h2>
+
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-conversionAccuracy">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">conversionAccuracy</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber134">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-invalid">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">invalid</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber138">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-loc">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">loc</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber130">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-matrix">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">matrix</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber142">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-values">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">values</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber126">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
 
   
 
@@ -2144,7 +2736,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">as</span><span data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="code" data-ice="name">as</span><span class="code" data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
     <span class="right-info">
       
       
@@ -2169,8 +2761,8 @@ on invalid DateTimes or Intervals.</p>
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">unit</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">unit</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>a unit such as &apos;minutes&apos; or &apos;days&apos;</p>
 </td>
@@ -2185,7 +2777,7 @@ on invalid DateTimes or Intervals.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -2232,7 +2824,7 @@ on invalid DateTimes or Intervals.</p>
     
     
     
-    <span data-ice="name">equals</span><span data-ice="signature">(other: <span><a href="class/src/duration.js~Duration.html">Duration</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
+    <span class="code" data-ice="name">equals</span><span class="code" data-ice="signature">(other: <span><a href="class/src/duration.js~Duration.html">Duration</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
     <span class="right-info">
       
       
@@ -2258,8 +2850,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">other</td>
-      <td data-ice="type"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">other</td>
+      <td data-ice="type" class="code"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
@@ -2273,7 +2865,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
           
         </tr>
       </tbody>
@@ -2305,7 +2897,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">get</span><span data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="code" data-ice="name">get</span><span class="code" data-ice="signature">(unit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
     <span class="right-info">
       
       
@@ -2330,8 +2922,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">unit</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">unit</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>a unit such as &apos;minute&apos; or &apos;day&apos;</p>
 </td>
@@ -2346,7 +2938,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
           
         </tr>
       </tbody>
@@ -2393,7 +2985,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">inspect</span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">inspect</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
@@ -2417,7 +3009,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -2449,7 +3041,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">minus</span><span data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">minus</span><span class="code" data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -2474,8 +3066,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">duration</td>
-      <td data-ice="type"><span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">duration</td>
+      <td data-ice="type" class="code"><span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()</p>
 </td>
@@ -2490,7 +3082,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -2522,7 +3114,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">negate</span><span data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">negate</span><span class="code" data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -2546,7 +3138,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -2585,7 +3177,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">normalize</span><span data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">normalize</span><span class="code" data-ice="signature">(): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -2609,7 +3201,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -2652,7 +3244,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">plus</span><span data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">plus</span><span class="code" data-ice="signature">(duration: <span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -2677,8 +3269,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">duration</td>
-      <td data-ice="type"><span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">duration</td>
+      <td data-ice="type" class="code"><span><a href="class/src/duration.js~Duration.html">Duration</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()</p>
 </td>
@@ -2693,7 +3285,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -2725,7 +3317,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">reconfigure</span><span data-ice="signature">(objectPattern: {&quot;locale&quot;: <span>*</span>, &quot;numberingSystem&quot;: <span>*</span>, &quot;conversionAccuracy&quot;: <span>*</span>}): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">reconfigure</span><span class="code" data-ice="signature">(objectPattern: {&quot;locale&quot;: <span>*</span>, &quot;numberingSystem&quot;: <span>*</span>, &quot;conversionAccuracy&quot;: <span>*</span>}): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -2750,8 +3342,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">objectPattern</td>
-      <td data-ice="type">{&quot;locale&quot;: <span>*</span>, &quot;numberingSystem&quot;: <span>*</span>, &quot;conversionAccuracy&quot;: <span>*</span>}</td>
+      <td data-ice="name" class="code" data-depth="0">objectPattern</td>
+      <td data-ice="type" class="code">{&quot;locale&quot;: <span>*</span>, &quot;numberingSystem&quot;: <span>*</span>, &quot;conversionAccuracy&quot;: <span>*</span>}</td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: {}</li></ul></td>
       <td data-ice="description"></td>
@@ -2766,7 +3358,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -2805,7 +3397,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">set</span><span data-ice="signature">(values: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">set</span><span class="code" data-ice="signature">(values: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -2830,8 +3422,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">values</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">values</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>a mapping of units to numbers</p>
 </td>
@@ -2846,7 +3438,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -2889,7 +3481,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">shiftTo</span><span data-ice="signature">(units: ...<span>*</span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="code" data-ice="name">shiftTo</span><span class="code" data-ice="signature">(units: ...<span>*</span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
     <span class="right-info">
       
       
@@ -2914,8 +3506,8 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">units</td>
-      <td data-ice="type">...<span>*</span></td>
+      <td data-ice="name" class="code" data-depth="0">units</td>
+      <td data-ice="type" class="code">...<span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
@@ -2929,7 +3521,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
           
         </tr>
       </tbody>
@@ -2968,7 +3560,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">toFormat</span><span data-ice="signature">(fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">toFormat</span><span class="code" data-ice="signature">(fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
@@ -2993,22 +3585,22 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">fmt</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">fmt</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>the format string</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">opts</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>options</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">opts.round</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">opts.round</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>round numerical values</p>
 </td>
@@ -3023,7 +3615,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -3055,7 +3647,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">toISO</span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">toISO</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
@@ -3079,7 +3671,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -3130,7 +3722,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">toJSON</span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">toJSON</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
@@ -3154,7 +3746,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -3186,7 +3778,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">toObject</span><span data-ice="signature">(opts: <span>*</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+    <span class="code" data-ice="name">toObject</span><span class="code" data-ice="signature">(opts: <span>*</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
     <span class="right-info">
       
       
@@ -3211,15 +3803,15 @@ Two Durations are equal iff they have the same units and the same values for eac
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">opts</td>
-      <td data-ice="type"><span>*</span></td>
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>options for generating the object</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" data-depth="1">opts.includeConfig</td>
-      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">opts.includeConfig</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: false</li></ul></td>
       <td data-ice="description"><p>include configuration attributes in the output</p>
@@ -3235,7 +3827,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
           
         </tr>
       </tbody>
@@ -3274,7 +3866,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     
     
     
-    <span data-ice="name">toString</span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">toString</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
@@ -3298,7 +3890,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
           
         </tr>
       </tbody>
@@ -3326,7 +3918,7 @@ Two Durations are equal iff they have the same units and the same values for eac
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

@@ -11,7 +11,7 @@
   <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
     <text x="26" y="15" fill="#010101" fill-opacity=".3">manual</text>
     <text x="26" y="14">manual</text>
-    <text x="72" y="15" fill="#010101" fill-opacity=".3">40%</text>
-    <text x="72" y="14">40%</text>
+    <text x="72" y="15" fill="#010101" fill-opacity=".3">0%</text>
+    <text x="72" y="14">0%</text>
   </g>
 </svg>
