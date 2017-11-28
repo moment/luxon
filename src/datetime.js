@@ -23,6 +23,7 @@ const INVALID = 'Invalid DateTime',
   UNSUPPORTED_ZONE = 'unsupported zone',
   UNPARSABLE = 'unparsable';
 
+// we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
     dt.weekData = Conversions.gregorianToWeek(dt.c);
@@ -30,6 +31,8 @@ function possiblyCachedWeekData(dt) {
   return dt.weekData;
 }
 
+// clone really means, "make a new object with these modifications". all "setters" really use this
+// to create a new object while only changing some of the properties
 function clone(inst, alts) {
   const current = {
     ts: inst.ts,
@@ -42,6 +45,8 @@ function clone(inst, alts) {
   return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
 
+// find the right offset a given local time. The o input is our guess, which determines which
+// offset we'll pick in ambiguous cases (e.g. there are two 3 AMs b/c Fallback DST)
 function fixOffset(localTS, o, tz) {
   // Our UTC time is just a guess because our offset is just a guess
   let utcGuess = localTS - o * 60 * 1000;
@@ -67,6 +72,7 @@ function fixOffset(localTS, o, tz) {
   return [localTS - Math.min(o2, o3) * 60 * 1000, Math.max(o2, o3)];
 }
 
+// convert an epoch timestamp into a calendar object with the given offset
 function tsToObj(ts, offset) {
   ts += offset * 60 * 1000;
 
@@ -83,6 +89,7 @@ function tsToObj(ts, offset) {
   };
 }
 
+// covert a calendar object to a local timestamp (epoch, but with the offset baked in)
 function objToLocalTS(obj) {
   let d = Date.UTC(
     obj.year,
@@ -102,10 +109,12 @@ function objToLocalTS(obj) {
   return +d;
 }
 
+// convert a calendar object to a epoch timestamp
 function objToTS(obj, offset, zone) {
   return fixOffset(objToLocalTS(obj), offset, zone);
 }
 
+// create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
   const oPre = inst.o,
     c = Object.assign({}, inst.c, {
@@ -132,6 +141,8 @@ function adjustTime(inst, dur) {
   return { ts, o };
 }
 
+// helper useful in turning the results of parsing into real dates
+// by handling the zone options
 function parseDataToDateTime(parsed, parsedZone, opts) {
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
@@ -147,12 +158,16 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
   }
 }
 
+// if you want to output a technical format (e.g. RFC 2822), this helper
+// helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
     ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format)
     : null;
 }
 
+// technical time formats (e.g. the time part of ISO 8601), take some options
+// and this commonizes their handling
 function toTechTimeFormat(
   dt,
   {
@@ -185,6 +200,7 @@ function toTechTimeFormat(
   return toTechFormat(dt, fmt);
 }
 
+// defaults for unspecified units in the supported calendars
 const defaultUnitValues = {
     month: 1,
     day: 1,
@@ -209,20 +225,20 @@ const defaultUnitValues = {
     millisecond: 0
   };
 
-const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+// Units in the supported calendars, sorted by bigness
+const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'],
+  orderedWeekUnits = [
+    'weekYear',
+    'weekNumber',
+    'weekday',
+    'hour',
+    'minute',
+    'second',
+    'millisecond'
+  ],
+  orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
-const orderedWeekUnits = [
-  'weekYear',
-  'weekNumber',
-  'weekday',
-  'hour',
-  'minute',
-  'second',
-  'millisecond'
-];
-
-const orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
-
+// standardize case and plurality in units
 function normalizeUnit(unit, ignoreUnknown = false) {
   const normalized = {
     year: 'year',
@@ -260,8 +276,7 @@ function normalizeUnit(unit, ignoreUnknown = false) {
 function quickDT(obj, zone) {
   // assume we have the higher-order units
   for (const u of orderedUnits) {
-    const v = obj[u];
-    if (Util.isUndefined(v)) {
+    if (Util.isUndefined(obj[u])) {
       obj[u] = defaultUnitValues[u];
     }
   }
@@ -275,6 +290,7 @@ function quickDT(obj, zone) {
   const tsNow = Settings.now(),
     offsetProvis = zone.offset(tsNow),
     [ts, o] = objToTS(obj, offsetProvis, zone);
+
   return new DateTime({
     ts,
     zone,

@@ -6,6 +6,7 @@ import { InvalidArgumentError, InvalidIntervalError } from './errors';
 
 const INVALID = 'Invalid Interval';
 
+// checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
   return !!start && !!end && start.isValid && end.isValid && start <= end;
 }

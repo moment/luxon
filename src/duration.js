@@ -7,6 +7,7 @@ import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './
 
 const INVALID = 'Invalid Duration';
 
+// unit conversion constants
 const lowOrderMatrix = {
     weeks: {
       days: 7,
@@ -72,6 +73,7 @@ const lowOrderMatrix = {
     lowOrderMatrix
   );
 
+// units ordered by size
 const orderedUnits = [
   'years',
   'months',
@@ -83,6 +85,7 @@ const orderedUnits = [
   'milliseconds'
 ];
 
+// clone really means "create another instance just like this one, but with these changes"
 function clone(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
@@ -93,6 +96,8 @@ function clone(dur, alts, clear = false) {
   return new Duration(conf);
 }
 
+// some functions really care about the absolute value of a duration, so combined with
+// normalize() this tells us whether this duration is positive or negative
 function isHighOrderNegative(obj) {
   // only rule is that the highest-order part must be non-negative
   for (const k of orderedUnits) {
