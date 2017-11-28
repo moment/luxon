@@ -142,6 +142,10 @@ test('DateTime#ordinal returns the ordinal', () => {
   expect(dateTime.ordinal).toBe(145);
 });
 
+test('DateTime#ordinal returns NaN for invalid DateTimes', () => {
+  expect(inv.ordinal).toBeFalsy();
+});
+
 //------
 // get
 //------

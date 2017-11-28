@@ -458,3 +458,29 @@ test('DateTime.fromString() with setZone parses fixed offsets and sets it', () =
 test("DateTime.fromString() throws if you don't provide a format", () => {
   expect(() => DateTime.fromString('yo')).toThrowError(InvalidArgumentError);
 });
+
+//------
+// .fromStringExplain
+//-------
+
+function keyCount(o) {
+  return Object.keys(o).length;
+}
+
+test('DateTime.fromStringExplain() explains success', () => {
+  const ex = DateTime.fromStringExplain('May 25, 1982 09:10:12.445', 'MMMM dd, yyyy HH:mm:ss.SSS');
+  expect(ex.rawMatches).toBeInstanceOf(Array);
+  expect(ex.matches).toBeInstanceOf(Object);
+  expect(keyCount(ex.matches)).toBe(7);
+  expect(ex.result).toBeInstanceOf(Object);
+  expect(keyCount(ex.result)).toBe(7);
+});
+
+test('DateTime.fromStringExplain() explains a bad match', () => {
+  const ex = DateTime.fromStringExplain('May 25, 1982 09:10:12.445', 'MMMM dd, yyyy mmmm');
+  expect(ex.rawMatches).toBeNull();
+  expect(ex.matches).toBeInstanceOf(Object);
+  expect(keyCount(ex.matches)).toBe(0);
+  expect(ex.result).toBeInstanceOf(Object);
+  expect(keyCount(ex.result)).toBe(0);
+});

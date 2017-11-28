@@ -33,3 +33,7 @@ test('DateTime#toObject accepts a flag to return config', () => {
     outputCalendar: null
   });
 });
+
+test('DateTime#toObject returns an empty object for invalid DateTimes', () => {
+  expect(DateTime.invalid('because').toObject()).toEqual({});
+});
