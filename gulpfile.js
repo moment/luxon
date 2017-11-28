@@ -152,6 +152,16 @@ gulp.task(
   })
 );
 
+gulp.task(
+  'amd-filled',
+  processLib('amd-filled', {
+    format: 'amd',
+    rollupOpts: { name: 'luxon' },
+    target: browsersOld,
+    src: './src/luxonFilled.js'
+  })
+);
+
 gulp.task('node', processLib('node', { format: 'cjs', target: 'node >= 6' }));
 
 gulp.task('cjs-browser', processLib('cjs-browser', { format: 'cjs', browsersOld }));
@@ -173,7 +183,16 @@ gulp.task(
   })
 );
 
-gulp.task('build', ['node', 'cjs-browser', 'es6', 'amd', 'global', 'global-es6', 'global-filled']);
+gulp.task('build', [
+  'node',
+  'cjs-browser',
+  'es6',
+  'amd',
+  'amd-filled',
+  'global',
+  'global-es6',
+  'global-filled'
+]);
 
 gulp.task('test-with-coverage', () => test(true));
 gulp.task('test', () => test(false));

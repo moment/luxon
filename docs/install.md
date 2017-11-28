@@ -21,16 +21,20 @@ var DateTime = luxon.DateTime;
 
 ### Internet Explorer
 
-If you're supporting IE 10 or 11, you need some polyfills. You have two options: use a polyfilled build or apply the polyfills yourself. The polyfilled builds are here:
+If you're supporting IE 10 or 11, you need some polyfills to get Luxon to work. You have two options: use a polyfilled build or apply the polyfills yourself. The polyfilled builds are here:
 
 * [Download full polyfilled](../../global-filled/luxon.js)
 * [Download minified polyfilled](../../global-filled/luxon.min.js)
+
+Note that none of this polyfills the Intl API to enhance internationalization or zone capabilities; this is just about making sure the browser has stuff like `Object.assign`. To polyfill that stuff see [here](matrix.html#polyfills).
 
 To polyfill it yourself, use polyfill.io:
 
 ```html
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 ```
+
+This will *also* add the Intl stuff, so that's two birds with one stone.
 
 ## Node
 
@@ -54,6 +58,11 @@ requirejs(['luxon'], function(luxon) {
   //...
 });
 ```
+
+There are also polyfilled versions of this; see the Internet Explorer section above for additional options and caveats.
+
+* [Download full polyfilled](../../amd-filled/luxon.js)
+* [Download minified polyfilled](../../amd-filled/luxon.min.js)
 
 ## ES6
 
