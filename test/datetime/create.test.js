@@ -475,3 +475,11 @@ test('DateTime.fromObject accepts plurals and weird capitalization', () => {
   expect(dt.month).toBe(12);
   expect(dt.day).toBe(13);
 });
+
+test('DateTime.fromObject validates weekdays', () => {
+  let dt = DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 1 });
+  expect(dt.isValid).toBe(false);
+
+  dt = DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 2 });
+  expect(dt.isValid).toBe(true);
+});

@@ -459,6 +459,28 @@ test("DateTime.fromString() throws if you don't provide a format", () => {
   expect(() => DateTime.fromString('yo')).toThrowError(InvalidArgumentError);
 });
 
+test('DateTime.fromString validates weekdays', () => {
+  let dt = DateTime.fromString('Wed 2017-11-29 02:00', 'EEE yyyy-MM-dd HH:mm');
+  expect(dt.isValid).toBe(true);
+
+  dt = DateTime.fromString('Thu 2017-11-29 02:00', 'EEE yyyy-MM-dd HH:mm');
+  expect(dt.isValid).toBe(false);
+
+  dt = DateTime.fromString('Wed 2017-11-29 02:00 +12:00', 'EEE yyyy-MM-dd HH:mm ZZ');
+  expect(dt.isValid).toBe(true);
+
+  dt = DateTime.fromString('Wed 2017-11-29 02:00 +12:00', 'EEE yyyy-MM-dd HH:mm ZZ', {
+    setZone: true
+  });
+
+  expect(dt.isValid).toBe(true);
+
+  dt = DateTime.fromString('Tue 2017-11-29 02:00 +12:00', 'EEE yyyy-MM-dd HH:mm ZZ', {
+    setZone: true
+  });
+  expect(dt.isValid).toBe(false);
+});
+
 //------
 // .fromStringExplain
 //-------
