@@ -15,7 +15,7 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
 
 ## Download/install
 
-[Download/install instructions](https://moment.github.io/luxon/docs/manual/design/install.html)
+[Download/install instructions](https://moment.github.io/luxon/docs/manual/install.html)
 
 ## Documentation
 
