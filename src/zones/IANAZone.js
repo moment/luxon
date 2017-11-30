@@ -46,7 +46,7 @@ function isValid(zone) {
 
 export class IANAZone extends Zone {
   static isValidSpecier(s) {
-    return s && s.match(/[a-z_]+\/[a-z_]+/i);
+    return s && s.match(/[a-z_]{1,256}\/[a-z_]{1,256}/i);
   }
 
   constructor(name) {
