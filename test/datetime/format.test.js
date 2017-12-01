@@ -128,6 +128,7 @@ test('DateTime#toRFC2822() returns null for invalid DateTimes', () => {
 test('DateTime#toHTTP() returns an RFC 1123 date', () => {
   expect(dt.toUTC().toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
   expect(dt.setZone('America/New_York').toHTTP()).toBe('Tue, 25 May 1982 09:23:54 GMT');
+  expect(dt.plus({ hours: 10 }).toHTTP()).toBe('Tue, 25 May 1982 19:23:54 GMT');
 });
 
 test('DateTime#toHTTP() returns null for invalid DateTimes', () => {
