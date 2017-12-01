@@ -612,7 +612,7 @@ var IANAZone = function (_Zone) {
   createClass(IANAZone, null, [{
     key: 'isValidSpecier',
     value: function isValidSpecier(s) {
-      return s && s.match(/[a-z_]+\/[a-z_]+/i);
+      return s && s.match(/[a-z_]{1,256}\/[a-z_]{1,256}/i);
     }
   }]);
 
@@ -2505,7 +2505,7 @@ var isoOrdinalRegex = /(\d{4})-?(\d{3})/;
 var extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
 var extractISOOrdinalData = simpleParse('year', 'ordinal');
 var sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
-var sqlTimeRegex = RegExp(isoTimeBaseRegex.source + ' ?(?:' + offsetRegex.source + '|([a-zA-Z_]+/[a-zA-Z_]+))?');
+var sqlTimeRegex = RegExp(isoTimeBaseRegex.source + ' ?(?:' + offsetRegex.source + '|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?');
 var sqlTimeExtensionRegex = RegExp('(?: ' + sqlTimeRegex.source + ')?');
 
 function extractISOYmd(match, cursor) {
@@ -2543,7 +2543,7 @@ function extractIANAZone(match, cursor) {
 
 // ISO duration parsing
 
-var isoDuration = /^P(?:(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?|(\d+)W)$/;
+var isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\d{1,9})H)?(?:(\d{1,9})M)?(?:(\d{1,9})S)?)?|(\d{1,9})W)$/;
 
 function extractISODuration(match) {
   var _match = slicedToArray(match, 8),
@@ -2707,6 +2707,7 @@ var RegexParser = function () {
 
 var INVALID$1 = 'Invalid Duration';
 
+// unit conversion constants
 var lowOrderMatrix = {
   weeks: {
     days: 7,
@@ -2766,8 +2767,10 @@ var accurateMatrix = Object.assign({
   }
 }, lowOrderMatrix);
 
+// units ordered by size
 var orderedUnits$1 = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
+// clone really means "create another instance just like this one, but with these changes"
 function clone$1(dur, alts) {
   var clear = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
@@ -2780,6 +2783,8 @@ function clone$1(dur, alts) {
   return new Duration(conf);
 }
 
+// some functions really care about the absolute value of a duration, so combined with
+// normalize() this tells us whether this duration is positive or negative
 function isHighOrderNegative(obj) {
   // only rule is that the highest-order part must be non-negative
   var _iteratorNormalCompletion = true;
@@ -2815,7 +2820,7 @@ function isHighOrderNegative(obj) {
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
  *
- * * **Creation** To create a Duration, use {@link fromMillis}, {@link fromObject}, or {@link fromISO}.
+ * * **Creation** To create a Duration, use {@link Duration#fromMillis}, {@link Duration#fromObject}, or {@link Duration#fromISO}.
  * * **Unit values** See the {@link years}, {@link months}, {@link weeks}, {@link days}, {@link hours}, {@link minutes}, {@link seconds}, {@link milliseconds} accessors.
  * * **Configuration** See  {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation** To create new Durations out of old ones use {@link plus}, {@link minus}, {@link normalize}, {@link set}, {@link reconfigure}, {@link shiftTo}, and {@link negate}.
@@ -3548,6 +3553,7 @@ var Duration = function () {
 
 var INVALID$2 = 'Invalid Interval';
 
+// checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
   return !!start && !!end && start.isValid && end.isValid && start <= end;
 }
@@ -4611,7 +4617,7 @@ function unitForToken(token, loc) {
       // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
       // because we don't have any way to figure out what they are
       case 'z':
-        return simple(/[A-Za-z_]+\/[A-Za-z_]+/);
+        return simple(/[A-Za-z_]{1,256}\/[A-Za-z_]{1,256}/);
       default:
         return literal(t);
     }
@@ -4966,6 +4972,7 @@ var INVALID_INPUT = 'invalid input';
 var UNSUPPORTED_ZONE = 'unsupported zone';
 var UNPARSABLE = 'unparsable';
 
+// we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
     dt.weekData = Conversions.gregorianToWeek(dt.c);
@@ -4973,6 +4980,8 @@ function possiblyCachedWeekData(dt) {
   return dt.weekData;
 }
 
+// clone really means, "make a new object with these modifications". all "setters" really use this
+// to create a new object while only changing some of the properties
 function clone(inst, alts) {
   var current = {
     ts: inst.ts,
@@ -4985,6 +4994,8 @@ function clone(inst, alts) {
   return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
 
+// find the right offset a given local time. The o input is our guess, which determines which
+// offset we'll pick in ambiguous cases (e.g. there are two 3 AMs b/c Fallback DST)
 function fixOffset(localTS, o, tz) {
   // Our UTC time is just a guess because our offset is just a guess
   var utcGuess = localTS - o * 60 * 1000;
@@ -5010,6 +5021,7 @@ function fixOffset(localTS, o, tz) {
   return [localTS - Math.min(o2, o3) * 60 * 1000, Math.max(o2, o3)];
 }
 
+// convert an epoch timestamp into a calendar object with the given offset
 function tsToObj(ts, offset) {
   ts += offset * 60 * 1000;
 
@@ -5026,6 +5038,7 @@ function tsToObj(ts, offset) {
   };
 }
 
+// covert a calendar object to a local timestamp (epoch, but with the offset baked in)
 function objToLocalTS(obj) {
   var d = Date.UTC(obj.year, obj.month - 1, obj.day, obj.hour, obj.minute, obj.second, obj.millisecond);
 
@@ -5037,10 +5050,12 @@ function objToLocalTS(obj) {
   return +d;
 }
 
+// convert a calendar object to a epoch timestamp
 function objToTS(obj, offset, zone) {
   return fixOffset(objToLocalTS(obj), offset, zone);
 }
 
+// create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
   var oPre = inst.o,
       c = Object.assign({}, inst.c, {
@@ -5070,6 +5085,8 @@ function adjustTime(inst, dur) {
   return { ts: ts, o: o };
 }
 
+// helper useful in turning the results of parsing into real dates
+// by handling the zone options
 function parseDataToDateTime(parsed, parsedZone, opts) {
   var setZone = opts.setZone,
       zone = opts.zone;
@@ -5085,10 +5102,14 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
   }
 }
 
+// if you want to output a technical format (e.g. RFC 2822), this helper
+// helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format) : null;
 }
 
+// technical time formats (e.g. the time part of ISO 8601), take some options
+// and this commonizes their handling
 function toTechTimeFormat(dt, _ref) {
   var _ref$suppressSeconds = _ref.suppressSeconds,
       suppressSeconds = _ref$suppressSeconds === undefined ? false : _ref$suppressSeconds,
@@ -5123,6 +5144,7 @@ function toTechTimeFormat(dt, _ref) {
   return toTechFormat(dt, fmt);
 }
 
+// defaults for unspecified units in the supported calendars
 var defaultUnitValues = {
   month: 1,
   day: 1,
@@ -5147,12 +5169,12 @@ var defaultOrdinalUnitValues = {
   millisecond: 0
 };
 
+// Units in the supported calendars, sorted by bigness
 var orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
-
 var orderedWeekUnits = ['weekYear', 'weekNumber', 'weekday', 'hour', 'minute', 'second', 'millisecond'];
-
 var orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
+// standardize case and plurality in units
 function normalizeUnit(unit) {
   var ignoreUnknown = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
@@ -5199,8 +5221,7 @@ function quickDT(obj, zone) {
     for (var _iterator = orderedUnits[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var u = _step.value;
 
-      var v = obj[u];
-      if (Util.isUndefined(v)) {
+      if (Util.isUndefined(obj[u])) {
         obj[u] = defaultUnitValues[u];
       }
     }
@@ -5230,6 +5251,7 @@ function quickDT(obj, zone) {
       _objToTS2 = slicedToArray(_objToTS, 2),
       ts = _objToTS2[0],
       o = _objToTS2[1];
+
 
   return new DateTime({
     ts: ts,
@@ -5774,13 +5796,14 @@ var DateTime = function () {
      * Specifically, the string conforms to RFC 1123.
      * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
      * @example DateTime.utc(2014, 7, 13).toHTTP() //=> 'Sun, 13 Jul 2014 00:00:00 GMT'
+     * @example DateTime.utc(2014, 7, 13, 19).toHTTP() //=> 'Sun, 13 Jul 2014 19:00:00 GMT'
      * @return {string}
      */
 
   }, {
     key: 'toHTTP',
     value: function toHTTP() {
-      return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy hh:mm:ss 'GMT'");
+      return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy HH:mm:ss 'GMT'");
     }
 
     /**
