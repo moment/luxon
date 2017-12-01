@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.4
+
+ * Fix `toHTTP` to use 24-hour hours
+ * Tighten up regular expressions
+ * Various documentation fixes
+
 ## 0.2.3
 
  * Fixes for `diff` with multiple units
