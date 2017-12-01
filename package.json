@@ -13,9 +13,11 @@
     "*.{js,json}": ["prettier --config .prettier.js --write", "git add"]
   },
   "devDependencies": {
+    "babel-eslint": "^8.0.2",
     "babel-jest": "latest",
     "babel-plugin-external-helpers": "latest",
     "babel-preset-env": "latest",
+    "babel-preset-flow": "^6.23.0",
     "benchmark": "latest",
     "core-js": "latest",
     "coveralls": "latest",
@@ -23,6 +25,7 @@
     "eslint": "^4.12.0",
     "eslint-config-airbnb-base": "12.0.2",
     "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype-errors": "^3.3.6",
     "eslint-plugin-import": "latest",
     "eslint-plugin-prettier": "latest",
     "gulp": "latest",
@@ -45,6 +48,7 @@
     "prettier": "1.7.4",
     "rollup-plugin-babel": "latest",
     "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-node-resolve": "latest",
     "rollup-stream": "latest",
     "run-sequence": "latest",

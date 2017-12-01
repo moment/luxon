@@ -1,7 +1,9 @@
+// @flow
+
 import { Formats } from './formats';
 import { Util } from './util';
 
-function stringify(obj) {
+function stringify(obj: Object) {
   return JSON.stringify(obj, Object.keys(obj).sort());
 }
 
