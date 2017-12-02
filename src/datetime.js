@@ -1019,7 +1019,7 @@ export class DateTime {
   /**
    * Returns the number of days in this DateTime's month
    * @example DateTime.local(2016, 2).daysInMonth //=> 29
-   * @example DateTime.local(2016, 3).days //=> 31
+   * @example DateTime.local(2016, 3).daysInMonth //=> 31
    * @return {number}
    */
   get daysInMonth() {
