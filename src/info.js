@@ -72,8 +72,8 @@ export class Info {
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.weekdays()[0] //=> 'Monday'
    * @example Info.weekdays('short')[0] //=> 'Mon'
-   * @example Info.weekdays('short', 'fr-CA')[0] //=> 'lun.'
-   * @example Info.weekdays('short', 'ar')[0] //=> 'الاثنين'
+   * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
+   * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
    * @return {[string]}
    */
   static weekdays(length = 'long', { locale = null, numberingSystem = null } = {}) {
@@ -101,7 +101,7 @@ export class Info {
    * @param {object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
-   * @example Info.meridiems('de') //=> [ 'vorm.', 'nachm.' ]
+   * @example Info.meridiems({ locale: 'de' }) //=> [ 'vorm.', 'nachm.' ]
    * @return {[string]}
    */
   static meridiems({ locale = null } = {}) {
@@ -115,7 +115,7 @@ export class Info {
    * @param {string} [opts.locale] - the locale code
    * @example Info.eras() //=> [ 'BC', 'AD' ]
    * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
-   * @example Info.eras('long', 'fr') //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
+   * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
    * @return {[string]}
    */
   static eras(length = 'short', { locale = null } = {}) {
