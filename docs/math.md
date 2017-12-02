@@ -89,6 +89,30 @@ DateTime.fromISO('2017-04-30').plus({days: 1}).plus({months: 1}).toISODate() //=
 
 It's not a coincidence that Luxon's interface makes it awkward to do this wrong.
 
+## Comparing DateTimes
+
+DateTime implements `#valueOf` to return the epoch timestamp, so you can compare DateTimes with `<`, `>`, `<=`, and `>=`. That lets you find out if one DateTime is after or before another DateTime.
+
+```js
+d1 < d2 // is d1 before d2?
+```
+
+However, `===` compares object identity (not a useful concept in a library with immutable types) and `#equals` compares both the time and additional metadata, such as the locale and time zone. If you're only interested in checking the equality of the timestamps, you need to coerce them:
+
+```js
++d1 === +d2 // are d1 and d2 the same instant in time?
+```
+
+You may also use `#hasSame` to make more subtle comparisons:
+
+```js
+d1.hasSame(d2, 'milllisecond'); // equivalent to `+d1 === +d2`
+d1.hasSame(d2, 'minute');       // both DateTimes are in the same minute (and hour, day, month, etc)
+d1.hasSame(d2, 'year');         // etc
+```
+
+Note that these are checking against the calendar. For example, if `d1` is in 2017, calling `hasSame` with "year" asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you'd need `diff` (see below).
+
 ## Duration math
 
 ### Basics
