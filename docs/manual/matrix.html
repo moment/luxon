@@ -167,6 +167,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#dsts" data-ice="link">DSTs</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#time-math" data-ice="link">Time math</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/math.html"><a href="manual/math.html#math-with-multiple-units" data-ice="link">Math with multiple units</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/math.html"><a href="manual/math.html#comparing-datetimes" data-ice="link">Comparing DateTimes</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/math.html"><a href="manual/math.html#duration-math" data-ice="link">Duration math</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#basics" data-ice="link">Basics</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#diffs" data-ice="link">Diffs</a></li>
@@ -456,7 +457,7 @@
 </tr>
 </tbody>
 </table>
-<p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. It won&apos;t work if you provide your own, modify for the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p>
+<p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. If you provide your own, modify for the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p>
 <p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as their in Latin (i.e. Western) numbers.</p>
 <p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning null if it fails.</p>
 <h2 id="polyfills">Polyfills</h2><h3 id="intl-and-intl-tokens">Intl and Intl tokens</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p>
