@@ -69,7 +69,7 @@ In the support table above, you can see that some platforms have caveats. They a
 | `Info.months`, etc in en-US          | OK           | OK                                          | OK                                                 | OK                   |
 | `Info.months`, etc in other locales  | OK           | Uses English                                | Uses English                                       | OK                   |
 
-† Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like `DateTime.DATETIME_MED`. It won't work if you provide your own, modify for the presets, or even clone them, it will use `DateTime.DATETIME_HUGE`. If you don't provide any arguments at all, it defaults to `DateTime.DATE_SHORT`.
+† Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like `DateTime.DATETIME_MED`. If you provide your own, modify for the presets, or even clone them, it will use `DateTime.DATETIME_HUGE`. If you don't provide any arguments at all, it defaults to `DateTime.DATE_SHORT`.
 
 ‡ This means that Luxon can't parse anything with a word in it like localized versions of "January" or "Tuesday". It's fine with numbers, as long as their in Latin (i.e. Western) numbers.
 
