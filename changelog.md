@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5
+
+ * Better shiftTo behavior for durations with floating point components
+
 ## 0.2.4
 
  * Fix `toHTTP` to use 24-hour hours
