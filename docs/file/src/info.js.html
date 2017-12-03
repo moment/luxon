@@ -122,8 +122,8 @@ export class Info {
    * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
    * @example Info.weekdays()[0] //=&gt; &apos;Monday&apos;
    * @example Info.weekdays(&apos;short&apos;)[0] //=&gt; &apos;Mon&apos;
-   * @example Info.weekdays(&apos;short&apos;, &apos;fr-CA&apos;)[0] //=&gt; &apos;lun.&apos;
-   * @example Info.weekdays(&apos;short&apos;, &apos;ar&apos;)[0] //=&gt; &apos;&#x627;&#x644;&#x627;&#x62B;&#x646;&#x64A;&#x646;&apos;
+   * @example Info.weekdays(&apos;short&apos;, { locale: &apos;fr-CA&apos; })[0] //=&gt; &apos;lun.&apos;
+   * @example Info.weekdays(&apos;short&apos;, { locale: &apos;ar&apos; })[0] //=&gt; &apos;&#x627;&#x644;&#x627;&#x62B;&#x646;&#x64A;&#x646;&apos;
    * @return {[string]}
    */
   static weekdays(length = &apos;long&apos;, { locale = null, numberingSystem = null } = {}) {
@@ -151,7 +151,7 @@ export class Info {
    * @param {object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=&gt; [ &apos;AM&apos;, &apos;PM&apos; ]
-   * @example Info.meridiems(&apos;de&apos;) //=&gt; [ &apos;vorm.&apos;, &apos;nachm.&apos; ]
+   * @example Info.meridiems({ locale: &apos;de&apos; }) //=&gt; [ &apos;vorm.&apos;, &apos;nachm.&apos; ]
    * @return {[string]}
    */
   static meridiems({ locale = null } = {}) {
@@ -165,7 +165,7 @@ export class Info {
    * @param {string} [opts.locale] - the locale code
    * @example Info.eras() //=&gt; [ &apos;BC&apos;, &apos;AD&apos; ]
    * @example Info.eras(&apos;long&apos;) //=&gt; [ &apos;Before Christ&apos;, &apos;Anno Domini&apos; ]
-   * @example Info.eras(&apos;long&apos;, &apos;fr&apos;) //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]
+   * @example Info.eras(&apos;long&apos;, { locale: &apos;fr&apos; }) //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]
    * @return {[string]}
    */
   static eras(length = &apos;short&apos;, { locale = null } = {}) {

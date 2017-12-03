@@ -2512,21 +2512,26 @@ class Duration {
 
     for (const k of orderedUnits$1) {
       if (units.indexOf(k) >= 0) {
-        built[k] = 0;
         lastUnit = k;
+
+        let own = 0;
 
         // anything we haven't boiled down yet should get boiled to this unit
         for (const ak in accumulated) {
           if (accumulated.hasOwnProperty(ak)) {
-            built[k] += this.matrix[ak][k] * accumulated[ak];
+            own += this.matrix[ak][k] * accumulated[ak];
+            accumulated[ak] = 0;
           }
-          delete accumulated[ak];
         }
 
         // plus anything that's already in this unit
         if (Util.isNumber(vals[k])) {
-          built[k] += vals[k];
+          own += vals[k];
         }
+
+        const i = Math.trunc(own);
+        built[k] = i;
+        accumulated[k] = own - i;
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
@@ -2547,11 +2552,13 @@ class Duration {
     if (lastUnit) {
       for (const key in accumulated) {
         if (accumulated.hasOwnProperty(key)) {
-          built[lastUnit] += accumulated[key] / this.matrix[lastUnit][key];
+          if (accumulated[key] > 0) {
+            built[lastUnit] +=
+              key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
+          }
         }
       }
     }
-
     return clone$1(this, { values: built }, true);
   }
 
@@ -3232,8 +3239,8 @@ class Info {
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.weekdays()[0] //=> 'Monday'
    * @example Info.weekdays('short')[0] //=> 'Mon'
-   * @example Info.weekdays('short', 'fr-CA')[0] //=> 'lun.'
-   * @example Info.weekdays('short', 'ar')[0] //=> 'الاثنين'
+   * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
+   * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
    * @return {[string]}
    */
   static weekdays(length = 'long', { locale = null, numberingSystem = null } = {}) {
@@ -3261,7 +3268,7 @@ class Info {
    * @param {object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
-   * @example Info.meridiems('de') //=> [ 'vorm.', 'nachm.' ]
+   * @example Info.meridiems({ locale: 'de' }) //=> [ 'vorm.', 'nachm.' ]
    * @return {[string]}
    */
   static meridiems({ locale = null } = {}) {
@@ -3275,7 +3282,7 @@ class Info {
    * @param {string} [opts.locale] - the locale code
    * @example Info.eras() //=> [ 'BC', 'AD' ]
    * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
-   * @example Info.eras('long', 'fr') //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
+   * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
    * @return {[string]}
    */
   static eras(length = 'short', { locale = null } = {}) {
@@ -4758,7 +4765,7 @@ class DateTime {
   /**
    * Returns the number of days in this DateTime's month
    * @example DateTime.local(2016, 2).daysInMonth //=> 29
-   * @example DateTime.local(2016, 3).days //=> 31
+   * @example DateTime.local(2016, 3).daysInMonth //=> 31
    * @return {number}
    */
   get daysInMonth() {
