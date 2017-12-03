@@ -475,21 +475,26 @@ export class Duration {
 
     for (const k of orderedUnits) {
       if (units.indexOf(k) >= 0) {
-        built[k] = 0;
         lastUnit = k;
+
+        let own = 0;
 
         // anything we haven't boiled down yet should get boiled to this unit
         for (const ak in accumulated) {
           if (accumulated.hasOwnProperty(ak)) {
-            built[k] += this.matrix[ak][k] * accumulated[ak];
+            own += this.matrix[ak][k] * accumulated[ak];
+            accumulated[ak] = 0;
           }
-          delete accumulated[ak];
         }
 
         // plus anything that's already in this unit
         if (Util.isNumber(vals[k])) {
-          built[k] += vals[k];
+          own += vals[k];
         }
+
+        const i = Math.trunc(own);
+        built[k] = i;
+        accumulated[k] = own - i;
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
@@ -510,11 +515,13 @@ export class Duration {
     if (lastUnit) {
       for (const key in accumulated) {
         if (accumulated.hasOwnProperty(key)) {
-          built[lastUnit] += accumulated[key] / this.matrix[lastUnit][key];
+          if (accumulated[key] > 0) {
+            built[lastUnit] +=
+              key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
+          }
         }
       }
     }
-
     return clone(this, { values: built }, true);
   }
 

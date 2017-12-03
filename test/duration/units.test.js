@@ -4,7 +4,7 @@ import { Duration } from '../../src/luxon';
 //------
 // #shiftTo()
 //-------
-test('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', () => {
+test('Duration#shiftTo rolls milliseconds up hours and minutes', () => {
   const dur = Duration.fromMillis(5760000);
   expect(dur.shiftTo('hours').hours).toBe(1.6);
 
@@ -14,7 +14,7 @@ test('Duration#shiftTo rolls milliseconds up shiftTo hours and minutes', () => {
   expect(mod.seconds).toBe(0);
 });
 
-test('Duration#shiftTo boils hours down shiftTo milliseconds', () => {
+test('Duration#shiftTo boils hours down milliseconds', () => {
   const dur = Duration.fromObject({ hours: 1 }).shiftTo('milliseconds');
   expect(dur.milliseconds).toBe(3600000);
 });
@@ -37,6 +37,19 @@ test('Duration#shiftTo throws on invalid units', () => {
   expect(() => {
     Duration.fromObject({ years: 2, hours: 5000 }).shiftTo('months', 'glorp');
   }).toThrow();
+});
+
+test('Duration#shiftTo tacks decimals onto the end', () => {
+  const dur = Duration.fromObject({ minutes: 73 }).shiftTo('hours');
+  expect(dur.isValid).toBe(true);
+  expect(dur.hours).toBeCloseTo(1.2167, 4);
+});
+
+test('Duration#shiftTo deconstructs decimal inputs', () => {
+  const dur = Duration.fromObject({ hours: 2.3 }).shiftTo('hours', 'minutes');
+  expect(dur.isValid).toBe(true);
+  expect(dur.hours).toBe(2);
+  expect(dur.minutes).toBeCloseTo(18, 8);
 });
 
 test('Duration#shiftTo maintains invalidity', () => {
