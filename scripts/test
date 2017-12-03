@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-NODE_ICU_DATA="$(pwd)/node_modules/full-icu" gulp test
+NODE_ICU_DATA="$(pwd)/node_modules/full-icu" LANG=en_US.utf8 gulp test
