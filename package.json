@@ -5,7 +5,10 @@
   "author": "Isaac Cambron",
   "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
-  "dependencies": {},
+  "dependencies": {
+    "flow-bin": "^0.60.1",
+    "full-icu": "^1.2.0"
+  },
   "scripts": {
     "precommit": "lint-staged"
   },
