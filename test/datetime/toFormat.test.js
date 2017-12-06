@@ -64,6 +64,8 @@ test("DateTime#toFormat('mm') returns the padded minute", () => {
 test("DateTime#toFormat('h') returns the hours", () => {
   expect(dt.toFormat('h')).toBe('9');
   expect(dt.reconfigure({ locale: 'bn' }).toFormat('h')).toBe('৯');
+  expect(dt.set({ hour: 0 }).toFormat('h')).toBe('12');
+  expect(dt.set({ hour: 24 }).toFormat('h')).toBe('12');
   expect(dt.set({ hour: 12 }).toFormat('h')).toBe('12');
   expect(dt.set({ hour: 13 }).toFormat('h')).toBe('1');
 });
@@ -71,6 +73,8 @@ test("DateTime#toFormat('h') returns the hours", () => {
 test("DateTime#toFormat('hh') returns the padded hour (12-hour time)", () => {
   expect(dt.toFormat('hh')).toBe('09');
   expect(dt.reconfigure({ locale: 'bn' }).toFormat('hh')).toBe('০৯');
+  expect(dt.set({ hour: 0 }).toFormat('h')).toBe('12');
+  expect(dt.set({ hour: 24 }).toFormat('h')).toBe('12');
   expect(dt.set({ hour: 12 }).toFormat('hh')).toBe('12');
   expect(dt.set({ hour: 13 }).toFormat('hh')).toBe('01');
 });
