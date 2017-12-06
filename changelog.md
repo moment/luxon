@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.7
+
+ * Fix `DateTime.fromMillis(0)`
+
 ## 0.2.6
 
  * Fix 'h' and 'hh' `toFormat` tokens for midnight
