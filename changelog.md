@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.2.6
+
+ * Fix 'h' and 'hh' `toFormat` tokens for midnight
+
 ## 0.2.5
 
- * Better shiftTo behavior for durations with floating point components
+ * Better `shiftTo` behavior for durations with floating point components
 
 ## 0.2.4
 
