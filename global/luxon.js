@@ -1350,9 +1350,9 @@ var Formatter = function () {
             return _this.num(dt.minute, 2);
           // hours
           case 'h':
-            return _this.num(dt.hour === 12 ? 12 : dt.hour % 12);
+            return _this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12);
           case 'hh':
-            return _this.num(dt.hour === 12 ? 12 : dt.hour % 12, 2);
+            return _this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12, 2);
           case 'H':
             return _this.num(dt.hour);
           case 'HH':

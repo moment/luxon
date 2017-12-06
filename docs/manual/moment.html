@@ -239,6 +239,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-6" data-ice="link">0.2.6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-5" data-ice="link">0.2.5</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-4" data-ice="link">0.2.4</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-3" data-ice="link">0.2.3</a></li>
@@ -341,7 +342,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>From custom format</td>
 <td><code>moment(String, String)</code></td>
 <td><code>DateTime.fromString(String, String)</code></td>
-<td></td>
+<td>The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.</td>
 </tr>
 <tr>
 <td>From object</td>
@@ -707,7 +708,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>custom format</td>
 <td><code>format(...)</code></td>
 <td><code>toFormat(...)</code></td>
-<td></td>
+<td>The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.</td>
 </tr>
 <tr>
 <td>RFC 2822</td>

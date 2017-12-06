@@ -239,6 +239,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-6" data-ice="link">0.2.6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-5" data-ice="link">0.2.5</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-4" data-ice="link">0.2.4</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-3" data-ice="link">0.2.3</a></li>
@@ -1950,7 +1951,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>From custom format</td>
 <td><code>moment(String, String)</code></td>
 <td><code>DateTime.fromString(String, String)</code></td>
-<td></td>
+<td>The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.</td>
 </tr>
 <tr>
 <td>From object</td>
@@ -2308,7 +2309,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>custom format</td>
 <td><code>format(...)</code></td>
 <td><code>toFormat(...)</code></td>
-<td></td>
+<td>The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.</td>
 </tr>
 <tr>
 <td>RFC 2822</td>
@@ -2422,8 +2423,10 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.2.5</h2><ul>
-<li>Better shiftTo behavior for durations with floating point components</li>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.2.6</h2><ul>
+<li>Fix &apos;h&apos; and &apos;hh&apos; <code>toFormat</code> tokens for midnight</li>
+</ul><h2>0.2.5</h2><ul>
+<li>Better <code>shiftTo</code> behavior for durations with floating point components</li>
 </ul><h2>0.2.4</h2><ul>
 <li>Fix <code>toHTTP</code> to use 24-hour hours</li>
 <li>Tighten up regular expressions</li>
