@@ -161,9 +161,9 @@ export class Formatter {
             return this.num(dt.minute, 2);
           // hours
           case 'h':
-            return this.num(dt.hour === 12 ? 12 : dt.hour % 12);
+            return this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12);
           case 'hh':
-            return this.num(dt.hour === 12 ? 12 : dt.hour % 12, 2);
+            return this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12, 2);
           case 'H':
             return this.num(dt.hour);
           case 'HH':
