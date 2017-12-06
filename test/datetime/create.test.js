@@ -238,10 +238,10 @@ test('DateTime.fromJSDate accepts the default locale', () => {
 // .fromMillis()
 //-------
 test('DateTime.fromMillis(ms) has a value of ms', () => {
-  const value = 391147200000,
-    dateTime = DateTime.fromMillis(value);
+  const bigValue = 391147200000;
+  expect(DateTime.fromMillis(bigValue).valueOf()).toBe(bigValue);
 
-  expect(dateTime.valueOf()).toBe(value);
+  expect(DateTime.fromMillis(0).valueOf()).toBe(0);
 });
 
 test('DateTime.fromMillis(ms) accepts a zone option', () => {

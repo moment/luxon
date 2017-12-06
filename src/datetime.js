@@ -341,7 +341,7 @@ export class DateTime {
     /**
      * @access private
      */
-    this.ts = config.ts || Settings.now();
+    this.ts = Util.isUndefined(config.ts) ? Settings.now() : config.ts;
     /**
      * @access private
      */
