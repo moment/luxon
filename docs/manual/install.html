@@ -239,6 +239,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-7" data-ice="link">0.2.7</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-6" data-ice="link">0.2.6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-5" data-ice="link">0.2.5</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-4" data-ice="link">0.2.4</a></li>
@@ -307,6 +308,7 @@
 <pre><code><code class="source-code prettyprint">npm install --save luxon</code>
 </code></pre><pre><code class="lang-js"><code class="source-code prettyprint">const { DateTime } = require(&apos;luxon&apos;);</code>
 </code></pre>
+<p>If you want to work with locales, you&apos;ll need to have <code>full-icu</code> support installed in Node. You can <a href="https://github.com/nodejs/node/wiki/Intl">build Node with it</a>, use an <a href="https://www.npmjs.com/package/full-icu">NPM module</a> to provide it, or find it prepackaged for your platform, like <code>brew install node --with-full-icu</code>. If you skip this step, Luxon still works but methods like <code>setLocale()</code> will do nothing.</p>
 <h2 id="amd--system-js--requirejs--etc-">AMD (System.js, RequireJS, etc)</h2><ul>
 <li><a href="./manual/../../amd/luxon.js">Download full</a></li>
 <li><a href="./manual/../../amd/luxon.min.js">Download minified</a></li>

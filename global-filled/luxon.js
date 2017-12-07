@@ -3008,6 +3008,29 @@ function stringifyTokens(splits, tokenToString) {
   return s;
 }
 
+var tokenToObject = {
+  D: Formats.DATE_SHORT,
+  DD: Formats.DATE_MED,
+  DDD: Formats.DATE_FULL,
+  DDDD: Formats.DATE_HUGE,
+  t: Formats.TIME_SIMPLE,
+  tt: Formats.TIME_WITH_SECONDS,
+  ttt: Formats.TIME_WITH_SHORT_OFFSET,
+  tttt: Formats.TIME_WITH_LONG_OFFSET,
+  T: Formats.TIME_24_SIMPLE,
+  TT: Formats.TIME_24_WITH_SECONDS,
+  TTT: Formats.TIME_24_WITH_SHORT_OFFSET,
+  TTTT: Formats.TIME_24_WITH_LONG_OFFSET,
+  f: Formats.DATETIME_SHORT,
+  ff: Formats.DATETIME_MED,
+  fff: Formats.DATETIME_FULL,
+  ffff: Formats.DATETIME_HUGE,
+  F: Formats.DATETIME_SHORT_WITH_SECONDS,
+  FF: Formats.DATETIME_MED_WITH_SECONDS,
+  FFF: Formats.DATETIME_FULL_WITH_SECONDS,
+  FFFF: Formats.DATETIME_HUGE_WITH_SECONDS
+};
+
 /**
  * @private
  */
@@ -3150,6 +3173,14 @@ var Formatter = function () {
       },
           weekday = function weekday(length, standalone) {
         return knownEnglish ? English.weekdayForDateTime(dt, length) : string(standalone ? { weekday: length } : { weekday: length, month: 'long', day: 'numeric' }, 'weekday');
+      },
+          maybeMacro = function maybeMacro(token) {
+        var macro = tokenToObject[token];
+        if (macro) {
+          return _this.formatWithSystemDefault(dt, macro);
+        } else {
+          return token;
+        }
       },
           era = function era(length) {
         return knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, 'era');
@@ -3305,50 +3336,8 @@ var Formatter = function () {
             return _this.num(dt.ordinal);
           case 'ooo':
             return _this.num(dt.ordinal, 3);
-          // macros
-          case 'D':
-            return _this.formatWithSystemDefault(dt, DateTime.DATE_SHORT);
-          case 'DD':
-            return _this.formatWithSystemDefault(dt, DateTime.DATE_MED);
-          case 'DDD':
-            return _this.formatWithSystemDefault(dt, DateTime.DATE_FULL);
-          case 'DDDD':
-            return _this.formatWithSystemDefault(dt, DateTime.DATE_HUGE);
-          case 't':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_SIMPLE);
-          case 'tt':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SECONDS);
-          case 'ttt':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_WITH_SHORT_OFFSET);
-          case 'tttt':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_WITH_LONG_OFFSET);
-          case 'T':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_SIMPLE);
-          case 'TT':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SECONDS);
-          case 'TTT':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_SHORT_OFFSET);
-          case 'TTTT':
-            return _this.formatWithSystemDefault(dt, DateTime.TIME_24_WITH_LONG_OFFSET);
-          case 'f':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT);
-          case 'ff':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_MED);
-          case 'fff':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL);
-          case 'ffff':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE);
-          case 'F':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_SHORT_WITH_SECONDS);
-          case 'FF':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_MED_WITH_SECONDS);
-          case 'FFF':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_FULL_WITH_SECONDS);
-          case 'FFFF':
-            return _this.formatWithSystemDefault(dt, DateTime.DATETIME_HUGE_WITH_SECONDS);
-
           default:
-            return token;
+            return maybeMacro(token);
         }
       };
 
@@ -7137,7 +7126,7 @@ var DateTime = function () {
     /**
      * @access private
      */
-    this.ts = config.ts || Settings.now();
+    this.ts = Util.isUndefined(config.ts) ? Settings.now() : config.ts;
     /**
      * @access private
      */
