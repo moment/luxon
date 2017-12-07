@@ -48,6 +48,8 @@ npm install --save luxon
 const { DateTime } = require('luxon');
 ```
 
+If you want to work with locales, you'll need to have `full-icu` support installed in Node. You can [build Node with it](https://github.com/nodejs/node/wiki/Intl), use an [NPM module](https://www.npmjs.com/package/full-icu) to provide it, or find it prepackaged for your platform, like `brew install node --with-full-icu`. If you skip this step, Luxon still works but methods like `setLocale()` will do nothing.
+
 ## AMD (System.js, RequireJS, etc)
 
 * [Download full](../../amd/luxon.js)
