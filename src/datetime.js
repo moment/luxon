@@ -1337,7 +1337,7 @@ export class DateTime {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime's date component
-   * @example DateTime.utc(1982, 5, 25).toISODate() //=> '07:34:19.361Z'
+   * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
    * @return {string}
    */
   toISODate() {
