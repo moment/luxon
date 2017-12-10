@@ -1120,12 +1120,12 @@ export class DateTime {
 
   /**
    * "Set" the values of specified units. Returns a newly-constructed DateTime.
+   * You can only set units with this method; for "setting" metadata, see {@link reconfigure} and {@link setZone}.
    * @param {object} values - a mapping of units to numbers
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
    * @example dt.set({ weekday: 5 })
    * @example dt.set({ year: 2005, ordinal: 234 })
-   * @example dt.set({ outputCalendar: 'beng', zone: 'utc' })
    * @return {DateTime}
    */
   set(values) {
