@@ -187,7 +187,7 @@ export class Interval {
   }
 
   /**
-   * Return this Interval's start is after the specified DateTime.
+   * Return whether this Interval's start is after the specified DateTime.
    * @param {DateTime} dateTime
    * @return {boolean}
    */
@@ -197,7 +197,7 @@ export class Interval {
   }
 
   /**
-   * Return this Interval's end is before the specified DateTime.
+   * Return whether this Interval's end is before the specified DateTime.
    * @param {Datetime} dateTime
    * @return {boolean}
    */
@@ -207,7 +207,7 @@ export class Interval {
   }
 
   /**
-   * Return this Interval contains the specified DateTime.
+   * Return whether this Interval contains the specified DateTime.
    * @param {DateTime} dateTime
    * @return {boolean}
    */
