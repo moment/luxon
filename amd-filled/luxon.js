@@ -4637,7 +4637,7 @@ function isHighOrderNegative(obj) {
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
  *
- * * **Creation** To create a Duration, use {@link Duration#fromMillis}, {@link Duration#fromObject}, or {@link Duration#fromISO}.
+ * * **Creation** To create a Duration, use {@link Duration.fromMillis}, {@link Duration.fromObject}, or {@link Duration.fromISO}.
  * * **Unit values** See the {@link years}, {@link months}, {@link weeks}, {@link days}, {@link hours}, {@link minutes}, {@link seconds}, {@link milliseconds} accessors.
  * * **Configuration** See  {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation** To create new Durations out of old ones use {@link plus}, {@link minus}, {@link normalize}, {@link set}, {@link reconfigure}, {@link shiftTo}, and {@link negate}.
@@ -5478,7 +5478,7 @@ var Interval = function () {
     }
 
     /**
-     * Return this Interval's start is after the specified DateTime.
+     * Return whether this Interval's start is after the specified DateTime.
      * @param {DateTime} dateTime
      * @return {boolean}
      */
@@ -5491,7 +5491,7 @@ var Interval = function () {
     }
 
     /**
-     * Return this Interval's end is before the specified DateTime.
+     * Return whether this Interval's end is before the specified DateTime.
      * @param {Datetime} dateTime
      * @return {boolean}
      */
@@ -5504,7 +5504,7 @@ var Interval = function () {
     }
 
     /**
-     * Return this Interval contains the specified DateTime.
+     * Return whether this Interval contains the specified DateTime.
      * @param {DateTime} dateTime
      * @return {boolean}
      */
@@ -7315,12 +7315,12 @@ var DateTime = function () {
 
     /**
      * "Set" the values of specified units. Returns a newly-constructed DateTime.
+     * You can only set units with this method; for "setting" metadata, see {@link reconfigure} and {@link setZone}.
      * @param {object} values - a mapping of units to numbers
      * @example dt.set({ year: 2017 })
      * @example dt.set({ hour: 8, minute: 30 })
      * @example dt.set({ weekday: 5 })
      * @example dt.set({ year: 2005, ordinal: 234 })
-     * @example dt.set({ outputCalendar: 'beng', zone: 'utc' })
      * @return {DateTime}
      */
 
@@ -7554,7 +7554,7 @@ var DateTime = function () {
 
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's date component
-     * @example DateTime.utc(1982, 5, 25).toISODate() //=> '07:34:19.361Z'
+     * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
      * @return {string}
      */
 
