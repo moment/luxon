@@ -59,6 +59,12 @@
   "engines": {
     "node": "*"
   },
-  "files": ["build/node/luxon.js", "build/cjs-browser/luxon.js", "src"],
+  "files": [
+    "build/node/luxon.js",
+    "build/node/luxon.js.map",
+    "build/cjs-browser/luxon.js",
+    "build/cjs-browser/luxon.js.map",
+    "src"
+  ],
   "license": "MIT"
 }

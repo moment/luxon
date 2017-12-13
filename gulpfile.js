@@ -69,14 +69,26 @@ function processLib(dest, opts) {
         .pipe(sourcemaps.write, '.')
         .pipe(gulp.dest, fullDest);
 
-    return rollupLib(opts)
-      .pipe(source(opts.src || './src/luxon.js'))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({ loadMaps: true }))
-      .pipe(sourcemaps.write('.'))
-      .pipe(rename({ basename: 'luxon', dirname: '' }))
-      .pipe(gulp.dest(fullDest))
-      .pipe(minifyLib());
+    return (
+      rollupLib(opts)
+        .pipe(source(opts.src || './src/luxon.js'))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({ loadMaps: true }))
+        .pipe(sourcemaps.write('.'))
+        // see https://github.com/hparra/gulp-rename/issues/16 for why this is complicated
+        .pipe(
+          rename(path => {
+            const weirdExt = path.basename
+              .split('.')
+              .slice(1)
+              .map(n => `.${n}`);
+            path.dirname = '';
+            path.basename = 'luxon' + weirdExt;
+          })
+        )
+        .pipe(gulp.dest(fullDest))
+        .pipe(minifyLib())
+    );
   };
 }
 
@@ -90,8 +102,7 @@ function prettify(opts) {
 }
 
 function checkForDocCoverage() {
-  // eslint-disable-next-line func-names
-  return through.obj(function(file, enc, cb) {
+  return through.obj((file, enc, cb) => {
     const content = file.contents.toString(enc),
       parsed = JSON.parse(content);
     if (parsed.coverage === '100%') {
