@@ -16,7 +16,7 @@ Luxon officially supports the last two versions of the major browsers, with some
 | Safari       |       11 |                                                                   |
 |              |       10 | no intl tokens, no zones                                          |
 | Node w/ICU   |        8 |                                                                   |
-|              |        6 | no zones                                                          |
+|              |        6 | no zones, no intl tokens                                          |
 | Node w/o ICU |        8 | no intl tokens                                                    |
 |              |        6 | no intl tokens, no zones                                          |
 
