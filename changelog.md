@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.8
+
+ * Fix sourcemaps
+
 ## 0.2.7
 
  * Fix `DateTime.fromMillis(0)`
