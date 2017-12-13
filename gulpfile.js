@@ -102,7 +102,8 @@ function prettify(opts) {
 }
 
 function checkForDocCoverage() {
-  return through.obj((file, enc, cb) => {
+  // eslint-disable-next-line func-names
+  return through.obj(function(file, enc, cb) {
     const content = file.contents.toString(enc),
       parsed = JSON.parse(content);
     if (parsed.coverage === '100%') {
