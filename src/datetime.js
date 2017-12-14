@@ -327,21 +327,20 @@ export class DateTime {
       invalidReason =
         config.invalidReason ||
         (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
-        (!zone.isValid ? UNSUPPORTED_ZONE : null),
-      ts = config.ts || Settings.now();
-
-    let c = null,
-      o = null;
-    if (!invalidReason) {
-      const unchanged = config.old && config.old.ts === ts && config.old.zone.equals(zone);
-      c = unchanged ? config.old.c : tsToObj(ts, zone.offset(ts));
-      o = unchanged ? config.old.o : zone.offset(ts);
-    }
-
+        (!zone.isValid ? UNSUPPORTED_ZONE : null);
     /**
      * @access private
      */
     this.ts = Util.isUndefined(config.ts) ? Settings.now() : config.ts;
+
+    let c = null,
+      o = null;
+    if (!invalidReason) {
+      const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
+      c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
+      o = unchanged ? config.old.o : zone.offset(this.ts);
+    }
+
     /**
      * @access private
      */
