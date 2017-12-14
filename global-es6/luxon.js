@@ -4065,21 +4065,20 @@ class DateTime {
       invalidReason =
         config.invalidReason ||
         (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
-        (!zone.isValid ? UNSUPPORTED_ZONE : null),
-      ts = config.ts || Settings.now();
-
-    let c = null,
-      o = null;
-    if (!invalidReason) {
-      const unchanged = config.old && config.old.ts === ts && config.old.zone.equals(zone);
-      c = unchanged ? config.old.c : tsToObj(ts, zone.offset(ts));
-      o = unchanged ? config.old.o : zone.offset(ts);
-    }
-
+        (!zone.isValid ? UNSUPPORTED_ZONE : null);
     /**
      * @access private
      */
     this.ts = Util.isUndefined(config.ts) ? Settings.now() : config.ts;
+
+    let c = null,
+      o = null;
+    if (!invalidReason) {
+      const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
+      c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
+      o = unchanged ? config.old.o : zone.offset(this.ts);
+    }
+
     /**
      * @access private
      */
@@ -4347,7 +4346,7 @@ class DateTime {
    * Create a DateTime from an ISO 8601 string
    * @param {string} text - the ISO string
    * @param {Object} opts - options to affect the creation
-   * @param {boolean} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
+   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -4368,7 +4367,7 @@ class DateTime {
    * Create a DateTime from an RFC 2822 string
    * @param {string} text - the RFC 2822 string
    * @param {Object} opts - options to affect the creation
-   * @param {boolean} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -4388,7 +4387,7 @@ class DateTime {
    * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
    * @param {string} text - the HTTP header date
    * @param {object} options - options to affect the creation
-   * @param {boolean} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {string|Zone} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
    * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -4409,7 +4408,7 @@ class DateTime {
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
    * @param {Object} options - options to affect the creation
-   * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
@@ -4436,7 +4435,7 @@ class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
    * @param {Object} options - options to affect the creation
-   * @param {boolean} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
@@ -5229,7 +5228,7 @@ class DateTime {
 
   /**
    * Returns a Javascript Date equivalent to this DateTime.
-   * @return {object}
+   * @return {Date}
    */
   toJSDate() {
     return new Date(this.isValid ? this.ts : NaN);
