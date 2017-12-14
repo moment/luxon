@@ -1491,7 +1491,7 @@ export class DateTime {
 
   /**
    * Returns a Javascript Date equivalent to this DateTime.
-   * @return {object}
+   * @return {Date}
    */
   toJSDate() {
     return new Date(this.isValid ? this.ts : NaN);
