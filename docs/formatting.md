@@ -172,7 +172,7 @@ The macro options available correspond one-to-one with the preset formats define
 | mm              |              | minute, padded to 2                                            | 07                                                          |
 | h               |              | hour in 12-hour time, no padding                               | 1                                                           |
 | hh              |              | hour in 12-hour time, padded to 2                              | 01                                                          |
-| H               |              | hour in 24-hour time, padded to 2                              | 9                                                           |
+| H               |              | hour in 24-hour time, no padding                               | 9                                                           |
 | HH              |              | hour in 24-hour time, padded to 2                              | 13                                                          |
 | Z               |              | narrow offset                                                  | +5                                                          |
 | ZZ              |              | short offset                                                   | +05:00                                                      |
