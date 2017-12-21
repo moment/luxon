@@ -46,7 +46,7 @@ All of these are parsable by `fromISO`:
 
  * In addition, all the times support offset arguments like "Z" and "+06:00".
  * Missing lower-order values are always set to the minimum possible value; i.e. it always parses to a full DateTime. For example, "2016-05-25" parses to midnight of that day. "2016-05" parses to the first of the month, etc.
- * The time is parsed as a local time if no offset is specified, but see the method docs to see your options,and also check out [time zone docs](zones.html) for more details.
+ * The time is parsed as a local time if no offset is specified, but see the method docs to see your options, and also check out [time zone docs](zones.html) for more details.
 
 ### HTTP and RFC2822
 
@@ -161,7 +161,7 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 
 (Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).
 
-| Standlone token | Format token | Description                                                    |                   Example |
+| Standalone token | Format token | Description                                                    |                   Example |
 | ---             | ---          | ---                                                            |                       --- |
 | S               |              | millisecond, no padding                                        |                        54 |
 | SSS             |              | millisecond, padded to 3                                       |                       054 |
