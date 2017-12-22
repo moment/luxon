@@ -161,7 +161,7 @@ The macro options available correspond one-to-one with the preset formats define
 
 (Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).
 
-| Standlone token | Format token | Description                                                    | Example                                                     |
+| Standalone token | Format token | Description                                                    | Example                                                     |
 | ---             | ---          | ---                                                            | ---                                                         |
 | S               |              | millisecond, no padding                                        | 54                                                          |
 | SSS             |              | millisecond, padded to 3                                       | 054                                                         |

@@ -113,7 +113,7 @@
 ## 0.0.7
 
  * Added `toLocaleParts`
- * Slighly more friendly month/weekday parsing
+ * Slightly more friendly month/weekday parsing
  * Default locale setting
 
 ## 0.0.6
