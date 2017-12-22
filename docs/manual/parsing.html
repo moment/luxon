@@ -321,7 +321,7 @@
 </code></pre><ul>
 <li>In addition, all the times support offset arguments like &quot;Z&quot; and &quot;+06:00&quot;.</li>
 <li>Missing lower-order values are always set to the minimum possible value; i.e. it always parses to a full DateTime. For example, &quot;2016-05-25&quot; parses to midnight of that day. &quot;2016-05&quot; parses to the first of the month, etc.</li>
-<li>The time is parsed as a local time if no offset is specified, but see the method docs to see your options,and also check out <a href="./manual/zones.html">time zone docs</a> for more details.</li>
+<li>The time is parsed as a local time if no offset is specified, but see the method docs to see your options, and also check out <a href="./manual/zones.html">time zone docs</a> for more details.</li>
 </ul>
 <h3 id="http-and-rfc2822">HTTP and RFC2822</h3><p>Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&apos;Tue, 01 Nov 2016 13:23:12 +0630&apos;);
@@ -394,7 +394,7 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
 <table>
 <thead>
 <tr>
-<th>Standlone token</th>
+<th>Standalone token</th>
 <th>Format token</th>
 <th>Description</th>
 <th>Example</th>
