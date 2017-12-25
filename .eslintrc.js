@@ -1,9 +1,11 @@
 const prettierOptions = require('./.prettier.js');
 
 module.exports = {
+  parser: 'babel-eslint',
   extends: ['airbnb-base', 'prettier'],
-  plugins: ['import', 'prettier'],
+  plugins: ['import', 'prettier', 'flowtype-errors'],
   rules: {
+    'flowtype-errors/show-errors': 2,
     radix: 'off',
     'prettier/prettier': ['error', prettierOptions],
     // the prettier config override for this is broken

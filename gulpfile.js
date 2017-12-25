@@ -14,6 +14,7 @@ const babel = require('rollup-plugin-babel'),
   process = require('process'),
   rename = require('gulp-rename'),
   rollup = require('rollup-stream'),
+  rollupFlow = require('rollup-plugin-flow'),
   rollupNode = require('rollup-plugin-node-resolve'),
   rollupCommonJS = require('rollup-plugin-commonjs'),
   runSequence = require('run-sequence'),
@@ -29,6 +30,7 @@ function rollupLib(inopts) {
         sourcemap: true,
         format: inopts.format,
         plugins: [
+          rollupFlow(),
           rollupNode(),
           rollupCommonJS({
             include: 'node_modules/**'
