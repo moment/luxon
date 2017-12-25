@@ -85,6 +85,22 @@ npm install --save luxon
 import { DateTime } from 'luxon';
 ```
 
+## Types
+
+There are third-party typing files for Flow (via [flow-typed](https://github.com/flowtype/flow-typed)) and TypeScript (via [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)).
+
+For Flow, use:
+
+```
+flow-typed install luxon
+```
+
+For TypeScript, use:
+
+```
+npm install --save-dev @types/luxon
+```
+
 ## Meteor
 
 [Help wanted.]
