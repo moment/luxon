@@ -89,7 +89,7 @@ const orderedUnits = [
 function clone(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
-    values: clear ? alts.values : Object.assign(dur.values, alts.values || {}),
+    values: clear ? alts.values : Object.assign({}, dur.values, alts.values || {}),
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
   };
@@ -536,7 +536,7 @@ export class Duration {
     for (const k of Object.keys(this.values)) {
       negated[k] = -this.values[k];
     }
-    return clone(this, { values: negated });
+    return clone(this, { values: negated }, true);
   }
 
   /**

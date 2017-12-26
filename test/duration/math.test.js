@@ -100,6 +100,12 @@ test('Duration#negate preserves invalidity', () => {
   expect(result.invalidReason).toBe('because');
 });
 
+test("Duration#negate doesn't mutate", () => {
+  const orig = Duration.fromObject({ hours: 8 });
+  orig.negate();
+  expect(orig.hours).toBe(8);
+});
+
 test('Duration#negate preserves conversionAccuracy', () => {
   const dur = Duration.fromObject({
       hours: 4,
