@@ -1,11 +1,14 @@
 const babel = require('rollup-plugin-babel'),
+  benchmark = require('gulp-benchmark'),
   buffer = require('vinyl-buffer'),
   coveralls = require('gulp-coveralls'),
+  del = require('del'),
   docConfig = require('./docs/index'),
   esdoc = require('gulp-esdoc'),
   eslint = require('gulp-eslint'),
   filter = require('gulp-filter'),
   gulp = require('gulp'),
+  gulpBabel = require('gulp-babel'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
   minify = require('gulp-babel-minify'),
@@ -246,3 +249,28 @@ gulp.task('default', cb =>
 );
 
 gulp.task('prerelease', cb => runSequence('format', 'build', 'lint', 'docs', 'site', cb));
+
+// I can't seem to pipe the results of babeling the test suite directly into benchmark()
+// even when intermediating with buffer(), but perhaps someone with more gulp skills
+// can sort that out
+// In the meantime, build it as a separate step
+
+const benchBuildDir = './build/benchmarks';
+
+gulp.task('clean-benchmarks', () => del([benchBuildDir]));
+
+gulp.task('build-benchmarks', ['node'], () => {
+  return gulp
+    .src('./benchmarks/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(gulpBabel())
+    .pipe(gulp.dest(benchBuildDir));
+});
+
+gulp.task('benchmark', ['clean-benchmarks', 'build-benchmarks'], () => {
+  gulp.src(`${benchBuildDir}/*`, { read: false }).pipe(
+    benchmark({
+      reporters: benchmark.reporters.fastest
+    })
+  );
+});
