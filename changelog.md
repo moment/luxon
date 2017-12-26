@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.10
+
+ * Fix bug where Durations could sometimes mutate
+
 ## 0.2.9
 
  * Fix `DateTime.fromMillis(0)` more thoroughly
