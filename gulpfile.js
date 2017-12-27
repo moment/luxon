@@ -1,11 +1,14 @@
 const babel = require('rollup-plugin-babel'),
+  benchmark = require('gulp-benchmark'),
   buffer = require('vinyl-buffer'),
   coveralls = require('gulp-coveralls'),
+  del = require('del'),
   docConfig = require('./docs/index'),
   esdoc = require('gulp-esdoc'),
   eslint = require('gulp-eslint'),
   filter = require('gulp-filter'),
   gulp = require('gulp'),
+  gulpBabel = require('gulp-babel'),
   jest = require('gulp-jest').default,
   lazypipe = require('lazypipe'),
   minify = require('gulp-babel-minify'),
@@ -246,3 +249,23 @@ gulp.task('default', cb =>
 );
 
 gulp.task('prerelease', cb => runSequence('format', 'build', 'lint', 'docs', 'site', cb));
+
+function buildbenchmarks() {
+  return gulp
+    .src('./benchmarks/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(gulpBabel())
+    .pipe(gulp.dest('built-benchmarks'));
+}
+
+gulp.task('buildbenchmarks', ['node'], buildbenchmarks);
+
+gulp.task('benchmark', ['clean:benchmarks', 'buildbenchmarks'], () => {
+  gulp.src('/built-benchmarks/*.js', { read: false }).pipe(
+    benchmark({
+      reporters: benchmark.reporters.etalon('RegExp#test')
+    })
+  );
+});
+
+gulp.task('clean:benchmarks', () => del(['./built-benchmarks/**/*']));
