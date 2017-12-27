@@ -1662,7 +1662,7 @@ export class DateTime {
   /**
    * Return the min of several date times
    * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
-   * @return {DateTime}
+   * @return {DateTime} the min DateTime, or undefined if called with no argument
    */
   static min(...dateTimes) {
     return Util.bestBy(dateTimes, i => i.valueOf(), Math.min);
@@ -1671,7 +1671,7 @@ export class DateTime {
   /**
    * Return the max of several date times
    * @param {...DateTime} dateTimes - the DateTimes from which to choose the maximum
-   * @return {DateTime}
+   * @return {DateTime} the max DateTime, or undefined if called with no argument
    */
   static max(...dateTimes) {
     return Util.bestBy(dateTimes, i => i.valueOf(), Math.max);
