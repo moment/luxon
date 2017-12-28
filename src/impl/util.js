@@ -43,6 +43,9 @@ export class Util {
   }
 
   static bestBy(arr, by, compare) {
+    if (arr.length === 0) {
+      return undefined;
+    }
     return arr.reduce((best, next) => {
       const pair = [by(next), next];
       if (!best) {
