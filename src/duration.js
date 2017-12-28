@@ -161,7 +161,7 @@ export class Duration {
   }
 
   /**
-   * Create an DateTime from a Javascript object with keys like 'years' and 'hours'.
+   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.months
@@ -185,7 +185,7 @@ export class Duration {
   }
 
   /**
-   * Create a DateTime from an ISO 8601 duration string.
+   * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
    * @param {Object} opts - options for parsing
    * @param {string} [obj.locale='en-US'] - the locale to use
@@ -209,7 +209,7 @@ export class Duration {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
+      throw new InvalidArgumentError('need to specify a reason the Duration is invalid');
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDurationError(reason);
