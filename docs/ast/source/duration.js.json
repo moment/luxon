@@ -9605,7 +9605,7 @@
                 "trailingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Create an DateTime from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
+                    "value": "*\n   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
                     "start": 5579,
                     "end": 6241,
                     "loc": {
@@ -10155,7 +10155,7 @@
                 "leadingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Create an DateTime from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
+                    "value": "*\n   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
                     "start": 5579,
                     "end": 6241,
                     "loc": {
@@ -10173,7 +10173,7 @@
                 "trailingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Create a DateTime from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
+                    "value": "*\n   * Create a Duration from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
                     "start": 6465,
                     "end": 7208,
                     "loc": {
@@ -10602,7 +10602,7 @@
                 "leadingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Create a DateTime from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
+                    "value": "*\n   * Create a Duration from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
                     "start": 6465,
                     "end": 7208,
                     "loc": {
@@ -10835,10 +10835,10 @@
                                     }
                                   },
                                   "extra": {
-                                    "rawValue": "need to specify a reason the DateTime is invalid",
-                                    "raw": "'need to specify a reason the DateTime is invalid'"
+                                    "rawValue": "need to specify a reason the Duration is invalid",
+                                    "raw": "'need to specify a reason the Duration is invalid'"
                                   },
-                                  "value": "need to specify a reason the DateTime is invalid"
+                                  "value": "need to specify a reason the Duration is invalid"
                                 }
                               ]
                             }
@@ -32236,7 +32236,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Create an DateTime from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
+      "value": "*\n   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
       "start": 5579,
       "end": 6241,
       "loc": {
@@ -32252,7 +32252,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Create a DateTime from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
+      "value": "*\n   * Create a Duration from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
       "start": 6465,
       "end": 7208,
       "loc": {
@@ -50051,7 +50051,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Create an DateTime from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
+      "value": "*\n   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.\n   * @param {Object} obj - the object to create the DateTime from\n   * @param {number} obj.years\n   * @param {number} obj.months\n   * @param {number} obj.weeks\n   * @param {number} obj.days\n   * @param {number} obj.hours\n   * @param {number} obj.minutes\n   * @param {number} obj.seconds\n   * @param {number} obj.milliseconds\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @return {Duration}\n   ",
       "start": 5579,
       "end": 6241,
       "loc": {
@@ -51205,7 +51205,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Create a DateTime from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
+      "value": "*\n   * Create a Duration from an ISO 8601 duration string.\n   * @param {string} text - text to parse\n   * @param {Object} opts - options for parsing\n   * @param {string} [obj.locale='en-US'] - the locale to use\n   * @param {string} obj.numberingSystem - the numbering system to use\n   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use\n   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations\n   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }\n   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }\n   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }\n   * @return {Duration}\n   ",
       "start": 6465,
       "end": 7208,
       "loc": {
@@ -52543,7 +52543,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "need to specify a reason the DateTime is invalid",
+      "value": "need to specify a reason the Duration is invalid",
       "start": 7560,
       "end": 7610,
       "loc": {

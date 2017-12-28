@@ -1574,6 +1574,9 @@ class Util {
   }
 
   static bestBy(arr, by, compare) {
+    if (arr.length === 0) {
+      return undefined;
+    }
     return arr.reduce((best, next) => {
       const pair = [by(next), next];
       if (!best) {
@@ -2187,7 +2190,7 @@ class Duration {
   }
 
   /**
-   * Create an DateTime from a Javascript object with keys like 'years' and 'hours'.
+   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.months
@@ -2211,7 +2214,7 @@ class Duration {
   }
 
   /**
-   * Create a DateTime from an ISO 8601 duration string.
+   * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
    * @param {Object} opts - options for parsing
    * @param {string} [obj.locale='en-US'] - the locale to use
@@ -2235,7 +2238,7 @@ class Duration {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
+      throw new InvalidArgumentError('need to specify a reason the Duration is invalid');
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDurationError(reason);
@@ -5397,7 +5400,7 @@ class DateTime {
   /**
    * Return the min of several date times
    * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
-   * @return {DateTime}
+   * @return {DateTime} the min DateTime, or undefined if called with no argument
    */
   static min(...dateTimes) {
     return Util.bestBy(dateTimes, i => i.valueOf(), Math.min);
@@ -5406,7 +5409,7 @@ class DateTime {
   /**
    * Return the max of several date times
    * @param {...DateTime} dateTimes - the DateTimes from which to choose the maximum
-   * @return {DateTime}
+   * @return {DateTime} the max DateTime, or undefined if called with no argument
    */
   static max(...dateTimes) {
     return Util.bestBy(dateTimes, i => i.valueOf(), Math.max);

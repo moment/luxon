@@ -2165,6 +2165,9 @@ var Util = function () {
   }, {
     key: 'bestBy',
     value: function bestBy(arr, by, compare) {
+      if (arr.length === 0) {
+        return undefined;
+      }
       return arr.reduce(function (best, next) {
         var pair = [by(next), next];
         if (!best) {
@@ -3446,7 +3449,7 @@ var Duration = function () {
     }
 
     /**
-     * Create an DateTime from a Javascript object with keys like 'years' and 'hours'.
+     * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
      * @param {Object} obj - the object to create the DateTime from
      * @param {number} obj.years
      * @param {number} obj.months
@@ -3473,7 +3476,7 @@ var Duration = function () {
     }
 
     /**
-     * Create a DateTime from an ISO 8601 duration string.
+     * Create a Duration from an ISO 8601 duration string.
      * @param {string} text - text to parse
      * @param {Object} opts - options for parsing
      * @param {string} [obj.locale='en-US'] - the locale to use
@@ -3503,7 +3506,7 @@ var Duration = function () {
     key: 'invalid',
     value: function invalid(reason) {
       if (!reason) {
-        throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
+        throw new InvalidArgumentError('need to specify a reason the Duration is invalid');
       }
       if (Settings.throwOnInvalid) {
         throw new InvalidDurationError(reason);
@@ -6126,7 +6129,7 @@ var DateTime = function () {
     /**
      * Return the min of several date times
      * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
-     * @return {DateTime}
+     * @return {DateTime} the min DateTime, or undefined if called with no argument
      */
 
   }, {
@@ -6935,7 +6938,7 @@ var DateTime = function () {
     /**
      * Return the max of several date times
      * @param {...DateTime} dateTimes - the DateTimes from which to choose the maximum
-     * @return {DateTime}
+     * @return {DateTime} the max DateTime, or undefined if called with no argument
      */
 
   }, {
