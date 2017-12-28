@@ -1262,8 +1262,8 @@ export class DateTime {
    * @param {string} fmt - the format string
    * @param {object} opts - options
    * @param {boolean} opts.round - round numerical values
-   * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 avr. 22'
-   * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 Apr 22'
+   * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
+   * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
    * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
    * @return {string}
    */
