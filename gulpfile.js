@@ -259,13 +259,13 @@ const benchBuildDir = './build/benchmarks';
 
 gulp.task('clean-benchmarks', () => del([benchBuildDir]));
 
-gulp.task('build-benchmarks', ['node'], () => {
-  return gulp
+gulp.task('build-benchmarks', ['node'], () =>
+  gulp
     .src('./benchmarks/*.js')
     .pipe(sourcemaps.init())
     .pipe(gulpBabel())
-    .pipe(gulp.dest(benchBuildDir));
-});
+    .pipe(gulp.dest(benchBuildDir))
+);
 
 gulp.task('benchmark', ['clean-benchmarks', 'build-benchmarks'], () => {
   gulp.src(`${benchBuildDir}/*`, { read: false }).pipe(
