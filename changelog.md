@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.11
+
+ * Handle no arguments in `DateTime.min` and `DateTime.max`
+ * Documentation fixes
+
 ## 0.2.10
 
  * Fix bug where Durations could sometimes mutate
