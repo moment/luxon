@@ -73,7 +73,7 @@ It's possible to do math with multiple units:
 DateTime.fromISO('2017-05-15').plus({months: 2, days: 6}).toISODate(); //=> '2017-07-21'
 ```
 
-This isn't as simple as it looks. For example, but should you expect this to do?
+This isn't as simple as it looks. For example, what should you expect this to do?
 
 ```js
 DateTime.fromISO('2017-04-30').plus({months: 1, days: 1}).toISODate() //=> '2017-05-31'
