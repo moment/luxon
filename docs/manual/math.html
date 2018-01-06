@@ -99,7 +99,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#setzone" data-ice="link">setZone</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#changing-zones" data-ice="link">Changing zones</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#setzone" data-ice="link">setZone</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#keepcalendartime" data-ice="link">keepCalendarTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#keeplocaltime" data-ice="link">keepLocalTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#accessors" data-ice="link">Accessors</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#dst-weirdness" data-ice="link">DST weirdness</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#invalid-times" data-ice="link">Invalid times</a></li>
@@ -240,6 +240,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-12" data-ice="link">0.2.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-11" data-ice="link">0.2.11</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-10" data-ice="link">0.2.10</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-9" data-ice="link">0.2.9</a></li>
@@ -329,7 +330,7 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 <h2 id="math-with-multiple-units">Math with multiple units</h2><p>It&apos;s possible to do math with multiple units:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-05-15&apos;).plus({months: 2, days: 6}).toISODate(); //=&gt; &apos;2017-07-21&apos;</code>
 </code></pre>
-<p>This isn&apos;t as simple as it looks. For example, but should you expect this to do?</p>
+<p>This isn&apos;t as simple as it looks. For example, what should you expect this to do?</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate() //=&gt; &apos;2017-05-31&apos;</code>
 </code></pre>
 <p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p>

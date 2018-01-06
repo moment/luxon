@@ -99,7 +99,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#setzone" data-ice="link">setZone</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#changing-zones" data-ice="link">Changing zones</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#setzone" data-ice="link">setZone</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#keepcalendartime" data-ice="link">keepCalendarTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#keeplocaltime" data-ice="link">keepLocalTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#accessors" data-ice="link">Accessors</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#dst-weirdness" data-ice="link">DST weirdness</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#invalid-times" data-ice="link">Invalid times</a></li>
@@ -240,6 +240,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-12" data-ice="link">0.2.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-11" data-ice="link">0.2.11</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-10" data-ice="link">0.2.10</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-9" data-ice="link">0.2.9</a></li>
@@ -441,7 +442,7 @@ dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x
 <li>An <strong>offset</strong> is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we&apos;ll use hours.</li>
 <li>A <strong>time zone</strong> is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as &quot;America/New_York&quot;. That zone says something to the effect of &quot;The offset is -4, except between March and November, when it&apos;s -5&quot;.</li>
 <li>A <strong>fixed-offset time zone</strong> is any time zone that never changes offsets, such as UTC. Luxon supports fixed-offset zones directly; they&apos;re specified like UTC+7, which you can interpret as &quot;always with an offset of +7&quot;.</li>
-<li>A <strong>named offset</strong> is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America&apos;s EST roughly implies America/New_York) and the current offset (EST means +4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it&apos;s always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US&apos;s EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.</li>
+<li>A <strong>named offset</strong> is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America&apos;s EST roughly implies America/New_York) and the current offset (EST means -4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it&apos;s always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US&apos;s EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.</li>
 </ol><p>Some subtleties:</p><ol>
 <li>Multiple zones can have the same offset (think about the US&apos;s zones and their Canadian equivalents), though they might not have the same offset all the time, depending on when their DSTs are. Thus zones and offsets have a  many-to-many relationship.</li>
 <li>Just because a time zone doesn&apos;t have a DST now doesn&apos;t mean it&apos;s fixed. Perhaps it had one in the past. Regardless, Luxon does not have first-class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.</li>
@@ -543,8 +544,8 @@ rezoned.toString()   //=&gt; &apos;2017-09-13T15:30:51.141-07:00&apos;
 
 // but actually the same time
 local.valueOf() === rezoned.valueOf(); //=&gt; true</code>
-</code></pre><h3>keepCalendarTime</h3><p>Generally, it&apos;s best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that&apos;s not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local();
-var rezoned = local.setZone(&apos;America/Los_Angeles&apos;, { keepCalendarTime: true });
+</code></pre><h3>keepLocalTime</h3><p>Generally, it&apos;s best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that&apos;s not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local();
+var rezoned = local.setZone(&apos;America/Los_Angeles&apos;, { keepLocalTime: true });
 
 local.toString();      //=&gt; &apos;2017-09-13T18:36:23.187-04:00&apos;
 rezoned.toString();    //=&gt; &apos;2017-09-13T18:36:23.187-07:00&apos;
@@ -776,7 +777,7 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 <tr>
 <td>DATETIME_FULL</td>
 <td>full date and time with abbreviated named offset</td>
-<td>14 octobre 1983 &#xE0; 13:30 UTC&#x2212;4</td>
+<td>October 14, 1983, 1:30 PM EDT</td>
 <td>14 octobre 1983 &#xE0; 13:30 UTC&#x2212;4</td>
 </tr>
 <tr>
@@ -1574,7 +1575,7 @@ start.hour                          //=&gt; 10, just for comparison
 start.plus({days: 1}).hour          //=&gt; 10, stayed the same
 start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code>
 </code></pre><p>So in adding a day, we kept the hour at 10, even though that&apos;s only 23 hours later.</p><h3>Time math</h3><p>Time math is different. In time math, we&apos;re just adjusting the clock, adding or subtracting from the epoch timestamp. Adding 63 hours is really the same as adding 63 hours&apos; worth of milliseconds. Under the covers, Luxon does this exactly the opposite of how it does calendar math; it boils the operation down to milliseconds, computes the new timestamp, and then computes the date out of that.</p><h2>Math with multiple units</h2><p>It&apos;s possible to do math with multiple units:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-05-15&apos;).plus({months: 2, days: 6}).toISODate(); //=&gt; &apos;2017-07-21&apos;</code>
-</code></pre><p>This isn&apos;t as simple as it looks. For example, but should you expect this to do?</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate() //=&gt; &apos;2017-05-31&apos;</code>
+</code></pre><p>This isn&apos;t as simple as it looks. For example, what should you expect this to do?</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate() //=&gt; &apos;2017-05-31&apos;</code>
 </code></pre><p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p><p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({days: 1}).plus({months: 1}).toISODate() //=&gt; &apos;2017-06-01&apos;</code>
 </code></pre><p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p><h2>Comparing DateTimes</h2><p>DateTime implements <code>#valueOf</code> to return the epoch timestamp, so you can compare DateTimes with <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code>. That lets you find out if one DateTime is after or before another DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">d1 &lt; d2 // is d1 before d2?</code>
 </code></pre><p>However, <code>===</code> compares object identity (not a useful concept in a library with immutable types) and <code>#equals</code> compares both the time and additional metadata, such as the locale and time zone. If you&apos;re only interested in checking the equality of the timestamps, you need to coerce them:</p><pre><code class="lang-js"><code class="source-code prettyprint">+d1 === +d2 // are d1 and d2 the same instant in time?</code>
@@ -2431,7 +2432,9 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.2.11</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.2.12</h2><ul>
+<li>Fix DateTime.fromObject&apos;s handling of default zones</li>
+</ul><h2>0.2.11</h2><ul>
 <li>Handle no arguments in <code>DateTime.min</code> and <code>DateTime.max</code></li>
 <li>Documentation fixes</li>
 </ul><h2>0.2.10</h2><ul>
