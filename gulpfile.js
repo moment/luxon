@@ -41,7 +41,8 @@ function rollupLib(inopts) {
       inopts.rollupOpts || {}
     ),
     presetOpts = {
-      modules: false
+      modules: false,
+      loose: true
     };
 
   if (inopts.target) {
