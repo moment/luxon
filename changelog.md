@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.12
+
+ * Fix DateTime.fromObject's handling of default zones
+
 ## 0.2.11
 
  * Handle no arguments in `DateTime.min` and `DateTime.max`
