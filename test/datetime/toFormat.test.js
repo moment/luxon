@@ -12,7 +12,7 @@ const dt = DateTime.fromObject({
     millisecond: 123,
     zone: 'utc'
   }),
-  ny = dt.setZone('America/New_York', { keepCalendarTime: true });
+  ny = dt.setZone('America/New_York', { keepLocalTime: true });
 
 //------
 // #toFormat()

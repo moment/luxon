@@ -182,13 +182,13 @@ rezoned.toString()   //=> '2017-09-13T15:30:51.141-07:00'
 local.valueOf() === rezoned.valueOf(); //=> true
 ```
 
-### keepCalendarTime
+### keepLocalTime
 
 Generally, it's best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that's not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:
 
 ```js
 var local = DateTime.local();
-var rezoned = local.setZone('America/Los_Angeles', { keepCalendarTime: true });
+var rezoned = local.setZone('America/Los_Angeles', { keepLocalTime: true });
 
 local.toString();      //=> '2017-09-13T18:36:23.187-04:00'
 rezoned.toString();    //=> '2017-09-13T18:36:23.187-07:00'

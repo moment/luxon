@@ -120,10 +120,10 @@ test('accepts IANA zone names', () => {
   expect(zoned.hour).toBe(6); // cedt is +2
 });
 
-test('setZone accepts a keepCalendarTime option', () => {
+test('setZone accepts a keepLocalTime option', () => {
   const zoned = dt()
     .toUTC()
-    .setZone('America/Los_Angeles', { keepCalendarTime: true });
+    .setZone('America/Los_Angeles', { keepLocalTime: true });
   expect(zoned.zoneName).toBe('America/Los_Angeles');
   expect(zoned.year).toBe(1982);
   expect(zoned.month).toBe(5);
@@ -132,7 +132,7 @@ test('setZone accepts a keepCalendarTime option', () => {
   expect(zoned.isOffsetFixed).toBe(false);
 
   const zonedMore = zoned.setZone('America/New_York', {
-    keepCalendarTime: true
+    keepLocalTime: true
   });
   expect(zonedMore.zoneName).toBe('America/New_York');
   expect(zonedMore.year).toBe(1982);
