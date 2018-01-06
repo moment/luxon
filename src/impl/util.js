@@ -181,7 +181,7 @@ export class Util {
 
   static normalizeZone(input) {
     if (Util.isUndefined(input) || input === null) {
-      return LocalZone.instance;
+      return Settings.defaultZone;
     } else if (input instanceof Zone) {
       return input;
     } else if (Util.isString(input)) {

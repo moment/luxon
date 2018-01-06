@@ -199,6 +199,7 @@ test('The local zone does local stuff', () => {
 test('Setting the default zone results in a different creation zone', () => {
   Helpers.withDefaultZone('Asia/Tokyo', () => {
     expect(DateTime.local().zoneName).toBe('Asia/Tokyo');
+    expect(DateTime.fromObject({}).zoneName).toBe('Asia/Tokyo');
   });
 });
 
