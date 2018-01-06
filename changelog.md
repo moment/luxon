@@ -3,6 +3,7 @@
 ## 0.2.12
 
  * Fix DateTime.fromObject's handling of default zones
+ * Change `keepCalendarTime` to `keepLocalTime`
 
 ## 0.2.11
 
