@@ -1,6 +1,23 @@
 import { Util } from '../impl/util';
 import { Zone } from '../zone';
 
+const dtfCache = {};
+function makeDTF(zone) {
+  if (!dtfCache[zone]) {
+    dtfCache[zone] = new Intl.DateTimeFormat('en-US', {
+      hour12: false,
+      timeZone: zone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+  return dtfCache[zone];
+}
+
 const typeToPos = {
   year: 0,
   month: 1,
@@ -73,16 +90,7 @@ export class IANAZone extends Zone {
 
   offset(ts) {
     const date = new Date(ts),
-      dtf = new Intl.DateTimeFormat('en-US', {
-        hour12: false,
-        timeZone: this.zoneName,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }),
+      dtf = makeDTF(this.zoneName),
       [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts
         ? partsOffset(dtf, date)
         : hackyOffset(dtf, date),
