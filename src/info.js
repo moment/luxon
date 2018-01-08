@@ -126,10 +126,10 @@ export class Info {
    * Return the set of available features in this environment.
    * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.
    * Keys:
-   * * `timezones`: whether this environment supports IANA timezones
+   * * `zones`: whether this environment supports IANA timezones
    * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
    * * `intl`: whether this environment supports general internationalization
-   * @example Info.feature() //=> { intl: true, intlTokens: false, timezones: true }
+   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true }
    * @return {object}
    */
   static features() {
