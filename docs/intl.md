@@ -23,7 +23,7 @@ var dt = DateTime.fromISO('2017-09-24', { locale: 'fr' })
 dt.locale //=> 'fr'
 ```
 
-In this case, the specified locale didn't change the how the parsing worked (there's nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as `fromString`, the locale argument *does* affect how the string is parsed. See further down for more.
+In this case, the specified locale didn't change the how the parsing worked (there's nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as `fromFormat`, the locale argument *does* affect how the string is parsed. See further down for more.
 
 You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using `setLocale`:
 
@@ -45,7 +45,7 @@ DateTime.local().reconfigure({ locale: 'fr' }).locale; //=> 'fr'
 By default the `locale` property of a new DateTime or Duration is `null`. This means different things in different contexts:
 
  1. `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.
- 2. `DateTime.fromString` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.
+ 2. `DateTime.fromFormat` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.
  3. There's an exception, though: DateTime#toFormat can take "macro" formats like "D" that produce localized strings as part of a larger string. These *do* default to the system locale because their entire purpose is to be localized.
  
 ### Setting the default
@@ -57,11 +57,11 @@ Settings.defaultLocale = 'fr';
 DateTime.local().locale; //=> 'fr'
 ```
 
-Note that this also alters the behavior of `DateTime#toFormat` and `DateTime#fromString`.
+Note that this also alters the behavior of `DateTime#toFormat` and `DateTime#fromFormat`.
 
 ### Using the system locale in string parsing
 
-You generally don't want `DateTime#fromString` and `DateTime#toFormat` to use the system's locale, since your format won't be sensitive to the locale's string ordering. That's why Luxon doesn't behave that way by default. But if you really want that behavior, you can always do this:
+You generally don't want `DateTime#fromFormat` and `DateTime#toFormat` to use the system's locale, since your format won't be sensitive to the locale's string ordering. That's why Luxon doesn't behave that way by default. But if you really want that behavior, you can always do this:
 
  ```js
  Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;
@@ -105,7 +105,7 @@ dt.setLocale('fr').toFormat('MMMM dd, yyyy GG'); //=> 'septembre 25, 2017 après
 You can [parse](parsing.html) localized strings:
 
 ```js
-DateTime.fromString('septembre 25, 2017 après Jésus-Christ', 'MMMM dd, yyyy GG', {locale: 'fr'})
+DateTime.fromFormat('septembre 25, 2017 après Jésus-Christ', 'MMMM dd, yyyy GG', {locale: 'fr'})
 ```
 
 ### Listing

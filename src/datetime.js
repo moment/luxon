@@ -308,7 +308,7 @@ function quickDT(obj, zone) {
  *
  * Here is a brief overview of the most commonly used functionality it provides:
  *
- * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link local}, {@link utc}, and (most flexibly) {@link fromObject}. To create one from a standard string format, use {@link fromISO}, {@link fromHTTP}, and {@link fromRFC2822}. To create one from a custom string format, use {@link fromString}. To create one from a native JS date, use {@link fromJSDate}.
+ * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link local}, {@link utc}, and (most flexibly) {@link fromObject}. To create one from a standard string format, use {@link fromISO}, {@link fromHTTP}, and {@link fromRFC2822}. To create one from a custom string format, use {@link fromFormat}. To create one from a native JS date, use {@link fromJSDate}.
  * * **Gregorian calendar and time**: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through {@link toObject}), use the {@link year}, {@link month},
  * {@link day}, {@link hour}, {@link minute}, {@link second}, {@link millisecond} accessors.
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
@@ -677,9 +677,9 @@ export class DateTime {
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromString(text, fmt, options = {}) {
+  static fromFormat(text, fmt, options = {}) {
     if (Util.isUndefined(text) || Util.isUndefined(fmt)) {
-      throw new InvalidArgumentError('fromString requires an input string and a format');
+      throw new InvalidArgumentError('fromFormat requires an input string and a format');
     }
 
     const { locale = null, numberingSystem = null } = options,
@@ -690,6 +690,13 @@ export class DateTime {
     } else {
       return parseDataToDateTime(vals, parsedZone, options);
     }
+  }
+
+  /**
+   * @deprecated use fromFormat instead
+   */
+  static fromString(text, fmt, opts = {}) {
+    return DateTime.fromFormat(text, fmt, opts);
   }
 
   /**
@@ -1681,13 +1688,13 @@ export class DateTime {
   // MISC
 
   /**
-   * Explain how a string would be parsed by fromString()
+   * Explain how a string would be parsed by fromFormat()
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {object} options - options taken by fromString()
+   * @param {object} options - options taken by fromFormat()
    * @return {object}
    */
-  static fromStringExplain(text, fmt, options = {}) {
+  static fromFormatExplain(text, fmt, options = {}) {
     const parser = new TokenParser(Locale.fromOpts(options));
     return parser.explainParse(text, fmt);
   }

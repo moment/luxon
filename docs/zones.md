@@ -131,7 +131,7 @@ var specifyOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00");
 specifyOffset.zoneName;         //=> 'America/New_York'
 specifyOffset.toString();       //=> '2017-05-15T14:10:23.000-04:00'
 
-var specifyZone = DateTime.fromString("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-dd'T'HH:mm:ss z");
+var specifyZone = DateTime.fromFormat("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-dd'T'HH:mm:ss z");
 
 specifyZone.zoneName           //=> 'America/New_York'
 specifyZone.toString()         //=> '2017-05-15T03:10:23.000-04:00'
@@ -156,7 +156,7 @@ var keepOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00", { setZone: true }
 keepOffset.zoneName;           //=> 'UTC-9'
 keepOffset.toString();         //=> '2017-05-15T09:10:23.000-09:00'
 
-var keepZone = DateTime.fromString("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-dd'T'HH:mm:ss z", { setZone: true });
+var keepZone = DateTime.fromFormat("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-dd'T'HH:mm:ss z", { setZone: true });
 
 keepZone.zoneName;             //=> 'Europe/Paris'
 keepZone.toString()            //=> '2017-05-15T09:10:23.000+02:00'

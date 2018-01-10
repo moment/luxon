@@ -63,9 +63,9 @@ In the support table above, you can see that some platforms have caveats. They a
 | `DateTime#toLocaleParts`             | OK           | Empty array                                 | Empty array                                        | OK                   |
 | `DateTime#toFormat` in en-US         | OK           | OK                                          | OK                                                 | OK                   |
 | `DateTime#toFormat` in other locales | OK           | Uses English                                | Uses English if format contains localized strings‡ | OK                   |
-| `DateTime#fromString` in en-US       | OK           | OK                                          | OK                                                 | OK                   |
+| `DateTime#fromFormat` in en-US       | OK           | OK                                          | OK                                                 | OK                   |
 | `DateTime#offsetNameShort`, etc      | OK           | Returns null                                | OK in most locales§                                |                      |
-| `fromString` in other locales        | OK           | Invalid DateTime if uses localized strings‡ | Uses English if format contains localized strings‡ | OK                   |
+| `fromFormat` in other locales        | OK           | Invalid DateTime if uses localized strings‡ | Uses English if format contains localized strings‡ | OK                   |
 | `Info.months`, etc in en-US          | OK           | OK                                          | OK                                                 | OK                   |
 | `Info.months`, etc in other locales  | OK           | Uses English                                | Uses English                                       | OK                   |
 

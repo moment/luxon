@@ -81,12 +81,12 @@ You generally shouldn't use Luxon to parse arbitrarily formatted date strings:
 
 Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.
 
-### fromString
+### fromFormat
 
-See [DateTime.fromString](../class/src/datetime.js~DateTime.html#static-method-fromString) for the method signature. A brief example:
+See [DateTime.fromFormat](../class/src/datetime.js~DateTime.html#static-method-fromFormat) for the method signature. A brief example:
 
 ```js
-DateTime.fromString('May 25 1982', 'LLLL dd yyyy');
+DateTime.fromFormat('May 25 1982', 'LLLL dd yyyy');
 ```
 
 ### Intl
@@ -94,7 +94,7 @@ DateTime.fromString('May 25 1982', 'LLLL dd yyyy');
 Luxon supports parsing internationalized strings:
 
 ```js
-DateTime.fromString('mai 25 1982', 'LLLL dd yyyy', { locale: 'fr' });
+DateTime.fromFormat('mai 25 1982', 'LLLL dd yyyy', { locale: 'fr' });
 ```
 
 Note, however, that Luxon derives the list of strings that can match, say, "LLLL" (and their meaning) by introspecting the environment's Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the [support matrix](matrix.html)).
@@ -109,12 +109,12 @@ Not every token supported by `DateTime#toFormat` is supported in the parser. For
 
 ### Debugging
 
-There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called [fromStringExplain](../class/src/datetime.js~DateTime.html#static-method-fromStringExplain). It takes the same arguments as `fromString` but returns a map of information about the parse that can be useful in debugging.
+There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called [fromFormatExplain](../class/src/datetime.js~DateTime.html#static-method-fromFormatExplain). It takes the same arguments as `fromFormat` but returns a map of information about the parse that can be useful in debugging.
 
 For example, here the code is using "MMMM" where "MMM" was needed. You can see the regex Luxon uses and see that it didn't match anything:
 
 ```js
-> DateTime.fromStringExplain("Aug 6 1982", "MMMM d yyyy")
+> DateTime.fromFormatExplain("Aug 6 1982", "MMMM d yyyy")
 
 { input: 'Aug 6 1982',
   tokens:
@@ -132,15 +132,15 @@ For example, here the code is using "MMMM" where "MMM" was needed. You can see t
 If you parse something and get an invalid date, the debugging steps are slightly different. Here, we're attempting to parse August 32nd, which doesn't exist:
 
 ```js
-var d = DateTime.fromString("August 32 1982", "MMMM d yyyy")
+var d = DateTime.fromFormat("August 32 1982", "MMMM d yyyy")
 d.isValid //=> false
 d.invalidReason //=> 'day out of range'
 ```
 
-For more on validity and how to debug it, see [validity](validity.html). You may find more comprehensive tips there. But as it applies specifically to `fromString`, again try `fromStringExplain`:
+For more on validity and how to debug it, see [validity](validity.html). You may find more comprehensive tips there. But as it applies specifically to `fromFormat`, again try `fromFormatExplain`:
 
 ```js
-> DateTime.fromStringExplain("August 32 1982", "MMMM d yyyy")
+> DateTime.fromFormatExplain("August 32 1982", "MMMM d yyyy")
 
 { input: 'August 32 1982',
   tokens:

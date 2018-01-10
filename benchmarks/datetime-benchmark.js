@@ -12,14 +12,14 @@ module.exports = {
       fn: () => DateTime.local(2017, 5, 15),
       async: true
     },
-    fromString: {
-      fn: () => DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS'),
+    fromFormat: {
+      fn: () => DateTime.fromFormat('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS'),
       async: true
     },
-    fromStringZoned: {
+    fromFormatZoned: {
       setup: () => {},
       fn: () =>
-        DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS', {
+        DateTime.fromFormat('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS', {
           zone: 'America/Los_Angeles'
         }),
       async: true
