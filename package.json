@@ -3,22 +3,38 @@
   "version": "0.2.12",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
-  "keywords": ["date", "immutable"],
+  "keywords": [
+    "date",
+    "immutable"
+  ],
   "repository": "https://github.com/moment/luxon",
   "dependencies": {},
   "scripts": {
-    "precommit": "lint-staged"
+    "build": "babel-node tasks/build.js",
+    "test": "babel-node tasks/unit.js",
+    "docs": "esdoc -c docs/index.js",
+    "site": "cp -r site/** build/",
+    "lint": "eslint src/**/*.js, test/**/*.js, gulpfile.js",
+    "lint!": "npm run format && npm run lint",
+    "format": "prettier --config .prettier.js --write **.js",
+    "benchmark": "",
+    "coveralls": ""
   },
   "lint-staged": {
-    "*.{js,json}": ["prettier --config .prettier.js --write", "git add"]
+    "*.{js,json}": [
+      "prettier --config .prettier.js --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "babel-jest": "latest",
+    "babel-cli": "latest",
     "babel-plugin-external-helpers": "latest",
     "babel-preset-env": "latest",
     "benchmark": "latest",
     "core-js": "latest",
     "coveralls": "latest",
+    "esdoc": "latest",
     "esdoc-standard-plugin": "latest",
     "eslint": "^4.14.0",
     "eslint-config-airbnb-base": "12.0.2",

@@ -1,7 +1,5 @@
 /* eslint import/no-extraneous-dependencies: off */
-import run from './run';
-
-// This is undoutedly just noobing, but I can't get this to work with import
+/* global console */
 const rollup = require('rollup'),
   rollupBabel = require('rollup-plugin-babel'),
   rollupMinify = require('rollup-plugin-babel-minify'),
@@ -71,6 +69,7 @@ async function babelAndRollup(dest, opts) {
 }
 
 async function buildLibrary(dest, opts) {
+  console.log('Building', dest);
   await Promise.all([
     babelAndRollup(dest, opts),
     babelAndRollup(
@@ -81,6 +80,7 @@ async function buildLibrary(dest, opts) {
       })
     )
   ]);
+  console.log('Built', dest);
 }
 
 const browsersOld = { browsers: 'last 2 major versions' };
@@ -144,15 +144,20 @@ async function globalEs6() {
 
 async function build() {
   await Promise.all([
-    run(node),
-    run(cjsBrowser),
-    run(es6),
-    run(amd),
-    run(amdFilled),
-    run(global),
-    run(globalEs6),
-    run(globalFilled)
+    node(),
+    cjsBrowser(),
+    es6(),
+    amd(),
+    amdFilled(),
+    global(),
+    globalEs6(),
+    globalFilled()
   ]);
 }
 
-build();
+build().then(
+  () => {},
+  err => {
+    console.error(err);
+  }
+);

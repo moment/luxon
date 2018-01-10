@@ -1,6 +1,4 @@
 /* eslint import/no-extraneous-dependencies: off */
-import run from './run';
-
 const jest = require('jest');
 
 async function test() {
@@ -18,4 +16,4 @@ async function test() {
   await jest.runCLI(opts, ['./test']);
 }
 
-run(test);
+test();
