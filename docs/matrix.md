@@ -16,7 +16,7 @@ Luxon officially supports the last two versions of the major browsers, with some
 | Safari       |       11 |                                                                   |
 |              |       10 | no intl tokens, no zones                                          |
 | Node w/ICU   |        8 |                                                                   |
-|              |        6 | no zones, no intl tokens                                          |
+|              |        6 | no intl tokens, no zones                                          |
 | Node w/o ICU |        8 | no intl tokens                                                    |
 |              |        6 | no intl tokens, no zones                                          |
 
@@ -69,7 +69,7 @@ In the support table above, you can see that some platforms have caveats. They a
 | `Info.months`, etc in en-US          | OK           | OK                                          | OK                                                 | OK                   |
 | `Info.months`, etc in other locales  | OK           | Uses English                                | Uses English                                       | OK                   |
 
-† Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like `DateTime.DATETIME_MED`. If you provide your own, modify for the presets, or even clone them, it will use `DateTime.DATETIME_HUGE`. If you don't provide any arguments at all, it defaults to `DateTime.DATE_SHORT`.
+† Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like `DateTime.DATETIME_MED`. If you provide your own, modify the presets, or even clone them, it will use `DateTime.DATETIME_HUGE`. If you don't provide any arguments at all, it defaults to `DateTime.DATE_SHORT`.
 
 ‡ This means that Luxon can't parse anything with a word in it like localized versions of "January" or "Tuesday". It's fine with numbers, as long as their in Latin (i.e. Western) numbers.
 
@@ -95,7 +95,7 @@ If you have an Intl API (either natively or through the Intl polyfill above) but
 
  * **Older versions of both Chrome and Firefox** will most likely work. It's just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting `formatToParts` in 51 and time zones in 52). I haven't broken that out because it's complicated, Luxon doesn't officially support them, and no one runs them anyway.
  * **Older versions of IE** probably won't work at all.
- * **Older versions of Node** probably won't work without recompiling the source code with a different Node target. In which case they'll work with some of the caveats.
+ * **Older versions of Node** probably won't work without recompiling Luxon  with a different Node target. In which case they'll work with some of the caveats.
 
 ## Other platforms
 
