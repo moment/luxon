@@ -63,7 +63,18 @@ function isValid(zone) {
 
 export class IANAZone extends Zone {
   static isValidSpecier(s) {
-    return s && s.match(/[a-z_]{1,256}\/[a-z_]{1,256}/i);
+    return s && s.match(/[a-z_+-]{1,256}\/[a-z_+-]{1,256}/i);
+  }
+
+  // Etc/GMT+8 -> 480
+  static parseGMTOffset(specifier) {
+    if (specifier) {
+      const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
+      if (match) {
+        return 60 * parseInt(match[1]);
+      }
+    }
+    return null;
   }
 
   constructor(name) {

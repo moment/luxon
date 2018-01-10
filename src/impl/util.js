@@ -180,6 +180,7 @@ export class Util {
   }
 
   static normalizeZone(input) {
+    let offset;
     if (Util.isUndefined(input) || input === null) {
       return Settings.defaultZone;
     } else if (input instanceof Zone) {
@@ -188,7 +189,10 @@ export class Util {
       const lowered = input.toLowerCase();
       if (lowered === 'local') return LocalZone.instance;
       else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
-      else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
+      else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
+        // handle Etc/GMT-4, which V8 chokes on
+        return FixedOffsetZone.instance(offset);
+      } else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
       else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);

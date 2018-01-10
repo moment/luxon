@@ -182,6 +182,18 @@ test('DateTime#offsetNameShort returns null for invalid times', () => {
 });
 
 //------
+// Etc/GMT zones
+//------
+test('Etc/GMT zones work even though V8 does not support them', () => {
+  let zoned = DateTime.local().setZone('Etc/GMT+8');
+  expect(zoned.zoneName).toBe('UTC+8');
+  zoned = DateTime.local().setZone('Etc/GMT-5');
+  expect(zoned.zoneName).toBe('UTC-5');
+  zoned = DateTime.local().setZone('Etc/GMT-0');
+  expect(zoned.zoneName).toBe('UTC');
+});
+
+//------
 // local zone
 //------
 
