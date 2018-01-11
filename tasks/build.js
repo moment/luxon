@@ -1,5 +1,5 @@
 /* eslint import/no-extraneous-dependencies: off */
-/* global console */
+/* eslint no-console: off */
 const rollup = require('rollup'),
   rollupBabel = require('rollup-plugin-babel'),
   rollupMinify = require('rollup-plugin-babel-minify'),

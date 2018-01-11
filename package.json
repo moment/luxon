@@ -14,11 +14,12 @@
     "test": "babel-node tasks/unit.js",
     "docs": "esdoc -c docs/index.js",
     "site": "cp -r site/** build/",
-    "lint": "eslint src/**/*.js, test/**/*.js, gulpfile.js",
+    "lint": "eslint src/**/*.js, test/**/*.js, benchmarks/*.js",
     "lint!": "npm run format && npm run lint",
     "format": "prettier --config .prettier.js --write **.js",
-    "benchmark": "",
-    "coveralls": ""
+    "benchmark": "babel-node benchmarks/datetime.js",
+    "coveralls": "cat build/coverage/lcov.info | coveralls",
+    "check-doc-coverage": "babel-node tasks/docCoverage"
   },
   "lint-staged": {
     "*.{js,json}": [
@@ -41,6 +42,7 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "latest",
     "eslint-plugin-prettier": "latest",
+    "fs-extra": "latest",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
     "jest-cli": "latest",
