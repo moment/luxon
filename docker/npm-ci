@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+docker run -e COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} -it --rm -v $(pwd):/luxon -w /luxon icambron/luxon npm $@

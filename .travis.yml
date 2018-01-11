@@ -4,9 +4,14 @@ services:
  - docker
 before_install:
   - docker pull icambron/luxon
-  - ./docker/install
+  - ./docker/npm-ci install
 script:
-  - ./docker/gulp ci
+  - ./docker/npm-ci run build
+  - ./docker/npm-ci run lint
+  - ./docker/npm-ci run test
+  - ./docker/npm-ci run coveralls
+  - ./docker/npm-ci run docs
+  - ./docker/npm-ci run check-doc-coverage
 branches:
   only:
     - master
