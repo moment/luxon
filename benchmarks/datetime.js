@@ -1,7 +1,7 @@
 /* eslint import/no-extraneous-dependencies: off */
 /* eslint no-console: off */
-import { DateTime } from '../src/datetime';
 import Benchmark from 'benchmark';
+import { DateTime } from '../src/datetime';
 
 const suite = new Benchmark.Suite();
 
@@ -29,10 +29,10 @@ suite
   .add('DateTime#add', () => {
     DateTime.local().plus({ milliseconds: 3434 });
   })
-  .on('cycle', function(event) {
+  .on('cycle', event => {
     console.log(String(event.target));
   })
-  .on('complete', function() {
+  .on('complete', () => {
     console.log('Fastest is ' + this.filter('fastest').map('name'));
   })
   .run();
