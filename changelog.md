@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+ * Rename DateTime.fromString to DateTime.fromFormat (leaving deprecated DateTime.fromString)
+ * Rename DateTime.fromStringExplain to DateTime.fromFormatExplain (leaving deprecated DateTime.fromStringExplain)
+ * Support Etc/GMT IANA zones
+ * Perf fixes for zones
+ * Rework build infrastructure
+
 ## 0.2.12
 
  * Fix DateTime.fromObject's handling of default zones
