@@ -39,6 +39,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#es6" data-ice="link">ES6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#webpack" data-ice="link">Webpack</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#types" data-ice="link">Types</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#react-native" data-ice="link">React Native</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#meteor" data-ice="link">Meteor</a></li>
 </ul>
   </div>
@@ -150,7 +151,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromstring" data-ice="link">fromString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#intl" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#limitations" data-ice="link">Limitations</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#debugging" data-ice="link">Debugging</a></li>
@@ -240,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-12" data-ice="link">0.2.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-11" data-ice="link">0.2.11</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-10" data-ice="link">0.2.10</a></li>
@@ -283,7 +285,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#windows" data-ice="link">Windows</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#docker" data-ice="link">Docker</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#patch-basics" data-ice="link">Patch basics</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#gulp-command-reference" data-ice="link">Gulp command reference</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#npm-script-reference" data-ice="link">npm script reference</a></li>
 </ul>
   </div>
 </div>
@@ -344,11 +346,11 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
 <li>If the string is typed out by a human, it may not conform to the format you specify when asking Luxon to parse it. Luxon is quite strict about the format matching the string exactly.</li>
 </ol>
 <p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p>
-<h3 id="fromstring">fromString</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromString">DateTime.fromString</a> for the method signature. A brief example:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
+<h3 id="fromformat">fromFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormat">DateTime.fromFormat</a> for the method signature. A brief example:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
 </code></pre>
 <h3 id="intl">Intl</h3><p>Luxon supports parsing internationalized strings:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
 </code></pre>
 <p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/matrix.html">support matrix</a>).</p>
 <h3 id="limitations">Limitations</h3><p>Not every token supported by <code>DateTime#toFormat</code> is supported in the parser. For example, there&apos;s no <code>ZZZZ</code> or <code>ZZZZZ</code> tokens. This is for a few reasons:</p>
@@ -357,9 +359,9 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
 <li>Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can&apos;t be parsed because of their ambiguity.</li>
 <li>Luxon doesn&apos;t yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.</li>
 </ul>
-<h3 id="debugging">Debugging</h3><p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromStringExplain">fromStringExplain</a>. It takes the same arguments as <code>fromString</code> but returns a map of information about the parse that can be useful in debugging.</p>
+<h3 id="debugging">Debugging</h3><p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormatExplain">fromFormatExplain</a>. It takes the same arguments as <code>fromFormat</code> but returns a map of information about the parse that can be useful in debugging.</p>
 <p>For example, here the code is using &quot;MMMM&quot; where &quot;MMM&quot; was needed. You can see the regex Luxon uses and see that it didn&apos;t match anything:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromStringExplain(&quot;Aug 6 1982&quot;, &quot;MMMM d yyyy&quot;)
+<pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromFormatExplain(&quot;Aug 6 1982&quot;, &quot;MMMM d yyyy&quot;)
 
 { input: &apos;Aug 6 1982&apos;,
   tokens:
@@ -374,12 +376,12 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
   zone: null }</code>
 </code></pre>
 <p>If you parse something and get an invalid date, the debugging steps are slightly different. Here, we&apos;re attempting to parse August 32nd, which doesn&apos;t exist:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromString(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
+<pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromFormat(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
 d.isValid //=&gt; false
 d.invalidReason //=&gt; &apos;day out of range&apos;</code>
 </code></pre>
-<p>For more on validity and how to debug it, see <a href="./manual/validity.html">validity</a>. You may find more comprehensive tips there. But as it applies specifically to <code>fromString</code>, again try <code>fromStringExplain</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromStringExplain(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
+<p>For more on validity and how to debug it, see <a href="./manual/validity.html">validity</a>. You may find more comprehensive tips there. But as it applies specifically to <code>fromFormat</code>, again try <code>fromFormatExplain</code>:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromFormatExplain(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
 
 { input: &apos;August 32 1982&apos;,
   tokens:

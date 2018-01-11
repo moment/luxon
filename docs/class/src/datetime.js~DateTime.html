@@ -83,7 +83,7 @@
 </ul>
 <p>Here is a brief overview of the most commonly used functionality it provides:</p>
 <ul>
-<li><strong>Creation</strong>: To create a DateTime from its components, use one of its factory class methods: <span><a href="class/src/datetime.js~DateTime.html#static-method-local">local</a></span>, <span><a href="class/src/datetime.js~DateTime.html#static-method-utc">utc</a></span>, and (most flexibly) <span><a href="class/src/datetime.js~DateTime.html#static-method-fromObject">fromObject</a></span>. To create one from a standard string format, use <span><a href="class/src/datetime.js~DateTime.html#static-method-fromISO">fromISO</a></span>, <span><a href="class/src/datetime.js~DateTime.html#static-method-fromHTTP">fromHTTP</a></span>, and <span><a href="class/src/datetime.js~DateTime.html#static-method-fromRFC2822">fromRFC2822</a></span>. To create one from a custom string format, use <span><a href="class/src/datetime.js~DateTime.html#static-method-fromString">fromString</a></span>. To create one from a native JS date, use <span><a href="class/src/datetime.js~DateTime.html#static-method-fromJSDate">fromJSDate</a></span>.</li>
+<li><strong>Creation</strong>: To create a DateTime from its components, use one of its factory class methods: <span><a href="class/src/datetime.js~DateTime.html#static-method-local">local</a></span>, <span><a href="class/src/datetime.js~DateTime.html#static-method-utc">utc</a></span>, and (most flexibly) <span><a href="class/src/datetime.js~DateTime.html#static-method-fromObject">fromObject</a></span>. To create one from a standard string format, use <span><a href="class/src/datetime.js~DateTime.html#static-method-fromISO">fromISO</a></span>, <span><a href="class/src/datetime.js~DateTime.html#static-method-fromHTTP">fromHTTP</a></span>, and <span><a href="class/src/datetime.js~DateTime.html#static-method-fromRFC2822">fromRFC2822</a></span>. To create one from a custom string format, use <span><a href="class/src/datetime.js~DateTime.html#static-method-fromFormat">fromFormat</a></span>. To create one from a native JS date, use <span><a href="class/src/datetime.js~DateTime.html#static-method-fromJSDate">fromJSDate</a></span>.</li>
 <li><strong>Gregorian calendar and time</strong>: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through <span><a href="class/src/datetime.js~DateTime.html#instance-method-toObject">toObject</a></span>), use the <span><a href="class/src/datetime.js~DateTime.html#instance-get-year">year</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-get-month">month</a></span>,
 <span><a href="class/src/datetime.js~DateTime.html#instance-get-day">day</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-get-hour">hour</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-get-minute">minute</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-get-second">second</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-get-millisecond">millisecond</a></span> accessors.</li>
 <li><strong>Week calendar</strong>: For ISO week calendar attributes, see the <span><a href="class/src/datetime.js~DateTime.html#instance-get-weekYear">weekYear</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-get-weekNumber">weekNumber</a></span>, and <span><a href="class/src/datetime.js~DateTime.html#instance-get-weekday">weekday</a></span> accessors.</li>
@@ -709,6 +709,65 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/datetime.js~DateTime.html#static-method-fromFormat">fromFormat</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Create a DateTime from an input string and format string
+Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/datetime.js~DateTime.html#static-method-fromFormatExplain">fromFormatExplain</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Explain how a string would be parsed by fromFormat()</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/datetime.js~DateTime.html#static-method-fromHTTP">fromHTTP</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span>
         </p>
       </div>
@@ -913,15 +972,13 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/datetime.js~DateTime.html#static-method-fromString">fromString</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/datetime.js~DateTime.html#static-method-fromString">fromString</a></span></span><span class="code" data-ice="signature">(text: <span>*</span>, fmt: <span>*</span>, opts: {}): <span>*</span></span>
         </p>
       </div>
       <div>
+        <div class="deprecated" data-ice="deprecated">this method was deprecated. use fromFormat instead</div>
         
         
-        <div data-ice="description"><p>Create a DateTime from an input string and format string
-Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale</p>
-</div>
       </div>
     </td>
     <td>
@@ -943,14 +1000,13 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/datetime.js~DateTime.html#static-method-fromStringExplain">fromStringExplain</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/datetime.js~DateTime.html#static-method-fromStringExplain">fromStringExplain</a></span></span><span class="code" data-ice="signature">(text: <span>*</span>, fmt: <span>*</span>, options: {}): <span>*</span></span>
         </p>
       </div>
       <div>
+        <div class="deprecated" data-ice="deprecated">this method was deprecated. use fromFormatExplain instead</div>
         
         
-        <div data-ice="description"><p>Explain how a string would be parsed by fromString()</p>
-</div>
       </div>
     </td>
     <td>
@@ -3236,7 +3292,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1812">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1827">source</a></span></span>
     </span>
   </h3>
 
@@ -3280,7 +3336,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1819">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1834">source</a></span></span>
     </span>
   </h3>
 
@@ -3324,7 +3380,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1826">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1841">source</a></span></span>
     </span>
   </h3>
 
@@ -3368,7 +3424,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1833">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1848">source</a></span></span>
     </span>
   </h3>
 
@@ -3412,7 +3468,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1798">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1813">source</a></span></span>
     </span>
   </h3>
 
@@ -3456,7 +3512,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1805">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1820">source</a></span></span>
     </span>
   </h3>
 
@@ -3500,7 +3556,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1784">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1799">source</a></span></span>
     </span>
   </h3>
 
@@ -3544,7 +3600,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1791">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1806">source</a></span></span>
     </span>
   </h3>
 
@@ -3588,7 +3644,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1714">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1729">source</a></span></span>
     </span>
   </h3>
 
@@ -3632,7 +3688,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1721">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1736">source</a></span></span>
     </span>
   </h3>
 
@@ -3676,7 +3732,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1707">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1722">source</a></span></span>
     </span>
   </h3>
 
@@ -3720,7 +3776,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1700">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1715">source</a></span></span>
     </span>
   </h3>
 
@@ -3764,7 +3820,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1756">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1771">source</a></span></span>
     </span>
   </h3>
 
@@ -3808,7 +3864,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1777">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1792">source</a></span></span>
     </span>
   </h3>
 
@@ -3852,7 +3908,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1763">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1778">source</a></span></span>
     </span>
   </h3>
 
@@ -3896,7 +3952,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1770">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1785">source</a></span></span>
     </span>
   </h3>
 
@@ -3940,7 +3996,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1728">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1743">source</a></span></span>
     </span>
   </h3>
 
@@ -3984,7 +4040,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1749">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1764">source</a></span></span>
     </span>
   </h3>
 
@@ -4028,7 +4084,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1735">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1750">source</a></span></span>
     </span>
   </h3>
 
@@ -4072,7 +4128,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1742">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1757">source</a></span></span>
     </span>
   </h3>
 
@@ -4107,6 +4163,219 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
 </div>
 <div data-ice="staticMethodDetails"><h2 data-ice="title">Static Public Methods</h2>
 
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-fromFormat">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">fromFormat</span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber680">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Create a DateTime from an input string and format string
+Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">text</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the string to parse</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">fmt</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the format the string is expected to be in (see description)</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">options</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>options to affect the creation</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.zone</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/zone.js~Zone.html">Zone</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: &apos;local&apos;</li></ul></td>
+      <td data-ice="description"><p>use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.setZone</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: false</li></ul></td>
+      <td data-ice="description"><p>override the zone with a zone specified in the string itself, if it specifies one</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.locale</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: &apos;en-US&apos;</li></ul></td>
+      <td data-ice="description"><p>a locale string to use when parsing. Will also set the DateTime to this locale</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.numberingSystem</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.outputCalendar</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the output calendar to set on the resulting DateTime instance</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-fromFormatExplain">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">fromFormatExplain</span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1698">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Explain how a string would be parsed by fromFormat()</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">text</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the string to parse</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">fmt</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the format the string is expected to be in (see description)</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">options</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>options taken by fromFormat()</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
 <div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-method-fromHTTP">
     <span class="access" data-ice="access">public</span>
@@ -4934,7 +5203,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber715">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber722">source</a></span></span>
     </span>
   </h3>
 
@@ -5084,20 +5353,18 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     
     
     
-    <span class="code" data-ice="name">fromString</span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></span>
+    <span class="code" data-ice="name">fromString</span><span class="code" data-ice="signature">(text: <span>*</span>, fmt: <span>*</span>, opts: {}): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber680">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber698">source</a></span></span>
     </span>
   </h3>
 
   
+  <div class="deprecated" data-ice="deprecated">this method was deprecated. use fromFormat instead</div>
   
   
-  <div data-ice="description"><p>Create a DateTime from an input string and format string
-Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale</p>
-</div>
 
   
 
@@ -5111,62 +5378,22 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">text</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>the string to parse</p>
-</td>
+      <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">fmt</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>the format the string is expected to be in (see description)</p>
-</td>
+      <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">options</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>options to affect the creation</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">options.zone</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/zone.js~Zone.html">Zone</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code">{}</td>
       <td data-ice="appendix"><ul><li>optional</li>
-<li>default: &apos;local&apos;</li></ul></td>
-      <td data-ice="description"><p>use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">options.setZone</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
-      <td data-ice="appendix"><ul><li>optional</li>
-<li>default: false</li></ul></td>
-      <td data-ice="description"><p>override the zone with a zone specified in the string itself, if it specifies one</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">options.locale</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-      <td data-ice="appendix"><ul><li>optional</li>
-<li>default: &apos;en-US&apos;</li></ul></td>
-      <td data-ice="description"><p>a locale string to use when parsing. Will also set the DateTime to this locale</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">options.numberingSystem</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">options.outputCalendar</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>the output calendar to set on the resulting DateTime instance</p>
-</td>
+<li>default: {}</li></ul></td>
+      <td data-ice="description"></td>
     </tr>
 </tbody>
   </table>
@@ -5178,7 +5405,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="class/src/datetime.js~DateTime.html">DateTime</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
           
         </tr>
       </tbody>
@@ -5210,19 +5437,18 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     
     
     
-    <span class="code" data-ice="name">fromStringExplain</span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fmt: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+    <span class="code" data-ice="name">fromStringExplain</span><span class="code" data-ice="signature">(text: <span>*</span>, fmt: <span>*</span>, options: {}): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1690">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1706">source</a></span></span>
     </span>
   </h3>
 
   
+  <div class="deprecated" data-ice="deprecated">this method was deprecated. use fromFormatExplain instead</div>
   
   
-  <div data-ice="description"><p>Explain how a string would be parsed by fromString()</p>
-</div>
 
   
 
@@ -5236,24 +5462,22 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">text</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>the string to parse</p>
-</td>
+      <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">fmt</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>the format the string is expected to be in (see description)</p>
-</td>
+      <td data-ice="description"></td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">options</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>options taken by fromString()</p>
-</td>
+      <td data-ice="type" class="code">{}</td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {}</li></ul></td>
+      <td data-ice="description"></td>
     </tr>
 </tbody>
   </table>
@@ -5265,7 +5489,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
           
         </tr>
       </tbody>
@@ -5301,7 +5525,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber724">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber731">source</a></span></span>
     </span>
   </h3>
 
@@ -5529,7 +5753,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1677">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1685">source</a></span></span>
     </span>
   </h3>
 
@@ -5603,7 +5827,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1668">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1676">source</a></span></span>
     </span>
   </h3>
 
@@ -5882,7 +6106,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber824">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber831">source</a></span></span>
     </span>
   </h3>
 
@@ -5945,7 +6169,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1024">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1031">source</a></span></span>
     </span>
   </h3>
 
@@ -6012,7 +6236,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1034">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1041">source</a></span></span>
     </span>
   </h3>
 
@@ -6079,7 +6303,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber833">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber840">source</a></span></span>
     </span>
   </h3>
 
@@ -6142,7 +6366,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber762">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber769">source</a></span></span>
     </span>
   </h3>
 
@@ -6198,7 +6422,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber998">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1005">source</a></span></span>
     </span>
   </h3>
 
@@ -6254,7 +6478,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1014">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1021">source</a></span></span>
     </span>
   </h3>
 
@@ -6321,7 +6545,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber990">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber997">source</a></span></span>
     </span>
   </h3>
 
@@ -6377,7 +6601,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber754">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber761">source</a></span></span>
     </span>
   </h3>
 
@@ -6437,7 +6661,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber771">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber778">source</a></span></span>
     </span>
   </h3>
 
@@ -6493,7 +6717,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber860">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber867">source</a></span></span>
     </span>
   </h3>
 
@@ -6556,7 +6780,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber842">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber849">source</a></span></span>
     </span>
   </h3>
 
@@ -6619,7 +6843,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber815">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber822">source</a></span></span>
     </span>
   </h3>
 
@@ -6682,7 +6906,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber920">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber927">source</a></span></span>
     </span>
   </h3>
 
@@ -6746,7 +6970,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber910">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber917">source</a></span></span>
     </span>
   </h3>
 
@@ -6810,7 +7034,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber780">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber787">source</a></span></span>
     </span>
   </h3>
 
@@ -6866,7 +7090,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber950">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber957">source</a></span></span>
     </span>
   </h3>
 
@@ -6933,7 +7157,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber975">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber982">source</a></span></span>
     </span>
   </h3>
 
@@ -6990,7 +7214,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber959">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber966">source</a></span></span>
     </span>
   </h3>
 
@@ -7047,7 +7271,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber900">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber907">source</a></span></span>
     </span>
   </h3>
 
@@ -7110,7 +7334,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber789">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber796">source</a></span></span>
     </span>
   </h3>
 
@@ -7166,7 +7390,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber851">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber858">source</a></span></span>
     </span>
   </h3>
 
@@ -7229,7 +7453,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber880">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber887">source</a></span></span>
     </span>
   </h3>
 
@@ -7292,7 +7516,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber870">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber877">source</a></span></span>
     </span>
   </h3>
 
@@ -7355,7 +7579,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber891">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber898">source</a></span></span>
     </span>
   </h3>
 
@@ -7419,7 +7643,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber940">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber947">source</a></span></span>
     </span>
   </h3>
 
@@ -7483,7 +7707,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber930">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber937">source</a></span></span>
     </span>
   </h3>
 
@@ -7547,7 +7771,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber806">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber813">source</a></span></span>
     </span>
   </h3>
 
@@ -7610,7 +7834,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber797">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber804">source</a></span></span>
     </span>
   </h3>
 
@@ -7972,7 +8196,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1517">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1525">source</a></span></span>
     </span>
   </h3>
 
@@ -8080,7 +8304,7 @@ i2.diff(i1, [&apos;months&apos;, &apos;days&apos;, &apos;hours&apos;]).toObject(
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1619">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1627">source</a></span></span>
     </span>
   </h3>
 
@@ -8170,7 +8394,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-diff">dif
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1249">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1256">source</a></span></span>
     </span>
   </h3>
 
@@ -8262,7 +8486,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-diff">dif
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1655">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1663">source</a></span></span>
     </span>
   </h3>
 
@@ -8336,7 +8560,7 @@ Two DateTimes are equal iff they represent the same millisecond</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber744">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber751">source</a></span></span>
     </span>
   </h3>
 
@@ -8420,7 +8644,7 @@ Two DateTimes are equal iff they represent the same millisecond</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1639">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1647">source</a></span></span>
     </span>
   </h3>
 
@@ -8507,7 +8731,7 @@ Two DateTimes are equal iff they represent the same millisecond</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1447">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1454">source</a></span></span>
     </span>
   </h3>
 
@@ -8563,7 +8787,7 @@ Two DateTimes are equal iff they represent the same millisecond</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1188">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1195">source</a></span></span>
     </span>
   </h3>
 
@@ -8637,7 +8861,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1176">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1183">source</a></span></span>
     </span>
   </h3>
 
@@ -8738,7 +8962,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1106">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1113">source</a></span></span>
     </span>
   </h3>
 
@@ -8818,7 +9042,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1044">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1051">source</a></span></span>
     </span>
   </h3>
 
@@ -8892,7 +9116,7 @@ This is useful in understanding the behavior of formatting methods</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1131">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1138">source</a></span></span>
     </span>
   </h3>
 
@@ -8985,7 +9209,7 @@ You can only set units with this method; for &quot;setting&quot; metadata, see <
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1117">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1124">source</a></span></span>
     </span>
   </h3>
 
@@ -9065,7 +9289,7 @@ Just a convenient alias for reconfigure({ locale })</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1085">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1092">source</a></span></span>
     </span>
   </h3>
 
@@ -9155,7 +9379,7 @@ Just a convenient alias for reconfigure({ locale })</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1203">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1210">source</a></span></span>
     </span>
   </h3>
 
@@ -9247,7 +9471,7 @@ Just a convenient alias for reconfigure({ locale })</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1271">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1278">source</a></span></span>
     </span>
   </h3>
 
@@ -9351,7 +9575,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1388">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1395">source</a></span></span>
     </span>
   </h3>
 
@@ -9419,7 +9643,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1330">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1337">source</a></span></span>
     </span>
   </h3>
 
@@ -9531,7 +9755,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1343">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1350">source</a></span></span>
     </span>
   </h3>
 
@@ -9594,7 +9818,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1366">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1373">source</a></span></span>
     </span>
   </h3>
 
@@ -9702,7 +9926,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1352">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1359">source</a></span></span>
     </span>
   </h3>
 
@@ -9765,7 +9989,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1496">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1504">source</a></span></span>
     </span>
   </h3>
 
@@ -9821,7 +10045,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1468">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1476">source</a></span></span>
     </span>
   </h3>
 
@@ -9877,7 +10101,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1072">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1079">source</a></span></span>
     </span>
   </h3>
 
@@ -9934,7 +10158,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1313">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1320">source</a></span></span>
     </span>
   </h3>
 
@@ -10021,7 +10245,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1294">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1301">source</a></span></span>
     </span>
   </h3>
 
@@ -10132,7 +10356,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1479">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1487">source</a></span></span>
     </span>
   </h3>
 
@@ -10220,7 +10444,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1376">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1383">source</a></span></span>
     </span>
   </h3>
 
@@ -10287,7 +10511,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1427">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1434">source</a></span></span>
     </span>
   </h3>
 
@@ -10395,7 +10619,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1397">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1404">source</a></span></span>
     </span>
   </h3>
 
@@ -10458,7 +10682,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1412">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1419">source</a></span></span>
     </span>
   </h3>
 
@@ -10566,7 +10790,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1439">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1446">source</a></span></span>
     </span>
   </h3>
 
@@ -10622,7 +10846,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1062">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1069">source</a></span></span>
     </span>
   </h3>
 
@@ -10705,7 +10929,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1628">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1636">source</a></span></span>
     </span>
   </h3>
 
@@ -10778,7 +11002,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1460">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/datetime.js.html#lineNumber1468">source</a></span></span>
     </span>
   </h3>
 

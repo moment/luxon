@@ -39,6 +39,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#es6" data-ice="link">ES6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#webpack" data-ice="link">Webpack</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#types" data-ice="link">Types</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#react-native" data-ice="link">React Native</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#meteor" data-ice="link">Meteor</a></li>
 </ul>
   </div>
@@ -150,7 +151,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromstring" data-ice="link">fromString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#intl" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#limitations" data-ice="link">Limitations</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#debugging" data-ice="link">Debugging</a></li>
@@ -240,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-12" data-ice="link">0.2.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-11" data-ice="link">0.2.11</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-10" data-ice="link">0.2.10</a></li>
@@ -283,7 +285,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#windows" data-ice="link">Windows</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#docker" data-ice="link">Docker</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#patch-basics" data-ice="link">Patch basics</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#gulp-command-reference" data-ice="link">Gulp command reference</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#npm-script-reference" data-ice="link">npm script reference</a></li>
 </ul>
   </div>
 </div>
@@ -364,7 +366,7 @@
 <pre><code class="lang-js"><code class="source-code prettyprint">Info.features().zones; //=&gt; true</code>
 </code></pre>
 <p>If you&apos;re unsure if all your target environments (browser versions and Node versions) support this, check out the <a href="./manual/matrix.html">Support Matrix</a>. You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also <a href="./manual/matrix.html#zones">polyfill</a> your environment.</p>
-<p>If you specify a zone and your environment doesn&apos;t support that zone, you&apos;ll get an <a href="./manual/validity.html">invalid</a> DateTime. That could be because the environment doesn&apos;t support zones at all, because for whatever reason doesn&apos;t support that <em>particular</em> zone, or because the zone is just bogus. Like this:</p>
+<p>If you specify a zone and your environment doesn&apos;t support that zone, you&apos;ll get an <a href="./manual/validity.html">invalid</a> DateTime. That could be because the environment doesn&apos;t support zones at all, because for whatever reason it doesn&apos;t support that <em>particular</em> zone, or because the zone is just bogus. Like this:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">bogus = DateTime.local().setZone(&apos;America/Bogus&apos;)
 
 bogus.isValid;         //=&gt; false
@@ -405,7 +407,7 @@ utc.toString();                //=&gt; &apos;2017-05-15T09:10:23.000Z&apos;</cod
 specifyOffset.zoneName;         //=&gt; &apos;America/New_York&apos;
 specifyOffset.toString();       //=&gt; &apos;2017-05-15T14:10:23.000-04:00&apos;
 
-var specifyZone = DateTime.fromString(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;);
+var specifyZone = DateTime.fromFormat(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;);
 
 specifyZone.zoneName           //=&gt; &apos;America/New_York&apos;
 specifyZone.toString()         //=&gt; &apos;2017-05-15T03:10:23.000-04:00&apos;</code>
@@ -422,7 +424,7 @@ specifyOffsetAndOverrideZone.toString();               //=&gt; &apos;2017-05-15T
 keepOffset.zoneName;           //=&gt; &apos;UTC-9&apos;
 keepOffset.toString();         //=&gt; &apos;2017-05-15T09:10:23.000-09:00&apos;
 
-var keepZone = DateTime.fromString(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;, { setZone: true });
+var keepZone = DateTime.fromFormat(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;, { setZone: true });
 
 keepZone.zoneName;             //=&gt; &apos;Europe/Paris&apos;
 keepZone.toString()            //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>

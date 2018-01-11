@@ -39,6 +39,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#es6" data-ice="link">ES6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#webpack" data-ice="link">Webpack</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#types" data-ice="link">Types</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#react-native" data-ice="link">React Native</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#meteor" data-ice="link">Meteor</a></li>
 </ul>
   </div>
@@ -150,7 +151,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromstring" data-ice="link">fromString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#intl" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#limitations" data-ice="link">Limitations</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#debugging" data-ice="link">Debugging</a></li>
@@ -240,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-12" data-ice="link">0.2.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-11" data-ice="link">0.2.11</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-10" data-ice="link">0.2.10</a></li>
@@ -283,7 +285,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#windows" data-ice="link">Windows</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#docker" data-ice="link">Docker</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#patch-basics" data-ice="link">Patch basics</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#gulp-command-reference" data-ice="link">Gulp command reference</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#npm-script-reference" data-ice="link">npm script reference</a></li>
 </ul>
   </div>
 </div>
@@ -327,7 +329,7 @@
 </code></pre><pre><code class="lang-js"><code class="source-code prettyprint">import { DateTime } from &apos;luxon&apos;;</code>
 </code></pre><h2>Types</h2><p>There are third-party typing files for Flow (via <a href="https://github.com/flowtype/flow-typed">flow-typed</a>) and TypeScript (via <a href="https://github.com/DefinitelyTyped/DefinitelyTyped">DefinitelyTyped</a>).</p><p>For Flow, use:</p><pre><code><code class="source-code prettyprint">flow-typed install luxon</code>
 </code></pre><p>For TypeScript, use:</p><pre><code><code class="source-code prettyprint">npm install --save-dev @types/luxon</code>
-</code></pre><h2>Meteor</h2><p>[Help wanted.]</p></div>
+</code></pre><h2>React Native</h2><p>React Native works just fine, but React Native for Android doesn&apos;t ship with Intl support, which you need for <a href="./manual/matrix.html">a lot of Luxon&apos;s functionality</a>. Use <a href="https://github.com/SoftwareMansion/jsc-android-buildscripts">jsc-android-buildscripts</a> to fix it.</p><h2>Meteor</h2><p>[Help wanted.]</p></div>
         <a data-ice="link" href="manual/install.html"></a>
       </div>
     </div>
@@ -397,22 +399,22 @@ i.toString()    //=&gt; &apos;[2017-09-14T04:07:11.532-04:00 &#x2013; 2020-10-12
         <div data-ice="card"><h1>Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;el&apos;).toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
 </code></pre><h2>How locales work</h2><p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument works. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string.</p><p>The rest of this document will concentrate on what Luxon does when provided with locale information.</p><h2>Setting the locale</h2><p><code>locale</code> is a property of Luxon object. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.</p><p>You can generally set it at construction time:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.fromISO(&apos;2017-09-24&apos;, { locale: &apos;fr&apos; })
 dt.locale //=&gt; &apos;fr&apos;</code>
-</code></pre><p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromString</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p><p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;fr&apos;).locale //=&gt; &apos;fr&apos;</code>
+</code></pre><p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p><p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;fr&apos;).locale //=&gt; &apos;fr&apos;</code>
 </code></pre><p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &apos;fr&apos; }).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre><h2>Default locale</h2><h3>Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is <code>null</code>. This means different things in different contexts:</p><ol>
 <li><code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</li>
-<li><code>DateTime.fromString</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
+<li><code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
 <li>There&apos;s an exception, though: DateTime#toFormat can take &quot;macro&quot; formats like &quot;D&quot; that produce localized strings as part of a larger string. These <em>do</em> default to the system locale because their entire purpose is to be localized.</li>
 </ol><h3>Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &apos;fr&apos;;
 DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
-</code></pre><p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromString</code>.</p><h3>Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromString</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint"> Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
+</code></pre><p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p><h3>Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint"> Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
 </code></pre><h2>Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({locale: &apos;fr-co&apos;}).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
                                                              //     numberingSystem: &apos;latn&apos;,
                                                              //     outputCalendar: &apos;gregory&apos; }</code>
 </code></pre><h2>Methods affected by the locale</h2><h3>Formatting</h3><p>The most important method affected by the locale setting is <code>toLocaleString</code>, which allows you to produce internationalized, human-readable strings.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;25 septembre 2017&apos;</code>
 </code></pre><p>That&apos;s the normal way to do it: set the locale as property of the DateTime itself and let the <code>toLocaleString</code> inherit it. But you can specify the locale directly to <code>toLocaleString</code> too:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString( Object.assign({ locale: &apos;es&apos; }, DateTime.DATE_FULL)) //=&gt; &apos;25 de septiembre de 2017&apos;</code>
 </code></pre><p>Ad-hoc formatting also respects the locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&apos;fr&apos;).toFormat(&apos;MMMM dd, yyyy GG&apos;); //=&gt; &apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;</code>
-</code></pre><h3>Parsing</h3><p>You can <a href="./manual/parsing.html">parse</a> localized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;, &apos;MMMM dd, yyyy GG&apos;, {locale: &apos;fr&apos;})</code>
+</code></pre><h3>Parsing</h3><p>You can <a href="./manual/parsing.html">parse</a> localized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;, &apos;MMMM dd, yyyy GG&apos;, {locale: &apos;fr&apos;})</code>
 </code></pre><h3>Listing</h3><p>Some of the methods in the <a href="./manual/../class/src/info.js~Info.html">Info</a> class let you list strings like months, weekdays, and eras, and they can be localized:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&apos;long&apos;, { locale: &apos;fr&apos; })    //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, ...
 Info.weekdays(&apos;long&apos;, { locale: &apos;fr&apos; })  //=&gt; [ &apos;lundi&apos;, &apos;mardi&apos;, ...
 Info.eras(&apos;long&apos;, { locale: &apos;fr&apos; })      //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
@@ -488,7 +490,7 @@ dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x
 </tr>
 </tbody>
 </table><h3>IANA support</h3><p>IANA-specified zones are string identifiers like &quot;America/New_York&quot; or &quot;Asia/Tokyo&quot;. Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can&apos;t fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features().zones; //=&gt; true</code>
-</code></pre><p>If you&apos;re unsure if all your target environments (browser versions and Node versions) support this, check out the <a href="./manual/matrix.html">Support Matrix</a>. You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also <a href="./manual/matrix.html#zones">polyfill</a> your environment.</p><p>If you specify a zone and your environment doesn&apos;t support that zone, you&apos;ll get an <a href="./manual/validity.html">invalid</a> DateTime. That could be because the environment doesn&apos;t support zones at all, because for whatever reason doesn&apos;t support that <em>particular</em> zone, or because the zone is just bogus. Like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">bogus = DateTime.local().setZone(&apos;America/Bogus&apos;)
+</code></pre><p>If you&apos;re unsure if all your target environments (browser versions and Node versions) support this, check out the <a href="./manual/matrix.html">Support Matrix</a>. You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also <a href="./manual/matrix.html#zones">polyfill</a> your environment.</p><p>If you specify a zone and your environment doesn&apos;t support that zone, you&apos;ll get an <a href="./manual/validity.html">invalid</a> DateTime. That could be because the environment doesn&apos;t support zones at all, because for whatever reason it doesn&apos;t support that <em>particular</em> zone, or because the zone is just bogus. Like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">bogus = DateTime.local().setZone(&apos;America/Bogus&apos;)
 
 bogus.isValid;         //=&gt; false
 bogus.invalidReason;   //=&gt; &apos;unsupported zone&apos;</code>
@@ -517,7 +519,7 @@ utc.toString();                //=&gt; &apos;2017-05-15T09:10:23.000Z&apos;</cod
 specifyOffset.zoneName;         //=&gt; &apos;America/New_York&apos;
 specifyOffset.toString();       //=&gt; &apos;2017-05-15T14:10:23.000-04:00&apos;
 
-var specifyZone = DateTime.fromString(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;);
+var specifyZone = DateTime.fromFormat(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;);
 
 specifyZone.zoneName           //=&gt; &apos;America/New_York&apos;
 specifyZone.toString()         //=&gt; &apos;2017-05-15T03:10:23.000-04:00&apos;</code>
@@ -530,7 +532,7 @@ specifyOffsetAndOverrideZone.toString();               //=&gt; &apos;2017-05-15T
 keepOffset.zoneName;           //=&gt; &apos;UTC-9&apos;
 keepOffset.toString();         //=&gt; &apos;2017-05-15T09:10:23.000-09:00&apos;
 
-var keepZone = DateTime.fromString(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;, { setZone: true });
+var keepZone = DateTime.fromFormat(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;, { setZone: true });
 
 keepZone.zoneName;             //=&gt; &apos;Europe/Paris&apos;
 keepZone.toString()            //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
@@ -1242,13 +1244,13 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
 </code></pre><p>It works similarly to <code>fromISO</code>, so see above for additional notes.</p><h2>Ad-hoc parsing</h2><h3>Consider alternatives</h3><p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p><ol>
 <li>If the string was generated by a computer for programmatic access, use a standard format like ISO 8601. Then you can parse it using <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">DateTime.fromISO</a>.</li>
 <li>If the string is typed out by a human, it may not conform to the format you specify when asking Luxon to parse it. Luxon is quite strict about the format matching the string exactly.</li>
-</ol><p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p><h3>fromString</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromString">DateTime.fromString</a> for the method signature. A brief example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
-</code></pre><h3>Intl</h3><p>Luxon supports parsing internationalized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromString(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
+</ol><p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p><h3>fromFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormat">DateTime.fromFormat</a> for the method signature. A brief example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
+</code></pre><h3>Intl</h3><p>Luxon supports parsing internationalized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
 </code></pre><p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/matrix.html">support matrix</a>).</p><h3>Limitations</h3><p>Not every token supported by <code>DateTime#toFormat</code> is supported in the parser. For example, there&apos;s no <code>ZZZZ</code> or <code>ZZZZZ</code> tokens. This is for a few reasons:</p><ul>
 <li>Luxon relies on natively-available functionality that only provides the mapping in one way. We can ask what the named offset is and get &quot;Eastern Standard Time&quot; but not ask what &quot;Eastern Standard Time&quot; is most likely to mean.</li>
 <li>Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can&apos;t be parsed because of their ambiguity.</li>
 <li>Luxon doesn&apos;t yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.</li>
-</ul><h3>Debugging</h3><p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromStringExplain">fromStringExplain</a>. It takes the same arguments as <code>fromString</code> but returns a map of information about the parse that can be useful in debugging.</p><p>For example, here the code is using &quot;MMMM&quot; where &quot;MMM&quot; was needed. You can see the regex Luxon uses and see that it didn&apos;t match anything:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromStringExplain(&quot;Aug 6 1982&quot;, &quot;MMMM d yyyy&quot;)
+</ul><h3>Debugging</h3><p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormatExplain">fromFormatExplain</a>. It takes the same arguments as <code>fromFormat</code> but returns a map of information about the parse that can be useful in debugging.</p><p>For example, here the code is using &quot;MMMM&quot; where &quot;MMM&quot; was needed. You can see the regex Luxon uses and see that it didn&apos;t match anything:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromFormatExplain(&quot;Aug 6 1982&quot;, &quot;MMMM d yyyy&quot;)
 
 { input: &apos;Aug 6 1982&apos;,
   tokens:
@@ -1261,10 +1263,10 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
   matches: {},
   result: {},
   zone: null }</code>
-</code></pre><p>If you parse something and get an invalid date, the debugging steps are slightly different. Here, we&apos;re attempting to parse August 32nd, which doesn&apos;t exist:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromString(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
+</code></pre><p>If you parse something and get an invalid date, the debugging steps are slightly different. Here, we&apos;re attempting to parse August 32nd, which doesn&apos;t exist:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromFormat(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
 d.isValid //=&gt; false
 d.invalidReason //=&gt; &apos;day out of range&apos;</code>
-</code></pre><p>For more on validity and how to debug it, see <a href="./manual/validity.html">validity</a>. You may find more comprehensive tips there. But as it applies specifically to <code>fromString</code>, again try <code>fromStringExplain</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromStringExplain(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
+</code></pre><p>For more on validity and how to debug it, see <a href="./manual/validity.html">validity</a>. You may find more comprehensive tips there. But as it applies specifically to <code>fromFormat</code>, again try <code>fromFormatExplain</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromFormatExplain(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
 
 { input: &apos;August 32 1982&apos;,
   tokens:
@@ -1780,7 +1782,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <tr>
 <td></td>
 <td>6</td>
-<td>no zones, no intl tokens</td>
+<td>no intl tokens, no zones</td>
 </tr>
 <tr>
 <td>Node w/o ICU</td>
@@ -1860,7 +1862,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td>OK</td>
 </tr>
 <tr>
-<td><code>DateTime#fromString</code> in en-US</td>
+<td><code>DateTime#fromFormat</code> in en-US</td>
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
@@ -1874,7 +1876,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td></td>
 </tr>
 <tr>
-<td><code>fromString</code> in other locales</td>
+<td><code>fromFormat</code> in other locales</td>
 <td>OK</td>
 <td>Invalid DateTime if uses localized strings&#x2021;</td>
 <td>Uses English if format contains localized strings&#x2021;</td>
@@ -1895,11 +1897,11 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 <td>OK</td>
 </tr>
 </tbody>
-</table><p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. If you provide your own, modify for the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p><p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as their in Latin (i.e. Western) numbers.</p><p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning null if it fails.</p><h2>Polyfills</h2><h3>Intl and Intl tokens</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p><p>The easiest way to add this is through polyfill.io:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=intl&quot;&gt;</code>
+</table><p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. If you provide your own, modify the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p><p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as their in Latin (i.e. Western) numbers.</p><p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning null if it fails.</p><h2>Polyfills</h2><h3>Intl and Intl tokens</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p><p>The easiest way to add this is through polyfill.io:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=intl&quot;&gt;</code>
 </code></pre><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p><h2>Older platforms</h2><ul>
 <li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
 <li><strong>Older versions of IE</strong> probably won&apos;t work at all.</li>
-<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling the source code with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
+<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon  with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
 </ul><h2>Other platforms</h2><p>If the platform you&apos;re targeting isn&apos;t on the list and you&apos;re unsure what caveats apply, you can check which pieces are supported:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features() //=&gt; { intl: true, intlTokens: true, zones: true }</code>
 </code></pre><p>Specific notes on other platforms:</p><ul>
 <li><strong>React Native on (specifically) Android</strong> doesn&apos;t come with Intl support, so all three caveats apply to it. Use <a href="https://github.com/SoftwareMansion/jsc-android-buildscripts">jsc-android-buildscripts</a> to fix it.</li>
@@ -1959,7 +1961,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <tr>
 <td>From custom format</td>
 <td><code>moment(String, String)</code></td>
-<td><code>DateTime.fromString(String, String)</code></td>
+<td><code>DateTime.fromFormat(String, String)</code></td>
 <td>The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.</td>
 </tr>
 <tr>
@@ -2432,8 +2434,15 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.2.12</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.3.0</h2><ul>
+<li>Rename DateTime.fromString to DateTime.fromFormat (leaving deprecated DateTime.fromString)</li>
+<li>Rename DateTime.fromStringExplain to DateTime.fromFormatExplain (leaving deprecated DateTime.fromStringExplain)</li>
+<li>Support Etc/GMT IANA zones</li>
+<li>Perf fixes for zones</li>
+<li>Rework build infrastructure</li>
+</ul><h2>0.2.12</h2><ul>
 <li>Fix DateTime.fromObject&apos;s handling of default zones</li>
+<li>Change <code>keepCalendarTime</code> to <code>keepLocalTime</code></li>
 </ul><h2>0.2.11</h2><ul>
 <li>Handle no arguments in <code>DateTime.min</code> and <code>DateTime.max</code></li>
 <li>Documentation fixes</li>
@@ -2528,23 +2537,21 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li>Luxon shouldn&apos;t contain simple conveniences that bloat the library to save callers a couple lines of code. Write those lines in your own code.</li>
 <li>Most of the complexity of JS module loading compatibility is left to the build. If you have a &quot;this can&apos;t be loaded in my bespoke JS module loader&quot; problems, this isn&apos;t something you should be solving with changes to the <code>src</code> directory. If it&apos;s a common use case and is possible to generate with Rollup, it can get its own build command.</li>
 <li>We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don&apos;t want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.</li>
-</ol><h2>Building and testing</h2><p>Building and testing is done through Gulp tasks. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you&apos;re good to go; just run Gulp commands like <code>gulp test</code>.</p><h3>OSX</h3><p>Mac is easy:</p><pre><code><code class="source-code prettyprint">brew install node --with-full-icu
+</ol><h2>Building and testing</h2><p>Building and testing is done through npm scripts. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you&apos;re good to go; just run npm scripts like <code>npm run test</code>.</p><h3>OSX</h3><p>Mac is easy:</p><pre><code><code class="source-code prettyprint">brew install node --with-full-icu
 npm install
-npm install -g gulp-cli
-gulp test</code>
+npm run test</code>
 </code></pre><p>If that&apos;s for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.</p><h3>Linux</h3><p>There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We&apos;ll cover the latter. Assuming you&apos;ve installed Node 8:</p><pre><code><code class="source-code prettyprint">npm install
 npm install full-icu
-npm install gulp-cli
 ./scripts/test</code>
-</code></pre><p>Where <code>scripts/test</code> is just <code>NODE_ICU_DATA=&quot;$(pwd)/node_modules/full-icu&quot; gulp test</code>, which is required for making Node load the full-icu module you just installed. You can run all the other Gulp commands (e.g. <code>gulp docs</code>) directly; they don&apos;t require Intl support.</p><h3>Windows</h3><p>If you have Bash, the Linux instructions seem to work fine.</p><h3>Docker</h3><p>In case messing with your Node environment just to run Luxon&apos;s tests is too much to ask, we&apos;ve provided a Docker container. You&apos;ll need a functioning Docker environment, but the rest is easy:</p><pre><code><code class="source-code prettyprint">./docker/install
-./docker/gulp test</code>
-</code></pre><p>where <code>docker/install</code> is a convenience wrapper for <code>npm install</code> in the container and <code>docker/gulp</code> just wraps <code>gulp</code>.</p><h2>Patch basics</h2><p>Once you&apos;re sure your bugfix or feature makes sense for Luxon, make sure you take these steps:</p><ol>
-<li>Be sure to add tests and run them with <code>gulp test</code></li>
-<li>Be sure you run <code>gulp lint!</code> before you commit. Note this will modify your source files to line up with the style guidelines.</li>
-<li>Make sure you add or ESDoc annotations appropriately. You can run <code>gulp docs</code> to generate the HTML for them. They land in the <code>build/docs</code> directory. This also builds the markdown files in <code>/docs</code> into the guide on the Luxon website.</li>
-<li>To test Luxon in your browser, run <code>gulp site</code> and then open <code>build/demo/global.html</code>. You can access Luxon classes in the console like <code>window.luxon.DateTime</code>.</li>
-<li>To test in Node, run <code>gulp cjs</code> and then run something like <code>var DateTime = require(&apos;./build/cjs/luxon&apos;).DateTime</code>.</li>
-</ol><p>Luxon uses <a href="https://github.com/typicode/husky">Husky</a> to run the formatter on your code as a pre-commit hook. You should still run <code>gulp lint!</code> yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.</p><h2>Gulp command reference</h2><table>
+</code></pre><p>Where <code>scripts/test</code> is just <code>NODE_ICU_DATA=&quot;$(pwd)/node_modules/full-icu&quot; npm run test</code>, which is required for making Node load the full-icu module you just installed. You can run all the other npm scripts (e.g. <code>npm run docs</code>) directly; they don&apos;t require Intl support.</p><h3>Windows</h3><p>If you have Bash, the Linux instructions seem to work fine.</p><h3>Docker</h3><p>In case messing with your Node environment just to run Luxon&apos;s tests is too much to ask, we&apos;ve provided a Docker container. You&apos;ll need a functioning Docker environment, but the rest is easy:</p><pre><code><code class="source-code prettyprint">./docker/npm install
+./docker/npm run test</code>
+</code></pre><h2>Patch basics</h2><p>Once you&apos;re sure your bugfix or feature makes sense for Luxon, make sure you take these steps:</p><ol>
+<li>Be sure to add tests and run them with <code>npm run test</code></li>
+<li>Be sure you run <code>npm run lint!</code> before you commit. Note this will modify your source files to line up with the style guidelines.</li>
+<li>Make sure you add or ESDoc annotations appropriately. You can run <code>npm run docs</code> to generate the HTML for them. They land in the <code>build/docs</code> directory. This also builds the markdown files in <code>/docs</code> into the guide on the Luxon website.</li>
+<li>To test Luxon in your browser, run <code>npm run site</code> and then open <code>build/demo/global.html</code>. You can access Luxon classes in the console like <code>window.luxon.DateTime</code>.</li>
+<li>To test in Node, run <code>npm run build</code> and then run something like <code>var DateTime = require(&apos;./build/cjs/luxon&apos;).DateTime</code>.</li>
+</ol><p>Luxon uses <a href="https://github.com/typicode/husky">Husky</a> to run the formatter on your code as a pre-commit hook. You should still run <code>npm run lint!</code> yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.</p><h2>npm script reference</h2><table>
 <thead>
 <tr>
 <th>Command</th>
@@ -2553,44 +2560,28 @@ npm install gulp-cli
 </thead>
 <tbody>
 <tr>
-<td><code>gulp build</code></td>
+<td><code>npm run build</code></td>
 <td>Build all the distributable files</td>
 </tr>
 <tr>
-<td><code>gulp test</code></td>
+<td><code>npm run test</code></td>
 <td>Run the test suite</td>
 </tr>
 <tr>
-<td><code>gulp format</code></td>
+<td><code>npm run format</code></td>
 <td>Run the Prettier formatter</td>
 </tr>
 <tr>
-<td><code>gulp lint!</code></td>
+<td><code>npm run lint!</code></td>
 <td>Run the formatter and the linter</td>
 </tr>
 <tr>
-<td><code>gulp docs</code></td>
+<td><code>npm run docs</code></td>
 <td>Build the doc pages</td>
 </tr>
 <tr>
-<td><code>gulp site</code></td>
+<td><code>npm run site</code></td>
 <td>Build the Luxon website</td>
-</tr>
-<tr>
-<td><code>gulp cjs</code></td>
-<td>Build just the CJS distributable</td>
-</tr>
-<tr>
-<td><code>gulp es6</code></td>
-<td>Build just the ES6 distributable</td>
-</tr>
-<tr>
-<td><code>gulp amd</code></td>
-<td>Build just the AMD distributable</td>
-</tr>
-<tr>
-<td><code>gulp global</code></td>
-<td>Build just the browser global distributable</td>
 </tr>
 </tbody>
 </table></div>

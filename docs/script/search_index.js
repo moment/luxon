@@ -924,6 +924,18 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/datetime.js~datetime.fromformat",
+    "class/src/datetime.js~DateTime.html#static-method-fromFormat",
+    "src/datetime.js~DateTime.fromFormat",
+    "method"
+  ],
+  [
+    "src/datetime.js~datetime.fromformatexplain",
+    "class/src/datetime.js~DateTime.html#static-method-fromFormatExplain",
+    "src/datetime.js~DateTime.fromFormatExplain",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime.fromhttp",
     "class/src/datetime.js~DateTime.html#static-method-fromHTTP",
     "src/datetime.js~DateTime.fromHTTP",
@@ -1639,13 +1651,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-get-now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
+    "class/src/settings.js~Settings.html#static-get-now",
     "src/settings.js~Settings.now",
     "member"
   ],

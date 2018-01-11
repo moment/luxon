@@ -183,6 +183,23 @@ class LocalZone extends Zone {
   }
 }
 
+const dtfCache = {};
+function makeDTF(zone) {
+  if (!dtfCache[zone]) {
+    dtfCache[zone] = new Intl.DateTimeFormat('en-US', {
+      hour12: false,
+      timeZone: zone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+  return dtfCache[zone];
+}
+
 const typeToPos = {
   year: 0,
   month: 1,
@@ -228,7 +245,18 @@ function isValid(zone) {
 
 class IANAZone extends Zone {
   static isValidSpecier(s) {
-    return s && s.match(/[a-z_]{1,256}\/[a-z_]{1,256}/i);
+    return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
+  }
+
+  // Etc/GMT+8 -> 480
+  static parseGMTOffset(specifier) {
+    if (specifier) {
+      const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
+      if (match) {
+        return 60 * parseInt(match[1]);
+      }
+    }
+    return null;
   }
 
   constructor(name) {
@@ -255,16 +283,7 @@ class IANAZone extends Zone {
 
   offset(ts) {
     const date = new Date(ts),
-      dtf = new Intl.DateTimeFormat('en-US', {
-        hour12: false,
-        timeZone: this.zoneName,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }),
+      dtf = makeDTF(this.zoneName),
       [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts
         ? partsOffset(dtf, date)
         : hackyOffset(dtf, date),
@@ -1714,6 +1733,7 @@ class Util {
   }
 
   static normalizeZone(input) {
+    let offset;
     if (Util.isUndefined(input) || input === null) {
       return Settings.defaultZone;
     } else if (input instanceof Zone) {
@@ -1722,7 +1742,10 @@ class Util {
       const lowered = input.toLowerCase();
       if (lowered === 'local') return LocalZone.instance;
       else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
-      else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
+      else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
+        // handle Etc/GMT-4, which V8 chokes on
+        return FixedOffsetZone.instance(offset);
+      } else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
       else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
@@ -3008,6 +3031,7 @@ class Interval {
   /**
    * Return an Interval representing the intersection of this Interval and the specified Interval.
    * Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.
+   * Returns null if the intersection is empty, i.e., the intervals don't intersect.
    * @param {Interval} other
    * @return {Interval}
    */
@@ -3288,10 +3312,10 @@ class Info {
    * Return the set of available features in this environment.
    * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.
    * Keys:
-   * * `timezones`: whether this environment supports IANA timezones
+   * * `zones`: whether this environment supports IANA timezones
    * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
    * * `intl`: whether this environment supports general internationalization
-   * @example Info.feature() //=> { intl: true, intlTokens: false, timezones: true }
+   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true }
    * @return {object}
    */
   static features() {
@@ -4049,7 +4073,7 @@ function quickDT(obj, zone) {
  *
  * Here is a brief overview of the most commonly used functionality it provides:
  *
- * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link local}, {@link utc}, and (most flexibly) {@link fromObject}. To create one from a standard string format, use {@link fromISO}, {@link fromHTTP}, and {@link fromRFC2822}. To create one from a custom string format, use {@link fromString}. To create one from a native JS date, use {@link fromJSDate}.
+ * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link local}, {@link utc}, and (most flexibly) {@link fromObject}. To create one from a standard string format, use {@link fromISO}, {@link fromHTTP}, and {@link fromRFC2822}. To create one from a custom string format, use {@link fromFormat}. To create one from a native JS date, use {@link fromJSDate}.
  * * **Gregorian calendar and time**: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through {@link toObject}), use the {@link year}, {@link month},
  * {@link day}, {@link hour}, {@link minute}, {@link second}, {@link millisecond} accessors.
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
@@ -4418,9 +4442,9 @@ class DateTime {
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromString(text, fmt, options = {}) {
+  static fromFormat(text, fmt, options = {}) {
     if (Util.isUndefined(text) || Util.isUndefined(fmt)) {
-      throw new InvalidArgumentError('fromString requires an input string and a format');
+      throw new InvalidArgumentError('fromFormat requires an input string and a format');
     }
 
     const { locale = null, numberingSystem = null } = options,
@@ -4431,6 +4455,13 @@ class DateTime {
     } else {
       return parseDataToDateTime(vals, parsedZone, options);
     }
+  }
+
+  /**
+   * @deprecated use fromFormat instead
+   */
+  static fromString(text, fmt, opts = {}) {
+    return DateTime.fromFormat(text, fmt, opts);
   }
 
   /**
@@ -5187,8 +5218,9 @@ class DateTime {
    */
   inspect() {
     if (this.isValid) {
-      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
-        .locale} }`;
+      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${
+        this.locale
+      } }`;
     } else {
       return `DateTime { Invalid, reason: ${this.invalidReason} }`;
     }
@@ -5422,15 +5454,22 @@ class DateTime {
   // MISC
 
   /**
-   * Explain how a string would be parsed by fromString()
+   * Explain how a string would be parsed by fromFormat()
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {object} options - options taken by fromString()
+   * @param {object} options - options taken by fromFormat()
    * @return {object}
    */
-  static fromStringExplain(text, fmt, options = {}) {
+  static fromFormatExplain(text, fmt, options = {}) {
     const parser = new TokenParser(Locale.fromOpts(options));
     return parser.explainParse(text, fmt);
+  }
+
+  /**
+   * @deprecated use fromFormatExplain instead
+   */
+  static fromStringExplain(text, fmt, options = {}) {
+    return DateTime.fromFormatExplain(text, fmt, options);
   }
 
   // FORMAT PRESETS

@@ -39,6 +39,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#es6" data-ice="link">ES6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#webpack" data-ice="link">Webpack</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#types" data-ice="link">Types</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#react-native" data-ice="link">React Native</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#meteor" data-ice="link">Meteor</a></li>
 </ul>
   </div>
@@ -150,7 +151,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromstring" data-ice="link">fromString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#intl" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#limitations" data-ice="link">Limitations</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#debugging" data-ice="link">Debugging</a></li>
@@ -240,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-12" data-ice="link">0.2.12</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-11" data-ice="link">0.2.11</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-2-10" data-ice="link">0.2.10</a></li>
@@ -283,7 +285,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#windows" data-ice="link">Windows</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#docker" data-ice="link">Docker</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#patch-basics" data-ice="link">Patch basics</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#gulp-command-reference" data-ice="link">Gulp command reference</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#npm-script-reference" data-ice="link">npm script reference</a></li>
 </ul>
   </div>
 </div>
@@ -298,34 +300,31 @@
 <li>Most of the complexity of JS module loading compatibility is left to the build. If you have a &quot;this can&apos;t be loaded in my bespoke JS module loader&quot; problems, this isn&apos;t something you should be solving with changes to the <code>src</code> directory. If it&apos;s a common use case and is possible to generate with Rollup, it can get its own build command.</li>
 <li>We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don&apos;t want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.</li>
 </ol>
-<h2 id="building-and-testing">Building and testing</h2><p>Building and testing is done through Gulp tasks. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you&apos;re good to go; just run Gulp commands like <code>gulp test</code>.</p>
+<h2 id="building-and-testing">Building and testing</h2><p>Building and testing is done through npm scripts. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you&apos;re good to go; just run npm scripts like <code>npm run test</code>.</p>
 <h3 id="osx">OSX</h3><p>Mac is easy:</p>
 <pre><code><code class="source-code prettyprint">brew install node --with-full-icu
 npm install
-npm install -g gulp-cli
-gulp test</code>
+npm run test</code>
 </code></pre><p>If that&apos;s for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.</p>
 <h3 id="linux">Linux</h3><p>There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We&apos;ll cover the latter. Assuming you&apos;ve installed Node 8:</p>
 <pre><code><code class="source-code prettyprint">npm install
 npm install full-icu
-npm install gulp-cli
 ./scripts/test</code>
-</code></pre><p>Where <code>scripts/test</code> is just <code>NODE_ICU_DATA=&quot;$(pwd)/node_modules/full-icu&quot; gulp test</code>, which is required for making Node load the full-icu module you just installed. You can run all the other Gulp commands (e.g. <code>gulp docs</code>) directly; they don&apos;t require Intl support.</p>
+</code></pre><p>Where <code>scripts/test</code> is just <code>NODE_ICU_DATA=&quot;$(pwd)/node_modules/full-icu&quot; npm run test</code>, which is required for making Node load the full-icu module you just installed. You can run all the other npm scripts (e.g. <code>npm run docs</code>) directly; they don&apos;t require Intl support.</p>
 <h3 id="windows">Windows</h3><p>If you have Bash, the Linux instructions seem to work fine.</p>
 <h3 id="docker">Docker</h3><p>In case messing with your Node environment just to run Luxon&apos;s tests is too much to ask, we&apos;ve provided a Docker container. You&apos;ll need a functioning Docker environment, but the rest is easy:</p>
-<pre><code><code class="source-code prettyprint">./docker/install
-./docker/gulp test</code>
-</code></pre><p>where <code>docker/install</code> is a convenience wrapper for <code>npm install</code> in the container and <code>docker/gulp</code> just wraps <code>gulp</code>.</p>
-<h2 id="patch-basics">Patch basics</h2><p>Once you&apos;re sure your bugfix or feature makes sense for Luxon, make sure you take these steps:</p>
+<pre><code><code class="source-code prettyprint">./docker/npm install
+./docker/npm run test</code>
+</code></pre><h2 id="patch-basics">Patch basics</h2><p>Once you&apos;re sure your bugfix or feature makes sense for Luxon, make sure you take these steps:</p>
 <ol>
-<li>Be sure to add tests and run them with <code>gulp test</code></li>
-<li>Be sure you run <code>gulp lint!</code> before you commit. Note this will modify your source files to line up with the style guidelines.</li>
-<li>Make sure you add or ESDoc annotations appropriately. You can run <code>gulp docs</code> to generate the HTML for them. They land in the <code>build/docs</code> directory. This also builds the markdown files in <code>/docs</code> into the guide on the Luxon website.</li>
-<li>To test Luxon in your browser, run <code>gulp site</code> and then open <code>build/demo/global.html</code>. You can access Luxon classes in the console like <code>window.luxon.DateTime</code>.</li>
-<li>To test in Node, run <code>gulp cjs</code> and then run something like <code>var DateTime = require(&apos;./build/cjs/luxon&apos;).DateTime</code>.</li>
+<li>Be sure to add tests and run them with <code>npm run test</code></li>
+<li>Be sure you run <code>npm run lint!</code> before you commit. Note this will modify your source files to line up with the style guidelines.</li>
+<li>Make sure you add or ESDoc annotations appropriately. You can run <code>npm run docs</code> to generate the HTML for them. They land in the <code>build/docs</code> directory. This also builds the markdown files in <code>/docs</code> into the guide on the Luxon website.</li>
+<li>To test Luxon in your browser, run <code>npm run site</code> and then open <code>build/demo/global.html</code>. You can access Luxon classes in the console like <code>window.luxon.DateTime</code>.</li>
+<li>To test in Node, run <code>npm run build</code> and then run something like <code>var DateTime = require(&apos;./build/cjs/luxon&apos;).DateTime</code>.</li>
 </ol>
-<p>Luxon uses <a href="https://github.com/typicode/husky">Husky</a> to run the formatter on your code as a pre-commit hook. You should still run <code>gulp lint!</code> yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.</p>
-<h2 id="gulp-command-reference">Gulp command reference</h2><table>
+<p>Luxon uses <a href="https://github.com/typicode/husky">Husky</a> to run the formatter on your code as a pre-commit hook. You should still run <code>npm run lint!</code> yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.</p>
+<h2 id="npm-script-reference">npm script reference</h2><table>
 <thead>
 <tr>
 <th>Command</th>
@@ -334,44 +333,28 @@ npm install gulp-cli
 </thead>
 <tbody>
 <tr>
-<td><code>gulp build</code></td>
+<td><code>npm run build</code></td>
 <td>Build all the distributable files</td>
 </tr>
 <tr>
-<td><code>gulp test</code></td>
+<td><code>npm run test</code></td>
 <td>Run the test suite</td>
 </tr>
 <tr>
-<td><code>gulp format</code></td>
+<td><code>npm run format</code></td>
 <td>Run the Prettier formatter</td>
 </tr>
 <tr>
-<td><code>gulp lint!</code></td>
+<td><code>npm run lint!</code></td>
 <td>Run the formatter and the linter</td>
 </tr>
 <tr>
-<td><code>gulp docs</code></td>
+<td><code>npm run docs</code></td>
 <td>Build the doc pages</td>
 </tr>
 <tr>
-<td><code>gulp site</code></td>
+<td><code>npm run site</code></td>
 <td>Build the Luxon website</td>
-</tr>
-<tr>
-<td><code>gulp cjs</code></td>
-<td>Build just the CJS distributable</td>
-</tr>
-<tr>
-<td><code>gulp es6</code></td>
-<td>Build just the ES6 distributable</td>
-</tr>
-<tr>
-<td><code>gulp amd</code></td>
-<td>Build just the AMD distributable</td>
-</tr>
-<tr>
-<td><code>gulp global</code></td>
-<td>Build just the browser global distributable</td>
 </tr>
 </tbody>
 </table>
