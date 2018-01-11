@@ -63,7 +63,7 @@ function isValid(zone) {
 
 export class IANAZone extends Zone {
   static isValidSpecier(s) {
-    return s && s.match(/[a-z_+-]{1,256}\/[a-z_+-]{1,256}/i);
+    return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
   }
 
   // Etc/GMT+8 -> 480
