@@ -1453,8 +1453,9 @@ export class DateTime {
    */
   inspect() {
     if (this.isValid) {
-      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
-        .locale} }`;
+      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${
+        this.locale
+      } }`;
     } else {
       return `DateTime { Invalid, reason: ${this.invalidReason} }`;
     }
@@ -1697,6 +1698,13 @@ export class DateTime {
   static fromFormatExplain(text, fmt, options = {}) {
     const parser = new TokenParser(Locale.fromOpts(options));
     return parser.explainParse(text, fmt);
+  }
+
+  /**
+   * @deprecated use fromFormatExplain instead
+   */
+  static fromStringExplain(text, fmt, options = {}) {
+    return DateTime.fromFormatExplain(text, fmt, options);
   }
 
   // FORMAT PRESETS

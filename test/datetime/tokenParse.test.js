@@ -508,6 +508,16 @@ test('DateTime.fromFormatExplain() explains a bad match', () => {
 });
 
 //------
+// .fromStringExplain
+//-------
+test('DateTime.fromStringExplain is an alias for DateTime.fromFormatExplain', () => {
+  const ff = DateTime.fromFormatExplain('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS'),
+    fs = DateTime.fromStringExplain('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
+
+  expect(ff).toEqual(fs);
+});
+
+//------
 // .fromString
 //-------
 
