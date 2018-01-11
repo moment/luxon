@@ -6,12 +6,12 @@ before_install:
   - docker pull icambron/luxon
   - ./docker/npm install
 script:
-  - ./docker/npm build
-  - ./docker/npm lint
-  - ./docker/npm test
-  - ./docker/npm coveralls
-  - ./docker/npm docs
-  - ./docker/npm check-doc-coverage
+  - ./docker/npm run build
+  - ./docker/npm run lint
+  - ./docker/npm run test
+  - ./docker/npm run coveralls
+  - ./docker/npm run docs
+  - ./docker/npm run check-doc-coverage
 branches:
   only:
     - master
