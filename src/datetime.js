@@ -616,7 +616,7 @@ export class DateTime {
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
-   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc')
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc'})
    * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */
