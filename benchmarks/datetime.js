@@ -32,7 +32,7 @@ suite
   .on('cycle', event => {
     console.log(String(event.target));
   })
-  .on('complete', () => {
+  .on('complete', function() {
     console.log('Fastest is ' + this.filter('fastest').map('name'));
   })
   .run();
