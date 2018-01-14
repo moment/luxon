@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+ * Fixed `toLocaleString` for fixed-offset zones in the absence of Intl
+ * Added `Info.isValidIANAZone`
+ * Made malformed zone specifiers result in invalid DateTime instances
+
 ## 0.3.0
 
  * Rename DateTime.fromString to DateTime.fromFormat (leaving deprecated DateTime.fromString)
