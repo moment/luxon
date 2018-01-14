@@ -52,6 +52,7 @@
 import { Settings } from &apos;./settings&apos;;
 import { Locale } from &apos;./impl/locale&apos;;
 import { Util } from &apos;./impl/util&apos;;
+import { IANAZone } from &apos;./zones/IANAZone.js&apos;;
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
@@ -68,6 +69,15 @@ export class Info {
       .set({ month: 12 });
 
     return !zone.universal &amp;&amp; proto.offset !== proto.set({ month: 6 }).offset;
+  }
+
+  /**
+   * Return whether the specified zone is a valid IANA specifier.
+   * @param {string} zone - Zone to check
+   * @return {boolean}
+   */
+  static isValidIANAZone(zone) {
+    return !!IANAZone.isValidSpecifier(zone) &amp;&amp; IANAZone.isValidZone(zone);
   }
 
   /**

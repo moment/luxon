@@ -2204,15 +2204,6 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-function isValid(zone) {
-  try {
-    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
 /**
  * @private
  */
@@ -2220,8 +2211,17 @@ function isValid(zone) {
 var IANAZone = function (_Zone) {
   inherits(IANAZone, _Zone);
 
-  IANAZone.isValidSpecier = function isValidSpecier(s) {
+  IANAZone.isValidSpecifier = function isValidSpecifier(s) {
     return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
+  };
+
+  IANAZone.isValidZone = function isValidZone(zone) {
+    try {
+      new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
+      return true;
+    } catch (e) {
+      return false;
+    }
   };
 
   // Etc/GMT+8 -> 480
@@ -2243,7 +2243,7 @@ var IANAZone = function (_Zone) {
     var _this = possibleConstructorReturn(this, _Zone.call(this));
 
     _this.zoneName = name;
-    _this.valid = isValid(name);
+    _this.valid = IANAZone.isValidZone(name);
     return _this;
   }
 
@@ -2383,6 +2383,60 @@ var FixedOffsetZone = function (_Zone) {
     }
   }]);
   return FixedOffsetZone;
+}(Zone);
+
+var singleton$2 = null;
+
+var InvalidZone = function (_Zone) {
+  inherits(InvalidZone, _Zone);
+
+  function InvalidZone() {
+    classCallCheck(this, InvalidZone);
+    return possibleConstructorReturn(this, _Zone.apply(this, arguments));
+  }
+
+  InvalidZone.prototype.offsetName = function offsetName() {
+    return null;
+  };
+
+  InvalidZone.prototype.offset = function offset() {
+    return NaN;
+  };
+
+  InvalidZone.prototype.equals = function equals() {
+    return false;
+  };
+
+  createClass(InvalidZone, [{
+    key: 'type',
+    get: function get$$1() {
+      return 'invalid';
+    }
+  }, {
+    key: 'name',
+    get: function get$$1() {
+      return null;
+    }
+  }, {
+    key: 'universal',
+    get: function get$$1() {
+      return false;
+    }
+  }, {
+    key: 'isValid',
+    get: function get$$1() {
+      return false;
+    }
+  }], [{
+    key: 'instance',
+    get: function get$$1() {
+      if (singleton$2 === null) {
+        singleton$2 = new InvalidZone();
+      }
+      return singleton$2;
+    }
+  }]);
+  return InvalidZone;
 }(Zone);
 
 /**
@@ -3234,7 +3288,7 @@ var PolyDateFormatter = function () {
     this.hasIntl = Util.hasIntl();
 
     var z = void 0;
-    if (dt.zone.universal) {
+    if (dt.zone.universal && this.hasIntl) {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make do with just displaying
       // the time in UTC; the formatter doesn't know how to handle UTC+8
@@ -3854,7 +3908,7 @@ var Util = function () {
       if (lowered === 'local') return LocalZone.instance;else if (lowered === 'utc') return FixedOffsetZone.utcInstance;else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
         // handle Etc/GMT-4, which V8 chokes on
         return FixedOffsetZone.instance(offset);
-      } else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
+      } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);else return FixedOffsetZone.parseSpecifier(lowered) || InvalidZone.instance;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
     } else if ((typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && input.offset) {
@@ -3862,7 +3916,7 @@ var Util = function () {
       // so we're duck checking it
       return input;
     } else {
-      return Settings.defaultZone;
+      return InvalidZone.instance;
     }
   };
 
@@ -5622,6 +5676,17 @@ var Info = function () {
   };
 
   /**
+   * Return whether the specified zone is a valid IANA specifier.
+   * @param {string} zone - Zone to check
+   * @return {boolean}
+   */
+
+
+  Info.isValidIANAZone = function isValidIANAZone(zone) {
+    return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
+  };
+
+  /**
    * Return an array of standalone month names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
@@ -6931,7 +6996,7 @@ var DateTime = function () {
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
-   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc')
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc'})
    * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */

@@ -230,22 +230,22 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-function isValid(zone) {
-  try {
-    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
 /**
  * @private
  */
 
 class IANAZone extends Zone {
-  static isValidSpecier(s) {
+  static isValidSpecifier(s) {
     return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
+  }
+
+  static isValidZone(zone) {
+    try {
+      new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Etc/GMT+8 -> 480
@@ -262,7 +262,7 @@ class IANAZone extends Zone {
   constructor(name) {
     super();
     this.zoneName = name;
-    this.valid = isValid(name);
+    this.valid = IANAZone.isValidZone(name);
   }
 
   get type() {
@@ -369,6 +369,45 @@ class FixedOffsetZone extends Zone {
 
   get isValid() {
     return true;
+  }
+}
+
+let singleton$2 = null;
+
+class InvalidZone extends Zone {
+  static get instance() {
+    if (singleton$2 === null) {
+      singleton$2 = new InvalidZone();
+    }
+    return singleton$2;
+  }
+
+  get type() {
+    return 'invalid';
+  }
+
+  get name() {
+    return null;
+  }
+
+  get universal() {
+    return false;
+  }
+
+  offsetName() {
+    return null;
+  }
+
+  offset() {
+    return NaN;
+  }
+
+  equals() {
+    return false;
+  }
+
+  get isValid() {
+    return false;
   }
 }
 
@@ -1193,7 +1232,7 @@ class PolyDateFormatter {
     this.hasIntl = Util.hasIntl();
 
     let z;
-    if (dt.zone.universal) {
+    if (dt.zone.universal && this.hasIntl) {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make do with just displaying
       // the time in UTC; the formatter doesn't know how to handle UTC+8
@@ -1370,10 +1409,9 @@ class Locale {
         // for AM and PM. This is probably wrong, but it's makes parsing way easier.
         if (!this.meridiemCache) {
           const intl = { hour: 'numeric', hour12: true };
-          this.meridiemCache = [
-            DateTime.utc(2016, 11, 13, 9),
-            DateTime.utc(2016, 11, 13, 19)
-          ].map(dt => this.extract(dt, intl, 'dayperiod'));
+          this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
+            dt => this.extract(dt, intl, 'dayperiod')
+          );
         }
 
         return this.meridiemCache;
@@ -1745,8 +1783,8 @@ class Util {
       else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
         // handle Etc/GMT-4, which V8 chokes on
         return FixedOffsetZone.instance(offset);
-      } else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
-      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
+      } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);
+      else return FixedOffsetZone.parseSpecifier(lowered) || InvalidZone.instance;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
     } else if (typeof input === 'object' && input.offset) {
@@ -1754,7 +1792,7 @@ class Util {
       // so we're duck checking it
       return input;
     } else {
-      return Settings.defaultZone;
+      return InvalidZone.instance;
     }
   }
 
@@ -3207,6 +3245,15 @@ class Info {
   }
 
   /**
+   * Return whether the specified zone is a valid IANA specifier.
+   * @param {string} zone - Zone to check
+   * @return {boolean}
+   */
+  static isValidIANAZone(zone) {
+    return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
+  }
+
+  /**
    * Return an array of standalone month names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
@@ -4381,7 +4428,7 @@ class DateTime {
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
-   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc')
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc'})
    * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */

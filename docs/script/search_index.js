@@ -1320,6 +1320,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/info.js~info.isvalidianazone",
+    "class/src/info.js~Info.html#static-method-isValidIANAZone",
+    "src/info.js~Info.isValidIANAZone",
+    "method"
+  ],
+  [
     "src/info.js~info.meridiems",
     "class/src/info.js~Info.html#static-method-meridiems",
     "src/info.js~Info.meridiems",

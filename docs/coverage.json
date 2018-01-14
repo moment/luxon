@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 226,
-  "actualCount": 226,
+  "expectCount": 227,
+  "actualCount": 227,
   "files": {
     "src/datetime.js": {
       "expectCount": 108,
@@ -19,8 +19,8 @@
       "undocumentLines": []
     },
     "src/info.js": {
-      "expectCount": 9,
-      "actualCount": 9,
+      "expectCount": 10,
+      "actualCount": 10,
       "undocumentLines": []
     },
     "src/interval.js": {
