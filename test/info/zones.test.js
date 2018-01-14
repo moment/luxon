@@ -28,3 +28,19 @@ test('Info.hasDST defaults to the global zone', () => {
     expect(Info.hasDST()).toBe(false);
   });
 });
+
+//------
+// .hasDST()
+//------
+
+test('Info.isValidIANAZone returns true for valid zones', () => {
+  expect(Info.isValidIANAZone('America/Cancun')).toBe(true);
+});
+
+test('Info.isValidIANAZone returns false for junk', () => {
+  expect(Info.isValidIANAZone('blorp')).toBe(false);
+});
+
+test('Info.isValidIANAZone returns false for well-specified but invalid zones', () => {
+  expect(Info.isValidIANAZone('America/Blork')).toBe(false);
+});

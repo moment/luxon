@@ -48,22 +48,22 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-function isValid(zone) {
-  try {
-    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
 /**
  * @private
  */
 
 export class IANAZone extends Zone {
-  static isValidSpecier(s) {
+  static isValidSpecifier(s) {
     return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
+  }
+
+  static isValidZone(zone) {
+    try {
+      new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Etc/GMT+8 -> 480
@@ -80,7 +80,7 @@ export class IANAZone extends Zone {
   constructor(name) {
     super();
     this.zoneName = name;
-    this.valid = isValid(name);
+    this.valid = IANAZone.isValidZone(name);
   }
 
   get type() {

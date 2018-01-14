@@ -193,7 +193,7 @@ export class Util {
       else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
         // handle Etc/GMT-4, which V8 chokes on
         return FixedOffsetZone.instance(offset);
-      } else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
+      } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);
       else return FixedOffsetZone.parseSpecifier(lowered) || InvalidZone.instance;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
