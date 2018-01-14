@@ -97,6 +97,14 @@ Helpers.withoutIntl("DateTime#zoneName falls back to 'local'", () => {
   expect(DateTime.local().zoneName).toBe('local');
 });
 
+Helpers.withoutIntl('DateTime#toLocaleString can use fixed-offset zones', () => {
+  expect(
+    DateTime.utc(2017, 5, 15, 4, 30)
+      .setZone('UTC+1')
+      .toLocaleString(DateTime.DATETIME_MED)
+  ).toBe('May 15, 2017, 5:30 AM');
+});
+
 Helpers.withoutIntl('DateTime#offsetNameLong returns null', () => {
   expect(
     DateTime.fromObject({

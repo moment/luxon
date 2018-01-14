@@ -93,7 +93,7 @@ class PolyDateFormatter {
     this.hasIntl = Util.hasIntl();
 
     let z;
-    if (dt.zone.universal) {
+    if (dt.zone.universal && this.hasIntl) {
       // if we have a fixed-offset zone that isn't actually UTC,
       // (like UTC+8), we need to make do with just displaying
       // the time in UTC; the formatter doesn't know how to handle UTC+8
@@ -270,10 +270,9 @@ export class Locale {
         // for AM and PM. This is probably wrong, but it's makes parsing way easier.
         if (!this.meridiemCache) {
           const intl = { hour: 'numeric', hour12: true };
-          this.meridiemCache = [
-            DateTime.utc(2016, 11, 13, 9),
-            DateTime.utc(2016, 11, 13, 19)
-          ].map(dt => this.extract(dt, intl, 'dayperiod'));
+          this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
+            dt => this.extract(dt, intl, 'dayperiod')
+          );
         }
 
         return this.meridiemCache;
