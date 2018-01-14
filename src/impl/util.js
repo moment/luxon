@@ -4,6 +4,7 @@ import { Zone } from '../zone';
 import { LocalZone } from '../zones/localZone';
 import { IANAZone } from '../zones/IANAZone';
 import { FixedOffsetZone } from '../zones/fixedOffsetZone';
+import { InvalidZone } from '../zones/invalidZone';
 import { Settings } from '../settings';
 import { InvalidArgumentError } from '../errors';
 
@@ -193,7 +194,7 @@ export class Util {
         // handle Etc/GMT-4, which V8 chokes on
         return FixedOffsetZone.instance(offset);
       } else if (IANAZone.isValidSpecier(lowered)) return new IANAZone(input);
-      else return FixedOffsetZone.parseSpecifier(lowered) || Settings.defaultZone;
+      else return FixedOffsetZone.parseSpecifier(lowered) || InvalidZone.instance;
     } else if (Util.isNumber(input)) {
       return FixedOffsetZone.instance(input);
     } else if (typeof input === 'object' && input.offset) {
@@ -201,7 +202,7 @@ export class Util {
       // so we're duck checking it
       return input;
     } else {
-      return Settings.defaultZone;
+      return InvalidZone.instance;
     }
   }
 

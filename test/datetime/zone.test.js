@@ -142,6 +142,12 @@ test('setZone accepts a keepLocalTime option', () => {
   expect(zonedMore.isOffsetFixed).toBe(false);
 });
 
+test('DateTime#setZone rejects jibberish', () => {
+  let zoned = dt().setZone('blorp');
+  expect(zoned.isValid).toBe(false);
+  expect(zoned.invalidReason).toBe('unsupported zone');
+});
+
 //------
 // #isInDST()
 //------

@@ -354,6 +354,12 @@ test('DateTime.fromObject() accepts a Zone as the zone option', () => {
   expect(standard.millisecond).toBe(123);
 });
 
+test('DateTime.fromObject() rejects invalid zones', () => {
+  const dt = DateTime.fromObject({ zone: 'blorp' });
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe('unsupported zone');
+});
+
 test('DateTime.fromObject() defaults high-order values to the current date', () => {
   const dateTime = DateTime.fromObject({}),
     now = DateTime.local();
