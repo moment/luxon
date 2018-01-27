@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+ * Always round down to the nearest millisecond when parsing
+
 ## 0.3.1
 
  * Fixed `toLocaleString` for fixed-offset zones in the absence of Intl
