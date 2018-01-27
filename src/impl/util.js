@@ -79,7 +79,7 @@ export class Util {
   static parseMillis(fraction) {
     if (fraction) {
       const f = parseFloat('0.' + fraction) * 1000;
-      return Math.round(f);
+      return Math.floor(f);
     } else {
       return 0;
     }

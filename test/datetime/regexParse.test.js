@@ -193,7 +193,7 @@ test('DateTime.fromISO() accepts year-moth-dayThour', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-moth-dayThour:minute', () => {
+test('DateTime.fromISO() accepts year-month-dayThour:minute', () => {
   isSame('2016-05-25T09:24', {
     year: 2016,
     month: 5,
@@ -215,7 +215,7 @@ test('DateTime.fromISO() accepts year-moth-dayThour:minute', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-moth-dayThour:minute:second', () => {
+test('DateTime.fromISO() accepts year-month-dayThour:minute:second', () => {
   isSame('2016-05-25T09:24:15', {
     year: 2016,
     month: 5,
@@ -237,7 +237,7 @@ test('DateTime.fromISO() accepts year-moth-dayThour:minute:second', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-moth-dayThour:minute:second.millisecond', () => {
+test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond', () => {
   isSame('2016-05-25T09:24:15.123', {
     year: 2016,
     month: 5,
@@ -268,7 +268,7 @@ test('DateTime.fromISO() accepts year-moth-dayThour:minute:second.millisecond', 
     millisecond: 123
   });
 
-  isSame('2016-05-25T09:24:15.123456789', {
+  isSame('2016-05-25T09:24:15.1239999', {
     year: 2016,
     month: 5,
     day: 25,
@@ -288,6 +288,7 @@ test('DateTime.fromISO() accepts year-moth-dayThour:minute:second.millisecond', 
     millisecond: 23
   });
 
+  // we round down always
   isSame('2016-05-25T09:24:15.3456', {
     year: 2016,
     month: 5,
@@ -295,7 +296,17 @@ test('DateTime.fromISO() accepts year-moth-dayThour:minute:second.millisecond', 
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 346
+    millisecond: 345
+  });
+
+  isSame('2016-05-25T09:24:15.999999', {
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 999
   });
 
   isSame('2016-05-25T09:24:15.1', {
@@ -729,7 +740,7 @@ test('DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision'
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 235
+    millisecond: 234
   });
 
   dt = DateTime.fromSQL('2016-05-14 10:23:54.2341');

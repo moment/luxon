@@ -128,7 +128,7 @@ test('DateTime.fromFormat() parses fractional seconds', () => {
   expect(DateTime.fromFormat('023', 'u').millisecond).toBe(23);
   expect(DateTime.fromFormat('003', 'u').millisecond).toBe(3);
   expect(DateTime.fromFormat('1234', 'u').millisecond).toBe(123);
-  expect(DateTime.fromFormat('1235', 'u').millisecond).toBe(124);
+  expect(DateTime.fromFormat('1235', 'u').millisecond).toBe(123);
 });
 
 test('DateTime.fromFormat() parses weekdays', () => {
