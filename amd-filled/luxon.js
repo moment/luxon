@@ -156,14 +156,14 @@ var _toPrimitive = function _toPrimitive(it, S) {
   throw TypeError("Can't convert object to primitive value");
 };
 
-var dP$1 = Object.defineProperty;
+var dP = Object.defineProperty;
 
 var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes) {
   _anObject(O);
   P = _toPrimitive(P, true);
   _anObject(Attributes);
   if (_ie8DomDefine) try {
-    return dP$1(O, P, Attributes);
+    return dP(O, P, Attributes);
   } catch (e) {/* empty */}
   if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
   if ('value' in Attributes) O[P] = Attributes.value;
@@ -256,7 +256,7 @@ var _ctx = function _ctx(fn, that, length) {
   };
 };
 
-var PROTOTYPE$1 = 'prototype';
+var PROTOTYPE = 'prototype';
 
 var $export = function $export(type, name, source) {
   var IS_FORCED = type & $export.F;
@@ -264,9 +264,9 @@ var $export = function $export(type, name, source) {
   var IS_STATIC = type & $export.S;
   var IS_PROTO = type & $export.P;
   var IS_BIND = type & $export.B;
-  var target = IS_GLOBAL ? _global : IS_STATIC ? _global[name] || (_global[name] = {}) : (_global[name] || {})[PROTOTYPE$1];
+  var target = IS_GLOBAL ? _global : IS_STATIC ? _global[name] || (_global[name] = {}) : (_global[name] || {})[PROTOTYPE];
   var exports = IS_GLOBAL ? _core : _core[name] || (_core[name] = {});
-  var expProto = exports[PROTOTYPE$1] || (exports[PROTOTYPE$1] = {});
+  var expProto = exports[PROTOTYPE] || (exports[PROTOTYPE] = {});
   var key, own, out, exp;
   if (IS_GLOBAL) source = name;
   for (key in source) {
@@ -557,7 +557,7 @@ var _html = document$1 && document$1.documentElement;
 
 var IE_PROTO$1 = _sharedKey('IE_PROTO');
 var Empty = function Empty() {/* empty */};
-var PROTOTYPE$2 = 'prototype';
+var PROTOTYPE$1 = 'prototype';
 
 // Create object with fake `null` prototype: use iframe Object with cleared prototype
 var _createDict = function createDict() {
@@ -578,16 +578,16 @@ var _createDict = function createDict() {
   iframeDocument.close();
   _createDict = iframeDocument.F;
   while (i--) {
-    delete _createDict[PROTOTYPE$2][_enumBugKeys[i]];
+    delete _createDict[PROTOTYPE$1][_enumBugKeys[i]];
   }return _createDict();
 };
 
 var _objectCreate = Object.create || function create(O, Properties) {
   var result;
   if (O !== null) {
-    Empty[PROTOTYPE$2] = _anObject(O);
+    Empty[PROTOTYPE$1] = _anObject(O);
     result = new Empty();
-    Empty[PROTOTYPE$2] = null;
+    Empty[PROTOTYPE$1] = null;
     // add "__proto__" for Object.getPrototypeOf polyfill
     result[IE_PROTO$1] = O;
   } else result = _createDict();
@@ -598,44 +598,44 @@ var _objectCreate = Object.create || function create(O, Properties) {
 
 var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
 
-var f$5 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+var f$4 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   return _objectKeysInternal(O, hiddenKeys);
 };
 
 var _objectGopn = {
-  f: f$5
+  f: f$4
 };
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 
-var gOPN$1 = _objectGopn.f;
+var gOPN = _objectGopn.f;
 var toString$1 = {}.toString;
 
 var windowNames = (typeof window === 'undefined' ? 'undefined' : _typeof(window)) == 'object' && window && Object.getOwnPropertyNames ? Object.getOwnPropertyNames(window) : [];
 
 var getWindowNames = function getWindowNames(it) {
   try {
-    return gOPN$1(it);
+    return gOPN(it);
   } catch (e) {
     return windowNames.slice();
   }
 };
 
-var f$4 = function getOwnPropertyNames(it) {
-  return windowNames && toString$1.call(it) == '[object Window]' ? getWindowNames(it) : gOPN$1(_toIobject(it));
+var f$5 = function getOwnPropertyNames(it) {
+  return windowNames && toString$1.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(_toIobject(it));
 };
 
 var _objectGopnExt = {
-  f: f$4
+  f: f$5
 };
 
-var gOPD$1 = Object.getOwnPropertyDescriptor;
+var gOPD = Object.getOwnPropertyDescriptor;
 
-var f$6 = _descriptors ? gOPD$1 : function getOwnPropertyDescriptor(O, P) {
+var f$6 = _descriptors ? gOPD : function getOwnPropertyDescriptor(O, P) {
   O = _toIobject(O);
   P = _toPrimitive(P, true);
   if (_ie8DomDefine) try {
-    return gOPD$1(O, P);
+    return gOPD(O, P);
   } catch (e) {/* empty */}
   if (_has(O, P)) return _propertyDesc(!_objectPie.f.call(O, P), O[P]);
 };
@@ -649,41 +649,41 @@ var _objectGopd = {
 
 var META = _meta.KEY;
 
-var gOPD = _objectGopd.f;
-var dP = _objectDp.f;
-var gOPN = _objectGopnExt.f;
+var gOPD$1 = _objectGopd.f;
+var dP$2 = _objectDp.f;
+var gOPN$1 = _objectGopnExt.f;
 var $Symbol = _global.Symbol;
 var $JSON = _global.JSON;
 var _stringify = $JSON && $JSON.stringify;
-var PROTOTYPE = 'prototype';
+var PROTOTYPE$2 = 'prototype';
 var HIDDEN = _wks('_hidden');
 var TO_PRIMITIVE = _wks('toPrimitive');
 var isEnum = {}.propertyIsEnumerable;
 var SymbolRegistry = _shared('symbol-registry');
 var AllSymbols = _shared('symbols');
 var OPSymbols = _shared('op-symbols');
-var ObjectProto = Object[PROTOTYPE];
+var ObjectProto = Object[PROTOTYPE$2];
 var USE_NATIVE = typeof $Symbol == 'function';
 var QObject = _global.QObject;
 // Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
-var setter = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
+var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
 
 // fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
 var setSymbolDesc = _descriptors && _fails(function () {
-  return _objectCreate(dP({}, 'a', {
+  return _objectCreate(dP$2({}, 'a', {
     get: function get$$1() {
-      return dP(this, 'a', { value: 7 }).a;
+      return dP$2(this, 'a', { value: 7 }).a;
     }
   })).a != 7;
 }) ? function (it, key, D) {
-  var protoDesc = gOPD(ObjectProto, key);
+  var protoDesc = gOPD$1(ObjectProto, key);
   if (protoDesc) delete ObjectProto[key];
-  dP(it, key, D);
-  if (protoDesc && it !== ObjectProto) dP(ObjectProto, key, protoDesc);
-} : dP;
+  dP$2(it, key, D);
+  if (protoDesc && it !== ObjectProto) dP$2(ObjectProto, key, protoDesc);
+} : dP$2;
 
 var wrap = function wrap(tag) {
-  var sym = AllSymbols[tag] = _objectCreate($Symbol[PROTOTYPE]);
+  var sym = AllSymbols[tag] = _objectCreate($Symbol[PROTOTYPE$2]);
   sym._k = tag;
   return sym;
 };
@@ -701,13 +701,13 @@ var $defineProperty = function defineProperty$$1(it, key, D) {
   _anObject(D);
   if (_has(AllSymbols, key)) {
     if (!D.enumerable) {
-      if (!_has(it, HIDDEN)) dP(it, HIDDEN, _propertyDesc(1, {}));
+      if (!_has(it, HIDDEN)) dP$2(it, HIDDEN, _propertyDesc(1, {}));
       it[HIDDEN][key] = true;
     } else {
       if (_has(it, HIDDEN) && it[HIDDEN][key]) it[HIDDEN][key] = false;
       D = _objectCreate(D, { enumerable: _propertyDesc(0, false) });
     }return setSymbolDesc(it, key, D);
-  }return dP(it, key, D);
+  }return dP$2(it, key, D);
 };
 var $defineProperties = function defineProperties(it, P) {
   _anObject(it);
@@ -719,7 +719,7 @@ var $defineProperties = function defineProperties(it, P) {
     $defineProperty(it, key = keys[i++], P[key]);
   }return it;
 };
-var $create = function create$$1(it, P) {
+var $create = function create(it, P) {
   return P === undefined ? _objectCreate(it) : $defineProperties(_objectCreate(it), P);
 };
 var $propertyIsEnumerable = function propertyIsEnumerable(key) {
@@ -731,12 +731,12 @@ var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key) {
   it = _toIobject(it);
   key = _toPrimitive(key, true);
   if (it === ObjectProto && _has(AllSymbols, key) && !_has(OPSymbols, key)) return;
-  var D = gOPD(it, key);
+  var D = gOPD$1(it, key);
   if (D && _has(AllSymbols, key) && !(_has(it, HIDDEN) && it[HIDDEN][key])) D.enumerable = true;
   return D;
 };
 var $getOwnPropertyNames = function getOwnPropertyNames(it) {
-  var names = gOPN(_toIobject(it));
+  var names = gOPN$1(_toIobject(it));
   var result = [];
   var i = 0;
   var key;
@@ -746,7 +746,7 @@ var $getOwnPropertyNames = function getOwnPropertyNames(it) {
 };
 var $getOwnPropertySymbols = function getOwnPropertySymbols(it) {
   var IS_OP = it === ObjectProto;
-  var names = gOPN(IS_OP ? OPSymbols : _toIobject(it));
+  var names = gOPN$1(IS_OP ? OPSymbols : _toIobject(it));
   var result = [];
   var i = 0;
   var key;
@@ -768,7 +768,7 @@ if (!USE_NATIVE) {
     if (_descriptors && setter) setSymbolDesc(ObjectProto, tag, { configurable: true, set: $set });
     return wrap(tag);
   };
-  _redefine($Symbol[PROTOTYPE], 'toString', function toString() {
+  _redefine($Symbol[PROTOTYPE$2], 'toString', function toString() {
     return this._k;
   });
 
@@ -856,7 +856,7 @@ $JSON && _export(_export.S + _export.F * (!USE_NATIVE || _fails(function () {
 });
 
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || _hide($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+$Symbol[PROTOTYPE$2][TO_PRIMITIVE] || _hide($Symbol[PROTOTYPE$2], TO_PRIMITIVE, $Symbol[PROTOTYPE$2].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
 _setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
@@ -957,7 +957,7 @@ var _objectGpo = Object.getPrototypeOf || function (O) {
 
 
 _objectSap('getPrototypeOf', function () {
-  return function getPrototypeOf$$1(it) {
+  return function getPrototypeOf(it) {
     return _objectGpo(_toObject(it));
   };
 });
@@ -3791,7 +3791,7 @@ var Util = function () {
   Util.parseMillis = function parseMillis(fraction) {
     if (fraction) {
       var f = parseFloat('0.' + fraction) * 1000;
-      return Math.round(f);
+      return Math.floor(f);
     } else {
       return 0;
     }
@@ -4248,7 +4248,7 @@ var RegexParser = function () {
   return RegexParser;
 }();
 
-var INVALID$1 = 'Invalid Duration';
+var INVALID = 'Invalid Duration';
 
 // unit conversion constants
 var lowOrderMatrix = {
@@ -4311,10 +4311,10 @@ var accurateMatrix = Object.assign({
 }, lowOrderMatrix);
 
 // units ordered by size
-var orderedUnits$1 = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
+var orderedUnits = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
 // clone really means "create another instance just like this one, but with these changes"
-function clone$1(dur, alts) {
+function clone(dur, alts) {
   var clear = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
   // deep merge for vals
@@ -4330,7 +4330,7 @@ function clone$1(dur, alts) {
 // normalize() this tells us whether this duration is positive or negative
 function isHighOrderNegative(obj) {
   // only rule is that the highest-order part must be non-negative
-  for (var _iterator = orderedUnits$1, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+  for (var _iterator = orderedUnits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
     var _ref;
 
     if (_isArray) {
@@ -4519,7 +4519,7 @@ var Duration = function () {
   Duration.prototype.toFormat = function toFormat(fmt) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    return this.isValid ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt) : INVALID$1;
+    return this.isValid ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt) : INVALID;
   };
 
   /**
@@ -4624,7 +4624,7 @@ var Duration = function () {
     var dur = Util.friendlyDuration(duration),
         result = {};
 
-    for (var _iterator2 = orderedUnits$1, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+    for (var _iterator2 = orderedUnits, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
       var _ref2;
 
       if (_isArray2) {
@@ -4644,7 +4644,7 @@ var Duration = function () {
       }
     }
 
-    return clone$1(this, { values: result }, true);
+    return clone(this, { values: result }, true);
   };
 
   /**
@@ -4686,7 +4686,7 @@ var Duration = function () {
 
   Duration.prototype.set = function set$$1(values) {
     var mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
-    return clone$1(this, { values: mixed });
+    return clone(this, { values: mixed });
   };
 
   /**
@@ -4709,7 +4709,7 @@ var Duration = function () {
       opts.conversionAccuracy = conversionAccuracy;
     }
 
-    return clone$1(this, opts);
+    return clone(this, opts);
   };
 
   /**
@@ -4770,7 +4770,7 @@ var Duration = function () {
         vals = this.toObject();
     var lastUnit = void 0;
 
-    for (var _iterator3 = orderedUnits$1, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+    for (var _iterator3 = orderedUnits, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
       var _ref4;
 
       if (_isArray3) {
@@ -4808,7 +4808,7 @@ var Duration = function () {
 
         // plus anything further down the chain that should be rolled up in to this
         for (var down in vals) {
-          if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
+          if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
             var conv = this.matrix[k][down],
                 added = Math.floor(vals[down] / conv);
             built[k] += added;
@@ -4831,7 +4831,7 @@ var Duration = function () {
         }
       }
     }
-    return clone$1(this, { values: built }, true);
+    return clone(this, { values: built }, true);
   };
 
   /**
@@ -4860,7 +4860,7 @@ var Duration = function () {
 
       negated[k] = -this.values[k];
     }
-    return clone$1(this, { values: negated }, true);
+    return clone(this, { values: negated }, true);
   };
 
   /**
@@ -4884,7 +4884,7 @@ var Duration = function () {
       return false;
     }
 
-    for (var _iterator5 = orderedUnits$1, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
+    for (var _iterator5 = orderedUnits, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
       var _ref6;
 
       if (_isArray5) {
@@ -5031,7 +5031,7 @@ var Duration = function () {
   return Duration;
 }();
 
-var INVALID$2 = 'Invalid Interval';
+var INVALID$1 = 'Invalid Interval';
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
@@ -5541,7 +5541,7 @@ var Interval = function () {
 
 
   Interval.prototype.toString = function toString() {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return '[' + this.s.toISO() + ' \u2013 ' + this.e.toISO() + ')';
   };
 
@@ -5568,7 +5568,7 @@ var Interval = function () {
 
 
   Interval.prototype.toISO = function toISO(opts) {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return this.s.toISO(opts) + '/' + this.e.toISO(opts);
   };
 
@@ -5586,7 +5586,7 @@ var Interval = function () {
         _ref4$separator = _ref4.separator,
         separator = _ref4$separator === undefined ? ' – ' : _ref4$separator;
 
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return '' + this.s.toFormat(dateFormat) + separator + this.e.toFormat(dateFormat);
   };
 
@@ -6380,7 +6380,7 @@ var Conversions = function () {
   return Conversions;
 }();
 
-var INVALID = 'Invalid DateTime';
+var INVALID$2 = 'Invalid DateTime';
 var INVALID_INPUT = 'invalid input';
 var UNSUPPORTED_ZONE = 'unsupported zone';
 var UNPARSABLE = 'unparsable';
@@ -6395,7 +6395,7 @@ function possiblyCachedWeekData(dt) {
 
 // clone really means, "make a new object with these modifications". all "setters" really use this
 // to create a new object while only changing some of the properties
-function clone(inst, alts) {
+function clone$1(inst, alts) {
   var current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -6582,7 +6582,7 @@ var defaultOrdinalUnitValues = {
 };
 
 // Units in the supported calendars, sorted by bigness
-var orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+var orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 var orderedWeekUnits = ['weekYear', 'weekNumber', 'weekday', 'hour', 'minute', 'second', 'millisecond'];
 var orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
@@ -6625,7 +6625,7 @@ function normalizeUnit(unit) {
 // are present, and so on.
 function quickDT(obj, zone) {
   // assume we have the higher-order units
-  for (var _iterator = orderedUnits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+  for (var _iterator = orderedUnits$1, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
     var _ref2;
 
     if (_isArray) {
@@ -6925,7 +6925,7 @@ var DateTime = function () {
       defaultValues = defaultOrdinalUnitValues;
       objNow = Conversions.gregorianToOrdinal(objNow);
     } else {
-      units = orderedUnits;
+      units = orderedUnits$1;
       defaultValues = defaultUnitValues;
     }
 
@@ -7260,7 +7260,7 @@ var DateTime = function () {
     } else {
       var newTS = keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
       ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000 : this.ts;
-      return clone(this, { ts: newTS, zone: zone });
+      return clone$1(this, { ts: newTS, zone: zone });
     }
   };
 
@@ -7279,7 +7279,7 @@ var DateTime = function () {
         outputCalendar = _ref5.outputCalendar;
 
     var loc = this.loc.clone({ locale: locale, numberingSystem: numberingSystem, outputCalendar: outputCalendar });
-    return clone(this, { loc: loc });
+    return clone$1(this, { loc: loc });
   };
 
   /**
@@ -7331,7 +7331,7 @@ var DateTime = function () {
         ts = _objToTS3[0],
         o = _objToTS3[1];
 
-    return clone(this, { ts: ts, o: o });
+    return clone$1(this, { ts: ts, o: o });
   };
 
   /**
@@ -7352,7 +7352,7 @@ var DateTime = function () {
   DateTime.prototype.plus = function plus(duration) {
     if (!this.isValid) return this;
     var dur = Util.friendlyDuration(duration);
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   };
 
   /**
@@ -7366,7 +7366,7 @@ var DateTime = function () {
   DateTime.prototype.minus = function minus(duration) {
     if (!this.isValid) return this;
     var dur = Util.friendlyDuration(duration).negate();
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   };
 
   /**
@@ -7453,7 +7453,7 @@ var DateTime = function () {
   DateTime.prototype.toFormat = function toFormat(fmt) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    return this.isValid ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt) : INVALID;
+    return this.isValid ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt) : INVALID$2;
   };
 
   /**
@@ -7478,7 +7478,7 @@ var DateTime = function () {
   DateTime.prototype.toLocaleString = function toLocaleString() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Formats.DATE_SHORT;
 
-    return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID;
+    return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID$2;
   };
 
   /**
@@ -7661,7 +7661,7 @@ var DateTime = function () {
 
 
   DateTime.prototype.toString = function toString() {
-    return this.isValid ? this.toISO() : INVALID;
+    return this.isValid ? this.toISO() : INVALID$2;
   };
 
   /**

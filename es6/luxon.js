@@ -1666,7 +1666,7 @@ class Util {
   static parseMillis(fraction) {
     if (fraction) {
       const f = parseFloat('0.' + fraction) * 1000;
-      return Math.round(f);
+      return Math.floor(f);
     } else {
       return 0;
     }
@@ -2095,7 +2095,7 @@ class RegexParser {
   }
 }
 
-const INVALID$1 = 'Invalid Duration';
+const INVALID = 'Invalid Duration';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -2164,7 +2164,7 @@ const accurateMatrix = Object.assign(
   );
 
 // units ordered by size
-const orderedUnits$1 = [
+const orderedUnits = [
   'years',
   'months',
   'weeks',
@@ -2176,7 +2176,7 @@ const orderedUnits$1 = [
 ];
 
 // clone really means "create another instance just like this one, but with these changes"
-function clone$1(dur, alts, clear = false) {
+function clone(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
     values: clear ? alts.values : Object.assign({}, dur.values, alts.values || {}),
@@ -2190,7 +2190,7 @@ function clone$1(dur, alts, clear = false) {
 // normalize() this tells us whether this duration is positive or negative
 function isHighOrderNegative(obj) {
   // only rule is that the highest-order part must be non-negative
-  for (const k of orderedUnits$1) {
+  for (const k of orderedUnits) {
     if (obj[k]) return obj[k] < 0;
   }
   return false;
@@ -2363,7 +2363,7 @@ class Duration {
   toFormat(fmt, opts = {}) {
     return this.isValid
       ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
-      : INVALID$1;
+      : INVALID;
   }
 
   /**
@@ -2455,14 +2455,14 @@ class Duration {
     const dur = Util.friendlyDuration(duration),
       result = {};
 
-    for (const k of orderedUnits$1) {
+    for (const k of orderedUnits) {
       const val = dur.get(k) + this.get(k);
       if (val !== 0) {
         result[k] = val;
       }
     }
 
-    return clone$1(this, { values: result }, true);
+    return clone(this, { values: result }, true);
   }
 
   /**
@@ -2498,7 +2498,7 @@ class Duration {
    */
   set(values) {
     const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
-    return clone$1(this, { values: mixed });
+    return clone(this, { values: mixed });
   }
 
   /**
@@ -2514,7 +2514,7 @@ class Duration {
       opts.conversionAccuracy = conversionAccuracy;
     }
 
-    return clone$1(this, opts);
+    return clone(this, opts);
   }
 
   /**
@@ -2563,7 +2563,7 @@ class Duration {
       vals = this.toObject();
     let lastUnit;
 
-    for (const k of orderedUnits$1) {
+    for (const k of orderedUnits) {
       if (units.indexOf(k) >= 0) {
         lastUnit = k;
 
@@ -2588,7 +2588,7 @@ class Duration {
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
-          if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
+          if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
             const conv = this.matrix[k][down],
               added = Math.floor(vals[down] / conv);
             built[k] += added;
@@ -2612,7 +2612,7 @@ class Duration {
         }
       }
     }
-    return clone$1(this, { values: built }, true);
+    return clone(this, { values: built }, true);
   }
 
   /**
@@ -2626,7 +2626,7 @@ class Duration {
     for (const k of Object.keys(this.values)) {
       negated[k] = -this.values[k];
     }
-    return clone$1(this, { values: negated }, true);
+    return clone(this, { values: negated }, true);
   }
 
   /**
@@ -2725,7 +2725,7 @@ class Duration {
       return false;
     }
 
-    for (const u of orderedUnits$1) {
+    for (const u of orderedUnits) {
       if (this.values[u] !== other.values[u]) {
         return false;
       }
@@ -2734,7 +2734,7 @@ class Duration {
   }
 }
 
-const INVALID$2 = 'Invalid Interval';
+const INVALID$1 = 'Invalid Interval';
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
@@ -3164,7 +3164,7 @@ class Interval {
    * @return {string}
    */
   toString() {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return `[${this.s.toISO()} – ${this.e.toISO()})`;
   }
 
@@ -3188,7 +3188,7 @@ class Interval {
    * @return {string}
    */
   toISO(opts) {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;
   }
 
@@ -3200,7 +3200,7 @@ class Interval {
    * @return {string}
    */
   toFormat(dateFormat, { separator = ' – ' } = {}) {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
   }
 
@@ -3827,7 +3827,7 @@ class Conversions {
   }
 }
 
-const INVALID = 'Invalid DateTime';
+const INVALID$2 = 'Invalid DateTime';
 const INVALID_INPUT = 'invalid input';
 const UNSUPPORTED_ZONE = 'unsupported zone';
 const UNPARSABLE = 'unparsable';
@@ -3842,7 +3842,7 @@ function possiblyCachedWeekData(dt) {
 
 // clone really means, "make a new object with these modifications". all "setters" really use this
 // to create a new object while only changing some of the properties
-function clone(inst, alts) {
+function clone$1(inst, alts) {
   const current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -4035,7 +4035,7 @@ const defaultOrdinalUnitValues = {
   };
 
 // Units in the supported calendars, sorted by bigness
-const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+const orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 const orderedWeekUnits = [
     'weekYear',
     'weekNumber',
@@ -4084,7 +4084,7 @@ function normalizeUnit(unit, ignoreUnknown = false) {
 // are present, and so on.
 function quickDT(obj, zone) {
   // assume we have the higher-order units
-  for (const u of orderedUnits) {
+  for (const u of orderedUnits$1) {
     if (Util.isUndefined(obj[u])) {
       obj[u] = defaultUnitValues[u];
     }
@@ -4364,7 +4364,7 @@ class DateTime {
       defaultValues = defaultOrdinalUnitValues;
       objNow = Conversions.gregorianToOrdinal(objNow);
     } else {
-      units = orderedUnits;
+      units = orderedUnits$1;
       defaultValues = defaultUnitValues;
     }
 
@@ -4909,7 +4909,7 @@ class DateTime {
         keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
           ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
           : this.ts;
-      return clone(this, { ts: newTS, zone });
+      return clone$1(this, { ts: newTS, zone });
     }
   }
 
@@ -4921,7 +4921,7 @@ class DateTime {
    */
   reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
     const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
-    return clone(this, { loc });
+    return clone$1(this, { loc });
   }
 
   /**
@@ -4973,7 +4973,7 @@ class DateTime {
     }
 
     const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o });
+    return clone$1(this, { ts, o });
   }
 
   /**
@@ -4992,7 +4992,7 @@ class DateTime {
   plus(duration) {
     if (!this.isValid) return this;
     const dur = Util.friendlyDuration(duration);
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   }
 
   /**
@@ -5004,7 +5004,7 @@ class DateTime {
   minus(duration) {
     if (!this.isValid) return this;
     const dur = Util.friendlyDuration(duration).negate();
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   }
 
   /**
@@ -5087,7 +5087,7 @@ class DateTime {
   toFormat(fmt, opts = {}) {
     return this.isValid
       ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt)
-      : INVALID;
+      : INVALID$2;
   }
 
   /**
@@ -5110,7 +5110,7 @@ class DateTime {
   toLocaleString(opts = Formats.DATE_SHORT) {
     return this.isValid
       ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this)
-      : INVALID;
+      : INVALID$2;
   }
 
   /**
@@ -5253,7 +5253,7 @@ class DateTime {
    * @return {string}
    */
   toString() {
-    return this.isValid ? this.toISO() : INVALID;
+    return this.isValid ? this.toISO() : INVALID$2;
   }
 
   /**

@@ -2002,7 +2002,7 @@ var Util = function () {
   Util.parseMillis = function parseMillis(fraction) {
     if (fraction) {
       var f = parseFloat('0.' + fraction) * 1000;
-      return Math.round(f);
+      return Math.floor(f);
     } else {
       return 0;
     }
@@ -2459,7 +2459,7 @@ var RegexParser = function () {
   return RegexParser;
 }();
 
-var INVALID$1 = 'Invalid Duration';
+var INVALID = 'Invalid Duration';
 
 // unit conversion constants
 var lowOrderMatrix = {
@@ -2522,10 +2522,10 @@ var accurateMatrix = Object.assign({
 }, lowOrderMatrix);
 
 // units ordered by size
-var orderedUnits$1 = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
+var orderedUnits = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
 // clone really means "create another instance just like this one, but with these changes"
-function clone$1(dur, alts) {
+function clone(dur, alts) {
   var clear = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
   // deep merge for vals
@@ -2541,7 +2541,7 @@ function clone$1(dur, alts) {
 // normalize() this tells us whether this duration is positive or negative
 function isHighOrderNegative(obj) {
   // only rule is that the highest-order part must be non-negative
-  for (var _iterator = orderedUnits$1, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+  for (var _iterator = orderedUnits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
     var _ref;
 
     if (_isArray) {
@@ -2730,7 +2730,7 @@ var Duration = function () {
   Duration.prototype.toFormat = function toFormat(fmt) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    return this.isValid ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt) : INVALID$1;
+    return this.isValid ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt) : INVALID;
   };
 
   /**
@@ -2835,7 +2835,7 @@ var Duration = function () {
     var dur = Util.friendlyDuration(duration),
         result = {};
 
-    for (var _iterator2 = orderedUnits$1, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+    for (var _iterator2 = orderedUnits, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
       var _ref2;
 
       if (_isArray2) {
@@ -2855,7 +2855,7 @@ var Duration = function () {
       }
     }
 
-    return clone$1(this, { values: result }, true);
+    return clone(this, { values: result }, true);
   };
 
   /**
@@ -2897,7 +2897,7 @@ var Duration = function () {
 
   Duration.prototype.set = function set$$1(values) {
     var mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
-    return clone$1(this, { values: mixed });
+    return clone(this, { values: mixed });
   };
 
   /**
@@ -2920,7 +2920,7 @@ var Duration = function () {
       opts.conversionAccuracy = conversionAccuracy;
     }
 
-    return clone$1(this, opts);
+    return clone(this, opts);
   };
 
   /**
@@ -2981,7 +2981,7 @@ var Duration = function () {
         vals = this.toObject();
     var lastUnit = void 0;
 
-    for (var _iterator3 = orderedUnits$1, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+    for (var _iterator3 = orderedUnits, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
       var _ref4;
 
       if (_isArray3) {
@@ -3019,7 +3019,7 @@ var Duration = function () {
 
         // plus anything further down the chain that should be rolled up in to this
         for (var down in vals) {
-          if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
+          if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
             var conv = this.matrix[k][down],
                 added = Math.floor(vals[down] / conv);
             built[k] += added;
@@ -3042,7 +3042,7 @@ var Duration = function () {
         }
       }
     }
-    return clone$1(this, { values: built }, true);
+    return clone(this, { values: built }, true);
   };
 
   /**
@@ -3071,7 +3071,7 @@ var Duration = function () {
 
       negated[k] = -this.values[k];
     }
-    return clone$1(this, { values: negated }, true);
+    return clone(this, { values: negated }, true);
   };
 
   /**
@@ -3095,7 +3095,7 @@ var Duration = function () {
       return false;
     }
 
-    for (var _iterator5 = orderedUnits$1, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
+    for (var _iterator5 = orderedUnits, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
       var _ref6;
 
       if (_isArray5) {
@@ -3242,7 +3242,7 @@ var Duration = function () {
   return Duration;
 }();
 
-var INVALID$2 = 'Invalid Interval';
+var INVALID$1 = 'Invalid Interval';
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
@@ -3752,7 +3752,7 @@ var Interval = function () {
 
 
   Interval.prototype.toString = function toString() {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return '[' + this.s.toISO() + ' \u2013 ' + this.e.toISO() + ')';
   };
 
@@ -3779,7 +3779,7 @@ var Interval = function () {
 
 
   Interval.prototype.toISO = function toISO(opts) {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return this.s.toISO(opts) + '/' + this.e.toISO(opts);
   };
 
@@ -3797,7 +3797,7 @@ var Interval = function () {
         _ref4$separator = _ref4.separator,
         separator = _ref4$separator === undefined ? ' – ' : _ref4$separator;
 
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return '' + this.s.toFormat(dateFormat) + separator + this.e.toFormat(dateFormat);
   };
 
@@ -4591,7 +4591,7 @@ var Conversions = function () {
   return Conversions;
 }();
 
-var INVALID = 'Invalid DateTime';
+var INVALID$2 = 'Invalid DateTime';
 var INVALID_INPUT = 'invalid input';
 var UNSUPPORTED_ZONE = 'unsupported zone';
 var UNPARSABLE = 'unparsable';
@@ -4606,7 +4606,7 @@ function possiblyCachedWeekData(dt) {
 
 // clone really means, "make a new object with these modifications". all "setters" really use this
 // to create a new object while only changing some of the properties
-function clone(inst, alts) {
+function clone$1(inst, alts) {
   var current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -4793,7 +4793,7 @@ var defaultOrdinalUnitValues = {
 };
 
 // Units in the supported calendars, sorted by bigness
-var orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+var orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 var orderedWeekUnits = ['weekYear', 'weekNumber', 'weekday', 'hour', 'minute', 'second', 'millisecond'];
 var orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
@@ -4836,7 +4836,7 @@ function normalizeUnit(unit) {
 // are present, and so on.
 function quickDT(obj, zone) {
   // assume we have the higher-order units
-  for (var _iterator = orderedUnits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+  for (var _iterator = orderedUnits$1, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
     var _ref2;
 
     if (_isArray) {
@@ -5136,7 +5136,7 @@ var DateTime = function () {
       defaultValues = defaultOrdinalUnitValues;
       objNow = Conversions.gregorianToOrdinal(objNow);
     } else {
-      units = orderedUnits;
+      units = orderedUnits$1;
       defaultValues = defaultUnitValues;
     }
 
@@ -5471,7 +5471,7 @@ var DateTime = function () {
     } else {
       var newTS = keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
       ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000 : this.ts;
-      return clone(this, { ts: newTS, zone: zone });
+      return clone$1(this, { ts: newTS, zone: zone });
     }
   };
 
@@ -5490,7 +5490,7 @@ var DateTime = function () {
         outputCalendar = _ref5.outputCalendar;
 
     var loc = this.loc.clone({ locale: locale, numberingSystem: numberingSystem, outputCalendar: outputCalendar });
-    return clone(this, { loc: loc });
+    return clone$1(this, { loc: loc });
   };
 
   /**
@@ -5542,7 +5542,7 @@ var DateTime = function () {
         ts = _objToTS3[0],
         o = _objToTS3[1];
 
-    return clone(this, { ts: ts, o: o });
+    return clone$1(this, { ts: ts, o: o });
   };
 
   /**
@@ -5563,7 +5563,7 @@ var DateTime = function () {
   DateTime.prototype.plus = function plus(duration) {
     if (!this.isValid) return this;
     var dur = Util.friendlyDuration(duration);
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   };
 
   /**
@@ -5577,7 +5577,7 @@ var DateTime = function () {
   DateTime.prototype.minus = function minus(duration) {
     if (!this.isValid) return this;
     var dur = Util.friendlyDuration(duration).negate();
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   };
 
   /**
@@ -5664,7 +5664,7 @@ var DateTime = function () {
   DateTime.prototype.toFormat = function toFormat(fmt) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    return this.isValid ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt) : INVALID;
+    return this.isValid ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt) : INVALID$2;
   };
 
   /**
@@ -5689,7 +5689,7 @@ var DateTime = function () {
   DateTime.prototype.toLocaleString = function toLocaleString() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Formats.DATE_SHORT;
 
-    return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID;
+    return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID$2;
   };
 
   /**
@@ -5872,7 +5872,7 @@ var DateTime = function () {
 
 
   DateTime.prototype.toString = function toString() {
-    return this.isValid ? this.toISO() : INVALID;
+    return this.isValid ? this.toISO() : INVALID$2;
   };
 
   /**
