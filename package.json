@@ -8,7 +8,9 @@
     "immutable"
   ],
   "repository": "https://github.com/moment/luxon",
-  "dependencies": {},
+  "dependencies": {
+    "full-icu": "^1.2.0"
+  },
   "scripts": {
     "build": "babel-node tasks/build.js",
     "test": "babel-node tasks/unit.js",
