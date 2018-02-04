@@ -96,10 +96,13 @@ export class Util {
   }
 
   static daysInMonth(year, month) {
-    if (month === 2) {
-      return Util.isLeapYear(year) ? 29 : 28;
+    const modMonth = 1 + (((month - 1) % 12) + 12) % 12,
+          modYear = year + (month - modMonth) / 12;
+
+    if (modMonth === 2) {
+      return Util.isLeapYear(modYear) ? 29 : 28;
     } else {
-      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
     }
   }
 

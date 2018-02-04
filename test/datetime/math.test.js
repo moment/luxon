@@ -18,7 +18,7 @@ function createDateTime() {
 //------
 // #plus()
 //------
-test('DateTime#plus({ year: 1}) adds a year', () => {
+test('DateTime#plus({ years: 1 }) adds a year', () => {
   const i = createDateTime().plus({ years: 1 });
   expect(i.year).toBe(2011);
 });
@@ -27,6 +27,13 @@ test('DateTime#plus({quarter: 1}) adds a quarter', () => {
   const i = createDateTime().plus({ quarters: 1 });
   expect(i.quarter).toBe(2);
   expect(i.month).toBe(5);
+});
+
+test('DateTime#plus({ months: 1 }) at the end of the month', () => {
+  const i = DateTime.fromISO('2018-01-31T10:00'),
+    later = i.plus({ months: 1 });
+  expect(later.day).toBe(28);
+  expect(later.month).toBe(2);
 });
 
 test('DateTime#plus({ days: 1 }) keeps the same time across a DST', () => {
