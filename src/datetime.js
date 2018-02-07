@@ -119,7 +119,7 @@ function adjustTime(inst, dur) {
   const oPre = inst.o,
     c = Object.assign({}, inst.c, {
       year: inst.c.year + dur.years,
-      month: inst.c.month + dur.months,
+      month: inst.c.month + dur.months + dur.quarters * 3,
       day: inst.c.day + dur.days + dur.weeks * 7
     }),
     millisToAdd = Duration.fromObject({
@@ -815,6 +815,14 @@ export class DateTime {
   }
 
   /**
+   * Get the quarter
+   * @example DateTime.local(2017, 5, 25).quarter //=> 2
+   * @return {number}
+   */
+  get quarter() {
+    return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
+  }
+  /**
    * Get the month (1-12).
    * @example DateTime.local(2017, 5, 25).month //=> 5
    * @return {number}
@@ -1215,6 +1223,7 @@ export class DateTime {
       case 'years':
         o.month = 1;
       // falls through
+      case 'quarters':
       case 'months':
         o.day = 1;
       // falls through
@@ -1239,6 +1248,10 @@ export class DateTime {
 
     if (normalizedUnit === 'weeks') {
       o.weekday = 1;
+    }
+
+    if (normalizedUnit === 'quarters') {
+      o.month = Math.floor(this.month / 3) * 3 + 1;
     }
 
     return this.set(o);

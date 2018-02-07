@@ -318,6 +318,16 @@ test("DateTime#toFormat('ooo') returns an unpadded ordinal", () => {
   expect(dt.set({ month: 1, day: 8 }).toFormat('ooo')).toBe('008');
 });
 
+test("DateTime#toFormat('q') returns an unpadded quarter", () => {
+  expect(dt.toFormat('q')).toBe('2');
+  expect(dt.set({ month: 2 }).toFormat('q')).toBe('1');
+});
+
+test("DateTime#toFormat('qq') returns a padded quarter", () => {
+  expect(dt.toFormat('qq')).toBe('02');
+  expect(dt.set({ month: 2 }).toFormat('qq')).toBe('01');
+});
+
 test("DateTime#toFormat('D') returns a short date representation", () => {
   expect(dt.toFormat('D')).toBe('5/25/1982');
   expect(dt.reconfigure({ locale: 'fr' }).toFormat('D')).toBe('25/05/1982');

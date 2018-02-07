@@ -325,6 +325,12 @@ export class Formatter {
             return this.num(dt.ordinal);
           case 'ooo':
             return this.num(dt.ordinal, 3);
+          case 'q':
+            // like 1
+            return this.num(dt.quarter);
+          case 'qq':
+            // like 01
+            return this.num(dt.quarter, 2);
           default:
             return maybeMacro(token);
         }
