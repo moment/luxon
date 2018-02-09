@@ -4,6 +4,7 @@ import { Duration } from '../../src/luxon';
 
 const dur = Duration.fromObject({
     years: 1,
+    quarters: 2,
     months: 2,
     days: 3,
     hours: 4,
@@ -21,6 +22,11 @@ const dur = Duration.fromObject({
 test('Duration#years returns the years', () => {
   expect(dur.years).toBe(1);
   expect(inv.years).toBeFalsy();
+});
+
+test('Duration#quarters returns the quarters', () => {
+  expect(dur.quarters).toBe(2);
+  expect(inv.quarters).toBeFalsy();
 });
 
 test('Duration#months returns the (1-indexed) months', () => {

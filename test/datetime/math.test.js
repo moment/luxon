@@ -23,6 +23,12 @@ test('DateTime#plus({ year: 1}) adds a year', () => {
   expect(i.year).toBe(2011);
 });
 
+test('DateTime#plus({quarter: 1}) adds a quarter', () => {
+  const i = createDateTime().plus({ quarters: 1 });
+  expect(i.quarter).toBe(2);
+  expect(i.month).toBe(5);
+});
+
 test('DateTime#plus({ days: 1 }) keeps the same time across a DST', () => {
   const i = DateTime.fromISO('2016-03-12T10:00', {
       zone: 'America/Los_Angeles'
@@ -69,6 +75,13 @@ test('DateTime#minus({ years: 1 }) subtracts a year', () => {
   expect(dt.year).toBe(2009);
 });
 
+test('DateTime#minus({ quarters: 1 }) subtracts a quarter', () => {
+  const dt = createDateTime().minus({ quarters: 1 });
+  expect(dt.year).toBe(2009);
+  expect(dt.quarter).toBe(4);
+  expect(dt.month).toBe(11);
+});
+
 test('DateTime#minus maintains invalidity', () => {
   expect(DateTime.invalid('because').minus({ day: 1 }).isValid).toBe(false);
 });
@@ -78,6 +91,18 @@ test('DateTime#minus maintains invalidity', () => {
 //------
 test("DateTime#startOf('year') goes to the start of the year", () => {
   const dt = createDateTime().startOf('year');
+
+  expect(dt.year).toBe(2010);
+  expect(dt.month).toBe(1);
+  expect(dt.day).toBe(1);
+  expect(dt.hour).toBe(0);
+  expect(dt.minute).toBe(0);
+  expect(dt.second).toBe(0);
+  expect(dt.millisecond).toBe(0);
+});
+
+test("DateTime#startOf('quarter') goes to the start of the month", () => {
+  const dt = createDateTime().startOf('quarter');
 
   expect(dt.year).toBe(2010);
   expect(dt.month).toBe(1);
@@ -177,6 +202,18 @@ test("DateTime#endOf('year') goes to the start of the year", () => {
 
   expect(dt.year).toBe(2010);
   expect(dt.month).toBe(12);
+  expect(dt.day).toBe(31);
+  expect(dt.hour).toBe(23);
+  expect(dt.minute).toBe(59);
+  expect(dt.second).toBe(59);
+  expect(dt.millisecond).toBe(999);
+});
+
+test("DateTime#endOf('quarter') goes to the end of the quarter", () => {
+  const dt = createDateTime().endOf('quarter');
+
+  expect(dt.year).toBe(2010);
+  expect(dt.month).toBe(3);
   expect(dt.day).toBe(31);
   expect(dt.hour).toBe(23);
   expect(dt.minute).toBe(59);
