@@ -72,6 +72,15 @@ export class Util {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
 
+  /**
+   * JS implementation (truncated division) of x % n takes the sign of the dividend (x).
+   * 
+   * This implementation takes the sign of the divisor (n)
+   */
+  static floorMod(x, n) {
+    return x - n * Math.floor(x / n);
+  }
+
   static padStart(input, n = 2) {
     return ('0'.repeat(n) + input).slice(-n);
   }
@@ -96,7 +105,7 @@ export class Util {
   }
 
   static daysInMonth(year, month) {
-    const modMonth = 1 + (((month - 1) % 12) + 12) % 12,
+    const modMonth = Util.floorMod(month - 1, 12) + 1,
           modYear = year + (month - modMonth) / 12;
 
     if (modMonth === 2) {
