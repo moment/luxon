@@ -4,7 +4,7 @@
 
 One of the most irritating aspects of programming with time is that it's possible to end up with invalid dates. This is a bit subtle: barring integer overflows, there's no count of milliseconds that don't correspond to a valid DateTime, but when working with calendar units, it's pretty easy to say something like "June 400th". Luxon considers that invalid and will mark it accordingly.
 
-Unless if you've asked Luxon to throw an exception when it creates an invalid DateTime (see more on that below), it will fail silently, creating an instance that doesn't know how to do anything. You can check validity with `isValid`:
+Unless you've asked Luxon to throw an exception when it creates an invalid DateTime (see more on that below), it will fail silently, creating an instance that doesn't know how to do anything. You can check validity with `isValid`:
 
 ```js
 > var dt = DateTime.fromObject({ month: 6, day: 400 });
@@ -27,7 +27,7 @@ dt.plus({ days: 4 }).isValid; //=> false
 
 ## Reasons a DateTimes can be invalid
 
-The most common way to do that is to over or underflow some unit:
+The most common way to do that is to over- or underflow some unit:
 
  * February 40th
  * 28:00

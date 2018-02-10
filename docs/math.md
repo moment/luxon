@@ -1,6 +1,6 @@
 # Math
 
-This page covers some oddball topics with date and time math, which has some quirky corner cases.
+This page covers some oddball topics related to date and time math, which has some quirky corner cases.
 
 ## Calendar math vs time math
 
@@ -9,9 +9,9 @@ This page covers some oddball topics with date and time math, which has some qui
 Math with dates and times can be unintuitive to programmers. If it's Feb 13, 2017 and I say "in exactly one month", you know I mean March 13. Exactly one month after that is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said "30 days from February 13", you'd try to figure out what day that landed on in March. Here it is in Luxon:
 
 ```js
-DateTime.local(2017, 2, 13).plus({months: 1}).toISODate() //=> '2017-03-13'
+DateTime.local(2017, 2, 13).plus({ months: 1 }).toISODate() //=> '2017-03-13'
 
-DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=> '2017-03-15'
+DateTime.local(2017, 2, 13).plus({ days: 30 }).toISODate() //=> '2017-03-15'
 ```
 
 More generally we can differentiate two modes of math:
@@ -26,6 +26,7 @@ These units use calendar math:
  * **Years** vary because of leap years.
  * **Months** vary because they're just different lengths.
  * **Days** vary because DST transitions mean some days are 23 or 25 hours long.
+ * **Quarters** are always three months, but months vary in length so quarters do too.
  * **Weeks** are always the same number of days, but days vary so weeks do too.
  
 These units use time math:
@@ -76,7 +77,7 @@ DateTime.fromISO('2017-05-15').plus({months: 2, days: 6}).toISODate(); //=> '201
 This isn't as simple as it looks. For example, what should you expect this to do?
 
 ```js
-DateTime.fromISO('2017-04-30').plus({months: 1, days: 1}).toISODate() //=> '2017-05-31'
+DateTime.fromISO('2017-04-30').plus({months: 1, days: 1}).toISODate();
 ```
 
 If the day is added first, we'll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we'll an intermediate value of May 30 and day after that is May 31. (See "Calendar math vs time math above if this is confusing.) So the order matters.
@@ -209,7 +210,7 @@ DateTime.local().plus(dur.shiftTo('milliseconds')).year //=> 51984
 DateTime.local().plus(dur).year                         //=> 52017
 ```
 
-Those are 33 years apart! So Luxon offers an alternative conversion scheme, based on the 400-year calendar cycle:
+Those are 33 years apart! So Luxon offers an alternative conversion scheme called "longterm", based on the 400-year calendar cycle:
 
 |         | Month |     Week |       Day |
 |----     | ---   |      --- |       --- |
@@ -219,7 +220,7 @@ Those are 33 years apart! So Luxon offers an alternative conversion scheme, base
 
 You can see why these are irritating to work with, which is why they're not the default.
 
-Luxon methods that create Durations de novo accept an option called `conversionAccuracy` You can set it to 'casual' or 'longterm'. It's a property of the Duration itself, so any conversions you do use the rule you've picked, and any new Durations you derive from it will retain that property.
+Luxon methods that create Durations de novo accept an option called `conversionAccuracy`. You can set it to "casual" or "longterm". It's a property of the Duration itself, so any conversions you do use the rule you've picked, and any new Durations you derive from it will retain that property.
 
 ```js
 Duration.fromObject({ years: 23, conversionAccuracy: 'longterm' });
