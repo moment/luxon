@@ -113,7 +113,7 @@ const isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\
 function extractISODuration(match) {
   const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;
 
-  return {
+  return [ {
     years: parseInt(yearStr),
     months: parseInt(monthStr),
     weeks: parseInt(weekStr),
@@ -121,7 +121,7 @@ function extractISODuration(match) {
     hours: parseInt(hourStr),
     minutes: parseInt(minuteStr),
     seconds: parseInt(secondStr)
-  };
+  } ];
 }
 
 // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York

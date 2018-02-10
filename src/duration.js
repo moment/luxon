@@ -5,7 +5,8 @@ import { RegexParser } from './impl/regexParser';
 import { Settings } from './settings';
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './errors';
 
-const INVALID = 'Invalid Duration';
+const INVALID = 'Invalid Duration',
+ UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -217,8 +218,13 @@ export class Duration {
    * @return {Duration}
    */
   static fromISO(text, opts) {
-    const obj = Object.assign(RegexParser.parseISODuration(text), opts);
-    return Duration.fromObject(obj);
+    const [parsed] = RegexParser.parseISODuration(text);
+    if (parsed) {
+      const obj = Object.assign(parsed, opts);
+      return Duration.fromObject(obj);
+    } else {
+      return Duration.invalid(UNPARSABLE);
+    }
   }
 
   /**

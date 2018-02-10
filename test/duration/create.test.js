@@ -28,23 +28,3 @@ test('Duration.fromObject accepts a conversionAccuracy', () => {
   const dur = Duration.fromObject({ days: 1, conversionAccuracy: 'longterm' });
   expect(dur.conversionAccuracy).toBe('longterm');
 });
-
-//------
-// .invalid()
-//-------
-test('Duration.invalid produces invalid Intervals', () => {
-  expect(Duration.invalid('because').isValid).toBe(false);
-});
-
-test('Duration.invalid throws if throwOnInvalid is set', () => {
-  try {
-    Settings.throwOnInvalid = true;
-    expect(() => Duration.invalid('because')).toThrow();
-  } finally {
-    Settings.throwOnInvalid = false;
-  }
-});
-
-test('Duration.invalid throws if no reason is specified', () => {
-  expect(() => Duration.invalid()).toThrow();
-});

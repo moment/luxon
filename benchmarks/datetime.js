@@ -32,6 +32,7 @@ suite
   .on('cycle', event => {
     console.log(String(event.target));
   })
+  // eslint-disable-next-line func-names
   .on('complete', function() {
     console.log('Fastest is ' + this.filter('fastest').map('name'));
   })

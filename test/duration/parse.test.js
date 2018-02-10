@@ -20,10 +20,11 @@ test('Duration.fromISO can parse a variety of ISO formats', () => {
 
 test('Duration.fromISO rejects junk', () => {
   const rejects = s => {
-    expect(Duration.fromISO(s).as('milliseconds')).toBe(0);
+    expect(Duration.fromISO(s).isValid).toBe(false);
   };
 
   rejects('poop');
+  rejects('PTglorb');
   rejects('P5Y34S');
   rejects('5Y');
   rejects('P34S');
