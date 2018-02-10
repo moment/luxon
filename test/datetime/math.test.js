@@ -36,6 +36,21 @@ test('DateTime#plus({ months: 1 }) at the end of the month', () => {
   expect(later.month).toBe(2);
 });
 
+test('DateTime#plus({ months: 1 }) at the end of the month in a leap year', () => {
+  const i = DateTime.fromISO('2016-01-31T10:00'),
+    later = i.plus({ months: 1 });
+  expect(later.day).toBe(29);
+  expect(later.month).toBe(2);
+});
+
+test('DateTime#plus({ months: 13 }) at the end of the month', () => {
+  const i = DateTime.fromISO('2015-01-31T10:00'),
+    later = i.plus({ months: 13 });
+  expect(later.day).toBe(29);
+  expect(later.month).toBe(2);
+  expect(later.year).toBe(2016);
+});
+
 test('DateTime#plus({ days: 1 }) keeps the same time across a DST', () => {
   const i = DateTime.fromISO('2016-03-12T10:00', {
       zone: 'America/Los_Angeles'
@@ -87,6 +102,28 @@ test('DateTime#minus({ quarters: 1 }) subtracts a quarter', () => {
   expect(dt.year).toBe(2009);
   expect(dt.quarter).toBe(4);
   expect(dt.month).toBe(11);
+});
+
+test('DateTime#minus({ months: 1 }) at the end of the month', () => {
+  const i = DateTime.fromISO('2018-03-31T10:00'),
+    earlier = i.minus({ months: 1 });
+  expect(earlier.day).toBe(28);
+  expect(earlier.month).toBe(2);
+});
+
+test('DateTime#minus({ months: 1 }) at the end of the month in a leap year', () => {
+  const i = DateTime.fromISO('2016-03-31T10:00'),
+    earlier = i.minus({ months: 1 });
+  expect(earlier.day).toBe(29);
+  expect(earlier.month).toBe(2);
+});
+
+test('DateTime#minus({ months: 13 }) at the end of the month', () => {
+  const i = DateTime.fromISO('2017-03-31T10:00'),
+    earlier = i.minus({ months: 13 });
+  expect(earlier.day).toBe(29);
+  expect(earlier.month).toBe(2);
+  expect(earlier.year).toBe(2016);
 });
 
 test('DateTime#minus maintains invalidity', () => {
