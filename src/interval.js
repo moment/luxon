@@ -203,7 +203,7 @@ export class Interval {
    */
   isBefore(dateTime) {
     if (!this.isValid) return false;
-    return this.e.plus(1) < dateTime;
+    return this.e <= dateTime;
   }
 
   /**

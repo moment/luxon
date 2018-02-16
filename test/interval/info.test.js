@@ -103,7 +103,7 @@ test('Interval#toDuration accepts duration options', () => {
 test('Interval#toDuration returns an invalid duration for invalid intervals', () => {
   const int = Interval.invalid('because'),
     dur = int.toDuration(['hours']);
-  expect(dur.isValid).toBe(false);
+  expect(dur.isValid).toBeFalsy();
 });
 
 //------
@@ -111,32 +111,32 @@ test('Interval#toDuration returns an invalid duration for invalid intervals', ()
 //-------
 test('Interval#contains returns true for DateTimes in the interval', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-  expect(i.contains(DateTime.fromISO('1982-05-25T06:30'))).toBeTruthy();
+  expect(i.contains(DateTime.fromISO('1982-05-25T06:30'))).toBe(true);
 });
 
 test('Interval#contains returns false for DateTimes after the interval', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-  expect(i.contains(DateTime.fromISO('1982-05-25T08:30'))).toBeFalsy();
+  expect(i.contains(DateTime.fromISO('1982-05-25T08:30'))).toBe(false);
 });
 
 test('Interval#contains returns false for DateTimes before the interval', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-  expect(i.contains(DateTime.fromISO('1982-05-25T05:30'))).toBeFalsy();
+  expect(i.contains(DateTime.fromISO('1982-05-25T05:30'))).toBe(false);
 });
 
 test('Interval#contains returns true for the start endpoint', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-  expect(i.contains(DateTime.fromISO('1982-05-25T06:00'))).toBeTruthy();
+  expect(i.contains(DateTime.fromISO('1982-05-25T06:00'))).toBe(true);
 });
 
 test('Interval#contains returns false for the end endpoint', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T07:00');
-  expect(i.contains(DateTime.fromISO('1982-05-25T07:00'))).toBeFalsy();
+  expect(i.contains(DateTime.fromISO('1982-05-25T07:00'))).toBe(false);
 });
 
 test('Interval#contains returns false for invalid intervals', () => {
   const i = Interval.invalid('because');
-  expect(i.contains(DateTime.fromISO('1982-05-25T07:00'))).toBeFalsy();
+  expect(i.contains(DateTime.fromISO('1982-05-25T07:00'))).toBe(false);
 });
 
 //------
@@ -144,12 +144,12 @@ test('Interval#contains returns false for invalid intervals', () => {
 //-------
 test('Interval#isEmpty returns true for empty intervals', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T06:00');
-  expect(i.isEmpty()).toBeTruthy();
+  expect(i.isEmpty()).toBe(true);
 });
 
 test('Interval#isEmpty returns false for non-empty intervals', () => {
   const i = fromISOs('1982-05-25T06:00', '1982-05-25T08:00');
-  expect(i.isEmpty()).toBeFalsy();
+  expect(i.isEmpty()).toBe(false);
 });
 
 //------
@@ -158,31 +158,37 @@ test('Interval#isEmpty returns false for non-empty intervals', () => {
 test('Interval#isBefore returns true for intervals fully before the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.minus({ days: 2 }), n.minus({ days: 1 }));
-  expect(i.isBefore(n)).toBeTruthy();
+  expect(i.isBefore(n)).toBe(true);
 });
 
 test('Interval#isBefore returns false for intervals containing the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.minus({ days: 2 }), n.plus({ days: 2 }));
-  expect(i.isBefore(n)).toBeFalsy();
+  expect(i.isBefore(n)).toBe(false);
 });
 
 test('Interval#isBefore returns false for intervals fully after the input ', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.plus({ days: 2 }), n.plus({ days: 3 }));
-  expect(i.isBefore(n)).toBeFalsy();
+  expect(i.isBefore(n)).toBe(false);
 });
 
-test('Interval#isBefore returns false for intervals starting at the input', () => {
+test('Interval#isBefore returns true for intervals ending at the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.minus({ days: 1 }), n);
-  expect(i.isBefore(n)).toBeFalsy();
+  expect(i.isBefore(n)).toBe(true);
+});
+
+test('Interval#isBefore returns false for intervals just inside the input', () => {
+  const n = DateTime.fromISO('1982-05-25T06:00'),
+        i = Interval.fromDateTimes(n.minus({ days: 1 }), n);
+  expect(i.isBefore(n.minus(1))).toBe(false);
 });
 
 test('Interval#isBefore returns false for invalid intervals', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.invalid('because');
-  expect(i.isBefore(n)).toBeFalsy();
+  expect(i.isBefore(n)).toBe(false);
 });
 
 //------
@@ -191,31 +197,31 @@ test('Interval#isBefore returns false for invalid intervals', () => {
 test('Interval#isAfter returns true for intervals fully after the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.plus({ days: 1 }), n.plus({ days: 2 }));
-  expect(i.isAfter(n)).toBeTruthy();
+  expect(i.isAfter(n)).toBe(true);
 });
 
 test('Interval#isAfter returns false for intervals containing the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.minus({ day: 2 }), n.plus({ days: 2 }));
-  expect(i.isAfter(n)).toBeFalsy();
+  expect(i.isAfter(n)).toBe(false);
 });
 
 test('Interval#isAfter returns false for fully before the input ', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n.minus({ day: 2 }), n.minus(1, 'day'));
-  expect(i.isAfter(n)).toBeFalsy();
+  expect(i.isAfter(n)).toBe(false);
 });
 
 test('Interval#isAfter returns false for intervals beginning at the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n, n.plus({ days: 1 }));
-  expect(i.isAfter(n)).toBeFalsy();
+  expect(i.isAfter(n)).toBe(false);
 });
 
 test('Interval#isAfter returns false for invalid intervals', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.invalid('because');
-  expect(i.isAfter(n)).toBeFalsy();
+  expect(i.isAfter(n)).toBe(false);
 });
 
 //------
@@ -224,22 +230,22 @@ test('Interval#isAfter returns false for invalid intervals', () => {
 test("Interval#hasSame('day') returns true for durations on the same day", () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n, n.plus({ hours: 5 }));
-  expect(i.hasSame('day')).toBeTruthy();
+  expect(i.hasSame('day')).toBe(true);
 });
 
 test("Interval#hasSame('day') returns true for durations that last until the next day", () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n, n.plus({ hours: 20 }));
-  expect(i.hasSame('day')).toBeFalsy();
+  expect(i.hasSame('day')).toBe(false);
 });
 
 test("Interval#hasSame('day') returns true for durations durations ending at midnight", () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
     i = Interval.fromDateTimes(n, n.plus({ days: 1 }).startOf('day'));
-  expect(i.hasSame('day')).toBeTruthy();
+  expect(i.hasSame('day')).toBe(true);
 });
 
 test('Interval#hasSame returns false for invalid intervals', () => {
   const i = Interval.invalid('because');
-  expect(i.hasSame('day')).toBeFalsy();
+  expect(i.hasSame('day')).toBe(false);
 });
