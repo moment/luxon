@@ -228,3 +228,11 @@ test("Setting the default zone to 'local' gives you back a local zone", () => {
     expect(DateTime.local().zoneName).toBe(localZone);
   });
 });
+
+//------
+// invalid
+//------
+
+test('invalid DateTimes have no zone', () => {
+  expect(DateTime.invalid("because").zoneName).toBe(null);
+});

@@ -42,7 +42,11 @@ export class Settings {
    * @type {string}
    */
   static set defaultZoneName(z) {
-    defaultZone = Util.normalizeZone(z);
+    if (!z) {
+      defaultZone = null;
+    } else {
+      defaultZone = Util.normalizeZone(z);
+    }
   }
 
   /**

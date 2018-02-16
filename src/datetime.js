@@ -804,7 +804,7 @@ export class DateTime {
    * @return {String}
    */
   get zoneName() {
-    return this.zone.name;
+    return this.invalid ? null : this.zone.name;
   }
 
   /**
