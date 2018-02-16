@@ -72,6 +72,11 @@ export class Util {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
 
+  // x % n but takes the sign of n instead of x
+  static floorMod(x, n) {
+    return x - n * Math.floor(x / n);
+  }
+
   static padStart(input, n = 2) {
     return ('0'.repeat(n) + input).slice(-n);
   }
@@ -96,10 +101,13 @@ export class Util {
   }
 
   static daysInMonth(year, month) {
-    if (month === 2) {
-      return Util.isLeapYear(year) ? 29 : 28;
+    const modMonth = Util.floorMod(month - 1, 12) + 1,
+          modYear = year + (month - modMonth) / 12;
+
+    if (modMonth === 2) {
+      return Util.isLeapYear(modYear) ? 29 : 28;
     } else {
-      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
     }
   }
 
