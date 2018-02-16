@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-0" data-ice="link">0.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-4-0" data-ice="link">0.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-1" data-ice="link">0.3.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
@@ -293,11 +294,11 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="math">Math</h1><p>This page covers some oddball topics with date and time math, which has some quirky corner cases.</p>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="math">Math</h1><p>This page covers some oddball topics related to date and time math, which has some quirky corner cases.</p>
 <h2 id="calendar-math-vs-time-math">Calendar math vs time math</h2><h3 id="the-basics">The basics</h3><p>Math with dates and times can be unintuitive to programmers. If it&apos;s Feb 13, 2017 and I say &quot;in exactly one month&quot;, you know I mean March 13. Exactly one month after that is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said &quot;30 days from February 13&quot;, you&apos;d try to figure out what day that landed on in March. Here it is in Luxon:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 2, 13).plus({months: 1}).toISODate() //=&gt; &apos;2017-03-13&apos;
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 2, 13).plus({ months: 1 }).toISODate() //=&gt; &apos;2017-03-13&apos;
 
-DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=&gt; &apos;2017-03-15&apos;</code>
+DateTime.local(2017, 2, 13).plus({ days: 30 }).toISODate() //=&gt; &apos;2017-03-15&apos;</code>
 </code></pre>
 <p>More generally we can differentiate two modes of math:</p>
 <ul>
@@ -309,6 +310,7 @@ DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=&gt; &apos;2017-03-1
 <li><strong>Years</strong> vary because of leap years.</li>
 <li><strong>Months</strong> vary because they&apos;re just different lengths.</li>
 <li><strong>Days</strong> vary because DST transitions mean some days are 23 or 25 hours long.</li>
+<li><strong>Quarters</strong> are always three months, but months vary in length so quarters do too.</li>
 <li><strong>Weeks</strong> are always the same number of days, but days vary so weeks do too.</li>
 </ul>
 <p>These units use time math:</p>
@@ -335,7 +337,7 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-05-15&apos;).plus({months: 2, days: 6}).toISODate(); //=&gt; &apos;2017-07-21&apos;</code>
 </code></pre>
 <p>This isn&apos;t as simple as it looks. For example, what should you expect this to do?</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate() //=&gt; &apos;2017-05-31&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate();</code>
 </code></pre>
 <p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p>
 <p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p>
@@ -423,6 +425,12 @@ dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 1
 <td>365</td>
 </tr>
 <tr>
+<td>Quarter</td>
+<td>3</td>
+<td>13</td>
+<td>91</td>
+</tr>
+<tr>
 <td>Month</td>
 <td></td>
 <td>4</td>
@@ -438,7 +446,7 @@ dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 1
 DateTime.local().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
 DateTime.local().plus(dur).year                         //=&gt; 52017</code>
 </code></pre>
-<p>Those are 33 years apart! So Luxon offers an alternative conversion scheme, based on the 400-year calendar cycle:</p>
+<p>Those are 33 years apart! So Luxon offers an alternative conversion scheme called &quot;longterm&quot;, based on the 400-year calendar cycle:</p>
 <table>
 <thead>
 <tr>
@@ -456,6 +464,12 @@ DateTime.local().plus(dur).year                         //=&gt; 52017</code>
 <td>365.2425</td>
 </tr>
 <tr>
+<td>Quarter</td>
+<td>3</td>
+<td>13.04435</td>
+<td>91.310625</td>
+</tr>
+<tr>
 <td>Month</td>
 <td></td>
 <td>4.348125</td>
@@ -464,7 +478,7 @@ DateTime.local().plus(dur).year                         //=&gt; 52017</code>
 </tbody>
 </table>
 <p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p>
-<p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code> You can set it to &apos;casual&apos; or &apos;longterm&apos;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p>
+<p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code>. You can set it to &quot;casual&quot; or &quot;longterm&quot;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
 Duration.fromISO(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
 

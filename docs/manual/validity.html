@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-0" data-ice="link">0.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-4-0" data-ice="link">0.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-1" data-ice="link">0.3.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
@@ -294,7 +295,7 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="validity">Validity</h1><h2 id="invalid-datetimes">Invalid DateTimes</h2><p>One of the most irritating aspects of programming with time is that it&apos;s possible to end up with invalid dates. This is a bit subtle: barring integer overflows, there&apos;s no count of milliseconds that don&apos;t correspond to a valid DateTime, but when working with calendar units, it&apos;s pretty easy to say something like &quot;June 400th&quot;. Luxon considers that invalid and will mark it accordingly.</p>
-<p>Unless if you&apos;ve asked Luxon to throw an exception when it creates an invalid DateTime (see more on that below), it will fail silently, creating an instance that doesn&apos;t know how to do anything. You can check validity with <code>isValid</code>:</p>
+<p>Unless you&apos;ve asked Luxon to throw an exception when it creates an invalid DateTime (see more on that below), it will fail silently, creating an instance that doesn&apos;t know how to do anything. You can check validity with <code>isValid</code>:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">&gt; var dt = DateTime.fromObject({ month: 6, day: 400 });
 dt.isValid //=&gt; false</code>
 </code></pre>
@@ -306,7 +307,7 @@ dt.toObject(); //=&gt; {}</code>
 <p>Methods that return other Luxon objects will return invalid ones:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.plus({ days: 4 }).isValid; //=&gt; false</code>
 </code></pre>
-<h2 id="reasons-a-datetimes-can-be-invalid">Reasons a DateTimes can be invalid</h2><p>The most common way to do that is to over or underflow some unit:</p>
+<h2 id="reasons-a-datetimes-can-be-invalid">Reasons a DateTimes can be invalid</h2><p>The most common way to do that is to over- or underflow some unit:</p>
 <ul>
 <li>February 40th</li>
 <li>28:00</li>

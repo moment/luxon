@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-0" data-ice="link">0.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-4-0" data-ice="link">0.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-1" data-ice="link">0.3.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
@@ -393,11 +394,11 @@ overrideZone.toString();       //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;
 </code></pre>
 <p>Note two things:</p>
 <ol>
-<li>The date and time specified in the string was interpreted as specifying a Parisian local time (i.e. it&apos;s the time that corresponds to what would be called 9:10 <em>there</em>).</li>
+<li>The date and time specified in the string was interpreted as a Parisian local time (i.e. it&apos;s the time that corresponds to what would be called 9:10 <em>there</em>).</li>
 <li>The resulting DateTime object is in Europe/Paris.</li>
 </ol>
 <p>Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it&apos;s more convenient for the same option to govern both.</p>
-<p>In addition, one static method, <code>utc()</code>, specifically interprets the input as being specified in UTC. It also creates a DateTime in UTC:</p>
+<p>In addition, one static method, <code>utc()</code>, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
 
 utc.zoneName;                  //=&gt; &apos;UTC&apos;
@@ -452,7 +453,7 @@ rezoned.toString();    //=&gt; &apos;2017-09-13T18:36:23.187-07:00&apos;
 
 local.valueOf() === rezoned.valueOf()  //=&gt; false</code>
 </code></pre>
-<p>If you find that confusing, I recommend just not using it.</p>
+<p>If you find that confusing, I recommend just not using it. On the other hand, if you find yourself using this all the time, you are probably doing something wrong.</p>
 <h2 id="accessors">Accessors</h2><p>Luxon DateTimes have a few different accessors that let you find out about the zone and offset:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
 
@@ -464,12 +465,12 @@ dt.isOffsetFixed     //=&gt; false
 dt.isInDST           //=&gt; true</code>
 </code></pre>
 <p>Those are all documented in the <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime API docs</a>.</p>
-<p>DateTime also has a <code>zone</code> property that holds an Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p>
+<p>DateTime also has a <code>zone</code> property that holds a Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.zone   //=&gt; LocalZone {}</code>
 </code></pre>
 <h2 id="dst-weirdness">DST weirdness</h2><p>Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it&apos;s not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts&apos; timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This all a tremendous waste of everyone&apos;s energy and, er, time, but it is how the world works and a date and a time library has to deal with it.</p>
 <p>Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.</p>
-<h3 id="invalid-times">Invalid times</h3><p>Some local times simply don&apos;t exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, <code>America/New_York</code>, on March 12, 2017 the millisecond after 1:59:59.999 became 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don&apos;t exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.</p>
+<h3 id="invalid-times">Invalid times</h3><p>Some local times simply don&apos;t exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, <code>America/New_York</code>, on March 12, 2017 the millisecond after 1:59:59.999 is 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don&apos;t exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.</p>
 <p>If you create such a DateTime from scratch, the missing time will be advanced by an hour:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 12, 2, 30).toString(); //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
 </code></pre>
@@ -477,7 +478,7 @@ dt.isInDST           //=&gt; true</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 11, 2, 30).plus({days: 1}).toString()         //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;
 DateTime.local(2017, 3, 13, 2, 30).minus({days: 1}).toString()        //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
 </code></pre>
-<h3 id="ambiguous-times">Ambiguous times</h3><p>Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, <code>America/New_York</code>, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It&apos;s an important question, because those correspond to different moments in time.</p>
+<h3 id="ambiguous-times">Ambiguous times</h3><p>Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, <code>America/New_York</code>, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day, one hour before before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It&apos;s an important question, because they correspond to different moments in time.</p>
 <p>However, Luxon&apos;s behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 11, 5, 1, 30).offset / 60                   //=&gt; -4
 DateTime.local(2017, 11, 4, 1, 30).plus({days: 1}).offset / 60   //=&gt; -4

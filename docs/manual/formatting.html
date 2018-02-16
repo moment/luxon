@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-0" data-ice="link">0.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-4-0" data-ice="link">0.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-1" data-ice="link">0.3.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
@@ -310,7 +311,7 @@ dt.toISOTime();     //=&gt; &apos;11:32:00.000-04:00&apos;</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.toRFC2822(); //=&gt; &apos;Thu, 20 Apr 2017 11:32:00 -0400&apos;
 dt.toHTTP();    //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
 </code></pre>
-<h2 id="tolocalestring--strings-for-humans-">toLocaleString (strings for humans)</h2><h3 id="the-basics">The basics</h3><p>Modern browsers (and other JS environments) provide brought support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p>
+<h2 id="tolocalestring--strings-for-humans-">toLocaleString (strings for humans)</h2><h3 id="the-basics">The basics</h3><p>Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString();                                       //=&gt; &apos;4/20/2017&apos;
 dt.toLocaleString(DateTime.DATETIME_FULL);                 //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
 dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;20 avril 2017 &#xE0; 11:32 UTC&#x2212;4&apos;</code>
@@ -338,8 +339,8 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 <tr>
 <th>Name</th>
 <th>Description</th>
-<th>Example in EN_US</th>
-<th>Example in FR</th>
+<th>Example in en_US</th>
+<th>Example in fr</th>
 </tr>
 </thead>
 <tbody>
@@ -863,6 +864,18 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 <td></td>
 <td>extra verbose localized date and time with seconds</td>
 <td>Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time</td>
+</tr>
+<tr>
+<td>q</td>
+<td></td>
+<td>quarter, no padding</td>
+<td>9</td>
+</tr>
+<tr>
+<td>qq</td>
+<td></td>
+<td>quarter, padded to 2</td>
+<td>13</td>
 </tr>
 </tbody>
 </table>

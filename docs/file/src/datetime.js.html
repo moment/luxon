@@ -167,10 +167,12 @@ function objToTS(obj, offset, zone) {
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
   const oPre = inst.o,
+    year = inst.c.year + dur.years,
+    month = inst.c.month + dur.months + dur.quarters * 3,
     c = Object.assign({}, inst.c, {
-      year: inst.c.year + dur.years,
-      month: inst.c.month + dur.months,
-      day: inst.c.day + dur.days + dur.weeks * 7
+      year: year,
+      month: month,
+      day: Math.min(inst.c.day, Util.daysInMonth(year, month)) + dur.days + dur.weeks * 7
     }),
     millisToAdd = Duration.fromObject({
       hours: dur.hours,
@@ -852,7 +854,7 @@ export class DateTime {
    * @return {String}
    */
   get zoneName() {
-    return this.zone.name;
+    return this.invalid ? null : this.zone.name;
   }
 
   /**
@@ -864,6 +866,14 @@ export class DateTime {
     return this.isValid ? this.c.year : NaN;
   }
 
+  /**
+   * Get the quarter
+   * @example DateTime.local(2017, 5, 25).quarter //=&gt; 2
+   * @return {number}
+   */
+  get quarter() {
+    return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
+  }
   /**
    * Get the month (1-12).
    * @example DateTime.local(2017, 5, 25).month //=&gt; 5
@@ -1265,6 +1275,7 @@ export class DateTime {
       case &apos;years&apos;:
         o.month = 1;
       // falls through
+      case &apos;quarters&apos;:
       case &apos;months&apos;:
         o.day = 1;
       // falls through
@@ -1289,6 +1300,10 @@ export class DateTime {
 
     if (normalizedUnit === &apos;weeks&apos;) {
       o.weekday = 1;
+    }
+
+    if (normalizedUnit === &apos;quarters&apos;) {
+      o.month = Math.floor(this.month / 3) * 3 + 1;
     }
 
     return this.set(o);

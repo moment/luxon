@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-0" data-ice="link">0.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-4-0" data-ice="link">0.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-1" data-ice="link">0.3.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
@@ -510,9 +511,9 @@ iso.toString();                //=&gt; &apos;2017-05-15T09:10:23.000-04:00&apos;
 overrideZone.zoneName;         //=&gt; &apos;Europe/Paris&apos;
 overrideZone.toString();       //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
 </code></pre><p>Note two things:</p><ol>
-<li>The date and time specified in the string was interpreted as specifying a Parisian local time (i.e. it&apos;s the time that corresponds to what would be called 9:10 <em>there</em>).</li>
+<li>The date and time specified in the string was interpreted as a Parisian local time (i.e. it&apos;s the time that corresponds to what would be called 9:10 <em>there</em>).</li>
 <li>The resulting DateTime object is in Europe/Paris.</li>
-</ol><p>Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it&apos;s more convenient for the same option to govern both.</p><p>In addition, one static method, <code>utc()</code>, specifically interprets the input as being specified in UTC. It also creates a DateTime in UTC:</p><pre><code class="lang-js"><code class="source-code prettyprint">var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
+</ol><p>Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it&apos;s more convenient for the same option to govern both.</p><p>In addition, one static method, <code>utc()</code>, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:</p><pre><code class="lang-js"><code class="source-code prettyprint">var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
 
 utc.zoneName;                  //=&gt; &apos;UTC&apos;
 utc.toString();                //=&gt; &apos;2017-05-15T09:10:23.000Z&apos;</code>
@@ -555,7 +556,7 @@ local.toString();      //=&gt; &apos;2017-09-13T18:36:23.187-04:00&apos;
 rezoned.toString();    //=&gt; &apos;2017-09-13T18:36:23.187-07:00&apos;
 
 local.valueOf() === rezoned.valueOf()  //=&gt; false</code>
-</code></pre><p>If you find that confusing, I recommend just not using it.</p><h2>Accessors</h2><p>Luxon DateTimes have a few different accessors that let you find out about the zone and offset:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+</code></pre><p>If you find that confusing, I recommend just not using it. On the other hand, if you find yourself using this all the time, you are probably doing something wrong.</p><h2>Accessors</h2><p>Luxon DateTimes have a few different accessors that let you find out about the zone and offset:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
 
 dt.zoneName          //=&gt; &apos;America/New_York&apos;
 dt.offset            //=&gt; -240
@@ -563,11 +564,11 @@ dt.offsetNameShort   //=&gt; &apos;EDT&apos;
 dt.offsetNameLong    //=&gt; &apos;Eastern Daylight Time&apos;
 dt.isOffsetFixed     //=&gt; false
 dt.isInDST           //=&gt; true</code>
-</code></pre><p>Those are all documented in the <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime API docs</a>.</p><p>DateTime also has a <code>zone</code> property that holds an Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.zone   //=&gt; LocalZone {}</code>
-</code></pre><h2>DST weirdness</h2><p>Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it&apos;s not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts&apos; timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This all a tremendous waste of everyone&apos;s energy and, er, time, but it is how the world works and a date and a time library has to deal with it.</p><p>Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.</p><h3>Invalid times</h3><p>Some local times simply don&apos;t exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, <code>America/New_York</code>, on March 12, 2017 the millisecond after 1:59:59.999 became 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don&apos;t exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.</p><p>If you create such a DateTime from scratch, the missing time will be advanced by an hour:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 12, 2, 30).toString(); //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
+</code></pre><p>Those are all documented in the <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime API docs</a>.</p><p>DateTime also has a <code>zone</code> property that holds a Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.zone   //=&gt; LocalZone {}</code>
+</code></pre><h2>DST weirdness</h2><p>Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it&apos;s not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts&apos; timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This all a tremendous waste of everyone&apos;s energy and, er, time, but it is how the world works and a date and a time library has to deal with it.</p><p>Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.</p><h3>Invalid times</h3><p>Some local times simply don&apos;t exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, <code>America/New_York</code>, on March 12, 2017 the millisecond after 1:59:59.999 is 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don&apos;t exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.</p><p>If you create such a DateTime from scratch, the missing time will be advanced by an hour:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 12, 2, 30).toString(); //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
 </code></pre><p>You can also do date math that lands you in the middle of the shift. These also push forward:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 11, 2, 30).plus({days: 1}).toString()         //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;
 DateTime.local(2017, 3, 13, 2, 30).minus({days: 1}).toString()        //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
-</code></pre><h3>Ambiguous times</h3><p>Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, <code>America/New_York</code>, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day an hour before. So if you create a DateTime with a local time of 1:30, which time do you mean? It&apos;s an important question, because those correspond to different moments in time.</p><p>However, Luxon&apos;s behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 11, 5, 1, 30).offset / 60                   //=&gt; -4
+</code></pre><h3>Ambiguous times</h3><p>Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, <code>America/New_York</code>, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day, one hour before before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It&apos;s an important question, because they correspond to different moments in time.</p><p>However, Luxon&apos;s behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 11, 5, 1, 30).offset / 60                   //=&gt; -4
 DateTime.local(2017, 11, 4, 1, 30).plus({days: 1}).offset / 60   //=&gt; -4
 DateTime.local(2017, 11, 6, 1, 30).minus({days: 1}).offset / 60  //=&gt; -5</code>
 </code></pre><p>In other words, sometimes it picks one and sometimes the other. Luxon doesn&apos;t guarantee the specific behavior above. That&apos;s just what it happens to do.</p><p>If you&apos;re curious, this lack of definition is because Luxon doesn&apos;t actually know that any particular DateTime is an ambiguous time. It doesn&apos;t know the time zones rules at all. It just knows the local time does not contradict the offset and leaves it at that. To find out the time is ambiguous and define exact rules for how to resolve it, Luxon would have to test nearby times to see if it can find duplicate local time, and it would have to do that on every creation of a DateTime, regardless of whether it was anywhere near a real DST shift. Because that&apos;s onerous, Luxon doesn&apos;t bother.</p><h3>Math across DSTs</h3><p>There&apos;s a whole <a href="./manual/math.html">section</a> about date and time math, but it&apos;s worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher-order, variable-length units like days, weeks, months, and years. When working with lower-order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.</p><p>An easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is <code>America/New_York</code>, which had a Spring Forward DST in the early hours of March 12.</p><pre><code class="lang-js"><code class="source-code prettyprint">var start = DateTime.local(2017, 3, 11, 10);
@@ -669,7 +670,7 @@ dt.toISOWeekDate(); //=&gt; &apos;2017-W17-7&apos;
 dt.toISOTime();     //=&gt; &apos;11:32:00.000-04:00&apos;</code>
 </code></pre><p>Generally, you&apos;ll want the first one. Use it by default when building or interacting with APIs, communicating times over a wire, etc.</p><h3>HTTP and RFC 2822</h3><p>There are a number of legacy standard date and time formats out there, and Luxon supports some of them. You shouldn&apos;t use them unless you have a specific reason to.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toRFC2822(); //=&gt; &apos;Thu, 20 Apr 2017 11:32:00 -0400&apos;
 dt.toHTTP();    //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
-</code></pre><h2>toLocaleString (strings for humans)</h2><h3>The basics</h3><p>Modern browsers (and other JS environments) provide brought support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString();                                       //=&gt; &apos;4/20/2017&apos;
+</code></pre><h2>toLocaleString (strings for humans)</h2><h3>The basics</h3><p>Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString();                                       //=&gt; &apos;4/20/2017&apos;
 dt.toLocaleString(DateTime.DATETIME_FULL);                 //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
 dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;20 avril 2017 &#xE0; 11:32 UTC&#x2212;4&apos;</code>
 </code></pre><h3>Intl.DateTimeFormat</h3><p>In the example above, <code>DateTime.DATETIME_FULL</code> is one of several convenience formats provided by Luxon. But the arguments are really any object of options that can be provided to <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat">Intl.DateTimeFormat</a>. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString({ month: &apos;long&apos;, day: &apos;numeric&apos; }) //=&gt; &apos;April 20&apos;</code>
@@ -689,8 +690,8 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 <tr>
 <th>Name</th>
 <th>Description</th>
-<th>Example in EN_US</th>
-<th>Example in FR</th>
+<th>Example in en_US</th>
+<th>Example in fr</th>
 </tr>
 </thead>
 <tbody>
@@ -1198,6 +1199,18 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 <td>extra verbose localized date and time with seconds</td>
 <td>Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time</td>
 </tr>
+<tr>
+<td>q</td>
+<td></td>
+<td>quarter, no padding</td>
+<td>9</td>
+</tr>
+<tr>
+<td>qq</td>
+<td></td>
+<td>quarter, padded to 2</td>
+<td>13</td>
+</tr>
 </tbody>
 </table></div>
         <a data-ice="link" href="manual/formatting.html"></a>
@@ -1249,7 +1262,7 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
 </ol><p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p><h3>fromFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormat">DateTime.fromFormat</a> for the method signature. A brief example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
 </code></pre><h3>Intl</h3><p>Luxon supports parsing internationalized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
 </code></pre><p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/matrix.html">support matrix</a>).</p><h3>Limitations</h3><p>Not every token supported by <code>DateTime#toFormat</code> is supported in the parser. For example, there&apos;s no <code>ZZZZ</code> or <code>ZZZZZ</code> tokens. This is for a few reasons:</p><ul>
-<li>Luxon relies on natively-available functionality that only provides the mapping in one way. We can ask what the named offset is and get &quot;Eastern Standard Time&quot; but not ask what &quot;Eastern Standard Time&quot; is most likely to mean.</li>
+<li>Luxon relies on natively-available functionality that only provides the mapping in one direction. We can ask what the named offset is and get &quot;Eastern Standard Time&quot; but not ask what &quot;Eastern Standard Time&quot; is most likely to mean.</li>
 <li>Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can&apos;t be parsed because of their ambiguity.</li>
 <li>Luxon doesn&apos;t yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.</li>
 </ul><h3>Debugging</h3><p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormatExplain">fromFormatExplain</a>. It takes the same arguments as <code>fromFormat</code> but returns a map of information about the parse that can be useful in debugging.</p><p>For example, here the code is using &quot;MMMM&quot; where &quot;MMM&quot; was needed. You can see the regex Luxon uses and see that it didn&apos;t match anything:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromFormatExplain(&quot;Aug 6 1982&quot;, &quot;MMMM d yyyy&quot;)
@@ -1556,9 +1569,9 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Math</h1><p>This page covers some oddball topics with date and time math, which has some quirky corner cases.</p><h2>Calendar math vs time math</h2><h3>The basics</h3><p>Math with dates and times can be unintuitive to programmers. If it&apos;s Feb 13, 2017 and I say &quot;in exactly one month&quot;, you know I mean March 13. Exactly one month after that is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said &quot;30 days from February 13&quot;, you&apos;d try to figure out what day that landed on in March. Here it is in Luxon:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 2, 13).plus({months: 1}).toISODate() //=&gt; &apos;2017-03-13&apos;
+        <div data-ice="card"><h1>Math</h1><p>This page covers some oddball topics related to date and time math, which has some quirky corner cases.</p><h2>Calendar math vs time math</h2><h3>The basics</h3><p>Math with dates and times can be unintuitive to programmers. If it&apos;s Feb 13, 2017 and I say &quot;in exactly one month&quot;, you know I mean March 13. Exactly one month after that is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said &quot;30 days from February 13&quot;, you&apos;d try to figure out what day that landed on in March. Here it is in Luxon:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 2, 13).plus({ months: 1 }).toISODate() //=&gt; &apos;2017-03-13&apos;
 
-DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=&gt; &apos;2017-03-15&apos;</code>
+DateTime.local(2017, 2, 13).plus({ days: 30 }).toISODate() //=&gt; &apos;2017-03-15&apos;</code>
 </code></pre><p>More generally we can differentiate two modes of math:</p><ul>
 <li>Calendar math works with higher-order, variable-length units like years and months</li>
 <li>Time math works with lower-order, constant-length units such as hours, minutes, and seconds.</li>
@@ -1566,6 +1579,7 @@ DateTime.local(2017, 2, 13).plus({days: 30}).toISODate() //=&gt; &apos;2017-03-1
 <li><strong>Years</strong> vary because of leap years.</li>
 <li><strong>Months</strong> vary because they&apos;re just different lengths.</li>
 <li><strong>Days</strong> vary because DST transitions mean some days are 23 or 25 hours long.</li>
+<li><strong>Quarters</strong> are always three months, but months vary in length so quarters do too.</li>
 <li><strong>Weeks</strong> are always the same number of days, but days vary so weeks do too.</li>
 </ul><p>These units use time math:</p><ul>
 <li><strong>Hours</strong> are always 60 minutes</li>
@@ -1579,7 +1593,7 @@ start.hour                          //=&gt; 10, just for comparison
 start.plus({days: 1}).hour          //=&gt; 10, stayed the same
 start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code>
 </code></pre><p>So in adding a day, we kept the hour at 10, even though that&apos;s only 23 hours later.</p><h3>Time math</h3><p>Time math is different. In time math, we&apos;re just adjusting the clock, adding or subtracting from the epoch timestamp. Adding 63 hours is really the same as adding 63 hours&apos; worth of milliseconds. Under the covers, Luxon does this exactly the opposite of how it does calendar math; it boils the operation down to milliseconds, computes the new timestamp, and then computes the date out of that.</p><h2>Math with multiple units</h2><p>It&apos;s possible to do math with multiple units:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-05-15&apos;).plus({months: 2, days: 6}).toISODate(); //=&gt; &apos;2017-07-21&apos;</code>
-</code></pre><p>This isn&apos;t as simple as it looks. For example, what should you expect this to do?</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate() //=&gt; &apos;2017-05-31&apos;</code>
+</code></pre><p>This isn&apos;t as simple as it looks. For example, what should you expect this to do?</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate();</code>
 </code></pre><p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p><p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({days: 1}).plus({months: 1}).toISODate() //=&gt; &apos;2017-06-01&apos;</code>
 </code></pre><p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p><h2>Comparing DateTimes</h2><p>DateTime implements <code>#valueOf</code> to return the epoch timestamp, so you can compare DateTimes with <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code>. That lets you find out if one DateTime is after or before another DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">d1 &lt; d2 // is d1 before d2?</code>
 </code></pre><p>However, <code>===</code> compares object identity (not a useful concept in a library with immutable types) and <code>#equals</code> compares both the time and additional metadata, such as the locale and time zone. If you&apos;re only interested in checking the equality of the timestamps, you need to coerce them:</p><pre><code class="lang-js"><code class="source-code prettyprint">+d1 === +d2 // are d1 and d2 the same instant in time?</code>
@@ -1640,6 +1654,12 @@ dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 1
 <td>365</td>
 </tr>
 <tr>
+<td>Quarter</td>
+<td>3</td>
+<td>13</td>
+<td>91</td>
+</tr>
+<tr>
 <td>Month</td>
 <td></td>
 <td>4</td>
@@ -1650,7 +1670,7 @@ dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 1
 </code></pre><p>This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ years: 50000 });
 DateTime.local().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
 DateTime.local().plus(dur).year                         //=&gt; 52017</code>
-</code></pre><p>Those are 33 years apart! So Luxon offers an alternative conversion scheme, based on the 400-year calendar cycle:</p><table>
+</code></pre><p>Those are 33 years apart! So Luxon offers an alternative conversion scheme called &quot;longterm&quot;, based on the 400-year calendar cycle:</p><table>
 <thead>
 <tr>
 <th></th>
@@ -1667,13 +1687,19 @@ DateTime.local().plus(dur).year                         //=&gt; 52017</code>
 <td>365.2425</td>
 </tr>
 <tr>
+<td>Quarter</td>
+<td>3</td>
+<td>13.04435</td>
+<td>91.310625</td>
+</tr>
+<tr>
 <td>Month</td>
 <td></td>
 <td>4.348125</td>
 <td>30.436875</td>
 </tr>
 </tbody>
-</table><p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p><p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code> You can set it to &apos;casual&apos; or &apos;longterm&apos;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p><pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
+</table><p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p><p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code>. You can set it to &quot;casual&quot; or &quot;longterm&quot;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p><pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
 Duration.fromISO(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
 
 end.diff(start, { conversionAccuracy: &apos;longterm&apos; })</code>
@@ -1707,13 +1733,13 @@ i.toDuration([&apos;years&apos;, &apos;months&apos;, &apos;days&apos;]).toObject
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Validity</h1><h2>Invalid DateTimes</h2><p>One of the most irritating aspects of programming with time is that it&apos;s possible to end up with invalid dates. This is a bit subtle: barring integer overflows, there&apos;s no count of milliseconds that don&apos;t correspond to a valid DateTime, but when working with calendar units, it&apos;s pretty easy to say something like &quot;June 400th&quot;. Luxon considers that invalid and will mark it accordingly.</p><p>Unless if you&apos;ve asked Luxon to throw an exception when it creates an invalid DateTime (see more on that below), it will fail silently, creating an instance that doesn&apos;t know how to do anything. You can check validity with <code>isValid</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; var dt = DateTime.fromObject({ month: 6, day: 400 });
+        <div data-ice="card"><h1>Validity</h1><h2>Invalid DateTimes</h2><p>One of the most irritating aspects of programming with time is that it&apos;s possible to end up with invalid dates. This is a bit subtle: barring integer overflows, there&apos;s no count of milliseconds that don&apos;t correspond to a valid DateTime, but when working with calendar units, it&apos;s pretty easy to say something like &quot;June 400th&quot;. Luxon considers that invalid and will mark it accordingly.</p><p>Unless you&apos;ve asked Luxon to throw an exception when it creates an invalid DateTime (see more on that below), it will fail silently, creating an instance that doesn&apos;t know how to do anything. You can check validity with <code>isValid</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; var dt = DateTime.fromObject({ month: 6, day: 400 });
 dt.isValid //=&gt; false</code>
 </code></pre><p>All of the methods or getters that return primitives return degenerate ones:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.year; //=&gt;  NaN
 dt.toString(); //=&gt; &apos;Invalid DateTime&apos;
 dt.toObject(); //=&gt; {}</code>
 </code></pre><p>Methods that return other Luxon objects will return invalid ones:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.plus({ days: 4 }).isValid; //=&gt; false</code>
-</code></pre><h2>Reasons a DateTimes can be invalid</h2><p>The most common way to do that is to over or underflow some unit:</p><ul>
+</code></pre><h2>Reasons a DateTimes can be invalid</h2><p>The most common way to do that is to over- or underflow some unit:</p><ul>
 <li>February 40th</li>
 <li>28:00</li>
 <li>-4 pm</li>
@@ -2436,7 +2462,12 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.4.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.5.0</h2><ul>
+<li><code>isBefore()</code> returns true for the end of the interval, consistent with being half-open</li>
+<li><code>zoneName</code> now rturns <code>null</code> for invalid DateTimes</li>
+<li>Added quarter support</li>
+<li>Adding a month to Jan 31 gives Feb 28/29</li>
+</ul><h2>0.4.0</h2><ul>
 <li>Always round down to the nearest millisecond when parsing</li>
 </ul><h2>0.3.1</h2><ul>
 <li>Fixed <code>toLocaleString</code> for fixed-offset zones in the absence of Intl</li>

@@ -582,6 +582,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime#quarter",
+    "class/src/datetime.js~DateTime.html#instance-get-quarter",
+    "src/datetime.js~DateTime#quarter",
+    "member"
+  ],
+  [
     "src/datetime.js~datetime#reconfigure",
     "class/src/datetime.js~DateTime.html#instance-method-reconfigure",
     "src/datetime.js~DateTime#reconfigure",
@@ -1158,6 +1164,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/duration.js~duration#quarters",
+    "class/src/duration.js~Duration.html#instance-get-quarters",
+    "src/duration.js~Duration#quarters",
+    "member"
+  ],
+  [
     "src/duration.js~duration#reconfigure",
     "class/src/duration.js~Duration.html#instance-method-reconfigure",
     "src/duration.js~Duration#reconfigure",
@@ -1603,13 +1615,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-get-defaultLocale",
+    "class/src/settings.js~Settings.html#static-set-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-set-defaultLocale",
+    "class/src/settings.js~Settings.html#static-get-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
@@ -1627,13 +1639,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1645,13 +1657,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],

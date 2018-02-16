@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-0" data-ice="link">0.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-4-0" data-ice="link">0.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-1" data-ice="link">0.3.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-0" data-ice="link">0.3.0</a></li>
@@ -357,7 +358,7 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
 <p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/matrix.html">support matrix</a>).</p>
 <h3 id="limitations">Limitations</h3><p>Not every token supported by <code>DateTime#toFormat</code> is supported in the parser. For example, there&apos;s no <code>ZZZZ</code> or <code>ZZZZZ</code> tokens. This is for a few reasons:</p>
 <ul>
-<li>Luxon relies on natively-available functionality that only provides the mapping in one way. We can ask what the named offset is and get &quot;Eastern Standard Time&quot; but not ask what &quot;Eastern Standard Time&quot; is most likely to mean.</li>
+<li>Luxon relies on natively-available functionality that only provides the mapping in one direction. We can ask what the named offset is and get &quot;Eastern Standard Time&quot; but not ask what &quot;Eastern Standard Time&quot; is most likely to mean.</li>
 <li>Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can&apos;t be parsed because of their ambiguity.</li>
 <li>Luxon doesn&apos;t yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.</li>
 </ul>

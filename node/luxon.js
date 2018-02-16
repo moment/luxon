@@ -1349,6 +1349,12 @@ var Formatter = function () {
           return _this.num(dt.ordinal);
         case 'ooo':
           return _this.num(dt.ordinal, 3);
+        case 'q':
+          // like 1
+          return _this.num(dt.quarter);
+        case 'qq':
+          // like 01
+          return _this.num(dt.quarter, 2);
         default:
           return maybeMacro(token);
       }
@@ -1830,7 +1836,11 @@ var Settings = function () {
      */
     ,
     set: function set$$1(z) {
-      defaultZone = Util.normalizeZone(z);
+      if (!z) {
+        defaultZone = null;
+      } else {
+        defaultZone = Util.normalizeZone(z);
+      }
     }
 
     /**
@@ -1995,6 +2005,13 @@ var Util = function () {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   };
 
+  // x % n but takes the sign of n instead of x
+
+
+  Util.floorMod = function floorMod(x, n) {
+    return x - n * Math.floor(x / n);
+  };
+
   Util.padStart = function padStart(input) {
     var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
 
@@ -2021,10 +2038,13 @@ var Util = function () {
   };
 
   Util.daysInMonth = function daysInMonth(year, month) {
-    if (month === 2) {
-      return Util.isLeapYear(year) ? 29 : 28;
+    var modMonth = Util.floorMod(month - 1, 12) + 1,
+        modYear = year + (month - modMonth) / 12;
+
+    if (modMonth === 2) {
+      return Util.isLeapYear(modYear) ? 29 : 28;
     } else {
-      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
     }
   };
 
@@ -2168,14 +2188,14 @@ var Util = function () {
 }();
 
 /*
-This file handles parsing for well-specified formats. Here's how it works:
+ * This file handles parsing for well-specified formats. Here's how it works:
  * Two things go into parsing: a regex to match with and an extractor to take apart the groups in the match.
  * An extractor is just a function that takes a regex match array and returns a { year: ..., month: ... } object
  * parse() does the work of executing the regex and applying the extractor. It takes multiple regex/extractor pairs to try in sequence.
  * Extractors can take a "cursor" representing the offset in the match to look at. This makes it easy to combine extractors.
  * combineExtractors() does the work of combining them, keeping track of the cursor through multiple extractions.
  * Some extractions are super dumb and simpleParse and fromStrings help DRY them.
-*/
+ */
 
 function combineRegexes() {
   for (var _len = arguments.length, regexes = Array(_len), _key = 0; _key < _len; _key++) {
@@ -2319,7 +2339,7 @@ function extractISODuration(match) {
       weekStr = match[7];
 
 
-  return {
+  return [{
     years: parseInt(yearStr),
     months: parseInt(monthStr),
     weeks: parseInt(weekStr),
@@ -2327,7 +2347,7 @@ function extractISODuration(match) {
     hours: parseInt(hourStr),
     minutes: parseInt(minuteStr),
     seconds: parseInt(secondStr)
-  };
+  }];
 }
 
 // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
@@ -2462,6 +2482,7 @@ var RegexParser = function () {
 }();
 
 var INVALID = 'Invalid Duration';
+var UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 var lowOrderMatrix = {
@@ -2492,6 +2513,14 @@ var casualMatrix = Object.assign({
     seconds: 365 * 24 * 60 * 60,
     milliseconds: 365 * 24 * 60 * 60 * 1000
   },
+  quarters: {
+    months: 3,
+    weeks: 13,
+    days: 91,
+    hours: 91 * 24,
+    minutes: 91 * 24 * 60,
+    milliseconds: 91 * 24 * 60 * 60 * 1000
+  },
   months: {
     weeks: 4,
     days: 30,
@@ -2513,6 +2542,15 @@ var accurateMatrix = Object.assign({
     seconds: daysInYearAccurate * 24 * 60 * 60,
     milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
   },
+  quarters: {
+    months: 3,
+    weeks: daysInYearAccurate / 28,
+    days: daysInYearAccurate / 4,
+    hours: daysInYearAccurate * 24 / 4,
+    minutes: daysInYearAccurate * 24 * 60 / 4,
+    seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
+    milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000 / 4
+  },
   months: {
     weeks: daysInMonthAccurate / 7,
     days: daysInMonthAccurate,
@@ -2524,7 +2562,7 @@ var accurateMatrix = Object.assign({
 }, lowOrderMatrix);
 
 // units ordered by size
-var orderedUnits = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
+var orderedUnits = ['years', 'quarters', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
 // clone really means "create another instance just like this one, but with these changes"
 function clone(dur, alts) {
@@ -2624,6 +2662,7 @@ var Duration = function () {
    * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
+   * @param {number} obj.quarters
    * @param {number} obj.months
    * @param {number} obj.weeks
    * @param {number} obj.days
@@ -2662,8 +2701,15 @@ var Duration = function () {
 
 
   Duration.fromISO = function fromISO(text, opts) {
-    var obj = Object.assign(RegexParser.parseISODuration(text), opts);
-    return Duration.fromObject(obj);
+    var _RegexParser$parseISO = RegexParser.parseISODuration(text),
+        parsed = _RegexParser$parseISO[0];
+
+    if (parsed) {
+      var obj = Object.assign(parsed, opts);
+      return Duration.fromObject(obj);
+    } else {
+      return Duration.invalid(UNPARSABLE);
+    }
   };
 
   /**
@@ -2695,6 +2741,8 @@ var Duration = function () {
     var normalized = {
       year: 'years',
       years: 'years',
+      quarter: 'quarters',
+      quarters: 'quarters',
       month: 'months',
       months: 'months',
       week: 'weeks',
@@ -2781,7 +2829,7 @@ var Duration = function () {
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
 
     if (norm.years > 0) s += norm.years + 'Y';
-    if (norm.months > 0) s += norm.months + 'M';
+    if (norm.months > 0 || norm.quarters > 0) s += norm.months + norm.quarters * 3 + 'M';
     if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + 'D';
     if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += 'T';
     if (norm.hours > 0) s += norm.hours + 'H';
@@ -3142,6 +3190,17 @@ var Duration = function () {
     }
 
     /**
+     * Get the quarters.
+     * @return {number}
+     */
+
+  }, {
+    key: 'quarters',
+    get: function get$$1() {
+      return this.isValid ? this.values.quarters || 0 : NaN;
+    }
+
+    /**
      * Get the months.
      * @return {number}
      */
@@ -3446,7 +3505,7 @@ var Interval = function () {
 
   Interval.prototype.isBefore = function isBefore(dateTime) {
     if (!this.isValid) return false;
-    return this.e.plus(1) < dateTime;
+    return this.e <= dateTime;
   };
 
   /**
@@ -4596,7 +4655,7 @@ var Conversions = function () {
 var INVALID$2 = 'Invalid DateTime';
 var INVALID_INPUT = 'invalid input';
 var UNSUPPORTED_ZONE = 'unsupported zone';
-var UNPARSABLE = 'unparsable';
+var UNPARSABLE$1 = 'unparsable';
 
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
@@ -4684,10 +4743,12 @@ function objToTS(obj, offset, zone) {
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
   var oPre = inst.o,
+      year = inst.c.year + dur.years,
+      month = inst.c.month + dur.months + dur.quarters * 3,
       c = Object.assign({}, inst.c, {
-    year: inst.c.year + dur.years,
-    month: inst.c.month + dur.months,
-    day: inst.c.day + dur.days + dur.weeks * 7
+    year: year,
+    month: month,
+    day: Math.min(inst.c.day, Util.daysInMonth(year, month)) + dur.days + dur.weeks * 7
   }),
       millisToAdd = Duration.fromObject({
     hours: dur.hours,
@@ -4723,7 +4784,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
     }));
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(UNPARSABLE);
+    return DateTime.invalid(UNPARSABLE$1);
   }
 }
 
@@ -5601,6 +5662,7 @@ var DateTime = function () {
       case 'years':
         o.month = 1;
       // falls through
+      case 'quarters':
       case 'months':
         o.day = 1;
       // falls through
@@ -5625,6 +5687,10 @@ var DateTime = function () {
 
     if (normalizedUnit === 'weeks') {
       o.weekday = 1;
+    }
+
+    if (normalizedUnit === 'quarters') {
+      o.month = Math.floor(this.month / 3) * 3 + 1;
     }
 
     return this.set(o);
@@ -6248,7 +6314,7 @@ var DateTime = function () {
   }, {
     key: 'zoneName',
     get: function get$$1() {
-      return this.zone.name;
+      return this.invalid ? null : this.zone.name;
     }
 
     /**
@@ -6263,6 +6329,17 @@ var DateTime = function () {
       return this.isValid ? this.c.year : NaN;
     }
 
+    /**
+     * Get the quarter
+     * @example DateTime.local(2017, 5, 25).quarter //=> 2
+     * @return {number}
+     */
+
+  }, {
+    key: 'quarter',
+    get: function get$$1() {
+      return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
+    }
     /**
      * Get the month (1-12).
      * @example DateTime.local(2017, 5, 25).month //=> 5

@@ -1093,6 +1093,12 @@ class Formatter {
             return this.num(dt.ordinal);
           case 'ooo':
             return this.num(dt.ordinal, 3);
+          case 'q':
+            // like 1
+            return this.num(dt.quarter);
+          case 'qq':
+            // like 01
+            return this.num(dt.quarter, 2);
           default:
             return maybeMacro(token);
         }
@@ -1511,7 +1517,11 @@ class Settings {
    * @type {string}
    */
   static set defaultZoneName(z) {
-    defaultZone = Util.normalizeZone(z);
+    if (!z) {
+      defaultZone = null;
+    } else {
+      defaultZone = Util.normalizeZone(z);
+    }
   }
 
   /**
@@ -1659,6 +1669,11 @@ class Util {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
 
+  // x % n but takes the sign of n instead of x
+  static floorMod(x, n) {
+    return x - n * Math.floor(x / n);
+  }
+
   static padStart(input, n = 2) {
     return ('0'.repeat(n) + input).slice(-n);
   }
@@ -1683,10 +1698,13 @@ class Util {
   }
 
   static daysInMonth(year, month) {
-    if (month === 2) {
-      return Util.isLeapYear(year) ? 29 : 28;
+    const modMonth = Util.floorMod(month - 1, 12) + 1,
+          modYear = year + (month - modMonth) / 12;
+
+    if (modMonth === 2) {
+      return Util.isLeapYear(modYear) ? 29 : 28;
     } else {
-      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+      return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
     }
   }
 
@@ -1825,14 +1843,14 @@ class Util {
 }
 
 /*
-This file handles parsing for well-specified formats. Here's how it works:
+ * This file handles parsing for well-specified formats. Here's how it works:
  * Two things go into parsing: a regex to match with and an extractor to take apart the groups in the match.
  * An extractor is just a function that takes a regex match array and returns a { year: ..., month: ... } object
  * parse() does the work of executing the regex and applying the extractor. It takes multiple regex/extractor pairs to try in sequence.
  * Extractors can take a "cursor" representing the offset in the match to look at. This makes it easy to combine extractors.
  * combineExtractors() does the work of combining them, keeping track of the cursor through multiple extractions.
  * Some extractions are super dumb and simpleParse and fromStrings help DRY them.
-*/
+ */
 
 function combineRegexes(...regexes) {
   const full = regexes.reduce((f, r) => f + r.source, '');
@@ -1934,7 +1952,7 @@ const isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\
 function extractISODuration(match) {
   const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;
 
-  return {
+  return [ {
     years: parseInt(yearStr),
     months: parseInt(monthStr),
     weeks: parseInt(weekStr),
@@ -1942,7 +1960,7 @@ function extractISODuration(match) {
     hours: parseInt(hourStr),
     minutes: parseInt(minuteStr),
     seconds: parseInt(secondStr)
-  };
+  } ];
 }
 
 // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
@@ -2096,6 +2114,7 @@ class RegexParser {
 }
 
 const INVALID = 'Invalid Duration';
+const UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -2127,6 +2146,14 @@ const casualMatrix = Object.assign(
         seconds: 365 * 24 * 60 * 60,
         milliseconds: 365 * 24 * 60 * 60 * 1000
       },
+      quarters: {
+        months: 3,
+        weeks: 13,
+        days: 91,
+        hours: 91 * 24,
+        minutes: 91 * 24 * 60,
+        milliseconds: 91 * 24 * 60 * 60 * 1000
+      },
       months: {
         weeks: 4,
         days: 30,
@@ -2151,6 +2178,15 @@ const accurateMatrix = Object.assign(
         seconds: daysInYearAccurate * 24 * 60 * 60,
         milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
       },
+      quarters: {
+        months: 3,
+        weeks: daysInYearAccurate / 28,
+        days: daysInYearAccurate / 4,
+        hours: daysInYearAccurate * 24 / 4,
+        minutes: daysInYearAccurate * 24 * 60 / 4,
+        seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
+        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000 / 4
+      },
       months: {
         weeks: daysInMonthAccurate / 7,
         days: daysInMonthAccurate,
@@ -2166,6 +2202,7 @@ const accurateMatrix = Object.assign(
 // units ordered by size
 const orderedUnits = [
   'years',
+  'quarters',
   'months',
   'weeks',
   'days',
@@ -2254,6 +2291,7 @@ class Duration {
    * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
+   * @param {number} obj.quarters
    * @param {number} obj.months
    * @param {number} obj.weeks
    * @param {number} obj.days
@@ -2288,8 +2326,13 @@ class Duration {
    * @return {Duration}
    */
   static fromISO(text, opts) {
-    const obj = Object.assign(RegexParser.parseISODuration(text), opts);
-    return Duration.fromObject(obj);
+    const [parsed] = RegexParser.parseISODuration(text);
+    if (parsed) {
+      const obj = Object.assign(parsed, opts);
+      return Duration.fromObject(obj);
+    } else {
+      return Duration.invalid(UNPARSABLE);
+    }
   }
 
   /**
@@ -2315,6 +2358,8 @@ class Duration {
     const normalized = {
       year: 'years',
       years: 'years',
+      quarter: 'quarters',
+      quarters: 'quarters',
       month: 'months',
       months: 'months',
       week: 'weeks',
@@ -2406,7 +2451,7 @@ class Duration {
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
 
     if (norm.years > 0) s += norm.years + 'Y';
-    if (norm.months > 0) s += norm.months + 'M';
+    if (norm.months > 0 || norm.quarters > 0) s += norm.months + norm.quarters * 3 + 'M';
     if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + 'D';
     if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += 'T';
     if (norm.hours > 0) s += norm.hours + 'H';
@@ -2635,6 +2680,14 @@ class Duration {
    */
   get years() {
     return this.isValid ? this.values.years || 0 : NaN;
+  }
+
+  /**
+   * Get the quarters.
+   * @return {number}
+   */
+  get quarters() {
+    return this.isValid ? this.values.quarters || 0 : NaN;
   }
 
   /**
@@ -2933,7 +2986,7 @@ class Interval {
    */
   isBefore(dateTime) {
     if (!this.isValid) return false;
-    return this.e.plus(1) < dateTime;
+    return this.e <= dateTime;
   }
 
   /**
@@ -3830,7 +3883,7 @@ class Conversions {
 const INVALID$2 = 'Invalid DateTime';
 const INVALID_INPUT = 'invalid input';
 const UNSUPPORTED_ZONE = 'unsupported zone';
-const UNPARSABLE = 'unparsable';
+const UNPARSABLE$1 = 'unparsable';
 
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
@@ -3926,10 +3979,12 @@ function objToTS(obj, offset, zone) {
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
   const oPre = inst.o,
+    year = inst.c.year + dur.years,
+    month = inst.c.month + dur.months + dur.quarters * 3,
     c = Object.assign({}, inst.c, {
-      year: inst.c.year + dur.years,
-      month: inst.c.month + dur.months,
-      day: inst.c.day + dur.days + dur.weeks * 7
+      year: year,
+      month: month,
+      day: Math.min(inst.c.day, Util.daysInMonth(year, month)) + dur.days + dur.weeks * 7
     }),
     millisToAdd = Duration.fromObject({
       hours: dur.hours,
@@ -3963,7 +4018,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
       );
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(UNPARSABLE);
+    return DateTime.invalid(UNPARSABLE$1);
   }
 }
 
@@ -4611,7 +4666,7 @@ class DateTime {
    * @return {String}
    */
   get zoneName() {
-    return this.zone.name;
+    return this.invalid ? null : this.zone.name;
   }
 
   /**
@@ -4623,6 +4678,14 @@ class DateTime {
     return this.isValid ? this.c.year : NaN;
   }
 
+  /**
+   * Get the quarter
+   * @example DateTime.local(2017, 5, 25).quarter //=> 2
+   * @return {number}
+   */
+  get quarter() {
+    return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
+  }
   /**
    * Get the month (1-12).
    * @example DateTime.local(2017, 5, 25).month //=> 5
@@ -5024,6 +5087,7 @@ class DateTime {
       case 'years':
         o.month = 1;
       // falls through
+      case 'quarters':
       case 'months':
         o.day = 1;
       // falls through
@@ -5048,6 +5112,10 @@ class DateTime {
 
     if (normalizedUnit === 'weeks') {
       o.weekday = 1;
+    }
+
+    if (normalizedUnit === 'quarters') {
+      o.month = Math.floor(this.month / 3) * 3 + 1;
     }
 
     return this.set(o);
