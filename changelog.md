@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0
+
+ * `isBefore()` returns true for the end of the interval, consistent with being half-open
+ * `zoneName` now rturns `null` for invalid DateTimes
+ * Added quarter support
+ * Adding a month to Jan 31 gives Feb 28/29
+
 ## 0.4.0
 
  * Always round down to the nearest millisecond when parsing
