@@ -72,11 +72,7 @@ export class Util {
     return Util.isNumber(thing) && thing >= bottom && thing <= top;
   }
 
-  /**
-   * JS implementation (truncated division) of x % n takes the sign of the dividend (x).
-   * 
-   * This implementation takes the sign of the divisor (n)
-   */
+  // x % n but takes the sign of n instead of x
   static floorMod(x, n) {
     return x - n * Math.floor(x / n);
   }
