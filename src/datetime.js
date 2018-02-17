@@ -7,6 +7,7 @@ import { FixedOffsetZone } from './zones/fixedOffsetZone';
 import { LocalZone } from './zones/localZone';
 import { Locale } from './impl/locale';
 import { Util } from './impl/util';
+import diff from './impl/diff';
 import { RegexParser } from './impl/regexParser';
 import { TokenParser } from './impl/tokenParser';
 import { Conversions } from './impl/conversions';
@@ -1541,94 +1542,13 @@ export class DateTime {
     if (!this.isValid || !otherDateTime.isValid)
       return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
-    const units = Util.maybeArray(unit).map(Duration.normalizeUnit);
+    const units = Util.maybeArray(unit).map(Duration.normalizeUnit),
+          otherIsLater = otherDateTime.valueOf() > this.valueOf(),
+          earlier = otherIsLater ? this : otherDateTime,
+          later = otherIsLater ? otherDateTime : this,
+          diffed = diff(earlier, later, units, opts);
 
-    const flipped = otherDateTime.valueOf() > this.valueOf(),
-      post = flipped ? otherDateTime : this,
-      accum = {};
-
-    let cursor = flipped ? this : otherDateTime,
-      lowestOrder = null;
-
-    if (units.indexOf('years') >= 0) {
-      let dYear = post.year - cursor.year;
-
-      cursor = cursor.set({ year: post.year });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ years: 1 });
-        dYear -= 1;
-      }
-
-      accum.years = dYear;
-      lowestOrder = 'years';
-    }
-
-    if (units.indexOf('months') >= 0) {
-      const dYear = post.year - cursor.year;
-      let dMonth = post.month - cursor.month + dYear * 12;
-
-      cursor = cursor.set({ year: post.year, month: post.month });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ months: 1 });
-        dMonth -= 1;
-      }
-
-      accum.months = dMonth;
-      lowestOrder = 'months';
-    }
-
-    const computeDayDelta = () => {
-      const utcDayStart = dt =>
-          dt
-            .toUTC(0, { keepLocalTime: true })
-            .startOf('day')
-            .valueOf(),
-        ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromMillis(ms, opts).shiftTo('days').days);
-    };
-
-    if (units.indexOf('weeks') >= 0) {
-      const days = computeDayDelta();
-      let weeks = (days - days % 7) / 7;
-      cursor = cursor.plus({ weeks });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ weeks: 1 });
-        weeks -= 1;
-      }
-
-      accum.weeks = weeks;
-      lowestOrder = 'weeks';
-    }
-
-    if (units.indexOf('days') >= 0) {
-      let days = computeDayDelta();
-      cursor = cursor.set({
-        year: post.year,
-        month: post.month,
-        day: post.day
-      });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ days: 1 });
-        days -= 1;
-      }
-
-      accum.days = days;
-      lowestOrder = 'days';
-    }
-
-    const remaining = Duration.fromMillis(post - cursor, opts),
-      moreUnits = units.filter(
-        u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
-      ),
-      shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
-      shifted = remaining.shiftTo(...shiftTo),
-      merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
-
-    return flipped ? merged.negate() : merged;
+    return otherIsLater ? diffed.negate() : diffed;
   }
 
   /**
