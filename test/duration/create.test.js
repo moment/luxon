@@ -28,3 +28,23 @@ test('Duration.fromObject accepts a conversionAccuracy', () => {
   const dur = Duration.fromObject({ days: 1, conversionAccuracy: 'longterm' });
   expect(dur.conversionAccuracy).toBe('longterm');
 });
+
+test('Duration.fromObject returns invalid duration if the argument is not an object', () => {
+  const dur1 = Duration.fromObject();
+  expect(dur1.isValid).toBe(false);
+  expect(dur1.invalidReason).toBe('invalid input');
+
+  const dur2 = Duration.fromObject(null);
+  expect(dur2.isValid).toBe(false);
+  expect(dur2.invalidReason).toBe('invalid input');
+
+  const dur3 = Duration.fromObject('foo');
+  expect(dur3.isValid).toBe(false);
+  expect(dur3.invalidReason).toBe('invalid input');
+});
+
+test('Duration.fromObject returns invalid duration if the initial object has no units', () => {
+  const dur = Duration.fromObject({});
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe('invalid input');
+});

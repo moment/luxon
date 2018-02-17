@@ -6,7 +6,8 @@ import { Settings } from './settings';
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './errors';
 
 const INVALID = 'Invalid Duration',
- UNPARSABLE = 'unparsable';
+  INVALID_INPUT = 'invalid input',
+  UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -197,8 +198,26 @@ export class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
+    if (obj == null || typeof obj !== 'object') {
+      return Duration.invalid(INVALID_INPUT);
+    }
+
+    const values = Util.normalizeObject(obj, Duration.normalizeUnit, true);
+
+    let hasUnits = false;
+    for (let i = 0, l = orderedUnits.length; i < l; i++) {
+      if (values[orderedUnits[i]]) {
+        hasUnits = true;
+        break;
+      }
+    }
+
+    if (hasUnits === false) {
+      return Duration.invalid(INVALID_INPUT);
+    }
+
     return new Duration({
-      values: Util.normalizeObject(obj, Duration.normalizeUnit, true),
+      values,
       loc: Locale.fromObject(obj),
       conversionAccuracy: obj.conversionAccuracy
     });
