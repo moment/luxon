@@ -13,7 +13,11 @@ async function test() {
     opts.maxWorkers = 4;
   }
 
-  await jest.runCLI(opts, ['./test']);
+  return jest.runCLI(opts, ['./test']);
 }
 
-test();
+test().then(({ results }) => {
+  if (results.numFailedTests) {
+    process.exit(1);
+  }
+});
