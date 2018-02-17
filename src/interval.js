@@ -421,7 +421,7 @@ export class Interval {
   /**
    * Return an Interval representing the span of time in this Interval that doesn't overlap with any of the specified Intervals.
    * @param {...Interval} intervals
-   * @return {Interval}
+   * @return {[Interval]}
    */
   difference(...intervals) {
     return Interval.xor([this].concat(intervals))
