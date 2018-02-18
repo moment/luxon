@@ -26,16 +26,7 @@ Luxon officially supports the last two versions of the major browsers, with some
 
 ## Internet Explorer
 
-If you're supporting IE 10 or 11, you need some polyfills just to make Luxon work at all. You have two options: use a polyfilled build or apply the polyfills yourself.
-
-The polyfilled builds of Luxon are here:
-
-* [Download full polyfilled](../../global-filled/luxon.js)
-* [Download minified polyfilled](../../global-filled/luxon.min.js)
-
-These polyfilled builds don't add intl support, just the basic JS features you need to run Luxon (i.e. the caveats and additional polyfill options in the "Platform Caveats" still apply).
-
-To polyfill it yourself, use polyfill.io:
+If you're supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.
 
 ```html
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
@@ -89,7 +80,7 @@ The easiest way to add this is through polyfill.io:
 
 ### Zones
 
-If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format pollyfill](https://github.com/yahoo/date-time-format-timezone).
+If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format pollyfill](https://github.com/yahoo/date-time-format-timezone). **Unfortunately, this currently breaks Chrome**. See issue [$#190](https://github.com/moment/luxon/issues/190) for more.
 
 ## Older platforms
 
