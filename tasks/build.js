@@ -39,9 +39,9 @@ function rollupInputOpts(opts) {
   if (opts.minify) {
     inputOpts.plugins.push(
       rollupMinify({
-        comments: false,
+        comments: true,
         mangle: {
-          topLevel: true
+          topLevel: !opts.global
         }
       })
     );
@@ -91,6 +91,7 @@ const browsersOld = { browsers: 'last 2 major versions' };
 async function global() {
   await buildLibrary('global', {
     format: 'iife',
+    global: true,
     name: 'luxon',
     target: browsersOld
   });
@@ -99,6 +100,7 @@ async function global() {
 async function globalFilled() {
   await buildLibrary('global-filled', {
     format: 'iife',
+    global: true,
     name: 'luxon',
     target: browsersOld,
     src: './src/luxonFilled.js'
