@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+ * Fixed minified builds (oops)
+ * Fix computation of fractional parts of diffs
+
 ## 0.5.0
 
  * `isBefore()` returns true for the end of the interval, consistent with being half-open
