@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.2
+ * Remove comments from minified builds (introduced by 0.5.1)
+
 ## 0.5.1
  * Fixed minified builds (oops)
  * Fix computation of fractional parts of diffs

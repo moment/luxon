@@ -39,7 +39,7 @@ function rollupInputOpts(opts) {
   if (opts.minify) {
     inputOpts.plugins.push(
       rollupMinify({
-        comments: true,
+        comments: false,
         mangle: {
           topLevel: !opts.global
         }
