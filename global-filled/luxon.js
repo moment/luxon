@@ -5576,7 +5576,7 @@ var Interval = function () {
   /**
    * Return an Interval representing the span of time in this Interval that doesn't overlap with any of the specified Intervals.
    * @param {...Interval} intervals
-   * @return {Interval}
+   * @return {[Interval]}
    */
 
 
@@ -5932,6 +5932,108 @@ var Info = function () {
 
   return Info;
 }();
+
+function dayDiff(earlier, later) {
+  var utcDayStart = function utcDayStart(dt) {
+    return dt.toUTC(0, { keepLocalTime: true }).startOf("day").valueOf();
+  },
+      ms = utcDayStart(later) - utcDayStart(earlier);
+  return Math.floor(Duration.fromMillis(ms).as("days"));
+}
+
+function highOrderDiffs(cursor, later, units) {
+  var differs = [["years", function (a, b) {
+    return b.year - a.year;
+  }], ["months", function (a, b) {
+    return b.month - a.month + (b.year - a.year) * 12;
+  }], ["weeks", function (a, b) {
+    var days = dayDiff(a, b);
+    return (days - days % 7) / 7;
+  }], ["days", dayDiff]];
+
+  var results = {};
+  var lowestOrder = void 0,
+      highWater = void 0;
+
+  for (var _iterator = differs, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+    var _ref2;
+
+    if (_isArray) {
+      if (_i >= _iterator.length) break;
+      _ref2 = _iterator[_i++];
+    } else {
+      _i = _iterator.next();
+      if (_i.done) break;
+      _ref2 = _i.value;
+    }
+
+    var _ref = _ref2;
+    var unit = _ref[0];
+    var differ = _ref[1];
+
+    if (units.indexOf(unit) >= 0) {
+      var _cursor$plus;
+
+      lowestOrder = unit;
+
+      var delta = differ(cursor, later);
+
+      highWater = cursor.plus((_cursor$plus = {}, _cursor$plus[unit] = delta, _cursor$plus));
+
+      if (highWater > later) {
+        var _highWater$minus;
+
+        cursor = highWater.minus((_highWater$minus = {}, _highWater$minus[unit] = 1, _highWater$minus));
+        delta -= 1;
+      } else {
+        cursor = highWater;
+      }
+
+      if (delta > 0) {
+        results[unit] = delta;
+      }
+    }
+  }
+
+  return [cursor, results, highWater, lowestOrder];
+}
+
+function _diff (earlier, later, units, opts) {
+  var _highOrderDiffs = highOrderDiffs(earlier, later, units),
+      cursor = _highOrderDiffs[0],
+      results = _highOrderDiffs[1],
+      highWater = _highOrderDiffs[2],
+      lowestOrder = _highOrderDiffs[3];
+
+  var remainingMillis = later - cursor;
+
+  var lowerOrderUnits = units.filter(function (u) {
+    return ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0;
+  });
+
+  if (lowerOrderUnits.length === 0) {
+
+    if (highWater < later) {
+      var _cursor$plus2;
+
+      highWater = cursor.plus((_cursor$plus2 = {}, _cursor$plus2[lowestOrder] = 1, _cursor$plus2));
+    }
+
+    if (highWater !== cursor) {
+      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
+    }
+  }
+
+  var duration = Duration.fromObject(Object.assign(results, opts));
+
+  if (lowerOrderUnits.length > 0) {
+    var _Duration$fromMillis;
+
+    return (_Duration$fromMillis = Duration.fromMillis(remainingMillis, opts)).shiftTo.apply(_Duration$fromMillis, lowerOrderUnits).plus(duration);
+  } else {
+    return duration;
+  }
+}
 
 var MISSING_FTP = 'missing Intl.DateTimeFormat.formatToParts support';
 
@@ -7824,92 +7926,13 @@ var DateTime = function () {
 
     if (!this.isValid || !otherDateTime.isValid) return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
-    var units = Util.maybeArray(unit).map(Duration.normalizeUnit);
+    var units = Util.maybeArray(unit).map(Duration.normalizeUnit),
+        otherIsLater = otherDateTime.valueOf() > this.valueOf(),
+        earlier = otherIsLater ? this : otherDateTime,
+        later = otherIsLater ? otherDateTime : this,
+        diffed = _diff(earlier, later, units, opts);
 
-    var flipped = otherDateTime.valueOf() > this.valueOf(),
-        post = flipped ? otherDateTime : this,
-        accum = {};
-
-    var cursor = flipped ? this : otherDateTime,
-        lowestOrder = null;
-
-    if (units.indexOf('years') >= 0) {
-      var dYear = post.year - cursor.year;
-
-      cursor = cursor.set({ year: post.year });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ years: 1 });
-        dYear -= 1;
-      }
-
-      accum.years = dYear;
-      lowestOrder = 'years';
-    }
-
-    if (units.indexOf('months') >= 0) {
-      var _dYear = post.year - cursor.year;
-      var dMonth = post.month - cursor.month + _dYear * 12;
-
-      cursor = cursor.set({ year: post.year, month: post.month });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ months: 1 });
-        dMonth -= 1;
-      }
-
-      accum.months = dMonth;
-      lowestOrder = 'months';
-    }
-
-    var computeDayDelta = function computeDayDelta() {
-      var utcDayStart = function utcDayStart(dt) {
-        return dt.toUTC(0, { keepLocalTime: true }).startOf('day').valueOf();
-      },
-          ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromMillis(ms, opts).shiftTo('days').days);
-    };
-
-    if (units.indexOf('weeks') >= 0) {
-      var days = computeDayDelta();
-      var weeks = (days - days % 7) / 7;
-      cursor = cursor.plus({ weeks: weeks });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ weeks: 1 });
-        weeks -= 1;
-      }
-
-      accum.weeks = weeks;
-      lowestOrder = 'weeks';
-    }
-
-    if (units.indexOf('days') >= 0) {
-      var _days = computeDayDelta();
-      cursor = cursor.set({
-        year: post.year,
-        month: post.month,
-        day: post.day
-      });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ days: 1 });
-        _days -= 1;
-      }
-
-      accum.days = _days;
-      lowestOrder = 'days';
-    }
-
-    var remaining = Duration.fromMillis(post - cursor, opts),
-        moreUnits = units.filter(function (u) {
-      return ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0;
-    }),
-        shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
-        shifted = remaining.shiftTo.apply(remaining, shiftTo),
-        merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
-
-    return flipped ? merged.negate() : merged;
+    return otherIsLater ? diffed.negate() : diffed;
   };
 
   /**

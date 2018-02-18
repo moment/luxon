@@ -3204,7 +3204,7 @@ class Interval {
   /**
    * Return an Interval representing the span of time in this Interval that doesn't overlap with any of the specified Intervals.
    * @param {...Interval} intervals
-   * @return {Interval}
+   * @return {[Interval]}
    */
   difference(...intervals) {
     return Interval.xor([this].concat(intervals))
@@ -3434,6 +3434,92 @@ class Info {
     }
 
     return { intl, intlTokens, zones };
+  }
+}
+
+function dayDiff(earlier, later) {
+  const utcDayStart = dt =>
+        dt
+        .toUTC(0, { keepLocalTime: true })
+        .startOf("day")
+        .valueOf(),
+        ms = utcDayStart(later) - utcDayStart(earlier);
+  return Math.floor(Duration.fromMillis(ms).as("days"));
+}
+
+function highOrderDiffs(cursor, later, units) {
+  const differs = [
+    ["years", (a, b) => b.year - a.year],
+    ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
+    [
+      "weeks",
+      (a, b) => {
+        const days = dayDiff(a, b);
+        return (days - days % 7) / 7;
+      }
+    ],
+    ["days", dayDiff]
+  ];
+
+  const results = {};
+  let lowestOrder, highWater;
+
+  for (const [unit, differ] of differs) {
+    if (units.indexOf(unit) >= 0) {
+      lowestOrder = unit;
+
+      let delta = differ(cursor, later);
+
+      highWater = cursor.plus({ [unit]: delta });
+
+      if (highWater > later) {
+        cursor = highWater.minus({ [unit]: 1 });
+        delta -= 1;
+      } else {
+        cursor = highWater;
+      }
+
+      if (delta > 0) {
+        results[unit] = delta;
+      }
+    }
+  }
+
+  return [cursor, results, highWater, lowestOrder];
+}
+
+function diff(earlier, later, units, opts) {
+
+  let [cursor, results, highWater, lowestOrder] = highOrderDiffs(
+    earlier,
+    later,
+    units
+  );
+
+  const remainingMillis = later - cursor;
+
+  const lowerOrderUnits = units.filter(
+    u => ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0
+  );
+
+
+  if (lowerOrderUnits.length === 0) {
+
+    if (highWater < later) {
+      highWater = cursor.plus({[lowestOrder]: 1 });
+    }
+
+    if (highWater !== cursor) {
+      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
+    }
+  }
+
+  const duration = Duration.fromObject(Object.assign(results, opts));
+
+  if (lowerOrderUnits.length > 0) {
+    return Duration.fromMillis(remainingMillis, opts).shiftTo(...lowerOrderUnits).plus(duration);
+  } else {
+    return duration;
   }
 }
 
@@ -5403,94 +5489,13 @@ class DateTime {
     if (!this.isValid || !otherDateTime.isValid)
       return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
-    const units = Util.maybeArray(unit).map(Duration.normalizeUnit);
+    const units = Util.maybeArray(unit).map(Duration.normalizeUnit),
+          otherIsLater = otherDateTime.valueOf() > this.valueOf(),
+          earlier = otherIsLater ? this : otherDateTime,
+          later = otherIsLater ? otherDateTime : this,
+          diffed = diff(earlier, later, units, opts);
 
-    const flipped = otherDateTime.valueOf() > this.valueOf(),
-      post = flipped ? otherDateTime : this,
-      accum = {};
-
-    let cursor = flipped ? this : otherDateTime,
-      lowestOrder = null;
-
-    if (units.indexOf('years') >= 0) {
-      let dYear = post.year - cursor.year;
-
-      cursor = cursor.set({ year: post.year });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ years: 1 });
-        dYear -= 1;
-      }
-
-      accum.years = dYear;
-      lowestOrder = 'years';
-    }
-
-    if (units.indexOf('months') >= 0) {
-      const dYear = post.year - cursor.year;
-      let dMonth = post.month - cursor.month + dYear * 12;
-
-      cursor = cursor.set({ year: post.year, month: post.month });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ months: 1 });
-        dMonth -= 1;
-      }
-
-      accum.months = dMonth;
-      lowestOrder = 'months';
-    }
-
-    const computeDayDelta = () => {
-      const utcDayStart = dt =>
-          dt
-            .toUTC(0, { keepLocalTime: true })
-            .startOf('day')
-            .valueOf(),
-        ms = utcDayStart(post) - utcDayStart(cursor);
-      return Math.floor(Duration.fromMillis(ms, opts).shiftTo('days').days);
-    };
-
-    if (units.indexOf('weeks') >= 0) {
-      const days = computeDayDelta();
-      let weeks = (days - days % 7) / 7;
-      cursor = cursor.plus({ weeks });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ weeks: 1 });
-        weeks -= 1;
-      }
-
-      accum.weeks = weeks;
-      lowestOrder = 'weeks';
-    }
-
-    if (units.indexOf('days') >= 0) {
-      let days = computeDayDelta();
-      cursor = cursor.set({
-        year: post.year,
-        month: post.month,
-        day: post.day
-      });
-
-      if (cursor > post) {
-        cursor = cursor.minus({ days: 1 });
-        days -= 1;
-      }
-
-      accum.days = days;
-      lowestOrder = 'days';
-    }
-
-    const remaining = Duration.fromMillis(post - cursor, opts),
-      moreUnits = units.filter(
-        u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
-      ),
-      shiftTo = moreUnits.length > 0 ? moreUnits : [lowestOrder],
-      shifted = remaining.shiftTo(...shiftTo),
-      merged = shifted.plus(Duration.fromObject(Object.assign(accum, opts)));
-
-    return flipped ? merged.negate() : merged;
+    return otherIsLater ? diffed.negate() : diffed;
   }
 
   /**

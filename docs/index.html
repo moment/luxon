@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-1" data-ice="link">0.5.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-5-0" data-ice="link">0.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-4-0" data-ice="link">0.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#0-3-1" data-ice="link">0.3.1</a></li>
@@ -1361,7 +1362,7 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
 <tr>
 <td>H</td>
 <td></td>
-<td>hour in 24-hour time, padded to 2</td>
+<td>hour in 24-hour time, no padding</td>
 <td>9</td>
 </tr>
 <tr>
@@ -2462,7 +2463,10 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>0.5.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>0.5.1</h2><ul>
+<li>Fixed minified builds (oops)</li>
+<li>Fix computation of fractional parts of diffs</li>
+</ul><h2>0.5.0</h2><ul>
 <li><code>isBefore()</code> returns true for the end of the interval, consistent with being half-open</li>
 <li><code>zoneName</code> now rturns <code>null</code> for invalid DateTimes</li>
 <li>Added quarter support</li>
