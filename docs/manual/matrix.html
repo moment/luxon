@@ -362,14 +362,7 @@
 <li>Those caveats are explained in the next sections.</li>
 <li>&quot;w/ICU&quot; refers to providing Node with ICU data. See <a href="https://github.com/nodejs/node/wiki/Intl">here</a> for more info.</li>
 </ul>
-<h2 id="internet-explorer">Internet Explorer</h2><p>If you&apos;re supporting IE 10 or 11, you need some polyfills just to make Luxon work at all. You have two options: use a polyfilled build or apply the polyfills yourself.</p>
-<p>The polyfilled builds of Luxon are here:</p>
-<ul>
-<li><a href="./manual/../../global-filled/luxon.js">Download full polyfilled</a></li>
-<li><a href="./manual/../../global-filled/luxon.min.js">Download minified polyfilled</a></li>
-</ul>
-<p>These polyfilled builds don&apos;t add intl support, just the basic JS features you need to run Luxon (i.e. the caveats and additional polyfill options in the &quot;Platform Caveats&quot; still apply).</p>
-<p>To polyfill it yourself, use polyfill.io:</p>
+<h2 id="internet-explorer">Internet Explorer</h2><p>If you&apos;re supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.</p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.min.js&quot;&gt;&lt;/script&gt;</code>
 </code></pre>
 <p>This will also add basic intl and intl token support. So the only caveat remaining is the lack of zone support.</p>
@@ -479,7 +472,7 @@
 <p>The easiest way to add this is through polyfill.io:</p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=intl&quot;&gt;</code>
 </code></pre>
-<h3 id="zones">Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p>
+<h3 id="zones">Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>. <strong>Unfortunately, this currently breaks Chrome</strong>. See issue <a href="https://github.com/moment/luxon/issues/190">$#190</a> for more.</p>
 <h2 id="older-platforms">Older platforms</h2><ul>
 <li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
 <li><strong>Older versions of IE</strong> probably won&apos;t work at all.</li>
