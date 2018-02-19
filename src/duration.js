@@ -169,7 +169,7 @@ export class Duration {
   /**
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
-   * @param {Object} opts - options for parsing
+   * @param {object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
@@ -181,7 +181,7 @@ export class Duration {
 
   /**
    * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
-   * @param {Object} obj - the object to create the DateTime from
+   * @param {object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.quarters
    * @param {number} obj.months
@@ -207,7 +207,7 @@ export class Duration {
   /**
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
-   * @param {Object} opts - options for parsing
+   * @param {object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use

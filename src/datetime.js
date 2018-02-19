@@ -454,7 +454,7 @@ export class DateTime {
   /**
    * Create an DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date} date - a Javascript Date object
-   * @param {Object} options - configuration options for the DateTime
+   * @param {object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
@@ -469,7 +469,7 @@ export class DateTime {
   /**
    * Create an DateTime from a count of epoch milliseconds. Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
-   * @param {Object} options - configuration options for the DateTime
+   * @param {object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -486,7 +486,7 @@ export class DateTime {
 
   /**
    * Create an DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
-   * @param {Object} obj - the object to create the DateTime from
+   * @param {object} obj - the object to create the DateTime from
    * @param {number} obj.year - a year, such as 1987
    * @param {number} obj.month - a month, 1-12
    * @param {number} obj.day - a day of the month, 1-31, depending on the month
@@ -610,7 +610,7 @@ export class DateTime {
   /**
    * Create a DateTime from an ISO 8601 string
    * @param {string} text - the ISO string
-   * @param {Object} opts - options to affect the creation
+   * @param {object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
@@ -631,7 +631,7 @@ export class DateTime {
   /**
    * Create a DateTime from an RFC 2822 string
    * @param {string} text - the RFC 2822 string
-   * @param {Object} opts - options to affect the creation
+   * @param {object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
@@ -672,7 +672,7 @@ export class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {Object} options - options to affect the creation
+   * @param {object} options - options to affect the creation
    * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
@@ -706,7 +706,7 @@ export class DateTime {
    * Create a DateTime from a SQL date, time, or datetime
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
-   * @param {Object} options - options to affect the creation
+   * @param {object} options - options to affect the creation
    * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
@@ -802,7 +802,7 @@ export class DateTime {
 
   /**
    * Get the name of the time zone.
-   * @return {String}
+   * @return {string}
    */
   get zoneName() {
     return this.invalid ? null : this.zone.name;
@@ -972,7 +972,7 @@ export class DateTime {
   /**
    * Get the short human name for the zone's current offset, for example "EST" or "EDT".
    * Defaults to the system's locale if no locale has been specified
-   * @return {String}
+   * @return {string}
    */
   get offsetNameShort() {
     if (this.isValid) {
@@ -988,7 +988,7 @@ export class DateTime {
   /**
    * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
    * Defaults to the system's locale if no locale has been specified
-   * @return {String}
+   * @return {string}
    */
   get offsetNameLong() {
     if (this.isValid) {
@@ -1527,7 +1527,7 @@ export class DateTime {
    * Return the difference between two DateTimes as a Duration.
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
    * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
-   * @param {Object} opts - options that affect the creation of the Duration
+   * @param {object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @example
    * var i1 = DateTime.fromISO('1982-05-25T09:45'),
@@ -1555,7 +1555,7 @@ export class DateTime {
    * Return the difference between this DateTime and right now.
    * See {@link diff}
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
-   * @param {Object} opts - options that affect the creation of the Duration
+   * @param {object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
