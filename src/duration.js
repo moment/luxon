@@ -6,7 +6,6 @@ import { Settings } from './settings';
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './errors';
 
 const INVALID = 'Invalid Duration',
-  INVALID_INPUT = 'invalid input',
   UNPARSABLE = 'unparsable';
 
 // unit conversion constants
