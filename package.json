@@ -8,9 +8,6 @@
     "immutable"
   ],
   "repository": "https://github.com/moment/luxon",
-  "dependencies": {
-    "full-icu": "^1.2.0"
-  },
   "scripts": {
     "build": "babel-node tasks/build.js",
     "test": "babel-node tasks/unit.js",
@@ -45,6 +42,7 @@
     "eslint-plugin-import": "latest",
     "eslint-plugin-prettier": "latest",
     "fs-extra": "latest",
+    "full-icu": "^1.2.0",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
     "jest-cli": "latest",
