@@ -170,9 +170,9 @@ export class Duration {
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
    * @param {Object} opts - options for parsing
-   * @param {string} [obj.locale='en-US'] - the locale to use
-   * @param {string} obj.numberingSystem - the numbering system to use
-   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
   static fromMillis(count, opts) {
@@ -208,9 +208,9 @@ export class Duration {
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
    * @param {Object} opts - options for parsing
-   * @param {string} [obj.locale='en-US'] - the locale to use
-   * @param {string} obj.numberingSystem - the numbering system to use
-   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }

@@ -61,7 +61,7 @@ export class Info {
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
    * @param {object} opts - options
    * @param {string} [opts.locale] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
@@ -78,8 +78,7 @@ export class Info {
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
    * @param {object} opts - options
    * @param {string} [opts.locale] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
-   * @param {string} [opts.outputCalendar='gregory'] - the calendar
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @example Info.weekdays()[0] //=> 'Monday'
    * @example Info.weekdays('short')[0] //=> 'Mon'
    * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
@@ -98,8 +97,7 @@ export class Info {
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
    * @param {object} opts - options
    * @param {string} [opts.locale=null] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
-   * @param {string} [opts.outputCalendar='gregory'] - the calendar
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @return {[string]}
    */
   static weekdaysFormat(length = 'long', { locale = null, numberingSystem = null } = {}) {

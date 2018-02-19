@@ -15,7 +15,7 @@ let now = () => new Date().valueOf(),
 export class Settings {
   /**
    * Get the callback for returning the current timestamp.
-   * @type {function}
+   * @return {function}
    */
   static get now() {
     return now;
@@ -24,6 +24,7 @@ export class Settings {
   /**
    * Set the callback for returning the current timestamp.
    * @type {function}
+   * @return {void}
    */
   static set now(n) {
     now = n;
@@ -31,7 +32,7 @@ export class Settings {
 
   /**
    * Get the default time zone to create DateTimes in.
-   * @type {string}
+   * @return {string}
    */
   static get defaultZoneName() {
     return (defaultZone || LocalZone.instance).name;
@@ -40,6 +41,7 @@ export class Settings {
   /**
    * Set the default time zone to create DateTimes in. Does not affect existing instances.
    * @type {string}
+   * @return {void}
    */
   static set defaultZoneName(z) {
     if (!z) {
@@ -51,7 +53,7 @@ export class Settings {
 
   /**
    * Get the default time zone object to create DateTimes in. Does not affect existing instances.
-   * @type {Zone}
+   * @return {Zone}
    */
   static get defaultZone() {
     return defaultZone || LocalZone.instance;
@@ -59,7 +61,7 @@ export class Settings {
 
   /**
    * Get the default locale to create DateTimes with. Does not affect existing instances.
-   * @type {string}
+   * @return {string}
    */
   static get defaultLocale() {
     return defaultLocale;
@@ -68,6 +70,7 @@ export class Settings {
   /**
    * Set the default locale to create DateTimes with. Does not affect existing instances.
    * @type {string}
+   * @return {void}
    */
   static set defaultLocale(locale) {
     defaultLocale = locale;
@@ -75,7 +78,7 @@ export class Settings {
 
   /**
    * Get the default numbering system to create DateTimes with. Does not affect existing instances.
-   * @type {string}
+   * @return {string}
    */
   static get defaultNumberingSystem() {
     return defaultNumberingSystem;
@@ -84,6 +87,7 @@ export class Settings {
   /**
    * Set the default numbering system to create DateTimes with. Does not affect existing instances.
    * @type {string}
+   * @return {void}
    */
   static set defaultNumberingSystem(numberingSystem) {
     defaultNumberingSystem = numberingSystem;
@@ -91,7 +95,7 @@ export class Settings {
 
   /**
    * Get the default output calendar to create DateTimes with. Does not affect existing instances.
-   * @type {string}
+   * @return {string}
    */
   static get defaultOutputCalendar() {
     return defaultOutputCalendar;
@@ -100,6 +104,7 @@ export class Settings {
   /**
    * Set the default output calendar to create DateTimes with. Does not affect existing instances.
    * @type {string}
+   * @return {void}
    */
   static set defaultOutputCalendar(outputCalendar) {
     defaultOutputCalendar = outputCalendar;
@@ -107,7 +112,7 @@ export class Settings {
 
   /**
    * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {Zone}
+   * @return {Zone}
    */
   static get throwOnInvalid() {
     return throwOnInvalid;
@@ -116,6 +121,7 @@ export class Settings {
   /**
    * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
    * @type {Zone}
+   * @return {void}
    */
   static set throwOnInvalid(t) {
     throwOnInvalid = t;

@@ -198,7 +198,7 @@ export class Interval {
 
   /**
    * Return whether this Interval's end is before the specified DateTime.
-   * @param {Datetime} dateTime
+   * @param {DateTime} dateTime
    * @return {boolean}
    */
   isBefore(dateTime) {
@@ -230,7 +230,7 @@ export class Interval {
 
   /**
    * Split this Interval at each of the specified DateTimes
-   * @param {...DateTimes} dateTimes - the unit of time to count.
+   * @param {...[DateTime]} dateTimes - the unit of time to count.
    * @return {[Interval]}
    */
   splitAt(...dateTimes) {
