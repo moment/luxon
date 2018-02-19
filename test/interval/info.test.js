@@ -74,13 +74,13 @@ test('Interval#count() returns NaN for invalid intervals', () => {
 test('Interval#toDuration creates a duration in those units', () => {
   const int = Interval.fromDateTimes(Helpers.todayAt(9), Helpers.todayAt(13));
 
-  expect(int.toDuration()).toEqual(Duration.fromMillis(4 * 3600 * 1000));
-  expect(int.toDuration('milliseconds')).toEqual(Duration.fromMillis(4 * 3600 * 1000));
-  expect(int.toDuration('seconds')).toEqual(Duration.fromObject({ seconds: 4 * 3600 }));
-  expect(int.toDuration('minutes')).toEqual(Duration.fromObject({ minutes: 4 * 60 }));
-  expect(int.toDuration('hours')).toEqual(Duration.fromObject({ hours: 4 }));
-  expect(int.toDuration('days')).toEqual(Duration.fromObject({ days: 1 / 6 }));
-  expect(int.toDuration('weeks')).toEqual(Duration.fromObject({ weeks: 1 / (6 * 7) }));
+  expect(int.toDuration().equals(Duration.fromMillis(4 * 3600 * 1000))).toBe(true);
+  expect(int.toDuration('milliseconds').equals(Duration.fromMillis(4 * 3600 * 1000))).toBe(true);
+  expect(int.toDuration('seconds').equals(Duration.fromObject({ seconds: 4 * 3600 }))).toBe(true);
+  expect(int.toDuration('minutes').equals(Duration.fromObject({ minutes: 4 * 60 }))).toBe(true);
+  expect(int.toDuration('hours').equals(Duration.fromObject({ hours: 4 }))).toBe(true);
+  expect(int.toDuration('days').equals(Duration.fromObject({ days: 1.0 / 6 }))).toBe(true);
+  expect(int.toDuration('weeks').equals(Duration.fromObject({ weeks: 1.0 / (6 * 7) }))).toBe(true);
 });
 
 test('Interval#toDuration accepts multiple units', () => {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.2
+ * Remove comments from minified builds (introduced by 0.5.1)
+
+## 0.5.1
+ * Fixed minified builds (oops)
+ * Fix computation of fractional parts of diffs
+
 ## 0.5.0
 
  * `isBefore()` returns true for the end of the interval, consistent with being half-open
