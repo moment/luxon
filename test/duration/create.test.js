@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Duration, Settings } from '../../src/luxon';
+import { Duration } from '../../src/luxon';
 
 //------
 // .fromObject()
@@ -29,22 +29,12 @@ test('Duration.fromObject accepts a conversionAccuracy', () => {
   expect(dur.conversionAccuracy).toBe('longterm');
 });
 
-test('Duration.fromObject returns invalid duration if the argument is not an object', () => {
-  const dur1 = Duration.fromObject();
-  expect(dur1.isValid).toBe(false);
-  expect(dur1.invalidReason).toBe('invalid input');
-
-  const dur2 = Duration.fromObject(null);
-  expect(dur2.isValid).toBe(false);
-  expect(dur2.invalidReason).toBe('invalid input');
-
-  const dur3 = Duration.fromObject('foo');
-  expect(dur3.isValid).toBe(false);
-  expect(dur3.invalidReason).toBe('invalid input');
+test('Duration.fromObject throws if the argument is not an object', () => {
+  expect(() => Duration.fromObject()).toThrow();
+  expect(() => Duration.fromObject(null)).toThrow();
+  expect(() => Duration.fromObject('foo')).toThrow();
 });
 
-test('Duration.fromObject returns invalid duration if the initial object has no units', () => {
-  const dur = Duration.fromObject({});
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe('invalid input');
+test('Duration.fromObject throws if the initial object has no units', () => {
+  expect(() => Duration.fromObject({})).toThrow();
 });

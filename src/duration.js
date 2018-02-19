@@ -199,28 +199,22 @@ export class Duration {
    */
   static fromObject(obj) {
     if (obj == null || typeof obj !== 'object') {
-      return Duration.invalid(INVALID_INPUT);
+      throw new InvalidArgumentError('Argument expected to be an object with units.');
     }
 
     const values = Util.normalizeObject(obj, Duration.normalizeUnit, true);
+    const hasUnits = Object.keys(values).length > 0;
 
-    let hasUnits = false;
-    for (let i = 0, l = orderedUnits.length; i < l; i++) {
-      if (values[orderedUnits[i]]) {
-        hasUnits = true;
-        break;
-      }
+    if (hasUnits) {
+      return new Duration({
+        values,
+        loc: Locale.fromObject(obj),
+        conversionAccuracy: obj.conversionAccuracy
+      });
     }
-
-    if (hasUnits === false) {
-      return Duration.invalid(INVALID_INPUT);
+    else {
+      throw new InvalidArgumentError('Argument expected to be an object with units.');
     }
-
-    return new Duration({
-      values,
-      loc: Locale.fromObject(obj),
-      conversionAccuracy: obj.conversionAccuracy
-    });
   }
 
   /**
