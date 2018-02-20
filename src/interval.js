@@ -59,8 +59,8 @@ export class Interval {
 
   /**
    * Create an Interval from a start DateTime and an end DateTime. Inclusive of the start but not the end.
-   * @param {DateTime|object|Date} start
-   * @param {DateTime|object|Date} end
+   * @param {DateTime|Date|Object} start
+   * @param {DateTime|Date|Object} end
    * @return {Interval}
    */
   static fromDateTimes(start, end) {
@@ -76,8 +76,8 @@ export class Interval {
 
   /**
    * Create an Interval from a start DateTime and a Duration to extend to.
-   * @param {DateTime|object|Date} start
-   * @param {Duration|number|object} duration - the length of the Interval.
+   * @param {DateTime|Date|Object} start
+   * @param {Duration|Object|number} duration - the length of the Interval.
    * @return {Interval}
    */
   static after(start, duration) {
@@ -88,8 +88,8 @@ export class Interval {
 
   /**
    * Create an Interval from an end DateTime and a Duration to extend backwards to.
-   * @param {DateTime|object|Date} end
-   * @param {Duration|number|object} duration - the length of the Interval.
+   * @param {DateTime|Date|Object} end
+   * @param {Duration|Object|number} duration - the length of the Interval.
    * @return {Interval}
    */
   static before(end, duration) {
@@ -101,7 +101,7 @@ export class Interval {
   /**
    * Create an Interval from an ISO 8601 string
    * @param {string} string - the ISO string to parse
-   * @param {object} opts - options to pass {@see DateTime.fromISO}
+   * @param {Object} opts - options to pass {@see DateTime.fromISO}
    * @return {Interval}
    */
   static fromISO(string, opts) {
@@ -218,7 +218,7 @@ export class Interval {
 
   /**
    * "Sets" the start and/or end dates. Returns a newly-constructed Interval.
-   * @param {object} values - the values to set
+   * @param {Object} values - the values to set
    * @param {DateTime} values.start - the starting DateTime
    * @param {DateTime} values.end - the ending DateTime
    * @return {Interval}
@@ -254,7 +254,7 @@ export class Interval {
   /**
    * Split this Interval into smaller Intervals, each of the specified length.
    * Left over time is grouped into a smaller interval
-   * @param {Duration|number|object} duration - The length of each resulting interval.
+   * @param {Duration|number|Object} duration - The length of each resulting interval.
    * @return {[Interval]}
    */
   splitBy(duration) {
@@ -454,7 +454,7 @@ export class Interval {
   /**
    * Returns an ISO 8601-compliant string representation of this Interval.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
-   * @param {object} opts - The same options as {@link DateTime.toISO}
+   * @param {Object} opts - The same options as {@link DateTime.toISO}
    * @return {string}
    */
   toISO(opts) {
@@ -465,7 +465,7 @@ export class Interval {
   /**
    * Returns a string representation of this Interval formatted according to the specified format string.
    * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime.toFormat} for details.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations
    * @return {string}
    */
@@ -477,7 +477,7 @@ export class Interval {
   /**
    * Return a Duration representing the time spanned by this interval.
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.
-   * @param {object} opts - options that affect the creation of the Duration
+   * @param {Object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { milliseconds: 88489257 }
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { days: 1.0241812152777778 }

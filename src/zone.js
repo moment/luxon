@@ -36,7 +36,7 @@ export class Zone {
    * Returns the offset's common name (such as EST) at the specified timestamp
    * @abstract
    * @param {number} ts - Epoch milliseconds for which to get the name
-   * @param {object} opts - Options to affect the format
+   * @param {Object} opts - Options to affect the format
    * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
    * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
    * @return {string}

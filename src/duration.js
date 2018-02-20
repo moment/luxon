@@ -169,7 +169,7 @@ export class Duration {
   /**
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
-   * @param {object} opts - options for parsing
+   * @param {Object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
@@ -181,7 +181,7 @@ export class Duration {
 
   /**
    * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
-   * @param {object} obj - the object to create the DateTime from
+   * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.quarters
    * @param {number} obj.months
@@ -207,7 +207,7 @@ export class Duration {
   /**
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
-   * @param {object} opts - options for parsing
+   * @param {Object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
@@ -293,7 +293,7 @@ export class Duration {
   /**
    * Returns a string representation of this Duration formatted according to the specified format string.
    * @param {string} fmt - the format string
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} opts.round - round numerical values
    * @return {string}
    */
@@ -308,7 +308,7 @@ export class Duration {
    * @param opts - options for generating the object
    * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=> { years: 1, days: 6, seconds: 2 }
-   * @return {object}
+   * @return {Object}
    */
   toObject(opts = {}) {
     if (!this.isValid) return {};
@@ -383,7 +383,7 @@ export class Duration {
 
   /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|number|Object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
   plus(duration) {
@@ -404,7 +404,7 @@ export class Duration {
 
   /**
    * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|number|Object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
   minus(duration) {
@@ -428,7 +428,7 @@ export class Duration {
 
   /**
    * "Set" the values of specified units. Return a newly-constructed Duration.
-   * @param {object} values - a mapping of units to numbers
+   * @param {Object} values - a mapping of units to numbers
    * @example dur.set({ years: 2017 })
    * @example dur.set({ hours: 8, minutes: 30 })
    * @return {Duration}

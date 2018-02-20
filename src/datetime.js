@@ -454,7 +454,7 @@ export class DateTime {
   /**
    * Create an DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date} date - a Javascript Date object
-   * @param {object} options - configuration options for the DateTime
+   * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
@@ -469,7 +469,7 @@ export class DateTime {
   /**
    * Create an DateTime from a count of epoch milliseconds. Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
-   * @param {object} options - configuration options for the DateTime
+   * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -486,7 +486,7 @@ export class DateTime {
 
   /**
    * Create an DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
-   * @param {object} obj - the object to create the DateTime from
+   * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.year - a year, such as 1987
    * @param {number} obj.month - a month, 1-12
    * @param {number} obj.day - a day of the month, 1-31, depending on the month
@@ -610,7 +610,7 @@ export class DateTime {
   /**
    * Create a DateTime from an ISO 8601 string
    * @param {string} text - the ISO string
-   * @param {object} opts - options to affect the creation
+   * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
@@ -631,7 +631,7 @@ export class DateTime {
   /**
    * Create a DateTime from an RFC 2822 string
    * @param {string} text - the RFC 2822 string
-   * @param {object} opts - options to affect the creation
+   * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
@@ -651,7 +651,7 @@ export class DateTime {
    * Create a DateTime from an HTTP header date
    * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
    * @param {string} text - the HTTP header date
-   * @param {object} options - options to affect the creation
+   * @param {Object} options - options to affect the creation
    * @param {string|Zone} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
    * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
@@ -672,7 +672,7 @@ export class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {object} options - options to affect the creation
+   * @param {Object} options - options to affect the creation
    * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
@@ -706,7 +706,7 @@ export class DateTime {
    * Create a DateTime from a SQL date, time, or datetime
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
-   * @param {object} options - options to affect the creation
+   * @param {Object} options - options to affect the creation
    * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
@@ -1056,8 +1056,8 @@ export class DateTime {
   /**
    * Returns the resolved Intl options for this DateTime.
    * This is useful in understanding the behavior of formatting methods
-   * @param {object} opts - the same options as toLocaleString
-   * @return {object}
+   * @param {Object} opts - the same options as toLocaleString
+   * @return {Object}
    */
   resolvedLocaleOpts(opts = {}) {
     const { locale, numberingSystem, calendar } = Formatter.create(
@@ -1074,7 +1074,7 @@ export class DateTime {
    *
    * Equivalent to {@link setZone}('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
-   * @param {object} [opts={}] - options to pass to `setZone()`
+   * @param {Object} [opts={}] - options to pass to `setZone()`
    * @return {DateTime}
    */
   toUTC(offset = 0, opts = {}) {
@@ -1096,7 +1096,7 @@ export class DateTime {
    *
    * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
    * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'utc+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
@@ -1117,7 +1117,7 @@ export class DateTime {
 
   /**
    * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
-   * @param {object} properties - the properties to set
+   * @param {Object} properties - the properties to set
    * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
    * @return {DateTime}
    */
@@ -1139,7 +1139,7 @@ export class DateTime {
   /**
    * "Set" the values of specified units. Returns a newly-constructed DateTime.
    * You can only set units with this method; for "setting" metadata, see {@link reconfigure} and {@link setZone}.
-   * @param {object} values - a mapping of units to numbers
+   * @param {Object} values - a mapping of units to numbers
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
    * @example dt.set({ weekday: 5 })
@@ -1182,7 +1182,7 @@ export class DateTime {
    * Add a period of time to this DateTime and return the resulting DateTime
    *
    * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
-   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|number|Object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @example DateTime.local().plus(123) //~> in 123 milliseconds
    * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
    * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
@@ -1200,7 +1200,7 @@ export class DateTime {
   /**
    * Subtract a period of time to this DateTime and return the resulting DateTime
    * See {@link plus}
-   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|number|Object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    @return {DateTime}
   */
   minus(duration) {
@@ -1284,7 +1284,7 @@ export class DateTime {
    * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool. See the documentation for the specific format tokens supported.
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} fmt - the format string
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} opts.round - round numerical values
    * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
    * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
@@ -1303,7 +1303,7 @@ export class DateTime {
    * of the DateTime in the assigned locale.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
-   * @param opts {object} - Intl.DateTimeFormat constructor options
+   * @param opts {Object} - Intl.DateTimeFormat constructor options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
    * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
    * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
@@ -1324,7 +1324,7 @@ export class DateTime {
    * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
-   * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
+   * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
    * @example DateTime.local().toLocaleString(); //=> [
    *                                    //=>   { type: 'day', value: '25' },
    *                                    //=>   { type: 'literal', value: '/' },
@@ -1341,7 +1341,7 @@ export class DateTime {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
@@ -1378,7 +1378,7 @@ export class DateTime {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime's time component
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
@@ -1423,7 +1423,7 @@ export class DateTime {
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Time
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @example DateTime.utc().toSQL() //=> '05:15:16.345'
@@ -1438,7 +1438,7 @@ export class DateTime {
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL DateTime
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 Z'
@@ -1498,7 +1498,7 @@ export class DateTime {
    * @param opts - options for generating the object
    * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
    * @example DateTime.local().toObject() //=> { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
-   * @return {object}
+   * @return {Object}
    */
   toObject(opts = {}) {
     if (!this.isValid) return {};
@@ -1527,7 +1527,7 @@ export class DateTime {
    * Return the difference between two DateTimes as a Duration.
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
    * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
-   * @param {object} opts - options that affect the creation of the Duration
+   * @param {Object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @example
    * var i1 = DateTime.fromISO('1982-05-25T09:45'),
@@ -1555,7 +1555,7 @@ export class DateTime {
    * Return the difference between this DateTime and right now.
    * See {@link diff}
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
-   * @param {object} opts - options that affect the creation of the Duration
+   * @param {Object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
@@ -1627,8 +1627,8 @@ export class DateTime {
    * Explain how a string would be parsed by fromFormat()
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {object} options - options taken by fromFormat()
-   * @return {object}
+   * @param {Object} options - options taken by fromFormat()
+   * @return {Object}
    */
   static fromFormatExplain(text, fmt, options = {}) {
     const parser = new TokenParser(Locale.fromOpts(options));
