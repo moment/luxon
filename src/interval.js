@@ -116,7 +116,7 @@ export class Interval {
 
   /**
    * Returns the start of the Interval
-   * @return {DateTime}
+   * @type {DateTime}
    */
   get start() {
     return this.isValid ? this.s : null;
@@ -124,7 +124,7 @@ export class Interval {
 
   /**
    * Returns the end of the Interval
-   * @return {DateTime}
+   * @type {DateTime}
    */
   get end() {
     return this.isValid ? this.e : null;
@@ -132,7 +132,7 @@ export class Interval {
 
   /**
    * Returns whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
-   * @return {boolean}
+   * @type {boolean}
    */
   get isValid() {
     return this.invalidReason === null;
@@ -140,7 +140,7 @@ export class Interval {
 
   /**
    * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
-   * @return {string}
+   * @type {string}
    */
   get invalidReason() {
     return this.invalid;

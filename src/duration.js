@@ -275,7 +275,7 @@ export class Duration {
 
   /**
    * Get  the locale of a Duration, such 'en-GB'
-   * @return {string}
+   * @type {string}
    */
   get locale() {
     return this.loc.locale;
@@ -284,7 +284,7 @@ export class Duration {
   /**
    * Get the numbering system of a Duration, such 'beng'. The numbering system is used when formatting the Duration
    *
-   * @return {string}
+   * @type {string}
    */
   get numberingSystem() {
     return this.loc.numberingSystem;
@@ -568,7 +568,7 @@ export class Duration {
 
   /**
    * Get the years.
-   * @return {number}
+   * @type {number}
    */
   get years() {
     return this.isValid ? this.values.years || 0 : NaN;
@@ -576,7 +576,7 @@ export class Duration {
 
   /**
    * Get the quarters.
-   * @return {number}
+   * @type {number}
    */
   get quarters() {
     return this.isValid ? this.values.quarters || 0 : NaN;
@@ -584,7 +584,7 @@ export class Duration {
 
   /**
    * Get the months.
-   * @return {number}
+   * @type {number}
    */
   get months() {
     return this.isValid ? this.values.months || 0 : NaN;
@@ -592,7 +592,7 @@ export class Duration {
 
   /**
    * Get the weeks
-   * @return {number}
+   * @type {number}
    */
   get weeks() {
     return this.isValid ? this.values.weeks || 0 : NaN;
@@ -600,7 +600,7 @@ export class Duration {
 
   /**
    * Get the days.
-   * @return {number}
+   * @type {number}
    */
   get days() {
     return this.isValid ? this.values.days || 0 : NaN;
@@ -608,7 +608,7 @@ export class Duration {
 
   /**
    * Get the hours.
-   * @return {number}
+   * @type {number}
    */
   get hours() {
     return this.isValid ? this.values.hours || 0 : NaN;
@@ -616,7 +616,7 @@ export class Duration {
 
   /**
    * Get the minutes.
-   * @return {number}
+   * @type {number}
    */
   get minutes() {
     return this.isValid ? this.values.minutes || 0 : NaN;
