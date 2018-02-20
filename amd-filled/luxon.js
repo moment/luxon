@@ -7954,7 +7954,7 @@ var DateTime = function () {
   /**
    * Return an Interval spanning between this DateTime and another DateTime
    * @param {DateTime} otherDateTime - the other end point of the Interval
-   * @return {Duration}
+   * @return {Interval}
    */
 
 
