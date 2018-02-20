@@ -24,7 +24,6 @@ export class Settings {
   /**
    * Set the callback for returning the current timestamp.
    * @type {function}
-   * @return {void}
    */
   static set now(n) {
     now = n;
@@ -41,7 +40,6 @@ export class Settings {
   /**
    * Set the default time zone to create DateTimes in. Does not affect existing instances.
    * @type {string}
-   * @return {void}
    */
   static set defaultZoneName(z) {
     if (!z) {
@@ -70,7 +68,6 @@ export class Settings {
   /**
    * Set the default locale to create DateTimes with. Does not affect existing instances.
    * @type {string}
-   * @return {void}
    */
   static set defaultLocale(locale) {
     defaultLocale = locale;
@@ -87,7 +84,6 @@ export class Settings {
   /**
    * Set the default numbering system to create DateTimes with. Does not affect existing instances.
    * @type {string}
-   * @return {void}
    */
   static set defaultNumberingSystem(numberingSystem) {
     defaultNumberingSystem = numberingSystem;
@@ -104,7 +100,6 @@ export class Settings {
   /**
    * Set the default output calendar to create DateTimes with. Does not affect existing instances.
    * @type {string}
-   * @return {void}
    */
   static set defaultOutputCalendar(outputCalendar) {
     defaultOutputCalendar = outputCalendar;
@@ -121,7 +116,6 @@ export class Settings {
   /**
    * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
    * @type {Zone}
-   * @return {void}
    */
   static set throwOnInvalid(t) {
     throwOnInvalid = t;
