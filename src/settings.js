@@ -107,7 +107,7 @@ export class Settings {
 
   /**
    * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {Zone}
+   * @type {boolean}
    */
   static get throwOnInvalid() {
     return throwOnInvalid;
@@ -115,7 +115,7 @@ export class Settings {
 
   /**
    * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {Zone}
+   * @type {boolean}
    */
   static set throwOnInvalid(t) {
     throwOnInvalid = t;
