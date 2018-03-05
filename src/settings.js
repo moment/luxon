@@ -15,7 +15,7 @@ let now = () => new Date().valueOf(),
 export class Settings {
   /**
    * Get the callback for returning the current timestamp.
-   * @return {function}
+   * @type {function}
    */
   static get now() {
     return now;
@@ -31,7 +31,7 @@ export class Settings {
 
   /**
    * Get the default time zone to create DateTimes in.
-   * @return {string}
+   * @type {string}
    */
   static get defaultZoneName() {
     return (defaultZone || LocalZone.instance).name;
