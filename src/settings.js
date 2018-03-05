@@ -51,7 +51,7 @@ export class Settings {
 
   /**
    * Get the default time zone object to create DateTimes in. Does not affect existing instances.
-   * @return {Zone}
+   * @type {Zone}
    */
   static get defaultZone() {
     return defaultZone || LocalZone.instance;
@@ -59,7 +59,7 @@ export class Settings {
 
   /**
    * Get the default locale to create DateTimes with. Does not affect existing instances.
-   * @return {string}
+   * @type {string}
    */
   static get defaultLocale() {
     return defaultLocale;
@@ -75,7 +75,7 @@ export class Settings {
 
   /**
    * Get the default numbering system to create DateTimes with. Does not affect existing instances.
-   * @return {string}
+   * @type {string}
    */
   static get defaultNumberingSystem() {
     return defaultNumberingSystem;
@@ -91,7 +91,7 @@ export class Settings {
 
   /**
    * Get the default output calendar to create DateTimes with. Does not affect existing instances.
-   * @return {string}
+   * @type {string}
    */
   static get defaultOutputCalendar() {
     return defaultOutputCalendar;
