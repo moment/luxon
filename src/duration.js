@@ -170,9 +170,9 @@ export class Duration {
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
    * @param {Object} opts - options for parsing
-   * @param {string} [obj.locale='en-US'] - the locale to use
-   * @param {string} obj.numberingSystem - the numbering system to use
-   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
   static fromMillis(count, opts) {
@@ -208,9 +208,9 @@ export class Duration {
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
    * @param {Object} opts - options for parsing
-   * @param {string} [obj.locale='en-US'] - the locale to use
-   * @param {string} obj.numberingSystem - the numbering system to use
-   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
@@ -275,7 +275,7 @@ export class Duration {
 
   /**
    * Get  the locale of a Duration, such 'en-GB'
-   * @return {string}
+   * @type {string}
    */
   get locale() {
     return this.loc.locale;
@@ -284,7 +284,7 @@ export class Duration {
   /**
    * Get the numbering system of a Duration, such 'beng'. The numbering system is used when formatting the Duration
    *
-   * @return {string}
+   * @type {string}
    */
   get numberingSystem() {
     return this.loc.numberingSystem;
@@ -293,7 +293,7 @@ export class Duration {
   /**
    * Returns a string representation of this Duration formatted according to the specified format string.
    * @param {string} fmt - the format string
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} opts.round - round numerical values
    * @return {string}
    */
@@ -308,7 +308,7 @@ export class Duration {
    * @param opts - options for generating the object
    * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=> { years: 1, days: 6, seconds: 2 }
-   * @return {object}
+   * @return {Object}
    */
   toObject(opts = {}) {
     if (!this.isValid) return {};
@@ -383,7 +383,7 @@ export class Duration {
 
   /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
   plus(duration) {
@@ -404,7 +404,7 @@ export class Duration {
 
   /**
    * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
   minus(duration) {
@@ -428,7 +428,7 @@ export class Duration {
 
   /**
    * "Set" the values of specified units. Return a newly-constructed Duration.
-   * @param {object} values - a mapping of units to numbers
+   * @param {Object} values - a mapping of units to numbers
    * @example dur.set({ years: 2017 })
    * @example dur.set({ hours: 8, minutes: 30 })
    * @return {Duration}
@@ -568,7 +568,7 @@ export class Duration {
 
   /**
    * Get the years.
-   * @return {number}
+   * @type {number}
    */
   get years() {
     return this.isValid ? this.values.years || 0 : NaN;
@@ -576,7 +576,7 @@ export class Duration {
 
   /**
    * Get the quarters.
-   * @return {number}
+   * @type {number}
    */
   get quarters() {
     return this.isValid ? this.values.quarters || 0 : NaN;
@@ -584,7 +584,7 @@ export class Duration {
 
   /**
    * Get the months.
-   * @return {number}
+   * @type {number}
    */
   get months() {
     return this.isValid ? this.values.months || 0 : NaN;
@@ -592,7 +592,7 @@ export class Duration {
 
   /**
    * Get the weeks
-   * @return {number}
+   * @type {number}
    */
   get weeks() {
     return this.isValid ? this.values.weeks || 0 : NaN;
@@ -600,7 +600,7 @@ export class Duration {
 
   /**
    * Get the days.
-   * @return {number}
+   * @type {number}
    */
   get days() {
     return this.isValid ? this.values.days || 0 : NaN;
@@ -608,7 +608,7 @@ export class Duration {
 
   /**
    * Get the hours.
-   * @return {number}
+   * @type {number}
    */
   get hours() {
     return this.isValid ? this.values.hours || 0 : NaN;
@@ -616,7 +616,7 @@ export class Duration {
 
   /**
    * Get the minutes.
-   * @return {number}
+   * @type {number}
    */
   get minutes() {
     return this.isValid ? this.values.minutes || 0 : NaN;

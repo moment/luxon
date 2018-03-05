@@ -8,7 +8,7 @@ export class Zone {
   /**
    * The type of zone
    * @abstract
-   * @return {string}
+   * @type {string}
    */
   get type() {
     throw new ZoneIsAbstractError();
@@ -17,7 +17,7 @@ export class Zone {
   /**
    * The name of this zone.
    * @abstract
-   * @return {string}
+   * @type {string}
    */
   get name() {
     throw new ZoneIsAbstractError();
@@ -26,7 +26,7 @@ export class Zone {
   /**
    * Returns whether the offset is known to be fixed for the whole year.
    * @abstract
-   * @return {boolean}
+   * @type {boolean}
    */
   get universal() {
     throw new ZoneIsAbstractError();
@@ -68,7 +68,7 @@ export class Zone {
   /**
    * Return whether this Zone is valid.
    * @abstract
-   * @return {boolean}
+   * @type {boolean}
    */
   get isValid() {
     throw new ZoneIsAbstractError();
