@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.3
+ * Remove errant ICU runtime dep (again)
+
 ## 0.5.2
  * Remove comments from minified builds (introduced by 0.5.1)
 
