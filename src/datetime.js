@@ -779,7 +779,7 @@ export class DateTime {
    * @type {string}
    */
   get locale() {
-    return this.loc.locale;
+    return this.isValid ? this.loc.locale : null;
   }
 
   /**
@@ -788,7 +788,7 @@ export class DateTime {
    * @type {string}
    */
   get numberingSystem() {
-    return this.loc.numberingSystem;
+    return this.isValid ? this.loc.numberingSystem : null;
   }
 
   /**
@@ -797,7 +797,7 @@ export class DateTime {
    * @type {string}
    */
   get outputCalendar() {
-    return this.loc.outputCalendar;
+    return this.isValid ? this.loc.outputCalendar : null;
   }
 
   /**
@@ -805,7 +805,7 @@ export class DateTime {
    * @type {string}
    */
   get zoneName() {
-    return this.invalid ? null : this.zone.name;
+    return this.isValid ? this.zone.name : null;
   }
 
   /**
@@ -1006,7 +1006,7 @@ export class DateTime {
    * @type {boolean}
    */
   get isOffsetFixed() {
-    return this.zone.universal;
+    return this.isValid ? this.zone.universal : null;
   }
 
   /**
