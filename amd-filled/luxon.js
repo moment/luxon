@@ -2036,7 +2036,7 @@ var Zone = function () {
   /**
    * Return whether this Zone is valid.
    * @abstract
-   * @return {boolean}
+   * @type {boolean}
    */
 
 
@@ -2046,7 +2046,7 @@ var Zone = function () {
     /**
      * The type of zone
      * @abstract
-     * @return {string}
+     * @type {string}
      */
     get: function get$$1() {
       throw new ZoneIsAbstractError();
@@ -2055,7 +2055,7 @@ var Zone = function () {
     /**
      * The name of this zone.
      * @abstract
-     * @return {string}
+     * @type {string}
      */
 
   }, {
@@ -2067,7 +2067,7 @@ var Zone = function () {
     /**
      * Returns whether the offset is known to be fixed for the whole year.
      * @abstract
-     * @return {boolean}
+     * @type {boolean}
      */
 
   }, {
@@ -3203,7 +3203,9 @@ function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
   } else if (Util.hasIntl()) {
-    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
+    var computedSys = new Intl.DateTimeFormat().resolvedOptions().locale;
+    // node sometimes defaults to "und". Override that because that is dumb
+    sysLocaleCache = computedSys === 'und' ? 'en-US' : computedSys;
     return sysLocaleCache;
   } else {
     sysLocaleCache = 'en-US';
@@ -3703,7 +3705,7 @@ var Settings = function () {
 
     /**
      * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-     * @type {Zone}
+     * @type {boolean}
      */
 
   }, {
@@ -3714,7 +3716,7 @@ var Settings = function () {
 
     /**
      * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-     * @type {Zone}
+     * @type {boolean}
      */
     ,
     set: function set$$1(t) {
@@ -4434,9 +4436,9 @@ var Duration = function () {
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
    * @param {Object} opts - options for parsing
-   * @param {string} [obj.locale='en-US'] - the locale to use
-   * @param {string} obj.numberingSystem - the numbering system to use
-   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
 
@@ -4476,9 +4478,9 @@ var Duration = function () {
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
    * @param {Object} opts - options for parsing
-   * @param {string} [obj.locale='en-US'] - the locale to use
-   * @param {string} obj.numberingSystem - the numbering system to use
-   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
@@ -4553,14 +4555,14 @@ var Duration = function () {
 
   /**
    * Get  the locale of a Duration, such 'en-GB'
-   * @return {string}
+   * @type {string}
    */
 
 
   /**
    * Returns a string representation of this Duration formatted according to the specified format string.
    * @param {string} fmt - the format string
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} opts.round - round numerical values
    * @return {string}
    */
@@ -4575,7 +4577,7 @@ var Duration = function () {
    * @param opts - options for generating the object
    * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=> { years: 1, days: 6, seconds: 2 }
-   * @return {object}
+   * @return {Object}
    */
 
 
@@ -4653,7 +4655,8 @@ var Duration = function () {
 
   Duration.prototype.inspect = function inspect() {
     if (this.isValid) {
-      return 'Duration {\n  values: ' + this.toISO() + ',\n  locale: ' + this.locale + ',\n  conversionAccuracy: ' + this.conversionAccuracy + ' }';
+      var valsInspect = JSON.stringify(this.toObject());
+      return 'Duration {\n  values: ' + valsInspect + ',\n  locale: ' + this.locale + ',\n  conversionAccuracy: ' + this.conversionAccuracy + ' }';
     } else {
       return 'Duration { Invalid, reason: ' + this.invalidReason + ' }';
     }
@@ -4661,7 +4664,7 @@ var Duration = function () {
 
   /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
 
@@ -4697,7 +4700,7 @@ var Duration = function () {
 
   /**
    * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
 
@@ -4725,7 +4728,7 @@ var Duration = function () {
 
   /**
    * "Set" the values of specified units. Return a newly-constructed Duration.
-   * @param {object} values - a mapping of units to numbers
+   * @param {Object} values - a mapping of units to numbers
    * @example dur.set({ years: 2017 })
    * @example dur.set({ hours: 8, minutes: 30 })
    * @return {Duration}
@@ -4913,7 +4916,7 @@ var Duration = function () {
 
   /**
    * Get the years.
-   * @return {number}
+   * @type {number}
    */
 
 
@@ -4956,19 +4959,19 @@ var Duration = function () {
   createClass(Duration, [{
     key: 'locale',
     get: function get$$1() {
-      return this.loc.locale;
+      return this.isValid ? this.loc.locale : null;
     }
 
     /**
      * Get the numbering system of a Duration, such 'beng'. The numbering system is used when formatting the Duration
      *
-     * @return {string}
+     * @type {string}
      */
 
   }, {
     key: 'numberingSystem',
     get: function get$$1() {
-      return this.loc.numberingSystem;
+      return this.isValid ? this.loc.numberingSystem : null;
     }
   }, {
     key: 'years',
@@ -4978,7 +4981,7 @@ var Duration = function () {
 
     /**
      * Get the quarters.
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -4989,7 +4992,7 @@ var Duration = function () {
 
     /**
      * Get the months.
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -5000,7 +5003,7 @@ var Duration = function () {
 
     /**
      * Get the weeks
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -5011,7 +5014,7 @@ var Duration = function () {
 
     /**
      * Get the days.
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -5022,7 +5025,7 @@ var Duration = function () {
 
     /**
      * Get the hours.
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -5033,7 +5036,7 @@ var Duration = function () {
 
     /**
      * Get the minutes.
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -5149,8 +5152,8 @@ var Interval = function () {
 
   /**
    * Create an Interval from a start DateTime and an end DateTime. Inclusive of the start but not the end.
-   * @param {DateTime|object|Date} start
-   * @param {DateTime|object|Date} end
+   * @param {DateTime|Date|Object} start
+   * @param {DateTime|Date|Object} end
    * @return {Interval}
    */
 
@@ -5168,8 +5171,8 @@ var Interval = function () {
 
   /**
    * Create an Interval from a start DateTime and a Duration to extend to.
-   * @param {DateTime|object|Date} start
-   * @param {Duration|number|object} duration - the length of the Interval.
+   * @param {DateTime|Date|Object} start
+   * @param {Duration|Object|number} duration - the length of the Interval.
    * @return {Interval}
    */
 
@@ -5182,8 +5185,8 @@ var Interval = function () {
 
   /**
    * Create an Interval from an end DateTime and a Duration to extend backwards to.
-   * @param {DateTime|object|Date} end
-   * @param {Duration|number|object} duration - the length of the Interval.
+   * @param {DateTime|Date|Object} end
+   * @param {Duration|Object|number} duration - the length of the Interval.
    * @return {Interval}
    */
 
@@ -5197,7 +5200,7 @@ var Interval = function () {
   /**
    * Create an Interval from an ISO 8601 string
    * @param {string} string - the ISO string to parse
-   * @param {object} opts - options to pass {@see DateTime.fromISO}
+   * @param {Object} opts - options to pass {@see DateTime.fromISO}
    * @return {Interval}
    */
 
@@ -5217,7 +5220,7 @@ var Interval = function () {
 
   /**
    * Returns the start of the Interval
-   * @return {DateTime}
+   * @type {DateTime}
    */
 
 
@@ -5285,7 +5288,7 @@ var Interval = function () {
 
   /**
    * Return whether this Interval's end is before the specified DateTime.
-   * @param {Datetime} dateTime
+   * @param {DateTime} dateTime
    * @return {boolean}
    */
 
@@ -5309,7 +5312,7 @@ var Interval = function () {
 
   /**
    * "Sets" the start and/or end dates. Returns a newly-constructed Interval.
-   * @param {object} values - the values to set
+   * @param {Object} values - the values to set
    * @param {DateTime} values.start - the starting DateTime
    * @param {DateTime} values.end - the ending DateTime
    * @return {Interval}
@@ -5327,7 +5330,7 @@ var Interval = function () {
 
   /**
    * Split this Interval at each of the specified DateTimes
-   * @param {...DateTimes} dateTimes - the unit of time to count.
+   * @param {...[DateTime]} dateTimes - the unit of time to count.
    * @return {[Interval]}
    */
 
@@ -5359,7 +5362,7 @@ var Interval = function () {
   /**
    * Split this Interval into smaller Intervals, each of the specified length.
    * Left over time is grouped into a smaller interval
-   * @param {Duration|number|object} duration - The length of each resulting interval.
+   * @param {Duration|Object|number} duration - The length of each resulting interval.
    * @return {[Interval]}
    */
 
@@ -5621,7 +5624,7 @@ var Interval = function () {
   /**
    * Returns an ISO 8601-compliant string representation of this Interval.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
-   * @param {object} opts - The same options as {@link DateTime.toISO}
+   * @param {Object} opts - The same options as {@link DateTime.toISO}
    * @return {string}
    */
 
@@ -5634,7 +5637,7 @@ var Interval = function () {
   /**
    * Returns a string representation of this Interval formatted according to the specified format string.
    * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime.toFormat} for details.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations
    * @return {string}
    */
@@ -5678,7 +5681,7 @@ var Interval = function () {
 
     /**
      * Returns the end of the Interval
-     * @return {DateTime}
+     * @type {DateTime}
      */
 
   }, {
@@ -5689,7 +5692,7 @@ var Interval = function () {
 
     /**
      * Returns whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
-     * @return {boolean}
+     * @type {boolean}
      */
 
   }, {
@@ -5700,7 +5703,7 @@ var Interval = function () {
 
     /**
      * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
-     * @return {string}
+     * @type {string}
      */
 
   }, {
@@ -5748,7 +5751,7 @@ var Info = function () {
    * Return an array of standalone month names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
@@ -5782,9 +5785,9 @@ var Info = function () {
    * changes the string.
    * See {@link months}
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
@@ -5808,10 +5811,9 @@ var Info = function () {
    * Return an array of standalone week names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
-   * @param {string} [opts.outputCalendar='gregory'] - the calendar
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @example Info.weekdays()[0] //=> 'Monday'
    * @example Info.weekdays('short')[0] //=> 'Mon'
    * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
@@ -5838,10 +5840,9 @@ var Info = function () {
    * changes the string.
    * See {@link weekdays}
    * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale=null] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
-   * @param {string} [opts.outputCalendar='gregory'] - the calendar
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @return {[string]}
    */
 
@@ -5860,7 +5861,7 @@ var Info = function () {
 
   /**
    * Return an array of meridiems.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
    * @example Info.meridiems({ locale: 'de' }) //=> [ 'vorm.', 'nachm.' ]
@@ -5879,7 +5880,7 @@ var Info = function () {
   /**
    * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.
    * @param {string} [length='short'] - the length of the era representation, such as "short" or "long".
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.eras() //=> [ 'BC', 'AD' ]
    * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
@@ -5906,7 +5907,7 @@ var Info = function () {
    * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
    * * `intl`: whether this environment supports general internationalization
    * @example Info.features() //=> { intl: true, intlTokens: false, zones: true }
-   * @return {object}
+   * @return {Object}
    */
 
 
@@ -7204,7 +7205,7 @@ var DateTime = function () {
    * Create a DateTime from an HTTP header date
    * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
    * @param {string} text - the HTTP header date
-   * @param {object} options - options to affect the creation
+   * @param {Object} options - options to affect the creation
    * @param {string|Zone} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
    * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
@@ -7345,15 +7346,15 @@ var DateTime = function () {
    * Returns whether the DateTime is valid. Invalid DateTimes occur when:
    * * The DateTime was created from invalid calendar information, such as the 13th month or February 30
    * * The DateTime was created by an operation on another invalid date
-   * @return {boolean}
+   * @type {boolean}
    */
 
 
   /**
    * Returns the resolved Intl options for this DateTime.
    * This is useful in understanding the behavior of formatting methods
-   * @param {object} opts - the same options as toLocaleString
-   * @return {object}
+   * @param {Object} opts - the same options as toLocaleString
+   * @return {Object}
    */
   DateTime.prototype.resolvedLocaleOpts = function resolvedLocaleOpts() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -7373,7 +7374,7 @@ var DateTime = function () {
    *
    * Equivalent to {@link setZone}('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
-   * @param {object} [opts={}] - options to pass to `setZone()`
+   * @param {Object} [opts={}] - options to pass to `setZone()`
    * @return {DateTime}
    */
 
@@ -7402,7 +7403,7 @@ var DateTime = function () {
    *
    * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
    * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'utc+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
@@ -7429,7 +7430,7 @@ var DateTime = function () {
 
   /**
    * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
-   * @param {object} properties - the properties to set
+   * @param {Object} properties - the properties to set
    * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
    * @return {DateTime}
    */
@@ -7460,7 +7461,7 @@ var DateTime = function () {
   /**
    * "Set" the values of specified units. Returns a newly-constructed DateTime.
    * You can only set units with this method; for "setting" metadata, see {@link reconfigure} and {@link setZone}.
-   * @param {object} values - a mapping of units to numbers
+   * @param {Object} values - a mapping of units to numbers
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
    * @example dt.set({ weekday: 5 })
@@ -7501,7 +7502,7 @@ var DateTime = function () {
    * Add a period of time to this DateTime and return the resulting DateTime
    *
    * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
-   * @param {Duration|number|object} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @example DateTime.local().plus(123) //~> in 123 milliseconds
    * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
    * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
@@ -7521,7 +7522,7 @@ var DateTime = function () {
   /**
    * Subtract a period of time to this DateTime and return the resulting DateTime
    * See {@link plus}
-   * @param {Duration|number|object} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    @return {DateTime}
   */
 
@@ -7609,7 +7610,7 @@ var DateTime = function () {
    * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool. See the documentation for the specific format tokens supported.
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} fmt - the format string
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} opts.round - round numerical values
    * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
    * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
@@ -7630,7 +7631,7 @@ var DateTime = function () {
    * of the DateTime in the assigned locale.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
-   * @param opts {object} - Intl.DateTimeFormat constructor options
+   * @param opts {Object} - Intl.DateTimeFormat constructor options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
    * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
    * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
@@ -7653,7 +7654,7 @@ var DateTime = function () {
    * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
-   * @param opts {object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
+   * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
    * @example DateTime.local().toLocaleString(); //=> [
    *                                    //=>   { type: 'day', value: '25' },
    *                                    //=>   { type: 'literal', value: '/' },
@@ -7672,7 +7673,7 @@ var DateTime = function () {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
@@ -7717,7 +7718,7 @@ var DateTime = function () {
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime's time component
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
@@ -7778,7 +7779,7 @@ var DateTime = function () {
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Time
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @example DateTime.utc().toSQL() //=> '05:15:16.345'
@@ -7801,7 +7802,7 @@ var DateTime = function () {
 
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL DateTime
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 Z'
@@ -7871,7 +7872,7 @@ var DateTime = function () {
    * @param opts - options for generating the object
    * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
    * @example DateTime.local().toObject() //=> { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
-   * @return {object}
+   * @return {Object}
    */
 
 
@@ -8033,8 +8034,8 @@ var DateTime = function () {
    * Explain how a string would be parsed by fromFormat()
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {object} options - options taken by fromFormat()
-   * @return {object}
+   * @param {Object} options - options taken by fromFormat()
+   * @return {Object}
    */
 
 
@@ -8060,6 +8061,7 @@ var DateTime = function () {
 
   /**
    * {@link toLocaleString} format like 10/14/1983
+   * @type {Object}
    */
 
 
@@ -8071,7 +8073,7 @@ var DateTime = function () {
 
     /**
      * Returns an explanation of why this DateTime became invalid, or null if the DateTime is valid
-     * @return {string}
+     * @type {string}
      */
 
   }, {
@@ -8083,54 +8085,54 @@ var DateTime = function () {
     /**
      * Get the locale of a DateTime, such 'en-GB'. The locale is used when formatting the DateTime
      *
-     * @return {string}
+     * @type {string}
      */
 
   }, {
     key: 'locale',
     get: function get$$1() {
-      return this.loc.locale;
+      return this.isValid ? this.loc.locale : null;
     }
 
     /**
      * Get the numbering system of a DateTime, such 'beng'. The numbering system is used when formatting the DateTime
      *
-     * @return {string}
+     * @type {string}
      */
 
   }, {
     key: 'numberingSystem',
     get: function get$$1() {
-      return this.loc.numberingSystem;
+      return this.isValid ? this.loc.numberingSystem : null;
     }
 
     /**
      * Get the output calendar of a DateTime, such 'islamic'. The output calendar is used when formatting the DateTime
      *
-     * @return {string}
+     * @type {string}
      */
 
   }, {
     key: 'outputCalendar',
     get: function get$$1() {
-      return this.loc.outputCalendar;
+      return this.isValid ? this.loc.outputCalendar : null;
     }
 
     /**
      * Get the name of the time zone.
-     * @return {String}
+     * @type {string}
      */
 
   }, {
     key: 'zoneName',
     get: function get$$1() {
-      return this.invalid ? null : this.zone.name;
+      return this.isValid ? this.zone.name : null;
     }
 
     /**
      * Get the year
      * @example DateTime.local(2017, 5, 25).year //=> 2017
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8142,7 +8144,7 @@ var DateTime = function () {
     /**
      * Get the quarter
      * @example DateTime.local(2017, 5, 25).quarter //=> 2
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8153,7 +8155,7 @@ var DateTime = function () {
     /**
      * Get the month (1-12).
      * @example DateTime.local(2017, 5, 25).month //=> 5
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8165,7 +8167,7 @@ var DateTime = function () {
     /**
      * Get the day of the month (1-30ish).
      * @example DateTime.local(2017, 5, 25).day //=> 25
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8177,7 +8179,7 @@ var DateTime = function () {
     /**
      * Get the hour of the day (0-23).
      * @example DateTime.local(2017, 5, 25, 9).hour //=> 9
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8189,7 +8191,7 @@ var DateTime = function () {
     /**
      * Get the minute of the hour (0-59).
      * @example DateTime.local(2017, 5, 25, 9, 30).minute //=> 30
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8201,7 +8203,7 @@ var DateTime = function () {
     /**
      * Get the second of the minute (0-59).
      * @example DateTime.local(2017, 5, 25, 9, 30, 52).second //=> 52
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8213,7 +8215,7 @@ var DateTime = function () {
     /**
      * Get the millisecond of the second (0-999).
      * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond //=> 654
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8226,7 +8228,7 @@ var DateTime = function () {
      * Get the week year
      * @see https://en.wikipedia.org/wiki/ISO_week_date
      * @example DateTime.local(2014, 11, 31).weekYear //=> 2015
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8239,7 +8241,7 @@ var DateTime = function () {
      * Get the week number of the week year (1-52ish).
      * @see https://en.wikipedia.org/wiki/ISO_week_date
      * @example DateTime.local(2017, 5, 25).weekNumber //=> 21
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8253,7 +8255,7 @@ var DateTime = function () {
      * 1 is Monday and 7 is Sunday
      * @see https://en.wikipedia.org/wiki/ISO_week_date
      * @example DateTime.local(2014, 11, 31).weekday //=> 4
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8265,7 +8267,7 @@ var DateTime = function () {
     /**
      * Get the ordinal (i.e. the day of the year)
      * @example DateTime.local(2017, 5, 25).ordinal //=> 145
-     * @return {number|DateTime}
+     * @type {number|DateTime}
      */
 
   }, {
@@ -8278,7 +8280,7 @@ var DateTime = function () {
      * Get the human readable short month name, such as 'Oct'.
      * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30).monthShort //=> Oct
-     * @return {string}
+     * @type {string}
      */
 
   }, {
@@ -8291,7 +8293,7 @@ var DateTime = function () {
      * Get the human readable long month name, such as 'October'.
      * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30).monthLong //=> October
-     * @return {string}
+     * @type {string}
      */
 
   }, {
@@ -8304,7 +8306,7 @@ var DateTime = function () {
      * Get the human readable short weekday, such as 'Mon'.
      * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30).weekdayShort //=> Mon
-     * @return {string}
+     * @type {string}
      */
 
   }, {
@@ -8317,7 +8319,7 @@ var DateTime = function () {
      * Get the human readable long weekday, such as 'Monday'.
      * Defaults to the system's locale if no locale has been specified
      * @example DateTime.local(2017, 10, 30).weekdayLong //=> Monday
-     * @return {string}
+     * @type {string}
      */
 
   }, {
@@ -8330,7 +8332,7 @@ var DateTime = function () {
      * Get the UTC offset of this DateTime in minutes
      * @example DateTime.local().offset //=> -240
      * @example DateTime.utc().offset //=> 0
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8342,7 +8344,7 @@ var DateTime = function () {
     /**
      * Get the short human name for the zone's current offset, for example "EST" or "EDT".
      * Defaults to the system's locale if no locale has been specified
-     * @return {String}
+     * @type {string}
      */
 
   }, {
@@ -8361,7 +8363,7 @@ var DateTime = function () {
     /**
      * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
      * Defaults to the system's locale if no locale has been specified
-     * @return {String}
+     * @type {string}
      */
 
   }, {
@@ -8379,18 +8381,18 @@ var DateTime = function () {
 
     /**
      * Get whether this zone's offset ever changes, as in a DST.
-     * @return {boolean}
+     * @type {boolean}
      */
 
   }, {
     key: 'isOffsetFixed',
     get: function get$$1() {
-      return this.zone.universal;
+      return this.isValid ? this.zone.universal : null;
     }
 
     /**
      * Get whether the DateTime is in a DST.
-     * @return {boolean}
+     * @type {boolean}
      */
 
   }, {
@@ -8407,7 +8409,7 @@ var DateTime = function () {
      * Returns true if this DateTime is in a leap year, false otherwise
      * @example DateTime.local(2016).isInLeapYear //=> true
      * @example DateTime.local(2013).isInLeapYear //=> false
-     * @return {boolean}
+     * @type {boolean}
      */
 
   }, {
@@ -8420,7 +8422,7 @@ var DateTime = function () {
      * Returns the number of days in this DateTime's month
      * @example DateTime.local(2016, 2).daysInMonth //=> 29
      * @example DateTime.local(2016, 3).daysInMonth //=> 31
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8433,7 +8435,7 @@ var DateTime = function () {
      * Returns the number of days in this DateTime's year
      * @example DateTime.local(2016).daysInYear //=> 366
      * @example DateTime.local(2013).daysInYear //=> 365
-     * @return {number}
+     * @type {number}
      */
 
   }, {
@@ -8449,6 +8451,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'Oct 14, 1983'
+     * @type {Object}
      */
 
   }, {
@@ -8459,6 +8462,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'October 14, 1983'
+     * @type {Object}
      */
 
   }, {
@@ -8469,6 +8473,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'Tuesday, October 14, 1983'
+     * @type {Object}
      */
 
   }, {
@@ -8479,6 +8484,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8489,6 +8495,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8499,6 +8506,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8509,6 +8517,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8519,6 +8528,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30', always 24-hour.
+     * @type {Object}
      */
 
   }, {
@@ -8529,6 +8539,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30:23', always 24-hour.
+     * @type {Object}
      */
 
   }, {
@@ -8539,6 +8550,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30:23 EDT', always 24-hour.
+     * @type {Object}
      */
 
   }, {
@@ -8549,6 +8561,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
+     * @type {Object}
      */
 
   }, {
@@ -8559,6 +8572,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8569,6 +8583,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8579,6 +8594,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8589,6 +8605,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8599,6 +8616,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8609,6 +8627,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'October 14, 1983, 9:303 AM EDT'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8619,6 +8638,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {
@@ -8629,6 +8649,7 @@ var DateTime = function () {
 
     /**
      * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+     * @type {Object}
      */
 
   }, {

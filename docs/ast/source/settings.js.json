@@ -1,7 +1,7 @@
 {
   "type": "File",
   "start": 0,
-  "end": 3308,
+  "end": 3314,
   "loc": {
     "start": {
       "line": 1,
@@ -15,7 +15,7 @@
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 3308,
+    "end": 3314,
     "loc": {
       "start": {
         "line": 1,
@@ -730,7 +730,7 @@
       {
         "type": "ExportNamedDeclaration",
         "start": 551,
-        "end": 3307,
+        "end": 3313,
         "loc": {
           "start": {
             "line": 15,
@@ -746,7 +746,7 @@
         "declaration": {
           "type": "ClassDeclaration",
           "start": 558,
-          "end": 3307,
+          "end": 3313,
           "loc": {
             "start": {
               "line": 15,
@@ -779,7 +779,7 @@
           "body": {
             "type": "ClassBody",
             "start": 573,
-            "end": 3307,
+            "end": 3313,
             "loc": {
               "start": {
                 "line": 15,
@@ -2814,9 +2814,9 @@
                 "trailingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
+                    "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
                     "start": 2763,
-                    "end": 2886,
+                    "end": 2889,
                     "loc": {
                       "start": {
                         "line": 108,
@@ -2832,8 +2832,8 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 2889,
-                "end": 2949,
+                "start": 2892,
+                "end": 2952,
                 "loc": {
                   "start": {
                     "line": 112,
@@ -2848,8 +2848,8 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 2900,
-                  "end": 2914,
+                  "start": 2903,
+                  "end": 2917,
                   "loc": {
                     "start": {
                       "line": 112,
@@ -2871,8 +2871,8 @@
                 "params": [],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 2917,
-                  "end": 2949,
+                  "start": 2920,
+                  "end": 2952,
                   "loc": {
                     "start": {
                       "line": 112,
@@ -2886,8 +2886,8 @@
                   "body": [
                     {
                       "type": "ReturnStatement",
-                      "start": 2923,
-                      "end": 2945,
+                      "start": 2926,
+                      "end": 2948,
                       "loc": {
                         "start": {
                           "line": 113,
@@ -2900,8 +2900,8 @@
                       },
                       "argument": {
                         "type": "Identifier",
-                        "start": 2930,
-                        "end": 2944,
+                        "start": 2933,
+                        "end": 2947,
                         "loc": {
                           "start": {
                             "line": 113,
@@ -2923,9 +2923,9 @@
                 "leadingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
+                    "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
                     "start": 2763,
-                    "end": 2886,
+                    "end": 2889,
                     "loc": {
                       "start": {
                         "line": 108,
@@ -2941,9 +2941,9 @@
                 "trailingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
-                    "start": 2953,
-                    "end": 3076,
+                    "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
+                    "start": 2956,
+                    "end": 3082,
                     "loc": {
                       "start": {
                         "line": 116,
@@ -2959,8 +2959,8 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 3079,
-                "end": 3137,
+                "start": 3085,
+                "end": 3143,
                 "loc": {
                   "start": {
                     "line": 120,
@@ -2975,8 +2975,8 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 3090,
-                  "end": 3104,
+                  "start": 3096,
+                  "end": 3110,
                   "loc": {
                     "start": {
                       "line": 120,
@@ -2998,8 +2998,8 @@
                 "params": [
                   {
                     "type": "Identifier",
-                    "start": 3105,
-                    "end": 3106,
+                    "start": 3111,
+                    "end": 3112,
                     "loc": {
                       "start": {
                         "line": 120,
@@ -3016,8 +3016,8 @@
                 ],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 3108,
-                  "end": 3137,
+                  "start": 3114,
+                  "end": 3143,
                   "loc": {
                     "start": {
                       "line": 120,
@@ -3031,8 +3031,8 @@
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 3114,
-                      "end": 3133,
+                      "start": 3120,
+                      "end": 3139,
                       "loc": {
                         "start": {
                           "line": 121,
@@ -3045,8 +3045,8 @@
                       },
                       "expression": {
                         "type": "AssignmentExpression",
-                        "start": 3114,
-                        "end": 3132,
+                        "start": 3120,
+                        "end": 3138,
                         "loc": {
                           "start": {
                             "line": 121,
@@ -3060,8 +3060,8 @@
                         "operator": "=",
                         "left": {
                           "type": "Identifier",
-                          "start": 3114,
-                          "end": 3128,
+                          "start": 3120,
+                          "end": 3134,
                           "loc": {
                             "start": {
                               "line": 121,
@@ -3077,8 +3077,8 @@
                         },
                         "right": {
                           "type": "Identifier",
-                          "start": 3131,
-                          "end": 3132,
+                          "start": 3137,
+                          "end": 3138,
                           "loc": {
                             "start": {
                               "line": 121,
@@ -3101,9 +3101,9 @@
                 "leadingComments": [
                   {
                     "type": "CommentBlock",
-                    "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
-                    "start": 2953,
-                    "end": 3076,
+                    "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
+                    "start": 2956,
+                    "end": 3082,
                     "loc": {
                       "start": {
                         "line": 116,
@@ -3120,8 +3120,8 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Reset Luxon's global caches. Should only be necessary in testing scenarios.\n   * @return {void}\n   ",
-                    "start": 3141,
-                    "end": 3251,
+                    "start": 3147,
+                    "end": 3257,
                     "loc": {
                       "start": {
                         "line": 124,
@@ -3137,8 +3137,8 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 3254,
-                "end": 3305,
+                "start": 3260,
+                "end": 3311,
                 "loc": {
                   "start": {
                     "line": 128,
@@ -3153,8 +3153,8 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 3261,
-                  "end": 3272,
+                  "start": 3267,
+                  "end": 3278,
                   "loc": {
                     "start": {
                       "line": 128,
@@ -3176,8 +3176,8 @@
                 "params": [],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 3275,
-                  "end": 3305,
+                  "start": 3281,
+                  "end": 3311,
                   "loc": {
                     "start": {
                       "line": 128,
@@ -3191,8 +3191,8 @@
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 3281,
-                      "end": 3301,
+                      "start": 3287,
+                      "end": 3307,
                       "loc": {
                         "start": {
                           "line": 129,
@@ -3205,8 +3205,8 @@
                       },
                       "expression": {
                         "type": "CallExpression",
-                        "start": 3281,
-                        "end": 3300,
+                        "start": 3287,
+                        "end": 3306,
                         "loc": {
                           "start": {
                             "line": 129,
@@ -3219,8 +3219,8 @@
                         },
                         "callee": {
                           "type": "MemberExpression",
-                          "start": 3281,
-                          "end": 3298,
+                          "start": 3287,
+                          "end": 3304,
                           "loc": {
                             "start": {
                               "line": 129,
@@ -3233,8 +3233,8 @@
                           },
                           "object": {
                             "type": "Identifier",
-                            "start": 3281,
-                            "end": 3287,
+                            "start": 3287,
+                            "end": 3293,
                             "loc": {
                               "start": {
                                 "line": 129,
@@ -3250,8 +3250,8 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 3288,
-                            "end": 3298,
+                            "start": 3294,
+                            "end": 3304,
                             "loc": {
                               "start": {
                                 "line": 129,
@@ -3277,8 +3277,8 @@
                   {
                     "type": "CommentBlock",
                     "value": "*\n   * Reset Luxon's global caches. Should only be necessary in testing scenarios.\n   * @return {void}\n   ",
-                    "start": 3141,
-                    "end": 3251,
+                    "start": 3147,
+                    "end": 3257,
                     "loc": {
                       "start": {
                         "line": 124,
@@ -3547,9 +3547,9 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
+      "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
       "start": 2763,
-      "end": 2886,
+      "end": 2889,
       "loc": {
         "start": {
           "line": 108,
@@ -3563,9 +3563,9 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
-      "start": 2953,
-      "end": 3076,
+      "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
+      "start": 2956,
+      "end": 3082,
       "loc": {
         "start": {
           "line": 116,
@@ -3580,8 +3580,8 @@
     {
       "type": "CommentBlock",
       "value": "*\n   * Reset Luxon's global caches. Should only be necessary in testing scenarios.\n   * @return {void}\n   ",
-      "start": 3141,
-      "end": 3251,
+      "start": 3147,
+      "end": 3257,
       "loc": {
         "start": {
           "line": 124,
@@ -9284,9 +9284,9 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
+      "value": "*\n   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
       "start": 2763,
-      "end": 2886,
+      "end": 2889,
       "loc": {
         "start": {
           "line": 108,
@@ -9311,8 +9311,8 @@
         "binop": null
       },
       "value": "static",
-      "start": 2889,
-      "end": 2895,
+      "start": 2892,
+      "end": 2898,
       "loc": {
         "start": {
           "line": 112,
@@ -9337,8 +9337,8 @@
         "binop": null
       },
       "value": "get",
-      "start": 2896,
-      "end": 2899,
+      "start": 2899,
+      "end": 2902,
       "loc": {
         "start": {
           "line": 112,
@@ -9363,8 +9363,8 @@
         "binop": null
       },
       "value": "throwOnInvalid",
-      "start": 2900,
-      "end": 2914,
+      "start": 2903,
+      "end": 2917,
       "loc": {
         "start": {
           "line": 112,
@@ -9388,8 +9388,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 2914,
-      "end": 2915,
+      "start": 2917,
+      "end": 2918,
       "loc": {
         "start": {
           "line": 112,
@@ -9413,8 +9413,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 2915,
-      "end": 2916,
+      "start": 2918,
+      "end": 2919,
       "loc": {
         "start": {
           "line": 112,
@@ -9438,8 +9438,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 2917,
-      "end": 2918,
+      "start": 2920,
+      "end": 2921,
       "loc": {
         "start": {
           "line": 112,
@@ -9466,8 +9466,8 @@
         "updateContext": null
       },
       "value": "return",
-      "start": 2923,
-      "end": 2929,
+      "start": 2926,
+      "end": 2932,
       "loc": {
         "start": {
           "line": 113,
@@ -9492,8 +9492,8 @@
         "binop": null
       },
       "value": "throwOnInvalid",
-      "start": 2930,
-      "end": 2944,
+      "start": 2933,
+      "end": 2947,
       "loc": {
         "start": {
           "line": 113,
@@ -9518,8 +9518,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 2944,
-      "end": 2945,
+      "start": 2947,
+      "end": 2948,
       "loc": {
         "start": {
           "line": 113,
@@ -9543,8 +9543,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 2948,
-      "end": 2949,
+      "start": 2951,
+      "end": 2952,
       "loc": {
         "start": {
           "line": 114,
@@ -9558,9 +9558,9 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {Zone}\n   ",
-      "start": 2953,
-      "end": 3076,
+      "value": "*\n   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals\n   * @type {boolean}\n   ",
+      "start": 2956,
+      "end": 3082,
       "loc": {
         "start": {
           "line": 116,
@@ -9585,8 +9585,8 @@
         "binop": null
       },
       "value": "static",
-      "start": 3079,
-      "end": 3085,
+      "start": 3085,
+      "end": 3091,
       "loc": {
         "start": {
           "line": 120,
@@ -9611,8 +9611,8 @@
         "binop": null
       },
       "value": "set",
-      "start": 3086,
-      "end": 3089,
+      "start": 3092,
+      "end": 3095,
       "loc": {
         "start": {
           "line": 120,
@@ -9637,8 +9637,8 @@
         "binop": null
       },
       "value": "throwOnInvalid",
-      "start": 3090,
-      "end": 3104,
+      "start": 3096,
+      "end": 3110,
       "loc": {
         "start": {
           "line": 120,
@@ -9662,8 +9662,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3104,
-      "end": 3105,
+      "start": 3110,
+      "end": 3111,
       "loc": {
         "start": {
           "line": 120,
@@ -9688,8 +9688,8 @@
         "binop": null
       },
       "value": "t",
-      "start": 3105,
-      "end": 3106,
+      "start": 3111,
+      "end": 3112,
       "loc": {
         "start": {
           "line": 120,
@@ -9713,8 +9713,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3106,
-      "end": 3107,
+      "start": 3112,
+      "end": 3113,
       "loc": {
         "start": {
           "line": 120,
@@ -9738,8 +9738,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3108,
-      "end": 3109,
+      "start": 3114,
+      "end": 3115,
       "loc": {
         "start": {
           "line": 120,
@@ -9764,8 +9764,8 @@
         "binop": null
       },
       "value": "throwOnInvalid",
-      "start": 3114,
-      "end": 3128,
+      "start": 3120,
+      "end": 3134,
       "loc": {
         "start": {
           "line": 121,
@@ -9791,8 +9791,8 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 3129,
-      "end": 3130,
+      "start": 3135,
+      "end": 3136,
       "loc": {
         "start": {
           "line": 121,
@@ -9817,8 +9817,8 @@
         "binop": null
       },
       "value": "t",
-      "start": 3131,
-      "end": 3132,
+      "start": 3137,
+      "end": 3138,
       "loc": {
         "start": {
           "line": 121,
@@ -9843,8 +9843,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3132,
-      "end": 3133,
+      "start": 3138,
+      "end": 3139,
       "loc": {
         "start": {
           "line": 121,
@@ -9868,8 +9868,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3136,
-      "end": 3137,
+      "start": 3142,
+      "end": 3143,
       "loc": {
         "start": {
           "line": 122,
@@ -9884,8 +9884,8 @@
     {
       "type": "CommentBlock",
       "value": "*\n   * Reset Luxon's global caches. Should only be necessary in testing scenarios.\n   * @return {void}\n   ",
-      "start": 3141,
-      "end": 3251,
+      "start": 3147,
+      "end": 3257,
       "loc": {
         "start": {
           "line": 124,
@@ -9910,8 +9910,8 @@
         "binop": null
       },
       "value": "static",
-      "start": 3254,
-      "end": 3260,
+      "start": 3260,
+      "end": 3266,
       "loc": {
         "start": {
           "line": 128,
@@ -9936,8 +9936,8 @@
         "binop": null
       },
       "value": "resetCaches",
-      "start": 3261,
-      "end": 3272,
+      "start": 3267,
+      "end": 3278,
       "loc": {
         "start": {
           "line": 128,
@@ -9961,8 +9961,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3272,
-      "end": 3273,
+      "start": 3278,
+      "end": 3279,
       "loc": {
         "start": {
           "line": 128,
@@ -9986,8 +9986,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3273,
-      "end": 3274,
+      "start": 3279,
+      "end": 3280,
       "loc": {
         "start": {
           "line": 128,
@@ -10011,8 +10011,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3275,
-      "end": 3276,
+      "start": 3281,
+      "end": 3282,
       "loc": {
         "start": {
           "line": 128,
@@ -10037,8 +10037,8 @@
         "binop": null
       },
       "value": "Locale",
-      "start": 3281,
-      "end": 3287,
+      "start": 3287,
+      "end": 3293,
       "loc": {
         "start": {
           "line": 129,
@@ -10063,8 +10063,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3287,
-      "end": 3288,
+      "start": 3293,
+      "end": 3294,
       "loc": {
         "start": {
           "line": 129,
@@ -10089,8 +10089,8 @@
         "binop": null
       },
       "value": "resetCache",
-      "start": 3288,
-      "end": 3298,
+      "start": 3294,
+      "end": 3304,
       "loc": {
         "start": {
           "line": 129,
@@ -10114,8 +10114,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3298,
-      "end": 3299,
+      "start": 3304,
+      "end": 3305,
       "loc": {
         "start": {
           "line": 129,
@@ -10139,8 +10139,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3299,
-      "end": 3300,
+      "start": 3305,
+      "end": 3306,
       "loc": {
         "start": {
           "line": 129,
@@ -10165,8 +10165,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3300,
-      "end": 3301,
+      "start": 3306,
+      "end": 3307,
       "loc": {
         "start": {
           "line": 129,
@@ -10190,8 +10190,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3304,
-      "end": 3305,
+      "start": 3310,
+      "end": 3311,
       "loc": {
         "start": {
           "line": 130,
@@ -10215,8 +10215,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3306,
-      "end": 3307,
+      "start": 3312,
+      "end": 3313,
       "loc": {
         "start": {
           "line": 131,
@@ -10241,8 +10241,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3308,
-      "end": 3308,
+      "start": 3314,
+      "end": 3314,
       "loc": {
         "start": {
           "line": 132,

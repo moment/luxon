@@ -84,7 +84,7 @@ export class Info {
    * Return an array of standalone month names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;numeric&quot;, &quot;2-digit&quot;, &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
@@ -109,9 +109,9 @@ export class Info {
    * changes the string.
    * See {@link months}
    * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;numeric&quot;, &quot;2-digit&quot;, &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
    * @return {[string]}
    */
@@ -126,10 +126,9 @@ export class Info {
    * Return an array of standalone week names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
-   * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @example Info.weekdays()[0] //=&gt; &apos;Monday&apos;
    * @example Info.weekdays(&apos;short&apos;)[0] //=&gt; &apos;Mon&apos;
    * @example Info.weekdays(&apos;short&apos;, { locale: &apos;fr-CA&apos; })[0] //=&gt; &apos;lun.&apos;
@@ -146,10 +145,9 @@ export class Info {
    * changes the string.
    * See {@link weekdays}
    * @param {string} [length=&apos;long&apos;] - the length of the month representation, such as &quot;narrow&quot;, &quot;short&quot;, &quot;long&quot;.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale=null] - the locale code
-   * @param {string} [opts.numbering=null] - the numbering system
-   * @param {string} [opts.outputCalendar=&apos;gregory&apos;] - the calendar
+   * @param {string} [opts.numberingSystem=null] - the numbering system
    * @return {[string]}
    */
   static weekdaysFormat(length = &apos;long&apos;, { locale = null, numberingSystem = null } = {}) {
@@ -158,7 +156,7 @@ export class Info {
 
   /**
    * Return an array of meridiems.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=&gt; [ &apos;AM&apos;, &apos;PM&apos; ]
    * @example Info.meridiems({ locale: &apos;de&apos; }) //=&gt; [ &apos;vorm.&apos;, &apos;nachm.&apos; ]
@@ -171,7 +169,7 @@ export class Info {
   /**
    * Return an array of eras, such as [&apos;BC&apos;, &apos;AD&apos;]. The locale can be specified, but the calendar system is always Gregorian.
    * @param {string} [length=&apos;short&apos;] - the length of the era representation, such as &quot;short&quot; or &quot;long&quot;.
-   * @param {object} opts - options
+   * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.eras() //=&gt; [ &apos;BC&apos;, &apos;AD&apos; ]
    * @example Info.eras(&apos;long&apos;) //=&gt; [ &apos;Before Christ&apos;, &apos;Anno Domini&apos; ]
@@ -190,7 +188,7 @@ export class Info {
    * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
    * * `intl`: whether this environment supports general internationalization
    * @example Info.features() //=&gt; { intl: true, intlTokens: false, zones: true }
-   * @return {object}
+   * @return {Object}
    */
   static features() {
     let intl = false,
