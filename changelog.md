@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.4
+
+ * Fix default locales in Node
+ * Fix prototype to help with React inspection
+ * Improve REPL output for Durations in Node
+
 ## 0.5.3
  * Remove errant ICU runtime dep (again)
 
