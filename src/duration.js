@@ -374,7 +374,8 @@ export class Duration {
    */
   inspect() {
     if (this.isValid) {
-      return `Duration {\n  values: ${this.toISO()},\n  locale: ${this
+      const valsInspect = JSON.stringify(this.toObject());
+      return `Duration {\n  values: ${valsInspect},\n  locale: ${this
         .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
     } else {
       return `Duration { Invalid, reason: ${this.invalidReason} }`;
