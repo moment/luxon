@@ -278,7 +278,7 @@ export class Duration {
    * @type {string}
    */
   get locale() {
-    return this.loc.locale;
+    return this.isValid ? this.loc.locale : null;
   }
 
   /**
@@ -287,7 +287,7 @@ export class Duration {
    * @type {string}
    */
   get numberingSystem() {
-    return this.loc.numberingSystem;
+    return this.isValid ? this.loc.numberingSystem : null;
   }
 
   /**
