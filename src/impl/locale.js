@@ -9,7 +9,9 @@ function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
   } else if (Util.hasIntl()) {
-    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
+    const computedSys = new Intl.DateTimeFormat().resolvedOptions().locale;
+    // node sometimes defaults to "und". Override that because that is dumb
+    sysLocaleCache = computedSys === 'und' ? 'en-US' : computedSys;
     return sysLocaleCache;
   } else {
     sysLocaleCache = 'en-US';
