@@ -15,9 +15,9 @@ test('Interval#length defaults to milliseconds', () => {
 
 test("Interval#length('days') returns 1 for yesterday", () => {
   expect(
-    Helpers.todayAt(13)
+    Helpers.atHour(13)
       .minus({ days: 1 })
-      .until(Helpers.todayAt(13))
+      .until(Helpers.atHour(13))
       .length('days')
   ).toBe(1);
 });
@@ -72,21 +72,21 @@ test('Interval#count() returns NaN for invalid intervals', () => {
 // #toDuration()
 //-------
 test('Interval#toDuration creates a duration in those units', () => {
-  const int = Interval.fromDateTimes(Helpers.todayAt(9), Helpers.todayAt(13));
+  const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13));
 
-  expect(int.toDuration().equals(Duration.fromMillis(4 * 3600 * 1000))).toBe(true);
-  expect(int.toDuration('milliseconds').equals(Duration.fromMillis(4 * 3600 * 1000))).toBe(true);
-  expect(int.toDuration('seconds').equals(Duration.fromObject({ seconds: 4 * 3600 }))).toBe(true);
-  expect(int.toDuration('minutes').equals(Duration.fromObject({ minutes: 4 * 60 }))).toBe(true);
-  expect(int.toDuration('hours').equals(Duration.fromObject({ hours: 4 }))).toBe(true);
-  expect(int.toDuration('days').equals(Duration.fromObject({ days: 1.0 / 6 }))).toBe(true);
-  expect(int.toDuration('weeks').equals(Duration.fromObject({ weeks: 1.0 / (6 * 7) }))).toBe(true);
+  expect(int.toDuration().toObject()).toEqual({ milliseconds: 4 * 3600 * 1000 });
+  expect(int.toDuration('milliseconds').toObject()).toEqual({ milliseconds: 4 * 3600 * 1000});
+  expect(int.toDuration('seconds').toObject()).toEqual({ seconds: 4 * 3600 });
+  expect(int.toDuration('minutes').toObject()).toEqual({ minutes: 4 * 60 });
+  expect(int.toDuration('hours').toObject()).toEqual({ hours: 4 });
+  expect(int.toDuration('days').toObject()).toEqual({ days: 1 / 6 });
+  expect(int.toDuration('weeks').toObject()).toEqual({ weeks: 1 / (6 * 7) });
 });
 
 test('Interval#toDuration accepts multiple units', () => {
   const int = Interval.fromDateTimes(
-    Helpers.todayAt(9).plus({ minutes: 3 }),
-    Helpers.todayAt(13).plus({ minutes: 47 })
+    Helpers.atHour(9).plus({ minutes: 3 }),
+    Helpers.atHour(13).plus({ minutes: 47 })
   );
 
   expect(int.toDuration(['hours', 'minutes'])).toEqual(
@@ -95,7 +95,7 @@ test('Interval#toDuration accepts multiple units', () => {
 });
 
 test('Interval#toDuration accepts duration options', () => {
-  const int = Interval.fromDateTimes(Helpers.todayAt(9), Helpers.todayAt(13)),
+  const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13)),
     dur = int.toDuration(['hours'], { conversionAccuracy: 'longterm' });
   expect(dur.conversionAccuracy).toBe('longterm');
 });

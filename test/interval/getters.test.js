@@ -1,11 +1,8 @@
 /* global test expect */
 import { DateTime, Interval } from '../../src/luxon';
+import { Helpers } from '../helpers';
 
-const todayAt = h =>
-    DateTime.local()
-      .startOf('day')
-      .set({ hour: h }),
-  todayFrom = (h1, h2) => Interval.fromDateTimes(todayAt(h1), todayAt(h2)),
+const todayFrom = (h1, h2) => Interval.fromDateTimes(Helpers.atHour(h1), Helpers.atHour(h2)),
   invalid = Interval.invalid('because');
 
 test('Interval.start gets the start', () => {

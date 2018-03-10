@@ -3,7 +3,7 @@ import { DateTime, Interval, Duration } from '../../src/luxon';
 import { Helpers } from '../helpers';
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
-  todayFrom = (h1, h2) => Interval.fromDateTimes(Helpers.todayAt(h1), Helpers.todayAt(h2));
+  todayFrom = (h1, h2) => Interval.fromDateTimes(Helpers.atHour(h1), Helpers.atHour(h2));
 
 //-------
 // #equals()
@@ -294,7 +294,7 @@ test('Interval#abutsEnd returns false for invalid intervals', () => {
 // #splitAt()
 //-------
 test('Interval#splitAt breaks up the interval', () => {
-  const split = todayFrom(8, 13).splitAt(Helpers.todayAt(9), Helpers.todayAt(11));
+  const split = todayFrom(8, 13).splitAt(Helpers.atHour(9), Helpers.atHour(11));
   expect(split.length).toBe(3);
   expect(split[0].equals(todayFrom(8, 9))).toBeTruthy();
   expect(split[1].equals(todayFrom(9, 11))).toBeTruthy();
@@ -302,7 +302,7 @@ test('Interval#splitAt breaks up the interval', () => {
 });
 
 test('Interval#splitAt returns [] for invalid intervals', () => {
-  const split = Interval.invalid('because').splitAt(Helpers.todayAt(9), Helpers.todayAt(11));
+  const split = Interval.invalid('because').splitAt(Helpers.atHour(9), Helpers.atHour(11));
   expect(split).toEqual([]);
 });
 
@@ -342,14 +342,14 @@ test('Interval#divideEqually should split a 4 hour period into 4 contiguous 1-ho
 
 test('Interval#divideEqually should split a 1m30s into 3 30-second parts', () => {
   const after = (i, m, s) => Interval.after(i, Duration.fromObject({ minutes: m, seconds: s })),
-    split = after(Helpers.todayAt(9), 1, 30).divideEqually(3);
+    split = after(Helpers.atHour(9), 1, 30).divideEqually(3);
   expect(split.length).toBe(3);
-  expect(split[0].equals(after(Helpers.todayAt(9), 0, 30))).toBeTruthy();
-  expect(split[2].equals(after(Helpers.todayAt(9).plus({ minutes: 1 }), 0, 30))).toBeTruthy();
+  expect(split[0].equals(after(Helpers.atHour(9), 0, 30))).toBeTruthy();
+  expect(split[2].equals(after(Helpers.atHour(9).plus({ minutes: 1 }), 0, 30))).toBeTruthy();
 });
 
 test('Interval#divideEqually always gives you the right number of parts', () => {
-  const int = Interval.after(Helpers.todayAt(9), { minutes: 7 }),
+  const int = Interval.after(Helpers.atHour(9), { minutes: 7 }),
     split = int.divideEqually(17);
   expect(split.length).toBe(17);
 });

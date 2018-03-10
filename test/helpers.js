@@ -77,8 +77,8 @@ export class Helpers {
     }
   }
 
-  static todayAt(hour) {
-    return DateTime.local()
+  static atHour(hour) {
+    return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
       .startOf('day')
       .set({ hour });
   }

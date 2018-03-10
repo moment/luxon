@@ -55,6 +55,14 @@ test('DateTime#diff makes simple diffs', () => {
   expect(
     diffObjs(
       { year: 2016, month: 6, day: 28, hour: 13 },
+      { year: 2016, month: 6, day: 28, hour: 5 },
+      'days'
+    )
+  ).toEqual({ days: 1 / 3 });
+
+  expect(
+    diffObjs(
+      { year: 2016, month: 6, day: 28, hour: 13 },
       { year: 2016, month: 6, day: 25, hour: 5 },
       'hours'
     )
