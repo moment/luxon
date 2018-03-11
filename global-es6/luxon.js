@@ -1241,11 +1241,21 @@ class PolyDateFormatter {
 
     let z;
     if (dt.zone.universal && this.hasIntl) {
-      // if we have a fixed-offset zone that isn't actually UTC,
-      // (like UTC+8), we need to make do with just displaying
-      // the time in UTC; the formatter doesn't know how to handle UTC+8
-      this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);
+      // Chromium doesn't support fixed-offset zones like Etc/GMT+8 in its formatter,
+      // See https://bugs.chromium.org/p/chromium/issues/detail?id=364374.
+      // So we have to make do. Two cases:
+      // 1. The format options tell us to show the zone. We can't do that, so the best
+      // we can do is format the date in UTC.
+      // 2. The format options don't tell us to show the zone. Then we can adjust them
+      // the time and tell the formatter to show it to us in UTC, so that the time is right
+      // and the bad zone doesn't show up.
+      // We can clean all this up when Chrome fixes this.
       z = 'UTC';
+      if (opts.timeZoneName) {
+        this.dt = dt;
+      } else {
+        this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);
+      }
     } else if (dt.zone.type === 'local') {
       this.dt = dt;
     } else {
@@ -2217,6 +2227,8 @@ const orderedUnits = [
   'milliseconds'
 ];
 
+const reverseUnits = orderedUnits.slice(0).reverse();
+
 // clone really means "create another instance just like this one, but with these changes"
 function clone(dur, alts, clear = false) {
   // deep merge for vals
@@ -2237,6 +2249,29 @@ function isHighOrderNegative(obj) {
   }
   return false;
 }
+
+// NB: mutates parameters
+function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
+  const conv = matrix[toUnit][fromUnit],
+        added = Math.floor(fromMap[fromUnit] / conv);
+  toMap[toUnit] += added;
+  fromMap[fromUnit] -= added * conv;
+}
+
+// NB: mutates parameters
+function normalizeValues(matrix, vals) {
+  reverseUnits.reduce((previous, current) => {
+    if (!Util.isUndefined(vals[current])) {
+      if (previous) {
+        convert(matrix, vals, previous, vals, current);
+      }
+      return current;
+    } else {
+      return previous;
+    }
+  }, null);
+}
+
 
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
@@ -2590,9 +2625,10 @@ class Duration {
     if (!this.isValid) return this;
 
     const neg = isHighOrderNegative(this.values),
-      dur = neg ? this.negate() : this,
-      shifted = dur.shiftTo(...Object.keys(this.values));
-    return neg ? shifted.negate() : shifted;
+          vals = (neg ? this.negate() : this).toObject();
+    normalizeValues(this.matrix, vals);
+    const dur = Duration.fromObject(vals);
+    return neg ? dur.negate() : dur;
   }
 
   /**
@@ -2613,6 +2649,8 @@ class Duration {
       accumulated = {},
       vals = this.toObject();
     let lastUnit;
+
+    normalizeValues(this.matrix, vals);
 
     for (const k of orderedUnits) {
       if (units.indexOf(k) >= 0) {
@@ -2640,10 +2678,7 @@ class Duration {
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
           if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
-            const conv = this.matrix[k][down],
-              added = Math.floor(vals[down] / conv);
-            built[k] += added;
-            vals[down] -= added * conv;
+            convert(this.matrix, vals, down, built, k);
           }
         }
         // otherwise, keep it in the wings to boil it later

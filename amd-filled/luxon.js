@@ -3296,11 +3296,21 @@ var PolyDateFormatter = function () {
 
     var z = void 0;
     if (dt.zone.universal && this.hasIntl) {
-      // if we have a fixed-offset zone that isn't actually UTC,
-      // (like UTC+8), we need to make do with just displaying
-      // the time in UTC; the formatter doesn't know how to handle UTC+8
-      this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);
+      // Chromium doesn't support fixed-offset zones like Etc/GMT+8 in its formatter,
+      // See https://bugs.chromium.org/p/chromium/issues/detail?id=364374.
+      // So we have to make do. Two cases:
+      // 1. The format options tell us to show the zone. We can't do that, so the best
+      // we can do is format the date in UTC.
+      // 2. The format options don't tell us to show the zone. Then we can adjust them
+      // the time and tell the formatter to show it to us in UTC, so that the time is right
+      // and the bad zone doesn't show up.
+      // We can clean all this up when Chrome fixes this.
       z = 'UTC';
+      if (opts.timeZoneName) {
+        this.dt = dt;
+      } else {
+        this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);
+      }
     } else if (dt.zone.type === 'local') {
       this.dt = dt;
     } else {
@@ -4353,6 +4363,8 @@ var accurateMatrix = Object.assign({
 // units ordered by size
 var orderedUnits = ['years', 'quarters', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'];
 
+var reverseUnits = orderedUnits.slice(0).reverse();
+
 // clone really means "create another instance just like this one, but with these changes"
 function clone(dur, alts) {
   var clear = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -4387,6 +4399,28 @@ function isHighOrderNegative(obj) {
     if (obj[k]) return obj[k] < 0;
   }
   return false;
+}
+
+// NB: mutates parameters
+function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
+  var conv = matrix[toUnit][fromUnit],
+      added = Math.floor(fromMap[fromUnit] / conv);
+  toMap[toUnit] += added;
+  fromMap[fromUnit] -= added * conv;
+}
+
+// NB: mutates parameters
+function normalizeValues(matrix, vals) {
+  reverseUnits.reduce(function (previous, current) {
+    if (!Util.isUndefined(vals[current])) {
+      if (previous) {
+        convert(matrix, vals, previous, vals, current);
+      }
+      return current;
+    } else {
+      return previous;
+    }
+  }, null);
 }
 
 /**
@@ -4789,9 +4823,10 @@ var Duration = function () {
     if (!this.isValid) return this;
 
     var neg = isHighOrderNegative(this.values),
-        dur = neg ? this.negate() : this,
-        shifted = dur.shiftTo.apply(dur, Object.keys(this.values));
-    return neg ? shifted.negate() : shifted;
+        vals = (neg ? this.negate() : this).toObject();
+    normalizeValues(this.matrix, vals);
+    var dur = Duration.fromObject(vals);
+    return neg ? dur.negate() : dur;
   };
 
   /**
@@ -4820,6 +4855,8 @@ var Duration = function () {
         accumulated = {},
         vals = this.toObject();
     var lastUnit = void 0;
+
+    normalizeValues(this.matrix, vals);
 
     for (var _iterator3 = orderedUnits, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
       var _ref4;
@@ -4860,10 +4897,7 @@ var Duration = function () {
         // plus anything further down the chain that should be rolled up in to this
         for (var down in vals) {
           if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
-            var conv = this.matrix[k][down],
-                added = Math.floor(vals[down] / conv);
-            built[k] += added;
-            vals[down] -= added * conv;
+            convert(this.matrix, vals, down, built, k);
           }
         }
         // otherwise, keep it in the wings to boil it later
