@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.5
+
+ * Best-we-can-do fix for `DateTime#toLocaleString()` for fixed-offset zones when showing the zone name in the output
+ * Fixed `Duration#shiftTo` for unormalized Durations that need a rollup cascade
+
 ## 0.5.4
 
  * Fix default locales in Node
