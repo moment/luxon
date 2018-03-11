@@ -6,7 +6,7 @@ import { Settings } from './settings';
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './errors';
 
 const INVALID = 'Invalid Duration',
- UNPARSABLE = 'unparsable';
+  UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -222,11 +222,23 @@ export class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
-    return new Duration({
-      values: Util.normalizeObject(obj, Duration.normalizeUnit, true),
-      loc: Locale.fromObject(obj),
-      conversionAccuracy: obj.conversionAccuracy
-    });
+    if (obj == null || typeof obj !== 'object') {
+      throw new InvalidArgumentError('Argument expected to be an object with units.');
+    }
+
+    const values = Util.normalizeObject(obj, Duration.normalizeUnit, true);
+    const hasUnits = Object.keys(values).length > 0;
+
+    if (hasUnits) {
+      return new Duration({
+        values,
+        loc: Locale.fromObject(obj),
+        conversionAccuracy: obj.conversionAccuracy
+      });
+    }
+    else {
+      throw new InvalidArgumentError('Argument expected to be an object with units.');
+    }
   }
 
   /**
