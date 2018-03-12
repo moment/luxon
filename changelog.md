@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.6
+
+ * Refactor internals
+ * Added support for fractional seconds in `Duration.fromISO`
+ * Added browser global to the NPM package
+
 ## 0.5.5
 
  * Best-we-can-do fix for `DateTime#toLocaleString()` for fixed-offset zones when showing the zone name in the output
