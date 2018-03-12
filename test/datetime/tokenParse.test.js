@@ -507,6 +507,11 @@ test('DateTime.fromFormatExplain() explains a bad match', () => {
   expect(keyCount(ex.result)).toBe(0);
 });
 
+test('DateTime.fromFormatExplain() takes the same options as fromFormat', () => {
+  const ex = DateTime.fromFormatExplain('Janv. 25 1982', 'LLL dd yyyy', { locale: 'fr' });
+  expect(keyCount(ex.result)).toBe(3);
+});
+
 //------
 // .fromStringExplain
 //-------

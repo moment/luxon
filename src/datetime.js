@@ -1643,8 +1643,9 @@ export default class DateTime {
    * @return {Object}
    */
   static fromFormatExplain(text, fmt, options = {}) {
-    const locale = Locale.fromOpts(options);
-    return explainFromTokens(locale, text, fmt);
+    const { locale = null, numberingSystem = null } = options,
+      localeToUse = Locale.fromOpts({ locale, numberingSystem, defaultToEN: true });
+    return explainFromTokens(localeToUse, text, fmt);
   }
 
   /**
