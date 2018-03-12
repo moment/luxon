@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Duration, Settings } from '../../src/luxon';
+import { Duration } from '../../src/luxon';
 
 //------
 // .fromObject()

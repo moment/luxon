@@ -1,27 +1,27 @@
-import { Duration } from "../duration";
+import Duration from '../duration';
 
 function dayDiff(earlier, later) {
   const utcDayStart = dt =>
-        dt
+      dt
         .toUTC(0, { keepLocalTime: true })
-        .startOf("day")
+        .startOf('day')
         .valueOf(),
-        ms = utcDayStart(later) - utcDayStart(earlier);
-  return Math.floor(Duration.fromMillis(ms).as("days"));
+    ms = utcDayStart(later) - utcDayStart(earlier);
+  return Math.floor(Duration.fromMillis(ms).as('days'));
 }
 
 function highOrderDiffs(cursor, later, units) {
   const differs = [
-    ["years", (a, b) => b.year - a.year],
-    ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
+    ['years', (a, b) => b.year - a.year],
+    ['months', (a, b) => b.month - a.month + (b.year - a.year) * 12],
     [
-      "weeks",
+      'weeks',
       (a, b) => {
         const days = dayDiff(a, b);
         return (days - days % 7) / 7;
       }
     ],
-    ["days", dayDiff]
+    ['days', dayDiff]
   ];
 
   const results = {};
@@ -52,24 +52,17 @@ function highOrderDiffs(cursor, later, units) {
 }
 
 export default function(earlier, later, units, opts) {
-
-  let [cursor, results, highWater, lowestOrder] = highOrderDiffs(
-    earlier,
-    later,
-    units
-  );
+  let [cursor, results, highWater, lowestOrder] = highOrderDiffs(earlier, later, units);
 
   const remainingMillis = later - cursor;
 
   const lowerOrderUnits = units.filter(
-    u => ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0
+    u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
   );
 
-
   if (lowerOrderUnits.length === 0) {
-
     if (highWater < later) {
-      highWater = cursor.plus({[lowestOrder]: 1 });
+      highWater = cursor.plus({ [lowestOrder]: 1 });
     }
 
     if (highWater !== cursor) {
@@ -80,7 +73,9 @@ export default function(earlier, later, units, opts) {
   const duration = Duration.fromObject(Object.assign(results, opts));
 
   if (lowerOrderUnits.length > 0) {
-    return Duration.fromMillis(remainingMillis, opts).shiftTo(...lowerOrderUnits).plus(duration);
+    return Duration.fromMillis(remainingMillis, opts)
+      .shiftTo(...lowerOrderUnits)
+      .plus(duration);
   } else {
     return duration;
   }

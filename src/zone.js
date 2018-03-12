@@ -4,7 +4,7 @@ import { ZoneIsAbstractError } from './errors';
 /**
  * @interface
 */
-export class Zone {
+export default class Zone {
   /**
    * The type of zone
    * @abstract

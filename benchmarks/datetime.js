@@ -1,7 +1,7 @@
 /* eslint import/no-extraneous-dependencies: off */
 /* eslint no-console: off */
 import Benchmark from 'benchmark';
-import { DateTime } from '../src/datetime';
+import DateTime from '../src/datetime';
 
 const suite = new Benchmark.Suite();
 

@@ -147,7 +147,7 @@ async function globalEs6() {
   });
 }
 
-async function build() {
+async function buildAll() {
   await Promise.all([
     node(),
     cjsBrowser(),
@@ -160,9 +160,7 @@ async function build() {
   ]);
 }
 
-build().then(
-  () => {},
-  err => {
-    console.error(err);
-  }
-);
+module.exports = {
+  buildAll,
+  buildNode: node
+};

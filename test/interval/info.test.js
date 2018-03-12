@@ -75,7 +75,7 @@ test('Interval#toDuration creates a duration in those units', () => {
   const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13));
 
   expect(int.toDuration().toObject()).toEqual({ milliseconds: 4 * 3600 * 1000 });
-  expect(int.toDuration('milliseconds').toObject()).toEqual({ milliseconds: 4 * 3600 * 1000});
+  expect(int.toDuration('milliseconds').toObject()).toEqual({ milliseconds: 4 * 3600 * 1000 });
   expect(int.toDuration('seconds').toObject()).toEqual({ seconds: 4 * 3600 });
   expect(int.toDuration('minutes').toObject()).toEqual({ minutes: 4 * 60 });
   expect(int.toDuration('hours').toObject()).toEqual({ hours: 4 });
@@ -181,7 +181,7 @@ test('Interval#isBefore returns true for intervals ending at the input', () => {
 
 test('Interval#isBefore returns false for intervals just inside the input', () => {
   const n = DateTime.fromISO('1982-05-25T06:00'),
-        i = Interval.fromDateTimes(n.minus({ days: 1 }), n);
+    i = Interval.fromDateTimes(n.minus({ days: 1 }), n);
   expect(i.isBefore(n.minus(1))).toBe(false);
 });
 

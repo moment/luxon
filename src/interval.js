@@ -1,7 +1,6 @@
-import { Util } from './impl/util';
-import { DateTime } from './datetime';
-import { Duration } from './duration';
-import { Settings } from './settings';
+import DateTime, { friendlyDateTime } from './datetime';
+import Duration, { friendlyDuration } from './duration';
+import Settings from './settings';
 import { InvalidArgumentError, InvalidIntervalError } from './errors';
 
 const INVALID = 'Invalid Interval';
@@ -23,7 +22,7 @@ function validateStartEnd(start, end) {
  * * **Comparison** To compare this Interval to another one, use {@link equals}, {@link overlaps}, {@link abutsStart}, {@link abutsEnd}, {@link engulfs}
  * * **Output*** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toFormat}, and {@link toDuration}.
  */
-export class Interval {
+export default class Interval {
   /**
    * @private
    */
@@ -64,8 +63,8 @@ export class Interval {
    * @return {Interval}
    */
   static fromDateTimes(start, end) {
-    const builtStart = Util.friendlyDateTime(start),
-      builtEnd = Util.friendlyDateTime(end);
+    const builtStart = friendlyDateTime(start),
+      builtEnd = friendlyDateTime(end);
 
     return new Interval({
       start: builtStart,
@@ -81,8 +80,8 @@ export class Interval {
    * @return {Interval}
    */
   static after(start, duration) {
-    const dur = Util.friendlyDuration(duration),
-      dt = Util.friendlyDateTime(start);
+    const dur = friendlyDuration(duration),
+      dt = friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
   }
 
@@ -93,8 +92,8 @@ export class Interval {
    * @return {Interval}
    */
   static before(end, duration) {
-    const dur = Util.friendlyDuration(duration),
-      dt = Util.friendlyDateTime(end);
+    const dur = friendlyDuration(duration),
+      dt = friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
   }
 
@@ -235,7 +234,7 @@ export class Interval {
    */
   splitAt(...dateTimes) {
     if (!this.isValid) return [];
-    const sorted = dateTimes.map(Util.friendlyDateTime).sort(),
+    const sorted = dateTimes.map(friendlyDateTime).sort(),
       results = [];
     let { s } = this,
       i = 0;
@@ -259,7 +258,7 @@ export class Interval {
    */
   splitBy(duration) {
     if (!this.isValid) return [];
-    const dur = Util.friendlyDuration(duration),
+    const dur = friendlyDuration(duration),
       results = [];
     let { s } = this,
       added,

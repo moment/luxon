@@ -67,11 +67,12 @@ Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on yo
 
 ## npm script reference
 
-| Command          | Function                                |
-|------------------+-----------------------------------------|
-| `npm run build`  | Build all the distributable files       |
-| `npm run test`   | Run the test suite, but see notes above |
-| `npm run format` | Run the Prettier formatter              |
-| `npm run lint!`  | Run the formatter and the linter        |
-| `npm run docs`   | Build the doc pages                     |
-| `npm run site`   | Build the Luxon website                 |
+| Command              | Function                                |
+|----------------------+-----------------------------------------|
+| `npm run build`      | Build all the distributable files       |
+| `npm run build-node` | Build just for Node                     |
+| `npm run test`       | Run the test suite, but see notes above |
+| `npm run format`     | Run the Prettier formatter              |
+| `npm run lint!`      | Run the formatter and the linter        |
+| `npm run docs`       | Build the doc pages                     |
+| `npm run site`       | Build the Luxon website                 |

@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime, Interval } from '../../src/luxon';
+import { Interval } from '../../src/luxon';
 import { Helpers } from '../helpers';
 
 const todayFrom = (h1, h2) => Interval.fromDateTimes(Helpers.atHour(h1), Helpers.atHour(h2));

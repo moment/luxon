@@ -265,7 +265,9 @@ test('DateTime#toLocaleString() shows things in the right fixed-offset zone', ()
 });
 
 test('DateTime#toLocaleString() does the best it can with a fixed-offset zone when showing the zone', () => {
-  expect(dt.setZone('UTC-8').toLocaleString(DateTime.DATETIME_FULL)).toBe('May 25, 1982, 9:23 AM UTC');
+  expect(dt.setZone('UTC-8').toLocaleString(DateTime.DATETIME_FULL)).toBe(
+    'May 25, 1982, 9:23 AM UTC'
+  );
 });
 
 //------

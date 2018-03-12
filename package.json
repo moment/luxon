@@ -9,13 +9,14 @@
   ],
   "repository": "https://github.com/moment/luxon",
   "scripts": {
-    "build": "babel-node tasks/build.js",
+    "build": "babel-node tasks/buildAll.js",
+    "build-node": "babel-node tasks/buildNode.js",
     "test": "babel-node tasks/unit.js",
     "docs": "esdoc -c docs/index.js",
     "site": "cp -r site/** build/",
-    "lint": "eslint src/**/*.js, test/**/*.js, benchmarks/*.js",
+    "lint": "eslint src test benchmark",
     "lint!": "npm run format && npm run lint",
-    "format": "prettier --config .prettier.js --write **.js",
+    "format": "prettier --config .prettier.js --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/datetime.js",
     "coveralls": "cat build/coverage/lcov.info | coveralls",
     "check-doc-coverage": "babel-node tasks/docCoverage"

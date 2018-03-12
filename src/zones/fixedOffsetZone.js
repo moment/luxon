@@ -1,5 +1,5 @@
-import { Util } from '../impl/util';
-import { Zone } from '../zone';
+import { padStart, signedOffset } from '../impl/util';
+import Zone from '../zone';
 
 let singleton = null;
 
@@ -8,14 +8,14 @@ function hoursMinutesOffset(z) {
     minutes = Math.abs(z.fixed % 60),
     sign = hours > 0 ? '+' : '-',
     base = sign + Math.abs(hours);
-  return minutes > 0 ? `${base}:${Util.padStart(minutes, 2)}` : base;
+  return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;
 }
 
 /**
  * @private
  */
 
-export class FixedOffsetZone extends Zone {
+export default class FixedOffsetZone extends Zone {
   static get utcInstance() {
     if (singleton === null) {
       singleton = new FixedOffsetZone(0);
@@ -31,7 +31,7 @@ export class FixedOffsetZone extends Zone {
     if (s) {
       const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
       if (r) {
-        return new FixedOffsetZone(Util.signedOffset(r[1], r[2]));
+        return new FixedOffsetZone(signedOffset(r[1], r[2]));
       }
     }
     return null;

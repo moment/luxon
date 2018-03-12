@@ -1,4 +1,5 @@
 /* global test expect */
+/* eslint no-proto: "off" */
 import { DateTime } from '../../src/luxon';
 
 test('DateTime prototype properties should not throw when accessed', () => {

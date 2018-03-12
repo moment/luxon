@@ -1,4 +1,5 @@
 /* global test expect */
+/* eslint no-proto: "off" */
 import { Duration } from '../../src/luxon';
 
 test('Duration prototype properties should not throw when addressed', () => {

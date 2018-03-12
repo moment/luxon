@@ -149,9 +149,11 @@ test('DateTime#diff puts fractional parts in the lowest order unit', () => {
 
 test("DateTime#diff returns the fractional parts even when it can't find a whole unit", () => {
   expect(
-    diffObjs({ year: 2017, month: 7, day: 14, hour: 6 }, { year: 2017, month: 7, day: 14, hour: 2 }, [
-      'days'
-    ])
+    diffObjs(
+      { year: 2017, month: 7, day: 14, hour: 6 },
+      { year: 2017, month: 7, day: 14, hour: 2 },
+      ['days']
+    )
   ).toEqual({ days: 1 / 6 });
 });
 
@@ -181,28 +183,36 @@ test('DateTime#diff handles fractional years as fractions of those specific year
   // the point here is that we're crossing the leap year
   expect(
     diffObjs({ year: 2020, month: 3, day: 27 }, { year: 2018, month: 3, day: 28 }, 'years')
-  ).toEqual({ years: 1 + 365.0/366 });
+  ).toEqual({ years: 1 + 365.0 / 366 });
 });
 
 test('DateTime#diff handles fractional months as fractions of those specific months', () => {
   // The point here is that January has 31 days
   expect(
     diffObjs({ year: 2018, month: 2, day: 24 }, { year: 2017, month: 12, day: 25 }, 'months')
-  ).toEqual({ months: 1 + 30.0/31 });
+  ).toEqual({ months: 1 + 30.0 / 31 });
 });
 
 test('DateTime#diff handles fractional weeks as fractions of those specific weeks', () => {
   // America/New_York has a fall back Nov 4, 2018 at 2:00
   expect(
-    diffObjs({ year: 2018, month: 11, day: 16, hour: 0}, { year: 2018, month: 11, day: 2, hour: 1 }, 'weeks')
-  ).toEqual({ weeks: 1 + 6.0/7 + 23.0/24/7 });
+    diffObjs(
+      { year: 2018, month: 11, day: 16, hour: 0 },
+      { year: 2018, month: 11, day: 2, hour: 1 },
+      'weeks'
+    )
+  ).toEqual({ weeks: 1 + 6.0 / 7 + 23.0 / 24 / 7 });
 });
 
 test('DateTime#diff handles fractional days as fractions of those specific days', () => {
   // America/New_York has a fall back Nov 4, 2018 at 2:00
   expect(
-    diffObjs({ year: 2018, month: 11, day: 5, hour: 0}, { year: 2018, month: 11, day: 3, hour: 1 }, 'days')
-  ).toEqual({ days: 1 + 23.0/24 });
+    diffObjs(
+      { year: 2018, month: 11, day: 5, hour: 0 },
+      { year: 2018, month: 11, day: 3, hour: 1 },
+      'days'
+    )
+  ).toEqual({ days: 1 + 23.0 / 24 });
 });
 
 test('DateTime#diff is precise for lower order units', () => {

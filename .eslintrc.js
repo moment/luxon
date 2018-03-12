@@ -39,6 +39,8 @@ module.exports = {
     'import/no-extraneous-dependencies': [
       'error',
       { devDependencies: ['test/**/*.js', 'benchmarks/*.js', 'gulpfile.js'] }
-    ]
+    ],
+    // don't yell at me about mixed let/const destructuring needs
+    'prefer-const': ['error', { destructuring: 'all' }]
   }
 };

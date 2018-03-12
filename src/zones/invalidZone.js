@@ -1,8 +1,8 @@
-import { Zone } from '../zone';
+import Zone from '../zone';
 
 let singleton = null;
 
-export class InvalidZone extends Zone {
+export default class InvalidZone extends Zone {
   static get instance() {
     if (singleton === null) {
       singleton = new InvalidZone();

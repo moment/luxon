@@ -1,5 +1,5 @@
-import { Util } from '../impl/util';
-import { Zone } from '../zone';
+import { parseZoneInfo, hasIntl } from '../impl/util';
+import Zone from '../zone';
 
 let singleton = null;
 
@@ -7,7 +7,7 @@ let singleton = null;
  * @private
  */
 
-export class LocalZone extends Zone {
+export default class LocalZone extends Zone {
   static get instance() {
     if (singleton === null) {
       singleton = new LocalZone();
@@ -20,7 +20,7 @@ export class LocalZone extends Zone {
   }
 
   get name() {
-    if (Util.hasIntl()) {
+    if (hasIntl()) {
       return new Intl.DateTimeFormat().resolvedOptions().timeZone;
     } else return 'local';
   }
@@ -30,7 +30,7 @@ export class LocalZone extends Zone {
   }
 
   offsetName(ts, { format, locale }) {
-    return Util.parseZoneInfo(ts, format, locale);
+    return parseZoneInfo(ts, format, locale);
   }
 
   offset(ts) {

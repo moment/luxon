@@ -1,5 +1,5 @@
-import { Util } from '../impl/util';
-import { Zone } from '../zone';
+import { parseZoneInfo, isUndefined } from '../impl/util';
+import Zone from '../zone';
 
 const dtfCache = {};
 function makeDTF(zone) {
@@ -41,7 +41,7 @@ function partsOffset(dtf, date) {
     const { type, value } = formatted[i],
       pos = typeToPos[type];
 
-    if (!Util.isUndefined(pos)) {
+    if (!isUndefined(pos)) {
       filled[pos] = parseInt(value, 10);
     }
   }
@@ -52,7 +52,7 @@ function partsOffset(dtf, date) {
  * @private
  */
 
-export class IANAZone extends Zone {
+export default class IANAZone extends Zone {
   static isValidSpecifier(s) {
     return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
   }
@@ -96,7 +96,7 @@ export class IANAZone extends Zone {
   }
 
   offsetName(ts, { format, locale }) {
-    return Util.parseZoneInfo(ts, format, locale, this.zoneName);
+    return parseZoneInfo(ts, format, locale, this.zoneName);
   }
 
   offset(ts) {

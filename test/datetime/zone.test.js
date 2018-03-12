@@ -143,7 +143,7 @@ test('setZone accepts a keepLocalTime option', () => {
 });
 
 test('DateTime#setZone rejects jibberish', () => {
-  let zoned = dt().setZone('blorp');
+  const zoned = dt().setZone('blorp');
   expect(zoned.isValid).toBe(false);
   expect(zoned.invalidReason).toBe('unsupported zone');
 });
@@ -234,5 +234,5 @@ test("Setting the default zone to 'local' gives you back a local zone", () => {
 //------
 
 test('invalid DateTimes have no zone', () => {
-  expect(DateTime.invalid("because").zoneName).toBe(null);
+  expect(DateTime.invalid('because').zoneName).toBe(null);
 });

@@ -1,12 +1,12 @@
-import { Util } from './impl/util';
-import { Locale } from './impl/locale';
-import { Formatter } from './impl/formatter';
-import { RegexParser } from './impl/regexParser';
-import { Settings } from './settings';
+import { isUndefined, isNumber, normalizeObject } from './impl/util';
+import Locale from './impl/locale';
+import Formatter from './impl/formatter';
+import { parseISODuration } from './impl/regexParser';
+import Settings from './settings';
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './errors';
 
 const INVALID = 'Invalid Duration',
- UNPARSABLE = 'unparsable';
+  UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -130,15 +130,15 @@ function isHighOrderNegative(obj) {
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   const conv = matrix[toUnit][fromUnit],
-        added = Math.floor(fromMap[fromUnit] / conv);
+    added = Math.floor(fromMap[fromUnit] / conv);
   toMap[toUnit] += added;
   fromMap[fromUnit] -= added * conv;
-};
+}
 
 // NB: mutates parameters
 function normalizeValues(matrix, vals) {
   reverseUnits.reduce((previous, current) => {
-    if (!Util.isUndefined(vals[current])) {
+    if (!isUndefined(vals[current])) {
       if (previous) {
         convert(matrix, vals, previous, vals, current);
       }
@@ -149,6 +149,17 @@ function normalizeValues(matrix, vals) {
   }, null);
 }
 
+export function friendlyDuration(duration) {
+  if (isNumber(duration)) {
+    return Duration.fromMillis(duration);
+  } else if (duration instanceof Duration) {
+    return duration;
+  } else if (duration instanceof Object) {
+    return Duration.fromObject(duration);
+  } else {
+    throw new InvalidArgumentError('Unknown duration argument');
+  }
+}
 
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
@@ -163,7 +174,7 @@ function normalizeValues(matrix, vals) {
  *
  * There's are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
  */
-export class Duration {
+export default class Duration {
   /**
    * @private
    */
@@ -223,7 +234,7 @@ export class Duration {
    */
   static fromObject(obj) {
     return new Duration({
-      values: Util.normalizeObject(obj, Duration.normalizeUnit, true),
+      values: normalizeObject(obj, Duration.normalizeUnit, true),
       loc: Locale.fromObject(obj),
       conversionAccuracy: obj.conversionAccuracy
     });
@@ -243,7 +254,7 @@ export class Duration {
    * @return {Duration}
    */
   static fromISO(text, opts) {
-    const [parsed] = RegexParser.parseISODuration(text);
+    const [parsed] = parseISODuration(text);
     if (parsed) {
       const obj = Object.assign(parsed, opts);
       return Duration.fromObject(obj);
@@ -415,7 +426,7 @@ export class Duration {
   plus(duration) {
     if (!this.isValid) return this;
 
-    const dur = Util.friendlyDuration(duration),
+    const dur = friendlyDuration(duration),
       result = {};
 
     for (const k of orderedUnits) {
@@ -436,7 +447,7 @@ export class Duration {
   minus(duration) {
     if (!this.isValid) return this;
 
-    const dur = Util.friendlyDuration(duration);
+    const dur = friendlyDuration(duration);
     return this.plus(dur.negate());
   }
 
@@ -460,7 +471,7 @@ export class Duration {
    * @return {Duration}
    */
   set(values) {
-    const mixed = Object.assign(this.values, Util.normalizeObject(values, Duration.normalizeUnit));
+    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit));
     return clone(this, { values: mixed });
   }
 
@@ -502,7 +513,7 @@ export class Duration {
     if (!this.isValid) return this;
 
     const neg = isHighOrderNegative(this.values),
-          vals = (neg ? this.negate() : this).toObject();
+      vals = (neg ? this.negate() : this).toObject();
     normalizeValues(this.matrix, vals);
     const dur = Duration.fromObject(vals);
     return neg ? dur.negate() : dur;
@@ -544,7 +555,7 @@ export class Duration {
         }
 
         // plus anything that's already in this unit
-        if (Util.isNumber(vals[k])) {
+        if (isNumber(vals[k])) {
           own += vals[k];
         }
 
@@ -559,7 +570,7 @@ export class Duration {
           }
         }
         // otherwise, keep it in the wings to boil it later
-      } else if (Util.isNumber(vals[k])) {
+      } else if (isNumber(vals[k])) {
         accumulated[k] = vals[k];
       }
     }

@@ -8,11 +8,10 @@ test('Explicitly invalid durations are invalid', () => {
   expect(dt.invalidReason).toBe('just because');
 });
 
-
 test('throwOnInvalid throws', () => {
   try {
     Settings.throwOnInvalid = true;
-    expect(() => Duration.invalid("because")).toThrow();
+    expect(() => Duration.invalid('because')).toThrow();
   } finally {
     Settings.throwOnInvalid = false;
   }
@@ -23,7 +22,7 @@ test("Duration.invalid throws if you don't provide a reason", () => {
 });
 
 test('Diffing invalid DateTimes creates invalid Durations', () => {
-  const invalidDT = DateTime.invalid("so?");
+  const invalidDT = DateTime.invalid('so?');
   expect(invalidDT.diff(DateTime.local()).isValid).toBe(false);
   expect(DateTime.local().diff(invalidDT).isValid).toBe(false);
 });

@@ -1,7 +1,7 @@
-import { Util } from './util';
-import { English } from './english';
-import { FixedOffsetZone } from '../zones/fixedOffsetZone';
-import { IANAZone } from '../zones/IANAZone';
+import { untruncateYear, signedOffset, parseMillis } from './util';
+import * as English from './english';
+import FixedOffsetZone from '../zones/fixedOffsetZone';
+import IANAZone from '../zones/IANAZone';
 
 /*
  * This file handles parsing for well-specified formats. Here's how it works:
@@ -88,7 +88,7 @@ function extractISOTime(match, cursor) {
     hour: parseInt(match[cursor]) || 0,
     minute: parseInt(match[cursor + 1]) || 0,
     second: parseInt(match[cursor + 2]) || 0,
-    millisecond: Util.parseMillis(match[cursor + 3])
+    millisecond: parseMillis(match[cursor + 3])
   };
 
   return [item, null, cursor + 4];
@@ -96,7 +96,7 @@ function extractISOTime(match, cursor) {
 
 function extractISOOffset(match, cursor) {
   const local = !match[cursor] && !match[cursor + 1],
-    fullOffset = Util.signedOffset(match[cursor + 1], match[cursor + 2]),
+    fullOffset = signedOffset(match[cursor + 1], match[cursor + 2]),
     zone = local ? null : FixedOffsetZone.instance(fullOffset);
   return [{}, zone, cursor + 3];
 }
@@ -111,18 +111,30 @@ function extractIANAZone(match, cursor) {
 const isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\d{1,9})H)?(?:(\d{1,9})M)?(?:(\d{1,9})(?:[.,](\d{1,9}))?S)?)?|(\d{1,9})W)$/;
 
 function extractISODuration(match) {
-  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr, weekStr] = match;
+  const [
+    ,
+    yearStr,
+    monthStr,
+    dayStr,
+    hourStr,
+    minuteStr,
+    secondStr,
+    millisecondsStr,
+    weekStr
+  ] = match;
 
-  return [ {
-    years: parseInt(yearStr),
-    months: parseInt(monthStr),
-    weeks: parseInt(weekStr),
-    days: parseInt(dayStr),
-    hours: parseInt(hourStr),
-    minutes: parseInt(minuteStr),
-    seconds: parseInt(secondStr),
-    milliseconds: Util.parseMillis(millisecondsStr)
-  } ];
+  return [
+    {
+      years: parseInt(yearStr),
+      months: parseInt(monthStr),
+      weeks: parseInt(weekStr),
+      days: parseInt(dayStr),
+      hours: parseInt(hourStr),
+      minutes: parseInt(minuteStr),
+      seconds: parseInt(secondStr),
+      milliseconds: parseMillis(millisecondsStr)
+    }
+  ];
 }
 
 // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
@@ -142,7 +154,7 @@ const obsOffsets = {
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
-    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
+    year: yearStr.length === 2 ? untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month:
       monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
@@ -187,7 +199,7 @@ function extractRFC2822(match) {
   } else if (milOffset) {
     offset = 0;
   } else {
-    offset = Util.signedOffset(offHourStr, offMinuteStr);
+    offset = signedOffset(offHourStr, offMinuteStr);
   }
 
   return [result, new FixedOffsetZone(offset)];
@@ -223,54 +235,52 @@ function extractASCII(match) {
  * @private
  */
 
-export class RegexParser {
-  static parseISODate(s) {
-    return parse(
-      s,
-      [
-        combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOYmd, extractISOTime, extractISOOffset)
-      ],
-      [
-        combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset)
-      ],
-      [
-        combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOOrdinalData, extractISOTime)
-      ],
-      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime, extractISOOffset)]
-    );
-  }
+export function parseISODate(s) {
+  return parse(
+    s,
+    [
+      combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOYmd, extractISOTime, extractISOOffset)
+    ],
+    [
+      combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset)
+    ],
+    [
+      combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOOrdinalData, extractISOTime)
+    ],
+    [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime, extractISOOffset)]
+  );
+}
 
-  static parseRFC2822Date(s) {
-    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
-  }
+export function parseRFC2822Date(s) {
+  return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
+}
 
-  static parseHTTPDate(s) {
-    return parse(
-      s,
-      [rfc1123, extractRFC1123Or850],
-      [rfc850, extractRFC1123Or850],
-      [ascii, extractASCII]
-    );
-  }
+export function parseHTTPDate(s) {
+  return parse(
+    s,
+    [rfc1123, extractRFC1123Or850],
+    [rfc850, extractRFC1123Or850],
+    [ascii, extractASCII]
+  );
+}
 
-  static parseISODuration(s) {
-    return parse(s, [isoDuration, extractISODuration]);
-  }
+export function parseISODuration(s) {
+  return parse(s, [isoDuration, extractISODuration]);
+}
 
-  static parseSQL(s) {
-    return parse(
-      s,
-      [
-        combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
-        combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)
-      ],
-      [
-        combineRegexes(sqlTimeRegex),
-        combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)
-      ]
-    );
-  }
+export function parseSQL(s) {
+  return parse(
+    s,
+    [
+      combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
+      combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)
+    ],
+    [
+      combineRegexes(sqlTimeRegex),
+      combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)
+    ]
+  );
 }

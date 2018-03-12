@@ -1,7 +1,7 @@
-import { Util } from './util';
-import { Formatter } from './formatter';
-import { FixedOffsetZone } from '../zones/fixedOffsetZone';
-import { IANAZone } from '../zones/IANAZone';
+import { parseMillis, isUndefined, untruncateYear, signedOffset } from './util';
+import Formatter from './formatter';
+import FixedOffsetZone from '../zones/fixedOffsetZone';
+import IANAZone from '../zones/IANAZone';
 
 const MISSING_FTP = 'missing Intl.DateTimeFormat.formatToParts support';
 
@@ -31,7 +31,7 @@ function oneOf(strings, startIndex) {
 }
 
 function offset(regex, groups) {
-  return { regex, deser: ([, h, m]) => Util.signedOffset(h, m), groups };
+  return { regex, deser: ([, h, m]) => signedOffset(h, m), groups };
 }
 
 function simple(regex) {
@@ -61,7 +61,7 @@ function unitForToken(token, loc) {
         case 'y':
           return intUnit(/\d{1,6}/);
         case 'yy':
-          return intUnit(twoToFour, Util.untruncateYear);
+          return intUnit(twoToFour, untruncateYear);
         case 'yyyy':
           return intUnit(four);
         case 'yyyyy':
@@ -125,7 +125,7 @@ function unitForToken(token, loc) {
         case 'kkkk':
           return intUnit(four);
         case 'kk':
-          return intUnit(twoToFour, Util.untruncateYear);
+          return intUnit(twoToFour, untruncateYear);
         // weekNumber (W)
         case 'W':
           return intUnit(oneOrTwo);
@@ -228,15 +228,15 @@ function dateTimeFromMatches(matches) {
   };
 
   let zone;
-  if (!Util.isUndefined(matches.Z)) {
+  if (!isUndefined(matches.Z)) {
     zone = new FixedOffsetZone(matches.Z);
-  } else if (!Util.isUndefined(matches.z)) {
+  } else if (!isUndefined(matches.z)) {
     zone = new IANAZone(matches.z);
   } else {
     zone = null;
   }
 
-  if (!Util.isUndefined(matches.h)) {
+  if (!isUndefined(matches.h)) {
     if (matches.h < 12 && matches.a === 1) {
       matches.h += 12;
     } else if (matches.h === 12 && matches.a === 0) {
@@ -248,8 +248,8 @@ function dateTimeFromMatches(matches) {
     matches.y = -matches.y;
   }
 
-  if (!Util.isUndefined(matches.u)) {
-    matches.S = Util.parseMillis(matches.u);
+  if (!isUndefined(matches.u)) {
+    matches.S = parseMillis(matches.u);
   }
 
   const vals = Object.keys(matches).reduce((r, k) => {
@@ -268,30 +268,24 @@ function dateTimeFromMatches(matches) {
  * @private
  */
 
-export class TokenParser {
-  constructor(loc) {
-    this.loc = loc;
+export function explainFromTokens(locale, input, format) {
+  const tokens = Formatter.parseFormat(format),
+    units = tokens.map(t => unitForToken(t, locale)),
+    disqualifyingUnit = units.find(t => t.invalidReason);
+
+  if (disqualifyingUnit) {
+    return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
+  } else {
+    const [regexString, handlers] = buildRegex(units),
+      regex = RegExp(regexString, 'i'),
+      [rawMatches, matches] = match(input, regex, handlers),
+      [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+
+    return { input, tokens, regex, rawMatches, matches, result, zone };
   }
+}
 
-  explainParse(input, format) {
-    const tokens = Formatter.parseFormat(format),
-      units = tokens.map(t => unitForToken(t, this.loc)),
-      disqualifyingUnit = units.find(t => t.invalidReason);
-
-    if (disqualifyingUnit) {
-      return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
-    } else {
-      const [regexString, handlers] = buildRegex(units),
-        regex = RegExp(regexString, 'i'),
-        [rawMatches, matches] = match(input, regex, handlers),
-        [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
-
-      return { input, tokens, regex, rawMatches, matches, result, zone };
-    }
-  }
-
-  parseDateTime(input, format) {
-    const { result, zone, invalidReason } = this.explainParse(input, format);
-    return [result, zone, invalidReason];
-  }
+export function parseFromTokens(locale, input, format) {
+  const { result, zone, invalidReason } = explainFromTokens(locale, input, format);
+  return [result, zone, invalidReason];
 }

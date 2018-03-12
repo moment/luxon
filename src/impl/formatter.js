@@ -1,5 +1,5 @@
-import { English } from './english';
-import { Formats } from './formats';
+import * as English from './english';
+import * as Formats from './formats';
 
 function stringifyTokens(splits, tokenToString) {
   let s = '';
@@ -40,7 +40,7 @@ const tokenToObject = {
  * @private
  */
 
-export class Formatter {
+export default class Formatter {
   static create(locale, opts = {}) {
     const formatOpts = Object.assign({}, { round: true }, opts);
     return new Formatter(locale, formatOpts);

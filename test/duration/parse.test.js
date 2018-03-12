@@ -19,12 +19,31 @@ test('Duration.fromISO can parse a variety of ISO formats', () => {
 });
 
 test('Duration.fromISO can parse fractions of seconds', () => {
-
-  expect(Duration.fromISO('PT54M32.5S').toObject()).toEqual({ minutes: 54, seconds: 32, milliseconds: 500 });
-  expect(Duration.fromISO('PT54M32.53S').toObject()).toEqual({ minutes: 54, seconds: 32, milliseconds: 530 });
-  expect(Duration.fromISO('PT54M32.534S').toObject()).toEqual({ minutes: 54, seconds: 32, milliseconds: 534 });
-  expect(Duration.fromISO('PT54M32.5348S').toObject()).toEqual({ minutes: 54, seconds: 32, milliseconds: 534 });
-  expect(Duration.fromISO('PT54M32.034S').toObject()).toEqual({ minutes: 54, seconds: 32, milliseconds: 34 });
+  expect(Duration.fromISO('PT54M32.5S').toObject()).toEqual({
+    minutes: 54,
+    seconds: 32,
+    milliseconds: 500
+  });
+  expect(Duration.fromISO('PT54M32.53S').toObject()).toEqual({
+    minutes: 54,
+    seconds: 32,
+    milliseconds: 530
+  });
+  expect(Duration.fromISO('PT54M32.534S').toObject()).toEqual({
+    minutes: 54,
+    seconds: 32,
+    milliseconds: 534
+  });
+  expect(Duration.fromISO('PT54M32.5348S').toObject()).toEqual({
+    minutes: 54,
+    seconds: 32,
+    milliseconds: 534
+  });
+  expect(Duration.fromISO('PT54M32.034S').toObject()).toEqual({
+    minutes: 54,
+    seconds: 32,
+    milliseconds: 34
+  });
 });
 
 test('Duration.fromISO rejects junk', () => {

@@ -1,14 +1,14 @@
-import { Util } from './util';
-import { English } from './english';
-import { Settings } from '../settings';
-import { DateTime } from '../datetime';
-import { Formatter } from './formatter';
+import { hasFormatToParts, hasIntl, padStart } from './util';
+import * as English from './english';
+import Settings from '../settings';
+import DateTime from '../datetime';
+import Formatter from './formatter';
 
 let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
     return sysLocaleCache;
-  } else if (Util.hasIntl()) {
+  } else if (hasIntl()) {
     const computedSys = new Intl.DateTimeFormat().resolvedOptions().locale;
     // node sometimes defaults to "und". Override that because that is dumb
     sysLocaleCache = computedSys === 'und' ? 'en-US' : computedSys;
@@ -20,7 +20,7 @@ function systemLocale() {
 }
 
 function intlConfigString(locale, numberingSystem, outputCalendar) {
-  if (Util.hasIntl()) {
+  if (hasIntl()) {
     locale = Array.isArray(locale) ? locale : [locale];
 
     if (outputCalendar || numberingSystem) {
@@ -85,14 +85,14 @@ class PolyNumberFormatter {
 
   format(i) {
     const maybeRounded = this.round ? Math.round(i) : i;
-    return Util.padStart(maybeRounded.toString(), this.padTo);
+    return padStart(maybeRounded.toString(), this.padTo);
   }
 }
 
 class PolyDateFormatter {
   constructor(dt, intl, opts) {
     this.opts = opts;
-    this.hasIntl = Util.hasIntl();
+    this.hasIntl = hasIntl();
 
     let z;
     if (dt.zone.universal && this.hasIntl) {
@@ -138,7 +138,7 @@ class PolyDateFormatter {
   }
 
   formatToParts() {
-    if (this.hasIntl && Util.hasFormatToParts()) {
+    if (this.hasIntl && hasFormatToParts()) {
       return this.dtf.formatToParts(this.dt.toJSDate());
     } else {
       // This is kind of a cop out. We actually could do this for English. However, we couldn't do it for intl strings
@@ -164,7 +164,7 @@ class PolyDateFormatter {
  * @private
  */
 
-export class Locale {
+export default class Locale {
   static fromOpts(opts) {
     return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar, opts.defaultToEN);
   }
@@ -202,12 +202,12 @@ export class Locale {
 
   // todo: cache me
   listingMode(defaultOk = true) {
-    const hasIntl = Util.hasIntl(),
-      hasFTP = hasIntl && Util.hasFormatToParts(),
+    const intl = hasIntl(),
+      hasFTP = intl && hasFormatToParts(),
       isActuallyEn =
         this.locale === 'en' ||
         this.locale.toLowerCase() === 'en-us' ||
-        (hasIntl &&
+        (intl &&
           Intl.DateTimeFormat(this.intl)
             .resolvedOptions()
             .locale.startsWith('en-us')),
@@ -282,9 +282,10 @@ export class Locale {
         // for AM and PM. This is probably wrong, but it's makes parsing way easier.
         if (!this.meridiemCache) {
           const intl = { hour: 'numeric', hour12: true };
-          this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
-            dt => this.extract(dt, intl, 'dayperiod')
-          );
+          this.meridiemCache = [
+            DateTime.utc(2016, 11, 13, 9),
+            DateTime.utc(2016, 11, 13, 19)
+          ].map(dt => this.extract(dt, intl, 'dayperiod'));
         }
 
         return this.meridiemCache;
@@ -317,7 +318,7 @@ export class Locale {
   }
 
   numberFormatter(opts = {}, intlOpts = {}) {
-    if (Util.hasIntl()) {
+    if (hasIntl()) {
       const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
 
       if (opts.padTo > 0) {

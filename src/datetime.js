@@ -1,17 +1,37 @@
-import { Duration } from './duration';
-import { Interval } from './interval';
-import { Settings } from './settings';
-import { Info } from './info';
-import { Formatter } from './impl/formatter';
-import { FixedOffsetZone } from './zones/fixedOffsetZone';
-import { LocalZone } from './zones/localZone';
-import { Locale } from './impl/locale';
-import { Util } from './impl/util';
+import Duration, { friendlyDuration } from './duration';
+import Interval from './interval';
+import Settings from './settings';
+import Info from './info';
+import Formatter from './impl/formatter';
+import FixedOffsetZone from './zones/fixedOffsetZone';
+import LocalZone from './zones/localZone';
+import Locale from './impl/locale';
+import {
+  isUndefined,
+  maybeArray,
+  isDate,
+  isNumber,
+  bestBy,
+  daysInMonth,
+  daysInYear,
+  isLeapYear,
+  normalizeObject
+} from './impl/util';
+import { normalizeZone } from './impl/zoneUtil';
 import diff from './impl/diff';
-import { RegexParser } from './impl/regexParser';
-import { TokenParser } from './impl/tokenParser';
-import { Conversions } from './impl/conversions';
-import { Formats } from './impl/formats';
+import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from './impl/regexParser';
+import { parseFromTokens, explainFromTokens } from './impl/tokenParser';
+import {
+  gregorianToWeek,
+  weekToGregorian,
+  gregorianToOrdinal,
+  ordinalToGregorian,
+  hasInvalidGregorianData,
+  hasInvalidWeekData,
+  hasInvalidOrdinalData,
+  hasInvalidTimeData
+} from './impl/conversions';
+import * as Formats from './impl/formats';
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
@@ -27,7 +47,7 @@ const INVALID = 'Invalid DateTime',
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
-    dt.weekData = Conversions.gregorianToWeek(dt.c);
+    dt.weekData = gregorianToWeek(dt.c);
   }
   return dt.weekData;
 }
@@ -121,9 +141,9 @@ function adjustTime(inst, dur) {
     year = inst.c.year + dur.years,
     month = inst.c.month + dur.months + dur.quarters * 3,
     c = Object.assign({}, inst.c, {
-      year: year,
-      month: month,
-      day: Math.min(inst.c.day, Util.daysInMonth(year, month)) + dur.days + dur.weeks * 7
+      year,
+      month,
+      day: Math.min(inst.c.day, daysInMonth(year, month)) + dur.days + dur.weeks * 7
     }),
     millisToAdd = Duration.fromObject({
       hours: dur.hours,
@@ -279,13 +299,12 @@ function normalizeUnit(unit, ignoreUnknown = false) {
 function quickDT(obj, zone) {
   // assume we have the higher-order units
   for (const u of orderedUnits) {
-    if (Util.isUndefined(obj[u])) {
+    if (isUndefined(obj[u])) {
       obj[u] = defaultUnitValues[u];
     }
   }
 
-  const invalidReason =
-    Conversions.hasInvalidGregorianData(obj) || Conversions.hasInvalidTimeData(obj);
+  const invalidReason = hasInvalidGregorianData(obj) || hasInvalidTimeData(obj);
   if (invalidReason) {
     return DateTime.invalid(invalidReason);
   }
@@ -321,7 +340,7 @@ function quickDT(obj, zone) {
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
-export class DateTime {
+export default class DateTime {
   /**
    * @access private
    */
@@ -334,7 +353,7 @@ export class DateTime {
     /**
      * @access private
      */
-    this.ts = Util.isUndefined(config.ts) ? Settings.now() : config.ts;
+    this.ts = isUndefined(config.ts) ? Settings.now() : config.ts;
 
     let c = null,
       o = null;
@@ -392,7 +411,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static local(year, month, day, hour, minute, second, millisecond) {
-    if (Util.isUndefined(year)) {
+    if (isUndefined(year)) {
       return new DateTime({ ts: Settings.now() });
     } else {
       return quickDT(
@@ -430,7 +449,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static utc(year, month, day, hour, minute, second, millisecond) {
-    if (Util.isUndefined(year)) {
+    if (isUndefined(year)) {
       return new DateTime({
         ts: Settings.now(),
         zone: FixedOffsetZone.utcInstance
@@ -460,8 +479,8 @@ export class DateTime {
    */
   static fromJSDate(date, options = {}) {
     return new DateTime({
-      ts: Util.isDate(date) ? date.valueOf() : NaN,
-      zone: Util.normalizeZone(options.zone),
+      ts: isDate(date) ? date.valueOf() : NaN,
+      zone: normalizeZone(options.zone, Settings.defaultZone),
       loc: Locale.fromObject(options)
     });
   }
@@ -479,7 +498,7 @@ export class DateTime {
   static fromMillis(milliseconds, options = {}) {
     return new DateTime({
       ts: milliseconds,
-      zone: Util.normalizeZone(options.zone),
+      zone: normalizeZone(options.zone, Settings.defaultZone),
       loc: Locale.fromObject(options)
     });
   }
@@ -512,17 +531,17 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromObject(obj) {
-    const zoneToUse = Util.normalizeZone(obj.zone);
+    const zoneToUse = normalizeZone(obj.zone, Settings.defaultZone);
     if (!zoneToUse.isValid) {
       return DateTime.invalid(UNSUPPORTED_ZONE);
     }
 
     const tsNow = Settings.now(),
       offsetProvis = zoneToUse.offset(tsNow),
-      normalized = Util.normalizeObject(obj, normalizeUnit, true),
-      containsOrdinal = !Util.isUndefined(normalized.ordinal),
-      containsGregorYear = !Util.isUndefined(normalized.year),
-      containsGregorMD = !Util.isUndefined(normalized.month) || !Util.isUndefined(normalized.day),
+      normalized = normalizeObject(obj, normalizeUnit, true),
+      containsOrdinal = !isUndefined(normalized.ordinal),
+      containsGregorYear = !isUndefined(normalized.year),
+      containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
       containsGregor = containsGregorYear || containsGregorMD,
       definiteWeekDef = normalized.weekYear || normalized.weekNumber,
       loc = Locale.fromObject(obj);
@@ -552,11 +571,11 @@ export class DateTime {
     if (useWeekData) {
       units = orderedWeekUnits;
       defaultValues = defaultWeekUnitValues;
-      objNow = Conversions.gregorianToWeek(objNow);
+      objNow = gregorianToWeek(objNow);
     } else if (containsOrdinal) {
       units = orderedOrdinalUnits;
       defaultValues = defaultOrdinalUnitValues;
-      objNow = Conversions.gregorianToOrdinal(objNow);
+      objNow = gregorianToOrdinal(objNow);
     } else {
       units = orderedUnits;
       defaultValues = defaultUnitValues;
@@ -566,7 +585,7 @@ export class DateTime {
     let foundFirst = false;
     for (const u of units) {
       const v = normalized[u];
-      if (!Util.isUndefined(v)) {
+      if (!isUndefined(v)) {
         foundFirst = true;
       } else if (foundFirst) {
         normalized[u] = defaultValues[u];
@@ -577,11 +596,9 @@ export class DateTime {
 
     // make sure the values we have are in range
     const higherOrderInvalid = useWeekData
-        ? Conversions.hasInvalidWeekData(normalized)
-        : containsOrdinal
-          ? Conversions.hasInvalidOrdinalData(normalized)
-          : Conversions.hasInvalidGregorianData(normalized),
-      invalidReason = higherOrderInvalid || Conversions.hasInvalidTimeData(normalized);
+        ? hasInvalidWeekData(normalized)
+        : containsOrdinal ? hasInvalidOrdinalData(normalized) : hasInvalidGregorianData(normalized),
+      invalidReason = higherOrderInvalid || hasInvalidTimeData(normalized);
 
     if (invalidReason) {
       return DateTime.invalid(invalidReason);
@@ -589,8 +606,8 @@ export class DateTime {
 
     // compute the actual time
     const gregorian = useWeekData
-        ? Conversions.weekToGregorian(normalized)
-        : containsOrdinal ? Conversions.ordinalToGregorian(normalized) : normalized,
+        ? weekToGregorian(normalized)
+        : containsOrdinal ? ordinalToGregorian(normalized) : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
       inst = new DateTime({
         ts: tsFinal,
@@ -624,7 +641,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromISO(text, opts = {}) {
-    const [vals, parsedZone] = RegexParser.parseISODate(text);
+    const [vals, parsedZone] = parseISODate(text);
     return parseDataToDateTime(vals, parsedZone, opts);
   }
 
@@ -643,7 +660,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromRFC2822(text, opts = {}) {
-    const [vals, parsedZone] = RegexParser.parseRFC2822Date(text);
+    const [vals, parsedZone] = parseRFC2822Date(text);
     return parseDataToDateTime(vals, parsedZone, opts);
   }
 
@@ -663,7 +680,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromHTTP(text, options = {}) {
-    const [vals, parsedZone] = RegexParser.parseHTTPDate(text);
+    const [vals, parsedZone] = parseHTTPDate(text);
     return parseDataToDateTime(vals, parsedZone, options);
   }
 
@@ -681,13 +698,13 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromFormat(text, fmt, options = {}) {
-    if (Util.isUndefined(text) || Util.isUndefined(fmt)) {
+    if (isUndefined(text) || isUndefined(fmt)) {
       throw new InvalidArgumentError('fromFormat requires an input string and a format');
     }
 
     const { locale = null, numberingSystem = null } = options,
-      parser = new TokenParser(Locale.fromOpts({ locale, numberingSystem, defaultToEN: true })),
-      [vals, parsedZone, invalidReason] = parser.parseDateTime(text, fmt);
+      localeToUse = Locale.fromOpts({ locale, numberingSystem, defaultToEN: true }),
+      [vals, parsedZone, invalidReason] = parseFromTokens(localeToUse, text, fmt);
     if (invalidReason) {
       return DateTime.invalid(invalidReason);
     } else {
@@ -723,7 +740,7 @@ export class DateTime {
    * @return {DateTime}
    */
   static fromSQL(text, options = {}) {
-    const [vals, parsedZone] = RegexParser.parseSQL(text);
+    const [vals, parsedZone] = parseSQL(text);
     return parseDataToDateTime(vals, parsedZone, options);
   }
 
@@ -916,7 +933,7 @@ export class DateTime {
    * @type {number|DateTime}
    */
   get ordinal() {
-    return this.isValid ? Conversions.gregorianToOrdinal(this.c).ordinal : NaN;
+    return this.isValid ? gregorianToOrdinal(this.c).ordinal : NaN;
   }
 
   /**
@@ -1030,7 +1047,7 @@ export class DateTime {
    * @type {boolean}
    */
   get isInLeapYear() {
-    return Util.isLeapYear(this.year);
+    return isLeapYear(this.year);
   }
 
   /**
@@ -1040,7 +1057,7 @@ export class DateTime {
    * @type {number}
    */
   get daysInMonth() {
-    return Util.daysInMonth(this.year, this.month);
+    return daysInMonth(this.year, this.month);
   }
 
   /**
@@ -1050,7 +1067,7 @@ export class DateTime {
    * @type {number}
    */
   get daysInYear() {
-    return this.isValid ? Util.daysInYear(this.year) : NaN;
+    return this.isValid ? daysInYear(this.year) : NaN;
   }
 
   /**
@@ -1101,7 +1118,7 @@ export class DateTime {
    * @return {DateTime}
    */
   setZone(zone, { keepLocalTime = false, keepCalendarTime = false } = {}) {
-    zone = Util.normalizeZone(zone);
+    zone = normalizeZone(zone, Settings.defaultZone);
     if (zone.equals(this.zone)) {
       return this;
     } else if (!zone.isValid) {
@@ -1149,28 +1166,24 @@ export class DateTime {
   set(values) {
     if (!this.isValid) return this;
 
-    const normalized = Util.normalizeObject(values, normalizeUnit),
+    const normalized = normalizeObject(values, normalizeUnit),
       settingWeekStuff =
-        !Util.isUndefined(normalized.weekYear) ||
-        !Util.isUndefined(normalized.weekNumber) ||
-        !Util.isUndefined(normalized.weekday);
+        !isUndefined(normalized.weekYear) ||
+        !isUndefined(normalized.weekNumber) ||
+        !isUndefined(normalized.weekday);
 
     let mixed;
     if (settingWeekStuff) {
-      mixed = Conversions.weekToGregorian(
-        Object.assign(Conversions.gregorianToWeek(this.c), normalized)
-      );
-    } else if (!Util.isUndefined(normalized.ordinal)) {
-      mixed = Conversions.ordinalToGregorian(
-        Object.assign(Conversions.gregorianToOrdinal(this.c), normalized)
-      );
+      mixed = weekToGregorian(Object.assign(gregorianToWeek(this.c), normalized));
+    } else if (!isUndefined(normalized.ordinal)) {
+      mixed = ordinalToGregorian(Object.assign(gregorianToOrdinal(this.c), normalized));
     } else {
       mixed = Object.assign(this.toObject(), normalized);
 
       // if we didn't set the day but we ended up on an overflow date,
       // use the last day of the right month
-      if (Util.isUndefined(normalized.day)) {
-        mixed.day = Math.min(Util.daysInMonth(mixed.year, mixed.month), mixed.day);
+      if (isUndefined(normalized.day)) {
+        mixed.day = Math.min(daysInMonth(mixed.year, mixed.month), mixed.day);
       }
     }
 
@@ -1193,7 +1206,7 @@ export class DateTime {
    */
   plus(duration) {
     if (!this.isValid) return this;
-    const dur = Util.friendlyDuration(duration);
+    const dur = friendlyDuration(duration);
     return clone(this, adjustTime(this, dur));
   }
 
@@ -1205,7 +1218,7 @@ export class DateTime {
   */
   minus(duration) {
     if (!this.isValid) return this;
-    const dur = Util.friendlyDuration(duration).negate();
+    const dur = friendlyDuration(duration).negate();
     return clone(this, adjustTime(this, dur));
   }
 
@@ -1469,9 +1482,8 @@ export class DateTime {
    */
   inspect() {
     if (this.isValid) {
-      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${
-        this.locale
-      } }`;
+      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
+        .locale} }`;
     } else {
       return `DateTime { Invalid, reason: ${this.invalidReason} }`;
     }
@@ -1542,11 +1554,11 @@ export class DateTime {
     if (!this.isValid || !otherDateTime.isValid)
       return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
-    const units = Util.maybeArray(unit).map(Duration.normalizeUnit),
-          otherIsLater = otherDateTime.valueOf() > this.valueOf(),
-          earlier = otherIsLater ? this : otherDateTime,
-          later = otherIsLater ? otherDateTime : this,
-          diffed = diff(earlier, later, units, opts);
+    const units = maybeArray(unit).map(Duration.normalizeUnit),
+      otherIsLater = otherDateTime.valueOf() > this.valueOf(),
+      earlier = otherIsLater ? this : otherDateTime,
+      later = otherIsLater ? otherDateTime : this,
+      diffed = diff(earlier, later, units, opts);
 
     return otherIsLater ? diffed.negate() : diffed;
   }
@@ -1609,7 +1621,7 @@ export class DateTime {
    * @return {DateTime} the min DateTime, or undefined if called with no argument
    */
   static min(...dateTimes) {
-    return Util.bestBy(dateTimes, i => i.valueOf(), Math.min);
+    return bestBy(dateTimes, i => i.valueOf(), Math.min);
   }
 
   /**
@@ -1618,7 +1630,7 @@ export class DateTime {
    * @return {DateTime} the max DateTime, or undefined if called with no argument
    */
   static max(...dateTimes) {
-    return Util.bestBy(dateTimes, i => i.valueOf(), Math.max);
+    return bestBy(dateTimes, i => i.valueOf(), Math.max);
   }
 
   // MISC
@@ -1631,8 +1643,8 @@ export class DateTime {
    * @return {Object}
    */
   static fromFormatExplain(text, fmt, options = {}) {
-    const parser = new TokenParser(Locale.fromOpts(options));
-    return parser.explainParse(text, fmt);
+    const locale = Locale.fromOpts(options);
+    return explainFromTokens(locale, text, fmt);
   }
 
   /**
@@ -1802,5 +1814,17 @@ export class DateTime {
    */
   static get DATETIME_HUGE_WITH_SECONDS() {
     return Formats.DATETIME_HUGE_WITH_SECONDS;
+  }
+}
+
+export function friendlyDateTime(dateTimeish) {
+  if (dateTimeish instanceof DateTime) {
+    return dateTimeish;
+  } else if (dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
+    return DateTime.fromJSDate(dateTimeish);
+  } else if (dateTimeish instanceof Object) {
+    return DateTime.fromObject(dateTimeish);
+  } else {
+    throw new InvalidArgumentError('Unknown datetime argument');
   }
 }

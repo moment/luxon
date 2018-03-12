@@ -1,13 +1,14 @@
-import { DateTime } from './datetime';
-import { Settings } from './settings';
-import { Locale } from './impl/locale';
-import { Util } from './impl/util';
-import { IANAZone } from './zones/IANAZone.js';
+import DateTime from './datetime';
+import Settings from './settings';
+import Locale from './impl/locale';
+import IANAZone from './zones/IANAZone';
+
+import { hasFormatToParts, hasIntl } from './impl/util';
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
  */
-export class Info {
+export default class Info {
   /**
    * Return whether the specified zone contains a DST.
    * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.
@@ -145,9 +146,9 @@ export class Info {
       intlTokens = false,
       zones = false;
 
-    if (Util.hasIntl()) {
+    if (hasIntl()) {
       intl = true;
-      intlTokens = Util.hasFormatToParts();
+      intlTokens = hasFormatToParts();
 
       try {
         zones =
