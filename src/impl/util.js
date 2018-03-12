@@ -82,11 +82,11 @@ export class Util {
   }
 
   static parseMillis(fraction) {
-    if (fraction) {
+    if (Util.isUndefined(fraction)) {
+      return NaN;
+    } else {
       const f = parseFloat('0.' + fraction) * 1000;
       return Math.floor(f);
-    } else {
-      return 0;
     }
   }
 
