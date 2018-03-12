@@ -28,8 +28,8 @@
     ]
   },
   "devDependencies": {
-    "babel-jest": "latest",
     "babel-cli": "latest",
+    "babel-jest": "latest",
     "babel-plugin-external-helpers": "latest",
     "babel-preset-env": "latest",
     "benchmark": "latest",
@@ -49,11 +49,11 @@
     "jest-cli": "latest",
     "lint-staged": "^4.3.0",
     "prettier": "1.7.4",
+    "rollup": "^0.56.5",
     "rollup-plugin-babel": "latest",
-    "rollup-plugin-commonjs": "latest",
     "rollup-plugin-babel-minify": "latest",
-    "rollup-plugin-node-resolve": "latest",
-    "rollup": "latest"
+    "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-node-resolve": "latest"
   },
   "main": "build/node/luxon.js",
   "module": "src/luxon.js",
