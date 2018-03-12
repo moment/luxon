@@ -1,11 +1,5 @@
 window.esdocSearchIndex = [
   [
-    "luxon/src/errors.js~conflictingspecificationerror",
-    "class/src/errors.js~ConflictingSpecificationError.html",
-    "<span>ConflictingSpecificationError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
     "luxon/src/datetime.js~datetime",
     "class/src/datetime.js~DateTime.html",
     "<span>DateTime</span> <span class=\"search-result-import-path\">luxon/src/datetime.js</span>",
@@ -30,42 +24,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "luxon/src/errors.js~invalidargumenterror",
-    "class/src/errors.js~InvalidArgumentError.html",
-    "<span>InvalidArgumentError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
-    "luxon/src/errors.js~invaliddatetimeerror",
-    "class/src/errors.js~InvalidDateTimeError.html",
-    "<span>InvalidDateTimeError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
-    "luxon/src/errors.js~invaliddurationerror",
-    "class/src/errors.js~InvalidDurationError.html",
-    "<span>InvalidDurationError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
-    "luxon/src/errors.js~invalidintervalerror",
-    "class/src/errors.js~InvalidIntervalError.html",
-    "<span>InvalidIntervalError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
-    "luxon/src/errors.js~invaliduniterror",
-    "class/src/errors.js~InvalidUnitError.html",
-    "<span>InvalidUnitError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
-    "luxon/src/errors.js~luxonerror",
-    "class/src/errors.js~LuxonError.html",
-    "<span>LuxonError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
     "luxon/src/settings.js~settings",
     "class/src/settings.js~Settings.html",
     "<span>Settings</span> <span class=\"search-result-import-path\">luxon/src/settings.js</span>",
@@ -76,24 +34,6 @@ window.esdocSearchIndex = [
     "class/src/zone.js~Zone.html",
     "<span>Zone</span> <span class=\"search-result-import-path\">luxon/src/zone.js</span>",
     "class"
-  ],
-  [
-    "luxon/src/errors.js~zoneisabstracterror",
-    "class/src/errors.js~ZoneIsAbstractError.html",
-    "<span>ZoneIsAbstractError</span> <span class=\"search-result-import-path\">luxon/src/errors.js</span>",
-    "class"
-  ],
-  [
-    "luxon/src/datetime.js~friendlydatetime",
-    "function/index.html#static-function-friendlyDateTime",
-    "<span>friendlyDateTime</span> <span class=\"search-result-import-path\">luxon/src/datetime.js</span>",
-    "function"
-  ],
-  [
-    "luxon/src/duration.js~friendlyduration",
-    "function/index.html#static-function-friendlyDuration",
-    "<span>friendlyDuration</span> <span class=\"search-result-import-path\">luxon/src/duration.js</span>",
-    "function"
   ],
   [
     "src/.external-ecmascript.js~array",
@@ -384,18 +324,6 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/datetime.js~datetime#c",
-    "class/src/datetime.js~DateTime.html#instance-member-c",
-    "src/datetime.js~DateTime#c",
-    "member"
-  ],
-  [
-    "src/datetime.js~datetime#constructor",
-    "class/src/datetime.js~DateTime.html#instance-constructor-constructor",
-    "src/datetime.js~DateTime#constructor",
-    "method"
-  ],
-  [
     "src/datetime.js~datetime#day",
     "class/src/datetime.js~DateTime.html#instance-get-day",
     "src/datetime.js~DateTime#day",
@@ -462,12 +390,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/datetime.js~datetime#invalid",
-    "class/src/datetime.js~DateTime.html#instance-member-invalid",
-    "src/datetime.js~DateTime#invalid",
-    "member"
-  ],
-  [
     "src/datetime.js~datetime#invalidreason",
     "class/src/datetime.js~DateTime.html#instance-get-invalidReason",
     "src/datetime.js~DateTime#invalidReason",
@@ -495,12 +417,6 @@ window.esdocSearchIndex = [
     "src/datetime.js~datetime#isvalid",
     "class/src/datetime.js~DateTime.html#instance-get-isValid",
     "src/datetime.js~DateTime#isValid",
-    "member"
-  ],
-  [
-    "src/datetime.js~datetime#loc",
-    "class/src/datetime.js~DateTime.html#instance-member-loc",
-    "src/datetime.js~DateTime#loc",
     "member"
   ],
   [
@@ -549,12 +465,6 @@ window.esdocSearchIndex = [
     "src/datetime.js~datetime#numberingsystem",
     "class/src/datetime.js~DateTime.html#instance-get-numberingSystem",
     "src/datetime.js~DateTime#numberingSystem",
-    "member"
-  ],
-  [
-    "src/datetime.js~datetime#o",
-    "class/src/datetime.js~DateTime.html#instance-member-o",
-    "src/datetime.js~DateTime#o",
     "member"
   ],
   [
@@ -750,12 +660,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/datetime.js~datetime#ts",
-    "class/src/datetime.js~DateTime.html#instance-member-ts",
-    "src/datetime.js~DateTime#ts",
-    "member"
-  ],
-  [
     "src/datetime.js~datetime#until",
     "class/src/datetime.js~DateTime.html#instance-method-until",
     "src/datetime.js~DateTime#until",
@@ -766,12 +670,6 @@ window.esdocSearchIndex = [
     "class/src/datetime.js~DateTime.html#instance-method-valueOf",
     "src/datetime.js~DateTime#valueOf",
     "method"
-  ],
-  [
-    "src/datetime.js~datetime#weekdata",
-    "class/src/datetime.js~DateTime.html#instance-member-weekData",
-    "src/datetime.js~DateTime#weekData",
-    "member"
   ],
   [
     "src/datetime.js~datetime#weeknumber",
@@ -807,12 +705,6 @@ window.esdocSearchIndex = [
     "src/datetime.js~datetime#year",
     "class/src/datetime.js~DateTime.html#instance-get-year",
     "src/datetime.js~DateTime#year",
-    "member"
-  ],
-  [
-    "src/datetime.js~datetime#zone",
-    "class/src/datetime.js~DateTime.html#instance-member-zone",
-    "src/datetime.js~DateTime#zone",
     "member"
   ],
   [
@@ -1050,18 +942,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/duration.js~duration#constructor",
-    "class/src/duration.js~Duration.html#instance-constructor-constructor",
-    "src/duration.js~Duration#constructor",
-    "method"
-  ],
-  [
-    "src/duration.js~duration#conversionaccuracy",
-    "class/src/duration.js~Duration.html#instance-member-conversionAccuracy",
-    "src/duration.js~Duration#conversionAccuracy",
-    "member"
-  ],
-  [
     "src/duration.js~duration#days",
     "class/src/duration.js~Duration.html#instance-get-days",
     "src/duration.js~Duration#days",
@@ -1092,12 +972,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/duration.js~duration#invalid",
-    "class/src/duration.js~Duration.html#instance-member-invalid",
-    "src/duration.js~Duration#invalid",
-    "member"
-  ],
-  [
     "src/duration.js~duration#invalidreason",
     "class/src/duration.js~Duration.html#instance-get-invalidReason",
     "src/duration.js~Duration#invalidReason",
@@ -1110,21 +984,9 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/duration.js~duration#loc",
-    "class/src/duration.js~Duration.html#instance-member-loc",
-    "src/duration.js~Duration#loc",
-    "member"
-  ],
-  [
     "src/duration.js~duration#locale",
     "class/src/duration.js~Duration.html#instance-get-locale",
     "src/duration.js~Duration#locale",
-    "member"
-  ],
-  [
-    "src/duration.js~duration#matrix",
-    "class/src/duration.js~Duration.html#instance-member-matrix",
-    "src/duration.js~Duration#matrix",
     "member"
   ],
   [
@@ -1236,12 +1098,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/duration.js~duration#values",
-    "class/src/duration.js~Duration.html#instance-member-values",
-    "src/duration.js~Duration#values",
-    "member"
-  ],
-  [
     "src/duration.js~duration#weeks",
     "class/src/duration.js~Duration.html#instance-get-weeks",
     "src/duration.js~Duration#weeks",
@@ -1278,46 +1134,10 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/duration.js~duration.normalizeunit",
-    "class/src/duration.js~Duration.html#static-method-normalizeUnit",
-    "src/duration.js~Duration.normalizeUnit",
-    "method"
-  ],
-  [
     "src/errors.js",
     "file/src/errors.js.html",
     "src/errors.js",
     "file"
-  ],
-  [
-    "src/errors.js~invaliddatetimeerror#constructor",
-    "class/src/errors.js~InvalidDateTimeError.html#instance-constructor-constructor",
-    "src/errors.js~InvalidDateTimeError#constructor",
-    "method"
-  ],
-  [
-    "src/errors.js~invaliddurationerror#constructor",
-    "class/src/errors.js~InvalidDurationError.html#instance-constructor-constructor",
-    "src/errors.js~InvalidDurationError#constructor",
-    "method"
-  ],
-  [
-    "src/errors.js~invalidintervalerror#constructor",
-    "class/src/errors.js~InvalidIntervalError.html#instance-constructor-constructor",
-    "src/errors.js~InvalidIntervalError#constructor",
-    "method"
-  ],
-  [
-    "src/errors.js~invaliduniterror#constructor",
-    "class/src/errors.js~InvalidUnitError.html#instance-constructor-constructor",
-    "src/errors.js~InvalidUnitError#constructor",
-    "method"
-  ],
-  [
-    "src/errors.js~zoneisabstracterror#constructor",
-    "class/src/errors.js~ZoneIsAbstractError.html#instance-constructor-constructor",
-    "src/errors.js~ZoneIsAbstractError#constructor",
-    "method"
   ],
   [
     "src/info.js",
@@ -1398,12 +1218,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/interval.js~interval#constructor",
-    "class/src/interval.js~Interval.html#instance-constructor-constructor",
-    "src/interval.js~Interval#constructor",
-    "method"
-  ],
-  [
     "src/interval.js~interval#contains",
     "class/src/interval.js~Interval.html#instance-method-contains",
     "src/interval.js~Interval#contains",
@@ -1426,12 +1240,6 @@ window.esdocSearchIndex = [
     "class/src/interval.js~Interval.html#instance-method-divideEqually",
     "src/interval.js~Interval#divideEqually",
     "method"
-  ],
-  [
-    "src/interval.js~interval#e",
-    "class/src/interval.js~Interval.html#instance-member-e",
-    "src/interval.js~Interval#e",
-    "member"
   ],
   [
     "src/interval.js~interval#end",
@@ -1468,12 +1276,6 @@ window.esdocSearchIndex = [
     "class/src/interval.js~Interval.html#instance-method-intersection",
     "src/interval.js~Interval#intersection",
     "method"
-  ],
-  [
-    "src/interval.js~interval#invalid",
-    "class/src/interval.js~Interval.html#instance-member-invalid",
-    "src/interval.js~Interval#invalid",
-    "member"
   ],
   [
     "src/interval.js~interval#invalidreason",
@@ -1516,12 +1318,6 @@ window.esdocSearchIndex = [
     "class/src/interval.js~Interval.html#instance-method-overlaps",
     "src/interval.js~Interval#overlaps",
     "method"
-  ],
-  [
-    "src/interval.js~interval#s",
-    "class/src/interval.js~Interval.html#instance-member-s",
-    "src/interval.js~Interval#s",
-    "member"
   ],
   [
     "src/interval.js~interval#set",
@@ -1627,25 +1423,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-get-defaultLocale",
-    "src/settings.js~Settings.defaultLocale",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultlocale",
     "class/src/settings.js~Settings.html#static-set-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
-    "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
-    "src/settings.js~Settings.defaultNumberingSystem",
+    "src/settings.js~settings.defaultlocale",
+    "class/src/settings.js~Settings.html#static-get-defaultLocale",
+    "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
     "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
@@ -1681,13 +1477,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-get-now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
+    "class/src/settings.js~Settings.html#static-get-now",
     "src/settings.js~Settings.now",
     "member"
   ],
@@ -1699,13 +1495,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
