@@ -14,7 +14,7 @@ Here are some vague notes on Luxon's design philosophy:
  
 ## Building and testing
 
-Building and testing is done through npm scripts. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you're good to go; just run npm scripts like `npm run test`.
+Building and testing is done through npm scripts. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you're good to go; just run npm scripts like `npm run test`. But you probably don't have that, so read on.
 
 ### OSX
 
@@ -67,11 +67,11 @@ Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on yo
 
 ## npm script reference
 
-| Command          | Function                          |
-|------------------|-----------------------------------|
-| `npm run build`  | Build all the distributable files |
-| `npm run test`   | Run the test suite                |
-| `npm run format` | Run the Prettier formatter        |
-| `npm run lint!`  | Run the formatter and the linter  |
-| `npm run docs`   | Build the doc pages               |
-| `npm run site`   | Build the Luxon website           |
+| Command          | Function                                |
+|------------------+-----------------------------------------|
+| `npm run build`  | Build all the distributable files       |
+| `npm run test`   | Run the test suite, but see notes above |
+| `npm run format` | Run the Prettier formatter              |
+| `npm run lint!`  | Run the formatter and the linter        |
+| `npm run docs`   | Build the doc pages                     |
+| `npm run site`   | Build the Luxon website                 |
