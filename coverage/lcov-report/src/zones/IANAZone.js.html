@@ -169,7 +169,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">44x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">370x</span>
+<span class="cline-any cline-yes">371x</span>
 <span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -181,7 +181,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">370x</span>
+<span class="cline-any cline-yes">371x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">44x</span>
@@ -194,24 +194,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">363x</span>
-<span class="cline-any cline-yes">363x</span>
-<span class="cline-any cline-yes">363x</span>
-<span class="cline-any cline-yes">3993x</span>
-<span class="cline-any cline-yes">3993x</span>
+<span class="cline-any cline-yes">365x</span>
+<span class="cline-any cline-yes">365x</span>
+<span class="cline-any cline-yes">365x</span>
+<span class="cline-any cline-yes">4015x</span>
+<span class="cline-any cline-yes">4015x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3993x</span>
-<span class="cline-any cline-yes">2178x</span>
+<span class="cline-any cline-yes">4015x</span>
+<span class="cline-any cline-yes">2190x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">363x</span>
+<span class="cline-any cline-yes">365x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -266,15 +266,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">370x</span>
-<span class="cline-any cline-yes">370x</span>
-<span class="cline-any cline-yes">370x</span>
+<span class="cline-any cline-yes">371x</span>
+<span class="cline-any cline-yes">371x</span>
+<span class="cline-any cline-yes">371x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">370x</span>
-<span class="cline-any cline-yes">370x</span>
-<span class="cline-any cline-yes">370x</span>
-<span class="cline-any cline-yes">370x</span>
+<span class="cline-any cline-yes">371x</span>
+<span class="cline-any cline-yes">371x</span>
+<span class="cline-any cline-yes">371x</span>
+<span class="cline-any cline-yes">371x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -285,8 +285,8 @@
 <span class="cline-any cline-yes">170x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Util } from '../impl/util';
-import { Zone } from '../zone';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { parseZoneInfo, isUndefined } from '../impl/util';
+import Zone from '../zone';
 &nbsp;
 const dtfCache = {};
 function makeDTF(zone) {
@@ -328,7 +328,7 @@ function partsOffset(dtf, date) {
     const { type, value } = formatted[i],
       pos = typeToPos[type];
 &nbsp;
-    if (!Util.isUndefined(pos)) {
+    if (!isUndefined(pos)) {
       filled[pos] = parseInt(value, 10);
     }
   }
@@ -339,7 +339,7 @@ function partsOffset(dtf, date) {
  * @private
  */
 &nbsp;
-export class IANAZone extends Zone {
+export default class IANAZone extends Zone {
   static isValidSpecifier(s) {
     return s &amp;&amp; s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
   }
@@ -383,7 +383,7 @@ export class IANAZone extends Zone {
   }
 &nbsp;
   offsetName(ts, { format, locale }) {
-    return Util.parseZoneInfo(ts, format, locale, this.zoneName);
+    return parseZoneInfo(ts, format, locale, this.zoneName);
   }
 &nbsp;
   offset(ts) {
@@ -412,7 +412,7 @@ export class IANAZone extends Zone {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Mar 10 2018 23:05:00 GMT-0500 (EST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Mar 11 2018 22:48:11 GMT-0400 (EDT)
 </div>
 </div>
 <script src="../../prettify.js"></script>

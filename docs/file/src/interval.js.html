@@ -43,15 +43,16 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-friendlyDateTime">friendlyDateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-friendlyDuration">friendlyDuration</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/interval.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Util } from &apos;./impl/util&apos;;
-import { DateTime } from &apos;./datetime&apos;;
-import { Duration } from &apos;./duration&apos;;
-import { Settings } from &apos;./settings&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime, { friendlyDateTime } from &apos;./datetime&apos;;
+import Duration, { friendlyDuration } from &apos;./duration&apos;;
+import Settings from &apos;./settings&apos;;
 import { InvalidArgumentError, InvalidIntervalError } from &apos;./errors&apos;;
 
 const INVALID = &apos;Invalid Interval&apos;;
@@ -73,7 +74,7 @@ function validateStartEnd(start, end) {
  * * **Comparison** To compare this Interval to another one, use {@link equals}, {@link overlaps}, {@link abutsStart}, {@link abutsEnd}, {@link engulfs}
  * * **Output*** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toFormat}, and {@link toDuration}.
  */
-export class Interval {
+export default class Interval {
   /**
    * @private
    */
@@ -114,8 +115,8 @@ export class Interval {
    * @return {Interval}
    */
   static fromDateTimes(start, end) {
-    const builtStart = Util.friendlyDateTime(start),
-      builtEnd = Util.friendlyDateTime(end);
+    const builtStart = friendlyDateTime(start),
+      builtEnd = friendlyDateTime(end);
 
     return new Interval({
       start: builtStart,
@@ -131,8 +132,8 @@ export class Interval {
    * @return {Interval}
    */
   static after(start, duration) {
-    const dur = Util.friendlyDuration(duration),
-      dt = Util.friendlyDateTime(start);
+    const dur = friendlyDuration(duration),
+      dt = friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
   }
 
@@ -143,8 +144,8 @@ export class Interval {
    * @return {Interval}
    */
   static before(end, duration) {
-    const dur = Util.friendlyDuration(duration),
-      dt = Util.friendlyDateTime(end);
+    const dur = friendlyDuration(duration),
+      dt = friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
   }
 
@@ -285,7 +286,7 @@ export class Interval {
    */
   splitAt(...dateTimes) {
     if (!this.isValid) return [];
-    const sorted = dateTimes.map(Util.friendlyDateTime).sort(),
+    const sorted = dateTimes.map(friendlyDateTime).sort(),
       results = [];
     let { s } = this,
       i = 0;
@@ -309,7 +310,7 @@ export class Interval {
    */
   splitBy(duration) {
     if (!this.isValid) return [];
-    const dur = Util.friendlyDuration(duration),
+    const dur = friendlyDuration(duration),
       results = [];
     let { s } = this,
       added,

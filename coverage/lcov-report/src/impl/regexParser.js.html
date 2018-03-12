@@ -318,7 +318,18 @@
 273
 274
 275
-276</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -352,14 +363,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">181x</span>
+<span class="cline-any cline-yes">186x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">180x</span>
-<span class="cline-any cline-yes">256x</span>
-<span class="cline-any cline-yes">256x</span>
-<span class="cline-any cline-yes">159x</span>
+<span class="cline-any cline-yes">185x</span>
+<span class="cline-any cline-yes">261x</span>
+<span class="cline-any cline-yes">261x</span>
+<span class="cline-any cline-yes">164x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">21x</span>
@@ -431,9 +442,22 @@
 <span class="cline-any cline-yes">44x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -543,7 +567,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">137x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -576,7 +599,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -592,11 +615,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Util } from './util';
-import { English } from './english';
-import { FixedOffsetZone } from '../zones/fixedOffsetZone';
-import { IANAZone } from '../zones/IANAZone';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { untruncateYear, signedOffset, parseMillis } from './util';
+import * as English from './english';
+import FixedOffsetZone from '../zones/fixedOffsetZone';
+import IANAZone from '../zones/IANAZone';
 &nbsp;
 /*
  * This file handles parsing for well-specified formats. Here's how it works:
@@ -683,7 +705,7 @@ function extractISOTime(match, cursor) {
     hour: parseInt(match[cursor]) || 0,
     minute: parseInt(match[cursor + 1]) || 0,
     second: parseInt(match[cursor + 2]) || 0,
-    millisecond: Util.parseMillis(match[cursor + 3])
+    millisecond: parseMillis(match[cursor + 3])
   };
 &nbsp;
   return [item, null, cursor + 4];
@@ -691,7 +713,7 @@ function extractISOTime(match, cursor) {
 &nbsp;
 function extractISOOffset(match, cursor) {
   const local = !match[cursor] &amp;&amp; !match[cursor + 1],
-    fullOffset = Util.signedOffset(match[cursor + 1], match[cursor + 2]),
+    fullOffset = signedOffset(match[cursor + 1], match[cursor + 2]),
     zone = local ? null : FixedOffsetZone.instance(fullOffset);
   return [{}, zone, cursor + 3];
 }
@@ -703,20 +725,33 @@ function extractIANAZone(match, cursor) {
 &nbsp;
 // ISO duration parsing
 &nbsp;
-const isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\d{1,9})H)?(?:(\d{1,9})M)?(?:(\d{1,9})S)?)?|(\d{1,9})W)$/;
+const isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\d{1,9})H)?(?:(\d{1,9})M)?(?:(\d{1,9})(?:[.,](\d{1,9}))?S)?)?|(\d{1,9})W)$/;
 &nbsp;
 function extractISODuration(match) {
-  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, weekStr] = match;
+  const [
+    ,
+    yearStr,
+    monthStr,
+    dayStr,
+    hourStr,
+    minuteStr,
+    secondStr,
+    millisecondsStr,
+    weekStr
+  ] = match;
 &nbsp;
-  return [ {
-    years: parseInt(yearStr),
-    months: parseInt(monthStr),
-    weeks: parseInt(weekStr),
-    days: parseInt(dayStr),
-    hours: parseInt(hourStr),
-    minutes: parseInt(minuteStr),
-    seconds: parseInt(secondStr)
-  } ];
+  return [
+    {
+      years: parseInt(yearStr),
+      months: parseInt(monthStr),
+      weeks: parseInt(weekStr),
+      days: parseInt(dayStr),
+      hours: parseInt(hourStr),
+      minutes: parseInt(minuteStr),
+      seconds: parseInt(secondStr),
+      milliseconds: parseMillis(millisecondsStr)
+    }
+  ];
 }
 &nbsp;
 // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
@@ -736,7 +771,7 @@ const obsOffsets = {
 &nbsp;
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
-    year: yearStr.length === 2 ? Util.untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
+    year: yearStr.length === 2 ? untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
     month:
       monthStr.length === 2 ? <span class="branch-0 cbranch-no" title="branch not covered" >parseInt(monthStr, 10) </span>: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInt(dayStr),
@@ -781,7 +816,7 @@ function extractRFC2822(match) {
   } else if (milOffset) {
     offset = 0;
   } else {
-    offset = Util.signedOffset(offHourStr, offMinuteStr);
+    offset = signedOffset(offHourStr, offMinuteStr);
   }
 &nbsp;
   return [result, new FixedOffsetZone(offset)];
@@ -817,56 +852,54 @@ function extractASCII(match) {
  * @private
  */
 &nbsp;
-export class RegexParser {
-  static parseISODate(s) {
-    return parse(
-      s,
-      [
-        combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOYmd, extractISOTime, extractISOOffset)
-      ],
-      [
-        combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset)
-      ],
-      [
-        combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOOrdinalData, extractISOTime)
-      ],
-      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime, extractISOOffset)]
-    );
-  }
+export function parseISODate(s) {
+  return parse(
+    s,
+    [
+      combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOYmd, extractISOTime, extractISOOffset)
+    ],
+    [
+      combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset)
+    ],
+    [
+      combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOOrdinalData, extractISOTime)
+    ],
+    [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime, extractISOOffset)]
+  );
+}
 &nbsp;
-  static parseRFC2822Date(s) {
-    return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
-  }
+export function parseRFC2822Date(s) {
+  return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
+}
 &nbsp;
-  static parseHTTPDate(s) {
-    return parse(
-      s,
-      [rfc1123, extractRFC1123Or850],
-      [rfc850, extractRFC1123Or850],
-      [ascii, extractASCII]
-    );
-  }
+export function parseHTTPDate(s) {
+  return parse(
+    s,
+    [rfc1123, extractRFC1123Or850],
+    [rfc850, extractRFC1123Or850],
+    [ascii, extractASCII]
+  );
+}
 &nbsp;
-  static parseISODuration(s) {
-    return parse(s, [isoDuration, extractISODuration]);
-  }
+export function parseISODuration(s) {
+  return parse(s, [isoDuration, extractISODuration]);
+}
 &nbsp;
-  static parseSQL(s) {
-    return parse(
-      s,
-      [
-        combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
-        combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)
-      ],
-      [
-        combineRegexes(sqlTimeRegex),
-        combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)
-      ]
-    );
-  }
+export function parseSQL(s) {
+  return parse(
+    s,
+    [
+      combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
+      combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)
+    ],
+    [
+      combineRegexes(sqlTimeRegex),
+      combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)
+    ]
+  );
 }
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -874,7 +907,7 @@ export class RegexParser {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Mar 10 2018 23:05:00 GMT-0500 (EST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Mar 11 2018 22:48:11 GMT-0400 (EDT)
 </div>
 </div>
 <script src="../../prettify.js"></script>

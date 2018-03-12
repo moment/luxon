@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">99.3% </span>
+        <span class="strong">99.29% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>141/142</span>
+        <span class='fraction'>140/141</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">98.08% </span>
@@ -30,14 +30,14 @@
         <span class='fraction'>102/104</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">96.43% </span>
+        <span class="strong">96.3% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>27/28</span>
+        <span class='fraction'>26/27</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>132/132</span>
+        <span class='fraction'>131/131</span>
       </div>
     </div>
   </div>
@@ -334,13 +334,7 @@
 289
 290
 291
-292
-293
-294
-295
-296
-297
-298</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+292</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -611,11 +605,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">131x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">131x</span>
 <span class="cline-any cline-yes">639x</span>
 <span class="cline-any cline-yes">629x</span>
@@ -636,11 +625,10 @@
 <span class="cline-any cline-yes">127x</span>
 <span class="cline-any cline-yes">127x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Util } from './util';
-import { Formatter } from './formatter';
-import { FixedOffsetZone } from '../zones/fixedOffsetZone';
-import { IANAZone } from '../zones/IANAZone';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { parseMillis, isUndefined, untruncateYear, signedOffset } from './util';
+import Formatter from './formatter';
+import FixedOffsetZone from '../zones/fixedOffsetZone';
+import IANAZone from '../zones/IANAZone';
 &nbsp;
 const MISSING_FTP = 'missing Intl.DateTimeFormat.formatToParts support';
 &nbsp;
@@ -670,7 +658,7 @@ function oneOf(strings, startIndex) {
 }
 &nbsp;
 function offset(regex, groups) {
-  return { regex, deser: ([, h, m]) =&gt; Util.signedOffset(h, m), groups };
+  return { regex, deser: ([, h, m]) =&gt; signedOffset(h, m), groups };
 }
 &nbsp;
 function simple(regex) {
@@ -700,7 +688,7 @@ function unitForToken(token, loc) {
         case 'y':
           return intUnit(/\d{1,6}/);
         case 'yy':
-          return intUnit(twoToFour, Util.untruncateYear);
+          return intUnit(twoToFour, untruncateYear);
         case 'yyyy':
           return intUnit(four);
         case 'yyyyy':
@@ -764,7 +752,7 @@ function unitForToken(token, loc) {
         case 'kkkk':
           return intUnit(four);
         case 'kk':
-          return intUnit(twoToFour, Util.untruncateYear);
+          return intUnit(twoToFour, untruncateYear);
         // weekNumber (W)
         case 'W':
           return intUnit(oneOrTwo);
@@ -867,15 +855,15 @@ function dateTimeFromMatches(matches) {
   };
 &nbsp;
   let zone;
-  if (!Util.isUndefined(matches.Z)) {
+  if (!isUndefined(matches.Z)) {
     zone = new FixedOffsetZone(matches.Z);
-  } else if (!Util.isUndefined(matches.z)) {
+  } else if (!isUndefined(matches.z)) {
     zone = new IANAZone(matches.z);
   } else {
     zone = null;
   }
 &nbsp;
-  if (!Util.isUndefined(matches.h)) {
+  if (!isUndefined(matches.h)) {
     if (matches.h &lt; 12 &amp;&amp; matches.a === 1) {
       matches.h += 12;
     } else if (matches.h === 12 &amp;&amp; matches.a === 0) {
@@ -887,8 +875,8 @@ function dateTimeFromMatches(matches) {
     matches.y = -matches.y;
   }
 &nbsp;
-  if (!Util.isUndefined(matches.u)) {
-    matches.S = Util.parseMillis(matches.u);
+  if (!isUndefined(matches.u)) {
+    matches.S = parseMillis(matches.u);
   }
 &nbsp;
   const vals = Object.keys(matches).reduce((r, k) =&gt; {
@@ -907,32 +895,26 @@ function dateTimeFromMatches(matches) {
  * @private
  */
 &nbsp;
-export class TokenParser {
-  constructor(loc) {
-    this.loc = loc;
+export function explainFromTokens(locale, input, format) {
+  const tokens = Formatter.parseFormat(format),
+    units = tokens.map(t =&gt; unitForToken(t, locale)),
+    disqualifyingUnit = units.find(t =&gt; t.invalidReason);
+&nbsp;
+  if (disqualifyingUnit) {
+    return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
+  } else {
+    const [regexString, handlers] = buildRegex(units),
+      regex = RegExp(regexString, 'i'),
+      [rawMatches, matches] = match(input, regex, handlers),
+      [result, zone] = matches ? dateTimeFromMatches(matches) : <span class="branch-1 cbranch-no" title="branch not covered" >[null, null];</span>
+&nbsp;
+    return { input, tokens, regex, rawMatches, matches, result, zone };
   }
+}
 &nbsp;
-  explainParse(input, format) {
-    const tokens = Formatter.parseFormat(format),
-      units = tokens.map(t =&gt; unitForToken(t, this.loc)),
-      disqualifyingUnit = units.find(t =&gt; t.invalidReason);
-&nbsp;
-    if (disqualifyingUnit) {
-      return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
-    } else {
-      const [regexString, handlers] = buildRegex(units),
-        regex = RegExp(regexString, 'i'),
-        [rawMatches, matches] = match(input, regex, handlers),
-        [result, zone] = matches ? dateTimeFromMatches(matches) : <span class="branch-1 cbranch-no" title="branch not covered" >[null, null];</span>
-&nbsp;
-      return { input, tokens, regex, rawMatches, matches, result, zone };
-    }
-  }
-&nbsp;
-  parseDateTime(input, format) {
-    const { result, zone, invalidReason } = this.explainParse(input, format);
-    return [result, zone, invalidReason];
-  }
+export function parseFromTokens(locale, input, format) {
+  const { result, zone, invalidReason } = explainFromTokens(locale, input, format);
+  return [result, zone, invalidReason];
 }
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -940,7 +922,7 @@ export class TokenParser {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Mar 10 2018 23:05:00 GMT-0500 (EST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Mar 11 2018 22:48:11 GMT-0400 (EDT)
 </div>
 </div>
 <script src="../../prettify.js"></script>

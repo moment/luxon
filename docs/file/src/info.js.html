@@ -43,21 +43,24 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-friendlyDateTime">friendlyDateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-friendlyDuration">friendlyDuration</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/info.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { DateTime } from &apos;./datetime&apos;;
-import { Settings } from &apos;./settings&apos;;
-import { Locale } from &apos;./impl/locale&apos;;
-import { Util } from &apos;./impl/util&apos;;
-import { IANAZone } from &apos;./zones/IANAZone.js&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime from &apos;./datetime&apos;;
+import Settings from &apos;./settings&apos;;
+import Locale from &apos;./impl/locale&apos;;
+import IANAZone from &apos;./zones/IANAZone&apos;;
+
+import { hasFormatToParts, hasIntl } from &apos;./impl/util&apos;;
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
  */
-export class Info {
+export default class Info {
   /**
    * Return whether the specified zone contains a DST.
    * @param {string|Zone} [zone=&apos;local&apos;] - Zone to check. Defaults to the environment&apos;s local zone.
@@ -195,9 +198,9 @@ export class Info {
       intlTokens = false,
       zones = false;
 
-    if (Util.hasIntl()) {
+    if (hasIntl()) {
       intl = true;
-      intlTokens = Util.hasFormatToParts();
+      intlTokens = hasFormatToParts();
 
       try {
         zones =

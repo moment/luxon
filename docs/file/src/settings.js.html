@@ -43,14 +43,17 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-friendlyDateTime">friendlyDateTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-friendlyDuration">friendlyDuration</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/settings.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { LocalZone } from &apos;./zones/localZone&apos;;
-import { Util } from &apos;./impl/util&apos;;
-import { Locale } from &apos;./impl/locale&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import LocalZone from &apos;./zones/localZone&apos;;
+import Locale from &apos;./impl/locale&apos;;
+
+import { normalizeZone } from &apos;./impl/zoneUtil&apos;;
 
 let now = () =&gt; new Date().valueOf(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
@@ -62,7 +65,7 @@ let now = () =&gt; new Date().valueOf(),
 /**
  * Settings contains static getters and setters that control Luxon&apos;s overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
  */
-export class Settings {
+export default class Settings {
   /**
    * Get the callback for returning the current timestamp.
    * @type {function}
@@ -95,7 +98,7 @@ export class Settings {
     if (!z) {
       defaultZone = null;
     } else {
-      defaultZone = Util.normalizeZone(z);
+      defaultZone = normalizeZone(z);
     }
   }
 
