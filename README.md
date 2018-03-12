@@ -7,6 +7,7 @@ Luxon is a library for working with dates and times in Javascript.
 ```js
 DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
 ```
+
 ## Features
  * DateTime, Duration, and Interval types.
  * Immutable, chainable, unambiguous API.
@@ -44,7 +45,7 @@ See [contributing](contributing.md).
 [doc-url]: https://moment.github.io/luxon/docs/
 [doc-coverage-image]: https://moment.github.io/luxon/docs/badge.svg
 
-[test-coverage-url]: https://coveralls.io/github/moment/luxon?branch=master
-[test-coverage-image]: https://coveralls.io/repos/github/moment/luxon/badge.svg?branch=master
+[test-coverage-url]: https://codecov.io/gh/moment/luxon
+[test-coverage-image]: https://codecov.io/gh/moment/luxon/branch/master/graph/badge.svg
 
 [phasers-image]: https://img.shields.io/badge/phasers-stun-brightgreen.svg

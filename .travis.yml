@@ -4,13 +4,12 @@ services:
  - docker
 before_install:
   - docker pull icambron/luxon
-  - ./docker/npm-ci install
+  - ./docker/npm install
 script:
-  - ./docker/npm-ci run build
-  - ./docker/npm-ci run lint
-  - ./docker/npm-ci run test
-  - ./docker/npm-ci run docs
-  - ./docker/npm-ci run check-doc-coverage
-branches:
-  only:
-    - master
+  - ./docker/npm run build
+  - ./docker/npm run lint
+  - ./docker/npm run test
+  - ./docker/npm run docs
+  - ./docker/npm run check-doc-coverage
+  - bash <(curl -s https://codecov.io/bash)
+

@@ -18,7 +18,7 @@
     "lint!": "npm run format && npm run lint",
     "format": "prettier --config .prettier.js --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/datetime.js",
-    "coveralls": "cat build/coverage/lcov.info | coveralls",
+    "codecov": "codecov",
     "check-doc-coverage": "babel-node tasks/docCoverage"
   },
   "lint-staged": {
@@ -33,6 +33,7 @@
     "babel-plugin-external-helpers": "latest",
     "babel-preset-env": "latest",
     "benchmark": "latest",
+    "codecov": "^3.0.0",
     "core-js": "latest",
     "coveralls": "latest",
     "esdoc": "latest",
