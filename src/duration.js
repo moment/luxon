@@ -149,6 +149,9 @@ function normalizeValues(matrix, vals) {
   }, null);
 }
 
+/**
+ * @private
+ */
 export function friendlyDuration(duration) {
   if (isNumber(duration)) {
     return Duration.fromMillis(duration);

@@ -45,6 +45,9 @@ module.exports = {
     {
       name: 'esdoc-standard-plugin',
       option: {
+        accessor: {
+          access: ["public"]
+        },
         brand: {
           title: 'Luxon'
         },

@@ -1818,6 +1818,9 @@ export default class DateTime {
   }
 }
 
+/**
+ * @private
+ */
 export function friendlyDateTime(dateTimeish) {
   if (dateTimeish instanceof DateTime) {
     return dateTimeish;

@@ -1,3 +1,7 @@
+/**
+ * @private
+ */
+
 import Zone from '../zone';
 import LocalZone from '../zones/localZone';
 import IANAZone from '../zones/IANAZone';
