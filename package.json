@@ -67,6 +67,8 @@
     "build/node/luxon.js.map",
     "build/cjs-browser/luxon.js",
     "build/cjs-browser/luxon.js.map",
+    "build/amd/luxon.js",
+    "build/amd/luxon.js.map",
     "build/global/luxon.js",
     "build/global/luxon.js.map",
     "src"
