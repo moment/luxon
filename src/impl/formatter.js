@@ -1,6 +1,6 @@
 import * as English from './english';
 import * as Formats from './formats';
-import { padStart } from './util';
+import { padStart, roundTo } from './util';
 
 function stringifyTokens(splits, tokenToString) {
   let s = '';
@@ -43,9 +43,8 @@ const tokenToObject = {
 
 export default class Formatter {
   static create(locale, opts = {}) {
-    const fast = opts.fast;
     const formatOpts = Object.assign({}, { round: true }, opts);
-    return new Formatter(locale, formatOpts, fast);
+    return new Formatter(locale, formatOpts);
   }
 
   static parseFormat(fmt) {
@@ -82,9 +81,8 @@ export default class Formatter {
     return splits;
   }
 
-  constructor(locale, formatOpts, fast) {
+  constructor(locale, formatOpts) {
     this.opts = formatOpts;
-    this.fast = fast;
     this.loc = locale;
     this.systemLoc = null;
   }
@@ -113,21 +111,19 @@ export default class Formatter {
   }
 
   num(n, p = 0) {
-    if (this.fast) {
-      if (p > 0) {
-        return padStart(n, p);
-      } else {
-        return n;
-      }
-    } else {
-      const opts = Object.assign({}, this.opts);
 
-      if (p > 0) {
-        opts.padTo = p;
-      }
-
-      return this.loc.numberFormatter(opts).format(n);
+    // we get some perf out of doing this here, annoyingly
+    if (this.opts.forceSimple) {
+      return padStart(n, p);
     }
+
+    const opts = Object.assign({}, this.opts);
+
+    if (p > 0) {
+      opts.padTo = p;
+    }
+
+    return this.loc.numberFormatter(opts).format(n);
   }
 
   formatDateTimeFromString(dt, fmt) {

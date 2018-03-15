@@ -1,4 +1,4 @@
-import { hasFormatToParts, hasIntl, padStart } from './util';
+import { hasFormatToParts, hasIntl, padStart, roundTo } from './util';
 import * as English from './english';
 import Settings from '../settings';
 import DateTime from '../datetime';
@@ -73,21 +73,38 @@ function listStuff(loc, length, defaultOK, englishFn, intlFn) {
   }
 }
 
+function supportsFastNumbers(loc) {
+  if (loc.numberingSystem && loc.numberingSystem !== 'latn') {
+    return false;
+  } else {
+    return loc.numberingSystem === 'latn' || !loc.locale || loc.locale.startsWith('en') || (hasIntl() &&
+                                                                                               Intl.DateTimeFormat(loc.intl)
+                                                                                               .resolvedOptions()
+                                                                                               .numberingSystem === 'latn');
+  }
+}
+
 /**
  * @private
  */
 
-class PolyNumberFormatter {
+class SimpleNumberFormatter {
   constructor(opts) {
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
   }
 
   format(i) {
-    const maybeRounded = this.round ? Math.round(i) : i;
-    return padStart(maybeRounded.toString(), this.padTo);
+    // to match the browser's numberformatter defaults
+    const digits = this.round ? 0 : 3,
+          rounded = roundTo(i, digits);
+    return padStart(rounded, this.padTo);
   }
 }
+
+/**
+ * @private
+ */
 
 class PolyDateFormatter {
   constructor(dt, intl, opts) {
@@ -198,6 +215,7 @@ export default class Locale {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
+    this.fastNumbers = supportsFastNumbers(this);
   }
 
   // todo: cache me
@@ -317,21 +335,27 @@ export default class Locale {
     return matching ? matching.value : null;
   }
 
-  numberFormatter(opts = {}, intlOpts = {}) {
-    if (hasIntl()) {
-      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
-
-      if (opts.padTo > 0) {
-        realIntlOpts.minimumIntegerDigits = opts.padTo;
-      }
-
-      if (opts.round) {
-        realIntlOpts.maximumFractionDigits = 0;
-      }
-
-      return new Intl.NumberFormat(this.intl, realIntlOpts);
+  numberFormatter(opts = {}) {
+    // this option is never used (the only caller short-circuits on it, but it seems safer to leave)
+    // (in contrast, the || is used heavily)
+    if (opts.forceSimple || this.fastNumbers) {
+      return new SimpleNumberFormatter(opts);
     } else {
-      return new PolyNumberFormatter(opts);
+      if (hasIntl()) {
+        const intlOpts = { useGrouping: false };
+
+        if (opts.padTo > 0) {
+          intlOpts.minimumIntegerDigits = opts.padTo;
+        }
+
+        if (opts.round) {
+          intlOpts.maximumFractionDigits = 0;
+        }
+
+        return new Intl.NumberFormat(this.intl, intlOpts);
+      } else {
+        return new SimpleNumberFormatter(opts);
+      }
     }
   }
 

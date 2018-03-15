@@ -77,7 +77,11 @@ export function floorMod(x, n) {
 }
 
 export function padStart(input, n = 2) {
-  return ('0'.repeat(n) + input).slice(-n);
+  if (input.toString().length < n) {
+    return ('0'.repeat(n) + input).slice(-n);
+  } else {
+    return input.toString();
+  }
 }
 
 export function parseMillis(fraction) {
@@ -87,6 +91,11 @@ export function parseMillis(fraction) {
     const f = parseFloat('0.' + fraction) * 1000;
     return Math.floor(f);
   }
+}
+
+export function roundTo(number, digits) {
+  var factor = Math.pow(10, digits);
+  return Math.round(number * factor) / factor;
 }
 
 // DATE BASICS
