@@ -80,7 +80,11 @@ function floorMod(x, n) {
 }
 
 function padStart(input, n = 2) {
-  return ('0'.repeat(n) + input).slice(-n);
+  if (input.toString().length < n) {
+    return ('0'.repeat(n) + input).slice(-n);
+  } else {
+    return input.toString();
+  }
 }
 
 function parseMillis(fraction) {
@@ -90,6 +94,11 @@ function parseMillis(fraction) {
     const f = parseFloat('0.' + fraction) * 1000;
     return Math.floor(f);
   }
+}
+
+function roundTo(number, digits) {
+  var factor = Math.pow(10, digits);
+  return Math.round(number * factor) / factor;
 }
 
 // DATE BASICS
@@ -1154,9 +1163,8 @@ const tokenToObject = {
 
 class Formatter {
   static create(locale, opts = {}) {
-    const fast = opts.fast;
     const formatOpts = Object.assign({}, { round: true }, opts);
-    return new Formatter(locale, formatOpts, fast);
+    return new Formatter(locale, formatOpts);
   }
 
   static parseFormat(fmt) {
@@ -1193,9 +1201,8 @@ class Formatter {
     return splits;
   }
 
-  constructor(locale, formatOpts, fast) {
+  constructor(locale, formatOpts) {
     this.opts = formatOpts;
-    this.fast = fast;
     this.loc = locale;
     this.systemLoc = null;
   }
@@ -1224,21 +1231,19 @@ class Formatter {
   }
 
   num(n, p = 0) {
-    if (this.fast) {
-      if (p > 0) {
-        return padStart(n, p);
-      } else {
-        return n;
-      }
-    } else {
-      const opts = Object.assign({}, this.opts);
 
-      if (p > 0) {
-        opts.padTo = p;
-      }
-
-      return this.loc.numberFormatter(opts).format(n);
+    // we get some perf out of doing this here, annoyingly
+    if (this.opts.forceSimple) {
+      return padStart(n, p);
     }
+
+    const opts = Object.assign({}, this.opts);
+
+    if (p > 0) {
+      opts.padTo = p;
+    }
+
+    return this.loc.numberFormatter(opts).format(n);
   }
 
   formatDateTimeFromString(dt, fmt) {
@@ -1569,21 +1574,38 @@ function listStuff(loc, length, defaultOK, englishFn, intlFn) {
   }
 }
 
+function supportsFastNumbers(loc) {
+  if (loc.numberingSystem && loc.numberingSystem !== 'latn') {
+    return false;
+  } else {
+    return loc.numberingSystem === 'latn' || !loc.locale || loc.locale.startsWith('en') || (hasIntl() &&
+                                                                                               Intl.DateTimeFormat(loc.intl)
+                                                                                               .resolvedOptions()
+                                                                                               .numberingSystem === 'latn');
+  }
+}
+
 /**
  * @private
  */
 
-class PolyNumberFormatter {
+class SimpleNumberFormatter {
   constructor(opts) {
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
   }
 
   format(i) {
-    const maybeRounded = this.round ? Math.round(i) : i;
-    return padStart(maybeRounded.toString(), this.padTo);
+    // to match the browser's numberformatter defaults
+    const digits = this.round ? 0 : 3,
+          rounded = roundTo(i, digits);
+    return padStart(rounded, this.padTo);
   }
 }
+
+/**
+ * @private
+ */
 
 class PolyDateFormatter {
   constructor(dt, intl, opts) {
@@ -1694,6 +1716,7 @@ class Locale {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
+    this.fastNumbers = supportsFastNumbers(this);
   }
 
   // todo: cache me
@@ -1813,21 +1836,27 @@ class Locale {
     return matching ? matching.value : null;
   }
 
-  numberFormatter(opts = {}, intlOpts = {}) {
-    if (hasIntl()) {
-      const realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
-
-      if (opts.padTo > 0) {
-        realIntlOpts.minimumIntegerDigits = opts.padTo;
-      }
-
-      if (opts.round) {
-        realIntlOpts.maximumFractionDigits = 0;
-      }
-
-      return new Intl.NumberFormat(this.intl, realIntlOpts);
+  numberFormatter(opts = {}) {
+    // this option is never used (the only caller short-circuits on it, but it seems safer to leave)
+    // (in contrast, the || is used heavily)
+    if (opts.forceSimple || this.fastNumbers) {
+      return new SimpleNumberFormatter(opts);
     } else {
-      return new PolyNumberFormatter(opts);
+      if (hasIntl()) {
+        const intlOpts = { useGrouping: false };
+
+        if (opts.padTo > 0) {
+          intlOpts.minimumIntegerDigits = opts.padTo;
+        }
+
+        if (opts.round) {
+          intlOpts.maximumFractionDigits = 0;
+        }
+
+        return new Intl.NumberFormat(this.intl, intlOpts);
+      } else {
+        return new SimpleNumberFormatter(opts);
+      }
     }
   }
 
@@ -4150,7 +4179,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en-US'), { fast: true }).formatDateTimeFromString(dt, format)
+    ? Formatter.create(Locale.create('en-US'), { forceSimple: true }).formatDateTimeFromString(dt, format)
     : null;
 }
 

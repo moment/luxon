@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">98.77% </span>
+        <span class="strong">98.73% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>160/162</span>
+        <span class='fraction'>156/158</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">89.58% </span>
+        <span class="strong">89.44% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>129/144</span>
+        <span class='fraction'>127/142</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>24/24</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">98.74% </span>
+        <span class="strong">98.71% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>157/159</span>
+        <span class='fraction'>153/155</span>
       </div>
     </div>
   </div>
@@ -429,11 +429,7 @@
 384
 385
 386
-387
-388
-389
-390
-391</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+387</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -480,7 +476,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">388x</span>
 <span class="cline-any cline-yes">388x</span>
-<span class="cline-any cline-yes">388x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -521,7 +516,6 @@
 <span class="cline-any cline-yes">388x</span>
 <span class="cline-any cline-yes">388x</span>
 <span class="cline-any cline-yes">388x</span>
-<span class="cline-any cline-yes">388x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -545,14 +539,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">510x</span>
 <span class="cline-any cline-yes">235x</span>
-<span class="cline-any cline-yes">234x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">275x</span>
@@ -562,7 +555,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">275x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -825,7 +817,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as English from './english';
 import * as Formats from './formats';
-import { padStart } from './util';
+import { padStart, roundTo } from './util';
 &nbsp;
 function stringifyTokens(splits, tokenToString) {
   let s = '';
@@ -868,9 +860,8 @@ const tokenToObject = {
 &nbsp;
 export default class Formatter {
   static create(locale, opts = {}) {
-    const fast = opts.fast;
     const formatOpts = Object.assign({}, { round: true }, opts);
-    return new Formatter(locale, formatOpts, fast);
+    return new Formatter(locale, formatOpts);
   }
 &nbsp;
   static parseFormat(fmt) {
@@ -907,9 +898,8 @@ export default class Formatter {
     return splits;
   }
 &nbsp;
-  constructor(locale, formatOpts, fast) {
+  constructor(locale, formatOpts) {
     this.opts = formatOpts;
-    this.fast = fast;
     this.loc = locale;
     this.systemLoc = null;
   }
@@ -938,21 +928,19 @@ export default class Formatter {
   }
 &nbsp;
   num(n, p = 0) {
-    if (this.fast) {
-      if (p &gt; 0) {
-        return padStart(n, p);
-      } else {
-        return n;
-      }
-    } else {
-      const opts = Object.assign({}, this.opts);
 &nbsp;
-      if (p &gt; 0) {
-        opts.padTo = p;
-      }
-&nbsp;
-      return this.loc.numberFormatter(opts).format(n);
+    // we get some perf out of doing this here, annoyingly
+    if (this.opts.forceSimple) {
+      return padStart(n, p);
     }
+&nbsp;
+    const opts = Object.assign({}, this.opts);
+&nbsp;
+    if (p &gt; 0) {
+      opts.padTo = p;
+    }
+&nbsp;
+    return this.loc.numberFormatter(opts).format(n);
   }
 &nbsp;
   formatDateTimeFromString(dt, fmt) {
@@ -1219,7 +1207,7 @@ export default class Formatter {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Mar 15 2018 01:08:28 GMT-0400 (EDT)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Mar 15 2018 02:58:42 GMT-0400 (EDT)
 </div>
 </div>
 <script src="../../prettify.js"></script>

@@ -1920,7 +1920,11 @@ function floorMod(x, n) {
 function padStart(input) {
   var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
 
-  return ('0'.repeat(n) + input).slice(-n);
+  if (input.toString().length < n) {
+    return ('0'.repeat(n) + input).slice(-n);
+  } else {
+    return input.toString();
+  }
 }
 
 function parseMillis(fraction) {
@@ -1930,6 +1934,11 @@ function parseMillis(fraction) {
     var f = parseFloat('0.' + fraction) * 1000;
     return Math.floor(f);
   }
+}
+
+function roundTo(number, digits) {
+  var factor = Math.pow(10, digits);
+  return Math.round(number * factor) / factor;
 }
 
 // DATE BASICS
@@ -3160,9 +3169,8 @@ var Formatter = function () {
   Formatter.create = function create(locale) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    var fast = opts.fast;
     var formatOpts = Object.assign({}, { round: true }, opts);
-    return new Formatter(locale, formatOpts, fast);
+    return new Formatter(locale, formatOpts);
   };
 
   Formatter.parseFormat = function parseFormat(fmt) {
@@ -3199,11 +3207,10 @@ var Formatter = function () {
     return splits;
   };
 
-  function Formatter(locale, formatOpts, fast) {
+  function Formatter(locale, formatOpts) {
     classCallCheck(this, Formatter);
 
     this.opts = formatOpts;
-    this.fast = fast;
     this.loc = locale;
     this.systemLoc = null;
   }
@@ -3240,21 +3247,19 @@ var Formatter = function () {
   Formatter.prototype.num = function num(n) {
     var p = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-    if (this.fast) {
-      if (p > 0) {
-        return padStart(n, p);
-      } else {
-        return n;
-      }
-    } else {
-      var opts = Object.assign({}, this.opts);
 
-      if (p > 0) {
-        opts.padTo = p;
-      }
-
-      return this.loc.numberFormatter(opts).format(n);
+    // we get some perf out of doing this here, annoyingly
+    if (this.opts.forceSimple) {
+      return padStart(n, p);
     }
+
+    var opts = Object.assign({}, this.opts);
+
+    if (p > 0) {
+      opts.padTo = p;
+    }
+
+    return this.loc.numberFormatter(opts).format(n);
   };
 
   Formatter.prototype.formatDateTimeFromString = function formatDateTimeFromString(dt, fmt) {
@@ -3587,25 +3592,39 @@ function listStuff(loc, length, defaultOK, englishFn, intlFn) {
   }
 }
 
+function supportsFastNumbers(loc) {
+  if (loc.numberingSystem && loc.numberingSystem !== 'latn') {
+    return false;
+  } else {
+    return loc.numberingSystem === 'latn' || !loc.locale || loc.locale.startsWith('en') || hasIntl() && Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === 'latn';
+  }
+}
+
 /**
  * @private
  */
 
-var PolyNumberFormatter = function () {
-  function PolyNumberFormatter(opts) {
-    classCallCheck(this, PolyNumberFormatter);
+var SimpleNumberFormatter = function () {
+  function SimpleNumberFormatter(opts) {
+    classCallCheck(this, SimpleNumberFormatter);
 
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
   }
 
-  PolyNumberFormatter.prototype.format = function format(i) {
-    var maybeRounded = this.round ? Math.round(i) : i;
-    return padStart(maybeRounded.toString(), this.padTo);
+  SimpleNumberFormatter.prototype.format = function format(i) {
+    // to match the browser's numberformatter defaults
+    var digits = this.round ? 0 : 3,
+        rounded = roundTo(i, digits);
+    return padStart(rounded, this.padTo);
   };
 
-  return PolyNumberFormatter;
+  return SimpleNumberFormatter;
 }();
+
+/**
+ * @private
+ */
 
 var PolyDateFormatter = function () {
   function PolyDateFormatter(dt, intl, opts) {
@@ -3730,6 +3749,7 @@ var Locale = function () {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
+    this.fastNumbers = supportsFastNumbers(this);
   }
 
   // todo: cache me
@@ -3861,22 +3881,27 @@ var Locale = function () {
 
   Locale.prototype.numberFormatter = function numberFormatter() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var intlOpts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    if (hasIntl()) {
-      var realIntlOpts = Object.assign({ useGrouping: false }, intlOpts);
-
-      if (opts.padTo > 0) {
-        realIntlOpts.minimumIntegerDigits = opts.padTo;
-      }
-
-      if (opts.round) {
-        realIntlOpts.maximumFractionDigits = 0;
-      }
-
-      return new Intl.NumberFormat(this.intl, realIntlOpts);
+    // this option is never used (the only caller short-circuits on it, but it seems safer to leave)
+    // (in contrast, the || is used heavily)
+    if (opts.forceSimple || this.fastNumbers) {
+      return new SimpleNumberFormatter(opts);
     } else {
-      return new PolyNumberFormatter(opts);
+      if (hasIntl()) {
+        var intlOpts = { useGrouping: false };
+
+        if (opts.padTo > 0) {
+          intlOpts.minimumIntegerDigits = opts.padTo;
+        }
+
+        if (opts.round) {
+          intlOpts.maximumFractionDigits = 0;
+        }
+
+        return new Intl.NumberFormat(this.intl, intlOpts);
+      } else {
+        return new SimpleNumberFormatter(opts);
+      }
     }
   };
 
@@ -6614,7 +6639,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // if you want to output a technical format (e.g. RFC 2822), this helper
 // helps handle the details
 function toTechFormat(dt, format) {
-  return dt.isValid ? Formatter.create(Locale.create('en-US'), { fast: true }).formatDateTimeFromString(dt, format) : null;
+  return dt.isValid ? Formatter.create(Locale.create('en-US'), { forceSimple: true }).formatDateTimeFromString(dt, format) : null;
 }
 
 // technical time formats (e.g. the time part of ISO 8601), take some options
