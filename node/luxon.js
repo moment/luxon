@@ -512,16 +512,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-
-
-
-
-
-
-
-
-
-
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -546,14 +536,6 @@ var createClass = function () {
   };
 }();
 
-
-
-
-
-
-
-
-
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
@@ -569,16 +551,6 @@ var inherits = function (subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 };
-
-
-
-
-
-
-
-
-
-
 
 var possibleConstructorReturn = function (self, call) {
   if (!self) {
@@ -705,6 +677,7 @@ var ZoneIsAbstractError = function (_LuxonError7) {
 }(LuxonError);
 
 /* eslint no-unused-vars: "off" */
+
 /**
  * @interface
 */
@@ -1156,6 +1129,10 @@ var InvalidZone = function (_Zone) {
   return InvalidZone;
 }(Zone);
 
+/**
+ * @private
+ */
+
 function normalizeZone(input, defaultZone) {
   var offset = void 0;
   if (isUndefined(input) || input === null) {
@@ -1181,12 +1158,13 @@ function normalizeZone(input, defaultZone) {
 
 var now = function now() {
   return new Date().valueOf();
-};
-var defaultZone = null;
-var defaultLocale = null;
-var defaultNumberingSystem = null;
-var defaultOutputCalendar = null;
-var throwOnInvalid = false;
+},
+    defaultZone = null,
+    // not setting this directly to LocalZone.instance bc loading order issues
+defaultLocale = null,
+    defaultNumberingSystem = null,
+    defaultOutputCalendar = null,
+    throwOnInvalid = false;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -1399,8 +1377,9 @@ var Formatter = function () {
   Formatter.create = function create(locale) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+    var fast = opts.fast;
     var formatOpts = Object.assign({}, { round: true }, opts);
-    return new Formatter(locale, formatOpts);
+    return new Formatter(locale, formatOpts, fast);
   };
 
   Formatter.parseFormat = function parseFormat(fmt) {
@@ -1437,10 +1416,11 @@ var Formatter = function () {
     return splits;
   };
 
-  function Formatter(locale, formatOpts) {
+  function Formatter(locale, formatOpts, fast) {
     classCallCheck(this, Formatter);
 
     this.opts = formatOpts;
+    this.fast = fast;
     this.loc = locale;
     this.systemLoc = null;
   }
@@ -1477,13 +1457,21 @@ var Formatter = function () {
   Formatter.prototype.num = function num(n) {
     var p = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-    var opts = Object.assign({}, this.opts);
+    if (this.fast) {
+      if (p > 0) {
+        return padStart(n, p);
+      } else {
+        return n;
+      }
+    } else {
+      var opts = Object.assign({}, this.opts);
 
-    if (p > 0) {
-      opts.padTo = p;
+      if (p > 0) {
+        opts.padTo = p;
+      }
+
+      return this.loc.numberFormatter(opts).format(n);
     }
-
-    return this.loc.numberFormatter(opts).format(n);
   };
 
   Formatter.prototype.formatDateTimeFromString = function formatDateTimeFromString(dt, fmt) {
@@ -2214,18 +2202,19 @@ function simpleParse() {
 }
 
 // ISO and SQL parsing
-var offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/;
-var isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/;
-var isoTimeRegex = RegExp('' + isoTimeBaseRegex.source + offsetRegex.source + '?');
-var isoTimeExtensionRegex = RegExp('(?:T' + isoTimeRegex.source + ')?');
-var isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
-var isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/;
-var isoOrdinalRegex = /(\d{4})-?(\d{3})/;
-var extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
-var extractISOOrdinalData = simpleParse('year', 'ordinal');
-var sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
-var sqlTimeRegex = RegExp(isoTimeBaseRegex.source + ' ?(?:' + offsetRegex.source + '|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?');
-var sqlTimeExtensionRegex = RegExp('(?: ' + sqlTimeRegex.source + ')?');
+var offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
+    isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/,
+    isoTimeRegex = RegExp('' + isoTimeBaseRegex.source + offsetRegex.source + '?'),
+    isoTimeExtensionRegex = RegExp('(?:T' + isoTimeRegex.source + ')?'),
+    isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
+    isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/,
+    isoOrdinalRegex = /(\d{4})-?(\d{3})/,
+    extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),
+    extractISOOrdinalData = simpleParse('year', 'ordinal'),
+    sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/,
+    // dumbed-down version of the ISO one
+sqlTimeRegex = RegExp(isoTimeBaseRegex.source + ' ?(?:' + offsetRegex.source + '|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?'),
+    sqlTimeExtensionRegex = RegExp('(?: ' + sqlTimeRegex.source + ')?');
 
 function extractISOYmd(match, cursor) {
   var item = {
@@ -2356,9 +2345,9 @@ function preprocessRFC2822(s) {
 
 // http date
 
-var rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/;
-var rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/;
-var ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
+var rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/,
+    rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/,
+    ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
 
 function extractRFC1123Or850(match) {
   var weekdayStr = match[1],
@@ -2410,8 +2399,8 @@ function parseSQL(s) {
   return parse(s, [combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex), combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)], [combineRegexes(sqlTimeRegex), combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)]);
 }
 
-var INVALID = 'Invalid Duration';
-var UNPARSABLE = 'unparsable';
+var INVALID = 'Invalid Duration',
+    UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 var lowOrderMatrix = {
@@ -2431,8 +2420,8 @@ var lowOrderMatrix = {
   hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
   minutes: { seconds: 60, milliseconds: 60 * 1000 },
   seconds: { milliseconds: 1000 }
-};
-var casualMatrix = Object.assign({
+},
+    casualMatrix = Object.assign({
   years: {
     months: 12,
     weeks: 52,
@@ -2458,10 +2447,10 @@ var casualMatrix = Object.assign({
     seconds: 30 * 24 * 60 * 60,
     milliseconds: 30 * 24 * 60 * 60 * 1000
   }
-}, lowOrderMatrix);
-var daysInYearAccurate = 146097.0 / 400;
-var daysInMonthAccurate = 146097.0 / 4800;
-var accurateMatrix = Object.assign({
+}, lowOrderMatrix),
+    daysInYearAccurate = 146097.0 / 400,
+    daysInMonthAccurate = 146097.0 / 4800,
+    accurateMatrix = Object.assign({
   years: {
     months: 12,
     weeks: daysInYearAccurate / 7,
@@ -2553,6 +2542,9 @@ function normalizeValues(matrix, vals) {
   }, null);
 }
 
+/**
+ * @private
+ */
 function friendlyDuration(duration) {
   if (isNumber(duration)) {
     return Duration.fromMillis(duration);
@@ -4541,8 +4533,8 @@ function parseFromTokens(locale, input, format) {
   return [result, zone, invalidReason];
 }
 
-var nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-var leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+var nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
+    leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
 
 function dayOfWeek(year, month, day) {
   var js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
@@ -4700,10 +4692,10 @@ function hasInvalidTimeData(obj) {
   } else return false;
 }
 
-var INVALID$2 = 'Invalid DateTime';
-var INVALID_INPUT = 'invalid input';
-var UNSUPPORTED_ZONE = 'unsupported zone';
-var UNPARSABLE$1 = 'unparsable';
+var INVALID$2 = 'Invalid DateTime',
+    INVALID_INPUT = 'invalid input',
+    UNSUPPORTED_ZONE = 'unsupported zone',
+    UNPARSABLE$1 = 'unparsable';
 
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
@@ -4839,7 +4831,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // if you want to output a technical format (e.g. RFC 2822), this helper
 // helps handle the details
 function toTechFormat(dt, format) {
-  return dt.isValid ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format) : null;
+  return dt.isValid ? Formatter.create(Locale.create('en-US'), { fast: true }).formatDateTimeFromString(dt, format) : null;
 }
 
 // technical time formats (e.g. the time part of ISO 8601), take some options
@@ -4886,16 +4878,16 @@ var defaultUnitValues = {
   minute: 0,
   second: 0,
   millisecond: 0
-};
-var defaultWeekUnitValues = {
+},
+    defaultWeekUnitValues = {
   weekNumber: 1,
   weekday: 1,
   hour: 0,
   minute: 0,
   second: 0,
   millisecond: 0
-};
-var defaultOrdinalUnitValues = {
+},
+    defaultOrdinalUnitValues = {
   ordinal: 1,
   hour: 0,
   minute: 0,
@@ -4904,9 +4896,9 @@ var defaultOrdinalUnitValues = {
 };
 
 // Units in the supported calendars, sorted by bigness
-var orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
-var orderedWeekUnits = ['weekYear', 'weekNumber', 'weekday', 'hour', 'minute', 'second', 'millisecond'];
-var orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
+var orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'],
+    orderedWeekUnits = ['weekYear', 'weekNumber', 'weekday', 'hour', 'minute', 'second', 'millisecond'],
+    orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
 // standardize case and plurality in units
 function normalizeUnit(unit) {
@@ -6823,7 +6815,6 @@ var DateTime = function () {
   }]);
   return DateTime;
 }();
-
 function friendlyDateTime(dateTimeish) {
   if (dateTimeish instanceof DateTime) {
     return dateTimeish;

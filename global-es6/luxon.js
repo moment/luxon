@@ -607,6 +607,7 @@ class ZoneIsAbstractError extends LuxonError {
 }
 
 /* eslint no-unused-vars: "off" */
+
 /**
  * @interface
 */
@@ -954,6 +955,10 @@ class InvalidZone extends Zone {
   }
 }
 
+/**
+ * @private
+ */
+
 function normalizeZone(input, defaultZone) {
   let offset;
   if (isUndefined(input) || input === null) {
@@ -980,12 +985,12 @@ function normalizeZone(input, defaultZone) {
   }
 }
 
-let now = () => new Date().valueOf();
-let defaultZone = null;
-let defaultLocale = null;
-let defaultNumberingSystem = null;
-let defaultOutputCalendar = null;
-let throwOnInvalid = false;
+let now = () => new Date().valueOf(),
+  defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
+  defaultLocale = null,
+  defaultNumberingSystem = null,
+  defaultOutputCalendar = null,
+  throwOnInvalid = false;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -1149,8 +1154,9 @@ const tokenToObject = {
 
 class Formatter {
   static create(locale, opts = {}) {
+    const fast = opts.fast;
     const formatOpts = Object.assign({}, { round: true }, opts);
-    return new Formatter(locale, formatOpts);
+    return new Formatter(locale, formatOpts, fast);
   }
 
   static parseFormat(fmt) {
@@ -1187,8 +1193,9 @@ class Formatter {
     return splits;
   }
 
-  constructor(locale, formatOpts) {
+  constructor(locale, formatOpts, fast) {
     this.opts = formatOpts;
+    this.fast = fast;
     this.loc = locale;
     this.systemLoc = null;
   }
@@ -1217,13 +1224,21 @@ class Formatter {
   }
 
   num(n, p = 0) {
-    const opts = Object.assign({}, this.opts);
+    if (this.fast) {
+      if (p > 0) {
+        return padStart(n, p);
+      } else {
+        return n;
+      }
+    } else {
+      const opts = Object.assign({}, this.opts);
 
-    if (p > 0) {
-      opts.padTo = p;
+      if (p > 0) {
+        opts.padTo = p;
+      }
+
+      return this.loc.numberFormatter(opts).format(n);
     }
-
-    return this.loc.numberFormatter(opts).format(n);
   }
 
   formatDateTimeFromString(dt, fmt) {
@@ -1884,20 +1899,20 @@ function simpleParse(...keys) {
 }
 
 // ISO and SQL parsing
-const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/;
-const isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/;
-const isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${offsetRegex.source}?`);
-const isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`);
-const isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
-const isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/;
-const isoOrdinalRegex = /(\d{4})-?(\d{3})/;
-const extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
-const extractISOOrdinalData = simpleParse('year', 'ordinal');
-const sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
-const sqlTimeRegex = RegExp(
+const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
+  isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/,
+  isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${offsetRegex.source}?`),
+  isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`),
+  isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
+  isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/,
+  isoOrdinalRegex = /(\d{4})-?(\d{3})/,
+  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),
+  extractISOOrdinalData = simpleParse('year', 'ordinal'),
+  sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/, // dumbed-down version of the ISO one
+  sqlTimeRegex = RegExp(
     `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?`
-  );
-const sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
+  ),
+  sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
 function extractISOYmd(match, cursor) {
   const item = {
@@ -2041,9 +2056,9 @@ function preprocessRFC2822(s) {
 
 // http date
 
-const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/;
-const rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/;
-const ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
+const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/,
+  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/,
+  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
 
 function extractRFC1123Or850(match) {
   const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
@@ -2111,8 +2126,8 @@ function parseSQL(s) {
   );
 }
 
-const INVALID = 'Invalid Duration';
-const UNPARSABLE = 'unparsable';
+const INVALID = 'Invalid Duration',
+  UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -2132,8 +2147,8 @@ const lowOrderMatrix = {
     hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
     seconds: { milliseconds: 1000 }
-  };
-const casualMatrix = Object.assign(
+  },
+  casualMatrix = Object.assign(
     {
       years: {
         months: 12,
@@ -2162,10 +2177,10 @@ const casualMatrix = Object.assign(
       }
     },
     lowOrderMatrix
-  );
-const daysInYearAccurate = 146097.0 / 400;
-const daysInMonthAccurate = 146097.0 / 4800;
-const accurateMatrix = Object.assign(
+  ),
+  daysInYearAccurate = 146097.0 / 400,
+  daysInMonthAccurate = 146097.0 / 4800,
+  accurateMatrix = Object.assign(
     {
       years: {
         months: 12,
@@ -2255,6 +2270,9 @@ function normalizeValues(matrix, vals) {
   }, null);
 }
 
+/**
+ * @private
+ */
 function friendlyDuration(duration) {
   if (isNumber(duration)) {
     return Duration.fromMillis(duration);
@@ -3838,8 +3856,8 @@ function parseFromTokens(locale, input, format) {
   return [result, zone, invalidReason];
 }
 
-const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-const leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
+  leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
 
 function dayOfWeek(year, month, day) {
   const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
@@ -3986,10 +4004,10 @@ function hasInvalidTimeData(obj) {
   } else return false;
 }
 
-const INVALID$2 = 'Invalid DateTime';
-const INVALID_INPUT = 'invalid input';
-const UNSUPPORTED_ZONE = 'unsupported zone';
-const UNPARSABLE$1 = 'unparsable';
+const INVALID$2 = 'Invalid DateTime',
+  INVALID_INPUT = 'invalid input',
+  UNSUPPORTED_ZONE = 'unsupported zone',
+  UNPARSABLE$1 = 'unparsable';
 
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
@@ -4132,7 +4150,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en-US')).formatDateTimeFromString(dt, format)
+    ? Formatter.create(Locale.create('en-US'), { fast: true }).formatDateTimeFromString(dt, format)
     : null;
 }
 
@@ -4178,16 +4196,16 @@ const defaultUnitValues = {
     minute: 0,
     second: 0,
     millisecond: 0
-  };
-const defaultWeekUnitValues = {
+  },
+  defaultWeekUnitValues = {
     weekNumber: 1,
     weekday: 1,
     hour: 0,
     minute: 0,
     second: 0,
     millisecond: 0
-  };
-const defaultOrdinalUnitValues = {
+  },
+  defaultOrdinalUnitValues = {
     ordinal: 1,
     hour: 0,
     minute: 0,
@@ -4196,8 +4214,8 @@ const defaultOrdinalUnitValues = {
   };
 
 // Units in the supported calendars, sorted by bigness
-const orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
-const orderedWeekUnits = [
+const orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'],
+  orderedWeekUnits = [
     'weekYear',
     'weekNumber',
     'weekday',
@@ -4205,8 +4223,8 @@ const orderedWeekUnits = [
     'minute',
     'second',
     'millisecond'
-  ];
-const orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
+  ],
+  orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
 // standardize case and plurality in units
 function normalizeUnit(unit, ignoreUnknown = false) {
@@ -5765,6 +5783,9 @@ class DateTime {
   }
 }
 
+/**
+ * @private
+ */
 function friendlyDateTime(dateTimeish) {
   if (dateTimeish instanceof DateTime) {
     return dateTimeish;

@@ -227,7 +227,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create(&apos;en-US&apos;)).formatDateTimeFromString(dt, format)
+    ? Formatter.create(Locale.create(&apos;en-US&apos;), { fast: true }).formatDateTimeFromString(dt, format)
     : null;
 }
 
