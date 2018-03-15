@@ -5,8 +5,10 @@ import DateTime from '../src/datetime';
 
 const suite = new Benchmark.Suite();
 
+const dt = DateTime.local();
+
 suite
-  .add('DateTime.now', () => {
+  .add('DateTime.local', () => {
     DateTime.local();
   })
   .add('DateTime.local with numbers', () => {
@@ -21,13 +23,16 @@ suite
     });
   })
   .add('DateTime#setZone', () => {
-    DateTime.local().setZone('America/Los_Angeles');
+    dt.setZone('America/Los_Angeles');
   })
   .add('DateTime#toFormat', () => {
-    DateTime.local().toFormat('yyyy-MM-dd');
+    dt.toFormat('yyyy-MM-dd');
   })
   .add('DateTime#add', () => {
-    DateTime.local().plus({ milliseconds: 3434 });
+    dt.plus({ milliseconds: 3434 });
+  })
+  .add('DateTime#toISO', () => {
+    dt.toISO();
   })
   .on('cycle', event => {
     console.log(String(event.target));
