@@ -77,10 +77,12 @@ function supportsFastNumbers(loc) {
   if (loc.numberingSystem && loc.numberingSystem !== 'latn') {
     return false;
   } else {
-    return loc.numberingSystem === 'latn' || !loc.locale || loc.locale.startsWith('en') || (hasIntl() &&
-                                                                                               Intl.DateTimeFormat(loc.intl)
-                                                                                               .resolvedOptions()
-                                                                                               .numberingSystem === 'latn');
+    return (
+      loc.numberingSystem === 'latn' ||
+      !loc.locale ||
+      loc.locale.startsWith('en') ||
+      (hasIntl() && Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === 'latn')
+    );
   }
 }
 
@@ -97,7 +99,7 @@ class SimpleNumberFormatter {
   format(i) {
     // to match the browser's numberformatter defaults
     const digits = this.round ? 0 : 3,
-          rounded = roundTo(i, digits);
+      rounded = roundTo(i, digits);
     return padStart(rounded, this.padTo);
   }
 }
@@ -340,22 +342,20 @@ export default class Locale {
     // (in contrast, the || is used heavily)
     if (opts.forceSimple || this.fastNumbers) {
       return new SimpleNumberFormatter(opts);
-    } else {
-      if (hasIntl()) {
-        const intlOpts = { useGrouping: false };
+    } else if (hasIntl()) {
+      const intlOpts = { useGrouping: false };
 
-        if (opts.padTo > 0) {
-          intlOpts.minimumIntegerDigits = opts.padTo;
-        }
-
-        if (opts.round) {
-          intlOpts.maximumFractionDigits = 0;
-        }
-
-        return new Intl.NumberFormat(this.intl, intlOpts);
-      } else {
-        return new SimpleNumberFormatter(opts);
+      if (opts.padTo > 0) {
+        intlOpts.minimumIntegerDigits = opts.padTo;
       }
+
+      if (opts.round) {
+        intlOpts.maximumFractionDigits = 0;
+      }
+
+      return new Intl.NumberFormat(this.intl, intlOpts);
+    } else {
+      return new SimpleNumberFormatter(opts);
     }
   }
 
