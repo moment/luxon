@@ -2,59 +2,64 @@
  * @private
  */
 
+const n = 'numeric',
+  s = 'short',
+  l = 'long',
+  d2 = '2-digit';
+
 export const DATE_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric'
+  year: n,
+  month: n,
+  day: n
 };
 
 export const DATE_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
+  year: n,
+  month: s,
+  day: n
 };
 
 export const DATE_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
+  year: n,
+  month: l,
+  day: n
 };
 
 export const DATE_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l
 };
 
 export const TIME_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit'
+  hour: n,
+  minute: d2
 };
 
 export const TIME_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 export const TIME_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 
 export const TIME_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };
 
 export const TIME_24_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit',
+  hour: n,
+  minute: d2,
   hour12: false
 };
 
@@ -62,9 +67,9 @@ export const TIME_24_SIMPLE = {
  * {@link toLocaleString}; format like '09:30:23', always 24-hour.
  */
 export const TIME_24_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false
 };
 
@@ -72,100 +77,100 @@ export const TIME_24_WITH_SECONDS = {
  * {@link toLocaleString}; format like '09:30:23 EDT', always 24-hour.
  */
 export const TIME_24_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'short'
+  timeZoneName: s
 };
 
 /**
  * {@link toLocaleString}; format like '09:30:23 Eastern Daylight Time', always 24-hour.
  */
 export const TIME_24_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'long'
+  timeZoneName: l
 };
 
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
  */
 export const DATETIME_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2
 };
 
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
  */
 export const DATETIME_SHORT_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 export const DATETIME_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2
 };
 
 export const DATETIME_MED_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 export const DATETIME_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  timeZoneName: s
 };
 
 export const DATETIME_FULL_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 
 export const DATETIME_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  timeZoneName: l
 };
 
 export const DATETIME_HUGE_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };

@@ -55,7 +55,7 @@ Here's a rough mapping of DateTime methods in Moment to ones in Luxon. I haven't
 | From timestamp          | `moment(Number)`         | `DateTime.fromMillis(Number)`         |                                                                                                                                      |
 | From JS Date            | `moment(Date)`           | `DateTime.fromJSDate(Date)`           |                                                                                                                                      |
 | From civil time         | `moment(Array)`          | `DateTime.local(Number...)`           | Like `DateTime.local(2016, 12, 25, 10, 30)`                                                                                          |
-| From UTC civil time     | `moment.utc(Array)`      | `DateTime.utc(Number...)`             | Luxon also uses `moment.utc()` to take other arguments. In Luxon, use the appropriate method and pass in the `{ zone: 'utc'}` option |
+| From UTC civil time     | `moment.utc(Array)`      | `DateTime.utc(Number...)`             | Moment also uses `moment.utc()` to take other arguments. In Luxon, use the appropriate method and pass in the `{ zone: 'utc'}` option |
 | Clone                   | `moment(Moment)`         | N/A                                   | Immutability makes this pointless; just reuse the object                                                                             |
 | Use the string's offset | `parseZone`              | See note                              | Methods taking strings that can specify offset or zone take a `setZone` argument                                                    |
 
