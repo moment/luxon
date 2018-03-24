@@ -22,7 +22,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>20/20</span>
+        <span class='fraction'>24/24</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -37,7 +37,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>20/20</span>
+        <span class='fraction'>24/24</span>
       </div>
     </div>
   </div>
@@ -214,9 +214,19 @@
 169
 170
 171
-172</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+172
+173
+174
+175
+176
+177</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44x</span>
+<span class="cline-any cline-yes">44x</span>
+<span class="cline-any cline-yes">44x</span>
+<span class="cline-any cline-yes">44x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">44x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -389,59 +399,64 @@
  * @private
  */
 &nbsp;
+const n = "numeric",
+      s = "short",
+      l = "long",
+      d2 = "2-digit";
+&nbsp;
 export const DATE_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric'
+  year: n,
+  month: n,
+  day: n
 };
 &nbsp;
 export const DATE_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
+  year: n,
+  month: s,
+  day: n
 };
 &nbsp;
 export const DATE_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
+  year: n,
+  month: l,
+  day: n
 };
 &nbsp;
 export const DATE_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l
 };
 &nbsp;
 export const TIME_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit'
+  hour: n,
+  minute: d2
 };
 &nbsp;
 export const TIME_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  hour: n,
+  minute: d2,
+  second: d2
 };
 &nbsp;
 export const TIME_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 &nbsp;
 export const TIME_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };
 &nbsp;
 export const TIME_24_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit',
+  hour: n,
+  minute: d2,
   hour12: false
 };
 &nbsp;
@@ -449,9 +464,9 @@ export const TIME_24_SIMPLE = {
  * {@link toLocaleString}; format like '09:30:23', always 24-hour.
  */
 export const TIME_24_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false
 };
 &nbsp;
@@ -459,102 +474,102 @@ export const TIME_24_WITH_SECONDS = {
  * {@link toLocaleString}; format like '09:30:23 EDT', always 24-hour.
  */
 export const TIME_24_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'short'
+  timeZoneName: s
 };
 &nbsp;
 /**
  * {@link toLocaleString}; format like '09:30:23 Eastern Daylight Time', always 24-hour.
  */
 export const TIME_24_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'long'
+  timeZoneName: l
 };
 &nbsp;
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
  */
 export const DATETIME_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2
 };
 &nbsp;
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
  */
 export const DATETIME_SHORT_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 &nbsp;
 export const DATETIME_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2
 };
 &nbsp;
 export const DATETIME_MED_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 &nbsp;
 export const DATETIME_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  timeZoneName: s
 };
 &nbsp;
 export const DATETIME_FULL_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 &nbsp;
 export const DATETIME_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  timeZoneName: l
 };
 &nbsp;
 export const DATETIME_HUGE_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -562,7 +577,7 @@ export const DATETIME_HUGE_WITH_SECONDS = {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Mar 15 2018 02:58:42 GMT-0400 (EDT)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Mar 17 2018 17:11:31 GMT-0400 (EDT)
 </div>
 </div>
 <script src="../../prettify.js"></script>

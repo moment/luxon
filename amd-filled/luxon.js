@@ -2042,59 +2042,64 @@ function timeObject(obj) {
  * @private
  */
 
+var n = 'numeric',
+    s = 'short',
+    l = 'long',
+    d2 = '2-digit';
+
 var DATE_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric'
+  year: n,
+  month: n,
+  day: n
 };
 
 var DATE_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
+  year: n,
+  month: s,
+  day: n
 };
 
 var DATE_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
+  year: n,
+  month: l,
+  day: n
 };
 
 var DATE_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l
 };
 
 var TIME_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit'
+  hour: n,
+  minute: d2
 };
 
 var TIME_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 var TIME_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 
 var TIME_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };
 
 var TIME_24_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit',
+  hour: n,
+  minute: d2,
   hour12: false
 };
 
@@ -2102,9 +2107,9 @@ var TIME_24_SIMPLE = {
  * {@link toLocaleString}; format like '09:30:23', always 24-hour.
  */
 var TIME_24_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false
 };
 
@@ -2112,102 +2117,102 @@ var TIME_24_WITH_SECONDS = {
  * {@link toLocaleString}; format like '09:30:23 EDT', always 24-hour.
  */
 var TIME_24_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'short'
+  timeZoneName: s
 };
 
 /**
  * {@link toLocaleString}; format like '09:30:23 Eastern Daylight Time', always 24-hour.
  */
 var TIME_24_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'long'
+  timeZoneName: l
 };
 
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
  */
 var DATETIME_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2
 };
 
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
  */
 var DATETIME_SHORT_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 var DATETIME_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2
 };
 
 var DATETIME_MED_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 var DATETIME_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  timeZoneName: s
 };
 
 var DATETIME_FULL_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 
 var DATETIME_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  timeZoneName: l
 };
 
 var DATETIME_HUGE_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };
 
 function stringify(obj) {
@@ -3246,7 +3251,6 @@ var Formatter = function () {
   Formatter.prototype.num = function num(n) {
     var p = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-
     // we get some perf out of doing this here, annoyingly
     if (this.opts.forceSimple) {
       return padStart(n, p);
@@ -3885,22 +3889,20 @@ var Locale = function () {
     // (in contrast, the || is used heavily)
     if (opts.forceSimple || this.fastNumbers) {
       return new SimpleNumberFormatter(opts);
-    } else {
-      if (hasIntl()) {
-        var intlOpts = { useGrouping: false };
+    } else if (hasIntl()) {
+      var intlOpts = { useGrouping: false };
 
-        if (opts.padTo > 0) {
-          intlOpts.minimumIntegerDigits = opts.padTo;
-        }
-
-        if (opts.round) {
-          intlOpts.maximumFractionDigits = 0;
-        }
-
-        return new Intl.NumberFormat(this.intl, intlOpts);
-      } else {
-        return new SimpleNumberFormatter(opts);
+      if (opts.padTo > 0) {
+        intlOpts.minimumIntegerDigits = opts.padTo;
       }
+
+      if (opts.round) {
+        intlOpts.maximumFractionDigits = 0;
+      }
+
+      return new Intl.NumberFormat(this.intl, intlOpts);
+    } else {
+      return new SimpleNumberFormatter(opts);
     }
   };
 

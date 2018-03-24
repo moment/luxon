@@ -97,7 +97,7 @@ function parseMillis(fraction) {
 }
 
 function roundTo(number, digits) {
-  var factor = Math.pow(10, digits);
+  const factor = 10 ** digits;
   return Math.round(number * factor) / factor;
 }
 
@@ -199,59 +199,64 @@ function timeObject(obj) {
  * @private
  */
 
+const n = 'numeric',
+  s = 'short',
+  l = 'long',
+  d2 = '2-digit';
+
 const DATE_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric'
+  year: n,
+  month: n,
+  day: n
 };
 
 const DATE_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
+  year: n,
+  month: s,
+  day: n
 };
 
 const DATE_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
+  year: n,
+  month: l,
+  day: n
 };
 
 const DATE_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l
 };
 
 const TIME_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit'
+  hour: n,
+  minute: d2
 };
 
 const TIME_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 const TIME_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 
 const TIME_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };
 
 const TIME_24_SIMPLE = {
-  hour: 'numeric',
-  minute: '2-digit',
+  hour: n,
+  minute: d2,
   hour12: false
 };
 
@@ -259,9 +264,9 @@ const TIME_24_SIMPLE = {
  * {@link toLocaleString}; format like '09:30:23', always 24-hour.
  */
 const TIME_24_WITH_SECONDS = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false
 };
 
@@ -269,102 +274,102 @@ const TIME_24_WITH_SECONDS = {
  * {@link toLocaleString}; format like '09:30:23 EDT', always 24-hour.
  */
 const TIME_24_WITH_SHORT_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'short'
+  timeZoneName: s
 };
 
 /**
  * {@link toLocaleString}; format like '09:30:23 Eastern Daylight Time', always 24-hour.
  */
 const TIME_24_WITH_LONG_OFFSET = {
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
+  hour: n,
+  minute: d2,
+  second: d2,
   hour12: false,
-  timeZoneName: 'long'
+  timeZoneName: l
 };
 
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
  */
 const DATETIME_SHORT = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2
 };
 
 /**
  * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
  */
 const DATETIME_SHORT_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 const DATETIME_MED = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2
 };
 
 const DATETIME_MED_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit'
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2
 };
 
 const DATETIME_FULL = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  timeZoneName: s
 };
 
 const DATETIME_FULL_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'short'
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: s
 };
 
 const DATETIME_HUGE = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  timeZoneName: l
 };
 
 const DATETIME_HUGE_WITH_SECONDS = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-  hour: 'numeric',
-  minute: '2-digit',
-  second: '2-digit',
-  timeZoneName: 'long'
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: d2,
+  second: d2,
+  timeZoneName: l
 };
 
 function stringify(obj) {
@@ -1231,7 +1236,6 @@ class Formatter {
   }
 
   num(n, p = 0) {
-
     // we get some perf out of doing this here, annoyingly
     if (this.opts.forceSimple) {
       return padStart(n, p);
@@ -1578,10 +1582,12 @@ function supportsFastNumbers(loc) {
   if (loc.numberingSystem && loc.numberingSystem !== 'latn') {
     return false;
   } else {
-    return loc.numberingSystem === 'latn' || !loc.locale || loc.locale.startsWith('en') || (hasIntl() &&
-                                                                                               Intl.DateTimeFormat(loc.intl)
-                                                                                               .resolvedOptions()
-                                                                                               .numberingSystem === 'latn');
+    return (
+      loc.numberingSystem === 'latn' ||
+      !loc.locale ||
+      loc.locale.startsWith('en') ||
+      (hasIntl() && Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === 'latn')
+    );
   }
 }
 
@@ -1598,7 +1604,7 @@ class SimpleNumberFormatter {
   format(i) {
     // to match the browser's numberformatter defaults
     const digits = this.round ? 0 : 3,
-          rounded = roundTo(i, digits);
+      rounded = roundTo(i, digits);
     return padStart(rounded, this.padTo);
   }
 }
@@ -1841,22 +1847,20 @@ class Locale {
     // (in contrast, the || is used heavily)
     if (opts.forceSimple || this.fastNumbers) {
       return new SimpleNumberFormatter(opts);
-    } else {
-      if (hasIntl()) {
-        const intlOpts = { useGrouping: false };
+    } else if (hasIntl()) {
+      const intlOpts = { useGrouping: false };
 
-        if (opts.padTo > 0) {
-          intlOpts.minimumIntegerDigits = opts.padTo;
-        }
-
-        if (opts.round) {
-          intlOpts.maximumFractionDigits = 0;
-        }
-
-        return new Intl.NumberFormat(this.intl, intlOpts);
-      } else {
-        return new SimpleNumberFormatter(opts);
+      if (opts.padTo > 0) {
+        intlOpts.minimumIntegerDigits = opts.padTo;
       }
+
+      if (opts.round) {
+        intlOpts.maximumFractionDigits = 0;
+      }
+
+      return new Intl.NumberFormat(this.intl, intlOpts);
+    } else {
+      return new SimpleNumberFormatter(opts);
     }
   }
 
@@ -4179,7 +4183,10 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en-US'), { forceSimple: true }).formatDateTimeFromString(dt, format)
+    ? Formatter.create(Locale.create('en-US'), { forceSimple: true }).formatDateTimeFromString(
+        dt,
+        format
+      )
     : null;
 }
 
