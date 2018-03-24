@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0
+ * The big one-oh. No changes from 0.5.8.
+
 ## 0.5.8
  *  Large perf improvements for `DateTime#toFormat()`, when using non-intl numbers
 
