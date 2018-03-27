@@ -1,6 +1,6 @@
 # Luxon
 
-[![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![Doc coverage][doc-coverage-image]][doc-url]
+[![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![Doc coverage][doc-coverage-image]][doc-url] [![PRs welcome][contributing-image]][contributing-url]
 
 Luxon is a library for working with dates and times in Javascript.
 
@@ -47,5 +47,8 @@ See [contributing](contributing.md).
 
 [test-coverage-url]: https://codecov.io/gh/moment/luxon
 [test-coverage-image]: https://codecov.io/gh/moment/luxon/branch/master/graph/badge.svg
+
+[contributing-url]: https://moment.github.io/luxon/docs/manual/contributing.html
+[contributing-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 
 [phasers-image]: https://img.shields.io/badge/phasers-stun-brightgreen.svg
