@@ -336,15 +336,44 @@ npm install full-icu
 <li>To test in Node, run <code>npm run build</code> and then run something like <code>var DateTime = require(&apos;./build/cjs/luxon&apos;).DateTime</code>.</li>
 </ol>
 <p>Luxon uses <a href="https://github.com/typicode/husky">Husky</a> to run the formatter on your code as a pre-commit hook. You should still run <code>npm run lint!</code> yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.</p>
-<h2 id="npm-script-reference">npm script reference</h2><p>| Command              | Function                                |
-|----------------------+-----------------------------------------|
-| <code>npm run build</code>      | Build all the distributable files       |
-| <code>npm run build-node</code> | Build just for Node                     |
-| <code>npm run test</code>       | Run the test suite, but see notes above |
-| <code>npm run format</code>     | Run the Prettier formatter              |
-| <code>npm run lint!</code>      | Run the formatter and the linter        |
-| <code>npm run docs</code>       | Build the doc pages                     |
-| <code>npm run site</code>       | Build the Luxon website                 |</p>
+<h2 id="npm-script-reference">npm script reference</h2><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>npm run build</code></td>
+<td>Build all the distributable files</td>
+</tr>
+<tr>
+<td><code>npm run build-node</code></td>
+<td>Build just for Node</td>
+</tr>
+<tr>
+<td><code>npm run test</code></td>
+<td>Run the test suite, but see notes above</td>
+</tr>
+<tr>
+<td><code>npm run format</code></td>
+<td>Run the Prettier formatter</td>
+</tr>
+<tr>
+<td><code>npm run lint!</code></td>
+<td>Run the formatter and the linter</td>
+</tr>
+<tr>
+<td><code>npm run docs</code></td>
+<td>Build the doc pages</td>
+</tr>
+<tr>
+<td><code>npm run site</code></td>
+<td>Build the Luxon website</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
