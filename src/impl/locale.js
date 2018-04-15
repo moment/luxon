@@ -221,7 +221,7 @@ export default class Locale {
   }
 
   // todo: cache me
-  listingMode(defaultOk = true) {
+  listingMode(defaultOK = true) {
     const intl = hasIntl(),
       hasFTP = intl && hasFormatToParts(),
       isActuallyEn =
@@ -235,7 +235,7 @@ export default class Locale {
         (this.numberingSystem === null || this.numberingSystem === 'latn') &&
         (this.outputCalendar === null || this.outputCalendar === 'gregory');
 
-    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
+    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOK) {
       return 'error';
     } else if (!hasFTP || (isActuallyEn && hasNoWeirdness)) {
       return 'en';
