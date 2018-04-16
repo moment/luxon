@@ -1,4 +1,12 @@
-import { numberBetween, isLeapYear, timeObject, daysInYear, daysInMonth, isNumber } from './util';
+import {
+  numberBetween,
+  isLeapYear,
+  timeObject,
+  daysInYear,
+  daysInMonth,
+  weeksInWeekYear,
+  isNumber
+} from './util';
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
@@ -6,18 +14,6 @@ const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
 function dayOfWeek(year, month, day) {
   const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
   return js === 0 ? 7 : js;
-}
-
-function lastWeekNumber(weekYear) {
-  const p1 =
-      (weekYear +
-        Math.floor(weekYear / 4) -
-        Math.floor(weekYear / 100) +
-        Math.floor(weekYear / 400)) %
-      7,
-    last = weekYear - 1,
-    p2 = (last + Math.floor(last / 4) - Math.floor(last / 100) + Math.floor(last / 400)) % 7;
-  return p1 === 4 || p2 === 3 ? 53 : 52;
 }
 
 function computeOrdinal(year, month, day) {
@@ -45,8 +41,8 @@ export function gregorianToWeek(gregObj) {
 
   if (weekNumber < 1) {
     weekYear = year - 1;
-    weekNumber = lastWeekNumber(weekYear);
-  } else if (weekNumber > lastWeekNumber(year)) {
+    weekNumber = weeksInWeekYear(weekYear);
+  } else if (weekNumber > weeksInWeekYear(year)) {
     weekYear = year + 1;
     weekNumber = 1;
   } else {
@@ -94,7 +90,7 @@ export function ordinalToGregorian(ordinalData) {
 
 export function hasInvalidWeekData(obj) {
   const validYear = isNumber(obj.weekYear),
-    validWeek = numberBetween(obj.weekNumber, 1, lastWeekNumber(obj.weekYear)),
+    validWeek = numberBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
     validWeekday = numberBetween(obj.weekday, 1, 7);
 
   if (!validYear) {

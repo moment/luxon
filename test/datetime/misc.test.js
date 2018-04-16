@@ -88,3 +88,16 @@ test("DateTime#daysInMonth returns the number of days in the DateTime's month", 
 test('DateTime#daysInMonth returns NaN for invalid DateTimes', () => {
   expect(DateTime.invalid('because').daysInMonth).toBeFalsy();
 });
+
+//------
+// #weeksInWeekYear
+//------
+test("DateTime#weeksInWeekYear returns the number of days in the DateTime's year", () => {
+  expect(DateTime.local(2004, 5, 25).weeksInWeekYear).toBe(53);
+  expect(DateTime.local(2017, 5, 25).weeksInWeekYear).toBe(52);
+  expect(DateTime.local(2020, 5, 25).weeksInWeekYear).toBe(53);
+});
+
+test('DateTime#weeksInWeekYear returns NaN for invalid DateTimes', () => {
+  expect(DateTime.invalid('because').weeksInWeekYear).toBeFalsy();
+});
