@@ -119,7 +119,6 @@ export function daysInMonth(year, month) {
   }
 }
 
-
 export function weeksInWeekYear(weekYear) {
   const p1 =
       (weekYear +
