@@ -119,6 +119,29 @@ export function daysInMonth(year, month) {
   }
 }
 
+export function weeksInWeekYear(year) {
+  const check = new Date(`${year}-01-01`);
+  const leap = isLeapYear(year);
+
+  const firstDay = check.getUTCDay();
+  check.setUTCMonth(11, 31);
+  const lastDay = check.getUTCDay();
+
+  if ((!leap && firstDay === 4) || (leap && firstDay === 3)) {
+    return 53;
+  }
+
+  if ((!leap && lastDay === 4) || (leap && lastDay === 5)) {
+    return 53;
+  }
+
+  if (firstDay === 4 && lastDay === 4) {
+    return 53;
+  }
+
+  return 52;
+}
+
 export function untruncateYear(year) {
   if (year > 99) {
     return year;

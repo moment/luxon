@@ -15,6 +15,7 @@ import {
   daysInMonth,
   daysInYear,
   isLeapYear,
+  weeksInWeekYear,
   normalizeObject
 } from './impl/util';
 import { normalizeZone } from './impl/zoneUtil';
@@ -1071,6 +1072,17 @@ export default class DateTime {
    */
   get daysInYear() {
     return this.isValid ? daysInYear(this.year) : NaN;
+  }
+
+  /**
+   * Returns the number of weeks in this DateTime's year
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @example DateTime.local(2004).weeksInWeekYear //=> 53
+   * @example DateTime.local(2013).weeksInWeekYear //=> 52
+   * @type {number}
+   */
+  get weeksInWeekYear() {
+    return this.isValid ? weeksInWeekYear(this.year) : NaN;
   }
 
   /**
