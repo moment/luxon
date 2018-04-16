@@ -1,5 +1,5 @@
 /* global expect Intl */
-import { DateTime } from '../../src/luxon';
+import { DateTime, Formats } from '../../src/luxon';
 import { Helpers } from '../helpers';
 
 //------
@@ -26,26 +26,26 @@ Helpers.withoutIntl('DateTime#toLocaleString supports known configurations', () 
   const dt = DateTime.local(2014, 8, 6, 9, 15, 36),
     expected = new Map();
 
-  expected.set(DateTime.DATE_SHORT, '8/6/2014');
-  expected.set(DateTime.DATE_MED, 'Aug 6, 2014');
-  expected.set(DateTime.DATE_FULL, 'August 6, 2014');
-  expected.set(DateTime.DATE_HUGE, 'Wednesday, August 6, 2014');
-  expected.set(DateTime.TIME_SIMPLE, '9:15 AM');
-  expected.set(DateTime.TIME_WITH_SECONDS, '9:15:36 AM');
-  expected.set(DateTime.TIME_WITH_SHORT_OFFSET, '9:15 AM'); // we can't do the offset
-  expected.set(DateTime.TIME_WITH_LONG_OFFSET, '9:15 AM');
-  expected.set(DateTime.TIME_24_SIMPLE, '09:15');
-  expected.set(DateTime.TIME_24_WITH_SECONDS, '09:15:36');
-  expected.set(DateTime.TIME_24_WITH_SHORT_OFFSET, '09:15');
-  expected.set(DateTime.TIME_24_WITH_LONG_OFFSET, '09:15');
-  expected.set(DateTime.DATETIME_SHORT, '8/6/2014, 9:15 AM');
-  expected.set(DateTime.DATETIME_MED, 'Aug 6, 2014, 9:15 AM');
-  expected.set(DateTime.DATETIME_FULL, 'August 6, 2014, 9:15 AM');
-  expected.set(DateTime.DATETIME_HUGE, 'Wednesday, August 6, 2014, 9:15 AM');
-  expected.set(DateTime.DATETIME_SHORT_WITH_SECONDS, '8/6/2014, 9:15:36 AM');
-  expected.set(DateTime.DATETIME_MED_WITH_SECONDS, 'Aug 6, 2014, 9:15:36 AM');
-  expected.set(DateTime.DATETIME_FULL_WITH_SECONDS, 'August 6, 2014, 9:15:36 AM');
-  expected.set(DateTime.DATETIME_HUGE_WITH_SECONDS, 'Wednesday, August 6, 2014, 9:15:36 AM');
+  expected.set(Formats.DATE_SHORT, '8/6/2014');
+  expected.set(Formats.DATE_MED, 'Aug 6, 2014');
+  expected.set(Formats.DATE_FULL, 'August 6, 2014');
+  expected.set(Formats.DATE_HUGE, 'Wednesday, August 6, 2014');
+  expected.set(Formats.TIME_SIMPLE, '9:15 AM');
+  expected.set(Formats.TIME_WITH_SECONDS, '9:15:36 AM');
+  expected.set(Formats.TIME_WITH_SHORT_OFFSET, '9:15 AM'); // we can't do the offset
+  expected.set(Formats.TIME_WITH_LONG_OFFSET, '9:15 AM');
+  expected.set(Formats.TIME_24_SIMPLE, '09:15');
+  expected.set(Formats.TIME_24_WITH_SECONDS, '09:15:36');
+  expected.set(Formats.TIME_24_WITH_SHORT_OFFSET, '09:15');
+  expected.set(Formats.TIME_24_WITH_LONG_OFFSET, '09:15');
+  expected.set(Formats.DATETIME_SHORT, '8/6/2014, 9:15 AM');
+  expected.set(Formats.DATETIME_MED, 'Aug 6, 2014, 9:15 AM');
+  expected.set(Formats.DATETIME_FULL, 'August 6, 2014, 9:15 AM');
+  expected.set(Formats.DATETIME_HUGE, 'Wednesday, August 6, 2014, 9:15 AM');
+  expected.set(Formats.DATETIME_SHORT_WITH_SECONDS, '8/6/2014, 9:15:36 AM');
+  expected.set(Formats.DATETIME_MED_WITH_SECONDS, 'Aug 6, 2014, 9:15:36 AM');
+  expected.set(Formats.DATETIME_FULL_WITH_SECONDS, 'August 6, 2014, 9:15:36 AM');
+  expected.set(Formats.DATETIME_HUGE_WITH_SECONDS, 'Wednesday, August 6, 2014, 9:15:36 AM');
 
   expected.forEach((exp, fmt) => {
     expect(dt.toLocaleString(fmt)).toBe(exp);
@@ -71,7 +71,7 @@ Helpers.withoutIntl('DateTime#toLocaleString uses English', () => {
   expect(
     DateTime.local(2014, 8, 6, 9, 15)
       .setLocale('fr')
-      .toLocaleString(DateTime.DATE_FULL)
+      .toLocaleString(Formats.DATE_FULL)
   ).toBe('August 6, 2014');
 });
 
@@ -101,7 +101,7 @@ Helpers.withoutIntl('DateTime#toLocaleString can use fixed-offset zones', () => 
   expect(
     DateTime.utc(2017, 5, 15, 4, 30)
       .setZone('UTC+1')
-      .toLocaleString(DateTime.DATETIME_MED)
+      .toLocaleString(Formats.DATETIME_MED)
   ).toBe('May 15, 2017, 5:30 AM');
 });
 

@@ -33,7 +33,7 @@ You can modulate the structure of that string with arguments to `toLocaleString`
 Here's a table of the different calendars with examples generated formatting the same date generated like this:
 
 ```js
-DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);
+DateTime.fromObject({ outputCalendar: c }).toLocaleString(Formats.DATE_FULL);
 ```
 
 | Calendar | Example                  |

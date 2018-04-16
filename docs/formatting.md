@@ -37,14 +37,15 @@ dt.toHTTP();    //=> 'Thu, 20 Apr 2017 03:32:00 GMT'
 Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString) to do it:
 
 ```js
+import { Formats, DateTime } from 'luxon'
 dt.toLocaleString();                                       //=> '4/20/2017'
-dt.toLocaleString(DateTime.DATETIME_FULL);                 //=> 'April 20, 2017, 11:32 AM EDT'
-dt.setLocale('fr').toLocaleString(DateTime.DATETIME_FULL); //=> '20 avril 2017 à 11:32 UTC−4'
+dt.toLocaleString(Formats.DATETIME_FULL);                 //=> 'April 20, 2017, 11:32 AM EDT'
+dt.setLocale('fr').toLocaleString(Formats.DATETIME_FULL); //=> '20 avril 2017 à 11:32 UTC−4'
 ```
 
 ### Intl.DateTimeFormat
 
-In the example above, `DateTime.DATETIME_FULL` is one of several convenience formats provided by Luxon. But the arguments are really any object of options that can be provided to [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). For example:
+In the example above, `Formats.DATETIME_FULL` is one of several convenience formats provided by Luxon. But the arguments are really any object of options that can be provided to [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). For example:
 
 ```js
 dt.toLocaleString({ month: 'long', day: 'numeric' }) //=> 'April 20'
@@ -53,7 +54,7 @@ dt.toLocaleString({ month: 'long', day: 'numeric' }) //=> 'April 20'
 And that's all the preset is:
 
 ```
-DateTime.DATETIME_FULL;  //=> {
+Formats.DATETIME_FULL;   //=> {
                          //     year: 'numeric',
                          //     month: 'long',
                          //     day: 'numeric',
@@ -67,8 +68,8 @@ DateTime.DATETIME_FULL;  //=> {
 This also means you can modify the presets as you choose:
 
 ```js
-dt.toLocaleString(DateTime.DATE_SHORT); //=>  '4/20/2017'
-var newFormat = Object.assign({ weekday: 'long' }, DateTime.DATE_SHORT);
+dt.toLocaleString(Formats.DATE_SHORT); //=>  '4/20/2017'
+var newFormat = Object.assign({ weekday: 'long' }, Formats.DATE_SHORT);
 dt.toLocaleString(newFormat); //=>  'Thursday, 4/20/2017'
 ```
 

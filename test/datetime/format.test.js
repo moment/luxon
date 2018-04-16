@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from '../../src/luxon';
+import { DateTime, Formats } from '../../src/luxon';
 
 const dtMaker = () =>
     DateTime.fromObject({
@@ -255,17 +255,17 @@ test('DateTime#toLocaleString() returns something different for invalid DateTime
 });
 
 test('DateTime#toLocaleString() shows things in the right IANA zone', () => {
-  expect(dt.setZone('America/New_York').toLocaleString(DateTime.DATETIME_SHORT)).toBe(
+  expect(dt.setZone('America/New_York').toLocaleString(Formats.DATETIME_SHORT)).toBe(
     '5/25/1982, 5:23 AM'
   );
 });
 
 test('DateTime#toLocaleString() shows things in the right fixed-offset zone', () => {
-  expect(dt.setZone('UTC-8').toLocaleString(DateTime.DATETIME_SHORT)).toBe('5/25/1982, 1:23 AM');
+  expect(dt.setZone('UTC-8').toLocaleString(Formats.DATETIME_SHORT)).toBe('5/25/1982, 1:23 AM');
 });
 
 test('DateTime#toLocaleString() does the best it can with a fixed-offset zone when showing the zone', () => {
-  expect(dt.setZone('UTC-8').toLocaleString(DateTime.DATETIME_FULL)).toBe(
+  expect(dt.setZone('UTC-8').toLocaleString(Formats.DATETIME_FULL)).toBe(
     'May 25, 1982, 9:23 AM UTC'
   );
 });
@@ -343,7 +343,7 @@ test("DateTime#toLocaleParts can override the dateTime's locale", () => {
 });
 
 test('DateTime#toLocaleParts accepts date formatting options', () => {
-  expect(dt.toLocaleParts(DateTime.TIME_SIMPLE)).toEqual([
+  expect(dt.toLocaleParts(Formats.TIME_SIMPLE)).toEqual([
     { type: 'hour', value: '9' },
     { type: 'literal', value: ':' },
     { type: 'minute', value: '23' },

@@ -3,7 +3,7 @@
 Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:
 
 ```js
-DateTime.local().setLocale('el').toLocaleString(DateTime.DATE_FULL); //=>  '24 Σεπτεμβρίου 2017'
+DateTime.local().setLocale('el').toLocaleString(Formats.DATE_FULL); //=>  '24 Σεπτεμβρίου 2017'
 ```
 
 ## How locales work
@@ -85,13 +85,13 @@ DateTime.fromObject({locale: 'fr-co'}).resolvedLocaleOpts(); //=> { locale: 'fr'
 The most important method affected by the locale setting is `toLocaleString`, which allows you to produce internationalized, human-readable strings.
 
 ```js
-dt.setLocale('fr').toLocaleString(DateTime.DATE_FULL) //=> '25 septembre 2017'
+dt.setLocale('fr').toLocaleString(Formats.DATE_FULL) //=> '25 septembre 2017'
 ```
 
 That's the normal way to do it: set the locale as property of the DateTime itself and let the `toLocaleString` inherit it. But you can specify the locale directly to `toLocaleString` too:
 
 ```js
-dt.toLocaleString( Object.assign({ locale: 'es' }, DateTime.DATE_FULL)) //=> '25 de septiembre de 2017'
+dt.toLocaleString( Object.assign({ locale: 'es' }, Formats.DATE_FULL)) //=> '25 de septiembre de 2017'
 ```
 
 Ad-hoc formatting also respects the locale:
@@ -138,7 +138,7 @@ For this reason, Luxon defaults its own `numberingSystem` property to null, by w
 
 ```js
 var dt  = DateTime.local().reconfigure({ locale: 'it', numberingSystem: 'beng' })
-dt.toLocaleString(DateTime.DATE_FULL) //=> '২৪ settembre ২০১৭'
+dt.toLocaleString(Formats.DATE_FULL) //=> '২৪ settembre ২০১৭'
 ```
 
 Similar to `locale`, you can set the default numbering system for new instances:

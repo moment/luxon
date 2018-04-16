@@ -1,4 +1,4 @@
-import * as Formats from './formats';
+import * as Formats from '../formats';
 import { pick } from './util';
 
 function stringify(obj) {

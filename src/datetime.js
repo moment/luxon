@@ -32,7 +32,6 @@ import {
   hasInvalidOrdinalData,
   hasInvalidTimeData
 } from './impl/conversions';
-import * as Formats from './impl/formats';
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
@@ -1326,7 +1325,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
+   * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `Formats.DATE_FULL` or `Formats.TIME_SIMPLE`.
    * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
    * of the DateTime in the assigned locale.
    * Defaults to the system's locale if no locale has been specified
@@ -1334,15 +1333,24 @@ export default class DateTime {
    * @param opts {Object} - Intl.DateTimeFormat constructor options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
    * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
-   * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
-   * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=> '11:32 AM'
-   * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=> '4/20/2017, 11:32 AM'
+   * @example DateTime.local().toLocaleString(Formats.DATE_FULL); //=> 'April 20, 2017'
+   * @example DateTime.local().toLocaleString(Formats.TIME_SIMPLE); //=> '11:32 AM'
+   * @example DateTime.local().toLocaleString(Formats.DATETIME_SHORT); //=> '4/20/2017, 11:32 AM'
    * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', day: '2-digit'}); //=> 'Thu, Apr 20'
    * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit'}); //=> 'Thu, Apr 20, 11:27'
    * @example DateTime.local().toLocaleString({hour: '2-digit', minute: '2-digit'}); //=> '11:32'
    * @return {string}
    */
-  toLocaleString(opts = Formats.DATE_SHORT) {
+  toLocaleString(opts = null) {
+    if (opts === null) {
+      const n = "numeric";
+      opts = {
+  year: n,
+  month: n,
+  day: n
+};
+}
+
     return this.isValid
       ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this)
       : INVALID;
@@ -1668,168 +1676,6 @@ export default class DateTime {
    */
   static fromStringExplain(text, fmt, options = {}) {
     return DateTime.fromFormatExplain(text, fmt, options);
-  }
-
-  // FORMAT PRESETS
-
-  /**
-   * {@link toLocaleString} format like 10/14/1983
-   * @type {Object}
-   */
-  static get DATE_SHORT() {
-    return Formats.DATE_SHORT;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'Oct 14, 1983'
-   * @type {Object}
-   */
-  static get DATE_MED() {
-    return Formats.DATE_MED;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'October 14, 1983'
-   * @type {Object}
-   */
-  static get DATE_FULL() {
-    return Formats.DATE_FULL;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'Tuesday, October 14, 1983'
-   * @type {Object}
-   */
-  static get DATE_HUGE() {
-    return Formats.DATE_HUGE;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get TIME_SIMPLE() {
-    return Formats.TIME_SIMPLE;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get TIME_WITH_SECONDS() {
-    return Formats.TIME_WITH_SECONDS;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get TIME_WITH_SHORT_OFFSET() {
-    return Formats.TIME_WITH_SHORT_OFFSET;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get TIME_WITH_LONG_OFFSET() {
-    return Formats.TIME_WITH_LONG_OFFSET;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30', always 24-hour.
-   * @type {Object}
-   */
-  static get TIME_24_SIMPLE() {
-    return Formats.TIME_24_SIMPLE;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30:23', always 24-hour.
-   * @type {Object}
-   */
-  static get TIME_24_WITH_SECONDS() {
-    return Formats.TIME_24_WITH_SECONDS;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30:23 EDT', always 24-hour.
-   * @type {Object}
-   */
-  static get TIME_24_WITH_SHORT_OFFSET() {
-    return Formats.TIME_24_WITH_SHORT_OFFSET;
-  }
-
-  /**
-   * {@link toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
-   * @type {Object}
-   */
-  static get TIME_24_WITH_LONG_OFFSET() {
-    return Formats.TIME_24_WITH_LONG_OFFSET;
-  }
-
-  /**
-   * {@link toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_SHORT() {
-    return Formats.DATETIME_SHORT;
-  }
-
-  /**
-   * {@link toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_SHORT_WITH_SECONDS() {
-    return Formats.DATETIME_SHORT_WITH_SECONDS;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_MED() {
-    return Formats.DATETIME_MED;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_MED_WITH_SECONDS() {
-    return Formats.DATETIME_MED_WITH_SECONDS;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_FULL() {
-    return Formats.DATETIME_FULL;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'October 14, 1983, 9:303 AM EDT'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_FULL_WITH_SECONDS() {
-    return Formats.DATETIME_FULL_WITH_SECONDS;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_HUGE() {
-    return Formats.DATETIME_HUGE;
-  }
-
-  /**
-   * {@link toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
-   * @type {Object}
-   */
-  static get DATETIME_HUGE_WITH_SECONDS() {
-    return Formats.DATETIME_HUGE_WITH_SECONDS;
   }
 }
 

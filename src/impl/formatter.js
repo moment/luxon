@@ -1,5 +1,5 @@
 import * as English from './english';
-import * as Formats from './formats';
+import * as Formats from '../formats';
 import { padStart } from './util';
 
 function stringifyTokens(splits, tokenToString) {

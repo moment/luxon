@@ -1,6 +1,7 @@
 function demo(luxon) {
   var DateTime = luxon.DateTime,
     Duration = luxon.Duration,
+    Formats = luxon.Formats,
     examples = [],
     run = function(code) {
       var result;
@@ -52,9 +53,9 @@ function demo(luxon) {
   example("DateTime.local().diff(DateTime.local(1982, 5, 25), ['days', 'hours'])");
   example('DateTime.local().toLocaleString()');
   example("DateTime.local().setLocale('zh').toLocaleString()");
-  example('DateTime.local().toLocaleString(DateTime.DATE_MED)');
-  example("DateTime.local().setLocale('zh').toLocaleString(DateTime.DATE_MED)");
-  example("DateTime.local().setLocale('fr').toLocaleString(DateTime.DATE_FULL)");
+  example('DateTime.local().toLocaleString(Formats.DATE_MED)');
+  example("DateTime.local().setLocale('zh').toLocaleString(Formats.DATE_MED)");
+  example("DateTime.local().setLocale('fr').toLocaleString(Formats.DATE_FULL)");
   example("DateTime.fromISO('2017-05-15')");
   example("DateTime.fromISO('2017-05-15T17:36')");
   example("DateTime.fromISO('2017-W33-4')");
