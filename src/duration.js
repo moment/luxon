@@ -82,10 +82,10 @@ const lowOrderMatrix = {
       months: {
         weeks: daysInMonthAccurate / 7,
         days: daysInMonthAccurate,
-        hours: daysInYearAccurate * 24,
-        minutes: daysInYearAccurate * 24 * 60,
-        seconds: daysInYearAccurate * 24 * 60 * 60,
-        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
+        hours: daysInMonthAccurate * 24,
+        minutes: daysInMonthAccurate * 24 * 60,
+        seconds: daysInMonthAccurate * 24 * 60 * 60,
+        milliseconds: daysInMonthAccurate * 24 * 60 * 60 * 1000
       }
     },
     lowOrderMatrix
