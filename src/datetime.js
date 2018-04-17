@@ -1082,7 +1082,7 @@ export default class DateTime {
    * @type {number}
    */
   get weeksInWeekYear() {
-    return this.isValid ? weeksInWeekYear(this.year) : NaN;
+    return this.isValid ? weeksInWeekYear(this.weekYear) : NaN;
   }
 
   /**
