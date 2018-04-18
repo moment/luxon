@@ -44,3 +44,11 @@ test('Info.isValidIANAZone returns false for junk', () => {
 test('Info.isValidIANAZone returns false for well-specified but invalid zones', () => {
   expect(Info.isValidIANAZone('America/Blork')).toBe(false);
 });
+
+test('Info.isValidIANAZone returns true for valid zones like America/Indiana/Indianapolis', () => {
+  expect(Info.isValidIANAZone('America/Indiana/Indianapolis')).toBe(true);
+});
+
+test('Info.isValidIANAZone returns false for well-specified but invalid zones like America/Indiana/Blork', () => {
+  expect(Info.isValidIANAZone('America/Indiana/Blork')).toBe(false);
+});
