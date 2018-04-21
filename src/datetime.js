@@ -186,10 +186,10 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en-US'), { allowZ: true, forceSimple: true }).formatDateTimeFromString(
-        dt,
-        format
-      )
+    ? Formatter.create(Locale.create('en-US'), {
+        allowZ: true,
+        forceSimple: true
+      }).formatDateTimeFromString(dt, format)
     : null;
 }
 
