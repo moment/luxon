@@ -55,7 +55,7 @@ test('DateTime#toLocal() sets the calendar back to local', () => {
 //------
 // #setZone()
 //------
-test('setZone sets the TZ to the specified zone', () => {
+test('DateTime#setZone setZone sets the TZ to the specified zone', () => {
   const zoned = dt().setZone('America/Los_Angeles');
 
   expect(zoned.zoneName).toBe('America/Los_Angeles');
@@ -67,19 +67,26 @@ test('setZone sets the TZ to the specified zone', () => {
   expect(zoned.isInDST).toBe(true);
 });
 
-test('accepts "local"', () => {
+test('DateTime#setZone accepts "local"', () => {
   const zoned = DateTime.utc().setZone('local');
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 
-test('accepts "utc"', () => {
+test('DateTime#setZone accepts "utc"', () => {
   const zoned = DateTime.local().setZone('utc');
   expect(zoned.offset).toBe(0);
   expect(zoned.offsetNameShort).toBe('UTC');
   expect(zoned.offsetNameLong).toBe('UTC');
 });
 
-test('accepts "utc+3"', () => {
+test('DateTime#setZone accepts "gmt"', () => {
+  const zoned = DateTime.local().setZone('gmt');
+  expect(zoned.offset).toBe(0);
+  expect(zoned.offsetNameShort).toBe('UTC');
+  expect(zoned.offsetNameLong).toBe('UTC');
+});
+
+test('DateTime#setZone accepts "utc+3"', () => {
   const zoned = DateTime.local().setZone('utc+3');
   expect(zoned.zone.name).toBe('UTC+3');
   expect(zoned.offset).toBe(3 * 60);
@@ -87,7 +94,7 @@ test('accepts "utc+3"', () => {
   expect(zoned.offsetNameLong).toBe('UTC+3');
 });
 
-test('accepts "utc-3"', () => {
+test('DateTime#setZone accepts "utc-3"', () => {
   const zoned = DateTime.local().setZone('utc-3');
   expect(zoned.zone.name).toBe('UTC-3');
   expect(zoned.offset).toBe(-3 * 60);
@@ -95,7 +102,7 @@ test('accepts "utc-3"', () => {
   expect(zoned.offsetNameLong).toBe('UTC-3');
 });
 
-test('accepts "utc-3:30"', () => {
+test('DateTime#setZone accepts "utc-3:30"', () => {
   const zoned = DateTime.local().setZone('utc-3:30');
   expect(zoned.zone.name).toBe('UTC-3:30');
   expect(zoned.offset).toBe(-3 * 60 - 30);
@@ -103,13 +110,13 @@ test('accepts "utc-3:30"', () => {
   expect(zoned.offsetNameLong).toBe('UTC-3:30');
 });
 
-test('does not accept dumb things', () => {
+test('DateTime#setZone does not accept dumb things', () => {
   const zoned = DateTime.local().setZone('utc-yo');
   // this is questionable; should this be invalid instead?
   expect(zoned.zone.type).toBe('local');
 });
 
-test('accepts IANA zone names', () => {
+test('DateTime#setZone accepts IANA zone names', () => {
   // this will only work in Chrome/V8 for now
   const zoned = dt().setZone('Europe/Paris');
   expect(zoned.zoneName).toBe('Europe/Paris');
@@ -120,7 +127,7 @@ test('accepts IANA zone names', () => {
   expect(zoned.hour).toBe(6); // cedt is +2
 });
 
-test('setZone accepts a keepLocalTime option', () => {
+test('DateTime#setZone accepts a keepLocalTime option', () => {
   const zoned = dt()
     .toUTC()
     .setZone('America/Los_Angeles', { keepLocalTime: true });
