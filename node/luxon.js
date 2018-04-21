@@ -125,6 +125,13 @@ function daysInMonth(year, month) {
   }
 }
 
+function weeksInWeekYear(weekYear) {
+  var p1 = (weekYear + Math.floor(weekYear / 4) - Math.floor(weekYear / 100) + Math.floor(weekYear / 400)) % 7,
+      last = weekYear - 1,
+      p2 = (last + Math.floor(last / 4) - Math.floor(last / 100) + Math.floor(last / 400)) % 7;
+  return p1 === 4 || p2 === 3 ? 53 : 52;
+}
+
 function untruncateYear(year) {
   if (year > 99) {
     return year;
@@ -916,7 +923,7 @@ var IANAZone = function (_Zone) {
   inherits(IANAZone, _Zone);
 
   IANAZone.isValidSpecifier = function isValidSpecifier(s) {
-    return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}$/i);
+    return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?$/i);
   };
 
   IANAZone.isValidZone = function isValidZone(zone) {
@@ -1977,14 +1984,14 @@ var Locale = function () {
 
 
   Locale.prototype.listingMode = function listingMode() {
-    var defaultOk = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    var defaultOK = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
     var intl = hasIntl(),
         hasFTP = intl && hasFormatToParts(),
         isActuallyEn = this.locale === 'en' || this.locale.toLowerCase() === 'en-us' || intl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith('en-us'),
         hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === 'latn') && (this.outputCalendar === null || this.outputCalendar === 'gregory');
 
-    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOk) {
+    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOK) {
       return 'error';
     } else if (!hasFTP || isActuallyEn && hasNoWeirdness) {
       return 'en';
@@ -2499,10 +2506,10 @@ var lowOrderMatrix = {
   months: {
     weeks: daysInMonthAccurate / 7,
     days: daysInMonthAccurate,
-    hours: daysInYearAccurate * 24,
-    minutes: daysInYearAccurate * 24 * 60,
-    seconds: daysInYearAccurate * 24 * 60 * 60,
-    milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
+    hours: daysInMonthAccurate * 24,
+    minutes: daysInMonthAccurate * 24 * 60,
+    seconds: daysInMonthAccurate * 24 * 60 * 60,
+    milliseconds: daysInMonthAccurate * 24 * 60 * 60 * 1000
   }
 }, lowOrderMatrix);
 
@@ -4568,13 +4575,6 @@ function dayOfWeek(year, month, day) {
   return js === 0 ? 7 : js;
 }
 
-function lastWeekNumber(weekYear) {
-  var p1 = (weekYear + Math.floor(weekYear / 4) - Math.floor(weekYear / 100) + Math.floor(weekYear / 400)) % 7,
-      last = weekYear - 1,
-      p2 = (last + Math.floor(last / 4) - Math.floor(last / 100) + Math.floor(last / 400)) % 7;
-  return p1 === 4 || p2 === 3 ? 53 : 52;
-}
-
 function computeOrdinal(year, month, day) {
   return day + (isLeapYear(year) ? leapLadder : nonLeapLadder)[month - 1];
 }
@@ -4605,8 +4605,8 @@ function gregorianToWeek(gregObj) {
 
   if (weekNumber < 1) {
     weekYear = year - 1;
-    weekNumber = lastWeekNumber(weekYear);
-  } else if (weekNumber > lastWeekNumber(year)) {
+    weekNumber = weeksInWeekYear(weekYear);
+  } else if (weekNumber > weeksInWeekYear(year)) {
     weekYear = year + 1;
     weekNumber = 1;
   } else {
@@ -4665,7 +4665,7 @@ function ordinalToGregorian(ordinalData) {
 
 function hasInvalidWeekData(obj) {
   var validYear = isNumber(obj.weekYear),
-      validWeek = numberBetween(obj.weekNumber, 1, lastWeekNumber(obj.weekYear)),
+      validWeek = numberBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
       validWeekday = numberBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
@@ -6624,6 +6624,20 @@ var DateTime = function () {
     key: 'daysInYear',
     get: function get$$1() {
       return this.isValid ? daysInYear(this.year) : NaN;
+    }
+
+    /**
+     * Returns the number of weeks in this DateTime's year
+     * @see https://en.wikipedia.org/wiki/ISO_week_date
+     * @example DateTime.local(2004).weeksInWeekYear //=> 53
+     * @example DateTime.local(2013).weeksInWeekYear //=> 52
+     * @type {number}
+     */
+
+  }, {
+    key: 'weeksInWeekYear',
+    get: function get$$1() {
+      return this.isValid ? weeksInWeekYear(this.weekYear) : NaN;
     }
   }], [{
     key: 'DATE_SHORT',
