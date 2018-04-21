@@ -98,6 +98,7 @@ test("DateTime#toFormat('Z') returns the narrow offset", () => {
   expect(dt.toUTC(390).toFormat('Z')).toBe('+6:30');
   expect(dt.toUTC(-360).toFormat('Z')).toBe('-6');
   expect(dt.toUTC(-390).toFormat('Z')).toBe('-6:30');
+  expect(dt.toUTC().toFormat('Z')).toBe('+0');
 });
 
 test("DateTime#toFormat('ZZ') returns the padded offset", () => {
@@ -105,6 +106,7 @@ test("DateTime#toFormat('ZZ') returns the padded offset", () => {
   expect(dt.toUTC(390).toFormat('ZZ')).toBe('+06:30');
   expect(dt.toUTC(-360).toFormat('ZZ')).toBe('-06:00');
   expect(dt.toUTC(-390).toFormat('ZZ')).toBe('-06:30');
+  expect(dt.toUTC().toFormat('ZZ')).toBe('+00:00');
 });
 
 test("DateTime#toFormat('ZZZ') returns a numerical offset", () => {
@@ -112,21 +114,27 @@ test("DateTime#toFormat('ZZZ') returns a numerical offset", () => {
   expect(dt.toUTC(390).toFormat('ZZZ')).toBe('+0630');
   expect(dt.toUTC(-360).toFormat('ZZZ')).toBe('-0600');
   expect(dt.toUTC(-390).toFormat('ZZZ')).toBe('-0630');
+  expect(dt.toUTC().toFormat('ZZZ')).toBe('+0000');
 });
 
 test("DateTime#toFormat('ZZZZ') returns the short offset name", () => {
   const zoned = dt.setZone('America/Los_Angeles');
   expect(zoned.toFormat('ZZZZ')).toBe('PDT');
+  expect(dt.toUTC().toFormat('ZZZZ')).toBe('UTC');
 });
 
 test("DateTime#toFormat('ZZZZZ') returns the full offset name", () => {
   const zoned = dt.setZone('America/Los_Angeles');
   expect(zoned.toFormat('ZZZZZ')).toBe('Pacific Daylight Time');
+  expect(dt.toUTC().toFormat('ZZZZZ')).toBe('UTC');
 });
 
 test("DateTime#toFormat('z') returns the zone name", () => {
   const zoned = dt.setZone('America/Los_Angeles');
   expect(zoned.toFormat('z')).toBe('America/Los_Angeles');
+
+  const utc = dt.toUTC();
+  expect(utc.toFormat('z')).toBe('UTC');
 });
 
 test("DateTime#toFormat('a') returns the meridiem", () => {

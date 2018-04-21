@@ -208,10 +208,10 @@ export default class Formatter {
           // offset
           case 'Z':
             // like +6
-            return formatOffset({ format: 'narrow', allowZ: true });
+            return formatOffset({ format: 'narrow', allowZ: this.opts.allowZ });
           case 'ZZ':
             // like +06:00
-            return formatOffset({ format: 'short', allowZ: true });
+            return formatOffset({ format: 'short', allowZ: this.opts.allowZ });
           case 'ZZZ':
             // like +0600
             return formatOffset({ format: 'techie', allowZ: false });
