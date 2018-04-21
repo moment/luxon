@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+ * Support for zone names with more than two components
+ * Fixed long-term-accurate conversions for months
+ * Added `weeksInWeekYear`
+
 ## 1.0.0
  * The big one-oh. No changes from 0.5.8.
 
