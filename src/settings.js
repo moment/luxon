@@ -1,5 +1,6 @@
 import LocalZone from './zones/localZone';
 import Locale from './impl/locale';
+import IANAZone from './zones/IANAZone';
 
 import { normalizeZone } from './impl/zoneUtil';
 
@@ -128,5 +129,6 @@ export default class Settings {
    */
   static resetCaches() {
     Locale.resetCache();
+    IANAZone.resetCache();
   }
 }
