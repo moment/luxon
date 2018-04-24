@@ -157,6 +157,26 @@ test("DateTime#startOf('quarter') goes to the start of the quarter", () => {
   expect(dt.millisecond).toBe(0);
 });
 
+test("DateTime#startOf('quarter') goes to the start of the quarter in December", () => {
+  const dt = DateTime.fromObject({
+    year: 2017,
+    month: 12,
+    day: 10,
+    hour: 4,
+    minute: 5,
+    second: 6,
+    millisecond: 7
+  }).startOf('quarter');
+
+  expect(dt.year).toBe(2017);
+  expect(dt.month).toBe(10);
+  expect(dt.day).toBe(1);
+  expect(dt.hour).toBe(0);
+  expect(dt.minute).toBe(0);
+  expect(dt.second).toBe(0);
+  expect(dt.millisecond).toBe(0);
+});
+
 test("DateTime#startOf('month') goes to the start of the month", () => {
   const dt = createDateTime().startOf('month');
 
