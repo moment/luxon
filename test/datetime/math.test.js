@@ -145,10 +145,50 @@ test("DateTime#startOf('year') goes to the start of the year", () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test("DateTime#startOf('quarter') goes to the start of the month", () => {
+test("DateTime#startOf('quarter') goes to the start of the quarter", () => {
   const dt = createDateTime().startOf('quarter');
 
   expect(dt.year).toBe(2010);
+  expect(dt.month).toBe(1);
+  expect(dt.day).toBe(1);
+  expect(dt.hour).toBe(0);
+  expect(dt.minute).toBe(0);
+  expect(dt.second).toBe(0);
+  expect(dt.millisecond).toBe(0);
+});
+
+test("DateTime#startOf('quarter') goes to the start of the quarter in December", () => {
+  const dt = DateTime.fromObject({
+    year: 2017,
+    month: 12,
+    day: 10,
+    hour: 4,
+    minute: 5,
+    second: 6,
+    millisecond: 7
+  }).startOf('quarter');
+
+  expect(dt.year).toBe(2017);
+  expect(dt.month).toBe(10);
+  expect(dt.day).toBe(1);
+  expect(dt.hour).toBe(0);
+  expect(dt.minute).toBe(0);
+  expect(dt.second).toBe(0);
+  expect(dt.millisecond).toBe(0);
+});
+
+test("DateTime#startOf('quarter') goes to the start of the quarter in January", () => {
+  const dt = DateTime.fromObject({
+    year: 2017,
+    month: 1,
+    day: 10,
+    hour: 4,
+    minute: 5,
+    second: 6,
+    millisecond: 7
+  }).startOf('quarter');
+
+  expect(dt.year).toBe(2017);
   expect(dt.month).toBe(1);
   expect(dt.day).toBe(1);
   expect(dt.hour).toBe(0);
@@ -257,6 +297,46 @@ test("DateTime#endOf('quarter') goes to the end of the quarter", () => {
   const dt = createDateTime().endOf('quarter');
 
   expect(dt.year).toBe(2010);
+  expect(dt.month).toBe(3);
+  expect(dt.day).toBe(31);
+  expect(dt.hour).toBe(23);
+  expect(dt.minute).toBe(59);
+  expect(dt.second).toBe(59);
+  expect(dt.millisecond).toBe(999);
+});
+
+test("DateTime#endOf('quarter') goes to the end of the quarter in December", () => {
+  const dt = DateTime.fromObject({
+    year: 2017,
+    month: 12,
+    day: 10,
+    hour: 4,
+    minute: 5,
+    second: 6,
+    millisecond: 7
+  }).endOf('quarter');
+
+  expect(dt.year).toBe(2017);
+  expect(dt.month).toBe(12);
+  expect(dt.day).toBe(31);
+  expect(dt.hour).toBe(23);
+  expect(dt.minute).toBe(59);
+  expect(dt.second).toBe(59);
+  expect(dt.millisecond).toBe(999);
+});
+
+test("DateTime#endOf('quarter') goes to the end of the quarter in January", () => {
+  const dt = DateTime.fromObject({
+    year: 2017,
+    month: 1,
+    day: 10,
+    hour: 4,
+    minute: 5,
+    second: 6,
+    millisecond: 7
+  }).endOf('quarter');
+
+  expect(dt.year).toBe(2017);
   expect(dt.month).toBe(3);
   expect(dt.day).toBe(31);
   expect(dt.hour).toBe(23);
