@@ -145,16 +145,39 @@ test("DateTime#startOf('year') goes to the start of the year", () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test("DateTime#startOf('quarter') goes to the start of the month", () => {
-  const dt = createDateTime().startOf('quarter');
+test("DateTime#startOf('quarter') goes to the start of the quarter", () => {
+  const monthToQuarterStart = (month, quarterStart) => {
+    const dt = DateTime.fromObject({
+      year: 2017,
+      month,
+      day: 10,
+      hour: 4,
+      minute: 5,
+      second: 6,
+      millisecond: 7
+    }).startOf('quarter');
 
-  expect(dt.year).toBe(2010);
-  expect(dt.month).toBe(1);
-  expect(dt.day).toBe(1);
-  expect(dt.hour).toBe(0);
-  expect(dt.minute).toBe(0);
-  expect(dt.second).toBe(0);
-  expect(dt.millisecond).toBe(0);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(quarterStart);
+    expect(dt.day).toBe(1);
+    expect(dt.hour).toBe(0);
+    expect(dt.minute).toBe(0);
+    expect(dt.second).toBe(0);
+    expect(dt.millisecond).toBe(0);
+  };
+
+  monthToQuarterStart(1, 1);
+  monthToQuarterStart(2, 1);
+  monthToQuarterStart(3, 1);
+  monthToQuarterStart(4, 4);
+  monthToQuarterStart(5, 4);
+  monthToQuarterStart(6, 4);
+  monthToQuarterStart(7, 7);
+  monthToQuarterStart(8, 7);
+  monthToQuarterStart(9, 7);
+  monthToQuarterStart(10, 10);
+  monthToQuarterStart(11, 10);
+  monthToQuarterStart(12, 10);
 });
 
 test("DateTime#startOf('month') goes to the start of the month", () => {
@@ -263,6 +286,41 @@ test("DateTime#endOf('quarter') goes to the end of the quarter", () => {
   expect(dt.minute).toBe(59);
   expect(dt.second).toBe(59);
   expect(dt.millisecond).toBe(999);
+});
+
+test("DateTime#endOf('quarter') goes to the end of the quarter in December", () => {
+  const monthToQuarterEnd = (month, endMonth) => {
+    const dt = DateTime.fromObject({
+      year: 2017,
+      month,
+      day: 10,
+      hour: 4,
+      minute: 5,
+      second: 6,
+      millisecond: 7
+    }).endOf('quarter');
+
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(endMonth);
+    expect(dt.day).toBe(dt.endOf('month').day);
+    expect(dt.hour).toBe(23);
+    expect(dt.minute).toBe(59);
+    expect(dt.second).toBe(59);
+    expect(dt.millisecond).toBe(999);
+  };
+
+  monthToQuarterEnd(1, 3);
+  monthToQuarterEnd(2, 3);
+  monthToQuarterEnd(3, 3);
+  monthToQuarterEnd(4, 6);
+  monthToQuarterEnd(5, 6);
+  monthToQuarterEnd(6, 6);
+  monthToQuarterEnd(7, 9);
+  monthToQuarterEnd(8, 9);
+  monthToQuarterEnd(9, 9);
+  monthToQuarterEnd(10, 12);
+  monthToQuarterEnd(11, 12);
+  monthToQuarterEnd(12, 12);
 });
 
 test("DateTime#endOf('month') goes to the start of the month", () => {

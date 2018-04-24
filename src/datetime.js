@@ -1282,7 +1282,8 @@ export default class DateTime {
     }
 
     if (normalizedUnit === 'quarters') {
-      o.month = Math.floor(this.month / 3) * 3 + 1;
+      const q = Math.ceil(this.month / 3);
+      o.month = (q - 1) * 3 + 1;
     }
 
     return this.set(o);
