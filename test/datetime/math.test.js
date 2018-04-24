@@ -145,7 +145,7 @@ test("DateTime#startOf('year') goes to the start of the year", () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test("DateTime#startOf('quarter') goes to the start of the month", () => {
+test("DateTime#startOf('quarter') goes to the start of the quarter", () => {
   const dt = createDateTime().startOf('quarter');
 
   expect(dt.year).toBe(2010);
