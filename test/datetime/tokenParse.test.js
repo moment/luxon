@@ -511,24 +511,3 @@ test('DateTime.fromFormatExplain() takes the same options as fromFormat', () => 
   const ex = DateTime.fromFormatExplain('Janv. 25 1982', 'LLL dd yyyy', { locale: 'fr' });
   expect(keyCount(ex.result)).toBe(3);
 });
-
-//------
-// .fromStringExplain
-//-------
-test('DateTime.fromStringExplain is an alias for DateTime.fromFormatExplain', () => {
-  const ff = DateTime.fromFormatExplain('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS'),
-    fs = DateTime.fromStringExplain('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
-
-  expect(ff).toEqual(fs);
-});
-
-//------
-// .fromString
-//-------
-
-test('DateTime.fromString is an alias for DateTime.fromFormat', () => {
-  const ff = DateTime.fromFormat('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS'),
-    fs = DateTime.fromString('1982/05/25 09:10:11.445', 'yyyy/MM/dd HH:mm:ss.SSS');
-
-  expect(ff).toEqual(fs);
-});

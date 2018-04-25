@@ -27,7 +27,6 @@ export const DATE_MED = {
   day: n
 };
 
-
 /**
  * Format like 'October 14, 1983'
  * @type {Object}
@@ -171,7 +170,6 @@ export const DATETIME_MED = {
   hour: n,
   minute: d2
 };
-
 
 /**
  * Format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.

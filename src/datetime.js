@@ -716,13 +716,6 @@ export default class DateTime {
   }
 
   /**
-   * @deprecated use fromFormat instead
-   */
-  static fromString(text, fmt, opts = {}) {
-    return DateTime.fromFormat(text, fmt, opts);
-  }
-
-  /**
    * Create a DateTime from a SQL date, time, or datetime
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
@@ -1131,17 +1124,14 @@ export default class DateTime {
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
-  setZone(zone, { keepLocalTime = false, keepCalendarTime = false } = {}) {
+  setZone(zone, { keepLocalTime = false } = {}) {
     zone = normalizeZone(zone, Settings.defaultZone);
     if (zone.equals(this.zone)) {
       return this;
     } else if (!zone.isValid) {
       return DateTime.invalid(UNSUPPORTED_ZONE);
     } else {
-      const newTS =
-        keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
-          ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
-          : this.ts;
+      const newTS = keepLocalTime ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000 : this.ts;
       return clone(this, { ts: newTS, zone });
     }
   }
@@ -1343,13 +1333,13 @@ export default class DateTime {
    */
   toLocaleString(opts = null) {
     if (opts === null) {
-      const n = "numeric";
+      const n = 'numeric';
       opts = {
-  year: n,
-  month: n,
-  day: n
-};
-}
+        year: n,
+        month: n,
+        day: n
+      };
+    }
 
     return this.isValid
       ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this)
@@ -1669,13 +1659,6 @@ export default class DateTime {
     const { locale = null, numberingSystem = null } = options,
       localeToUse = Locale.fromOpts({ locale, numberingSystem, defaultToEN: true });
     return explainFromTokens(localeToUse, text, fmt);
-  }
-
-  /**
-   * @deprecated use fromFormatExplain instead
-   */
-  static fromStringExplain(text, fmt, options = {}) {
-    return DateTime.fromFormatExplain(text, fmt, options);
   }
 }
 
