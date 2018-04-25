@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+ * Export Zone classes
+ * Fix `endOf` and `startOf` for quarters
+ * Change `toFormat("Z")` to return a number for UTC
+ * Allow "GTM" as an argument to `setZone`
+
 ## 1.1.0
 
  * Support for zone names with more than two components
