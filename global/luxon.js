@@ -1161,7 +1161,7 @@ function normalizeZone(input, defaultZone) {
     return input;
   } else if (isString(input)) {
     var lowered = input.toLowerCase();
-    if (lowered === 'local') return LocalZone.instance;else if (lowered === 'utc') return FixedOffsetZone.utcInstance;else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
+    if (lowered === 'local') return LocalZone.instance;else if (lowered === 'utc' || lowered === 'gmt') return FixedOffsetZone.utcInstance;else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
       // handle Etc/GMT-4, which V8 chokes on
       return FixedOffsetZone.instance(offset);
     } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);else return FixedOffsetZone.parseSpecifier(lowered) || InvalidZone.instance;
@@ -1571,10 +1571,10 @@ var Formatter = function () {
         // offset
         case 'Z':
           // like +6
-          return formatOffset({ format: 'narrow', allowZ: true });
+          return formatOffset({ format: 'narrow', allowZ: _this.opts.allowZ });
         case 'ZZ':
           // like +06:00
-          return formatOffset({ format: 'short', allowZ: true });
+          return formatOffset({ format: 'short', allowZ: _this.opts.allowZ });
         case 'ZZZ':
           // like +0600
           return formatOffset({ format: 'techie', allowZ: false });
@@ -4857,7 +4857,10 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // if you want to output a technical format (e.g. RFC 2822), this helper
 // helps handle the details
 function toTechFormat(dt, format) {
-  return dt.isValid ? Formatter.create(Locale.create('en-US'), { forceSimple: true }).formatDateTimeFromString(dt, format) : null;
+  return dt.isValid ? Formatter.create(Locale.create('en-US'), {
+    allowZ: true,
+    forceSimple: true
+  }).formatDateTimeFromString(dt, format) : null;
 }
 
 // technical time formats (e.g. the time part of ISO 8601), take some options
@@ -5757,7 +5760,8 @@ var DateTime = function () {
     }
 
     if (normalizedUnit === 'quarters') {
-      o.month = Math.floor(this.month / 3) * 3 + 1;
+      var q = Math.ceil(this.month / 3);
+      o.month = (q - 1) * 3 + 1;
     }
 
     return this.set(o);
@@ -6872,6 +6876,9 @@ exports.Duration = Duration;
 exports.Interval = Interval;
 exports.Info = Info;
 exports.Zone = Zone;
+exports.FixedOffsetZone = FixedOffsetZone;
+exports.IANAZone = IANAZone;
+exports.LocalZone = LocalZone;
 exports.Settings = Settings;
 
 return exports;

@@ -994,7 +994,7 @@ function normalizeZone(input, defaultZone) {
   } else if (isString(input)) {
     const lowered = input.toLowerCase();
     if (lowered === 'local') return LocalZone.instance;
-    else if (lowered === 'utc') return FixedOffsetZone.utcInstance;
+    else if (lowered === 'utc' || lowered === 'gmt') return FixedOffsetZone.utcInstance;
     else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
       // handle Etc/GMT-4, which V8 chokes on
       return FixedOffsetZone.instance(offset);
@@ -1345,10 +1345,10 @@ class Formatter {
           // offset
           case 'Z':
             // like +6
-            return formatOffset({ format: 'narrow', allowZ: true });
+            return formatOffset({ format: 'narrow', allowZ: this.opts.allowZ });
           case 'ZZ':
             // like +06:00
-            return formatOffset({ format: 'short', allowZ: true });
+            return formatOffset({ format: 'short', allowZ: this.opts.allowZ });
           case 'ZZZ':
             // like +0600
             return formatOffset({ format: 'techie', allowZ: false });
@@ -4183,10 +4183,10 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en-US'), { forceSimple: true }).formatDateTimeFromString(
-        dt,
-        format
-      )
+    ? Formatter.create(Locale.create('en-US'), {
+        allowZ: true,
+        forceSimple: true
+      }).formatDateTimeFromString(dt, format)
     : null;
 }
 
@@ -5279,7 +5279,8 @@ class DateTime {
     }
 
     if (normalizedUnit === 'quarters') {
-      o.month = Math.floor(this.month / 3) * 3 + 1;
+      const q = Math.ceil(this.month / 3);
+      o.month = (q - 1) * 3 + 1;
     }
 
     return this.set(o);
@@ -5850,6 +5851,9 @@ exports.Duration = Duration;
 exports.Interval = Interval;
 exports.Info = Info;
 exports.Zone = Zone;
+exports.FixedOffsetZone = FixedOffsetZone;
+exports.IANAZone = IANAZone;
+exports.LocalZone = LocalZone;
 exports.Settings = Settings;
 
 return exports;
