@@ -11,10 +11,6 @@ function hoursMinutesOffset(z) {
   return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;
 }
 
-/**
- * @private
- */
-
 export default class FixedOffsetZone extends Zone {
   static get utcInstance() {
     if (singleton === null) {

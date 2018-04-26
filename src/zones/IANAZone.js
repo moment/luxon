@@ -48,10 +48,6 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-/**
- * @private
- */
-
 export default class IANAZone extends Zone {
   static isValidSpecifier(s) {
     return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?$/i);
