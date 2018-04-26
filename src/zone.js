@@ -38,10 +38,10 @@ export default class Zone {
    * @param {number} ts - Epoch milliseconds for which to get the name
    * @param {Object} opts - Options to affect the format
    * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
-   * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
+   * @param {string} opts.locale - What locale to return the offset name in.
    * @return {string}
    */
-  static offsetName(ts, opts) {
+  offsetName(ts, opts) {
     throw new ZoneIsAbstractError();
   }
 

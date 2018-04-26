@@ -3,10 +3,6 @@ import Zone from '../zone';
 
 let singleton = null;
 
-/**
- * @private
- */
-
 export default class LocalZone extends Zone {
   static get instance() {
     if (singleton === null) {
