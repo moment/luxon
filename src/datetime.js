@@ -411,7 +411,7 @@ export default class DateTime {
    * @example DateTime.local(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00
    * @example DateTime.local(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00
    * @example DateTime.local(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10
-   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765
    * @return {DateTime}
    */
   static local(year, month, day, hour, minute, second, millisecond) {
@@ -449,7 +449,7 @@ export default class DateTime {
    * @example DateTime.utc(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10Z
-   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765Z
    * @return {DateTime}
    */
   static utc(year, month, day, hour, minute, second, millisecond) {
