@@ -1521,7 +1521,6 @@ export default class DateTime {
     return this.valueOf();
   }
 
-
   /**
    * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON.
    * @return {string}
