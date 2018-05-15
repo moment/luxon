@@ -13,12 +13,11 @@ const dtMaker = () =>
       millisecond: 123,
       zone: 'utc'
     }),
-  dt = dtMaker(),
-  invalid = DateTime.invalid('because');
+  dt = dtMaker();
 
 //------
 // #toMillis()
 //------
 test('DateTime#toMillis() just does valueOf()', () => {
-    expect(dt.toMillis()).toBe(dt.valueOf());
-  });
+  expect(dt.toMillis()).toBe(dt.valueOf());
+});
