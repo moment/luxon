@@ -137,11 +137,11 @@ See the [formatting guide](formatting.html) for more about the string-outputting
 | full ISO 8601        | `iso()`        | `toISO()`        |                                                                                                                                                   |
 | ISO date only        | None           | `toISODate()`    |                                                                                                                                                   |
 | ISO time only        | None           | `toISOTime()`    |                                                                                                                                                   |
-| custom format        | `format(...)`  | `toFormat(...)`  | The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.                            |
+| custom format        | `format(...)`  | `toFormat(...)`  | The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.                               |
 | RFC 2822             |                | `toRFC2822()`    |                                                                                                                                                   |
 | HTTP date string     |                | `toHTTP()`       |                                                                                                                                                   |
 | JS Date              | `toDate()`     | `toJSDate()`     |                                                                                                                                                   |
-| Epoch time           | `valueOf()`    | `valueOf()`      |                                                                                                                                                   |
+| Epoch time           | `valueOf()`    | `valueOf()` or `toMillis()`      |                                                                                                                                                   |
 | Object               | `toObject()`   | `toObject()`     |                                                                                                                                                   |
 | Duration             | `diff(Moment)` | `diff(DateTime)` | Moment's diff returns a count of milliseconds, but Luxon's returns a Duration. To replicate the Moment behavior, use `dt1.diff(d2).milliseconds`. |
 
