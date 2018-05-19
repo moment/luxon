@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1
+
+ * 222x speed-up in DateTime creation for non-en locales
+ * `DateTime#toMillis` alias for `DateTime#valueOf`
+ * Fix types on zone exports
+
 ## 1.2.0
 
  * Export Zone classes
