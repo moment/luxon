@@ -671,10 +671,10 @@ class Zone {
    * @param {number} ts - Epoch milliseconds for which to get the name
    * @param {Object} opts - Options to affect the format
    * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
-   * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
+   * @param {string} opts.locale - What locale to return the offset name in.
    * @return {string}
    */
-  static offsetName(ts, opts) {
+  offsetName(ts, opts) {
     throw new ZoneIsAbstractError();
   }
 
@@ -709,10 +709,6 @@ class Zone {
 }
 
 let singleton = null;
-
-/**
- * @private
- */
 
 class LocalZone extends Zone {
   static get instance() {
@@ -800,10 +796,6 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-/**
- * @private
- */
-
 class IANAZone extends Zone {
   static isValidSpecifier(s) {
     return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?$/i);
@@ -881,10 +873,6 @@ function hoursMinutesOffset(z) {
     base = sign + Math.abs(hours);
   return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;
 }
-
-/**
- * @private
- */
 
 class FixedOffsetZone extends Zone {
   static get utcInstance() {
@@ -1734,7 +1722,15 @@ class Locale {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
-    this.fastNumbers = supportsFastNumbers(this);
+    this.fastNumbersCached = null;
+  }
+
+  get fastNumbers() {
+    if (this.fastNumbersCached !== null) {
+      this.fastNumbersCached = supportsFastNumbers(this);
+    }
+
+    return this.fastNumbersCached;
   }
 
   // todo: cache me
@@ -4408,7 +4404,7 @@ class DateTime {
    * @example DateTime.local(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00
    * @example DateTime.local(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00
    * @example DateTime.local(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10
-   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765
    * @return {DateTime}
    */
   static local(year, month, day, hour, minute, second, millisecond) {
@@ -4446,7 +4442,7 @@ class DateTime {
    * @example DateTime.utc(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10Z
-   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765Z
    * @return {DateTime}
    */
   static utc(year, month, day, hour, minute, second, millisecond) {
@@ -5508,6 +5504,14 @@ class DateTime {
    */
   valueOf() {
     return this.isValid ? this.ts : NaN;
+  }
+
+  /**
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link valueOf}
+   * @return {number}
+   */
+  toMillis() {
+    return this.valueOf();
   }
 
   /**

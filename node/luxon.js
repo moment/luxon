@@ -714,10 +714,10 @@ var Zone = function () {
    * @param {number} ts - Epoch milliseconds for which to get the name
    * @param {Object} opts - Options to affect the format
    * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
-   * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
+   * @param {string} opts.locale - What locale to return the offset name in.
    * @return {string}
    */
-  Zone.offsetName = function offsetName(ts, opts) {
+  Zone.prototype.offsetName = function offsetName(ts, opts) {
     throw new ZoneIsAbstractError();
   };
 
@@ -797,10 +797,6 @@ var Zone = function () {
 }();
 
 var singleton = null;
-
-/**
- * @private
- */
 
 var LocalZone = function (_Zone) {
   inherits(LocalZone, _Zone);
@@ -915,10 +911,6 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-/**
- * @private
- */
-
 var IANAZone = function (_Zone) {
   inherits(IANAZone, _Zone);
 
@@ -1019,10 +1011,6 @@ function hoursMinutesOffset(z) {
       base = sign + Math.abs(hours);
   return minutes > 0 ? base + ':' + padStart(minutes, 2) : base;
 }
-
-/**
- * @private
- */
 
 var FixedOffsetZone = function (_Zone) {
   inherits(FixedOffsetZone, _Zone);
@@ -1977,12 +1965,10 @@ var Locale = function () {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
-    this.fastNumbers = supportsFastNumbers(this);
+    this.fastNumbersCached = null;
   }
 
   // todo: cache me
-
-
   Locale.prototype.listingMode = function listingMode() {
     var defaultOK = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -2141,6 +2127,16 @@ var Locale = function () {
     return this.locale === other.locale && this.numberingSystem === other.numberingSystem && this.outputCalendar === other.outputCalendar;
   };
 
+  createClass(Locale, [{
+    key: 'fastNumbers',
+    get: function get$$1() {
+      if (this.fastNumbersCached !== null) {
+        this.fastNumbersCached = supportsFastNumbers(this);
+      }
+
+      return this.fastNumbersCached;
+    }
+  }]);
   return Locale;
 }();
 
@@ -5094,7 +5090,7 @@ var DateTime = function () {
    * @example DateTime.local(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00
    * @example DateTime.local(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00
    * @example DateTime.local(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10
-   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765
    * @return {DateTime}
    */
 
@@ -5131,7 +5127,7 @@ var DateTime = function () {
    * @example DateTime.utc(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10Z
-   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765Z
    * @return {DateTime}
    */
 
@@ -6037,6 +6033,16 @@ var DateTime = function () {
 
   DateTime.prototype.valueOf = function valueOf() {
     return this.isValid ? this.ts : NaN;
+  };
+
+  /**
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link valueOf}
+   * @return {number}
+   */
+
+
+  DateTime.prototype.toMillis = function toMillis() {
+    return this.valueOf();
   };
 
   /**

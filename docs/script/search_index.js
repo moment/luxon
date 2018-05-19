@@ -618,6 +618,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime#tomillis",
+    "class/src/datetime.js~DateTime.html#instance-method-toMillis",
+    "src/datetime.js~DateTime#toMillis",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime#toobject",
     "class/src/datetime.js~DateTime.html#instance-method-toObject",
     "src/datetime.js~DateTime#toObject",
@@ -1429,13 +1435,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-get-defaultLocale",
+    "class/src/settings.js~Settings.html#static-set-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-set-defaultLocale",
+    "class/src/settings.js~Settings.html#static-get-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
@@ -1453,13 +1459,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1471,13 +1477,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
@@ -1501,13 +1507,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
@@ -1542,6 +1548,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/zone.js~zone#offsetname",
+    "class/src/zone.js~Zone.html#instance-method-offsetName",
+    "src/zone.js~Zone#offsetName",
+    "method"
+  ],
+  [
     "src/zone.js~zone#type",
     "class/src/zone.js~Zone.html#instance-get-type",
     "src/zone.js~Zone#type",
@@ -1552,11 +1564,5 @@ window.esdocSearchIndex = [
     "class/src/zone.js~Zone.html#instance-get-universal",
     "src/zone.js~Zone#universal",
     "member"
-  ],
-  [
-    "src/zone.js~zone.offsetname",
-    "class/src/zone.js~Zone.html#static-method-offsetName",
-    "src/zone.js~Zone.offsetName",
-    "method"
   ]
 ]

@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-2-1" data-ice="link">1.2.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-2-0" data-ice="link">1.2.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-1-0" data-ice="link">1.1.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-0-0" data-ice="link">1.0.0</a></li>
@@ -2376,7 +2377,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <tr>
 <td>Epoch time</td>
 <td><code>valueOf()</code></td>
-<td><code>valueOf()</code></td>
+<td><code>valueOf()</code> or <code>toMillis()</code></td>
 <td></td>
 </tr>
 <tr>
@@ -2467,7 +2468,11 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.2.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.2.1</h2><ul>
+<li>222x speed-up in DateTime creation for non-en locales</li>
+<li><code>DateTime#toMillis</code> alias for <code>DateTime#valueOf</code></li>
+<li>Fix types on zone exports</li>
+</ul><h2>1.2.0</h2><ul>
 <li>Export Zone classes</li>
 <li>Fix <code>endOf</code> and <code>startOf</code> for quarters</li>
 <li>Change <code>toFormat(&quot;Z&quot;)</code> to return a number for UTC</li>

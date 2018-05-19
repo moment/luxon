@@ -33,7 +33,7 @@ var _descriptors = !_fails(function () {
 });
 
 var _core = createCommonjsModule(function (module) {
-  var core = module.exports = { version: '2.5.3' };
+  var core = module.exports = { version: '2.5.5' };
   if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 });
 var _core_1 = _core.version;
@@ -1146,7 +1146,7 @@ var _iterDefine = function _iterDefine(Base, NAME, Constructor, next, DEFAULT, I
   var VALUES_BUG = false;
   var proto = Base.prototype;
   var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = !BUGGY && $native || getMethod(DEFAULT);
+  var $default = $native || getMethod(DEFAULT);
   var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
   var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
   var methods, key, IteratorPrototype;
@@ -1157,7 +1157,7 @@ var _iterDefine = function _iterDefine(Base, NAME, Constructor, next, DEFAULT, I
       // Set @@toStringTag to native iterators
       _setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!_library && !_has(IteratorPrototype, ITERATOR)) _hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -2496,10 +2496,10 @@ var Zone = function () {
    * @param {number} ts - Epoch milliseconds for which to get the name
    * @param {Object} opts - Options to affect the format
    * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
-   * @param {string} opts.localeCode - What locale to return the offset name in. Defaults to us-en
+   * @param {string} opts.locale - What locale to return the offset name in.
    * @return {string}
    */
-  Zone.offsetName = function offsetName(ts, opts) {
+  Zone.prototype.offsetName = function offsetName(ts, opts) {
     throw new ZoneIsAbstractError();
   };
 
@@ -2579,10 +2579,6 @@ var Zone = function () {
 }();
 
 var singleton = null;
-
-/**
- * @private
- */
 
 var LocalZone = function (_Zone) {
   inherits(LocalZone, _Zone);
@@ -2697,10 +2693,6 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-/**
- * @private
- */
-
 var IANAZone = function (_Zone) {
   inherits(IANAZone, _Zone);
 
@@ -2801,10 +2793,6 @@ function hoursMinutesOffset(z) {
       base = sign + Math.abs(hours);
   return minutes > 0 ? base + ':' + padStart(minutes, 2) : base;
 }
-
-/**
- * @private
- */
 
 var FixedOffsetZone = function (_Zone) {
   inherits(FixedOffsetZone, _Zone);
@@ -3759,12 +3747,10 @@ var Locale = function () {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
-    this.fastNumbers = supportsFastNumbers(this);
+    this.fastNumbersCached = null;
   }
 
   // todo: cache me
-
-
   Locale.prototype.listingMode = function listingMode() {
     var defaultOK = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -3923,6 +3909,16 @@ var Locale = function () {
     return this.locale === other.locale && this.numberingSystem === other.numberingSystem && this.outputCalendar === other.outputCalendar;
   };
 
+  createClass(Locale, [{
+    key: 'fastNumbers',
+    get: function get$$1() {
+      if (this.fastNumbersCached !== null) {
+        this.fastNumbersCached = supportsFastNumbers(this);
+      }
+
+      return this.fastNumbersCached;
+    }
+  }]);
   return Locale;
 }();
 
@@ -6876,7 +6872,7 @@ var DateTime = function () {
    * @example DateTime.local(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00
    * @example DateTime.local(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00
    * @example DateTime.local(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10
-   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765
    * @return {DateTime}
    */
 
@@ -6913,7 +6909,7 @@ var DateTime = function () {
    * @example DateTime.utc(2017, 3, 12, 5)              //~> 2017-03-12T05:00:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45)          //~> 2017-03-12T05:45:00Z
    * @example DateTime.utc(2017, 3, 12, 5, 45, 10)      //~> 2017-03-12T05:45:10Z
-   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.675Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765Z
    * @return {DateTime}
    */
 
@@ -7819,6 +7815,16 @@ var DateTime = function () {
 
   DateTime.prototype.valueOf = function valueOf() {
     return this.isValid ? this.ts : NaN;
+  };
+
+  /**
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link valueOf}
+   * @return {number}
+   */
+
+
+  DateTime.prototype.toMillis = function toMillis() {
+    return this.valueOf();
   };
 
   /**
