@@ -11,6 +11,9 @@ suite
   .add('DateTime.local', () => {
     DateTime.local();
   })
+  .add('DateTime.fromObject with locale', () => {
+    DateTime.fromObject({ locale: 'fr' });
+  })
   .add('DateTime.local with numbers', () => {
     DateTime.local(2017, 5, 15);
   })

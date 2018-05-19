@@ -217,7 +217,15 @@ export default class Locale {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
-    this.fastNumbers = supportsFastNumbers(this);
+    this.fastNumbersCached = null;
+  }
+
+  get fastNumbers() {
+    if (this.fastNumbersCached !== null) {
+      this.fastNumbersCached = supportsFastNumbers(this);
+    }
+
+    return this.fastNumbersCached;
   }
 
   // todo: cache me
