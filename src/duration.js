@@ -236,11 +236,24 @@ export default class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
-    return new Duration({
-      values: normalizeObject(obj, Duration.normalizeUnit, true),
-      loc: Locale.fromObject(obj),
-      conversionAccuracy: obj.conversionAccuracy
-    });
+    if (obj == null || typeof obj !== 'object') {
+      throw new InvalidArgumentError('Duration.fromObject(arg): argument expected to be an object.');
+    }
+    // If Argument is empty object {} then create zero Duration;
+    if (Object.getOwnPropertyNames(obj).length == 0)
+      return new Duration({ values:{} });
+    const val = normalizeObject(obj, Duration.normalizeUnit, true);
+    const hasUnits = Object.keys(val).length > 0;
+    if (hasUnits) {
+      return new Duration({
+        values: val,
+        loc: Locale.fromObject(obj),
+        conversionAccuracy: obj.conversionAccuracy
+      });
+    }
+    else {
+      throw new InvalidArgumentError('Duration.fromObject(arg): argument expected to be an object with units.');
+    }
   }
 
   /**
@@ -405,6 +418,10 @@ export default class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  valueOf() {
+    return this.as('milliseconds');
   }
 
   /**
