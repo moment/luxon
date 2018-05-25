@@ -70,12 +70,12 @@ export default function(earlier, later, units, opts) {
     }
   }
 
-  const isNotEmptyObject =function (obj) {
-    return (typeof obj === "object") && (Object.getOwnPropertyNames(obj).length > 0);
+  function isNotEmptyObject(obj) {
+    return typeof obj === 'object' && Object.getOwnPropertyNames(obj).length > 0;
   }
-  const duration = isNotEmptyObject(results) ? 
-    Duration.fromObject(Object.assign(results, opts)) :
-    Duration.fromObject({});
+  const duration = isNotEmptyObject(results)
+    ? Duration.fromObject(Object.assign(results, opts))
+    : Duration.fromObject({});
 
   if (lowerOrderUnits.length > 0) {
     return Duration.fromMillis(remainingMillis, opts)
