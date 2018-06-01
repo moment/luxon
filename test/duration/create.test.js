@@ -49,3 +49,7 @@ test('Duration.fromObject({}) costructs zero duration', () => {
 test('Duration.fromObject() throws if the initial object has no units', () => {
   expect(() => Duration.fromObject({ foo: 0 })).toThrow();
 });
+
+test('Duration.fromObject() throws if providing options only', () => {
+  expect(() => Duration.fromObject({ conversionAccuracy: 'longterm' })).toThrow();
+});

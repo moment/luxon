@@ -242,8 +242,7 @@ export default class Duration {
         'Duration.fromObject(arg): argument expected to be an object.'
       );
     }
-    // If Argument is empty object {} then create zero Duration;
-    if (Object.getOwnPropertyNames(obj).length === 0) {
+    if (Object.keys(obj).length === 0) {
       return new Duration({ values: {} });
     }
     const val = normalizeObject(obj, Duration.normalizeUnit, true);

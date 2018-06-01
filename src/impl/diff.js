@@ -71,7 +71,7 @@ export default function(earlier, later, units, opts) {
   }
 
   function isNotEmptyObject(obj) {
-    return typeof obj === 'object' && Object.getOwnPropertyNames(obj).length > 0;
+    return typeof obj === 'object' && Object.keys(obj).length > 0;
   }
   const duration = isNotEmptyObject(results)
     ? Duration.fromObject(Object.assign(results, opts))
