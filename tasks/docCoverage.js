@@ -8,6 +8,8 @@ fs
     if (parsed.coverage !== '100%') {
       console.error('Doc coverage not 100%');
       process.exit(1);
+    } else {
+      console.error('Doc coverage 100%');
     }
   })
   .catch(() => {
