@@ -375,18 +375,16 @@ export default class Interval {
    * @return {[Interval]}
    */
   static merge(intervals) {
-    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(
-      ([sofar, current], item) => {
-        if (!current) {
-          return [sofar, item];
-        } else if (current.overlaps(item) || current.abutsStart(item)) {
-          return [sofar, current.union(item)];
-        } else {
-          return [sofar.concat([current]), item];
-        }
-      },
-      [[], null]
-    );
+    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(([sofar, current], item) => {
+      if (!current) {
+        return [sofar, item];
+      } else if (current.overlaps(item) || current.abutsStart(item)) {
+        return [sofar, current.union(item)];
+      } else {
+        return [sofar.concat([current]), item];
+      }
+    },
+    [[], null]);
     if (final) {
       found.push(final);
     }
@@ -449,9 +447,8 @@ export default class Interval {
    */
   inspect() {
     if (this.isValid) {
-      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${
-        this.start.zone.name
-      },\n  locale:   ${this.start.locale} }`;
+      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
+        .start.zone.name},\n  locale:   ${this.start.locale} }`;
     } else {
       return `Interval { Invalid, reason: ${this.invalidReason} }`;
     }
