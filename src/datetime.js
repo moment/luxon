@@ -475,7 +475,7 @@ export default class DateTime {
   }
 
   /**
-   * Create an DateTime from a Javascript Date object. Uses the default zone.
+   * Create a DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date} date - a Javascript Date object
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -490,7 +490,7 @@ export default class DateTime {
   }
 
   /**
-   * Create an DateTime from a count of epoch milliseconds. Uses the default zone.
+   * Create a DateTime from a number of milliseconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -508,7 +508,7 @@ export default class DateTime {
   }
 
   /**
-   * Create an DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
+   * Create a DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.year - a year, such as 1987
    * @param {number} obj.month - a month, 1-12
