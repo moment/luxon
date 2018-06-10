@@ -21,3 +21,12 @@ const dtMaker = () =>
 test('DateTime#toMillis() just does valueOf()', () => {
   expect(dt.toMillis()).toBe(dt.valueOf());
 });
+
+//------
+// #toJSDate()
+//------
+test('DateTime#toJSDate() returns a native Date equivalent', () => {
+  const js = dt.toJSDate();
+  expect(js).toBeInstanceOf(Date);
+  expect(js.getTime()).toBe(dt.toMillis());
+});
