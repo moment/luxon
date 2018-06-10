@@ -30,3 +30,12 @@ test('DateTime#toJSDate() returns a native Date equivalent', () => {
   expect(js).toBeInstanceOf(Date);
   expect(js.getTime()).toBe(dt.toMillis());
 });
+
+//------
+// #toBSON()
+//------
+test('DateTime#toBSON() return a BSON serializable equivalent', () => {
+  const js = dt.toJSDate();
+  expect(js).toBeInstanceOf(Date);
+  expect(js.getTime()).toBe(dt.toMillis());
+});
