@@ -21,6 +21,16 @@ test('Interval#equals returns true iff the times are the same', () => {
   expect(first.equals(fromISOs(s2, e2))).toBeFalsy();
 });
 
+test('Interval#equals returns false for invalid intervals', () => {
+  const invalid = Interval.invalid('blarg'),
+    normal = fromISOs('2017-01-01', '2017-01-02');
+
+  expect(invalid.equals(invalid)).toBeFalsy();
+  expect(normal.equals(invalid)).toBeFalsy();
+  expect(invalid.equals(normal)).toBeFalsy();
+  expect(normal.equals(normal)).toBeTruthy();
+});
+
 //-------
 // #union()
 //-------

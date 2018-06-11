@@ -329,6 +329,10 @@ export default class Interval {
    * @return {boolean}
    */
   equals(other) {
+    if (!this.isValid || !other.isValid) {
+      return false;
+    }
+
     return this.s.equals(other.s) && this.e.equals(other.e);
   }
 

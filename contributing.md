@@ -11,6 +11,7 @@ Here are some vague notes on Luxon's design philosophy:
  1. Luxon shouldn't contain simple conveniences that bloat the library to save callers a couple lines of code. Write those lines in your own code.
  1. Most of the complexity of JS module loading compatibility is left to the build. If you have a "this can't be loaded in my bespoke JS module loader" problems, this isn't something you should be solving with changes to the `src` directory. If it's a common use case and is possible to generate with Rollup, it can get its own build command.
  1. We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don't want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.
+ 1. You'll need to sign a CLA as part of your first pull request to Luxon.
  
 ## Building and testing
 
@@ -23,7 +24,7 @@ Mac is easy:
 ```
 brew install node --with-full-icu
 npm install
-npm run test
+./scripts/test
 ```
 
 If that's for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.
@@ -57,7 +58,7 @@ In case messing with your Node environment just to run Luxon's tests is too much
 
 Once you're sure your bugfix or feature makes sense for Luxon, make sure you take these steps:
 
- 1. Be sure to add tests and run them with `npm run test`
+ 1. Be sure to add tests and run them with `scripts/test`
  1. Be sure you run `npm run lint!` before you commit. Note this will modify your source files to line up with the style guidelines.
  1. Make sure you add or ESDoc annotations appropriately. You can run `npm run docs` to generate the HTML for them. They land in the `build/docs` directory. This also builds the markdown files in `/docs` into the guide on the Luxon website.
  1. To test Luxon in your browser, run `npm run site` and then open `build/demo/global.html`. You can access Luxon classes in the console like `window.luxon.DateTime`.
@@ -67,12 +68,13 @@ Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on yo
 
 ## npm script reference
 
-| Command              | Function                                |
-|----------------------|-----------------------------------------|
-| `npm run build`      | Build all the distributable files       |
-| `npm run build-node` | Build just for Node                     |
-| `npm run test`       | Run the test suite, but see notes above |
-| `npm run format`     | Run the Prettier formatter              |
-| `npm run lint!`      | Run the formatter and the linter        |
-| `npm run docs`       | Build the doc pages                     |
-| `npm run site`       | Build the Luxon website                 |
+| Command                  | Function                                |
+|--------------------------|-----------------------------------------|
+| `npm run build`          | Build all the distributable files       |
+| `npm run build-node`     | Build just for Node                     |
+| `npm run test`           | Run the test suite, but see notes above |
+| `npm run format`         | Run the Prettier formatter              |
+| `npm run lint!`          | Run the formatter and the linter        |
+| `npm run docs`           | Build the doc pages                     |
+| `npm run site`           | Build the Luxon website                 |
+| `npm check-doc-coverage` | Check whether there's full doc coverage |
