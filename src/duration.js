@@ -219,7 +219,8 @@ export default class Duration {
   }
 
   /**
-   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
+   * Create a Duration from a Javascript object with keys like 'years' and 'hours. 
+   * If this object is empty then zero  milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.quarters
@@ -236,11 +237,26 @@ export default class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
-    return new Duration({
-      values: normalizeObject(obj, Duration.normalizeUnit, true),
-      loc: Locale.fromObject(obj),
-      conversionAccuracy: obj.conversionAccuracy
-    });
+    if (obj == null || typeof obj !== 'object') {
+      throw new InvalidArgumentError(
+        'Duration.fromObject(arg): argument expected to be an object.'
+      );
+    }
+    if (Object.keys(obj).length === 0) {
+      return new Duration({ values: {} });
+    }
+    const val = normalizeObject(obj, Duration.normalizeUnit, true);
+    const hasUnits = Object.keys(val).length > 0;
+    if (hasUnits) {
+      return new Duration({
+        values: val,
+        loc: Locale.fromObject(obj),
+        conversionAccuracy: obj.conversionAccuracy
+      });
+    } else {
+      const reason = 'Duration.fromObject(arg): argument expected to be an object with units';
+      return Duration.invalid(reason);
+    }
   }
 
   /**
@@ -405,6 +421,14 @@ export default class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns an milliseconds value of this Duration.
+   * @return {number}
+   */
+  valueOf() {
+    return this.as('milliseconds');
   }
 
   /**
