@@ -254,9 +254,8 @@ export default class Duration {
         conversionAccuracy: obj.conversionAccuracy
       });
     } else {
-      throw new InvalidArgumentError(
-        'Duration.fromObject(arg): argument expected to be an object with units.'
-      );
+      const reason = 'Duration.fromObject(arg): argument expected to be an object with units';
+      return Duration.invalid(reason);
     }
   }
 
