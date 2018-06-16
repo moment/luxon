@@ -257,13 +257,17 @@ export default class Interval {
    * @return {[Interval]}
    */
   splitBy(duration) {
-    if (!this.isValid) return [];
-    const dur = friendlyDuration(duration),
-      results = [];
+    const dur = friendlyDuration(duration);
+
+    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
+      return [];
+    }
+
     let { s } = this,
       added,
       next;
 
+    const results = [];
     while (s < this.e) {
       added = s.plus(dur);
       next = +added > +this.e ? this.e : added;
