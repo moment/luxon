@@ -3,7 +3,7 @@ import Locale from './impl/locale';
 
 import { normalizeZone } from './impl/zoneUtil';
 
-let now = () => new Date().valueOf(),
+let now = () => Date.now(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
   defaultLocale = null,
   defaultNumberingSystem = null,
