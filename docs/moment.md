@@ -141,7 +141,7 @@ See the [formatting guide](formatting.html) for more about the string-outputting
 | RFC 2822             |                | `toRFC2822()`    |                                                                                                                                                   |
 | HTTP date string     |                | `toHTTP()`       |                                                                                                                                                   |
 | JS Date              | `toDate()`     | `toJSDate()`     |                                                                                                                                                   |
-| Epoch time           | `valueOf()`    | `valueOf()` or `toMillis()`      |                                                                                                                                                   |
+| Epoch time           | `valueOf()`    | `toMillis()` or `valueOf()`      |                                                                                                                                                   |
 | Object               | `toObject()`   | `toObject()`     |                                                                                                                                                   |
 | Duration             | `diff(Moment)` | `diff(DateTime)` | Moment's diff returns a count of milliseconds, but Luxon's returns a Duration. To replicate the Moment behavior, use `dt1.diff(d2).milliseconds`. |
 
