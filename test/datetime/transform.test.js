@@ -18,22 +18,22 @@ const dtMaker = () =>
 //------
 // #toMillis()
 //------
-test("DateTime#toMillis() returns milliseconds for valid DateTimes", () => {
+test('DateTime#toMillis() returns milliseconds for valid DateTimes', () => {
   const js = dt.toJSDate();
   expect(dt.toMillis()).toBe(js.getTime());
 });
 
-test("DateTime#toMillis() returns NaN for invalid DateTimes", () => {
-  const invalid = DateTime.invalid("reason");
+test('DateTime#toMillis() returns NaN for invalid DateTimes', () => {
+  const invalid = DateTime.invalid('reason');
   expect(invalid.toMillis()).toBe(NaN);
 });
 
 //------
 // #valueOf()
 //------
-test("DateTime#valueOf() just does toMillis()", () => {
+test('DateTime#valueOf() just does toMillis()', () => {
   expect(dt.valueOf()).toBe(dt.toMillis());
-  const invalid = DateTime.invalid("reason");
+  const invalid = DateTime.invalid('reason');
   expect(invalid.valueOf()).toBe(invalid.toMillis());
 });
 
