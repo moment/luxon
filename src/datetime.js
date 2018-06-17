@@ -1640,10 +1640,13 @@ export default class DateTime {
    * @return {boolean}
    */
   equals(other) {
-    return this.isValid && other.isValid &&
+    return (
+      this.isValid &&
+      other.isValid &&
       this.valueOf() === other.valueOf() &&
       this.zone.equals(other.zone) &&
-      this.loc.equals(other.loc);
+      this.loc.equals(other.loc)
+    );
   }
 
   /**
