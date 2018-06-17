@@ -39,7 +39,7 @@ test('Invalid tell you why', () => {
 });
 
 test('Invalid DateTimes return invalid Dates', () => {
-  expect(organic1.toJSDate().valueOf()).toBeFalsy();
+  expect(organic1.toJSDate().valueOf()).toBe(NaN);
 });
 
 test('Diffing invalid DateTimes creates invalid Durations', () => {
