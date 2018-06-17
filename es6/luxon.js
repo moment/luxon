@@ -1596,13 +1596,36 @@ class SimpleNumberFormatter {
   constructor(opts) {
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
+    this.floor = opts.floor || false;
   }
 
   format(i) {
     // to match the browser's numberformatter defaults
-    const digits = this.round ? 0 : 3,
-      rounded = roundTo(i, digits);
-    return padStart(rounded, this.padTo);
+    const fixed = this.floor ? Math.floor(i) : roundTo(i, this.round ? 0 : 3);
+    return padStart(fixed, this.padTo);
+  }
+}
+
+class IntlNumberFormatter {
+  constructor(intl, opts) {
+
+    const intlOpts = { useGrouping: false };
+
+    if (opts.padTo > 0) {
+      intlOpts.minimumIntegerDigits = opts.padTo;
+    }
+
+    if (opts.round) {
+      intlOpts.maximumFractionDigits = 0;
+    }
+
+    this.floor = opts.floor;
+    this.intl = new Intl.NumberFormat(intl, intlOpts);
+  }
+
+  format(i) {
+    const fixed = this.floor ? Math.floor(i) : i;
+    return this.intl.format(fixed);
   }
 }
 
@@ -1723,7 +1746,7 @@ class Locale {
   }
 
   get fastNumbers() {
-    if (this.fastNumbersCached !== null) {
+    if (this.fastNumbersCached == null) {
       this.fastNumbersCached = supportsFastNumbers(this);
     }
 
@@ -1848,24 +1871,12 @@ class Locale {
   }
 
   numberFormatter(opts = {}) {
-    // this option is never used (the only caller short-circuits on it, but it seems safer to leave)
-    // (in contrast, the || is used heavily)
-    if (opts.forceSimple || this.fastNumbers) {
+    // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
+    // (in contrast, the rest of the condition is used heavily)
+    if (opts.forceSimple || this.fastNumbers || !hasIntl()) {
       return new SimpleNumberFormatter(opts);
-    } else if (hasIntl()) {
-      const intlOpts = { useGrouping: false };
-
-      if (opts.padTo > 0) {
-        intlOpts.minimumIntegerDigits = opts.padTo;
-      }
-
-      if (opts.round) {
-        intlOpts.maximumFractionDigits = 0;
-      }
-
-      return new Intl.NumberFormat(this.intl, intlOpts);
     } else {
-      return new SimpleNumberFormatter(opts);
+      return new IntlNumberFormatter(this.intl, opts);
     }
   }
 
@@ -2378,7 +2389,8 @@ class Duration {
   }
 
   /**
-   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
+   * Create a Duration from a Javascript object with keys like 'years' and 'hours. 
+   * If this object is empty then zero  milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.quarters
@@ -2395,6 +2407,11 @@ class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
+    if (obj == null || typeof obj !== 'object') {
+      throw new InvalidArgumentError(
+        'Duration.fromObject: argument expected to be an object.'
+      );
+    }
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit, true),
       loc: Locale.fromObject(obj),
@@ -2492,12 +2509,21 @@ class Duration {
    * Returns a string representation of this Duration formatted according to the specified format string.
    * @param {string} fmt - the format string
    * @param {Object} opts - options
-   * @param {boolean} opts.round - round numerical values
+   * @param {boolean} [opts.floor=true] - floor numerical values
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
+
+    // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
+    // 1. always turn off rounding in the underlying formatter
+    // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on
+    const fmtOpts = Object.assign({}, opts, { floor: true, round: false });
+    if (opts.round === false || opts.floor === false) {
+      fmtOpts.floor = false;
+    }
+
     return this.isValid
-      ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
+      ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
       : INVALID;
   }
 
@@ -2564,6 +2590,14 @@ class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns an milliseconds value of this Duration.
+   * @return {number}
+   */
+  valueOf() {
+    return this.as('milliseconds');
   }
 
   /**
@@ -3132,13 +3166,17 @@ class Interval {
    * @return {[Interval]}
    */
   splitBy(duration) {
-    if (!this.isValid) return [];
-    const dur = friendlyDuration(duration),
-      results = [];
+    const dur = friendlyDuration(duration);
+
+    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
+      return [];
+    }
+
     let { s } = this,
       added,
       next;
 
+    const results = [];
     while (s < this.e) {
       added = s.plus(dur);
       next = +added > +this.e ? this.e : added;
@@ -3204,6 +3242,10 @@ class Interval {
    * @return {boolean}
    */
   equals(other) {
+    if (!this.isValid || !other.isValid) {
+      return false;
+    }
+
     return this.s.equals(other.s) && this.e.equals(other.e);
   }
 
@@ -4465,7 +4507,7 @@ class DateTime {
   }
 
   /**
-   * Create an DateTime from a Javascript Date object. Uses the default zone.
+   * Create a DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date} date - a Javascript Date object
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -4480,7 +4522,7 @@ class DateTime {
   }
 
   /**
-   * Create an DateTime from a count of epoch milliseconds. Uses the default zone.
+   * Create a DateTime from a number of milliseconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -4498,7 +4540,7 @@ class DateTime {
   }
 
   /**
-   * Create an DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
+   * Create a DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.year - a year, such as 1987
    * @param {number} obj.month - a month, 1-12
@@ -5517,6 +5559,14 @@ class DateTime {
    */
   toJSON() {
     return this.toISO();
+  }
+
+  /**
+   * Returns a BSON serializable equivalent to this DateTime.
+   * @return {Date}
+   */
+  toBSON() {
+    return this.toJSDate();
   }
 
   /**

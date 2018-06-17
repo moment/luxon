@@ -299,13 +299,17 @@ export default class Interval {
    * @return {[Interval]}
    */
   splitBy(duration) {
-    if (!this.isValid) return [];
-    const dur = friendlyDuration(duration),
-      results = [];
+    const dur = friendlyDuration(duration);
+
+    if (!this.isValid || !dur.isValid || dur.as(&quot;milliseconds&quot;) === 0) {
+      return [];
+    }
+
     let { s } = this,
       added,
       next;
 
+    const results = [];
     while (s &lt; this.e) {
       added = s.plus(dur);
       next = +added &gt; +this.e ? this.e : added;
@@ -371,6 +375,10 @@ export default class Interval {
    * @return {boolean}
    */
   equals(other) {
+    if (!this.isValid || !other.isValid) {
+      return false;
+    }
+
     return this.s.equals(other.s) &amp;&amp; this.e.equals(other.e);
   }
 

@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-0" data-ice="link">1.3.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-2-1" data-ice="link">1.2.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-2-0" data-ice="link">1.2.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-1-0" data-ice="link">1.1.0</a></li>
@@ -314,12 +315,13 @@
 <li>Luxon shouldn&apos;t contain simple conveniences that bloat the library to save callers a couple lines of code. Write those lines in your own code.</li>
 <li>Most of the complexity of JS module loading compatibility is left to the build. If you have a &quot;this can&apos;t be loaded in my bespoke JS module loader&quot; problems, this isn&apos;t something you should be solving with changes to the <code>src</code> directory. If it&apos;s a common use case and is possible to generate with Rollup, it can get its own build command.</li>
 <li>We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don&apos;t want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.</li>
+<li>You&apos;ll need to sign a CLA as part of your first pull request to Luxon.</li>
 </ol>
 <h2 id="building-and-testing">Building and testing</h2><p>Building and testing is done through npm scripts. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you&apos;re good to go; just run npm scripts like <code>npm run test</code>. But you probably don&apos;t have that, so read on.</p>
 <h3 id="osx">OSX</h3><p>Mac is easy:</p>
 <pre><code><code class="source-code prettyprint">brew install node --with-full-icu
 npm install
-npm run test</code>
+./scripts/test</code>
 </code></pre><p>If that&apos;s for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.</p>
 <h3 id="linux">Linux</h3><p>There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We&apos;ll cover the latter. Assuming you&apos;ve installed Node 8:</p>
 <pre><code><code class="source-code prettyprint">npm install
@@ -332,7 +334,7 @@ npm install full-icu
 ./docker/npm run test</code>
 </code></pre><h2 id="patch-basics">Patch basics</h2><p>Once you&apos;re sure your bugfix or feature makes sense for Luxon, make sure you take these steps:</p>
 <ol>
-<li>Be sure to add tests and run them with <code>npm run test</code></li>
+<li>Be sure to add tests and run them with <code>scripts/test</code></li>
 <li>Be sure you run <code>npm run lint!</code> before you commit. Note this will modify your source files to line up with the style guidelines.</li>
 <li>Make sure you add or ESDoc annotations appropriately. You can run <code>npm run docs</code> to generate the HTML for them. They land in the <code>build/docs</code> directory. This also builds the markdown files in <code>/docs</code> into the guide on the Luxon website.</li>
 <li>To test Luxon in your browser, run <code>npm run site</code> and then open <code>build/demo/global.html</code>. You can access Luxon classes in the console like <code>window.luxon.DateTime</code>.</li>
@@ -374,6 +376,10 @@ npm install full-icu
 <tr>
 <td><code>npm run site</code></td>
 <td>Build the Luxon website</td>
+</tr>
+<tr>
+<td><code>npm check-doc-coverage</code></td>
+<td>Check whether there&apos;s full doc coverage</td>
 </tr>
 </tbody>
 </table>

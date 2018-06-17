@@ -552,6 +552,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime#tobson",
+    "class/src/datetime.js~DateTime.html#instance-method-toBSON",
+    "src/datetime.js~DateTime#toBSON",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime#toformat",
     "class/src/datetime.js~DateTime.html#instance-method-toFormat",
     "src/datetime.js~DateTime#toFormat",
@@ -1110,6 +1116,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/duration.js~duration#valueof",
+    "class/src/duration.js~Duration.html#instance-method-valueOf",
+    "src/duration.js~Duration#valueOf",
+    "method"
+  ],
+  [
     "src/duration.js~duration#weeks",
     "class/src/duration.js~Duration.html#instance-get-weeks",
     "src/duration.js~Duration#weeks",
@@ -1447,25 +1459,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
-    "src/settings.js~Settings.defaultNumberingSystem",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultnumberingsystem",
     "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
-    "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
-    "src/settings.js~Settings.defaultOutputCalendar",
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
     "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "src/settings.js~Settings.defaultOutputCalendar",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultoutputcalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1477,13 +1489,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
