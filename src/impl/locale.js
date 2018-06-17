@@ -106,7 +106,6 @@ class SimpleNumberFormatter {
 
 class IntlNumberFormatter {
   constructor(intl, opts) {
-
     const intlOpts = { useGrouping: false };
 
     if (opts.padTo > 0) {

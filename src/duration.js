@@ -238,9 +238,7 @@ export default class Duration {
    */
   static fromObject(obj) {
     if (obj == null || typeof obj !== 'object') {
-      throw new InvalidArgumentError(
-        'Duration.fromObject: argument expected to be an object.'
-      );
+      throw new InvalidArgumentError('Duration.fromObject: argument expected to be an object.');
     }
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit, true),
@@ -343,7 +341,6 @@ export default class Duration {
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
-
     // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
     // 1. always turn off rounding in the underlying formatter
     // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on

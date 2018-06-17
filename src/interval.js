@@ -259,7 +259,7 @@ export default class Interval {
   splitBy(duration) {
     const dur = friendlyDuration(duration);
 
-    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
+    if (!this.isValid || !dur.isValid || dur.as('milliseconds') === 0) {
       return [];
     }
 
