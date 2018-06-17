@@ -219,7 +219,8 @@ export default class Duration {
   }
 
   /**
-   * Create an Duration from a Javascript object with keys like 'years' and 'hours'.
+   * Create a Duration from a Javascript object with keys like 'years' and 'hours. 
+   * If this object is empty then zero  milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.quarters
@@ -236,6 +237,9 @@ export default class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
+    if (obj == null || typeof obj !== 'object') {
+      throw new InvalidArgumentError('Duration.fromObject: argument expected to be an object.');
+    }
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit, true),
       loc: Locale.fromObject(obj),
@@ -333,12 +337,20 @@ export default class Duration {
    * Returns a string representation of this Duration formatted according to the specified format string.
    * @param {string} fmt - the format string
    * @param {Object} opts - options
-   * @param {boolean} opts.round - round numerical values
+   * @param {boolean} [opts.floor=true] - floor numerical values
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
+    // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
+    // 1. always turn off rounding in the underlying formatter
+    // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on
+    const fmtOpts = Object.assign({}, opts, { floor: true, round: false });
+    if (opts.round === false || opts.floor === false) {
+      fmtOpts.floor = false;
+    }
+
     return this.isValid
-      ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
+      ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
       : INVALID;
   }
 
@@ -405,6 +417,14 @@ export default class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns an milliseconds value of this Duration.
+   * @return {number}
+   */
+  valueOf() {
+    return this.as('milliseconds');
   }
 
   /**

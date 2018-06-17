@@ -111,3 +111,22 @@ test('Duration#as shifts to one unit and returns it', () => {
 test('Duration#as returns null for invalid durations', () => {
   expect(Duration.invalid('because').as('hours')).toBeFalsy();
 });
+
+//------
+// #valueOf()
+//-------
+
+test('Duration#valueOf value of zero duration', () => {
+  const dur = Duration.fromObject({});
+  expect(dur.valueOf()).toBe(0);
+});
+
+test('Duration#valueOf returns as millisecond value (lower order units)', () => {
+  const dur = Duration.fromObject({ hours: 1, minutes: 36, seconds: 0 });
+  expect(dur.valueOf()).toBe(5760000);
+});
+
+test('Duration#valueOf value of the duration with lower and higher order units', () => {
+  const dur = Duration.fromObject({ days: 2, seconds: 1 });
+  expect(dur.valueOf()).toBe(172801000);
+});
