@@ -68,41 +68,41 @@ test("Duration#toFormat('S') returns milliseconds", () => {
 
 test("Duration#toFormat('s') returns seconds", () => {
   expect(dur().toFormat('s')).toBe('36993906');
-  expect(dur().toFormat('s', { round: false })).toBe('36993906.007');
+  expect(dur().toFormat('s', { floor: false })).toBe('36993906.007');
   expect(dur().toFormat('s.SSS')).toBe('36993906.007');
 });
 
 test("Duration#toFormat('m') returns minutes", () => {
   expect(dur().toFormat('m')).toBe('616565');
-  expect(dur().toFormat('m', { round: false })).toBe('616565.1');
+  expect(dur().toFormat('m', { floor: false })).toBe('616565.1');
   expect(dur().toFormat('m:ss')).toBe('616565:06');
   expect(dur().toFormat('m:ss.SSS')).toBe('616565:06.007');
 });
 
 test("Duration#toFormat('h') returns hours", () => {
   expect(dur().toFormat('h')).toBe('10276');
-  expect(dur().toFormat('h', { round: false })).toBe('10276.085');
+  expect(dur().toFormat('h', { floor: false })).toBe('10276.085');
   expect(dur().toFormat('h:ss')).toBe('10276:306');
   expect(dur().toFormat('h:mm:ss.SSS')).toBe('10276:05:06.007');
 });
 
 test("Duration#toFormat('d') returns days", () => {
   expect(dur().toFormat('d')).toBe('428');
-  expect(dur().toFormat('d', { round: false })).toBe('428.17');
+  expect(dur().toFormat('d', { floor: false })).toBe('428.17');
   expect(dur().toFormat('d:h:ss')).toBe('428:4:306');
   expect(dur().toFormat('d:h:mm:ss.SSS')).toBe('428:4:05:06.007');
 });
 
 test("Duration#toFormat('M') returns months", () => {
   expect(dur().toFormat('M')).toBe('14');
-  expect(dur().toFormat('M', { round: false })).toBe('14.106');
+  expect(dur().toFormat('M', { floor: false })).toBe('14.106');
   expect(dur().toFormat('M:s')).toBe('14:273906');
   expect(dur().toFormat('M:dd:h:mm:ss.SSS')).toBe('14:03:4:05:06.007');
 });
 
 test("Duration#toFormat('y') returns years", () => {
   expect(dur().toFormat('y')).toBe('1');
-  expect(dur().toFormat('y', { round: false })).toBe('1.175');
+  expect(dur().toFormat('y', { floor: false })).toBe('1.175');
   expect(dur().toFormat('y:m')).toBe('1:90965');
   expect(dur().toFormat('y:M:dd:h:mm:ss.SSS')).toBe('1:2:03:4:05:06.007');
 
@@ -112,10 +112,27 @@ test("Duration#toFormat('y') returns years", () => {
   expect(lil.toFormat('yyyyy')).toBe('00005');
 });
 
+test("Duration#toFormat accepts the deprecated 'round' option", () => {
+  expect(dur().toFormat('s', { round: false })).toBe('36993906.007');
+  expect(dur().toFormat('m', { round: false })).toBe('616565.1');
+  expect(dur().toFormat('h', { round: false })).toBe('10276.085');
+  expect(dur().toFormat('d', { round: false })).toBe('428.17');
+  expect(dur().toFormat('M', { round: false })).toBe('14.106');
+  expect(dur().toFormat('y', { round: false })).toBe('1.175');
+});
+
 test('Duration#toFormat leaves in zeros', () => {
   const tiny = Duration.fromObject({ seconds: 5 });
   expect(tiny.toFormat('hh:mm:ss')).toBe('00:00:05');
   expect(tiny.toFormat('hh:mm:ss.SSS')).toBe('00:00:05.000');
+});
+
+test('Duration#toFormat rounds down', () => {
+  const tiny = Duration.fromObject({ seconds: 5.7 });
+  expect(tiny.toFormat('s')).toBe('5');
+
+  const unpromoted = Duration.fromObject({ seconds: 59.7 });
+  expect(unpromoted.toFormat('mm:ss')).toBe('00:59');
 });
 
 test('Duration#toFormat localizes the numbers', () => {

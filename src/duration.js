@@ -349,12 +349,21 @@ export default class Duration {
    * Returns a string representation of this Duration formatted according to the specified format string.
    * @param {string} fmt - the format string
    * @param {Object} opts - options
-   * @param {boolean} opts.round - round numerical values
+   * @param {boolean} [opts.floor=true] - floor numerical values
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
+
+    // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
+    // 1. always turn off rounding in the underlying formatter
+    // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on
+    const fmtOpts = Object.assign({}, opts, { floor: true, round: false });
+    if (opts.round === false || opts.floor === false) {
+      fmtOpts.floor = false;
+    }
+
     return this.isValid
-      ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
+      ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
       : INVALID;
   }
 

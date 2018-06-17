@@ -94,13 +94,36 @@ class SimpleNumberFormatter {
   constructor(opts) {
     this.padTo = opts.padTo || 0;
     this.round = opts.round || false;
+    this.floor = opts.floor || false;
   }
 
   format(i) {
     // to match the browser's numberformatter defaults
-    const digits = this.round ? 0 : 3,
-      rounded = roundTo(i, digits);
-    return padStart(rounded, this.padTo);
+    const fixed = this.floor ? Math.floor(i) : roundTo(i, this.round ? 0 : 3);
+    return padStart(fixed, this.padTo);
+  }
+}
+
+class IntlNumberFormatter {
+  constructor(intl, opts) {
+
+    const intlOpts = { useGrouping: false };
+
+    if (opts.padTo > 0) {
+      intlOpts.minimumIntegerDigits = opts.padTo;
+    }
+
+    if (opts.round) {
+      intlOpts.maximumFractionDigits = 0;
+    }
+
+    this.floor = opts.floor;
+    this.intl = new Intl.NumberFormat(intl, intlOpts);
+  }
+
+  format(i) {
+    const fixed = this.floor ? Math.floor(i) : i;
+    return this.intl.format(fixed);
   }
 }
 
@@ -221,7 +244,7 @@ export default class Locale {
   }
 
   get fastNumbers() {
-    if (this.fastNumbersCached !== null) {
+    if (this.fastNumbersCached == null) {
       this.fastNumbersCached = supportsFastNumbers(this);
     }
 
@@ -346,24 +369,12 @@ export default class Locale {
   }
 
   numberFormatter(opts = {}) {
-    // this option is never used (the only caller short-circuits on it, but it seems safer to leave)
-    // (in contrast, the || is used heavily)
-    if (opts.forceSimple || this.fastNumbers) {
+    // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
+    // (in contrast, the rest of the condition is used heavily)
+    if (opts.forceSimple || this.fastNumbers || !hasIntl()) {
       return new SimpleNumberFormatter(opts);
-    } else if (hasIntl()) {
-      const intlOpts = { useGrouping: false };
-
-      if (opts.padTo > 0) {
-        intlOpts.minimumIntegerDigits = opts.padTo;
-      }
-
-      if (opts.round) {
-        intlOpts.maximumFractionDigits = 0;
-      }
-
-      return new Intl.NumberFormat(this.intl, intlOpts);
     } else {
-      return new SimpleNumberFormatter(opts);
+      return new IntlNumberFormatter(this.intl, opts);
     }
   }
 
