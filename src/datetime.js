@@ -340,7 +340,7 @@ function quickDT(obj, zone) {
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
- * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link valueOf} and {@link toJSDate}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
@@ -1506,19 +1506,19 @@ export default class DateTime {
   }
 
   /**
-   * Returns the epoch milliseconds of this DateTime
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link toMillis}
    * @return {number}
    */
   valueOf() {
-    return this.isValid ? this.ts : NaN;
+    return this.toMillis();
   }
 
   /**
-   * Returns the epoch milliseconds of this DateTime. Alias of {@link valueOf}
+   * Returns the epoch milliseconds of this DateTime.
    * @return {number}
    */
   toMillis() {
-    return this.valueOf();
+    return this.isValid ? this.ts : NaN;
   }
 
   /**
@@ -1640,11 +1640,13 @@ export default class DateTime {
    * @return {boolean}
    */
   equals(other) {
-    return this.isValid && other.isValid
-      ? this.valueOf() === other.valueOf() &&
-          this.zone.equals(other.zone) &&
-          this.loc.equals(other.loc)
-      : false;
+    return (
+      this.isValid &&
+      other.isValid &&
+      this.valueOf() === other.valueOf() &&
+      this.zone.equals(other.zone) &&
+      this.loc.equals(other.loc)
+    );
   }
 
   /**
