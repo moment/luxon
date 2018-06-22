@@ -1860,7 +1860,7 @@ export function friendlyDateTime(dateTimeish) {
     return dateTimeish;
   } else if (dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
     return DateTime.fromJSDate(dateTimeish);
-  } else if (dateTimeish instanceof Object) {
+  } else if (typeof dateTimeish === 'object') {
     return DateTime.fromObject(dateTimeish);
   } else {
     throw new InvalidArgumentError('Unknown datetime argument');

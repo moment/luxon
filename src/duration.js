@@ -157,7 +157,7 @@ export function friendlyDuration(duration) {
     return Duration.fromMillis(duration);
   } else if (duration instanceof Duration) {
     return duration;
-  } else if (duration instanceof Object) {
+  } else if (typeof duration === 'object') {
     return Duration.fromObject(duration);
   } else {
     throw new InvalidArgumentError('Unknown duration argument');
@@ -219,7 +219,7 @@ export default class Duration {
   }
 
   /**
-   * Create a Duration from a Javascript object with keys like 'years' and 'hours. 
+   * Create a Duration from a Javascript object with keys like 'years' and 'hours.
    * If this object is empty then zero  milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
