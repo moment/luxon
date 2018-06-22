@@ -123,7 +123,7 @@ function objToLocalTS(obj) {
     obj.millisecond
   );
 
-  // javascript is stupid and i hate it
+  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
   if (obj.year < 100 && obj.year >= 0) {
     d = new Date(d);
     d.setUTCFullYear(obj.year);
