@@ -70,12 +70,7 @@ export default function(earlier, later, units, opts) {
     }
   }
 
-  function isNotEmptyObject(obj) {
-    return typeof obj === 'object' && Object.keys(obj).length > 0;
-  }
-  const duration = isNotEmptyObject(results)
-    ? Duration.fromObject(Object.assign(results, opts))
-    : Duration.fromObject({});
+  const duration = Duration.fromObject(Object.assign(results, opts));
 
   if (lowerOrderUnits.length > 0) {
     return Duration.fromMillis(remainingMillis, opts)
