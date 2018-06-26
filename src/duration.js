@@ -238,27 +238,6 @@ export default class Duration {
    */
   static fromObject(obj) {
     if (obj == null || typeof obj !== 'object') {
-<<<<<<< HEAD
-      throw new InvalidArgumentError(
-        'Duration.fromObject(arg): argument expected to be an object.'
-      );
-    }
-    if (Object.keys(obj).length === 0) {
-      return new Duration({ values: {} });
-    }
-    const val = normalizeObject(obj, Duration.normalizeUnit, true);
-    const hasUnits = Object.keys(val).length > 0;
-    if (hasUnits) {
-      return new Duration({
-        values: val,
-        loc: Locale.fromObject(obj),
-        conversionAccuracy: obj.conversionAccuracy
-      });
-    } else {
-      const reason = 'Duration.fromObject(arg): argument expected to be an object with units';
-      return Duration.invalid(reason);
-    }
-=======
       throw new InvalidArgumentError('Duration.fromObject: argument expected to be an object.');
     }
     return new Duration({
@@ -266,7 +245,6 @@ export default class Duration {
       loc: Locale.fromObject(obj),
       conversionAccuracy: obj.conversionAccuracy
     });
->>>>>>> upstream/master
   }
 
   /**
