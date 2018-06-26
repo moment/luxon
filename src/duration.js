@@ -1,4 +1,4 @@
-import { isUndefined, isNumber, normalizeObject } from './impl/util';
+import { isUndefined, isNumber, normalizeObject, customInspectSymbol } from './impl/util';
 import Locale from './impl/locale';
 import Formatter from './impl/formatter';
 import { parseISODuration } from './impl/regexParser';
@@ -238,6 +238,7 @@ export default class Duration {
    */
   static fromObject(obj) {
     if (obj == null || typeof obj !== 'object') {
+<<<<<<< HEAD
       throw new InvalidArgumentError(
         'Duration.fromObject(arg): argument expected to be an object.'
       );
@@ -257,6 +258,15 @@ export default class Duration {
       const reason = 'Duration.fromObject(arg): argument expected to be an object with units';
       return Duration.invalid(reason);
     }
+=======
+      throw new InvalidArgumentError('Duration.fromObject: argument expected to be an object.');
+    }
+    return new Duration({
+      values: normalizeObject(obj, Duration.normalizeUnit, true),
+      loc: Locale.fromObject(obj),
+      conversionAccuracy: obj.conversionAccuracy
+    });
+>>>>>>> upstream/master
   }
 
   /**
@@ -349,12 +359,20 @@ export default class Duration {
    * Returns a string representation of this Duration formatted according to the specified format string.
    * @param {string} fmt - the format string
    * @param {Object} opts - options
-   * @param {boolean} opts.round - round numerical values
+   * @param {boolean} [opts.floor=true] - floor numerical values
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
+    // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
+    // 1. always turn off rounding in the underlying formatter
+    // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on
+    const fmtOpts = Object.assign({}, opts, { floor: true, round: false });
+    if (opts.round === false || opts.floor === false) {
+      fmtOpts.floor = false;
+    }
+
     return this.isValid
-      ? Formatter.create(this.loc, opts).formatDurationFromString(this, fmt)
+      ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
       : INVALID;
   }
 
@@ -435,7 +453,7 @@ export default class Duration {
    * Returns a string representation of this Duration appropriate for the REPL.
    * @return {string}
    */
-  inspect() {
+  [customInspectSymbol]() {
     if (this.isValid) {
       const valsInspect = JSON.stringify(this.toObject());
       return `Duration {\n  values: ${valsInspect},\n  locale: ${this

@@ -18,6 +18,39 @@ const dtMaker = () =>
 //------
 // #toMillis()
 //------
-test('DateTime#toMillis() just does valueOf()', () => {
-  expect(dt.toMillis()).toBe(dt.valueOf());
+test('DateTime#toMillis() returns milliseconds for valid DateTimes', () => {
+  const js = dt.toJSDate();
+  expect(dt.toMillis()).toBe(js.getTime());
+});
+
+test('DateTime#toMillis() returns NaN for invalid DateTimes', () => {
+  const invalid = DateTime.invalid('reason');
+  expect(invalid.toMillis()).toBe(NaN);
+});
+
+//------
+// #valueOf()
+//------
+test('DateTime#valueOf() just does toMillis()', () => {
+  expect(dt.valueOf()).toBe(dt.toMillis());
+  const invalid = DateTime.invalid('reason');
+  expect(invalid.valueOf()).toBe(invalid.toMillis());
+});
+
+//------
+// #toJSDate()
+//------
+test('DateTime#toJSDate() returns a native Date equivalent', () => {
+  const js = dt.toJSDate();
+  expect(js).toBeInstanceOf(Date);
+  expect(js.getTime()).toBe(dt.toMillis());
+});
+
+//------
+// #toBSON()
+//------
+test('DateTime#toBSON() return a BSON serializable equivalent', () => {
+  const js = dt.toJSDate();
+  expect(js).toBeInstanceOf(Date);
+  expect(js.getTime()).toBe(dt.toMillis());
 });

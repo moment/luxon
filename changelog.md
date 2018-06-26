@@ -1,10 +1,18 @@
 # Changelog
 
+## 1.3.0
+
+ * **mildly breaking change** Duration.toFormat now floors its outputs instead of rounding them (see #224)
+ * Added 'floor' option to Duration.toFormat and deprecated the 'round' option
+ * Added `Dateime.toBSON`
+ * Fixed infinite loop when passing invalid or zero-length durations to Interval#splitBy
+ * Added better error handling to Duration.fromObject()
+
 ## 1.2.1
 
  * 222x speed-up in DateTime creation for non-en locales
- * `DateTime#toMillis` alias for `DateTime#valueOf`
- * Fix types on zone exports
+ * Added `DateTime#toMillis` alias for `DateTime#valueOf`
+ * Fixed types on zone exports
 
 ## 1.2.0
 

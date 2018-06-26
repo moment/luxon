@@ -46,6 +46,7 @@ test('Duration.fromObject({}) costructs zero duration', () => {
   expect(dur.milliseconds).toBe(0);
 });
 
+<<<<<<< HEAD
 test('Duration.fromObject invlid if the initial object has no units', () => {
   const dur = Duration.fromObject({ foo: 0 });
   expect(dur.isValid).toBe(false);
@@ -54,4 +55,27 @@ test('Duration.fromObject invlid if the initial object has no units', () => {
 test('Duration.fromObject invlid if providing options only', () => {
   const dur = Duration.fromObject({ conversionAccuracy: 'longterm' });
   expect(dur.isValid).toBe(false);
+=======
+test('Duration.fromObject is invalid if the initial object has no units', () => {
+  const dur = Duration.fromObject({ foo: 0 });
+  expect(dur.years).toBe(0);
+  expect(dur.months).toBe(0);
+  expect(dur.days).toBe(0);
+  expect(dur.hours).toBe(0);
+  expect(dur.minutes).toBe(0);
+  expect(dur.seconds).toBe(0);
+  expect(dur.milliseconds).toBe(0);
+});
+
+test('Duration.fromObject is valid if providing options only', () => {
+  const dur = Duration.fromObject({ conversionAccuracy: 'longterm' });
+  expect(dur.years).toBe(0);
+  expect(dur.months).toBe(0);
+  expect(dur.days).toBe(0);
+  expect(dur.hours).toBe(0);
+  expect(dur.minutes).toBe(0);
+  expect(dur.seconds).toBe(0);
+  expect(dur.milliseconds).toBe(0);
+  expect(dur.isValid).toBe(true);
+>>>>>>> upstream/master
 });

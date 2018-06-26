@@ -1,3 +1,4 @@
+import { customInspectSymbol } from './impl/util';
 import DateTime, { friendlyDateTime } from './datetime';
 import Duration, { friendlyDuration } from './duration';
 import Settings from './settings';
@@ -257,13 +258,17 @@ export default class Interval {
    * @return {[Interval]}
    */
   splitBy(duration) {
-    if (!this.isValid) return [];
-    const dur = friendlyDuration(duration),
-      results = [];
+    const dur = friendlyDuration(duration);
+
+    if (!this.isValid || !dur.isValid || dur.as('milliseconds') === 0) {
+      return [];
+    }
+
     let { s } = this,
       added,
       next;
 
+    const results = [];
     while (s < this.e) {
       added = s.plus(dur);
       next = +added > +this.e ? this.e : added;
@@ -445,7 +450,7 @@ export default class Interval {
    * Returns a string representation of this Interval appropriate for the REPL.
    * @return {string}
    */
-  inspect() {
+  [customInspectSymbol]() {
     if (this.isValid) {
       return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
         .start.zone.name},\n  locale:   ${this.start.locale} }`;

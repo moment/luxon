@@ -16,6 +16,7 @@ import {
   daysInYear,
   isLeapYear,
   weeksInWeekYear,
+  customInspectSymbol,
   normalizeObject
 } from './impl/util';
 import { normalizeZone } from './impl/zoneUtil';
@@ -123,7 +124,7 @@ function objToLocalTS(obj) {
     obj.millisecond
   );
 
-  // javascript is stupid and i hate it
+  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
   if (obj.year < 100 && obj.year >= 0) {
     d = new Date(d);
     d.setUTCFullYear(obj.year);
@@ -340,7 +341,7 @@ function quickDT(obj, zone) {
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
- * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link valueOf} and {@link toJSDate}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
@@ -1496,7 +1497,7 @@ export default class DateTime {
    * Returns a string representation of this DateTime appropriate for the REPL.
    * @return {string}
    */
-  inspect() {
+  [customInspectSymbol]() {
     if (this.isValid) {
       return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
         .locale} }`;
@@ -1506,19 +1507,19 @@ export default class DateTime {
   }
 
   /**
-   * Returns the epoch milliseconds of this DateTime
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link toMillis}
    * @return {number}
    */
   valueOf() {
-    return this.isValid ? this.ts : NaN;
+    return this.toMillis();
   }
 
   /**
-   * Returns the epoch milliseconds of this DateTime. Alias of {@link valueOf}
+   * Returns the epoch milliseconds of this DateTime.
    * @return {number}
    */
   toMillis() {
-    return this.valueOf();
+    return this.isValid ? this.ts : NaN;
   }
 
   /**
@@ -1527,6 +1528,14 @@ export default class DateTime {
    */
   toJSON() {
     return this.toISO();
+  }
+
+  /**
+   * Returns a BSON serializable equivalent to this DateTime.
+   * @return {Date}
+   */
+  toBSON() {
+    return this.toJSDate();
   }
 
   /**
@@ -1632,11 +1641,13 @@ export default class DateTime {
    * @return {boolean}
    */
   equals(other) {
-    return this.isValid && other.isValid
-      ? this.valueOf() === other.valueOf() &&
-          this.zone.equals(other.zone) &&
-          this.loc.equals(other.loc)
-      : false;
+    return (
+      this.isValid &&
+      other.isValid &&
+      this.valueOf() === other.valueOf() &&
+      this.zone.equals(other.zone) &&
+      this.loc.equals(other.loc)
+    );
   }
 
   /**
