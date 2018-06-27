@@ -381,6 +381,7 @@ export default class Duration {
    * @example Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=> 'P4MT45S'
    * @example Duration.fromObject({ months: 5 }).toISO() //=> 'P5M'
    * @example Duration.fromObject({ minutes: 5 }).toISO() //=> 'PT5M'
+   * @example Duration.fromObject({ milliseconds: 6 }).toISO() //=> 'PT0.006S'
    * @return {string}
    */
   toISO() {
@@ -399,7 +400,8 @@ export default class Duration {
     if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += 'T';
     if (norm.hours > 0) s += norm.hours + 'H';
     if (norm.minutes > 0) s += norm.minutes + 'M';
-    if (norm.seconds > 0) s += norm.seconds + 'S';
+    if (norm.seconds > 0 || norm.milliseconds > 0)
+      s += norm.seconds + norm.milliseconds / 1000 + 'S';
     return s;
   }
 

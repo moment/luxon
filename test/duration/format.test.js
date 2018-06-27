@@ -16,7 +16,7 @@ const dur = () =>
 // #toISO()
 //------
 test('Duration#toISO fills out every field', () => {
-  expect(dur().toISO()).toBe('P1Y2M3DT4H5M6S');
+  expect(dur().toISO()).toBe('P1Y2M3DT4H5M6.007S');
 });
 
 test('Duration#toISO creates a minimal string', () => {
@@ -36,6 +36,10 @@ test('Duration#toISO handles mixed negative/positive durations', () => {
 
 test('Duration#toISO returns null for invalid durations', () => {
   expect(Duration.invalid('because').toISO()).toBe(null);
+});
+
+test('Duration#toISO handles milliseconds duration', () => {
+  expect(Duration.fromObject({ milliseconds: 7 }).toISO()).toBe('PT0.007S');
 });
 
 //------
