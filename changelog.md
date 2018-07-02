@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1
+
+ * Include milliseconds in Duration#toISO
+ * Avoid deprecation warning from DateTime#inspect in Node 10
+
 ## 1.3.0
 
  * **mildly breaking change** Duration.toFormat now floors its outputs instead of rounding them (see #224)
