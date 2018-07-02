@@ -33,7 +33,7 @@ var _descriptors = !_fails(function () {
 });
 
 var _core = createCommonjsModule(function (module) {
-  var core = module.exports = { version: '2.5.5' };
+  var core = module.exports = { version: '2.5.7' };
   if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 });
 var _core_1 = _core.version;
@@ -326,11 +326,20 @@ var _meta_3 = _meta.fastKey;
 var _meta_4 = _meta.getWeak;
 var _meta_5 = _meta.onFreeze;
 
-var SHARED = '__core-js_shared__';
-var store = _global[SHARED] || (_global[SHARED] = {});
-var _shared = function _shared(key) {
-  return store[key] || (store[key] = {});
-};
+var _library = false;
+
+var _shared = createCommonjsModule(function (module) {
+  var SHARED = '__core-js_shared__';
+  var store = _global[SHARED] || (_global[SHARED] = {});
+
+  (module.exports = function (key, value) {
+    return store[key] || (store[key] = value !== undefined ? value : {});
+  })('versions', []).push({
+    version: _core.version,
+    mode: _library ? 'pure' : 'global',
+    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+  });
+});
 
 var _wks = createCommonjsModule(function (module) {
   var store = _shared('wks');
@@ -358,8 +367,6 @@ var f$1 = _wks;
 var _wksExt = {
 	f: f$1
 };
-
-var _library = false;
 
 var defineProperty$1 = _objectDp.f;
 var _wksDefine = function _wksDefine(name) {
@@ -2045,6 +2052,14 @@ function timeObject(obj) {
   return pick(obj, ['hour', 'minute', 'second', 'millisecond']);
 }
 
+var customInspectSymbol = function () {
+  try {
+    return require('util').inspect.custom; // eslint-disable-line global-require
+  } catch (_err) {
+    return Symbol('util.inspect.custom');
+  }
+}();
+
 /**
  * @private
  */
@@ -2948,7 +2963,7 @@ function normalizeZone(input, defaultZone) {
 }
 
 var now = function now() {
-  return new Date().valueOf();
+  return Date.now();
 },
     defaultZone = null,
     // not setting this directly to LocalZone.instance bc loading order issues
@@ -3623,7 +3638,6 @@ var SimpleNumberFormatter = function () {
 var IntlNumberFormatter = function () {
   function IntlNumberFormatter(intl, opts) {
     classCallCheck(this, IntlNumberFormatter);
-
 
     var intlOpts = { useGrouping: false };
 
@@ -4569,7 +4583,6 @@ var Duration = function () {
   Duration.prototype.toFormat = function toFormat(fmt) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-
     // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
     // 1. always turn off rounding in the underlying formatter
     // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on
@@ -4612,6 +4625,7 @@ var Duration = function () {
    * @example Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=> 'P4MT45S'
    * @example Duration.fromObject({ months: 5 }).toISO() //=> 'P5M'
    * @example Duration.fromObject({ minutes: 5 }).toISO() //=> 'PT5M'
+   * @example Duration.fromObject({ milliseconds: 6 }).toISO() //=> 'PT0.006S'
    * @return {string}
    */
 
@@ -4632,7 +4646,7 @@ var Duration = function () {
     if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += 'T';
     if (norm.hours > 0) s += norm.hours + 'H';
     if (norm.minutes > 0) s += norm.minutes + 'M';
-    if (norm.seconds > 0) s += norm.seconds + 'S';
+    if (norm.seconds > 0 || norm.milliseconds > 0) s += norm.seconds + norm.milliseconds / 1000 + 'S';
     return s;
   };
 
@@ -4672,7 +4686,7 @@ var Duration = function () {
    */
 
 
-  Duration.prototype.inspect = function inspect() {
+  Duration.prototype[customInspectSymbol] = function () {
     if (this.isValid) {
       var valsInspect = JSON.stringify(this.toObject());
       return 'Duration {\n  values: ' + valsInspect + ',\n  locale: ' + this.locale + ',\n  conversionAccuracy: ' + this.conversionAccuracy + ' }';
@@ -5390,7 +5404,7 @@ var Interval = function () {
   Interval.prototype.splitBy = function splitBy(duration) {
     var dur = friendlyDuration(duration);
 
-    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
+    if (!this.isValid || !dur.isValid || dur.as('milliseconds') === 0) {
       return [];
     }
 
@@ -5641,7 +5655,7 @@ var Interval = function () {
    */
 
 
-  Interval.prototype.inspect = function inspect() {
+  Interval.prototype[customInspectSymbol] = function () {
     if (this.isValid) {
       return 'Interval {\n  start: ' + this.start.toISO() + ',\n  end: ' + this.end.toISO() + ',\n  zone:   ' + this.start.zone.name + ',\n  locale:   ' + this.start.locale + ' }';
     } else {
@@ -6618,7 +6632,7 @@ function tsToObj(ts, offset) {
 function objToLocalTS(obj) {
   var d = Date.UTC(obj.year, obj.month - 1, obj.day, obj.hour, obj.minute, obj.second, obj.millisecond);
 
-  // javascript is stupid and i hate it
+  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
   if (obj.year < 100 && obj.year >= 0) {
     d = new Date(d);
     d.setUTCFullYear(obj.year);
@@ -6847,7 +6861,7 @@ function quickDT(obj, zone) {
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
- * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link valueOf} and {@link toJSDate}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
@@ -7845,7 +7859,7 @@ var DateTime = function () {
    */
 
 
-  DateTime.prototype.inspect = function inspect() {
+  DateTime.prototype[customInspectSymbol] = function () {
     if (this.isValid) {
       return 'DateTime {\n  ts: ' + this.toISO() + ',\n  zone: ' + this.zone.name + ',\n  locale: ' + this.locale + ' }';
     } else {
@@ -7854,23 +7868,23 @@ var DateTime = function () {
   };
 
   /**
-   * Returns the epoch milliseconds of this DateTime
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link toMillis}
    * @return {number}
    */
 
 
   DateTime.prototype.valueOf = function valueOf() {
-    return this.isValid ? this.ts : NaN;
+    return this.toMillis();
   };
 
   /**
-   * Returns the epoch milliseconds of this DateTime. Alias of {@link valueOf}
+   * Returns the epoch milliseconds of this DateTime.
    * @return {number}
    */
 
 
   DateTime.prototype.toMillis = function toMillis() {
-    return this.valueOf();
+    return this.isValid ? this.ts : NaN;
   };
 
   /**
@@ -8017,7 +8031,7 @@ var DateTime = function () {
 
 
   DateTime.prototype.equals = function equals(other) {
-    return this.isValid && other.isValid ? this.valueOf() === other.valueOf() && this.zone.equals(other.zone) && this.loc.equals(other.loc) : false;
+    return this.isValid && other.isValid && this.valueOf() === other.valueOf() && this.zone.equals(other.zone) && this.loc.equals(other.loc);
   };
 
   /**

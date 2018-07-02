@@ -204,6 +204,14 @@ function timeObject(obj) {
   return pick(obj, ['hour', 'minute', 'second', 'millisecond']);
 }
 
+const customInspectSymbol = (() => {
+  try {
+    return require('util').inspect.custom; // eslint-disable-line global-require
+  } catch (_err) {
+    return Symbol('util.inspect.custom');
+  }
+})();
+
 /**
  * @private
  */
@@ -996,7 +1004,7 @@ function normalizeZone(input, defaultZone) {
   }
 }
 
-let now = () => new Date().valueOf(),
+let now = () => Date.now(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
   defaultLocale = null,
   defaultNumberingSystem = null,
@@ -1608,7 +1616,6 @@ class SimpleNumberFormatter {
 
 class IntlNumberFormatter {
   constructor(intl, opts) {
-
     const intlOpts = { useGrouping: false };
 
     if (opts.padTo > 0) {
@@ -2408,9 +2415,7 @@ class Duration {
    */
   static fromObject(obj) {
     if (obj == null || typeof obj !== 'object') {
-      throw new InvalidArgumentError(
-        'Duration.fromObject: argument expected to be an object.'
-      );
+      throw new InvalidArgumentError('Duration.fromObject: argument expected to be an object.');
     }
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit, true),
@@ -2513,7 +2518,6 @@ class Duration {
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
-
     // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
     // 1. always turn off rounding in the underlying formatter
     // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on
@@ -2554,6 +2558,7 @@ class Duration {
    * @example Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=> 'P4MT45S'
    * @example Duration.fromObject({ months: 5 }).toISO() //=> 'P5M'
    * @example Duration.fromObject({ minutes: 5 }).toISO() //=> 'PT5M'
+   * @example Duration.fromObject({ milliseconds: 6 }).toISO() //=> 'PT0.006S'
    * @return {string}
    */
   toISO() {
@@ -2572,7 +2577,8 @@ class Duration {
     if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += 'T';
     if (norm.hours > 0) s += norm.hours + 'H';
     if (norm.minutes > 0) s += norm.minutes + 'M';
-    if (norm.seconds > 0) s += norm.seconds + 'S';
+    if (norm.seconds > 0 || norm.milliseconds > 0)
+      s += norm.seconds + norm.milliseconds / 1000 + 'S';
     return s;
   }
 
@@ -2604,7 +2610,7 @@ class Duration {
    * Returns a string representation of this Duration appropriate for the REPL.
    * @return {string}
    */
-  inspect() {
+  [customInspectSymbol]() {
     if (this.isValid) {
       const valsInspect = JSON.stringify(this.toObject());
       return `Duration {\n  values: ${valsInspect},\n  locale: ${this
@@ -3168,7 +3174,7 @@ class Interval {
   splitBy(duration) {
     const dur = friendlyDuration(duration);
 
-    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
+    if (!this.isValid || !dur.isValid || dur.as('milliseconds') === 0) {
       return [];
     }
 
@@ -3358,7 +3364,7 @@ class Interval {
    * Returns a string representation of this Interval appropriate for the REPL.
    * @return {string}
    */
-  inspect() {
+  [customInspectSymbol]() {
     if (this.isValid) {
       return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
         .start.zone.name},\n  locale:   ${this.start.locale} }`;
@@ -4155,7 +4161,7 @@ function objToLocalTS(obj) {
     obj.millisecond
   );
 
-  // javascript is stupid and i hate it
+  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
   if (obj.year < 100 && obj.year >= 0) {
     d = new Date(d);
     d.setUTCFullYear(obj.year);
@@ -4372,7 +4378,7 @@ function quickDT(obj, zone) {
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
- * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link valueOf} and {@link toJSDate}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
@@ -5528,7 +5534,7 @@ class DateTime {
    * Returns a string representation of this DateTime appropriate for the REPL.
    * @return {string}
    */
-  inspect() {
+  [customInspectSymbol]() {
     if (this.isValid) {
       return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
         .locale} }`;
@@ -5538,19 +5544,19 @@ class DateTime {
   }
 
   /**
-   * Returns the epoch milliseconds of this DateTime
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link toMillis}
    * @return {number}
    */
   valueOf() {
-    return this.isValid ? this.ts : NaN;
+    return this.toMillis();
   }
 
   /**
-   * Returns the epoch milliseconds of this DateTime. Alias of {@link valueOf}
+   * Returns the epoch milliseconds of this DateTime.
    * @return {number}
    */
   toMillis() {
-    return this.valueOf();
+    return this.isValid ? this.ts : NaN;
   }
 
   /**
@@ -5672,11 +5678,13 @@ class DateTime {
    * @return {boolean}
    */
   equals(other) {
-    return this.isValid && other.isValid
-      ? this.valueOf() === other.valueOf() &&
-          this.zone.equals(other.zone) &&
-          this.loc.equals(other.loc)
-      : false;
+    return (
+      this.isValid &&
+      other.isValid &&
+      this.valueOf() === other.valueOf() &&
+      this.zone.equals(other.zone) &&
+      this.loc.equals(other.loc)
+    );
   }
 
   /**
