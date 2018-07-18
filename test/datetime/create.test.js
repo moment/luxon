@@ -256,6 +256,11 @@ test('DateTime.fromMillis accepts the default locale', () => {
   withDefaultLocale('fr', () => expect(DateTime.fromMillis(391147200000).locale).toBe('fr'));
 });
 
+test('DateTime.fromMillis(ms) accepts numerical input', () => {
+  const dt = DateTime.fromMillis(391147200000);
+  expect(dt.isValid).toBe(true);
+});
+
 //------
 // .fromObject()
 //-------
