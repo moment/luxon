@@ -257,7 +257,7 @@ test('DateTime.fromMillis accepts the default locale', () => {
 });
 
 test('DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input', () => {
-  expect((() => DateTime.fromMillis('slurp'))).toThrow();
+  expect(() => DateTime.fromMillis('slurp')).toThrow();
 });
 
 //------
