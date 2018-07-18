@@ -501,11 +501,15 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromMillis(milliseconds, options = {}) {
-    return new DateTime({
-      ts: milliseconds,
-      zone: normalizeZone(options.zone, Settings.defaultZone),
-      loc: Locale.fromObject(options)
-    });
+    if (!isNumber(milliseconds)) {
+      throw new InvalidArgumentError('fromMillis requires a numerical input');
+    } else {
+      return new DateTime({
+        ts: milliseconds,
+        zone: normalizeZone(options.zone, Settings.defaultZone),
+        loc: Locale.fromObject(options)
+      });
+    }
   }
 
   /**
