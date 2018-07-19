@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.2
+
+ * DateTime.fromMillis will throw if passed a non-number
+ * Fixes for type checking across JS contexts
+
 ## 1.3.1
 
  * Include milliseconds in Duration#toISO
