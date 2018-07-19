@@ -543,11 +543,15 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromMillis(milliseconds, options = {}) {
-    return new DateTime({
-      ts: milliseconds,
-      zone: normalizeZone(options.zone, Settings.defaultZone),
-      loc: Locale.fromObject(options)
-    });
+    if (!isNumber(milliseconds)) {
+      throw new InvalidArgumentError(&apos;fromMillis requires a numerical input&apos;);
+    } else {
+      return new DateTime({
+        ts: milliseconds,
+        zone: normalizeZone(options.zone, Settings.defaultZone),
+        loc: Locale.fromObject(options)
+      });
+    }
   }
 
   /**
@@ -1903,7 +1907,7 @@ export function friendlyDateTime(dateTimeish) {
     return dateTimeish;
   } else if (dateTimeish.valueOf &amp;&amp; isNumber(dateTimeish.valueOf())) {
     return DateTime.fromJSDate(dateTimeish);
-  } else if (dateTimeish instanceof Object) {
+  } else if (typeof dateTimeish === &apos;object&apos;) {
     return DateTime.fromObject(dateTimeish);
   } else {
     throw new InvalidArgumentError(&apos;Unknown datetime argument&apos;);

@@ -2601,7 +2601,7 @@ function friendlyDuration(duration) {
     return Duration.fromMillis(duration);
   } else if (duration instanceof Duration) {
     return duration;
-  } else if (duration instanceof Object) {
+  } else if ((typeof duration === 'undefined' ? 'undefined' : _typeof(duration)) === 'object') {
     return Duration.fromObject(duration);
   } else {
     throw new InvalidArgumentError('Unknown duration argument');
@@ -2668,7 +2668,7 @@ var Duration = function () {
   };
 
   /**
-   * Create a Duration from a Javascript object with keys like 'years' and 'hours. 
+   * Create a Duration from a Javascript object with keys like 'years' and 'hours.
    * If this object is empty then zero  milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
@@ -5237,11 +5237,15 @@ var DateTime = function () {
   DateTime.fromMillis = function fromMillis(milliseconds) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    return new DateTime({
-      ts: milliseconds,
-      zone: normalizeZone(options.zone, Settings.defaultZone),
-      loc: Locale.fromObject(options)
-    });
+    if (!isNumber(milliseconds)) {
+      throw new InvalidArgumentError('fromMillis requires a numerical input');
+    } else {
+      return new DateTime({
+        ts: milliseconds,
+        zone: normalizeZone(options.zone, Settings.defaultZone),
+        loc: Locale.fromObject(options)
+      });
+    }
   };
 
   /**
@@ -6933,7 +6937,7 @@ function friendlyDateTime(dateTimeish) {
     return dateTimeish;
   } else if (dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
     return DateTime.fromJSDate(dateTimeish);
-  } else if (dateTimeish instanceof Object) {
+  } else if ((typeof dateTimeish === 'undefined' ? 'undefined' : _typeof(dateTimeish)) === 'object') {
     return DateTime.fromObject(dateTimeish);
   } else {
     throw new InvalidArgumentError('Unknown datetime argument');
