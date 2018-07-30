@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.3
+
+Documentation fixes
+
 ## 1.3.2
 
  * DateTime.fromMillis will throw if passed a non-number
