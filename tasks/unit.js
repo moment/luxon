@@ -6,7 +6,8 @@ async function test() {
     collectCoverage: true,
     coverageDirectory: 'build/coverage',
     collectCoverageFrom: ['src/**', '!src/zone.js', '!src/luxonFilled.js'],
-    ci: !!process.env.CI
+    ci: !!process.env.CI,
+    testEnvironment: 'node'
   };
 
   if (process.env.LIMIT_JEST) {

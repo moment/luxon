@@ -110,7 +110,7 @@ export default class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
-   * @example Info.meridiems({ locale: 'de' }) //=> [ 'vorm.', 'nachm.' ]
+   * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]
    * @return {[string]}
    */
   static meridiems({ locale = null } = {}) {

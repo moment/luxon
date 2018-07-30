@@ -1,4 +1,4 @@
-FROM bitnami/node:8.9.1-r0-prod
+FROM library/node:10-slim
 
 RUN npm install full-icu
 

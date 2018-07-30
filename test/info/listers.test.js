@@ -339,7 +339,7 @@ test('Info.weekdaysFormat defaults to long names', () => {
 //------
 test('Info.meridiems lists the meridiems', () => {
   expect(Info.meridiems({ locale: 'en' })).toEqual(['AM', 'PM']);
-  expect(Info.meridiems({ locale: 'de' })).toEqual(['vorm.', 'nachm.']);
+  expect(Info.meridiems({ locale: 'my' })).toEqual(['နံနက်', 'ညနေ']);
 });
 
 test('Info.meridiems defaults to the current locale', () => {

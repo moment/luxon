@@ -139,14 +139,14 @@ test("DateTime#toFormat('z') returns the zone name", () => {
 
 test("DateTime#toFormat('a') returns the meridiem", () => {
   expect(dt.toFormat('a')).toBe('AM');
-  expect(dt.reconfigure({ locale: 'de' }).toFormat('a')).toBe('vorm.');
+  expect(dt.reconfigure({ locale: 'my' }).toFormat('a')).toBe('နံနက်');
   expect(dt.set({ hour: 13 }).toFormat('a')).toBe('PM');
   expect(
     dt
       .set({ hour: 13 })
-      .reconfigure({ locale: 'de' })
+      .reconfigure({ locale: 'my' })
       .toFormat('a')
-  ).toBe('nachm.');
+  ).toBe('ညနေ');
 });
 
 test("DateTime#toFormat('d') returns the day", () => {
