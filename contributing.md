@@ -20,6 +20,7 @@ Building and testing is done through npm scripts. The tests run in Node and requ
 ### OSX
 
 Mac is easy:
+Open the terminal at your Mac. Search 'Terminal' at Spotlight.
 
 ```
 brew install node --with-full-icu
@@ -43,7 +44,7 @@ Where `scripts/test` is just `NODE_ICU_DATA="$(pwd)/node_modules/full-icu" npm r
 
 ### Windows
 
-If you have Bash, the Linux instructions seem to work fine.
+If you have [Bash](https://git-scm.com/downloads), the Linux instructions seem to work fine.
 
 I would love to add instructions for a non-WSL install of the dev env!
 
