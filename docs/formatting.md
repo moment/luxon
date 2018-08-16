@@ -226,3 +226,5 @@ The macro options available correspond one-to-one with the preset formats define
 | FFFF            |              | extra verbose localized date and time with seconds             | Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time |
 | q               |              | quarter, no padding                                            | 3                                                           |
 | qq              |              | quarter, padded to 2                                           | 03                                                          |
+| X               |              | unix timestamp in seconds                                      | 1407287224                                                  |
+| x               |              | unix timestamp in milliseconds                                 | 14072872240054                                              |
