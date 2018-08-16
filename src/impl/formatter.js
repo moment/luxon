@@ -337,6 +337,8 @@ export default class Formatter {
           case 'qq':
             // like 01
             return this.num(dt.quarter, 2);
+          case 'x':
+            return this.num(dt.ts / 1000);
           default:
             return maybeMacro(token);
         }
