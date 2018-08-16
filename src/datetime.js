@@ -17,7 +17,8 @@ import {
   isLeapYear,
   weeksInWeekYear,
   customInspectSymbol,
-  normalizeObject
+  normalizeObject,
+  padStart
 } from './impl/util';
 import { normalizeZone } from './impl/zoneUtil';
 import diff from './impl/diff';
@@ -1525,6 +1526,14 @@ export default class DateTime {
    */
   toMillis() {
     return this.isValid ? this.ts : NaN;
+  }
+
+  /**
+   * Returns the epoch seconds of this DateTime.
+   * @return {number}
+   */
+  toUnix() {
+    return this.isValid ? padStart(this.ts / 1000, 0) : NaN;
   }
 
   /**
