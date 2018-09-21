@@ -62,12 +62,12 @@ export default class IANAZone extends Zone {
     }
   }
 
-  // Etc/GMT+8 -> 480
+  // Etc/GMT+8 -> -480
   static parseGMTOffset(specifier) {
     if (specifier) {
       const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
       if (match) {
-        return 60 * parseInt(match[1]);
+        return -60 * parseInt(match[1]);
       }
     }
     return null;
