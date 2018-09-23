@@ -1,4 +1,4 @@
-import { isUndefined, isNumber, normalizeObject, customInspectSymbol } from './impl/util';
+import { isUndefined, isNumber, normalizeObject } from './impl/util';
 import Locale from './impl/locale';
 import Formatter from './impl/formatter';
 import { parseISODuration } from './impl/regexParser';
@@ -440,20 +440,6 @@ export default class Duration {
    */
   valueOf() {
     return this.as('milliseconds');
-  }
-
-  /**
-   * Returns a string representation of this Duration appropriate for the REPL.
-   * @return {string}
-   */
-  [customInspectSymbol]() {
-    if (this.isValid) {
-      const valsInspect = JSON.stringify(this.toObject());
-      return `Duration {\n  values: ${valsInspect},\n  locale: ${this
-        .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
-    } else {
-      return `Duration { Invalid, reason: ${this.invalidReason} }`;
-    }
   }
 
   /**
