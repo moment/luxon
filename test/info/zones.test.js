@@ -30,11 +30,15 @@ test('Info.hasDST defaults to the global zone', () => {
 });
 
 //------
-// .hasDST()
+// .isValidIANAZone()
 //------
 
 test('Info.isValidIANAZone returns true for valid zones', () => {
   expect(Info.isValidIANAZone('America/Cancun')).toBe(true);
+});
+
+test('Info.isValidIANAZone returns true for single-section zones', () => {
+  expect(Info.isValidIANAZone('UTC')).toBe(true);
 });
 
 test('Info.isValidIANAZone returns false for junk', () => {
