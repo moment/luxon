@@ -1,5 +1,5 @@
-// This file is only consumed by Jest. To see how the library actually compiles,
-// see the options that get set in tasks/build.js
 {
-  "presets": ["env"]
+  "presets": [
+    "@babel/preset-env"
+  ]
 }
