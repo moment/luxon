@@ -611,3 +611,11 @@ test('DateTime#toFormat() uses the output calendar', () => {
 test('DateTime#toFormat() returns something different for invalid DateTimes', () => {
   expect(DateTime.invalid('because').toFormat('dd MM yyyy')).toBe('Invalid DateTime');
 });
+
+test("DateTime#toFormat('X') returns a Unix timestamp in seconds", () => {
+  expect(dt.toFormat('X')).toBe('391166634');
+});
+
+test("DateTime#toFormat('x') returns a Unix timestamp in milliseconds", () => {
+  expect(dt.toFormat('x')).toBe('391166634123');
+});

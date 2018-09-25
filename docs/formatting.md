@@ -227,3 +227,5 @@ The macro options available correspond one-to-one with the preset formats define
 | FF               |              | less short localized date and time with seconds                | Aug 6, 2014, 1:07:04 PM                                     |
 | FFF              |              | verbose localized date and time with seconds                   | August 6, 2014, 1:07:04 PM EDT                              |
 | FFFF             |              | extra verbose localized date and time with seconds             | Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time |
+| X                |              | unix timestamp in seconds                                      | 1407287224                                                  |
+| x                |              | unix timestamp in milliseconds                                 | 14072872240054                                              |
