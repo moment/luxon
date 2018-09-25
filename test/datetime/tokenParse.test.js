@@ -402,12 +402,19 @@ test('DateTime.fromFormat() accepts a zone argument', () => {
 });
 
 test('DateTime.fromFormat() parses IANA zones', () => {
-  const d = DateTime.fromFormat(
+  let d = DateTime.fromFormat(
     '1982/05/25 09:10:11.445 Asia/Tokyo',
     'yyyy/MM/dd HH:mm:ss.SSS z'
   ).toUTC();
+  expect(d.isValid).toBe(true);
   expect(d.offset).toBe(0);
   expect(d.hour).toBe(0);
+  expect(d.minute).toBe(10);
+
+  d = DateTime.fromFormat('1982/05/25 09:10:11.445 UTC', 'yyyy/MM/dd HH:mm:ss.SSS z').toUTC();
+  expect(d.isValid).toBe(true);
+  expect(d.offset).toBe(0);
+  expect(d.hour).toBe(9);
   expect(d.minute).toBe(10);
 });
 

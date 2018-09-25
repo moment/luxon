@@ -16,7 +16,6 @@ import {
   daysInYear,
   isLeapYear,
   weeksInWeekYear,
-  customInspectSymbol,
   normalizeObject
 } from './impl/util';
 import { normalizeZone } from './impl/zoneUtil';
@@ -1496,19 +1495,6 @@ export default class DateTime {
    */
   toString() {
     return this.isValid ? this.toISO() : INVALID;
-  }
-
-  /**
-   * Returns a string representation of this DateTime appropriate for the REPL.
-   * @return {string}
-   */
-  [customInspectSymbol]() {
-    if (this.isValid) {
-      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
-        .locale} }`;
-    } else {
-      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
-    }
   }
 
   /**

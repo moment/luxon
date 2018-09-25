@@ -203,11 +203,3 @@ export function normalizeObject(obj, normalizer, ignoreUnknown = false) {
 export function timeObject(obj) {
   return pick(obj, ['hour', 'minute', 'second', 'millisecond']);
 }
-
-export const customInspectSymbol = (() => {
-  try {
-    return require('util').inspect.custom; // eslint-disable-line global-require
-  } catch (_err) {
-    return Symbol('util.inspect.custom');
-  }
-})();

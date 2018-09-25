@@ -13,11 +13,18 @@ function rollupInputOpts(opts) {
   };
 
   if (opts.target) {
-    presetOpts.targets = [opts.target];
+    presetOpts.targets = opts.target;
   }
 
   const inputOpts = {
     input: opts.src || './src/luxon.js',
+    onwarn: warning => {
+      // I don't care about these for now
+      if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+        console.warn(`(!) ${warning.message}`);
+      }
+    },
+
     plugins: [
       rollupNode(),
       rollupCommonJS({
@@ -30,8 +37,7 @@ function rollupInputOpts(opts) {
     inputOpts.plugins.push(
       rollupBabel({
         babelrc: false,
-        presets: [['env', presetOpts]],
-        plugins: ['external-helpers']
+        presets: [['@babel/preset-env', presetOpts]]
       })
     );
   }
@@ -86,7 +92,7 @@ async function buildLibrary(dest, opts) {
   console.log('Built', dest);
 }
 
-const browsersOld = { browsers: 'last 2 major versions' };
+const browsersOld = 'last 2 major versions';
 
 async function global() {
   await buildLibrary('global', {
@@ -125,11 +131,11 @@ async function amdFilled() {
 }
 
 async function node() {
-  await buildLibrary('node', { format: 'cjs', target: 'node >= 6' });
+  await buildLibrary('node', { format: 'cjs', target: 'node  6' });
 }
 
 async function cjsBrowser() {
-  await buildLibrary('cjs-browser', { format: 'cjs', browsersOld });
+  await buildLibrary('cjs-browser', { format: 'cjs', target: browsersOld });
 }
 
 async function es6() {

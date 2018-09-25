@@ -1,4 +1,3 @@
-import { customInspectSymbol } from './impl/util';
 import DateTime, { friendlyDateTime } from './datetime';
 import Duration, { friendlyDuration } from './duration';
 import Settings from './settings';
@@ -444,19 +443,6 @@ export default class Interval {
   toString() {
     if (!this.isValid) return INVALID;
     return `[${this.s.toISO()} – ${this.e.toISO()})`;
-  }
-
-  /**
-   * Returns a string representation of this Interval appropriate for the REPL.
-   * @return {string}
-   */
-  [customInspectSymbol]() {
-    if (this.isValid) {
-      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
-        .start.zone.name},\n  locale:   ${this.start.locale} }`;
-    } else {
-      return `Interval { Invalid, reason: ${this.invalidReason} }`;
-    }
   }
 
   /**
