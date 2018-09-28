@@ -1,6 +1,6 @@
 /* global test */
 /* eslint no-global-assign: "off" */
-import { DateTime, Settings } from '../src/luxon';
+import { DateTime, Settings } from "../src/luxon";
 
 export class Helpers {
   static withoutIntl(name, f) {
@@ -79,7 +79,7 @@ export class Helpers {
 
   static atHour(hour) {
     return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
-      .startOf('day')
+      .startOf("day")
       .set({ hour });
   }
 }

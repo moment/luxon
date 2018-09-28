@@ -56,6 +56,6 @@ export class InvalidArgumentError extends LuxonError {}
  */
 export class ZoneIsAbstractError extends LuxonError {
   constructor() {
-    super('Zone is an abstract class');
+    super("Zone is an abstract class");
   }
 }

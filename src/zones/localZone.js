@@ -1,5 +1,5 @@
-import { parseZoneInfo, hasIntl } from '../impl/util';
-import Zone from '../zone';
+import { parseZoneInfo, hasIntl } from "../impl/util";
+import Zone from "../zone";
 
 let singleton = null;
 
@@ -12,13 +12,13 @@ export default class LocalZone extends Zone {
   }
 
   get type() {
-    return 'local';
+    return "local";
   }
 
   get name() {
     if (hasIntl()) {
       return new Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } else return 'local';
+    } else return "local";
   }
 
   get universal() {
@@ -34,7 +34,7 @@ export default class LocalZone extends Zone {
   }
 
   equals(otherZone) {
-    return otherZone.type === 'local';
+    return otherZone.type === "local";
   }
 
   get isValid() {

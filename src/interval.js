@@ -1,9 +1,9 @@
-import DateTime, { friendlyDateTime } from './datetime';
-import Duration, { friendlyDuration } from './duration';
-import Settings from './settings';
-import { InvalidArgumentError, InvalidIntervalError } from './errors';
+import DateTime, { friendlyDateTime } from "./datetime";
+import Duration, { friendlyDuration } from "./duration";
+import Settings from "./settings";
+import { InvalidArgumentError, InvalidIntervalError } from "./errors";
 
-const INVALID = 'Invalid Interval';
+const INVALID = "Invalid Interval";
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
@@ -47,7 +47,7 @@ export default class Interval {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
+      throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidIntervalError(reason);
@@ -69,7 +69,7 @@ export default class Interval {
     return new Interval({
       start: builtStart,
       end: builtEnd,
-      invalidReason: validateStartEnd(builtStart, builtEnd) ? null : 'invalid endpoints'
+      invalidReason: validateStartEnd(builtStart, builtEnd) ? null : "invalid endpoints"
     });
   }
 
@@ -110,7 +110,7 @@ export default class Interval {
         return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));
       }
     }
-    return Interval.invalid('invalid ISO format');
+    return Interval.invalid("invalid ISO format");
   }
 
   /**
@@ -150,7 +150,7 @@ export default class Interval {
    * @param {string} unit - the unit (such as 'hours' or 'days') to return the length in.
    * @return {number}
    */
-  length(unit = 'milliseconds') {
+  length(unit = "milliseconds") {
     return this.isValid ? this.toDuration(...[unit]).get(unit) : NaN;
   }
 
@@ -161,7 +161,7 @@ export default class Interval {
    * @param {string} [unit='milliseconds'] - the unit of time to count.
    * @return {number}
    */
-  count(unit = 'milliseconds') {
+  count(unit = "milliseconds") {
     if (!this.isValid) return NaN;
     const start = this.start.startOf(unit),
       end = this.end.startOf(unit);
@@ -259,7 +259,7 @@ export default class Interval {
   splitBy(duration) {
     const dur = friendlyDuration(duration);
 
-    if (!this.isValid || !dur.isValid || dur.as('milliseconds') === 0) {
+    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
       return [];
     }
 
@@ -404,12 +404,12 @@ export default class Interval {
     let start = null,
       currentCount = 0;
     const results = [],
-      ends = intervals.map(i => [{ time: i.s, type: 's' }, { time: i.e, type: 'e' }]),
+      ends = intervals.map(i => [{ time: i.s, type: "s" }, { time: i.e, type: "e" }]),
       flattened = Array.prototype.concat(...ends),
       arr = flattened.sort((a, b) => a.time - b.time);
 
     for (const i of arr) {
-      currentCount += i.type === 's' ? 1 : -1;
+      currentCount += i.type === "s" ? 1 : -1;
 
       if (currentCount === 1) {
         start = i.time;
@@ -463,7 +463,7 @@ export default class Interval {
    * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations
    * @return {string}
    */
-  toFormat(dateFormat, { separator = ' – ' } = {}) {
+  toFormat(dateFormat, { separator = " – " } = {}) {
     if (!this.isValid) return INVALID;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
   }

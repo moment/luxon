@@ -6,6 +6,7 @@ module.exports = {
   rules: {
     radix: 'off',
     'prettier/prettier': ['error', prettierOptions],
+    'linebreak-style': 'off',
     // the prettier config override for this is broken
     curly: 'off',
     // turn this on when https://github.com/eslint/eslint/issues/4680 is done

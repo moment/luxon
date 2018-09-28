@@ -1,4 +1,4 @@
-import Zone from '../zone';
+import Zone from "../zone";
 
 let singleton = null;
 
@@ -11,7 +11,7 @@ export default class InvalidZone extends Zone {
   }
 
   get type() {
-    return 'invalid';
+    return "invalid";
   }
 
   get name() {

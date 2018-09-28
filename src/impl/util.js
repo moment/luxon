@@ -11,25 +11,25 @@
 // TYPES
 
 export function isUndefined(o) {
-  return typeof o === 'undefined';
+  return typeof o === "undefined";
 }
 
 export function isNumber(o) {
-  return typeof o === 'number';
+  return typeof o === "number";
 }
 
 export function isString(o) {
-  return typeof o === 'string';
+  return typeof o === "string";
 }
 
 export function isDate(o) {
-  return Object.prototype.toString.call(o) === '[object Date]';
+  return Object.prototype.toString.call(o) === "[object Date]";
 }
 
 // CAPABILITIES
 
 export function hasIntl() {
-  return typeof Intl !== 'undefined' && Intl.DateTimeFormat;
+  return typeof Intl !== "undefined" && Intl.DateTimeFormat;
 }
 
 export function hasFormatToParts() {
@@ -78,7 +78,7 @@ export function floorMod(x, n) {
 
 export function padStart(input, n = 2) {
   if (input.toString().length < n) {
-    return ('0'.repeat(n) + input).slice(-n);
+    return ("0".repeat(n) + input).slice(-n);
   } else {
     return input.toString();
   }
@@ -88,7 +88,7 @@ export function parseMillis(fraction) {
   if (isUndefined(fraction)) {
     return NaN;
   } else {
-    const f = parseFloat('0.' + fraction) * 1000;
+    const f = parseFloat("0." + fraction) * 1000;
     return Math.floor(f);
   }
 }
@@ -143,11 +143,11 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
   const date = new Date(ts),
     intlOpts = {
       hour12: false,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
     };
 
   if (timeZone) {
@@ -160,14 +160,14 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
   if (intl && hasFormatToParts()) {
     const parsed = new Intl.DateTimeFormat(locale, modified)
       .formatToParts(date)
-      .find(m => m.type.toLowerCase() === 'timezonename');
+      .find(m => m.type.toLowerCase() === "timezonename");
     return parsed ? parsed.value : null;
   } else if (intl) {
     // this probably doesn't work for all locales
     const without = new Intl.DateTimeFormat(locale, intlOpts).format(date),
       included = new Intl.DateTimeFormat(locale, modified).format(date),
       diffed = included.substring(without.length),
-      trimmed = diffed.replace(/^[, ]+/, '');
+      trimmed = diffed.replace(/^[, ]+/, "");
     return trimmed;
   } else {
     return null;
@@ -201,5 +201,5 @@ export function normalizeObject(obj, normalizer, ignoreUnknown = false) {
 }
 
 export function timeObject(obj) {
-  return pick(obj, ['hour', 'minute', 'second', 'millisecond']);
+  return pick(obj, ["hour", "minute", "second", "millisecond"]);
 }

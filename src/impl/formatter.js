@@ -1,9 +1,9 @@
-import * as English from './english';
-import * as Formats from './formats';
-import { padStart } from './util';
+import * as English from "./english";
+import * as Formats from "./formats";
+import { padStart } from "./util";
 
 function stringifyTokens(splits, tokenToString) {
-  let s = '';
+  let s = "";
   for (const token of splits) {
     if (token.literal) {
       s += token.val;
@@ -49,7 +49,7 @@ export default class Formatter {
 
   static parseFormat(fmt) {
     let current = null,
-      currentFull = '',
+      currentFull = "",
       bracketed = false;
     const splits = [];
     for (let i = 0; i < fmt.length; i++) {
@@ -59,7 +59,7 @@ export default class Formatter {
           splits.push({ literal: bracketed, val: currentFull });
         }
         current = null;
-        currentFull = '';
+        currentFull = "";
         bracketed = !bracketed;
       } else if (bracketed) {
         currentFull += c;
@@ -126,24 +126,24 @@ export default class Formatter {
   }
 
   formatDateTimeFromString(dt, fmt) {
-    const knownEnglish = this.loc.listingMode() === 'en';
+    const knownEnglish = this.loc.listingMode() === "en";
     const string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
         if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
-          return 'Z';
+          return "Z";
         }
 
         const hours = Math.trunc(dt.offset / 60),
           minutes = Math.abs(dt.offset % 60),
-          sign = hours >= 0 ? '+' : '-',
+          sign = hours >= 0 ? "+" : "-",
           base = `${sign}${Math.abs(hours)}`;
 
         switch (opts.format) {
-          case 'short':
+          case "short":
             return `${sign}${this.num(Math.abs(hours), 2)}:${this.num(minutes, 2)}`;
-          case 'narrow':
+          case "narrow":
             return minutes > 0 ? `${base}:${minutes}` : base;
-          case 'techie':
+          case "techie":
             return `${sign}${this.num(Math.abs(hours), 2)}${this.num(minutes, 2)}`;
           default:
             throw new RangeError(`Value format ${opts.format} is out of range for property format`);
@@ -152,17 +152,17 @@ export default class Formatter {
       meridiem = () =>
         knownEnglish
           ? English.meridiemForDateTime(dt)
-          : string({ hour: 'numeric', hour12: true }, 'dayperiod'),
+          : string({ hour: "numeric", hour12: true }, "dayperiod"),
       month = (length, standalone) =>
         knownEnglish
           ? English.monthForDateTime(dt, length)
-          : string(standalone ? { month: length } : { month: length, day: 'numeric' }, 'month'),
+          : string(standalone ? { month: length } : { month: length, day: "numeric" }, "month"),
       weekday = (length, standalone) =>
         knownEnglish
           ? English.weekdayForDateTime(dt, length)
           : string(
-              standalone ? { weekday: length } : { weekday: length, month: 'long', day: 'numeric' },
-              'weekday'
+              standalone ? { weekday: length } : { weekday: length, month: "long", day: "numeric" },
+              "weekday"
             ),
       maybeMacro = token => {
         const macro = tokenToObject[token];
@@ -173,173 +173,173 @@ export default class Formatter {
         }
       },
       era = length =>
-        knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, 'era'),
+        knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, "era"),
       tokenToString = token => {
         const outputCal = this.loc.outputCalendar;
 
         // Where possible: http://cldr.unicode.org/translation/date-time#TOC-Stand-Alone-vs.-Format-Styles
         switch (token) {
           // ms
-          case 'S':
+          case "S":
             return this.num(dt.millisecond);
-          case 'u':
+          case "u":
           // falls through
-          case 'SSS':
+          case "SSS":
             return this.num(dt.millisecond, 3);
           // seconds
-          case 's':
+          case "s":
             return this.num(dt.second);
-          case 'ss':
+          case "ss":
             return this.num(dt.second, 2);
           // minutes
-          case 'm':
+          case "m":
             return this.num(dt.minute);
-          case 'mm':
+          case "mm":
             return this.num(dt.minute, 2);
           // hours
-          case 'h':
+          case "h":
             return this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12);
-          case 'hh':
+          case "hh":
             return this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12, 2);
-          case 'H':
+          case "H":
             return this.num(dt.hour);
-          case 'HH':
+          case "HH":
             return this.num(dt.hour, 2);
           // offset
-          case 'Z':
+          case "Z":
             // like +6
-            return formatOffset({ format: 'narrow', allowZ: this.opts.allowZ });
-          case 'ZZ':
+            return formatOffset({ format: "narrow", allowZ: this.opts.allowZ });
+          case "ZZ":
             // like +06:00
-            return formatOffset({ format: 'short', allowZ: this.opts.allowZ });
-          case 'ZZZ':
+            return formatOffset({ format: "short", allowZ: this.opts.allowZ });
+          case "ZZZ":
             // like +0600
-            return formatOffset({ format: 'techie', allowZ: false });
-          case 'ZZZZ':
+            return formatOffset({ format: "techie", allowZ: false });
+          case "ZZZZ":
             // like EST
             return dt.offsetNameShort;
-          case 'ZZZZZ':
+          case "ZZZZZ":
             // like Eastern Standard Time
             return dt.offsetNameLong;
           // zone
-          case 'z':
+          case "z":
             // like America/New_York
             return dt.zoneName;
           // meridiems
-          case 'a':
+          case "a":
             return meridiem();
           // dates
-          case 'd':
-            return outputCal ? string({ day: 'numeric' }, 'day') : this.num(dt.day);
-          case 'dd':
-            return outputCal ? string({ day: '2-digit' }, 'day') : this.num(dt.day, 2);
+          case "d":
+            return outputCal ? string({ day: "numeric" }, "day") : this.num(dt.day);
+          case "dd":
+            return outputCal ? string({ day: "2-digit" }, "day") : this.num(dt.day, 2);
           // weekdays - standalone
-          case 'c':
+          case "c":
             // like 1
             return this.num(dt.weekday);
-          case 'ccc':
+          case "ccc":
             // like 'Tues'
-            return weekday('short', true);
-          case 'cccc':
+            return weekday("short", true);
+          case "cccc":
             // like 'Tuesday'
-            return weekday('long', true);
-          case 'ccccc':
+            return weekday("long", true);
+          case "ccccc":
             // like 'T'
-            return weekday('narrow', true);
+            return weekday("narrow", true);
           // weekdays - format
-          case 'E':
+          case "E":
             // like 1
             return this.num(dt.weekday);
-          case 'EEE':
+          case "EEE":
             // like 'Tues'
-            return weekday('short', false);
-          case 'EEEE':
+            return weekday("short", false);
+          case "EEEE":
             // like 'Tuesday'
-            return weekday('long', false);
-          case 'EEEEE':
+            return weekday("long", false);
+          case "EEEEE":
             // like 'T'
-            return weekday('narrow', false);
+            return weekday("narrow", false);
           // months - standalone
-          case 'L':
+          case "L":
             // like 1
             return outputCal
-              ? string({ month: 'numeric', day: 'numeric' }, 'month')
+              ? string({ month: "numeric", day: "numeric" }, "month")
               : this.num(dt.month);
-          case 'LL':
+          case "LL":
             // like 01, doesn't seem to work
             return outputCal
-              ? string({ month: '2-digit', day: 'numeric' }, 'month')
+              ? string({ month: "2-digit", day: "numeric" }, "month")
               : this.num(dt.month, 2);
-          case 'LLL':
+          case "LLL":
             // like Jan
-            return month('short', true);
-          case 'LLLL':
+            return month("short", true);
+          case "LLLL":
             // like January
-            return month('long', true);
-          case 'LLLLL':
+            return month("long", true);
+          case "LLLLL":
             // like J
-            return month('narrow', true);
+            return month("narrow", true);
           // months - format
-          case 'M':
+          case "M":
             // like 1
-            return outputCal ? string({ month: 'numeric' }, 'month') : this.num(dt.month);
-          case 'MM':
+            return outputCal ? string({ month: "numeric" }, "month") : this.num(dt.month);
+          case "MM":
             // like 01
-            return outputCal ? string({ month: '2-digit' }, 'month') : this.num(dt.month, 2);
-          case 'MMM':
+            return outputCal ? string({ month: "2-digit" }, "month") : this.num(dt.month, 2);
+          case "MMM":
             // like Jan
-            return month('short', false);
-          case 'MMMM':
+            return month("short", false);
+          case "MMMM":
             // like January
-            return month('long', false);
-          case 'MMMMM':
+            return month("long", false);
+          case "MMMMM":
             // like J
-            return month('narrow', false);
+            return month("narrow", false);
           // years
-          case 'y':
+          case "y":
             // like 2014
-            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year);
-          case 'yy':
+            return outputCal ? string({ year: "numeric" }, "year") : this.num(dt.year);
+          case "yy":
             // like 14
             return outputCal
-              ? string({ year: '2-digit' }, 'year')
+              ? string({ year: "2-digit" }, "year")
               : this.num(dt.year.toString().slice(-2), 2);
-          case 'yyyy':
+          case "yyyy":
             // like 0012
-            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year, 4);
-          case 'yyyyyy':
+            return outputCal ? string({ year: "numeric" }, "year") : this.num(dt.year, 4);
+          case "yyyyyy":
             // like 000012
-            return outputCal ? string({ year: 'numeric' }, 'year') : this.num(dt.year, 6);
+            return outputCal ? string({ year: "numeric" }, "year") : this.num(dt.year, 6);
           // eras
-          case 'G':
+          case "G":
             // like AD
-            return era('short');
-          case 'GG':
+            return era("short");
+          case "GG":
             // like Anno Domini
-            return era('long');
-          case 'GGGGG':
-            return era('narrow');
-          case 'kk':
+            return era("long");
+          case "GGGGG":
+            return era("narrow");
+          case "kk":
             return this.num(dt.weekYear.toString().slice(-2), 2);
-          case 'kkkk':
+          case "kkkk":
             return this.num(dt.weekYear, 4);
-          case 'W':
+          case "W":
             return this.num(dt.weekNumber);
-          case 'WW':
+          case "WW":
             return this.num(dt.weekNumber, 2);
-          case 'o':
+          case "o":
             return this.num(dt.ordinal);
-          case 'ooo':
+          case "ooo":
             return this.num(dt.ordinal, 3);
-          case 'q':
+          case "q":
             // like 1
             return this.num(dt.quarter);
-          case 'qq':
+          case "qq":
             // like 01
             return this.num(dt.quarter, 2);
-          case 'X':
+          case "X":
             return this.num(dt.ts / 1000);
-          case 'x':
+          case "x":
             return this.num(dt.ts);
           default:
             return maybeMacro(token);
@@ -352,20 +352,20 @@ export default class Formatter {
   formatDurationFromString(dur, fmt) {
     const tokenToField = token => {
         switch (token[0]) {
-          case 'S':
-            return 'millisecond';
-          case 's':
-            return 'second';
-          case 'm':
-            return 'minute';
-          case 'h':
-            return 'hour';
-          case 'd':
-            return 'day';
-          case 'M':
-            return 'month';
-          case 'y':
-            return 'year';
+          case "S":
+            return "millisecond";
+          case "s":
+            return "second";
+          case "m":
+            return "minute";
+          case "h":
+            return "hour";
+          case "d":
+            return "day";
+          case "M":
+            return "month";
+          case "y":
+            return "year";
           default:
             return null;
         }

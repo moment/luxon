@@ -1,5 +1,5 @@
 /* eslint no-unused-vars: "off" */
-import { ZoneIsAbstractError } from './errors';
+import { ZoneIsAbstractError } from "./errors";
 
 /**
  * @interface

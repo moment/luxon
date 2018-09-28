@@ -1,7 +1,7 @@
-import { untruncateYear, signedOffset, parseMillis } from './util';
-import * as English from './english';
-import FixedOffsetZone from '../zones/fixedOffsetZone';
-import IANAZone from '../zones/IANAZone';
+import { untruncateYear, signedOffset, parseMillis } from "./util";
+import * as English from "./english";
+import FixedOffsetZone from "../zones/fixedOffsetZone";
+import IANAZone from "../zones/IANAZone";
 
 /*
  * This file handles parsing for well-specified formats. Here's how it works:
@@ -14,7 +14,7 @@ import IANAZone from '../zones/IANAZone';
  */
 
 function combineRegexes(...regexes) {
-  const full = regexes.reduce((f, r) => f + r.source, '');
+  const full = regexes.reduce((f, r) => f + r.source, "");
   return RegExp(`^${full}$`);
 }
 
@@ -65,8 +65,8 @@ const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
   isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
   isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/,
   isoOrdinalRegex = /(\d{4})-?(\d{3})/,
-  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),
-  extractISOOrdinalData = simpleParse('year', 'ordinal'),
+  extractISOWeekData = simpleParse("weekYear", "weekNumber", "weekDay"),
+  extractISOOrdinalData = simpleParse("year", "ordinal"),
   sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/, // dumbed-down version of the ISO one
   sqlTimeRegex = RegExp(
     `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?`
@@ -208,8 +208,8 @@ function extractRFC2822(match) {
 function preprocessRFC2822(s) {
   // Remove comments and folding whitespace and replace multiple-spaces with a single space
   return s
-    .replace(/\([^)]*\)|[\n\t]/g, ' ')
-    .replace(/(\s\s+)/g, ' ')
+    .replace(/\([^)]*\)|[\n\t]/g, " ")
+    .replace(/(\s\s+)/g, " ")
     .trim();
 }
 

@@ -1,12 +1,12 @@
 /* global test expect */
 
-import { DateTime } from '../../src/luxon';
+import { DateTime } from "../../src/luxon";
 
 //------
 // .fromISO
 //-------
-test('DateTime.fromISO() parses as local by default', () => {
-  const dt = DateTime.fromISO('2016-05-25T09:08:34.123');
+test("DateTime.fromISO() parses as local by default", () => {
+  const dt = DateTime.fromISO("2016-05-25T09:08:34.123");
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -18,8 +18,8 @@ test('DateTime.fromISO() parses as local by default', () => {
   });
 });
 
-test('DateTime.fromISO() uses the offset provided, but keeps the dateTime as local', () => {
-  const dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00');
+test("DateTime.fromISO() uses the offset provided, but keeps the dateTime as local", () => {
+  const dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00");
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -31,8 +31,8 @@ test('DateTime.fromISO() uses the offset provided, but keeps the dateTime as loc
   });
 });
 
-test('DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local', () => {
-  const dt = DateTime.fromISO('2016-05-25T09:08:34.123Z');
+test("DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local", () => {
+  const dt = DateTime.fromISO("2016-05-25T09:08:34.123Z");
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -44,9 +44,9 @@ test('DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local
   });
 });
 
-test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
-  let dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { setZone: true });
-  expect(dt.zone.name).toBe('UTC+6');
+test("DateTime.fromISO() optionally adopts the UTC offset provided", () => {
+  let dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00", { setZone: true });
+  expect(dt.zone.name).toBe("UTC+6");
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -57,8 +57,8 @@ test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
     millisecond: 123
   });
 
-  dt = DateTime.fromISO('1983-10-14T13:30Z', { setZone: true });
-  expect(dt.zone.name).toBe('UTC');
+  dt = DateTime.fromISO("1983-10-14T13:30Z", { setZone: true });
+  expect(dt.zone.name).toBe("UTC");
   expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
     year: 1983,
@@ -71,8 +71,8 @@ test('DateTime.fromISO() optionally adopts the UTC offset provided', () => {
   });
 });
 
-test('DateTime.fromISO() can optionally specify a zone', () => {
-  let dt = DateTime.fromISO('2016-05-25T09:08:34.123', { zone: 'utc' });
+test("DateTime.fromISO() can optionally specify a zone", () => {
+  let dt = DateTime.fromISO("2016-05-25T09:08:34.123", { zone: "utc" });
   expect(dt.offset).toEqual(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -84,7 +84,7 @@ test('DateTime.fromISO() can optionally specify a zone', () => {
     millisecond: 123
   });
 
-  dt = DateTime.fromISO('2016-05-25T09:08:34.123+06:00', { zone: 'utc' });
+  dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00", { zone: "utc" });
   expect(dt.offset).toEqual(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -99,8 +99,8 @@ test('DateTime.fromISO() can optionally specify a zone', () => {
 
 const isSame = (s, expected) => expect(DateTime.fromISO(s).toObject()).toEqual(expected);
 
-test('DateTime.fromISO() accepts just the year', () => {
-  isSame('2016', {
+test("DateTime.fromISO() accepts just the year", () => {
+  isSame("2016", {
     year: 2016,
     month: 1,
     day: 1,
@@ -111,8 +111,8 @@ test('DateTime.fromISO() accepts just the year', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-month', () => {
-  isSame('2016-05', {
+test("DateTime.fromISO() accepts year-month", () => {
+  isSame("2016-05", {
     year: 2016,
     month: 5,
     day: 1,
@@ -123,8 +123,8 @@ test('DateTime.fromISO() accepts year-month', () => {
   });
 });
 
-test('DateTime.fromISO() accepts yearmonth', () => {
-  isSame('201605', {
+test("DateTime.fromISO() accepts yearmonth", () => {
+  isSame("201605", {
     year: 2016,
     month: 5,
     day: 1,
@@ -135,8 +135,8 @@ test('DateTime.fromISO() accepts yearmonth', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-month-day', () => {
-  isSame('2016-05-25', {
+test("DateTime.fromISO() accepts year-month-day", () => {
+  isSame("2016-05-25", {
     year: 2016,
     month: 5,
     day: 25,
@@ -147,8 +147,8 @@ test('DateTime.fromISO() accepts year-month-day', () => {
   });
 });
 
-test('DateTime.fromISO() accepts yearmonthday', () => {
-  isSame('20160525', {
+test("DateTime.fromISO() accepts yearmonthday", () => {
+  isSame("20160525", {
     year: 2016,
     month: 5,
     day: 25,
@@ -159,8 +159,8 @@ test('DateTime.fromISO() accepts yearmonthday', () => {
   });
 });
 
-test('DateTime.fromISO() accepts extend years', () => {
-  isSame('+002016-05-25', {
+test("DateTime.fromISO() accepts extend years", () => {
+  isSame("+002016-05-25", {
     year: 2016,
     month: 5,
     day: 25,
@@ -170,7 +170,7 @@ test('DateTime.fromISO() accepts extend years', () => {
     millisecond: 0
   });
 
-  isSame('-002016-05-25', {
+  isSame("-002016-05-25", {
     year: -2016,
     month: 5,
     day: 25,
@@ -181,8 +181,8 @@ test('DateTime.fromISO() accepts extend years', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-moth-dayThour', () => {
-  isSame('2016-05-25T09', {
+test("DateTime.fromISO() accepts year-moth-dayThour", () => {
+  isSame("2016-05-25T09", {
     year: 2016,
     month: 5,
     day: 25,
@@ -193,8 +193,8 @@ test('DateTime.fromISO() accepts year-moth-dayThour', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-month-dayThour:minute', () => {
-  isSame('2016-05-25T09:24', {
+test("DateTime.fromISO() accepts year-month-dayThour:minute", () => {
+  isSame("2016-05-25T09:24", {
     year: 2016,
     month: 5,
     day: 25,
@@ -204,7 +204,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute', () => {
     millisecond: 0
   });
 
-  isSame('2016-05-25T0924', {
+  isSame("2016-05-25T0924", {
     year: 2016,
     month: 5,
     day: 25,
@@ -215,8 +215,8 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-month-dayThour:minute:second', () => {
-  isSame('2016-05-25T09:24:15', {
+test("DateTime.fromISO() accepts year-month-dayThour:minute:second", () => {
+  isSame("2016-05-25T09:24:15", {
     year: 2016,
     month: 5,
     day: 25,
@@ -226,7 +226,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second', () => {
     millisecond: 0
   });
 
-  isSame('2016-05-25T092415', {
+  isSame("2016-05-25T092415", {
     year: 2016,
     month: 5,
     day: 25,
@@ -237,8 +237,8 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond', () => {
-  isSame('2016-05-25T09:24:15.123', {
+test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond", () => {
+  isSame("2016-05-25T09:24:15.123", {
     year: 2016,
     month: 5,
     day: 25,
@@ -248,7 +248,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
     millisecond: 123
   });
 
-  isSame('2016-05-25T092415.123', {
+  isSame("2016-05-25T092415.123", {
     year: 2016,
     month: 5,
     day: 25,
@@ -258,7 +258,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
     millisecond: 123
   });
 
-  isSame('2016-05-25T09:24:15,123', {
+  isSame("2016-05-25T09:24:15,123", {
     year: 2016,
     month: 5,
     day: 25,
@@ -268,7 +268,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
     millisecond: 123
   });
 
-  isSame('2016-05-25T09:24:15.1239999', {
+  isSame("2016-05-25T09:24:15.1239999", {
     year: 2016,
     month: 5,
     day: 25,
@@ -278,7 +278,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
     millisecond: 123
   });
 
-  isSame('2016-05-25T09:24:15.023', {
+  isSame("2016-05-25T09:24:15.023", {
     year: 2016,
     month: 5,
     day: 25,
@@ -289,7 +289,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
   });
 
   // we round down always
-  isSame('2016-05-25T09:24:15.3456', {
+  isSame("2016-05-25T09:24:15.3456", {
     year: 2016,
     month: 5,
     day: 25,
@@ -299,7 +299,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
     millisecond: 345
   });
 
-  isSame('2016-05-25T09:24:15.999999', {
+  isSame("2016-05-25T09:24:15.999999", {
     year: 2016,
     month: 5,
     day: 25,
@@ -309,7 +309,7 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
     millisecond: 999
   });
 
-  isSame('2016-05-25T09:24:15.1', {
+  isSame("2016-05-25T09:24:15.1", {
     year: 2016,
     month: 5,
     day: 25,
@@ -320,8 +320,8 @@ test('DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond',
   });
 });
 
-test('DateTime.fromISO() accepts year-week-day', () => {
-  isSame('2016-W21-3', {
+test("DateTime.fromISO() accepts year-week-day", () => {
+  isSame("2016-W21-3", {
     year: 2016,
     month: 5,
     day: 25,
@@ -331,7 +331,7 @@ test('DateTime.fromISO() accepts year-week-day', () => {
     millisecond: 0
   });
 
-  isSame('2016W213', {
+  isSame("2016W213", {
     year: 2016,
     month: 5,
     day: 25,
@@ -342,8 +342,8 @@ test('DateTime.fromISO() accepts year-week-day', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-week-dayTtime', () => {
-  isSame('2016-W21-3T09:24:15.123', {
+test("DateTime.fromISO() accepts year-week-dayTtime", () => {
+  isSame("2016-W21-3T09:24:15.123", {
     year: 2016,
     month: 5,
     day: 25,
@@ -353,7 +353,7 @@ test('DateTime.fromISO() accepts year-week-dayTtime', () => {
     millisecond: 123
   });
 
-  isSame('2016W213T09:24:15.123', {
+  isSame("2016W213T09:24:15.123", {
     year: 2016,
     month: 5,
     day: 25,
@@ -364,8 +364,8 @@ test('DateTime.fromISO() accepts year-week-dayTtime', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-ordinal', () => {
-  isSame('2016-200', {
+test("DateTime.fromISO() accepts year-ordinal", () => {
+  isSame("2016-200", {
     year: 2016,
     month: 7,
     day: 18,
@@ -375,7 +375,7 @@ test('DateTime.fromISO() accepts year-ordinal', () => {
     millisecond: 0
   });
 
-  isSame('2016200', {
+  isSame("2016200", {
     year: 2016,
     month: 7,
     day: 18,
@@ -386,8 +386,8 @@ test('DateTime.fromISO() accepts year-ordinal', () => {
   });
 });
 
-test('DateTime.fromISO() accepts year-ordinalTtime', () => {
-  isSame('2016-200T09:24:15.123', {
+test("DateTime.fromISO() accepts year-ordinalTtime", () => {
+  isSame("2016-200T09:24:15.123", {
     year: 2016,
     month: 7,
     day: 18,
@@ -398,9 +398,9 @@ test('DateTime.fromISO() accepts year-ordinalTtime', () => {
   });
 });
 
-test('DateTime.fromISO() accepts hour:minute:second.millisecond', () => {
+test("DateTime.fromISO() accepts hour:minute:second.millisecond", () => {
   const { year, month, day } = DateTime.local();
-  isSame('09:24:15.123', {
+  isSame("09:24:15.123", {
     year,
     month,
     day,
@@ -411,9 +411,9 @@ test('DateTime.fromISO() accepts hour:minute:second.millisecond', () => {
   });
 });
 
-test('DateTime.fromISO() accepts hour:minute:second,millisecond', () => {
+test("DateTime.fromISO() accepts hour:minute:second,millisecond", () => {
   const { year, month, day } = DateTime.local();
-  isSame('09:24:15,123', {
+  isSame("09:24:15,123", {
     year,
     month,
     day,
@@ -424,9 +424,9 @@ test('DateTime.fromISO() accepts hour:minute:second,millisecond', () => {
   });
 });
 
-test('DateTime.fromISO() accepts hour:minute:second', () => {
+test("DateTime.fromISO() accepts hour:minute:second", () => {
   const { year, month, day } = DateTime.local();
-  isSame('09:24:15', {
+  isSame("09:24:15", {
     year,
     month,
     day,
@@ -437,9 +437,9 @@ test('DateTime.fromISO() accepts hour:minute:second', () => {
   });
 });
 
-test('DateTime.fromISO() accepts hour:minute', () => {
+test("DateTime.fromISO() accepts hour:minute", () => {
   const { year, month, day } = DateTime.local();
-  isSame('09:24', {
+  isSame("09:24", {
     year,
     month,
     day,
@@ -450,9 +450,9 @@ test('DateTime.fromISO() accepts hour:minute', () => {
   });
 });
 
-test('DateTime.fromISO() accepts hour:minute', () => {
+test("DateTime.fromISO() accepts hour:minute", () => {
   const { year, month, day } = DateTime.local();
-  isSame('09:24', {
+  isSame("09:24", {
     year,
     month,
     day,
@@ -463,10 +463,10 @@ test('DateTime.fromISO() accepts hour:minute', () => {
   });
 });
 
-test('DateTime.fromISO() accepts some technically incorrect stuff', () => {
+test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
   // these are formats that aren't technically valid but we parse anyway.
   // Testing them more to document them than anything else
-  isSame('2016-05-25T0924:15.123', {
+  isSame("2016-05-25T0924:15.123", {
     year: 2016,
     month: 5,
     day: 25,
@@ -476,7 +476,7 @@ test('DateTime.fromISO() accepts some technically incorrect stuff', () => {
     millisecond: 123
   });
 
-  isSame('2016-05-25T09:2415.123', {
+  isSame("2016-05-25T09:2415.123", {
     year: 2016,
     month: 5,
     day: 25,
@@ -486,7 +486,7 @@ test('DateTime.fromISO() accepts some technically incorrect stuff', () => {
     millisecond: 123
   });
 
-  isSame('2016-W213', {
+  isSame("2016-W213", {
     year: 2016,
     month: 5,
     day: 25,
@@ -497,34 +497,34 @@ test('DateTime.fromISO() accepts some technically incorrect stuff', () => {
   });
 });
 
-test('DateTime.fromISO() rejects poop', () => {
+test("DateTime.fromISO() rejects poop", () => {
   const rejects = s => expect(DateTime.fromISO(s).isValid).toBeFalsy();
 
   rejects(null);
-  rejects('');
-  rejects(' ');
-  rejects('2016-1');
-  rejects('2016-1-15');
-  rejects('2016-01-5');
-  rejects('2016-05-25 08:34:34');
-  rejects('2016-05-25Q08:34:34');
-  rejects('2016-05-25T8:04:34');
-  rejects('2016-05-25T08:4:34');
-  rejects('2016-05-25T08:04:4');
-  rejects('2016-05-25T:03:4');
-  rejects('2016-05-25T08::4');
-  rejects('2016-W32-02');
+  rejects("");
+  rejects(" ");
+  rejects("2016-1");
+  rejects("2016-1-15");
+  rejects("2016-01-5");
+  rejects("2016-05-25 08:34:34");
+  rejects("2016-05-25Q08:34:34");
+  rejects("2016-05-25T8:04:34");
+  rejects("2016-05-25T08:4:34");
+  rejects("2016-05-25T08:04:4");
+  rejects("2016-05-25T:03:4");
+  rejects("2016-05-25T08::4");
+  rejects("2016-W32-02");
 
   // some of these are actually valid iso we don't take (yet)
-  rejects('2016-W32');
+  rejects("2016-W32");
 });
 
 //------
 // .fromRFC2822
 //-------
 
-test('DateTime.fromRFC2822() accepts full format', () => {
-  const dt = DateTime.fromRFC2822('Tue, 01 Nov 2016 13:23:12 +0630');
+test("DateTime.fromRFC2822() accepts full format", () => {
+  const dt = DateTime.fromRFC2822("Tue, 01 Nov 2016 13:23:12 +0630");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -537,18 +537,18 @@ test('DateTime.fromRFC2822() accepts full format', () => {
   });
 });
 
-test('DateTime.fromRFC2822 parses a range of dates', () => {
+test("DateTime.fromRFC2822 parses a range of dates", () => {
   const testCases = {
-    'Sun, 12 Apr 2015 05:06:07 GMT': [2015, 4, 12, 5, 6, 7],
-    'Tue, 01 Nov 2016 01:23:45 +0000': [2016, 11, 1, 1, 23, 45],
-    'Tue, 01 Nov 16 04:23:45 Z': [2016, 11, 1, 4, 23, 45],
-    '01 Nov 2016 05:23:45 z': [2016, 11, 1, 5, 23, 45],
-    'Mon, 02 Jan 2017 06:00:00 -0800': [2017, 1, 2, 6 + 8, 0, 0],
-    'Mon, 02 Jan 2017 06:00:00 +0800': [2017, 1, 1, 22, 0, 0],
-    'Mon, 02 Jan 2017 06:00:00 +0330': [2017, 1, 2, 2, 30, 0],
-    'Mon, 02 Jan 2017 06:00:00 -0330': [2017, 1, 2, 9, 30, 0],
-    'Mon, 02 Jan 2017 06:00:00 PST': [2017, 1, 2, 6 + 8, 0, 0],
-    'Mon, 02 Jan 2017 06:00:00 PDT': [2017, 1, 2, 6 + 7, 0, 0]
+    "Sun, 12 Apr 2015 05:06:07 GMT": [2015, 4, 12, 5, 6, 7],
+    "Tue, 01 Nov 2016 01:23:45 +0000": [2016, 11, 1, 1, 23, 45],
+    "Tue, 01 Nov 16 04:23:45 Z": [2016, 11, 1, 4, 23, 45],
+    "01 Nov 2016 05:23:45 z": [2016, 11, 1, 5, 23, 45],
+    "Mon, 02 Jan 2017 06:00:00 -0800": [2017, 1, 2, 6 + 8, 0, 0],
+    "Mon, 02 Jan 2017 06:00:00 +0800": [2017, 1, 1, 22, 0, 0],
+    "Mon, 02 Jan 2017 06:00:00 +0330": [2017, 1, 2, 2, 30, 0],
+    "Mon, 02 Jan 2017 06:00:00 -0330": [2017, 1, 2, 9, 30, 0],
+    "Mon, 02 Jan 2017 06:00:00 PST": [2017, 1, 2, 6 + 8, 0, 0],
+    "Mon, 02 Jan 2017 06:00:00 PDT": [2017, 1, 2, 6 + 7, 0, 0]
   };
 
   for (const testString in testCases) {
@@ -561,13 +561,13 @@ test('DateTime.fromRFC2822 parses a range of dates', () => {
   }
 });
 
-test('DateTime.fromRFC2822() rejects incorrect days of the week', () => {
-  const dt = DateTime.fromRFC2822('Wed, 01 Nov 2016 13:23:12 +0600');
+test("DateTime.fromRFC2822() rejects incorrect days of the week", () => {
+  const dt = DateTime.fromRFC2822("Wed, 01 Nov 2016 13:23:12 +0600");
   expect(dt.isValid).toBe(false);
 });
 
-test('DateTime.fromRFC2822() can elide the day of the week', () => {
-  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 +0600');
+test("DateTime.fromRFC2822() can elide the day of the week", () => {
+  const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 +0600");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -580,8 +580,8 @@ test('DateTime.fromRFC2822() can elide the day of the week', () => {
   });
 });
 
-test('DateTime.fromRFC2822() can elide seconds', () => {
-  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23 +0600');
+test("DateTime.fromRFC2822() can elide seconds", () => {
+  const dt = DateTime.fromRFC2822("01 Nov 2016 13:23 +0600");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -594,8 +594,8 @@ test('DateTime.fromRFC2822() can elide seconds', () => {
   });
 });
 
-test('DateTime.fromRFC2822() can use Z', () => {
-  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 Z');
+test("DateTime.fromRFC2822() can use Z", () => {
+  const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 Z");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -608,8 +608,8 @@ test('DateTime.fromRFC2822() can use Z', () => {
   });
 });
 
-test('DateTime.fromRFC2822() can use a weird subset of offset abbreviations', () => {
-  const dt = DateTime.fromRFC2822('01 Nov 2016 13:23:12 EST');
+test("DateTime.fromRFC2822() can use a weird subset of offset abbreviations", () => {
+  const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 EST");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -626,8 +626,8 @@ test('DateTime.fromRFC2822() can use a weird subset of offset abbreviations', ()
 // .fromHTTP
 //-------
 
-test('DateTime.fromHTTP() can parse RFC 1123', () => {
-  const dt = DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
+test("DateTime.fromHTTP() can parse RFC 1123", () => {
+  const dt = DateTime.fromHTTP("Sun, 06 Nov 1994 08:49:37 GMT");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
@@ -640,8 +640,8 @@ test('DateTime.fromHTTP() can parse RFC 1123', () => {
   });
 });
 
-test('DateTime.fromHTTP() can parse RFC 850', () => {
-  const dt = DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT');
+test("DateTime.fromHTTP() can parse RFC 850", () => {
+  const dt = DateTime.fromHTTP("Sunday, 06-Nov-94 08:49:37 GMT");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
@@ -654,8 +654,8 @@ test('DateTime.fromHTTP() can parse RFC 850', () => {
   });
 });
 
-test('DateTime.fromHTTP() can parse ASCII dates with one date digit', () => {
-  const dt = DateTime.fromHTTP('Sun Nov  6 08:49:37 1994');
+test("DateTime.fromHTTP() can parse ASCII dates with one date digit", () => {
+  const dt = DateTime.fromHTTP("Sun Nov  6 08:49:37 1994");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
@@ -668,8 +668,8 @@ test('DateTime.fromHTTP() can parse ASCII dates with one date digit', () => {
   });
 });
 
-test('DateTime.fromHTTP() can parse ASCII dates with two date digits', () => {
-  const dt = DateTime.fromHTTP('Wed Nov 16 08:49:37 1994');
+test("DateTime.fromHTTP() can parse ASCII dates with two date digits", () => {
+  const dt = DateTime.fromHTTP("Wed Nov 16 08:49:37 1994");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
@@ -686,8 +686,8 @@ test('DateTime.fromHTTP() can parse ASCII dates with two date digits', () => {
 // .fromSQL
 //-------
 
-test('DateTime.fromSQL() can parse SQL dates', () => {
-  const dt = DateTime.fromSQL('2016-05-14');
+test("DateTime.fromSQL() can parse SQL dates", () => {
+  const dt = DateTime.fromSQL("2016-05-14");
   expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -700,8 +700,8 @@ test('DateTime.fromSQL() can parse SQL dates', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse SQL times', () => {
-  const dt = DateTime.fromSQL('04:12:00.123');
+test("DateTime.fromSQL() can parse SQL times", () => {
+  const dt = DateTime.fromSQL("04:12:00.123");
   expect(dt.isValid).toBe(true);
   const now = new Date();
   expect(dt.toObject()).toEqual({
@@ -715,8 +715,8 @@ test('DateTime.fromSQL() can parse SQL times', () => {
   });
 });
 
-test('DateTime.fromSQL() handles times without fractional seconds', () => {
-  const dt = DateTime.fromSQL('04:12:00');
+test("DateTime.fromSQL() handles times without fractional seconds", () => {
+  const dt = DateTime.fromSQL("04:12:00");
   expect(dt.isValid).toBe(true);
   const now = new Date();
   expect(dt.toObject()).toEqual({
@@ -730,8 +730,8 @@ test('DateTime.fromSQL() handles times without fractional seconds', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision', () => {
-  let dt = DateTime.fromSQL('2016-05-14 10:23:54.2346');
+test("DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision", () => {
+  let dt = DateTime.fromSQL("2016-05-14 10:23:54.2346");
   expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -743,7 +743,7 @@ test('DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision'
     millisecond: 234
   });
 
-  dt = DateTime.fromSQL('2016-05-14 10:23:54.2341');
+  dt = DateTime.fromSQL("2016-05-14 10:23:54.2341");
   expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -756,8 +756,8 @@ test('DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision'
   });
 });
 
-test('DateTime.fromSQL() handles deciseconds in SQL datetimes', () => {
-  const dt = DateTime.fromSQL('2016-05-14 10:23:54.1');
+test("DateTime.fromSQL() handles deciseconds in SQL datetimes", () => {
+  const dt = DateTime.fromSQL("2016-05-14 10:23:54.1");
   expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -770,8 +770,8 @@ test('DateTime.fromSQL() handles deciseconds in SQL datetimes', () => {
   });
 });
 
-test('DateTime.fromSQL() handles datetimes without fractional seconds', () => {
-  const dt = DateTime.fromSQL('2016-05-14 10:23:54');
+test("DateTime.fromSQL() handles datetimes without fractional seconds", () => {
+  const dt = DateTime.fromSQL("2016-05-14 10:23:54");
   expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -784,8 +784,8 @@ test('DateTime.fromSQL() handles datetimes without fractional seconds', () => {
   });
 });
 
-test('DateTime.fromSQL() accepts a zone to default to', () => {
-  const dt = DateTime.fromSQL('2016-05-14 10:23:54.023', { zone: 'utc' });
+test("DateTime.fromSQL() accepts a zone to default to", () => {
+  const dt = DateTime.fromSQL("2016-05-14 10:23:54.023", { zone: "utc" });
   expect(dt.isValid).toBe(true);
   expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
@@ -799,8 +799,8 @@ test('DateTime.fromSQL() accepts a zone to default to', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse an optional offset', () => {
-  let dt = DateTime.fromSQL('2016-05-14 10:23:54.023 +06:00');
+test("DateTime.fromSQL() can parse an optional offset", () => {
+  let dt = DateTime.fromSQL("2016-05-14 10:23:54.023 +06:00");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -813,7 +813,7 @@ test('DateTime.fromSQL() can parse an optional offset', () => {
   });
 
   // no space before the zone
-  dt = DateTime.fromSQL('2016-05-14 10:23:54.023+06:00');
+  dt = DateTime.fromSQL("2016-05-14 10:23:54.023+06:00");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -826,7 +826,7 @@ test('DateTime.fromSQL() can parse an optional offset', () => {
   });
 
   // no milliseconds
-  dt = DateTime.fromSQL('2016-05-14 10:23:54 +06:00');
+  dt = DateTime.fromSQL("2016-05-14 10:23:54 +06:00");
   expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
@@ -839,10 +839,10 @@ test('DateTime.fromSQL() can parse an optional offset', () => {
   });
 });
 
-test('DateTime.fromSQL() can parse an optional zone', () => {
-  const dt = DateTime.fromSQL('2016-05-14 10:23:54 Europe/Paris', { setZone: true });
+test("DateTime.fromSQL() can parse an optional zone", () => {
+  const dt = DateTime.fromSQL("2016-05-14 10:23:54 Europe/Paris", { setZone: true });
   expect(dt.isValid).toBe(true);
-  expect(dt.zoneName).toBe('Europe/Paris');
+  expect(dt.zoneName).toBe("Europe/Paris");
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,

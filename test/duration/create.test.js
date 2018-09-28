@@ -1,11 +1,11 @@
 /* global test expect */
 
-import { Duration } from '../../src/luxon';
+import { Duration } from "../../src/luxon";
 
 //------
 // .fromObject()
 //-------
-test('Duration.fromObject sets all the values', () => {
+test("Duration.fromObject sets all the values", () => {
   const dur = Duration.fromObject({
     years: 1,
     months: 2,
@@ -24,18 +24,18 @@ test('Duration.fromObject sets all the values', () => {
   expect(dur.milliseconds).toBe(7);
 });
 
-test('Duration.fromObject accepts a conversionAccuracy', () => {
-  const dur = Duration.fromObject({ days: 1, conversionAccuracy: 'longterm' });
-  expect(dur.conversionAccuracy).toBe('longterm');
+test("Duration.fromObject accepts a conversionAccuracy", () => {
+  const dur = Duration.fromObject({ days: 1, conversionAccuracy: "longterm" });
+  expect(dur.conversionAccuracy).toBe("longterm");
 });
 
-test('Duration.fromObject throws if the argument is not an object', () => {
+test("Duration.fromObject throws if the argument is not an object", () => {
   expect(() => Duration.fromObject()).toThrow();
   expect(() => Duration.fromObject(null)).toThrow();
-  expect(() => Duration.fromObject('foo')).toThrow();
+  expect(() => Duration.fromObject("foo")).toThrow();
 });
 
-test('Duration.fromObject({}) costructs zero duration', () => {
+test("Duration.fromObject({}) costructs zero duration", () => {
   const dur = Duration.fromObject({});
   expect(dur.years).toBe(0);
   expect(dur.months).toBe(0);
@@ -46,7 +46,7 @@ test('Duration.fromObject({}) costructs zero duration', () => {
   expect(dur.milliseconds).toBe(0);
 });
 
-test('Duration.fromObject is invalid if the initial object has no units', () => {
+test("Duration.fromObject is invalid if the initial object has no units", () => {
   const dur = Duration.fromObject({ foo: 0 });
   expect(dur.years).toBe(0);
   expect(dur.months).toBe(0);
@@ -57,8 +57,8 @@ test('Duration.fromObject is invalid if the initial object has no units', () => 
   expect(dur.milliseconds).toBe(0);
 });
 
-test('Duration.fromObject is valid if providing options only', () => {
-  const dur = Duration.fromObject({ conversionAccuracy: 'longterm' });
+test("Duration.fromObject is valid if providing options only", () => {
+  const dur = Duration.fromObject({ conversionAccuracy: "longterm" });
   expect(dur.years).toBe(0);
   expect(dur.months).toBe(0);
   expect(dur.days).toBe(0);

@@ -1,9 +1,9 @@
-import DateTime from './datetime';
-import Settings from './settings';
-import Locale from './impl/locale';
-import IANAZone from './zones/IANAZone';
+import DateTime from "./datetime";
+import Settings from "./settings";
+import Locale from "./impl/locale";
+import IANAZone from "./zones/IANAZone";
 
-import { hasFormatToParts, hasIntl } from './impl/util';
+import { hasFormatToParts, hasIntl } from "./impl/util";
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
@@ -48,8 +48,8 @@ export default class Info {
    * @return {[string]}
    */
   static months(
-    length = 'long',
-    { locale = null, numberingSystem = null, outputCalendar = 'gregory' } = {}
+    length = "long",
+    { locale = null, numberingSystem = null, outputCalendar = "gregory" } = {}
   ) {
     return Locale.create(locale, numberingSystem, outputCalendar).months(length);
   }
@@ -67,8 +67,8 @@ export default class Info {
    * @return {[string]}
    */
   static monthsFormat(
-    length = 'long',
-    { locale = null, numberingSystem = null, outputCalendar = 'gregory' } = {}
+    length = "long",
+    { locale = null, numberingSystem = null, outputCalendar = "gregory" } = {}
   ) {
     return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);
   }
@@ -86,7 +86,7 @@ export default class Info {
    * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
    * @return {[string]}
    */
-  static weekdays(length = 'long', { locale = null, numberingSystem = null } = {}) {
+  static weekdays(length = "long", { locale = null, numberingSystem = null } = {}) {
     return Locale.create(locale, numberingSystem, null).weekdays(length);
   }
 
@@ -101,7 +101,7 @@ export default class Info {
    * @param {string} [opts.numberingSystem=null] - the numbering system
    * @return {[string]}
    */
-  static weekdaysFormat(length = 'long', { locale = null, numberingSystem = null } = {}) {
+  static weekdaysFormat(length = "long", { locale = null, numberingSystem = null } = {}) {
     return Locale.create(locale, numberingSystem, null).weekdays(length, true);
   }
 
@@ -127,8 +127,8 @@ export default class Info {
    * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
    * @return {[string]}
    */
-  static eras(length = 'short', { locale = null } = {}) {
-    return Locale.create(locale, null, 'gregory').eras(length);
+  static eras(length = "short", { locale = null } = {}) {
+    return Locale.create(locale, null, "gregory").eras(length);
   }
 
   /**
@@ -152,8 +152,8 @@ export default class Info {
 
       try {
         zones =
-          new Intl.DateTimeFormat('en', { timeZone: 'America/New_York' }).resolvedOptions()
-            .timeZone === 'America/New_York';
+          new Intl.DateTimeFormat("en", { timeZone: "America/New_York" }).resolvedOptions()
+            .timeZone === "America/New_York";
       } catch (e) {
         zones = false;
       }

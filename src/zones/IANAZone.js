@@ -1,18 +1,18 @@
-import { parseZoneInfo, isUndefined } from '../impl/util';
-import Zone from '../zone';
+import { parseZoneInfo, isUndefined } from "../impl/util";
+import Zone from "../zone";
 
 const dtfCache = {};
 function makeDTF(zone) {
   if (!dtfCache[zone]) {
-    dtfCache[zone] = new Intl.DateTimeFormat('en-US', {
+    dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
       hour12: false,
       timeZone: zone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
     });
   }
   return dtfCache[zone];
@@ -28,7 +28,7 @@ const typeToPos = {
 };
 
 function hackyOffset(dtf, date) {
-  const formatted = dtf.format(date).replace(/\u200E/g, ''),
+  const formatted = dtf.format(date).replace(/\u200E/g, ""),
     parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
     [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
   return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
@@ -55,7 +55,7 @@ export default class IANAZone extends Zone {
 
   static isValidZone(zone) {
     try {
-      new Intl.DateTimeFormat('en-US', { timeZone: zone }).format();
+      new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
       return true;
     } catch (e) {
       return false;
@@ -80,7 +80,7 @@ export default class IANAZone extends Zone {
   }
 
   get type() {
-    return 'iana';
+    return "iana";
   }
 
   get name() {
@@ -108,7 +108,7 @@ export default class IANAZone extends Zone {
   }
 
   equals(otherZone) {
-    return otherZone.type === 'iana' && otherZone.zoneName === this.zoneName;
+    return otherZone.type === "iana" && otherZone.zoneName === this.zoneName;
   }
 
   get isValid() {

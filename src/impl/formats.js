@@ -2,10 +2,10 @@
  * @private
  */
 
-const n = 'numeric',
-  s = 'short',
-  l = 'long',
-  d2 = '2-digit';
+const n = "numeric",
+  s = "short",
+  l = "long",
+  d2 = "2-digit";
 
 export const DATE_SHORT = {
   year: n,

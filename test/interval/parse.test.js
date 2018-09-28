@@ -1,11 +1,11 @@
 /* global test expect */
-import { Interval } from '../../src/luxon';
+import { Interval } from "../../src/luxon";
 
 //------
 // .fromISO()
 //------
 
-test('Interval.fromISO can parse a variety of ISO formats', () => {
+test("Interval.fromISO can parse a variety of ISO formats", () => {
   const check = (s, ob1, ob2) => {
     const i = Interval.fromISO(s);
     expect(i.start.toObject()).toEqual(ob1);
@@ -15,7 +15,7 @@ test('Interval.fromISO can parse a variety of ISO formats', () => {
   // keeping these brief because I don't want to rehash the existing DT ISO tests
 
   check(
-    '2007-03-01T13:00:00/2008-05-11T15:30:00',
+    "2007-03-01T13:00:00/2008-05-11T15:30:00",
     {
       year: 2007,
       month: 3,
@@ -37,7 +37,7 @@ test('Interval.fromISO can parse a variety of ISO formats', () => {
   );
 
   check(
-    '2007-03-01T13:00:00/2016-W21-3',
+    "2007-03-01T13:00:00/2016-W21-3",
     {
       year: 2007,
       month: 3,
@@ -59,8 +59,8 @@ test('Interval.fromISO can parse a variety of ISO formats', () => {
   );
 });
 
-test('Interval.fromISO will return invalid for junk', () => {
-  const i = Interval.fromISO('hello');
+test("Interval.fromISO will return invalid for junk", () => {
+  const i = Interval.fromISO("hello");
   expect(i.isValid).toBe(false);
-  expect(i.invalidReason).toBe('invalid ISO format');
+  expect(i.invalidReason).toBe("invalid ISO format");
 });

@@ -1,13 +1,13 @@
 /* global test expect */
 
-import { DateTime } from '../../src/luxon';
+import { DateTime } from "../../src/luxon";
 
 const dt = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
 
 //------
 // year/month/day/hour/minute/second/millisecond
 //-------
-test('DateTime#set() sets Gregorian fields', () => {
+test("DateTime#set() sets Gregorian fields", () => {
   expect(dt.set({ year: 2012 }).year).toBe(2012);
   expect(dt.set({ month: 2 }).month).toBe(2);
   expect(dt.set({ month: 2 }).hour).toBe(9); // this will cross a DST for many people
@@ -36,7 +36,7 @@ test("DateTime#set({ year }) doesn't wrap leap years", () => {
 // weekYear/weekNumber/weekday
 //------
 
-test('DateTime#set({ weekYear }) sets the date to the same weekNumber/weekday of the target weekYear', () => {
+test("DateTime#set({ weekYear }) sets the date to the same weekNumber/weekday of the target weekYear", () => {
   const modified = dt.set({ weekYear: 2017 });
   expect(modified.weekday).toBe(2); // still tuesday
   expect(modified.weekNumber).toBe(21);
@@ -49,7 +49,7 @@ test('DateTime#set({ weekYear }) sets the date to the same weekNumber/weekday of
   expect(modified.millisecond).toBe(123);
 });
 
-test('DateTime#set({ weekNumber }) sets the date to the same weekday of the target weekNumber', () => {
+test("DateTime#set({ weekNumber }) sets the date to the same weekday of the target weekNumber", () => {
   const modified = dt.set({ weekNumber: 2 });
   expect(modified.weekday).toBe(2); // still tuesday
   expect(modified.year).toBe(1982);
@@ -76,7 +76,7 @@ test("DateTime#set({ weekday }) sets the weekday to this week's matching day", (
 //------
 // year/ordinal
 //------
-test('DateTime#set({ ordinal }) sets the date to the ordinal within the current year', () => {
+test("DateTime#set({ ordinal }) sets the date to the ordinal within the current year", () => {
   const modified = dt.set({ ordinal: 200 });
   expect(modified.year).toBe(1982);
   expect(modified.month).toBe(7);
@@ -91,7 +91,7 @@ test('DateTime#set({ ordinal }) sets the date to the ordinal within the current 
 // set multiple things
 //------
 
-test('DateTime.set does units in increasing size', () => {
+test("DateTime.set does units in increasing size", () => {
   const modified = dt.set({ day: 31, month: 3 });
   expect(modified.month).toBe(3);
   expect(modified.day).toBe(31);
@@ -100,10 +100,10 @@ test('DateTime.set does units in increasing size', () => {
 //------
 // set invalid things
 //------
-test('DateTime#set throws for invalid units', () => {
+test("DateTime#set throws for invalid units", () => {
   expect(() => dt.set({ glorb: 200 })).toThrow();
 });
 
-test('DateTime#set maintains invalidity', () => {
-  expect(DateTime.invalid('because').set({ ordinal: 200 }).isValid).toBe(false);
+test("DateTime#set maintains invalidity", () => {
+  expect(DateTime.invalid("because").set({ ordinal: 200 }).isValid).toBe(false);
 });

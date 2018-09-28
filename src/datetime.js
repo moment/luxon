@@ -1,11 +1,11 @@
-import Duration, { friendlyDuration } from './duration';
-import Interval from './interval';
-import Settings from './settings';
-import Info from './info';
-import Formatter from './impl/formatter';
-import FixedOffsetZone from './zones/fixedOffsetZone';
-import LocalZone from './zones/localZone';
-import Locale from './impl/locale';
+import Duration, { friendlyDuration } from "./duration";
+import Interval from "./interval";
+import Settings from "./settings";
+import Info from "./info";
+import Formatter from "./impl/formatter";
+import FixedOffsetZone from "./zones/fixedOffsetZone";
+import LocalZone from "./zones/localZone";
+import Locale from "./impl/locale";
 import {
   isUndefined,
   maybeArray,
@@ -17,11 +17,11 @@ import {
   isLeapYear,
   weeksInWeekYear,
   normalizeObject
-} from './impl/util';
-import { normalizeZone } from './impl/zoneUtil';
-import diff from './impl/diff';
-import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from './impl/regexParser';
-import { parseFromTokens, explainFromTokens } from './impl/tokenParser';
+} from "./impl/util";
+import { normalizeZone } from "./impl/zoneUtil";
+import diff from "./impl/diff";
+import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser";
+import { parseFromTokens, explainFromTokens } from "./impl/tokenParser";
 import {
   gregorianToWeek,
   weekToGregorian,
@@ -31,19 +31,19 @@ import {
   hasInvalidWeekData,
   hasInvalidOrdinalData,
   hasInvalidTimeData
-} from './impl/conversions';
-import * as Formats from './impl/formats';
+} from "./impl/conversions";
+import * as Formats from "./impl/formats";
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
   InvalidUnitError,
   InvalidDateTimeError
-} from './errors';
+} from "./errors";
 
-const INVALID = 'Invalid DateTime',
-  INVALID_INPUT = 'invalid input',
-  UNSUPPORTED_ZONE = 'unsupported zone',
-  UNPARSABLE = 'unparsable';
+const INVALID = "Invalid DateTime",
+  INVALID_INPUT = "invalid input",
+  UNSUPPORTED_ZONE = "unsupported zone",
+  UNPARSABLE = "unparsable";
 
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
@@ -151,7 +151,7 @@ function adjustTime(inst, dur) {
       minutes: dur.minutes,
       seconds: dur.seconds,
       milliseconds: dur.milliseconds
-    }).as('milliseconds'),
+    }).as("milliseconds"),
     localTS = objToLocalTS(c);
 
   let [ts, o] = fixOffset(localTS, oPre, inst.zone);
@@ -186,7 +186,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
 // helps handle the details
 function toTechFormat(dt, format) {
   return dt.isValid
-    ? Formatter.create(Locale.create('en-US'), {
+    ? Formatter.create(Locale.create("en-US"), {
         allowZ: true,
         forceSimple: true
       }).formatDateTimeFromString(dt, format)
@@ -205,23 +205,23 @@ function toTechTimeFormat(
     spaceZone = false
   }
 ) {
-  let fmt = 'HH:mm';
+  let fmt = "HH:mm";
 
   if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-    fmt += ':ss';
+    fmt += ":ss";
     if (!suppressMilliseconds || dt.millisecond !== 0) {
-      fmt += '.SSS';
+      fmt += ".SSS";
     }
   }
 
   if ((includeZone || includeOffset) && spaceZone) {
-    fmt += ' ';
+    fmt += " ";
   }
 
   if (includeZone) {
-    fmt += 'z';
+    fmt += "z";
   } else if (includeOffset) {
-    fmt += 'ZZ';
+    fmt += "ZZ";
   }
 
   return toTechFormat(dt, fmt);
@@ -253,43 +253,43 @@ const defaultUnitValues = {
   };
 
 // Units in the supported calendars, sorted by bigness
-const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'],
+const orderedUnits = ["year", "month", "day", "hour", "minute", "second", "millisecond"],
   orderedWeekUnits = [
-    'weekYear',
-    'weekNumber',
-    'weekday',
-    'hour',
-    'minute',
-    'second',
-    'millisecond'
+    "weekYear",
+    "weekNumber",
+    "weekday",
+    "hour",
+    "minute",
+    "second",
+    "millisecond"
   ],
-  orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
+  orderedOrdinalUnits = ["year", "ordinal", "hour", "minute", "second", "millisecond"];
 
 // standardize case and plurality in units
 function normalizeUnit(unit, ignoreUnknown = false) {
   const normalized = {
-    year: 'year',
-    years: 'year',
-    month: 'month',
-    months: 'month',
-    day: 'day',
-    days: 'day',
-    hour: 'hour',
-    hours: 'hour',
-    minute: 'minute',
-    minutes: 'minute',
-    second: 'second',
-    seconds: 'second',
-    millisecond: 'millisecond',
-    milliseconds: 'millisecond',
-    weekday: 'weekday',
-    weekdays: 'weekday',
-    weeknumber: 'weekNumber',
-    weeksnumber: 'weekNumber',
-    weeknumbers: 'weekNumber',
-    weekyear: 'weekYear',
-    weekyears: 'weekYear',
-    ordinal: 'ordinal'
+    year: "year",
+    years: "year",
+    month: "month",
+    months: "month",
+    day: "day",
+    days: "day",
+    hour: "hour",
+    hours: "hour",
+    minute: "minute",
+    minutes: "minute",
+    second: "second",
+    seconds: "second",
+    millisecond: "millisecond",
+    milliseconds: "millisecond",
+    weekday: "weekday",
+    weekdays: "weekday",
+    weeknumber: "weekNumber",
+    weeksnumber: "weekNumber",
+    weeknumbers: "weekNumber",
+    weekyear: "weekYear",
+    weekyears: "weekYear",
+    ordinal: "ordinal"
   }[unit ? unit.toLowerCase() : unit];
 
   if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
@@ -501,7 +501,7 @@ export default class DateTime {
    */
   static fromMillis(milliseconds, options = {}) {
     if (!isNumber(milliseconds)) {
-      throw new InvalidArgumentError('fromMillis requires a numerical input');
+      throw new InvalidArgumentError("fromMillis requires a numerical input");
     } else {
       return new DateTime({
         ts: milliseconds,
@@ -626,7 +626,7 @@ export default class DateTime {
 
     // gregorian data + weekday serves only to validate
     if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
-      return DateTime.invalid('mismatched weekday');
+      return DateTime.invalid("mismatched weekday");
     }
 
     return inst;
@@ -707,7 +707,7 @@ export default class DateTime {
    */
   static fromFormat(text, fmt, options = {}) {
     if (isUndefined(text) || isUndefined(fmt)) {
-      throw new InvalidArgumentError('fromFormat requires an input string and a format');
+      throw new InvalidArgumentError("fromFormat requires an input string and a format");
     }
 
     const { locale = null, numberingSystem = null } = options,
@@ -758,7 +758,7 @@ export default class DateTime {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError('need to specify a reason the DateTime is invalid');
+      throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDateTimeError(reason);
@@ -850,6 +850,7 @@ export default class DateTime {
   get quarter() {
     return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
   }
+
   /**
    * Get the month (1-12).
    * @example DateTime.local(2017, 5, 25).month //=> 5
@@ -951,7 +952,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthShort() {
-    return this.isValid ? Info.months('short', { locale: this.locale })[this.month - 1] : null;
+    return this.isValid ? Info.months("short", { locale: this.locale })[this.month - 1] : null;
   }
 
   /**
@@ -961,7 +962,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthLong() {
-    return this.isValid ? Info.months('long', { locale: this.locale })[this.month - 1] : null;
+    return this.isValid ? Info.months("long", { locale: this.locale })[this.month - 1] : null;
   }
 
   /**
@@ -971,7 +972,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayShort() {
-    return this.isValid ? Info.weekdays('short', { locale: this.locale })[this.weekday - 1] : null;
+    return this.isValid ? Info.weekdays("short", { locale: this.locale })[this.weekday - 1] : null;
   }
 
   /**
@@ -981,7 +982,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayLong() {
-    return this.isValid ? Info.weekdays('long', { locale: this.locale })[this.weekday - 1] : null;
+    return this.isValid ? Info.weekdays("long", { locale: this.locale })[this.weekday - 1] : null;
   }
 
   /**
@@ -1002,7 +1003,7 @@ export default class DateTime {
   get offsetNameShort() {
     if (this.isValid) {
       return this.zone.offsetName(this.ts, {
-        format: 'short',
+        format: "short",
         locale: this.locale
       });
     } else {
@@ -1018,7 +1019,7 @@ export default class DateTime {
   get offsetNameLong() {
     if (this.isValid) {
       return this.zone.offsetName(this.ts, {
-        format: 'long',
+        format: "long",
         locale: this.locale
       });
     } else {
@@ -1255,37 +1256,37 @@ export default class DateTime {
     const o = {},
       normalizedUnit = Duration.normalizeUnit(unit);
     switch (normalizedUnit) {
-      case 'years':
+      case "years":
         o.month = 1;
       // falls through
-      case 'quarters':
-      case 'months':
+      case "quarters":
+      case "months":
         o.day = 1;
       // falls through
-      case 'weeks':
-      case 'days':
+      case "weeks":
+      case "days":
         o.hour = 0;
       // falls through
-      case 'hours':
+      case "hours":
         o.minute = 0;
       // falls through
-      case 'minutes':
+      case "minutes":
         o.second = 0;
       // falls through
-      case 'seconds':
+      case "seconds":
         o.millisecond = 0;
         break;
-      case 'milliseconds':
+      case "milliseconds":
         break;
       default:
         throw new InvalidUnitError(unit);
     }
 
-    if (normalizedUnit === 'weeks') {
+    if (normalizedUnit === "weeks") {
       o.weekday = 1;
     }
 
-    if (normalizedUnit === 'quarters') {
+    if (normalizedUnit === "quarters") {
       const q = Math.ceil(this.month / 3);
       o.month = (q - 1) * 3 + 1;
     }
@@ -1398,7 +1399,7 @@ export default class DateTime {
    * @return {string}
    */
   toISODate() {
-    return toTechFormat(this, 'yyyy-MM-dd');
+    return toTechFormat(this, "yyyy-MM-dd");
   }
 
   /**
@@ -1431,7 +1432,7 @@ export default class DateTime {
    * @return {string}
    */
   toRFC2822() {
-    return toTechFormat(this, 'EEE, dd LLL yyyy hh:mm:ss ZZZ');
+    return toTechFormat(this, "EEE, dd LLL yyyy hh:mm:ss ZZZ");
   }
 
   /**
@@ -1452,7 +1453,7 @@ export default class DateTime {
    * @return {string}
    */
   toSQLDate() {
-    return toTechFormat(this, 'yyyy-MM-dd');
+    return toTechFormat(this, "yyyy-MM-dd");
   }
 
   /**
@@ -1574,7 +1575,7 @@ export default class DateTime {
    * i2.diff(i1, ['months', 'days', 'hours']).toObject() //=> { months: 16, days: 19, hours: 0.75 }
    * @return {Duration}
    */
-  diff(otherDateTime, unit = 'milliseconds', opts = {}) {
+  diff(otherDateTime, unit = "milliseconds", opts = {}) {
     if (!this.isValid || !otherDateTime.isValid)
       return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
 
@@ -1595,7 +1596,7 @@ export default class DateTime {
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  diffNow(unit = 'milliseconds', opts = {}) {
+  diffNow(unit = "milliseconds", opts = {}) {
     return this.diff(DateTime.local(), unit, opts);
   }
 
@@ -1617,7 +1618,7 @@ export default class DateTime {
    */
   hasSame(otherDateTime, unit) {
     if (!this.isValid) return false;
-    if (unit === 'millisecond') {
+    if (unit === "millisecond") {
       return this.valueOf() === otherDateTime.valueOf();
     } else {
       const inputMs = otherDateTime.valueOf();
@@ -1853,9 +1854,9 @@ export function friendlyDateTime(dateTimeish) {
     return dateTimeish;
   } else if (dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
     return DateTime.fromJSDate(dateTimeish);
-  } else if (typeof dateTimeish === 'object') {
+  } else if (typeof dateTimeish === "object") {
     return DateTime.fromObject(dateTimeish);
   } else {
-    throw new InvalidArgumentError('Unknown datetime argument');
+    throw new InvalidArgumentError("Unknown datetime argument");
   }
 }

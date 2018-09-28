@@ -1,12 +1,12 @@
-import { isUndefined, isNumber, normalizeObject } from './impl/util';
-import Locale from './impl/locale';
-import Formatter from './impl/formatter';
-import { parseISODuration } from './impl/regexParser';
-import Settings from './settings';
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from './errors';
+import { isUndefined, isNumber, normalizeObject } from "./impl/util";
+import Locale from "./impl/locale";
+import Formatter from "./impl/formatter";
+import { parseISODuration } from "./impl/regexParser";
+import Settings from "./settings";
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors";
 
-const INVALID = 'Invalid Duration',
-  UNPARSABLE = 'unparsable';
+const INVALID = "Invalid Duration",
+  UNPARSABLE = "unparsable";
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -93,15 +93,15 @@ const lowOrderMatrix = {
 
 // units ordered by size
 const orderedUnits = [
-  'years',
-  'quarters',
-  'months',
-  'weeks',
-  'days',
-  'hours',
-  'minutes',
-  'seconds',
-  'milliseconds'
+  "years",
+  "quarters",
+  "months",
+  "weeks",
+  "days",
+  "hours",
+  "minutes",
+  "seconds",
+  "milliseconds"
 ];
 
 const reverseUnits = orderedUnits.slice(0).reverse();
@@ -157,10 +157,10 @@ export function friendlyDuration(duration) {
     return Duration.fromMillis(duration);
   } else if (duration instanceof Duration) {
     return duration;
-  } else if (typeof duration === 'object') {
+  } else if (typeof duration === "object") {
     return Duration.fromObject(duration);
   } else {
-    throw new InvalidArgumentError('Unknown duration argument');
+    throw new InvalidArgumentError("Unknown duration argument");
   }
 }
 
@@ -182,7 +182,7 @@ export default class Duration {
    * @private
    */
   constructor(config) {
-    const accurate = config.conversionAccuracy === 'longterm' || false;
+    const accurate = config.conversionAccuracy === "longterm" || false;
     /**
      * @access private
      */
@@ -194,7 +194,7 @@ export default class Duration {
     /**
      * @access private
      */
-    this.conversionAccuracy = accurate ? 'longterm' : 'casual';
+    this.conversionAccuracy = accurate ? "longterm" : "casual";
     /**
      * @access private
      */
@@ -237,8 +237,8 @@ export default class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
-    if (obj == null || typeof obj !== 'object') {
-      throw new InvalidArgumentError('Duration.fromObject: argument expected to be an object.');
+    if (obj == null || typeof obj !== "object") {
+      throw new InvalidArgumentError("Duration.fromObject: argument expected to be an object.");
     }
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit, true),
@@ -277,7 +277,7 @@ export default class Duration {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError('need to specify a reason the Duration is invalid');
+      throw new InvalidArgumentError("need to specify a reason the Duration is invalid");
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDurationError(reason);
@@ -291,24 +291,24 @@ export default class Duration {
    */
   static normalizeUnit(unit, ignoreUnknown = false) {
     const normalized = {
-      year: 'years',
-      years: 'years',
-      quarter: 'quarters',
-      quarters: 'quarters',
-      month: 'months',
-      months: 'months',
-      week: 'weeks',
-      weeks: 'weeks',
-      day: 'days',
-      days: 'days',
-      hour: 'hours',
-      hours: 'hours',
-      minute: 'minutes',
-      minutes: 'minutes',
-      second: 'seconds',
-      seconds: 'seconds',
-      millisecond: 'milliseconds',
-      milliseconds: 'milliseconds'
+      year: "years",
+      years: "years",
+      quarter: "quarters",
+      quarters: "quarters",
+      month: "months",
+      months: "months",
+      week: "weeks",
+      weeks: "weeks",
+      day: "days",
+      days: "days",
+      hour: "hours",
+      hours: "hours",
+      minute: "minutes",
+      minutes: "minutes",
+      second: "seconds",
+      seconds: "seconds",
+      millisecond: "milliseconds",
+      milliseconds: "milliseconds"
     }[unit ? unit.toLowerCase() : unit];
 
     if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
@@ -401,20 +401,20 @@ export default class Duration {
     // we could use the formatter, but this is an easier way to get the minimum string
     if (!this.isValid) return null;
 
-    let s = 'P',
+    let s = "P",
       norm = this.normalize();
 
     // ISO durations are always positive, so take the absolute value
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
 
-    if (norm.years > 0) s += norm.years + 'Y';
-    if (norm.months > 0 || norm.quarters > 0) s += norm.months + norm.quarters * 3 + 'M';
-    if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + 'D';
-    if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += 'T';
-    if (norm.hours > 0) s += norm.hours + 'H';
-    if (norm.minutes > 0) s += norm.minutes + 'M';
+    if (norm.years > 0) s += norm.years + "Y";
+    if (norm.months > 0 || norm.quarters > 0) s += norm.months + norm.quarters * 3 + "M";
+    if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + "D";
+    if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += "T";
+    if (norm.hours > 0) s += norm.hours + "H";
+    if (norm.minutes > 0) s += norm.minutes + "M";
     if (norm.seconds > 0 || norm.milliseconds > 0)
-      s += norm.seconds + norm.milliseconds / 1000 + 'S';
+      s += norm.seconds + norm.milliseconds / 1000 + "S";
     return s;
   }
 
@@ -439,7 +439,7 @@ export default class Duration {
    * @return {number}
    */
   valueOf() {
-    return this.as('milliseconds');
+    return this.as("milliseconds");
   }
 
   /**

@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime } from '../../src/luxon';
+import { DateTime } from "../../src/luxon";
 
 // you hate to see a class like this, but here we are
 
@@ -7,33 +7,33 @@ import { DateTime } from '../../src/luxon';
 // #hasSame()
 //------
 
-test('DateTime#hasSame() can use milliseconds for exact comparisons', () => {
+test("DateTime#hasSame() can use milliseconds for exact comparisons", () => {
   const dt = DateTime.local();
-  expect(dt.hasSame(dt, 'millisecond')).toBe(true);
-  expect(dt.hasSame(dt.reconfigure({ locale: 'fr' }), 'millisecond')).toBe(true);
-  expect(dt.hasSame(dt.plus({ milliseconds: 1 }), 'millisecond')).toBe(false);
+  expect(dt.hasSame(dt, "millisecond")).toBe(true);
+  expect(dt.hasSame(dt.reconfigure({ locale: "fr" }), "millisecond")).toBe(true);
+  expect(dt.hasSame(dt.plus({ milliseconds: 1 }), "millisecond")).toBe(false);
 });
 
-test('DateTime#hasSame() checks the unit', () => {
+test("DateTime#hasSame() checks the unit", () => {
   const dt = DateTime.local();
-  expect(dt.hasSame(dt, 'day')).toBe(true);
-  expect(dt.hasSame(dt.startOf('day'), 'day')).toBe(true);
-  expect(dt.hasSame(dt.plus({ days: 1 }), 'days')).toBe(false);
+  expect(dt.hasSame(dt, "day")).toBe(true);
+  expect(dt.hasSame(dt.startOf("day"), "day")).toBe(true);
+  expect(dt.hasSame(dt.plus({ days: 1 }), "days")).toBe(false);
 });
 
-test('DateTime#hasSame() returns false for invalid DateTimes', () => {
+test("DateTime#hasSame() returns false for invalid DateTimes", () => {
   const dt = DateTime.local(),
-    invalid = DateTime.invalid('because');
-  expect(dt.hasSame(invalid, 'day')).toBe(false);
-  expect(invalid.hasSame(invalid, 'day')).toBe(false);
-  expect(invalid.hasSame(dt, 'day')).toBe(false);
+    invalid = DateTime.invalid("because");
+  expect(dt.hasSame(invalid, "day")).toBe(false);
+  expect(invalid.hasSame(invalid, "day")).toBe(false);
+  expect(invalid.hasSame(dt, "day")).toBe(false);
 });
 
 //------
 // #until()
 //------
 
-test('DateTime#until() creates an Interval', () => {
+test("DateTime#until() creates an Interval", () => {
   const dt = DateTime.local(),
     other = dt.plus({ days: 1 }),
     i = dt.until(other);
@@ -42,9 +42,9 @@ test('DateTime#until() creates an Interval', () => {
   expect(i.end).toBe(other);
 });
 
-test('DateTime#until() creates an invalid Interval out of an invalid DateTime', () => {
+test("DateTime#until() creates an invalid Interval out of an invalid DateTime", () => {
   const dt = DateTime.local(),
-    invalid = DateTime.invalid('because');
+    invalid = DateTime.invalid("because");
 
   expect(invalid.until(invalid).isValid).toBe(false);
   expect(invalid.until(dt).isValid).toBe(false);
@@ -59,8 +59,8 @@ test("DateTime#isInLeapYear returns the whether the DateTime's year is in a leap
   expect(DateTime.local(2020, 5, 25).isInLeapYear).toBe(true);
 });
 
-test('DateTime#isInLeapYear returns false for invalid DateTimes', () => {
-  expect(DateTime.invalid('because').isInLeapYear).toBe(false);
+test("DateTime#isInLeapYear returns false for invalid DateTimes", () => {
+  expect(DateTime.invalid("because").isInLeapYear).toBe(false);
 });
 
 //------
@@ -71,8 +71,8 @@ test("DateTime#daysInYear returns the number of days in the DateTime's year", ()
   expect(DateTime.local(2020, 5, 25).daysInYear).toBe(366);
 });
 
-test('DateTime#daysInYear returns NaN for invalid DateTimes', () => {
-  expect(DateTime.invalid('because').daysInYear).toBeFalsy();
+test("DateTime#daysInYear returns NaN for invalid DateTimes", () => {
+  expect(DateTime.invalid("because").daysInYear).toBeFalsy();
 });
 
 //------
@@ -85,8 +85,8 @@ test("DateTime#daysInMonth returns the number of days in the DateTime's month", 
   expect(DateTime.local(2020, 2, 10).daysInMonth).toBe(29);
 });
 
-test('DateTime#daysInMonth returns NaN for invalid DateTimes', () => {
-  expect(DateTime.invalid('because').daysInMonth).toBeFalsy();
+test("DateTime#daysInMonth returns NaN for invalid DateTimes", () => {
+  expect(DateTime.invalid("because").daysInMonth).toBeFalsy();
 });
 
 //------
@@ -98,6 +98,6 @@ test("DateTime#weeksInWeekYear returns the number of days in the DateTime's year
   expect(DateTime.local(2020, 5, 25).weeksInWeekYear).toBe(53);
 });
 
-test('DateTime#weeksInWeekYear returns NaN for invalid DateTimes', () => {
-  expect(DateTime.invalid('because').weeksInWeekYear).toBeFalsy();
+test("DateTime#weeksInWeekYear returns NaN for invalid DateTimes", () => {
+  expect(DateTime.invalid("because").weeksInWeekYear).toBeFalsy();
 });

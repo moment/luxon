@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Settings } from '../../src/luxon';
+import { DateTime, Settings } from "../../src/luxon";
 
 function setUnset(prop) {
   return (value, f) => {
@@ -14,9 +14,9 @@ function setUnset(prop) {
   };
 }
 
-const withDefaultLocale = setUnset('defaultLocale'),
-  withDefaultNumberingSystem = setUnset('defaultNumberingSystem'),
-  withDefaultOutputCalendar = setUnset('defaultOutputCalendar');
+const withDefaultLocale = setUnset("defaultLocale"),
+  withDefaultNumberingSystem = setUnset("defaultNumberingSystem"),
+  withDefaultOutputCalendar = setUnset("defaultOutputCalendar");
 
 //------
 // .local()
@@ -26,7 +26,7 @@ test("DateTime.local() has today's date", () => {
   expect(now.toJSDate().getDate()).toBe(new Date().getDate());
 });
 
-test('DateTime.local(2017) is the beginning of the year', () => {
+test("DateTime.local(2017) is the beginning of the year", () => {
   const dt = DateTime.local(2017);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(1);
@@ -37,7 +37,7 @@ test('DateTime.local(2017) is the beginning of the year', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.local(2017, 6) is the beginning of the month', () => {
+test("DateTime.local(2017, 6) is the beginning of the month", () => {
   const dt = DateTime.local(2017, 6);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -48,7 +48,7 @@ test('DateTime.local(2017, 6) is the beginning of the month', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.local(2017, 6, 12) is the beginning of 6/12', () => {
+test("DateTime.local(2017, 6, 12) is the beginning of 6/12", () => {
   const dt = DateTime.local(2017, 6, 12);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -59,7 +59,7 @@ test('DateTime.local(2017, 6, 12) is the beginning of 6/12', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.local(2017, 6, 12, 5) is the beginning of the hour', () => {
+test("DateTime.local(2017, 6, 12, 5) is the beginning of the hour", () => {
   const dt = DateTime.local(2017, 6, 12, 5);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -70,7 +70,7 @@ test('DateTime.local(2017, 6, 12, 5) is the beginning of the hour', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.local(2017, 6, 12, 5, 25) is the beginning of the minute', () => {
+test("DateTime.local(2017, 6, 12, 5, 25) is the beginning of the minute", () => {
   const dt = DateTime.local(2017, 6, 12, 5, 25);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -81,7 +81,7 @@ test('DateTime.local(2017, 6, 12, 5, 25) is the beginning of the minute', () => 
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.local(2017, 6, 12, 5, 25, 16) is the beginning of the second', () => {
+test("DateTime.local(2017, 6, 12, 5, 25, 16) is the beginning of the second", () => {
   const dt = DateTime.local(2017, 6, 12, 5, 25, 16);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -92,7 +92,7 @@ test('DateTime.local(2017, 6, 12, 5, 25, 16) is the beginning of the second', ()
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.local(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond', () => {
+test("DateTime.local(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond", () => {
   const dt = DateTime.local(2017, 6, 12, 5, 25, 16, 255);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -103,27 +103,27 @@ test('DateTime.local(2017, 6, 12, 5, 25, 16, 255) is right down to the milliseco
   expect(dt.millisecond).toBe(255);
 });
 
-test('DateTime.local accepts the default locale', () => {
-  withDefaultLocale('fr', () => expect(DateTime.local().locale).toBe('fr'));
+test("DateTime.local accepts the default locale", () => {
+  withDefaultLocale("fr", () => expect(DateTime.local().locale).toBe("fr"));
 });
 
-test('DateTime.local accepts the default numbering system', () => {
-  withDefaultNumberingSystem('beng', () => expect(DateTime.local().numberingSystem).toBe('beng'));
+test("DateTime.local accepts the default numbering system", () => {
+  withDefaultNumberingSystem("beng", () => expect(DateTime.local().numberingSystem).toBe("beng"));
 });
 
-test('DateTime.local accepts the default output calendar', () => {
-  withDefaultOutputCalendar('hebrew', () => expect(DateTime.local().outputCalendar).toBe('hebrew'));
+test("DateTime.local accepts the default output calendar", () => {
+  withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
 });
 
 //------
 // .utc()
 //-------
-test('DateTime.utc() is in utc', () => {
+test("DateTime.utc() is in utc", () => {
   const now = DateTime.utc();
   expect(now.offset).toBe(0);
 });
 
-test('DateTime.utc(2017) is the beginning of the year', () => {
+test("DateTime.utc(2017) is the beginning of the year", () => {
   const dt = DateTime.utc(2017);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(1);
@@ -134,7 +134,7 @@ test('DateTime.utc(2017) is the beginning of the year', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.utc(2017, 6) is the beginning of the month', () => {
+test("DateTime.utc(2017, 6) is the beginning of the month", () => {
   const dt = DateTime.utc(2017, 6);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -145,7 +145,7 @@ test('DateTime.utc(2017, 6) is the beginning of the month', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.utc(2017, 6, 12) is the beginning of 6/12', () => {
+test("DateTime.utc(2017, 6, 12) is the beginning of 6/12", () => {
   const dt = DateTime.utc(2017, 6, 12);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -156,7 +156,7 @@ test('DateTime.utc(2017, 6, 12) is the beginning of 6/12', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.utc(2017, 6, 12, 5) is the beginning of the hour', () => {
+test("DateTime.utc(2017, 6, 12, 5) is the beginning of the hour", () => {
   const dt = DateTime.utc(2017, 6, 12, 5);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -167,7 +167,7 @@ test('DateTime.utc(2017, 6, 12, 5) is the beginning of the hour', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.utc(2017, 6, 12, 5, 25) is the beginning of the minute', () => {
+test("DateTime.utc(2017, 6, 12, 5, 25) is the beginning of the minute", () => {
   const dt = DateTime.utc(2017, 6, 12, 5, 25);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -178,7 +178,7 @@ test('DateTime.utc(2017, 6, 12, 5, 25) is the beginning of the minute', () => {
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.utc(2017, 6, 12, 5, 25, 16) is the beginning of the second', () => {
+test("DateTime.utc(2017, 6, 12, 5, 25, 16) is the beginning of the second", () => {
   const dt = DateTime.utc(2017, 6, 12, 5, 25, 16);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -189,7 +189,7 @@ test('DateTime.utc(2017, 6, 12, 5, 25, 16) is the beginning of the second', () =
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.utc(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond', () => {
+test("DateTime.utc(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond", () => {
   const dt = DateTime.utc(2017, 6, 12, 5, 25, 16, 255);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -200,14 +200,14 @@ test('DateTime.utc(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond
   expect(dt.millisecond).toBe(255);
 });
 
-test('DateTime.utc accepts the default locale', () => {
-  withDefaultLocale('fr', () => expect(DateTime.utc().locale).toBe('fr'));
+test("DateTime.utc accepts the default locale", () => {
+  withDefaultLocale("fr", () => expect(DateTime.utc().locale).toBe("fr"));
 });
 
 //------
 // .fromJSDate()
 //-------
-test('DateTime.fromJSDate(date) clones the date', () => {
+test("DateTime.fromJSDate(date) clones the date", () => {
   const date = new Date(1982, 4, 25),
     dateTime = DateTime.fromJSDate(date),
     oldValue = dateTime.valueOf();
@@ -216,48 +216,48 @@ test('DateTime.fromJSDate(date) clones the date', () => {
   expect(dateTime.toJSDate().valueOf()).toBe(oldValue);
 });
 
-test('DateTime.fromJSDate(date) accepts a zone option', () => {
+test("DateTime.fromJSDate(date) accepts a zone option", () => {
   const date = new Date(1982, 4, 25),
-    dateTime = DateTime.fromJSDate(date, { zone: 'America/Santiago' });
+    dateTime = DateTime.fromJSDate(date, { zone: "America/Santiago" });
 
   expect(dateTime.toJSDate().valueOf()).toBe(date.valueOf());
-  expect(dateTime.zoneName).toBe('America/Santiago');
+  expect(dateTime.zoneName).toBe("America/Santiago");
 });
 
-test('DateTime.fromJSDate(date) returns invalid for invalid values', () => {
-  expect(DateTime.fromJSDate('').isValid).toBe(false);
-  expect(DateTime.fromJSDate(new Date('')).isValid).toBe(false);
+test("DateTime.fromJSDate(date) returns invalid for invalid values", () => {
+  expect(DateTime.fromJSDate("").isValid).toBe(false);
+  expect(DateTime.fromJSDate(new Date("")).isValid).toBe(false);
   expect(DateTime.fromJSDate(new Date().valueOf()).isValid).toBe(false);
 });
 
-test('DateTime.fromJSDate accepts the default locale', () => {
-  withDefaultLocale('fr', () => expect(DateTime.fromJSDate(new Date()).locale).toBe('fr'));
+test("DateTime.fromJSDate accepts the default locale", () => {
+  withDefaultLocale("fr", () => expect(DateTime.fromJSDate(new Date()).locale).toBe("fr"));
 });
 
 //------
 // .fromMillis()
 //-------
-test('DateTime.fromMillis(ms) has a value of ms', () => {
+test("DateTime.fromMillis(ms) has a value of ms", () => {
   const bigValue = 391147200000;
   expect(DateTime.fromMillis(bigValue).valueOf()).toBe(bigValue);
 
   expect(DateTime.fromMillis(0).valueOf()).toBe(0);
 });
 
-test('DateTime.fromMillis(ms) accepts a zone option', () => {
+test("DateTime.fromMillis(ms) accepts a zone option", () => {
   const value = 391147200000,
-    dateTime = DateTime.fromMillis(value, { zone: 'America/Santiago' });
+    dateTime = DateTime.fromMillis(value, { zone: "America/Santiago" });
 
   expect(dateTime.valueOf()).toBe(value);
-  expect(dateTime.zoneName).toBe('America/Santiago');
+  expect(dateTime.zoneName).toBe("America/Santiago");
 });
 
-test('DateTime.fromMillis accepts the default locale', () => {
-  withDefaultLocale('fr', () => expect(DateTime.fromMillis(391147200000).locale).toBe('fr'));
+test("DateTime.fromMillis accepts the default locale", () => {
+  withDefaultLocale("fr", () => expect(DateTime.fromMillis(391147200000).locale).toBe("fr"));
 });
 
-test('DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input', () => {
-  expect(() => DateTime.fromMillis('slurp')).toThrow();
+test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input", () => {
+  expect(() => DateTime.fromMillis("slurp")).toThrow();
 });
 
 //------
@@ -273,7 +273,7 @@ const baseObject = {
   millisecond: 123
 };
 
-test('DateTime.fromObject() sets all the fields', () => {
+test("DateTime.fromObject() sets all the fields", () => {
   const dateTime = DateTime.fromObject(baseObject);
 
   expect(dateTime.isOffsetFixed).toBe(false);
@@ -287,7 +287,7 @@ test('DateTime.fromObject() sets all the fields', () => {
 });
 
 test('DateTime.fromObject() accepts a zone option of "utc"', () => {
-  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { zone: 'utc' }));
+  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { zone: "utc" }));
 
   expect(dateTime.isOffsetFixed).toBe(true);
   expect(dateTime.year).toBe(1982);
@@ -300,7 +300,7 @@ test('DateTime.fromObject() accepts a zone option of "utc"', () => {
 });
 
 test('DateTime.fromObject() accepts "utc-8" as the zone option', () => {
-  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { zone: 'utc-8' }));
+  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { zone: "utc-8" }));
 
   expect(dateTime.isOffsetFixed).toBe(true);
   expect(dateTime.offset).toBe(-8 * 60);
@@ -315,7 +315,7 @@ test('DateTime.fromObject() accepts "utc-8" as the zone option', () => {
 
 test('DateTime.fromObject() accepts "America/Los_Angeles" as the zone option', () => {
   const dateTime = DateTime.fromObject(
-    Object.assign({}, baseObject, { zone: 'America/Los_Angeles' })
+    Object.assign({}, baseObject, { zone: "America/Los_Angeles" })
   );
 
   expect(dateTime.isOffsetFixed).toBe(false);
@@ -329,12 +329,12 @@ test('DateTime.fromObject() accepts "America/Los_Angeles" as the zone option', (
   expect(dateTime.millisecond).toBe(123);
 });
 
-test('DateTime.fromObject() accepts a Zone as the zone option', () => {
+test("DateTime.fromObject() accepts a Zone as the zone option", () => {
   const daylight = DateTime.fromObject(
-      Object.assign({}, baseObject, { month: 5, zone: 'America/Los_Angeles' })
+      Object.assign({}, baseObject, { month: 5, zone: "America/Los_Angeles" })
     ),
     standard = DateTime.fromObject(
-      Object.assign({}, baseObject, { month: 12, zone: 'America/Los_Angeles' })
+      Object.assign({}, baseObject, { month: 12, zone: "America/Los_Angeles" })
     );
 
   expect(daylight.isOffsetFixed).toBe(false);
@@ -358,13 +358,13 @@ test('DateTime.fromObject() accepts a Zone as the zone option', () => {
   expect(standard.millisecond).toBe(123);
 });
 
-test('DateTime.fromObject() rejects invalid zones', () => {
-  const dt = DateTime.fromObject({ zone: 'blorp' });
+test("DateTime.fromObject() rejects invalid zones", () => {
+  const dt = DateTime.fromObject({ zone: "blorp" });
   expect(dt.isValid).toBe(false);
-  expect(dt.invalidReason).toBe('unsupported zone');
+  expect(dt.invalidReason).toBe("unsupported zone");
 });
 
-test('DateTime.fromObject() defaults high-order values to the current date', () => {
+test("DateTime.fromObject() defaults high-order values to the current date", () => {
   const dateTime = DateTime.fromObject({}),
     now = DateTime.local();
 
@@ -373,7 +373,7 @@ test('DateTime.fromObject() defaults high-order values to the current date', () 
   expect(dateTime.day).toBe(now.day);
 });
 
-test('DateTime.fromObject() defaults lower-order values to their minimums if a high-order value is set', () => {
+test("DateTime.fromObject() defaults lower-order values to their minimums if a high-order value is set", () => {
   const dateTime = DateTime.fromObject({ year: 2017 });
   expect(dateTime.year).toBe(2017);
   expect(dateTime.month).toBe(1);
@@ -384,7 +384,7 @@ test('DateTime.fromObject() defaults lower-order values to their minimums if a h
   expect(dateTime.millisecond).toBe(0);
 });
 
-test('DateTime.fromObject() w/weeks handles fully specified dates', () => {
+test("DateTime.fromObject() w/weeks handles fully specified dates", () => {
   const dt = DateTime.fromObject({
     weekYear: 2016,
     weekNumber: 2,
@@ -402,7 +402,7 @@ test('DateTime.fromObject() w/weeks handles fully specified dates', () => {
   expect(dt.day).toBe(13);
 });
 
-test('DateTime.fromObject() w/weekYears handles skew with Gregorian years', () => {
+test("DateTime.fromObject() w/weekYears handles skew with Gregorian years", () => {
   let dt = DateTime.fromObject({ weekYear: 2015, weekNumber: 1, weekday: 3 });
   expect(dt.weekYear).toBe(2015);
   expect(dt.weekNumber).toBe(1);
@@ -420,7 +420,7 @@ test('DateTime.fromObject() w/weekYears handles skew with Gregorian years', () =
   expect(dt.day).toBe(1);
 });
 
-test('DateTime.fromObject() w/weeks defaults high-order values to the current date', () => {
+test("DateTime.fromObject() w/weeks defaults high-order values to the current date", () => {
   const dt = DateTime.fromObject({ weekday: 2 }),
     now = DateTime.local();
 
@@ -429,7 +429,7 @@ test('DateTime.fromObject() w/weeks defaults high-order values to the current da
   expect(dt.weekday).toBe(2);
 });
 
-test('DateTime.fromObject() w/weeks defaults low-order values to their minimums', () => {
+test("DateTime.fromObject() w/weeks defaults low-order values to their minimums", () => {
   const dt = DateTime.fromObject({ weekYear: 2016 });
 
   expect(dt.weekYear).toBe(2016);
@@ -441,7 +441,7 @@ test('DateTime.fromObject() w/weeks defaults low-order values to their minimums'
   expect(dt.millisecond).toBe(0);
 });
 
-test('DateTime.fromObject() w/ordinals handles fully specified dates', () => {
+test("DateTime.fromObject() w/ordinals handles fully specified dates", () => {
   const dt = DateTime.fromObject({
     year: 2016,
     ordinal: 200,
@@ -456,37 +456,37 @@ test('DateTime.fromObject() w/ordinals handles fully specified dates', () => {
   expect(dt.day).toBe(18);
 });
 
-test('DateTime.fromObject() w/ordinal defaults to the current year', () => {
+test("DateTime.fromObject() w/ordinal defaults to the current year", () => {
   const dt = DateTime.fromObject({ ordinal: 200 }),
     now = DateTime.local();
   expect(dt.year).toBe(now.year);
   expect(dt.ordinal).toBe(200);
 });
 
-test('DateTime.fromObject() returns invalid for invalid values', () => {
+test("DateTime.fromObject() returns invalid for invalid values", () => {
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid).toBe(false);
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid).toBe(false);
 });
 
-test('DateTime.fromObject accepts the default locale', () => {
-  withDefaultLocale('fr', () => expect(DateTime.fromObject({}).locale).toBe('fr'));
+test("DateTime.fromObject accepts the default locale", () => {
+  withDefaultLocale("fr", () => expect(DateTime.fromObject({}).locale).toBe("fr"));
 });
 
-test('DateTime.fromObject accepts really low year numbers', () => {
+test("DateTime.fromObject accepts really low year numbers", () => {
   const dt = DateTime.fromObject({ year: 5 });
   expect(dt.year).toBe(5);
   expect(dt.month).toBe(1);
   expect(dt.day).toBe(1);
 });
 
-test('DateTime.fromObject accepts plurals and weird capitalization', () => {
+test("DateTime.fromObject accepts plurals and weird capitalization", () => {
   const dt = DateTime.fromObject({ Year: 2005, months: 12, dAy: 13 });
   expect(dt.year).toBe(2005);
   expect(dt.month).toBe(12);
   expect(dt.day).toBe(13);
 });
 
-test('DateTime.fromObject validates weekdays', () => {
+test("DateTime.fromObject validates weekdays", () => {
   let dt = DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 1 });
   expect(dt.isValid).toBe(false);
 

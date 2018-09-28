@@ -1,27 +1,27 @@
-import Duration from '../duration';
+import Duration from "../duration";
 
 function dayDiff(earlier, later) {
   const utcDayStart = dt =>
       dt
         .toUTC(0, { keepLocalTime: true })
-        .startOf('day')
+        .startOf("day")
         .valueOf(),
     ms = utcDayStart(later) - utcDayStart(earlier);
-  return Math.floor(Duration.fromMillis(ms).as('days'));
+  return Math.floor(Duration.fromMillis(ms).as("days"));
 }
 
 function highOrderDiffs(cursor, later, units) {
   const differs = [
-    ['years', (a, b) => b.year - a.year],
-    ['months', (a, b) => b.month - a.month + (b.year - a.year) * 12],
+    ["years", (a, b) => b.year - a.year],
+    ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
     [
-      'weeks',
+      "weeks",
       (a, b) => {
         const days = dayDiff(a, b);
         return (days - days % 7) / 7;
       }
     ],
-    ['days', dayDiff]
+    ["days", dayDiff]
   ];
 
   const results = {};
@@ -55,7 +55,7 @@ export default function(earlier, later, units, opts) {
   const remainingMillis = later - cursor;
 
   const lowerOrderUnits = units.filter(
-    u => ['hours', 'minutes', 'seconds', 'milliseconds'].indexOf(u) >= 0
+    u => ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0
   );
 
   if (lowerOrderUnits.length === 0) {

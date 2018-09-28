@@ -6,7 +6,7 @@ import {
   daysInMonth,
   weeksInWeekYear,
   isNumber
-} from './util';
+} from "./util";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
@@ -94,11 +94,11 @@ export function hasInvalidWeekData(obj) {
     validWeekday = numberBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
-    return 'weekYear out of range';
+    return "weekYear out of range";
   } else if (!validWeek) {
-    return 'week out of range';
+    return "week out of range";
   } else if (!validWeekday) {
-    return 'weekday out of range';
+    return "weekday out of range";
   } else return false;
 }
 
@@ -107,9 +107,9 @@ export function hasInvalidOrdinalData(obj) {
     validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
 
   if (!validYear) {
-    return 'year out of range';
+    return "year out of range";
   } else if (!validOrdinal) {
-    return 'ordinal out of range';
+    return "ordinal out of range";
   } else return false;
 }
 
@@ -119,11 +119,11 @@ export function hasInvalidGregorianData(obj) {
     validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 
   if (!validYear) {
-    return 'year out of range';
+    return "year out of range";
   } else if (!validMonth) {
-    return 'month out of range';
+    return "month out of range";
   } else if (!validDay) {
-    return 'day out of range';
+    return "day out of range";
   } else return false;
 }
 
@@ -134,12 +134,12 @@ export function hasInvalidTimeData(obj) {
     validMillisecond = numberBetween(obj.millisecond, 0, 999);
 
   if (!validHour) {
-    return 'hour out of range';
+    return "hour out of range";
   } else if (!validMinute) {
-    return 'minute out of range';
+    return "minute out of range";
   } else if (!validSecond) {
-    return 'second out of range';
+    return "second out of range";
   } else if (!validMillisecond) {
-    return 'millisecond out of range';
+    return "millisecond out of range";
   } else return false;
 }

@@ -1,5 +1,5 @@
 /* global test expect */
-import { Duration } from '../../src/luxon';
+import { Duration } from "../../src/luxon";
 
 //------
 // years/months/days/hours/minutes/seconds/milliseconds
@@ -15,7 +15,7 @@ const dur = () =>
     milliseconds: 1
   });
 
-test('Duration#set() sets the values', () => {
+test("Duration#set() sets the values", () => {
   expect(dur().set({ years: 2 }).years).toBe(2);
   expect(dur().set({ months: 2 }).months).toBe(2);
   expect(dur().set({ days: 2 }).days).toBe(2);
