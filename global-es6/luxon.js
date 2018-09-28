@@ -2630,9 +2630,8 @@ var luxon = (function (exports) {
         result = {};
 
       for (const k of orderedUnits) {
-        const val = dur.get(k) + this.get(k);
-        if (val !== 0) {
-          result[k] = val;
+        if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
+          result[k] = dur.get(k) + this.get(k);
         }
       }
 
@@ -3601,9 +3600,7 @@ var luxon = (function (exports) {
           cursor = highWater;
         }
 
-        if (delta > 0) {
-          results[unit] = delta;
-        }
+        results[unit] = delta;
       }
     }
 

@@ -3160,10 +3160,9 @@ define(['exports'], function (exports) { 'use strict';
 
       for (var _i2 = 0; _i2 < orderedUnits.length; _i2++) {
         var k = orderedUnits[_i2];
-        var val = dur.get(k) + this.get(k);
 
-        if (val !== 0) {
-          result[k] = val;
+        if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
+          result[k] = dur.get(k) + this.get(k);
         }
       }
 
@@ -4401,9 +4400,7 @@ define(['exports'], function (exports) { 'use strict';
           cursor = highWater;
         }
 
-        if (delta > 0) {
-          results[unit] = delta;
-        }
+        results[unit] = delta;
       }
     }
 
