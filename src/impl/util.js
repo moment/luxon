@@ -50,7 +50,7 @@ export function bestBy(arr, by, compare) {
     const pair = [by(next), next];
     if (!best) {
       return pair;
-    } else if (compare.apply(null, [best[0], pair[0]]) === best[0]) {
+    } else if (compare(best[0], pair[0]) === best[0]) {
       return best;
     } else {
       return pair;

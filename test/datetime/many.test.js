@@ -13,7 +13,7 @@ test("DateTime.min returns the only dateTime if solo", () => {
 
 test("DateTime.min returns the min dateTime", () => {
   const m = DateTime.min(
-    DateTime.fromJSDate(new Date(1982, 5, 25)),
+    DateTime.fromJSDate(new Date(1982, 4, 25)),
     DateTime.fromJSDate(new Date(1982, 3, 25)),
     DateTime.fromJSDate(new Date(1982, 3, 26))
   );
@@ -27,7 +27,7 @@ test("DateTime.min returns undefined if no argument", () => {
 
 test("DateTime.min is stable", () => {
   const m = DateTime.min(
-    DateTime.fromJSDate(new Date(1982, 5, 25)),
+    DateTime.fromJSDate(new Date(1982, 4, 25)),
     DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: "en-GB" }),
     DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: "en-US" })
   );

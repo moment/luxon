@@ -1,6 +1,5 @@
 /* global test expect */
 import { DateTime } from "../../src/luxon";
-import { InvalidArgumentError } from "../../src/errors";
 
 //------
 // .fromFormat
@@ -464,7 +463,7 @@ test("DateTime.fromFormat() with setZone parses fixed offsets and sets it", () =
 });
 
 test("DateTime.fromFormat() throws if you don't provide a format", () => {
-  expect(() => DateTime.fromFormat("yo")).toThrowError(InvalidArgumentError);
+  expect(() => DateTime.fromFormat("yo")).toThrowError();
 });
 
 test("DateTime.fromFormat validates weekdays", () => {
