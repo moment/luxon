@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+
+ * Add x and X to toFormat for formatting Epoch seconds and Epoch milliseconds
+ * Parser allows a wider range of IANA zone specifiers
+ * BREAKING: Etc/GMT+10 is now interpreted as UTC-10, per spec
+
 ## 1.3.3
 
 Documentation fixes
