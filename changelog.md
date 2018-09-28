@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1
+ * Empty diffs now have all the asked-for units in them, set at 0
+ * Duration operations perserve the superset of units
+
 ## 1.4.0
 
  * Add x and X to toFormat for formatting Epoch seconds and Epoch milliseconds
