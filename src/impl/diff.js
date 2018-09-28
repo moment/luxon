@@ -42,9 +42,7 @@ function highOrderDiffs(cursor, later, units) {
         cursor = highWater;
       }
 
-      if (delta > 0) {
-        results[unit] = delta;
-      }
+      results[unit] = delta;
     }
   }
 

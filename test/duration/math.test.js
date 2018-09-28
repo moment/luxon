@@ -52,6 +52,14 @@ test('Duration#plus maintains invalidity', () => {
   expect(dur.invalidReason).toBe('because');
 });
 
+test('Duration#plus results in the superset of units', () => {
+  let dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({ seconds: 3, milliseconds: 0 });
+  expect(dur.toObject()).toEqual({ hours: 1, minutes: 0, seconds: 3, milliseconds: 0 });
+
+  dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({ });
+  expect(dur.toObject()).toEqual({ hours: 1, minutes: 0 });
+});
+
 //------
 // #minus()
 //------

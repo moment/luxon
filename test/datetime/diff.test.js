@@ -18,7 +18,7 @@ test('DateTime#diff defaults to milliseconds', () => {
 });
 
 test('DateTime#diff makes simple diffs', () => {
-  expect(diffObjs({ year: 2017 }, { year: 2017 }, 'years')).toEqual({});
+  expect(diffObjs({ year: 2017 }, { year: 2017 }, 'years')).toEqual({ years: 0 });
 
   expect(diffObjs({ year: 2017 }, { year: 2016 }, 'years')).toEqual({
     years: 1
@@ -102,14 +102,6 @@ test('DateTime#diff accepts multiple units', () => {
       'days'
     ])
   ).toEqual({ years: 5, days: 363 });
-
-  expect(
-    diffObjs({ year: 2015, month: 3, day: 14 }, { year: 2009, month: 3, day: 16 }, [
-      'years',
-      'days',
-      'hours'
-    ])
-  ).toEqual({ years: 5, days: 363 });
 });
 
 test('DateTime#diff handles unmatched units', () => {
@@ -119,7 +111,7 @@ test('DateTime#diff handles unmatched units', () => {
       { year: 2017, month: 6, day: 1, hour: 22 },
       ['weeks', 'days', 'hours']
     )
-  ).toEqual({ days: 5, hours: 23 });
+  ).toEqual({ weeks: 0, days: 5, hours: 23 });
 
   expect(
     diffObjs(
@@ -127,7 +119,7 @@ test('DateTime#diff handles unmatched units', () => {
       { year: 2017, month: 6, day: 26, hour: 22 },
       ['days', 'hours']
     )
-  ).toEqual({ hours: 23 });
+  ).toEqual({ days: 0, hours: 23 });
 
   expect(
     diffObjs(
@@ -135,7 +127,14 @@ test('DateTime#diff handles unmatched units', () => {
       { year: 2017, month: 6, day: 1, hour: 22 },
       ['weeks', 'hours']
     )
-  ).toEqual({ hours: 23 + 5 * 24 });
+  ).toEqual({ weeks: 0, hours: 23 + 5 * 24 });
+});
+
+test('DateTime#diff sets all its units to 0 if the duration is empty', () => {
+  const t = DateTime.fromObject({ year: 2018, month: 11, day: 5, hour: 0 });
+  expect(t.diff(t).toObject()).toEqual({ milliseconds: 0 });
+  expect(t.diff(t, 'hours').toObject()).toEqual({ hours: 0 });
+  expect(t.diff(t, 'days').toObject()).toEqual({ days: 0 });
 });
 
 test('DateTime#diff puts fractional parts in the lowest order unit', () => {
@@ -164,7 +163,7 @@ test('DateTime#diff is calendary for years, months, day', () => {
       'years',
       'days'
     ])
-  ).toEqual({ years: 6 });
+  ).toEqual({ years: 6, days: 0 });
 
   expect(
     diffObjs({ year: 2016, month: 3, day: 14 }, { year: 2010, month: 3, day: 16 }, [
