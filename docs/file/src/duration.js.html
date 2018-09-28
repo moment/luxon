@@ -40,7 +40,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/duration.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject, customInspectSymbol } from &apos;./impl/util&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject } from &apos;./impl/util&apos;;
 import Locale from &apos;./impl/locale&apos;;
 import Formatter from &apos;./impl/formatter&apos;;
 import { parseISODuration } from &apos;./impl/regexParser&apos;;
@@ -482,20 +482,6 @@ export default class Duration {
    */
   valueOf() {
     return this.as(&apos;milliseconds&apos;);
-  }
-
-  /**
-   * Returns a string representation of this Duration appropriate for the REPL.
-   * @return {string}
-   */
-  [customInspectSymbol]() {
-    if (this.isValid) {
-      const valsInspect = JSON.stringify(this.toObject());
-      return `Duration {\n  values: ${valsInspect},\n  locale: ${this
-        .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
-    } else {
-      return `Duration { Invalid, reason: ${this.invalidReason} }`;
-    }
   }
 
   /**

@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-0" data-ice="link">1.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-3" data-ice="link">1.3.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-2" data-ice="link">1.3.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-1" data-ice="link">1.3.1</a></li>
@@ -320,13 +321,13 @@
 <li>We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don&apos;t want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.</li>
 <li>You&apos;ll need to sign a CLA as part of your first pull request to Luxon.</li>
 </ol>
-<h2 id="building-and-testing">Building and testing</h2><p>Building and testing is done through npm scripts. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you&apos;re good to go; just run npm scripts like <code>npm run test</code>. But you probably don&apos;t have that, so read on.</p>
+<h2 id="building-and-testing">Building and testing</h2><p>Building and testing is done through npm scripts. The tests run in Node and require Node 10+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 10 installed with full-icu, you&apos;re good to go; just run npm scripts like <code>npm run test</code>. But you probably don&apos;t have that, so read on.</p>
 <h3 id="osx">OSX</h3><p>Mac is easy:</p>
 <pre><code><code class="source-code prettyprint">brew install node --with-full-icu
 npm install
 ./scripts/test</code>
 </code></pre><p>If that&apos;s for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.</p>
-<h3 id="linux">Linux</h3><p>There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We&apos;ll cover the latter. Assuming you&apos;ve installed Node 8:</p>
+<h3 id="linux">Linux</h3><p>There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We&apos;ll cover the latter. Assuming you&apos;ve installed Node 10:</p>
 <pre><code><code class="source-code prettyprint">npm install
 npm install full-icu
 ./scripts/test</code>

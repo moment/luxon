@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-0" data-ice="link">1.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-3" data-ice="link">1.3.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-2" data-ice="link">1.3.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-1" data-ice="link">1.3.1</a></li>
@@ -317,23 +318,23 @@
 <li>Token-based formatting</li>
 </ol>
 <h2 id="technical-formats--strings-for-computers-">Technical formats (strings for computers)</h2><h3 id="iso-8601">ISO 8601</h3><p><a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> is the most widely used set of string formats for dates and times. Luxon can <em>parse</em> a wide range of them, but provides direct support for formatting only a few of them:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO();         //=&gt; &apos;2017-04-20T11:32:00.000-04:00&apos;
-dt.toISODate();     //=&gt; &apos;2017-04-20&apos;
+<pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO(); //=&gt; &apos;2017-04-20T11:32:00.000-04:00&apos;
+dt.toISODate(); //=&gt; &apos;2017-04-20&apos;
 dt.toISOWeekDate(); //=&gt; &apos;2017-W17-7&apos;
-dt.toISOTime();     //=&gt; &apos;11:32:00.000-04:00&apos;</code>
+dt.toISOTime(); //=&gt; &apos;11:32:00.000-04:00&apos;</code>
 </code></pre>
 <p>Generally, you&apos;ll want the first one. Use it by default when building or interacting with APIs, communicating times over a wire, etc.</p>
 <h3 id="http-and-rfc-2822">HTTP and RFC 2822</h3><p>There are a number of legacy standard date and time formats out there, and Luxon supports some of them. You shouldn&apos;t use them unless you have a specific reason to.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.toRFC2822(); //=&gt; &apos;Thu, 20 Apr 2017 11:32:00 -0400&apos;
-dt.toHTTP();    //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
+dt.toHTTP(); //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
 </code></pre>
 <h2 id="tolocalestring--strings-for-humans-">toLocaleString (strings for humans)</h2><h3 id="the-basics">The basics</h3><p>Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString();                                       //=&gt; &apos;4/20/2017&apos;
-dt.toLocaleString(DateTime.DATETIME_FULL);                 //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
+<pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(); //=&gt; &apos;4/20/2017&apos;
+dt.toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
 dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;20 avril 2017 &#xE0; 11:32 UTC&#x2212;4&apos;</code>
 </code></pre>
 <h3 id="intl-datetimeformat">Intl.DateTimeFormat</h3><p>In the example above, <code>DateTime.DATETIME_FULL</code> is one of several convenience formats provided by Luxon. But the arguments are really any object of options that can be provided to <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat">Intl.DateTimeFormat</a>. For example:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString({ month: &apos;long&apos;, day: &apos;numeric&apos; }) //=&gt; &apos;April 20&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString({ month: &apos;long&apos;, day: &apos;numeric&apos; }); //=&gt; &apos;April 20&apos;</code>
 </code></pre>
 <p>And that&apos;s all the preset is:</p>
 <pre><code><code class="source-code prettyprint">DateTime.DATETIME_FULL;  //=&gt; {
@@ -486,22 +487,24 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 <h2 id="formatting-with-tokens--strings-for-cthulhu-">Formatting with tokens (strings for Cthulhu)</h2><p>This section covers generating strings from DateTimes with programmer-specified formats.</p>
 <h3 id="consider-alternatives">Consider alternatives</h3><p>You shouldn&apos;t create ad-hoc string formats if you can avoid it. If you intend for a computer to read the string, prefer ISO 8601. If a human will read it, prefer <code>toLocaleString</code>. Both are covered above. However, if you have some esoteric need where you need some specific format (e.g. because some other software expects it), then <code>toFormat</code> is how you do it.</p>
 <h3 id="toformat">toFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toFormat">DateTime#toFormat</a> for the API signature. As a brief motivating example:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2014 Aug 06&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;yyyy LLL dd&apos;); //=&gt; &apos;2014 Aug 06&apos;</code>
 </code></pre>
 <p>The supported tokens are described in the table below.</p>
 <h3 id="intl">Intl</h3><p>All of the strings (e.g. month names and weekday names) are internationalized by introspecting strings generated by the Intl API. Thus they exact strings you get are implementation-specific.</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;fr&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2014 ao&#xFB;t 06&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;)
+  .setLocale(&apos;fr&apos;)
+  .toFormat(&apos;yyyy LLL dd&apos;); //=&gt; &apos;2014 ao&#xFB;t 06&apos;</code>
 </code></pre>
 <h3 id="escaping">Escaping</h3><p>You may escape strings using single quotes:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;) //=&gt; &apos;20 hours and 55 minutes&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;); //=&gt; &apos;20 hours and 55 minutes&apos;</code>
 </code></pre>
 <h3 id="standalone-vs-format-tokens">Standalone vs format tokens</h3><p>Some tokens have a &quot;standalone&quot; and &quot;format&quot; version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. &quot;Monday the 22nd&quot; vs &quot;Monday&quot;). Use them accordingly.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;ru&apos;);
-d.toFormat(&quot;LLLL&quot;) //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos; (standalone)
-d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos; (format)</code>
+d.toFormat(&apos;LLLL&apos;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos; (standalone)
+d.toFormat(&apos;MMMM&apos;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos; (format)</code>
 </code></pre>
 <h3 id="macro-tokens">Macro tokens</h3><p>Some of the formats are &quot;macros&quot;, meaning they correspond to multiple components. These use the native Intl API and will order their constituent parts in a locale-friendly way.</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;ff&apos;) //=&gt; &apos;Aug 6, 2014, 1:07 PM&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;ff&apos;); //=&gt; &apos;Aug 6, 2014, 1:07 PM&apos;</code>
 </code></pre>
 <p>The macro options available correspond one-to-one with the preset formats defined for <code>toLocaleString</code>.</p>
 <h3 id="table-of-tokens">Table of tokens</h3><p>(Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).</p>
@@ -762,6 +765,18 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 <td>218</td>
 </tr>
 <tr>
+<td>q</td>
+<td></td>
+<td>quarter, no padding</td>
+<td>3</td>
+</tr>
+<tr>
+<td>qq</td>
+<td></td>
+<td>quarter, padded to 2</td>
+<td>03</td>
+</tr>
+<tr>
 <td>D</td>
 <td></td>
 <td>localized numeric date</td>
@@ -882,16 +897,16 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 <td>Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time</td>
 </tr>
 <tr>
-<td>q</td>
+<td>X</td>
 <td></td>
-<td>quarter, no padding</td>
-<td>3</td>
+<td>unix timestamp in seconds</td>
+<td>1407287224</td>
 </tr>
 <tr>
-<td>qq</td>
+<td>x</td>
 <td></td>
-<td>quarter, padded to 2</td>
-<td>03</td>
+<td>unix timestamp in milliseconds</td>
+<td>14072872240054</td>
 </tr>
 </tbody>
 </table>

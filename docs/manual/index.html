@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-0" data-ice="link">1.4.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-3" data-ice="link">1.3.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-2" data-ice="link">1.3.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-3-1" data-ice="link">1.3.1</a></li>
@@ -677,16 +678,16 @@ dtHebrew.toLocaleString() //=&gt; &apos;4 Tishri 5778&apos;</code>
 <li>Technical formats like ISO 8601 and RFC 2822</li>
 <li>Internationalizable human-readable formats</li>
 <li>Token-based formatting</li>
-</ol><h2>Technical formats (strings for computers)</h2><h3>ISO 8601</h3><p><a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> is the most widely used set of string formats for dates and times. Luxon can <em>parse</em> a wide range of them, but provides direct support for formatting only a few of them:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO();         //=&gt; &apos;2017-04-20T11:32:00.000-04:00&apos;
-dt.toISODate();     //=&gt; &apos;2017-04-20&apos;
+</ol><h2>Technical formats (strings for computers)</h2><h3>ISO 8601</h3><p><a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> is the most widely used set of string formats for dates and times. Luxon can <em>parse</em> a wide range of them, but provides direct support for formatting only a few of them:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO(); //=&gt; &apos;2017-04-20T11:32:00.000-04:00&apos;
+dt.toISODate(); //=&gt; &apos;2017-04-20&apos;
 dt.toISOWeekDate(); //=&gt; &apos;2017-W17-7&apos;
-dt.toISOTime();     //=&gt; &apos;11:32:00.000-04:00&apos;</code>
+dt.toISOTime(); //=&gt; &apos;11:32:00.000-04:00&apos;</code>
 </code></pre><p>Generally, you&apos;ll want the first one. Use it by default when building or interacting with APIs, communicating times over a wire, etc.</p><h3>HTTP and RFC 2822</h3><p>There are a number of legacy standard date and time formats out there, and Luxon supports some of them. You shouldn&apos;t use them unless you have a specific reason to.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toRFC2822(); //=&gt; &apos;Thu, 20 Apr 2017 11:32:00 -0400&apos;
-dt.toHTTP();    //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
-</code></pre><h2>toLocaleString (strings for humans)</h2><h3>The basics</h3><p>Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString();                                       //=&gt; &apos;4/20/2017&apos;
-dt.toLocaleString(DateTime.DATETIME_FULL);                 //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
+dt.toHTTP(); //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
+</code></pre><h2>toLocaleString (strings for humans)</h2><h3>The basics</h3><p>Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(); //=&gt; &apos;4/20/2017&apos;
+dt.toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
 dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;20 avril 2017 &#xE0; 11:32 UTC&#x2212;4&apos;</code>
-</code></pre><h3>Intl.DateTimeFormat</h3><p>In the example above, <code>DateTime.DATETIME_FULL</code> is one of several convenience formats provided by Luxon. But the arguments are really any object of options that can be provided to <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat">Intl.DateTimeFormat</a>. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString({ month: &apos;long&apos;, day: &apos;numeric&apos; }) //=&gt; &apos;April 20&apos;</code>
+</code></pre><h3>Intl.DateTimeFormat</h3><p>In the example above, <code>DateTime.DATETIME_FULL</code> is one of several convenience formats provided by Luxon. But the arguments are really any object of options that can be provided to <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat">Intl.DateTimeFormat</a>. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString({ month: &apos;long&apos;, day: &apos;numeric&apos; }); //=&gt; &apos;April 20&apos;</code>
 </code></pre><p>And that&apos;s all the preset is:</p><pre><code><code class="source-code prettyprint">DateTime.DATETIME_FULL;  //=&gt; {
                          //     year: &apos;numeric&apos;,
                          //     month: &apos;long&apos;,
@@ -829,13 +830,15 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 <td>vendredi 14 octobre 1983 &#xE0; 13:30:23 heure d&#x2019;&#xE9;t&#xE9; de l&#x2019;Est</td>
 </tr>
 </tbody>
-</table><h3>Intl</h3><p><code>toLocaleString</code>&apos;s behavior is affected by the DateTime&apos;s <code>locale</code>, <code>numberingSystem</code>, and <code>outputCalendar</code> properties. See the <a href="./manual/intl.html">Intl</a> section for more.</p><h2>Formatting with tokens (strings for Cthulhu)</h2><p>This section covers generating strings from DateTimes with programmer-specified formats.</p><h3>Consider alternatives</h3><p>You shouldn&apos;t create ad-hoc string formats if you can avoid it. If you intend for a computer to read the string, prefer ISO 8601. If a human will read it, prefer <code>toLocaleString</code>. Both are covered above. However, if you have some esoteric need where you need some specific format (e.g. because some other software expects it), then <code>toFormat</code> is how you do it.</p><h3>toFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toFormat">DateTime#toFormat</a> for the API signature. As a brief motivating example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2014 Aug 06&apos;</code>
-</code></pre><p>The supported tokens are described in the table below.</p><h3>Intl</h3><p>All of the strings (e.g. month names and weekday names) are internationalized by introspecting strings generated by the Intl API. Thus they exact strings you get are implementation-specific.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;fr&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2014 ao&#xFB;t 06&apos;</code>
-</code></pre><h3>Escaping</h3><p>You may escape strings using single quotes:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;) //=&gt; &apos;20 hours and 55 minutes&apos;</code>
+</table><h3>Intl</h3><p><code>toLocaleString</code>&apos;s behavior is affected by the DateTime&apos;s <code>locale</code>, <code>numberingSystem</code>, and <code>outputCalendar</code> properties. See the <a href="./manual/intl.html">Intl</a> section for more.</p><h2>Formatting with tokens (strings for Cthulhu)</h2><p>This section covers generating strings from DateTimes with programmer-specified formats.</p><h3>Consider alternatives</h3><p>You shouldn&apos;t create ad-hoc string formats if you can avoid it. If you intend for a computer to read the string, prefer ISO 8601. If a human will read it, prefer <code>toLocaleString</code>. Both are covered above. However, if you have some esoteric need where you need some specific format (e.g. because some other software expects it), then <code>toFormat</code> is how you do it.</p><h3>toFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toFormat">DateTime#toFormat</a> for the API signature. As a brief motivating example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;yyyy LLL dd&apos;); //=&gt; &apos;2014 Aug 06&apos;</code>
+</code></pre><p>The supported tokens are described in the table below.</p><h3>Intl</h3><p>All of the strings (e.g. month names and weekday names) are internationalized by introspecting strings generated by the Intl API. Thus they exact strings you get are implementation-specific.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;)
+  .setLocale(&apos;fr&apos;)
+  .toFormat(&apos;yyyy LLL dd&apos;); //=&gt; &apos;2014 ao&#xFB;t 06&apos;</code>
+</code></pre><h3>Escaping</h3><p>You may escape strings using single quotes:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;); //=&gt; &apos;20 hours and 55 minutes&apos;</code>
 </code></pre><h3>Standalone vs format tokens</h3><p>Some tokens have a &quot;standalone&quot; and &quot;format&quot; version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. &quot;Monday the 22nd&quot; vs &quot;Monday&quot;). Use them accordingly.</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;ru&apos;);
-d.toFormat(&quot;LLLL&quot;) //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos; (standalone)
-d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos; (format)</code>
-</code></pre><h3>Macro tokens</h3><p>Some of the formats are &quot;macros&quot;, meaning they correspond to multiple components. These use the native Intl API and will order their constituent parts in a locale-friendly way.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;ff&apos;) //=&gt; &apos;Aug 6, 2014, 1:07 PM&apos;</code>
+d.toFormat(&apos;LLLL&apos;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos; (standalone)
+d.toFormat(&apos;MMMM&apos;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos; (format)</code>
+</code></pre><h3>Macro tokens</h3><p>Some of the formats are &quot;macros&quot;, meaning they correspond to multiple components. These use the native Intl API and will order their constituent parts in a locale-friendly way.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).toFormat(&apos;ff&apos;); //=&gt; &apos;Aug 6, 2014, 1:07 PM&apos;</code>
 </code></pre><p>The macro options available correspond one-to-one with the preset formats defined for <code>toLocaleString</code>.</p><h3>Table of tokens</h3><p>(Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).</p><table>
 <thead>
 <tr>
@@ -1093,6 +1096,18 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 <td>218</td>
 </tr>
 <tr>
+<td>q</td>
+<td></td>
+<td>quarter, no padding</td>
+<td>3</td>
+</tr>
+<tr>
+<td>qq</td>
+<td></td>
+<td>quarter, padded to 2</td>
+<td>03</td>
+</tr>
+<tr>
 <td>D</td>
 <td></td>
 <td>localized numeric date</td>
@@ -1213,16 +1228,16 @@ d.toFormat(&quot;MMMM&quot;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&
 <td>Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time</td>
 </tr>
 <tr>
-<td>q</td>
+<td>X</td>
 <td></td>
-<td>quarter, no padding</td>
-<td>3</td>
+<td>unix timestamp in seconds</td>
+<td>1407287224</td>
 </tr>
 <tr>
-<td>qq</td>
+<td>x</td>
 <td></td>
-<td>quarter, padded to 2</td>
-<td>03</td>
+<td>unix timestamp in milliseconds</td>
+<td>14072872240054</td>
 </tr>
 </tbody>
 </table></div>
@@ -1291,9 +1306,9 @@ DateTime.fromSQL(&apos;09:24:15&apos;);</code>
   matches: {},
   result: {},
   zone: null }</code>
-</code></pre><p>If you parse something and get an invalid date, the debugging steps are slightly different. Here, we&apos;re attempting to parse August 32nd, which doesn&apos;t exist:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromFormat(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
-d.isValid //=&gt; false
-d.invalidReason //=&gt; &apos;day out of range&apos;</code>
+</code></pre><p>If you parse something and get an invalid date, the debugging steps are slightly different. Here, we&apos;re attempting to parse August 32nd, which doesn&apos;t exist:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromFormat(&apos;August 32 1982&apos;, &apos;MMMM d yyyy&apos;);
+d.isValid; //=&gt; false
+d.invalidReason; //=&gt; &apos;day out of range&apos;</code>
 </code></pre><p>For more on validity and how to debug it, see <a href="./manual/validity.html">validity</a>. You may find more comprehensive tips there. But as it applies specifically to <code>fromFormat</code>, again try <code>fromFormatExplain</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">&gt; DateTime.fromFormatExplain(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;)
 
 { input: &apos;August 32 1982&apos;,
@@ -1307,7 +1322,7 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
   matches: { M: 8, d: 32, y: 1982 },
   result: { month: 8, day: 32, year: 1982 },
   zone: null }</code>
-</code></pre><p>Because Luxon was able to parse the string without difficulty, the output is a lot richer. And you can see that the &quot;day&quot; field is set to 32. Combined with the &quot;out of range&quot; explanation above, that should clear up the situation.</p><h3>Table of tokens</h3><p>(Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York).</p><table>
+</code></pre><p>Because Luxon was able to parse the string without difficulty, the output is a lot richer. And you can see that the &quot;day&quot; field is set to 32. Combined with the &quot;out of range&quot; explanation above, that should clear up the situation.</p><h3>Table of tokens</h3><p>(Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York). Note that many tokens supported by the <a href="./manual/formatting.md">formatter</a> are <strong>not</strong> supported by the parser. That includes all the &quot;macro&quot; formats like &quot;D&quot; for &quot;localized numeric date&quot;.</p><table>
 <thead>
 <tr>
 <th>Standalone token</th>
@@ -1550,30 +1565,6 @@ d.invalidReason //=&gt; &apos;day out of range&apos;</code>
 <td></td>
 <td>ordinal (day of year), padded to 3</td>
 <td>218</td>
-</tr>
-<tr>
-<td>D</td>
-<td></td>
-<td>localized numeric date</td>
-<td>9/4/2017</td>
-</tr>
-<tr>
-<td>DD</td>
-<td></td>
-<td>localized date with abbreviated month</td>
-<td>Aug 6, 2014</td>
-</tr>
-<tr>
-<td>DDD</td>
-<td></td>
-<td>localized date with full month</td>
-<td>August 6, 2014</td>
-</tr>
-<tr>
-<td>DDDD</td>
-<td></td>
-<td>localized date with full month and weekday</td>
-<td>Wednesday, August 6, 2014</td>
 </tr>
 </tbody>
 </table></div>
@@ -2472,7 +2463,11 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.3.3</h2><p>Documentation fixes</p><h2>1.3.2</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.4.0</h2><ul>
+<li>Add x and X to toFormat for formatting Epoch seconds and Epoch milliseconds</li>
+<li>Parser allows a wider range of IANA zone specifiers</li>
+<li>BREAKING: Etc/GMT+10 is now interpreted as UTC-10, per spec</li>
+</ul><h2>1.3.3</h2><p>Documentation fixes</p><h2>1.3.2</h2><ul>
 <li>DateTime.fromMillis will throw if passed a non-number</li>
 <li>Fixes for type checking across JS contexts</li>
 </ul><h2>1.3.1</h2><ul>
@@ -2637,10 +2632,10 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li>Most of the complexity of JS module loading compatibility is left to the build. If you have a &quot;this can&apos;t be loaded in my bespoke JS module loader&quot; problems, this isn&apos;t something you should be solving with changes to the <code>src</code> directory. If it&apos;s a common use case and is possible to generate with Rollup, it can get its own build command.</li>
 <li>We prefer documentation clarifications and gotchas to go in the docstrings, not in the guides on the docs page. Obviously, if the guides are wrong, they should be fixed, but we don&apos;t want them to turn into troubleshooting pages. On the other hand, making sure the method-level documentation has ample examples and notes is great.</li>
 <li>You&apos;ll need to sign a CLA as part of your first pull request to Luxon.</li>
-</ol><h2>Building and testing</h2><p>Building and testing is done through npm scripts. The tests run in Node and require Node 8+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 8 installed with full-icu, you&apos;re good to go; just run npm scripts like <code>npm run test</code>. But you probably don&apos;t have that, so read on.</p><h3>OSX</h3><p>Mac is easy:</p><pre><code><code class="source-code prettyprint">brew install node --with-full-icu
+</ol><h2>Building and testing</h2><p>Building and testing is done through npm scripts. The tests run in Node and require Node 10+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 10 installed with full-icu, you&apos;re good to go; just run npm scripts like <code>npm run test</code>. But you probably don&apos;t have that, so read on.</p><h3>OSX</h3><p>Mac is easy:</p><pre><code><code class="source-code prettyprint">brew install node --with-full-icu
 npm install
 ./scripts/test</code>
-</code></pre><p>If that&apos;s for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.</p><h3>Linux</h3><p>There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We&apos;ll cover the latter. Assuming you&apos;ve installed Node 8:</p><pre><code><code class="source-code prettyprint">npm install
+</code></pre><p>If that&apos;s for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.</p><h3>Linux</h3><p>There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We&apos;ll cover the latter. Assuming you&apos;ve installed Node 10:</p><pre><code><code class="source-code prettyprint">npm install
 npm install full-icu
 ./scripts/test</code>
 </code></pre><p>Where <code>scripts/test</code> is just <code>NODE_ICU_DATA=&quot;$(pwd)/node_modules/full-icu&quot; npm run test</code>, which is required for making Node load the full-icu module you just installed. You can run all the other npm scripts (e.g. <code>npm run docs</code>) directly; they don&apos;t require Intl support.</p><h3>Windows</h3><p>If you have Bash, the Linux instructions seem to work fine.</p><p>I would love to add instructions for a non-WSL install of the dev env!</p><h3>Docker</h3><p>In case messing with your Node environment just to run Luxon&apos;s tests is too much to ask, we&apos;ve provided a Docker container. You&apos;ll need a functioning Docker environment, but the rest is easy:</p><pre><code><code class="source-code prettyprint">./docker/npm install

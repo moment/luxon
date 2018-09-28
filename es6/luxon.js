@@ -204,22 +204,14 @@ function timeObject(obj) {
   return pick(obj, ['hour', 'minute', 'second', 'millisecond']);
 }
 
-const customInspectSymbol = (() => {
-  try {
-    return require('util').inspect.custom; // eslint-disable-line global-require
-  } catch (_err) {
-    return Symbol('util.inspect.custom');
-  }
-})();
-
 /**
  * @private
  */
 
-const n = 'numeric';
-const s = 'short';
-const l = 'long';
-const d2 = '2-digit';
+const n = 'numeric',
+  s = 'short',
+  l = 'long',
+  d2 = '2-digit';
 
 const DATE_SHORT = {
   year: n,
@@ -638,6 +630,7 @@ class ZoneIsAbstractError extends LuxonError {
 }
 
 /* eslint no-unused-vars: "off" */
+
 /**
  * @interface
 */
@@ -802,7 +795,7 @@ function partsOffset(dtf, date) {
 
 class IANAZone extends Zone {
   static isValidSpecifier(s) {
-    return s && s.match(/^[a-z_+-]{1,256}\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?$/i);
+    return s && s.match(/^[a-z_+-]{1,256}(\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?)?$/i);
   }
 
   static isValidZone(zone) {
@@ -814,12 +807,12 @@ class IANAZone extends Zone {
     }
   }
 
-  // Etc/GMT+8 -> 480
+  // Etc/GMT+8 -> -480
   static parseGMTOffset(specifier) {
     if (specifier) {
       const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
       if (match) {
-        return 60 * parseInt(match[1]);
+        return -60 * parseInt(match[1]);
       }
     }
     return null;
@@ -1003,12 +996,12 @@ function normalizeZone(input, defaultZone) {
   }
 }
 
-let now = () => Date.now();
-let defaultZone = null;
-let defaultLocale = null;
-let defaultNumberingSystem = null;
-let defaultOutputCalendar = null;
-let throwOnInvalid = false;
+let now = () => Date.now(),
+  defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
+  defaultLocale = null,
+  defaultNumberingSystem = null,
+  defaultOutputCalendar = null,
+  throwOnInvalid = false;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -1466,6 +1459,10 @@ class Formatter {
           case 'qq':
             // like 01
             return this.num(dt.quarter, 2);
+          case 'X':
+            return this.num(dt.ts / 1000);
+          case 'x':
+            return this.num(dt.ts);
           default:
             return maybeMacro(token);
         }
@@ -1954,20 +1951,20 @@ function simpleParse(...keys) {
 }
 
 // ISO and SQL parsing
-const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/;
-const isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/;
-const isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${offsetRegex.source}?`);
-const isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`);
-const isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
-const isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/;
-const isoOrdinalRegex = /(\d{4})-?(\d{3})/;
-const extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay');
-const extractISOOrdinalData = simpleParse('year', 'ordinal');
-const sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
-const sqlTimeRegex = RegExp(
+const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
+  isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/,
+  isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${offsetRegex.source}?`),
+  isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`),
+  isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
+  isoWeekRegex = /(\d{4})-?W(\d\d)-?(\d)/,
+  isoOrdinalRegex = /(\d{4})-?(\d{3})/,
+  extractISOWeekData = simpleParse('weekYear', 'weekNumber', 'weekDay'),
+  extractISOOrdinalData = simpleParse('year', 'ordinal'),
+  sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/, // dumbed-down version of the ISO one
+  sqlTimeRegex = RegExp(
     `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?`
-  );
-const sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
+  ),
+  sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
 function extractISOYmd(match, cursor) {
   const item = {
@@ -2111,9 +2108,9 @@ function preprocessRFC2822(s) {
 
 // http date
 
-const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/;
-const rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/;
-const ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
+const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/,
+  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/,
+  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
 
 function extractRFC1123Or850(match) {
   const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
@@ -2181,8 +2178,8 @@ function parseSQL(s) {
   );
 }
 
-const INVALID$1 = 'Invalid Duration';
-const UNPARSABLE$1 = 'unparsable';
+const INVALID = 'Invalid Duration',
+  UNPARSABLE = 'unparsable';
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -2202,8 +2199,8 @@ const lowOrderMatrix = {
     hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
     seconds: { milliseconds: 1000 }
-  };
-const casualMatrix = Object.assign(
+  },
+  casualMatrix = Object.assign(
     {
       years: {
         months: 12,
@@ -2232,10 +2229,10 @@ const casualMatrix = Object.assign(
       }
     },
     lowOrderMatrix
-  );
-const daysInYearAccurate = 146097.0 / 400;
-const daysInMonthAccurate = 146097.0 / 4800;
-const accurateMatrix = Object.assign(
+  ),
+  daysInYearAccurate = 146097.0 / 400,
+  daysInMonthAccurate = 146097.0 / 4800,
+  accurateMatrix = Object.assign(
     {
       years: {
         months: 12,
@@ -2268,7 +2265,7 @@ const accurateMatrix = Object.assign(
   );
 
 // units ordered by size
-const orderedUnits$1 = [
+const orderedUnits = [
   'years',
   'quarters',
   'months',
@@ -2280,10 +2277,10 @@ const orderedUnits$1 = [
   'milliseconds'
 ];
 
-const reverseUnits = orderedUnits$1.slice(0).reverse();
+const reverseUnits = orderedUnits.slice(0).reverse();
 
 // clone really means "create another instance just like this one, but with these changes"
-function clone$1(dur, alts, clear = false) {
+function clone(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
     values: clear ? alts.values : Object.assign({}, dur.values, alts.values || {}),
@@ -2297,7 +2294,7 @@ function clone$1(dur, alts, clear = false) {
 // normalize() this tells us whether this duration is positive or negative
 function isHighOrderNegative(obj) {
   // only rule is that the highest-order part must be non-negative
-  for (const k of orderedUnits$1) {
+  for (const k of orderedUnits) {
     if (obj[k]) return obj[k] < 0;
   }
   return false;
@@ -2442,7 +2439,7 @@ class Duration {
       const obj = Object.assign(parsed, opts);
       return Duration.fromObject(obj);
     } else {
-      return Duration.invalid(UNPARSABLE$1);
+      return Duration.invalid(UNPARSABLE);
     }
   }
 
@@ -2510,7 +2507,7 @@ class Duration {
   }
 
   /**
-   * Returns a string representation of this Duration formatted according to the specified format string. The duration will be converted to the set of units in the format string using {@link Duration.shiftTo} and the Durations's conversion accuracy setting. You may use these tokens:
+   * Returns a string representation of this Duration formatted according to the specified format string. You may use these tokens:
    * * `S` for milliseconds
    * * `s` for seconds
    * * `m` for minutes
@@ -2518,10 +2515,14 @@ class Duration {
    * * `d` for days
    * * `M` for months
    * * `y` for years
+   * Notes:
+   * * Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits
+   * * The duration will be converted to the set of units in the format string using {@link Duration.shiftTo} and the Durations's conversion accuracy setting.
    * @param {string} fmt - the format string
    * @param {Object} opts - options
    * @param {boolean} [opts.floor=true] - floor numerical values
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("y d s") //=> "1 6 2"
+   * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("yy dd sss") //=> "01 06 002"
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("M S") //=> "12 518402000"
    * @return {string}
    */
@@ -2536,7 +2537,7 @@ class Duration {
 
     return this.isValid
       ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
-      : INVALID$1;
+      : INVALID;
   }
 
   /**
@@ -2615,20 +2616,6 @@ class Duration {
   }
 
   /**
-   * Returns a string representation of this Duration appropriate for the REPL.
-   * @return {string}
-   */
-  [customInspectSymbol]() {
-    if (this.isValid) {
-      const valsInspect = JSON.stringify(this.toObject());
-      return `Duration {\n  values: ${valsInspect},\n  locale: ${this
-        .locale},\n  conversionAccuracy: ${this.conversionAccuracy} }`;
-    } else {
-      return `Duration { Invalid, reason: ${this.invalidReason} }`;
-    }
-  }
-
-  /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
    * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
@@ -2639,14 +2626,14 @@ class Duration {
     const dur = friendlyDuration(duration),
       result = {};
 
-    for (const k of orderedUnits$1) {
+    for (const k of orderedUnits) {
       const val = dur.get(k) + this.get(k);
       if (val !== 0) {
         result[k] = val;
       }
     }
 
-    return clone$1(this, { values: result }, true);
+    return clone(this, { values: result }, true);
   }
 
   /**
@@ -2682,7 +2669,7 @@ class Duration {
    */
   set(values) {
     const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit));
-    return clone$1(this, { values: mixed });
+    return clone(this, { values: mixed });
   }
 
   /**
@@ -2698,7 +2685,7 @@ class Duration {
       opts.conversionAccuracy = conversionAccuracy;
     }
 
-    return clone$1(this, opts);
+    return clone(this, opts);
   }
 
   /**
@@ -2750,7 +2737,7 @@ class Duration {
 
     normalizeValues(this.matrix, vals);
 
-    for (const k of orderedUnits$1) {
+    for (const k of orderedUnits) {
       if (units.indexOf(k) >= 0) {
         lastUnit = k;
 
@@ -2775,7 +2762,7 @@ class Duration {
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
-          if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
+          if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
             convert(this.matrix, vals, down, built, k);
           }
         }
@@ -2796,7 +2783,7 @@ class Duration {
         }
       }
     }
-    return clone$1(this, { values: built }, true);
+    return clone(this, { values: built }, true);
   }
 
   /**
@@ -2810,7 +2797,7 @@ class Duration {
     for (const k of Object.keys(this.values)) {
       negated[k] = -this.values[k];
     }
-    return clone$1(this, { values: negated }, true);
+    return clone(this, { values: negated }, true);
   }
 
   /**
@@ -2917,7 +2904,7 @@ class Duration {
       return false;
     }
 
-    for (const u of orderedUnits$1) {
+    for (const u of orderedUnits) {
       if (this.values[u] !== other.values[u]) {
         return false;
       }
@@ -2926,7 +2913,7 @@ class Duration {
   }
 }
 
-const INVALID$2 = 'Invalid Interval';
+const INVALID$1 = 'Invalid Interval';
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
@@ -3364,21 +3351,8 @@ class Interval {
    * @return {string}
    */
   toString() {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return `[${this.s.toISO()} – ${this.e.toISO()})`;
-  }
-
-  /**
-   * Returns a string representation of this Interval appropriate for the REPL.
-   * @return {string}
-   */
-  [customInspectSymbol]() {
-    if (this.isValid) {
-      return `Interval {\n  start: ${this.start.toISO()},\n  end: ${this.end.toISO()},\n  zone:   ${this
-        .start.zone.name},\n  locale:   ${this.start.locale} }`;
-    } else {
-      return `Interval { Invalid, reason: ${this.invalidReason} }`;
-    }
   }
 
   /**
@@ -3388,7 +3362,7 @@ class Interval {
    * @return {string}
    */
   toISO(opts) {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;
   }
 
@@ -3400,7 +3374,7 @@ class Interval {
    * @return {string}
    */
   toFormat(dateFormat, { separator = ' – ' } = {}) {
-    if (!this.isValid) return INVALID$2;
+    if (!this.isValid) return INVALID$1;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
   }
 
@@ -3529,7 +3503,7 @@ class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
-   * @example Info.meridiems({ locale: 'de' }) //=> [ 'vorm.', 'nachm.' ]
+   * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]
    * @return {[string]}
    */
   static meridiems({ locale = null } = {}) {
@@ -3812,7 +3786,7 @@ function unitForToken(token, loc) {
         // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
         // because we don't have any way to figure out what they are
         case 'z':
-          return simple(/[A-Za-z_]{1,256}\/[A-Za-z_]{1,256}/);
+          return simple(/[a-z_+-]{1,256}(\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?)?/i);
         default:
           return literal(t);
       }
@@ -3950,8 +3924,8 @@ function parseFromTokens(locale, input, format) {
   return [result, zone, invalidReason];
 }
 
-const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-const leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
+  leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
 
 function dayOfWeek(year, month, day) {
   const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
@@ -4086,10 +4060,10 @@ function hasInvalidTimeData(obj) {
   } else return false;
 }
 
-const INVALID = 'Invalid DateTime';
-const INVALID_INPUT = 'invalid input';
-const UNSUPPORTED_ZONE = 'unsupported zone';
-const UNPARSABLE = 'unparsable';
+const INVALID$2 = 'Invalid DateTime',
+  INVALID_INPUT = 'invalid input',
+  UNSUPPORTED_ZONE = 'unsupported zone',
+  UNPARSABLE$1 = 'unparsable';
 
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
@@ -4101,7 +4075,7 @@ function possiblyCachedWeekData(dt) {
 
 // clone really means, "make a new object with these modifications". all "setters" really use this
 // to create a new object while only changing some of the properties
-function clone(inst, alts) {
+function clone$1(inst, alts) {
   const current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -4224,7 +4198,7 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
       );
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(UNPARSABLE);
+    return DateTime.invalid(UNPARSABLE$1);
   }
 }
 
@@ -4281,16 +4255,16 @@ const defaultUnitValues = {
     minute: 0,
     second: 0,
     millisecond: 0
-  };
-const defaultWeekUnitValues = {
+  },
+  defaultWeekUnitValues = {
     weekNumber: 1,
     weekday: 1,
     hour: 0,
     minute: 0,
     second: 0,
     millisecond: 0
-  };
-const defaultOrdinalUnitValues = {
+  },
+  defaultOrdinalUnitValues = {
     ordinal: 1,
     hour: 0,
     minute: 0,
@@ -4299,8 +4273,8 @@ const defaultOrdinalUnitValues = {
   };
 
 // Units in the supported calendars, sorted by bigness
-const orderedUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
-const orderedWeekUnits = [
+const orderedUnits$1 = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'],
+  orderedWeekUnits = [
     'weekYear',
     'weekNumber',
     'weekday',
@@ -4308,8 +4282,8 @@ const orderedWeekUnits = [
     'minute',
     'second',
     'millisecond'
-  ];
-const orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
+  ],
+  orderedOrdinalUnits = ['year', 'ordinal', 'hour', 'minute', 'second', 'millisecond'];
 
 // standardize case and plurality in units
 function normalizeUnit(unit, ignoreUnknown = false) {
@@ -4348,7 +4322,7 @@ function normalizeUnit(unit, ignoreUnknown = false) {
 // are present, and so on.
 function quickDT(obj, zone) {
   // assume we have the higher-order units
-  for (const u of orderedUnits) {
+  for (const u of orderedUnits$1) {
     if (isUndefined(obj[u])) {
       obj[u] = defaultUnitValues[u];
     }
@@ -4631,7 +4605,7 @@ class DateTime {
       defaultValues = defaultOrdinalUnitValues;
       objNow = gregorianToOrdinal(objNow);
     } else {
-      units = orderedUnits;
+      units = orderedUnits$1;
       defaultValues = defaultUnitValues;
     }
 
@@ -5193,7 +5167,7 @@ class DateTime {
         keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
           ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
           : this.ts;
-      return clone(this, { ts: newTS, zone });
+      return clone$1(this, { ts: newTS, zone });
     }
   }
 
@@ -5205,7 +5179,7 @@ class DateTime {
    */
   reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
     const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
-    return clone(this, { loc });
+    return clone$1(this, { loc });
   }
 
   /**
@@ -5253,7 +5227,7 @@ class DateTime {
     }
 
     const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o });
+    return clone$1(this, { ts, o });
   }
 
   /**
@@ -5272,7 +5246,7 @@ class DateTime {
   plus(duration) {
     if (!this.isValid) return this;
     const dur = friendlyDuration(duration);
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   }
 
   /**
@@ -5284,7 +5258,7 @@ class DateTime {
   minus(duration) {
     if (!this.isValid) return this;
     const dur = friendlyDuration(duration).negate();
-    return clone(this, adjustTime(this, dur));
+    return clone$1(this, adjustTime(this, dur));
   }
 
   /**
@@ -5374,7 +5348,7 @@ class DateTime {
   toFormat(fmt, opts = {}) {
     return this.isValid
       ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt)
-      : INVALID;
+      : INVALID$2;
   }
 
   /**
@@ -5397,7 +5371,7 @@ class DateTime {
   toLocaleString(opts = DATE_SHORT) {
     return this.isValid
       ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this)
-      : INVALID;
+      : INVALID$2;
   }
 
   /**
@@ -5540,20 +5514,7 @@ class DateTime {
    * @return {string}
    */
   toString() {
-    return this.isValid ? this.toISO() : INVALID;
-  }
-
-  /**
-   * Returns a string representation of this DateTime appropriate for the REPL.
-   * @return {string}
-   */
-  [customInspectSymbol]() {
-    if (this.isValid) {
-      return `DateTime {\n  ts: ${this.toISO()},\n  zone: ${this.zone.name},\n  locale: ${this
-        .locale} }`;
-    } else {
-      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
-    }
+    return this.isValid ? this.toISO() : INVALID$2;
   }
 
   /**
