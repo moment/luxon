@@ -320,6 +320,18 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
   });
 });
 
+test("DateTime.fromISO() accepts year-week", () => {
+  isSame("2016-W21", {
+    year: 2016,
+    month: 5,
+    day: 23,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
 test("DateTime.fromISO() accepts year-week-day", () => {
   isSame("2016-W21-3", {
     year: 2016,
@@ -514,9 +526,6 @@ test("DateTime.fromISO() rejects poop", () => {
   rejects("2016-05-25T:03:4");
   rejects("2016-05-25T08::4");
   rejects("2016-W32-02");
-
-  // some of these are actually valid iso we don't take (yet)
-  rejects("2016-W32");
 });
 
 //------
