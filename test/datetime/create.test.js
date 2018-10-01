@@ -507,17 +507,14 @@ test("DateTime.fromObject accepts a locale with calendar and numbering identifie
 });
 
 test("DateTime.fromObject accepts a locale string with weird junk in it", () => {
-  // annoyingly, this string works fine in Node, rendering this test worthless,
-  // but must throws in Chrome, which is why we have special handling for it
   withDefaultLocale("en-US", () => {
     const res = DateTime.fromObject({
-      locale: "be-u-ca-coptic-nu-mong-va-posix"
+      locale: "be-u-ca-coptic-ca-islamic"
     });
 
     expect(res.locale).toBe("be");
-    // these would return "gregory" and "latn" if I could really test this
-    expect(res.outputCalendar).toBe("coptic");
-    expect(res.numberingSystem).toBe("mong");
+    expect(res.outputCalendar).toBe("gregory");
+    expect(res.numberingSystem).toBe("latn");
   });
 });
 
