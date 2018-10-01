@@ -493,3 +493,56 @@ test("DateTime.fromObject validates weekdays", () => {
   dt = DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 2 });
   expect(dt.isValid).toBe(true);
 });
+
+test("DateTime.fromObject accepts a locale", () => {
+  const res = DateTime.fromObject({ locale: "be" });
+  expect(res.locale).toBe("be");
+});
+
+test("DateTime.fromObject accepts a locale with calendar and numbering identifiers", () => {
+  const res = DateTime.fromObject({ locale: "be-u-ca-coptic-nu-mong" });
+  expect(res.locale).toBe("be");
+  expect(res.outputCalendar).toBe("coptic");
+  expect(res.numberingSystem).toBe("mong");
+});
+
+test("DateTime.fromObject accepts a locale string with weird junk in it", () => {
+  // annoyingly, this string works fine in Node, rendering this test worthless,
+  // but must throws in Chrome, which is why we have special handling for it
+  withDefaultLocale("en-US", () => {
+    const res = DateTime.fromObject({
+      locale: "be-u-ca-coptic-nu-mong-va-posix"
+    });
+
+    expect(res.locale).toBe("be");
+    // these would return "gregory" and "latn" if I could really test this
+    expect(res.outputCalendar).toBe("coptic");
+    expect(res.numberingSystem).toBe("mong");
+  });
+});
+
+test("DateTime.fromObject overrides the locale string with explicit settings", () => {
+  const res = DateTime.fromObject({
+    locale: "be-u-ca-coptic-nu-mong",
+    numberingSystem: "thai",
+    outputCalendar: "islamic"
+  });
+
+  expect(res.locale).toBe("be");
+  expect(res.outputCalendar).toBe("islamic");
+  expect(res.numberingSystem).toBe("thai");
+});
+
+test("DateTime.fromObject handles null as a language tag", () => {
+  withDefaultLocale("en-GB", () => {
+    const res = DateTime.fromObject({
+      locale: null,
+      numberingSystem: "thai",
+      outputCalendar: "islamic"
+    });
+
+    expect(res.locale).toBe("en-GB");
+    expect(res.outputCalendar).toBe("islamic");
+    expect(res.numberingSystem).toBe("thai");
+  });
+});

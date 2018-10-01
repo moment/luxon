@@ -19,25 +19,55 @@ function systemLocale() {
   }
 }
 
-function intlConfigString(locale, numberingSystem, outputCalendar) {
-  if (hasIntl()) {
-    locale = Array.isArray(locale) ? locale : [locale];
+function parseLocaleString(localeStr) {
+  // I really want to avoid writing a BCP 47 parser
+  // see, e.g. https://github.com/wooorm/bcp-47
+  // Intead, we'll do this:
 
-    if (outputCalendar || numberingSystem) {
-      locale = locale.map(l => {
-        l += "-u";
+  // a) if the string has no -u extensions, just leave it alone
+  // b) if it does, use Intl to resolve everything
+  // c) if Intl fails (see, e.g. https://github.com/moment/luxon/issues/217), then strip out everything after the -u- and let the chips fall where they may
+  // d) if that fails, return null
 
-        if (outputCalendar) {
-          l += "-ca-" + outputCalendar;
-        }
+  // This is not a perfect solution, because we lose some good information when we do (c), but getting that right would require the parser
 
-        if (numberingSystem) {
-          l += "-nu-" + numberingSystem;
-        }
-        return l;
-      });
+  const uIndex = localeStr.indexOf("-u-");
+  if (uIndex === -1) {
+    return [localeStr];
+  } else {
+    let options;
+    const smaller = localeStr.substring(0, uIndex);
+    try {
+      options = Intl.DateTimeFormat(localeStr).resolvedOptions();
+    } catch (e) {
+      try {
+        options = Intl.DateTimeFormat(smaller).resolvedOptions();
+      } catch (e) {
+        return [];
+      }
     }
-    return locale;
+
+    const { numberingSystem, calendar } = options;
+    return [smaller, numberingSystem, calendar];
+  }
+}
+
+function intlConfigString(localeStr, numberingSystem, outputCalendar) {
+  if (hasIntl()) {
+    if (outputCalendar || numberingSystem) {
+      localeStr += "-u";
+
+      if (outputCalendar) {
+        localeStr += `-ca-${outputCalendar}`;
+      }
+
+      if (numberingSystem) {
+        localeStr += `-nu-${numberingSystem}`;
+      }
+      return localeStr;
+    } else {
+      return localeStr;
+    }
   } else {
     return [];
   }
@@ -228,9 +258,11 @@ export default class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, specifiedLocale) {
-    this.locale = locale;
-    this.numberingSystem = numbering;
-    this.outputCalendar = outputCalendar;
+    let [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
+
+    this.locale = parsedLocale;
+    this.numberingSystem = numbering || parsedNumberingSystem || null;
+    this.outputCalendar = outputCalendar || parsedOutputCalendar || null;
     this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 
     this.weekdaysCache = { format: {}, standalone: {} };
