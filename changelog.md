@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.2
+
+ * Handle locale strings with BCP 47 extensions. Especially helpful for environments with funky default locales
+ * Support for [weekYear]-W[weekNumber] ISO 8601 strings
+
 ## 1.4.1
  * Empty diffs now have all the asked-for units in them, set at 0
  * Duration operations perserve the superset of units
