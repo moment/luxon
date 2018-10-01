@@ -40,12 +40,12 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/info.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime from &apos;./datetime&apos;;
-import Settings from &apos;./settings&apos;;
-import Locale from &apos;./impl/locale&apos;;
-import IANAZone from &apos;./zones/IANAZone&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime from &quot;./datetime&quot;;
+import Settings from &quot;./settings&quot;;
+import Locale from &quot;./impl/locale&quot;;
+import IANAZone from &quot;./zones/IANAZone&quot;;
 
-import { hasFormatToParts, hasIntl } from &apos;./impl/util&apos;;
+import { hasFormatToParts, hasIntl } from &quot;./impl/util&quot;;
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
@@ -90,8 +90,8 @@ export default class Info {
    * @return {[string]}
    */
   static months(
-    length = &apos;long&apos;,
-    { locale = null, numberingSystem = null, outputCalendar = &apos;gregory&apos; } = {}
+    length = &quot;long&quot;,
+    { locale = null, numberingSystem = null, outputCalendar = &quot;gregory&quot; } = {}
   ) {
     return Locale.create(locale, numberingSystem, outputCalendar).months(length);
   }
@@ -109,8 +109,8 @@ export default class Info {
    * @return {[string]}
    */
   static monthsFormat(
-    length = &apos;long&apos;,
-    { locale = null, numberingSystem = null, outputCalendar = &apos;gregory&apos; } = {}
+    length = &quot;long&quot;,
+    { locale = null, numberingSystem = null, outputCalendar = &quot;gregory&quot; } = {}
   ) {
     return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);
   }
@@ -128,7 +128,7 @@ export default class Info {
    * @example Info.weekdays(&apos;short&apos;, { locale: &apos;ar&apos; })[0] //=&gt; &apos;&#x627;&#x644;&#x627;&#x62B;&#x646;&#x64A;&#x646;&apos;
    * @return {[string]}
    */
-  static weekdays(length = &apos;long&apos;, { locale = null, numberingSystem = null } = {}) {
+  static weekdays(length = &quot;long&quot;, { locale = null, numberingSystem = null } = {}) {
     return Locale.create(locale, numberingSystem, null).weekdays(length);
   }
 
@@ -143,7 +143,7 @@ export default class Info {
    * @param {string} [opts.numberingSystem=null] - the numbering system
    * @return {[string]}
    */
-  static weekdaysFormat(length = &apos;long&apos;, { locale = null, numberingSystem = null } = {}) {
+  static weekdaysFormat(length = &quot;long&quot;, { locale = null, numberingSystem = null } = {}) {
     return Locale.create(locale, numberingSystem, null).weekdays(length, true);
   }
 
@@ -169,8 +169,8 @@ export default class Info {
    * @example Info.eras(&apos;long&apos;, { locale: &apos;fr&apos; }) //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]
    * @return {[string]}
    */
-  static eras(length = &apos;short&apos;, { locale = null } = {}) {
-    return Locale.create(locale, null, &apos;gregory&apos;).eras(length);
+  static eras(length = &quot;short&quot;, { locale = null } = {}) {
+    return Locale.create(locale, null, &quot;gregory&quot;).eras(length);
   }
 
   /**
@@ -194,8 +194,8 @@ export default class Info {
 
       try {
         zones =
-          new Intl.DateTimeFormat(&apos;en&apos;, { timeZone: &apos;America/New_York&apos; }).resolvedOptions()
-            .timeZone === &apos;America/New_York&apos;;
+          new Intl.DateTimeFormat(&quot;en&quot;, { timeZone: &quot;America/New_York&quot; }).resolvedOptions()
+            .timeZone === &quot;America/New_York&quot;;
       } catch (e) {
         zones = false;
       }

@@ -2080,7 +2080,7 @@
                             },
                             "extra": {
                               "rawValue": "Zone is an abstract class",
-                              "raw": "'Zone is an abstract class'"
+                              "raw": "\"Zone is an abstract class\""
                             },
                             "value": "Zone is an abstract class"
                           }

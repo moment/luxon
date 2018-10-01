@@ -40,15 +40,15 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/duration.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject } from &apos;./impl/util&apos;;
-import Locale from &apos;./impl/locale&apos;;
-import Formatter from &apos;./impl/formatter&apos;;
-import { parseISODuration } from &apos;./impl/regexParser&apos;;
-import Settings from &apos;./settings&apos;;
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &apos;./errors&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject } from &quot;./impl/util&quot;;
+import Locale from &quot;./impl/locale&quot;;
+import Formatter from &quot;./impl/formatter&quot;;
+import { parseISODuration } from &quot;./impl/regexParser&quot;;
+import Settings from &quot;./settings&quot;;
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &quot;./errors&quot;;
 
-const INVALID = &apos;Invalid Duration&apos;,
-  UNPARSABLE = &apos;unparsable&apos;;
+const INVALID = &quot;Invalid Duration&quot;,
+  UNPARSABLE = &quot;unparsable&quot;;
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -135,15 +135,15 @@ const lowOrderMatrix = {
 
 // units ordered by size
 const orderedUnits = [
-  &apos;years&apos;,
-  &apos;quarters&apos;,
-  &apos;months&apos;,
-  &apos;weeks&apos;,
-  &apos;days&apos;,
-  &apos;hours&apos;,
-  &apos;minutes&apos;,
-  &apos;seconds&apos;,
-  &apos;milliseconds&apos;
+  &quot;years&quot;,
+  &quot;quarters&quot;,
+  &quot;months&quot;,
+  &quot;weeks&quot;,
+  &quot;days&quot;,
+  &quot;hours&quot;,
+  &quot;minutes&quot;,
+  &quot;seconds&quot;,
+  &quot;milliseconds&quot;
 ];
 
 const reverseUnits = orderedUnits.slice(0).reverse();
@@ -199,10 +199,10 @@ export function friendlyDuration(duration) {
     return Duration.fromMillis(duration);
   } else if (duration instanceof Duration) {
     return duration;
-  } else if (typeof duration === &apos;object&apos;) {
+  } else if (typeof duration === &quot;object&quot;) {
     return Duration.fromObject(duration);
   } else {
-    throw new InvalidArgumentError(&apos;Unknown duration argument&apos;);
+    throw new InvalidArgumentError(&quot;Unknown duration argument&quot;);
   }
 }
 
@@ -224,7 +224,7 @@ export default class Duration {
    * @private
    */
   constructor(config) {
-    const accurate = config.conversionAccuracy === &apos;longterm&apos; || false;
+    const accurate = config.conversionAccuracy === &quot;longterm&quot; || false;
     /**
      * @access private
      */
@@ -236,7 +236,7 @@ export default class Duration {
     /**
      * @access private
      */
-    this.conversionAccuracy = accurate ? &apos;longterm&apos; : &apos;casual&apos;;
+    this.conversionAccuracy = accurate ? &quot;longterm&quot; : &quot;casual&quot;;
     /**
      * @access private
      */
@@ -279,8 +279,8 @@ export default class Duration {
    * @return {Duration}
    */
   static fromObject(obj) {
-    if (obj == null || typeof obj !== &apos;object&apos;) {
-      throw new InvalidArgumentError(&apos;Duration.fromObject: argument expected to be an object.&apos;);
+    if (obj == null || typeof obj !== &quot;object&quot;) {
+      throw new InvalidArgumentError(&quot;Duration.fromObject: argument expected to be an object.&quot;);
     }
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit, true),
@@ -319,7 +319,7 @@ export default class Duration {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError(&apos;need to specify a reason the Duration is invalid&apos;);
+      throw new InvalidArgumentError(&quot;need to specify a reason the Duration is invalid&quot;);
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidDurationError(reason);
@@ -333,24 +333,24 @@ export default class Duration {
    */
   static normalizeUnit(unit, ignoreUnknown = false) {
     const normalized = {
-      year: &apos;years&apos;,
-      years: &apos;years&apos;,
-      quarter: &apos;quarters&apos;,
-      quarters: &apos;quarters&apos;,
-      month: &apos;months&apos;,
-      months: &apos;months&apos;,
-      week: &apos;weeks&apos;,
-      weeks: &apos;weeks&apos;,
-      day: &apos;days&apos;,
-      days: &apos;days&apos;,
-      hour: &apos;hours&apos;,
-      hours: &apos;hours&apos;,
-      minute: &apos;minutes&apos;,
-      minutes: &apos;minutes&apos;,
-      second: &apos;seconds&apos;,
-      seconds: &apos;seconds&apos;,
-      millisecond: &apos;milliseconds&apos;,
-      milliseconds: &apos;milliseconds&apos;
+      year: &quot;years&quot;,
+      years: &quot;years&quot;,
+      quarter: &quot;quarters&quot;,
+      quarters: &quot;quarters&quot;,
+      month: &quot;months&quot;,
+      months: &quot;months&quot;,
+      week: &quot;weeks&quot;,
+      weeks: &quot;weeks&quot;,
+      day: &quot;days&quot;,
+      days: &quot;days&quot;,
+      hour: &quot;hours&quot;,
+      hours: &quot;hours&quot;,
+      minute: &quot;minutes&quot;,
+      minutes: &quot;minutes&quot;,
+      second: &quot;seconds&quot;,
+      seconds: &quot;seconds&quot;,
+      millisecond: &quot;milliseconds&quot;,
+      milliseconds: &quot;milliseconds&quot;
     }[unit ? unit.toLowerCase() : unit];
 
     if (!ignoreUnknown &amp;&amp; !normalized) throw new InvalidUnitError(unit);
@@ -443,20 +443,20 @@ export default class Duration {
     // we could use the formatter, but this is an easier way to get the minimum string
     if (!this.isValid) return null;
 
-    let s = &apos;P&apos;,
+    let s = &quot;P&quot;,
       norm = this.normalize();
 
     // ISO durations are always positive, so take the absolute value
     norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
 
-    if (norm.years &gt; 0) s += norm.years + &apos;Y&apos;;
-    if (norm.months &gt; 0 || norm.quarters &gt; 0) s += norm.months + norm.quarters * 3 + &apos;M&apos;;
-    if (norm.days &gt; 0 || norm.weeks &gt; 0) s += norm.days + norm.weeks * 7 + &apos;D&apos;;
-    if (norm.hours &gt; 0 || norm.minutes &gt; 0 || norm.seconds &gt; 0 || norm.milliseconds &gt; 0) s += &apos;T&apos;;
-    if (norm.hours &gt; 0) s += norm.hours + &apos;H&apos;;
-    if (norm.minutes &gt; 0) s += norm.minutes + &apos;M&apos;;
+    if (norm.years &gt; 0) s += norm.years + &quot;Y&quot;;
+    if (norm.months &gt; 0 || norm.quarters &gt; 0) s += norm.months + norm.quarters * 3 + &quot;M&quot;;
+    if (norm.days &gt; 0 || norm.weeks &gt; 0) s += norm.days + norm.weeks * 7 + &quot;D&quot;;
+    if (norm.hours &gt; 0 || norm.minutes &gt; 0 || norm.seconds &gt; 0 || norm.milliseconds &gt; 0) s += &quot;T&quot;;
+    if (norm.hours &gt; 0) s += norm.hours + &quot;H&quot;;
+    if (norm.minutes &gt; 0) s += norm.minutes + &quot;M&quot;;
     if (norm.seconds &gt; 0 || norm.milliseconds &gt; 0)
-      s += norm.seconds + norm.milliseconds / 1000 + &apos;S&apos;;
+      s += norm.seconds + norm.milliseconds / 1000 + &quot;S&quot;;
     return s;
   }
 
@@ -481,7 +481,7 @@ export default class Duration {
    * @return {number}
    */
   valueOf() {
-    return this.as(&apos;milliseconds&apos;);
+    return this.as(&quot;milliseconds&quot;);
   }
 
   /**

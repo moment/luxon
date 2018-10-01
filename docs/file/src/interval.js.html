@@ -40,12 +40,12 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/interval.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime, { friendlyDateTime } from &apos;./datetime&apos;;
-import Duration, { friendlyDuration } from &apos;./duration&apos;;
-import Settings from &apos;./settings&apos;;
-import { InvalidArgumentError, InvalidIntervalError } from &apos;./errors&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime, { friendlyDateTime } from &quot;./datetime&quot;;
+import Duration, { friendlyDuration } from &quot;./duration&quot;;
+import Settings from &quot;./settings&quot;;
+import { InvalidArgumentError, InvalidIntervalError } from &quot;./errors&quot;;
 
-const INVALID = &apos;Invalid Interval&apos;;
+const INVALID = &quot;Invalid Interval&quot;;
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
@@ -89,7 +89,7 @@ export default class Interval {
    */
   static invalid(reason) {
     if (!reason) {
-      throw new InvalidArgumentError(&apos;need to specify a reason the DateTime is invalid&apos;);
+      throw new InvalidArgumentError(&quot;need to specify a reason the DateTime is invalid&quot;);
     }
     if (Settings.throwOnInvalid) {
       throw new InvalidIntervalError(reason);
@@ -111,7 +111,7 @@ export default class Interval {
     return new Interval({
       start: builtStart,
       end: builtEnd,
-      invalidReason: validateStartEnd(builtStart, builtEnd) ? null : &apos;invalid endpoints&apos;
+      invalidReason: validateStartEnd(builtStart, builtEnd) ? null : &quot;invalid endpoints&quot;
     });
   }
 
@@ -152,7 +152,7 @@ export default class Interval {
         return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));
       }
     }
-    return Interval.invalid(&apos;invalid ISO format&apos;);
+    return Interval.invalid(&quot;invalid ISO format&quot;);
   }
 
   /**
@@ -192,7 +192,7 @@ export default class Interval {
    * @param {string} unit - the unit (such as &apos;hours&apos; or &apos;days&apos;) to return the length in.
    * @return {number}
    */
-  length(unit = &apos;milliseconds&apos;) {
+  length(unit = &quot;milliseconds&quot;) {
     return this.isValid ? this.toDuration(...[unit]).get(unit) : NaN;
   }
 
@@ -203,7 +203,7 @@ export default class Interval {
    * @param {string} [unit=&apos;milliseconds&apos;] - the unit of time to count.
    * @return {number}
    */
-  count(unit = &apos;milliseconds&apos;) {
+  count(unit = &quot;milliseconds&quot;) {
     if (!this.isValid) return NaN;
     const start = this.start.startOf(unit),
       end = this.end.startOf(unit);
@@ -301,7 +301,7 @@ export default class Interval {
   splitBy(duration) {
     const dur = friendlyDuration(duration);
 
-    if (!this.isValid || !dur.isValid || dur.as(&apos;milliseconds&apos;) === 0) {
+    if (!this.isValid || !dur.isValid || dur.as(&quot;milliseconds&quot;) === 0) {
       return [];
     }
 
@@ -446,12 +446,12 @@ export default class Interval {
     let start = null,
       currentCount = 0;
     const results = [],
-      ends = intervals.map(i =&gt; [{ time: i.s, type: &apos;s&apos; }, { time: i.e, type: &apos;e&apos; }]),
+      ends = intervals.map(i =&gt; [{ time: i.s, type: &quot;s&quot; }, { time: i.e, type: &quot;e&quot; }]),
       flattened = Array.prototype.concat(...ends),
       arr = flattened.sort((a, b) =&gt; a.time - b.time);
 
     for (const i of arr) {
-      currentCount += i.type === &apos;s&apos; ? 1 : -1;
+      currentCount += i.type === &quot;s&quot; ? 1 : -1;
 
       if (currentCount === 1) {
         start = i.time;
@@ -505,7 +505,7 @@ export default class Interval {
    * @param {string} [opts.separator =  &apos; &#x2013; &apos;] - a separator to place between the start and end representations
    * @return {string}
    */
-  toFormat(dateFormat, { separator = &apos; &#x2013; &apos; } = {}) {
+  toFormat(dateFormat, { separator = &quot; &#x2013; &quot; } = {}) {
     if (!this.isValid) return INVALID;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
   }
