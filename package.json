@@ -1,6 +1,6 @@
 {
   "name": "luxon",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": [
@@ -81,8 +81,5 @@
     "build/global/luxon.js.map",
     "src"
   ],
-  "license": "MIT",
-  "dependencies": {
-    "babel-upgrade": "0.0.23"
-  }
+  "license": "MIT"
 }

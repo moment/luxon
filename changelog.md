@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3
+
+Removal accidentally-introduced runtime dependency
+
 ## 1.4.2
 
  * Handle locale strings with BCP 47 extensions. Especially helpful for environments with funky default locales
