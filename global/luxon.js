@@ -1958,9 +1958,7 @@ var luxon = (function (exports) {
     // Intead, we'll do this:
     // a) if the string has no -u extensions, just leave it alone
     // b) if it does, use Intl to resolve everything
-    // c) if Intl fails (see, e.g. https://github.com/moment/luxon/issues/217), then strip out everything after the -u- and let the chips fall where they may
-    // d) if that fails, return null
-    // This is not a perfect solution, because we lose some good information when we do (c), but getting that right would require the parser
+    // c) if Intl fails, try again without the -u
     var uIndex = localeStr.indexOf("-u-");
 
     if (uIndex === -1) {
@@ -1972,16 +1970,13 @@ var luxon = (function (exports) {
       try {
         options = Intl.DateTimeFormat(localeStr).resolvedOptions();
       } catch (e) {
-        try {
-          options = Intl.DateTimeFormat(smaller).resolvedOptions();
-        } catch (e) {
-          return [];
-        }
+        options = Intl.DateTimeFormat(smaller).resolvedOptions();
       }
 
       var _options = options,
           numberingSystem = _options.numberingSystem,
-          calendar = _options.calendar;
+          calendar = _options.calendar; // return the smaller one so that we can append the calendar and numbering overrides to it
+
       return [smaller, numberingSystem, calendar];
     }
   }
