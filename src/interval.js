@@ -51,6 +51,10 @@ export default class Interval {
      * @access private
      */
     this.invalid = config.invalid || null;
+    /**
+     * @access private
+     */
+    this.isLuxonInterval = true;
   }
 
   /**
@@ -145,6 +149,15 @@ export default class Interval {
       }
     }
     return Interval.invalid("unparsable", `the input "${text}" can't be parsed asISO 8601`);
+  }
+
+  /**
+   * Check if an object is an Interval. Works across context boundaries
+   * @param {object} o
+   * @return {boolean}
+   */
+  static isInterval(o) {
+    return o instanceof Interval || o.isLuxonInterval;
   }
 
   /**
