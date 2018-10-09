@@ -30,7 +30,7 @@ Some subtleties:
 If all this seems too terse, check out these articles. The terminology in them is subtly different but the concepts are the same:
 
  * [Time Zones Aren’t Offsets – Offsets Aren’t Time Zones](https://spin.atomicobject.com/2016/07/06/time-zones-offsets/)
- * [Stack Overflows timezone wiki page](https://stackoverflow.com/tags/timezone/info)
+ * [Stack Overflow's timezone wiki page](https://stackoverflow.com/tags/timezone/info)
 
 ## Luxon works with time zones
 
