@@ -150,21 +150,6 @@ function normalizeValues(matrix, vals) {
 }
 
 /**
- * @private
- */
-export function friendlyDuration(duration) {
-  if (isNumber(duration)) {
-    return Duration.fromMillis(duration);
-  } else if (duration instanceof Duration) {
-    return duration;
-  } else if (typeof duration === "object") {
-    return Duration.fromObject(duration);
-  } else {
-    throw new InvalidArgumentError("Unknown duration argument");
-  }
-}
-
-/**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
@@ -203,6 +188,10 @@ export default class Duration {
      * @access private
      */
     this.matrix = accurate ? accurateMatrix : casualMatrix;
+    /**
+     * @access private
+     */
+    this._isDuration = true;
   }
 
   /**
@@ -736,5 +725,25 @@ export default class Duration {
       }
     }
     return true;
+  }
+
+  // TYPE CHECK
+  static isDuration(o) {
+    return (o instanceof Duration) || o._isDuration;
+  }
+}
+
+/**
+ * @private
+ */
+export function friendlyDuration(duration) {
+  if (isNumber(duration)) {
+    return Duration.fromMillis(duration);
+  } else if (Duration.isDuration(duration)) {
+    return duration;
+  } else if (typeof duration === "object") {
+    return Duration.fromObject(duration);
+  } else {
+    throw new InvalidArgumentError("Unknown duration argument");
   }
 }

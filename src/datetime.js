@@ -391,6 +391,10 @@ export default class DateTime {
      * @access private
      */
     this.o = o;
+    /**
+     * @access private
+     */
+    this._isDateTime = true;
   }
 
   // CONSTRUCT
@@ -1844,13 +1848,18 @@ export default class DateTime {
   static get DATETIME_HUGE_WITH_SECONDS() {
     return Formats.DATETIME_HUGE_WITH_SECONDS;
   }
+
+  // TYPE CHECK
+  static isDateTime(o) {
+    return (o instanceof DateTime) || o._isDateTime;
+  }
 }
 
 /**
  * @private
  */
 export function friendlyDateTime(dateTimeish) {
-  if (dateTimeish instanceof DateTime) {
+  if (DateTime.isDateTime(dateTimeish)) {
     return dateTimeish;
   } else if (dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
     return DateTime.fromJSDate(dateTimeish);
