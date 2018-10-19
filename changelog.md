@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.4
+
+ * Fix hour formatting in RFC822 strings
+ * Interval.fromISO accepts formats with durations
+
 ## 1.4.3
 
 Removal accidentally-introduced runtime dependency
