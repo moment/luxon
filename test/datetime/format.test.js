@@ -115,6 +115,7 @@ test("DateTime#toISOTime() returns null for invalid DateTimes", () => {
 test("DateTime#toRFC2822() returns an RFC 2822 date", () => {
   expect(dt.toUTC().toRFC2822()).toBe("Tue, 25 May 1982 09:23:54 +0000");
   expect(dt.setZone("America/New_York").toRFC2822()).toBe("Tue, 25 May 1982 05:23:54 -0400");
+  expect(dt.set({ hour: 15 }).toRFC2822()).toBe("Tue, 25 May 1982 15:23:54 +0000");
 });
 
 test("DateTime#toRFC2822() returns null for invalid DateTimes", () => {

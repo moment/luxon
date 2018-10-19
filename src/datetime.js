@@ -1436,7 +1436,7 @@ export default class DateTime {
    * @return {string}
    */
   toRFC2822() {
-    return toTechFormat(this, "EEE, dd LLL yyyy hh:mm:ss ZZZ");
+    return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ");
   }
 
   /**
