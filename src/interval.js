@@ -379,16 +379,18 @@ export default class Interval {
    * @return {[Interval]}
    */
   static merge(intervals) {
-    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(([sofar, current], item) => {
-      if (!current) {
-        return [sofar, item];
-      } else if (current.overlaps(item) || current.abutsStart(item)) {
-        return [sofar, current.union(item)];
-      } else {
-        return [sofar.concat([current]), item];
-      }
-    },
-    [[], null]);
+    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(
+      ([sofar, current], item) => {
+        if (!current) {
+          return [sofar, item];
+        } else if (current.overlaps(item) || current.abutsStart(item)) {
+          return [sofar, current.union(item)];
+        } else {
+          return [sofar.concat([current]), item];
+        }
+      },
+      [[], null]
+    );
     if (final) {
       found.push(final);
     }

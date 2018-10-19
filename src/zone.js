@@ -3,7 +3,7 @@ import { ZoneIsAbstractError } from "./errors";
 
 /**
  * @interface
-*/
+ */
 export default class Zone {
   /**
    * The type of zone

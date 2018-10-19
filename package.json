@@ -28,7 +28,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.1.1",
+    "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
     "@babel/plugin-external-helpers": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
@@ -40,7 +40,7 @@
     "core-js": "^2.5.7",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "latest",
-    "eslint": "latest",
+    "eslint": "^5.7.0",
     "eslint-config-defaults": "latest",
     "eslint-config-prettier": "latest",
     "eslint-config-standard": "latest",
@@ -57,11 +57,11 @@
     "jest": "^22.4.2",
     "jest-cli": "^23.6.0",
     "lint-staged": "^4.3.0",
-    "prettier": "1.7.4",
+    "prettier": "latest",
     "rollup": "^0.58.0",
     "rollup-plugin-babel": "latest",
-    "rollup-plugin-babel-minify": "latest",
-    "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-babel-minify": "^6.1.1",
+    "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "latest"
   },
   "main": "build/node/luxon.js",

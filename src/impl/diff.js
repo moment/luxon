@@ -18,7 +18,7 @@ function highOrderDiffs(cursor, later, units) {
       "weeks",
       (a, b) => {
         const days = dayDiff(a, b);
-        return (days - days % 7) / 7;
+        return (days - (days % 7)) / 7;
       }
     ],
     ["days", dayDiff]
