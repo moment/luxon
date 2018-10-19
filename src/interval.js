@@ -98,16 +98,33 @@ export default class Interval {
   }
 
   /**
-   * Create an Interval from an ISO 8601 string
+   * Create an Interval from an ISO 8601 string.
+   * Accepts `<start>/<end>`, `<start>/<duration>`, and `<duration>/<end>` formats.
    * @param {string} string - the ISO string to parse
-   * @param {Object} opts - options to pass {@see DateTime.fromISO}
+   * @param {Object} [opts] - options to pass {@link DateTime.fromISO} and optionally {@link Duration.fromISO}
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @return {Interval}
    */
   static fromISO(string, opts) {
-    if (string) {
-      const [s, e] = string.split(/\//);
-      if (s && e) {
-        return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));
+    const [s, e] = (string || "").split("/", 2);
+    if (s && e) {
+      const start = DateTime.fromISO(s, opts),
+        end = DateTime.fromISO(e, opts);
+
+      if (start.isValid && end.isValid) {
+        return Interval.fromDateTimes(start, end);
+      }
+
+      if (start.isValid) {
+        const dur = Duration.fromISO(e, opts);
+        if (dur.isValid) {
+          return Interval.after(start, dur);
+        }
+      } else if (end.isValid) {
+        const dur = Duration.fromISO(s, opts);
+        if (dur.isValid) {
+          return Interval.before(end, dur);
+        }
       }
     }
     return Interval.invalid("invalid ISO format");
