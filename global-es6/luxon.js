@@ -636,7 +636,7 @@ var luxon = (function (exports) {
 
   /**
    * @interface
-  */
+   */
   class Zone {
     /**
      * The type of zone
@@ -1020,7 +1020,10 @@ var luxon = (function (exports) {
 
     /**
      * Set the callback for returning the current timestamp.
+     * The function should return a number, which will be interpreted as an Epoch millisecond count
      * @type {function}
+     * @example Settings.now = () => Date.now() + 3000 // pretend it is 3 seconds in the future
+     * @example Settings.now = () => 0 // always pretend it's Jan 1, 1970 at midnight in UTC time
      */
     static set now(n) {
       now = n;
@@ -1867,10 +1870,9 @@ var luxon = (function (exports) {
           // for AM and PM. This is probably wrong, but it's makes parsing way easier.
           if (!this.meridiemCache) {
             const intl = { hour: "numeric", hour12: true };
-            this.meridiemCache = [
-              DateTime.utc(2016, 11, 13, 9),
-              DateTime.utc(2016, 11, 13, 19)
-            ].map(dt => this.extract(dt, intl, "dayperiod"));
+            this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
+              dt => this.extract(dt, intl, "dayperiod")
+            );
           }
 
           return this.meridiemCache;
@@ -2276,10 +2278,10 @@ var luxon = (function (exports) {
           months: 3,
           weeks: daysInYearAccurate / 28,
           days: daysInYearAccurate / 4,
-          hours: daysInYearAccurate * 24 / 4,
-          minutes: daysInYearAccurate * 24 * 60 / 4,
-          seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
-          milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000 / 4
+          hours: (daysInYearAccurate * 24) / 4,
+          minutes: (daysInYearAccurate * 24 * 60) / 4,
+          seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
+          milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
         },
         months: {
           weeks: daysInMonthAccurate / 7,
@@ -3036,16 +3038,33 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Create an Interval from an ISO 8601 string
+     * Create an Interval from an ISO 8601 string.
+     * Accepts `<start>/<end>`, `<start>/<duration>`, and `<duration>/<end>` formats.
      * @param {string} string - the ISO string to parse
-     * @param {Object} opts - options to pass {@see DateTime.fromISO}
+     * @param {Object} [opts] - options to pass {@link DateTime.fromISO} and optionally {@link Duration.fromISO}
+     * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
      * @return {Interval}
      */
     static fromISO(string, opts) {
-      if (string) {
-        const [s, e] = string.split(/\//);
-        if (s && e) {
-          return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));
+      const [s, e] = (string || "").split("/", 2);
+      if (s && e) {
+        const start = DateTime.fromISO(s, opts),
+          end = DateTime.fromISO(e, opts);
+
+        if (start.isValid && end.isValid) {
+          return Interval.fromDateTimes(start, end);
+        }
+
+        if (start.isValid) {
+          const dur = Duration.fromISO(e, opts);
+          if (dur.isValid) {
+            return Interval.after(start, dur);
+          }
+        } else if (end.isValid) {
+          const dur = Duration.fromISO(s, opts);
+          if (dur.isValid) {
+            return Interval.before(end, dur);
+          }
         }
       }
       return Interval.invalid("invalid ISO format");
@@ -3317,16 +3336,18 @@ var luxon = (function (exports) {
      * @return {[Interval]}
      */
     static merge(intervals) {
-      const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(([sofar, current], item) => {
-        if (!current) {
-          return [sofar, item];
-        } else if (current.overlaps(item) || current.abutsStart(item)) {
-          return [sofar, current.union(item)];
-        } else {
-          return [sofar.concat([current]), item];
-        }
-      },
-      [[], null]);
+      const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(
+        ([sofar, current], item) => {
+          if (!current) {
+            return [sofar, item];
+          } else if (current.overlaps(item) || current.abutsStart(item)) {
+            return [sofar, current.union(item)];
+          } else {
+            return [sofar.concat([current]), item];
+          }
+        },
+        [[], null]
+      );
       if (final) {
         found.push(final);
       }
@@ -3602,7 +3623,7 @@ var luxon = (function (exports) {
         "weeks",
         (a, b) => {
           const days = dayDiff(a, b);
-          return (days - days % 7) / 7;
+          return (days - (days % 7)) / 7;
         }
       ],
       ["days", dayDiff]
@@ -4651,7 +4672,9 @@ var luxon = (function (exports) {
       // make sure the values we have are in range
       const higherOrderInvalid = useWeekData
           ? hasInvalidWeekData(normalized)
-          : containsOrdinal ? hasInvalidOrdinalData(normalized) : hasInvalidGregorianData(normalized),
+          : containsOrdinal
+            ? hasInvalidOrdinalData(normalized)
+            : hasInvalidGregorianData(normalized),
         invalidReason = higherOrderInvalid || hasInvalidTimeData(normalized);
 
       if (invalidReason) {
@@ -4661,7 +4684,9 @@ var luxon = (function (exports) {
       // compute the actual time
       const gregorian = useWeekData
           ? weekToGregorian(normalized)
-          : containsOrdinal ? ordinalToGregorian(normalized) : normalized,
+          : containsOrdinal
+            ? ordinalToGregorian(normalized)
+            : normalized,
         [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
         inst = new DateTime({
           ts: tsFinal,
@@ -5478,7 +5503,7 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toRFC2822() {
-      return toTechFormat(this, "EEE, dd LLL yyyy hh:mm:ss ZZZ");
+      return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ");
     }
 
     /**

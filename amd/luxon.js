@@ -740,7 +740,7 @@ define(['exports'], function (exports) { 'use strict';
 
   /**
    * @interface
-  */
+   */
 
   var Zone =
   /*#__PURE__*/
@@ -1264,7 +1264,10 @@ define(['exports'], function (exports) { 'use strict';
       }
       /**
        * Set the callback for returning the current timestamp.
+       * The function should return a number, which will be interpreted as an Epoch millisecond count
        * @type {function}
+       * @example Settings.now = () => Date.now() + 3000 // pretend it is 3 seconds in the future
+       * @example Settings.now = () => 0 // always pretend it's Jan 1, 1970 at midnight in UTC time
        */
       ,
       set: function set(n) {
@@ -3657,21 +3660,40 @@ define(['exports'], function (exports) { 'use strict';
       return Interval.fromDateTimes(dt.minus(dur), dt);
     };
     /**
-     * Create an Interval from an ISO 8601 string
+     * Create an Interval from an ISO 8601 string.
+     * Accepts `<start>/<end>`, `<start>/<duration>`, and `<duration>/<end>` formats.
      * @param {string} string - the ISO string to parse
-     * @param {Object} opts - options to pass {@see DateTime.fromISO}
+     * @param {Object} [opts] - options to pass {@link DateTime.fromISO} and optionally {@link Duration.fromISO}
+     * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
      * @return {Interval}
      */
 
 
     Interval.fromISO = function fromISO(string, opts) {
-      if (string) {
-        var _string$split = string.split(/\//),
-            s = _string$split[0],
-            e = _string$split[1];
+      var _split = (string || "").split("/", 2),
+          s = _split[0],
+          e = _split[1];
 
-        if (s && e) {
-          return Interval.fromDateTimes(DateTime.fromISO(s, opts), DateTime.fromISO(e, opts));
+      if (s && e) {
+        var start = DateTime.fromISO(s, opts),
+            end = DateTime.fromISO(e, opts);
+
+        if (start.isValid && end.isValid) {
+          return Interval.fromDateTimes(start, end);
+        }
+
+        if (start.isValid) {
+          var dur = Duration.fromISO(e, opts);
+
+          if (dur.isValid) {
+            return Interval.after(start, dur);
+          }
+        } else if (end.isValid) {
+          var _dur = Duration.fromISO(s, opts);
+
+          if (_dur.isValid) {
+            return Interval.before(end, _dur);
+          }
         }
       }
 
@@ -6291,7 +6313,7 @@ define(['exports'], function (exports) { 'use strict';
 
 
     _proto.toRFC2822 = function toRFC2822() {
-      return toTechFormat(this, "EEE, dd LLL yyyy hh:mm:ss ZZZ");
+      return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ");
     };
     /**
      * Returns a string representation of this DateTime appropriate for use in HTTP headers.

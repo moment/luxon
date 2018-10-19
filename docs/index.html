@@ -241,6 +241,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-4" data-ice="link">1.4.4</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-3" data-ice="link">1.4.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-2" data-ice="link">1.4.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-1" data-ice="link">1.4.1</a></li>
@@ -470,7 +471,7 @@ dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x
 <li>Just because a time zone doesn&apos;t have a DST now doesn&apos;t mean it&apos;s fixed. Perhaps it had one in the past. Regardless, Luxon does not have first-class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.</li>
 </ol><p>If all this seems too terse, check out these articles. The terminology in them is subtly different but the concepts are the same:</p><ul>
 <li><a href="https://spin.atomicobject.com/2016/07/06/time-zones-offsets/">Time Zones Aren&#x2019;t Offsets &#x2013; Offsets Aren&#x2019;t Time Zones</a></li>
-<li><a href="https://stackoverflow.com/tags/timezone/info">Stack Overflows timezone wiki page</a></li>
+<li><a href="https://stackoverflow.com/tags/timezone/info">Stack Overflow&apos;s timezone wiki page</a></li>
 </ul><h2>Luxon works with time zones</h2><p>Luxon&apos;s DateTime class supports zones directly. By default, a date created in Luxon is &quot;in&quot; the local time zone of the machine it&apos;s running on. By &quot;in&quot; we mean that the DateTime has, as one of its properties, an associated zone.</p><p>It&apos;s important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you&apos;re in; the zone is really piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon&apos;s behavior too. It just doesn&apos;t change <em>what time it is</em>.</p><p>Specifically, a DateTime&apos;s zone affects its behavior in these ways:</p><ol>
 <li>Times will be formatted as they would be in that zone.</li>
 <li>Transformations to the DateTime (such as <code>plus</code> or <code>startOf</code>) will obey any DSTs in that zone that affect the calculation (see &quot;Math across DSTs&quot; below)</li>
@@ -2466,7 +2467,10 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.4.3</h2><p>Removal accidentally-introduced runtime dependency</p><h2>1.4.2</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.4.4</h2><ul>
+<li>Fix hour formatting in RFC822 strings</li>
+<li>Interval.fromISO accepts formats with durations</li>
+</ul><h2>1.4.3</h2><p>Removal accidentally-introduced runtime dependency</p><h2>1.4.2</h2><ul>
 <li>Handle locale strings with BCP 47 extensions. Especially helpful for environments with funky default locales</li>
 <li>Support for [weekYear]-W[weekNumber] ISO 8601 strings</li>
 </ul><h2>1.4.1</h2><ul>
