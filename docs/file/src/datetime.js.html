@@ -1525,7 +1525,7 @@ export default class DateTime {
    * @example DateTime.utc(2014, 7, 13).toSQL() //=&gt; &apos;2014-07-13 00:00:00.000 Z&apos;
    * @example DateTime.local(2014, 7, 13).toSQL() //=&gt; &apos;2014-07-13 00:00:00.000 -04:00&apos;
    * @example DateTime.local(2014, 7, 13).toSQL({ includeOffset: false }) //=&gt; &apos;2014-07-13 00:00:00.000&apos;
-   * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: false }) //=&gt; &apos;2014-07-13 00:00:00.000 America/New_York&apos;
+   * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: true }) //=&gt; &apos;2014-07-13 00:00:00.000 America/New_York&apos;
    * @return {string}
    */
   toSQL(opts = {}) {
