@@ -1,6 +1,6 @@
 {
   "name": "luxon",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": [
@@ -62,7 +62,8 @@
     "rollup-plugin-babel": "latest",
     "rollup-plugin-babel-minify": "^6.1.1",
     "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "latest"
+    "rollup-plugin-node-resolve": "latest",
+    "uglify-js": "latest"
   },
   "main": "build/node/luxon.js",
   "module": "src/luxon.js",

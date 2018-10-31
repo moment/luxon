@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.5
+
+* Fix minified builds
+
 ## 1.4.4
 
  * Fix hour formatting in RFC822 strings

@@ -4,7 +4,9 @@ const rollup = require('rollup'),
   rollupBabel = require('rollup-plugin-babel'),
   rollupMinify = require('rollup-plugin-babel-minify'),
   rollupNode = require('rollup-plugin-node-resolve'),
-  rollupCommonJS = require('rollup-plugin-commonjs');
+  rollupCommonJS = require('rollup-plugin-commonjs'),
+  UglifyJS = require("uglify-js"),
+  fs = require("fs");
 
 function rollupInputOpts(opts) {
   const presetOpts = {
@@ -42,6 +44,10 @@ function rollupInputOpts(opts) {
     );
   }
 
+  /*
+  For some reason, the minifier is currently producing total giberrish, at least for the global build.
+  I've disabled it for now, and will simply uglify externally.
+
   if (opts.minify) {
     inputOpts.plugins.push(
       rollupMinify({
@@ -52,6 +58,7 @@ function rollupInputOpts(opts) {
       })
     );
   }
+  */
 
   return inputOpts;
 }
@@ -79,16 +86,38 @@ async function babelAndRollup(dest, opts) {
 
 async function buildLibrary(dest, opts) {
   console.log('Building', dest);
-  await Promise.all([
-    babelAndRollup(dest, opts),
-    babelAndRollup(
-      dest,
-      Object.assign({}, opts, {
-        minify: true,
-        filename: 'luxon.min.js'
-      })
-    )
-  ]);
+  const promises = [babelAndRollup(dest, opts)];
+  /*
+  if (opts.minify) {
+    promises.push(
+       babelAndRollup(
+       dest,
+       Object.assign({}, opts, {
+         minify: true,
+         filename: 'luxon.min.js'
+       })));
+  }
+  */
+
+  await Promise.all(promises);
+  if (opts.minify) {
+    const code = fs.readFileSync(`build/${dest}/luxon.js`, "utf8"),
+      ugly = UglifyJS.minify(code, {
+        toplevel: !opts.global,
+        output: {
+          comments: false,
+        },
+        sourceMap: {
+          filename: `build/${dest}/luxon.js`
+        }
+      });
+    if (ugly.error) {
+      console.error("Error uglifying", ugly.error);
+    } else {
+      fs.writeFileSync(`build/${dest}/luxon.min.js`, ugly.code);
+      fs.writeFileSync(`build/${dest}/luxon.min.js.map`, ugly.map);
+    }
+  }
   console.log('Built', dest);
 }
 
@@ -99,7 +128,8 @@ async function global() {
     format: 'iife',
     global: true,
     name: 'luxon',
-    target: browsersOld
+    target: browsersOld,
+    minify: true
   });
 }
 
@@ -109,7 +139,8 @@ async function globalFilled() {
     global: true,
     name: 'luxon',
     target: browsersOld,
-    src: './src/luxonFilled.js'
+    src: './src/luxonFilled.js',
+    minify: true
   });
 }
 
@@ -117,7 +148,8 @@ async function amd() {
   await buildLibrary('amd', {
     format: 'amd',
     name: 'luxon',
-    target: browsersOld
+    target: browsersOld,
+    minify: true
   });
 }
 
@@ -126,7 +158,8 @@ async function amdFilled() {
     format: 'amd',
     name: 'luxon',
     target: browsersOld,
-    src: './src/luxonFilled.js'
+    src: './src/luxonFilled.js',
+    minify: true
   });
 }
 
