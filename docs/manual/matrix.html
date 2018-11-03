@@ -70,6 +70,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/intl.html"><a href="manual/intl.html" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#making-sure-you-have-access-to-other-locales" data-ice="link">Making sure you have access to other locales</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#setting-the-locale" data-ice="link">Setting the locale</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#default-locale" data-ice="link">Default locale</a></li>
@@ -340,7 +341,12 @@
 </tr>
 <tr>
 <td>Edge</td>
-<td>&gt;= 15</td>
+<td>15-17</td>
+<td>no intl tokens</td>
+</tr>
+<tr>
+<td>Edge</td>
+<td>18</td>
 <td></td>
 </tr>
 <tr>
@@ -360,7 +366,7 @@
 </tr>
 <tr>
 <td>Node w/ICU</td>
-<td>8</td>
+<td>&gt;= 8</td>
 <td></td>
 </tr>
 <tr>
@@ -370,7 +376,7 @@
 </tr>
 <tr>
 <td>Node w/o ICU</td>
-<td>8</td>
+<td>&gt;= 8</td>
 <td>no intl tokens</td>
 </tr>
 <tr>
@@ -393,10 +399,9 @@
 <ol>
 <li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>. Most browsers and recent versions of Node support this.</li>
 <li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.</li>
-<li><p><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</p>
-<p>If the browser lacks these capabilities, Luxon tries its best:</p>
-</li>
+<li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</li>
 </ol>
+<p>If the browser lacks these capabilities, Luxon tries its best:</p>
 <table>
 <thead>
 <tr>
@@ -498,10 +503,10 @@
 <h2 id="older-platforms">Older platforms</h2><ul>
 <li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
 <li><strong>Older versions of IE</strong> probably won&apos;t work at all.</li>
-<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon  with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
+<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
 </ul>
 <h2 id="other-platforms">Other platforms</h2><p>If the platform you&apos;re targeting isn&apos;t on the list and you&apos;re unsure what caveats apply, you can check which pieces are supported:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">Info.features() //=&gt; { intl: true, intlTokens: true, zones: true }</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">Info.features(); //=&gt; { intl: true, intlTokens: true, zones: true }</code>
 </code></pre>
 <p>Specific notes on other platforms:</p>
 <ul>

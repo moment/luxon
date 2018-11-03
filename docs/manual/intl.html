@@ -70,6 +70,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/intl.html"><a href="manual/intl.html" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#making-sure-you-have-access-to-other-locales" data-ice="link">Making sure you have access to other locales</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#setting-the-locale" data-ice="link">Setting the locale</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#default-locale" data-ice="link">Default locale</a></li>
@@ -318,74 +319,76 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="intl">Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;el&apos;).toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local()
+  .setLocale(&quot;el&quot;)
+  .toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
 </code></pre>
+<h2 id="making-sure-you-have-access-to-other-locales">Making sure you have access to other locales</h2><p>Please see the <a href="./manual/install.html">install guide</a> for instructions on making sure your platform has access to the Intl APIs and the ICU data to power it. This especially important for Node, which doesn&apos;t ship with ICU data by default.</p>
 <h2 id="how-locales-work">How locales work</h2><p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument works. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string.</p>
 <p>The rest of this document will concentrate on what Luxon does when provided with locale information.</p>
 <h2 id="setting-the-locale">Setting the locale</h2><p><code>locale</code> is a property of Luxon object. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.</p>
 <p>You can generally set it at construction time:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.fromISO(&apos;2017-09-24&apos;, { locale: &apos;fr&apos; })
-dt.locale //=&gt; &apos;fr&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.fromISO(&quot;2017-09-24&quot;, { locale: &quot;fr&quot; });
+dt.locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p>
 <p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;fr&apos;).locale //=&gt; &apos;fr&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&quot;fr&quot;).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &apos;fr&apos; }).locale; //=&gt; &apos;fr&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <h2 id="default-locale">Default locale</h2><h3 id="out-of-the-box-behavior">Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is <code>null</code>. This means different things in different contexts:</p>
 <ol>
 <li><code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</li>
 <li><code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
-<li>There&apos;s an exception, though: DateTime#toFormat can take &quot;macro&quot; formats like &quot;D&quot; that produce localized strings as part of a larger string. These <em>do</em> default to the system locale because their entire purpose is to be localized.</li>
+<li>There&apos;s an exception, though: DateTime#toFormat can take &quot;macro&quot; formats like &quot;D&quot; that produce localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be localized.</li>
 </ol>
 <h3 id="setting-the-default">Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &apos;fr&apos;;
+<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
 DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p>
 <h3 id="using-the-system-locale-in-string-parsing">Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint"> Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
 </code></pre>
 <h2 id="checking-what-you-got">Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({locale: &apos;fr-co&apos;}).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
-                                                             //     numberingSystem: &apos;latn&apos;,
-                                                             //     outputCalendar: &apos;gregory&apos; }</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ locale: &quot;fr-co&quot; }).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
+//     numberingSystem: &apos;latn&apos;,
+//     outputCalendar: &apos;gregory&apos; }</code>
 </code></pre>
 <h2 id="methods-affected-by-the-locale">Methods affected by the locale</h2><h3 id="formatting">Formatting</h3><p>The most important method affected by the locale setting is <code>toLocaleString</code>, which allows you to produce internationalized, human-readable strings.</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;25 septembre 2017&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&quot;fr&quot;).toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;25 septembre 2017&apos;</code>
 </code></pre>
 <p>That&apos;s the normal way to do it: set the locale as property of the DateTime itself and let the <code>toLocaleString</code> inherit it. But you can specify the locale directly to <code>toLocaleString</code> too:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString( Object.assign({ locale: &apos;es&apos; }, DateTime.DATE_FULL)) //=&gt; &apos;25 de septiembre de 2017&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(Object.assign({ locale: &quot;es&quot; }, DateTime.DATE_FULL)); //=&gt; &apos;25 de septiembre de 2017&apos;</code>
 </code></pre>
 <p>Ad-hoc formatting also respects the locale:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&apos;fr&apos;).toFormat(&apos;MMMM dd, yyyy GG&apos;); //=&gt; &apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&quot;fr&quot;).toFormat(&quot;MMMM dd, yyyy GG&quot;); //=&gt; &apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;</code>
 </code></pre>
 <h3 id="parsing">Parsing</h3><p>You can <a href="./manual/parsing.html">parse</a> localized strings:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;, &apos;MMMM dd, yyyy GG&apos;, {locale: &apos;fr&apos;})</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&quot;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&quot;, &quot;MMMM dd, yyyy GG&quot;, { locale: &quot;fr&quot; });</code>
 </code></pre>
 <h3 id="listing">Listing</h3><p>Some of the methods in the <a href="./manual/../class/src/info.js~Info.html">Info</a> class let you list strings like months, weekdays, and eras, and they can be localized:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&apos;long&apos;, { locale: &apos;fr&apos; })    //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, ...
-Info.weekdays(&apos;long&apos;, { locale: &apos;fr&apos; })  //=&gt; [ &apos;lundi&apos;, &apos;mardi&apos;, ...
-Info.eras(&apos;long&apos;, { locale: &apos;fr&apos; })      //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, ...
+Info.weekdays(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;lundi&apos;, &apos;mardi&apos;, ...
+Info.eras(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
 </code></pre>
 <h2 id="numberingsystem">numberingSystem</h2><p>DateTimes also have a <code>numberingSystem</code> setting that lets you control what system of numerals is used in formatting. In general, you shouldn&apos;t override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setLocale(&apos;ar&apos;)
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setLocale(&quot;ar&quot;);
 
+dt.resolvedLocaleOpts(); //=&gt; { locale: &apos;ar&apos;,
+//     numberingSystem: &apos;arab&apos;,
+//     outputCalendar: &apos;gregory&apos; }
 
-dt.resolvedLocaleOpts() //=&gt; { locale: &apos;ar&apos;,
-                        //     numberingSystem: &apos;arab&apos;,
-                        //     outputCalendar: &apos;gregory&apos; }
-
-dt.toLocaleString() //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
+dt.toLocaleString(); //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
 </code></pre>
 <p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt  = DateTime.local().reconfigure({ locale: &apos;it&apos;, numberingSystem: &apos;beng&apos; })
-dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().reconfigure({ locale: &quot;it&quot;, numberingSystem: &quot;beng&quot; });
+dt.toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
 </code></pre>
 <p>Similar to <code>locale</code>, you can set the default numbering system for new instances:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultNumberingSystem = &apos;beng&apos;;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultNumberingSystem = &quot;beng&quot;;</code>
 </code></pre>
 </div>
 </div>

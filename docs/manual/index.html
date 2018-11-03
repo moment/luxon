@@ -70,6 +70,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/intl.html"><a href="manual/intl.html" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#making-sure-you-have-access-to-other-locales" data-ice="link">Making sure you have access to other locales</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#setting-the-locale" data-ice="link">Setting the locale</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#default-locale" data-ice="link">Default locale</a></li>
@@ -419,39 +420,40 @@ i.toString()    //=&gt; &apos;[2017-09-14T04:07:11.532-04:00 &#x2013; 2020-10-12
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;el&apos;).toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
-</code></pre><h2>How locales work</h2><p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument works. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string.</p><p>The rest of this document will concentrate on what Luxon does when provided with locale information.</p><h2>Setting the locale</h2><p><code>locale</code> is a property of Luxon object. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.</p><p>You can generally set it at construction time:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.fromISO(&apos;2017-09-24&apos;, { locale: &apos;fr&apos; })
-dt.locale //=&gt; &apos;fr&apos;</code>
-</code></pre><p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p><p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&apos;fr&apos;).locale //=&gt; &apos;fr&apos;</code>
-</code></pre><p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &apos;fr&apos; }).locale; //=&gt; &apos;fr&apos;</code>
+        <div data-ice="card"><h1>Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local()
+  .setLocale(&quot;el&quot;)
+  .toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
+</code></pre><h2>Making sure you have access to other locales</h2><p>Please see the <a href="./manual/install.html">install guide</a> for instructions on making sure your platform has access to the Intl APIs and the ICU data to power it. This especially important for Node, which doesn&apos;t ship with ICU data by default.</p><h2>How locales work</h2><p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument works. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string.</p><p>The rest of this document will concentrate on what Luxon does when provided with locale information.</p><h2>Setting the locale</h2><p><code>locale</code> is a property of Luxon object. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.</p><p>You can generally set it at construction time:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.fromISO(&quot;2017-09-24&quot;, { locale: &quot;fr&quot; });
+dt.locale; //=&gt; &apos;fr&apos;</code>
+</code></pre><p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p><p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&quot;fr&quot;).locale; //=&gt; &apos;fr&apos;</code>
+</code></pre><p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre><h2>Default locale</h2><h3>Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is <code>null</code>. This means different things in different contexts:</p><ol>
 <li><code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</li>
 <li><code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
-<li>There&apos;s an exception, though: DateTime#toFormat can take &quot;macro&quot; formats like &quot;D&quot; that produce localized strings as part of a larger string. These <em>do</em> default to the system locale because their entire purpose is to be localized.</li>
-</ol><h3>Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &apos;fr&apos;;
+<li>There&apos;s an exception, though: DateTime#toFormat can take &quot;macro&quot; formats like &quot;D&quot; that produce localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be localized.</li>
+</ol><h3>Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
 DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
-</code></pre><p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p><h3>Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint"> Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
-</code></pre><h2>Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({locale: &apos;fr-co&apos;}).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
-                                                             //     numberingSystem: &apos;latn&apos;,
-                                                             //     outputCalendar: &apos;gregory&apos; }</code>
-</code></pre><h2>Methods affected by the locale</h2><h3>Formatting</h3><p>The most important method affected by the locale setting is <code>toLocaleString</code>, which allows you to produce internationalized, human-readable strings.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;25 septembre 2017&apos;</code>
-</code></pre><p>That&apos;s the normal way to do it: set the locale as property of the DateTime itself and let the <code>toLocaleString</code> inherit it. But you can specify the locale directly to <code>toLocaleString</code> too:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString( Object.assign({ locale: &apos;es&apos; }, DateTime.DATE_FULL)) //=&gt; &apos;25 de septiembre de 2017&apos;</code>
-</code></pre><p>Ad-hoc formatting also respects the locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&apos;fr&apos;).toFormat(&apos;MMMM dd, yyyy GG&apos;); //=&gt; &apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;</code>
-</code></pre><h3>Parsing</h3><p>You can <a href="./manual/parsing.html">parse</a> localized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;, &apos;MMMM dd, yyyy GG&apos;, {locale: &apos;fr&apos;})</code>
-</code></pre><h3>Listing</h3><p>Some of the methods in the <a href="./manual/../class/src/info.js~Info.html">Info</a> class let you list strings like months, weekdays, and eras, and they can be localized:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&apos;long&apos;, { locale: &apos;fr&apos; })    //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, ...
-Info.weekdays(&apos;long&apos;, { locale: &apos;fr&apos; })  //=&gt; [ &apos;lundi&apos;, &apos;mardi&apos;, ...
-Info.eras(&apos;long&apos;, { locale: &apos;fr&apos; })      //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
-</code></pre><h2>numberingSystem</h2><p>DateTimes also have a <code>numberingSystem</code> setting that lets you control what system of numerals is used in formatting. In general, you shouldn&apos;t override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setLocale(&apos;ar&apos;)
+</code></pre><p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p><h3>Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
+</code></pre><h2>Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ locale: &quot;fr-co&quot; }).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
+//     numberingSystem: &apos;latn&apos;,
+//     outputCalendar: &apos;gregory&apos; }</code>
+</code></pre><h2>Methods affected by the locale</h2><h3>Formatting</h3><p>The most important method affected by the locale setting is <code>toLocaleString</code>, which allows you to produce internationalized, human-readable strings.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&quot;fr&quot;).toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;25 septembre 2017&apos;</code>
+</code></pre><p>That&apos;s the normal way to do it: set the locale as property of the DateTime itself and let the <code>toLocaleString</code> inherit it. But you can specify the locale directly to <code>toLocaleString</code> too:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(Object.assign({ locale: &quot;es&quot; }, DateTime.DATE_FULL)); //=&gt; &apos;25 de septiembre de 2017&apos;</code>
+</code></pre><p>Ad-hoc formatting also respects the locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.setLocale(&quot;fr&quot;).toFormat(&quot;MMMM dd, yyyy GG&quot;); //=&gt; &apos;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&apos;</code>
+</code></pre><h3>Parsing</h3><p>You can <a href="./manual/parsing.html">parse</a> localized strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&quot;septembre 25, 2017 apr&#xE8;s J&#xE9;sus-Christ&quot;, &quot;MMMM dd, yyyy GG&quot;, { locale: &quot;fr&quot; });</code>
+</code></pre><h3>Listing</h3><p>Some of the methods in the <a href="./manual/../class/src/info.js~Info.html">Info</a> class let you list strings like months, weekdays, and eras, and they can be localized:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, ...
+Info.weekdays(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;lundi&apos;, &apos;mardi&apos;, ...
+Info.eras(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
+</code></pre><h2>numberingSystem</h2><p>DateTimes also have a <code>numberingSystem</code> setting that lets you control what system of numerals is used in formatting. In general, you shouldn&apos;t override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setLocale(&quot;ar&quot;);
 
+dt.resolvedLocaleOpts(); //=&gt; { locale: &apos;ar&apos;,
+//     numberingSystem: &apos;arab&apos;,
+//     outputCalendar: &apos;gregory&apos; }
 
-dt.resolvedLocaleOpts() //=&gt; { locale: &apos;ar&apos;,
-                        //     numberingSystem: &apos;arab&apos;,
-                        //     outputCalendar: &apos;gregory&apos; }
-
-dt.toLocaleString() //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
-</code></pre><p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt  = DateTime.local().reconfigure({ locale: &apos;it&apos;, numberingSystem: &apos;beng&apos; })
-dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
-</code></pre><p>Similar to <code>locale</code>, you can set the default numbering system for new instances:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultNumberingSystem = &apos;beng&apos;;</code>
+dt.toLocaleString(); //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
+</code></pre><p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().reconfigure({ locale: &quot;it&quot;, numberingSystem: &quot;beng&quot; });
+dt.toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
+</code></pre><p>Similar to <code>locale</code>, you can set the default numbering system for new instances:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultNumberingSystem = &quot;beng&quot;;</code>
 </code></pre></div>
         <a data-ice="link" href="manual/intl.html"></a>
       </div>
@@ -469,7 +471,7 @@ dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x
 <li>A <strong>fixed-offset time zone</strong> is any time zone that never changes offsets, such as UTC. Luxon supports fixed-offset zones directly; they&apos;re specified like UTC+7, which you can interpret as &quot;always with an offset of +7&quot;.</li>
 <li>A <strong>named offset</strong> is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America&apos;s EST roughly implies America/New_York) and the current offset (EST means -4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it&apos;s always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US&apos;s EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.</li>
 </ol><p>Some subtleties:</p><ol>
-<li>Multiple zones can have the same offset (think about the US&apos;s zones and their Canadian equivalents), though they might not have the same offset all the time, depending on when their DSTs are. Thus zones and offsets have a  many-to-many relationship.</li>
+<li>Multiple zones can have the same offset (think about the US&apos;s zones and their Canadian equivalents), though they might not have the same offset all the time, depending on when their DSTs are. Thus zones and offsets have a many-to-many relationship.</li>
 <li>Just because a time zone doesn&apos;t have a DST now doesn&apos;t mean it&apos;s fixed. Perhaps it had one in the past. Regardless, Luxon does not have first-class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.</li>
 </ol><p>If all this seems too terse, check out these articles. The terminology in them is subtly different but the concepts are the same:</p><ul>
 <li><a href="https://spin.atomicobject.com/2016/07/06/time-zones-offsets/">Time Zones Aren&#x2019;t Offsets &#x2013; Offsets Aren&#x2019;t Time Zones</a></li>
@@ -513,98 +515,108 @@ dt.toLocaleString(DateTime.DATE_FULL) //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x
 </tr>
 </tbody>
 </table><h3>IANA support</h3><p>IANA-specified zones are string identifiers like &quot;America/New_York&quot; or &quot;Asia/Tokyo&quot;. Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can&apos;t fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features().zones; //=&gt; true</code>
-</code></pre><p>If you&apos;re unsure if all your target environments (browser versions and Node versions) support this, check out the <a href="./manual/matrix.html">Support Matrix</a>. You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also <a href="./manual/matrix.html#zones">polyfill</a> your environment.</p><p>If you specify a zone and your environment doesn&apos;t support that zone, you&apos;ll get an <a href="./manual/validity.html">invalid</a> DateTime. That could be because the environment doesn&apos;t support zones at all, because for whatever reason it doesn&apos;t support that <em>particular</em> zone, or because the zone is just bogus. Like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">bogus = DateTime.local().setZone(&apos;America/Bogus&apos;)
+</code></pre><p>If you&apos;re unsure if all your target environments (browser versions and Node versions) support this, check out the <a href="./manual/matrix.html">Support Matrix</a>. You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also <a href="./manual/matrix.html#zones">polyfill</a> your environment.</p><p>If you specify a zone and your environment doesn&apos;t support that zone, you&apos;ll get an <a href="./manual/validity.html">invalid</a> DateTime. That could be because the environment doesn&apos;t support zones at all, because for whatever reason it doesn&apos;t support that <em>particular</em> zone, or because the zone is just bogus. Like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">bogus = DateTime.local().setZone(&quot;America/Bogus&quot;);
 
-bogus.isValid;         //=&gt; false
-bogus.invalidReason;   //=&gt; &apos;unsupported zone&apos;</code>
+bogus.isValid; //=&gt; false
+bogus.invalidReason; //=&gt; &apos;unsupported zone&apos;</code>
 </code></pre><h2>Creating DateTimes</h2><h3>Local by default</h3><p>By default, DateTime instances are created in the system&apos;s local zone and parsed strings are interpreted as specifying times in the system&apos;s local zone. For example, my computer is configured to use <code>America/New_York</code>, which has an offset of -4 in May:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local(2017, 05, 15, 09, 10, 23);
 
-local.zoneName;                //=&gt; &apos;America/New_York&apos;
-local.toString();              //=&gt; &apos;2017-05-15T09:10:23.000-04:00&apos;
+local.zoneName; //=&gt; &apos;America/New_York&apos;
+local.toString(); //=&gt; &apos;2017-05-15T09:10:23.000-04:00&apos;
 
 var iso = DateTime.fromISO(&quot;2017-05-15T09:10:23&quot;);
 
-iso.zoneName;                  //=&gt; &apos;America/New_York&apos;
-iso.toString();                //=&gt; &apos;2017-05-15T09:10:23.000-04:00&apos;</code>
-</code></pre><h3>Creating DateTimes in a zone</h3><p>Many of Luxon&apos;s factory methods allow you to tell it specifically what zone to create the DateTime in:</p><pre><code class="lang-js"><code class="source-code prettyprint">var overrideZone = DateTime.fromISO(&quot;2017-05-15T09:10:23&quot;, { zone: &apos;Europe/Paris&apos; });
+iso.zoneName; //=&gt; &apos;America/New_York&apos;
+iso.toString(); //=&gt; &apos;2017-05-15T09:10:23.000-04:00&apos;</code>
+</code></pre><h3>Creating DateTimes in a zone</h3><p>Many of Luxon&apos;s factory methods allow you to tell it specifically what zone to create the DateTime in:</p><pre><code class="lang-js"><code class="source-code prettyprint">var overrideZone = DateTime.fromISO(&quot;2017-05-15T09:10:23&quot;, { zone: &quot;Europe/Paris&quot; });
 
-overrideZone.zoneName;         //=&gt; &apos;Europe/Paris&apos;
-overrideZone.toString();       //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
+overrideZone.zoneName; //=&gt; &apos;Europe/Paris&apos;
+overrideZone.toString(); //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
 </code></pre><p>Note two things:</p><ol>
 <li>The date and time specified in the string was interpreted as a Parisian local time (i.e. it&apos;s the time that corresponds to what would be called 9:10 <em>there</em>).</li>
 <li>The resulting DateTime object is in Europe/Paris.</li>
 </ol><p>Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it&apos;s more convenient for the same option to govern both.</p><p>In addition, one static method, <code>utc()</code>, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:</p><pre><code class="lang-js"><code class="source-code prettyprint">var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
 
-utc.zoneName;                  //=&gt; &apos;UTC&apos;
-utc.toString();                //=&gt; &apos;2017-05-15T09:10:23.000Z&apos;</code>
+utc.zoneName; //=&gt; &apos;UTC&apos;
+utc.toString(); //=&gt; &apos;2017-05-15T09:10:23.000Z&apos;</code>
 </code></pre><h3>Strings that specify an offset</h3><p>Some input strings may specify an offset as part of the string itself. In these case, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system&apos;s local zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var specifyOffset = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;);
 
-specifyOffset.zoneName;         //=&gt; &apos;America/New_York&apos;
-specifyOffset.toString();       //=&gt; &apos;2017-05-15T14:10:23.000-04:00&apos;
+specifyOffset.zoneName; //=&gt; &apos;America/New_York&apos;
+specifyOffset.toString(); //=&gt; &apos;2017-05-15T14:10:23.000-04:00&apos;
 
-var specifyZone = DateTime.fromFormat(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;);
+var specifyZone = DateTime.fromFormat(
+  &quot;2017-05-15T09:10:23 Europe/Paris&quot;,
+  &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;
+);
 
-specifyZone.zoneName           //=&gt; &apos;America/New_York&apos;
-specifyZone.toString()         //=&gt; &apos;2017-05-15T03:10:23.000-04:00&apos;</code>
-</code></pre><p>...unless a zone is specified as an option (see previous section), in which case the DateTime gets converted to <em>that</em> zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var specifyOffsetAndOverrideZone = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;, { zone: &apos;Europe/Paris&apos; });
+specifyZone.zoneName; //=&gt; &apos;America/New_York&apos;
+specifyZone.toString(); //=&gt; &apos;2017-05-15T03:10:23.000-04:00&apos;</code>
+</code></pre><p>...unless a zone is specified as an option (see previous section), in which case the DateTime gets converted to <em>that</em> zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var specifyOffsetAndOverrideZone = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;, {
+  zone: &quot;Europe/Paris&quot;
+});
 
-specifyOffsetAndOverrideZone.zoneName;                 //=&gt; &apos;Europe/Paris&apos;
-specifyOffsetAndOverrideZone.toString();               //=&gt; &apos;2017-05-15T20:10:23.000+02:00&apos;</code>
+specifyOffsetAndOverrideZone.zoneName; //=&gt; &apos;Europe/Paris&apos;
+specifyOffsetAndOverrideZone.toString(); //=&gt; &apos;2017-05-15T20:10:23.000+02:00&apos;</code>
 </code></pre><h3>setZone</h3><p>Finally, some parsing functions allow you to &quot;keep&quot; the zone in the string as the DateTime&apos;s zone. Note that if only an offset is provided by the string, the zone will be a fixed-offset one, since Luxon doesn&apos;t know which zone is meant, even if you do.</p><pre><code class="lang-js"><code class="source-code prettyprint">var keepOffset = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;, { setZone: true });
 
-keepOffset.zoneName;           //=&gt; &apos;UTC-9&apos;
-keepOffset.toString();         //=&gt; &apos;2017-05-15T09:10:23.000-09:00&apos;
+keepOffset.zoneName; //=&gt; &apos;UTC-9&apos;
+keepOffset.toString(); //=&gt; &apos;2017-05-15T09:10:23.000-09:00&apos;
 
-var keepZone = DateTime.fromFormat(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;, { setZone: true });
+var keepZone = DateTime.fromFormat(&quot;2017-05-15T09:10:23 Europe/Paris&quot;, &quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss z&quot;, {
+  setZone: true
+});
 
-keepZone.zoneName;             //=&gt; &apos;Europe/Paris&apos;
-keepZone.toString()            //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
+keepZone.zoneName; //=&gt; &apos;Europe/Paris&apos;
+keepZone.toString(); //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code>
 </code></pre><h2>Changing zones</h2><h3>setZone</h3><p>Luxon objects are immutable, so when we say &quot;changing zones&quot; we really mean &quot;creating a new instance with a different zone&quot;. Changing zone generally means &quot;change the zone in which this DateTime is expressed (and according to which rules it is manipulated), but don&apos;t change the underlying timestamp.&quot; For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local();
-var rezoned = local.setZone(&apos;America/Los_Angeles&apos;);
+var rezoned = local.setZone(&quot;America/Los_Angeles&quot;);
 
 // different local times with different offsets
-local.toString()     //=&gt; &apos;2017-09-13T18:30:51.141-04:00&apos;
-rezoned.toString()   //=&gt; &apos;2017-09-13T15:30:51.141-07:00&apos;
-
+local.toString(); //=&gt; &apos;2017-09-13T18:30:51.141-04:00&apos;
+rezoned.toString(); //=&gt; &apos;2017-09-13T15:30:51.141-07:00&apos;
 
 // but actually the same time
 local.valueOf() === rezoned.valueOf(); //=&gt; true</code>
 </code></pre><h3>keepLocalTime</h3><p>Generally, it&apos;s best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that&apos;s not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var local = DateTime.local();
-var rezoned = local.setZone(&apos;America/Los_Angeles&apos;, { keepLocalTime: true });
+var rezoned = local.setZone(&quot;America/Los_Angeles&quot;, { keepLocalTime: true });
 
-local.toString();      //=&gt; &apos;2017-09-13T18:36:23.187-04:00&apos;
-rezoned.toString();    //=&gt; &apos;2017-09-13T18:36:23.187-07:00&apos;
+local.toString(); //=&gt; &apos;2017-09-13T18:36:23.187-04:00&apos;
+rezoned.toString(); //=&gt; &apos;2017-09-13T18:36:23.187-07:00&apos;
 
-local.valueOf() === rezoned.valueOf()  //=&gt; false</code>
+local.valueOf() === rezoned.valueOf(); //=&gt; false</code>
 </code></pre><p>If you find that confusing, I recommend just not using it. On the other hand, if you find yourself using this all the time, you are probably doing something wrong.</p><h2>Accessors</h2><p>Luxon DateTimes have a few different accessors that let you find out about the zone and offset:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
 
-dt.zoneName          //=&gt; &apos;America/New_York&apos;
-dt.offset            //=&gt; -240
-dt.offsetNameShort   //=&gt; &apos;EDT&apos;
-dt.offsetNameLong    //=&gt; &apos;Eastern Daylight Time&apos;
-dt.isOffsetFixed     //=&gt; false
-dt.isInDST           //=&gt; true</code>
-</code></pre><p>Those are all documented in the <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime API docs</a>.</p><p>DateTime also has a <code>zone</code> property that holds a Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.zone   //=&gt; LocalZone {}</code>
+dt.zoneName; //=&gt; &apos;America/New_York&apos;
+dt.offset; //=&gt; -240
+dt.offsetNameShort; //=&gt; &apos;EDT&apos;
+dt.offsetNameLong; //=&gt; &apos;Eastern Daylight Time&apos;
+dt.isOffsetFixed; //=&gt; false
+dt.isInDST; //=&gt; true</code>
+</code></pre><p>Those are all documented in the <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime API docs</a>.</p><p>DateTime also has a <code>zone</code> property that holds a Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.zone; //=&gt; LocalZone {}</code>
 </code></pre><h2>DST weirdness</h2><p>Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it&apos;s not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts&apos; timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This all a tremendous waste of everyone&apos;s energy and, er, time, but it is how the world works and a date and a time library has to deal with it.</p><p>Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.</p><h3>Invalid times</h3><p>Some local times simply don&apos;t exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, <code>America/New_York</code>, on March 12, 2017 the millisecond after 1:59:59.999 is 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don&apos;t exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.</p><p>If you create such a DateTime from scratch, the missing time will be advanced by an hour:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 12, 2, 30).toString(); //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
-</code></pre><p>You can also do date math that lands you in the middle of the shift. These also push forward:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 11, 2, 30).plus({days: 1}).toString()         //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;
-DateTime.local(2017, 3, 13, 2, 30).minus({days: 1}).toString()        //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
-</code></pre><h3>Ambiguous times</h3><p>Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, <code>America/New_York</code>, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day, one hour before before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It&apos;s an important question, because they correspond to different moments in time.</p><p>However, Luxon&apos;s behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 11, 5, 1, 30).offset / 60                   //=&gt; -4
-DateTime.local(2017, 11, 4, 1, 30).plus({days: 1}).offset / 60   //=&gt; -4
-DateTime.local(2017, 11, 6, 1, 30).minus({days: 1}).offset / 60  //=&gt; -5</code>
+</code></pre><p>You can also do date math that lands you in the middle of the shift. These also push forward:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 3, 11, 2, 30)
+  .plus({ days: 1 })
+  .toString(); //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;
+DateTime.local(2017, 3, 13, 2, 30)
+  .minus({ days: 1 })
+  .toString(); //=&gt; &apos;2017-03-12T03:30:00.000-04:00&apos;</code>
+</code></pre><h3>Ambiguous times</h3><p>Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, <code>America/New_York</code>, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day, one hour before before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It&apos;s an important question, because they correspond to different moments in time.</p><p>However, Luxon&apos;s behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 11, 5, 1, 30).offset / 60; //=&gt; -4
+DateTime.local(2017, 11, 4, 1, 30).plus({ days: 1 }).offset / 60; //=&gt; -4
+DateTime.local(2017, 11, 6, 1, 30).minus({ days: 1 }).offset / 60; //=&gt; -5</code>
 </code></pre><p>In other words, sometimes it picks one and sometimes the other. Luxon doesn&apos;t guarantee the specific behavior above. That&apos;s just what it happens to do.</p><p>If you&apos;re curious, this lack of definition is because Luxon doesn&apos;t actually know that any particular DateTime is an ambiguous time. It doesn&apos;t know the time zones rules at all. It just knows the local time does not contradict the offset and leaves it at that. To find out the time is ambiguous and define exact rules for how to resolve it, Luxon would have to test nearby times to see if it can find duplicate local time, and it would have to do that on every creation of a DateTime, regardless of whether it was anywhere near a real DST shift. Because that&apos;s onerous, Luxon doesn&apos;t bother.</p><h3>Math across DSTs</h3><p>There&apos;s a whole <a href="./manual/math.html">section</a> about date and time math, but it&apos;s worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher-order, variable-length units like days, weeks, months, and years. When working with lower-order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.</p><p>An easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is <code>America/New_York</code>, which had a Spring Forward DST in the early hours of March 12.</p><pre><code class="lang-js"><code class="source-code prettyprint">var start = DateTime.local(2017, 3, 11, 10);
-start.hour                          //=&gt; 10, just for comparison
-start.plus({days: 1}).hour          //=&gt; 10, stayed the same
-start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code>
-</code></pre><h2>Changing the default zone</h2><p>By default, Luxon creates DateTimes in the system&apos;s local zone. However, you can override this behavior globally:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultZoneName = &apos;Asia/Tokyo&apos;
-DateTime.local().zoneName                 //=&gt; &apos;Asia/Tokyo&apos;
+start.hour; //=&gt; 10, just for comparison
+start.plus({ days: 1 }).hour; //=&gt; 10, stayed the same
+start.plus({ hours: 24 }).hour; //=&gt; 11, DST pushed forward an hour</code>
+</code></pre><h2>Changing the default zone</h2><p>By default, Luxon creates DateTimes in the system&apos;s local zone. However, you can override this behavior globally:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultZoneName = &quot;Asia/Tokyo&quot;;
+DateTime.local().zoneName; //=&gt; &apos;Asia/Tokyo&apos;
 
-Settings.defaultZoneName = &apos;utc&apos;
-DateTime.local().zoneName                 //=&gt; &apos;UTC&apos;
+Settings.defaultZoneName = &quot;utc&quot;;
+DateTime.local().zoneName; //=&gt; &apos;UTC&apos;
 
 // you can reset by setting to &apos;local&apos;
 
-Settings.defaultZoneName = &apos;local&apos;
-DateTime.local().zoneName                 //=&gt; &apos;America/New_York&apos;</code>
+Settings.defaultZoneName = &quot;local&quot;;
+DateTime.local().zoneName; //=&gt; &apos;America/New_York&apos;</code>
 </code></pre></div>
         <a data-ice="link" href="manual/zones.html"></a>
       </div>
@@ -1794,7 +1806,12 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 </tr>
 <tr>
 <td>Edge</td>
-<td>&gt;= 15</td>
+<td>15-17</td>
+<td>no intl tokens</td>
+</tr>
+<tr>
+<td>Edge</td>
+<td>18</td>
 <td></td>
 </tr>
 <tr>
@@ -1814,7 +1831,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 </tr>
 <tr>
 <td>Node w/ICU</td>
-<td>8</td>
+<td>&gt;= 8</td>
 <td></td>
 </tr>
 <tr>
@@ -1824,7 +1841,7 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 </tr>
 <tr>
 <td>Node w/o ICU</td>
-<td>8</td>
+<td>&gt;= 8</td>
 <td>no intl tokens</td>
 </tr>
 <tr>
@@ -1840,10 +1857,8 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 </code></pre><p>This will also add basic intl and intl token support. So the only caveat remaining is the lack of zone support.</p><h2>Platform caveats</h2><p><strong>If the platforms you&apos;re targeting don&apos;t have caveats listed above, ignore this section</strong>.</p><p>In the support table above, you can see that some platforms have caveats. They affect a subset of Luxon&apos;s features that depend on specific APIs that some older browsers don&apos;t support.</p><ol>
 <li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>. Most browsers and recent versions of Node support this.</li>
 <li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.</li>
-<li><p><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</p>
-<p>If the browser lacks these capabilities, Luxon tries its best:</p>
-</li>
-</ol><table>
+<li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</li>
+</ol><p>If the browser lacks these capabilities, Luxon tries its best:</p><table>
 <thead>
 <tr>
 <th>Feature</th>
@@ -1936,8 +1951,8 @@ DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime:
 </code></pre><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>. <strong>Unfortunately, this currently breaks Chrome</strong>. See issue <a href="https://github.com/moment/luxon/issues/190">$#190</a> for more.</p><h2>Older platforms</h2><ul>
 <li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
 <li><strong>Older versions of IE</strong> probably won&apos;t work at all.</li>
-<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon  with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
-</ul><h2>Other platforms</h2><p>If the platform you&apos;re targeting isn&apos;t on the list and you&apos;re unsure what caveats apply, you can check which pieces are supported:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features() //=&gt; { intl: true, intlTokens: true, zones: true }</code>
+<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
+</ul><h2>Other platforms</h2><p>If the platform you&apos;re targeting isn&apos;t on the list and you&apos;re unsure what caveats apply, you can check which pieces are supported:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features(); //=&gt; { intl: true, intlTokens: true, zones: true }</code>
 </code></pre><p>Specific notes on other platforms:</p><ul>
 <li><strong>React Native on (specifically) Android</strong> doesn&apos;t come with Intl support, so all three caveats apply to it. Use <a href="https://github.com/SoftwareMansion/jsc-android-buildscripts">jsc-android-buildscripts</a> to fix it.</li>
 </ul></div>
