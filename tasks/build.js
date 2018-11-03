@@ -1,12 +1,16 @@
 /* eslint import/no-extraneous-dependencies: off */
 /* eslint no-console: off */
-const rollup = require('rollup'),
-  rollupBabel = require('rollup-plugin-babel'),
-  rollupMinify = require('rollup-plugin-babel-minify'),
-  rollupNode = require('rollup-plugin-node-resolve'),
-  rollupCommonJS = require('rollup-plugin-commonjs'),
+const rollup = require("rollup"),
+  rollupBabel = require("rollup-plugin-babel"),
+  rollupMinify = require("rollup-plugin-babel-minify"),
+  rollupNode = require("rollup-plugin-node-resolve"),
+  rollupCommonJS = require("rollup-plugin-commonjs"),
   UglifyJS = require("uglify-js"),
   fs = require("fs");
+
+// For some reason, the minifier is currently producing total giberrish, at least for the global build.
+// I've disabled it for now, and will simply uglify externally.
+const TRUST_MINIFY = false;
 
 function rollupInputOpts(opts) {
   const presetOpts = {
@@ -19,10 +23,10 @@ function rollupInputOpts(opts) {
   }
 
   const inputOpts = {
-    input: opts.src || './src/luxon.js',
+    input: opts.src || "./src/luxon.js",
     onwarn: warning => {
       // I don't care about these for now
-      if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+      if (warning.code !== "CIRCULAR_DEPENDENCY") {
         console.warn(`(!) ${warning.message}`);
       }
     },
@@ -30,25 +34,21 @@ function rollupInputOpts(opts) {
     plugins: [
       rollupNode(),
       rollupCommonJS({
-        include: 'node_modules/**'
+        include: "node_modules/**"
       })
     ]
   };
 
-  if (opts.compile || typeof opts.compile === 'undefined') {
+  if (opts.compile || typeof opts.compile === "undefined") {
     inputOpts.plugins.push(
       rollupBabel({
         babelrc: false,
-        presets: [['@babel/preset-env', presetOpts]]
+        presets: [["@babel/preset-env", presetOpts]]
       })
     );
   }
 
-  /*
-  For some reason, the minifier is currently producing total giberrish, at least for the global build.
-  I've disabled it for now, and will simply uglify externally.
-
-  if (opts.minify) {
+  if (opts.minify && TRUST_MINIFY) {
     inputOpts.plugins.push(
       rollupMinify({
         comments: false,
@@ -58,14 +58,13 @@ function rollupInputOpts(opts) {
       })
     );
   }
-  */
 
   return inputOpts;
 }
 
 function rollupOutputOpts(dest, opts) {
   const outputOpts = {
-    file: `build/${dest}/${opts.filename || 'luxon.js'}`,
+    file: `build/${dest}/${opts.filename || "luxon.js"}`,
     format: opts.format,
     sourcemap: true
   };
@@ -85,27 +84,29 @@ async function babelAndRollup(dest, opts) {
 }
 
 async function buildLibrary(dest, opts) {
-  console.log('Building', dest);
+  console.log("Building", dest);
   const promises = [babelAndRollup(dest, opts)];
-  /*
-  if (opts.minify) {
+
+  if (opts.minify && TRUST_MINIFY) {
     promises.push(
-       babelAndRollup(
-       dest,
-       Object.assign({}, opts, {
-         minify: true,
-         filename: 'luxon.min.js'
-       })));
+      babelAndRollup(
+        dest,
+        Object.assign({}, opts, {
+          minify: true,
+          filename: "luxon.min.js"
+        })
+      )
+    );
   }
-  */
 
   await Promise.all(promises);
-  if (opts.minify) {
+
+  if (opts.minify && !TRUST_MINIFY) {
     const code = fs.readFileSync(`build/${dest}/luxon.js`, "utf8"),
       ugly = UglifyJS.minify(code, {
         toplevel: !opts.global,
         output: {
-          comments: false,
+          comments: false
         },
         sourceMap: {
           filename: `build/${dest}/luxon.js`
@@ -118,70 +119,70 @@ async function buildLibrary(dest, opts) {
       fs.writeFileSync(`build/${dest}/luxon.min.js.map`, ugly.map);
     }
   }
-  console.log('Built', dest);
+  console.log("Built", dest);
 }
 
-const browsersOld = 'last 2 major versions';
+const browsersOld = "last 2 major versions";
 
 async function global() {
-  await buildLibrary('global', {
-    format: 'iife',
+  await buildLibrary("global", {
+    format: "iife",
     global: true,
-    name: 'luxon',
+    name: "luxon",
     target: browsersOld,
     minify: true
   });
 }
 
 async function globalFilled() {
-  await buildLibrary('global-filled', {
-    format: 'iife',
+  await buildLibrary("global-filled", {
+    format: "iife",
     global: true,
-    name: 'luxon',
+    name: "luxon",
     target: browsersOld,
-    src: './src/luxonFilled.js',
+    src: "./src/luxonFilled.js",
     minify: true
   });
 }
 
 async function amd() {
-  await buildLibrary('amd', {
-    format: 'amd',
-    name: 'luxon',
+  await buildLibrary("amd", {
+    format: "amd",
+    name: "luxon",
     target: browsersOld,
     minify: true
   });
 }
 
 async function amdFilled() {
-  await buildLibrary('amd-filled', {
-    format: 'amd',
-    name: 'luxon',
+  await buildLibrary("amd-filled", {
+    format: "amd",
+    name: "luxon",
     target: browsersOld,
-    src: './src/luxonFilled.js',
+    src: "./src/luxonFilled.js",
     minify: true
   });
 }
 
 async function node() {
-  await buildLibrary('node', { format: 'cjs', target: 'node  6' });
+  await buildLibrary("node", { format: "cjs", target: "node  6" });
 }
 
 async function cjsBrowser() {
-  await buildLibrary('cjs-browser', { format: 'cjs', target: browsersOld });
+  await buildLibrary("cjs-browser", { format: "cjs", target: browsersOld });
 }
 
 async function es6() {
-  await buildLibrary('es6', {
-    format: 'es',
+  await buildLibrary("es6", {
+    format: "es",
     compile: false
   });
 }
 
 async function globalEs6() {
-  await buildLibrary('global-es6', {
-    format: 'iife',
-    name: 'luxon',
+  await buildLibrary("global-es6", {
+    format: "iife",
+    name: "luxon",
     compile: false
   });
 }
