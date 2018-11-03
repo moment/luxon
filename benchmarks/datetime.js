@@ -37,6 +37,9 @@ suite
   .add("DateTime#toISO", () => {
     dt.toISO();
   })
+  .add("DateTime#toFormatString", () => {
+    dt.toLocaleString();
+  })
   .on("cycle", event => {
     console.log(String(event.target));
   })
