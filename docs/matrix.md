@@ -6,23 +6,22 @@ This page covers what platforms are supported by Luxon and what caveats apply to
 
 Luxon officially supports the last two versions of the major browsers, with some caveats.
 
-
 | Browser      | Versions | Caveats                                                           |
-|--------------|----------|-------------------------------------------------------------------|
-| Chrome       |    >= 61 |                                                                   |
-| FF           |    >= 56 |                                                                   |
-| Edge         |    >= 15 |                                                                   |
-| IE           |    >= 10 | needs platform polyfills, no basic intl, no intl tokens, no zones |
-| Safari       |       11 |                                                                   |
-|              |       10 | no intl tokens, no zones                                          |
-| Node w/ICU   |        8 |                                                                   |
-|              |        6 | no intl tokens, no zones                                          |
-| Node w/o ICU |        8 | no intl tokens                                                    |
-|              |        6 | no intl tokens, no zones                                          |
+| ------------ | -------- | ----------------------------------------------------------------- |
+| Chrome       | >= 61    |                                                                   |
+| FF           | >= 56    |                                                                   |
+| Edge         | 15-17    | no intl tokens                                                    |
+| Edge         | 18       |                                                                   |
+| IE           | >= 10    | needs platform polyfills, no basic intl, no intl tokens, no zones |
+| Safari       | 11       |                                                                   |
+|              | 10       | no intl tokens, no zones                                          |
+| Node w/ICU   | >= 8     |                                                                   |
+|              | 6        | no intl tokens, no zones                                          |
+| Node w/o ICU | >= 8     | no intl tokens                                                    |
+|              | 6        | no intl tokens, no zones                                          |
 
-
- * Those caveats are explained in the next sections.
- * "w/ICU" refers to providing Node with ICU data. See [here](https://github.com/nodejs/node/wiki/Intl) for more info.
+- Those caveats are explained in the next sections.
+- "w/ICU" refers to providing Node with ICU data. See [here](https://github.com/nodejs/node/wiki/Intl) for more info.
 
 ## Internet Explorer
 
@@ -40,14 +39,14 @@ This will also add basic intl and intl token support. So the only caveat remaini
 
 In the support table above, you can see that some platforms have caveats. They affect a subset of Luxon's features that depend on specific APIs that some older browsers don't support.
 
- 1. **Basic internationalization**. Luxon doesn't have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString). Most browsers and recent versions of Node support this.
- 1. **Internationalized tokens**. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl's [formatToParts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts) method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.
- 1. **Zones**. Luxon's support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.
- 
- If the browser lacks these capabilities, Luxon tries its best:
+1.  **Basic internationalization**. Luxon doesn't have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString). Most browsers and recent versions of Node support this.
+1.  **Internationalized tokens**. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl's [formatToParts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts) method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.
+1.  **Zones**. Luxon's support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.
+
+If the browser lacks these capabilities, Luxon tries its best:
 
 | Feature                              | Full support | No Intl at all                              | Intl but no formatToParts                          | No IANA zone support |
-|--------------------------------------|--------------|---------------------------------------------|----------------------------------------------------|----------------------|
+| ------------------------------------ | ------------ | ------------------------------------------- | -------------------------------------------------- | -------------------- |
 | Most things                          | OK           | OK                                          | OK                                                 | OK                   |
 | Using explicit time zones            | OK           | Invalid DateTime                            | OK                                                 | Invalid DateTime     |
 | `DateTime#toLocaleString`            | OK           | Uses English with caveats†                  | OK                                                 | OK                   |
@@ -84,18 +83,18 @@ If you have an Intl API (either natively or through the Intl polyfill above) but
 
 ## Older platforms
 
- * **Older versions of both Chrome and Firefox** will most likely work. It's just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting `formatToParts` in 51 and time zones in 52). I haven't broken that out because it's complicated, Luxon doesn't officially support them, and no one runs them anyway.
- * **Older versions of IE** probably won't work at all.
- * **Older versions of Node** probably won't work without recompiling Luxon  with a different Node target. In which case they'll work with some of the caveats.
+- **Older versions of both Chrome and Firefox** will most likely work. It's just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting `formatToParts` in 51 and time zones in 52). I haven't broken that out because it's complicated, Luxon doesn't officially support them, and no one runs them anyway.
+- **Older versions of IE** probably won't work at all.
+- **Older versions of Node** probably won't work without recompiling Luxon with a different Node target. In which case they'll work with some of the caveats.
 
 ## Other platforms
 
 If the platform you're targeting isn't on the list and you're unsure what caveats apply, you can check which pieces are supported:
 
 ```js
-Info.features() //=> { intl: true, intlTokens: true, zones: true }
+Info.features(); //=> { intl: true, intlTokens: true, zones: true }
 ```
 
 Specific notes on other platforms:
 
- * **React Native on (specifically) Android** doesn't come with Intl support, so all three caveats apply to it. Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
+- **React Native on (specifically) Android** doesn't come with Intl support, so all three caveats apply to it. Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
