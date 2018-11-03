@@ -1155,7 +1155,7 @@ define(['exports'], function (exports) { 'use strict';
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true); // fix for some old engines
 
-	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  } // fix Array#{values, @@iterator}.name in V8 / FF
 
@@ -1169,7 +1169,7 @@ define(['exports'], function (exports) { 'use strict';
 	  } // Define iterator
 
 
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
 	    _hide(proto, ITERATOR, $default);
 	  } // Plug for library
 
@@ -3846,6 +3846,42 @@ define(['exports'], function (exports) { 'use strict';
 	  return Formatter;
 	}();
 
+	var intlDTCache = {};
+
+	function getCachedDTF(locString, opts) {
+	  if (opts === void 0) {
+	    opts = {};
+	  }
+
+	  var key = JSON.stringify([locString, opts]);
+	  var dtf = intlDTCache[key];
+
+	  if (!dtf) {
+	    dtf = new Intl.DateTimeFormat(locString, opts);
+	    intlDTCache[key] = dtf;
+	  }
+
+	  return dtf;
+	}
+
+	var intlNumCache = {};
+
+	function getCachendINF(locString, opts) {
+	  if (opts === void 0) {
+	    opts = {};
+	  }
+
+	  var key = JSON.stringify([locString, opts]);
+	  var inf = intlNumCache[key];
+
+	  if (!inf) {
+	    inf = new Intl.NumberFormat(locString, opts);
+	    intlNumCache[key] = inf;
+	  }
+
+	  return inf;
+	}
+
 	var sysLocaleCache = null;
 
 	function systemLocale() {
@@ -3878,9 +3914,9 @@ define(['exports'], function (exports) { 'use strict';
 	    var smaller = localeStr.substring(0, uIndex);
 
 	    try {
-	      options = Intl.DateTimeFormat(localeStr).resolvedOptions();
+	      options = getCachedDTF(localeStr).resolvedOptions();
 	    } catch (e) {
-	      options = Intl.DateTimeFormat(smaller).resolvedOptions();
+	      options = getCachedDTF(smaller).resolvedOptions();
 	    }
 
 	    var _options = options,
@@ -3996,14 +4032,14 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 
 	    this.floor = opts.floor;
-	    this.intl = new Intl.NumberFormat(intl, intlOpts);
+	    this.inf = getCachendINF(intl, intlOpts);
 	  }
 
 	  var _proto2 = IntlNumberFormatter.prototype;
 
 	  _proto2.format = function format(i) {
 	    var fixed = this.floor ? Math.floor(i) : i;
-	    return this.intl.format(fixed);
+	    return this.inf.format(fixed);
 	  };
 
 	  return IntlNumberFormatter;
@@ -4046,13 +4082,13 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 
 	    if (this.hasIntl) {
-	      var realIntlOpts = Object.assign({}, this.opts);
+	      var intlOpts = Object.assign({}, this.opts);
 
 	      if (z) {
-	        realIntlOpts.timeZone = z;
+	        intlOpts.timeZone = z;
 	      }
 
-	      this.dtf = new Intl.DateTimeFormat(intl, realIntlOpts);
+	      this.dtf = getCachedDTF(intl, intlOpts);
 	    }
 	  }
 
@@ -4119,6 +4155,8 @@ define(['exports'], function (exports) { 'use strict';
 
 	  Locale.resetCache = function resetCache() {
 	    sysLocaleCache = null;
+	    intlDTCache = {};
+	    intlNumCache = {};
 	  };
 
 	  Locale.fromObject = function fromObject(_temp) {
@@ -4156,7 +4194,6 @@ define(['exports'], function (exports) { 'use strict';
 
 	  var _proto4 = Locale.prototype;
 
-	  // todo: cache me
 	  _proto4.listingMode = function listingMode(defaultOK) {
 	    if (defaultOK === void 0) {
 	      defaultOK = true;

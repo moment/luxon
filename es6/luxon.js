@@ -1513,6 +1513,28 @@ class Formatter {
   }
 }
 
+let intlDTCache = {};
+function getCachedDTF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let dtf = intlDTCache[key];
+  if (!dtf) {
+    dtf = new Intl.DateTimeFormat(locString, opts);
+    intlDTCache[key] = dtf;
+  }
+  return dtf;
+}
+
+let intlNumCache = {};
+function getCachendINF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let inf = intlNumCache[key];
+  if (!inf) {
+    inf = new Intl.NumberFormat(locString, opts);
+    intlNumCache[key] = inf;
+  }
+  return inf;
+}
+
 let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
@@ -1544,9 +1566,9 @@ function parseLocaleString(localeStr) {
     let options;
     const smaller = localeStr.substring(0, uIndex);
     try {
-      options = Intl.DateTimeFormat(localeStr).resolvedOptions();
+      options = getCachedDTF(localeStr).resolvedOptions();
     } catch (e) {
-      options = Intl.DateTimeFormat(smaller).resolvedOptions();
+      options = getCachedDTF(smaller).resolvedOptions();
     }
 
     const { numberingSystem, calendar } = options;
@@ -1650,12 +1672,12 @@ class IntlNumberFormatter {
     }
 
     this.floor = opts.floor;
-    this.intl = new Intl.NumberFormat(intl, intlOpts);
+    this.inf = getCachendINF(intl, intlOpts);
   }
 
   format(i) {
     const fixed = this.floor ? Math.floor(i) : i;
-    return this.intl.format(fixed);
+    return this.inf.format(fixed);
   }
 }
 
@@ -1693,11 +1715,11 @@ class PolyDateFormatter {
     }
 
     if (this.hasIntl) {
-      const realIntlOpts = Object.assign({}, this.opts);
+      const intlOpts = Object.assign({}, this.opts);
       if (z) {
-        realIntlOpts.timeZone = z;
+        intlOpts.timeZone = z;
       }
-      this.dtf = new Intl.DateTimeFormat(intl, realIntlOpts);
+      this.dtf = getCachedDTF(intl, intlOpts);
     }
   }
 
@@ -1749,11 +1771,14 @@ class Locale {
       localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale()),
       numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
       outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
+
     return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
   }
 
   static resetCache() {
     sysLocaleCache = null;
+    intlDTCache = {};
+    intlNumCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
@@ -1785,7 +1810,6 @@ class Locale {
     return this.fastNumbersCached;
   }
 
-  // todo: cache me
   listingMode(defaultOK = true) {
     const intl = hasIntl(),
       hasFTP = intl && hasFormatToParts(),
@@ -1867,9 +1891,10 @@ class Locale {
         // for AM and PM. This is probably wrong, but it's makes parsing way easier.
         if (!this.meridiemCache) {
           const intl = { hour: "numeric", hour12: true };
-          this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
-            dt => this.extract(dt, intl, "dayperiod")
-          );
+          this.meridiemCache = [
+            DateTime.utc(2016, 11, 13, 9),
+            DateTime.utc(2016, 11, 13, 19)
+          ].map(dt => this.extract(dt, intl, "dayperiod"));
         }
 
         return this.meridiemCache;
