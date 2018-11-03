@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.6
+
+ * Cache Intl objects for an 85x speed up on basic operations using non-en locales
+
 ## 1.4.5
 
 * Fix minified builds
