@@ -382,10 +382,9 @@ export default class Locale {
         // for AM and PM. This is probably wrong, but it's makes parsing way easier.
         if (!this.meridiemCache) {
           const intl = { hour: "numeric", hour12: true };
-          this.meridiemCache = [
-            DateTime.utc(2016, 11, 13, 9),
-            DateTime.utc(2016, 11, 13, 19)
-          ].map(dt => this.extract(dt, intl, "dayperiod"));
+          this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
+            dt => this.extract(dt, intl, "dayperiod")
+          );
         }
 
         return this.meridiemCache;
