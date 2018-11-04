@@ -196,10 +196,11 @@
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/matrix.html"><a href="manual/matrix.html" data-ice="link">Support matrix</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#official-support" data-ice="link">Official support</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#internet-explorer" data-ice="link">Internet Explorer</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#internet-explorer-and-platform-polyfills" data-ice="link">Internet Explorer and platform polyfills</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#platform-caveats" data-ice="link">Platform caveats</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#polyfills" data-ice="link">Polyfills</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl-and-intl-tokens" data-ice="link">Intl and Intl tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl-tokens" data-ice="link">Intl tokens</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#zones" data-ice="link">Zones</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#older-platforms" data-ice="link">Older platforms</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#other-platforms" data-ice="link">Other platforms</a></li>
@@ -342,18 +343,23 @@
 </tr>
 <tr>
 <td>Edge</td>
-<td>15-17</td>
-<td>no intl tokens</td>
-</tr>
-<tr>
-<td>Edge</td>
 <td>18</td>
 <td></td>
 </tr>
 <tr>
+<td></td>
+<td>16</td>
+<td>no intl tokens</td>
+</tr>
+<tr>
 <td>IE</td>
-<td>&gt;= 10</td>
-<td>needs platform polyfills, no basic intl, no intl tokens, no zones</td>
+<td>&gt;= 11</td>
+<td>needs platform polyfills, no intl tokens, no zones</td>
+</tr>
+<tr>
+<td></td>
+<td>10</td>
+<td>needs platform polyfills, no basic internationalization, no intl tokens, no zones</td>
 </tr>
 <tr>
 <td>Safari</td>
@@ -388,13 +394,21 @@
 </tbody>
 </table>
 <ul>
-<li>Those caveats are explained in the next sections.</li>
-<li>&quot;w/ICU&quot; refers to providing Node with ICU data. See <a href="https://github.com/nodejs/node/wiki/Intl">here</a> for more info.</li>
+<li>Those caveats are explained in the next sections, along with possible polyfill options</li>
+<li>&quot;w/ICU&quot; refers to providing Node with ICU data. See the <a href="./manual/install.html#node">install</a> for instructions</li>
 </ul>
-<h2 id="internet-explorer">Internet Explorer</h2><p>If you&apos;re supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.</p>
-<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.min.js&quot;&gt;&lt;/script&gt;</code>
+<h2 id="internet-explorer-and-platform-polyfills">Internet Explorer and platform polyfills</h2><p>If you&apos;re supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.</p>
+<p>With IE 11, you can just add a polyfill like this to get the JS features you need:</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc&quot;&gt;&lt;/script&gt;</code>
 </code></pre>
-<p>This will also add basic intl and intl token support. So the only caveat remaining is the lack of zone support.</p>
+<p>So there are now two remaining caveats: Intl <em>token</em> support and zones. Keep reading to see what that means.</p>
+<p>With IE 10, you have the same problems as IE 11, except that you don&apos;t even get basic Intl support. You&apos;ll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.</p>
+<p>Altenatively, you can use a polyfilled build of Luxon, which you can find here:</p>
+<ul>
+<li><a href="./manual/../../global-filled/luxon.js">Download full polyfilled build</a></li>
+<li><a href="./manual/../../global-filled/luxon.min.js">Download minified polyfilled build</a></li>
+</ul>
+<p>These use global polyfills, though, which means newer browsers will be running the injected code too. And the same doesn&apos;t-include-intl-and-zone-support caveats apply to it too.</p>
 <h2 id="platform-caveats">Platform caveats</h2><p><strong>If the platforms you&apos;re targeting don&apos;t have caveats listed above, ignore this section</strong>.</p>
 <p>In the support table above, you can see that some platforms have caveats. They affect a subset of Luxon&apos;s features that depend on specific APIs that some older browsers don&apos;t support.</p>
 <ol>
@@ -496,11 +510,14 @@
 <p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. If you provide your own, modify the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p>
 <p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as their in Latin (i.e. Western) numbers.</p>
 <p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning null if it fails.</p>
-<h2 id="polyfills">Polyfills</h2><h3 id="intl-and-intl-tokens">Intl and Intl tokens</h3><p>To backfill the Intl and Intl tokens, there&apos;s the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a>. Use it if your environment doesn&apos;t have Intl support or if it has Intl but not <code>formatToParts</code>. Note that this fill comes with its own strings; there&apos;s no way to, say, just add the <code>formatToParts</code> piece. Also note that the data isn&apos;t as complete as some of the browsers&apos; and some more obscure parsing/formatting features in Luxon don&apos;t work very well with it. Finally, note that it does not add zone capabilities.</p>
-<p>The easiest way to add this is through polyfill.io:</p>
-<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=intl&quot;&gt;</code>
+<h2 id="polyfills">Polyfills</h2><h3 id="intl">Intl</h3><p>If your platform doesn&apos;t have any kind of Intl support (such as IE 10), you need to load them individually through a polyfill. The easiest way to that is like this:</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=Intl.~locale.zh,Intl.~locale.fr&quot;&gt;&lt;/script&gt;</code>
 </code></pre>
-<h3 id="zones">Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>. <strong>Unfortunately, this currently breaks Chrome</strong>. See issue <a href="https://github.com/moment/luxon/issues/190">$#190</a> for more.</p>
+<p>If you&apos;re on a platform that already needs other polyfills, just tack those features to the end of your polyfill list.</p>
+<h3 id="intl-tokens">Intl tokens</h3><p>Polyfilling Intl token support is a bit painful. This caveat applies to Edge &lt; 18 and all the IEs. Fortunately, you probably don&apos;t need Intl token support!</p>
+<p>First, if you don&apos;t have Intl at all (e.g. as in IE 10), you are in luck. The polyfills in the previous section will give you Intl token support too!</p>
+<p>But more likely, you have basic Intl support but not <code>formatToParts</code> (e.g. IE 11 or Edge 16). The problem here is that the polyfill service will ignore the Intl polyfills, so you won&apos;t get the support you need. Instead, you need to override all of Intl with the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a> directly. [help wanted: instructions on exactly how to do that]</p>
+<h3 id="zones">Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>. <strong>Unfortunately, this currently breaks Chrome</strong>. See issue <a href="https://github.com/moment/luxon/issues/190">#190</a> for more. I don&apos;t currently have a good solution for IE with zones.</p>
 <h2 id="older-platforms">Older platforms</h2><ul>
 <li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
 <li><strong>Older versions of IE</strong> probably won&apos;t work at all.</li>
