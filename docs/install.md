@@ -4,8 +4,8 @@ Luxon provides different builds for different JS environments. See below for a l
 
 ## Basic browser setup
 
-* [Download full](../../global/luxon.js)
-* [Download minified](../../global/luxon.min.js)
+- [Download full](../../global/luxon.js)
+- [Download minified](../../global/luxon.min.js)
 
 Just include Luxon in a script tag. You can access its various classes through the `luxon` global.
 
@@ -24,10 +24,10 @@ var DateTime = luxon.DateTime;
 If you're supporting IE 10 or 11, you need some polyfills to get Luxon to work. Use polyfill.io:
 
 ```html
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc"></script>
 ```
 
-This will add both the language-level features Luxon needs as well as Intl support (though not timezone support - see the [support matrix](matrix.html) for more.
+See the [support matrix](matrix.html) for more information on what works and what doesn't in IE.
 
 ## Node
 
@@ -38,7 +38,7 @@ npm install --save luxon
 ```
 
 ```js
-const { DateTime } = require('luxon');
+const { DateTime } = require("luxon");
 ```
 
 If you want to work with locales, you'll need to have `full-icu` support installed in Node. You can [build Node with it](https://github.com/nodejs/node/wiki/Intl), use an [NPM module](https://www.npmjs.com/package/full-icu) to provide it, or find it prepackaged for your platform, like `brew install node --with-full-icu`. If you skip this step, Luxon still works but methods like `setLocale()` will do nothing.
@@ -56,25 +56,24 @@ You can also point to the data with an environment var, like this:
 NODE_ICU_DATA="$(pwd)/node_modules/full-icu" node
 ```
 
-
 ## AMD (System.js, RequireJS, etc)
 
-* [Download full](../../amd/luxon.js)
-* [Download minified](../../amd/luxon.min.js)
+- [Download full](../../amd/luxon.js)
+- [Download minified](../../amd/luxon.min.js)
 
 ```js
-requirejs(['luxon'], function(luxon) {
+requirejs(["luxon"], function(luxon) {
   //...
 });
 ```
 
 ## ES6
 
-* [Download full](../../es6/luxon.js)
-* [Download minified](../../es6/luxon.min.js)
+- [Download full](../../es6/luxon.js)
+- [Download minified](../../es6/luxon.min.js)
 
 ```js
-import { DateTime } from 'luxon';
+import { DateTime } from "luxon";
 ```
 
 ## Webpack
@@ -84,7 +83,7 @@ npm install --save luxon
 ```
 
 ```js
-import { DateTime } from 'luxon';
+import { DateTime } from "luxon";
 ```
 
 ## Types

@@ -6,32 +6,44 @@ This page covers what platforms are supported by Luxon and what caveats apply to
 
 Luxon officially supports the last two versions of the major browsers, with some caveats.
 
-| Browser      | Versions | Caveats                                                           |
-| ------------ | -------- | ----------------------------------------------------------------- |
-| Chrome       | >= 61    |                                                                   |
-| FF           | >= 56    |                                                                   |
-| Edge         | 15-17    | no intl tokens                                                    |
-| Edge         | 18       |                                                                   |
-| IE           | >= 10    | needs platform polyfills, no basic intl, no intl tokens, no zones |
-| Safari       | 11       |                                                                   |
-|              | 10       | no intl tokens, no zones                                          |
-| Node w/ICU   | >= 8     |                                                                   |
-|              | 6        | no intl tokens, no zones                                          |
-| Node w/o ICU | >= 8     | no intl tokens                                                    |
-|              | 6        | no intl tokens, no zones                                          |
+| Browser      | Versions | Caveats                                                                           |
+| ------------ | -------- | --------------------------------------------------------------------------------- |
+| Chrome       | >= 61    |                                                                                   |
+| FF           | >= 56    |                                                                                   |
+| Edge         | 18       |                                                                                   |
+|              | 16       | no intl tokens                                                                    |
+| IE           | >= 11    | needs platform polyfills, no intl tokens, no zones                                |
+|              | 10       | needs platform polyfills, no basic internationalization, no intl tokens, no zones |
+| Safari       | 11       |                                                                                   |
+|              | 10       | no intl tokens, no zones                                                          |
+| Node w/ICU   | >= 8     |                                                                                   |
+|              | 6        | no intl tokens, no zones                                                          |
+| Node w/o ICU | >= 8     | no intl tokens                                                                    |
+|              | 6        | no intl tokens, no zones                                                          |
 
-- Those caveats are explained in the next sections.
-- "w/ICU" refers to providing Node with ICU data. See [here](https://github.com/nodejs/node/wiki/Intl) for more info.
+- Those caveats are explained in the next sections, along with possible polyfill options
+- "w/ICU" refers to providing Node with ICU data. See the [install](install.html#node) for instructions
 
-## Internet Explorer
+## Internet Explorer and platform polyfills
 
 If you're supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.
 
+With IE 11, you can just add a polyfill like this to get the JS features you need:
+
 ```html
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc"></script>
 ```
 
-This will also add basic intl and intl token support. So the only caveat remaining is the lack of zone support.
+So there are now two remaining caveats: Intl *token* support and zones. Keep reading to see what that means.
+
+With IE 10, you have the same problems as IE 11, except that you don't even get basic Intl support. You'll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.
+
+Altenatively, you can use a polyfilled build of Luxon, which you can find here:
+
+- [Download full polyfilled build](../../global-filled/luxon.js)
+- [Download minified polyfilled build](../../global-filled/luxon.min.js)
+
+These use global polyfills, though, which means newer browsers will be running the injected code too. And the same doesn't-include-intl-and-zone-support caveats apply to it too.
 
 ## Platform caveats
 
@@ -67,19 +79,27 @@ If the browser lacks these capabilities, Luxon tries its best:
 
 ## Polyfills
 
-### Intl and Intl tokens
+### Intl
 
-To backfill the Intl and Intl tokens, there's the [Intl polyfill](https://github.com/andyearnshaw/Intl.js/). Use it if your environment doesn't have Intl support or if it has Intl but not `formatToParts`. Note that this fill comes with its own strings; there's no way to, say, just add the `formatToParts` piece. Also note that the data isn't as complete as some of the browsers' and some more obscure parsing/formatting features in Luxon don't work very well with it. Finally, note that it does not add zone capabilities.
-
-The easiest way to add this is through polyfill.io:
+If your platform doesn't have any kind of Intl support (such as IE 10), you need to load them individually through a polyfill. The easiest way to that is like this:
 
 ```html
-<script src="https://cdn.polyfill.io/v2/polyfill.js?features=intl">
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=Intl.~locale.zh,Intl.~locale.fr"></script>
 ```
+
+If you're on a platform that already needs other polyfills, just tack those features to the end of your polyfill list.
+
+### Intl tokens
+
+Polyfilling Intl token support is a bit painful. This caveat applies to Edge < 18 and all the IEs. Fortunately, you probably don't need Intl token support!
+
+First, if you don't have Intl at all (e.g. as in IE 10), you are in luck. The polyfills in the previous section will give you Intl token support too!
+
+But more likely, you have basic Intl support but not `formatToParts` (e.g. IE 11 or Edge 16). The problem here is that the polyfill service will ignore the Intl polyfills, so you won't get the support you need. Instead, you need to override all of Intl with the [Intl polyfill](https://github.com/andyearnshaw/Intl.js/) directly. [help wanted: instructions on exactly how to do that]
 
 ### Zones
 
-If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format pollyfill](https://github.com/yahoo/date-time-format-timezone). **Unfortunately, this currently breaks Chrome**. See issue [$#190](https://github.com/moment/luxon/issues/190) for more.
+If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format pollyfill](https://github.com/yahoo/date-time-format-timezone). **Unfortunately, this currently breaks Chrome**. See issue [#190](https://github.com/moment/luxon/issues/190) for more. I don't currently have a good solution for IE with zones.
 
 ## Older platforms
 
