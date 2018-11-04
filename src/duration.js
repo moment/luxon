@@ -4,9 +4,9 @@ import Formatter from "./impl/formatter";
 import { parseISODuration } from "./impl/regexParser";
 import Settings from "./settings";
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors";
+import Invalid from "./impl/invalid";
 
-const INVALID = "Invalid Duration",
-  UNPARSABLE = "unparsable";
+const INVALID = "Invalid Duration";
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -152,15 +152,17 @@ function normalizeValues(matrix, vals) {
 /**
  * @private
  */
-export function friendlyDuration(duration) {
-  if (isNumber(duration)) {
-    return Duration.fromMillis(duration);
-  } else if (duration instanceof Duration) {
-    return duration;
-  } else if (typeof duration === "object") {
-    return Duration.fromObject(duration);
+export function friendlyDuration(durationish) {
+  if (isNumber(durationish)) {
+    return Duration.fromMillis(durationish);
+  } else if (durationish instanceof Duration) {
+    return durationish;
+  } else if (typeof durationish === "object") {
+    return Duration.fromObject(durationish);
   } else {
-    throw new InvalidArgumentError("Unknown duration argument");
+    throw new InvalidArgumentError(
+      `Unknown duration argument ${durationish} of type ${typeof durationish}`
+    );
   }
 }
 
@@ -198,7 +200,7 @@ export default class Duration {
     /**
      * @access private
      */
-    this.invalid = config.invalidReason || null;
+    this.invalid = config.invalid || null;
     /**
      * @access private
      */
@@ -238,7 +240,9 @@ export default class Duration {
    */
   static fromObject(obj) {
     if (obj == null || typeof obj !== "object") {
-      throw new InvalidArgumentError("Duration.fromObject: argument expected to be an object.");
+      throw new InvalidArgumentError(
+        `Duration.fromObject: argument expected to be an object, got ${typeof obj}`
+      );
     }
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit, true),
@@ -266,23 +270,27 @@ export default class Duration {
       const obj = Object.assign(parsed, opts);
       return Duration.fromObject(obj);
     } else {
-      return Duration.invalid(UNPARSABLE);
+      return Duration.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
     }
   }
 
   /**
    * Create an invalid Duration.
-   * @param {string} reason - reason this is invalid
+   * @param {string} reason - simple string of why this datetime is invalid. Should not contain parameters or anything else data-dependent
+   * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
    * @return {Duration}
    */
-  static invalid(reason) {
+  static invalid(reason, explanation = null) {
     if (!reason) {
       throw new InvalidArgumentError("need to specify a reason the Duration is invalid");
     }
+
+    const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+
     if (Settings.throwOnInvalid) {
-      throw new InvalidDurationError(reason);
+      throw new InvalidDurationError(invalid);
     } else {
-      return new Duration({ invalidReason: reason });
+      return new Duration({ invalid });
     }
   }
 
@@ -704,15 +712,23 @@ export default class Duration {
    * @return {boolean}
    */
   get isValid() {
-    return this.invalidReason === null;
+    return this.invalid === null;
+  }
+
+  /**
+   * Returns an error code if this Duration became invalid, or null if the Duration is valid
+   * @return {string}
+   */
+  get invalidReason() {
+    return this.invalid ? this.invalid.reason : null;
   }
 
   /**
    * Returns an explanation of why this Duration became invalid, or null if the Duration is valid
-   * @return {string}
+   * @type {string}
    */
-  get invalidReason() {
-    return this.invalid;
+  get invalidExplanation() {
+    return this.invalid ? this.invalid.explanation : null;
   }
 
   /**

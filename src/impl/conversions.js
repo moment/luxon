@@ -7,9 +7,17 @@ import {
   weeksInWeekYear,
   isNumber
 } from "./util";
+import Invalid from "./invalid";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+
+function unitOutOfRange(unit, value) {
+  return new Invalid(
+    "unit out of range",
+    `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
+  );
+}
 
 function dayOfWeek(year, month, day) {
   const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
@@ -94,11 +102,11 @@ export function hasInvalidWeekData(obj) {
     validWeekday = numberBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
-    return "weekYear out of range";
+    return unitOutOfRange("weekYear", obj.weekYear);
   } else if (!validWeek) {
-    return "week out of range";
+    return unitOutOfRange("week", obj.week);
   } else if (!validWeekday) {
-    return "weekday out of range";
+    return unitOutOfRange("weekday", obj.weekday);
   } else return false;
 }
 
@@ -107,9 +115,9 @@ export function hasInvalidOrdinalData(obj) {
     validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
 
   if (!validYear) {
-    return "year out of range";
+    return unitOutOfRange("year", obj.year);
   } else if (!validOrdinal) {
-    return "ordinal out of range";
+    return unitOutOfRange("ordinal", obj.ordinal);
   } else return false;
 }
 
@@ -119,11 +127,11 @@ export function hasInvalidGregorianData(obj) {
     validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 
   if (!validYear) {
-    return "year out of range";
+    return unitOutOfRange("year", obj.year);
   } else if (!validMonth) {
-    return "month out of range";
+    return unitOutOfRange("month", obj.month);
   } else if (!validDay) {
-    return "day out of range";
+    return unitOutOfRange("day", obj.day);
   } else return false;
 }
 
@@ -134,12 +142,12 @@ export function hasInvalidTimeData(obj) {
     validMillisecond = numberBetween(obj.millisecond, 0, 999);
 
   if (!validHour) {
-    return "hour out of range";
+    return unitOutOfRange("hour", obj.hour);
   } else if (!validMinute) {
-    return "minute out of range";
+    return unitOutOfRange("minute", obj.minute);
   } else if (!validSecond) {
-    return "second out of range";
+    return unitOutOfRange("second", obj.secon);
   } else if (!validMillisecond) {
-    return "millisecond out of range";
+    return unitOutOfRange("millisecond", obj.millisecond);
   } else return false;
 }

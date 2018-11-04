@@ -8,9 +8,10 @@ const organic1 = DateTime.utc(2014, 13, 33),
   organic3 = DateTime.fromObject({ year: 1982, month: 5, day: 25, hour: 27 });
 
 test("Explicitly invalid dates are invalid", () => {
-  const dt = DateTime.invalid("just because");
+  const dt = DateTime.invalid("just because", "seriously, just because");
   expect(dt.isValid).toBe(false);
   expect(dt.invalidReason).toBe("just because");
+  expect(dt.invalidExplanation).toBe("seriously, just because");
 });
 
 test("Invalid creations are invalid", () => {
@@ -32,10 +33,22 @@ test("invalid zones result in invalid dates", () => {
   expect(DateTime.fromJSDate(new Date(), { zone: "America/Lasers" }).isValid).toBe(false);
 });
 
-test("Invalid tell you why", () => {
-  expect(organic1.invalidReason).toBe("month out of range");
+test("Invalid DateTimes tell you why", () => {
+  expect(organic1.invalidReason).toBe("unit out of range");
   expect(organic2.invalidReason).toBe("mismatched weekday");
-  expect(organic3.invalidReason).toBe("hour out of range");
+  expect(organic3.invalidReason).toBe("unit out of range");
+});
+
+test("Invalid DateTimes can provide an extented explanation", () => {
+  expect(organic1.invalidExplanation).toBe(
+    "you specified 13 (of type number) as a month, which is invalid"
+  );
+  expect(organic2.invalidExplanation).toBe(
+    "you can't specify both a weekday of 3 and a date of 1982-05-25T00:00:00.000-04:00"
+  );
+  expect(organic3.invalidExplanation).toBe(
+    "you specified 27 (of type number) as a hour, which is invalid"
+  );
 });
 
 test("Invalid DateTimes return invalid Dates", () => {

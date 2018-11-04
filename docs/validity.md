@@ -29,19 +29,19 @@ dt.plus({ days: 4 }).isValid; //=> false
 
 The most common way to do that is to over- or underflow some unit:
 
- * February 40th
- * 28:00
- * -4 pm
- * etc
- 
+- February 40th
+- 28:00
+- -4 pm
+- etc
+
 But there are other ways to do it:
 
 ```js
 // specify a time zone that doesn't exist
-DateTime.local().setZone('America/Blorp').isValid //=> false
+DateTime.local().setZone("America/Blorp").isValid; //=> false
 
 // provide contradictory information (here, this date is not a Wedensday)
-DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3}).isValid //=> false
+DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=> false
 ```
 
 Note that some other kinds of mistakes throw, based on our judgment that they are more likely programmer errors than data issues:
@@ -52,38 +52,40 @@ DateTime.local().set({ blorp: 7 }); //=> kerplosion
 
 ## Debugging invalid DateTimes
 
-Because DateTimes fail silently, they can be a pain to debug. There are two features that can help.
+Because DateTimes fail silently, they can be a pain to debug. Luxon has some features that can help.
 
-### invalidReason
+### invalidReason and invalidExplanation
 
-Invalid DateTime objects are happy to tell you why they're invalid. Like this:
+Invalid DateTime objects are happy to tell you why they're invalid. `invalidReason` will give you a consistent error code you can use, whereas `invalidExplanation` will spell it out
 
 ```js
-DateTime.local().setZone('America/Blorp').invalidReason; //=>  'unsupported zone'
+var dt = DateTime.local().setZone("America/Blorp");
+dt.invalidReason; //=>  'unsupported zone'
+dt.invalidExplantion; //=> 'the zone "America/Blorp" is not supported'
 ```
 
 ### throwOnInvalid
 
-You can make Luxon throw whenever it creates an invalid DateTime.
+You can make Luxon throw whenever it creates an invalid DateTime. The message will combine `invalidReason` and `invalidExplanation`:
 
 ```js
-Settings.throwOnInvalid = true
-DateTime.local().setZone('America/Blorp'); // Error: Invalid DateTime: unsupported zone
+Settings.throwOnInvalid = true;
+DateTime.local().setZone("America/Blorp"); //=> Error: Invalid DateTime: unsupported zone: the zone "America/Blorp" is not supported
 ```
 
 You can of course leave this on in production too, but be sure to try/catch it appropriately.
 
 ## Invalid Durations
 
-Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime. 
+Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime.
 
 ```js
-DateTime.local(2017, 28).diffNow().isValid //=> false
+DateTime.local(2017, 28).diffNow().isValid; //=> false
 ```
 
 ## Invalid Intervals
 
 Intervals can be invalid. This can happen a few different ways:
 
- * The end time is before the start time
- * It was created from invalid DateTime or Duration
+- The end time is before the start time
+- It was created from invalid DateTime or Duration

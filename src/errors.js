@@ -10,7 +10,7 @@ class LuxonError extends Error {}
  */
 export class InvalidDateTimeError extends LuxonError {
   constructor(reason) {
-    super(`Invalid DateTime: ${reason}`);
+    super(`Invalid DateTime: ${reason.toMessage()}`);
   }
 }
 
@@ -19,7 +19,7 @@ export class InvalidDateTimeError extends LuxonError {
  */
 export class InvalidIntervalError extends LuxonError {
   constructor(reason) {
-    super(`Invalid Interval: ${reason}`);
+    super(`Invalid Interval: ${reason.toMessage()}`);
   }
 }
 
@@ -28,7 +28,7 @@ export class InvalidIntervalError extends LuxonError {
  */
 export class InvalidDurationError extends LuxonError {
   constructor(reason) {
-    super(`Invalid Duration: ${reason}`);
+    super(`Invalid Duration: ${reason.toMessage()}`);
   }
 }
 

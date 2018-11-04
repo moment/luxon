@@ -39,11 +39,13 @@ import {
   InvalidUnitError,
   InvalidDateTimeError
 } from "./errors";
+import Invalid from "./impl/invalid";
 
-const INVALID = "Invalid DateTime",
-  INVALID_INPUT = "invalid input",
-  UNSUPPORTED_ZONE = "unsupported zone",
-  UNPARSABLE = "unparsable";
+const INVALID = "Invalid DateTime";
+
+function unsupportedZone(zone) {
+  return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
+}
 
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
@@ -62,7 +64,7 @@ function clone(inst, alts) {
     c: inst.c,
     o: inst.o,
     loc: inst.loc,
-    invalidReason: inst.invalidReason
+    invalid: inst.invalid
   };
   return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
@@ -167,7 +169,7 @@ function adjustTime(inst, dur) {
 
 // helper useful in turning the results of parsing into real dates
 // by handling the zone options
-function parseDataToDateTime(parsed, parsedZone, opts) {
+function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
@@ -178,7 +180,9 @@ function parseDataToDateTime(parsed, parsedZone, opts) {
       );
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(UNPARSABLE);
+    return DateTime.invalid(
+      new Invalid("unparsable", `the input "${text}" can't be parsed as ${format}`)
+    );
   }
 }
 
@@ -308,9 +312,9 @@ function quickDT(obj, zone) {
     }
   }
 
-  const invalidReason = hasInvalidGregorianData(obj) || hasInvalidTimeData(obj);
-  if (invalidReason) {
-    return DateTime.invalid(invalidReason);
+  const invalid = hasInvalidGregorianData(obj) || hasInvalidTimeData(obj);
+  if (invalid) {
+    return DateTime.invalid(invalid);
   }
 
   const tsNow = Settings.now(),
@@ -350,10 +354,10 @@ export default class DateTime {
    */
   constructor(config) {
     const zone = config.zone || Settings.defaultZone,
-      invalidReason =
-        config.invalidReason ||
-        (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
-        (!zone.isValid ? UNSUPPORTED_ZONE : null);
+      invalid =
+        config.invalid ||
+        (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
+        (!zone.isValid ? unsupportedZone(zone) : null);
     /**
      * @access private
      */
@@ -361,7 +365,7 @@ export default class DateTime {
 
     let c = null,
       o = null;
-    if (!invalidReason) {
+    if (!invalid) {
       const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
       c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
       o = unchanged ? config.old.o : zone.offset(this.ts);
@@ -378,7 +382,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.invalid = invalidReason;
+    this.invalid = invalid;
     /**
      * @access private
      */
@@ -541,7 +545,7 @@ export default class DateTime {
   static fromObject(obj) {
     const zoneToUse = normalizeZone(obj.zone, Settings.defaultZone);
     if (!zoneToUse.isValid) {
-      return DateTime.invalid(UNSUPPORTED_ZONE);
+      return DateTime.invalid(unsupportedZone(zoneToUse));
     }
 
     const tsNow = Settings.now(),
@@ -608,10 +612,10 @@ export default class DateTime {
         : containsOrdinal
           ? hasInvalidOrdinalData(normalized)
           : hasInvalidGregorianData(normalized),
-      invalidReason = higherOrderInvalid || hasInvalidTimeData(normalized);
+      invalid = higherOrderInvalid || hasInvalidTimeData(normalized);
 
-    if (invalidReason) {
-      return DateTime.invalid(invalidReason);
+    if (invalid) {
+      return DateTime.invalid(invalid);
     }
 
     // compute the actual time
@@ -630,7 +634,10 @@ export default class DateTime {
 
     // gregorian data + weekday serves only to validate
     if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
-      return DateTime.invalid("mismatched weekday");
+      return DateTime.invalid(
+        "mismatched weekday",
+        `you can't specify both a weekday of ${normalized.weekday} and a date of ${inst.toISO()}`
+      );
     }
 
     return inst;
@@ -654,7 +661,7 @@ export default class DateTime {
    */
   static fromISO(text, opts = {}) {
     const [vals, parsedZone] = parseISODate(text);
-    return parseDataToDateTime(vals, parsedZone, opts);
+    return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text);
   }
 
   /**
@@ -673,27 +680,27 @@ export default class DateTime {
    */
   static fromRFC2822(text, opts = {}) {
     const [vals, parsedZone] = parseRFC2822Date(text);
-    return parseDataToDateTime(vals, parsedZone, opts);
+    return parseDataToDateTime(vals, parsedZone, opts, "RFC 2822", text);
   }
 
   /**
    * Create a DateTime from an HTTP header date
    * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
    * @param {string} text - the HTTP header date
-   * @param {Object} options - options to affect the creation
-   * @param {string|Zone} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
-   * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
-   * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
-   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {boolean} [opts.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
+   * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
    * @return {DateTime}
    */
-  static fromHTTP(text, options = {}) {
+  static fromHTTP(text, opts = {}) {
     const [vals, parsedZone] = parseHTTPDate(text);
-    return parseDataToDateTime(vals, parsedZone, options);
+    return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
   }
 
   /**
@@ -701,26 +708,26 @@ export default class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see description)
-   * @param {Object} options - options to affect the creation
-   * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
-   * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
-   * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
-   * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
-   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+   * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromFormat(text, fmt, options = {}) {
+  static fromFormat(text, fmt, opts = {}) {
     if (isUndefined(text) || isUndefined(fmt)) {
       throw new InvalidArgumentError("fromFormat requires an input string and a format");
     }
 
-    const { locale = null, numberingSystem = null } = options,
+    const { locale = null, numberingSystem = null } = opts,
       localeToUse = Locale.fromOpts({ locale, numberingSystem, defaultToEN: true }),
-      [vals, parsedZone, invalidReason] = parseFromTokens(localeToUse, text, fmt);
-    if (invalidReason) {
-      return DateTime.invalid(invalidReason);
+      [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
+    if (invalid) {
+      return DateTime.invalid(invalid);
     } else {
-      return parseDataToDateTime(vals, parsedZone, options);
+      return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text);
     }
   }
 
@@ -735,12 +742,12 @@ export default class DateTime {
    * Create a DateTime from a SQL date, time, or datetime
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
-   * @param {Object} options - options to affect the creation
-   * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
-   * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
-   * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
-   * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
-   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+   * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @example DateTime.fromSQL('2017-05-15')
    * @example DateTime.fromSQL('2017-05-15 09:12:34')
    * @example DateTime.fromSQL('2017-05-15 09:12:34.342')
@@ -751,23 +758,28 @@ export default class DateTime {
    * @example DateTime.fromSQL('09:12:34.342')
    * @return {DateTime}
    */
-  static fromSQL(text, options = {}) {
+  static fromSQL(text, opts = {}) {
     const [vals, parsedZone] = parseSQL(text);
-    return parseDataToDateTime(vals, parsedZone, options);
+    return parseDataToDateTime(vals, parsedZone, opts, "SQL", text);
   }
 
   /**
    * Create an invalid DateTime.
+   * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
+   * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
    * @return {DateTime}
    */
-  static invalid(reason) {
+  static invalid(reason, explanation = null) {
     if (!reason) {
       throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
     }
+
+    const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+
     if (Settings.throwOnInvalid) {
-      throw new InvalidDateTimeError(reason);
+      throw new InvalidDateTimeError(invalid);
     } else {
-      return new DateTime({ invalidReason: reason });
+      return new DateTime({ invalid });
     }
   }
 
@@ -791,15 +803,23 @@ export default class DateTime {
    * @type {boolean}
    */
   get isValid() {
-    return this.invalidReason === null;
+    return this.invalid === null;
+  }
+
+  /**
+   * Returns an error code if this DateTime is invalid, or null if the DateTime is valid
+   * @type {string}
+   */
+  get invalidReason() {
+    return this.invalid ? this.invalid.reason : null;
   }
 
   /**
    * Returns an explanation of why this DateTime became invalid, or null if the DateTime is valid
    * @type {string}
    */
-  get invalidReason() {
-    return this.invalid;
+  get invalidExplanation() {
+    return this.invalid ? this.invalid.explanation : null;
   }
 
   /**
@@ -1146,7 +1166,7 @@ export default class DateTime {
     if (zone.equals(this.zone)) {
       return this;
     } else if (!zone.isValid) {
-      return DateTime.invalid(UNSUPPORTED_ZONE);
+      return DateTime.invalid(unsupportedZone(zone));
     } else {
       const newTS =
         keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
@@ -1581,7 +1601,7 @@ export default class DateTime {
    */
   diff(otherDateTime, unit = "milliseconds", opts = {}) {
     if (!this.isValid || !otherDateTime.isValid)
-      return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
+      return Duration.invalid(this.invalid || otherDateTime.invalid);
 
     const units = maybeArray(unit).map(Duration.normalizeUnit),
       otherIsLater = otherDateTime.valueOf() > this.valueOf(),
@@ -1856,11 +1876,13 @@ export default class DateTime {
 export function friendlyDateTime(dateTimeish) {
   if (dateTimeish instanceof DateTime) {
     return dateTimeish;
-  } else if (dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
+  } else if (dateTimeish && dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
     return DateTime.fromJSDate(dateTimeish);
-  } else if (typeof dateTimeish === "object") {
+  } else if (dateTimeish && typeof dateTimeish === "object") {
     return DateTime.fromObject(dateTimeish);
   } else {
-    throw new InvalidArgumentError("Unknown datetime argument");
+    throw new InvalidArgumentError(
+      `Unknown datetime argument: ${dateTimeish}, of type ${typeof dateTimeish}`
+    );
   }
 }
