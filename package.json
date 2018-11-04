@@ -75,6 +75,8 @@
     "build/amd/luxon.js.map",
     "build/global/luxon.js",
     "build/global/luxon.js.map",
+    "build/global/luxon.min.js",
+    "build/global/luxon.min.js.map",
     "src"
   ],
   "license": "MIT"
