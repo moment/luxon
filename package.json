@@ -1,12 +1,9 @@
 {
   "name": "luxon",
-  "version": "1.4.6",
+  "version": "1.5.0",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
-  "keywords": [
-    "date",
-    "immutable"
-  ],
+  "keywords": ["date", "immutable"],
   "repository": "https://github.com/moment/luxon",
   "scripts": {
     "build": "babel-node tasks/buildAll.js",
@@ -16,16 +13,14 @@
     "site": "cp -r site/** build/",
     "lint": "eslint --quiet src test benchmarks",
     "lint!": "npm run format && npm run lint",
-    "format": "prettier --config .prettier.js --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
+    "format":
+      "prettier --config .prettier.js --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/datetime.js",
     "codecov": "codecov",
     "check-doc-coverage": "babel-node tasks/docCoverage"
   },
   "lint-staged": {
-    "*.{js,json}": [
-      "prettier --config .prettier.js --write",
-      "git add"
-    ]
+    "*.{js,json}": ["prettier --config .prettier.js --write", "git add"]
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
