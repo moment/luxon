@@ -40,13 +40,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Interval from &apos;<span><a href="file/src/interval.js.html#lineNumber25">luxon/src/interval.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Interval from &apos;<span><a href="file/src/interval.js.html#lineNumber37">luxon/src/interval.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/interval.js.html#lineNumber25">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/interval.js.html#lineNumber37">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -194,7 +194,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#static-method-fromISO">fromISO</a></span></span><span class="code" data-ice="signature">(string: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#static-method-fromISO">fromISO</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
         </p>
       </div>
       <div>
@@ -223,7 +223,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#static-method-invalid">invalid</a></span></span><span class="code" data-ice="signature">(reason: <span>*</span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#static-method-invalid">invalid</a></span></span><span class="code" data-ice="signature">(reason: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, explanation: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
         </p>
       </div>
       <div>
@@ -347,13 +347,42 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#instance-get-invalidReason">invalidReason</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#instance-get-invalidExplanation">invalidExplanation</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
         <div data-ice="description"><p>Returns an explanation of why this Interval became invalid, or null if the Interval is valid</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      <span class="kind" data-ice="kind">get</span>
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#instance-get-invalidReason">invalidReason</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Returns an error code if this Interval is invalid, or null if the Interval is valid</p>
 </div>
       </div>
     </td>
@@ -1115,7 +1144,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber82">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber99">source</a></span></span>
     </span>
   </h3>
 
@@ -1194,7 +1223,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber94">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber111">source</a></span></span>
     </span>
   </h3>
 
@@ -1273,7 +1302,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber65">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber82">source</a></span></span>
     </span>
   </h3>
 
@@ -1347,11 +1376,11 @@
     
     
     
-    <span class="code" data-ice="name">fromISO</span><span class="code" data-ice="signature">(string: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
+    <span class="code" data-ice="name">fromISO</span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber108">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber125">source</a></span></span>
     </span>
   </h3>
 
@@ -1373,7 +1402,7 @@ Accepts <code>&lt;start&gt;/&lt;end&gt;</code>, <code>&lt;start&gt;/&lt;duration
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">string</td>
+      <td data-ice="name" class="code" data-depth="0">text</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>the ISO string to parse</p>
@@ -1428,11 +1457,11 @@ Accepts <code>&lt;start&gt;/&lt;end&gt;</code>, <code>&lt;start&gt;/&lt;duration
     
     
     
-    <span class="code" data-ice="name">invalid</span><span class="code" data-ice="signature">(reason: <span>*</span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
+    <span class="code" data-ice="name">invalid</span><span class="code" data-ice="signature">(reason: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, explanation: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/interval.js~Interval.html">Interval</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber48">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber62">source</a></span></span>
     </span>
   </h3>
 
@@ -1454,9 +1483,18 @@ Accepts <code>&lt;start&gt;/&lt;end&gt;</code>, <code>&lt;start&gt;/&lt;duration
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">reason</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>simple string of why this Interval is invalid. Should not contain parameters or anything else data-dependent</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">explanation</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: null</li></ul></td>
+      <td data-ice="description"><p>longer explanation, may include parameters and other useful debugging information</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -1504,7 +1542,7 @@ Accepts <code>&lt;start&gt;/&lt;end&gt;</code>, <code>&lt;start&gt;/&lt;duration
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber398">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber423">source</a></span></span>
     </span>
   </h3>
 
@@ -1577,7 +1615,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber422">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber447">source</a></span></span>
     </span>
   </h3>
 
@@ -1653,7 +1691,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber145">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber162">source</a></span></span>
     </span>
   </h3>
 
@@ -1661,6 +1699,50 @@ Combines overlapping and adjacent Intervals.</p>
   
   
   <div data-ice="description"><p>Returns the end of the Interval</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-get-invalidExplanation">
+    <span class="access" data-ice="access">public</span>
+    
+    <span class="kind" data-ice="kind">get</span>
+    
+    
+    
+    <span class="code" data-ice="name">invalidExplanation</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber186">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Returns an explanation of why this Interval became invalid, or null if the Interval is valid</p>
 </div>
 
   
@@ -1697,14 +1779,14 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber161">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber178">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Returns an explanation of why this Interval became invalid, or null if the Interval is valid</p>
+  <div data-ice="description"><p>Returns an error code if this Interval is invalid, or null if the Interval is valid</p>
 </div>
 
   
@@ -1741,7 +1823,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber153">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber170">source</a></span></span>
     </span>
   </h3>
 
@@ -1785,7 +1867,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber137">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber154">source</a></span></span>
     </span>
   </h3>
 
@@ -1832,7 +1914,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber332">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber357">source</a></span></span>
     </span>
   </h3>
 
@@ -1904,7 +1986,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber322">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber347">source</a></span></span>
     </span>
   </h3>
 
@@ -1976,7 +2058,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber230">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber255">source</a></span></span>
     </span>
   </h3>
 
@@ -2048,7 +2130,7 @@ Combines overlapping and adjacent Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber181">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber206">source</a></span></span>
     </span>
   </h3>
 
@@ -2124,7 +2206,7 @@ asks &apos;what dates are included in this interval?&apos;, not &apos;how many d
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber452">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber477">source</a></span></span>
     </span>
   </h3>
 
@@ -2196,7 +2278,7 @@ asks &apos;what dates are included in this interval?&apos;, not &apos;how many d
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber303">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber328">source</a></span></span>
     </span>
   </h3>
 
@@ -2269,7 +2351,7 @@ asks &apos;what dates are included in this interval?&apos;, not &apos;how many d
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber342">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber367">source</a></span></span>
     </span>
   </h3>
 
@@ -2341,7 +2423,7 @@ asks &apos;what dates are included in this interval?&apos;, not &apos;how many d
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber352">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber377">source</a></span></span>
     </span>
   </h3>
 
@@ -2413,7 +2495,7 @@ asks &apos;what dates are included in this interval?&apos;, not &apos;how many d
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber193">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber218">source</a></span></span>
     </span>
   </h3>
 
@@ -2486,7 +2568,7 @@ asks &apos;what dates are included in this interval?&apos;, not &apos;how many d
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber367">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber392">source</a></span></span>
     </span>
   </h3>
 
@@ -2560,7 +2642,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber210">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber235">source</a></span></span>
     </span>
   </h3>
 
@@ -2632,7 +2714,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber220">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber245">source</a></span></span>
     </span>
   </h3>
 
@@ -2704,7 +2786,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber201">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber226">source</a></span></span>
     </span>
   </h3>
 
@@ -2760,7 +2842,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber170">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber195">source</a></span></span>
     </span>
   </h3>
 
@@ -2833,7 +2915,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber313">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber338">source</a></span></span>
     </span>
   </h3>
 
@@ -2905,7 +2987,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber242">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber267">source</a></span></span>
     </span>
   </h3>
 
@@ -2992,7 +3074,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber252">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber277">source</a></span></span>
     </span>
   </h3>
 
@@ -3065,7 +3147,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber276">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber301">source</a></span></span>
     </span>
   </h3>
 
@@ -3139,7 +3221,7 @@ Left over time is grouped into a smaller interval</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber502">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber527">source</a></span></span>
     </span>
   </h3>
 
@@ -3251,7 +3333,7 @@ Left over time is grouped into a smaller interval</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber485">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber510">source</a></span></span>
     </span>
   </h3>
 
@@ -3339,7 +3421,7 @@ Left over time is grouped into a smaller interval</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber473">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber498">source</a></span></span>
     </span>
   </h3>
 
@@ -3412,7 +3494,7 @@ Left over time is grouped into a smaller interval</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber462">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber487">source</a></span></span>
     </span>
   </h3>
 
@@ -3468,7 +3550,7 @@ Left over time is grouped into a smaller interval</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber385">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber410">source</a></span></span>
     </span>
   </h3>
 

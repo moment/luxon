@@ -185,7 +185,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-datetimes" data-ice="link">Invalid DateTimes</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#reasons-a-datetimes-can-be-invalid" data-ice="link">Reasons a DateTimes can be invalid</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#debugging-invalid-datetimes" data-ice="link">Debugging invalid DateTimes</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#invalidreason" data-ice="link">invalidReason</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#invalidreason-and-invalidexplanation" data-ice="link">invalidReason and invalidExplanation</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#throwoninvalid" data-ice="link">throwOnInvalid</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-durations" data-ice="link">Invalid Durations</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-intervals" data-ice="link">Invalid Intervals</a></li>
@@ -242,6 +242,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-5-0" data-ice="link">1.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-6" data-ice="link">1.4.6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-5" data-ice="link">1.4.5</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-4" data-ice="link">1.4.4</a></li>
@@ -318,7 +319,11 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><h2 id="1-4-6">1.4.6</h2><ul>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><h2 id="1-5-0">1.5.0</h2><ul>
+<li>Improved error message</li>
+<li>Added DateTime#invalidExplanation, Duration#invalidExplanation, Interval#invalidExplanation to provide more details on invalid objects</li>
+</ul>
+<h2 id="1-4-6">1.4.6</h2><ul>
 <li>Cache Intl objects for an 85x speed up on basic operations using non-en locales</li>
 </ul>
 <h2 id="1-4-5">1.4.5</h2><ul>

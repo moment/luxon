@@ -185,7 +185,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-datetimes" data-ice="link">Invalid DateTimes</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#reasons-a-datetimes-can-be-invalid" data-ice="link">Reasons a DateTimes can be invalid</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#debugging-invalid-datetimes" data-ice="link">Debugging invalid DateTimes</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#invalidreason" data-ice="link">invalidReason</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#invalidreason-and-invalidexplanation" data-ice="link">invalidReason and invalidExplanation</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#throwoninvalid" data-ice="link">throwOnInvalid</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-durations" data-ice="link">Invalid Durations</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-intervals" data-ice="link">Invalid Intervals</a></li>
@@ -242,6 +242,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-5-0" data-ice="link">1.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-6" data-ice="link">1.4.6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-5" data-ice="link">1.4.5</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-4" data-ice="link">1.4.4</a></li>
@@ -1767,15 +1768,17 @@ dt.toObject(); //=&gt; {}</code>
 <li>-4 pm</li>
 <li>etc</li>
 </ul><p>But there are other ways to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">// specify a time zone that doesn&apos;t exist
-DateTime.local().setZone(&apos;America/Blorp&apos;).isValid //=&gt; false
+DateTime.local().setZone(&quot;America/Blorp&quot;).isValid; //=&gt; false
 
 // provide contradictory information (here, this date is not a Wedensday)
-DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3}).isValid //=&gt; false</code>
+DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=&gt; false</code>
 </code></pre><p>Note that some other kinds of mistakes throw, based on our judgment that they are more likely programmer errors than data issues:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().set({ blorp: 7 }); //=&gt; kerplosion</code>
-</code></pre><h2>Debugging invalid DateTimes</h2><p>Because DateTimes fail silently, they can be a pain to debug. There are two features that can help.</p><h3>invalidReason</h3><p>Invalid DateTime objects are happy to tell you why they&apos;re invalid. Like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setZone(&apos;America/Blorp&apos;).invalidReason; //=&gt;  &apos;unsupported zone&apos;</code>
-</code></pre><h3>throwOnInvalid</h3><p>You can make Luxon throw whenever it creates an invalid DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.throwOnInvalid = true
-DateTime.local().setZone(&apos;America/Blorp&apos;); // Error: Invalid DateTime: unsupported zone</code>
-</code></pre><p>You can of course leave this on in production too, but be sure to try/catch it appropriately.</p><h2>Invalid Durations</h2><p>Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime. </p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 28).diffNow().isValid //=&gt; false</code>
+</code></pre><h2>Debugging invalid DateTimes</h2><p>Because DateTimes fail silently, they can be a pain to debug. Luxon has some features that can help.</p><h3>invalidReason and invalidExplanation</h3><p>Invalid DateTime objects are happy to tell you why they&apos;re invalid. <code>invalidReason</code> will give you a consistent error code you can use, whereas <code>invalidExplanation</code> will spell it out</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setZone(&quot;America/Blorp&quot;);
+dt.invalidReason; //=&gt;  &apos;unsupported zone&apos;
+dt.invalidExplantion; //=&gt; &apos;the zone &quot;America/Blorp&quot; is not supported&apos;</code>
+</code></pre><h3>throwOnInvalid</h3><p>You can make Luxon throw whenever it creates an invalid DateTime. The message will combine <code>invalidReason</code> and <code>invalidExplanation</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.throwOnInvalid = true;
+DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid DateTime: unsupported zone: the zone &quot;America/Blorp&quot; is not supported</code>
+</code></pre><p>You can of course leave this on in production too, but be sure to try/catch it appropriately.</p><h2>Invalid Durations</h2><p>Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 28).diffNow().isValid; //=&gt; false</code>
 </code></pre><h2>Invalid Intervals</h2><p>Intervals can be invalid. This can happen a few different ways:</p><ul>
 <li>The end time is before the start time</li>
 <li>It was created from invalid DateTime or Duration</li>
@@ -2484,7 +2487,10 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.4.6</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.5.0</h2><ul>
+<li>Improved error message</li>
+<li>Added DateTime#invalidExplanation, Duration#invalidExplanation, Interval#invalidExplanation to provide more details on invalid objects</li>
+</ul><h2>1.4.6</h2><ul>
 <li>Cache Intl objects for an 85x speed up on basic operations using non-en locales</li>
 </ul><h2>1.4.5</h2><ul>
 <li>Fix minified builds</li>

@@ -582,7 +582,7 @@ var luxon = (function (exports) {
    */
   class InvalidDateTimeError extends LuxonError {
     constructor(reason) {
-      super(`Invalid DateTime: ${reason}`);
+      super(`Invalid DateTime: ${reason.toMessage()}`);
     }
   }
 
@@ -591,7 +591,7 @@ var luxon = (function (exports) {
    */
   class InvalidIntervalError extends LuxonError {
     constructor(reason) {
-      super(`Invalid Interval: ${reason}`);
+      super(`Invalid Interval: ${reason.toMessage()}`);
     }
   }
 
@@ -600,7 +600,7 @@ var luxon = (function (exports) {
    */
   class InvalidDurationError extends LuxonError {
     constructor(reason) {
-      super(`Invalid Duration: ${reason}`);
+      super(`Invalid Duration: ${reason.toMessage()}`);
     }
   }
 
@@ -930,14 +930,10 @@ var luxon = (function (exports) {
     }
   }
 
-  let singleton$2 = null;
-
   class InvalidZone extends Zone {
-    static get instance() {
-      if (singleton$2 === null) {
-        singleton$2 = new InvalidZone();
-      }
-      return singleton$2;
+    constructor(zoneName) {
+      super();
+      this.zoneName = zoneName;
     }
 
     get type() {
@@ -945,7 +941,7 @@ var luxon = (function (exports) {
     }
 
     get name() {
-      return null;
+      return this.zoneName;
     }
 
     get universal() {
@@ -987,15 +983,15 @@ var luxon = (function (exports) {
         // handle Etc/GMT-4, which V8 chokes on
         return FixedOffsetZone.instance(offset);
       } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);
-      else return FixedOffsetZone.parseSpecifier(lowered) || InvalidZone.instance;
+      else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
     } else if (isNumber(input)) {
       return FixedOffsetZone.instance(input);
-    } else if (typeof input === "object" && input.offset) {
+    } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {
       // This is dumb, but the instanceof check above doesn't seem to really work
       // so we're duck checking it
       return input;
     } else {
-      return InvalidZone.instance;
+      return new InvalidZone(input);
     }
   }
 
@@ -1894,10 +1890,9 @@ var luxon = (function (exports) {
           // for AM and PM. This is probably wrong, but it's makes parsing way easier.
           if (!this.meridiemCache) {
             const intl = { hour: "numeric", hour12: true };
-            this.meridiemCache = [
-              DateTime.utc(2016, 11, 13, 9),
-              DateTime.utc(2016, 11, 13, 19)
-            ].map(dt => this.extract(dt, intl, "dayperiod"));
+            this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
+              dt => this.extract(dt, intl, "dayperiod")
+            );
           }
 
           return this.meridiemCache;
@@ -2234,8 +2229,22 @@ var luxon = (function (exports) {
     );
   }
 
-  const INVALID = "Invalid Duration",
-    UNPARSABLE = "unparsable";
+  class Invalid {
+    constructor(reason, explanation) {
+      this.reason = reason;
+      this.explanation = explanation;
+    }
+
+    toMessage() {
+      if (this.explanation) {
+        return `${this.reason}: ${this.explanation}`;
+      } else {
+        return this.reason;
+      }
+    }
+  }
+
+  const INVALID = "Invalid Duration";
 
   // unit conversion constants
   const lowOrderMatrix = {
@@ -2381,15 +2390,17 @@ var luxon = (function (exports) {
   /**
    * @private
    */
-  function friendlyDuration(duration) {
-    if (isNumber(duration)) {
-      return Duration.fromMillis(duration);
-    } else if (duration instanceof Duration) {
-      return duration;
-    } else if (typeof duration === "object") {
-      return Duration.fromObject(duration);
+  function friendlyDuration(durationish) {
+    if (isNumber(durationish)) {
+      return Duration.fromMillis(durationish);
+    } else if (durationish instanceof Duration) {
+      return durationish;
+    } else if (typeof durationish === "object") {
+      return Duration.fromObject(durationish);
     } else {
-      throw new InvalidArgumentError("Unknown duration argument");
+      throw new InvalidArgumentError(
+        `Unknown duration argument ${durationish} of type ${typeof durationish}`
+      );
     }
   }
 
@@ -2427,7 +2438,7 @@ var luxon = (function (exports) {
       /**
        * @access private
        */
-      this.invalid = config.invalidReason || null;
+      this.invalid = config.invalid || null;
       /**
        * @access private
        */
@@ -2467,7 +2478,9 @@ var luxon = (function (exports) {
      */
     static fromObject(obj) {
       if (obj == null || typeof obj !== "object") {
-        throw new InvalidArgumentError("Duration.fromObject: argument expected to be an object.");
+        throw new InvalidArgumentError(
+          `Duration.fromObject: argument expected to be an object, got ${typeof obj}`
+        );
       }
       return new Duration({
         values: normalizeObject(obj, Duration.normalizeUnit, true),
@@ -2495,23 +2508,27 @@ var luxon = (function (exports) {
         const obj = Object.assign(parsed, opts);
         return Duration.fromObject(obj);
       } else {
-        return Duration.invalid(UNPARSABLE);
+        return Duration.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
       }
     }
 
     /**
      * Create an invalid Duration.
-     * @param {string} reason - reason this is invalid
+     * @param {string} reason - simple string of why this datetime is invalid. Should not contain parameters or anything else data-dependent
+     * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
      * @return {Duration}
      */
-    static invalid(reason) {
+    static invalid(reason, explanation = null) {
       if (!reason) {
         throw new InvalidArgumentError("need to specify a reason the Duration is invalid");
       }
+
+      const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+
       if (Settings.throwOnInvalid) {
-        throw new InvalidDurationError(reason);
+        throw new InvalidDurationError(invalid);
       } else {
-        return new Duration({ invalidReason: reason });
+        return new Duration({ invalid });
       }
     }
 
@@ -2933,15 +2950,23 @@ var luxon = (function (exports) {
      * @return {boolean}
      */
     get isValid() {
-      return this.invalidReason === null;
+      return this.invalid === null;
+    }
+
+    /**
+     * Returns an error code if this Duration became invalid, or null if the Duration is valid
+     * @return {string}
+     */
+    get invalidReason() {
+      return this.invalid ? this.invalid.reason : null;
     }
 
     /**
      * Returns an explanation of why this Duration became invalid, or null if the Duration is valid
-     * @return {string}
+     * @type {string}
      */
-    get invalidReason() {
-      return this.invalid;
+    get invalidExplanation() {
+      return this.invalid ? this.invalid.explanation : null;
     }
 
     /**
@@ -2972,7 +2997,18 @@ var luxon = (function (exports) {
 
   // checks if the start is equal to or before the end
   function validateStartEnd(start, end) {
-    return !!start && !!end && start.isValid && end.isValid && start <= end;
+    if (!start || !start.isValid) {
+      return new Invalid("missing or invalid start");
+    } else if (!end || !end.isValid) {
+      return new Invalid("missing or invalid end");
+    } else if (end < start) {
+      return new Invalid(
+        "end before start",
+        `The end of an interval must be after its start, but you had start=${start.toISO()} and end=${end.toISO()}`
+      );
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -3003,21 +3039,26 @@ var luxon = (function (exports) {
       /**
        * @access private
        */
-      this.invalid = config.invalidReason || null;
+      this.invalid = config.invalid || null;
     }
 
     /**
      * Create an invalid Interval.
+     * @param {string} reason - simple string of why this Interval is invalid. Should not contain parameters or anything else data-dependent
+     * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
      * @return {Interval}
      */
-    static invalid(reason) {
+    static invalid(reason, explanation = null) {
       if (!reason) {
-        throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
+        throw new InvalidArgumentError("need to specify a reason the Interval is invalid");
       }
+
+      const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+
       if (Settings.throwOnInvalid) {
-        throw new InvalidIntervalError(reason);
+        throw new InvalidIntervalError(invalid);
       } else {
-        return new Interval({ invalidReason: reason });
+        return new Interval({ invalid });
       }
     }
 
@@ -3034,7 +3075,7 @@ var luxon = (function (exports) {
       return new Interval({
         start: builtStart,
         end: builtEnd,
-        invalidReason: validateStartEnd(builtStart, builtEnd) ? null : "invalid endpoints"
+        invalid: validateStartEnd(builtStart, builtEnd)
       });
     }
 
@@ -3065,13 +3106,13 @@ var luxon = (function (exports) {
     /**
      * Create an Interval from an ISO 8601 string.
      * Accepts `<start>/<end>`, `<start>/<duration>`, and `<duration>/<end>` formats.
-     * @param {string} string - the ISO string to parse
+     * @param {string} text - the ISO string to parse
      * @param {Object} [opts] - options to pass {@link DateTime.fromISO} and optionally {@link Duration.fromISO}
      * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
      * @return {Interval}
      */
-    static fromISO(string, opts) {
-      const [s, e] = (string || "").split("/", 2);
+    static fromISO(text, opts) {
+      const [s, e] = (text || "").split("/", 2);
       if (s && e) {
         const start = DateTime.fromISO(s, opts),
           end = DateTime.fromISO(e, opts);
@@ -3092,7 +3133,7 @@ var luxon = (function (exports) {
           }
         }
       }
-      return Interval.invalid("invalid ISO format");
+      return Interval.invalid("unparsable", `the input "${text}" can't be parsed asISO 8601`);
     }
 
     /**
@@ -3120,11 +3161,19 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
+     * Returns an error code if this Interval is invalid, or null if the Interval is valid
      * @type {string}
      */
     get invalidReason() {
-      return this.invalid;
+      return this.invalid ? this.invalid.reason : null;
+    }
+
+    /**
+     * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
+     * @type {string}
+     */
+    get invalidExplanation() {
+      return this.invalid ? this.invalid.explanation : null;
     }
 
     /**
@@ -3999,6 +4048,13 @@ var luxon = (function (exports) {
   const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
     leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
 
+  function unitOutOfRange(unit, value) {
+    return new Invalid(
+      "unit out of range",
+      `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
+    );
+  }
+
   function dayOfWeek(year, month, day) {
     const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
     return js === 0 ? 7 : js;
@@ -4082,11 +4138,11 @@ var luxon = (function (exports) {
       validWeekday = numberBetween(obj.weekday, 1, 7);
 
     if (!validYear) {
-      return "weekYear out of range";
+      return unitOutOfRange("weekYear", obj.weekYear);
     } else if (!validWeek) {
-      return "week out of range";
+      return unitOutOfRange("week", obj.week);
     } else if (!validWeekday) {
-      return "weekday out of range";
+      return unitOutOfRange("weekday", obj.weekday);
     } else return false;
   }
 
@@ -4095,9 +4151,9 @@ var luxon = (function (exports) {
       validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
 
     if (!validYear) {
-      return "year out of range";
+      return unitOutOfRange("year", obj.year);
     } else if (!validOrdinal) {
-      return "ordinal out of range";
+      return unitOutOfRange("ordinal", obj.ordinal);
     } else return false;
   }
 
@@ -4107,11 +4163,11 @@ var luxon = (function (exports) {
       validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 
     if (!validYear) {
-      return "year out of range";
+      return unitOutOfRange("year", obj.year);
     } else if (!validMonth) {
-      return "month out of range";
+      return unitOutOfRange("month", obj.month);
     } else if (!validDay) {
-      return "day out of range";
+      return unitOutOfRange("day", obj.day);
     } else return false;
   }
 
@@ -4122,20 +4178,21 @@ var luxon = (function (exports) {
       validMillisecond = numberBetween(obj.millisecond, 0, 999);
 
     if (!validHour) {
-      return "hour out of range";
+      return unitOutOfRange("hour", obj.hour);
     } else if (!validMinute) {
-      return "minute out of range";
+      return unitOutOfRange("minute", obj.minute);
     } else if (!validSecond) {
-      return "second out of range";
+      return unitOutOfRange("second", obj.secon);
     } else if (!validMillisecond) {
-      return "millisecond out of range";
+      return unitOutOfRange("millisecond", obj.millisecond);
     } else return false;
   }
 
-  const INVALID$2 = "Invalid DateTime",
-    INVALID_INPUT = "invalid input",
-    UNSUPPORTED_ZONE = "unsupported zone",
-    UNPARSABLE$1 = "unparsable";
+  const INVALID$2 = "Invalid DateTime";
+
+  function unsupportedZone(zone) {
+    return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
+  }
 
   // we cache week data on the DT object and this intermediates the cache
   function possiblyCachedWeekData(dt) {
@@ -4154,7 +4211,7 @@ var luxon = (function (exports) {
       c: inst.c,
       o: inst.o,
       loc: inst.loc,
-      invalidReason: inst.invalidReason
+      invalid: inst.invalid
     };
     return new DateTime(Object.assign({}, current, alts, { old: current }));
   }
@@ -4259,7 +4316,7 @@ var luxon = (function (exports) {
 
   // helper useful in turning the results of parsing into real dates
   // by handling the zone options
-  function parseDataToDateTime(parsed, parsedZone, opts) {
+  function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
     const { setZone, zone } = opts;
     if (parsed && Object.keys(parsed).length !== 0) {
       const interpretationZone = parsedZone || zone,
@@ -4270,7 +4327,9 @@ var luxon = (function (exports) {
         );
       return setZone ? inst : inst.setZone(zone);
     } else {
-      return DateTime.invalid(UNPARSABLE$1);
+      return DateTime.invalid(
+        new Invalid("unparsable", `the input "${text}" can't be parsed as ${format}`)
+      );
     }
   }
 
@@ -4400,9 +4459,9 @@ var luxon = (function (exports) {
       }
     }
 
-    const invalidReason = hasInvalidGregorianData(obj) || hasInvalidTimeData(obj);
-    if (invalidReason) {
-      return DateTime.invalid(invalidReason);
+    const invalid = hasInvalidGregorianData(obj) || hasInvalidTimeData(obj);
+    if (invalid) {
+      return DateTime.invalid(invalid);
     }
 
     const tsNow = Settings.now(),
@@ -4442,10 +4501,10 @@ var luxon = (function (exports) {
      */
     constructor(config) {
       const zone = config.zone || Settings.defaultZone,
-        invalidReason =
-          config.invalidReason ||
-          (Number.isNaN(config.ts) ? INVALID_INPUT : null) ||
-          (!zone.isValid ? UNSUPPORTED_ZONE : null);
+        invalid =
+          config.invalid ||
+          (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
+          (!zone.isValid ? unsupportedZone(zone) : null);
       /**
        * @access private
        */
@@ -4453,7 +4512,7 @@ var luxon = (function (exports) {
 
       let c = null,
         o = null;
-      if (!invalidReason) {
+      if (!invalid) {
         const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
         c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
         o = unchanged ? config.old.o : zone.offset(this.ts);
@@ -4470,7 +4529,7 @@ var luxon = (function (exports) {
       /**
        * @access private
        */
-      this.invalid = invalidReason;
+      this.invalid = invalid;
       /**
        * @access private
        */
@@ -4633,7 +4692,7 @@ var luxon = (function (exports) {
     static fromObject(obj) {
       const zoneToUse = normalizeZone(obj.zone, Settings.defaultZone);
       if (!zoneToUse.isValid) {
-        return DateTime.invalid(UNSUPPORTED_ZONE);
+        return DateTime.invalid(unsupportedZone(zoneToUse));
       }
 
       const tsNow = Settings.now(),
@@ -4700,10 +4759,10 @@ var luxon = (function (exports) {
           : containsOrdinal
             ? hasInvalidOrdinalData(normalized)
             : hasInvalidGregorianData(normalized),
-        invalidReason = higherOrderInvalid || hasInvalidTimeData(normalized);
+        invalid = higherOrderInvalid || hasInvalidTimeData(normalized);
 
-      if (invalidReason) {
-        return DateTime.invalid(invalidReason);
+      if (invalid) {
+        return DateTime.invalid(invalid);
       }
 
       // compute the actual time
@@ -4722,7 +4781,10 @@ var luxon = (function (exports) {
 
       // gregorian data + weekday serves only to validate
       if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
-        return DateTime.invalid("mismatched weekday");
+        return DateTime.invalid(
+          "mismatched weekday",
+          `you can't specify both a weekday of ${normalized.weekday} and a date of ${inst.toISO()}`
+        );
       }
 
       return inst;
@@ -4746,7 +4808,7 @@ var luxon = (function (exports) {
      */
     static fromISO(text, opts = {}) {
       const [vals, parsedZone] = parseISODate(text);
-      return parseDataToDateTime(vals, parsedZone, opts);
+      return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text);
     }
 
     /**
@@ -4765,27 +4827,27 @@ var luxon = (function (exports) {
      */
     static fromRFC2822(text, opts = {}) {
       const [vals, parsedZone] = parseRFC2822Date(text);
-      return parseDataToDateTime(vals, parsedZone, opts);
+      return parseDataToDateTime(vals, parsedZone, opts, "RFC 2822", text);
     }
 
     /**
      * Create a DateTime from an HTTP header date
      * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
      * @param {string} text - the HTTP header date
-     * @param {Object} options - options to affect the creation
-     * @param {string|Zone} [options.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
-     * @param {boolean} [options.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
-     * @param {string} [options.locale='en-US'] - a locale to set on the resulting DateTime instance
-     * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
-     * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+     * @param {Object} opts - options to affect the creation
+     * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+     * @param {boolean} [opts.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
+     * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+     * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+     * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
      * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
      * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
      * @return {DateTime}
      */
-    static fromHTTP(text, options = {}) {
+    static fromHTTP(text, opts = {}) {
       const [vals, parsedZone] = parseHTTPDate(text);
-      return parseDataToDateTime(vals, parsedZone, options);
+      return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
     }
 
     /**
@@ -4793,26 +4855,26 @@ var luxon = (function (exports) {
      * Defaults to en-US if no locale has been specified, regardless of the system's locale
      * @param {string} text - the string to parse
      * @param {string} fmt - the format the string is expected to be in (see description)
-     * @param {Object} options - options to affect the creation
-     * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
-     * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
-     * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
-     * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
-     * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+     * @param {Object} opts - options to affect the creation
+     * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+     * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+     * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+     * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+     * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @return {DateTime}
      */
-    static fromFormat(text, fmt, options = {}) {
+    static fromFormat(text, fmt, opts = {}) {
       if (isUndefined(text) || isUndefined(fmt)) {
         throw new InvalidArgumentError("fromFormat requires an input string and a format");
       }
 
-      const { locale = null, numberingSystem = null } = options,
+      const { locale = null, numberingSystem = null } = opts,
         localeToUse = Locale.fromOpts({ locale, numberingSystem, defaultToEN: true }),
-        [vals, parsedZone, invalidReason] = parseFromTokens(localeToUse, text, fmt);
-      if (invalidReason) {
-        return DateTime.invalid(invalidReason);
+        [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
+      if (invalid) {
+        return DateTime.invalid(invalid);
       } else {
-        return parseDataToDateTime(vals, parsedZone, options);
+        return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text);
       }
     }
 
@@ -4827,12 +4889,12 @@ var luxon = (function (exports) {
      * Create a DateTime from a SQL date, time, or datetime
      * Defaults to en-US if no locale has been specified, regardless of the system's locale
      * @param {string} text - the string to parse
-     * @param {Object} options - options to affect the creation
-     * @param {string|Zone} [options.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
-     * @param {boolean} [options.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
-     * @param {string} [options.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
-     * @param {string} options.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
-     * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+     * @param {Object} opts - options to affect the creation
+     * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+     * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+     * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+     * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+     * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @example DateTime.fromSQL('2017-05-15')
      * @example DateTime.fromSQL('2017-05-15 09:12:34')
      * @example DateTime.fromSQL('2017-05-15 09:12:34.342')
@@ -4843,23 +4905,28 @@ var luxon = (function (exports) {
      * @example DateTime.fromSQL('09:12:34.342')
      * @return {DateTime}
      */
-    static fromSQL(text, options = {}) {
+    static fromSQL(text, opts = {}) {
       const [vals, parsedZone] = parseSQL(text);
-      return parseDataToDateTime(vals, parsedZone, options);
+      return parseDataToDateTime(vals, parsedZone, opts, "SQL", text);
     }
 
     /**
      * Create an invalid DateTime.
+     * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
+     * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
      * @return {DateTime}
      */
-    static invalid(reason) {
+    static invalid(reason, explanation = null) {
       if (!reason) {
         throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
       }
+
+      const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+
       if (Settings.throwOnInvalid) {
-        throw new InvalidDateTimeError(reason);
+        throw new InvalidDateTimeError(invalid);
       } else {
-        return new DateTime({ invalidReason: reason });
+        return new DateTime({ invalid });
       }
     }
 
@@ -4883,15 +4950,23 @@ var luxon = (function (exports) {
      * @type {boolean}
      */
     get isValid() {
-      return this.invalidReason === null;
+      return this.invalid === null;
+    }
+
+    /**
+     * Returns an error code if this DateTime is invalid, or null if the DateTime is valid
+     * @type {string}
+     */
+    get invalidReason() {
+      return this.invalid ? this.invalid.reason : null;
     }
 
     /**
      * Returns an explanation of why this DateTime became invalid, or null if the DateTime is valid
      * @type {string}
      */
-    get invalidReason() {
-      return this.invalid;
+    get invalidExplanation() {
+      return this.invalid ? this.invalid.explanation : null;
     }
 
     /**
@@ -5238,7 +5313,7 @@ var luxon = (function (exports) {
       if (zone.equals(this.zone)) {
         return this;
       } else if (!zone.isValid) {
-        return DateTime.invalid(UNSUPPORTED_ZONE);
+        return DateTime.invalid(unsupportedZone(zone));
       } else {
         const newTS =
           keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
@@ -5673,7 +5748,7 @@ var luxon = (function (exports) {
      */
     diff(otherDateTime, unit = "milliseconds", opts = {}) {
       if (!this.isValid || !otherDateTime.isValid)
-        return Duration.invalid(this.invalidReason || otherDateTime.invalidReason);
+        return Duration.invalid(this.invalid || otherDateTime.invalid);
 
       const units = maybeArray(unit).map(Duration.normalizeUnit),
         otherIsLater = otherDateTime.valueOf() > this.valueOf(),
@@ -5948,12 +6023,14 @@ var luxon = (function (exports) {
   function friendlyDateTime(dateTimeish) {
     if (dateTimeish instanceof DateTime) {
       return dateTimeish;
-    } else if (dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
+    } else if (dateTimeish && dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
       return DateTime.fromJSDate(dateTimeish);
-    } else if (typeof dateTimeish === "object") {
+    } else if (dateTimeish && typeof dateTimeish === "object") {
       return DateTime.fromObject(dateTimeish);
     } else {
-      throw new InvalidArgumentError("Unknown datetime argument");
+      throw new InvalidArgumentError(
+        `Unknown datetime argument: ${dateTimeish}, of type ${typeof dateTimeish}`
+      );
     }
   }
 

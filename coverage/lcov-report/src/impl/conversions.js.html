@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">96.3% </span>
+        <span class="strong">96.34% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>78/81</span>
+        <span class='fraction'>79/82</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">92.11% </span>
@@ -32,12 +32,12 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>12/12</span>
+        <span class='fraction'>13/13</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">96.25% </span>
+        <span class="strong">96.3% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>77/80</span>
+        <span class='fraction'>78/81</span>
       </div>
     </div>
     <p class="quiet">
@@ -191,7 +191,16 @@
 <a name='L143'></a><a href='#L143'>143</a>
 <a name='L144'></a><a href='#L144'>144</a>
 <a name='L145'></a><a href='#L145'>145</a>
-<a name='L146'></a><a href='#L146'>146</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -203,6 +212,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-yes">45x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">148x</span>
@@ -345,9 +361,17 @@
   weeksInWeekYear,
   isNumber
 } from "./util";
+import Invalid from "./invalid";
 &nbsp;
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+&nbsp;
+function unitOutOfRange(unit, value) {
+  return new Invalid(
+    "unit out of range",
+    `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
+  );
+}
 &nbsp;
 function dayOfWeek(year, month, day) {
   const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
@@ -432,11 +456,11 @@ export function hasInvalidWeekData(obj) {
     validWeekday = numberBetween(obj.weekday, 1, 7);
 &nbsp;
   <span class="missing-if-branch" title="if path not taken" >I</span>if (!validYear) {
-<span class="cstat-no" title="statement not covered" >    return "weekYear out of range";</span>
+<span class="cstat-no" title="statement not covered" >    return unitOutOfRange("weekYear", obj.weekYear);</span>
   } else if (!validWeek) {
-    return "week out of range";
+    return unitOutOfRange("week", obj.week);
   } else if (!validWeekday) {
-    return "weekday out of range";
+    return unitOutOfRange("weekday", obj.weekday);
   } else return false;
 }
 &nbsp;
@@ -445,9 +469,9 @@ export function hasInvalidOrdinalData(obj) {
     validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
 &nbsp;
   <span class="missing-if-branch" title="if path not taken" >I</span>if (!validYear) {
-<span class="cstat-no" title="statement not covered" >    return "year out of range";</span>
+<span class="cstat-no" title="statement not covered" >    return unitOutOfRange("year", obj.year);</span>
   } else if (!validOrdinal) {
-    return "ordinal out of range";
+    return unitOutOfRange("ordinal", obj.ordinal);
   } else return false;
 }
 &nbsp;
@@ -457,11 +481,11 @@ export function hasInvalidGregorianData(obj) {
     validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 &nbsp;
   if (!validYear) {
-    return "year out of range";
+    return unitOutOfRange("year", obj.year);
   } else if (!validMonth) {
-    return "month out of range";
+    return unitOutOfRange("month", obj.month);
   } else if (!validDay) {
-    return "day out of range";
+    return unitOutOfRange("day", obj.day);
   } else return false;
 }
 &nbsp;
@@ -472,13 +496,13 @@ export function hasInvalidTimeData(obj) {
     validMillisecond = numberBetween(obj.millisecond, 0, 999);
 &nbsp;
   if (!validHour) {
-    return "hour out of range";
+    return unitOutOfRange("hour", obj.hour);
   } else if (!validMinute) {
-    return "minute out of range";
+    return unitOutOfRange("minute", obj.minute);
   } else <span class="missing-if-branch" title="if path not taken" >I</span>if (!validSecond) {
-<span class="cstat-no" title="statement not covered" >    return "second out of range";</span>
+<span class="cstat-no" title="statement not covered" >    return unitOutOfRange("second", obj.secon);</span>
   } else if (!validMillisecond) {
-    return "millisecond out of range";
+    return unitOutOfRange("millisecond", obj.millisecond);
   } else return false;
 }
 &nbsp;</pre></td></tr>
@@ -487,7 +511,7 @@ export function hasInvalidTimeData(obj) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Nov 03 2018 17:38:49 GMT-0400 (Eastern Daylight Time)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Nov 03 2018 21:33:11 GMT-0400 (Eastern Daylight Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>
