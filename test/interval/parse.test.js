@@ -114,5 +114,5 @@ const badInputs = [
 test.each(badInputs)("Interval.fromISO will return invalid for [%s]", s => {
   const i = Interval.fromISO(s);
   expect(i.isValid).toBe(false);
-  expect(i.invalidReason).toBe("invalid ISO format");
+  expect(i.invalidReason).toBe("unparsable");
 });

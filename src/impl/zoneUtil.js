@@ -24,14 +24,14 @@ export function normalizeZone(input, defaultZone) {
       // handle Etc/GMT-4, which V8 chokes on
       return FixedOffsetZone.instance(offset);
     } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);
-    else return FixedOffsetZone.parseSpecifier(lowered) || InvalidZone.instance;
+    else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);
-  } else if (typeof input === "object" && input.offset) {
+  } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {
     // This is dumb, but the instanceof check above doesn't seem to really work
     // so we're duck checking it
     return input;
   } else {
-    return InvalidZone.instance;
+    return new InvalidZone(input);
   }
 }

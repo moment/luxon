@@ -1,13 +1,9 @@
 import Zone from "../zone";
 
-let singleton = null;
-
 export default class InvalidZone extends Zone {
-  static get instance() {
-    if (singleton === null) {
-      singleton = new InvalidZone();
-    }
-    return singleton;
+  constructor(zoneName) {
+    super();
+    this.zoneName = zoneName;
   }
 
   get type() {
@@ -15,7 +11,7 @@ export default class InvalidZone extends Zone {
   }
 
   get name() {
-    return null;
+    return this.zoneName;
   }
 
   get universal() {

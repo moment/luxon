@@ -36,12 +36,19 @@ test("Interval.fromDateTimes creates an interval from Dates", () => {
 });
 
 test("Interval.fromDateTimes results in an invalid Interval if the endpoints are invalid", () => {
-  const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
-    end = DateTime.invalid("because"),
-    int = Interval.fromDateTimes(start, end);
+  const validDate = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
+    invalidDate = DateTime.invalid("because");
 
-  expect(int.isValid).toBe(false);
-  expect(int.invalidReason).toBe("invalid endpoints");
+  expect(Interval.fromDateTimes(validDate, invalidDate).invalidReason).toBe(
+    "missing or invalid end"
+  );
+  expect(Interval.fromDateTimes(invalidDate, validDate).invalidReason).toBe(
+    "missing or invalid start"
+  );
+
+  expect(Interval.fromDateTimes(validDate.plus({ days: 1 }), validDate).invalidReason).toBe(
+    "end before start"
+  );
 });
 
 //------
