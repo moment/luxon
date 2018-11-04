@@ -74,10 +74,10 @@ const lowOrderMatrix = {
         months: 3,
         weeks: daysInYearAccurate / 28,
         days: daysInYearAccurate / 4,
-        hours: (daysInYearAccurate * 24) / 4,
-        minutes: (daysInYearAccurate * 24 * 60) / 4,
-        seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
-        milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
+        hours: daysInYearAccurate * 24 / 4,
+        minutes: daysInYearAccurate * 24 * 60 / 4,
+        seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
+        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000 / 4
       },
       months: {
         weeks: daysInMonthAccurate / 7,
@@ -117,20 +117,18 @@ function clone(dur, alts, clear = false) {
   return new Duration(conf);
 }
 
-// some functions really care about the absolute value of a duration, so combined with
-// normalize() this tells us whether this duration is positive or negative
-function isHighOrderNegative(obj) {
-  // only rule is that the highest-order part must be non-negative
-  for (const k of orderedUnits) {
-    if (obj[k]) return obj[k] < 0;
-  }
-  return false;
+function antiTrunc(n) {
+  return n < 0 ? Math.floor(n) : Math.ceil(n);
 }
 
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   const conv = matrix[toUnit][fromUnit],
-    added = Math.floor(fromMap[fromUnit] / conv);
+    raw = fromMap[fromUnit] / conv,
+    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
+    // ok, so this is wild, but see the matrix in the tests
+    added =
+      !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
   toMap[toUnit] += added;
   fromMap[fromUnit] -= added * conv;
 }
@@ -409,20 +407,16 @@ export default class Duration {
     // we could use the formatter, but this is an easier way to get the minimum string
     if (!this.isValid) return null;
 
-    let s = "P",
-      norm = this.normalize();
-
-    // ISO durations are always positive, so take the absolute value
-    norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
-
-    if (norm.years > 0) s += norm.years + "Y";
-    if (norm.months > 0 || norm.quarters > 0) s += norm.months + norm.quarters * 3 + "M";
-    if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + "D";
-    if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += "T";
-    if (norm.hours > 0) s += norm.hours + "H";
-    if (norm.minutes > 0) s += norm.minutes + "M";
-    if (norm.seconds > 0 || norm.milliseconds > 0)
-      s += norm.seconds + norm.milliseconds / 1000 + "S";
+    let s = "P";
+    if (this.years !== 0) s += this.years + "Y";
+    if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + "M";
+    if (this.days !== 0 || this.weeks !== 0) s += this.days + this.weeks * 7 + "D";
+    if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0)
+      s += "T";
+    if (this.hours !== 0) s += this.hours + "H";
+    if (this.minutes !== 0) s += this.minutes + "M";
+    if (this.seconds !== 0 || this.milliseconds !== 0)
+      s += this.seconds + this.milliseconds / 1000 + "S";
     return s;
   }
 
@@ -542,12 +536,9 @@ export default class Duration {
    */
   normalize() {
     if (!this.isValid) return this;
-
-    const neg = isHighOrderNegative(this.values),
-      vals = (neg ? this.negate() : this).toObject();
+    const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    const dur = Duration.fromObject(vals);
-    return neg ? dur.negate() : dur;
+    return Duration.fromObject(vals);
   }
 
   /**
@@ -592,7 +583,7 @@ export default class Duration {
 
         const i = Math.trunc(own);
         built[k] = i;
-        accumulated[k] = own - i;
+        accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
@@ -610,13 +601,14 @@ export default class Duration {
     if (lastUnit) {
       for (const key in accumulated) {
         if (accumulated.hasOwnProperty(key)) {
-          if (accumulated[key] > 0) {
+          if (accumulated[key] !== 0) {
             built[lastUnit] +=
               key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
           }
         }
       }
     }
+
     return clone(this, { values: built }, true);
   }
 

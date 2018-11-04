@@ -6,16 +6,24 @@ import { Duration } from "../../src/luxon";
 // #fromISO()
 //------
 
-test("Duration.fromISO can parse a variety of ISO formats", () => {
-  const check = (s, ob) => {
-    expect(Duration.fromISO(s).toObject()).toEqual(ob);
-  };
+const check = (s, ob) => {
+  expect(Duration.fromISO(s).toObject()).toEqual(ob);
+};
 
+test("Duration.fromISO can parse a variety of ISO formats", () => {
   check("P5Y3M", { years: 5, months: 3 });
   check("PT54M32S", { minutes: 54, seconds: 32 });
   check("P3DT54M32S", { days: 3, minutes: 54, seconds: 32 });
   check("P1YT34000S", { years: 1, seconds: 34000 });
   check("P2W", { weeks: 2 });
+});
+
+test("Duration.fromISO can parse mixed or negative durations", () => {
+  check("P-5Y-3M", { years: -5, months: -3 });
+  check("PT-54M32S", { minutes: -54, seconds: 32 });
+  check("P-3DT54M-32S", { days: -3, minutes: 54, seconds: -32 });
+  check("P1YT-34000S", { years: 1, seconds: -34000 });
+  check("P-2W", { weeks: -2 });
 });
 
 test("Duration.fromISO can parse fractions of seconds", () => {

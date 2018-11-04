@@ -9,9 +9,7 @@ test("Duration#shiftTo rolls milliseconds up hours and minutes", () => {
   expect(dur.shiftTo("hours").hours).toBe(1.6);
 
   const mod = dur.shiftTo("hours", "minutes");
-  expect(mod.hours).toBe(1);
-  expect(mod.minutes).toBe(36);
-  expect(mod.seconds).toBe(0);
+  expect(mod.toObject()).toEqual({ hours: 1, minutes: 36 });
 });
 
 test("Duration#shiftTo boils hours down milliseconds", () => {
@@ -21,16 +19,12 @@ test("Duration#shiftTo boils hours down milliseconds", () => {
 
 test("Duration boils hours down shiftTo minutes and milliseconds", () => {
   const dur = Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo("minutes", "milliseconds");
-  expect(dur.minutes).toBe(60);
-  expect(dur.milliseconds).toBe(30000);
+  expect(dur.toObject()).toEqual({ minutes: 60, milliseconds: 30000 });
 });
 
 test("Duration#shiftTo boils down and then rolls up", () => {
   const dur = Duration.fromObject({ years: 2, hours: 5000 }).shiftTo("months", "days", "minutes");
-
-  expect(dur.months).toBe(30);
-  expect(dur.days).toBe(28);
-  expect(dur.minutes).toBe(8 * 60);
+  expect(dur.toObject()).toEqual({ months: 30, days: 28, minutes: 8 * 60 });
 });
 
 test("Duration#shiftTo throws on invalid units", () => {
@@ -72,25 +66,57 @@ test("Duration#shifTo accumulates when rolling up", () => {
   ).toEqual({ hours: 1, minutes: 2, seconds: 3 });
 });
 
+test("Duration#shifTo keeps unecessary higher-order negative units 0", () => {
+  expect(
+    Duration.fromObject({ milliseconds: -100 })
+      .shiftTo("hours", "minutes", "seconds")
+      .toObject()
+  ).toEqual({ hours: 0, minutes: 0, seconds: -0.1 });
+});
+
 //------
 // #normalize()
 //-------
 test("Duration#normalize rebalances negative units", () => {
   const dur = Duration.fromObject({ years: 2, days: -2 }).normalize();
-  expect(dur.years).toBe(1);
-  expect(dur.days).toBe(363);
+  expect(dur.toObject()).toEqual({ years: 1, days: 363 });
 });
 
 test("Duration#normalize de-overflows", () => {
   const dur = Duration.fromObject({ years: 2, days: 5000 }).normalize();
   expect(dur.years).toBe(15);
   expect(dur.days).toBe(255);
+  expect(dur.toObject()).toEqual({ years: 15, days: 255 });
 });
 
 test("Duration#normalize handles fully negative durations", () => {
   const dur = Duration.fromObject({ years: -2, days: -5000 }).normalize();
-  expect(dur.years).toBe(-15);
-  expect(dur.days).toBe(-255);
+  expect(dur.toObject()).toEqual({ years: -15, days: -255 });
+});
+
+test("Duration#normalize handles the full grid partially negative durations", () => {
+  const sets = [
+    [{ months: 1, days: 32 }, { months: 2, days: 2 }],
+    [{ months: 1, days: 28 }, { months: 1, days: 28 }],
+    [{ months: 1, days: -32 }, { months: 0, days: -2 }],
+    [{ months: 1, days: -28 }, { months: 0, days: 2 }],
+    [{ months: -1, days: 32 }, { months: 0, days: 2 }],
+    [{ months: -1, days: 28 }, { months: 0, days: -2 }],
+    [{ months: -1, days: -32 }, { months: -2, days: -2 }],
+    [{ months: -1, days: -28 }, { months: -1, days: -28 }],
+    [{ months: 0, days: 32 }, { months: 1, days: 2 }],
+    [{ months: 0, days: 28 }, { months: 0, days: 28 }],
+    [{ months: 0, days: -32 }, { months: -1, days: -2 }],
+    [{ months: 0, days: -28 }, { months: 0, days: -28 }]
+  ];
+
+  sets.forEach(([from, to]) => {
+    expect(
+      Duration.fromObject(from)
+        .normalize()
+        .toObject()
+    ).toEqual(to);
+  });
 });
 
 test("Duration#normalize maintains invalidity", () => {
