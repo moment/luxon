@@ -243,6 +243,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-6-0" data-ice="link">1.6.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-5-0" data-ice="link">1.5.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-6" data-ice="link">1.4.6</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-4-5" data-ice="link">1.4.5</a></li>
@@ -2496,7 +2497,12 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.5.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.6.0</h2><ul>
+<li><strong>midly breaking</strong> Rework negative durations</li>
+<li>Fix handling weekdays at the end of leap week years</li>
+<li>Add isDuration, isDateTime, and isInterval</li>
+<li>Fix handling of Luxon object arguments passed from other execution contexts</li>
+</ul><h2>1.5.0</h2><ul>
 <li>Improved error message</li>
 <li>Added DateTime#invalidExplanation, Duration#invalidExplanation, Interval#invalidExplanation to provide more details on invalid objects</li>
 </ul><h2>1.4.6</h2><ul>

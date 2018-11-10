@@ -116,10 +116,10 @@ const lowOrderMatrix = {
         months: 3,
         weeks: daysInYearAccurate / 28,
         days: daysInYearAccurate / 4,
-        hours: (daysInYearAccurate * 24) / 4,
-        minutes: (daysInYearAccurate * 24 * 60) / 4,
-        seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
-        milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
+        hours: daysInYearAccurate * 24 / 4,
+        minutes: daysInYearAccurate * 24 * 60 / 4,
+        seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
+        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000 / 4
       },
       months: {
         weeks: daysInMonthAccurate / 7,
@@ -159,20 +159,18 @@ function clone(dur, alts, clear = false) {
   return new Duration(conf);
 }
 
-// some functions really care about the absolute value of a duration, so combined with
-// normalize() this tells us whether this duration is positive or negative
-function isHighOrderNegative(obj) {
-  // only rule is that the highest-order part must be non-negative
-  for (const k of orderedUnits) {
-    if (obj[k]) return obj[k] &lt; 0;
-  }
-  return false;
+function antiTrunc(n) {
+  return n &lt; 0 ? Math.floor(n) : Math.ceil(n);
 }
 
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   const conv = matrix[toUnit][fromUnit],
-    added = Math.floor(fromMap[fromUnit] / conv);
+    raw = fromMap[fromUnit] / conv,
+    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
+    // ok, so this is wild, but see the matrix in the tests
+    added =
+      !sameSign &amp;&amp; toMap[toUnit] !== 0 &amp;&amp; Math.abs(raw) &lt;= 1 ? antiTrunc(raw) : Math.trunc(raw);
   toMap[toUnit] += added;
   fromMap[fromUnit] -= added * conv;
 }
@@ -189,23 +187,6 @@ function normalizeValues(matrix, vals) {
       return previous;
     }
   }, null);
-}
-
-/**
- * @private
- */
-export function friendlyDuration(durationish) {
-  if (isNumber(durationish)) {
-    return Duration.fromMillis(durationish);
-  } else if (durationish instanceof Duration) {
-    return durationish;
-  } else if (typeof durationish === &quot;object&quot;) {
-    return Duration.fromObject(durationish);
-  } else {
-    throw new InvalidArgumentError(
-      `Unknown duration argument ${durationish} of type ${typeof durationish}`
-    );
-  }
 }
 
 /**
@@ -247,6 +228,10 @@ export default class Duration {
      * @access private
      */
     this.matrix = accurate ? accurateMatrix : casualMatrix;
+    /**
+     * @access private
+     */
+    this.isLuxonDuration = true;
   }
 
   /**
@@ -367,6 +352,15 @@ export default class Duration {
   }
 
   /**
+   * Check if an object is a Duration. Works across context boundaries
+   * @param {object} o
+   * @return {boolean}
+   */
+  static isDuration(o) {
+    return o.isLuxonDuration;
+  }
+
+  /**
    * Get  the locale of a Duration, such &apos;en-GB&apos;
    * @type {string}
    */
@@ -451,20 +445,16 @@ export default class Duration {
     // we could use the formatter, but this is an easier way to get the minimum string
     if (!this.isValid) return null;
 
-    let s = &quot;P&quot;,
-      norm = this.normalize();
-
-    // ISO durations are always positive, so take the absolute value
-    norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
-
-    if (norm.years &gt; 0) s += norm.years + &quot;Y&quot;;
-    if (norm.months &gt; 0 || norm.quarters &gt; 0) s += norm.months + norm.quarters * 3 + &quot;M&quot;;
-    if (norm.days &gt; 0 || norm.weeks &gt; 0) s += norm.days + norm.weeks * 7 + &quot;D&quot;;
-    if (norm.hours &gt; 0 || norm.minutes &gt; 0 || norm.seconds &gt; 0 || norm.milliseconds &gt; 0) s += &quot;T&quot;;
-    if (norm.hours &gt; 0) s += norm.hours + &quot;H&quot;;
-    if (norm.minutes &gt; 0) s += norm.minutes + &quot;M&quot;;
-    if (norm.seconds &gt; 0 || norm.milliseconds &gt; 0)
-      s += norm.seconds + norm.milliseconds / 1000 + &quot;S&quot;;
+    let s = &quot;P&quot;;
+    if (this.years !== 0) s += this.years + &quot;Y&quot;;
+    if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + &quot;M&quot;;
+    if (this.days !== 0 || this.weeks !== 0) s += this.days + this.weeks * 7 + &quot;D&quot;;
+    if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0)
+      s += &quot;T&quot;;
+    if (this.hours !== 0) s += this.hours + &quot;H&quot;;
+    if (this.minutes !== 0) s += this.minutes + &quot;M&quot;;
+    if (this.seconds !== 0 || this.milliseconds !== 0)
+      s += this.seconds + this.milliseconds / 1000 + &quot;S&quot;;
     return s;
   }
 
@@ -584,12 +574,9 @@ export default class Duration {
    */
   normalize() {
     if (!this.isValid) return this;
-
-    const neg = isHighOrderNegative(this.values),
-      vals = (neg ? this.negate() : this).toObject();
+    const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    const dur = Duration.fromObject(vals);
-    return neg ? dur.negate() : dur;
+    return Duration.fromObject(vals);
   }
 
   /**
@@ -634,7 +621,7 @@ export default class Duration {
 
         const i = Math.trunc(own);
         built[k] = i;
-        accumulated[k] = own - i;
+        accumulated[k] = own - i; // we&apos;d like to absorb these fractions in another unit
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
@@ -652,13 +639,14 @@ export default class Duration {
     if (lastUnit) {
       for (const key in accumulated) {
         if (accumulated.hasOwnProperty(key)) {
-          if (accumulated[key] &gt; 0) {
+          if (accumulated[key] !== 0) {
             built[lastUnit] +=
               key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
           }
         }
       }
     }
+
     return clone(this, { values: built }, true);
   }
 
@@ -794,6 +782,24 @@ export default class Duration {
       }
     }
     return true;
+  }
+}
+
+/**
+ * @private
+ */
+export function friendlyDuration(duration) {
+  if (isNumber(duration)) {
+    return Duration.fromMillis(duration);
+  } else if (Duration.isDuration(duration)) {
+    return duration;
+  } else if (typeof duration === &quot;object&quot;) {
+    return Duration.fromObject(duration);
+  } else {
+    throw new InvalidArgumentError(
+      `Unknown duration argument ${durationish} of type ${typeof durationish}`
+    );
+    throw new InvalidArgumentError(&quot;Unknown duration argument&quot;);
   }
 }
 </code></pre>

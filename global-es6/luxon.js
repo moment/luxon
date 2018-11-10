@@ -2052,7 +2052,7 @@ var luxon = (function (exports) {
 
   // ISO duration parsing
 
-  const isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\d{1,9})H)?(?:(\d{1,9})M)?(?:(\d{1,9})(?:[.,](\d{1,9}))?S)?)?|(\d{1,9})W)$/;
+  const isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?|(-?\d{1,9})W)$/;
 
   function extractISODuration(match) {
     const [
@@ -2312,10 +2312,10 @@ var luxon = (function (exports) {
           months: 3,
           weeks: daysInYearAccurate / 28,
           days: daysInYearAccurate / 4,
-          hours: (daysInYearAccurate * 24) / 4,
-          minutes: (daysInYearAccurate * 24 * 60) / 4,
-          seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
-          milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
+          hours: daysInYearAccurate * 24 / 4,
+          minutes: daysInYearAccurate * 24 * 60 / 4,
+          seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
+          milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000 / 4
         },
         months: {
           weeks: daysInMonthAccurate / 7,
@@ -2355,20 +2355,18 @@ var luxon = (function (exports) {
     return new Duration(conf);
   }
 
-  // some functions really care about the absolute value of a duration, so combined with
-  // normalize() this tells us whether this duration is positive or negative
-  function isHighOrderNegative(obj) {
-    // only rule is that the highest-order part must be non-negative
-    for (const k of orderedUnits) {
-      if (obj[k]) return obj[k] < 0;
-    }
-    return false;
+  function antiTrunc(n) {
+    return n < 0 ? Math.floor(n) : Math.ceil(n);
   }
 
   // NB: mutates parameters
   function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
     const conv = matrix[toUnit][fromUnit],
-      added = Math.floor(fromMap[fromUnit] / conv);
+      raw = fromMap[fromUnit] / conv,
+      sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
+      // ok, so this is wild, but see the matrix in the tests
+      added =
+        !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
     toMap[toUnit] += added;
     fromMap[fromUnit] -= added * conv;
   }
@@ -2385,23 +2383,6 @@ var luxon = (function (exports) {
         return previous;
       }
     }, null);
-  }
-
-  /**
-   * @private
-   */
-  function friendlyDuration(durationish) {
-    if (isNumber(durationish)) {
-      return Duration.fromMillis(durationish);
-    } else if (durationish instanceof Duration) {
-      return durationish;
-    } else if (typeof durationish === "object") {
-      return Duration.fromObject(durationish);
-    } else {
-      throw new InvalidArgumentError(
-        `Unknown duration argument ${durationish} of type ${typeof durationish}`
-      );
-    }
   }
 
   /**
@@ -2443,6 +2424,10 @@ var luxon = (function (exports) {
        * @access private
        */
       this.matrix = accurate ? accurateMatrix : casualMatrix;
+      /**
+       * @access private
+       */
+      this.isLuxonDuration = true;
     }
 
     /**
@@ -2563,6 +2548,15 @@ var luxon = (function (exports) {
     }
 
     /**
+     * Check if an object is a Duration. Works across context boundaries
+     * @param {object} o
+     * @return {boolean}
+     */
+    static isDuration(o) {
+      return o.isLuxonDuration;
+    }
+
+    /**
      * Get  the locale of a Duration, such 'en-GB'
      * @type {string}
      */
@@ -2647,20 +2641,16 @@ var luxon = (function (exports) {
       // we could use the formatter, but this is an easier way to get the minimum string
       if (!this.isValid) return null;
 
-      let s = "P",
-        norm = this.normalize();
-
-      // ISO durations are always positive, so take the absolute value
-      norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
-
-      if (norm.years > 0) s += norm.years + "Y";
-      if (norm.months > 0 || norm.quarters > 0) s += norm.months + norm.quarters * 3 + "M";
-      if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + "D";
-      if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += "T";
-      if (norm.hours > 0) s += norm.hours + "H";
-      if (norm.minutes > 0) s += norm.minutes + "M";
-      if (norm.seconds > 0 || norm.milliseconds > 0)
-        s += norm.seconds + norm.milliseconds / 1000 + "S";
+      let s = "P";
+      if (this.years !== 0) s += this.years + "Y";
+      if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + "M";
+      if (this.days !== 0 || this.weeks !== 0) s += this.days + this.weeks * 7 + "D";
+      if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0)
+        s += "T";
+      if (this.hours !== 0) s += this.hours + "H";
+      if (this.minutes !== 0) s += this.minutes + "M";
+      if (this.seconds !== 0 || this.milliseconds !== 0)
+        s += this.seconds + this.milliseconds / 1000 + "S";
       return s;
     }
 
@@ -2780,12 +2770,9 @@ var luxon = (function (exports) {
      */
     normalize() {
       if (!this.isValid) return this;
-
-      const neg = isHighOrderNegative(this.values),
-        vals = (neg ? this.negate() : this).toObject();
+      const vals = this.toObject();
       normalizeValues(this.matrix, vals);
-      const dur = Duration.fromObject(vals);
-      return neg ? dur.negate() : dur;
+      return Duration.fromObject(vals);
     }
 
     /**
@@ -2830,7 +2817,7 @@ var luxon = (function (exports) {
 
           const i = Math.trunc(own);
           built[k] = i;
-          accumulated[k] = own - i;
+          accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
 
           // plus anything further down the chain that should be rolled up in to this
           for (const down in vals) {
@@ -2848,13 +2835,14 @@ var luxon = (function (exports) {
       if (lastUnit) {
         for (const key in accumulated) {
           if (accumulated.hasOwnProperty(key)) {
-            if (accumulated[key] > 0) {
+            if (accumulated[key] !== 0) {
               built[lastUnit] +=
                 key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
             }
           }
         }
       }
+
       return clone(this, { values: built }, true);
     }
 
@@ -2993,6 +2981,24 @@ var luxon = (function (exports) {
     }
   }
 
+  /**
+   * @private
+   */
+  function friendlyDuration(duration) {
+    if (isNumber(duration)) {
+      return Duration.fromMillis(duration);
+    } else if (Duration.isDuration(duration)) {
+      return duration;
+    } else if (typeof duration === "object") {
+      return Duration.fromObject(duration);
+    } else {
+      throw new InvalidArgumentError(
+        `Unknown duration argument ${durationish} of type ${typeof durationish}`
+      );
+      throw new InvalidArgumentError("Unknown duration argument");
+    }
+  }
+
   const INVALID$1 = "Invalid Interval";
 
   // checks if the start is equal to or before the end
@@ -3040,6 +3046,10 @@ var luxon = (function (exports) {
        * @access private
        */
       this.invalid = config.invalid || null;
+      /**
+       * @access private
+       */
+      this.isLuxonInterval = true;
     }
 
     /**
@@ -3134,6 +3144,15 @@ var luxon = (function (exports) {
         }
       }
       return Interval.invalid("unparsable", `the input "${text}" can't be parsed asISO 8601`);
+    }
+
+    /**
+     * Check if an object is an Interval. Works across context boundaries
+     * @param {object} o
+     * @return {boolean}
+     */
+    static isInterval(o) {
+      return o instanceof Interval || o.isLuxonInterval;
     }
 
     /**
@@ -4100,6 +4119,7 @@ var luxon = (function (exports) {
     const { weekYear, weekNumber, weekday } = weekData,
       weekdayOfJan4 = dayOfWeek(weekYear, 1, 4),
       yearInDays = daysInYear(weekYear);
+
     let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 3,
       year;
 
@@ -4108,7 +4128,7 @@ var luxon = (function (exports) {
       ordinal += daysInYear(year);
     } else if (ordinal > yearInDays) {
       year = weekYear + 1;
-      ordinal -= daysInYear(year);
+      ordinal -= daysInYear(weekYear);
     } else {
       year = weekYear;
     }
@@ -4542,6 +4562,10 @@ var luxon = (function (exports) {
        * @access private
        */
       this.o = o;
+      /**
+       * @access private
+       */
+      this.isLuxonDateTime = true;
     }
 
     // CONSTRUCT
@@ -4928,6 +4952,15 @@ var luxon = (function (exports) {
       } else {
         return new DateTime({ invalid });
       }
+    }
+
+    /**
+     * Check if an object is a DateTime. Works across context boundaries
+     * @param {object} o
+     * @return {boolean}
+     */
+    static isDateTime(o) {
+      return o.isLuxonDateTime;
     }
 
     // INFO
@@ -6021,7 +6054,7 @@ var luxon = (function (exports) {
    * @private
    */
   function friendlyDateTime(dateTimeish) {
-    if (dateTimeish instanceof DateTime) {
+    if (DateTime.isDateTime(dateTimeish)) {
       return dateTimeish;
     } else if (dateTimeish && dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
       return DateTime.fromJSDate(dateTimeish);

@@ -1155,7 +1155,7 @@ define(['exports'], function (exports) { 'use strict';
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true); // fix for some old engines
 
-	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  } // fix Array#{values, @@iterator}.name in V8 / FF
 
@@ -1169,7 +1169,7 @@ define(['exports'], function (exports) { 'use strict';
 	  } // Define iterator
 
 
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
 	    _hide(proto, ITERATOR, $default);
 	  } // Plug for library
 
@@ -4523,7 +4523,7 @@ define(['exports'], function (exports) { 'use strict';
 	} // ISO duration parsing
 
 
-	var isoDuration = /^P(?:(?:(\d{1,9})Y)?(?:(\d{1,9})M)?(?:(\d{1,9})D)?(?:T(?:(\d{1,9})H)?(?:(\d{1,9})M)?(?:(\d{1,9})(?:[.,](\d{1,9}))?S)?)?|(\d{1,9})W)$/;
+	var isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?|(-?\d{1,9})W)$/;
 
 	function extractISODuration(match) {
 	  var yearStr = match[1],
@@ -4784,24 +4784,19 @@ define(['exports'], function (exports) { 'use strict';
 	    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
 	  };
 	  return new Duration(conf);
-	} // some functions really care about the absolute value of a duration, so combined with
-	// normalize() this tells us whether this duration is positive or negative
+	}
 
-
-	function isHighOrderNegative(obj) {
-	  // only rule is that the highest-order part must be non-negative
-	  for (var _i = 0; _i < orderedUnits.length; _i++) {
-	    var k = orderedUnits[_i];
-	    if (obj[k]) return obj[k] < 0;
-	  }
-
-	  return false;
+	function antiTrunc(n) {
+	  return n < 0 ? Math.floor(n) : Math.ceil(n);
 	} // NB: mutates parameters
 
 
 	function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
 	  var conv = matrix[toUnit][fromUnit],
-	      added = Math.floor(fromMap[fromUnit] / conv);
+	      raw = fromMap[fromUnit] / conv,
+	      sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
+	      // ok, so this is wild, but see the matrix in the tests
+	  added = !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
 	  toMap[toUnit] += added;
 	  fromMap[fromUnit] -= added * conv;
 	} // NB: mutates parameters
@@ -4821,22 +4816,6 @@ define(['exports'], function (exports) { 'use strict';
 	  }, null);
 	}
 	/**
-	 * @private
-	 */
-
-
-	function friendlyDuration(durationish) {
-	  if (isNumber(durationish)) {
-	    return Duration.fromMillis(durationish);
-	  } else if (durationish instanceof Duration) {
-	    return durationish;
-	  } else if (typeof durationish === "object") {
-	    return Duration.fromObject(durationish);
-	  } else {
-	    throw new InvalidArgumentError("Unknown duration argument " + durationish + " of type " + typeof durationish);
-	  }
-	}
-	/**
 	 * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
 	 *
 	 * Here is a brief overview of commonly used methods and getters in Duration:
@@ -4849,6 +4828,7 @@ define(['exports'], function (exports) { 'use strict';
 	 *
 	 * There's are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
 	 */
+
 
 	var Duration =
 	/*#__PURE__*/
@@ -4883,6 +4863,11 @@ define(['exports'], function (exports) { 'use strict';
 	     */
 
 	    this.matrix = accurate ? accurateMatrix : casualMatrix;
+	    /**
+	     * @access private
+	     */
+
+	    this.isLuxonDuration = true;
 	  }
 	  /**
 	   * Create Duration from a number of milliseconds.
@@ -5018,6 +5003,16 @@ define(['exports'], function (exports) { 'use strict';
 	    return normalized;
 	  };
 	  /**
+	   * Check if an object is a Duration. Works across context boundaries
+	   * @param {object} o
+	   * @return {boolean}
+	   */
+
+
+	  Duration.isDuration = function isDuration(o) {
+	    return o.isLuxonDuration;
+	  };
+	  /**
 	   * Get  the locale of a Duration, such 'en-GB'
 	   * @type {string}
 	   */
@@ -5104,17 +5099,14 @@ define(['exports'], function (exports) { 'use strict';
 	  _proto.toISO = function toISO() {
 	    // we could use the formatter, but this is an easier way to get the minimum string
 	    if (!this.isValid) return null;
-	    var s = "P",
-	        norm = this.normalize(); // ISO durations are always positive, so take the absolute value
-
-	    norm = isHighOrderNegative(norm.values) ? norm.negate() : norm;
-	    if (norm.years > 0) s += norm.years + "Y";
-	    if (norm.months > 0 || norm.quarters > 0) s += norm.months + norm.quarters * 3 + "M";
-	    if (norm.days > 0 || norm.weeks > 0) s += norm.days + norm.weeks * 7 + "D";
-	    if (norm.hours > 0 || norm.minutes > 0 || norm.seconds > 0 || norm.milliseconds > 0) s += "T";
-	    if (norm.hours > 0) s += norm.hours + "H";
-	    if (norm.minutes > 0) s += norm.minutes + "M";
-	    if (norm.seconds > 0 || norm.milliseconds > 0) s += norm.seconds + norm.milliseconds / 1000 + "S";
+	    var s = "P";
+	    if (this.years !== 0) s += this.years + "Y";
+	    if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + "M";
+	    if (this.days !== 0 || this.weeks !== 0) s += this.days + this.weeks * 7 + "D";
+	    if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0) s += "T";
+	    if (this.hours !== 0) s += this.hours + "H";
+	    if (this.minutes !== 0) s += this.minutes + "M";
+	    if (this.seconds !== 0 || this.milliseconds !== 0) s += this.seconds + this.milliseconds / 1000 + "S";
 	    return s;
 	  };
 	  /**
@@ -5156,8 +5148,8 @@ define(['exports'], function (exports) { 'use strict';
 	    var dur = friendlyDuration(duration),
 	        result = {};
 
-	    for (var _i2 = 0; _i2 < orderedUnits.length; _i2++) {
-	      var k = orderedUnits[_i2];
+	    for (var _i = 0; _i < orderedUnits.length; _i++) {
+	      var k = orderedUnits[_i];
 
 	      if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
 	        result[k] = dur.get(k) + this.get(k);
@@ -5258,11 +5250,9 @@ define(['exports'], function (exports) { 'use strict';
 
 	  _proto.normalize = function normalize() {
 	    if (!this.isValid) return this;
-	    var neg = isHighOrderNegative(this.values),
-	        vals = (neg ? this.negate() : this).toObject();
+	    var vals = this.toObject();
 	    normalizeValues(this.matrix, vals);
-	    var dur = Duration.fromObject(vals);
-	    return neg ? dur.negate() : dur;
+	    return Duration.fromObject(vals);
 	  };
 	  /**
 	   * Convert this Duration into its representation in a different set of units.
@@ -5291,8 +5281,8 @@ define(['exports'], function (exports) { 'use strict';
 	    var lastUnit;
 	    normalizeValues(this.matrix, vals);
 
-	    for (var _i3 = 0; _i3 < orderedUnits.length; _i3++) {
-	      var k = orderedUnits[_i3];
+	    for (var _i2 = 0; _i2 < orderedUnits.length; _i2++) {
+	      var k = orderedUnits[_i2];
 
 	      if (units.indexOf(k) >= 0) {
 	        lastUnit = k;
@@ -5312,7 +5302,8 @@ define(['exports'], function (exports) { 'use strict';
 
 	        var i = Math.trunc(own);
 	        built[k] = i;
-	        accumulated[k] = own - i; // plus anything further down the chain that should be rolled up in to this
+	        accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
+	        // plus anything further down the chain that should be rolled up in to this
 
 	        for (var down in vals) {
 	          if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
@@ -5329,7 +5320,7 @@ define(['exports'], function (exports) { 'use strict';
 	    if (lastUnit) {
 	      for (var key in accumulated) {
 	        if (accumulated.hasOwnProperty(key)) {
-	          if (accumulated[key] > 0) {
+	          if (accumulated[key] !== 0) {
 	            built[lastUnit] += key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
 	          }
 	        }
@@ -5353,8 +5344,8 @@ define(['exports'], function (exports) { 'use strict';
 
 	    var _arr = Object.keys(this.values);
 
-	    for (var _i4 = 0; _i4 < _arr.length; _i4++) {
-	      var k = _arr[_i4];
+	    for (var _i3 = 0; _i3 < _arr.length; _i3++) {
+	      var k = _arr[_i3];
 	      negated[k] = -this.values[k];
 	    }
 
@@ -5383,8 +5374,8 @@ define(['exports'], function (exports) { 'use strict';
 	      return false;
 	    }
 
-	    for (var _i5 = 0; _i5 < orderedUnits.length; _i5++) {
-	      var u = orderedUnits[_i5];
+	    for (var _i4 = 0; _i4 < orderedUnits.length; _i4++) {
+	      var u = orderedUnits[_i4];
 
 	      if (this.values[u] !== other.values[u]) {
 	        return false;
@@ -5530,6 +5521,18 @@ define(['exports'], function (exports) { 'use strict';
 
 	  return Duration;
 	}();
+	function friendlyDuration(duration) {
+	  if (isNumber(duration)) {
+	    return Duration.fromMillis(duration);
+	  } else if (Duration.isDuration(duration)) {
+	    return duration;
+	  } else if (typeof duration === "object") {
+	    return Duration.fromObject(duration);
+	  } else {
+	    throw new InvalidArgumentError("Unknown duration argument " + durationish + " of type " + typeof durationish);
+	    throw new InvalidArgumentError("Unknown duration argument");
+	  }
+	}
 
 	var INVALID$1 = "Invalid Interval"; // checks if the start is equal to or before the end
 
@@ -5579,6 +5582,11 @@ define(['exports'], function (exports) { 'use strict';
 	     */
 
 	    this.invalid = config.invalid || null;
+	    /**
+	     * @access private
+	     */
+
+	    this.isLuxonInterval = true;
 	  }
 	  /**
 	   * Create an invalid Interval.
@@ -5689,6 +5697,16 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 
 	    return Interval.invalid("unparsable", "the input \"" + text + "\" can't be parsed asISO 8601");
+	  };
+	  /**
+	   * Check if an object is an Interval. Works across context boundaries
+	   * @param {object} o
+	   * @return {boolean}
+	   */
+
+
+	  Interval.isInterval = function isInterval(o) {
+	    return o instanceof Interval || o.isLuxonInterval;
 	  };
 	  /**
 	   * Returns the start of the Interval
@@ -6979,7 +6997,7 @@ define(['exports'], function (exports) { 'use strict';
 	    ordinal += daysInYear(year);
 	  } else if (ordinal > yearInDays) {
 	    year = weekYear + 1;
-	    ordinal -= daysInYear(year);
+	    ordinal -= daysInYear(weekYear);
 	  } else {
 	    year = weekYear;
 	  }
@@ -7422,6 +7440,11 @@ define(['exports'], function (exports) { 'use strict';
 	     */
 
 	    this.o = o;
+	    /**
+	     * @access private
+	     */
+
+	    this.isLuxonDateTime = true;
 	  } // CONSTRUCT
 
 	  /**
@@ -7879,6 +7902,16 @@ define(['exports'], function (exports) { 'use strict';
 	        invalid: invalid
 	      });
 	    }
+	  };
+	  /**
+	   * Check if an object is a DateTime. Works across context boundaries
+	   * @param {object} o
+	   * @return {boolean}
+	   */
+
+
+	  DateTime.isDateTime = function isDateTime(o) {
+	    return o.isLuxonDateTime;
 	  }; // INFO
 
 	  /**
@@ -9244,7 +9277,7 @@ define(['exports'], function (exports) { 'use strict';
 	  return DateTime;
 	}();
 	function friendlyDateTime(dateTimeish) {
-	  if (dateTimeish instanceof DateTime) {
+	  if (DateTime.isDateTime(dateTimeish)) {
 	    return dateTimeish;
 	  } else if (dateTimeish && dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
 	    return DateTime.fromJSDate(dateTimeish);

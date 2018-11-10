@@ -924,6 +924,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime.isdatetime",
+    "class/src/datetime.js~DateTime.html#static-method-isDateTime",
+    "src/datetime.js~DateTime.isDateTime",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime.local",
     "class/src/datetime.js~DateTime.html#static-method-local",
     "src/datetime.js~DateTime.local",
@@ -1155,6 +1161,12 @@ window.esdocSearchIndex = [
     "src/duration.js~duration.invalid",
     "class/src/duration.js~Duration.html#static-method-invalid",
     "src/duration.js~Duration.invalid",
+    "method"
+  ],
+  [
+    "src/duration.js~duration.isduration",
+    "class/src/duration.js~Duration.html#static-method-isDuration",
+    "src/duration.js~Duration.isDuration",
     "method"
   ],
   [
@@ -1428,6 +1440,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/interval.js~interval.isinterval",
+    "class/src/interval.js~Interval.html#static-method-isInterval",
+    "src/interval.js~Interval.isInterval",
+    "method"
+  ],
+  [
     "src/interval.js~interval.merge",
     "class/src/interval.js~Interval.html#static-method-merge",
     "src/interval.js~Interval.merge",
@@ -1459,25 +1477,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
-    "src/settings.js~Settings.defaultNumberingSystem",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultnumberingsystem",
     "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
-    "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
-    "src/settings.js~Settings.defaultOutputCalendar",
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
     "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "src/settings.js~Settings.defaultOutputCalendar",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultoutputcalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1489,25 +1507,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
-    "src/settings.js~Settings.defaultZoneName",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultzonename",
     "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
-    "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
-    "src/settings.js~Settings.now",
+    "src/settings.js~settings.defaultzonename",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.now",
     "class/src/settings.js~Settings.html#static-get-now",
+    "src/settings.js~Settings.now",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],
@@ -1519,13 +1537,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
