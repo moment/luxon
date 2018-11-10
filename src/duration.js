@@ -148,23 +148,6 @@ function normalizeValues(matrix, vals) {
 }
 
 /**
- * @private
- */
-export function friendlyDuration(durationish) {
-  if (isNumber(durationish)) {
-    return Duration.fromMillis(durationish);
-  } else if (durationish instanceof Duration) {
-    return durationish;
-  } else if (typeof durationish === "object") {
-    return Duration.fromObject(durationish);
-  } else {
-    throw new InvalidArgumentError(
-      `Unknown duration argument ${durationish} of type ${typeof durationish}`
-    );
-  }
-}
-
-/**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
@@ -203,6 +186,10 @@ export default class Duration {
      * @access private
      */
     this.matrix = accurate ? accurateMatrix : casualMatrix;
+    /**
+     * @access private
+     */
+    this.isLuxonDuration = true;
   }
 
   /**
@@ -320,6 +307,15 @@ export default class Duration {
     if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
 
     return normalized;
+  }
+
+  /**
+   * Check if an object is a Duration. Works across context boundaries
+   * @param {object} o
+   * @return {boolean}
+   */
+  static isDuration(o) {
+    return o.isLuxonDuration;
   }
 
   /**
@@ -744,5 +740,23 @@ export default class Duration {
       }
     }
     return true;
+  }
+}
+
+/**
+ * @private
+ */
+export function friendlyDuration(duration) {
+  if (isNumber(duration)) {
+    return Duration.fromMillis(duration);
+  } else if (Duration.isDuration(duration)) {
+    return duration;
+  } else if (typeof duration === "object") {
+    return Duration.fromObject(duration);
+  } else {
+    throw new InvalidArgumentError(
+      `Unknown duration argument ${durationish} of type ${typeof durationish}`
+    );
+    throw new InvalidArgumentError("Unknown duration argument");
   }
 }

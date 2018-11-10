@@ -395,6 +395,10 @@ export default class DateTime {
      * @access private
      */
     this.o = o;
+    /**
+     * @access private
+     */
+    this.isLuxonDateTime = true;
   }
 
   // CONSTRUCT
@@ -781,6 +785,15 @@ export default class DateTime {
     } else {
       return new DateTime({ invalid });
     }
+  }
+
+  /**
+   * Check if an object is a DateTime. Works across context boundaries
+   * @param {object} o
+   * @return {boolean}
+   */
+  static isDateTime(o) {
+    return o.isLuxonDateTime;
   }
 
   // INFO
@@ -1874,7 +1887,7 @@ export default class DateTime {
  * @private
  */
 export function friendlyDateTime(dateTimeish) {
-  if (dateTimeish instanceof DateTime) {
+  if (DateTime.isDateTime(dateTimeish)) {
     return dateTimeish;
   } else if (dateTimeish && dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
     return DateTime.fromJSDate(dateTimeish);

@@ -6,3 +6,4 @@ build
 coverage/
 .DS_Store
 .external-ecmascript.js
+.idea
