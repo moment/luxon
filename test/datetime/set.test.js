@@ -73,6 +73,19 @@ test("DateTime#set({ weekday }) sets the weekday to this week's matching day", (
   expect(modified.millisecond).toBe(123);
 });
 
+test("DateTime#set({ weekday }) handles week year edge cases", () => {
+  const endOfWeekIs = (startISO, expectedISO) => {
+    const start = DateTime.fromISO(startISO);
+    const expected = DateTime.fromISO(expectedISO);
+    expect(start.set({ weekday: 7 })).toEqual(expected);
+  };
+
+  endOfWeekIs("2016-01-02", "2016-01-03");
+  endOfWeekIs("2016-12-29", "2017-01-01");
+  endOfWeekIs("2021-01-01", "2021-01-03");
+  endOfWeekIs("2028-01-01", "2028-01-02");
+});
+
 //------
 // year/ordinal
 //------
