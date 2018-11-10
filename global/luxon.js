@@ -3614,16 +3614,15 @@ var luxon = (function (exports) {
 
     return Duration;
   }();
-  function friendlyDuration(duration) {
-    if (isNumber(duration)) {
-      return Duration.fromMillis(duration);
-    } else if (Duration.isDuration(duration)) {
-      return duration;
+  function friendlyDuration(durationish) {
+    if (isNumber(durationish)) {
+      return Duration.fromMillis(durationish);
+    } else if (Duration.isDuration(durationish)) {
+      return durationish;
     } else if (typeof duration === "object") {
-      return Duration.fromObject(duration);
+      return Duration.fromObject(durationish);
     } else {
       throw new InvalidArgumentError("Unknown duration argument " + durationish + " of type " + typeof durationish);
-      throw new InvalidArgumentError("Unknown duration argument");
     }
   }
 

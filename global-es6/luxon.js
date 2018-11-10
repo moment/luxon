@@ -2312,10 +2312,10 @@ var luxon = (function (exports) {
           months: 3,
           weeks: daysInYearAccurate / 28,
           days: daysInYearAccurate / 4,
-          hours: daysInYearAccurate * 24 / 4,
-          minutes: daysInYearAccurate * 24 * 60 / 4,
-          seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
-          milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000 / 4
+          hours: (daysInYearAccurate * 24) / 4,
+          minutes: (daysInYearAccurate * 24 * 60) / 4,
+          seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
+          milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
         },
         months: {
           weeks: daysInMonthAccurate / 7,
@@ -2984,18 +2984,17 @@ var luxon = (function (exports) {
   /**
    * @private
    */
-  function friendlyDuration(duration) {
-    if (isNumber(duration)) {
-      return Duration.fromMillis(duration);
-    } else if (Duration.isDuration(duration)) {
-      return duration;
+  function friendlyDuration(durationish) {
+    if (isNumber(durationish)) {
+      return Duration.fromMillis(durationish);
+    } else if (Duration.isDuration(durationish)) {
+      return durationish;
     } else if (typeof duration === "object") {
-      return Duration.fromObject(duration);
+      return Duration.fromObject(durationish);
     } else {
       throw new InvalidArgumentError(
         `Unknown duration argument ${durationish} of type ${typeof durationish}`
       );
-      throw new InvalidArgumentError("Unknown duration argument");
     }
   }
 
