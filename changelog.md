@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+
+- Fixing merge error that resulted in bad error messages
+
 ## 1.6.0
 
 - **midly breaking** Rework negative durations
