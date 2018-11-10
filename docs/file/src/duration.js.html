@@ -793,7 +793,7 @@ export function friendlyDuration(durationish) {
     return Duration.fromMillis(durationish);
   } else if (Duration.isDuration(durationish)) {
     return durationish;
-  } else if (typeof duration === &quot;object&quot;) {
+  } else if (typeof durationish === &quot;object&quot;) {
     return Duration.fromObject(durationish);
   } else {
     throw new InvalidArgumentError(
