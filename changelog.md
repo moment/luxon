@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.6.0
+
+- **midly breaking** Rework negative durations
+- Fix handling weekdays at the end of leap week years
+- Add isDuration, isDateTime, and isInterval
+- Fix handling of Luxon object arguments passed from other execution contexts
+
 ## 1.5.0
 
 - Improved error message
