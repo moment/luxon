@@ -220,12 +220,6 @@ dt.isInDST; //=> true
 
 Those are all documented in the [DateTime API docs](../class/src/datetime.js~DateTime.html).
 
-DateTime also has a `zone` property that holds a Luxon Zone object. You don't normally need to interact with it, but don't get it confused with the `zoneName`.
-
-```js
-dt.zone; //=> LocalZone {}
-```
-
 ## DST weirdness
 
 Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This is all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and a time library has to deal with it.
