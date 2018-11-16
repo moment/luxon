@@ -73,9 +73,9 @@ If the browser lacks these capabilities, Luxon tries its best:
 
 † Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like `DateTime.DATETIME_MED`. If you provide your own, modify the presets, or even clone them, it will use `DateTime.DATETIME_HUGE`. If you don't provide any arguments at all, it defaults to `DateTime.DATE_SHORT`.
 
-‡ This means that Luxon can't parse anything with a word in it like localized versions of "January" or "Tuesday". It's fine with numbers, as long as their in Latin (i.e. Western) numbers.
+‡ This means that Luxon can't parse anything with a word in it like localized versions of "January" or "Tuesday". It's fine with numbers, as long as they're Western numbers.
 
-§ This fallback uses a hack that is not guaranteed to work in every locale in every browser. It's worked where I tested it, though. It will fall back to returning null if it fails.
+§ This fallback uses a hack that is not guaranteed to work in every locale in every browser. It's worked where I tested it, though. It will fall back to returning `null` if it fails.
 
 ## Polyfills
 
