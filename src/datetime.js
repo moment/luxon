@@ -1356,16 +1356,14 @@ export default class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system's locale.
    * @see https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens
    * @param {string} fmt - the format string
-   * @param {Object} opts - options
-   * @param {boolean} opts.round - round numerical values
    * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
    * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
    * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
    * @return {string}
    */
-  toFormat(fmt, opts = {}) {
+  toFormat(fmt) {
     return this.isValid
-      ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt)
+      ? Formatter.create(this.loc.redefaultToEN()).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 

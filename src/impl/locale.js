@@ -139,13 +139,12 @@ function supportsFastNumbers(loc) {
 class SimpleNumberFormatter {
   constructor(opts) {
     this.padTo = opts.padTo || 0;
-    this.round = opts.round || false;
     this.floor = opts.floor || false;
   }
 
   format(i) {
     // to match the browser's numberformatter defaults
-    const fixed = this.floor ? Math.floor(i) : roundTo(i, this.round ? 0 : 3);
+    const fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
     return padStart(fixed, this.padTo);
   }
 }
@@ -156,10 +155,6 @@ class IntlNumberFormatter {
 
     if (opts.padTo > 0) {
       intlOpts.minimumIntegerDigits = opts.padTo;
-    }
-
-    if (opts.round) {
-      intlOpts.maximumFractionDigits = 0;
     }
 
     this.floor = opts.floor;

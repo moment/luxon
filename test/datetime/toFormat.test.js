@@ -616,6 +616,10 @@ test("DateTime#toFormat('X') returns a Unix timestamp in seconds", () => {
   expect(dt.toFormat("X")).toBe("391166634");
 });
 
+test("DateTime#toFormat('X') rounds down", () => {
+  expect(dt.plus(500).toFormat("X")).toBe("391166634");
+});
+
 test("DateTime#toFormat('x') returns a Unix timestamp in milliseconds", () => {
   expect(dt.toFormat("x")).toBe("391166634123");
 });

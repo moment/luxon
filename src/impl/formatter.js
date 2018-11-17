@@ -43,8 +43,7 @@ const tokenToObject = {
 
 export default class Formatter {
   static create(locale, opts = {}) {
-    const formatOpts = Object.assign({}, { round: true }, opts);
-    return new Formatter(locale, formatOpts);
+    return new Formatter(locale, opts);
   }
 
   static parseFormat(fmt) {
@@ -338,7 +337,7 @@ export default class Formatter {
             // like 01
             return this.num(dt.quarter, 2);
           case "X":
-            return this.num(dt.ts / 1000);
+            return this.num(Math.floor(dt.ts / 1000));
           case "x":
             return this.num(dt.ts);
           default:
