@@ -243,6 +243,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-7-0" data-ice="link">1.7.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-6-2" data-ice="link">1.6.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-6-0" data-ice="link">1.6.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-5-0" data-ice="link">1.5.0</a></li>
@@ -510,8 +511,8 @@
 </tbody>
 </table>
 <p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. If you provide your own, modify the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p>
-<p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as their in Latin (i.e. Western) numbers.</p>
-<p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning null if it fails.</p>
+<p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as they&apos;re Western numbers.</p>
+<p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning <code>null</code> if it fails.</p>
 <h2 id="polyfills">Polyfills</h2><h3 id="intl">Intl</h3><p>If your platform doesn&apos;t have any kind of Intl support (such as IE 10), you need to load them individually through a polyfill. The easiest way to that is like this:</p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=Intl.~locale.zh,Intl.~locale.fr&quot;&gt;&lt;/script&gt;</code>
 </code></pre>

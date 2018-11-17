@@ -243,6 +243,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-7-0" data-ice="link">1.7.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-6-2" data-ice="link">1.6.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-6-0" data-ice="link">1.6.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-5-0" data-ice="link">1.5.0</a></li>
@@ -499,10 +500,7 @@ dt.isOffsetFixed; //=&gt; false
 dt.isInDST; //=&gt; true</code>
 </code></pre>
 <p>Those are all documented in the <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime API docs</a>.</p>
-<p>DateTime also has a <code>zone</code> property that holds a Luxon Zone object. You don&apos;t normally need to interact with it, but don&apos;t get it confused with the <code>zoneName</code>.</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt.zone; //=&gt; LocalZone {}</code>
-</code></pre>
-<h2 id="dst-weirdness">DST weirdness</h2><p>Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it&apos;s not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts&apos; timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This all a tremendous waste of everyone&apos;s energy and, er, time, but it is how the world works and a date and a time library has to deal with it.</p>
+<h2 id="dst-weirdness">DST weirdness</h2><p>Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it&apos;s not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts&apos; timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This is all a tremendous waste of everyone&apos;s energy and, er, time, but it is how the world works and a date and a time library has to deal with it.</p>
 <p>Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.</p>
 <h3 id="invalid-times">Invalid times</h3><p>Some local times simply don&apos;t exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, <code>America/New_York</code>, on March 12, 2017 the millisecond after 1:59:59.999 is 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don&apos;t exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.</p>
 <p>If you create such a DateTime from scratch, the missing time will be advanced by an hour:</p>

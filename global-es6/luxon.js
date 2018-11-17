@@ -1167,8 +1167,7 @@ var luxon = (function (exports) {
 
   class Formatter {
     static create(locale, opts = {}) {
-      const formatOpts = Object.assign({}, { round: true }, opts);
-      return new Formatter(locale, formatOpts);
+      return new Formatter(locale, opts);
     }
 
     static parseFormat(fmt) {
@@ -1462,7 +1461,7 @@ var luxon = (function (exports) {
               // like 01
               return this.num(dt.quarter, 2);
             case "X":
-              return this.num(dt.ts / 1000);
+              return this.num(Math.floor(dt.ts / 1000));
             case "x":
               return this.num(dt.ts);
             default:
@@ -1647,13 +1646,12 @@ var luxon = (function (exports) {
   class SimpleNumberFormatter {
     constructor(opts) {
       this.padTo = opts.padTo || 0;
-      this.round = opts.round || false;
       this.floor = opts.floor || false;
     }
 
     format(i) {
       // to match the browser's numberformatter defaults
-      const fixed = this.floor ? Math.floor(i) : roundTo(i, this.round ? 0 : 3);
+      const fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
       return padStart(fixed, this.padTo);
     }
   }
@@ -1664,10 +1662,6 @@ var luxon = (function (exports) {
 
       if (opts.padTo > 0) {
         intlOpts.minimumIntegerDigits = opts.padTo;
-      }
-
-      if (opts.round) {
-        intlOpts.maximumFractionDigits = 0;
       }
 
       this.floor = opts.floor;
@@ -2594,14 +2588,10 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toFormat(fmt, opts = {}) {
-      // reverse-compat since 1.2; we always round down now, never up, and we do it by default. So:
-      // 1. always turn off rounding in the underlying formatter
-      // 2. turn off flooring if either rounding is turned off or flooring is turned off, otherwise leave it on
-      const fmtOpts = Object.assign({}, opts, { floor: true, round: false });
-      if (opts.round === false || opts.floor === false) {
-        fmtOpts.floor = false;
-      }
-
+      // reverse-compat since 1.2; we always round down now, never up, and we do it by default
+      const fmtOpts = Object.assign({}, opts, {
+        floor: opts.round !== false && opts.floor !== false
+      });
       return this.isValid
         ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
         : INVALID;
@@ -5522,16 +5512,14 @@ var luxon = (function (exports) {
      * Defaults to en-US if no locale has been specified, regardless of the system's locale.
      * @see https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens
      * @param {string} fmt - the format string
-     * @param {Object} opts - options
-     * @param {boolean} opts.round - round numerical values
      * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
      * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
      * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
      * @return {string}
      */
-    toFormat(fmt, opts = {}) {
+    toFormat(fmt) {
       return this.isValid
-        ? Formatter.create(this.loc.redefaultToEN(), opts).formatDateTimeFromString(this, fmt)
+        ? Formatter.create(this.loc.redefaultToEN()).formatDateTimeFromString(this, fmt)
         : INVALID$2;
     }
 
