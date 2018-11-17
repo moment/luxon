@@ -1,9 +1,9 @@
 # Changelog
 
-## 1.7.0
+## 1.7.1
 
 - Floor the seconds instead of rounding them when outputting the 'X' format
-- `DateTime#toFormat` no longer takes the an options argument, which was ignored anyway
+- Change the options to toLocale to override the configuration (the previous options were essentially ignored)
 
 ## 1.6.2
 

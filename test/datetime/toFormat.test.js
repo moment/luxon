@@ -17,6 +17,13 @@ const dt = DateTime.fromObject({
 //------
 // #toFormat()
 //------
+
+test("DateTime#toFormat accepts the locale from the DateTime or the options", () => {
+  expect(dt.setLocale("fr").toFormat("LLLL")).toBe("mai");
+  expect(dt.toFormat("LLLL", { locale: "fr" })).toBe("mai");
+  expect(dt.setLocale("pt").toFormat("LLLL", { locale: "fr" })).toBe("mai");
+});
+
 test("DateTime#toFormat('u') returns fractional seconds", () => {
   expect(dt.toFormat("u")).toBe("123");
   expect(dt.set({ millisecond: 82 }).toFormat("u")).toBe("082");
@@ -602,10 +609,12 @@ test("DateTime#toFormat() accepts literals in single quotes", () => {
 
 test("DateTime#toFormat() uses the numbering system", () => {
   expect(dt.reconfigure({ numberingSystem: "beng" }).toFormat("S")).toBe("১২৩");
+  expect(dt.toFormat("S", { numberingSystem: "beng" })).toBe("১২৩");
 });
 
 test("DateTime#toFormat() uses the output calendar", () => {
   expect(dt.reconfigure({ outputCalendar: "islamic" }).toFormat("MMMM yyyy")).toBe("Shaʻban 1402");
+  expect(dt.toFormat("MMMM yyyy", { outputCalendar: "islamic" })).toBe("Shaʻban 1402");
 });
 
 test("DateTime#toFormat() returns something different for invalid DateTimes", () => {

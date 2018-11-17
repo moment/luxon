@@ -1356,14 +1356,16 @@ export default class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system's locale.
    * @see https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens
    * @param {string} fmt - the format string
+   * @param {Object} opts - opts to override the configuration options
    * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
    * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
+   * @example DateTime.local().toFormat('yyyy LLL dd', { locale: "fr" }) //=> '2017 avr. 22'
    * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
    * @return {string}
    */
-  toFormat(fmt) {
+  toFormat(fmt, opts = {}) {
     return this.isValid
-      ? Formatter.create(this.loc.redefaultToEN()).formatDateTimeFromString(this, fmt)
+      ? Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 
@@ -1373,9 +1375,10 @@ export default class DateTime {
    * of the DateTime in the assigned locale.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
-   * @param opts {Object} - Intl.DateTimeFormat constructor options
+   * @param opts {Object} - Intl.DateTimeFormat constructor options and configuration options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
    * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
+   * @example DateTime.local().toLocaleString({ locale: "en-gb" }); //=> '20/04/2017'
    * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
    * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=> '11:32 AM'
    * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=> '4/20/2017, 11:32 AM'
