@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0
+
+- Floor the seconds instead of rounding them when outputting the 'X' format
+- `DateTime#toFormat` no longer takes the an options argument, which was ignored anyway
+
 ## 1.6.2
 
 - Fixing merge error that resulted in bad error messages
