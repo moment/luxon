@@ -1398,14 +1398,16 @@ export default class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale.
    * @see https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens
    * @param {string} fmt - the format string
+   * @param {Object} opts - opts to override the configuration options
    * @example DateTime.local().toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2017 Apr 22&apos;
    * @example DateTime.local().setLocale(&apos;fr&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2017 avr. 22&apos;
+   * @example DateTime.local().toFormat(&apos;yyyy LLL dd&apos;, { locale: &quot;fr&quot; }) //=&gt; &apos;2017 avr. 22&apos;
    * @example DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;) //=&gt; &apos;20 hours and 55 minutes&apos;
    * @return {string}
    */
-  toFormat(fmt) {
+  toFormat(fmt, opts = {}) {
     return this.isValid
-      ? Formatter.create(this.loc.redefaultToEN()).formatDateTimeFromString(this, fmt)
+      ? Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 
@@ -1415,9 +1417,10 @@ export default class DateTime {
    * of the DateTime in the assigned locale.
    * Defaults to the system&apos;s locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
-   * @param opts {Object} - Intl.DateTimeFormat constructor options
+   * @param opts {Object} - Intl.DateTimeFormat constructor options and configuration options
    * @example DateTime.local().toLocaleString(); //=&gt; 4/20/2017
    * @example DateTime.local().setLocale(&apos;en-gb&apos;).toLocaleString(); //=&gt; &apos;20/04/2017&apos;
+   * @example DateTime.local().toLocaleString({ locale: &quot;en-gb&quot; }); //=&gt; &apos;20/04/2017&apos;
    * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;April 20, 2017&apos;
    * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=&gt; &apos;11:32 AM&apos;
    * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=&gt; &apos;4/20/2017, 11:32 AM&apos;
