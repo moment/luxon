@@ -70,6 +70,18 @@ DateTime.fromSQL('09:24:15');
 
 It works similarly to `fromISO`, so see above for additional notes.
 
+### Unix timestamps
+
+Luxon can parse numerical [Unix timestamps](https://en.wikipedia.org/wiki/Unix_time):
+
+```js
+DateTime.fromMillis(1542674993410);
+DateTime.fromSeconds(1542674993);
+```
+
+Both methods accept the same options, which allow you to specify a timezone, calendar, and/or numbering system.
+
+
 ## Ad-hoc parsing
 
 ### Consider alternatives

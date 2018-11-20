@@ -261,6 +261,32 @@ test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input"
 });
 
 //------
+// .fromSeconds()
+//-------
+test("DateTime.fromSeconds(seconds) has a value of 1000 * seconds", () => {
+  const seconds = 391147200;
+  expect(DateTime.fromSeconds(seconds).valueOf()).toBe(1000 * seconds);
+
+  expect(DateTime.fromSeconds(0).valueOf()).toBe(0);
+});
+
+test("DateTime.fromSeconds(ms) accepts a zone option", () => {
+  const seconds = 391147200,
+    dateTime = DateTime.fromSeconds(seconds, { zone: "America/Santiago" });
+
+  expect(dateTime.valueOf()).toBe(1000 * seconds);
+  expect(dateTime.zoneName).toBe("America/Santiago");
+});
+
+test("DateTime.fromSeconds accepts the default locale", () => {
+  withDefaultLocale("fr", () => expect(DateTime.fromSeconds(391147200).locale).toBe("fr"));
+});
+
+test("DateTime.fromSeconds(seconds) throws InvalidArgumentError for non-numeric input", () => {
+  expect(() => DateTime.fromSeconds("slurp")).toThrow();
+});
+
+//------
 // .fromObject()
 //-------
 const baseObject = {

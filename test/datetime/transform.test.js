@@ -29,6 +29,19 @@ test("DateTime#toMillis() returns NaN for invalid DateTimes", () => {
 });
 
 //------
+// #toSeconds()
+//------
+test("DateTime#toSeconds() returns seconds for valid DateTimes", () => {
+  const js = dt.toJSDate();
+  expect(dt.toSeconds()).toBe(js.getTime() / 1000);
+});
+
+test("DateTime#toSeconds() returns NaN for invalid DateTimes", () => {
+  const invalid = DateTime.invalid("reason");
+  expect(invalid.toSeconds()).toBe(NaN);
+});
+
+//------
 // #valueOf()
 //------
 test("DateTime#valueOf() just does toMillis()", () => {

@@ -30,6 +30,16 @@ dt.toRFC2822(); //=> 'Thu, 20 Apr 2017 11:32:00 -0400'
 dt.toHTTP(); //=> 'Thu, 20 Apr 2017 03:32:00 GMT'
 ```
 
+### Unix timestamps
+
+DateTime objects can also be converted to numerical [Unix timestamps](https://en.wikipedia.org/wiki/Unix_time):
+
+```js
+dt.toMillis(); //=> 1492702320000
+dt.toSeconds(); //=> 1492702320
+dt.valueOf(); //=> 1492702320000, same as .toMillis()
+```
+
 ## toLocaleString (strings for humans)
 
 ### The basics
