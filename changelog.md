@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+
+- Add `DateTime.fromSeconds` and `DateTime#toSeconds`
+
 ## 1.7.1
 
 - Floor the seconds instead of rounding them when outputting the 'X' format
