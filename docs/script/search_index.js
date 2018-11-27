@@ -660,6 +660,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime#toseconds",
+    "class/src/datetime.js~DateTime.html#instance-method-toSeconds",
+    "src/datetime.js~DateTime#toSeconds",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime#tostring",
     "class/src/datetime.js~DateTime.html#instance-method-toString",
     "src/datetime.js~DateTime#toString",
@@ -903,6 +909,12 @@ window.esdocSearchIndex = [
     "src/datetime.js~datetime.fromsql",
     "class/src/datetime.js~DateTime.html#static-method-fromSQL",
     "src/datetime.js~DateTime.fromSQL",
+    "method"
+  ],
+  [
+    "src/datetime.js~datetime.fromseconds",
+    "class/src/datetime.js~DateTime.html#static-method-fromSeconds",
+    "src/datetime.js~DateTime.fromSeconds",
     "method"
   ],
   [
@@ -1489,13 +1501,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1507,13 +1519,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],

@@ -1156,7 +1156,7 @@ var luxon = (function (exports) {
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true); // fix for some old engines
 
-	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  } // fix Array#{values, @@iterator}.name in V8 / FF
 
@@ -1170,7 +1170,7 @@ var luxon = (function (exports) {
 	  } // Define iterator
 
 
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
 	    _hide(proto, ITERATOR, $default);
 	  } // Plug for library
 
@@ -7556,6 +7556,33 @@ var luxon = (function (exports) {
 	    }
 	  };
 	  /**
+	   * Create a DateTime from a number of seconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
+	   * @param {number} seconds - a number of seconds since 1970 UTC
+	   * @param {Object} options - configuration options for the DateTime
+	   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+	   * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
+	   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+	   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+	   * @return {DateTime}
+	   */
+
+
+	  DateTime.fromSeconds = function fromSeconds(seconds, options) {
+	    if (options === void 0) {
+	      options = {};
+	    }
+
+	    if (!isNumber(seconds)) {
+	      throw new InvalidArgumentError("fromSeconds requires a numerical input");
+	    } else {
+	      return new DateTime({
+	        ts: seconds * 1000,
+	        zone: normalizeZone(options.zone, Settings.defaultZone),
+	        loc: Locale.fromObject(options)
+	      });
+	    }
+	  };
+	  /**
 	   * Create a DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
 	   * @param {Object} obj - the object to create the DateTime from
 	   * @param {number} obj.year - a year, such as 1987
@@ -8447,6 +8474,15 @@ var luxon = (function (exports) {
 
 	  _proto.toMillis = function toMillis() {
 	    return this.isValid ? this.ts : NaN;
+	  };
+	  /**
+	   * Returns the epoch seconds of this DateTime.
+	   * @return {number}
+	   */
+
+
+	  _proto.toSeconds = function toSeconds() {
+	    return this.isValid ? this.ts / 1000 : NaN;
 	  };
 	  /**
 	   * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON.

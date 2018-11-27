@@ -127,6 +127,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/formatting.html"><a href="manual/formatting.html#technical-formats--strings-for-computers-" data-ice="link">Technical formats (strings for computers)</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#iso-8601" data-ice="link">ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#http-and-rfc-2822" data-ice="link">HTTP and RFC 2822</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/formatting.html"><a href="manual/formatting.html#tolocalestring--strings-for-humans-" data-ice="link">toLocaleString (strings for humans)</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#the-basics" data-ice="link">The basics</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#intl-datetimeformat" data-ice="link">Intl.DateTimeFormat</a></li>
@@ -150,6 +151,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#iso-8601" data-ice="link">ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
@@ -243,7 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-0" data-ice="link">1.8.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-1" data-ice="link">1.8.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-7-1" data-ice="link">1.7.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-6-2" data-ice="link">1.6.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-6-0" data-ice="link">1.6.0</a></li>
@@ -707,6 +709,9 @@ dt.toISOWeekDate(); //=&gt; &apos;2017-W17-7&apos;
 dt.toISOTime(); //=&gt; &apos;11:32:00.000-04:00&apos;</code>
 </code></pre><p>Generally, you&apos;ll want the first one. Use it by default when building or interacting with APIs, communicating times over a wire, etc.</p><h3>HTTP and RFC 2822</h3><p>There are a number of legacy standard date and time formats out there, and Luxon supports some of them. You shouldn&apos;t use them unless you have a specific reason to.</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toRFC2822(); //=&gt; &apos;Thu, 20 Apr 2017 11:32:00 -0400&apos;
 dt.toHTTP(); //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
+</code></pre><h3>Unix timestamps</h3><p>DateTime objects can also be converted to numerical <a href="https://en.wikipedia.org/wiki/Unix_time">Unix timestamps</a>:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toMillis(); //=&gt; 1492702320000
+dt.toSeconds(); //=&gt; 1492702320
+dt.valueOf(); //=&gt; 1492702320000, same as .toMillis()</code>
 </code></pre><h2>toLocaleString (strings for humans)</h2><h3>The basics</h3><p>Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(); //=&gt; &apos;4/20/2017&apos;
 dt.toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;April 20, 2017, 11:32 AM EDT&apos;
 dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &apos;20 avril 2017 &#xE0; 11:32 UTC&#x2212;4&apos;</code>
@@ -1307,7 +1312,9 @@ DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;);</code>
 </code></pre><h3>SQL</h3><p>Luxon accepts SQL dates, times, and datetimes, via <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromSQL">fromSQL</a>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromSQL(&apos;2017-05-15&apos;);
 DateTime.fromSQL(&apos;2017-05-15 09:24:15&apos;);
 DateTime.fromSQL(&apos;09:24:15&apos;);</code>
-</code></pre><p>It works similarly to <code>fromISO</code>, so see above for additional notes.</p><h2>Ad-hoc parsing</h2><h3>Consider alternatives</h3><p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p><ol>
+</code></pre><p>It works similarly to <code>fromISO</code>, so see above for additional notes.</p><h3>Unix timestamps</h3><p>Luxon can parse numerical <a href="https://en.wikipedia.org/wiki/Unix_time">Unix timestamps</a>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromMillis(1542674993410);
+DateTime.fromSeconds(1542674993);</code>
+</code></pre><p>Both methods accept the same options, which allow you to specify a timezone, calendar, and/or numbering system.</p><h2>Ad-hoc parsing</h2><h3>Consider alternatives</h3><p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p><ol>
 <li>If the string was generated by a computer for programmatic access, use a standard format like ISO 8601. Then you can parse it using <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">DateTime.fromISO</a>.</li>
 <li>If the string is typed out by a human, it may not conform to the format you specify when asking Luxon to parse it. Luxon is quite strict about the format matching the string exactly.</li>
 </ol><p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p><h3>fromFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormat">DateTime.fromFormat</a> for the method signature. A brief example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
@@ -2499,7 +2506,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.8.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.8.1</h2><ul>
 <li>Add <code>DateTime.fromSeconds</code> and <code>DateTime#toSeconds</code></li>
 </ul><h2>1.7.1</h2><ul>
 <li>Floor the seconds instead of rounding them when outputting the &apos;X&apos; format</li>
