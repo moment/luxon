@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.8.0
+## 1.8.1
 
 - Add `DateTime.fromSeconds` and `DateTime#toSeconds`
 
