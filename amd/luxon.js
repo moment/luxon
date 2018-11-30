@@ -256,7 +256,7 @@ define(['exports'], function (exports) { 'use strict';
       var without = new Intl.DateTimeFormat(locale, intlOpts).format(date),
           included = new Intl.DateTimeFormat(locale, modified).format(date),
           diffed = included.substring(without.length),
-          trimmed = diffed.replace(/^[, ]+/, "");
+          trimmed = diffed.replace(/^[, \u200e]+/, "");
       return trimmed;
     } else {
       return null;
