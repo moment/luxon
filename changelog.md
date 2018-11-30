@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.2
+
+ - Trim leading \u200e characters from offset names in Edge 16 and 17
+
 ## 1.8.1
 
 - Add `DateTime.fromSeconds` and `DateTime#toSeconds`
