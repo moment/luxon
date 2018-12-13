@@ -815,7 +815,7 @@ export default class DateTime {
    * @return {boolean}
    */
   static isDateTime(o) {
-    return o.isLuxonDateTime;
+    return o.isLuxonDateTime || false;
   }
 
   // INFO

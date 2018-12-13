@@ -315,7 +315,7 @@ export default class Duration {
    * @return {boolean}
    */
   static isDuration(o) {
-    return o.isLuxonDuration;
+    return o.isLuxonDuration || false;
   }
 
   /**
