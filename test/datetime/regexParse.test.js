@@ -849,9 +849,23 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
 });
 
 test("DateTime.fromSQL() can parse an optional zone", () => {
-  const dt = DateTime.fromSQL("2016-05-14 10:23:54 Europe/Paris", { setZone: true });
+  let dt = DateTime.fromSQL("2016-05-14 10:23:54 Europe/Paris", { setZone: true });
   expect(dt.isValid).toBe(true);
   expect(dt.zoneName).toBe("Europe/Paris");
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0
+  });
+
+  dt = DateTime.fromSQL("2016-05-14 10:23:54 UTC", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("UTC");
+  expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,

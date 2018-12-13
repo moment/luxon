@@ -1,5 +1,7 @@
-import { parseZoneInfo, isUndefined } from "../impl/util";
+import { parseZoneInfo, isUndefined, ianaRegex } from "../impl/util";
 import Zone from "../zone";
+
+const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 
 const dtfCache = {};
 function makeDTF(zone) {
@@ -50,7 +52,7 @@ function partsOffset(dtf, date) {
 
 export default class IANAZone extends Zone {
   static isValidSpecifier(s) {
-    return s && s.match(/^[a-z_+-]{1,256}(\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?)?$/i);
+    return s && s.match(matchingRegex);
   }
 
   static isValidZone(zone) {

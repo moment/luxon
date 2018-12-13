@@ -203,3 +203,5 @@ export function normalizeObject(obj, normalizer, ignoreUnknown = false) {
 export function timeObject(obj) {
   return pick(obj, ["hour", "minute", "second", "millisecond"]);
 }
+
+export const ianaRegex = /[A-Za-z_+-]{1,256}(:?\/[A-Za-z_+-]{1,256}(\/[A-Za-z_+-]{1,256})?)?/;

@@ -1,4 +1,4 @@
-import { untruncateYear, signedOffset, parseMillis } from "./util";
+import { untruncateYear, signedOffset, parseMillis, ianaRegex } from "./util";
 import * as English from "./english";
 import FixedOffsetZone from "../zones/fixedOffsetZone";
 import IANAZone from "../zones/IANAZone";
@@ -69,7 +69,7 @@ const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
   extractISOOrdinalData = simpleParse("year", "ordinal"),
   sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/, // dumbed-down version of the ISO one
   sqlTimeRegex = RegExp(
-    `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?`
+    `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|(${ianaRegex.source}))?`
   ),
   sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
