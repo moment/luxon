@@ -857,7 +857,7 @@ export default class DateTime {
    * @return {boolean}
    */
   static isDateTime(o) {
-    return o.isLuxonDateTime;
+    return o.isLuxonDateTime || false;
   }
 
   // INFO
@@ -1442,13 +1442,13 @@ export default class DateTime {
    * @param opts {Object} - Intl.DateTimeFormat constructor options and configuration options
    * @example DateTime.local().toLocaleString(); //=&gt; 4/20/2017
    * @example DateTime.local().setLocale(&apos;en-gb&apos;).toLocaleString(); //=&gt; &apos;20/04/2017&apos;
-   * @example DateTime.local().toLocaleString({ locale: &quot;en-gb&quot; }); //=&gt; &apos;20/04/2017&apos;
+   * @example DateTime.local().toLocaleString({ locale: &apos;en-gb&apos; }); //=&gt; &apos;20/04/2017&apos;
    * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;April 20, 2017&apos;
    * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=&gt; &apos;11:32 AM&apos;
    * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=&gt; &apos;4/20/2017, 11:32 AM&apos;
-   * @example DateTime.local().toLocaleString({weekday: &apos;long&apos;, month: &apos;long&apos;, day: &apos;2-digit&apos;}); //=&gt; &apos;Thu, Apr 20&apos;
-   * @example DateTime.local().toLocaleString({weekday: &apos;long&apos;, month: &apos;long&apos;, day: &apos;2-digit&apos;, hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos;}); //=&gt; &apos;Thu, Apr 20, 11:27&apos;
-   * @example DateTime.local().toLocaleString({hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos;}); //=&gt; &apos;11:32&apos;
+   * @example DateTime.local().toLocaleString({ weekday: &apos;long&apos;, month: &apos;long&apos;, day: &apos;2-digit&apos; }); //=&gt; &apos;Thursday, April 20&apos;
+   * @example DateTime.local().toLocaleString({ weekday: &apos;short&apos;, month: &apos;short&apos;, day: &apos;2-digit&apos;, hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos; }); //=&gt; &apos;Thu, Apr 20, 11:27 AM&apos;
+   * @example DateTime.local().toLocaleString({ hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos;, hour12: false }); //=&gt; &apos;11:32&apos;
    * @return {string}
    */
   toLocaleString(opts = Formats.DATE_SHORT) {

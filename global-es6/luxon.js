@@ -207,6 +207,8 @@ var luxon = (function (exports) {
     return pick(obj, ["hour", "minute", "second", "millisecond"]);
   }
 
+  const ianaRegex = /[A-Za-z_+-]{1,256}(:?\/[A-Za-z_+-]{1,256}(\/[A-Za-z_+-]{1,256})?)?/;
+
   /**
    * @private
    */
@@ -749,6 +751,8 @@ var luxon = (function (exports) {
     }
   }
 
+  const matchingRegex = RegExp(`^${ianaRegex.source}$`);
+
   const dtfCache = {};
   function makeDTF(zone) {
     if (!dtfCache[zone]) {
@@ -798,7 +802,7 @@ var luxon = (function (exports) {
 
   class IANAZone extends Zone {
     static isValidSpecifier(s) {
-      return s && s.match(/^[a-z_+-]{1,256}(\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?)?$/i);
+      return s && s.match(matchingRegex);
     }
 
     static isValidZone(zone) {
@@ -2007,7 +2011,7 @@ var luxon = (function (exports) {
     extractISOOrdinalData = simpleParse("year", "ordinal"),
     sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/, // dumbed-down version of the ISO one
     sqlTimeRegex = RegExp(
-      `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|([a-zA-Z_]{1,256}/[a-zA-Z_]{1,256}))?`
+      `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|(${ianaRegex.source}))?`
     ),
     sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
@@ -2547,7 +2551,7 @@ var luxon = (function (exports) {
      * @return {boolean}
      */
     static isDuration(o) {
-      return o.isLuxonDuration;
+      return o.isLuxonDuration || false;
     }
 
     /**
@@ -4971,7 +4975,7 @@ var luxon = (function (exports) {
      * @return {boolean}
      */
     static isDateTime(o) {
-      return o.isLuxonDateTime;
+      return o.isLuxonDateTime || false;
     }
 
     // INFO
@@ -5556,13 +5560,13 @@ var luxon = (function (exports) {
      * @param opts {Object} - Intl.DateTimeFormat constructor options and configuration options
      * @example DateTime.local().toLocaleString(); //=> 4/20/2017
      * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
-     * @example DateTime.local().toLocaleString({ locale: "en-gb" }); //=> '20/04/2017'
+     * @example DateTime.local().toLocaleString({ locale: 'en-gb' }); //=> '20/04/2017'
      * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
      * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=> '11:32 AM'
      * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=> '4/20/2017, 11:32 AM'
-     * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', day: '2-digit'}); //=> 'Thu, Apr 20'
-     * @example DateTime.local().toLocaleString({weekday: 'long', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit'}); //=> 'Thu, Apr 20, 11:27'
-     * @example DateTime.local().toLocaleString({hour: '2-digit', minute: '2-digit'}); //=> '11:32'
+     * @example DateTime.local().toLocaleString({ weekday: 'long', month: 'long', day: '2-digit' }); //=> 'Thursday, April 20'
+     * @example DateTime.local().toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }); //=> 'Thu, Apr 20, 11:27 AM'
+     * @example DateTime.local().toLocaleString({ hour: '2-digit', minute: '2-digit', hour12: false }); //=> '11:32'
      * @return {string}
      */
     toLocaleString(opts = DATE_SHORT) {
