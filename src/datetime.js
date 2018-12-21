@@ -353,7 +353,7 @@ export default class DateTime {
    * @access private
    */
   constructor(config) {
-    const zone = config.zone || Settings.defaultZone,
+    const zone = config.zone || config.tz || Settings.defaultZone,
       invalid =
         config.invalid ||
         (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
@@ -556,6 +556,8 @@ export default class DateTime {
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
    * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
+   * context of a particular zone. Can take any value taken as the first argument to setZone()
+   * @param {string|Zone} [obj.tz='local'] - alias for zone parameter
    * @param {string} [obj.locale='en-US'] - a locale to set on the resulting DateTime instance
    * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
@@ -569,7 +571,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromObject(obj) {
-    const zoneToUse = normalizeZone(obj.zone, Settings.defaultZone);
+    const zoneToUse = normalizeZone(obj.zone || obj.tz, Settings.defaultZone);
     if (!zoneToUse.isValid) {
       return DateTime.invalid(unsupportedZone(zoneToUse));
     }
@@ -893,6 +895,14 @@ export default class DateTime {
   }
 
   /**
+   * Alias for zoneName.
+   * @type {string}
+   */
+  get tz() {
+    return this.isValid ? this.zone.name : null;
+  }
+
+  /**
    * Get the year
    * @example DateTime.local(2017, 5, 25).year //=> 2017
    * @type {number}
@@ -1209,6 +1219,13 @@ export default class DateTime {
           : this.ts;
       return clone(this, { ts: newTS, zone });
     }
+  }
+
+  /**
+   * Alias for "setZone"
+   */
+  setTz(zone, { keepLocalTime = false, keepCalendarTime = false } = {}) {
+    return this.setZone(zone, { keepLocalTime, keepCalendarTime });
   }
 
   /**

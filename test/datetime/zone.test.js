@@ -155,6 +155,13 @@ test("DateTime#setZone rejects jibberish", () => {
   expect(zoned.invalidReason).toBe("unsupported zone");
 });
 
+test("DateTime#setTz is alias for DateTime#setZone", () => {
+  const local = DateTime.local();
+  expect(local.setTz("America/Los_Angeles").zoneName).toBe(
+    local.setZone("America/Los_Angeles").zoneName
+  );
+});
+
 //------
 // #isInDST()
 //------

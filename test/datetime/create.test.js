@@ -325,6 +325,13 @@ test('DateTime.fromObject() accepts a zone option of "utc"', () => {
   expect(dateTime.millisecond).toBe(123);
 });
 
+test('DateTime.fromObject() accepts a tz option as alias for "zone"', () => {
+  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { tz: "utc" }));
+
+  expect(dateTime.zoneName).toBe("UTC");
+  expect(dateTime.tz).toBe("UTC");
+});
+
 test('DateTime.fromObject() accepts "utc-8" as the zone option', () => {
   const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { zone: "utc-8" }));
 
