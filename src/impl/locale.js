@@ -26,6 +26,17 @@ function getCachendINF(locString, opts = {}) {
   return inf;
 }
 
+let intlRelCache = {};
+function getCachendRTF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let inf = intlRelCache[key];
+  if (!inf) {
+    inf = new Intl.RelativeTimeFormat(locString, opts);
+    intlRelCache[key] = inf;
+  }
+  return inf;
+}
+
 let sysLocaleCache = null;
 function systemLocale() {
   if (sysLocaleCache) {
@@ -423,6 +434,10 @@ export default class Locale {
 
   dtFormatter(dt, intlOpts = {}) {
     return new PolyDateFormatter(dt, this.intl, intlOpts);
+  }
+
+  relFormatter(intlOpts = {}) {
+    return getCachendRTF(this.intl, { numeric: intlOpts.forceNumbers ? "always" : "auto" });
   }
 
   equals(other) {

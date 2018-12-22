@@ -11,6 +11,7 @@
   "scripts": {
     "build": "babel-node tasks/buildAll.js",
     "build-node": "babel-node tasks/buildNode.js",
+    "build-global": "babel-node tasks/buildGlobal.js",
     "test": "babel-node tasks/unit.js",
     "docs": "esdoc -c docs/index.js",
     "site": "cp -r site/** build/",

@@ -16,7 +16,8 @@ import {
   daysInYear,
   isLeapYear,
   weeksInWeekYear,
-  normalizeObject
+  normalizeObject,
+  hasRelative
 } from "./impl/util";
 import { normalizeZone } from "./impl/zoneUtil";
 import diff from "./impl/diff";
@@ -37,7 +38,8 @@ import {
   InvalidArgumentError,
   ConflictingSpecificationError,
   InvalidUnitError,
-  InvalidDateTimeError
+  InvalidDateTimeError,
+  UnsupportedError
 } from "./errors";
 import Invalid from "./impl/invalid";
 
@@ -1644,14 +1646,20 @@ export default class DateTime {
    * @return {Duration}
    */
   diff(otherDateTime, unit = "milliseconds", opts = {}) {
-    if (!this.isValid || !otherDateTime.isValid)
+    if (!this.isValid || !otherDateTime.isValid) {
       return Duration.invalid(this.invalid || otherDateTime.invalid);
+    }
+
+    const durOpts = Object.assign(
+      { locale: this.locale, numberingSystem: this.numberingSystem },
+      opts
+    );
 
     const units = maybeArray(unit).map(Duration.normalizeUnit),
       otherIsLater = otherDateTime.valueOf() > this.valueOf(),
       earlier = otherIsLater ? this : otherDateTime,
       later = otherIsLater ? otherDateTime : this,
-      diffed = diff(earlier, later, units, opts);
+      diffed = diff(earlier, later, units, durOpts);
 
     return otherIsLater ? diffed.negate() : diffed;
   }
@@ -1709,6 +1717,38 @@ export default class DateTime {
       this.zone.equals(other.zone) &&
       this.loc.equals(other.loc)
     );
+  }
+
+  /**
+   * Returns a string representation of a this time relative to now, such as "yesterday" or "in two days".
+   * This does some rounding by default, such as setting the result to "in one minute" when there are more than 50 seconds. You may adjust these
+   * thresholds by setting Settings.relativeTimeThresholds.
+   * @param {Object} opts - options that affect the creation of the Duration
+   * @param {DateTime} [opts.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {boolean} [opts.forceNumbers=false] - whether to always use numerical measures like "in one day" instead "tomorrow"
+   * @param {locale} opts.locale - override the locale of this DateTime
+   * @param {locale} opts.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @example DateTime.local().plus({ days: 1 }).fromNow() //=> "tomorrow"
+   * @example DateTime.local().setLocale("es").plus({ days: 1 }).fromNow() //=> "mañana"
+   * @example DateTime.local().plus({ days: 1 }).fromNow({ locale: "fr" }) //=> "demain"
+   * @example DateTime.local().minus({ days: 1 }).fromNow() //=> "yesterday"
+   * @example DateTime.local().minus({ days: 1 }).fromNow({ forceNumbers: true }) //=> "1 day ago"
+   * @example DateTime.local().minus({ days: 2 }).fromNow() //=> "2 days ago"
+   */
+  fromNow(opts = {}) {
+    if (hasRelative()) {
+      const base = opts.base || DateTime.local(),
+        formatter = this.loc.clone(opts).relFormatter(opts),
+        thresholds = Settings.relativeTimeThresholds;
+      for (const [unit, thresh] of thresholds) {
+        const count = this.diff(base, unit).get(unit);
+        if (Math.abs(count) <= thresh) {
+          return formatter.format(count, unit);
+        }
+      }
+    } else {
+      throw new UnsupportedError("This platform does not support relative time formatting.");
+    }
   }
 
   /**

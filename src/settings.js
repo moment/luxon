@@ -8,7 +8,15 @@ let now = () => Date.now(),
   defaultLocale = null,
   defaultNumberingSystem = null,
   defaultOutputCalendar = null,
-  throwOnInvalid = false;
+  throwOnInvalid = false,
+  relativeTimeThresholds = [
+    ["seconds", 50], // seconds to minute
+    ["minutes", 50], // minutes to hour
+    ["hours", 23], // hours to day
+    ["days", 28], // days to month
+    ["months", 11], // months to year
+    ["years", Infinity]
+  ];
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -107,6 +115,22 @@ export default class Settings {
    */
   static set defaultOutputCalendar(outputCalendar) {
     defaultOutputCalendar = outputCalendar;
+  }
+
+  /**
+   * Get the thresholds for relative times
+   * @type {Array}
+   */
+  static get relativeTimeThresholds() {
+    return relativeTimeThresholds;
+  }
+
+  /**
+   * Set the thresholds for relative times
+   * @type {Array}
+   */
+  static set relativeTimeThresholds(arr) {
+    relativeTimeThresholds = arr;
   }
 
   /**

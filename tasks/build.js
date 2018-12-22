@@ -165,7 +165,7 @@ async function amdFilled() {
 }
 
 async function node() {
-  await buildLibrary("node", { format: "cjs", target: "node  6" });
+  await buildLibrary("node", { format: "cjs", target: "node 6" });
 }
 
 async function cjsBrowser() {
@@ -183,7 +183,8 @@ async function globalEs6() {
   await buildLibrary("global-es6", {
     format: "iife",
     name: "luxon",
-    compile: false
+    compile: false,
+    global: true
   });
 }
 
@@ -202,5 +203,6 @@ async function buildAll() {
 
 module.exports = {
   buildAll,
-  buildNode: node
+  buildNode: node,
+  buildGlobal: global
 };

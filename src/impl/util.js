@@ -36,6 +36,10 @@ export function hasFormatToParts() {
   return !isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
 }
 
+export function hasRelative() {
+  return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+}
+
 // OBJECTS AND ARRAYS
 
 export function maybeArray(thing) {

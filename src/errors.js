@@ -59,3 +59,5 @@ export class ZoneIsAbstractError extends LuxonError {
     super("Zone is an abstract class");
   }
 }
+
+export class UnsupportedError extends LuxonError {}
