@@ -1734,6 +1734,7 @@ export default class DateTime {
    * @example DateTime.local().minus({ days: 2 }).fromNow() //=> "2 days ago"
    */
   fromNow(opts = {}) {
+    if (!this.isValid) return null;
     if (hasRelative()) {
       const base = opts.base || DateTime.local(),
         formatter = this.loc.clone(opts).relFormatter(opts),
