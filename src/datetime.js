@@ -1721,8 +1721,6 @@ export default class DateTime {
 
   /**
    * Returns a string representation of a this time relative to now, such as "yesterday" or "in two days".
-   * This does some rounding by default, such as setting the result to "in one minute" when there are more than 50 seconds. You may adjust these
-   * thresholds by setting Settings.relativeTimeThresholds.
    * @param {Object} opts - options that affect the creation of the Duration
    * @param {DateTime} [opts.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {boolean} [opts.forceNumbers=false] - whether to always use numerical measures like "in one day" instead "tomorrow"
@@ -1739,11 +1737,11 @@ export default class DateTime {
     if (hasRelative()) {
       const base = opts.base || DateTime.local(),
         formatter = this.loc.clone(opts).relFormatter(opts),
-        thresholds = Settings.relativeTimeThresholds;
-      for (const [unit, thresh] of thresholds) {
+        units = ["years", "months", "days", "hours", "minutes", "seconds"];
+      for (const unit of units) {
         const count = this.diff(base, unit).get(unit);
-        if (Math.abs(count) <= thresh) {
-          return formatter.format(count, unit);
+        if (Math.abs(count) >= 1) {
+          return formatter.format(Math.round(count), unit);
         }
       }
     } else {
