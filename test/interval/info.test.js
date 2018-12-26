@@ -89,9 +89,7 @@ test("Interval#toDuration accepts multiple units", () => {
     Helpers.atHour(13).plus({ minutes: 47 })
   );
 
-  expect(int.toDuration(["hours", "minutes"])).toEqual(
-    Duration.fromObject({ hours: 4, minutes: 44 })
-  );
+  expect(int.toDuration(["hours", "minutes"]).toObject()).toEqual({ hours: 4, minutes: 44 });
 });
 
 test("Interval#toDuration accepts duration options", () => {

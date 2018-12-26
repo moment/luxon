@@ -1720,10 +1720,12 @@ export default class DateTime {
   }
 
   /**
-   * Returns a string representation of a this time relative to now, such as "yesterday" or "in two days".
+   * Returns a string representation of a this time relative to now, such as "yesterday" or "in two days". Can only internationalize if your
+   * platform supports Intl.RelativeDateFormat
    * @param {Object} opts - options that affect the creation of the Duration
    * @param {DateTime} [opts.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {boolean} [opts.forceNumbers=false] - whether to always use numerical measures like "in one day" instead "tomorrow"
+   * @param {boolean} [opts.style="long"] - the style of units, must be "long", "short", or "narrow"
    * @param {locale} opts.locale - override the locale of this DateTime
    * @param {locale} opts.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
    * @example DateTime.local().plus({ days: 1 }).fromNow() //=> "tomorrow"
@@ -1735,18 +1737,14 @@ export default class DateTime {
    */
   fromNow(opts = {}) {
     if (!this.isValid) return null;
-    if (hasRelative()) {
-      const base = opts.base || DateTime.local(),
-        formatter = this.loc.clone(opts).relFormatter(opts),
-        units = ["years", "months", "days", "hours", "minutes", "seconds"];
-      for (const unit of units) {
-        const count = this.diff(base, unit).get(unit);
-        if (Math.abs(count) >= 1) {
-          return formatter.format(Math.round(count), unit);
-        }
+    const base = opts.base || DateTime.local(),
+      formatter = this.loc.clone(opts).relFormatter(opts),
+      units = ["years", "months", "days", "hours", "minutes", "seconds"];
+    for (const unit of units) {
+      const count = this.diff(base, unit).get(unit);
+      if (Math.abs(count) >= 1) {
+        return formatter.format(Math.round(count), unit);
       }
-    } else {
-      throw new UnsupportedError("This platform does not support relative time formatting.");
     }
   }
 

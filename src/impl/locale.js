@@ -1,4 +1,4 @@
-import { hasFormatToParts, hasIntl, padStart, roundTo } from "./util";
+import { hasFormatToParts, hasIntl, padStart, roundTo, hasRelative } from "./util";
 import * as English from "./english";
 import Settings from "../settings";
 import DateTime from "../datetime";
@@ -256,6 +256,40 @@ class PolyDateFormatter {
 /**
  * @private
  */
+class PolyRelFormatter {
+  constructor(intl, opts) {
+    this.opts = Object.assign({ style: "long", forceNumbers: false }, opts);
+    this.hasIntl = hasRelative();
+    if (this.hasIntl) {
+      this.rtf = getCachendRTF(intl, opts);
+    }
+  }
+
+  format(count, unit) {
+    if (this.hasIntl) {
+      return this.rtf.format(count, units);
+    } else {
+      return English.formatRelativeTime(
+        unit,
+        count,
+        this.opts.forceNumbers,
+        this.opts.style !== "long"
+      );
+    }
+  }
+
+  formatToParts() {
+    if (hasRelative()) {
+      return this.rtf.formatToParts(count, units);
+    } else {
+      return [];
+    }
+  }
+}
+
+/**
+ * @private
+ */
 
 export default class Locale {
   static fromOpts(opts) {
@@ -436,8 +470,8 @@ export default class Locale {
     return new PolyDateFormatter(dt, this.intl, intlOpts);
   }
 
-  relFormatter(intlOpts = {}) {
-    return getCachendRTF(this.intl, { numeric: intlOpts.forceNumbers ? "always" : "auto" });
+  relFormatter(opts = {}) {
+    return new PolyRelFormatter(this.intl, opts);
   }
 
   equals(other) {
