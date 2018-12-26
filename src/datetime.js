@@ -16,8 +16,7 @@ import {
   daysInYear,
   isLeapYear,
   weeksInWeekYear,
-  normalizeObject,
-  hasRelative
+  normalizeObject
 } from "./impl/util";
 import { normalizeZone } from "./impl/zoneUtil";
 import diff from "./impl/diff";
@@ -38,8 +37,7 @@ import {
   InvalidArgumentError,
   ConflictingSpecificationError,
   InvalidUnitError,
-  InvalidDateTimeError,
-  UnsupportedError
+  InvalidDateTimeError
 } from "./errors";
 import Invalid from "./impl/invalid";
 

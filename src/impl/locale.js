@@ -267,7 +267,7 @@ class PolyRelFormatter {
 
   format(count, unit) {
     if (this.hasIntl) {
-      return this.rtf.format(count, units);
+      return this.rtf.format(count, unit);
     } else {
       return English.formatRelativeTime(
         unit,
@@ -278,9 +278,9 @@ class PolyRelFormatter {
     }
   }
 
-  formatToParts() {
+  formatToParts(count, unit) {
     if (hasRelative()) {
-      return this.rtf.formatToParts(count, units);
+      return this.rtf.formatToParts(count, unit);
     } else {
       return [];
     }

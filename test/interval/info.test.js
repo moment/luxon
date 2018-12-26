@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime, Interval, Duration } from "../../src/luxon";
+import { DateTime, Interval } from "../../src/luxon";
 import { Helpers } from "../helpers";
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e));

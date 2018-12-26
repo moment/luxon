@@ -1,7 +1,7 @@
 import { Helpers } from "../helpers";
 import DateTime from "../../src/datetime";
 
-/* global test expect */
+/* global expect */
 
 Helpers.withoutRTF("DateTime#fromNow falls back to English", () => {
   const base = DateTime.fromObject({ year: 2019, month: 12, day: 25 });
