@@ -147,7 +147,7 @@ See the [formatting guide](formatting.html) for more about the string-outputting
 
 #### Humanization
 
-Luxon supports `fromNow`, but it requires support for Intl.RelativeTimeFormat from the browser, which you may not have available.
+Luxon supports `fromNow`. For internationalization, it uses Int.RelativeTimeFormat, which isn't currently supported by most browsers; in those cases, it falls back to English.
 
 | Operation            | Moment         | Luxon                         |
 | -------------------- | -------------- | ----------------------------- |
@@ -155,7 +155,7 @@ Luxon supports `fromNow`, but it requires support for Intl.RelativeTimeFormat fr
 | Time from other time | `from(Moment)` | `fromNow({ base: DateTime })` |
 | Time to now          | `toNow()`      | None                          |
 | Time to other time   | `to(Moment)`   | None                          |
-| "Calendar time"      | `calendar()`   | None                          |
+| "Calendar time"      | `calendar()`   | `fromNow()`                   |
 
 ## Durations
 

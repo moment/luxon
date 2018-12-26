@@ -16,7 +16,8 @@ import {
   daysInYear,
   isLeapYear,
   weeksInWeekYear,
-  normalizeObject
+  normalizeObject,
+  roundTo
 } from "./impl/util";
 import { normalizeZone } from "./impl/zoneUtil";
 import diff from "./impl/diff";
@@ -344,7 +345,7 @@ function quickDT(obj, zone) {
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
- * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link fromNow}, {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
@@ -1723,25 +1724,36 @@ export default class DateTime {
    * @param {Object} opts - options that affect the creation of the Duration
    * @param {DateTime} [opts.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {boolean} [opts.forceNumbers=false] - whether to always use numerical measures like "in one day" instead "tomorrow"
-   * @param {boolean} [opts.style="long"] - the style of units, must be "long", "short", or "narrow"
-   * @param {locale} opts.locale - override the locale of this DateTime
-   * @param {locale} opts.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @param {string} [opts.style="long"] - the style of units, must be "long", "short", or "narrow"
+   * @param {string} opts.unit - force fromNow to use a specific unit; fromNow defaults to picking itself
+   * @param {boolean} [opts.round=true] - whether to round the numbers in the output
+   * @param {string} opts.locale - override the locale of this DateTime
+   * @param {string} opts.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
    * @example DateTime.local().plus({ days: 1 }).fromNow() //=> "tomorrow"
    * @example DateTime.local().setLocale("es").plus({ days: 1 }).fromNow() //=> "mañana"
    * @example DateTime.local().plus({ days: 1 }).fromNow({ locale: "fr" }) //=> "demain"
    * @example DateTime.local().minus({ days: 1 }).fromNow() //=> "yesterday"
    * @example DateTime.local().minus({ days: 1 }).fromNow({ forceNumbers: true }) //=> "1 day ago"
    * @example DateTime.local().minus({ days: 2 }).fromNow() //=> "2 days ago"
+   * @example DateTime.local().minus({ days: 2 }).fromNow({ unit: hours }) //=> "48 hours ago"
+   * @example DateTime.local().minus({ hours: 36 }).fromNow({ round: false }) //=> "1.5 days ago"
    */
   fromNow(opts = {}) {
     if (!this.isValid) return null;
-    const base = opts.base || DateTime.local(),
-      formatter = this.loc.clone(opts).relFormatter(opts),
-      units = ["years", "months", "days", "hours", "minutes", "seconds"];
+    const realOpts = Object.assign({ round: true, base: DateTime.local() }, opts),
+      formatter = this.loc.clone(realOpts).relFormatter(realOpts),
+      roundMaybe = c => roundTo(c, realOpts.round ? 0 : 2);
+
+    if (realOpts.unit) {
+      const c = this.diff(realOpts.base, realOpts.unit).get(realOpts.unit);
+      return formatter.format(roundMaybe(c), realOpts.unit);
+    }
+
+    const units = ["years", "months", "days", "hours", "minutes", "seconds"];
     for (const unit of units) {
-      const count = this.diff(base, unit).get(unit);
+      const count = this.diff(realOpts.base, unit).get(unit);
       if (Math.abs(count) >= 1) {
-        return formatter.format(Math.round(count), unit);
+        return formatter.format(roundMaybe(count), unit);
       }
     }
   }
