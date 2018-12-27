@@ -99,7 +99,7 @@ But more likely, you have basic Intl support but not `formatToParts` (e.g. IE 11
 
 ### Zones
 
-If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format pollyfill](https://github.com/yahoo/date-time-format-timezone). **Unfortunately, this currently breaks Chrome**. See issue [#190](https://github.com/moment/luxon/issues/190) for more. I don't currently have a good solution for IE with zones.
+If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format pollyfill](https://github.com/yahoo/date-time-format-timezone).
 
 ## Older platforms
 
