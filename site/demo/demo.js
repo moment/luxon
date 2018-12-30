@@ -10,6 +10,7 @@ function demo(luxon) {
         // eslint-disable-next-line no-eval
         result = eval(code);
       } catch (e) {
+        console.error(e);
         return "[error]";
       }
 
@@ -69,6 +70,12 @@ function demo(luxon) {
   example("DateTime.local().setLocale('fr').toFormat('MMMM dd, yyyy')");
   example("DateTime.fromFormat('May 25, 1982', 'MMMM dd, yyyy')");
   example("DateTime.fromFormat('mai 25, 1982', 'MMMM dd, yyyy', { locale: 'fr' })");
+  example("DateTime.local().plus({ days: 1 }).toRelativeCalendar()");
+  example("DateTime.local().plus({ days: -1 }).toRelativeCalendar()");
+  example("DateTime.local().plus({ months: 1 }).toRelativeCalendar()");
+  example("DateTime.local().setLocale('fr').plus({ days: 1 }).toRelativeCalendar()");
+  example("DateTime.local().setLocale('fr').plus({ days: -1 }).toRelativeCalendar()");
+  example("DateTime.local().setLocale('fr').plus({ months: 1 }).toRelativeCalendar()");
 
   var all = "<h1>Some Luxon examples</h1>";
   all +=

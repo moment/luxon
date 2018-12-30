@@ -147,15 +147,15 @@ See the [formatting guide](formatting.html) for more about the string-outputting
 
 #### Humanization
 
-Luxon supports `fromNow`. For internationalization, it uses Int.RelativeTimeFormat, which isn't currently supported by most browsers; in those cases, it falls back to English.
+Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they use Int.RelativeTimeFormat, which isn't currently supported by most browsers; in those cases, they fall back to English.
 
-| Operation            | Moment         | Luxon                         |
-| -------------------- | -------------- | ----------------------------- |
-| Time from now        | `fromNow()`    | `fromNow()`                   |
-| Time from other time | `from(Moment)` | `fromNow({ base: DateTime })` |
-| Time to now          | `toNow()`      | None                          |
-| Time to other time   | `to(Moment)`   | None                          |
-| "Calendar time"      | `calendar()`   | `fromNow()`                   |
+| Operation            | Moment         | Luxon                                         |
+| -------------------- | -------------- | --------------------------------------------- |
+| Time from now        | `fromNow()`    | `toRelative()`                                |
+| Time from other time | `from(Moment)` | `toRelative({ base: DateTime })`              |
+| Time to now          | `toNow()`      | `DateTime.local().toRelative({ base: this })` |
+| Time to other time   | `to(Moment)`   | `otherTime.toRelative({ base: this })`        |
+| "Calendar time"      | `calendar()`   | `toRelativeCalendar()`                        |
 
 ## Durations
 

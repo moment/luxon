@@ -97,9 +97,10 @@ export function parseMillis(fraction) {
   }
 }
 
-export function roundTo(number, digits) {
-  const factor = 10 ** digits;
-  return Math.round(number * factor) / factor;
+export function roundTo(number, digits, towardZero = false) {
+  const factor = 10 ** digits,
+    rounder = towardZero ? Math.trunc : Math.round;
+  return rounder(number * factor) / factor;
 }
 
 // DATE BASICS

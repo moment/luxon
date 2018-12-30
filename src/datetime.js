@@ -329,6 +329,39 @@ function quickDT(obj, zone) {
   });
 }
 
+function diffRelative(start, end, opts) {
+  const round = isUndefined(opts.round) ? true : opts.round,
+    format = (c, unit) => {
+      c = roundTo(c, round || opts.calendary ? 0 : 2, true);
+      const formatter = end.loc.clone(opts).relFormatter(opts);
+      return formatter.format(c, unit);
+    },
+    differ = unit => {
+      if (opts.calendary) {
+        if (!end.hasSame(start, unit)) {
+          return end
+            .startOf(unit)
+            .diff(start.startOf(unit), unit)
+            .get(unit);
+        } else return 0;
+      } else {
+        return end.diff(start, unit).get(unit);
+      }
+    };
+
+  if (opts.unit) {
+    return format(differ(opts.unit), opts.unit);
+  }
+
+  for (const unit of opts.units) {
+    const count = differ(unit);
+    if (Math.abs(count) >= 1) {
+      return format(count, unit);
+    }
+  }
+  return format(0, opts.units[opts.units.length - 1]);
+}
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -345,7 +378,7 @@ function quickDT(obj, zone) {
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
- * * **Output**: To convert the DateTime to other representations, use the {@link fromNow}, {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link toRelative}, {@link toRelativeCalendar}, {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
@@ -1719,43 +1752,61 @@ export default class DateTime {
   }
 
   /**
-   * Returns a string representation of a this time relative to now, such as "yesterday" or "in two days". Can only internationalize if your
-   * platform supports Intl.RelativeDateFormat
-   * @param {Object} opts - options that affect the creation of the Duration
-   * @param {DateTime} [opts.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
-   * @param {boolean} [opts.forceNumbers=false] - whether to always use numerical measures like "in one day" instead "tomorrow"
-   * @param {string} [opts.style="long"] - the style of units, must be "long", "short", or "narrow"
-   * @param {string} opts.unit - force fromNow to use a specific unit; fromNow defaults to picking itself
-   * @param {boolean} [opts.round=true] - whether to round the numbers in the output
-   * @param {string} opts.locale - override the locale of this DateTime
-   * @param {string} opts.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
-   * @example DateTime.local().plus({ days: 1 }).fromNow() //=> "tomorrow"
-   * @example DateTime.local().setLocale("es").plus({ days: 1 }).fromNow() //=> "mañana"
-   * @example DateTime.local().plus({ days: 1 }).fromNow({ locale: "fr" }) //=> "demain"
-   * @example DateTime.local().minus({ days: 1 }).fromNow() //=> "yesterday"
-   * @example DateTime.local().minus({ days: 1 }).fromNow({ forceNumbers: true }) //=> "1 day ago"
-   * @example DateTime.local().minus({ days: 2 }).fromNow() //=> "2 days ago"
-   * @example DateTime.local().minus({ days: 2 }).fromNow({ unit: hours }) //=> "48 hours ago"
-   * @example DateTime.local().minus({ hours: 36 }).fromNow({ round: false }) //=> "1.5 days ago"
+   * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
+   * platform supports Intl.RelativeDateFormat. Rounds down by default.
+   * @param {Object} options - options that affect the output
+   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
+   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit
+   * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+   * @param {boolean} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
+   * @param {string} options.locale - override the locale of this DateTime
+   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
+   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+   * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
+   * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
+   * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
+   * @example DateTime.local().minus({ hours: 36 }).toRelative({ round: false }) //=> "1.5 days ago"
    */
-  fromNow(opts = {}) {
+  toRelative(options = {}) {
     if (!this.isValid) return null;
-    const realOpts = Object.assign({ round: true, base: DateTime.local() }, opts),
-      formatter = this.loc.clone(realOpts).relFormatter(realOpts),
-      roundMaybe = c => roundTo(c, realOpts.round ? 0 : 2);
+    const base = options.base || DateTime.local(),
+      padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
+    return diffRelative(
+      base,
+      this.plus(padding),
+      Object.assign(options, {
+        numeric: "always",
+        units: ["years", "months", "days", "hours", "minutes", "seconds"]
+      })
+    );
+  }
 
-    if (realOpts.unit) {
-      const c = this.diff(realOpts.base, realOpts.unit).get(realOpts.unit);
-      return formatter.format(roundMaybe(c), realOpts.unit);
-    }
+  /**
+   * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+   * platform supports Intl.RelativeDateFormat.
+   * @param {Object} options - options that affect the output
+   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {string} options.locale - override the locale of this DateTime
+   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar() //=> "tomorrow"
+   * @example DateTime.local().setLocale("es").plus({ days: 1 }).toRelative() //=> ""mañana"
+   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar({ locale: "fr" }) //=> "demain"
+   * @example DateTime.local().minus({ days: 2 }).toRelativeCalendar() //=> "2 days ago"
+   */
+  toRelativeCalendar(options = {}) {
+    if (!this.isValid) return null;
 
-    const units = ["years", "months", "days", "hours", "minutes", "seconds"];
-    for (const unit of units) {
-      const count = this.diff(realOpts.base, unit).get(unit);
-      if (Math.abs(count) >= 1) {
-        return formatter.format(roundMaybe(count), unit);
-      }
-    }
+    return diffRelative(
+      options.base || DateTime.local(),
+      this,
+      Object.assign(options, {
+        numeric: "auto",
+        units: ["years", "months", "days"],
+        calendary: true
+      })
+    );
   }
 
   /**

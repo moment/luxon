@@ -124,7 +124,7 @@ export function eraForDateTime(dt, length) {
   return eras(length)[dt.year < 0 ? 0 : 1];
 }
 
-export function formatRelativeTime(unit, count, forceNumbers = false, narrow = false) {
+export function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
   const units = {
     years: ["year", "yr."],
     quarters: ["quarer", "qtr."],
@@ -138,7 +138,7 @@ export function formatRelativeTime(unit, count, forceNumbers = false, narrow = f
 
   const lastable = ["hours", "minutes", "seconds"].indexOf(unit) === -1;
 
-  if (!forceNumbers && lastable) {
+  if (numeric === "auto" && lastable) {
     const isDay = unit === "days";
     switch (count) {
       case 1:
