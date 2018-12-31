@@ -1155,7 +1155,7 @@ define(['exports'], function (exports) { 'use strict';
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true); // fix for some old engines
 
-	      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  } // fix Array#{values, @@iterator}.name in V8 / FF
 
@@ -1169,7 +1169,7 @@ define(['exports'], function (exports) { 'use strict';
 	  } // Define iterator
 
 
-	  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
+	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
 	    _hide(proto, ITERATOR, $default);
 	  } // Plug for library
 
@@ -2042,6 +2042,9 @@ define(['exports'], function (exports) { 'use strict';
 	}
 	function hasFormatToParts() {
 	  return !isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
+	}
+	function hasRelative() {
+	  return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
 	} // OBJECTS AND ARRAYS
 
 	function maybeArray(thing) {
@@ -2097,9 +2100,14 @@ define(['exports'], function (exports) { 'use strict';
 	    return Math.floor(f);
 	  }
 	}
-	function roundTo(number, digits) {
-	  var factor = Math.pow(10, digits);
-	  return Math.round(number * factor) / factor;
+	function roundTo(number, digits, towardZero) {
+	  if (towardZero === void 0) {
+	    towardZero = false;
+	  }
+
+	  var factor = Math.pow(10, digits),
+	      rounder = towardZero ? Math.trunc : Math.round;
+	  return rounder(number * factor) / factor;
 	} // DATE BASICS
 
 	function isLeapYear(year) {
@@ -2450,6 +2458,50 @@ define(['exports'], function (exports) { 'use strict';
 	}
 	function eraForDateTime(dt, length) {
 	  return eras(length)[dt.year < 0 ? 0 : 1];
+	}
+	function formatRelativeTime(unit, count, numeric, narrow) {
+	  if (numeric === void 0) {
+	    numeric = "always";
+	  }
+
+	  if (narrow === void 0) {
+	    narrow = false;
+	  }
+
+	  var units = {
+	    years: ["year", "yr."],
+	    quarters: ["quarer", "qtr."],
+	    months: ["month", "mo."],
+	    weeks: ["week", "wk."],
+	    days: ["day", "day"],
+	    hours: ["hour", "hr."],
+	    minutes: ["minute", "min."],
+	    seconds: ["second", "sec."]
+	  };
+	  var lastable = ["hours", "minutes", "seconds"].indexOf(unit) === -1;
+
+	  if (numeric === "auto" && lastable) {
+	    var isDay = unit === "days";
+
+	    switch (count) {
+	      case 1:
+	        return isDay ? "tomorrow" : "next " + units[unit][0];
+
+	      case -1:
+	        return isDay ? "yesterday" : "last " + units[unit][0];
+
+	      case 0:
+	        return isDay ? "today" : "this " + units[unit][0];
+
+	      default: // fall through
+
+	    }
+	  }
+
+	  var isInPast = Object.is(count, -0) || count < 0,
+	      fmtValue = Math.abs(count),
+	      fmtUnit = narrow ? units[unit][1] : fmtValue === 1 ? units[unit][0] : unit;
+	  return isInPast ? fmtValue + " " + fmtUnit + " ago" : "in " + fmtValue + " " + fmtUnit;
 	}
 	function formatString(knownFormat) {
 	  // these all have the offsets removed because we don't have access to them
@@ -3874,6 +3926,24 @@ define(['exports'], function (exports) { 'use strict';
 	  return inf;
 	}
 
+	var intlRelCache = {};
+
+	function getCachendRTF(locString, opts) {
+	  if (opts === void 0) {
+	    opts = {};
+	  }
+
+	  var key = JSON.stringify([locString, opts]);
+	  var inf = intlRelCache[key];
+
+	  if (!inf) {
+	    inf = new Intl.RelativeTimeFormat(locString, opts);
+	    intlRelCache[key] = inf;
+	  }
+
+	  return inf;
+	}
+
 	var sysLocaleCache = null;
 
 	function systemLocale() {
@@ -3987,49 +4057,37 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var SimpleNumberFormatter =
+	var PolyeNumberFormatter =
 	/*#__PURE__*/
 	function () {
-	  function SimpleNumberFormatter(opts) {
+	  function PolyeNumberFormatter(intl, forceSimple, opts) {
 	    this.padTo = opts.padTo || 0;
 	    this.floor = opts.floor || false;
+
+	    if (!forceSimple && hasIntl()) {
+	      var intlOpts = {
+	        useGrouping: false
+	      };
+	      if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
+	      this.inf = getCachendINF(intl, intlOpts);
+	    }
 	  }
 
-	  var _proto = SimpleNumberFormatter.prototype;
+	  var _proto = PolyeNumberFormatter.prototype;
 
 	  _proto.format = function format(i) {
-	    // to match the browser's numberformatter defaults
-	    var fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
-	    return padStart(fixed, this.padTo);
-	  };
+	    if (this.inf) {
+	      var fixed = this.floor ? Math.floor(i) : i;
+	      return this.inf.format(fixed);
+	    } else {
+	      // to match the browser's numberformatter defaults
+	      var _fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
 
-	  return SimpleNumberFormatter;
-	}();
-
-	var IntlNumberFormatter =
-	/*#__PURE__*/
-	function () {
-	  function IntlNumberFormatter(intl, opts) {
-	    var intlOpts = {
-	      useGrouping: false
-	    };
-
-	    if (opts.padTo > 0) {
-	      intlOpts.minimumIntegerDigits = opts.padTo;
+	      return padStart(_fixed, this.padTo);
 	    }
-
-	    this.floor = opts.floor;
-	    this.inf = getCachendINF(intl, intlOpts);
-	  }
-
-	  var _proto2 = IntlNumberFormatter.prototype;
-
-	  _proto2.format = function format(i) {
-	    var fixed = this.floor ? Math.floor(i) : i;
-	    return this.inf.format(fixed);
 	  };
 
-	  return IntlNumberFormatter;
+	  return PolyeNumberFormatter;
 	}();
 	/**
 	 * @private
@@ -4079,9 +4137,9 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 	  }
 
-	  var _proto3 = PolyDateFormatter.prototype;
+	  var _proto2 = PolyDateFormatter.prototype;
 
-	  _proto3.format = function format() {
+	  _proto2.format = function format() {
 	    if (this.hasIntl) {
 	      return this.dtf.format(this.dt.toJSDate());
 	    } else {
@@ -4091,7 +4149,7 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 	  };
 
-	  _proto3.formatToParts = function formatToParts() {
+	  _proto2.formatToParts = function formatToParts() {
 	    if (this.hasIntl && hasFormatToParts()) {
 	      return this.dtf.formatToParts(this.dt.toJSDate());
 	    } else {
@@ -4101,7 +4159,7 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 	  };
 
-	  _proto3.resolvedOptions = function resolvedOptions() {
+	  _proto2.resolvedOptions = function resolvedOptions() {
 	    if (this.hasIntl) {
 	      return this.dtf.resolvedOptions();
 	    } else {
@@ -4114,6 +4172,44 @@ define(['exports'], function (exports) { 'use strict';
 	  };
 
 	  return PolyDateFormatter;
+	}();
+	/**
+	 * @private
+	 */
+
+
+	var PolyRelFormatter =
+	/*#__PURE__*/
+	function () {
+	  function PolyRelFormatter(intl, isEnglish, opts) {
+	    this.opts = Object.assign({
+	      style: "long"
+	    }, opts);
+
+	    if (!isEnglish && hasRelative()) {
+	      this.rtf = getCachendRTF(intl, opts);
+	    }
+	  }
+
+	  var _proto3 = PolyRelFormatter.prototype;
+
+	  _proto3.format = function format(count, unit) {
+	    if (this.rtf) {
+	      return this.rtf.format(count, unit);
+	    } else {
+	      return formatRelativeTime(unit, count, this.opts.numeric, this.opts.style !== "long");
+	    }
+	  };
+
+	  _proto3.formatToParts = function formatToParts(count, unit) {
+	    if (this.rtf) {
+	      return this.rtf.formatToParts(count, unit);
+	    } else {
+	      return [];
+	    }
+	  };
+
+	  return PolyRelFormatter;
 	}();
 	/**
 	 * @private
@@ -4188,7 +4284,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	    var intl = hasIntl(),
 	        hasFTP = intl && hasFormatToParts(),
-	        isActuallyEn = this.locale === "en" || this.locale.toLowerCase() === "en-us" || intl && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us"),
+	        isActuallyEn = this.isEnglish(),
 	        hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === "latn") && (this.outputCalendar === null || this.outputCalendar === "gregory");
 
 	    if (!hasFTP && !(isActuallyEn && hasNoWeirdness) && !defaultOK) {
@@ -4355,11 +4451,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	    // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
 	    // (in contrast, the rest of the condition is used heavily)
-	    if (opts.forceSimple || this.fastNumbers || !hasIntl()) {
-	      return new SimpleNumberFormatter(opts);
-	    } else {
-	      return new IntlNumberFormatter(this.intl, opts);
-	    }
+	    return new PolyeNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
 	  };
 
 	  _proto4.dtFormatter = function dtFormatter(dt, intlOpts) {
@@ -4368,6 +4460,18 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 
 	    return new PolyDateFormatter(dt, this.intl, intlOpts);
+	  };
+
+	  _proto4.relFormatter = function relFormatter(opts) {
+	    if (opts === void 0) {
+	      opts = {};
+	    }
+
+	    return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
+	  };
+
+	  _proto4.isEnglish = function isEnglish() {
+	    return this.locale === "en" || this.locale.toLowerCase() === "en-us" || hasIntl() && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us");
 	  };
 
 	  _proto4.equals = function equals(other) {
@@ -6379,7 +6483,8 @@ define(['exports'], function (exports) { 'use strict';
 	   * * `zones`: whether this environment supports IANA timezones
 	   * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
 	   * * `intl`: whether this environment supports general internationalization
-	   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true }
+	   * * `relative`: whether this environment supports relative time formatting
+	   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true, relative: false }
 	   * @return {Object}
 	   */
 
@@ -6387,7 +6492,8 @@ define(['exports'], function (exports) { 'use strict';
 	  Info.features = function features() {
 	    var intl = false,
 	        intlTokens = false,
-	        zones = false;
+	        zones = false,
+	        relative = hasRelative();
 
 	    if (hasIntl()) {
 	      intl = true;
@@ -6405,7 +6511,8 @@ define(['exports'], function (exports) { 'use strict';
 	    return {
 	      intl: intl,
 	      intlTokens: intlTokens,
-	      zones: zones
+	      zones: zones,
+	      relative: relative
 	    };
 	  };
 
@@ -7350,6 +7457,50 @@ define(['exports'], function (exports) { 'use strict';
 	    o: o
 	  });
 	}
+
+	function diffRelative(start, end, opts) {
+	  var round = isUndefined(opts.round) ? true : opts.round,
+	      format = function format(c, unit) {
+	    c = roundTo(c, round || opts.calendary ? 0 : 2, true);
+	    var formatter = end.loc.clone(opts).relFormatter(opts);
+	    return formatter.format(c, unit);
+	  },
+	      differ = function differ(unit) {
+	    if (opts.calendary) {
+	      if (!end.hasSame(start, unit)) {
+	        return end.startOf(unit).diff(start.startOf(unit), unit).get(unit);
+	      } else return 0;
+	    } else {
+	      return end.diff(start, unit).get(unit);
+	    }
+	  };
+
+	  if (opts.unit) {
+	    return format(differ(opts.unit), opts.unit);
+	  }
+
+	  for (var _iterator = opts.units, _isArray = Array.isArray(_iterator), _i2 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+	    var _ref2;
+
+	    if (_isArray) {
+	      if (_i2 >= _iterator.length) break;
+	      _ref2 = _iterator[_i2++];
+	    } else {
+	      _i2 = _iterator.next();
+	      if (_i2.done) break;
+	      _ref2 = _i2.value;
+	    }
+
+	    var unit = _ref2;
+	    var count = differ(unit);
+
+	    if (Math.abs(count) >= 1) {
+	      return format(count, unit);
+	    }
+	  }
+
+	  return format(0, opts.units[opts.units.length - 1]);
+	}
 	/**
 	 * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
 	 *
@@ -7366,7 +7517,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
 	 * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
 	 * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
-	 * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
+	 * * **Output**: To convert the DateTime to other representations, use the {@link toRelative}, {@link toRelativeCalendar}, {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
 	 *
 	 * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
 	 */
@@ -7663,19 +7814,19 @@ define(['exports'], function (exports) { 'use strict';
 
 	    var foundFirst = false;
 
-	    for (var _iterator = units, _isArray = Array.isArray(_iterator), _i2 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	      var _ref2;
+	    for (var _iterator2 = units, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+	      var _ref3;
 
-	      if (_isArray) {
-	        if (_i2 >= _iterator.length) break;
-	        _ref2 = _iterator[_i2++];
+	      if (_isArray2) {
+	        if (_i3 >= _iterator2.length) break;
+	        _ref3 = _iterator2[_i3++];
 	      } else {
-	        _i2 = _iterator.next();
-	        if (_i2.done) break;
-	        _ref2 = _i2.value;
+	        _i3 = _iterator2.next();
+	        if (_i3.done) break;
+	        _ref3 = _i3.value;
 	      }
 
-	      var u = _ref2;
+	      var u = _ref3;
 	      var v = normalized[u];
 
 	      if (!isUndefined(v)) {
@@ -8015,11 +8166,11 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  _proto.setZone = function setZone(zone, _temp) {
-	    var _ref3 = _temp === void 0 ? {} : _temp,
-	        _ref3$keepLocalTime = _ref3.keepLocalTime,
-	        keepLocalTime = _ref3$keepLocalTime === void 0 ? false : _ref3$keepLocalTime,
-	        _ref3$keepCalendarTim = _ref3.keepCalendarTime,
-	        keepCalendarTime = _ref3$keepCalendarTim === void 0 ? false : _ref3$keepCalendarTim;
+	    var _ref4 = _temp === void 0 ? {} : _temp,
+	        _ref4$keepLocalTime = _ref4.keepLocalTime,
+	        keepLocalTime = _ref4$keepLocalTime === void 0 ? false : _ref4$keepLocalTime,
+	        _ref4$keepCalendarTim = _ref4.keepCalendarTime,
+	        keepCalendarTime = _ref4$keepCalendarTim === void 0 ? false : _ref4$keepCalendarTim;
 
 	    zone = normalizeZone(zone, Settings.defaultZone);
 
@@ -8045,10 +8196,10 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  _proto.reconfigure = function reconfigure(_temp2) {
-	    var _ref4 = _temp2 === void 0 ? {} : _temp2,
-	        locale = _ref4.locale,
-	        numberingSystem = _ref4.numberingSystem,
-	        outputCalendar = _ref4.outputCalendar;
+	    var _ref5 = _temp2 === void 0 ? {} : _temp2,
+	        locale = _ref5.locale,
+	        numberingSystem = _ref5.numberingSystem,
+	        outputCalendar = _ref5.outputCalendar;
 
 	    var loc = this.loc.clone({
 	      locale: locale,
@@ -8351,13 +8502,13 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  _proto.toISOTime = function toISOTime(_temp3) {
-	    var _ref5 = _temp3 === void 0 ? {} : _temp3,
-	        _ref5$suppressMillise = _ref5.suppressMilliseconds,
-	        suppressMilliseconds = _ref5$suppressMillise === void 0 ? false : _ref5$suppressMillise,
-	        _ref5$suppressSeconds = _ref5.suppressSeconds,
-	        suppressSeconds = _ref5$suppressSeconds === void 0 ? false : _ref5$suppressSeconds,
-	        _ref5$includeOffset = _ref5.includeOffset,
-	        includeOffset = _ref5$includeOffset === void 0 ? true : _ref5$includeOffset;
+	    var _ref6 = _temp3 === void 0 ? {} : _temp3,
+	        _ref6$suppressMillise = _ref6.suppressMilliseconds,
+	        suppressMilliseconds = _ref6$suppressMillise === void 0 ? false : _ref6$suppressMillise,
+	        _ref6$suppressSeconds = _ref6.suppressSeconds,
+	        suppressSeconds = _ref6$suppressSeconds === void 0 ? false : _ref6$suppressSeconds,
+	        _ref6$includeOffset = _ref6.includeOffset,
+	        includeOffset = _ref6$includeOffset === void 0 ? true : _ref6$includeOffset;
 
 	    return toTechTimeFormat(this, {
 	      suppressSeconds: suppressSeconds,
@@ -8413,11 +8564,11 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  _proto.toSQLTime = function toSQLTime(_temp4) {
-	    var _ref6 = _temp4 === void 0 ? {} : _temp4,
-	        _ref6$includeOffset = _ref6.includeOffset,
-	        includeOffset = _ref6$includeOffset === void 0 ? true : _ref6$includeOffset,
-	        _ref6$includeZone = _ref6.includeZone,
-	        includeZone = _ref6$includeZone === void 0 ? false : _ref6$includeZone;
+	    var _ref7 = _temp4 === void 0 ? {} : _temp4,
+	        _ref7$includeOffset = _ref7.includeOffset,
+	        includeOffset = _ref7$includeOffset === void 0 ? true : _ref7$includeOffset,
+	        _ref7$includeZone = _ref7.includeZone,
+	        includeZone = _ref7$includeZone === void 0 ? false : _ref7$includeZone;
 
 	    return toTechTimeFormat(this, {
 	      includeOffset: includeOffset,
@@ -8564,13 +8715,20 @@ define(['exports'], function (exports) { 'use strict';
 	      opts = {};
 	    }
 
-	    if (!this.isValid || !otherDateTime.isValid) return Duration.invalid(this.invalid || otherDateTime.invalid);
+	    if (!this.isValid || !otherDateTime.isValid) {
+	      return Duration.invalid(this.invalid || otherDateTime.invalid, "created by diffing an invalid DateTime");
+	    }
+
+	    var durOpts = Object.assign({
+	      locale: this.locale,
+	      numberingSystem: this.numberingSystem
+	    }, opts);
 
 	    var units = maybeArray(unit).map(Duration.normalizeUnit),
 	        otherIsLater = otherDateTime.valueOf() > this.valueOf(),
 	        earlier = otherIsLater ? this : otherDateTime,
 	        later = otherIsLater ? otherDateTime : this,
-	        diffed = _diff(earlier, later, units, opts);
+	        diffed = _diff(earlier, later, units, durOpts);
 
 	    return otherIsLater ? diffed.negate() : diffed;
 	  };
@@ -8635,6 +8793,66 @@ define(['exports'], function (exports) { 'use strict';
 
 	  _proto.equals = function equals(other) {
 	    return this.isValid && other.isValid && this.valueOf() === other.valueOf() && this.zone.equals(other.zone) && this.loc.equals(other.loc);
+	  };
+	  /**
+	   * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
+	   * platform supports Intl.RelativeDateFormat. Rounds down by default.
+	   * @param {Object} options - options that affect the output
+	   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+	   * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
+	   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", "day", "hour", "minute", or "second"
+	   * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+	   * @param {boolean} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
+	   * @param {string} options.locale - override the locale of this DateTime
+	   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+	   * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
+	   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+	   * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
+	   * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
+	   * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
+	   * @example DateTime.local().minus({ hours: 36 }).toRelative({ round: false }) //=> "1.5 days ago"
+	   */
+
+
+	  _proto.toRelative = function toRelative(options) {
+	    if (options === void 0) {
+	      options = {};
+	    }
+
+	    if (!this.isValid) return null;
+	    var base = options.base || DateTime.local(),
+	        padding = options.padding ? this < base ? -options.padding : options.padding : 0;
+	    return diffRelative(base, this.plus(padding), Object.assign(options, {
+	      numeric: "always",
+	      units: ["years", "months", "days", "hours", "minutes", "seconds"]
+	    }));
+	  };
+	  /**
+	   * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+	   * platform supports Intl.RelativeDateFormat.
+	   * @param {Object} options - options that affect the output
+	   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+	   * @param {string} options.locale - override the locale of this DateTime
+	   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", or "day"
+	   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+	   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar() //=> "tomorrow"
+	   * @example DateTime.local().setLocale("es").plus({ days: 1 }).toRelative() //=> ""mañana"
+	   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar({ locale: "fr" }) //=> "demain"
+	   * @example DateTime.local().minus({ days: 2 }).toRelativeCalendar() //=> "2 days ago"
+	   */
+
+
+	  _proto.toRelativeCalendar = function toRelativeCalendar(options) {
+	    if (options === void 0) {
+	      options = {};
+	    }
+
+	    if (!this.isValid) return null;
+	    return diffRelative(options.base || DateTime.local(), this, Object.assign(options, {
+	      numeric: "auto",
+	      units: ["years", "months", "days"],
+	      calendary: true
+	    }));
 	  };
 	  /**
 	   * Return the min of several date times

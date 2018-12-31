@@ -245,6 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-2" data-ice="link">1.8.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-1" data-ice="link">1.8.1</a></li>
@@ -341,63 +342,68 @@
 <tbody>
 <tr>
 <td>Chrome</td>
-<td>&gt;= 61</td>
+<td>&gt;= 71</td>
 <td></td>
+</tr>
+<tr>
+<td></td>
+<td>&gt;= 61</td>
+<td>no intl relative time formatting</td>
 </tr>
 <tr>
 <td>FF</td>
 <td>&gt;= 56</td>
-<td></td>
+<td>no intl relative time formatting</td>
 </tr>
 <tr>
 <td>Edge</td>
 <td>18</td>
-<td></td>
+<td>no intl relative time formatting</td>
 </tr>
 <tr>
 <td></td>
 <td>16</td>
-<td>no intl tokens</td>
+<td>no intl tokens, no intl relative time formatting</td>
 </tr>
 <tr>
 <td>IE</td>
 <td>&gt;= 11</td>
-<td>needs platform polyfills, no intl tokens, no zones</td>
+<td>needs platform polyfills, no intl tokens, no zones, no relatie time formatting</td>
 </tr>
 <tr>
 <td></td>
 <td>10</td>
-<td>needs platform polyfills, no basic internationalization, no intl tokens, no zones</td>
+<td>needs platform polyfills, no basic internationalization, no intl tokens, no zones, no intl relative time formatting</td>
 </tr>
 <tr>
 <td>Safari</td>
 <td>11</td>
-<td></td>
+<td>no intl relative time formatting</td>
 </tr>
 <tr>
 <td></td>
 <td>10</td>
-<td>no intl tokens, no zones</td>
+<td>no intl tokens, no zones, no intl relative time formatting</td>
 </tr>
 <tr>
 <td>Node w/ICU</td>
 <td>&gt;= 8</td>
-<td></td>
+<td>no intl relative time formatting</td>
 </tr>
 <tr>
 <td></td>
 <td>6</td>
-<td>no intl tokens, no zones</td>
+<td>no intl tokens, no zones, no intl relative time formatting</td>
 </tr>
 <tr>
 <td>Node w/o ICU</td>
 <td>&gt;= 8</td>
-<td>no intl tokens</td>
+<td>no intl tokens, no intl relative time formatting</td>
 </tr>
 <tr>
 <td></td>
 <td>6</td>
-<td>no intl tokens, no zones</td>
+<td>no intl tokens, no zones, no intl relative time formatting</td>
 </tr>
 </tbody>
 </table>
@@ -423,6 +429,7 @@
 <li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>. Most browsers and recent versions of Node support this.</li>
 <li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.</li>
 <li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</li>
+<li><strong>Relative time formatting</strong>. Luxon&apos;s support for relative time formatting (e.g. <code>DateTime#toRelative()</code> and <code>DateTime#toRelativeCanedar</code>) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome. Luxon will fall back to using English if that capability is missing.</li>
 </ol>
 <p>If the browser lacks these capabilities, Luxon tries its best:</p>
 <table>
@@ -433,11 +440,13 @@
 <th>No Intl at all</th>
 <th>Intl but no formatToParts</th>
 <th>No IANA zone support</th>
+<th>No relative time format</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Most things</td>
+<td>OK</td>
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
@@ -449,11 +458,13 @@
 <td>Invalid DateTime</td>
 <td>OK</td>
 <td>Invalid DateTime</td>
+<td>OK</td>
 </tr>
 <tr>
 <td><code>DateTime#toLocaleString</code></td>
 <td>OK</td>
 <td>Uses English with caveats&#x2020;</td>
+<td>OK</td>
 <td>OK</td>
 <td>OK</td>
 </tr>
@@ -463,9 +474,11 @@
 <td>Empty array</td>
 <td>Empty array</td>
 <td>OK</td>
+<td>OK</td>
 </tr>
 <tr>
 <td><code>DateTime#toFormat</code> in en-US</td>
+<td>OK</td>
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
@@ -477,6 +490,7 @@
 <td>Uses English</td>
 <td>Uses English if format contains localized strings&#x2021;</td>
 <td>OK</td>
+<td>OK</td>
 </tr>
 <tr>
 <td><code>DateTime#fromFormat</code> in en-US</td>
@@ -484,13 +498,31 @@
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>DateTime#toRelative</code> in en-US</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+</tr>
+<tr>
+<td><code>DateTime#toRelative</code> in other locales</td>
+<td>Uses English</td>
+<td>OK</td>
+<td>OK</td>
+<td>OK</td>
+<td>Uses Enlish</td>
 </tr>
 <tr>
 <td><code>DateTime#offsetNameShort</code>, etc</td>
 <td>OK</td>
 <td>Returns null</td>
 <td>OK in most locales&#xA7;</td>
-<td></td>
+<td>OK</td>
+<td>OK</td>
 </tr>
 <tr>
 <td><code>fromFormat</code> in other locales</td>
@@ -498,9 +530,11 @@
 <td>Invalid DateTime if uses localized strings&#x2021;</td>
 <td>Uses English if format contains localized strings&#x2021;</td>
 <td>OK</td>
+<td>OK</td>
 </tr>
 <tr>
 <td><code>Info.months</code>, etc in en-US</td>
+<td>OK</td>
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
@@ -511,6 +545,7 @@
 <td>OK</td>
 <td>Uses English</td>
 <td>Uses English</td>
+<td>OK</td>
 <td>OK</td>
 </tr>
 </tbody>
@@ -525,14 +560,14 @@
 <h3 id="intl-tokens">Intl tokens</h3><p>Polyfilling Intl token support is a bit painful. This caveat applies to Edge &lt; 18 and all the IEs. Fortunately, you probably don&apos;t need Intl token support!</p>
 <p>First, if you don&apos;t have Intl at all (e.g. as in IE 10), you are in luck. The polyfills in the previous section will give you Intl token support too!</p>
 <p>But more likely, you have basic Intl support but not <code>formatToParts</code> (e.g. IE 11 or Edge 16). The problem here is that the polyfill service will ignore the Intl polyfills, so you won&apos;t get the support you need. Instead, you need to override all of Intl with the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a> directly. [help wanted: instructions on exactly how to do that]</p>
-<h3 id="zones">Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>. <strong>Unfortunately, this currently breaks Chrome</strong>. See issue <a href="https://github.com/moment/luxon/issues/190">#190</a> for more. I don&apos;t currently have a good solution for IE with zones.</p>
+<h3 id="zones">Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p>
 <h2 id="older-platforms">Older platforms</h2><ul>
 <li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
 <li><strong>Older versions of IE</strong> probably won&apos;t work at all.</li>
 <li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
 </ul>
 <h2 id="other-platforms">Other platforms</h2><p>If the platform you&apos;re targeting isn&apos;t on the list and you&apos;re unsure what caveats apply, you can check which pieces are supported:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">Info.features(); //=&gt; { intl: true, intlTokens: true, zones: true }</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">Info.features(); //=&gt; { intl: true, intlTokens: true, zones: true, relative: false }</code>
 </code></pre>
 <p>Specific notes on other platforms:</p>
 <ul>

@@ -245,6 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-2" data-ice="link">1.8.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-1" data-ice="link">1.8.1</a></li>
@@ -794,7 +795,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 </tr>
 </tbody>
 </table>
-<h4 id="humanization">Humanization</h4><p>Luxon doesn&apos;t support these, and won&apos;t until the <a href="https://github.com/tc39/proposal-intl-relative-time">Relative Time Format</a> proposal lands in browsers.</p>
+<h4 id="humanization">Humanization</h4><p>Luxon has <code>toRelative</code> and <code>toRelativeCalendar</code>. For internationalization, they use Int.RelativeTimeFormat, which isn&apos;t currently supported by most browsers; in those cases, they fall back to English.</p>
 <table>
 <thead>
 <tr>
@@ -807,34 +808,34 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <tr>
 <td>Time from now</td>
 <td><code>fromNow()</code></td>
-<td>None</td>
+<td><code>toRelative()</code></td>
 </tr>
 <tr>
 <td>Time from other time</td>
 <td><code>from(Moment)</code></td>
-<td>None</td>
+<td><code>toRelative({ base: DateTime })</code></td>
 </tr>
 <tr>
 <td>Time to now</td>
 <td><code>toNow()</code></td>
-<td>None</td>
+<td><code>DateTime.local().toRelative({ base: this })</code></td>
 </tr>
 <tr>
 <td>Time to other time</td>
 <td><code>to(Moment)</code></td>
-<td>None</td>
+<td><code>otherTime.toRelative({ base: this })</code></td>
 </tr>
 <tr>
 <td>&quot;Calendar time&quot;</td>
 <td><code>calendar()</code></td>
-<td>None</td>
+<td><code>toRelativeCalendar()</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="durations">Durations</h2><p>Moment Durations and Luxon Durations are broadly similar in purpose and capabilities. The main differences are:</p>
 <ol>
 <li>Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using <code>shiftTo</code>. They can also be configured to use different unit conversions. See <a href="./manual/math.html#duration-math">Duration Math</a> for more.</li>
-<li>Luxon does not (yet) have an equivalent of Moment&apos;s <code>humanize</code> method</li>
+<li>Luxon does not (yet) have an equivalent of Moment&apos;s Duration <code>humanize</code> method. Luxon will add that when <a href="https://github.com/tc39/proposal-intl-unit-format">Intl.UnitFormat</a> is supported by browsers.</li>
 <li>Like DateTimes, Luxon Durations have separate methods for creating objects from different sources.</li>
 </ol>
 <p>See the <a href="./manual/../class/src/duration.js~Duration.html">Duration API docs</a> for more.</p>

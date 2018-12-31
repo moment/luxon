@@ -2,8 +2,10 @@
 <html>
     <head>
         <link rel='stylesheet' href='demo.css'/>
-        <script src='../global-es6/luxon.min.js'></script>
         <script src='demo.js'></script>
-        <script>demo(window.luxon)</script>
+        <script type="module">
+          import luxon from '../es6/luxon.js'
+          demo(luxon)</script>
+        </script>
     </head>
 </html>

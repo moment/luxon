@@ -642,6 +642,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime#torelative",
+    "class/src/datetime.js~DateTime.html#instance-method-toRelative",
+    "src/datetime.js~DateTime#toRelative",
+    "method"
+  ],
+  [
+    "src/datetime.js~datetime#torelativecalendar",
+    "class/src/datetime.js~DateTime.html#instance-method-toRelativeCalendar",
+    "src/datetime.js~DateTime#toRelativeCalendar",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime#tosql",
     "class/src/datetime.js~DateTime.html#instance-method-toSQL",
     "src/datetime.js~DateTime#toSQL",
@@ -1477,25 +1489,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-get-defaultLocale",
-    "src/settings.js~Settings.defaultLocale",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultlocale",
     "class/src/settings.js~Settings.html#static-set-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
-    "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
-    "src/settings.js~Settings.defaultNumberingSystem",
+    "src/settings.js~settings.defaultlocale",
+    "class/src/settings.js~Settings.html#static-get-defaultLocale",
+    "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
     "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
@@ -1549,13 +1561,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],

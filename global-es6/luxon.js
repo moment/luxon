@@ -39,6 +39,10 @@ var luxon = (function (exports) {
     return !isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
   }
 
+  function hasRelative() {
+    return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+  }
+
   // OBJECTS AND ARRAYS
 
   function maybeArray(thing) {
@@ -96,9 +100,10 @@ var luxon = (function (exports) {
     }
   }
 
-  function roundTo(number, digits) {
-    const factor = 10 ** digits;
-    return Math.round(number * factor) / factor;
+  function roundTo(number, digits, towardZero = false) {
+    const factor = 10 ** digits,
+      rounder = towardZero ? Math.trunc : Math.round;
+    return rounder(number * factor) / factor;
   }
 
   // DATE BASICS
@@ -507,6 +512,39 @@ var luxon = (function (exports) {
 
   function eraForDateTime(dt, length) {
     return eras(length)[dt.year < 0 ? 0 : 1];
+  }
+
+  function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
+    const units = {
+      years: ["year", "yr."],
+      quarters: ["quarer", "qtr."],
+      months: ["month", "mo."],
+      weeks: ["week", "wk."],
+      days: ["day", "day"],
+      hours: ["hour", "hr."],
+      minutes: ["minute", "min."],
+      seconds: ["second", "sec."]
+    };
+
+    const lastable = ["hours", "minutes", "seconds"].indexOf(unit) === -1;
+
+    if (numeric === "auto" && lastable) {
+      const isDay = unit === "days";
+      switch (count) {
+        case 1:
+          return isDay ? "tomorrow" : `next ${units[unit][0]}`;
+        case -1:
+          return isDay ? "yesterday" : `last ${units[unit][0]}`;
+        case 0:
+          return isDay ? "today" : `this ${units[unit][0]}`;
+        default: // fall through
+      }
+    }
+
+    const isInPast = Object.is(count, -0) || count < 0,
+      fmtValue = Math.abs(count),
+      fmtUnit = narrow ? units[unit][1] : fmtValue === 1 ? units[unit][0] : unit;
+    return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
   }
 
   function formatString(knownFormat) {
@@ -1537,6 +1575,17 @@ var luxon = (function (exports) {
     return inf;
   }
 
+  let intlRelCache = {};
+  function getCachendRTF(locString, opts = {}) {
+    const key = JSON.stringify([locString, opts]);
+    let inf = intlRelCache[key];
+    if (!inf) {
+      inf = new Intl.RelativeTimeFormat(locString, opts);
+      intlRelCache[key] = inf;
+    }
+    return inf;
+  }
+
   let sysLocaleCache = null;
   function systemLocale() {
     if (sysLocaleCache) {
@@ -1647,34 +1696,27 @@ var luxon = (function (exports) {
    * @private
    */
 
-  class SimpleNumberFormatter {
-    constructor(opts) {
+  class PolyeNumberFormatter {
+    constructor(intl, forceSimple, opts) {
       this.padTo = opts.padTo || 0;
       this.floor = opts.floor || false;
-    }
 
-    format(i) {
-      // to match the browser's numberformatter defaults
-      const fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
-      return padStart(fixed, this.padTo);
-    }
-  }
-
-  class IntlNumberFormatter {
-    constructor(intl, opts) {
-      const intlOpts = { useGrouping: false };
-
-      if (opts.padTo > 0) {
-        intlOpts.minimumIntegerDigits = opts.padTo;
+      if (!forceSimple && hasIntl()) {
+        const intlOpts = { useGrouping: false };
+        if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
+        this.inf = getCachendINF(intl, intlOpts);
       }
-
-      this.floor = opts.floor;
-      this.inf = getCachendINF(intl, intlOpts);
     }
 
     format(i) {
-      const fixed = this.floor ? Math.floor(i) : i;
-      return this.inf.format(fixed);
+      if (this.inf) {
+        const fixed = this.floor ? Math.floor(i) : i;
+        return this.inf.format(fixed);
+      } else {
+        // to match the browser's numberformatter defaults
+        const fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
+        return padStart(fixed, this.padTo);
+      }
     }
   }
 
@@ -1756,6 +1798,34 @@ var luxon = (function (exports) {
   /**
    * @private
    */
+  class PolyRelFormatter {
+    constructor(intl, isEnglish, opts) {
+      this.opts = Object.assign({ style: "long" }, opts);
+      if (!isEnglish && hasRelative()) {
+        this.rtf = getCachendRTF(intl, opts);
+      }
+    }
+
+    format(count, unit) {
+      if (this.rtf) {
+        return this.rtf.format(count, unit);
+      } else {
+        return formatRelativeTime(unit, count, this.opts.numeric, this.opts.style !== "long");
+      }
+    }
+
+    formatToParts(count, unit) {
+      if (this.rtf) {
+        return this.rtf.formatToParts(count, unit);
+      } else {
+        return [];
+      }
+    }
+  }
+
+  /**
+   * @private
+   */
 
   class Locale {
     static fromOpts(opts) {
@@ -1810,13 +1880,7 @@ var luxon = (function (exports) {
     listingMode(defaultOK = true) {
       const intl = hasIntl(),
         hasFTP = intl && hasFormatToParts(),
-        isActuallyEn =
-          this.locale === "en" ||
-          this.locale.toLowerCase() === "en-us" ||
-          (intl &&
-            Intl.DateTimeFormat(this.intl)
-              .resolvedOptions()
-              .locale.startsWith("en-us")),
+        isActuallyEn = this.isEnglish(),
         hasNoWeirdness =
           (this.numberingSystem === null || this.numberingSystem === "latn") &&
           (this.outputCalendar === null || this.outputCalendar === "gregory");
@@ -1925,15 +1989,26 @@ var luxon = (function (exports) {
     numberFormatter(opts = {}) {
       // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
       // (in contrast, the rest of the condition is used heavily)
-      if (opts.forceSimple || this.fastNumbers || !hasIntl()) {
-        return new SimpleNumberFormatter(opts);
-      } else {
-        return new IntlNumberFormatter(this.intl, opts);
-      }
+      return new PolyeNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
     }
 
     dtFormatter(dt, intlOpts = {}) {
       return new PolyDateFormatter(dt, this.intl, intlOpts);
+    }
+
+    relFormatter(opts = {}) {
+      return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
+    }
+
+    isEnglish() {
+      return (
+        this.locale === "en" ||
+        this.locale.toLowerCase() === "en-us" ||
+        (hasIntl() &&
+          Intl.DateTimeFormat(this.intl)
+            .resolvedOptions()
+            .locale.startsWith("en-us"))
+      );
     }
 
     equals(other) {
@@ -3666,13 +3741,15 @@ var luxon = (function (exports) {
      * * `zones`: whether this environment supports IANA timezones
      * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
      * * `intl`: whether this environment supports general internationalization
-     * @example Info.features() //=> { intl: true, intlTokens: false, zones: true }
+     * * `relative`: whether this environment supports relative time formatting
+     * @example Info.features() //=> { intl: true, intlTokens: false, zones: true, relative: false }
      * @return {Object}
      */
     static features() {
       let intl = false,
         intlTokens = false,
-        zones = false;
+        zones = false,
+        relative = hasRelative();
 
       if (hasIntl()) {
         intl = true;
@@ -3687,7 +3764,7 @@ var luxon = (function (exports) {
         }
       }
 
-      return { intl, intlTokens, zones };
+      return { intl, intlTokens, zones, relative };
     }
   }
 
@@ -4488,6 +4565,39 @@ var luxon = (function (exports) {
     });
   }
 
+  function diffRelative(start, end, opts) {
+    const round = isUndefined(opts.round) ? true : opts.round,
+      format = (c, unit) => {
+        c = roundTo(c, round || opts.calendary ? 0 : 2, true);
+        const formatter = end.loc.clone(opts).relFormatter(opts);
+        return formatter.format(c, unit);
+      },
+      differ = unit => {
+        if (opts.calendary) {
+          if (!end.hasSame(start, unit)) {
+            return end
+              .startOf(unit)
+              .diff(start.startOf(unit), unit)
+              .get(unit);
+          } else return 0;
+        } else {
+          return end.diff(start, unit).get(unit);
+        }
+      };
+
+    if (opts.unit) {
+      return format(differ(opts.unit), opts.unit);
+    }
+
+    for (const unit of opts.units) {
+      const count = differ(unit);
+      if (Math.abs(count) >= 1) {
+        return format(count, unit);
+      }
+    }
+    return format(0, opts.units[opts.units.length - 1]);
+  }
+
   /**
    * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
    *
@@ -4504,7 +4614,7 @@ var luxon = (function (exports) {
    * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
    * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
    * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
-   * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
+   * * **Output**: To convert the DateTime to other representations, use the {@link toRelative}, {@link toRelativeCalendar}, {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
    *
    * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
    */
@@ -5804,14 +5914,23 @@ var luxon = (function (exports) {
      * @return {Duration}
      */
     diff(otherDateTime, unit = "milliseconds", opts = {}) {
-      if (!this.isValid || !otherDateTime.isValid)
-        return Duration.invalid(this.invalid || otherDateTime.invalid);
+      if (!this.isValid || !otherDateTime.isValid) {
+        return Duration.invalid(
+          this.invalid || otherDateTime.invalid,
+          "created by diffing an invalid DateTime"
+        );
+      }
+
+      const durOpts = Object.assign(
+        { locale: this.locale, numberingSystem: this.numberingSystem },
+        opts
+      );
 
       const units = maybeArray(unit).map(Duration.normalizeUnit),
         otherIsLater = otherDateTime.valueOf() > this.valueOf(),
         earlier = otherIsLater ? this : otherDateTime,
         later = otherIsLater ? otherDateTime : this,
-        diffed = diff(earlier, later, units, opts);
+        diffed = diff(earlier, later, units, durOpts);
 
       return otherIsLater ? diffed.negate() : diffed;
     }
@@ -5868,6 +5987,65 @@ var luxon = (function (exports) {
         this.valueOf() === other.valueOf() &&
         this.zone.equals(other.zone) &&
         this.loc.equals(other.loc)
+      );
+    }
+
+    /**
+     * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
+     * platform supports Intl.RelativeDateFormat. Rounds down by default.
+     * @param {Object} options - options that affect the output
+     * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+     * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
+     * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", "day", "hour", "minute", or "second"
+     * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+     * @param {boolean} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
+     * @param {string} options.locale - override the locale of this DateTime
+     * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+     * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
+     * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+     * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
+     * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
+     * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
+     * @example DateTime.local().minus({ hours: 36 }).toRelative({ round: false }) //=> "1.5 days ago"
+     */
+    toRelative(options = {}) {
+      if (!this.isValid) return null;
+      const base = options.base || DateTime.local(),
+        padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
+      return diffRelative(
+        base,
+        this.plus(padding),
+        Object.assign(options, {
+          numeric: "always",
+          units: ["years", "months", "days", "hours", "minutes", "seconds"]
+        })
+      );
+    }
+
+    /**
+     * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+     * platform supports Intl.RelativeDateFormat.
+     * @param {Object} options - options that affect the output
+     * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+     * @param {string} options.locale - override the locale of this DateTime
+     * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", or "day"
+     * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+     * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar() //=> "tomorrow"
+     * @example DateTime.local().setLocale("es").plus({ days: 1 }).toRelative() //=> ""mañana"
+     * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar({ locale: "fr" }) //=> "demain"
+     * @example DateTime.local().minus({ days: 2 }).toRelativeCalendar() //=> "2 days ago"
+     */
+    toRelativeCalendar(options = {}) {
+      if (!this.isValid) return null;
+
+      return diffRelative(
+        options.base || DateTime.local(),
+        this,
+        Object.assign(options, {
+          numeric: "auto",
+          units: ["years", "months", "days"],
+          calendary: true
+        })
       );
     }
 
