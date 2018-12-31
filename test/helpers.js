@@ -31,6 +31,20 @@ export class Helpers {
     });
   }
 
+  static withoutRTF(name, f) {
+    const fullName = `With no RelativeTimeFormat support, ${name}`;
+    test(fullName, () => {
+      const rtf = Intl.RelativeTimeFormat;
+      try {
+        Intl.RelativeTimeFormat = undefined;
+        Settings.resetCaches();
+        f();
+      } finally {
+        Intl.RelativeTimeFormat = rtf;
+      }
+    });
+  }
+
   static withoutZones(name, f) {
     const fullName = `With no time zone support, ${name}`;
     test(fullName, () => {

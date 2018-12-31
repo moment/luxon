@@ -124,6 +124,39 @@ export function eraForDateTime(dt, length) {
   return eras(length)[dt.year < 0 ? 0 : 1];
 }
 
+export function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
+  const units = {
+    years: ["year", "yr."],
+    quarters: ["quarer", "qtr."],
+    months: ["month", "mo."],
+    weeks: ["week", "wk."],
+    days: ["day", "day"],
+    hours: ["hour", "hr."],
+    minutes: ["minute", "min."],
+    seconds: ["second", "sec."]
+  };
+
+  const lastable = ["hours", "minutes", "seconds"].indexOf(unit) === -1;
+
+  if (numeric === "auto" && lastable) {
+    const isDay = unit === "days";
+    switch (count) {
+      case 1:
+        return isDay ? "tomorrow" : `next ${units[unit][0]}`;
+      case -1:
+        return isDay ? "yesterday" : `last ${units[unit][0]}`;
+      case 0:
+        return isDay ? "today" : `this ${units[unit][0]}`;
+      default: // fall through
+    }
+  }
+
+  const isInPast = Object.is(count, -0) || count < 0,
+    fmtValue = Math.abs(count),
+    fmtUnit = narrow ? units[unit][1] : fmtValue === 1 ? units[unit][0] : unit;
+  return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
+}
+
 export function formatString(knownFormat) {
   // these all have the offsets removed because we don't have access to them
   // without all the intl stuff this is backfilling

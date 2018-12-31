@@ -16,7 +16,8 @@ import {
   daysInYear,
   isLeapYear,
   weeksInWeekYear,
-  normalizeObject
+  normalizeObject,
+  roundTo
 } from "./impl/util";
 import { normalizeZone } from "./impl/zoneUtil";
 import diff from "./impl/diff";
@@ -328,6 +329,39 @@ function quickDT(obj, zone) {
   });
 }
 
+function diffRelative(start, end, opts) {
+  const round = isUndefined(opts.round) ? true : opts.round,
+    format = (c, unit) => {
+      c = roundTo(c, round || opts.calendary ? 0 : 2, true);
+      const formatter = end.loc.clone(opts).relFormatter(opts);
+      return formatter.format(c, unit);
+    },
+    differ = unit => {
+      if (opts.calendary) {
+        if (!end.hasSame(start, unit)) {
+          return end
+            .startOf(unit)
+            .diff(start.startOf(unit), unit)
+            .get(unit);
+        } else return 0;
+      } else {
+        return end.diff(start, unit).get(unit);
+      }
+    };
+
+  if (opts.unit) {
+    return format(differ(opts.unit), opts.unit);
+  }
+
+  for (const unit of opts.units) {
+    const count = differ(unit);
+    if (Math.abs(count) >= 1) {
+      return format(count, unit);
+    }
+  }
+  return format(0, opts.units[opts.units.length - 1]);
+}
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -344,7 +378,7 @@ function quickDT(obj, zone) {
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
  * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
- * * **Output**: To convert the DateTime to other representations, use the {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
+ * * **Output**: To convert the DateTime to other representations, use the {@link toRelative}, {@link toRelativeCalendar}, {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
@@ -1644,14 +1678,20 @@ export default class DateTime {
    * @return {Duration}
    */
   diff(otherDateTime, unit = "milliseconds", opts = {}) {
-    if (!this.isValid || !otherDateTime.isValid)
+    if (!this.isValid || !otherDateTime.isValid) {
       return Duration.invalid(this.invalid || otherDateTime.invalid);
+    }
+
+    const durOpts = Object.assign(
+      { locale: this.locale, numberingSystem: this.numberingSystem },
+      opts
+    );
 
     const units = maybeArray(unit).map(Duration.normalizeUnit),
       otherIsLater = otherDateTime.valueOf() > this.valueOf(),
       earlier = otherIsLater ? this : otherDateTime,
       later = otherIsLater ? otherDateTime : this,
-      diffed = diff(earlier, later, units, opts);
+      diffed = diff(earlier, later, units, durOpts);
 
     return otherIsLater ? diffed.negate() : diffed;
   }
@@ -1708,6 +1748,65 @@ export default class DateTime {
       this.valueOf() === other.valueOf() &&
       this.zone.equals(other.zone) &&
       this.loc.equals(other.loc)
+    );
+  }
+
+  /**
+   * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
+   * platform supports Intl.RelativeDateFormat. Rounds down by default.
+   * @param {Object} options - options that affect the output
+   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
+   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", "day", "hour", "minute", or "second"
+   * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+   * @param {boolean} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
+   * @param {string} options.locale - override the locale of this DateTime
+   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
+   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+   * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
+   * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
+   * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
+   * @example DateTime.local().minus({ hours: 36 }).toRelative({ round: false }) //=> "1.5 days ago"
+   */
+  toRelative(options = {}) {
+    if (!this.isValid) return null;
+    const base = options.base || DateTime.local(),
+      padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
+    return diffRelative(
+      base,
+      this.plus(padding),
+      Object.assign(options, {
+        numeric: "always",
+        units: ["years", "months", "days", "hours", "minutes", "seconds"]
+      })
+    );
+  }
+
+  /**
+   * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+   * platform supports Intl.RelativeDateFormat.
+   * @param {Object} options - options that affect the output
+   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {string} options.locale - override the locale of this DateTime
+   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", or "day"
+   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar() //=> "tomorrow"
+   * @example DateTime.local().setLocale("es").plus({ days: 1 }).toRelative() //=> ""mañana"
+   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar({ locale: "fr" }) //=> "demain"
+   * @example DateTime.local().minus({ days: 2 }).toRelativeCalendar() //=> "2 days ago"
+   */
+  toRelativeCalendar(options = {}) {
+    if (!this.isValid) return null;
+
+    return diffRelative(
+      options.base || DateTime.local(),
+      this,
+      Object.assign(options, {
+        numeric: "auto",
+        units: ["years", "months", "days"],
+        calendary: true
+      })
     );
   }
 

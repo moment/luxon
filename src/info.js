@@ -3,7 +3,7 @@ import Settings from "./settings";
 import Locale from "./impl/locale";
 import IANAZone from "./zones/IANAZone";
 
-import { hasFormatToParts, hasIntl } from "./impl/util";
+import { hasFormatToParts, hasIntl, hasRelative } from "./impl/util";
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
@@ -138,13 +138,15 @@ export default class Info {
    * * `zones`: whether this environment supports IANA timezones
    * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing
    * * `intl`: whether this environment supports general internationalization
-   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true }
+   * * `relative`: whether this environment supports relative time formatting
+   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true, relative: false }
    * @return {Object}
    */
   static features() {
     let intl = false,
       intlTokens = false,
-      zones = false;
+      zones = false,
+      relative = hasRelative();
 
     if (hasIntl()) {
       intl = true;
@@ -159,6 +161,6 @@ export default class Info {
       }
     }
 
-    return { intl, intlTokens, zones };
+    return { intl, intlTokens, zones, relative };
   }
 }

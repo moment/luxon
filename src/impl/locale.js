@@ -1,4 +1,4 @@
-import { hasFormatToParts, hasIntl, padStart, roundTo } from "./util";
+import { hasFormatToParts, hasIntl, padStart, roundTo, hasRelative } from "./util";
 import * as English from "./english";
 import Settings from "../settings";
 import DateTime from "../datetime";
@@ -22,6 +22,17 @@ function getCachendINF(locString, opts = {}) {
   if (!inf) {
     inf = new Intl.NumberFormat(locString, opts);
     intlNumCache[key] = inf;
+  }
+  return inf;
+}
+
+let intlRelCache = {};
+function getCachendRTF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let inf = intlRelCache[key];
+  if (!inf) {
+    inf = new Intl.RelativeTimeFormat(locString, opts);
+    intlRelCache[key] = inf;
   }
   return inf;
 }
@@ -136,34 +147,27 @@ function supportsFastNumbers(loc) {
  * @private
  */
 
-class SimpleNumberFormatter {
-  constructor(opts) {
+class PolyeNumberFormatter {
+  constructor(intl, forceSimple, opts) {
     this.padTo = opts.padTo || 0;
     this.floor = opts.floor || false;
-  }
 
-  format(i) {
-    // to match the browser's numberformatter defaults
-    const fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
-    return padStart(fixed, this.padTo);
-  }
-}
-
-class IntlNumberFormatter {
-  constructor(intl, opts) {
-    const intlOpts = { useGrouping: false };
-
-    if (opts.padTo > 0) {
-      intlOpts.minimumIntegerDigits = opts.padTo;
+    if (!forceSimple && hasIntl()) {
+      const intlOpts = { useGrouping: false };
+      if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
+      this.inf = getCachendINF(intl, intlOpts);
     }
-
-    this.floor = opts.floor;
-    this.inf = getCachendINF(intl, intlOpts);
   }
 
   format(i) {
-    const fixed = this.floor ? Math.floor(i) : i;
-    return this.inf.format(fixed);
+    if (this.inf) {
+      const fixed = this.floor ? Math.floor(i) : i;
+      return this.inf.format(fixed);
+    } else {
+      // to match the browser's numberformatter defaults
+      const fixed = this.floor ? Math.floor(i) : roundTo(i, 3);
+      return padStart(fixed, this.padTo);
+    }
   }
 }
 
@@ -245,6 +249,34 @@ class PolyDateFormatter {
 /**
  * @private
  */
+class PolyRelFormatter {
+  constructor(intl, isEnglish, opts) {
+    this.opts = Object.assign({ style: "long" }, opts);
+    if (!isEnglish && hasRelative()) {
+      this.rtf = getCachendRTF(intl, opts);
+    }
+  }
+
+  format(count, unit) {
+    if (this.rtf) {
+      return this.rtf.format(count, unit);
+    } else {
+      return English.formatRelativeTime(unit, count, this.opts.numeric, this.opts.style !== "long");
+    }
+  }
+
+  formatToParts(count, unit) {
+    if (this.rtf) {
+      return this.rtf.formatToParts(count, unit);
+    } else {
+      return [];
+    }
+  }
+}
+
+/**
+ * @private
+ */
 
 export default class Locale {
   static fromOpts(opts) {
@@ -299,13 +331,7 @@ export default class Locale {
   listingMode(defaultOK = true) {
     const intl = hasIntl(),
       hasFTP = intl && hasFormatToParts(),
-      isActuallyEn =
-        this.locale === "en" ||
-        this.locale.toLowerCase() === "en-us" ||
-        (intl &&
-          Intl.DateTimeFormat(this.intl)
-            .resolvedOptions()
-            .locale.startsWith("en-us")),
+      isActuallyEn = this.isEnglish(),
       hasNoWeirdness =
         (this.numberingSystem === null || this.numberingSystem === "latn") &&
         (this.outputCalendar === null || this.outputCalendar === "gregory");
@@ -414,15 +440,26 @@ export default class Locale {
   numberFormatter(opts = {}) {
     // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
     // (in contrast, the rest of the condition is used heavily)
-    if (opts.forceSimple || this.fastNumbers || !hasIntl()) {
-      return new SimpleNumberFormatter(opts);
-    } else {
-      return new IntlNumberFormatter(this.intl, opts);
-    }
+    return new PolyeNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
   }
 
   dtFormatter(dt, intlOpts = {}) {
     return new PolyDateFormatter(dt, this.intl, intlOpts);
+  }
+
+  relFormatter(opts = {}) {
+    return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
+  }
+
+  isEnglish() {
+    return (
+      this.locale === "en" ||
+      this.locale.toLowerCase() === "en-us" ||
+      (hasIntl() &&
+        Intl.DateTimeFormat(this.intl)
+          .resolvedOptions()
+          .locale.startsWith("en-us"))
+    );
   }
 
   equals(other) {
