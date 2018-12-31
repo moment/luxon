@@ -1679,7 +1679,10 @@ export default class DateTime {
    */
   diff(otherDateTime, unit = "milliseconds", opts = {}) {
     if (!this.isValid || !otherDateTime.isValid) {
-      return Duration.invalid(this.invalid || otherDateTime.invalid);
+      return Duration.invalid(
+        this.invalid || otherDateTime.invalid,
+        "created by diffing an invalid DateTime"
+      );
     }
 
     const durOpts = Object.assign(

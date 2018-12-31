@@ -43,14 +43,14 @@ test("DateTime#toRelative takes a round argument", () => {
 });
 
 test("DateTime#toRelative takes a unit argument", () => {
-  const base = DateTime.fromObject({ year: 1983, month: 10, day: 14 });
+  const base = DateTime.fromObject({ year: 2018, month: 10, day: 14, zone: "UTC" });
   expect(base.plus({ months: 15 }).toRelative({ base, unit: "months" })).toBe("in 15 months");
   expect(base.minus({ months: 15 }).toRelative({ base, unit: "months" })).toBe("15 months ago");
-  expect(base.plus({ months: 6 }).toRelative({ base, unit: "years", round: false })).toBe(
-    "in 0.5 years"
+  expect(base.plus({ months: 3 }).toRelative({ base, unit: "years", round: false })).toBe(
+    "in 0.25 years"
   );
-  expect(base.minus({ months: 6 }).toRelative({ base, unit: "years", round: false })).toBe(
-    "0.5 years ago"
+  expect(base.minus({ months: 3 }).toRelative({ base, unit: "years", round: false })).toBe(
+    "0.25 years ago"
   );
 });
 
