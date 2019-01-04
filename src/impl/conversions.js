@@ -137,7 +137,7 @@ export function hasInvalidGregorianData(obj) {
 }
 
 export function hasInvalidTimeData(obj) {
-  const validHour = numberBetween(obj.hour, 0, 23),
+  const validHour = numberBetween(obj.hour, 0, 24),
     validMinute = numberBetween(obj.minute, 0, 59),
     validSecond = numberBetween(obj.second, 0, 59),
     validMillisecond = numberBetween(obj.millisecond, 0, 999);
