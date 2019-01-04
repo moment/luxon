@@ -475,6 +475,18 @@ test("DateTime.fromISO() accepts hour:minute", () => {
   });
 });
 
+test("DateTime.fromISO() accepts 24:00", () => {
+  isSame("2018-01-04T24:00", {
+    year: 2018,
+    month: 1,
+    day: 5,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
 test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
   // these are formats that aren't technically valid but we parse anyway.
   // Testing them more to document them than anything else
