@@ -1812,20 +1812,20 @@ export default class DateTime {
       })
     );
   }
-  
+
   /**
-   * Returns the time zone difference, in minutes, from current locale (host system settings) to UTC. 
-   * Mimics behaviour of getTimezoneOffset in JavaScript, improving compatibility with frameworks 
+   * Returns the time zone difference, in minutes, from current locale (host system settings) to UTC.
+   * Mimics behaviour of getTimezoneOffset in JavaScript, improving compatibility with frameworks
    * and UI components that rely on this method (i.e. Angular dateFormat filter, date pickers, etc.)
    */
   getTimezoneOffset() {
     return DateTime.local().offset * -1;
   }
-  
- /**
-   * Returns the milliseconds since Jan 1, 1970, 00:00:00.000 GMT as a numeric value corresponding 
-   * to the time for the specified date according to universal time. 
-   * Mimics behaviour of getTime in JavaScript, improving compatibility with frameworks 
+
+  /**
+   * Returns the milliseconds since Jan 1, 1970, 00:00:00.000 GMT as a numeric value corresponding
+   * to the time for the specified date according to universal time.
+   * Mimics behaviour of getTime in JavaScript, improving compatibility with frameworks
    * and UI components that rely on this method (i.e. Angular dateFormat filter, date pickers, etc.)
    */
   getTime() {
