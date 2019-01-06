@@ -76,3 +76,29 @@ test("Changing a calendar date to land on an ambiguous time chooses the closest 
   expect(d.hour).toBe(1);
   expect(d.offset).toBe(-5 * 60);
 });
+
+test("Start of a 0:00->1:00 DST day is 1:00", () => {
+  const d = DateTime.fromObject({
+    zone: "America/Sao_Paulo",
+    year: 2017,
+    month: 10,
+    day: 15
+  }).startOf("day");
+  expect(d.day).toBe(15);
+  expect(d.hour).toBe(1);
+  expect(d.minute).toBe(0);
+  expect(d.second).toBe(0);
+});
+
+test("End of a 0:00->1:00 DST day is 23:59", () => {
+  const d = DateTime.fromObject({
+    zone: "America/Sao_Paulo",
+    year: 2017,
+    month: 10,
+    day: 15
+  }).endOf("day");
+  expect(d.day).toBe(15);
+  expect(d.hour).toBe(23);
+  expect(d.minute).toBe(59);
+  expect(d.second).toBe(59);
+});

@@ -1398,8 +1398,8 @@ export default class DateTime {
    */
   endOf(unit) {
     return this.isValid
-      ? this.startOf(unit)
-          .plus({ [unit]: 1 })
+      ? this.plus({ [unit]: 1 })
+          .startOf(unit)
           .minus(1)
       : this;
   }
