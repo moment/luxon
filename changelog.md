@@ -1,13 +1,17 @@
 # Changelog
 
+## 1.9.0
+
+- Add `DateTime#toRelative` and `DateTime#toRelativeCalendar`
+
 ## 1.8.3
 
- - Allow "UTC" in the zone position of `fromSQL`
- - Force `isDateTime` and `isDuration` to return booleans in all cases
+- Allow "UTC" in the zone position of `fromSQL`
+- Force `isDateTime` and `isDuration` to return booleans in all cases
 
 ## 1.8.2
 
- - Trim leading \u200e characters from offset names in Edge 16 and 17
+- Trim leading \u200e characters from offset names in Edge 16 and 17
 
 ## 1.8.1
 
