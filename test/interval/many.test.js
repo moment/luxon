@@ -378,3 +378,16 @@ test("Interval#divideEqually returns [] for invalid intervals", () => {
   const split = Interval.invalid("because").divideEqually(3);
   expect(split).toEqual([]);
 });
+
+test("Interval#mapEndpoints returns a new Interval with the mapped endpoints", () => {
+  const zone = "America/Los_Angeles";
+  const original = Interval.fromDateTimes(
+    DateTime.fromObject({ zone }),
+    DateTime.fromObject({ zone }).plus({ hours: 1 })
+  );
+
+  const mapped = original.mapEndpoints(d => d.toUTC());
+
+  expect(mapped.s.zoneName).toEqual("UTC");
+  expect(mapped.e.zoneName).toEqual("UTC");
+});
