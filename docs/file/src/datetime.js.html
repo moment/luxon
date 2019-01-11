@@ -450,7 +450,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.zone = zone;
+    this._zone = zone;
     /**
      * @access private
      */
@@ -961,6 +961,14 @@ export default class DateTime {
   }
 
   /**
+   * Get the time zone associated with this DateTime.
+   * @type {Zone}
+   */
+  get zone() {
+    return this._zone;
+  }
+
+  /**
    * Get the name of the time zone.
    * @type {string}
    */
@@ -1440,8 +1448,8 @@ export default class DateTime {
    */
   endOf(unit) {
     return this.isValid
-      ? this.startOf(unit)
-          .plus({ [unit]: 1 })
+      ? this.plus({ [unit]: 1 })
+          .startOf(unit)
           .minus(1)
       : this;
   }

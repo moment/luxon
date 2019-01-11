@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1546233757750" clover="3.2.0">
-  <project timestamp="1546233757751" name="All files">
+<coverage generated="1546399799321" clover="3.2.0">
+  <project timestamp="1546399799321" name="All files">
     <metrics statements="1667" coveredstatements="1624" conditionals="1443" coveredconditionals="1354" methods="472" coveredmethods="458" elements="3582" coveredelements="3436" complexity="0" loc="1667" ncloc="1667" packages="3" files="22" classes="22">
       <package name="src">
         <metrics statements="720" coveredstatements="713" conditionals="738" coveredconditionals="713" methods="246" coveredmethods="243"/>
-        <file name="datetime.js" path="/mnt/c/Users/icambron/code/luxon/src/datetime.js">
+        <file name="datetime.js" path="/Users/isaac/code/luxon/src/datetime.js">
           <metrics statements="368" coveredstatements="365" conditionals="376" coveredconditionals="365" methods="129" coveredmethods="128"/>
           <line num="45" count="48" type="stmt"/>
           <line num="48" count="10" type="stmt"/>
@@ -22,9 +22,9 @@
           <line num="92" count="763" type="cond" truecount="2" falsecount="0"/>
           <line num="93" count="760" type="stmt"/>
           <line num="97" count="3" type="stmt"/>
-          <line num="102" count="3425" type="stmt"/>
-          <line num="104" count="3425" type="stmt"/>
-          <line num="106" count="3425" type="stmt"/>
+          <line num="102" count="3429" type="stmt"/>
+          <line num="104" count="3429" type="stmt"/>
+          <line num="106" count="3429" type="stmt"/>
           <line num="119" count="2765" type="stmt"/>
           <line num="130" count="2765" type="cond" truecount="4" falsecount="0"/>
           <line num="131" count="9" type="stmt"/>
@@ -375,7 +375,7 @@
           <line num="2028" count="2" type="stmt"/>
           <line num="2030" count="0" type="stmt"/>
         </file>
-        <file name="duration.js" path="/mnt/c/Users/icambron/code/luxon/src/duration.js">
+        <file name="duration.js" path="/Users/isaac/code/luxon/src/duration.js">
           <metrics statements="162" coveredstatements="161" conditionals="183" coveredconditionals="177" methods="44" coveredmethods="44"/>
           <line num="9" count="48" type="stmt"/>
           <line num="12" count="48" type="stmt"/>
@@ -540,7 +540,7 @@
           <line num="751" count="400" type="stmt"/>
           <line num="753" count="0" type="stmt"/>
         </file>
-        <file name="errors.js" path="/mnt/c/Users/icambron/code/luxon/src/errors.js">
+        <file name="errors.js" path="/Users/isaac/code/luxon/src/errors.js">
           <metrics statements="5" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="4"/>
           <line num="13" count="1" type="stmt"/>
           <line num="22" count="1" type="stmt"/>
@@ -548,7 +548,7 @@
           <line num="45" count="4" type="stmt"/>
           <line num="59" count="0" type="stmt"/>
         </file>
-        <file name="info.js" path="/mnt/c/Users/icambron/code/luxon/src/info.js">
+        <file name="info.js" path="/Users/isaac/code/luxon/src/info.js">
           <metrics statements="20" coveredstatements="20" conditionals="30" coveredconditionals="30" methods="9" coveredmethods="9"/>
           <line num="18" count="5" type="stmt"/>
           <line num="22" count="5" type="cond" truecount="2" falsecount="0"/>
@@ -571,7 +571,7 @@
           <line num="160" count="3" type="stmt"/>
           <line num="164" count="12" type="stmt"/>
         </file>
-        <file name="interval.js" path="/mnt/c/Users/icambron/code/luxon/src/interval.js">
+        <file name="interval.js" path="/Users/isaac/code/luxon/src/interval.js">
           <metrics statements="143" coveredstatements="142" conditionals="143" coveredconditionals="136" methods="44" coveredmethods="43"/>
           <line num="7" count="48" type="stmt"/>
           <line num="11" count="325" type="cond" truecount="4" falsecount="0"/>
@@ -717,10 +717,10 @@
           <line num="542" count="1" type="stmt"/>
           <line num="544" count="16" type="stmt"/>
         </file>
-        <file name="luxon.js" path="/mnt/c/Users/icambron/code/luxon/src/luxon.js">
+        <file name="luxon.js" path="/Users/isaac/code/luxon/src/luxon.js">
           <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         </file>
-        <file name="settings.js" path="/mnt/c/Users/icambron/code/luxon/src/settings.js">
+        <file name="settings.js" path="/Users/isaac/code/luxon/src/settings.js">
           <metrics statements="22" coveredstatements="21" conditionals="6" coveredconditionals="5" methods="15" coveredmethods="15"/>
           <line num="6" count="1252" type="stmt"/>
           <line num="7" count="48" type="stmt"/>
@@ -748,7 +748,7 @@
       </package>
       <package name="src.impl">
         <metrics statements="857" coveredstatements="831" conditionals="671" coveredconditionals="610" methods="184" coveredmethods="181"/>
-        <file name="conversions.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/conversions.js">
+        <file name="conversions.js" path="/Users/isaac/code/luxon/src/impl/conversions.js">
           <metrics statements="81" coveredstatements="78" conditionals="38" coveredconditionals="35" methods="13" coveredmethods="13"/>
           <line num="12" count="48" type="stmt"/>
           <line num="13" count="48" type="stmt"/>
@@ -768,9 +768,9 @@
           <line num="51" count="4" type="stmt"/>
           <line num="52" count="4" type="stmt"/>
           <line num="53" count="115" type="cond" truecount="2" falsecount="0"/>
-          <line num="54" count="37" type="stmt"/>
-          <line num="55" count="37" type="stmt"/>
-          <line num="57" count="78" type="stmt"/>
+          <line num="54" count="5" type="stmt"/>
+          <line num="55" count="5" type="stmt"/>
+          <line num="57" count="110" type="stmt"/>
           <line num="60" count="119" type="stmt"/>
           <line num="64" count="37" type="stmt"/>
           <line num="65" count="37" type="stmt"/>
@@ -832,7 +832,7 @@
           <line num="152" count="1" type="stmt"/>
           <line num="153" count="1089" type="stmt"/>
         </file>
-        <file name="diff.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/diff.js">
+        <file name="diff.js" path="/Users/isaac/code/luxon/src/impl/diff.js">
           <metrics statements="34" coveredstatements="34" conditionals="14" coveredconditionals="14" methods="8" coveredmethods="8"/>
           <line num="4" count="54" type="stmt"/>
           <line num="5" count="108" type="stmt"/>
@@ -869,7 +869,7 @@
           <line num="74" count="44" type="stmt"/>
           <line num="78" count="123" type="stmt"/>
         </file>
-        <file name="english.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/english.js">
+        <file name="english.js" path="/Users/isaac/code/luxon/src/impl/english.js">
           <metrics statements="70" coveredstatements="67" conditionals="64" coveredconditionals="60" methods="10" coveredmethods="10"/>
           <line num="5" count="274" type="stmt"/>
           <line num="12" count="49" type="stmt"/>
@@ -942,7 +942,7 @@
           <line num="217" count="1" type="stmt"/>
           <line num="219" count="1" type="stmt"/>
         </file>
-        <file name="formats.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/formats.js">
+        <file name="formats.js" path="/Users/isaac/code/luxon/src/impl/formats.js">
           <metrics statements="24" coveredstatements="24" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
           <line num="5" count="49" type="stmt"/>
           <line num="6" count="49" type="stmt"/>
@@ -969,7 +969,7 @@
           <line num="157" count="49" type="stmt"/>
           <line num="167" count="49" type="stmt"/>
         </file>
-        <file name="formatter.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/formatter.js">
+        <file name="formatter.js" path="/Users/isaac/code/luxon/src/impl/formatter.js">
           <metrics statements="156" coveredstatements="154" conditionals="144" coveredconditionals="129" methods="24" coveredmethods="24"/>
           <line num="6" count="413" type="stmt"/>
           <line num="7" count="413" type="stmt"/>
@@ -1128,7 +1128,7 @@
           <line num="385" count="139" type="stmt"/>
           <line num="386" count="61" type="stmt"/>
         </file>
-        <file name="invalid.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/invalid.js">
+        <file name="invalid.js" path="/Users/isaac/code/luxon/src/impl/invalid.js">
           <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
           <line num="3" count="158" type="stmt"/>
           <line num="4" count="158" type="stmt"/>
@@ -1136,7 +1136,7 @@
           <line num="9" count="1" type="stmt"/>
           <line num="11" count="2" type="stmt"/>
         </file>
-        <file name="locale.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/locale.js">
+        <file name="locale.js" path="/Users/isaac/code/luxon/src/impl/locale.js">
           <metrics statements="188" coveredstatements="176" conditionals="175" coveredconditionals="153" methods="49" coveredmethods="47"/>
           <line num="7" count="48" type="stmt"/>
           <line num="9" count="337" type="stmt"/>
@@ -1327,7 +1327,7 @@
           <line num="455" count="501" type="stmt"/>
           <line num="466" count="120" type="stmt"/>
         </file>
-        <file name="regexParser.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/regexParser.js">
+        <file name="regexParser.js" path="/Users/isaac/code/luxon/src/impl/regexParser.js">
           <metrics statements="73" coveredstatements="73" conditionals="36" coveredconditionals="35" methods="23" coveredmethods="23"/>
           <line num="17" count="1124" type="stmt"/>
           <line num="18" count="646" type="stmt"/>
@@ -1403,7 +1403,7 @@
           <line num="271" count="25" type="stmt"/>
           <line num="275" count="13" type="stmt"/>
         </file>
-        <file name="tokenParser.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/tokenParser.js">
+        <file name="tokenParser.js" path="/Users/isaac/code/luxon/src/impl/tokenParser.js">
           <metrics statements="131" coveredstatements="131" conditionals="104" coveredconditionals="102" methods="27" coveredmethods="26"/>
           <line num="6" count="48" type="stmt"/>
           <line num="8" count="297" type="cond" truecount="1" falsecount="0"/>
@@ -1537,9 +1537,9 @@
           <line num="289" count="128" type="stmt"/>
           <line num="290" count="128" type="stmt"/>
         </file>
-        <file name="util.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/util.js">
+        <file name="util.js" path="/Users/isaac/code/luxon/src/impl/util.js">
           <metrics statements="78" coveredstatements="77" conditionals="67" coveredconditionals="62" methods="27" coveredmethods="27"/>
-          <line num="14" count="43968" type="stmt"/>
+          <line num="14" count="44056" type="stmt"/>
           <line num="18" count="14898" type="stmt"/>
           <line num="22" count="92" type="stmt"/>
           <line num="26" count="32" type="stmt"/>
@@ -1618,7 +1618,7 @@
           <line num="209" count="194" type="stmt"/>
           <line num="212" count="49" type="stmt"/>
         </file>
-        <file name="zoneUtil.js" path="/mnt/c/Users/icambron/code/luxon/src/impl/zoneUtil.js">
+        <file name="zoneUtil.js" path="/Users/isaac/code/luxon/src/impl/zoneUtil.js">
           <metrics statements="17" coveredstatements="12" conditionals="27" coveredconditionals="18" methods="1" coveredmethods="1"/>
           <line num="15" count="1386" type="cond" truecount="4" falsecount="0"/>
           <line num="16" count="1061" type="stmt"/>
@@ -1641,26 +1641,26 @@
       </package>
       <package name="src.zones">
         <metrics statements="90" coveredstatements="80" conditionals="34" coveredconditionals="31" methods="42" coveredmethods="34"/>
-        <file name="IANAZone.js" path="/mnt/c/Users/icambron/code/luxon/src/zones/IANAZone.js">
+        <file name="IANAZone.js" path="/Users/isaac/code/luxon/src/zones/IANAZone.js">
           <metrics statements="44" coveredstatements="44" conditionals="14" coveredconditionals="13" methods="14" coveredmethods="14"/>
           <line num="4" count="48" type="stmt"/>
           <line num="6" count="48" type="stmt"/>
-          <line num="8" count="362" type="cond" truecount="2" falsecount="0"/>
+          <line num="8" count="370" type="cond" truecount="2" falsecount="0"/>
           <line num="9" count="21" type="stmt"/>
-          <line num="20" count="362" type="stmt"/>
+          <line num="20" count="370" type="stmt"/>
           <line num="23" count="48" type="stmt"/>
           <line num="33" count="7" type="stmt"/>
           <line num="34" count="7" type="stmt"/>
           <line num="35" count="7" type="stmt"/>
           <line num="36" count="7" type="stmt"/>
-          <line num="40" count="355" type="stmt"/>
-          <line num="41" count="355" type="stmt"/>
-          <line num="42" count="355" type="stmt"/>
-          <line num="43" count="3905" type="stmt"/>
-          <line num="44" count="3905" type="stmt"/>
-          <line num="46" count="3905" type="cond" truecount="2" falsecount="0"/>
-          <line num="47" count="2130" type="stmt"/>
-          <line num="50" count="355" type="stmt"/>
+          <line num="40" count="363" type="stmt"/>
+          <line num="41" count="363" type="stmt"/>
+          <line num="42" count="363" type="stmt"/>
+          <line num="43" count="3993" type="stmt"/>
+          <line num="44" count="3993" type="stmt"/>
+          <line num="46" count="3993" type="cond" truecount="2" falsecount="0"/>
+          <line num="47" count="2178" type="stmt"/>
+          <line num="50" count="363" type="stmt"/>
           <line num="55" count="81" type="cond" truecount="2" falsecount="0"/>
           <line num="59" count="79" type="stmt"/>
           <line num="60" count="79" type="stmt"/>
@@ -1674,21 +1674,21 @@
           <line num="79" count="73" type="stmt"/>
           <line num="80" count="73" type="stmt"/>
           <line num="81" count="73" type="stmt"/>
-          <line num="85" count="77" type="stmt"/>
+          <line num="85" count="73" type="stmt"/>
           <line num="89" count="53" type="stmt"/>
           <line num="93" count="40" type="stmt"/>
           <line num="97" count="5" type="stmt"/>
-          <line num="101" count="362" type="stmt"/>
-          <line num="102" count="362" type="stmt"/>
-          <line num="103" count="362" type="cond" truecount="2" falsecount="0"/>
-          <line num="106" count="362" type="stmt"/>
-          <line num="107" count="362" type="stmt"/>
-          <line num="108" count="362" type="stmt"/>
-          <line num="109" count="362" type="stmt"/>
-          <line num="113" count="60" type="cond" truecount="2" falsecount="0"/>
+          <line num="101" count="370" type="stmt"/>
+          <line num="102" count="370" type="stmt"/>
+          <line num="103" count="370" type="cond" truecount="2" falsecount="0"/>
+          <line num="106" count="370" type="stmt"/>
+          <line num="107" count="370" type="stmt"/>
+          <line num="108" count="370" type="stmt"/>
+          <line num="109" count="370" type="stmt"/>
+          <line num="113" count="56" type="cond" truecount="2" falsecount="0"/>
           <line num="117" count="175" type="stmt"/>
         </file>
-        <file name="fixedOffsetZone.js" path="/mnt/c/Users/icambron/code/luxon/src/zones/fixedOffsetZone.js">
+        <file name="fixedOffsetZone.js" path="/Users/isaac/code/luxon/src/zones/fixedOffsetZone.js">
           <metrics statements="24" coveredstatements="23" conditionals="16" coveredconditionals="14" methods="12" coveredmethods="12"/>
           <line num="4" count="48" type="stmt"/>
           <line num="7" count="14" type="stmt"/>
@@ -1715,7 +1715,7 @@
           <line num="62" count="407" type="cond" truecount="2" falsecount="0"/>
           <line num="66" count="952" type="stmt"/>
         </file>
-        <file name="invalidZone.js" path="/mnt/c/Users/icambron/code/luxon/src/zones/invalidZone.js">
+        <file name="invalidZone.js" path="/Users/isaac/code/luxon/src/zones/invalidZone.js">
           <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="0"/>
           <line num="5" count="0" type="stmt"/>
           <line num="6" count="0" type="stmt"/>
@@ -1727,7 +1727,7 @@
           <line num="30" count="0" type="stmt"/>
           <line num="34" count="0" type="stmt"/>
         </file>
-        <file name="localZone.js" path="/mnt/c/Users/icambron/code/luxon/src/zones/localZone.js">
+        <file name="localZone.js" path="/Users/isaac/code/luxon/src/zones/localZone.js">
           <metrics statements="13" coveredstatements="13" conditionals="4" coveredconditionals="4" methods="8" coveredmethods="8"/>
           <line num="4" count="48" type="stmt"/>
           <line num="8" count="1583" type="cond" truecount="2" falsecount="0"/>

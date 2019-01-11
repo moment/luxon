@@ -40,13 +40,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Info from &apos;<span><a href="file/src/info.js.html#lineNumber11">luxon/src/info.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Info from &apos;<span><a href="file/src/info.js.html#lineNumber12">luxon/src/info.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/info.js.html#lineNumber11">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/info.js.html#lineNumber12">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -301,6 +301,35 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/info.js~Info.html#static-method-normalizeZone">normalizeZone</a></span></span><span class="code" data-ice="signature">(input: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/zone.js~Zone.html">Zone</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="class/src/zone.js~Zone.html">Zone</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Converts the input into a <span><a href="class/src/zone.js~Zone.html">Zone</a></span> instance.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/info.js~Info.html#static-method-weekdays">weekdays</a></span></span><span class="code" data-ice="signature">(length: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>[string]</span></span>
         </p>
       </div>
@@ -369,7 +398,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber130">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber149">source</a></span></span>
     </span>
   </h3>
 
@@ -472,7 +501,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber145">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber164">source</a></span></span>
     </span>
   </h3>
 
@@ -543,7 +572,7 @@ Keys:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber17">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber18">source</a></span></span>
     </span>
   </h3>
 
@@ -617,7 +646,7 @@ Keys:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber30">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber31">source</a></span></span>
     </span>
   </h3>
 
@@ -690,7 +719,7 @@ Keys:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber116">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber135">source</a></span></span>
     </span>
   </h3>
 
@@ -781,7 +810,7 @@ Keys:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber50">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber69">source</a></span></span>
     </span>
   </h3>
 
@@ -912,7 +941,7 @@ Keys:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber69">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber88">source</a></span></span>
     </span>
   </h3>
 
@@ -1008,6 +1037,89 @@ See <span><a href="class/src/duration.js~Duration.html#instance-get-months">mont
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-normalizeZone">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">normalizeZone</span><span class="code" data-ice="signature">(input: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/zone.js~Zone.html">Zone</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="class/src/zone.js~Zone.html">Zone</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber49">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Converts the input into a <span><a href="class/src/zone.js~Zone.html">Zone</a></span> instance.</p>
+<ul>
+<li>If <code>input</code> is already a Zone instance, it is returned unchanged.</li>
+<li>If <code>input</code> is a string containing a valid time zone name, a Zone instance
+with that name is returned.</li>
+<li>If <code>input</code> is a string that doesn&apos;t refer to a known time zone, a Zone
+instance with <span><a href="class/src/zone.js~Zone.html#instance-get-isValid">Zone.isValid</a></span> == false is returned.</li>
+<li>If `input is a number, a Zone instance with the specified fixed offset
+in minutes is returned.</li>
+<li>If <code>input</code> is <code>null</code> or <code>undefined</code>, the default zone is returned.</li>
+</ul>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">input</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/zone.js~Zone.html">Zone</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>the value to be converted</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-method-weekdays">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
@@ -1019,7 +1131,7 @@ See <span><a href="class/src/duration.js~Duration.html#instance-get-months">mont
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber89">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber108">source</a></span></span>
     </span>
   </h3>
 
@@ -1134,7 +1246,7 @@ See <span><a href="class/src/duration.js~Duration.html#instance-get-months">mont
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber104">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/info.js.html#lineNumber123">source</a></span></span>
     </span>
   </h3>
 

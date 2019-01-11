@@ -744,6 +744,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/datetime.js~datetime#zone",
+    "class/src/datetime.js~DateTime.html#instance-get-zone",
+    "src/datetime.js~DateTime#zone",
+    "member"
+  ],
+  [
     "src/datetime.js~datetime#zonename",
     "class/src/datetime.js~DateTime.html#instance-get-zoneName",
     "src/datetime.js~DateTime#zoneName",
@@ -1248,6 +1254,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/info.js~info.normalizezone",
+    "class/src/info.js~Info.html#static-method-normalizeZone",
+    "src/info.js~Info.normalizeZone",
+    "method"
+  ],
+  [
     "src/info.js~info.weekdays",
     "class/src/info.js~Info.html#static-method-weekdays",
     "src/info.js~Info.weekdays",
@@ -1371,6 +1383,12 @@ window.esdocSearchIndex = [
     "src/interval.js~interval#length",
     "class/src/interval.js~Interval.html#instance-method-length",
     "src/interval.js~Interval#length",
+    "method"
+  ],
+  [
+    "src/interval.js~interval#mapendpoints",
+    "class/src/interval.js~Interval.html#instance-method-mapEndpoints",
+    "src/interval.js~Interval#mapEndpoints",
     "method"
   ],
   [
@@ -1513,13 +1531,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1531,13 +1549,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],

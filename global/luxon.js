@@ -4326,6 +4326,18 @@ var luxon = (function (exports) {
 
       return this.e.diff(this.s, unit, opts);
     };
+    /**
+     * Run mapFn on the interval start and end, returning a new Interval from the resulting DateTimes
+     * @param {function} mapFn
+     * @return {Interval}
+     * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.toUTC())
+     * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.plus({ hours: 2 }))
+     */
+
+
+    _proto.mapEndpoints = function mapEndpoints(mapFn) {
+      return Interval.fromDateTimes(mapFn(this.s), mapFn(this.e));
+    };
 
     _createClass(Interval, [{
       key: "start",
@@ -4412,6 +4424,25 @@ var luxon = (function (exports) {
 
     Info.isValidIANAZone = function isValidIANAZone(zone) {
       return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
+    };
+    /**
+     * Converts the input into a {@link Zone} instance.
+     *
+     * * If `input` is already a Zone instance, it is returned unchanged.
+     * * If `input` is a string containing a valid time zone name, a Zone instance
+     *   with that name is returned.
+     * * If `input` is a string that doesn't refer to a known time zone, a Zone
+     *   instance with {@link Zone.isValid} == false is returned.
+     * * If `input is a number, a Zone instance with the specified fixed offset
+     *   in minutes is returned.
+     * * If `input` is `null` or `undefined`, the default zone is returned.
+     * @param {string|Zone|number} [input] - the value to be converted
+     * @return {Zone}
+     */
+
+
+    Info.normalizeZone = function normalizeZone$$1(input) {
+      return normalizeZone(input, Settings.defaultZone);
     };
     /**
      * Return an array of standalone month names.
@@ -5643,7 +5674,7 @@ var luxon = (function (exports) {
        */
 
 
-      this.zone = zone;
+      this._zone = zone;
       /**
        * @access private
        */
@@ -6462,9 +6493,9 @@ var luxon = (function (exports) {
 
 
     _proto.endOf = function endOf(unit) {
-      var _this$startOf$plus;
+      var _this$plus;
 
-      return this.isValid ? this.startOf(unit).plus((_this$startOf$plus = {}, _this$startOf$plus[unit] = 1, _this$startOf$plus)).minus(1) : this;
+      return this.isValid ? this.plus((_this$plus = {}, _this$plus[unit] = 1, _this$plus)).startOf(unit).minus(1) : this;
     }; // OUTPUT
 
     /**
@@ -7084,6 +7115,16 @@ var luxon = (function (exports) {
         return this.isValid ? this.loc.outputCalendar : null;
       }
       /**
+       * Get the time zone associated with this DateTime.
+       * @type {Zone}
+       */
+
+    }, {
+      key: "zone",
+      get: function get() {
+        return this._zone;
+      }
+      /**
        * Get the name of the time zone.
        * @type {string}
        */
@@ -7628,6 +7669,7 @@ var luxon = (function (exports) {
   exports.Zone = Zone;
   exports.FixedOffsetZone = FixedOffsetZone;
   exports.IANAZone = IANAZone;
+  exports.InvalidZone = InvalidZone;
   exports.LocalZone = LocalZone;
   exports.Settings = Settings;
 
