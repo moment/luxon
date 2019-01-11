@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.10.0
+
+- Fix endOf("day") during DSTs (#399)
+- Add `Interval#mapEndpoints (#400)
+- Add `DateTime#zone` and `Info.normalizeZone` (#404)
+
 ## 1.9.0
 
 - Add `DateTime#toRelative` and `DateTime#toRelativeCalendar`
