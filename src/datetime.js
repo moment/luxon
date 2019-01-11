@@ -408,7 +408,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.zone = zone;
+    this._zone = zone;
     /**
      * @access private
      */
@@ -916,6 +916,14 @@ export default class DateTime {
    */
   get outputCalendar() {
     return this.isValid ? this.loc.outputCalendar : null;
+  }
+
+  /**
+   * Get the time zone associated with this DateTime.
+   * @type {Zone}
+   */
+  get zone() {
+    return this._zone;
   }
 
   /**

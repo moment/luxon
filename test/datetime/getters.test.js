@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime } from "../../src/luxon";
+import Settings from "../../src/settings";
 
 const dateTime = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123)),
   utc = DateTime.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).toUTC(),
@@ -165,6 +166,17 @@ test("DateTime#get returns undefined for invalid units", () => {
 test("DateTime#locale returns the locale", () => {
   const dt = DateTime.local().reconfigure({ locale: "be" });
   expect(dt.locale).toBe("be");
+});
+
+//------
+// zone/zoneName
+//------
+test("DateTime#zone returns the time zone", () => {
+  expect(dateTime.zone).toBe(Settings.defaultZone);
+});
+
+test("DateTime#zoneName returns the name of the time zone", () => {
+  expect(dateTime.zoneName).toBe(Settings.defaultZone.name);
 });
 
 //------

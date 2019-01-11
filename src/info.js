@@ -2,6 +2,7 @@ import DateTime from "./datetime";
 import Settings from "./settings";
 import Locale from "./impl/locale";
 import IANAZone from "./zones/IANAZone";
+import { normalizeZone } from "./impl/zoneUtil";
 
 import { hasFormatToParts, hasIntl, hasRelative } from "./impl/util";
 
@@ -29,6 +30,24 @@ export default class Info {
    */
   static isValidIANAZone(zone) {
     return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
+  }
+
+  /**
+   * Converts the input into a {@link Zone} instance.
+   *
+   * * If `input` is already a Zone instance, it is returned unchanged.
+   * * If `input` is a string containing a valid time zone name, a Zone instance
+   *   with that name is returned.
+   * * If `input` is a string that doesn't refer to a known time zone, a Zone
+   *   instance with {@link Zone.isValid} == false is returned.
+   * * If `input is a number, a Zone instance with the specified fixed offset
+   *   in minutes is returned.
+   * * If `input` is `null` or `undefined`, the default zone is returned.
+   * @param {string|Zone|number} [input] - the value to be converted
+   * @return {Zone}
+   */
+  static normalizeZone(input) {
+    return normalizeZone(input, Settings.defaultZone);
   }
 
   /**
