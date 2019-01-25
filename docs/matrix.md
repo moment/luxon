@@ -13,7 +13,7 @@ Luxon officially supports the last two versions of the major browsers, with some
 | FF           | >= 56    | no intl relative time formatting                                                                                    |
 | Edge         | 18       | no intl relative time formatting                                                                                    |
 |              | 16       | no intl tokens, no intl relative time formatting                                                                    |
-| IE           | >= 11    | needs platform polyfills, no intl tokens, no zones, no relatie time formatting                                      |
+| IE           | >= 11    | needs platform polyfills, no intl tokens, no zones, no relative time formatting                                      |
 |              | 10       | needs platform polyfills, no basic internationalization, no intl tokens, no zones, no intl relative time formatting |
 | Safari       | 11       | no intl relative time formatting                                                                                    |
 |              | 10       | no intl tokens, no zones, no intl relative time formatting                                                          |
@@ -39,7 +39,7 @@ So there are now two remaining caveats: Intl *token* support and zones. Keep rea
 
 With IE 10, you have the same problems as IE 11, except that you don't even get basic Intl support. You'll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.
 
-Altenatively, you can use a polyfilled build of Luxon, which you can find here:
+Alternatively, you can use a polyfilled build of Luxon, which you can find here:
 
 - [Download full polyfilled build](../../global-filled/luxon.js)
 - [Download minified polyfilled build](../../global-filled/luxon.min.js)
@@ -69,7 +69,7 @@ If the browser lacks these capabilities, Luxon tries its best:
 | `DateTime#toFormat` in other locales   | OK           | Uses English                                | Uses English if format contains localized strings‡ | OK                   | OK                      |
 | `DateTime#fromFormat` in en-US         | OK           | OK                                          | OK                                                 | OK                   | OK                      |
 | `DateTime#toRelative` in en-US         | OK           | OK                                          | OK                                                 | OK                   | OK                      |
-| `DateTime#toRelative` in other locales | Uses English | OK                                          | OK                                                 | OK                   | Uses Enlish             |
+| `DateTime#toRelative` in other locales | Uses English | OK                                          | OK                                                 | OK                   | Uses English             |
 | `DateTime#offsetNameShort`, etc        | OK           | Returns null                                | OK in most locales§                                | OK                   | OK                      |
 | `fromFormat` in other locales          | OK           | Invalid DateTime if uses localized strings‡ | Uses English if format contains localized strings‡ | OK                   | OK                      |
 | `Info.months`, etc in en-US            | OK           | OK                                          | OK                                                 | OK                   | OK                      |

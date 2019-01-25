@@ -56,7 +56,7 @@ export default class Zone {
   }
 
   /**
-   * Return whether this Zone is equal to another zoner
+   * Return whether this Zone is equal to another zone
    * @abstract
    * @param {Zone} otherZone - the zone to compare
    * @return {boolean}

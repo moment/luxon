@@ -55,7 +55,7 @@ function systemLocale() {
 function parseLocaleString(localeStr) {
   // I really want to avoid writing a BCP 47 parser
   // see, e.g. https://github.com/wooorm/bcp-47
-  // Intead, we'll do this:
+  // Instead, we'll do this:
 
   // a) if the string has no -u extensions, just leave it alone
   // b) if it does, use Intl to resolve everything
