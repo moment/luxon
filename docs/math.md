@@ -226,13 +226,13 @@ Luxon methods that create Durations de novo accept an option called `conversionA
 Duration.fromObject({ years: 23, conversionAccuracy: 'longterm' });
 Duration.fromISO('PY23', { conversionAccuracy: 'longterm' });
 
-end.diff(start, { conversionAccuracy: 'longterm' })
+end.diff(start, 'days', { conversionAccuracy: 'longterm' })
 ```
 
 You can also create an accurate Duration out of an existing one:
 
 ```js
-var pedanticDuration = casualDuration.reconfigure({conversionAccuracy: 'longterm' });
+var pedanticDuration = casualDuration.reconfigure({ conversionAccuracy: 'longterm' });
 ```
 
 These Durations will do their conversions differently.
