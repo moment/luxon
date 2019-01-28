@@ -1,7 +1,7 @@
-import { parseMillis, isUndefined, untruncateYear, signedOffset } from "./util";
-import Formatter from "./formatter";
-import FixedOffsetZone from "../zones/fixedOffsetZone";
-import IANAZone from "../zones/IANAZone";
+import { parseMillis, isUndefined, untruncateYear, signedOffset } from "./util.js";
+import Formatter from "./formatter.js";
+import FixedOffsetZone from "../zones/fixedOffsetZone.js";
+import IANAZone from "../zones/IANAZone.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 

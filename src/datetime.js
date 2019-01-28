@@ -1,11 +1,11 @@
-import Duration, { friendlyDuration } from "./duration";
-import Interval from "./interval";
-import Settings from "./settings";
-import Info from "./info";
-import Formatter from "./impl/formatter";
-import FixedOffsetZone from "./zones/fixedOffsetZone";
-import LocalZone from "./zones/localZone";
-import Locale from "./impl/locale";
+import Duration, { friendlyDuration } from "./duration.js";
+import Interval from "./interval.js";
+import Settings from "./settings.js";
+import Info from "./info.js";
+import Formatter from "./impl/formatter.js";
+import FixedOffsetZone from "./zones/fixedOffsetZone.js";
+import LocalZone from "./zones/localZone.js";
+import Locale from "./impl/locale.js";
 import {
   isUndefined,
   maybeArray,
@@ -18,11 +18,11 @@ import {
   weeksInWeekYear,
   normalizeObject,
   roundTo
-} from "./impl/util";
-import { normalizeZone } from "./impl/zoneUtil";
-import diff from "./impl/diff";
-import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser";
-import { parseFromTokens, explainFromTokens } from "./impl/tokenParser";
+} from "./impl/util.js";
+import { normalizeZone } from "./impl/zoneUtil.js";
+import diff from "./impl/diff.js";
+import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
+import { parseFromTokens, explainFromTokens } from "./impl/tokenParser.js";
 import {
   gregorianToWeek,
   weekToGregorian,
@@ -32,15 +32,15 @@ import {
   hasInvalidWeekData,
   hasInvalidOrdinalData,
   hasInvalidTimeData
-} from "./impl/conversions";
-import * as Formats from "./impl/formats";
+} from "./impl/conversions.js";
+import * as Formats from "./impl/formats.js";
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
   InvalidUnitError,
   InvalidDateTimeError
-} from "./errors";
-import Invalid from "./impl/invalid";
+} from "./errors.js";
+import Invalid from "./impl/invalid.js";
 
 const INVALID = "Invalid DateTime";
 

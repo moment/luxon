@@ -2,13 +2,13 @@
  * @private
  */
 
-import Zone from "../zone";
-import LocalZone from "../zones/localZone";
-import IANAZone from "../zones/IANAZone";
-import FixedOffsetZone from "../zones/fixedOffsetZone";
-import InvalidZone from "../zones/invalidZone";
+import Zone from "../zone.js";
+import LocalZone from "../zones/localZone.js";
+import IANAZone from "../zones/IANAZone.js";
+import FixedOffsetZone from "../zones/fixedOffsetZone.js";
+import InvalidZone from "../zones/invalidZone.js";
 
-import { isUndefined, isString, isNumber } from "./util";
+import { isUndefined, isString, isNumber } from "./util.js";
 
 export function normalizeZone(input, defaultZone) {
   let offset;

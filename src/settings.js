@@ -1,7 +1,7 @@
-import LocalZone from "./zones/localZone";
-import Locale from "./impl/locale";
+import LocalZone from "./zones/localZone.js";
+import Locale from "./impl/locale.js";
 
-import { normalizeZone } from "./impl/zoneUtil";
+import { normalizeZone } from "./impl/zoneUtil.js";
 
 let now = () => Date.now(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues

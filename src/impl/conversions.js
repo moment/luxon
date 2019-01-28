@@ -6,8 +6,8 @@ import {
   daysInMonth,
   weeksInWeekYear,
   isNumber
-} from "./util";
-import Invalid from "./invalid";
+} from "./util.js";
+import Invalid from "./invalid.js";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];

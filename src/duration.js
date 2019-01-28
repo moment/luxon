@@ -1,10 +1,10 @@
-import { isUndefined, isNumber, normalizeObject } from "./impl/util";
-import Locale from "./impl/locale";
-import Formatter from "./impl/formatter";
-import { parseISODuration } from "./impl/regexParser";
-import Settings from "./settings";
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors";
-import Invalid from "./impl/invalid";
+import { isUndefined, isNumber, normalizeObject } from "./impl/util.js";
+import Locale from "./impl/locale.js";
+import Formatter from "./impl/formatter.js";
+import { parseISODuration } from "./impl/regexParser.js";
+import Settings from "./settings.js";
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
+import Invalid from "./impl/invalid.js";
 
 const INVALID = "Invalid Duration";
 
