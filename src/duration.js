@@ -409,6 +409,7 @@ export default class Duration {
     if (this.minutes !== 0) s += this.minutes + "M";
     if (this.seconds !== 0 || this.milliseconds !== 0)
       s += this.seconds + this.milliseconds / 1000 + "S";
+    if (s === "P") s += "T0S";
     return s;
   }
 
