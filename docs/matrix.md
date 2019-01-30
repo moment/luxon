@@ -9,8 +9,9 @@ Luxon officially supports the last two versions of the major browsers, with some
 | Browser      | Versions | Caveats                                                                                                             |
 | ------------ | -------- | ------------------------------------------------------------------------------------------------------------------- |
 | Chrome       | >= 71    |                                                                                                                     |
-|              | >= 61    | no intl relative time formatting                                                                                    |
-| FF           | >= 56    | no intl relative time formatting                                                                                    |
+|              | >= 54    | no intl tokens, no intl relative time formatting                                                                    |
+| FF           | >= 65    |                                                                                                                     |
+|              | >= 56    | no intl relative time formatting                                                                                    |
 | Edge         | 18       | no intl relative time formatting                                                                                    |
 |              | 16       | no intl tokens, no intl relative time formatting                                                                    |
 | IE           | >= 11    | needs platform polyfills, no intl tokens, no zones, no relative time formatting                                      |
@@ -55,7 +56,7 @@ In the support table above, you can see that some platforms have caveats. They a
 1.  **Basic internationalization**. Luxon doesn't have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString). Most browsers and recent versions of Node support this.
 1.  **Internationalized tokens**. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl's [formatToParts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts) method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.
 1.  **Zones**. Luxon's support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.
-1. **Relative time formatting**. Luxon's support for relative time formatting (e.g. `DateTime#toRelative()` and `DateTime#toRelativeCanedar`) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome. Luxon will fall back to using English if that capability is missing.
+1. **Relative time formatting**. Luxon's support for relative time formatting (e.g. `DateTime#toRelative()` and `DateTime#toRelativeCanedar`) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.
 
 If the browser lacks these capabilities, Luxon tries its best:
 
