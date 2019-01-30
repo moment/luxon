@@ -1226,7 +1226,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   toLocal() {
-    return this.setZone(new LocalZone());
+    return this.setZone(Settings.defaultZone || new LocalZone());
   }
 
   /**
