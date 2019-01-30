@@ -16,7 +16,8 @@ function setUnset(prop) {
 
 const withDefaultLocale = setUnset("defaultLocale"),
   withDefaultNumberingSystem = setUnset("defaultNumberingSystem"),
-  withDefaultOutputCalendar = setUnset("defaultOutputCalendar");
+  withDefaultOutputCalendar = setUnset("defaultOutputCalendar"),
+  withdefaultZone = setUnset("defaultZoneName");
 
 //------
 // .local()
@@ -113,6 +114,13 @@ test("DateTime.local accepts the default numbering system", () => {
 
 test("DateTime.local accepts the default output calendar", () => {
   withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
+});
+
+//------
+// #toLocal()
+//-------
+test("DateTime#toLocal accepts the default locale", () => {
+  withdefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
 });
 
 //------

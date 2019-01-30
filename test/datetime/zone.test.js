@@ -52,6 +52,13 @@ test("DateTime#toLocal() sets the calendar back to local", () => {
   expect(relocaled.hour).toBe(expected);
 });
 
+test("DateTime#toLocal() accepts the default locale", () => {
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    Settings.defaultZoneName = "UTC";
+    expect(DateTime.local().toLocal().zoneName).toBe("UTC");
+  });
+});
+
 //------
 // #setZone()
 //------
@@ -111,9 +118,11 @@ test('DateTime#setZone accepts "utc-3:30"', () => {
 });
 
 test("DateTime#setZone does not accept dumb things", () => {
-  const zoned = DateTime.local().setZone("utc-yo");
-  // this is questionable; should this be invalid instead?
-  expect(zoned.zone.type).toBe("local");
+  Helpers.withDefaultZone("local", () => {
+    const zoned = DateTime.local().setZone("utc-yo");
+    // this is questionable; should this be invalid instead?
+    expect(zoned.zone.type).toBe("local");
+  });
 });
 
 test("DateTime#setZone accepts IANA zone names", () => {
