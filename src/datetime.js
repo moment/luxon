@@ -1764,7 +1764,7 @@ export default class DateTime {
 
   /**
    * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-   * platform supports Intl.RelativeDateFormat. Rounds down by default.
+   * platform supports Intl.RelativeDateFormat, **which it probably doesn't yet!** (As of this writing, only Chrome supports that). Rounds down by default.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
@@ -1774,7 +1774,7 @@ export default class DateTime {
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
    * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
-   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }) //=> "dentro de 1 día"
    * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
    * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
    * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
