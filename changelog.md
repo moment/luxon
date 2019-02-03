@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.0
+
+ * Fix low-year handling for IANA zones
+ * `DateTime#toLocal()` now uses the default locale
+ * Fix zero duration formatting
+ * Many documentation fixes
+
 ## 1.10.0
 
 - Fix endOf("day") during DSTs (#399)
