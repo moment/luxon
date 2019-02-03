@@ -17,7 +17,8 @@ import {
   isLeapYear,
   weeksInWeekYear,
   normalizeObject,
-  roundTo
+  roundTo,
+  objToLocalTS
 } from "./impl/util.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
@@ -112,26 +113,6 @@ function tsToObj(ts, offset) {
     second: d.getUTCSeconds(),
     millisecond: d.getUTCMilliseconds()
   };
-}
-
-// covert a calendar object to a local timestamp (epoch, but with the offset baked in)
-function objToLocalTS(obj) {
-  let d = Date.UTC(
-    obj.year,
-    obj.month - 1,
-    obj.day,
-    obj.hour,
-    obj.minute,
-    obj.second,
-    obj.millisecond
-  );
-
-  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
-  if (obj.year < 100 && obj.year >= 0) {
-    d = new Date(d);
-    d.setUTCFullYear(obj.year);
-  }
-  return +d;
 }
 
 // convert a calendar object to a epoch timestamp

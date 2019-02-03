@@ -1,4 +1,4 @@
-import { parseZoneInfo, isUndefined, ianaRegex } from "../impl/util.js";
+import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.js";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
@@ -100,10 +100,10 @@ export default class IANAZone extends Zone {
   offset(ts) {
     const date = new Date(ts),
       dtf = makeDTF(this.zoneName),
-      [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts
+      [year, month, day, hour, minute, second] = dtf.formatToParts
         ? partsOffset(dtf, date)
-        : hackyOffset(dtf, date),
-      asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
+        : hackyOffset(dtf, date);
+    const asUTC = objToLocalTS({ year, month, day, hour, minute, second, millisecond: 0 });
     let asTS = date.valueOf();
     asTS -= asTS % 1000;
     return (asUTC - asTS) / (60 * 1000);

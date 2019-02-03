@@ -123,6 +123,25 @@ export function daysInMonth(year, month) {
     return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
   }
 }
+// covert a calendar object to a local timestamp (epoch, but with the offset baked in)
+export function objToLocalTS(obj) {
+  let d = Date.UTC(
+    obj.year,
+    obj.month - 1,
+    obj.day,
+    obj.hour,
+    obj.minute,
+    obj.second,
+    obj.millisecond
+  );
+
+  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
+  if (obj.year < 100 && obj.year >= 0) {
+    d = new Date(d);
+    d.setUTCFullYear(obj.year);
+  }
+  return +d;
+}
 
 export function weeksInWeekYear(weekYear) {
   const p1 =

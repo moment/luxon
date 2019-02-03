@@ -501,6 +501,13 @@ test("DateTime.fromObject accepts really low year numbers", () => {
   expect(dt.day).toBe(1);
 });
 
+test("DateTime.fromObject accepts really low year numbers with IANA zones", () => {
+  const dt = DateTime.fromObject({ year: 5, zone: "America/New_York" });
+  expect(dt.year).toBe(5);
+  expect(dt.month).toBe(1);
+  expect(dt.day).toBe(1);
+});
+
 test("DateTime.fromObject accepts plurals and weird capitalization", () => {
   const dt = DateTime.fromObject({ Year: 2005, months: 12, dAy: 13 });
   expect(dt.year).toBe(2005);
