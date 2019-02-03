@@ -1,5 +1,5 @@
-import { parseZoneInfo, isUndefined, ianaRegex } from "../impl/util";
-import Zone from "../zone";
+import { parseZoneInfo, isUndefined, ianaRegex } from "../impl/util.js";
+import Zone from "../zone.js";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 

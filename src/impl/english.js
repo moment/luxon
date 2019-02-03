@@ -1,5 +1,5 @@
-import * as Formats from "./formats";
-import { pick } from "./util";
+import * as Formats from "./formats.js";
+import { pick } from "./util.js";
 
 function stringify(obj) {
   return JSON.stringify(obj, Object.keys(obj).sort());

@@ -1,5 +1,5 @@
-import { padStart, signedOffset } from "../impl/util";
-import Zone from "../zone";
+import { padStart, signedOffset } from "../impl/util.js";
+import Zone from "../zone.js";
 
 let singleton = null;
 

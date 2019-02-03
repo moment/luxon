@@ -1,5 +1,5 @@
-import { parseZoneInfo, hasIntl } from "../impl/util";
-import Zone from "../zone";
+import { parseZoneInfo, hasIntl } from "../impl/util.js";
+import Zone from "../zone.js";
 
 let singleton = null;
 
