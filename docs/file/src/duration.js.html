@@ -40,13 +40,13 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/duration.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject } from &quot;./impl/util&quot;;
-import Locale from &quot;./impl/locale&quot;;
-import Formatter from &quot;./impl/formatter&quot;;
-import { parseISODuration } from &quot;./impl/regexParser&quot;;
-import Settings from &quot;./settings&quot;;
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &quot;./errors&quot;;
-import Invalid from &quot;./impl/invalid&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject } from &quot;./impl/util.js&quot;;
+import Locale from &quot;./impl/locale.js&quot;;
+import Formatter from &quot;./impl/formatter.js&quot;;
+import { parseISODuration } from &quot;./impl/regexParser.js&quot;;
+import Settings from &quot;./settings.js&quot;;
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &quot;./errors.js&quot;;
+import Invalid from &quot;./impl/invalid.js&quot;;
 
 const INVALID = &quot;Invalid Duration&quot;;
 
@@ -451,6 +451,7 @@ export default class Duration {
     if (this.minutes !== 0) s += this.minutes + &quot;M&quot;;
     if (this.seconds !== 0 || this.milliseconds !== 0)
       s += this.seconds + this.milliseconds / 1000 + &quot;S&quot;;
+    if (s === &quot;P&quot;) s += &quot;T0S&quot;;
     return s;
   }
 

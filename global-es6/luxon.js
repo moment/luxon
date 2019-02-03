@@ -126,6 +126,25 @@ var luxon = (function (exports) {
       return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
     }
   }
+  // covert a calendar object to a local timestamp (epoch, but with the offset baked in)
+  function objToLocalTS(obj) {
+    let d = Date.UTC(
+      obj.year,
+      obj.month - 1,
+      obj.day,
+      obj.hour,
+      obj.minute,
+      obj.second,
+      obj.millisecond
+    );
+
+    // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
+    if (obj.year < 100 && obj.year >= 0) {
+      d = new Date(d);
+      d.setUTCFullYear(obj.year);
+    }
+    return +d;
+  }
 
   function weeksInWeekYear(weekYear) {
     const p1 =
@@ -729,7 +748,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Return whether this Zone is equal to another zoner
+     * Return whether this Zone is equal to another zone
      * @abstract
      * @param {Zone} otherZone - the zone to compare
      * @return {boolean}
@@ -888,10 +907,10 @@ var luxon = (function (exports) {
     offset(ts) {
       const date = new Date(ts),
         dtf = makeDTF(this.zoneName),
-        [fYear, fMonth, fDay, fHour, fMinute, fSecond] = dtf.formatToParts
+        [year, month, day, hour, minute, second] = dtf.formatToParts
           ? partsOffset(dtf, date)
-          : hackyOffset(dtf, date),
-        asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
+          : hackyOffset(dtf, date);
+      const asUTC = objToLocalTS({ year, month, day, hour, minute, second, millisecond: 0 });
       let asTS = date.valueOf();
       asTS -= asTS % 1000;
       return (asUTC - asTS) / (60 * 1000);
@@ -1604,7 +1623,7 @@ var luxon = (function (exports) {
   function parseLocaleString(localeStr) {
     // I really want to avoid writing a BCP 47 parser
     // see, e.g. https://github.com/wooorm/bcp-47
-    // Intead, we'll do this:
+    // Instead, we'll do this:
 
     // a) if the string has no -u extensions, just leave it alone
     // b) if it does, use Intl to resolve everything
@@ -2720,6 +2739,7 @@ var luxon = (function (exports) {
       if (this.minutes !== 0) s += this.minutes + "M";
       if (this.seconds !== 0 || this.milliseconds !== 0)
         s += this.seconds + this.milliseconds / 1000 + "S";
+      if (s === "P") s += "T0S";
       return s;
     }
 
@@ -4291,7 +4311,7 @@ var luxon = (function (exports) {
   }
 
   function hasInvalidTimeData(obj) {
-    const validHour = numberBetween(obj.hour, 0, 23),
+    const validHour = numberBetween(obj.hour, 0, 24),
       validMinute = numberBetween(obj.minute, 0, 59),
       validSecond = numberBetween(obj.second, 0, 59),
       validMillisecond = numberBetween(obj.millisecond, 0, 999);
@@ -4377,26 +4397,6 @@ var luxon = (function (exports) {
       second: d.getUTCSeconds(),
       millisecond: d.getUTCMilliseconds()
     };
-  }
-
-  // covert a calendar object to a local timestamp (epoch, but with the offset baked in)
-  function objToLocalTS(obj) {
-    let d = Date.UTC(
-      obj.year,
-      obj.month - 1,
-      obj.day,
-      obj.hour,
-      obj.minute,
-      obj.second,
-      obj.millisecond
-    );
-
-    // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
-    if (obj.year < 100 && obj.year >= 0) {
-      d = new Date(d);
-      d.setUTCFullYear(obj.year);
-    }
-    return +d;
   }
 
   // convert a calendar object to a epoch timestamp
@@ -5491,7 +5491,7 @@ var luxon = (function (exports) {
      * @return {DateTime}
      */
     toLocal() {
-      return this.setZone(new LocalZone());
+      return this.setZone(Settings.defaultZone || new LocalZone());
     }
 
     /**
@@ -5826,7 +5826,7 @@ var luxon = (function (exports) {
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL Time
      * @param {Object} opts - options
-     * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overides includeOffset.
+     * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
      * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
      * @example DateTime.utc().toSQL() //=> '05:15:16.345'
      * @example DateTime.local().toSQL() //=> '05:15:16.345 -04:00'
@@ -6029,7 +6029,7 @@ var luxon = (function (exports) {
 
     /**
      * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-     * platform supports Intl.RelativeDateFormat. Rounds down by default.
+     * platform supports Intl.RelativeDateFormat, **which it probably doesn't yet!** (As of this writing, only Chrome supports that). Rounds down by default.
      * @param {Object} options - options that affect the output
      * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
      * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
@@ -6039,7 +6039,7 @@ var luxon = (function (exports) {
      * @param {string} options.locale - override the locale of this DateTime
      * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
      * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
-     * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+     * @example DateTime.local().setLocale("es").toRelative({ days: 1 }) //=> "dentro de 1 día"
      * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
      * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
      * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"

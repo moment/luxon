@@ -40,14 +40,14 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/datetime.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Duration, { friendlyDuration } from &quot;./duration&quot;;
-import Interval from &quot;./interval&quot;;
-import Settings from &quot;./settings&quot;;
-import Info from &quot;./info&quot;;
-import Formatter from &quot;./impl/formatter&quot;;
-import FixedOffsetZone from &quot;./zones/fixedOffsetZone&quot;;
-import LocalZone from &quot;./zones/localZone&quot;;
-import Locale from &quot;./impl/locale&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Duration, { friendlyDuration } from &quot;./duration.js&quot;;
+import Interval from &quot;./interval.js&quot;;
+import Settings from &quot;./settings.js&quot;;
+import Info from &quot;./info.js&quot;;
+import Formatter from &quot;./impl/formatter.js&quot;;
+import FixedOffsetZone from &quot;./zones/fixedOffsetZone.js&quot;;
+import LocalZone from &quot;./zones/localZone.js&quot;;
+import Locale from &quot;./impl/locale.js&quot;;
 import {
   isUndefined,
   maybeArray,
@@ -59,12 +59,13 @@ import {
   isLeapYear,
   weeksInWeekYear,
   normalizeObject,
-  roundTo
-} from &quot;./impl/util&quot;;
-import { normalizeZone } from &quot;./impl/zoneUtil&quot;;
-import diff from &quot;./impl/diff&quot;;
-import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from &quot;./impl/regexParser&quot;;
-import { parseFromTokens, explainFromTokens } from &quot;./impl/tokenParser&quot;;
+  roundTo,
+  objToLocalTS
+} from &quot;./impl/util.js&quot;;
+import { normalizeZone } from &quot;./impl/zoneUtil.js&quot;;
+import diff from &quot;./impl/diff.js&quot;;
+import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from &quot;./impl/regexParser.js&quot;;
+import { parseFromTokens, explainFromTokens } from &quot;./impl/tokenParser.js&quot;;
 import {
   gregorianToWeek,
   weekToGregorian,
@@ -74,15 +75,15 @@ import {
   hasInvalidWeekData,
   hasInvalidOrdinalData,
   hasInvalidTimeData
-} from &quot;./impl/conversions&quot;;
-import * as Formats from &quot;./impl/formats&quot;;
+} from &quot;./impl/conversions.js&quot;;
+import * as Formats from &quot;./impl/formats.js&quot;;
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
   InvalidUnitError,
   InvalidDateTimeError
-} from &quot;./errors&quot;;
-import Invalid from &quot;./impl/invalid&quot;;
+} from &quot;./errors.js&quot;;
+import Invalid from &quot;./impl/invalid.js&quot;;
 
 const INVALID = &quot;Invalid DateTime&quot;;
 
@@ -154,26 +155,6 @@ function tsToObj(ts, offset) {
     second: d.getUTCSeconds(),
     millisecond: d.getUTCMilliseconds()
   };
-}
-
-// covert a calendar object to a local timestamp (epoch, but with the offset baked in)
-function objToLocalTS(obj) {
-  let d = Date.UTC(
-    obj.year,
-    obj.month - 1,
-    obj.day,
-    obj.hour,
-    obj.minute,
-    obj.second,
-    obj.millisecond
-  );
-
-  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
-  if (obj.year &lt; 100 &amp;&amp; obj.year &gt;= 0) {
-    d = new Date(d);
-    d.setUTCFullYear(obj.year);
-  }
-  return +d;
 }
 
 // convert a calendar object to a epoch timestamp
@@ -1268,7 +1249,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   toLocal() {
-    return this.setZone(new LocalZone());
+    return this.setZone(Settings.defaultZone || new LocalZone());
   }
 
   /**
@@ -1603,7 +1584,7 @@ export default class DateTime {
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Time
    * @param {Object} opts - options
-   * @param {boolean} [opts.includeZone=false] - include the zone, such as &apos;America/New_York&apos;. Overides includeOffset.
+   * @param {boolean} [opts.includeZone=false] - include the zone, such as &apos;America/New_York&apos;. Overrides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
    * @example DateTime.utc().toSQL() //=&gt; &apos;05:15:16.345&apos;
    * @example DateTime.local().toSQL() //=&gt; &apos;05:15:16.345 -04:00&apos;
@@ -1806,7 +1787,7 @@ export default class DateTime {
 
   /**
    * Returns a string representation of a this time relative to now, such as &quot;in two days&quot;. Can only internationalize if your
-   * platform supports Intl.RelativeDateFormat. Rounds down by default.
+   * platform supports Intl.RelativeDateFormat, **which it probably doesn&apos;t yet!** (As of this writing, only Chrome supports that). Rounds down by default.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style=&quot;long&quot;] - the style of units, must be &quot;long&quot;, &quot;short&quot;, or &quot;narrow&quot;
@@ -1816,7 +1797,7 @@ export default class DateTime {
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
    * @example DateTime.local().plus({ days: 1 }).toRelative() //=&gt; &quot;in 1 day&quot;
-   * @example DateTime.local().setLocale(&quot;es&quot;).toRelative({ days: 1 }).toRelative() //=&gt; &quot;dentro de 1 d&#xED;a&quot;
+   * @example DateTime.local().setLocale(&quot;es&quot;).toRelative({ days: 1 }) //=&gt; &quot;dentro de 1 d&#xED;a&quot;
    * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: &quot;fr&quot; }) //=&gt; &quot;dans 23 heures&quot;
    * @example DateTime.local().minus({ days: 2 }).toRelative() //=&gt; &quot;2 days ago&quot;
    * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: &quot;hours&quot; }) //=&gt; &quot;48 hours ago&quot;

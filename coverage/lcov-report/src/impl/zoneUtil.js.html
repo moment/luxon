@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">75% </span>
+        <span class="strong">85% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>15/20</span>
+        <span class='fraction'>17/20</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">66.67% </span>
+        <span class="strong">74.07% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>18/27</span>
+        <span class='fraction'>20/27</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -35,16 +35,16 @@
         <span class='fraction'>1/1</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">70.59% </span>
+        <span class="strong">82.35% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>12/17</span>
+        <span class='fraction'>14/17</span>
       </div>
     </div>
     <p class="quiet">
       Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
     </p>
   </div>
-  <div class='status-line medium'></div>
+  <div class='status-line high'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -97,21 +97,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1386x</span>
-<span class="cline-any cline-yes">1061x</span>
-<span class="cline-any cline-yes">325x</span>
-<span class="cline-any cline-yes">233x</span>
-<span class="cline-any cline-yes">92x</span>
-<span class="cline-any cline-yes">92x</span>
-<span class="cline-any cline-yes">92x</span>
-<span class="cline-any cline-yes">90x</span>
-<span class="cline-any cline-yes">78x</span>
+<span class="cline-any cline-yes">1399x</span>
+<span class="cline-any cline-yes">1062x</span>
+<span class="cline-any cline-yes">337x</span>
+<span class="cline-any cline-yes">238x</span>
+<span class="cline-any cline-yes">99x</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-yes">94x</span>
+<span class="cline-any cline-yes">80x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">75x</span>
 <span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -124,13 +124,13 @@
  * @private
  */
 &nbsp;
-import Zone from "../zone";
-import LocalZone from "../zones/localZone";
-import IANAZone from "../zones/IANAZone";
-import FixedOffsetZone from "../zones/fixedOffsetZone";
-import InvalidZone from "../zones/invalidZone";
+import Zone from "../zone.js";
+import LocalZone from "../zones/localZone.js";
+import IANAZone from "../zones/IANAZone.js";
+import FixedOffsetZone from "../zones/fixedOffsetZone.js";
+import InvalidZone from "../zones/invalidZone.js";
 &nbsp;
-import { isUndefined, isString, isNumber } from "./util";
+import { isUndefined, isString, isNumber } from "./util.js";
 &nbsp;
 export function normalizeZone(input, defaultZone) {
   let offset;
@@ -138,7 +138,7 @@ export function normalizeZone(input, defaultZone) {
     return defaultZone;
   } else if (input instanceof Zone) {
     return input;
-  } else <span class="missing-if-branch" title="else path not taken" >E</span>if (isString(input)) {
+  } else if (isString(input)) {
     const lowered = input.toLowerCase();
     if (lowered === "local") return LocalZone.instance;
     else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
@@ -147,8 +147,8 @@ export function normalizeZone(input, defaultZone) {
       return FixedOffsetZone.instance(offset);
     } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);
     else return FixedOffsetZone.parseSpecifier(lowered) || <span class="branch-1 cbranch-no" title="branch not covered" >new InvalidZone(input);</span>
-  } else <span class="cstat-no" title="statement not covered" >if (isNumber(input)) {</span>
-<span class="cstat-no" title="statement not covered" >    return FixedOffsetZone.instance(input);</span>
+  } else <span class="missing-if-branch" title="else path not taken" >E</span>if (isNumber(input)) {
+    return FixedOffsetZone.instance(input);
   } else <span class="cstat-no" title="statement not covered" >if (typeof input === "object" &amp;&amp; input.offset &amp;&amp; typeof input.offset === "number") {</span>
     // This is dumb, but the instanceof check above doesn't seem to really work
     // so we're duck checking it
@@ -163,7 +163,7 @@ export function normalizeZone(input, defaultZone) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Jan 01 2019 22:29:59 GMT-0500 (Eastern Standard Time)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Feb 03 2019 14:05:04 GMT-0500 (Eastern Standard Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>

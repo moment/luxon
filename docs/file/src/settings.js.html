@@ -40,10 +40,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/settings.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import LocalZone from &quot;./zones/localZone&quot;;
-import Locale from &quot;./impl/locale&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import LocalZone from &quot;./zones/localZone.js&quot;;
+import Locale from &quot;./impl/locale.js&quot;;
 
-import { normalizeZone } from &quot;./impl/zoneUtil&quot;;
+import { normalizeZone } from &quot;./impl/zoneUtil.js&quot;;
 
 let now = () =&gt; Date.now(),
   defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
