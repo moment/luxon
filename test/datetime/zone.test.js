@@ -54,8 +54,8 @@ test("DateTime#toLocal() sets the calendar back to local", () => {
 
 test("DateTime#toLocal() accepts the default locale", () => {
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZoneName = "UTC";
-    expect(DateTime.local().toLocal().zoneName).toBe("UTC");
+    const tokyoLocal = DateTime.local();
+    Helpers.withDefaultZone("UTC", () => expect(tokyoLocal.toLocal().zoneName).toBe("UTC"));
   });
 });
 

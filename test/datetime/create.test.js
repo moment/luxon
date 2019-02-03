@@ -1,23 +1,11 @@
 /* global test expect */
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime } from "../../src/luxon";
+import { Helpers } from "../helpers";
 
-function setUnset(prop) {
-  return (value, f) => {
-    const existing = Settings[prop];
-    try {
-      Settings[prop] = value;
-      f();
-    } finally {
-      Settings[prop] = existing;
-    }
-  };
-}
-
-const withDefaultLocale = setUnset("defaultLocale"),
-  withDefaultNumberingSystem = setUnset("defaultNumberingSystem"),
-  withDefaultOutputCalendar = setUnset("defaultOutputCalendar"),
-  withdefaultZone = setUnset("defaultZoneName");
+const withDefaultLocale = Helpers.setUnset("defaultLocale"),
+  withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
+  withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar");
 
 //------
 // .local()
@@ -120,7 +108,7 @@ test("DateTime.local accepts the default output calendar", () => {
 // #toLocal()
 //-------
 test("DateTime#toLocal accepts the default locale", () => {
-  withdefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
+  Helpers.withDefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
 });
 
 //------
