@@ -89,6 +89,13 @@ test("DateTime#plus maintains invalidity", () => {
   expect(DateTime.invalid("because").plus({ day: 1 }).isValid).toBe(false);
 });
 
+test("DateTime#plus works across the 100 barrier", () => {
+  const d = DateTime.fromISO("0099-12-31").plus({ day: 2 });
+  expect(d.year).toBe(100);
+  expect(d.month).toBe(1);
+  expect(d.day).toBe(2);
+});
+
 //------
 // #minus()
 //------
@@ -128,6 +135,13 @@ test("DateTime#minus({ months: 13 }) at the end of the month", () => {
 
 test("DateTime#minus maintains invalidity", () => {
   expect(DateTime.invalid("because").minus({ day: 1 }).isValid).toBe(false);
+});
+
+test("DateTime#minus works across the 100 barrier", () => {
+  const d = DateTime.fromISO("0100-01-02").minus({ day: 2 });
+  expect(d.year).toBe(99);
+  expect(d.month).toBe(12);
+  expect(d.day).toBe(31);
 });
 
 //------
