@@ -225,7 +225,7 @@ var luxon = (function (exports) {
 
     if (obj.year < 100 && obj.year >= 0) {
       d = new Date(d);
-      d.setUTCFullYear(obj.year);
+      d.setUTCFullYear(d.getUTCFullYear() - 1900);
     }
 
     return +d;
