@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.11.1
+
+ * Fix DateTime#plus() when spanning across AD 100
+
 ## 1.11.0
 
  * Fix low-year handling for IANA zones
