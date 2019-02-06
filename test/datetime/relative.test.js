@@ -139,3 +139,29 @@ Helpers.withoutRTF("DateTime#toRelativeCalendar falls back to English", () => {
       .toRelativeCalendar({ base })
   ).toBe("next year");
 });
+
+test("DateTime#toRelativeCalendar works down through the units for diffrent zone than local", () => {
+  const target = DateTime.local().setZone(`UTC+3`),
+    target1 = target.plus({ days: 1 }),
+    target2 = target1.plus({ days: 1 }),
+    target3 = target2.plus({ days: 1 });
+
+  expect(target.toRelativeCalendar()).toBe("today");
+  expect(target1.toRelativeCalendar()).toBe("tomorrow");
+  expect(target2.toRelativeCalendar()).toBe("in 2 days");
+  expect(target3.toRelativeCalendar()).toBe("in 3 days");
+});
+
+test("DateTime#toRelative works down through the units for diffrent zone than local", () => {
+  const base = DateTime.local().setZone(`UTC+3`);
+
+  expect(base.plus({ minutes: 65 }).toRelative()).toBe("in 1 hour");
+  expect(base.plus({ minutes: 165 }).toRelative()).toBe("in 2 hours");
+  expect(base.plus({ hours: 25 }).toRelative()).toBe("in 1 day");
+  expect(base.plus({ months: 15 }).toRelative()).toBe("in 1 year");
+
+  expect(base.minus({ minutes: 65 }).toRelative()).toBe("1 hour ago");
+  expect(base.minus({ minutes: 165 }).toRelative()).toBe("2 hours ago");
+  expect(base.minus({ hours: 25 }).toRelative()).toBe("1 day ago");
+  expect(base.minus({ months: 15 }).toRelative()).toBe("1 year ago");
+});
