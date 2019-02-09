@@ -38,6 +38,11 @@ function simple(regex) {
   return { regex, deser: ([s]) => s };
 }
 
+function escapeToken(value) {
+  // eslint-disable-next-line no-useless-escape
+  return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+}
+
 function unitForToken(token, loc) {
   const one = /\d/,
     two = /\d{2}/,
@@ -46,7 +51,7 @@ function unitForToken(token, loc) {
     oneOrTwo = /\d{1,2}/,
     oneToThree = /\d{1,3}/,
     twoToFour = /\d{2,4}/,
-    literal = t => ({ regex: RegExp(t.val), deser: ([s]) => s, literal: true }),
+    literal = t => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
     unitate = t => {
       if (token.literal) {
         return literal(t);
