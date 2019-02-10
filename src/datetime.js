@@ -1763,7 +1763,7 @@ export default class DateTime {
    */
   toRelative(options = {}) {
     if (!this.isValid) return null;
-    const base = options.base || DateTime.local(),
+    const base = options.base || DateTime.fromObject({ zone: this.zone }),
       padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
     return diffRelative(
       base,
@@ -1792,7 +1792,7 @@ export default class DateTime {
     if (!this.isValid) return null;
 
     return diffRelative(
-      options.base || DateTime.local(),
+      options.base || DateTime.fromObject({ zone: this.zone }),
       this,
       Object.assign(options, {
         numeric: "auto",
