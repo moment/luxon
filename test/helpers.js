@@ -82,13 +82,26 @@ export class Helpers {
 
   // not a tester!
   static withDefaultZone(zone, f) {
-    const localZone = Settings.defaultZoneName;
-    try {
-      Settings.defaultZoneName = zone;
-      f();
-    } finally {
-      Settings.defaultZoneName = localZone;
-    }
+    return (value, f) => {
+      try {
+        Settings.defaultZoneName = value;
+        f();
+      } finally {
+        Settings.defaultZoneName = null;
+      }
+    };
+  }
+
+  static setUnset(prop) {
+    return (value, f) => {
+      const existing = Settings[prop];
+      try {
+        Settings[prop] = value;
+        f();
+      } finally {
+        Settings[prop] = existing;
+      }
+    };
   }
 
   static atHour(hour) {

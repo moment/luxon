@@ -1,4 +1,4 @@
-import Duration from "../duration";
+import Duration from "../duration.js";
 
 function dayDiff(earlier, later) {
   const utcDayStart = dt =>

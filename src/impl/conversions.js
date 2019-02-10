@@ -6,8 +6,8 @@ import {
   daysInMonth,
   weeksInWeekYear,
   isNumber
-} from "./util";
-import Invalid from "./invalid";
+} from "./util.js";
+import Invalid from "./invalid.js";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
@@ -137,7 +137,7 @@ export function hasInvalidGregorianData(obj) {
 }
 
 export function hasInvalidTimeData(obj) {
-  const validHour = numberBetween(obj.hour, 0, 23),
+  const validHour = numberBetween(obj.hour, 0, 24),
     validMinute = numberBetween(obj.minute, 0, 59),
     validSecond = numberBetween(obj.second, 0, 59),
     validMillisecond = numberBetween(obj.millisecond, 0, 999);

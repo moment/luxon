@@ -1,7 +1,7 @@
-import { untruncateYear, signedOffset, parseMillis, ianaRegex } from "./util";
-import * as English from "./english";
-import FixedOffsetZone from "../zones/fixedOffsetZone";
-import IANAZone from "../zones/IANAZone";
+import { untruncateYear, signedOffset, parseMillis, ianaRegex } from "./util.js";
+import * as English from "./english.js";
+import FixedOffsetZone from "../zones/fixedOffsetZone.js";
+import IANAZone from "../zones/IANAZone.js";
 
 /*
  * This file handles parsing for well-specified formats. Here's how it works:

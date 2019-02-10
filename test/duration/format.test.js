@@ -36,6 +36,10 @@ test("Duration#toISO handles mixed negative/positive durations", () => {
   expect(Duration.fromObject({ years: -5, seconds: 34 }).toISO()).toBe("P-5YT34S");
 });
 
+test("Duration#toISO handles zero durations", () => {
+  expect(Duration.fromMillis(0).toISO()).toBe("PT0S");
+});
+
 test("Duration#toISO returns null for invalid durations", () => {
   expect(Duration.invalid("because").toISO()).toBe(null);
 });

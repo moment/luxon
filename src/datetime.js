@@ -1,11 +1,11 @@
-import Duration, { friendlyDuration } from "./duration";
-import Interval from "./interval";
-import Settings from "./settings";
-import Info from "./info";
-import Formatter from "./impl/formatter";
-import FixedOffsetZone from "./zones/fixedOffsetZone";
-import LocalZone from "./zones/localZone";
-import Locale from "./impl/locale";
+import Duration, { friendlyDuration } from "./duration.js";
+import Interval from "./interval.js";
+import Settings from "./settings.js";
+import Info from "./info.js";
+import Formatter from "./impl/formatter.js";
+import FixedOffsetZone from "./zones/fixedOffsetZone.js";
+import LocalZone from "./zones/localZone.js";
+import Locale from "./impl/locale.js";
 import {
   isUndefined,
   maybeArray,
@@ -17,12 +17,13 @@ import {
   isLeapYear,
   weeksInWeekYear,
   normalizeObject,
-  roundTo
-} from "./impl/util";
-import { normalizeZone } from "./impl/zoneUtil";
-import diff from "./impl/diff";
-import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser";
-import { parseFromTokens, explainFromTokens } from "./impl/tokenParser";
+  roundTo,
+  objToLocalTS
+} from "./impl/util.js";
+import { normalizeZone } from "./impl/zoneUtil.js";
+import diff from "./impl/diff.js";
+import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
+import { parseFromTokens, explainFromTokens } from "./impl/tokenParser.js";
 import {
   gregorianToWeek,
   weekToGregorian,
@@ -32,15 +33,15 @@ import {
   hasInvalidWeekData,
   hasInvalidOrdinalData,
   hasInvalidTimeData
-} from "./impl/conversions";
-import * as Formats from "./impl/formats";
+} from "./impl/conversions.js";
+import * as Formats from "./impl/formats.js";
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
   InvalidUnitError,
   InvalidDateTimeError
-} from "./errors";
-import Invalid from "./impl/invalid";
+} from "./errors.js";
+import Invalid from "./impl/invalid.js";
 
 const INVALID = "Invalid DateTime";
 
@@ -112,26 +113,6 @@ function tsToObj(ts, offset) {
     second: d.getUTCSeconds(),
     millisecond: d.getUTCMilliseconds()
   };
-}
-
-// covert a calendar object to a local timestamp (epoch, but with the offset baked in)
-function objToLocalTS(obj) {
-  let d = Date.UTC(
-    obj.year,
-    obj.month - 1,
-    obj.day,
-    obj.hour,
-    obj.minute,
-    obj.second,
-    obj.millisecond
-  );
-
-  // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
-  if (obj.year < 100 && obj.year >= 0) {
-    d = new Date(d);
-    d.setUTCFullYear(obj.year);
-  }
-  return +d;
 }
 
 // convert a calendar object to a epoch timestamp
@@ -1226,7 +1207,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   toLocal() {
-    return this.setZone(new LocalZone());
+    return this.setZone(Settings.defaultZone || new LocalZone());
   }
 
   /**
@@ -1764,7 +1745,7 @@ export default class DateTime {
 
   /**
    * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-   * platform supports Intl.RelativeDateFormat. Rounds down by default.
+   * platform supports Intl.RelativeDateFormat, **which it probably doesn't yet!** (As of this writing, only Chrome supports that). Rounds down by default.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
@@ -1774,7 +1755,7 @@ export default class DateTime {
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
    * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
-   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }) //=> "dentro de 1 día"
    * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
    * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
    * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"

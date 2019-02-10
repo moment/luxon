@@ -1,13 +1,13 @@
-import DateTime from "./datetime";
-import Duration from "./duration";
-import Interval from "./interval";
-import Info from "./info";
-import Zone from "./zone";
-import FixedOffsetZone from "./zones/fixedOffsetZone";
-import IANAZone from "./zones/IANAZone";
-import InvalidZone from "./zones/invalidZone";
-import LocalZone from "./zones/localZone";
-import Settings from "./settings";
+import DateTime from "./datetime.js";
+import Duration from "./duration.js";
+import Interval from "./interval.js";
+import Info from "./info.js";
+import Zone from "./zone.js";
+import FixedOffsetZone from "./zones/fixedOffsetZone.js";
+import IANAZone from "./zones/IANAZone.js";
+import InvalidZone from "./zones/invalidZone.js";
+import LocalZone from "./zones/localZone.js";
+import Settings from "./settings.js";
 
 export {
   DateTime,

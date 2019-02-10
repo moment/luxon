@@ -1,6 +1,6 @@
-import * as English from "./english";
-import * as Formats from "./formats";
-import { padStart } from "./util";
+import * as English from "./english.js";
+import * as Formats from "./formats.js";
+import { padStart } from "./util.js";
 
 function stringifyTokens(splits, tokenToString) {
   let s = "";

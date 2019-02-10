@@ -1,4 +1,4 @@
-import Zone from "../zone";
+import Zone from "../zone.js";
 
 export default class InvalidZone extends Zone {
   constructor(zoneName) {

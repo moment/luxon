@@ -1,10 +1,10 @@
-import DateTime from "./datetime";
-import Settings from "./settings";
-import Locale from "./impl/locale";
-import IANAZone from "./zones/IANAZone";
-import { normalizeZone } from "./impl/zoneUtil";
+import DateTime from "./datetime.js";
+import Settings from "./settings.js";
+import Locale from "./impl/locale.js";
+import IANAZone from "./zones/IANAZone.js";
+import { normalizeZone } from "./impl/zoneUtil.js";
 
-import { hasFormatToParts, hasIntl, hasRelative } from "./impl/util";
+import { hasFormatToParts, hasIntl, hasRelative } from "./impl/util.js";
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.

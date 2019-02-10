@@ -1,8 +1,8 @@
-import { hasFormatToParts, hasIntl, padStart, roundTo, hasRelative } from "./util";
-import * as English from "./english";
-import Settings from "../settings";
-import DateTime from "../datetime";
-import Formatter from "./formatter";
+import { hasFormatToParts, hasIntl, padStart, roundTo, hasRelative } from "./util.js";
+import * as English from "./english.js";
+import Settings from "../settings.js";
+import DateTime from "../datetime.js";
+import Formatter from "./formatter.js";
 
 let intlDTCache = {};
 function getCachedDTF(locString, opts = {}) {

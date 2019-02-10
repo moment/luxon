@@ -1,22 +1,11 @@
 /* global test expect */
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime } from "../../src/luxon";
+import { Helpers } from "../helpers";
 
-function setUnset(prop) {
-  return (value, f) => {
-    const existing = Settings[prop];
-    try {
-      Settings[prop] = value;
-      f();
-    } finally {
-      Settings[prop] = existing;
-    }
-  };
-}
-
-const withDefaultLocale = setUnset("defaultLocale"),
-  withDefaultNumberingSystem = setUnset("defaultNumberingSystem"),
-  withDefaultOutputCalendar = setUnset("defaultOutputCalendar");
+const withDefaultLocale = Helpers.setUnset("defaultLocale"),
+  withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
+  withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar");
 
 //------
 // .local()
@@ -113,6 +102,13 @@ test("DateTime.local accepts the default numbering system", () => {
 
 test("DateTime.local accepts the default output calendar", () => {
   withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
+});
+
+//------
+// #toLocal()
+//-------
+test("DateTime#toLocal accepts the default locale", () => {
+  Helpers.withDefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
 });
 
 //------
@@ -500,6 +496,13 @@ test("DateTime.fromObject accepts the default locale", () => {
 
 test("DateTime.fromObject accepts really low year numbers", () => {
   const dt = DateTime.fromObject({ year: 5 });
+  expect(dt.year).toBe(5);
+  expect(dt.month).toBe(1);
+  expect(dt.day).toBe(1);
+});
+
+test("DateTime.fromObject accepts really low year numbers with IANA zones", () => {
+  const dt = DateTime.fromObject({ year: 5, zone: "America/New_York" });
   expect(dt.year).toBe(5);
   expect(dt.month).toBe(1);
   expect(dt.day).toBe(1);
