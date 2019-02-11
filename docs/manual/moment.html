@@ -244,7 +244,10 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-10-0" data-ice="link">1.10.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
@@ -684,6 +687,18 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>Do these two times have the same [unit]?</td>
 <td><code>m1.isSame(m2, unit)</code></td>
 <td><code>dt1.hasSame(dt2, unit)</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Is this time&apos;s [unit] before that time&apos;s?</td>
+<td><code>m1.isBefore(m2, unit)</code></td>
+<td><code>dt1.startOf(unit) &lt; dt2.startOf(unit)</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Is this time&apos;s [unit] after that time&apos;s?</td>
+<td><code>m1.isAfter(m2, unit)</code></td>
+<td><code>dt1.startOf(unit) &gt; dt2.startOf(unit)</code></td>
 <td></td>
 </tr>
 <tr>

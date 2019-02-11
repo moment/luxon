@@ -244,7 +244,10 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-10-0" data-ice="link">1.10.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
@@ -330,7 +333,21 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><h2 id="1-10-0">1.10.0</h2><ul>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><h1 id="1-11-2">1.11.2</h1><ul>
+<li>Fixed handling of some characters in fromFormat literal sections</li>
+<li>Hanlde string values in object arguments to DateTime methods</li>
+<li>Fixed toRelativeCalendar&apos;s handling of zones in the base date</li>
+</ul>
+<h2 id="1-11-1">1.11.1</h2><ul>
+<li>Fix DateTime#plus() when spanning across AD 100</li>
+</ul>
+<h2 id="1-11-0">1.11.0</h2><ul>
+<li>Fix low-year handling for IANA zones</li>
+<li><code>DateTime#toLocal()</code> now uses the default locale</li>
+<li>Fix zero duration formatting</li>
+<li>Many documentation fixes</li>
+</ul>
+<h2 id="1-10-0">1.10.0</h2><ul>
 <li>Fix endOf(&quot;day&quot;) during DSTs (#399)</li>
 <li>Add `Interval#mapEndpoints (#400)</li>
 <li>Add <code>DateTime#zone</code> and <code>Info.normalizeZone</code> (#404)</li>

@@ -244,7 +244,10 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-10-0" data-ice="link">1.10.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
@@ -345,7 +348,7 @@
 <li><a href="./manual/../../global/luxon.min.js">Download minified</a></li>
 </ul><p>Just include Luxon in a script tag. You can access its various classes through the <code>luxon</code> global.</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;</code>
 </code></pre><p>You may wish to alias the classes you use:</p><pre><code class="lang-js"><code class="source-code prettyprint">var DateTime = luxon.DateTime;</code>
-</code></pre><h3>Internet Explorer</h3><p>If you&apos;re supporting IE 10 or 11, you need some polyfills to get Luxon to work. Use polyfill.io:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc&quot;&gt;&lt;/script&gt;</code>
+</code></pre><h3>Internet Explorer</h3><p>If you&apos;re supporting IE 10 or 11, you need some polyfills to get Luxon to work. Use polyfill.io:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign&quot;&gt;&lt;/script&gt;</code>
 </code></pre><p>See the <a href="./manual/matrix.html">support matrix</a> for more information on what works and what doesn&apos;t in IE.</p><h2>Node</h2><p>Supports Node 6+. Install via NPM:</p><pre><code><code class="source-code prettyprint">npm install --save luxon</code>
 </code></pre><pre><code class="lang-js"><code class="source-code prettyprint">const { DateTime } = require(&quot;luxon&quot;);</code>
 </code></pre><p>If you want to work with locales, you&apos;ll need to have <code>full-icu</code> support installed in Node. You can <a href="https://github.com/nodejs/node/wiki/Intl">build Node with it</a>, use an <a href="https://www.npmjs.com/package/full-icu">NPM module</a> to provide it, or find it prepackaged for your platform, like <code>brew install node --with-full-icu</code>. If you skip this step, Luxon still works but methods like <code>setLocale()</code> will do nothing.</p><p>The instructions for using full-icu as a package are a little confusing. Node can&apos;t automatically discover that you&apos;ve installed the it, so you need to tell it where to find the data, like this:</p><pre><code><code class="source-code prettyprint">npm install full-icu
@@ -1638,7 +1641,14 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 </code></pre><p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p><pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;milllisecond&apos;); // equivalent to `+d1 === +d2`
 d1.hasSame(d2, &apos;minute&apos;);       // both DateTimes are in the same minute (and hour, day, month, etc)
 d1.hasSame(d2, &apos;year&apos;);         // etc</code>
-</code></pre><p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p><h2>Duration math</h2><h3>Basics</h3><p><a href="./manual/../class/src/duration.js~Duration.html">Durations</a> are quantities of time, like &quot;3 days and 6 hours&quot;. Luxon has no idea <em>which</em> 3 days and 6 hours they represent; it&apos;s just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I&apos;m not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.</p><p>Here&apos;s some very basic stuff to get us going:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ days: 3, hours: 6})
+</code></pre><p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p><p>If you&apos;d like to compare using a specific unit, you can achieve this by combining <code>#startOf</code> and the <code>#valueOf</code> comparisions above.</p><pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.fromISO(&apos;2017-04-30&apos;);
+var d2 = DateTime.fromISO(&apos;2017-04-01&apos;);
+
+d2 &lt; d2                                   //=&gt; true
+d2.startOf(&apos;year&apos;) &lt; d1.startOf(&apos;year&apos;)   //=&gt; false
+d2.startOf(&apos;month&apos;) &lt; d1.startOf(&apos;month&apos;) //=&gt; false
+d2.startOf(&apos;day&apos;) &lt; d1.startOf(&apos;day&apos;)     //=&gt; true</code>
+</code></pre><h2>Duration math</h2><h3>Basics</h3><p><a href="./manual/../class/src/duration.js~Duration.html">Durations</a> are quantities of time, like &quot;3 days and 6 hours&quot;. Luxon has no idea <em>which</em> 3 days and 6 hours they represent; it&apos;s just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I&apos;m not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.</p><p>Here&apos;s some very basic stuff to get us going:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ days: 3, hours: 6})
 
 // examine it
 dur.toObject()          //=&gt; { days: 3, hours: 6 }
@@ -1740,8 +1750,8 @@ DateTime.local().plus(dur).year                         //=&gt; 52017</code>
 </table><p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p><p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code>. You can set it to &quot;casual&quot; or &quot;longterm&quot;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p><pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
 Duration.fromISO(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
 
-end.diff(start, { conversionAccuracy: &apos;longterm&apos; })</code>
-</code></pre><p>You can also create an accurate Duration out of an existing one:</p><pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({conversionAccuracy: &apos;longterm&apos; });</code>
+end.diff(start, &apos;days&apos;, { conversionAccuracy: &apos;longterm&apos; })</code>
+</code></pre><p>You can also create an accurate Duration out of an existing one:</p><pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({ conversionAccuracy: &apos;longterm&apos; });</code>
 </code></pre><p>These Durations will do their conversions differently.</p><h3>Losing information</h3><p>Be careful of converting between units. It&apos;s easy to lose information. Let&apos;s say we converted a diff into days:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
 var start = DateTime.fromISO(&apos;2017-02-13&apos;);
 diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
@@ -1819,11 +1829,16 @@ DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid Date
 </tr>
 <tr>
 <td></td>
-<td>&gt;= 61</td>
-<td>no intl relative time formatting</td>
+<td>&gt;= 54</td>
+<td>no intl tokens, no intl relative time formatting</td>
 </tr>
 <tr>
 <td>FF</td>
+<td>&gt;= 65</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>&gt;= 56</td>
 <td>no intl relative time formatting</td>
 </tr>
@@ -1840,7 +1855,7 @@ DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid Date
 <tr>
 <td>IE</td>
 <td>&gt;= 11</td>
-<td>needs platform polyfills, no intl tokens, no zones, no relatie time formatting</td>
+<td>needs platform polyfills, no intl tokens, no zones, no relative time formatting</td>
 </tr>
 <tr>
 <td></td>
@@ -1882,14 +1897,14 @@ DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid Date
 <li>Those caveats are explained in the next sections, along with possible polyfill options</li>
 <li>&quot;w/ICU&quot; refers to providing Node with ICU data. See the <a href="./manual/install.html#node">install</a> for instructions</li>
 </ul><h2>Internet Explorer and platform polyfills</h2><p>If you&apos;re supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.</p><p>With IE 11, you can just add a polyfill like this to get the JS features you need:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc&quot;&gt;&lt;/script&gt;</code>
-</code></pre><p>So there are now two remaining caveats: Intl <em>token</em> support and zones. Keep reading to see what that means.</p><p>With IE 10, you have the same problems as IE 11, except that you don&apos;t even get basic Intl support. You&apos;ll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.</p><p>Altenatively, you can use a polyfilled build of Luxon, which you can find here:</p><ul>
+</code></pre><p>So there are now two remaining caveats: Intl <em>token</em> support and zones. Keep reading to see what that means.</p><p>With IE 10, you have the same problems as IE 11, except that you don&apos;t even get basic Intl support. You&apos;ll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.</p><p>Alternatively, you can use a polyfilled build of Luxon, which you can find here:</p><ul>
 <li><a href="./manual/../../global-filled/luxon.js">Download full polyfilled build</a></li>
 <li><a href="./manual/../../global-filled/luxon.min.js">Download minified polyfilled build</a></li>
 </ul><p>These use global polyfills, though, which means newer browsers will be running the injected code too. And the same doesn&apos;t-include-intl-and-zone-support caveats apply to it too.</p><h2>Platform caveats</h2><p><strong>If the platforms you&apos;re targeting don&apos;t have caveats listed above, ignore this section</strong>.</p><p>In the support table above, you can see that some platforms have caveats. They affect a subset of Luxon&apos;s features that depend on specific APIs that some older browsers don&apos;t support.</p><ol>
 <li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>. Most browsers and recent versions of Node support this.</li>
 <li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.</li>
 <li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</li>
-<li><strong>Relative time formatting</strong>. Luxon&apos;s support for relative time formatting (e.g. <code>DateTime#toRelative()</code> and <code>DateTime#toRelativeCanedar</code>) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome. Luxon will fall back to using English if that capability is missing.</li>
+<li><strong>Relative time formatting</strong>. Luxon&apos;s support for relative time formatting (e.g. <code>DateTime#toRelative()</code> and <code>DateTime#toRelativeCanedar</code>) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.</li>
 </ol><p>If the browser lacks these capabilities, Luxon tries its best:</p><table>
 <thead>
 <tr>
@@ -1972,7 +1987,7 @@ DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid Date
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
-<td>Uses Enlish</td>
+<td>Uses English</td>
 </tr>
 <tr>
 <td><code>DateTime#offsetNameShort</code>, etc</td>
@@ -2363,6 +2378,18 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td></td>
 </tr>
 <tr>
+<td>Is this time&apos;s [unit] before that time&apos;s?</td>
+<td><code>m1.isBefore(m2, unit)</code></td>
+<td><code>dt1.startOf(unit) &lt; dt2.startOf(unit)</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Is this time&apos;s [unit] after that time&apos;s?</td>
+<td><code>m1.isAfter(m2, unit)</code></td>
+<td><code>dt1.startOf(unit) &gt; dt2.startOf(unit)</code></td>
+<td></td>
+</tr>
+<tr>
 <td>Is this time between these two times?</td>
 <td><code>m1.isBetween(m2, m3)</code></td>
 <td><code>Interval.fromDateTimes(dt2, dt3).contains(dt1)</code></td>
@@ -2544,7 +2571,18 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.10.0</h2><ul>
+        <div data-ice="card"><h1>1.11.2</h1><ul>
+<li>Fixed handling of some characters in fromFormat literal sections</li>
+<li>Hanlde string values in object arguments to DateTime methods</li>
+<li>Fixed toRelativeCalendar&apos;s handling of zones in the base date</li>
+</ul><h2>1.11.1</h2><ul>
+<li>Fix DateTime#plus() when spanning across AD 100</li>
+</ul><h2>1.11.0</h2><ul>
+<li>Fix low-year handling for IANA zones</li>
+<li><code>DateTime#toLocal()</code> now uses the default locale</li>
+<li>Fix zero duration formatting</li>
+<li>Many documentation fixes</li>
+</ul><h2>1.10.0</h2><ul>
 <li>Fix endOf(&quot;day&quot;) during DSTs (#399)</li>
 <li>Add `Interval#mapEndpoints (#400)</li>
 <li>Add <code>DateTime#zone</code> and <code>Info.normalizeZone</code> (#404)</li>
@@ -2740,7 +2778,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li><code>fromISO</code> now supports <code>year</code> and <code>year-month</code> formats</li>
 <li>More graceful degradation in the absence of platform features</li>
 </ul><h2>0.0.5</h2><p>Experimental, but now broadly useful.</p></div>
-        <a data-ice="link" href="manual/changelog.html"></a>
+        <a data-ice="link" href="manual/changelog.html#1-11-2"></a>
       </div>
     </div>
 <div class="manual-card-wrap" data-ice="cards">

@@ -244,7 +244,10 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-10-0" data-ice="link">1.10.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
@@ -392,6 +395,15 @@ d1.hasSame(d2, &apos;minute&apos;);       // both DateTimes are in the same minu
 d1.hasSame(d2, &apos;year&apos;);         // etc</code>
 </code></pre>
 <p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p>
+<p>If you&apos;d like to compare using a specific unit, you can achieve this by combining <code>#startOf</code> and the <code>#valueOf</code> comparisions above.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.fromISO(&apos;2017-04-30&apos;);
+var d2 = DateTime.fromISO(&apos;2017-04-01&apos;);
+
+d2 &lt; d2                                   //=&gt; true
+d2.startOf(&apos;year&apos;) &lt; d1.startOf(&apos;year&apos;)   //=&gt; false
+d2.startOf(&apos;month&apos;) &lt; d1.startOf(&apos;month&apos;) //=&gt; false
+d2.startOf(&apos;day&apos;) &lt; d1.startOf(&apos;day&apos;)     //=&gt; true</code>
+</code></pre>
 <h2 id="duration-math">Duration math</h2><h3 id="basics">Basics</h3><p><a href="./manual/../class/src/duration.js~Duration.html">Durations</a> are quantities of time, like &quot;3 days and 6 hours&quot;. Luxon has no idea <em>which</em> 3 days and 6 hours they represent; it&apos;s just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I&apos;m not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.</p>
 <p>Here&apos;s some very basic stuff to get us going:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ days: 3, hours: 6})
@@ -518,10 +530,10 @@ DateTime.local().plus(dur).year                         //=&gt; 52017</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
 Duration.fromISO(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
 
-end.diff(start, { conversionAccuracy: &apos;longterm&apos; })</code>
+end.diff(start, &apos;days&apos;, { conversionAccuracy: &apos;longterm&apos; })</code>
 </code></pre>
 <p>You can also create an accurate Duration out of an existing one:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({conversionAccuracy: &apos;longterm&apos; });</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({ conversionAccuracy: &apos;longterm&apos; });</code>
 </code></pre>
 <p>These Durations will do their conversions differently.</p>
 <h3 id="losing-information">Losing information</h3><p>Be careful of converting between units. It&apos;s easy to lose information. Let&apos;s say we converted a diff into days:</p>

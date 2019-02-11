@@ -1155,7 +1155,7 @@ define(['exports'], function (exports) { 'use strict';
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true); // fix for some old engines
 
-	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  } // fix Array#{values, @@iterator}.name in V8 / FF
 
@@ -1169,7 +1169,7 @@ define(['exports'], function (exports) { 'use strict';
 	  } // Define iterator
 
 
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
 	    _hide(proto, ITERATOR, $default);
 	  } // Plug for library
 
@@ -2125,6 +2125,17 @@ define(['exports'], function (exports) { 'use strict';
 	  } else {
 	    return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
 	  }
+	} // covert a calendar object to a local timestamp (epoch, but with the offset baked in)
+
+	function objToLocalTS(obj) {
+	  var d = Date.UTC(obj.year, obj.month - 1, obj.day, obj.hour, obj.minute, obj.second, obj.millisecond); // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
+
+	  if (obj.year < 100 && obj.year >= 0) {
+	    d = new Date(d);
+	    d.setUTCFullYear(d.getUTCFullYear() - 1900);
+	  }
+
+	  return +d;
 	}
 	function weeksInWeekYear(weekYear) {
 	  var p1 = (weekYear + Math.floor(weekYear / 4) - Math.floor(weekYear / 100) + Math.floor(weekYear / 400)) % 7,
@@ -2196,12 +2207,13 @@ define(['exports'], function (exports) { 'use strict';
 	  for (var u in obj) {
 	    if (obj.hasOwnProperty(u)) {
 	      var v = obj[u];
+	      var numericValue = Number(v);
 
-	      if (v !== null && !isUndefined(v) && !Number.isNaN(v)) {
+	      if (v !== null && !Number.isNaN(numericValue)) {
 	        var mapped = normalizer(u, ignoreUnknown);
 
 	        if (mapped) {
-	          normalized[mapped] = v;
+	          normalized[mapped] = numericValue;
 	        }
 	      }
 	    }
@@ -2734,7 +2746,7 @@ define(['exports'], function (exports) { 'use strict';
 	    throw new ZoneIsAbstractError();
 	  };
 	  /**
-	   * Return whether this Zone is equal to another zoner
+	   * Return whether this Zone is equal to another zone
 	   * @abstract
 	   * @param {Zone} otherZone - the zone to compare
 	   * @return {boolean}
@@ -2970,14 +2982,22 @@ define(['exports'], function (exports) { 'use strict';
 	    var date = new Date(ts),
 	        dtf = makeDTF(this.zoneName),
 	        _ref2 = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
-	        fYear = _ref2[0],
-	        fMonth = _ref2[1],
-	        fDay = _ref2[2],
-	        fHour = _ref2[3],
-	        fMinute = _ref2[4],
-	        fSecond = _ref2[5],
-	        asUTC = Date.UTC(fYear, fMonth - 1, fDay, fHour, fMinute, fSecond);
+	        year = _ref2[0],
+	        month = _ref2[1],
+	        day = _ref2[2],
+	        hour = _ref2[3],
+	        minute = _ref2[4],
+	        second = _ref2[5];
 
+	    var asUTC = objToLocalTS({
+	      year: year,
+	      month: month,
+	      day: day,
+	      hour: hour,
+	      minute: minute,
+	      second: second,
+	      millisecond: 0
+	    });
 	    var asTS = date.valueOf();
 	    asTS -= asTS % 1000;
 	    return (asUTC - asTS) / (60 * 1000);
@@ -3963,7 +3983,7 @@ define(['exports'], function (exports) { 'use strict';
 	function parseLocaleString(localeStr) {
 	  // I really want to avoid writing a BCP 47 parser
 	  // see, e.g. https://github.com/wooorm/bcp-47
-	  // Intead, we'll do this:
+	  // Instead, we'll do this:
 	  // a) if the string has no -u extensions, just leave it alone
 	  // b) if it does, use Intl to resolve everything
 	  // c) if Intl fails, try again without the -u
@@ -5197,6 +5217,7 @@ define(['exports'], function (exports) { 'use strict';
 	    if (this.hours !== 0) s += this.hours + "H";
 	    if (this.minutes !== 0) s += this.minutes + "M";
 	    if (this.seconds !== 0 || this.milliseconds !== 0) s += this.seconds + this.milliseconds / 1000 + "S";
+	    if (s === "P") s += "T0S";
 	    return s;
 	  };
 	  /**
@@ -6701,6 +6722,11 @@ define(['exports'], function (exports) { 'use strict';
 	  };
 	}
 
+	function escapeToken(value) {
+	  // eslint-disable-next-line no-useless-escape
+	  return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+	}
+
 	function unitForToken(token, loc) {
 	  var one = /\d/,
 	      two = /\d{2}/,
@@ -6711,7 +6737,7 @@ define(['exports'], function (exports) { 'use strict';
 	      twoToFour = /\d{2,4}/,
 	      literal = function literal(t) {
 	    return {
-	      regex: RegExp(t.val),
+	      regex: RegExp(escapeToken(t.val)),
 	      deser: function deser(_ref5) {
 	        var s = _ref5[0];
 	        return s;
@@ -7195,7 +7221,7 @@ define(['exports'], function (exports) { 'use strict';
 	  } else return false;
 	}
 	function hasInvalidTimeData(obj) {
-	  var validHour = numberBetween(obj.hour, 0, 23),
+	  var validHour = numberBetween(obj.hour, 0, 24),
 	      validMinute = numberBetween(obj.minute, 0, 59),
 	      validSecond = numberBetween(obj.second, 0, 59),
 	      validMillisecond = numberBetween(obj.millisecond, 0, 999);
@@ -7280,18 +7306,6 @@ define(['exports'], function (exports) { 'use strict';
 	    second: d.getUTCSeconds(),
 	    millisecond: d.getUTCMilliseconds()
 	  };
-	} // covert a calendar object to a local timestamp (epoch, but with the offset baked in)
-
-
-	function objToLocalTS(obj) {
-	  var d = Date.UTC(obj.year, obj.month - 1, obj.day, obj.hour, obj.minute, obj.second, obj.millisecond); // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
-
-	  if (obj.year < 100 && obj.year >= 0) {
-	    d = new Date(d);
-	    d.setUTCFullYear(obj.year);
-	  }
-
-	  return +d;
 	} // convert a calendar object to a epoch timestamp
 
 
@@ -8183,7 +8197,7 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  _proto.toLocal = function toLocal() {
-	    return this.setZone(new LocalZone());
+	    return this.setZone(Settings.defaultZone || new LocalZone());
 	  };
 	  /**
 	   * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
@@ -8584,7 +8598,7 @@ define(['exports'], function (exports) { 'use strict';
 	  /**
 	   * Returns a string representation of this DateTime appropriate for use in SQL Time
 	   * @param {Object} opts - options
-	   * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overides includeOffset.
+	   * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
 	   * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
 	   * @example DateTime.utc().toSQL() //=> '05:15:16.345'
 	   * @example DateTime.local().toSQL() //=> '05:15:16.345 -04:00'
@@ -8827,7 +8841,7 @@ define(['exports'], function (exports) { 'use strict';
 	  };
 	  /**
 	   * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-	   * platform supports Intl.RelativeDateFormat. Rounds down by default.
+	   * platform supports Intl.RelativeDateFormat, **which it probably doesn't yet!** (As of this writing, only Chrome supports that). Rounds down by default.
 	   * @param {Object} options - options that affect the output
 	   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
 	   * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
@@ -8837,7 +8851,7 @@ define(['exports'], function (exports) { 'use strict';
 	   * @param {string} options.locale - override the locale of this DateTime
 	   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
 	   * @example DateTime.local().plus({ days: 1 }).toRelative() //=> "in 1 day"
-	   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }).toRelative() //=> "dentro de 1 día"
+	   * @example DateTime.local().setLocale("es").toRelative({ days: 1 }) //=> "dentro de 1 día"
 	   * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
 	   * @example DateTime.local().minus({ days: 2 }).toRelative() //=> "2 days ago"
 	   * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
@@ -8851,7 +8865,9 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 
 	    if (!this.isValid) return null;
-	    var base = options.base || DateTime.local(),
+	    var base = options.base || DateTime.fromObject({
+	      zone: this.zone
+	    }),
 	        padding = options.padding ? this < base ? -options.padding : options.padding : 0;
 	    return diffRelative(base, this.plus(padding), Object.assign(options, {
 	      numeric: "always",
@@ -8879,7 +8895,9 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 
 	    if (!this.isValid) return null;
-	    return diffRelative(options.base || DateTime.local(), this, Object.assign(options, {
+	    return diffRelative(options.base || DateTime.fromObject({
+	      zone: this.zone
+	    }), this, Object.assign(options, {
 	      numeric: "auto",
 	      units: ["years", "months", "days"],
 	      calendary: true

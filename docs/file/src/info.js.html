@@ -40,13 +40,13 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/info.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime from &quot;./datetime&quot;;
-import Settings from &quot;./settings&quot;;
-import Locale from &quot;./impl/locale&quot;;
-import IANAZone from &quot;./zones/IANAZone&quot;;
-import { normalizeZone } from &quot;./impl/zoneUtil&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DateTime from &quot;./datetime.js&quot;;
+import Settings from &quot;./settings.js&quot;;
+import Locale from &quot;./impl/locale.js&quot;;
+import IANAZone from &quot;./zones/IANAZone.js&quot;;
+import { normalizeZone } from &quot;./impl/zoneUtil.js&quot;;
 
-import { hasFormatToParts, hasIntl, hasRelative } from &quot;./impl/util&quot;;
+import { hasFormatToParts, hasIntl, hasRelative } from &quot;./impl/util.js&quot;;
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
