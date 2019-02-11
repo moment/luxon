@@ -114,6 +114,18 @@ d1.hasSame(d2, 'year');         // etc
 
 Note that these are checking against the calendar. For example, if `d1` is in 2017, calling `hasSame` with "year" asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you'd need `diff` (see below).
 
+If you'd like to compare using a specific unit, you can achieve this by combining `#startOf` and the `#valueOf` comparisions above.
+
+```js
+var d1 = DateTime.fromISO('2017-04-30');
+var d2 = DateTime.fromISO('2017-04-01');
+
+d2 < d2                                   //=> true
+d2.startOf('year') < d1.startOf('year')   //=> false
+d2.startOf('month') < d1.startOf('month') //=> false
+d2.startOf('day') < d1.startOf('day')     //=> true
+```
+
 ## Duration math
 
 ### Basics
