@@ -245,8 +245,6 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-10-0" data-ice="link">1.10.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
@@ -520,10 +518,10 @@ DateTime.local().plus(dur).year                         //=&gt; 52017</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
 Duration.fromISO(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
 
-end.diff(start, &apos;days&apos;, { conversionAccuracy: &apos;longterm&apos; })</code>
+end.diff(start, { conversionAccuracy: &apos;longterm&apos; })</code>
 </code></pre>
 <p>You can also create an accurate Duration out of an existing one:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({ conversionAccuracy: &apos;longterm&apos; });</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({conversionAccuracy: &apos;longterm&apos; });</code>
 </code></pre>
 <p>These Durations will do their conversions differently.</p>
 <h3 id="losing-information">Losing information</h3><p>Be careful of converting between units. It&apos;s easy to lose information. Let&apos;s say we converted a diff into days:</p>

@@ -299,12 +299,13 @@ define(['exports'], function (exports) { 'use strict';
     for (var u in obj) {
       if (obj.hasOwnProperty(u)) {
         var v = obj[u];
+        var numericValue = Number(v);
 
-        if (v !== null && !isUndefined(v) && !Number.isNaN(v)) {
+        if (v !== null && !Number.isNaN(numericValue)) {
           var mapped = normalizer(u, ignoreUnknown);
 
           if (mapped) {
-            normalized[mapped] = v;
+            normalized[mapped] = numericValue;
           }
         }
       }
@@ -4813,6 +4814,11 @@ define(['exports'], function (exports) { 'use strict';
     };
   }
 
+  function escapeToken(value) {
+    // eslint-disable-next-line no-useless-escape
+    return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+  }
+
   function unitForToken(token, loc) {
     var one = /\d/,
         two = /\d{2}/,
@@ -4823,7 +4829,7 @@ define(['exports'], function (exports) { 'use strict';
         twoToFour = /\d{2,4}/,
         literal = function literal(t) {
       return {
-        regex: RegExp(t.val),
+        regex: RegExp(escapeToken(t.val)),
         deser: function deser(_ref5) {
           var s = _ref5[0];
           return s;
@@ -6951,7 +6957,9 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       if (!this.isValid) return null;
-      var base = options.base || DateTime.local(),
+      var base = options.base || DateTime.fromObject({
+        zone: this.zone
+      }),
           padding = options.padding ? this < base ? -options.padding : options.padding : 0;
       return diffRelative(base, this.plus(padding), Object.assign(options, {
         numeric: "always",
@@ -6979,7 +6987,9 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       if (!this.isValid) return null;
-      return diffRelative(options.base || DateTime.local(), this, Object.assign(options, {
+      return diffRelative(options.base || DateTime.fromObject({
+        zone: this.zone
+      }), this, Object.assign(options, {
         numeric: "auto",
         units: ["years", "months", "days"],
         calendary: true

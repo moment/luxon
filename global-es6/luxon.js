@@ -216,10 +216,11 @@ var luxon = (function (exports) {
     for (const u in obj) {
       if (obj.hasOwnProperty(u)) {
         const v = obj[u];
-        if (v !== null && !isUndefined(v) && !Number.isNaN(v)) {
+        const numericValue = Number(v);
+        if (v !== null && !Number.isNaN(numericValue)) {
           const mapped = normalizer(u, ignoreUnknown);
           if (mapped) {
-            normalized[mapped] = v;
+            normalized[mapped] = numericValue;
           }
         }
       }
@@ -3931,6 +3932,11 @@ var luxon = (function (exports) {
     return { regex, deser: ([s]) => s };
   }
 
+  function escapeToken(value) {
+    // eslint-disable-next-line no-useless-escape
+    return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+  }
+
   function unitForToken(token, loc) {
     const one = /\d/,
       two = /\d{2}/,
@@ -3939,7 +3945,7 @@ var luxon = (function (exports) {
       oneOrTwo = /\d{1,2}/,
       oneToThree = /\d{1,3}/,
       twoToFour = /\d{2,4}/,
-      literal = t => ({ regex: RegExp(t.val), deser: ([s]) => s, literal: true }),
+      literal = t => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
       unitate = t => {
         if (token.literal) {
           return literal(t);
@@ -6047,7 +6053,7 @@ var luxon = (function (exports) {
      */
     toRelative(options = {}) {
       if (!this.isValid) return null;
-      const base = options.base || DateTime.local(),
+      const base = options.base || DateTime.fromObject({ zone: this.zone }),
         padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
       return diffRelative(
         base,
@@ -6076,7 +6082,7 @@ var luxon = (function (exports) {
       if (!this.isValid) return null;
 
       return diffRelative(
-        options.base || DateTime.local(),
+        options.base || DateTime.fromObject({ zone: this.zone }),
         this,
         Object.assign(options, {
           numeric: "auto",

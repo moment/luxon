@@ -245,8 +245,6 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-10-0" data-ice="link">1.10.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-9-0" data-ice="link">1.9.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-8-3" data-ice="link">1.8.3</a></li>
@@ -350,16 +348,11 @@
 </tr>
 <tr>
 <td></td>
-<td>&gt;= 54</td>
-<td>no intl tokens, no intl relative time formatting</td>
+<td>&gt;= 61</td>
+<td>no intl relative time formatting</td>
 </tr>
 <tr>
 <td>FF</td>
-<td>&gt;= 65</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>&gt;= 56</td>
 <td>no intl relative time formatting</td>
 </tr>
@@ -376,7 +369,7 @@
 <tr>
 <td>IE</td>
 <td>&gt;= 11</td>
-<td>needs platform polyfills, no intl tokens, no zones, no relative time formatting</td>
+<td>needs platform polyfills, no intl tokens, no zones, no relatie time formatting</td>
 </tr>
 <tr>
 <td></td>
@@ -425,7 +418,7 @@
 </code></pre>
 <p>So there are now two remaining caveats: Intl <em>token</em> support and zones. Keep reading to see what that means.</p>
 <p>With IE 10, you have the same problems as IE 11, except that you don&apos;t even get basic Intl support. You&apos;ll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.</p>
-<p>Alternatively, you can use a polyfilled build of Luxon, which you can find here:</p>
+<p>Altenatively, you can use a polyfilled build of Luxon, which you can find here:</p>
 <ul>
 <li><a href="./manual/../../global-filled/luxon.js">Download full polyfilled build</a></li>
 <li><a href="./manual/../../global-filled/luxon.min.js">Download minified polyfilled build</a></li>
@@ -437,7 +430,7 @@
 <li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>. Most browsers and recent versions of Node support this.</li>
 <li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.</li>
 <li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</li>
-<li><strong>Relative time formatting</strong>. Luxon&apos;s support for relative time formatting (e.g. <code>DateTime#toRelative()</code> and <code>DateTime#toRelativeCanedar</code>) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.</li>
+<li><strong>Relative time formatting</strong>. Luxon&apos;s support for relative time formatting (e.g. <code>DateTime#toRelative()</code> and <code>DateTime#toRelativeCanedar</code>) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome. Luxon will fall back to using English if that capability is missing.</li>
 </ol>
 <p>If the browser lacks these capabilities, Luxon tries its best:</p>
 <table>
@@ -522,7 +515,7 @@
 <td>OK</td>
 <td>OK</td>
 <td>OK</td>
-<td>Uses English</td>
+<td>Uses Enlish</td>
 </tr>
 <tr>
 <td><code>DateTime#offsetNameShort</code>, etc</td>
