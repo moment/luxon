@@ -1,5 +1,11 @@
 # Changelog
 
+# 1.11.2
+
+ * Fixed handling of some characters in fromFormat literal sections
+ * Hanlde string values in object arguments to DateTime methods
+ * Fixed toRelativeCalendar's handling of zones in the base date
+
 ## 1.11.1
 
  * Fix DateTime#plus() when spanning across AD 100
