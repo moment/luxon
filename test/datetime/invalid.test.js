@@ -20,13 +20,6 @@ test("Invalid creations are invalid", () => {
   expect(organic3.isValid).toBe(false);
 });
 
-test("Lots of other ways to create invalid things", () => {
-  expect(DateTime.fromObject({ year: "hello" }).isValid).toBe(false);
-  expect(DateTime.fromObject({ ordinal: 5000 }).isValid).toBe(false);
-  expect(DateTime.fromObject({ minute: -6 }).isValid).toBe(false);
-  expect(DateTime.fromObject({ millisecond: new Date() }).isValid).toBe(false);
-});
-
 test("invalid zones result in invalid dates", () => {
   expect(DateTime.local().setZone("America/Lasers").isValid).toBe(false);
   expect(DateTime.fromObject({ zone: "America/Lasers" }).isValid).toBe(false);

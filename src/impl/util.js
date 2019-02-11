@@ -213,10 +213,11 @@ export function normalizeObject(obj, normalizer, ignoreUnknown = false) {
   for (const u in obj) {
     if (obj.hasOwnProperty(u)) {
       const v = obj[u];
-      if (v !== null && !isUndefined(v) && !Number.isNaN(v)) {
+      const numericValue = Number(v);
+      if (v !== null && !Number.isNaN(numericValue)) {
         const mapped = normalizer(u, ignoreUnknown);
         if (mapped) {
-          normalized[mapped] = v;
+          normalized[mapped] = numericValue;
         }
       }
     }

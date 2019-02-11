@@ -572,3 +572,12 @@ test("DateTime.fromObject handles null as a language tag", () => {
     expect(res.numberingSystem).toBe("thai");
   });
 });
+
+test("DateTime.fromObject overrides invalid date part with the current date part", () => {
+  const dt = DateTime.fromObject({ year: "hello" });
+  const localDt = DateTime.local();
+  expect(dt.isValid).toBe(true);
+  expect(dt.year).toBe(localDt.year);
+  expect(dt.months).toBe(localDt.months);
+  expect(dt.day).toBe(localDt.day);
+});
