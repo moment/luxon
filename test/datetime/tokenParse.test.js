@@ -488,6 +488,27 @@ test("DateTime.fromFormat validates weekdays", () => {
   expect(dt.isValid).toBe(false);
 });
 
+test("DateTime.fromFormat containg special regex token", () => {
+  const ianaFormat = "yyyy-MM-dd'T'HH-mm[z]";
+  const dt = DateTime.fromFormat("2019-01-14T11-30[Indian/Maldives]", ianaFormat, {
+    setZone: true
+  });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("Indian/Maldives");
+
+  expect(
+    DateTime.fromFormat("2019-01-14T11-30[[Indian/Maldives]]", "yyyy-MM-dd'T'HH-mm[[z]]").isValid
+  ).toBe(true);
+
+  expect(
+    DateTime.fromFormat("2019-01-14T11-30tIndian/Maldivest", "yyyy-MM-dd'T'HH-mm't'z't'").isValid
+  ).toBe(true);
+
+  expect(
+    DateTime.fromFormat("2019-01-14T11-30\tIndian/Maldives\t", "yyyy-MM-dd'T'HH-mm't'z't'").isValid
+  ).toBe(false);
+});
+
 //------
 // .fromFormatExplain
 //-------
