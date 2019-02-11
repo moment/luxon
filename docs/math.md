@@ -120,10 +120,10 @@ If you'd like to compare using a specific unit, you can achieve this by combinin
 var d1 = DateTime.fromISO('2017-04-30');
 var d2 = DateTime.fromISO('2017-04-01');
 
-d2 < d2                                  //=> true
-d2.shiftTo('year') < d1.shiftTo('year')  //=> false
-d2.shiftTo('month') < d1.shiftTo('year') //=> false
-d2.shiftTo('day') < d1.shiftTo('day')    //=> true
+d2 < d2                                   //=> true
+d2.shiftTo('year') < d1.shiftTo('year')   //=> false
+d2.shiftTo('month') < d1.shiftTo('month') //=> false
+d2.shiftTo('day') < d1.shiftTo('day')     //=> true
 ```
 
 ## Duration math
