@@ -114,7 +114,7 @@ d1.hasSame(d2, 'year');         // etc
 
 Note that these are checking against the calendar. For example, if `d1` is in 2017, calling `hasSame` with "year" asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you'd need `diff` (see below).
 
-If you'd like to compare against a specific unit, like checking if a DateTimes year falls before or after another DateTimes, you can achieve this by combining `#shiftTo` and `#valueOf`.
+If you'd like to compare using a specific unit, you can achieve this by combining `#shiftTo` and the `#valueOf` comparisions above.
 
 ```js
 var d1 = DateTime.fromISO('2017-04-30');
