@@ -147,7 +147,7 @@ function supportsFastNumbers(loc) {
  * @private
  */
 
-class PolyeNumberFormatter {
+class PolyNumberFormatter {
   constructor(intl, forceSimple, opts) {
     this.padTo = opts.padTo || 0;
     this.floor = opts.floor || false;
@@ -440,7 +440,7 @@ export default class Locale {
   numberFormatter(opts = {}) {
     // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
     // (in contrast, the rest of the condition is used heavily)
-    return new PolyeNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
+    return new PolyNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
   }
 
   dtFormatter(dt, intlOpts = {}) {
