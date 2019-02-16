@@ -33,7 +33,7 @@ If you're supporting IE 10 or 11, you need some polyfills just to make Luxon wor
 With IE 11, you can just add a polyfill like this to get the JS features you need:
 
 ```html
-<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign"></script>
 ```
 
 So there are now two remaining caveats: Intl *token* support and zones. Keep reading to see what that means.
