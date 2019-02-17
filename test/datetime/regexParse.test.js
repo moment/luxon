@@ -475,6 +475,22 @@ test("DateTime.fromISO() accepts hour:minute", () => {
   });
 });
 
+test("DateTime.fromISO() accepts 24:00", () => {
+  isSame("2018-01-04T24:00", {
+    year: 2018,
+    month: 1,
+    day: 5,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  });
+});
+
+test("DateTime.fromISO() doesn't accept 24:23", () => {
+  expect(DateTime.fromISO("2018-05-25T24:23").isValid).toBe(false);
+});
+
 test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
   // these are formats that aren't technically valid but we parse anyway.
   // Testing them more to document them than anything else
@@ -849,7 +865,9 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
 });
 
 test("DateTime.fromSQL() can parse an optional zone", () => {
-  let dt = DateTime.fromSQL("2016-05-14 10:23:54 Europe/Paris", { setZone: true });
+  let dt = DateTime.fromSQL("2016-05-14 10:23:54 Europe/Paris", {
+    setZone: true
+  });
   expect(dt.isValid).toBe(true);
   expect(dt.zoneName).toBe("Europe/Paris");
   expect(dt.toObject()).toEqual({
