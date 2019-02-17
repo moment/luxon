@@ -19,4 +19,6 @@ test("DateTime#isDateTime return false for primitives", () => {
   expect(DateTime.isDateTime({ hours: 60 })).toBe(false);
   expect(DateTime.isDateTime(1)).toBe(false);
   expect(DateTime.isDateTime("")).toBe(false);
+  expect(DateTime.isDateTime(null)).toBe(false);
+  expect(DateTime.isDateTime()).toBe(false);
 });

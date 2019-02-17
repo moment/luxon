@@ -763,7 +763,11 @@ export default class DateTime {
     }
 
     const { locale = null, numberingSystem = null } = opts,
-      localeToUse = Locale.fromOpts({ locale, numberingSystem, defaultToEN: true }),
+      localeToUse = Locale.fromOpts({
+        locale,
+        numberingSystem,
+        defaultToEN: true
+      }),
       [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
     if (invalid) {
       return DateTime.invalid(invalid);
@@ -830,7 +834,7 @@ export default class DateTime {
    * @return {boolean}
    */
   static isDateTime(o) {
-    return o.isLuxonDateTime || false;
+    return (o && o.isLuxonDateTime) || false;
   }
 
   // INFO
@@ -1505,7 +1509,11 @@ export default class DateTime {
    * @return {string}
    */
   toISOTime({ suppressMilliseconds = false, suppressSeconds = false, includeOffset = true } = {}) {
-    return toTechTimeFormat(this, { suppressSeconds, suppressMilliseconds, includeOffset });
+    return toTechTimeFormat(this, {
+      suppressSeconds,
+      suppressMilliseconds,
+      includeOffset
+    });
   }
 
   /**
@@ -1551,7 +1559,11 @@ export default class DateTime {
    * @return {string}
    */
   toSQLTime({ includeOffset = true, includeZone = false } = {}) {
-    return toTechTimeFormat(this, { includeOffset, includeZone, spaceZone: true });
+    return toTechTimeFormat(this, {
+      includeOffset,
+      includeZone,
+      spaceZone: true
+    });
   }
 
   /**
@@ -1831,7 +1843,11 @@ export default class DateTime {
    */
   static fromFormatExplain(text, fmt, options = {}) {
     const { locale = null, numberingSystem = null } = options,
-      localeToUse = Locale.fromOpts({ locale, numberingSystem, defaultToEN: true });
+      localeToUse = Locale.fromOpts({
+        locale,
+        numberingSystem,
+        defaultToEN: true
+      });
     return explainFromTokens(localeToUse, text, fmt);
   }
 

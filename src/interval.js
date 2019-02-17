@@ -157,7 +157,7 @@ export default class Interval {
    * @return {boolean}
    */
   static isInterval(o) {
-    return o instanceof Interval || o.isLuxonInterval;
+    return (o && o.isLuxonInterval) || false;
   }
 
   /**
