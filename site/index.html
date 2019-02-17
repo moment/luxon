@@ -1,129 +1,171 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Luxon</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"/>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css"/>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script>
-        <script src='global/luxon.js'></script>
+  <head>
+    <title>Luxon</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+      integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+    <script src="global/luxon.js"></script>
+    <script>
+      console.log(
+        "You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`."
+      );
+    </script>
+    <style>
+      .section {
+        margin-bottom: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="https://github.com/moment/luxon"
+      ><img
+        style="position: absolute; top: 0; right: 0; border: 0;"
+        src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+        alt="Fork me on GitHub"
+        data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
+    /></a>
+    <div class="container">
+      <h1 class="display-1">Luxon</h1>
 
-        <style>
-         .section {
-             margin-bottom: 40px;
-         }
-        </style>
-    </head>
-    <body>
-        <a href="https://github.com/moment/luxon"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
-        <div class="container">
-            <h1 class="display-1">Luxon</h1>
+      <p class="lead">
+        A powerful, modern, and friendly wrapper for Javascript dates and times.
+      </p>
 
-            <p class="lead">A powerful, modern, and friendly wrapper for Javascript dates and times.</p>
-
-            <pre>
+      <pre>
                 <code>
 DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
                 </code>
             </pre>
 
-            <div class="section">
-                <h2>Features</h2>
-                <ul>
-                    <li><a href="docs/class/src/datetime.js~DateTime.html">DateTime</a>, <a href="docs/class/src/duration.js~Duration.html">Duration</a>, and <a href="docs/class/src/interval.js~Interval.html">Interval</a> types.</li>
-                    <li>Immutable, chainable, unambiguous API.</li>
-                    <li>Parsing and formatting for common and custom formats.</li>
-                    <li>Native time zone and Intl support (no locale or tz files).</li>
-                </ul>
-            </div>
+      <div class="section">
+        <h2>Features</h2>
+        <ul>
+          <li>
+            <a href="docs/class/src/datetime.js~DateTime.html">DateTime</a>,
+            <a href="docs/class/src/duration.js~Duration.html">Duration</a>, and
+            <a href="docs/class/src/interval.js~Interval.html">Interval</a>
+            types.
+          </li>
+          <li>Immutable, chainable, unambiguous API.</li>
+          <li>Parsing and formatting for common and custom formats.</li>
+          <li>Native time zone and Intl support (no locale or tz files).</li>
+        </ul>
+      </div>
 
-            <div class="section">
-                <h2>Documentation</h2>
-                <ul>
-                    <li><a href="docs/index.html">General documentation</a></li>
-                    <li><a href="docs/identifiers.html">API docs</a></li>
-                    <li><a href="docs/manual/install.html">Install guide</a></li>
-                    <li><a href="docs/manual/tour.html">Quick tour</a></li>
-                    <li><a href="docs/manual/moment.html">For Moment users</a></li>
-                    <li><a href="docs/manual/why.html">Why does Luxon exist?</a></li>
-                </ul>
-            </div>
+      <div class="section">
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="docs/index.html">General documentation</a></li>
+          <li><a href="docs/identifiers.html">API docs</a></li>
+          <li><a href="docs/manual/install.html">Install guide</a></li>
+          <li><a href="docs/manual/tour.html">Quick tour</a></li>
+          <li><a href="docs/manual/moment.html">For Moment users</a></li>
+          <li><a href="docs/manual/why.html">Why does Luxon exist?</a></li>
+        </ul>
+      </div>
 
-            <div class="section">
-                <h2>Download</h2>
+      <div class="section">
+        <h2>Download</h2>
 
-                <table class="table">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <b>Browser global</b>
-                            </td>
-                            <td>
-                                <a href="global/luxon.js">Debug</a>
-                            </td>
-                            <td>
-                                <a href="global/luxon.min.js">Minified</a>
-                            </td>
-                            <td>
-                                <p>Exports a global variable called "luxon". Use it like this</p>
-                                <pre><code>&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;<br/>&lt;script&gt;luxon.DateTime.local();&lt;/script&gt;</code></pre>
-                                <p>See the <a href="docs/manual/install.html">install instructions</a> for details on older browsers, including IE 11.</p>
-                            </td>
-                            <td><a href="demo/global.html">Demo</a></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>Node</b>
-                            </td>
-                            <td colspan=2>
-                                <pre><code>npm install luxon</code></pre>
-                            </td>
-                            <td>
-                                <p>Luxon as a Node.js module</p>
-                                <pre><code>var { DateTime } = require('luxon');<br/>DateTime.local();</code></pre>
-                            </td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>AMD</b>
-                            </td>
-                            <td>
-                                <a href="amd/luxon.js">Debug</a>
-                            </td>
-                            <td>
-                                <a href="amd/luxon.min.js">Minified</a>
-                            </td>
-                            <td>
-                                <p>Luxon as an AMD module. Use with Require.js, System.js, and so on.</p>
-                                <pre><code>requirejs(['luxon'], function(luxon) {<br/>  luxon.DateTime.local();<br/>});</code></pre>
-                            </td>
-                            <td><a href="demo/requirejs.html">Demo</a></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>ES6</b>
-                            </td>
-                            <td>
-                                <a href="es6/luxon.js">Debug</a>
-                            </td>
-                            <td></td>
-                            <td>
-                                <p>Luxon as an ES6 module.</p>
-                                <pre><code>import { DateTime } from 'luxon';<br/>DateTime.local();</code></pre>
-                            </td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>
+                <b>Browser global</b>
+              </td>
+              <td>
+                <a href="global/luxon.js">Debug</a>
+              </td>
+              <td>
+                <a href="global/luxon.min.js">Minified</a>
+              </td>
+              <td>
+                <p>
+                  Exports a global variable called "luxon". Use it like this
+                </p>
+                <pre><code>&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;<br/>&lt;script&gt;luxon.DateTime.local();&lt;/script&gt;</code></pre>
+                <p>
+                  See the
+                  <a href="docs/manual/install.html">install instructions</a>
+                  for details on older browsers, including IE 11.
+                </p>
+              </td>
+              <td><a href="demo/global.html">Demo</a></td>
+            </tr>
+            <tr>
+              <td>
+                <b>Node</b>
+              </td>
+              <td colspan="2">
+                <pre><code>npm install luxon</code></pre>
+              </td>
+              <td>
+                <p>Luxon as a Node.js module</p>
+                <pre><code>var { DateTime } = require('luxon');<br/>DateTime.local();</code></pre>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <b>AMD</b>
+              </td>
+              <td>
+                <a href="amd/luxon.js">Debug</a>
+              </td>
+              <td>
+                <a href="amd/luxon.min.js">Minified</a>
+              </td>
+              <td>
+                <p>
+                  Luxon as an AMD module. Use with Require.js, System.js, and so
+                  on.
+                </p>
+                <pre><code>requirejs(['luxon'], function(luxon) {<br/>  luxon.DateTime.local();<br/>});</code></pre>
+              </td>
+              <td><a href="demo/requirejs.html">Demo</a></td>
+            </tr>
+            <tr>
+              <td>
+                <b>ES6</b>
+              </td>
+              <td>
+                <a href="es6/luxon.js">Debug</a>
+              </td>
+              <td></td>
+              <td>
+                <p>Luxon as an ES6 module.</p>
+                <pre><code>import { DateTime } from 'luxon';<br/>DateTime.local();</code></pre>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
 
-                <p>More details are available in the <a href="docs/manual/install.html">install guide</a>.</p>
-            </div>
+        <p>
+          More details are available in the
+          <a href="docs/manual/install.html">install guide</a>.
+        </p>
+      </div>
 
-            <div class="section">
-                <h2>Contribute</h2>
-                <p>Luxon is distributed under the MIT license. The code is available on <a href="https://github.com/moment/luxon">GitHub.</a> Patches welcome.</p>
-            </div>
-        </div>
-    </body>
+      <div class="section">
+        <h2>Contribute</h2>
+        <p>
+          Luxon is distributed under the MIT license. The code is available on
+          <a href="https://github.com/moment/luxon">GitHub.</a> Patches welcome.
+        </p>
+      </div>
+    </div>
+  </body>
 </html>
