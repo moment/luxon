@@ -422,7 +422,7 @@
 </ul>
 <h2 id="internet-explorer-and-platform-polyfills">Internet Explorer and platform polyfills</h2><p>If you&apos;re supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.</p>
 <p>With IE 11, you can just add a polyfill like this to get the JS features you need:</p>
-<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc&quot;&gt;&lt;/script&gt;</code>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign&quot;&gt;&lt;/script&gt;</code>
 </code></pre>
 <p>So there are now two remaining caveats: Intl <em>token</em> support and zones. Keep reading to see what that means.</p>
 <p>With IE 10, you have the same problems as IE 11, except that you don&apos;t even get basic Intl support. You&apos;ll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.</p>
@@ -596,5 +596,5 @@
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
 </html>

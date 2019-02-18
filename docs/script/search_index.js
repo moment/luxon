@@ -1507,20 +1507,14 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-set-defaultLocale",
-    "src/settings.js~Settings.defaultLocale",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultlocale",
     "class/src/settings.js~Settings.html#static-get-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
-    "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
-    "src/settings.js~Settings.defaultNumberingSystem",
+    "src/settings.js~settings.defaultlocale",
+    "class/src/settings.js~Settings.html#static-set-defaultLocale",
+    "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
@@ -1530,14 +1524,20 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
-    "src/settings.js~Settings.defaultOutputCalendar",
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
     "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "src/settings.js~Settings.defaultOutputCalendar",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultoutputcalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1549,13 +1549,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
@@ -1579,13 +1579,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],

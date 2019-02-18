@@ -4077,10 +4077,10 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var PolyeNumberFormatter =
+	var PolyNumberFormatter =
 	/*#__PURE__*/
 	function () {
-	  function PolyeNumberFormatter(intl, forceSimple, opts) {
+	  function PolyNumberFormatter(intl, forceSimple, opts) {
 	    this.padTo = opts.padTo || 0;
 	    this.floor = opts.floor || false;
 
@@ -4093,7 +4093,7 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 	  }
 
-	  var _proto = PolyeNumberFormatter.prototype;
+	  var _proto = PolyNumberFormatter.prototype;
 
 	  _proto.format = function format(i) {
 	    if (this.inf) {
@@ -4107,7 +4107,7 @@ define(['exports'], function (exports) { 'use strict';
 	    }
 	  };
 
-	  return PolyeNumberFormatter;
+	  return PolyNumberFormatter;
 	}();
 	/**
 	 * @private
@@ -4471,7 +4471,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	    // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
 	    // (in contrast, the rest of the condition is used heavily)
-	    return new PolyeNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
+	    return new PolyNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
 	  };
 
 	  _proto4.dtFormatter = function dtFormatter(dt, intlOpts) {
@@ -5128,7 +5128,7 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  Duration.isDuration = function isDuration(o) {
-	    return o.isLuxonDuration || false;
+	    return o && o.isLuxonDuration || false;
 	  };
 	  /**
 	   * Get  the locale of a Duration, such 'en-GB'
@@ -5816,7 +5816,7 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  Interval.isInterval = function isInterval(o) {
-	    return o instanceof Interval || o.isLuxonInterval;
+	    return o && o.isLuxonInterval || false;
 	  };
 	  /**
 	   * Returns the start of the Interval
@@ -7221,19 +7221,23 @@ define(['exports'], function (exports) { 'use strict';
 	  } else return false;
 	}
 	function hasInvalidTimeData(obj) {
-	  var validHour = numberBetween(obj.hour, 0, 24),
-	      validMinute = numberBetween(obj.minute, 0, 59),
-	      validSecond = numberBetween(obj.second, 0, 59),
-	      validMillisecond = numberBetween(obj.millisecond, 0, 999);
+	  var hour = obj.hour,
+	      minute = obj.minute,
+	      second = obj.second,
+	      millisecond = obj.millisecond;
+	  var validHour = numberBetween(hour, 0, 23) || hour === 24 && minute === 0 && second === 0 && millisecond === 0,
+	      validMinute = numberBetween(minute, 0, 59),
+	      validSecond = numberBetween(second, 0, 59),
+	      validMillisecond = numberBetween(millisecond, 0, 999);
 
 	  if (!validHour) {
-	    return unitOutOfRange("hour", obj.hour);
+	    return unitOutOfRange("hour", hour);
 	  } else if (!validMinute) {
-	    return unitOutOfRange("minute", obj.minute);
+	    return unitOutOfRange("minute", minute);
 	  } else if (!validSecond) {
-	    return unitOutOfRange("second", obj.secon);
+	    return unitOutOfRange("second", second);
 	  } else if (!validMillisecond) {
-	    return unitOutOfRange("millisecond", obj.millisecond);
+	    return unitOutOfRange("millisecond", millisecond);
 	  } else return false;
 	}
 
@@ -8119,7 +8123,7 @@ define(['exports'], function (exports) { 'use strict';
 
 
 	  DateTime.isDateTime = function isDateTime(o) {
-	    return o.isLuxonDateTime || false;
+	    return o && o.isLuxonDateTime || false;
 	  }; // INFO
 
 	  /**

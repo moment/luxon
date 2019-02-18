@@ -333,7 +333,12 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><h1 id="1-11-2">1.11.2</h1><ul>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><p>1.11.3</p>
+<ul>
+<li>Allow 24:00 in ISO (and other) strings</li>
+<li>Fix some bugs with the typecheck functions like <code>DateTime.isDateTime()</code></li>
+</ul>
+<h1 id="1-11-2">1.11.2</h1><ul>
 <li>Fixed handling of some characters in fromFormat literal sections</li>
 <li>Hanlde string values in object arguments to DateTime methods</li>
 <li>Fixed toRelativeCalendar&apos;s handling of zones in the base date</li>
@@ -622,5 +627,5 @@
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
 </html>
