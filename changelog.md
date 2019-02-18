@@ -1,5 +1,10 @@
 # Changelog
 
+1.11.3
+
+ * Allow 24:00 in ISO (and other) strings
+ * Fix some bugs with the typecheck functions like `DateTime.isDateTime()`
+
 # 1.11.2
 
  * Fixed handling of some characters in fromFormat literal sections
