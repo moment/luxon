@@ -24,3 +24,9 @@ test("Duration#set() sets the values", () => {
   expect(dur().set({ seconds: 45 }).seconds).toBe(45);
   expect(dur().set({ milliseconds: 86 }).milliseconds).toBe(86);
 });
+
+test("Duration#set() throws for metadata", () => {
+  expect(() => dur.set({ locale: "be" })).toThrow();
+  expect(() => dur.set({ numberingSystem: "thai" })).toThrow();
+  expect(() => dur.set({ invalid: 42 })).toThrow();
+});

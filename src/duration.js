@@ -230,7 +230,11 @@ export default class Duration {
       );
     }
     return new Duration({
-      values: normalizeObject(obj, Duration.normalizeUnit, true),
+      values: normalizeObject(obj, Duration.normalizeUnit, [
+        "locale",
+        "numberingSystem",
+        "conversionAccuracy"
+      ]),
       loc: Locale.fromObject(obj),
       conversionAccuracy: obj.conversionAccuracy
     });
@@ -282,7 +286,7 @@ export default class Duration {
   /**
    * @private
    */
-  static normalizeUnit(unit, ignoreUnknown = false) {
+  static normalizeUnit(unit) {
     const normalized = {
       year: "years",
       years: "years",
@@ -304,7 +308,7 @@ export default class Duration {
       milliseconds: "milliseconds"
     }[unit ? unit.toLowerCase() : unit];
 
-    if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
+    if (!normalized) throw new InvalidUnitError(unit);
 
     return normalized;
   }
@@ -489,7 +493,7 @@ export default class Duration {
    * @return {Duration}
    */
   set(values) {
-    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit));
+    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit, []));
     return clone(this, { values: mixed });
   }
 
