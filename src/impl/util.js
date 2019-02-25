@@ -88,9 +88,17 @@ export function padStart(input, n = 2) {
   }
 }
 
+export function parseInteger(string) {
+  if (isUndefined(string) || string === null || string === "") {
+    return undefined;
+  } else {
+    return parseInt(string, 10);
+  }
+}
+
 export function parseMillis(fraction) {
-  if (isUndefined(fraction)) {
-    return NaN;
+  if (isUndefined(fraction) || fraction === null || fraction === "") {
+    return undefined;
   } else {
     const f = parseFloat("0." + fraction) * 1000;
     return Math.floor(f);
@@ -208,18 +216,20 @@ export function signedOffset(offHourStr, offMinuteStr) {
 
 // COERCION
 
-export function normalizeObject(obj, normalizer, ignoreUnknown = false) {
+function asNumber(value) {
+  const numericValue = Number(value);
+  if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue))
+    throw new Error(`Invalid unit value ${value}`);
+  return numericValue;
+}
+
+export function normalizeObject(obj, normalizer, nonUnitKeys) {
   const normalized = {};
   for (const u in obj) {
     if (obj.hasOwnProperty(u)) {
       const v = obj[u];
-      const numericValue = Number(v);
-      if (v !== null && !Number.isNaN(numericValue)) {
-        const mapped = normalizer(u, ignoreUnknown);
-        if (mapped) {
-          normalized[mapped] = numericValue;
-        }
-      }
+      if (v === undefined || v === null || nonUnitKeys.includes(u)) continue;
+      normalized[normalizer(u)] = asNumber(v);
     }
   }
   return normalized;

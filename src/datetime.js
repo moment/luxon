@@ -155,11 +155,12 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
-      inst = DateTime.fromObject(
-        Object.assign(parsed, opts, {
-          zone: interpretationZone
-        })
-      );
+      obj = Object.assign(parsed, opts, {
+        zone: interpretationZone
+      });
+    // setZone is a valid option in calling methods, but not in fromObject
+    delete obj.setZone;
+    const inst = DateTime.fromObject(obj);
     return setZone ? inst : inst.setZone(zone);
   } else {
     return DateTime.invalid(
@@ -252,7 +253,7 @@ const orderedUnits = ["year", "month", "day", "hour", "minute", "second", "milli
   orderedOrdinalUnits = ["year", "ordinal", "hour", "minute", "second", "millisecond"];
 
 // standardize case and plurality in units
-function normalizeUnit(unit, ignoreUnknown = false) {
+function normalizeUnit(unit) {
   const normalized = {
     year: "year",
     years: "year",
@@ -278,7 +279,7 @@ function normalizeUnit(unit, ignoreUnknown = false) {
     ordinal: "ordinal"
   }[unit ? unit.toLowerCase() : unit];
 
-  if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
+  if (!normalized) throw new InvalidUnitError(unit);
 
   return normalized;
 }
@@ -589,9 +590,20 @@ export default class DateTime {
       return DateTime.invalid(unsupportedZone(zoneToUse));
     }
 
+    let normalized;
+    try {
+      normalized = normalizeObject(obj, normalizeUnit, [
+        "zone",
+        "locale",
+        "outputCalendar",
+        "numberingSystem"
+      ]);
+    } catch (error) {
+      return DateTime.invalid(error.message);
+    }
+
     const tsNow = Settings.now(),
       offsetProvis = zoneToUse.offset(tsNow),
-      normalized = normalizeObject(obj, normalizeUnit, true),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
@@ -1272,7 +1284,7 @@ export default class DateTime {
   set(values) {
     if (!this.isValid) return this;
 
-    const normalized = normalizeObject(values, normalizeUnit),
+    const normalized = normalizeObject(values, normalizeUnit, []),
       settingWeekStuff =
         !isUndefined(normalized.weekYear) ||
         !isUndefined(normalized.weekNumber) ||

@@ -386,6 +386,47 @@ test("DateTime.fromObject() rejects invalid zones", () => {
   expect(dt.invalidReason).toBe("unsupported zone");
 });
 
+test("DateTime.fromObject() ignores the case of object keys", () => {
+  const dt = DateTime.fromObject({ Year: 2019, MONTH: 4, daYs: 10 });
+  expect(dt.isValid).toBe(true);
+  expect(dt.year).toBe(2019);
+  expect(dt.month).toBe(4);
+  expect(dt.day).toBe(10);
+});
+
+test("DateTime.fromObject() rejects invalid keys", () => {
+  const dt = DateTime.fromObject({ invalidUnit: 42 });
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("Invalid unit invalidUnit");
+});
+
+test("DateTime.fromObject() rejects invalid values", () => {
+  const dt = DateTime.fromObject({ year: "blorp" });
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("Invalid unit value blorp");
+
+  expect(DateTime.fromObject({ month: "" }).isValid).toBe(false);
+  expect(DateTime.fromObject({ ordinal: 5000 }).isValid).toBe(false);
+  expect(DateTime.fromObject({ minute: -6 }).isValid).toBe(false);
+  expect(DateTime.fromObject({ millisecond: new Date() }).isValid).toBe(false);
+});
+
+test("DateTime.fromObject() rejects boolean values", () => {
+  const dtTrue = DateTime.fromObject({ year: true });
+  expect(dtTrue.isValid).toBe(false);
+  expect(dtTrue.invalidReason).toBe("Invalid unit value true");
+
+  const dtFalse = DateTime.fromObject({ year: false });
+  expect(dtFalse.isValid).toBe(false);
+  expect(dtFalse.invalidReason).toBe("Invalid unit value false");
+});
+
+test("DateTime.fromObject() rejects NaN values", () => {
+  const dt = DateTime.fromObject({ year: NaN });
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("Invalid unit value NaN");
+});
+
 test("DateTime.fromObject() defaults high-order values to the current date", () => {
   const dateTime = DateTime.fromObject({}),
     now = DateTime.local();
@@ -571,13 +612,4 @@ test("DateTime.fromObject handles null as a language tag", () => {
     expect(res.outputCalendar).toBe("islamic");
     expect(res.numberingSystem).toBe("thai");
   });
-});
-
-test("DateTime.fromObject overrides invalid date part with the current date part", () => {
-  const dt = DateTime.fromObject({ year: "hello" });
-  const localDt = DateTime.local();
-  expect(dt.isValid).toBe(true);
-  expect(dt.year).toBe(localDt.year);
-  expect(dt.months).toBe(localDt.months);
-  expect(dt.day).toBe(localDt.day);
 });
