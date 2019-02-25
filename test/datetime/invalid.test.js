@@ -4,7 +4,7 @@ import { DateTime, Settings } from "../../src/luxon";
 
 const organic1 = DateTime.utc(2014, 13, 33),
   // not an actual Wednesday
-  organic2 = DateTime.fromObject({ weekday: 3, year: 1982, month: 5, day: 25 }),
+  organic2 = DateTime.fromObject({ weekday: 3, year: 1982, month: 5, day: 25, zone: "UTC" }),
   organic3 = DateTime.fromObject({ year: 1982, month: 5, day: 25, hour: 27 });
 
 test("Explicitly invalid dates are invalid", () => {
@@ -37,7 +37,7 @@ test("Invalid DateTimes can provide an extented explanation", () => {
     "you specified 13 (of type number) as a month, which is invalid"
   );
   expect(organic2.invalidExplanation).toBe(
-    "you can't specify both a weekday of 3 and a date of 1982-05-25T00:00:00.000-04:00"
+    "you can't specify both a weekday of 3 and a date of 1982-05-25T00:00:00.000Z"
   );
   expect(organic3.invalidExplanation).toBe(
     "you specified 27 (of type number) as a hour, which is invalid"
