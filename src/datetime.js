@@ -1788,7 +1788,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+   * Returns a string representation of this date relative to today, such as "yesterday" or "next month"
    * platform supports Intl.RelativeDateFormat.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.

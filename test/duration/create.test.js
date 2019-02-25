@@ -54,7 +54,7 @@ test("Duration.fromObject throws if the argument is not an object", () => {
   expect(() => Duration.fromObject("foo")).toThrow();
 });
 
-test("Duration.fromObject({}) costructs zero duration", () => {
+test("Duration.fromObject({}) constructs zero duration", () => {
   const dur = Duration.fromObject({});
   expect(dur.years).toBe(0);
   expect(dur.months).toBe(0);
