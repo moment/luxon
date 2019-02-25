@@ -493,6 +493,8 @@ export default class Duration {
    * @return {Duration}
    */
   set(values) {
+    if (!this.isValid) return this;
+
     const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit, []));
     return clone(this, { values: mixed });
   }
