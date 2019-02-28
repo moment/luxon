@@ -386,6 +386,12 @@ test("DateTime.fromObject() rejects invalid zones", () => {
   expect(dt.invalidReason).toBe("unsupported zone");
 });
 
+test("DateTime.fromObject() rejects invalid numerical values", () => {
+  const dt = DateTime.fromObject({ year: "not a number" });
+  expect(dt.isValid).toBe(false);
+  //  expect(dt.invalidReason).toBe("unsupported zone");
+});
+
 test("DateTime.fromObject() defaults high-order values to the current date", () => {
   const dateTime = DateTime.fromObject({}),
     now = DateTime.local();

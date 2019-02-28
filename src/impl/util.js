@@ -1,3 +1,5 @@
+import { InvalidUnitError } from "../errors";
+
 /*
   This is just a junk drawer, containing anything used across multiple classes.
   Because Luxon is small(ish), this should stay small and we won't worry about splitting
@@ -214,9 +216,12 @@ export function normalizeObject(obj, normalizer, ignoreUnknown = false) {
     if (obj.hasOwnProperty(u)) {
       const v = obj[u];
       const numericValue = Number(v);
-      if (v !== null && !Number.isNaN(numericValue)) {
+      if (v !== null) {
         const mapped = normalizer(u, ignoreUnknown);
         if (mapped) {
+          if (Number.isNaN(numericValue)) {
+            throw new InvalidUnitError(mapped);
+          }
           normalized[mapped] = numericValue;
         }
       }
