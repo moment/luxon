@@ -97,3 +97,10 @@ test("Info.normalizeZone converts null and undefined to default Zone", () => {
   expect(Info.normalizeZone(null)).toBe(Settings.defaultZone);
   expect(Info.normalizeZone(undefined)).toBe(Settings.defaultZone);
 });
+
+test("Info.normalizeZone converts local to default Zone", () => {
+  expect(Info.normalizeZone("local")).toBe(Settings.defaultZone);
+  Helpers.withDefaultZone("Europe/Paris", () => {
+    expect(Info.normalizeZone("local").name).toBe("Europe/Paris");
+  });
+});

@@ -79,6 +79,12 @@ test('DateTime#setZone accepts "local"', () => {
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 
+test('DateTime#setZone accepts "local" and uses the default zone', () => {
+  Helpers.withDefaultZone("Europe/Paris", () => {
+    expect(DateTime.utc().setZone("local").zoneName).toBe("Europe/Paris");
+  });
+});
+
 test('DateTime#setZone accepts "utc"', () => {
   const zoned = DateTime.local().setZone("utc");
   expect(zoned.offset).toBe(0);

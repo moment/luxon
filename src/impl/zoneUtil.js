@@ -3,7 +3,6 @@
  */
 
 import Zone from "../zone.js";
-import LocalZone from "../zones/localZone.js";
 import IANAZone from "../zones/IANAZone.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import InvalidZone from "../zones/invalidZone.js";
@@ -18,7 +17,7 @@ export function normalizeZone(input, defaultZone) {
     return input;
   } else if (isString(input)) {
     const lowered = input.toLowerCase();
-    if (lowered === "local") return LocalZone.instance;
+    if (lowered === "local") return defaultZone;
     else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
     else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
       // handle Etc/GMT-4, which V8 chokes on
