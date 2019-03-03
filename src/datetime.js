@@ -747,8 +747,9 @@ export default class DateTime {
   /**
    * Create a DateTime from an input string and format string
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
+   * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
-   * @param {string} fmt - the format the string is expected to be in (see description)
+   * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
