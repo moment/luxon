@@ -35,6 +35,10 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/interval.js~Interval.html">Interval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/settings.js~Settings.html">Settings</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-interface">I</span><span data-ice="name"><span><a href="class/src/zone.js~Zone.html">Zone</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#zones">zones</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/zones/IANAZone.js~IANAZone.html">IANAZone</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html">FixedOffsetZone</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/zones/invalidZone.js~InvalidZone.html">InvalidZone</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/zones/localZone.js~LocalZone.html">LocalZone</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -87,35 +91,6 @@
     <td>
       <span class="access" data-ice="access">public</span>
       <span data-ice="static">static</span>
-      <span class="kind" data-ice="kind">get</span>
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/settings.js~Settings.html#static-get-defaultLocale">defaultLocale</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
-        </p>
-      </div>
-      <div>
-        
-        
-        <div data-ice="description"><p>Get the default locale to create DateTimes with.</p>
-</div>
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-<tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      <span data-ice="static">static</span>
       <span class="kind" data-ice="kind">set</span>
       
       <span class="override" data-ice="override"></span>
@@ -133,6 +108,35 @@
         
         
         <div data-ice="description"><p>Set the default locale to create DateTimes with.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      <span class="kind" data-ice="kind">get</span>
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/settings.js~Settings.html#static-get-defaultLocale">defaultLocale</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Get the default locale to create DateTimes with.</p>
 </div>
       </div>
     </td>
@@ -508,10 +512,10 @@
 <div data-ice="staticMemberDetails"><h2 data-ice="title">Static Public Members</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="static-get-defaultLocale">
+  <h3 data-ice="anchor" id="static-set-defaultLocale">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
-    <span class="kind" data-ice="kind">get</span>
+    <span class="kind" data-ice="kind">set</span>
     
     
     
@@ -519,14 +523,14 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/settings.js.html#lineNumber68">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/settings.js.html#lineNumber76">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Get the default locale to create DateTimes with. Does not affect existing instances.</p>
+  <div data-ice="description"><p>Set the default locale to create DateTimes with. Does not affect existing instances.</p>
 </div>
 
   
@@ -552,10 +556,10 @@
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="static-set-defaultLocale">
+  <h3 data-ice="anchor" id="static-get-defaultLocale">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
-    <span class="kind" data-ice="kind">set</span>
+    <span class="kind" data-ice="kind">get</span>
     
     
     
@@ -563,14 +567,14 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/settings.js.html#lineNumber76">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/settings.js.html#lineNumber68">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Set the default locale to create DateTimes with. Does not affect existing instances.</p>
+  <div data-ice="description"><p>Get the default locale to create DateTimes with. Does not affect existing instances.</p>
 </div>
 
   

@@ -12,6 +12,18 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "luxon/src/zones/fixedoffsetzone.js~fixedoffsetzone",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html",
+    "<span>FixedOffsetZone</span> <span class=\"search-result-import-path\">luxon/src/zones/fixedOffsetZone.js</span>",
+    "class"
+  ],
+  [
+    "luxon/src/zones/ianazone.js~ianazone",
+    "class/src/zones/IANAZone.js~IANAZone.html",
+    "<span>IANAZone</span> <span class=\"search-result-import-path\">luxon/src/zones/IANAZone.js</span>",
+    "class"
+  ],
+  [
     "luxon/src/info.js~info",
     "class/src/info.js~Info.html",
     "<span>Info</span> <span class=\"search-result-import-path\">luxon/src/info.js</span>",
@@ -21,6 +33,18 @@ window.esdocSearchIndex = [
     "luxon/src/interval.js~interval",
     "class/src/interval.js~Interval.html",
     "<span>Interval</span> <span class=\"search-result-import-path\">luxon/src/interval.js</span>",
+    "class"
+  ],
+  [
+    "luxon/src/zones/invalidzone.js~invalidzone",
+    "class/src/zones/invalidZone.js~InvalidZone.html",
+    "<span>InvalidZone</span> <span class=\"search-result-import-path\">luxon/src/zones/invalidZone.js</span>",
+    "class"
+  ],
+  [
+    "luxon/src/zones/localzone.js~localzone",
+    "class/src/zones/localZone.js~LocalZone.html",
+    "<span>LocalZone</span> <span class=\"search-result-import-path\">luxon/src/zones/localZone.js</span>",
     "class"
   ],
   [
@@ -1519,13 +1543,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
+    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
@@ -1549,13 +1573,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
@@ -1635,6 +1659,258 @@ window.esdocSearchIndex = [
     "src/zone.js~zone#universal",
     "class/src/zone.js~Zone.html#instance-get-universal",
     "src/zone.js~Zone#universal",
+    "member"
+  ],
+  [
+    "src/zones/ianazone.js",
+    "file/src/zones/IANAZone.js.html",
+    "src/zones/IANAZone.js",
+    "file"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#constructor",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-constructor-constructor",
+    "src/zones/IANAZone.js~IANAZone#constructor",
+    "method"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#equals",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-method-equals",
+    "src/zones/IANAZone.js~IANAZone#equals",
+    "method"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#isvalid",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-get-isValid",
+    "src/zones/IANAZone.js~IANAZone#isValid",
+    "member"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#name",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-get-name",
+    "src/zones/IANAZone.js~IANAZone#name",
+    "member"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#offset",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-method-offset",
+    "src/zones/IANAZone.js~IANAZone#offset",
+    "method"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#offsetname",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-method-offsetName",
+    "src/zones/IANAZone.js~IANAZone#offsetName",
+    "method"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#type",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-get-type",
+    "src/zones/IANAZone.js~IANAZone#type",
+    "member"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#universal",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-get-universal",
+    "src/zones/IANAZone.js~IANAZone#universal",
+    "member"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone.isvalidspecifier",
+    "class/src/zones/IANAZone.js~IANAZone.html#static-method-isValidSpecifier",
+    "src/zones/IANAZone.js~IANAZone.isValidSpecifier",
+    "method"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone.isvalidzone",
+    "class/src/zones/IANAZone.js~IANAZone.html#static-method-isValidZone",
+    "src/zones/IANAZone.js~IANAZone.isValidZone",
+    "method"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js",
+    "file/src/zones/fixedOffsetZone.js.html",
+    "src/zones/fixedOffsetZone.js",
+    "file"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#constructor",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-constructor-constructor",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#constructor",
+    "method"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#equals",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-method-equals",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#equals",
+    "method"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#isvalid",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-get-isValid",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#isValid",
+    "member"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#name",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-get-name",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#name",
+    "member"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#offset",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-method-offset",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#offset",
+    "method"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#offsetname",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-method-offsetName",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#offsetName",
+    "method"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#type",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-get-type",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#type",
+    "member"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#universal",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-get-universal",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#universal",
+    "member"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone.instance",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#static-method-instance",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone.instance",
+    "method"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone.parsespecifier",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#static-method-parseSpecifier",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone.parseSpecifier",
+    "method"
+  ],
+  [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone.utcinstance",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#static-get-utcInstance",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone.utcInstance",
+    "member"
+  ],
+  [
+    "src/zones/invalidzone.js",
+    "file/src/zones/invalidZone.js.html",
+    "src/zones/invalidZone.js",
+    "file"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#constructor",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-constructor-constructor",
+    "src/zones/invalidZone.js~InvalidZone#constructor",
+    "method"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#equals",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-method-equals",
+    "src/zones/invalidZone.js~InvalidZone#equals",
+    "method"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#isvalid",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-get-isValid",
+    "src/zones/invalidZone.js~InvalidZone#isValid",
+    "member"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#name",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-get-name",
+    "src/zones/invalidZone.js~InvalidZone#name",
+    "member"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#offset",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-method-offset",
+    "src/zones/invalidZone.js~InvalidZone#offset",
+    "method"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#offsetname",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-method-offsetName",
+    "src/zones/invalidZone.js~InvalidZone#offsetName",
+    "method"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#type",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-get-type",
+    "src/zones/invalidZone.js~InvalidZone#type",
+    "member"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#universal",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-get-universal",
+    "src/zones/invalidZone.js~InvalidZone#universal",
+    "member"
+  ],
+  [
+    "src/zones/invalidzone.js~invalidzone#zonename",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-member-zoneName",
+    "src/zones/invalidZone.js~InvalidZone#zoneName",
+    "member"
+  ],
+  [
+    "src/zones/localzone.js",
+    "file/src/zones/localZone.js.html",
+    "src/zones/localZone.js",
+    "file"
+  ],
+  [
+    "src/zones/localzone.js~localzone#equals",
+    "class/src/zones/localZone.js~LocalZone.html#instance-method-equals",
+    "src/zones/localZone.js~LocalZone#equals",
+    "method"
+  ],
+  [
+    "src/zones/localzone.js~localzone#isvalid",
+    "class/src/zones/localZone.js~LocalZone.html#instance-get-isValid",
+    "src/zones/localZone.js~LocalZone#isValid",
+    "member"
+  ],
+  [
+    "src/zones/localzone.js~localzone#name",
+    "class/src/zones/localZone.js~LocalZone.html#instance-get-name",
+    "src/zones/localZone.js~LocalZone#name",
+    "member"
+  ],
+  [
+    "src/zones/localzone.js~localzone#offset",
+    "class/src/zones/localZone.js~LocalZone.html#instance-method-offset",
+    "src/zones/localZone.js~LocalZone#offset",
+    "method"
+  ],
+  [
+    "src/zones/localzone.js~localzone#offsetname",
+    "class/src/zones/localZone.js~LocalZone.html#instance-method-offsetName",
+    "src/zones/localZone.js~LocalZone#offsetName",
+    "method"
+  ],
+  [
+    "src/zones/localzone.js~localzone#type",
+    "class/src/zones/localZone.js~LocalZone.html#instance-get-type",
+    "src/zones/localZone.js~LocalZone#type",
+    "member"
+  ],
+  [
+    "src/zones/localzone.js~localzone#universal",
+    "class/src/zones/localZone.js~LocalZone.html#instance-get-universal",
+    "src/zones/localZone.js~LocalZone#universal",
+    "member"
+  ],
+  [
+    "src/zones/localzone.js~localzone.instance",
+    "class/src/zones/localZone.js~LocalZone.html#static-get-instance",
+    "src/zones/localZone.js~LocalZone.instance",
     "member"
   ]
 ]

@@ -316,7 +316,7 @@ var luxon = (function (exports) {
 	    return store[key] || (store[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
 	    version: _core.version,
-	    mode: _library ? 'pure' : 'global',
+	    mode: 'global',
 	    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 	  });
 	});
@@ -351,7 +351,7 @@ var luxon = (function (exports) {
 	var defineProperty = _objectDp.f;
 
 	var _wksDefine = function _wksDefine(name) {
-	  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
+	  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
 	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, {
 	    value: _wksExt.f(name)
 	  });
@@ -1909,6 +1909,18 @@ var luxon = (function (exports) {
 
 	var trunc = _core.Math.trunc;
 
+	// 20.2.2.28 Math.sign(x)
+	var _mathSign = Math.sign || function sign(x) {
+	  // eslint-disable-next-line no-self-compare
+	  return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
+	};
+
+	_export(_export.S, 'Math', {
+	  sign: _mathSign
+	});
+
+	var sign = _core.Math.sign;
+
 	function _defineProperties(target, props) {
 	  for (var i = 0; i < props.length; i++) {
 	    var descriptor = props[i];
@@ -2808,6 +2820,10 @@ var luxon = (function (exports) {
 	}();
 
 	var singleton = null;
+	/**
+	 * Represents the local zone for this Javascript environment.
+	 * @implments {Zone}
+	 */
 
 	var LocalZone =
 	/*#__PURE__*/
@@ -2820,25 +2836,36 @@ var luxon = (function (exports) {
 
 	  var _proto = LocalZone.prototype;
 
+	  /** @override **/
 	  _proto.offsetName = function offsetName(ts, _ref) {
 	    var format = _ref.format,
 	        locale = _ref.locale;
 	    return parseZoneInfo(ts, format, locale);
 	  };
+	  /** @override **/
+
 
 	  _proto.offset = function offset(ts) {
 	    return -new Date(ts).getTimezoneOffset();
 	  };
+	  /** @override **/
+
 
 	  _proto.equals = function equals(otherZone) {
 	    return otherZone.type === "local";
 	  };
+	  /** @override **/
+
 
 	  _createClass(LocalZone, [{
 	    key: "type",
+
+	    /** @override **/
 	    get: function get() {
 	      return "local";
 	    }
+	    /** @override **/
+
 	  }, {
 	    key: "name",
 	    get: function get() {
@@ -2846,6 +2873,8 @@ var luxon = (function (exports) {
 	        return new Intl.DateTimeFormat().resolvedOptions().timeZone;
 	      } else return "local";
 	    }
+	    /** @override **/
+
 	  }, {
 	    key: "universal",
 	    get: function get() {
@@ -2858,6 +2887,11 @@ var luxon = (function (exports) {
 	    }
 	  }], [{
 	    key: "instance",
+
+	    /**
+	     * Get a singleton instance of the local zone
+	     * @return {LocalZone}
+	     */
 	    get: function get() {
 	      if (singleton === null) {
 	        singleton = new LocalZone();
@@ -2928,15 +2962,37 @@ var luxon = (function (exports) {
 
 	  return filled;
 	}
+	/**
+	 * A zone identified by an IANA identifier, like America/New_York
+	 * @implments {Zone}
+	 */
+
 
 	var IANAZone =
 	/*#__PURE__*/
 	function (_Zone) {
 	  _inheritsLoose(IANAZone, _Zone);
 
+	  /**
+	   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
+	   * @param {string} s - The string to check validity on
+	   * @example IANAZone.isValidSpecifier("America/New_York") //=> true
+	   * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
+	   * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
+	   * @return {true}
+	   */
 	  IANAZone.isValidSpecifier = function isValidSpecifier(s) {
 	    return s && s.match(matchingRegex);
 	  };
+	  /**
+	   * Returns whether the provided string identifies a real zone
+	   * @param {string} zone - The string to check
+	   * @example IANAZone.isValidZone("America/New_York") //=> true
+	   * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
+	   * @example IANAZone.isValidZone("Sport~~blorp") //=> false
+	   * @return {true}
+	   */
+
 
 	  IANAZone.isValidZone = function isValidZone(zone) {
 	    try {
@@ -2948,6 +3004,8 @@ var luxon = (function (exports) {
 	      return false;
 	    }
 	  }; // Etc/GMT+8 -> -480
+
+	  /** @ignore */
 
 
 	  IANAZone.parseGMTOffset = function parseGMTOffset(specifier) {
@@ -2966,22 +3024,31 @@ var luxon = (function (exports) {
 	    var _this;
 
 	    _this = _Zone.call(this) || this;
+	    /** @private **/
+
 	    _this.zoneName = name;
+	    /** @private **/
+
 	    _this.valid = IANAZone.isValidZone(name);
 	    return _this;
 	  }
+	  /** @override **/
+
 
 	  var _proto = IANAZone.prototype;
 
+	  /** @override **/
 	  _proto.offsetName = function offsetName(ts, _ref) {
 	    var format = _ref.format,
 	        locale = _ref.locale;
-	    return parseZoneInfo(ts, format, locale, this.zoneName);
+	    return parseZoneInfo(ts, format, locale, this.name);
 	  };
+	  /** @override **/
+
 
 	  _proto.offset = function offset(ts) {
 	    var date = new Date(ts),
-	        dtf = makeDTF(this.zoneName),
+	        dtf = makeDTF(this.name),
 	        _ref2 = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
 	        year = _ref2[0],
 	        month = _ref2[1],
@@ -3003,21 +3070,29 @@ var luxon = (function (exports) {
 	    asTS -= asTS % 1000;
 	    return (asUTC - asTS) / (60 * 1000);
 	  };
+	  /** @override **/
+
 
 	  _proto.equals = function equals(otherZone) {
-	    return otherZone.type === "iana" && otherZone.zoneName === this.zoneName;
+	    return otherZone.type === "iana" && otherZone.name === this.name;
 	  };
+	  /** @override **/
+
 
 	  _createClass(IANAZone, [{
 	    key: "type",
 	    get: function get() {
 	      return "iana";
 	    }
+	    /** @override **/
+
 	  }, {
 	    key: "name",
 	    get: function get() {
 	      return this.zoneName;
 	    }
+	    /** @override **/
+
 	  }, {
 	    key: "universal",
 	    get: function get() {
@@ -3042,15 +3117,34 @@ var luxon = (function (exports) {
 	      base = sign + Math.abs(hours);
 	  return minutes > 0 ? base + ":" + padStart(minutes, 2) : base;
 	}
+	/**
+	 * A zone with a fixed offset (i.e. no DST)
+	 * @implments {Zone}
+	 */
+
 
 	var FixedOffsetZone =
 	/*#__PURE__*/
 	function (_Zone) {
 	  _inheritsLoose(FixedOffsetZone, _Zone);
 
+	  /**
+	   * Get an instance with a specified offset
+	   * @param {number} offset - The offset in minutes
+	   * @return {FixedOffsetZone}
+	   */
 	  FixedOffsetZone.instance = function instance(offset) {
 	    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
 	  };
+	  /**
+	   * Get an instance of FixedOffsetZone with from a UTC offset string, like "UTC+6"
+	   * @param {string} s - The offset string to parse
+	   * @example FixedOffsetZone.parseSpecifier("UTC+6")
+	   * @example FixedOffsetZone.parseSpecifier("UTC+06")
+	   * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
+	   * @return {FixedOffsetZone}
+	   */
+
 
 	  FixedOffsetZone.parseSpecifier = function parseSpecifier(s) {
 	    if (s) {
@@ -3066,6 +3160,11 @@ var luxon = (function (exports) {
 
 	  _createClass(FixedOffsetZone, null, [{
 	    key: "utcInstance",
+
+	    /**
+	     * Get a singleton instance of UTC
+	     * @return {FixedOffsetZone}
+	     */
 	    get: function get() {
 	      if (singleton$1 === null) {
 	        singleton$1 = new FixedOffsetZone(0);
@@ -3079,29 +3178,43 @@ var luxon = (function (exports) {
 	    var _this;
 
 	    _this = _Zone.call(this) || this;
+	    /** @private **/
+
 	    _this.fixed = offset;
 	    return _this;
 	  }
+	  /** @override **/
+
 
 	  var _proto = FixedOffsetZone.prototype;
 
+	  /** @override **/
 	  _proto.offsetName = function offsetName() {
 	    return this.name;
 	  };
+	  /** @override **/
 
+
+	  /** @override **/
 	  _proto.offset = function offset() {
 	    return this.fixed;
 	  };
+	  /** @override **/
+
 
 	  _proto.equals = function equals(otherZone) {
 	    return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
 	  };
+	  /** @override **/
+
 
 	  _createClass(FixedOffsetZone, [{
 	    key: "type",
 	    get: function get() {
 	      return "fixed";
 	    }
+	    /** @override **/
+
 	  }, {
 	    key: "name",
 	    get: function get() {
@@ -3122,6 +3235,11 @@ var luxon = (function (exports) {
 	  return FixedOffsetZone;
 	}(Zone);
 
+	/**
+	 * A zone that failed to parse. You should never need to instantiate this.
+	 * @implments {Zone}
+	 */
+
 	var InvalidZone =
 	/*#__PURE__*/
 	function (_Zone) {
@@ -3131,34 +3249,49 @@ var luxon = (function (exports) {
 	    var _this;
 
 	    _this = _Zone.call(this) || this;
+	    /**  @private */
+
 	    _this.zoneName = zoneName;
 	    return _this;
 	  }
+	  /** @override **/
+
 
 	  var _proto = InvalidZone.prototype;
 
+	  /** @override **/
 	  _proto.offsetName = function offsetName() {
 	    return null;
 	  };
+	  /** @override **/
+
 
 	  _proto.offset = function offset() {
 	    return NaN;
 	  };
+	  /** @override **/
+
 
 	  _proto.equals = function equals() {
 	    return false;
 	  };
+	  /** @override **/
+
 
 	  _createClass(InvalidZone, [{
 	    key: "type",
 	    get: function get() {
 	      return "invalid";
 	    }
+	    /** @override **/
+
 	  }, {
 	    key: "name",
 	    get: function get() {
 	      return this.zoneName;
 	    }
+	    /** @override **/
+
 	  }, {
 	    key: "universal",
 	    get: function get() {
@@ -3186,7 +3319,7 @@ var luxon = (function (exports) {
 	    return input;
 	  } else if (isString(input)) {
 	    var lowered = input.toLowerCase();
-	    if (lowered === "local") return LocalZone.instance;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
+	    if (lowered === "local") return defaultZone;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
 	      // handle Etc/GMT-4, which V8 chokes on
 	      return FixedOffsetZone.instance(offset);
 	    } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
@@ -4345,7 +4478,7 @@ var luxon = (function (exports) {
 	    }));
 	  };
 
-	  _proto4.months = function months$$1(length, format, defaultOK) {
+	  _proto4.months = function months$1(length, format, defaultOK) {
 	    var _this = this;
 
 	    if (format === void 0) {
@@ -4375,7 +4508,7 @@ var luxon = (function (exports) {
 	    });
 	  };
 
-	  _proto4.weekdays = function weekdays$$1(length, format, defaultOK) {
+	  _proto4.weekdays = function weekdays$1(length, format, defaultOK) {
 	    var _this2 = this;
 
 	    if (format === void 0) {
@@ -4407,7 +4540,7 @@ var luxon = (function (exports) {
 	    });
 	  };
 
-	  _proto4.meridiems = function meridiems$$1(defaultOK) {
+	  _proto4.meridiems = function meridiems$1(defaultOK) {
 	    var _this3 = this;
 
 	    if (defaultOK === void 0) {
@@ -4433,7 +4566,7 @@ var luxon = (function (exports) {
 	    });
 	  };
 
-	  _proto4.eras = function eras$$1(length, defaultOK) {
+	  _proto4.eras = function eras$1(length, defaultOK) {
 	    var _this4 = this;
 
 	    if (defaultOK === void 0) {
@@ -6370,7 +6503,7 @@ var luxon = (function (exports) {
 	   */
 
 
-	  Info.normalizeZone = function normalizeZone$$1(input) {
+	  Info.normalizeZone = function normalizeZone$1(input) {
 	    return normalizeZone(input, Settings.defaultZone);
 	  };
 	  /**

@@ -770,7 +770,15 @@ var luxon = (function (exports) {
 
   let singleton = null;
 
+  /**
+   * Represents the local zone for this Javascript environment.
+   * @implments {Zone}
+   */
   class LocalZone extends Zone {
+    /**
+     * Get a singleton instance of the local zone
+     * @return {LocalZone}
+     */
     static get instance() {
       if (singleton === null) {
         singleton = new LocalZone();
@@ -778,32 +786,39 @@ var luxon = (function (exports) {
       return singleton;
     }
 
+    /** @override **/
     get type() {
       return "local";
     }
 
+    /** @override **/
     get name() {
       if (hasIntl()) {
         return new Intl.DateTimeFormat().resolvedOptions().timeZone;
       } else return "local";
     }
 
+    /** @override **/
     get universal() {
       return false;
     }
 
+    /** @override **/
     offsetName(ts, { format, locale }) {
       return parseZoneInfo(ts, format, locale);
     }
 
+    /** @override **/
     offset(ts) {
       return -new Date(ts).getTimezoneOffset();
     }
 
+    /** @override **/
     equals(otherZone) {
       return otherZone.type === "local";
     }
 
+    /** @override **/
     get isValid() {
       return true;
     }
@@ -858,11 +873,31 @@ var luxon = (function (exports) {
     return filled;
   }
 
+  /**
+   * A zone identified by an IANA identifier, like America/New_York
+   * @implments {Zone}
+   */
   class IANAZone extends Zone {
+    /**
+     * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
+     * @param {string} s - The string to check validity on
+     * @example IANAZone.isValidSpecifier("America/New_York") //=> true
+     * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
+     * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
+     * @return {true}
+     */
     static isValidSpecifier(s) {
       return s && s.match(matchingRegex);
     }
 
+    /**
+     * Returns whether the provided string identifies a real zone
+     * @param {string} zone - The string to check
+     * @example IANAZone.isValidZone("America/New_York") //=> true
+     * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
+     * @example IANAZone.isValidZone("Sport~~blorp") //=> false
+     * @return {true}
+     */
     static isValidZone(zone) {
       try {
         new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
@@ -873,6 +908,7 @@ var luxon = (function (exports) {
     }
 
     // Etc/GMT+8 -> -480
+    /** @ignore */
     static parseGMTOffset(specifier) {
       if (specifier) {
         const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
@@ -885,29 +921,36 @@ var luxon = (function (exports) {
 
     constructor(name) {
       super();
+      /** @private **/
       this.zoneName = name;
+      /** @private **/
       this.valid = IANAZone.isValidZone(name);
     }
 
+    /** @override **/
     get type() {
       return "iana";
     }
 
+    /** @override **/
     get name() {
       return this.zoneName;
     }
 
+    /** @override **/
     get universal() {
       return false;
     }
 
+    /** @override **/
     offsetName(ts, { format, locale }) {
-      return parseZoneInfo(ts, format, locale, this.zoneName);
+      return parseZoneInfo(ts, format, locale, this.name);
     }
 
+    /** @override **/
     offset(ts) {
       const date = new Date(ts),
-        dtf = makeDTF(this.zoneName),
+        dtf = makeDTF(this.name),
         [year, month, day, hour, minute, second] = dtf.formatToParts
           ? partsOffset(dtf, date)
           : hackyOffset(dtf, date);
@@ -917,10 +960,12 @@ var luxon = (function (exports) {
       return (asUTC - asTS) / (60 * 1000);
     }
 
+    /** @override **/
     equals(otherZone) {
-      return otherZone.type === "iana" && otherZone.zoneName === this.zoneName;
+      return otherZone.type === "iana" && otherZone.name === this.name;
     }
 
+    /** @override **/
     get isValid() {
       return this.valid;
     }
@@ -936,7 +981,15 @@ var luxon = (function (exports) {
     return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;
   }
 
+  /**
+   * A zone with a fixed offset (i.e. no DST)
+   * @implments {Zone}
+   */
   class FixedOffsetZone extends Zone {
+    /**
+     * Get a singleton instance of UTC
+     * @return {FixedOffsetZone}
+     */
     static get utcInstance() {
       if (singleton$1 === null) {
         singleton$1 = new FixedOffsetZone(0);
@@ -944,10 +997,23 @@ var luxon = (function (exports) {
       return singleton$1;
     }
 
+    /**
+     * Get an instance with a specified offset
+     * @param {number} offset - The offset in minutes
+     * @return {FixedOffsetZone}
+     */
     static instance(offset) {
       return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
     }
 
+    /**
+     * Get an instance of FixedOffsetZone with from a UTC offset string, like "UTC+6"
+     * @param {string} s - The offset string to parse
+     * @example FixedOffsetZone.parseSpecifier("UTC+6")
+     * @example FixedOffsetZone.parseSpecifier("UTC+06")
+     * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
+     * @return {FixedOffsetZone}
+     */
     static parseSpecifier(s) {
       if (s) {
         const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
@@ -960,68 +1026,88 @@ var luxon = (function (exports) {
 
     constructor(offset) {
       super();
+      /** @private **/
       this.fixed = offset;
     }
 
+    /** @override **/
     get type() {
       return "fixed";
     }
 
+    /** @override **/
     get name() {
       return this.fixed === 0 ? "UTC" : `UTC${hoursMinutesOffset(this)}`;
     }
 
+    /** @override **/
     offsetName() {
       return this.name;
     }
 
+    /** @override **/
     get universal() {
       return true;
     }
 
+    /** @override **/
     offset() {
       return this.fixed;
     }
 
+    /** @override **/
     equals(otherZone) {
       return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
     }
 
+    /** @override **/
     get isValid() {
       return true;
     }
   }
 
+  /**
+   * A zone that failed to parse. You should never need to instantiate this.
+   * @implments {Zone}
+   */
   class InvalidZone extends Zone {
     constructor(zoneName) {
       super();
+      /**  @private */
       this.zoneName = zoneName;
     }
 
+    /** @override **/
     get type() {
       return "invalid";
     }
 
+    /** @override **/
     get name() {
       return this.zoneName;
     }
 
+    /** @override **/
     get universal() {
       return false;
     }
 
+    /** @override **/
     offsetName() {
       return null;
     }
 
+    /** @override **/
     offset() {
       return NaN;
     }
 
+    /** @override **/
     equals() {
       return false;
     }
 
+    /** @override **/
     get isValid() {
       return false;
     }
@@ -1039,7 +1125,7 @@ var luxon = (function (exports) {
       return input;
     } else if (isString(input)) {
       const lowered = input.toLowerCase();
-      if (lowered === "local") return LocalZone.instance;
+      if (lowered === "local") return defaultZone;
       else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
       else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
         // handle Etc/GMT-4, which V8 chokes on

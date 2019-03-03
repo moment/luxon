@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1550423451854" clover="3.2.0">
-  <project timestamp="1550423451855" name="All files">
+<coverage generated="1551637214953" clover="3.2.0">
+  <project timestamp="1551637214954" name="All files">
     <metrics statements="1674" coveredstatements="1630" conditionals="1454" coveredconditionals="1366" methods="476" coveredmethods="463" elements="3604" coveredelements="3459" complexity="0" loc="1674" ncloc="1674" packages="3" files="22" classes="22">
       <package name="src">
         <metrics statements="719" coveredstatements="711" conditionals="741" coveredconditionals="719" methods="248" coveredmethods="245"/>
-        <file name="datetime.js" path="/luxon/src/datetime.js">
+        <file name="datetime.js" path="/mnt/c/code/luxon/src/datetime.js">
           <metrics statements="364" coveredstatements="361" conditionals="375" coveredconditionals="367" methods="129" coveredmethods="128"/>
           <line num="46" count="49" type="stmt"/>
           <line num="49" count="9" type="stmt"/>
@@ -22,9 +22,9 @@
           <line num="93" count="763" type="cond" truecount="2" falsecount="0"/>
           <line num="94" count="757" type="stmt"/>
           <line num="98" count="6" type="stmt"/>
-          <line num="103" count="3596" type="stmt"/>
-          <line num="105" count="3596" type="stmt"/>
-          <line num="107" count="3596" type="stmt"/>
+          <line num="103" count="3597" type="stmt"/>
+          <line num="105" count="3597" type="stmt"/>
+          <line num="107" count="3597" type="stmt"/>
           <line num="120" count="2285" type="stmt"/>
           <line num="125" count="634" type="stmt"/>
           <line num="126" count="634" type="stmt"/>
@@ -193,11 +193,11 @@
           <line num="827" count="90" type="stmt"/>
           <line num="837" count="676" type="cond" truecount="3" falsecount="0"/>
           <line num="850" count="4" type="stmt"/>
-          <line num="860" count="12958" type="stmt"/>
+          <line num="860" count="12959" type="stmt"/>
           <line num="868" count="7" type="cond" truecount="2" falsecount="0"/>
           <line num="876" count="5" type="cond" truecount="2" falsecount="0"/>
           <line num="885" count="242" type="cond" truecount="2" falsecount="0"/>
-          <line num="894" count="203" type="cond" truecount="2" falsecount="0"/>
+          <line num="894" count="204" type="cond" truecount="2" falsecount="0"/>
           <line num="903" count="11" type="cond" truecount="2" falsecount="0"/>
           <line num="911" count="5978" type="stmt"/>
           <line num="919" count="31" type="cond" truecount="2" falsecount="0"/>
@@ -258,12 +258,12 @@
           <line num="1292" count="1010" type="stmt"/>
           <line num="1296" count="1173" type="stmt"/>
           <line num="1297" count="1173" type="stmt"/>
-          <line num="1314" count="465" type="cond" truecount="2" falsecount="0"/>
-          <line num="1315" count="464" type="stmt"/>
-          <line num="1316" count="464" type="stmt"/>
-          <line num="1326" count="171" type="cond" truecount="2" falsecount="0"/>
-          <line num="1327" count="170" type="stmt"/>
-          <line num="1328" count="170" type="stmt"/>
+          <line num="1314" count="464" type="cond" truecount="2" falsecount="0"/>
+          <line num="1315" count="463" type="stmt"/>
+          <line num="1316" count="463" type="stmt"/>
+          <line num="1326" count="172" type="cond" truecount="2" falsecount="0"/>
+          <line num="1327" count="171" type="stmt"/>
+          <line num="1328" count="171" type="stmt"/>
           <line num="1341" count="699" type="cond" truecount="2" falsecount="0"/>
           <line num="1342" count="698" type="stmt"/>
           <line num="1343" count="698" type="stmt"/>
@@ -371,7 +371,7 @@
           <line num="2033" count="2" type="stmt"/>
           <line num="2035" count="0" type="stmt"/>
         </file>
-        <file name="duration.js" path="/luxon/src/duration.js">
+        <file name="duration.js" path="/mnt/c/code/luxon/src/duration.js">
           <metrics statements="163" coveredstatements="162" conditionals="186" coveredconditionals="180" methods="44" coveredmethods="44"/>
           <line num="9" count="49" type="stmt"/>
           <line num="12" count="49" type="stmt"/>
@@ -381,8 +381,8 @@
           <line num="62" count="49" type="stmt"/>
           <line num="95" count="49" type="stmt"/>
           <line num="107" count="49" type="stmt"/>
-          <line num="112" count="1139" type="stmt"/>
-          <line num="117" count="1139" type="stmt"/>
+          <line num="112" count="1140" type="stmt"/>
+          <line num="117" count="1140" type="stmt"/>
           <line num="121" count="59" type="cond" truecount="2" falsecount="0"/>
           <line num="126" count="2401" type="stmt"/>
           <line num="127" count="2401" type="stmt"/>
@@ -396,13 +396,13 @@
           <line num="141" count="2109" type="stmt"/>
           <line num="143" count="2955" type="stmt"/>
           <line num="145" count="4668" type="stmt"/>
-          <line num="168" count="2897" type="cond" truecount="2" falsecount="0"/>
-          <line num="172" count="2897" type="stmt"/>
-          <line num="176" count="2897" type="cond" truecount="2" falsecount="0"/>
-          <line num="180" count="2897" type="cond" truecount="2" falsecount="0"/>
-          <line num="184" count="2897" type="cond" truecount="2" falsecount="0"/>
-          <line num="188" count="2897" type="cond" truecount="2" falsecount="0"/>
-          <line num="192" count="2897" type="stmt"/>
+          <line num="168" count="2898" type="cond" truecount="2" falsecount="0"/>
+          <line num="172" count="2898" type="stmt"/>
+          <line num="176" count="2898" type="cond" truecount="2" falsecount="0"/>
+          <line num="180" count="2898" type="cond" truecount="2" falsecount="0"/>
+          <line num="184" count="2898" type="cond" truecount="2" falsecount="0"/>
+          <line num="188" count="2898" type="cond" truecount="2" falsecount="0"/>
+          <line num="192" count="2898" type="stmt"/>
           <line num="205" count="251" type="stmt"/>
           <line num="227" count="1730" type="cond" truecount="4" falsecount="0"/>
           <line num="228" count="3" type="stmt"/>
@@ -504,11 +504,11 @@
           <line num="597" count="3062" type="cond" truecount="2" falsecount="0"/>
           <line num="598" count="114" type="stmt"/>
           <line num="605" count="832" type="stmt"/>
-          <line num="614" count="238" type="cond" truecount="2" falsecount="0"/>
-          <line num="615" count="237" type="stmt"/>
-          <line num="616" count="237" type="stmt"/>
-          <line num="617" count="249" type="stmt"/>
-          <line num="619" count="237" type="stmt"/>
+          <line num="614" count="239" type="cond" truecount="2" falsecount="0"/>
+          <line num="615" count="238" type="stmt"/>
+          <line num="616" count="238" type="stmt"/>
+          <line num="617" count="250" type="stmt"/>
+          <line num="619" count="238" type="stmt"/>
           <line num="627" count="724" type="cond" truecount="4" falsecount="0"/>
           <line num="635" count="652" type="cond" truecount="4" falsecount="0"/>
           <line num="643" count="714" type="cond" truecount="4" falsecount="0"/>
@@ -518,7 +518,7 @@
           <line num="675" count="740" type="cond" truecount="4" falsecount="0"/>
           <line num="683" count="726" type="cond" truecount="4" falsecount="0"/>
           <line num="691" count="1359" type="cond" truecount="4" falsecount="0"/>
-          <line num="700" count="10090" type="stmt"/>
+          <line num="700" count="10091" type="stmt"/>
           <line num="708" count="7" type="cond" truecount="2" falsecount="0"/>
           <line num="716" count="1" type="cond" truecount="1" falsecount="1"/>
           <line num="726" count="10" type="cond" truecount="4" falsecount="0"/>
@@ -537,7 +537,7 @@
           <line num="752" count="468" type="stmt"/>
           <line num="754" count="0" type="stmt"/>
         </file>
-        <file name="errors.js" path="/luxon/src/errors.js">
+        <file name="errors.js" path="/mnt/c/code/luxon/src/errors.js">
           <metrics statements="5" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="4"/>
           <line num="13" count="1" type="stmt"/>
           <line num="22" count="1" type="stmt"/>
@@ -545,12 +545,12 @@
           <line num="45" count="4" type="stmt"/>
           <line num="59" count="0" type="stmt"/>
         </file>
-        <file name="info.js" path="/luxon/src/info.js">
+        <file name="info.js" path="/mnt/c/code/luxon/src/info.js">
           <metrics statements="21" coveredstatements="21" conditionals="30" coveredconditionals="29" methods="10" coveredmethods="10"/>
           <line num="19" count="4" type="stmt"/>
           <line num="23" count="4" type="cond" truecount="2" falsecount="0"/>
           <line num="32" count="6" type="cond" truecount="2" falsecount="0"/>
-          <line num="50" count="16" type="stmt"/>
+          <line num="50" count="17" type="stmt"/>
           <line num="73" count="20" type="stmt"/>
           <line num="92" count="6" type="stmt"/>
           <line num="109" count="13" type="stmt"/>
@@ -569,7 +569,7 @@
           <line num="179" count="3" type="stmt"/>
           <line num="183" count="12" type="stmt"/>
         </file>
-        <file name="interval.js" path="/luxon/src/interval.js">
+        <file name="interval.js" path="/mnt/c/code/luxon/src/interval.js">
           <metrics statements="144" coveredstatements="144" conditionals="144" coveredconditionals="139" methods="45" coveredmethods="45"/>
           <line num="7" count="49" type="stmt"/>
           <line num="11" count="328" type="cond" truecount="4" falsecount="0"/>
@@ -716,10 +716,10 @@
           <line num="544" count="16" type="stmt"/>
           <line num="555" count="1" type="stmt"/>
         </file>
-        <file name="luxon.js" path="/luxon/src/luxon.js">
+        <file name="luxon.js" path="/mnt/c/code/luxon/src/luxon.js">
           <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         </file>
-        <file name="settings.js" path="/luxon/src/settings.js">
+        <file name="settings.js" path="/mnt/c/code/luxon/src/settings.js">
           <metrics statements="22" coveredstatements="19" conditionals="6" coveredconditionals="4" methods="15" coveredmethods="14"/>
           <line num="6" count="1270" type="stmt"/>
           <line num="7" count="49" type="stmt"/>
@@ -733,7 +733,7 @@
           <line num="49" count="0" type="cond" truecount="0" falsecount="2"/>
           <line num="50" count="0" type="stmt"/>
           <line num="52" count="0" type="stmt"/>
-          <line num="61" count="1650" type="cond" truecount="2" falsecount="0"/>
+          <line num="61" count="1652" type="cond" truecount="2" falsecount="0"/>
           <line num="69" count="3281" type="stmt"/>
           <line num="77" count="16" type="stmt"/>
           <line num="85" count="3899" type="stmt"/>
@@ -747,7 +747,7 @@
       </package>
       <package name="src.impl">
         <metrics statements="865" coveredstatements="837" conditionals="679" coveredconditionals="616" methods="186" coveredmethods="183"/>
-        <file name="conversions.js" path="/luxon/src/impl/conversions.js">
+        <file name="conversions.js" path="/mnt/c/code/luxon/src/impl/conversions.js">
           <metrics statements="82" coveredstatements="75" conditionals="43" coveredconditionals="36" methods="13" coveredmethods="13"/>
           <line num="12" count="49" type="stmt"/>
           <line num="13" count="49" type="stmt"/>
@@ -832,7 +832,7 @@
           <line num="155" count="0" type="stmt"/>
           <line num="156" count="1112" type="stmt"/>
         </file>
-        <file name="diff.js" path="/luxon/src/impl/diff.js">
+        <file name="diff.js" path="/mnt/c/code/luxon/src/impl/diff.js">
           <metrics statements="34" coveredstatements="34" conditionals="14" coveredconditionals="14" methods="8" coveredmethods="8"/>
           <line num="4" count="63" type="stmt"/>
           <line num="5" count="126" type="stmt"/>
@@ -850,9 +850,9 @@
           <line num="34" count="158" type="stmt"/>
           <line num="36" count="158" type="stmt"/>
           <line num="38" count="158" type="cond" truecount="2" falsecount="0"/>
-          <line num="39" count="28" type="stmt"/>
-          <line num="40" count="28" type="stmt"/>
-          <line num="42" count="130" type="stmt"/>
+          <line num="39" count="29" type="stmt"/>
+          <line num="40" count="29" type="stmt"/>
+          <line num="42" count="129" type="stmt"/>
           <line num="45" count="158" type="stmt"/>
           <line num="49" count="194" type="stmt"/>
           <line num="53" count="194" type="stmt"/>
@@ -861,7 +861,7 @@
           <line num="58" count="209" type="stmt"/>
           <line num="61" count="194" type="cond" truecount="2" falsecount="0"/>
           <line num="62" count="146" type="cond" truecount="2" falsecount="0"/>
-          <line num="63" count="71" type="stmt"/>
+          <line num="63" count="70" type="stmt"/>
           <line num="66" count="146" type="cond" truecount="2" falsecount="0"/>
           <line num="67" count="94" type="cond" truecount="2" falsecount="0"/>
           <line num="71" count="194" type="stmt"/>
@@ -869,7 +869,7 @@
           <line num="74" count="48" type="stmt"/>
           <line num="78" count="146" type="stmt"/>
         </file>
-        <file name="english.js" path="/luxon/src/impl/english.js">
+        <file name="english.js" path="/mnt/c/code/luxon/src/impl/english.js">
           <metrics statements="70" coveredstatements="67" conditionals="64" coveredconditionals="60" methods="10" coveredmethods="10"/>
           <line num="5" count="274" type="stmt"/>
           <line num="12" count="50" type="stmt"/>
@@ -942,7 +942,7 @@
           <line num="217" count="1" type="stmt"/>
           <line num="219" count="1" type="stmt"/>
         </file>
-        <file name="formats.js" path="/luxon/src/impl/formats.js">
+        <file name="formats.js" path="/mnt/c/code/luxon/src/impl/formats.js">
           <metrics statements="24" coveredstatements="24" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
           <line num="5" count="50" type="stmt"/>
           <line num="6" count="50" type="stmt"/>
@@ -969,7 +969,7 @@
           <line num="157" count="50" type="stmt"/>
           <line num="167" count="50" type="stmt"/>
         </file>
-        <file name="formatter.js" path="/luxon/src/impl/formatter.js">
+        <file name="formatter.js" path="/mnt/c/code/luxon/src/impl/formatter.js">
           <metrics statements="156" coveredstatements="154" conditionals="144" coveredconditionals="129" methods="24" coveredmethods="24"/>
           <line num="6" count="413" type="stmt"/>
           <line num="7" count="413" type="stmt"/>
@@ -1128,7 +1128,7 @@
           <line num="385" count="139" type="stmt"/>
           <line num="386" count="61" type="stmt"/>
         </file>
-        <file name="invalid.js" path="/luxon/src/impl/invalid.js">
+        <file name="invalid.js" path="/mnt/c/code/luxon/src/impl/invalid.js">
           <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
           <line num="3" count="156" type="stmt"/>
           <line num="4" count="156" type="stmt"/>
@@ -1136,7 +1136,7 @@
           <line num="9" count="1" type="stmt"/>
           <line num="11" count="2" type="stmt"/>
         </file>
-        <file name="locale.js" path="/luxon/src/impl/locale.js">
+        <file name="locale.js" path="/mnt/c/code/luxon/src/impl/locale.js">
           <metrics statements="188" coveredstatements="176" conditionals="175" coveredconditionals="153" methods="49" coveredmethods="47"/>
           <line num="7" count="49" type="stmt"/>
           <line num="9" count="337" type="stmt"/>
@@ -1286,8 +1286,8 @@
           <line num="341" count="446" type="cond" truecount="5" falsecount="0"/>
           <line num="342" count="356" type="stmt"/>
           <line num="344" count="90" type="stmt"/>
-          <line num="349" count="1675" type="cond" truecount="4" falsecount="0"/>
-          <line num="350" count="1140" type="stmt"/>
+          <line num="349" count="1676" type="cond" truecount="4" falsecount="0"/>
+          <line num="350" count="1141" type="stmt"/>
           <line num="352" count="535" type="stmt"/>
           <line num="362" count="235" type="stmt"/>
           <line num="366" count="74" type="stmt"/>
@@ -1327,7 +1327,7 @@
           <line num="455" count="513" type="stmt"/>
           <line num="466" count="121" type="stmt"/>
         </file>
-        <file name="regexParser.js" path="/luxon/src/impl/regexParser.js">
+        <file name="regexParser.js" path="/mnt/c/code/luxon/src/impl/regexParser.js">
           <metrics statements="73" coveredstatements="73" conditionals="36" coveredconditionals="35" methods="23" coveredmethods="23"/>
           <line num="17" count="1152" type="stmt"/>
           <line num="18" count="662" type="stmt"/>
@@ -1403,7 +1403,7 @@
           <line num="271" count="25" type="stmt"/>
           <line num="275" count="13" type="stmt"/>
         </file>
-        <file name="tokenParser.js" path="/luxon/src/impl/tokenParser.js">
+        <file name="tokenParser.js" path="/mnt/c/code/luxon/src/impl/tokenParser.js">
           <metrics statements="132" coveredstatements="132" conditionals="104" coveredconditionals="102" methods="28" coveredmethods="27"/>
           <line num="6" count="49" type="stmt"/>
           <line num="8" count="312" type="cond" truecount="1" falsecount="0"/>
@@ -1538,11 +1538,11 @@
           <line num="294" count="132" type="stmt"/>
           <line num="295" count="132" type="stmt"/>
         </file>
-        <file name="util.js" path="/luxon/src/impl/util.js">
+        <file name="util.js" path="/mnt/c/code/luxon/src/impl/util.js">
           <metrics statements="84" coveredstatements="83" conditionals="70" coveredconditionals="65" methods="28" coveredmethods="28"/>
-          <line num="14" count="35320" type="stmt"/>
+          <line num="14" count="35321" type="stmt"/>
           <line num="18" count="16031" type="stmt"/>
-          <line num="22" count="101" type="stmt"/>
+          <line num="22" count="102" type="stmt"/>
           <line num="26" count="32" type="stmt"/>
           <line num="32" count="4973" type="cond" truecount="2" falsecount="0"/>
           <line num="36" count="678" type="stmt"/>
@@ -1572,13 +1572,13 @@
           <line num="101" count="273" type="stmt"/>
           <line num="102" count="273" type="cond" truecount="2" falsecount="0"/>
           <line num="103" count="273" type="stmt"/>
-          <line num="109" count="505" type="cond" truecount="2" falsecount="1"/>
+          <line num="109" count="348" type="cond" truecount="2" falsecount="1"/>
           <line num="113" count="57" type="cond" truecount="2" falsecount="0"/>
           <line num="117" count="2731" type="stmt"/>
           <line num="118" count="2731" type="stmt"/>
           <line num="120" count="2731" type="cond" truecount="2" falsecount="0"/>
-          <line num="121" count="251" type="cond" truecount="2" falsecount="0"/>
-          <line num="123" count="2480" type="stmt"/>
+          <line num="121" count="94" type="cond" truecount="2" falsecount="0"/>
+          <line num="123" count="2637" type="stmt"/>
           <line num="128" count="3324" type="stmt"/>
           <line num="139" count="3324" type="cond" truecount="4" falsecount="0"/>
           <line num="140" count="16" type="stmt"/>
@@ -1625,30 +1625,30 @@
           <line num="229" count="193" type="stmt"/>
           <line num="232" count="50" type="stmt"/>
         </file>
-        <file name="zoneUtil.js" path="/luxon/src/impl/zoneUtil.js">
+        <file name="zoneUtil.js" path="/mnt/c/code/luxon/src/impl/zoneUtil.js">
           <metrics statements="17" coveredstatements="14" conditionals="27" coveredconditionals="20" methods="1" coveredmethods="1"/>
-          <line num="15" count="1441" type="cond" truecount="4" falsecount="0"/>
-          <line num="16" count="1069" type="stmt"/>
-          <line num="17" count="372" type="cond" truecount="2" falsecount="0"/>
-          <line num="18" count="271" type="stmt"/>
-          <line num="19" count="101" type="cond" truecount="2" falsecount="0"/>
-          <line num="20" count="98" type="stmt"/>
-          <line num="21" count="98" type="cond" truecount="2" falsecount="0"/>
-          <line num="22" count="96" type="cond" truecount="4" falsecount="0"/>
-          <line num="23" count="82" type="cond" truecount="2" falsecount="0"/>
-          <line num="25" count="5" type="stmt"/>
-          <line num="26" count="77" type="cond" truecount="2" falsecount="0"/>
-          <line num="27" count="9" type="cond" truecount="1" falsecount="1"/>
-          <line num="28" count="3" type="cond" truecount="1" falsecount="1"/>
-          <line num="29" count="3" type="stmt"/>
-          <line num="30" count="0" type="cond" truecount="0" falsecount="5"/>
-          <line num="33" count="0" type="stmt"/>
-          <line num="35" count="0" type="stmt"/>
+          <line num="14" count="1442" type="cond" truecount="4" falsecount="0"/>
+          <line num="15" count="1069" type="stmt"/>
+          <line num="16" count="373" type="cond" truecount="2" falsecount="0"/>
+          <line num="17" count="271" type="stmt"/>
+          <line num="18" count="102" type="cond" truecount="2" falsecount="0"/>
+          <line num="19" count="99" type="stmt"/>
+          <line num="20" count="99" type="cond" truecount="2" falsecount="0"/>
+          <line num="21" count="96" type="cond" truecount="4" falsecount="0"/>
+          <line num="22" count="82" type="cond" truecount="2" falsecount="0"/>
+          <line num="24" count="5" type="stmt"/>
+          <line num="25" count="77" type="cond" truecount="2" falsecount="0"/>
+          <line num="26" count="9" type="cond" truecount="1" falsecount="1"/>
+          <line num="27" count="3" type="cond" truecount="1" falsecount="1"/>
+          <line num="28" count="3" type="stmt"/>
+          <line num="29" count="0" type="cond" truecount="0" falsecount="5"/>
+          <line num="32" count="0" type="stmt"/>
+          <line num="34" count="0" type="stmt"/>
         </file>
       </package>
       <package name="src.zones">
         <metrics statements="90" coveredstatements="82" conditionals="34" coveredconditionals="31" methods="42" coveredmethods="35"/>
-        <file name="IANAZone.js" path="/luxon/src/zones/IANAZone.js">
+        <file name="IANAZone.js" path="/mnt/c/code/luxon/src/zones/IANAZone.js">
           <metrics statements="44" coveredstatements="44" conditionals="14" coveredconditionals="13" methods="14" coveredmethods="14"/>
           <line num="4" count="49" type="stmt"/>
           <line num="6" count="49" type="stmt"/>
@@ -1695,7 +1695,7 @@
           <line num="113" count="59" type="cond" truecount="2" falsecount="0"/>
           <line num="117" count="190" type="stmt"/>
         </file>
-        <file name="fixedOffsetZone.js" path="/luxon/src/zones/fixedOffsetZone.js">
+        <file name="fixedOffsetZone.js" path="/mnt/c/code/luxon/src/zones/fixedOffsetZone.js">
           <metrics statements="24" coveredstatements="23" conditionals="16" coveredconditionals="14" methods="12" coveredmethods="12"/>
           <line num="4" count="49" type="stmt"/>
           <line num="7" count="14" type="stmt"/>
@@ -1714,15 +1714,15 @@
           <line num="33" count="0" type="stmt"/>
           <line num="37" count="85" type="stmt"/>
           <line num="38" count="85" type="stmt"/>
-          <line num="42" count="352" type="stmt"/>
+          <line num="42" count="351" type="stmt"/>
           <line num="46" count="28" type="cond" truecount="2" falsecount="0"/>
           <line num="50" count="12" type="stmt"/>
           <line num="54" count="347" type="stmt"/>
-          <line num="58" count="2876" type="stmt"/>
-          <line num="62" count="459" type="cond" truecount="2" falsecount="0"/>
+          <line num="58" count="2878" type="stmt"/>
+          <line num="62" count="458" type="cond" truecount="2" falsecount="0"/>
           <line num="66" count="1145" type="stmt"/>
         </file>
-        <file name="invalidZone.js" path="/luxon/src/zones/invalidZone.js">
+        <file name="invalidZone.js" path="/mnt/c/code/luxon/src/zones/invalidZone.js">
           <metrics statements="9" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="1"/>
           <line num="5" count="1" type="stmt"/>
           <line num="6" count="1" type="stmt"/>
@@ -1734,7 +1734,7 @@
           <line num="30" count="0" type="stmt"/>
           <line num="34" count="0" type="stmt"/>
         </file>
-        <file name="localZone.js" path="/luxon/src/zones/localZone.js">
+        <file name="localZone.js" path="/mnt/c/code/luxon/src/zones/localZone.js">
           <metrics statements="13" coveredstatements="13" conditionals="4" coveredconditionals="4" methods="8" coveredmethods="8"/>
           <line num="4" count="49" type="stmt"/>
           <line num="8" count="1655" type="cond" truecount="2" falsecount="0"/>
