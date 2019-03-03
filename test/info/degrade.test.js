@@ -1,6 +1,7 @@
 /* global expect */
 import { Info } from "../../src/luxon";
-import { Helpers } from "../helpers";
+
+var Helpers = require("../helpers");
 
 //------
 // Info.months()

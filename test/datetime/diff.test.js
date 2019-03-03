@@ -1,7 +1,6 @@
 /* global test expect */
 
 import { DateTime } from "../../src/luxon";
-import { Helpers } from "../helpers";
 
 var Helpers = require("../helpers");
 
