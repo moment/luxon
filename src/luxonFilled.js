@@ -8,5 +8,6 @@ import "core-js/es6/array.js";
 import "core-js/fn/string/virtual/starts-with.js";
 import "core-js/fn/string/virtual/repeat.js";
 import "core-js/fn/math/trunc.js";
+import "core-js/fn/math/sign.js";
 
 export * from "./luxon.js";
