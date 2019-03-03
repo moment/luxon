@@ -4,6 +4,8 @@
   it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
 */
 
+import { InvalidArgumentError } from "../errors.js";
+
 /**
  * @private
  */
@@ -97,6 +99,7 @@ export function parseInteger(string) {
 }
 
 export function parseMillis(fraction) {
+  // Return undefined (instead of 0) in these cases, where fraction is not set
   if (isUndefined(fraction) || fraction === null || fraction === "") {
     return undefined;
   } else {
@@ -219,7 +222,7 @@ export function signedOffset(offHourStr, offMinuteStr) {
 function asNumber(value) {
   const numericValue = Number(value);
   if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue))
-    throw new Error(`Invalid unit value ${value}`);
+    throw new InvalidArgumentError(`Invalid unit value ${value}`);
   return numericValue;
 }
 
@@ -227,8 +230,9 @@ export function normalizeObject(obj, normalizer, nonUnitKeys) {
   const normalized = {};
   for (const u in obj) {
     if (obj.hasOwnProperty(u)) {
+      if (nonUnitKeys.indexOf(u) >= 0) continue;
       const v = obj[u];
-      if (v === undefined || v === null || nonUnitKeys.includes(u)) continue;
+      if (v === undefined || v === null) continue;
       normalized[normalizer(u)] = asNumber(v);
     }
   }

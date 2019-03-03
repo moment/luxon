@@ -155,12 +155,13 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
-      obj = Object.assign(parsed, opts, {
-        zone: interpretationZone
-      });
-    // setZone is a valid option in calling methods, but not in fromObject
-    delete obj.setZone;
-    const inst = DateTime.fromObject(obj);
+      inst = DateTime.fromObject(
+        Object.assign(parsed, opts, {
+          zone: interpretationZone,
+          // setZone is a valid option in the calling methods, but not in fromObject
+          setZone: undefined
+        })
+      );
     return setZone ? inst : inst.setZone(zone);
   } else {
     return DateTime.invalid(
@@ -590,20 +591,14 @@ export default class DateTime {
       return DateTime.invalid(unsupportedZone(zoneToUse));
     }
 
-    let normalized;
-    try {
+    const tsNow = Settings.now(),
+      offsetProvis = zoneToUse.offset(tsNow),
       normalized = normalizeObject(obj, normalizeUnit, [
         "zone",
         "locale",
         "outputCalendar",
         "numberingSystem"
-      ]);
-    } catch (error) {
-      return DateTime.invalid(error.message);
-    }
-
-    const tsNow = Settings.now(),
-      offsetProvis = zoneToUse.offset(tsNow),
+      ]),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),

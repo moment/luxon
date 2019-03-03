@@ -394,37 +394,24 @@ test("DateTime.fromObject() ignores the case of object keys", () => {
   expect(dt.day).toBe(10);
 });
 
-test("DateTime.fromObject() rejects invalid keys", () => {
-  const dt = DateTime.fromObject({ invalidUnit: 42 });
-  expect(dt.isValid).toBe(false);
-  expect(dt.invalidReason).toBe("Invalid unit invalidUnit");
+test("DateTime.fromObject() throws with invalid object key", () => {
+  expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow();
 });
 
-test("DateTime.fromObject() rejects invalid values", () => {
-  const dt = DateTime.fromObject({ year: "blorp" });
-  expect(dt.isValid).toBe(false);
-  expect(dt.invalidReason).toBe("Invalid unit value blorp");
+test("DateTime.fromObject() throws with invalid value types", () => {
+  expect(() => DateTime.fromObject({ year: "blorp" })).toThrow();
+  expect(() => DateTime.fromObject({ year: "" })).toThrow();
+  expect(() => DateTime.fromObject({ month: NaN })).toThrow();
+  expect(() => DateTime.fromObject({ day: true })).toThrow();
+  expect(() => DateTime.fromObject({ day: false })).toThrow();
+  expect(() => DateTime.fromObject({ hour: {} })).toThrow();
+  expect(() => DateTime.fromObject({ hour: { unit: 42 } })).toThrow();
+});
 
-  expect(DateTime.fromObject({ month: "" }).isValid).toBe(false);
+test("DateTime.fromObject() reject invalid values", () => {
   expect(DateTime.fromObject({ ordinal: 5000 }).isValid).toBe(false);
   expect(DateTime.fromObject({ minute: -6 }).isValid).toBe(false);
   expect(DateTime.fromObject({ millisecond: new Date() }).isValid).toBe(false);
-});
-
-test("DateTime.fromObject() rejects boolean values", () => {
-  const dtTrue = DateTime.fromObject({ year: true });
-  expect(dtTrue.isValid).toBe(false);
-  expect(dtTrue.invalidReason).toBe("Invalid unit value true");
-
-  const dtFalse = DateTime.fromObject({ year: false });
-  expect(dtFalse.isValid).toBe(false);
-  expect(dtFalse.invalidReason).toBe("Invalid unit value false");
-});
-
-test("DateTime.fromObject() rejects NaN values", () => {
-  const dt = DateTime.fromObject({ year: NaN });
-  expect(dt.isValid).toBe(false);
-  expect(dt.invalidReason).toBe("Invalid unit value NaN");
 });
 
 test("DateTime.fromObject() defaults high-order values to the current date", () => {
