@@ -155,10 +155,7 @@ const obsOffsets = {
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
     year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
-    month:
-      monthStr.length === 2
-        ? parseInteger(monthStr, 10)
-        : English.monthsShort.indexOf(monthStr) + 1,
+    month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInteger(dayStr),
     hour: parseInteger(hourStr),
     minute: parseInteger(minuteStr)
