@@ -1,7 +1,8 @@
 /* global test expect */
 
 import { Info, FixedOffsetZone, IANAZone, InvalidZone, LocalZone, Settings } from "../../src/luxon";
-import { Helpers } from "../helpers";
+
+const Helpers = require("../helpers");
 
 //------
 // .hasDST()

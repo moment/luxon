@@ -1,6 +1,7 @@
 /* global test expect */
 import { DateTime, Interval } from "../../src/luxon";
-import { Helpers } from "../helpers";
+
+const Helpers = require("../helpers");
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e));
 

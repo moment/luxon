@@ -2,111 +2,111 @@
 /* eslint no-global-assign: "off" */
 import { DateTime, Settings } from "../src/luxon";
 
-export class Helpers {
-  static withoutIntl(name, f) {
-    const fullName = `With no Intl support, ${name}`;
-    test(fullName, () => {
-      const intl = Intl;
-      try {
-        Intl = undefined;
-        Settings.resetCaches();
-        f();
-      } finally {
-        Intl = intl;
-      }
-    });
-  }
 
-  static withoutFTP(name, f) {
-    const fullName = `With no FormatToParts support, ${name}`;
-    test(fullName, () => {
-      const { formatToParts } = Intl.DateTimeFormat.prototype;
-      try {
-        Intl.DateTimeFormat.prototype.formatToParts = undefined;
-        Settings.resetCaches();
-        f();
-      } finally {
-        Intl.DateTimeFormat.prototype.formatToParts = formatToParts;
-      }
-    });
-  }
+exports.withoutIntl = function (name, f) {
+  const fullName = `With no Intl support, ${name}`;
+  test(fullName, () => {
+    const intl = Intl;
+    try {
+      Intl = undefined;
+      Settings.resetCaches();
+      f();
+    } finally {
+      Intl = intl;
+    }
+  });
+};
 
-  static withoutRTF(name, f) {
-    const fullName = `With no RelativeTimeFormat support, ${name}`;
-    test(fullName, () => {
-      const rtf = Intl.RelativeTimeFormat;
-      try {
-        Intl.RelativeTimeFormat = undefined;
-        Settings.resetCaches();
-        f();
-      } finally {
-        Intl.RelativeTimeFormat = rtf;
-      }
-    });
-  }
+exports.withoutFTP = function (name, f) {
+  const fullName = `With no FormatToParts support, ${name}`;
+  test(fullName, () => {
+    const { formatToParts } = Intl.DateTimeFormat.prototype;
+    try {
+      Intl.DateTimeFormat.prototype.formatToParts = undefined;
+      Settings.resetCaches();
+      f();
+    } finally {
+      Intl.DateTimeFormat.prototype.formatToParts = formatToParts;
+    }
+  });
+};
 
-  static withoutZones(name, f) {
-    const fullName = `With no time zone support, ${name}`;
-    test(fullName, () => {
-      const { DateTimeFormat } = Intl;
-      try {
-        Intl.DateTimeFormat = (locale, opts = {}) => {
-          if (opts.timeZone) {
-            // eslint-disable-next-line no-throw-literal
-            throw `Unsupported time zone specified ${opts.timeZone}`;
-          }
-          return DateTimeFormat(locale, opts);
-        };
-        Intl.DateTimeFormat.prototype = DateTimeFormat.prototype;
+exports.withoutRTF = function (name, f) {
+  const fullName = `With no RelativeTimeFormat support, ${name}`;
+  test(fullName, () => {
+    const rtf = Intl.RelativeTimeFormat;
+    try {
+      Intl.RelativeTimeFormat = undefined;
+      Settings.resetCaches();
+      f();
+    } finally {
+      Intl.RelativeTimeFormat = rtf;
+    }
+  });
+};
 
-        Settings.resetCaches();
-        f();
-      } finally {
-        Intl.DateTimeFormat = DateTimeFormat;
-      }
-    });
-  }
+exports.withoutZones = function (name, f) {
+  const fullName = `With no time zone support, ${name}`;
+  test(fullName, () => {
+    const { DateTimeFormat } = Intl;
+    try {
+      Intl.DateTimeFormat = (locale, opts = {}) => {
+        if (opts.timeZone) {
+          // eslint-disable-next-line no-throw-literal
+          throw `Unsupported time zone specified ${opts.timeZone}`;
+        }
+        return DateTimeFormat(locale, opts);
+      };
+      Intl.DateTimeFormat.prototype = DateTimeFormat.prototype;
 
-  static withNow(name, dt, f) {
-    test(name, () => {
-      const oldNow = Settings.now;
+      Settings.resetCaches();
+      f();
+    } finally {
+      Intl.DateTimeFormat = DateTimeFormat;
+    }
+  });
+};
 
-      try {
-        Settings.now = () => dt.valueOf();
-        f();
-      } finally {
-        Settings.now = oldNow;
-      }
-    });
-  }
+exports.withNow = function (name, dt, f) {
+  test(name, () => {
+    const oldNow = Settings.now;
 
-  // not a tester!
-  static withDefaultZone(zone, f) {
-    return (value, f) => {
-      try {
-        Settings.defaultZoneName = value;
-        f();
-      } finally {
-        Settings.defaultZoneName = null;
-      }
-    };
-  }
+    try {
+      Settings.now = () => dt.valueOf();
+      f();
+    } finally {
+      Settings.now = oldNow;
+    }
+  });
+};
 
-  static setUnset(prop) {
-    return (value, f) => {
-      const existing = Settings[prop];
-      try {
-        Settings[prop] = value;
-        f();
-      } finally {
-        Settings[prop] = existing;
-      }
-    };
-  }
+// not a tester!
+exports.withDefaultZone = function (zone, f) {
+  return (value, f) => {
+    try {
+      Settings.defaultZoneName = value;
+      f();
+    } finally {
+      Settings.defaultZoneName = null;
+    }
+  };
+};
 
-  static atHour(hour) {
-    return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
-      .startOf("day")
-      .set({ hour });
-  }
-}
+exports.setUnset = function (prop) {
+  return (value, f) => {
+    const existing = Settings[prop];
+    try {
+      Settings[prop] = value;
+      f();
+    } finally {
+      Settings[prop] = existing;
+    }
+  };
+};
+
+exports.atHour = function (hour) {
+  return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
+    .startOf("day")
+    .set({ hour });
+};
+

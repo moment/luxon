@@ -1,7 +1,8 @@
 /* global test expect */
 
 import { DateTime } from "../../src/luxon";
-import { Helpers } from "../helpers";
+
+const Helpers = require("../helpers");
 
 const withDefaultLocale = Helpers.setUnset("defaultLocale"),
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),

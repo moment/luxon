@@ -1,7 +1,8 @@
 /* global test expect */
 
 import { DateTime, Settings } from "../../src/luxon";
-import { Helpers } from "../helpers";
+
+var Helpers = require("../helpers");
 
 const millis = 391147200000,
   // 1982-05-25T04:00:00.000Z
