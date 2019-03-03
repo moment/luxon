@@ -1,15 +1,14 @@
 /* eslint import/no-extraneous-dependencies: off */
 /* eslint no-console: off */
-import fs from 'fs-extra';
+import fs from "fs-extra";
 
-fs
-  .readJson('build/docs/coverage.json')
+fs.readJson("build/docs/coverage.json")
   .then(parsed => {
-    if (parsed.coverage !== '100%') {
-      console.error('Doc coverage not 100%');
+    if (parsed.coverage !== "100%") {
+      console.error("Doc coverage not 100%");
       process.exit(1);
     } else {
-      console.error('Doc coverage 100%');
+      console.error("Doc coverage 100%");
     }
   })
   .catch(() => {

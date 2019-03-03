@@ -11,7 +11,15 @@ function hoursMinutesOffset(z) {
   return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;
 }
 
+/**
+ * A zone with a fixed offset (i.e. no DST)
+ * @implments {Zone}
+ */
 export default class FixedOffsetZone extends Zone {
+  /**
+   * Get a singleton instance of UTC
+   * @return {FixedOffsetZone}
+   */
   static get utcInstance() {
     if (singleton === null) {
       singleton = new FixedOffsetZone(0);
@@ -19,10 +27,23 @@ export default class FixedOffsetZone extends Zone {
     return singleton;
   }
 
+  /**
+   * Get an instance with a specified offset
+   * @param {number} offset - The offset in minutes
+   * @return {FixedOffsetZone}
+   */
   static instance(offset) {
     return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
   }
 
+  /**
+   * Get an instance of FixedOffsetZone with from a UTC offset string, like "UTC+6"
+   * @param {string} s - The offset string to parse
+   * @example FixedOffsetZone.parseSpecifier("UTC+6")
+   * @example FixedOffsetZone.parseSpecifier("UTC+06")
+   * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
+   * @return {FixedOffsetZone}
+   */
   static parseSpecifier(s) {
     if (s) {
       const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
@@ -35,33 +56,41 @@ export default class FixedOffsetZone extends Zone {
 
   constructor(offset) {
     super();
+    /** @private **/
     this.fixed = offset;
   }
 
+  /** @override **/
   get type() {
     return "fixed";
   }
 
+  /** @override **/
   get name() {
     return this.fixed === 0 ? "UTC" : `UTC${hoursMinutesOffset(this)}`;
   }
 
+  /** @override **/
   offsetName() {
     return this.name;
   }
 
+  /** @override **/
   get universal() {
     return true;
   }
 
+  /** @override **/
   offset() {
     return this.fixed;
   }
 
+  /** @override **/
   equals(otherZone) {
     return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
   }
 
+  /** @override **/
   get isValid() {
     return true;
   }

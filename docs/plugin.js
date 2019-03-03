@@ -8,9 +8,7 @@ exports.onHandleContent = function(ev) {
   const $ = cheerio.load(ev.data.content);
 
   // Add Luxon to the page so you can play with it while browsing the docs
-  $("body").append(
-    "<script src='https://moment.github.io/luxon/global/luxon.js'/>"
-  );
+  $("body").append("<script src='https://moment.github.io/luxon/global/luxon.js'/>");
   $("body").append(
     "<script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script>"
   );
@@ -20,9 +18,7 @@ exports.onHandleContent = function(ev) {
 
   // Identify that this page is about Luxon
   $("header").prepend('<a href="../index.html" class="luxon-title">Luxon</a>');
-  $("head").append(
-    "<style>.luxon-title {font-size: 22px; color: black;}</style>"
-  );
+  $("head").append("<style>.luxon-title {font-size: 22px; color: black;}</style>");
 
   // Naming things better
   $('header > a:contains("Home")').text("Manual");

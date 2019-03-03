@@ -50,11 +50,31 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
+/**
+ * A zone identified by an IANA identifier, like America/New_York
+ * @implments {Zone}
+ */
 export default class IANAZone extends Zone {
+  /**
+   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
+   * @param {string} s - The string to check validity on
+   * @example IANAZone.isValidSpecifier("America/New_York") //=> true
+   * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
+   * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
+   * @return {true}
+   */
   static isValidSpecifier(s) {
     return s && s.match(matchingRegex);
   }
 
+  /**
+   * Returns whether the provided string identifies a real zone
+   * @param {string} zone - The string to check
+   * @example IANAZone.isValidZone("America/New_York") //=> true
+   * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
+   * @example IANAZone.isValidZone("Sport~~blorp") //=> false
+   * @return {true}
+   */
   static isValidZone(zone) {
     try {
       new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
@@ -65,6 +85,7 @@ export default class IANAZone extends Zone {
   }
 
   // Etc/GMT+8 -> -480
+  /** @ignore */
   static parseGMTOffset(specifier) {
     if (specifier) {
       const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
@@ -77,29 +98,36 @@ export default class IANAZone extends Zone {
 
   constructor(name) {
     super();
+    /** @private **/
     this.zoneName = name;
+    /** @private **/
     this.valid = IANAZone.isValidZone(name);
   }
 
+  /** @override **/
   get type() {
     return "iana";
   }
 
+  /** @override **/
   get name() {
     return this.zoneName;
   }
 
+  /** @override **/
   get universal() {
     return false;
   }
 
+  /** @override **/
   offsetName(ts, { format, locale }) {
-    return parseZoneInfo(ts, format, locale, this.zoneName);
+    return parseZoneInfo(ts, format, locale, this.name);
   }
 
+  /** @override **/
   offset(ts) {
     const date = new Date(ts),
-      dtf = makeDTF(this.zoneName),
+      dtf = makeDTF(this.name),
       [year, month, day, hour, minute, second] = dtf.formatToParts
         ? partsOffset(dtf, date)
         : hackyOffset(dtf, date);
@@ -109,10 +137,12 @@ export default class IANAZone extends Zone {
     return (asUTC - asTS) / (60 * 1000);
   }
 
+  /** @override **/
   equals(otherZone) {
-    return otherZone.type === "iana" && otherZone.zoneName === this.zoneName;
+    return otherZone.type === "iana" && otherZone.name === this.name;
   }
 
+  /** @override **/
   get isValid() {
     return this.valid;
   }
