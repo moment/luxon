@@ -1,5 +1,10 @@
 # Changelog
 
+1.11.4
+
+ * `setZone("local")` now returns the defaultZone if it is set
+ * Fixes for the polyfilled build
+
 1.11.3
 
  * Allow 24:00 in ISO (and other) strings
