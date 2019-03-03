@@ -1,6 +1,6 @@
 import DateTime from "../../src/datetime";
 
-var Helpers = require("../helpers");
+const Helpers = require("../helpers");
 
 /* global expect test */
 

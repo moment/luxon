@@ -1,7 +1,7 @@
 /* global expect Intl */
 import { DateTime } from "../../src/luxon";
 
-var Helpers = require("../helpers");
+const Helpers = require("../helpers");
 
 //------
 // No Intl support
