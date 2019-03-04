@@ -157,7 +157,9 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(
         Object.assign(parsed, opts, {
-          zone: interpretationZone
+          zone: interpretationZone,
+          // setZone is a valid option in the calling methods, but not in fromObject
+          setZone: undefined
         })
       );
     return setZone ? inst : inst.setZone(zone);
@@ -252,7 +254,7 @@ const orderedUnits = ["year", "month", "day", "hour", "minute", "second", "milli
   orderedOrdinalUnits = ["year", "ordinal", "hour", "minute", "second", "millisecond"];
 
 // standardize case and plurality in units
-function normalizeUnit(unit, ignoreUnknown = false) {
+function normalizeUnit(unit) {
   const normalized = {
     year: "year",
     years: "year",
@@ -278,7 +280,7 @@ function normalizeUnit(unit, ignoreUnknown = false) {
     ordinal: "ordinal"
   }[unit ? unit.toLowerCase() : unit];
 
-  if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
+  if (!normalized) throw new InvalidUnitError(unit);
 
   return normalized;
 }
@@ -591,7 +593,12 @@ export default class DateTime {
 
     const tsNow = Settings.now(),
       offsetProvis = zoneToUse.offset(tsNow),
-      normalized = normalizeObject(obj, normalizeUnit, true),
+      normalized = normalizeObject(obj, normalizeUnit, [
+        "zone",
+        "locale",
+        "outputCalendar",
+        "numberingSystem"
+      ]),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
@@ -1273,7 +1280,7 @@ export default class DateTime {
   set(values) {
     if (!this.isValid) return this;
 
-    const normalized = normalizeObject(values, normalizeUnit),
+    const normalized = normalizeObject(values, normalizeUnit, []),
       settingWeekStuff =
         !isUndefined(normalized.weekYear) ||
         !isUndefined(normalized.weekNumber) ||
@@ -1789,7 +1796,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+   * Returns a string representation of this date relative to today, such as "yesterday" or "next month"
    * platform supports Intl.RelativeDateFormat.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.

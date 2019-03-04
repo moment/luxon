@@ -1,4 +1,4 @@
-import { untruncateYear, signedOffset, parseMillis, ianaRegex } from "./util.js";
+import { untruncateYear, signedOffset, parseInteger, parseMillis, ianaRegex } from "./util.js";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
@@ -51,7 +51,7 @@ function simpleParse(...keys) {
     let i;
 
     for (i = 0; i < keys.length; i++) {
-      ret[keys[i]] = parseInt(match[cursor + i]);
+      ret[keys[i]] = parseInteger(match[cursor + i]);
     }
     return [ret, null, cursor + i];
   };
@@ -75,9 +75,9 @@ const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
 
 function extractISOYmd(match, cursor) {
   const item = {
-    year: parseInt(match[cursor]),
-    month: parseInt(match[cursor + 1]) || 1,
-    day: parseInt(match[cursor + 2]) || 1
+    year: parseInteger(match[cursor]),
+    month: parseInteger(match[cursor + 1]) || 1,
+    day: parseInteger(match[cursor + 2]) || 1
   };
 
   return [item, null, cursor + 3];
@@ -85,9 +85,9 @@ function extractISOYmd(match, cursor) {
 
 function extractISOTime(match, cursor) {
   const item = {
-    hour: parseInt(match[cursor]) || 0,
-    minute: parseInt(match[cursor + 1]) || 0,
-    second: parseInt(match[cursor + 2]) || 0,
+    hour: parseInteger(match[cursor]) || 0,
+    minute: parseInteger(match[cursor + 1]) || 0,
+    second: parseInteger(match[cursor + 2]) || 0,
     millisecond: parseMillis(match[cursor + 3])
   };
 
@@ -125,13 +125,13 @@ function extractISODuration(match) {
 
   return [
     {
-      years: parseInt(yearStr),
-      months: parseInt(monthStr),
-      weeks: parseInt(weekStr),
-      days: parseInt(dayStr),
-      hours: parseInt(hourStr),
-      minutes: parseInt(minuteStr),
-      seconds: parseInt(secondStr),
+      years: parseInteger(yearStr),
+      months: parseInteger(monthStr),
+      weeks: parseInteger(weekStr),
+      days: parseInteger(dayStr),
+      hours: parseInteger(hourStr),
+      minutes: parseInteger(minuteStr),
+      seconds: parseInteger(secondStr),
       milliseconds: parseMillis(millisecondsStr)
     }
   ];
@@ -154,15 +154,14 @@ const obsOffsets = {
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
-    year: yearStr.length === 2 ? untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-    month:
-      monthStr.length === 2 ? parseInt(monthStr, 10) : English.monthsShort.indexOf(monthStr) + 1,
-    day: parseInt(dayStr),
-    hour: parseInt(hourStr),
-    minute: parseInt(minuteStr)
+    year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
+    month: English.monthsShort.indexOf(monthStr) + 1,
+    day: parseInteger(dayStr),
+    hour: parseInteger(hourStr),
+    minute: parseInteger(minuteStr)
   };
 
-  if (secondStr) result.second = parseInt(secondStr);
+  if (secondStr) result.second = parseInteger(secondStr);
   if (weekdayStr) {
     result.weekday =
       weekdayStr.length > 3

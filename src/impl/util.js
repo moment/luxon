@@ -4,6 +4,8 @@
   it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
 */
 
+import { InvalidArgumentError } from "../errors.js";
+
 /**
  * @private
  */
@@ -88,9 +90,18 @@ export function padStart(input, n = 2) {
   }
 }
 
+export function parseInteger(string) {
+  if (isUndefined(string) || string === null || string === "") {
+    return undefined;
+  } else {
+    return parseInt(string, 10);
+  }
+}
+
 export function parseMillis(fraction) {
-  if (isUndefined(fraction)) {
-    return NaN;
+  // Return undefined (instead of 0) in these cases, where fraction is not set
+  if (isUndefined(fraction) || fraction === null || fraction === "") {
+    return undefined;
   } else {
     const f = parseFloat("0." + fraction) * 1000;
     return Math.floor(f);
@@ -208,18 +219,21 @@ export function signedOffset(offHourStr, offMinuteStr) {
 
 // COERCION
 
-export function normalizeObject(obj, normalizer, ignoreUnknown = false) {
+function asNumber(value) {
+  const numericValue = Number(value);
+  if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue))
+    throw new InvalidArgumentError(`Invalid unit value ${value}`);
+  return numericValue;
+}
+
+export function normalizeObject(obj, normalizer, nonUnitKeys) {
   const normalized = {};
   for (const u in obj) {
     if (obj.hasOwnProperty(u)) {
+      if (nonUnitKeys.indexOf(u) >= 0) continue;
       const v = obj[u];
-      const numericValue = Number(v);
-      if (v !== null && !Number.isNaN(numericValue)) {
-        const mapped = normalizer(u, ignoreUnknown);
-        if (mapped) {
-          normalized[mapped] = numericValue;
-        }
-      }
+      if (v === undefined || v === null) continue;
+      normalized[normalizer(u)] = asNumber(v);
     }
   }
   return normalized;

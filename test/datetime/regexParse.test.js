@@ -182,7 +182,7 @@ test("DateTime.fromISO() accepts extend years", () => {
   });
 });
 
-test("DateTime.fromISO() accepts year-moth-dayThour", () => {
+test("DateTime.fromISO() accepts year-month-dayThour", () => {
   isSame("2016-05-25T09", {
     year: 2016,
     month: 5,

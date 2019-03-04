@@ -117,6 +117,12 @@ test("DateTime#set throws for invalid units", () => {
   expect(() => dt.set({ glorb: 200 })).toThrow();
 });
 
+test("DateTime#set throws for metadata", () => {
+  expect(() => dt.set({ zone: "UTC" })).toThrow();
+  expect(() => dt.set({ locale: "be" })).toThrow();
+  expect(() => dt.set({ invalid: true })).toThrow();
+});
+
 test("DateTime#set maintains invalidity", () => {
   expect(DateTime.invalid("because").set({ ordinal: 200 }).isValid).toBe(false);
 });

@@ -386,6 +386,34 @@ test("DateTime.fromObject() rejects invalid zones", () => {
   expect(dt.invalidReason).toBe("unsupported zone");
 });
 
+test("DateTime.fromObject() ignores the case of object keys", () => {
+  const dt = DateTime.fromObject({ Year: 2019, MONTH: 4, daYs: 10 });
+  expect(dt.isValid).toBe(true);
+  expect(dt.year).toBe(2019);
+  expect(dt.month).toBe(4);
+  expect(dt.day).toBe(10);
+});
+
+test("DateTime.fromObject() throws with invalid object key", () => {
+  expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow();
+});
+
+test("DateTime.fromObject() throws with invalid value types", () => {
+  expect(() => DateTime.fromObject({ year: "blorp" })).toThrow();
+  expect(() => DateTime.fromObject({ year: "" })).toThrow();
+  expect(() => DateTime.fromObject({ month: NaN })).toThrow();
+  expect(() => DateTime.fromObject({ day: true })).toThrow();
+  expect(() => DateTime.fromObject({ day: false })).toThrow();
+  expect(() => DateTime.fromObject({ hour: {} })).toThrow();
+  expect(() => DateTime.fromObject({ hour: { unit: 42 } })).toThrow();
+});
+
+test("DateTime.fromObject() reject invalid values", () => {
+  expect(DateTime.fromObject({ ordinal: 5000 }).isValid).toBe(false);
+  expect(DateTime.fromObject({ minute: -6 }).isValid).toBe(false);
+  expect(DateTime.fromObject({ millisecond: new Date() }).isValid).toBe(false);
+});
+
 test("DateTime.fromObject() defaults high-order values to the current date", () => {
   const dateTime = DateTime.fromObject({}),
     now = DateTime.local();
@@ -571,13 +599,4 @@ test("DateTime.fromObject handles null as a language tag", () => {
     expect(res.outputCalendar).toBe("islamic");
     expect(res.numberingSystem).toBe("thai");
   });
-});
-
-test("DateTime.fromObject overrides invalid date part with the current date part", () => {
-  const dt = DateTime.fromObject({ year: "hello" });
-  const localDt = DateTime.local();
-  expect(dt.isValid).toBe(true);
-  expect(dt.year).toBe(localDt.year);
-  expect(dt.months).toBe(localDt.months);
-  expect(dt.day).toBe(localDt.day);
 });

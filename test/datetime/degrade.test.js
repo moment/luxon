@@ -1,4 +1,4 @@
-/* global expect Intl */
+/* global expect */
 import { DateTime } from "../../src/luxon";
 import { Helpers } from "../helpers";
 
