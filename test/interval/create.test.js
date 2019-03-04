@@ -4,7 +4,7 @@ import { DateTime, Interval, Duration, Settings } from "../../src/luxon";
 //------
 // .fromObject()
 //-------
-test("Interval#fromDateTimes creates an interval from datetimes", () => {
+test("Interval.fromDateTimes creates an interval from datetimes", () => {
   const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }),
     int = Interval.fromDateTimes(start, end);
@@ -13,7 +13,7 @@ test("Interval#fromDateTimes creates an interval from datetimes", () => {
   expect(int.end).toBe(end);
 });
 
-test("Interval#fromDateTimes creates an interval from objects", () => {
+test("Interval.fromDateTimes creates an interval from objects", () => {
   const start = { year: 2016, month: 5, day: 25 },
     end = { year: 2016, month: 5, day: 27 },
     int = Interval.fromDateTimes(start, end);
@@ -22,7 +22,7 @@ test("Interval#fromDateTimes creates an interval from objects", () => {
   expect(int.end).toEqual(DateTime.fromObject(end));
 });
 
-test("Interval#fromDateTimes creates an interval from Dates", () => {
+test("Interval.fromDateTimes creates an interval from Dates", () => {
   const start = DateTime.fromObject({
       year: 2016,
       month: 5,
@@ -35,7 +35,7 @@ test("Interval#fromDateTimes creates an interval from Dates", () => {
   expect(int.end.toJSDate()).toEqual(end);
 });
 
-test("Interval#fromDateTimes results in an invalid Interval if the endpoints are invalid", () => {
+test("Interval.fromDateTimes results in an invalid Interval if the endpoints are invalid", () => {
   const validDate = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     invalidDate = DateTime.invalid("because");
 
@@ -51,14 +51,14 @@ test("Interval#fromDateTimes results in an invalid Interval if the endpoints are
   );
 });
 
-test("Interval#fromDateTimes throws with invalid input", () => {
+test("Interval.fromDateTimes throws with invalid input", () => {
   expect(() => Interval.fromDateTimes(DateTime.local(), true)).toThrow();
 });
 
 //------
 // .after()
 //-------
-test("Interval#after takes a duration", () => {
+test("Interval.after takes a duration", () => {
   const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.after(start, Duration.fromObject({ days: 3 }));
 
@@ -66,7 +66,7 @@ test("Interval#after takes a duration", () => {
   expect(int.end.day).toBe(28);
 });
 
-test("Interval#after an object", () => {
+test("Interval.after an object", () => {
   const start = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.after(start, { days: 3 });
 
@@ -77,7 +77,7 @@ test("Interval#after an object", () => {
 //------
 // .before()
 //-------
-test("Interval#before takes a duration", () => {
+test("Interval.before takes a duration", () => {
   const end = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.before(end, Duration.fromObject({ days: 3 }));
 
@@ -85,7 +85,7 @@ test("Interval#before takes a duration", () => {
   expect(int.end).toBe(end);
 });
 
-test("Interval#before takes a number and unit", () => {
+test("Interval.before takes a number and unit", () => {
   const end = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
     int = Interval.before(end, { days: 3 });
 
@@ -96,11 +96,11 @@ test("Interval#before takes a number and unit", () => {
 //------
 // .invalid()
 //-------
-test("Interval#invalid produces invalid Intervals", () => {
+test("Interval.invalid produces invalid Intervals", () => {
   expect(Interval.invalid("because").isValid).toBe(false);
 });
 
-test("Interval#invalid throws if throwOnInvalid is set", () => {
+test("Interval.invalid throws if throwOnInvalid is set", () => {
   try {
     Settings.throwOnInvalid = true;
     expect(() => Interval.invalid("because")).toThrow();
@@ -109,6 +109,6 @@ test("Interval#invalid throws if throwOnInvalid is set", () => {
   }
 });
 
-test("Interval#invalid throws if no reason is specified", () => {
+test("Interval.invalid throws if no reason is specified", () => {
   expect(() => Interval.invalid()).toThrow();
 });
