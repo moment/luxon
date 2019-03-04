@@ -63,7 +63,7 @@ test("DateTime#toJSDate() returns a native Date equivalent", () => {
 // #toBSON()
 //------
 test("DateTime#toBSON() return a BSON serializable equivalent", () => {
-  const js = dt.toJSDate();
+  const js = dt.toBSON();
   expect(js).toBeInstanceOf(Date);
   expect(js.getTime()).toBe(dt.toMillis());
 });

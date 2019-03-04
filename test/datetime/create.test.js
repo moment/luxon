@@ -97,18 +97,24 @@ test("DateTime.local accepts the default locale", () => {
 });
 
 test("DateTime.local accepts the default numbering system", () => {
-  withDefaultNumberingSystem("beng", () => expect(DateTime.local().numberingSystem).toBe("beng"));
+  withDefaultNumberingSystem("beng", () =>
+    expect(DateTime.local().numberingSystem).toBe("beng")
+  );
 });
 
 test("DateTime.local accepts the default output calendar", () => {
-  withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
+  withDefaultOutputCalendar("hebrew", () =>
+    expect(DateTime.local().outputCalendar).toBe("hebrew")
+  );
 });
 
 //------
 // #toLocal()
 //-------
 test("DateTime#toLocal accepts the default locale", () => {
-  Helpers.withDefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
+  Helpers.withDefaultZone("UTC", () =>
+    expect(DateTime.local().zoneName).toBe("UTC")
+  );
 });
 
 //------
@@ -227,7 +233,9 @@ test("DateTime.fromJSDate(date) returns invalid for invalid values", () => {
 });
 
 test("DateTime.fromJSDate accepts the default locale", () => {
-  withDefaultLocale("fr", () => expect(DateTime.fromJSDate(new Date()).locale).toBe("fr"));
+  withDefaultLocale("fr", () =>
+    expect(DateTime.fromJSDate(new Date()).locale).toBe("fr")
+  );
 });
 
 //------
@@ -249,7 +257,9 @@ test("DateTime.fromMillis(ms) accepts a zone option", () => {
 });
 
 test("DateTime.fromMillis accepts the default locale", () => {
-  withDefaultLocale("fr", () => expect(DateTime.fromMillis(391147200000).locale).toBe("fr"));
+  withDefaultLocale("fr", () =>
+    expect(DateTime.fromMillis(391147200000).locale).toBe("fr")
+  );
 });
 
 test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input", () => {
@@ -275,7 +285,9 @@ test("DateTime.fromSeconds(ms) accepts a zone option", () => {
 });
 
 test("DateTime.fromSeconds accepts the default locale", () => {
-  withDefaultLocale("fr", () => expect(DateTime.fromSeconds(391147200).locale).toBe("fr"));
+  withDefaultLocale("fr", () =>
+    expect(DateTime.fromSeconds(391147200).locale).toBe("fr")
+  );
 });
 
 test("DateTime.fromSeconds(seconds) throws InvalidArgumentError for non-numeric input", () => {
@@ -309,7 +321,9 @@ test("DateTime.fromObject() sets all the fields", () => {
 });
 
 test('DateTime.fromObject() accepts a zone option of "utc"', () => {
-  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { zone: "utc" }));
+  const dateTime = DateTime.fromObject(
+    Object.assign({}, baseObject, { zone: "utc" })
+  );
 
   expect(dateTime.isOffsetFixed).toBe(true);
   expect(dateTime.year).toBe(1982);
@@ -322,7 +336,9 @@ test('DateTime.fromObject() accepts a zone option of "utc"', () => {
 });
 
 test('DateTime.fromObject() accepts "utc-8" as the zone option', () => {
-  const dateTime = DateTime.fromObject(Object.assign({}, baseObject, { zone: "utc-8" }));
+  const dateTime = DateTime.fromObject(
+    Object.assign({}, baseObject, { zone: "utc-8" })
+  );
 
   expect(dateTime.isOffsetFixed).toBe(true);
   expect(dateTime.offset).toBe(-8 * 60);
@@ -514,12 +530,18 @@ test("DateTime.fromObject() w/ordinal defaults to the current year", () => {
 });
 
 test("DateTime.fromObject() returns invalid for invalid values", () => {
-  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid).toBe(false);
-  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid).toBe(false);
+  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid).toBe(
+    false
+  );
+  expect(
+    DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid
+  ).toBe(false);
 });
 
 test("DateTime.fromObject accepts the default locale", () => {
-  withDefaultLocale("fr", () => expect(DateTime.fromObject({}).locale).toBe("fr"));
+  withDefaultLocale("fr", () =>
+    expect(DateTime.fromObject({}).locale).toBe("fr")
+  );
 });
 
 test("DateTime.fromObject accepts really low year numbers", () => {
@@ -599,4 +621,100 @@ test("DateTime.fromObject handles null as a language tag", () => {
     expect(res.outputCalendar).toBe("islamic");
     expect(res.numberingSystem).toBe("thai");
   });
+});
+
+test("DateTime.fromRFC2822 parses GMT correctly", () => {
+  const dt = DateTime.fromRFC2822("25 Nov 2016 13:23:12 GMT", { zone: "UTC" });
+  expect(dt.year).toBe(2016);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(25);
+  expect(dt.hour).toBe(13);
+  expect(dt.minute).toBe(23);
+  expect(dt.second).toBe(12);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromRFC2822 parses Zulu correctly", () => {
+  const dt = DateTime.fromRFC2822("25 Nov 2016 13:23 Z", { zone: "UTC" });
+  expect(dt.year).toBe(2016);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(25);
+  expect(dt.hour).toBe(13);
+  expect(dt.minute).toBe(23);
+  expect(dt.second).toBe(0);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromRFC2822 parses offset correctly", () => {
+  const dt = DateTime.fromRFC2822("Fri, 27 Apr 2018 09:27:12 +0200", {
+    zone: "UTC"
+  });
+  expect(dt.year).toBe(2018);
+  expect(dt.month).toBe(4);
+  expect(dt.day).toBe(27);
+  expect(dt.hour).toBe(7);
+  expect(dt.minute).toBe(27);
+  expect(dt.second).toBe(12);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromRFC2822 is invalid when weekday is not consistent", () => {
+  // Actually a Friday, not a Saturday
+  expect(DateTime.fromRFC2822("Sat, 27 Apr 2018 09:27:12 +0200").isValid).toBe(
+    false
+  );
+});
+
+test("DateTime.fromHTTP parses rfc1123", () => {
+  const dt = DateTime.fromHTTP("Sun, 06 Nov 1994 08:49:37 GMT", {
+    zone: "UTC"
+  });
+  expect(dt.year).toBe(1994);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(6);
+  expect(dt.hour).toBe(8);
+  expect(dt.minute).toBe(49);
+  expect(dt.second).toBe(37);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromHTTP parses rfc850", () => {
+  const dt = DateTime.fromHTTP("Sunday, 06-Nov-94 08:49:37 GMT", {
+    zone: "UTC"
+  });
+  expect(dt.year).toBe(1994);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(6);
+  expect(dt.hour).toBe(8);
+  expect(dt.minute).toBe(49);
+  expect(dt.second).toBe(37);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromHTTP parses ascii", () => {
+  const dt = DateTime.fromHTTP("Sun Nov  6 08:49:37 1994", { zone: "UTC" });
+  expect(dt.year).toBe(1994);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(6);
+  expect(dt.hour).toBe(8);
+  expect(dt.minute).toBe(49);
+  expect(dt.second).toBe(37);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromHTTP is invalid when weekday is not consistent", () => {
+  // Actually a Sunday, not a Saturday
+  expect(DateTime.fromRFC2822("Sat, 06 Nov 1994 08:49:37 GMT").isValid).toBe(
+    false
+  );
+  expect(DateTime.fromRFC2822("Saturday, 06-Nov-94 08:49:37 GMT").isValid).toBe(
+    false
+  );
+  expect(DateTime.fromRFC2822("Sat Nov  6 08:49:37 1994").isValid).toBe(false);
 });

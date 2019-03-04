@@ -6,7 +6,7 @@ import IANAZone from "../zones/IANAZone.js";
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
 function intUnit(regex, post = i => i) {
-  return { regex, deser: ([s]) => post(parseInt(s)) };
+  return { regex, deser: ([s]) => post(parseInt(s, 10)) };
 }
 
 function fixListRegex(s) {
