@@ -17,7 +17,7 @@
     "site": "cp -r site/** build/",
     "lint": "eslint --quiet src test benchmarks",
     "lint!": "npm run format && npm run lint",
-    "format": "prettier --config .prettier.js --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
+    "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/datetime.js",
     "codecov": "codecov",
     "check-doc-coverage": "babel-node tasks/docCoverage"
@@ -29,7 +29,7 @@
   },
   "lint-staged": {
     "*.{js,json}": [
-      "prettier --config .prettier.js --write",
+      "prettier --write",
       "git add"
     ]
   },
