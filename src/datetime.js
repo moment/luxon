@@ -576,7 +576,7 @@ export default class DateTime {
    * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
-   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01T00'
+   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'utc' }),
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'local' })
