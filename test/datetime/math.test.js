@@ -273,6 +273,7 @@ test("DateTime#startOf maintains invalidity", () => {
 
 test("DateTime#startOf throws on invalid units", () => {
   expect(() => DateTime.fromISO("2016-03-12T10:00").startOf("splork")).toThrow();
+  expect(() => DateTime.fromISO("2016-03-12T10:00").startOf("")).toThrow();
 });
 
 //------

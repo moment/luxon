@@ -569,10 +569,8 @@ export default class Duration {
 
         // anything we haven't boiled down yet should get boiled to this unit
         for (const ak in accumulated) {
-          if (accumulated.hasOwnProperty(ak)) {
-            own += this.matrix[ak][k] * accumulated[ak];
-            accumulated[ak] = 0;
-          }
+          own += this.matrix[ak][k] * accumulated[ak];
+          accumulated[ak] = 0;
         }
 
         // plus anything that's already in this unit
@@ -597,14 +595,11 @@ export default class Duration {
     }
 
     // anything leftover becomes the decimal for the last unit
-    if (lastUnit) {
-      for (const key in accumulated) {
-        if (accumulated.hasOwnProperty(key)) {
-          if (accumulated[key] !== 0) {
-            built[lastUnit] +=
-              key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
-          }
-        }
+    // lastUnit must be defined since units is not empty
+    for (const key in accumulated) {
+      if (accumulated[key] !== 0) {
+        built[lastUnit] +=
+          key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
       }
     }
 

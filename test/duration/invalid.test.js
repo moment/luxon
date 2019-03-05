@@ -3,9 +3,10 @@
 import { Duration, DateTime, Settings } from "../../src/luxon";
 
 test("Explicitly invalid durations are invalid", () => {
-  const dt = Duration.invalid("just because");
-  expect(dt.isValid).toBe(false);
-  expect(dt.invalidReason).toBe("just because");
+  const dur = Duration.invalid("just because", "seriously, just because");
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe("just because");
+  expect(dur.invalidExplanation).toBe("seriously, just because");
 });
 
 test("throwOnInvalid throws", () => {
