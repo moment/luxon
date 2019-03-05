@@ -600,3 +600,93 @@ test("DateTime.fromObject handles null as a language tag", () => {
     expect(res.numberingSystem).toBe("thai");
   });
 });
+
+test("DateTime.fromRFC2822 parses GMT correctly", () => {
+  const dt = DateTime.fromRFC2822("25 Nov 2016 13:23:12 GMT", { zone: "UTC" });
+  expect(dt.year).toBe(2016);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(25);
+  expect(dt.hour).toBe(13);
+  expect(dt.minute).toBe(23);
+  expect(dt.second).toBe(12);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromRFC2822 parses Zulu correctly", () => {
+  const dt = DateTime.fromRFC2822("25 Nov 2016 13:23 Z", { zone: "UTC" });
+  expect(dt.year).toBe(2016);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(25);
+  expect(dt.hour).toBe(13);
+  expect(dt.minute).toBe(23);
+  expect(dt.second).toBe(0);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromRFC2822 parses offset correctly", () => {
+  const dt = DateTime.fromRFC2822("Fri, 25 Nov 2016 13:23:12 +0600", {
+    zone: "UTC"
+  });
+  expect(dt.year).toBe(2016);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(25);
+  expect(dt.hour).toBe(7);
+  expect(dt.minute).toBe(23);
+  expect(dt.second).toBe(12);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromRFC2822 is invalid when weekday is not consistent", () => {
+  // Actually a Friday, not a Saturday
+  expect(DateTime.fromRFC2822("Sat, 25 Nov 2016 13:23:12 +0600").isValid).toBe(false);
+});
+
+test("DateTime.fromHTTP parses rfc1123", () => {
+  const dt = DateTime.fromHTTP("Sun, 06 Nov 1994 08:49:37 GMT", {
+    zone: "UTC"
+  });
+  expect(dt.year).toBe(1994);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(6);
+  expect(dt.hour).toBe(8);
+  expect(dt.minute).toBe(49);
+  expect(dt.second).toBe(37);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromHTTP parses rfc850", () => {
+  const dt = DateTime.fromHTTP("Sunday, 06-Nov-94 08:49:37 GMT", {
+    zone: "UTC"
+  });
+  expect(dt.year).toBe(1994);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(6);
+  expect(dt.hour).toBe(8);
+  expect(dt.minute).toBe(49);
+  expect(dt.second).toBe(37);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromHTTP parses ascii", () => {
+  const dt = DateTime.fromHTTP("Sun Nov  6 08:49:37 1994", { zone: "UTC" });
+  expect(dt.year).toBe(1994);
+  expect(dt.month).toBe(11);
+  expect(dt.day).toBe(6);
+  expect(dt.hour).toBe(8);
+  expect(dt.minute).toBe(49);
+  expect(dt.second).toBe(37);
+  expect(dt.millisecond).toBe(0);
+  expect(dt.offset).toBe(0);
+});
+
+test("DateTime.fromHTTP is invalid when weekday is not consistent", () => {
+  // Actually a Sunday, not a Saturday
+  expect(DateTime.fromRFC2822("Sat, 06 Nov 1994 08:49:37 GMT").isValid).toBe(false);
+  expect(DateTime.fromRFC2822("Saturday, 06-Nov-94 08:49:37 GMT").isValid).toBe(false);
+  expect(DateTime.fromRFC2822("Sat Nov  6 08:49:37 1994").isValid).toBe(false);
+});

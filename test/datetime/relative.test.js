@@ -88,6 +88,10 @@ Helpers.withoutRTF("DateTime#toRelative falls back to English", () => {
   ).toBe("in 1 month");
 });
 
+test("DateTime#toRelative returns null when used on an invalid date", () => {
+  expect(DateTime.invalid("not valid").toRelative()).toBe(null);
+});
+
 //------
 // #toRelativeCalendar()
 //-------
@@ -96,6 +100,18 @@ test("DateTime#toRelativeCalendar uses the calendar", () => {
   const base = DateTime.fromObject({ year: 1983, month: 10, day: 14, hour: 23, minute: 59 });
   const end = DateTime.fromObject({ year: 1983, month: 10, day: 15, hour: 0, minute: 3 });
   expect(end.toRelativeCalendar({ base })).toBe("tomorrow");
+});
+
+test("DateTime#toRelativeCalendar picks the correct unit with no options", () => {
+  expect(
+    DateTime.local()
+      .plus({ days: 1 })
+      .toRelativeCalendar()
+  ).toBe("tomorrow");
+});
+
+test("DateTime#toRelativeCalendar returns null when used on an invalid date", () => {
+  expect(DateTime.invalid("not valid").toRelativeCalendar()).toBe(null);
 });
 
 test("DateTime#toRelativeCalendar works down through the units", () => {

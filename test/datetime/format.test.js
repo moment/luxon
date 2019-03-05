@@ -104,6 +104,10 @@ test("DateTime#toISOTime() handles other offsets", () => {
   expect(dt.setZone("America/New_York").toISOTime()).toBe("05:23:54.123-04:00");
 });
 
+test("DateTime#toISOTime() can omit the offset", () => {
+  expect(dt.toISOTime({ includeOffset: false })).toBe("09:23:54.123");
+});
+
 test("DateTime#toISOTime() returns null for invalid DateTimes", () => {
   expect(invalid.toISOTime()).toBe(null);
 });

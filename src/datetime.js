@@ -4,7 +4,6 @@ import Settings from "./settings.js";
 import Info from "./info.js";
 import Formatter from "./impl/formatter.js";
 import FixedOffsetZone from "./zones/fixedOffsetZone.js";
-import LocalZone from "./zones/localZone.js";
 import Locale from "./impl/locale.js";
 import {
   isUndefined,
@@ -188,7 +187,7 @@ function toTechTimeFormat(
   {
     suppressSeconds = false,
     suppressMilliseconds = false,
-    includeOffset = true,
+    includeOffset,
     includeZone = false,
     spaceZone = false
   }
@@ -278,7 +277,7 @@ function normalizeUnit(unit) {
     weekyear: "weekYear",
     weekyears: "weekYear",
     ordinal: "ordinal"
-  }[unit ? unit.toLowerCase() : unit];
+  }[unit.toLowerCase()];
 
   if (!normalized) throw new InvalidUnitError(unit);
 
@@ -722,7 +721,7 @@ export default class DateTime {
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
-   * @example DateTime.fromRFC2822('Tue, 25 Nov 2016 13:23:12 +0600')
+   * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
    * @return {DateTime}
    */
@@ -1219,7 +1218,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   toLocal() {
-    return this.setZone(Settings.defaultZone || new LocalZone());
+    return this.setZone(Settings.defaultZone);
   }
 
   /**
@@ -1372,8 +1371,7 @@ export default class DateTime {
         break;
       case "milliseconds":
         break;
-      default:
-        throw new InvalidUnitError(unit);
+      // no default, invalid units throw in normalizeUnit()
     }
 
     if (normalizedUnit === "weeks") {
@@ -1428,7 +1426,7 @@ export default class DateTime {
 
   /**
    * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
-   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
+   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
    * of the DateTime in the assigned locale.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
