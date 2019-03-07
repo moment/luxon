@@ -1,16 +1,13 @@
-const prettierOptions = require("./.prettier.js");
-
 module.exports = {
-  extends: ["standard", "prettier", "prettier/standard"],
+  extends: ["standard", "plugin:prettier/recommended"],
   plugins: ["import", "prettier", "babel"],
   rules: {
-    "prettier/prettier": ["error", prettierOptions],
     "linebreak-style": "off",
     "one-var": "off",
-    "spaced-comment": ["error", "always", { "exceptions": ["-"] }],
+    "spaced-comment": ["error", "always", { exceptions: ["-"] }],
     "valid-jsdoc": "off"
   },
   env: {
-    "es6": true
+    es6: true
   }
 };

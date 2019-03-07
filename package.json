@@ -12,12 +12,13 @@
     "build": "babel-node tasks/buildAll.js",
     "build-node": "babel-node tasks/buildNode.js",
     "build-global": "babel-node tasks/buildGlobal.js",
-    "test": "babel-node tasks/unit.js",
+    "jest": "jest",
+    "test": "jest --coverage",
     "docs": "esdoc -c docs/index.js",
     "site": "cp -r site/** build/",
     "lint": "eslint --quiet src test benchmarks",
     "lint!": "npm run format && npm run lint",
-    "format": "prettier --config .prettier.js --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
+    "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/datetime.js",
     "codecov": "codecov",
     "check-doc-coverage": "babel-node tasks/docCoverage"
@@ -29,7 +30,7 @@
   },
   "lint-staged": {
     "*.{js,json}": [
-      "prettier --config .prettier.js --write",
+      "prettier --write",
       "git add"
     ]
   },
@@ -61,7 +62,6 @@
     "full-icu": "^1.2.1",
     "husky": "latest",
     "jest": "latest",
-    "jest-cli": "^23.6.0",
     "lint-staged": "latest",
     "prettier": "1.14.3",
     "rollup": "latest",

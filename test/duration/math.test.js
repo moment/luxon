@@ -46,6 +46,15 @@ test("Duration#plus adds single values", () => {
   expect(result.seconds).toBe(2);
 });
 
+test("Duration#plus adds number as milliseconds", () => {
+  const first = Duration.fromObject({ minutes: 11, seconds: 22 }),
+    result = first.plus(333);
+
+  expect(result.minutes).toBe(11);
+  expect(result.seconds).toBe(22);
+  expect(result.milliseconds).toBe(333);
+});
+
 test("Duration#plus maintains invalidity", () => {
   const dur = Duration.invalid("because").plus({ minutes: 5 });
   expect(dur.isValid).toBe(false);
@@ -58,6 +67,10 @@ test("Duration#plus results in the superset of units", () => {
 
   dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({});
   expect(dur.toObject()).toEqual({ hours: 1, minutes: 0 });
+});
+
+test("Duration#plus throws with invalid parameter", () => {
+  expect(() => Duration.fromObject({}).plus("123")).toThrow();
 });
 
 //------
