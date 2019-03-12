@@ -107,7 +107,7 @@ However, `===` compares object identity (not a useful concept in a library with 
 You may also use `#hasSame` to make more subtle comparisons:
 
 ```js
-d1.hasSame(d2, 'milllisecond'); // equivalent to `+d1 === +d2`
+d1.hasSame(d2, 'millisecond'); // equivalent to `+d1 === +d2`
 d1.hasSame(d2, 'minute');       // both DateTimes are in the same minute (and hour, day, month, etc)
 d1.hasSame(d2, 'year');         // etc
 ```
