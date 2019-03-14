@@ -74,6 +74,8 @@
   "main": "build/node/luxon.js",
   "module": "src/luxon.js",
   "browser": "build/cjs-browser/luxon.js",
+  "jsdelivr": "build/global/luxon.min.js",
+  "unpkg": "build/global/luxon.min.js",
   "engines": {
     "node": "*"
   },
