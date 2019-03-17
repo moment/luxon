@@ -2,8 +2,7 @@
 /* eslint no-global-assign: "off" */
 import { DateTime, Settings } from "../src/luxon";
 
-
-exports.withoutIntl = function (name, f) {
+exports.withoutIntl = function(name, f) {
   const fullName = `With no Intl support, ${name}`;
   test(fullName, () => {
     const intl = Intl;
@@ -17,7 +16,7 @@ exports.withoutIntl = function (name, f) {
   });
 };
 
-exports.withoutFTP = function (name, f) {
+exports.withoutFTP = function(name, f) {
   const fullName = `With no FormatToParts support, ${name}`;
   test(fullName, () => {
     const { formatToParts } = Intl.DateTimeFormat.prototype;
@@ -31,7 +30,7 @@ exports.withoutFTP = function (name, f) {
   });
 };
 
-exports.withoutRTF = function (name, f) {
+exports.withoutRTF = function(name, f) {
   const fullName = `With no RelativeTimeFormat support, ${name}`;
   test(fullName, () => {
     const rtf = Intl.RelativeTimeFormat;
@@ -45,7 +44,7 @@ exports.withoutRTF = function (name, f) {
   });
 };
 
-exports.withoutZones = function (name, f) {
+exports.withoutZones = function(name, f) {
   const fullName = `With no time zone support, ${name}`;
   test(fullName, () => {
     const { DateTimeFormat } = Intl;
@@ -67,7 +66,7 @@ exports.withoutZones = function (name, f) {
   });
 };
 
-exports.withNow = function (name, dt, f) {
+exports.withNow = function(name, dt, f) {
   test(name, () => {
     const oldNow = Settings.now;
 
@@ -81,7 +80,7 @@ exports.withNow = function (name, dt, f) {
 };
 
 // not a tester!
-exports.withDefaultZone = function (zone, f) {
+exports.withDefaultZone = function(zone, f) {
   return (value, f) => {
     try {
       Settings.defaultZoneName = value;
@@ -92,7 +91,7 @@ exports.withDefaultZone = function (zone, f) {
   };
 };
 
-exports.setUnset = function (prop) {
+exports.setUnset = function(prop) {
   return (value, f) => {
     const existing = Settings[prop];
     try {
@@ -104,9 +103,8 @@ exports.setUnset = function (prop) {
   };
 };
 
-exports.atHour = function (hour) {
+exports.atHour = function(hour) {
   return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
     .startOf("day")
     .set({ hour });
 };
-
