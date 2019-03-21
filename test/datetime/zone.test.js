@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime, Settings } from "../../src/luxon";
+import LocalZone from "../../src/zones/localZone";
 
 var Helpers = require("../helpers");
 
@@ -83,6 +84,12 @@ test('DateTime#setZone accepts "local"', () => {
 test('DateTime#setZone accepts "local" and uses the default zone', () => {
   Helpers.withDefaultZone("Europe/Paris", () => {
     expect(DateTime.utc().setZone("local").zoneName).toBe("Europe/Paris");
+  });
+});
+
+test('DateTime#setZone accepts "system" and uses LocalZone', () => {
+  Helpers.withDefaultZone("Europe/Paris", () => {
+    expect(DateTime.utc().setZone("system").zoneName).toBe(LocalZone.instance.name);
   });
 });
 
