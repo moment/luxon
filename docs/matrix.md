@@ -4,26 +4,28 @@ This page covers what platforms are supported by Luxon and what caveats apply to
 
 ## Official support
 
-Luxon officially supports the last two versions of the major browsers, with some caveats.
+Luxon officially supports the last two versions of the major browsers, with some caveats. The table below shows which of the not-universally-supported features are available in what environments.
 
-| Browser      | Versions | Caveats                                                                                                             |
-| ------------ | -------- | ------------------------------------------------------------------------------------------------------------------- |
-| Chrome       | >= 71    |                                                                                                                     |
-|              | >= 54    | no intl tokens, no intl relative time formatting                                                                    |
-| FF           | >= 65    |                                                                                                                     |
-|              | >= 56    | no intl relative time formatting                                                                                    |
-| Edge         | 18       | no intl relative time formatting                                                                                    |
-|              | 16       | no intl tokens, no intl relative time formatting                                                                    |
-| IE           | >= 11    | needs platform polyfills, no intl tokens, no zones, no relative time formatting                                      |
-|              | 10       | needs platform polyfills, no basic internationalization, no intl tokens, no zones, no intl relative time formatting |
-| Safari       | 11       | no intl relative time formatting                                                                                    |
-|              | 10       | no intl tokens, no zones, no intl relative time formatting                                                          |
-| Node w/ICU   | >= 8     | no intl relative time formatting                                                                                    |
-|              | 6        | no intl tokens, no zones, no intl relative time formatting                                                          |
-| Node w/o ICU | >= 8     | no intl tokens, no intl relative time formatting                                                                    |
-|              | 6        | no intl tokens, no zones, no intl relative time formatting                                                          |
+| Browser                          | Versions | Zones | Intl basics | Intl tokens | Intl relative time formatting |
+| -------------------------------- | -------- | ----- | ----------- | ----------- | ----------------------------- |
+| Chrome                           | >= 71    | ✓     | ✓           | ✓           | ✓                             |
+|                                  | >= 54    | ✓     | ✓           | ✓           | ✗                             |
+| Firefox                          | >= 65    | ✓     | ✓           | ✓           | ✗                             |
+| Edge                             | 18       | ✓     | ✓           | ✓           | ✗                             |
+|                                  | 16       | ✓     | ✓           | ✗           | ✗                             |
+| IE                               | 11       | ✗     | ✓           | ✗           | ✗                             |
+|                                  | 10       | ✗     | ✗           | ✗           | ✗                             |
+| Safari                           | 11       | ✓     | ✓           | ✓           | ✗                             |
+|                                  | 10       | ✓     | ✗           | ✗           | ✗                             |
+| iOS Safari (iOS version numbers) | >= 11    | ✓     | ✓           | ✓           | ✗                             |
+|                                  | 10       | ✓     | ✗           | ✗           | ✗                             |
+|                                  | 9        | ✗     | ✓           | ✗           | ✗                             |
+| Node w/ICU                       | >= 8     | ✓     | ✓           | ✓           | ✗                             |
+|                                  | 6        | ✗     | ✓           | ✗           | ✗                             |
+| Node w/o ICU                     | >= 8     | ✓     | ✗           | ✗           | ✗                             |
+|                                  | 6        | ✗     | ✗           | ✗           | ✗                             |
 
-- Those caveats are explained in the next sections, along with possible polyfill options
+- Those capabilities are explained in the next sections, along with possible polyfill options
 - "w/ICU" refers to providing Node with ICU data. See the [install](install.html#node) for instructions
 
 ## Internet Explorer and platform polyfills
@@ -36,7 +38,7 @@ With IE 11, you can just add a polyfill like this to get the JS features you nee
 <script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign"></script>
 ```
 
-So there are now two remaining caveats: Intl *token* support and zones. Keep reading to see what that means.
+That hasn't checked off the other boxes in the chart above though, so keep reading for those.
 
 With IE 10, you have the same problems as IE 11, except that you don't even get basic Intl support. You'll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.
 
@@ -47,16 +49,16 @@ Alternatively, you can use a polyfilled build of Luxon, which you can find here:
 
 These use global polyfills, though, which means newer browsers will be running the injected code too. And the same doesn't-include-intl-and-zone-support caveats apply to it too.
 
-## Platform caveats
+## Effects of missing features
 
-**If the platforms you're targeting don't have caveats listed above, ignore this section**.
+**If the platforms you're targeting has all its boxes above check off, ignore this section**.
 
-In the support table above, you can see that some platforms have caveats. They affect a subset of Luxon's features that depend on specific APIs that some older browsers don't support.
+In the support table above, you can see that some environments are missing capabilities. They affect a subset of Luxon's features that depend on specific APIs that some older browsers don't support.
 
 1.  **Basic internationalization**. Luxon doesn't have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString). Most browsers and recent versions of Node support this.
-1.  **Internationalized tokens**. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl's [formatToParts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts) method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.
-1.  **Zones**. Luxon's support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.
-1.  **Relative time formatting**. Luxon's support for relative time formatting (e.g. `DateTime#toRelative` and `DateTime#toRelativeCalendar`) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.
+2.  **Internationalized tokens**. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl's [formatToParts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts) method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.
+3.  **Zones**. Luxon's support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.
+4.  **Relative time formatting**. Luxon's support for relative time formatting (e.g. `DateTime#toRelative` and `DateTime#toRelativeCalendar`) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.
 
 If the browser lacks these capabilities, Luxon tries its best:
 
@@ -70,7 +72,7 @@ If the browser lacks these capabilities, Luxon tries its best:
 | `DateTime#toFormat` in other locales   | OK           | Uses English                                | Uses English if format contains localized strings‡ | OK                   | OK                      |
 | `DateTime#fromFormat` in en-US         | OK           | OK                                          | OK                                                 | OK                   | OK                      |
 | `DateTime#toRelative` in en-US         | OK           | OK                                          | OK                                                 | OK                   | OK                      |
-| `DateTime#toRelative` in other locales | Uses English | OK                                          | OK                                                 | OK                   | Uses English             |
+| `DateTime#toRelative` in other locales | Uses English | OK                                          | OK                                                 | OK                   | Uses English            |
 | `DateTime#offsetNameShort`, etc        | OK           | Returns null                                | OK in most locales§                                | OK                   | OK                      |
 | `fromFormat` in other locales          | OK           | Invalid DateTime if uses localized strings‡ | Uses English if format contains localized strings‡ | OK                   | OK                      |
 | `Info.months`, etc in en-US            | OK           | OK                                          | OK                                                 | OK                   | OK                      |
@@ -96,7 +98,7 @@ If you're on a platform that already needs other polyfills, just tack those feat
 
 ### Intl tokens
 
-Polyfilling Intl token support is a bit painful. This caveat applies to Edge < 18 and all the IEs. Fortunately, you probably don't need Intl token support!
+Polyfilling Intl token support is a bit painful. This limitation applies to Edge < 18 and all the IEs. Fortunately, you probably don't need Intl token support!
 
 First, if you don't have Intl at all (e.g. as in IE 10), you are in luck. The polyfills in the previous section will give you Intl token support too!
 
@@ -108,9 +110,9 @@ If you have an Intl API (either natively or through the Intl polyfill above) but
 
 ## Older platforms
 
-- **Older versions of both Chrome and Firefox** will most likely work. It's just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting `formatToParts` in 51 and time zones in 52). I haven't broken that out because it's complicated, Luxon doesn't officially support them, and no one runs them anyway.
+- **Older versions of both Chrome and Firefox** will most likely work. It's just that I only officially support the last two versions. As you get to older versions of these browsers, the missing capabilities listed above begin to apply to them. (e.g. FF started supporting `formatToParts` in 51 and time zones in 52). I haven't broken that out because it's complicated, Luxon doesn't officially support them, and no one runs them anyway.
 - **Older versions of IE** probably won't work at all.
-- **Older versions of Node** probably won't work without recompiling Luxon with a different Node target. In which case they'll work with some of the caveats.
+- **Older versions of Node** probably won't work without recompiling Luxon with a different Node target. In which case they'll work with some features missing.
 
 ## Other platforms
 
@@ -122,4 +124,4 @@ Info.features(); //=> { intl: true, intlTokens: true, zones: true, relative: fal
 
 Specific notes on other platforms:
 
-- **React Native on (specifically) Android** doesn't come with Intl support, so all three caveats apply to it. Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
+- **React Native on (specifically) Android** doesn't come with Intl support, so all the possible-to-be-missing capabilities above are unavailable. Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
