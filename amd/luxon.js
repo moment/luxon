@@ -106,16 +106,139 @@ define(['exports'], function (exports) { 'use strict';
     return _wrapNativeSuper(Class);
   }
 
+  // these aren't really private, but nor are they really useful to document
+
+  /**
+   * @private
+   */
+  var LuxonError =
+  /*#__PURE__*/
+  function (_Error) {
+    _inheritsLoose(LuxonError, _Error);
+
+    function LuxonError() {
+      return _Error.apply(this, arguments) || this;
+    }
+
+    return LuxonError;
+  }(_wrapNativeSuper(Error));
+  /**
+   * @private
+   */
+
+
+  var InvalidDateTimeError =
+  /*#__PURE__*/
+  function (_LuxonError) {
+    _inheritsLoose(InvalidDateTimeError, _LuxonError);
+
+    function InvalidDateTimeError(reason) {
+      return _LuxonError.call(this, "Invalid DateTime: " + reason.toMessage()) || this;
+    }
+
+    return InvalidDateTimeError;
+  }(LuxonError);
+  /**
+   * @private
+   */
+
+  var InvalidIntervalError =
+  /*#__PURE__*/
+  function (_LuxonError2) {
+    _inheritsLoose(InvalidIntervalError, _LuxonError2);
+
+    function InvalidIntervalError(reason) {
+      return _LuxonError2.call(this, "Invalid Interval: " + reason.toMessage()) || this;
+    }
+
+    return InvalidIntervalError;
+  }(LuxonError);
+  /**
+   * @private
+   */
+
+  var InvalidDurationError =
+  /*#__PURE__*/
+  function (_LuxonError3) {
+    _inheritsLoose(InvalidDurationError, _LuxonError3);
+
+    function InvalidDurationError(reason) {
+      return _LuxonError3.call(this, "Invalid Duration: " + reason.toMessage()) || this;
+    }
+
+    return InvalidDurationError;
+  }(LuxonError);
+  /**
+   * @private
+   */
+
+  var ConflictingSpecificationError =
+  /*#__PURE__*/
+  function (_LuxonError4) {
+    _inheritsLoose(ConflictingSpecificationError, _LuxonError4);
+
+    function ConflictingSpecificationError() {
+      return _LuxonError4.apply(this, arguments) || this;
+    }
+
+    return ConflictingSpecificationError;
+  }(LuxonError);
+  /**
+   * @private
+   */
+
+  var InvalidUnitError =
+  /*#__PURE__*/
+  function (_LuxonError5) {
+    _inheritsLoose(InvalidUnitError, _LuxonError5);
+
+    function InvalidUnitError(unit) {
+      return _LuxonError5.call(this, "Invalid unit " + unit) || this;
+    }
+
+    return InvalidUnitError;
+  }(LuxonError);
+  /**
+   * @private
+   */
+
+  var InvalidArgumentError =
+  /*#__PURE__*/
+  function (_LuxonError6) {
+    _inheritsLoose(InvalidArgumentError, _LuxonError6);
+
+    function InvalidArgumentError() {
+      return _LuxonError6.apply(this, arguments) || this;
+    }
+
+    return InvalidArgumentError;
+  }(LuxonError);
+  /**
+   * @private
+   */
+
+  var ZoneIsAbstractError =
+  /*#__PURE__*/
+  function (_LuxonError7) {
+    _inheritsLoose(ZoneIsAbstractError, _LuxonError7);
+
+    function ZoneIsAbstractError() {
+      return _LuxonError7.call(this, "Zone is an abstract class") || this;
+    }
+
+    return ZoneIsAbstractError;
+  }(LuxonError);
+
   /*
     This is just a junk drawer, containing anything used across multiple classes.
     Because Luxon is small(ish), this should stay small and we won't worry about splitting
     it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
   */
-
   /**
    * @private
    */
   // TYPES
+
   function isUndefined(o) {
     return typeof o === "undefined";
   }
@@ -184,9 +307,17 @@ define(['exports'], function (exports) { 'use strict';
       return input.toString();
     }
   }
+  function parseInteger(string) {
+    if (isUndefined(string) || string === null || string === "") {
+      return undefined;
+    } else {
+      return parseInt(string, 10);
+    }
+  }
   function parseMillis(fraction) {
-    if (isUndefined(fraction)) {
-      return NaN;
+    // Return undefined (instead of 0) in these cases, where fraction is not set
+    if (isUndefined(fraction) || fraction === null || fraction === "") {
+      return undefined;
     } else {
       var f = parseFloat("0." + fraction) * 1000;
       return Math.floor(f);
@@ -289,25 +420,21 @@ define(['exports'], function (exports) { 'use strict';
     return offHour * 60 + offMinSigned;
   } // COERCION
 
-  function normalizeObject(obj, normalizer, ignoreUnknown) {
-    if (ignoreUnknown === void 0) {
-      ignoreUnknown = false;
-    }
+  function asNumber(value) {
+    var numericValue = Number(value);
+    if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue)) throw new InvalidArgumentError("Invalid unit value " + value);
+    return numericValue;
+  }
 
+  function normalizeObject(obj, normalizer, nonUnitKeys) {
     var normalized = {};
 
     for (var u in obj) {
       if (obj.hasOwnProperty(u)) {
+        if (nonUnitKeys.indexOf(u) >= 0) continue;
         var v = obj[u];
-        var numericValue = Number(v);
-
-        if (v !== null && !Number.isNaN(numericValue)) {
-          var mapped = normalizer(u, ignoreUnknown);
-
-          if (mapped) {
-            normalized[mapped] = numericValue;
-          }
-        }
+        if (v === undefined || v === null) continue;
+        normalized[normalizer(u)] = asNumber(v);
       }
     }
 
@@ -680,129 +807,6 @@ define(['exports'], function (exports) { 'use strict';
     }
   }
 
-  // these aren't really private, but nor are they really useful to document
-
-  /**
-   * @private
-   */
-  var LuxonError =
-  /*#__PURE__*/
-  function (_Error) {
-    _inheritsLoose(LuxonError, _Error);
-
-    function LuxonError() {
-      return _Error.apply(this, arguments) || this;
-    }
-
-    return LuxonError;
-  }(_wrapNativeSuper(Error));
-  /**
-   * @private
-   */
-
-
-  var InvalidDateTimeError =
-  /*#__PURE__*/
-  function (_LuxonError) {
-    _inheritsLoose(InvalidDateTimeError, _LuxonError);
-
-    function InvalidDateTimeError(reason) {
-      return _LuxonError.call(this, "Invalid DateTime: " + reason.toMessage()) || this;
-    }
-
-    return InvalidDateTimeError;
-  }(LuxonError);
-  /**
-   * @private
-   */
-
-  var InvalidIntervalError =
-  /*#__PURE__*/
-  function (_LuxonError2) {
-    _inheritsLoose(InvalidIntervalError, _LuxonError2);
-
-    function InvalidIntervalError(reason) {
-      return _LuxonError2.call(this, "Invalid Interval: " + reason.toMessage()) || this;
-    }
-
-    return InvalidIntervalError;
-  }(LuxonError);
-  /**
-   * @private
-   */
-
-  var InvalidDurationError =
-  /*#__PURE__*/
-  function (_LuxonError3) {
-    _inheritsLoose(InvalidDurationError, _LuxonError3);
-
-    function InvalidDurationError(reason) {
-      return _LuxonError3.call(this, "Invalid Duration: " + reason.toMessage()) || this;
-    }
-
-    return InvalidDurationError;
-  }(LuxonError);
-  /**
-   * @private
-   */
-
-  var ConflictingSpecificationError =
-  /*#__PURE__*/
-  function (_LuxonError4) {
-    _inheritsLoose(ConflictingSpecificationError, _LuxonError4);
-
-    function ConflictingSpecificationError() {
-      return _LuxonError4.apply(this, arguments) || this;
-    }
-
-    return ConflictingSpecificationError;
-  }(LuxonError);
-  /**
-   * @private
-   */
-
-  var InvalidUnitError =
-  /*#__PURE__*/
-  function (_LuxonError5) {
-    _inheritsLoose(InvalidUnitError, _LuxonError5);
-
-    function InvalidUnitError(unit) {
-      return _LuxonError5.call(this, "Invalid unit " + unit) || this;
-    }
-
-    return InvalidUnitError;
-  }(LuxonError);
-  /**
-   * @private
-   */
-
-  var InvalidArgumentError =
-  /*#__PURE__*/
-  function (_LuxonError6) {
-    _inheritsLoose(InvalidArgumentError, _LuxonError6);
-
-    function InvalidArgumentError() {
-      return _LuxonError6.apply(this, arguments) || this;
-    }
-
-    return InvalidArgumentError;
-  }(LuxonError);
-  /**
-   * @private
-   */
-
-  var ZoneIsAbstractError =
-  /*#__PURE__*/
-  function (_LuxonError7) {
-    _inheritsLoose(ZoneIsAbstractError, _LuxonError7);
-
-    function ZoneIsAbstractError() {
-      return _LuxonError7.call(this, "Zone is an abstract class") || this;
-    }
-
-    return ZoneIsAbstractError;
-  }(LuxonError);
-
   /**
    * @interface
    */
@@ -825,35 +829,35 @@ define(['exports'], function (exports) { 'use strict';
      */
     _proto.offsetName = function offsetName(ts, opts) {
       throw new ZoneIsAbstractError();
-    };
+    }
     /**
      * Return the offset in minutes for this zone at the specified timestamp.
      * @abstract
      * @param {number} ts - Epoch milliseconds for which to compute the offset
      * @return {number}
      */
-
+    ;
 
     _proto.offset = function offset(ts) {
       throw new ZoneIsAbstractError();
-    };
+    }
     /**
      * Return whether this Zone is equal to another zone
      * @abstract
      * @param {Zone} otherZone - the zone to compare
      * @return {boolean}
      */
-
+    ;
 
     _proto.equals = function equals(otherZone) {
       throw new ZoneIsAbstractError();
-    };
+    }
     /**
      * Return whether this Zone is valid.
      * @abstract
      * @type {boolean}
      */
-
+    ;
 
     _createClass(Zone, [{
       key: "type",
@@ -920,21 +924,21 @@ define(['exports'], function (exports) { 'use strict';
       var format = _ref.format,
           locale = _ref.locale;
       return parseZoneInfo(ts, format, locale);
-    };
+    }
     /** @override **/
-
+    ;
 
     _proto.offset = function offset(ts) {
       return -new Date(ts).getTimezoneOffset();
-    };
+    }
     /** @override **/
-
+    ;
 
     _proto.equals = function equals(otherZone) {
       return otherZone.type === "local";
-    };
+    }
     /** @override **/
-
+    ;
 
     _createClass(LocalZone, [{
       key: "type",
@@ -1062,7 +1066,7 @@ define(['exports'], function (exports) { 'use strict';
      */
     IANAZone.isValidSpecifier = function isValidSpecifier(s) {
       return s && s.match(matchingRegex);
-    };
+    }
     /**
      * Returns whether the provided string identifies a real zone
      * @param {string} zone - The string to check
@@ -1071,7 +1075,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example IANAZone.isValidZone("Sport~~blorp") //=> false
      * @return {true}
      */
-
+    ;
 
     IANAZone.isValidZone = function isValidZone(zone) {
       try {
@@ -1082,10 +1086,10 @@ define(['exports'], function (exports) { 'use strict';
       } catch (e) {
         return false;
       }
-    }; // Etc/GMT+8 -> -480
+    } // Etc/GMT+8 -> -480
 
     /** @ignore */
-
+    ;
 
     IANAZone.parseGMTOffset = function parseGMTOffset(specifier) {
       if (specifier) {
@@ -1121,9 +1125,9 @@ define(['exports'], function (exports) { 'use strict';
       var format = _ref.format,
           locale = _ref.locale;
       return parseZoneInfo(ts, format, locale, this.name);
-    };
+    }
     /** @override **/
-
+    ;
 
     _proto.offset = function offset(ts) {
       var date = new Date(ts),
@@ -1148,15 +1152,15 @@ define(['exports'], function (exports) { 'use strict';
       var asTS = date.valueOf();
       asTS -= asTS % 1000;
       return (asUTC - asTS) / (60 * 1000);
-    };
+    }
     /** @override **/
-
+    ;
 
     _proto.equals = function equals(otherZone) {
       return otherZone.type === "iana" && otherZone.name === this.name;
-    };
+    }
     /** @override **/
-
+    ;
 
     _createClass(IANAZone, [{
       key: "type",
@@ -1214,7 +1218,7 @@ define(['exports'], function (exports) { 'use strict';
      */
     FixedOffsetZone.instance = function instance(offset) {
       return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
-    };
+    }
     /**
      * Get an instance of FixedOffsetZone with from a UTC offset string, like "UTC+6"
      * @param {string} s - The offset string to parse
@@ -1223,7 +1227,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
      * @return {FixedOffsetZone}
      */
-
+    ;
 
     FixedOffsetZone.parseSpecifier = function parseSpecifier(s) {
       if (s) {
@@ -1270,22 +1274,22 @@ define(['exports'], function (exports) { 'use strict';
     /** @override **/
     _proto.offsetName = function offsetName() {
       return this.name;
-    };
+    }
     /** @override **/
-
+    ;
 
     /** @override **/
     _proto.offset = function offset() {
       return this.fixed;
-    };
+    }
     /** @override **/
-
+    ;
 
     _proto.equals = function equals(otherZone) {
       return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
-    };
+    }
     /** @override **/
-
+    ;
 
     _createClass(FixedOffsetZone, [{
       key: "type",
@@ -1341,21 +1345,21 @@ define(['exports'], function (exports) { 'use strict';
     /** @override **/
     _proto.offsetName = function offsetName() {
       return null;
-    };
+    }
     /** @override **/
-
+    ;
 
     _proto.offset = function offset() {
       return NaN;
-    };
+    }
     /** @override **/
-
+    ;
 
     _proto.equals = function equals() {
       return false;
-    };
+    }
     /** @override **/
-
+    ;
 
     _createClass(InvalidZone, [{
       key: "type",
@@ -2776,10 +2780,12 @@ define(['exports'], function (exports) { 'use strict';
       patterns[_key3 - 1] = arguments[_key3];
     }
 
-    for (var _i = 0; _i < patterns.length; _i++) {
-      var _patterns$_i = patterns[_i],
-          regex = _patterns$_i[0],
-          extractor = _patterns$_i[1];
+    var _arr = patterns;
+
+    for (var _i = 0; _i < _arr.length; _i++) {
+      var _arr$_i = _arr[_i],
+          regex = _arr$_i[0],
+          extractor = _arr$_i[1];
       var m = regex.exec(s);
 
       if (m) {
@@ -2800,7 +2806,7 @@ define(['exports'], function (exports) { 'use strict';
       var i;
 
       for (i = 0; i < keys.length; i++) {
-        ret[keys[i]] = parseInt(match[cursor + i]);
+        ret[keys[i]] = parseInteger(match[cursor + i]);
       }
 
       return [ret, null, cursor + i];
@@ -2824,18 +2830,18 @@ define(['exports'], function (exports) { 'use strict';
 
   function extractISOYmd(match, cursor) {
     var item = {
-      year: parseInt(match[cursor]),
-      month: parseInt(match[cursor + 1]) || 1,
-      day: parseInt(match[cursor + 2]) || 1
+      year: parseInteger(match[cursor]),
+      month: parseInteger(match[cursor + 1]) || 1,
+      day: parseInteger(match[cursor + 2]) || 1
     };
     return [item, null, cursor + 3];
   }
 
   function extractISOTime(match, cursor) {
     var item = {
-      hour: parseInt(match[cursor]) || 0,
-      minute: parseInt(match[cursor + 1]) || 0,
-      second: parseInt(match[cursor + 2]) || 0,
+      hour: parseInteger(match[cursor]) || 0,
+      minute: parseInteger(match[cursor + 1]) || 0,
+      second: parseInteger(match[cursor + 2]) || 0,
       millisecond: parseMillis(match[cursor + 3])
     };
     return [item, null, cursor + 4];
@@ -2866,13 +2872,13 @@ define(['exports'], function (exports) { 'use strict';
         millisecondsStr = match[7],
         weekStr = match[8];
     return [{
-      years: parseInt(yearStr),
-      months: parseInt(monthStr),
-      weeks: parseInt(weekStr),
-      days: parseInt(dayStr),
-      hours: parseInt(hourStr),
-      minutes: parseInt(minuteStr),
-      seconds: parseInt(secondStr),
+      years: parseInteger(yearStr),
+      months: parseInteger(monthStr),
+      weeks: parseInteger(weekStr),
+      days: parseInteger(dayStr),
+      hours: parseInteger(hourStr),
+      minutes: parseInteger(minuteStr),
+      seconds: parseInteger(secondStr),
       milliseconds: parseMillis(millisecondsStr)
     }];
   } // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
@@ -2894,13 +2900,13 @@ define(['exports'], function (exports) { 'use strict';
 
   function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
     var result = {
-      year: yearStr.length === 2 ? untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-      month: monthStr.length === 2 ? parseInt(monthStr, 10) : monthsShort.indexOf(monthStr) + 1,
-      day: parseInt(dayStr),
-      hour: parseInt(hourStr),
-      minute: parseInt(minuteStr)
+      year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
+      month: monthsShort.indexOf(monthStr) + 1,
+      day: parseInteger(dayStr),
+      hour: parseInteger(hourStr),
+      minute: parseInteger(minuteStr)
     };
-    if (secondStr) result.second = parseInt(secondStr);
+    if (secondStr) result.second = parseInteger(secondStr);
 
     if (weekdayStr) {
       result.weekday = weekdayStr.length > 3 ? weekdaysLong.indexOf(weekdayStr) + 1 : weekdaysShort.indexOf(weekdayStr) + 1;
@@ -3215,10 +3221,10 @@ define(['exports'], function (exports) { 'use strict';
       return Duration.fromObject(Object.assign({
         milliseconds: count
       }, opts));
-    };
+    }
     /**
      * Create a Duration from a Javascript object with keys like 'years' and 'hours.
-     * If this object is empty then zero  milliseconds duration is returned.
+     * If this object is empty then a zero milliseconds duration is returned.
      * @param {Object} obj - the object to create the DateTime from
      * @param {number} obj.years
      * @param {number} obj.quarters
@@ -3234,7 +3240,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
      * @return {Duration}
      */
-
+    ;
 
     Duration.fromObject = function fromObject(obj) {
       if (obj == null || typeof obj !== "object") {
@@ -3242,11 +3248,11 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return new Duration({
-        values: normalizeObject(obj, Duration.normalizeUnit, true),
+        values: normalizeObject(obj, Duration.normalizeUnit, ["locale", "numberingSystem", "conversionAccuracy"]),
         loc: Locale.fromObject(obj),
         conversionAccuracy: obj.conversionAccuracy
       });
-    };
+    }
     /**
      * Create a Duration from an ISO 8601 duration string.
      * @param {string} text - text to parse
@@ -3255,12 +3261,12 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} opts.numberingSystem - the numbering system to use
      * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
      * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
-     * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
+     * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
      * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
      * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
      * @return {Duration}
      */
-
+    ;
 
     Duration.fromISO = function fromISO(text, opts) {
       var _parseISODuration = parseISODuration(text),
@@ -3272,14 +3278,14 @@ define(['exports'], function (exports) { 'use strict';
       } else {
         return Duration.invalid("unparsable", "the input \"" + text + "\" can't be parsed as ISO 8601");
       }
-    };
+    }
     /**
      * Create an invalid Duration.
      * @param {string} reason - simple string of why this datetime is invalid. Should not contain parameters or anything else data-dependent
      * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
      * @return {Duration}
      */
-
+    ;
 
     Duration.invalid = function invalid(reason, explanation) {
       if (explanation === void 0) {
@@ -3299,17 +3305,13 @@ define(['exports'], function (exports) { 'use strict';
           invalid: invalid
         });
       }
-    };
+    }
     /**
      * @private
      */
+    ;
 
-
-    Duration.normalizeUnit = function normalizeUnit(unit, ignoreUnknown) {
-      if (ignoreUnknown === void 0) {
-        ignoreUnknown = false;
-      }
-
+    Duration.normalizeUnit = function normalizeUnit(unit) {
       var normalized = {
         year: "years",
         years: "years",
@@ -3330,24 +3332,24 @@ define(['exports'], function (exports) { 'use strict';
         millisecond: "milliseconds",
         milliseconds: "milliseconds"
       }[unit ? unit.toLowerCase() : unit];
-      if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
+      if (!normalized) throw new InvalidUnitError(unit);
       return normalized;
-    };
+    }
     /**
      * Check if an object is a Duration. Works across context boundaries
      * @param {object} o
      * @return {boolean}
      */
-
+    ;
 
     Duration.isDuration = function isDuration(o) {
       return o && o.isLuxonDuration || false;
-    };
+    }
     /**
      * Get  the locale of a Duration, such 'en-GB'
      * @type {string}
      */
-
+    ;
 
     var _proto = Duration.prototype;
 
@@ -3381,7 +3383,7 @@ define(['exports'], function (exports) { 'use strict';
         floor: opts.round !== false && opts.floor !== false
       });
       return this.isValid ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt) : INVALID;
-    };
+    }
     /**
      * Returns a Javascript object with this Duration's values.
      * @param opts - options for generating the object
@@ -3389,7 +3391,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=> { years: 1, days: 6, seconds: 2 }
      * @return {Object}
      */
-
+    ;
 
     _proto.toObject = function toObject(opts) {
       if (opts === void 0) {
@@ -3406,7 +3408,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return base;
-    };
+    }
     /**
      * Returns an ISO 8601-compliant string representation of this Duration.
      * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
@@ -3417,7 +3419,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Duration.fromObject({ milliseconds: 6 }).toISO() //=> 'PT0.006S'
      * @return {string}
      */
-
+    ;
 
     _proto.toISO = function toISO() {
       // we could use the formatter, but this is an easier way to get the minimum string
@@ -3425,55 +3427,57 @@ define(['exports'], function (exports) { 'use strict';
       var s = "P";
       if (this.years !== 0) s += this.years + "Y";
       if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + "M";
-      if (this.days !== 0 || this.weeks !== 0) s += this.days + this.weeks * 7 + "D";
+      if (this.weeks !== 0) s += this.weeks + "W";
+      if (this.days !== 0) s += this.days + "D";
       if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0) s += "T";
       if (this.hours !== 0) s += this.hours + "H";
       if (this.minutes !== 0) s += this.minutes + "M";
       if (this.seconds !== 0 || this.milliseconds !== 0) s += this.seconds + this.milliseconds / 1000 + "S";
       if (s === "P") s += "T0S";
       return s;
-    };
+    }
     /**
      * Returns an ISO 8601 representation of this Duration appropriate for use in JSON.
      * @return {string}
      */
-
+    ;
 
     _proto.toJSON = function toJSON() {
       return this.toISO();
-    };
+    }
     /**
      * Returns an ISO 8601 representation of this Duration appropriate for use in debugging.
      * @return {string}
      */
-
+    ;
 
     _proto.toString = function toString() {
       return this.toISO();
-    };
+    }
     /**
      * Returns an milliseconds value of this Duration.
      * @return {number}
      */
-
+    ;
 
     _proto.valueOf = function valueOf() {
       return this.as("milliseconds");
-    };
+    }
     /**
      * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
      * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
      * @return {Duration}
      */
-
+    ;
 
     _proto.plus = function plus(duration) {
       if (!this.isValid) return this;
       var dur = friendlyDuration(duration),
           result = {};
+      var _arr = orderedUnits;
 
-      for (var _i = 0; _i < orderedUnits.length; _i++) {
-        var k = orderedUnits[_i];
+      for (var _i = 0; _i < _arr.length; _i++) {
+        var k = _arr[_i];
 
         if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
           result[k] = dur.get(k) + this.get(k);
@@ -3483,19 +3487,19 @@ define(['exports'], function (exports) { 'use strict';
       return clone(this, {
         values: result
       }, true);
-    };
+    }
     /**
      * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
      * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
      * @return {Duration}
      */
-
+    ;
 
     _proto.minus = function minus(duration) {
       if (!this.isValid) return this;
       var dur = friendlyDuration(duration);
       return this.plus(dur.negate());
-    };
+    }
     /**
      * Get the value of unit.
      * @param {string} unit - a unit such as 'minute' or 'day'
@@ -3504,11 +3508,11 @@ define(['exports'], function (exports) { 'use strict';
      * @example Duration.fromObject({years: 2, days: 3}).days //=> 3
      * @return {number}
      */
-
+    ;
 
     _proto.get = function get(unit) {
       return this[Duration.normalizeUnit(unit)];
-    };
+    }
     /**
      * "Set" the values of specified units. Return a newly-constructed Duration.
      * @param {Object} values - a mapping of units to numbers
@@ -3516,20 +3520,21 @@ define(['exports'], function (exports) { 'use strict';
      * @example dur.set({ hours: 8, minutes: 30 })
      * @return {Duration}
      */
-
+    ;
 
     _proto.set = function set(values) {
-      var mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit));
+      if (!this.isValid) return this;
+      var mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit, []));
       return clone(this, {
         values: mixed
       });
-    };
+    }
     /**
      * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
      * @example dur.reconfigure({ locale: 'en-GB' })
      * @return {Duration}
      */
-
+    ;
 
     _proto.reconfigure = function reconfigure(_temp) {
       var _ref = _temp === void 0 ? {} : _temp,
@@ -3550,7 +3555,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return clone(this, opts);
-    };
+    }
     /**
      * Return the length of the duration in the specified unit.
      * @param {string} unit - a unit such as 'minutes' or 'days'
@@ -3559,31 +3564,31 @@ define(['exports'], function (exports) { 'use strict';
      * @example Duration.fromObject({hours: 60}).as('days') //=> 2.5
      * @return {number}
      */
-
+    ;
 
     _proto.as = function as(unit) {
       return this.isValid ? this.shiftTo(unit).get(unit) : NaN;
-    };
+    }
     /**
      * Reduce this Duration to its canonical representation in its current units.
      * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=> { years: 15, days: 255 }
      * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=> { hours: 11, minutes: 15 }
      * @return {Duration}
      */
-
+    ;
 
     _proto.normalize = function normalize() {
       if (!this.isValid) return this;
       var vals = this.toObject();
       normalizeValues(this.matrix, vals);
       return Duration.fromObject(vals);
-    };
+    }
     /**
      * Convert this Duration into its representation in a different set of units.
      * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
      * @return {Duration}
      */
-
+    ;
 
     _proto.shiftTo = function shiftTo() {
       for (var _len = arguments.length, units = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -3604,19 +3609,18 @@ define(['exports'], function (exports) { 'use strict';
           vals = this.toObject();
       var lastUnit;
       normalizeValues(this.matrix, vals);
+      var _arr2 = orderedUnits;
 
-      for (var _i2 = 0; _i2 < orderedUnits.length; _i2++) {
-        var k = orderedUnits[_i2];
+      for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
+        var k = _arr2[_i2];
 
         if (units.indexOf(k) >= 0) {
           lastUnit = k;
           var own = 0; // anything we haven't boiled down yet should get boiled to this unit
 
           for (var ak in accumulated) {
-            if (accumulated.hasOwnProperty(ak)) {
-              own += this.matrix[ak][k] * accumulated[ak];
-              accumulated[ak] = 0;
-            }
+            own += this.matrix[ak][k] * accumulated[ak];
+            accumulated[ak] = 0;
           } // plus anything that's already in this unit
 
 
@@ -3639,49 +3643,46 @@ define(['exports'], function (exports) { 'use strict';
           accumulated[k] = vals[k];
         }
       } // anything leftover becomes the decimal for the last unit
+      // lastUnit must be defined since units is not empty
 
 
-      if (lastUnit) {
-        for (var key in accumulated) {
-          if (accumulated.hasOwnProperty(key)) {
-            if (accumulated[key] !== 0) {
-              built[lastUnit] += key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
-            }
-          }
+      for (var key in accumulated) {
+        if (accumulated[key] !== 0) {
+          built[lastUnit] += key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
         }
       }
 
       return clone(this, {
         values: built
       }, true);
-    };
+    }
     /**
      * Return the negative of this Duration.
      * @example Duration.fromObject({ hours: 1, seconds: 30 }).negate().toObject() //=> { hours: -1, seconds: -30 }
      * @return {Duration}
      */
-
+    ;
 
     _proto.negate = function negate() {
       if (!this.isValid) return this;
       var negated = {};
 
-      var _arr = Object.keys(this.values);
+      var _arr3 = Object.keys(this.values);
 
-      for (var _i3 = 0; _i3 < _arr.length; _i3++) {
-        var k = _arr[_i3];
+      for (var _i3 = 0; _i3 < _arr3.length; _i3++) {
+        var k = _arr3[_i3];
         negated[k] = -this.values[k];
       }
 
       return clone(this, {
         values: negated
       }, true);
-    };
+    }
     /**
      * Get the years.
      * @type {number}
      */
-
+    ;
 
     /**
      * Equality check
@@ -3698,8 +3699,10 @@ define(['exports'], function (exports) { 'use strict';
         return false;
       }
 
-      for (var _i4 = 0; _i4 < orderedUnits.length; _i4++) {
-        var u = orderedUnits[_i4];
+      var _arr4 = orderedUnits;
+
+      for (var _i4 = 0; _i4 < _arr4.length; _i4++) {
+        var u = _arr4[_i4];
 
         if (this.values[u] !== other.values[u]) {
           return false;
@@ -3937,14 +3940,14 @@ define(['exports'], function (exports) { 'use strict';
           invalid: invalid
         });
       }
-    };
+    }
     /**
      * Create an Interval from a start DateTime and an end DateTime. Inclusive of the start but not the end.
      * @param {DateTime|Date|Object} start
      * @param {DateTime|Date|Object} end
      * @return {Interval}
      */
-
+    ;
 
     Interval.fromDateTimes = function fromDateTimes(start, end) {
       var builtStart = friendlyDateTime(start),
@@ -3954,33 +3957,33 @@ define(['exports'], function (exports) { 'use strict';
         end: builtEnd,
         invalid: validateStartEnd(builtStart, builtEnd)
       });
-    };
+    }
     /**
      * Create an Interval from a start DateTime and a Duration to extend to.
      * @param {DateTime|Date|Object} start
      * @param {Duration|Object|number} duration - the length of the Interval.
      * @return {Interval}
      */
-
+    ;
 
     Interval.after = function after(start, duration) {
       var dur = friendlyDuration(duration),
           dt = friendlyDateTime(start);
       return Interval.fromDateTimes(dt, dt.plus(dur));
-    };
+    }
     /**
      * Create an Interval from an end DateTime and a Duration to extend backwards to.
      * @param {DateTime|Date|Object} end
      * @param {Duration|Object|number} duration - the length of the Interval.
      * @return {Interval}
      */
-
+    ;
 
     Interval.before = function before(end, duration) {
       var dur = friendlyDuration(duration),
           dt = friendlyDateTime(end);
       return Interval.fromDateTimes(dt.minus(dur), dt);
-    };
+    }
     /**
      * Create an Interval from an ISO 8601 string.
      * Accepts `<start>/<end>`, `<start>/<duration>`, and `<duration>/<end>` formats.
@@ -3989,7 +3992,7 @@ define(['exports'], function (exports) { 'use strict';
      * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
      * @return {Interval}
      */
-
+    ;
 
     Interval.fromISO = function fromISO(text, opts) {
       var _split = (text || "").split("/", 2),
@@ -4020,22 +4023,22 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return Interval.invalid("unparsable", "the input \"" + text + "\" can't be parsed asISO 8601");
-    };
+    }
     /**
      * Check if an object is an Interval. Works across context boundaries
      * @param {object} o
      * @return {boolean}
      */
-
+    ;
 
     Interval.isInterval = function isInterval(o) {
       return o && o.isLuxonInterval || false;
-    };
+    }
     /**
      * Returns the start of the Interval
      * @type {DateTime}
      */
-
+    ;
 
     var _proto = Interval.prototype;
 
@@ -4050,7 +4053,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.isValid ? this.toDuration.apply(this, [unit]).get(unit) : NaN;
-    };
+    }
     /**
      * Returns the count of minutes, hours, days, months, or years included in the Interval, even in part.
      * Unlike {@link length} this counts sections of the calendar, not periods of time, e.g. specifying 'day'
@@ -4058,7 +4061,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} [unit='milliseconds'] - the unit of time to count.
      * @return {number}
      */
-
+    ;
 
     _proto.count = function count(unit) {
       if (unit === void 0) {
@@ -4069,59 +4072,59 @@ define(['exports'], function (exports) { 'use strict';
       var start = this.start.startOf(unit),
           end = this.end.startOf(unit);
       return Math.floor(end.diff(start, unit).get(unit)) + 1;
-    };
+    }
     /**
      * Returns whether this Interval's start and end are both in the same unit of time
      * @param {string} unit - the unit of time to check sameness on
      * @return {boolean}
      */
-
+    ;
 
     _proto.hasSame = function hasSame(unit) {
       return this.isValid ? this.e.minus(1).hasSame(this.s, unit) : false;
-    };
+    }
     /**
      * Return whether this Interval has the same start and end DateTimes.
      * @return {boolean}
      */
-
+    ;
 
     _proto.isEmpty = function isEmpty() {
       return this.s.valueOf() === this.e.valueOf();
-    };
+    }
     /**
      * Return whether this Interval's start is after the specified DateTime.
      * @param {DateTime} dateTime
      * @return {boolean}
      */
-
+    ;
 
     _proto.isAfter = function isAfter(dateTime) {
       if (!this.isValid) return false;
       return this.s > dateTime;
-    };
+    }
     /**
      * Return whether this Interval's end is before the specified DateTime.
      * @param {DateTime} dateTime
      * @return {boolean}
      */
-
+    ;
 
     _proto.isBefore = function isBefore(dateTime) {
       if (!this.isValid) return false;
       return this.e <= dateTime;
-    };
+    }
     /**
      * Return whether this Interval contains the specified DateTime.
      * @param {DateTime} dateTime
      * @return {boolean}
      */
-
+    ;
 
     _proto.contains = function contains(dateTime) {
       if (!this.isValid) return false;
       return this.s <= dateTime && this.e > dateTime;
-    };
+    }
     /**
      * "Sets" the start and/or end dates. Returns a newly-constructed Interval.
      * @param {Object} values - the values to set
@@ -4129,7 +4132,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {DateTime} values.end - the ending DateTime
      * @return {Interval}
      */
-
+    ;
 
     _proto.set = function set(_temp) {
       var _ref = _temp === void 0 ? {} : _temp,
@@ -4138,13 +4141,13 @@ define(['exports'], function (exports) { 'use strict';
 
       if (!this.isValid) return this;
       return Interval.fromDateTimes(start || this.s, end || this.e);
-    };
+    }
     /**
      * Split this Interval at each of the specified DateTimes
      * @param {...[DateTime]} dateTimes - the unit of time to count.
      * @return {[Interval]}
      */
-
+    ;
 
     _proto.splitAt = function splitAt() {
       if (!this.isValid) return [];
@@ -4167,14 +4170,14 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return results;
-    };
+    }
     /**
      * Split this Interval into smaller Intervals, each of the specified length.
      * Left over time is grouped into a smaller interval
      * @param {Duration|Object|number} duration - The length of each resulting interval.
      * @return {[Interval]}
      */
-
+    ;
 
     _proto.splitBy = function splitBy(duration) {
       var dur = friendlyDuration(duration);
@@ -4196,67 +4199,67 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return results;
-    };
+    }
     /**
      * Split this Interval into the specified number of smaller intervals.
      * @param {number} numberOfParts - The number of Intervals to divide the Interval into.
      * @return {[Interval]}
      */
-
+    ;
 
     _proto.divideEqually = function divideEqually(numberOfParts) {
       if (!this.isValid) return [];
       return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
-    };
+    }
     /**
      * Return whether this Interval overlaps with the specified Interval
      * @param {Interval} other
      * @return {boolean}
      */
-
+    ;
 
     _proto.overlaps = function overlaps(other) {
       return this.e > other.s && this.s < other.e;
-    };
+    }
     /**
      * Return whether this Interval's end is adjacent to the specified Interval's start.
      * @param {Interval} other
      * @return {boolean}
      */
-
+    ;
 
     _proto.abutsStart = function abutsStart(other) {
       if (!this.isValid) return false;
       return +this.e === +other.s;
-    };
+    }
     /**
      * Return whether this Interval's start is adjacent to the specified Interval's end.
      * @param {Interval} other
      * @return {boolean}
      */
-
+    ;
 
     _proto.abutsEnd = function abutsEnd(other) {
       if (!this.isValid) return false;
       return +other.e === +this.s;
-    };
+    }
     /**
      * Return whether this Interval engulfs the start and end of the specified Interval.
      * @param {Interval} other
      * @return {boolean}
      */
-
+    ;
 
     _proto.engulfs = function engulfs(other) {
       if (!this.isValid) return false;
       return this.s <= other.s && this.e >= other.e;
-    };
+    }
     /**
      * Return whether this Interval has the same start and end as the specified Interval.
      * @param {Interval} other
      * @return {boolean}
      */
-
+    ;
 
     _proto.equals = function equals(other) {
       if (!this.isValid || !other.isValid) {
@@ -4264,7 +4267,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.s.equals(other.s) && this.e.equals(other.e);
-    };
+    }
     /**
      * Return an Interval representing the intersection of this Interval and the specified Interval.
      * Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.
@@ -4272,7 +4275,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {Interval} other
      * @return {Interval}
      */
-
+    ;
 
     _proto.intersection = function intersection(other) {
       if (!this.isValid) return this;
@@ -4284,28 +4287,28 @@ define(['exports'], function (exports) { 'use strict';
       } else {
         return Interval.fromDateTimes(s, e);
       }
-    };
+    }
     /**
      * Return an Interval representing the union of this Interval and the specified Interval.
      * Specifically, the resulting Interval has the minimum start time and the maximum end time of the two Intervals.
      * @param {Interval} other
      * @return {Interval}
      */
-
+    ;
 
     _proto.union = function union(other) {
       if (!this.isValid) return this;
       var s = this.s < other.s ? this.s : other.s,
           e = this.e > other.e ? this.e : other.e;
       return Interval.fromDateTimes(s, e);
-    };
+    }
     /**
      * Merge an array of Intervals into a equivalent minimal set of Intervals.
      * Combines overlapping and adjacent Intervals.
      * @param {[Interval]} intervals
      * @return {[Interval]}
      */
-
+    ;
 
     Interval.merge = function merge(intervals) {
       var _intervals$sort$reduc = intervals.sort(function (a, b) {
@@ -4330,13 +4333,13 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return found;
-    };
+    }
     /**
      * Return an array of Intervals representing the spans of time that only appear in one of the specified Intervals.
      * @param {[Interval]} intervals
      * @return {[Interval]}
      */
-
+    ;
 
     Interval.xor = function xor(intervals) {
       var _Array$prototype;
@@ -4386,13 +4389,13 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return Interval.merge(results);
-    };
+    }
     /**
      * Return an Interval representing the span of time in this Interval that doesn't overlap with any of the specified Intervals.
      * @param {...Interval} intervals
      * @return {[Interval]}
      */
-
+    ;
 
     _proto.difference = function difference() {
       var _this = this;
@@ -4406,29 +4409,29 @@ define(['exports'], function (exports) { 'use strict';
       }).filter(function (i) {
         return i && !i.isEmpty();
       });
-    };
+    }
     /**
      * Returns a string representation of this Interval appropriate for debugging.
      * @return {string}
      */
-
+    ;
 
     _proto.toString = function toString() {
       if (!this.isValid) return INVALID$1;
       return "[" + this.s.toISO() + " \u2013 " + this.e.toISO() + ")";
-    };
+    }
     /**
      * Returns an ISO 8601-compliant string representation of this Interval.
      * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
      * @param {Object} opts - The same options as {@link DateTime.toISO}
      * @return {string}
      */
-
+    ;
 
     _proto.toISO = function toISO(opts) {
       if (!this.isValid) return INVALID$1;
       return this.s.toISO(opts) + "/" + this.e.toISO(opts);
-    };
+    }
     /**
      * Returns a string representation of this Interval formatted according to the specified format string.
      * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime.toFormat} for details.
@@ -4436,7 +4439,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations
      * @return {string}
      */
-
+    ;
 
     _proto.toFormat = function toFormat(dateFormat, _temp2) {
       var _ref4 = _temp2 === void 0 ? {} : _temp2,
@@ -4445,7 +4448,7 @@ define(['exports'], function (exports) { 'use strict';
 
       if (!this.isValid) return INVALID$1;
       return "" + this.s.toFormat(dateFormat) + separator + this.e.toFormat(dateFormat);
-    };
+    }
     /**
      * Return a Duration representing the time spanned by this interval.
      * @param {string|string[]} [unit=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.
@@ -4458,7 +4461,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }
      * @return {Duration}
      */
-
+    ;
 
     _proto.toDuration = function toDuration(unit, opts) {
       if (!this.isValid) {
@@ -4466,7 +4469,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.e.diff(this.s, unit, opts);
-    };
+    }
     /**
      * Run mapFn on the interval start and end, returning a new Interval from the resulting DateTimes
      * @param {function} mapFn
@@ -4474,7 +4477,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.toUTC())
      * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.plus({ hours: 2 }))
      */
-
+    ;
 
     _proto.mapEndpoints = function mapEndpoints(mapFn) {
       return Interval.fromDateTimes(mapFn(this.s), mapFn(this.e));
@@ -4555,17 +4558,17 @@ define(['exports'], function (exports) { 'use strict';
       return !zone.universal && proto.offset !== proto.set({
         month: 6
       }).offset;
-    };
+    }
     /**
      * Return whether the specified zone is a valid IANA specifier.
      * @param {string} zone - Zone to check
      * @return {boolean}
      */
-
+    ;
 
     Info.isValidIANAZone = function isValidIANAZone(zone) {
       return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
-    };
+    }
     /**
      * Converts the input into a {@link Zone} instance.
      *
@@ -4580,11 +4583,11 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string|Zone|number} [input] - the value to be converted
      * @return {Zone}
      */
-
+    ;
 
     Info.normalizeZone = function normalizeZone$1(input) {
       return normalizeZone(input, Settings.defaultZone);
-    };
+    }
     /**
      * Return an array of standalone month names.
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
@@ -4601,7 +4604,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'
      * @return {[string]}
      */
-
+    ;
 
     Info.months = function months(length, _temp) {
       if (length === void 0) {
@@ -4617,7 +4620,7 @@ define(['exports'], function (exports) { 'use strict';
           outputCalendar = _ref$outputCalendar === void 0 ? "gregory" : _ref$outputCalendar;
 
       return Locale.create(locale, numberingSystem, outputCalendar).months(length);
-    };
+    }
     /**
      * Return an array of format month names.
      * Format months differ from standalone months in that they're meant to appear next to the day of the month. In some languages, that
@@ -4630,7 +4633,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} [opts.outputCalendar='gregory'] - the calendar
      * @return {[string]}
      */
-
+    ;
 
     Info.monthsFormat = function monthsFormat(length, _temp2) {
       if (length === void 0) {
@@ -4646,7 +4649,7 @@ define(['exports'], function (exports) { 'use strict';
           outputCalendar = _ref2$outputCalendar === void 0 ? "gregory" : _ref2$outputCalendar;
 
       return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);
-    };
+    }
     /**
      * Return an array of standalone week names.
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
@@ -4660,7 +4663,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
      * @return {[string]}
      */
-
+    ;
 
     Info.weekdays = function weekdays(length, _temp3) {
       if (length === void 0) {
@@ -4674,7 +4677,7 @@ define(['exports'], function (exports) { 'use strict';
           numberingSystem = _ref3$numberingSystem === void 0 ? null : _ref3$numberingSystem;
 
       return Locale.create(locale, numberingSystem, null).weekdays(length);
-    };
+    }
     /**
      * Return an array of format week names.
      * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that
@@ -4686,7 +4689,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} [opts.numberingSystem=null] - the numbering system
      * @return {[string]}
      */
-
+    ;
 
     Info.weekdaysFormat = function weekdaysFormat(length, _temp4) {
       if (length === void 0) {
@@ -4700,7 +4703,7 @@ define(['exports'], function (exports) { 'use strict';
           numberingSystem = _ref4$numberingSystem === void 0 ? null : _ref4$numberingSystem;
 
       return Locale.create(locale, numberingSystem, null).weekdays(length, true);
-    };
+    }
     /**
      * Return an array of meridiems.
      * @param {Object} opts - options
@@ -4709,7 +4712,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]
      * @return {[string]}
      */
-
+    ;
 
     Info.meridiems = function meridiems(_temp5) {
       var _ref5 = _temp5 === void 0 ? {} : _temp5,
@@ -4717,7 +4720,7 @@ define(['exports'], function (exports) { 'use strict';
           locale = _ref5$locale === void 0 ? null : _ref5$locale;
 
       return Locale.create(locale).meridiems();
-    };
+    }
     /**
      * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.
      * @param {string} [length='short'] - the length of the era representation, such as "short" or "long".
@@ -4728,7 +4731,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
      * @return {[string]}
      */
-
+    ;
 
     Info.eras = function eras(length, _temp6) {
       if (length === void 0) {
@@ -4740,7 +4743,7 @@ define(['exports'], function (exports) { 'use strict';
           locale = _ref6$locale === void 0 ? null : _ref6$locale;
 
       return Locale.create(locale, null, "gregory").eras(length);
-    };
+    }
     /**
      * Return the set of available features in this environment.
      * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.
@@ -4752,7 +4755,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example Info.features() //=> { intl: true, intlTokens: false, zones: true, relative: false }
      * @return {Object}
      */
-
+    ;
 
     Info.features = function features() {
       var intl = false,
@@ -4806,11 +4809,12 @@ define(['exports'], function (exports) { 'use strict';
     }], ["days", dayDiff]];
     var results = {};
     var lowestOrder, highWater;
+    var _arr = differs;
 
-    for (var _i = 0; _i < differs.length; _i++) {
-      var _differs$_i = differs[_i],
-          unit = _differs$_i[0],
-          differ = _differs$_i[1];
+    for (var _i = 0; _i < _arr.length; _i++) {
+      var _arr$_i = _arr[_i],
+          unit = _arr$_i[0],
+          differ = _arr$_i[1];
 
       if (units.indexOf(unit) >= 0) {
         var _cursor$plus;
@@ -4883,7 +4887,7 @@ define(['exports'], function (exports) { 'use strict';
       regex: regex,
       deser: function deser(_ref) {
         var s = _ref[0];
-        return post(parseInt(s));
+        return post(parseInt(s, 10));
       }
     };
   }
@@ -5573,7 +5577,9 @@ define(['exports'], function (exports) { 'use strict';
     if (parsed && Object.keys(parsed).length !== 0) {
       var interpretationZone = parsedZone || zone,
           inst = DateTime.fromObject(Object.assign(parsed, opts, {
-        zone: interpretationZone
+        zone: interpretationZone,
+        // setZone is a valid option in the calling methods, but not in fromObject
+        setZone: undefined
       }));
       return setZone ? inst : inst.setZone(zone);
     } else {
@@ -5597,8 +5603,7 @@ define(['exports'], function (exports) { 'use strict';
         suppressSeconds = _ref$suppressSeconds === void 0 ? false : _ref$suppressSeconds,
         _ref$suppressMillisec = _ref.suppressMilliseconds,
         suppressMilliseconds = _ref$suppressMillisec === void 0 ? false : _ref$suppressMillisec,
-        _ref$includeOffset = _ref.includeOffset,
-        includeOffset = _ref$includeOffset === void 0 ? true : _ref$includeOffset,
+        includeOffset = _ref.includeOffset,
         _ref$includeZone = _ref.includeZone,
         includeZone = _ref$includeZone === void 0 ? false : _ref$includeZone,
         _ref$spaceZone = _ref.spaceZone,
@@ -5655,11 +5660,7 @@ define(['exports'], function (exports) { 'use strict';
       orderedWeekUnits = ["weekYear", "weekNumber", "weekday", "hour", "minute", "second", "millisecond"],
       orderedOrdinalUnits = ["year", "ordinal", "hour", "minute", "second", "millisecond"]; // standardize case and plurality in units
 
-  function normalizeUnit(unit, ignoreUnknown) {
-    if (ignoreUnknown === void 0) {
-      ignoreUnknown = false;
-    }
-
+  function normalizeUnit(unit) {
     var normalized = {
       year: "year",
       years: "year",
@@ -5683,8 +5684,8 @@ define(['exports'], function (exports) { 'use strict';
       weekyear: "weekYear",
       weekyears: "weekYear",
       ordinal: "ordinal"
-    }[unit ? unit.toLowerCase() : unit];
-    if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
+    }[unit.toLowerCase()];
+    if (!normalized) throw new InvalidUnitError(unit);
     return normalized;
   } // this is a dumbed down version of fromObject() that runs about 60% faster
   // but doesn't do any validation, makes a bunch of assumptions about what units
@@ -5693,8 +5694,10 @@ define(['exports'], function (exports) { 'use strict';
 
   function quickDT(obj, zone) {
     // assume we have the higher-order units
-    for (var _i = 0; _i < orderedUnits$1.length; _i++) {
-      var u = orderedUnits$1[_i];
+    var _arr = orderedUnits$1;
+
+    for (var _i = 0; _i < _arr.length; _i++) {
+      var u = _arr[_i];
 
       if (isUndefined(obj[u])) {
         obj[u] = defaultUnitValues[u];
@@ -5882,7 +5885,7 @@ define(['exports'], function (exports) { 'use strict';
           millisecond: millisecond
         }, Settings.defaultZone);
       }
-    };
+    }
     /**
      * Create a DateTime in UTC
      * @param {number} year - The calendar year. If omitted (as in, call `utc()` with no arguments), the current time will be used
@@ -5902,7 +5905,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765) //~> 2017-03-12T05:45:10.765Z
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.utc = function utc(year, month, day, hour, minute, second, millisecond) {
       if (isUndefined(year)) {
@@ -5921,7 +5924,7 @@ define(['exports'], function (exports) { 'use strict';
           millisecond: millisecond
         }, FixedOffsetZone.utcInstance);
       }
-    };
+    }
     /**
      * Create a DateTime from a Javascript Date object. Uses the default zone.
      * @param {Date} date - a Javascript Date object
@@ -5929,7 +5932,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromJSDate = function fromJSDate(date, options) {
       if (options === void 0) {
@@ -5941,7 +5944,7 @@ define(['exports'], function (exports) { 'use strict';
         zone: normalizeZone(options.zone, Settings.defaultZone),
         loc: Locale.fromObject(options)
       });
-    };
+    }
     /**
      * Create a DateTime from a number of milliseconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
      * @param {number} milliseconds - a number of milliseconds since 1970 UTC
@@ -5952,7 +5955,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromMillis = function fromMillis(milliseconds, options) {
       if (options === void 0) {
@@ -5968,7 +5971,7 @@ define(['exports'], function (exports) { 'use strict';
           loc: Locale.fromObject(options)
         });
       }
-    };
+    }
     /**
      * Create a DateTime from a number of seconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
      * @param {number} seconds - a number of seconds since 1970 UTC
@@ -5979,7 +5982,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromSeconds = function fromSeconds(seconds, options) {
       if (options === void 0) {
@@ -5995,7 +5998,7 @@ define(['exports'], function (exports) { 'use strict';
           loc: Locale.fromObject(options)
         });
       }
-    };
+    }
     /**
      * Create a DateTime from a Javascript object with keys like 'year' and 'hour' with reasonable defaults.
      * @param {Object} obj - the object to create the DateTime from
@@ -6011,11 +6014,11 @@ define(['exports'], function (exports) { 'use strict';
      * @param {number} obj.second - second of the minute, 0-59
      * @param {number} obj.millisecond - millisecond of the second, 0-999
      * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
-     * @param {string} [obj.locale='en-US'] - a locale to set on the resulting DateTime instance
+     * @param {string} [obj.locale='system's locale'] - a locale to set on the resulting DateTime instance
      * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
-     * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01T00'
+     * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
      * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
      * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'utc' }),
      * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'local' })
@@ -6023,7 +6026,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromObject = function fromObject(obj) {
       var zoneToUse = normalizeZone(obj.zone, Settings.defaultZone);
@@ -6034,7 +6037,7 @@ define(['exports'], function (exports) { 'use strict';
 
       var tsNow = Settings.now(),
           offsetProvis = zoneToUse.offset(tsNow),
-          normalized = normalizeObject(obj, normalizeUnit, true),
+          normalized = normalizeObject(obj, normalizeUnit, ["zone", "locale", "outputCalendar", "numberingSystem"]),
           containsOrdinal = !isUndefined(normalized.ordinal),
           containsGregorYear = !isUndefined(normalized.year),
           containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
@@ -6126,14 +6129,14 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return inst;
-    };
+    }
     /**
      * Create a DateTime from an ISO 8601 string
      * @param {string} text - the ISO string
      * @param {Object} opts - options to affect the creation
      * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
      * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-     * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+     * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
      * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @example DateTime.fromISO('2016-05-25T09:08:34.123')
@@ -6143,7 +6146,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.fromISO('2016-W05-4')
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromISO = function fromISO(text, opts) {
       if (opts === void 0) {
@@ -6155,22 +6158,22 @@ define(['exports'], function (exports) { 'use strict';
           parsedZone = _parseISODate[1];
 
       return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text);
-    };
+    }
     /**
      * Create a DateTime from an RFC 2822 string
      * @param {string} text - the RFC 2822 string
      * @param {Object} opts - options to affect the creation
      * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
      * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-     * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+     * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
      * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
-     * @example DateTime.fromRFC2822('Tue, 25 Nov 2016 13:23:12 +0600')
+     * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
      * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromRFC2822 = function fromRFC2822(text, opts) {
       if (opts === void 0) {
@@ -6182,7 +6185,7 @@ define(['exports'], function (exports) { 'use strict';
           parsedZone = _parseRFC2822Date[1];
 
       return parseDataToDateTime(vals, parsedZone, opts, "RFC 2822", text);
-    };
+    }
     /**
      * Create a DateTime from an HTTP header date
      * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
@@ -6190,7 +6193,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {Object} opts - options to affect the creation
      * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
      * @param {boolean} [opts.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
-     * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+     * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
      * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
      * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
@@ -6198,7 +6201,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromHTTP = function fromHTTP(text, opts) {
       if (opts === void 0) {
@@ -6210,12 +6213,13 @@ define(['exports'], function (exports) { 'use strict';
           parsedZone = _parseHTTPDate[1];
 
       return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
-    };
+    }
     /**
      * Create a DateTime from an input string and format string
      * Defaults to en-US if no locale has been specified, regardless of the system's locale
+     * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
      * @param {string} text - the string to parse
-     * @param {string} fmt - the format the string is expected to be in (see description)
+     * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
      * @param {Object} opts - options to affect the creation
      * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
      * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
@@ -6224,7 +6228,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromFormat = function fromFormat(text, fmt, opts) {
       if (opts === void 0) {
@@ -6255,11 +6259,11 @@ define(['exports'], function (exports) { 'use strict';
       } else {
         return parseDataToDateTime(vals, parsedZone, opts, "format " + fmt, text);
       }
-    };
+    }
     /**
      * @deprecated use fromFormat instead
      */
-
+    ;
 
     DateTime.fromString = function fromString(text, fmt, opts) {
       if (opts === void 0) {
@@ -6267,7 +6271,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return DateTime.fromFormat(text, fmt, opts);
-    };
+    }
     /**
      * Create a DateTime from a SQL date, time, or datetime
      * Defaults to en-US if no locale has been specified, regardless of the system's locale
@@ -6288,7 +6292,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.fromSQL('09:12:34.342')
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.fromSQL = function fromSQL(text, opts) {
       if (opts === void 0) {
@@ -6300,14 +6304,14 @@ define(['exports'], function (exports) { 'use strict';
           parsedZone = _parseSQL[1];
 
       return parseDataToDateTime(vals, parsedZone, opts, "SQL", text);
-    };
+    }
     /**
      * Create an invalid DateTime.
      * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
      * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
      * @return {DateTime}
      */
-
+    ;
 
     DateTime.invalid = function invalid(reason, explanation) {
       if (explanation === void 0) {
@@ -6327,17 +6331,17 @@ define(['exports'], function (exports) { 'use strict';
           invalid: invalid
         });
       }
-    };
+    }
     /**
      * Check if an object is a DateTime. Works across context boundaries
      * @param {object} o
      * @return {boolean}
      */
-
+    ;
 
     DateTime.isDateTime = function isDateTime(o) {
       return o && o.isLuxonDateTime || false;
-    }; // INFO
+    } // INFO
 
     /**
      * Get the value of unit.
@@ -6346,20 +6350,20 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
      * @return {number}
      */
-
+    ;
 
     var _proto = DateTime.prototype;
 
     _proto.get = function get(unit) {
       return this[unit];
-    };
+    }
     /**
      * Returns whether the DateTime is valid. Invalid DateTimes occur when:
      * * The DateTime was created from invalid calendar information, such as the 13th month or February 30
      * * The DateTime was created by an operation on another invalid date
      * @type {boolean}
      */
-
+    ;
 
     /**
      * Returns the resolved Intl options for this DateTime.
@@ -6382,7 +6386,7 @@ define(['exports'], function (exports) { 'use strict';
         numberingSystem: numberingSystem,
         outputCalendar: calendar
       };
-    }; // TRANSFORM
+    } // TRANSFORM
 
     /**
      * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
@@ -6392,7 +6396,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {Object} [opts={}] - options to pass to `setZone()`
      * @return {DateTime}
      */
-
+    ;
 
     _proto.toUTC = function toUTC(offset, opts) {
       if (offset === void 0) {
@@ -6404,18 +6408,18 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.setZone(FixedOffsetZone.instance(offset), opts);
-    };
+    }
     /**
      * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
      *
      * Equivalent to `setZone('local')`
      * @return {DateTime}
      */
-
+    ;
 
     _proto.toLocal = function toLocal() {
-      return this.setZone(Settings.defaultZone || new LocalZone());
-    };
+      return this.setZone(Settings.defaultZone);
+    }
     /**
      * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
      *
@@ -6425,7 +6429,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
      * @return {DateTime}
      */
-
+    ;
 
     _proto.setZone = function setZone(zone, _temp) {
       var _ref4 = _temp === void 0 ? {} : _temp,
@@ -6448,14 +6452,14 @@ define(['exports'], function (exports) { 'use strict';
           zone: zone
         });
       }
-    };
+    }
     /**
      * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
      * @param {Object} properties - the properties to set
      * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
      * @return {DateTime}
      */
-
+    ;
 
     _proto.reconfigure = function reconfigure(_temp2) {
       var _ref5 = _temp2 === void 0 ? {} : _temp2,
@@ -6471,20 +6475,20 @@ define(['exports'], function (exports) { 'use strict';
       return clone$1(this, {
         loc: loc
       });
-    };
+    }
     /**
      * "Set" the locale. Returns a newly-constructed DateTime.
      * Just a convenient alias for reconfigure({ locale })
      * @example DateTime.local(2017, 5, 25).setLocale('en-GB')
      * @return {DateTime}
      */
-
+    ;
 
     _proto.setLocale = function setLocale(locale) {
       return this.reconfigure({
         locale: locale
       });
-    };
+    }
     /**
      * "Set" the values of specified units. Returns a newly-constructed DateTime.
      * You can only set units with this method; for "setting" metadata, see {@link reconfigure} and {@link setZone}.
@@ -6495,11 +6499,11 @@ define(['exports'], function (exports) { 'use strict';
      * @example dt.set({ year: 2005, ordinal: 234 })
      * @return {DateTime}
      */
-
+    ;
 
     _proto.set = function set(values) {
       if (!this.isValid) return this;
-      var normalized = normalizeObject(values, normalizeUnit),
+      var normalized = normalizeObject(values, normalizeUnit, []),
           settingWeekStuff = !isUndefined(normalized.weekYear) || !isUndefined(normalized.weekNumber) || !isUndefined(normalized.weekday);
       var mixed;
 
@@ -6524,7 +6528,7 @@ define(['exports'], function (exports) { 'use strict';
         ts: ts,
         o: o
       });
-    };
+    }
     /**
      * Add a period of time to this DateTime and return the resulting DateTime
      *
@@ -6538,26 +6542,26 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
      * @return {DateTime}
      */
-
+    ;
 
     _proto.plus = function plus(duration) {
       if (!this.isValid) return this;
       var dur = friendlyDuration(duration);
       return clone$1(this, adjustTime(this, dur));
-    };
+    }
     /**
      * Subtract a period of time to this DateTime and return the resulting DateTime
      * See {@link plus}
      * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
      @return {DateTime}
     */
-
+    ;
 
     _proto.minus = function minus(duration) {
       if (!this.isValid) return this;
       var dur = friendlyDuration(duration).negate();
       return clone$1(this, adjustTime(this, dur));
-    };
+    }
     /**
      * "Set" this DateTime to the beginning of a unit of time.
      * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
@@ -6567,7 +6571,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
      * @return {DateTime}
      */
-
+    ;
 
     _proto.startOf = function startOf(unit) {
       if (!this.isValid) return this;
@@ -6603,9 +6607,7 @@ define(['exports'], function (exports) { 'use strict';
 
         case "milliseconds":
           break;
-
-        default:
-          throw new InvalidUnitError(unit);
+        // no default, invalid units throw in normalizeUnit()
       }
 
       if (normalizedUnit === "weeks") {
@@ -6618,7 +6620,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.set(o);
-    };
+    }
     /**
      * "Set" this DateTime to the end (i.e. the last millisecond) of a unit of time
      * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
@@ -6628,13 +6630,13 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
      * @return {DateTime}
      */
-
+    ;
 
     _proto.endOf = function endOf(unit) {
       var _this$plus;
 
       return this.isValid ? this.plus((_this$plus = {}, _this$plus[unit] = 1, _this$plus)).startOf(unit).minus(1) : this;
-    }; // OUTPUT
+    } // OUTPUT
 
     /**
      * Returns a string representation of this DateTime formatted according to the specified format string.
@@ -6649,7 +6651,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
      * @return {string}
      */
-
+    ;
 
     _proto.toFormat = function toFormat(fmt, opts) {
       if (opts === void 0) {
@@ -6657,10 +6659,10 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.isValid ? Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt) : INVALID$2;
-    };
+    }
     /**
      * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
-     * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
+     * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
      * of the DateTime in the assigned locale.
      * Defaults to the system's locale if no locale has been specified
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
@@ -6676,7 +6678,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().toLocaleString({ hour: '2-digit', minute: '2-digit', hour12: false }); //=> '11:32'
      * @return {string}
      */
-
+    ;
 
     _proto.toLocaleString = function toLocaleString(opts) {
       if (opts === void 0) {
@@ -6684,7 +6686,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID$2;
-    };
+    }
     /**
      * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
      * Defaults to the system's locale if no locale has been specified
@@ -6698,7 +6700,7 @@ define(['exports'], function (exports) { 'use strict';
      *                                    //=>   { type: 'year', value: '1982' }
      *                                    //=> ]
      */
-
+    ;
 
     _proto.toLocaleParts = function toLocaleParts(opts) {
       if (opts === void 0) {
@@ -6706,7 +6708,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this) : [];
-    };
+    }
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime
      * @param {Object} opts - options
@@ -6718,7 +6720,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
      * @return {string}
      */
-
+    ;
 
     _proto.toISO = function toISO(opts) {
       if (opts === void 0) {
@@ -6730,27 +6732,27 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.toISODate() + "T" + this.toISOTime(opts);
-    };
+    }
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's date component
      * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
      * @return {string}
      */
-
+    ;
 
     _proto.toISODate = function toISODate() {
       return toTechFormat(this, "yyyy-MM-dd");
-    };
+    }
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's week date
      * @example DateTime.utc(1982, 5, 25).toISOWeekDate() //=> '1982-W21-2'
      * @return {string}
      */
-
+    ;
 
     _proto.toISOWeekDate = function toISOWeekDate() {
       return toTechFormat(this, "kkkk-'W'WW-c");
-    };
+    }
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's time component
      * @param {Object} opts - options
@@ -6761,7 +6763,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
      * @return {string}
      */
-
+    ;
 
     _proto.toISOTime = function toISOTime(_temp3) {
       var _ref6 = _temp3 === void 0 ? {} : _temp3,
@@ -6777,18 +6779,18 @@ define(['exports'], function (exports) { 'use strict';
         suppressMilliseconds: suppressMilliseconds,
         includeOffset: includeOffset
       });
-    };
+    }
     /**
      * Returns an RFC 2822-compatible string representation of this DateTime, always in UTC
      * @example DateTime.utc(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 +0000'
      * @example DateTime.local(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 -0400'
      * @return {string}
      */
-
+    ;
 
     _proto.toRFC2822 = function toRFC2822() {
       return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ");
-    };
+    }
     /**
      * Returns a string representation of this DateTime appropriate for use in HTTP headers.
      * Specifically, the string conforms to RFC 1123.
@@ -6797,21 +6799,21 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.utc(2014, 7, 13, 19).toHTTP() //=> 'Sun, 13 Jul 2014 19:00:00 GMT'
      * @return {string}
      */
-
+    ;
 
     _proto.toHTTP = function toHTTP() {
       return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy HH:mm:ss 'GMT'");
-    };
+    }
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL Date
      * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
      * @return {string}
      */
-
+    ;
 
     _proto.toSQLDate = function toSQLDate() {
       return toTechFormat(this, "yyyy-MM-dd");
-    };
+    }
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL Time
      * @param {Object} opts - options
@@ -6823,7 +6825,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().toSQL({ includeZone: false }) //=> '05:15:16.345 America/New_York'
      * @return {string}
      */
-
+    ;
 
     _proto.toSQLTime = function toSQLTime(_temp4) {
       var _ref7 = _temp4 === void 0 ? {} : _temp4,
@@ -6837,7 +6839,7 @@ define(['exports'], function (exports) { 'use strict';
         includeZone: includeZone,
         spaceZone: true
       });
-    };
+    }
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL DateTime
      * @param {Object} opts - options
@@ -6849,7 +6851,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: true }) //=> '2014-07-13 00:00:00.000 America/New_York'
      * @return {string}
      */
-
+    ;
 
     _proto.toSQL = function toSQL(opts) {
       if (opts === void 0) {
@@ -6861,61 +6863,61 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.toSQLDate() + " " + this.toSQLTime(opts);
-    };
+    }
     /**
      * Returns a string representation of this DateTime appropriate for debugging
      * @return {string}
      */
-
+    ;
 
     _proto.toString = function toString() {
       return this.isValid ? this.toISO() : INVALID$2;
-    };
+    }
     /**
      * Returns the epoch milliseconds of this DateTime. Alias of {@link toMillis}
      * @return {number}
      */
-
+    ;
 
     _proto.valueOf = function valueOf() {
       return this.toMillis();
-    };
+    }
     /**
      * Returns the epoch milliseconds of this DateTime.
      * @return {number}
      */
-
+    ;
 
     _proto.toMillis = function toMillis() {
       return this.isValid ? this.ts : NaN;
-    };
+    }
     /**
      * Returns the epoch seconds of this DateTime.
      * @return {number}
      */
-
+    ;
 
     _proto.toSeconds = function toSeconds() {
       return this.isValid ? this.ts / 1000 : NaN;
-    };
+    }
     /**
      * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON.
      * @return {string}
      */
-
+    ;
 
     _proto.toJSON = function toJSON() {
       return this.toISO();
-    };
+    }
     /**
      * Returns a BSON serializable equivalent to this DateTime.
      * @return {Date}
      */
-
+    ;
 
     _proto.toBSON = function toBSON() {
       return this.toJSDate();
-    };
+    }
     /**
      * Returns a Javascript object with this DateTime's year, month, day, and so on.
      * @param opts - options for generating the object
@@ -6923,7 +6925,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().toObject() //=> { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
      * @return {Object}
      */
-
+    ;
 
     _proto.toObject = function toObject(opts) {
       if (opts === void 0) {
@@ -6940,16 +6942,16 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return base;
-    };
+    }
     /**
      * Returns a Javascript Date equivalent to this DateTime.
      * @return {Date}
      */
-
+    ;
 
     _proto.toJSDate = function toJSDate() {
       return new Date(this.isValid ? this.ts : NaN);
-    }; // COMPARE
+    } // COMPARE
 
     /**
      * Return the difference between two DateTimes as a Duration.
@@ -6966,7 +6968,7 @@ define(['exports'], function (exports) { 'use strict';
      * i2.diff(i1, ['months', 'days', 'hours']).toObject() //=> { months: 16, days: 19, hours: 0.75 }
      * @return {Duration}
      */
-
+    ;
 
     _proto.diff = function diff(otherDateTime, unit, opts) {
       if (unit === void 0) {
@@ -6993,7 +6995,7 @@ define(['exports'], function (exports) { 'use strict';
           diffed = _diff(earlier, later, units, durOpts);
 
       return otherIsLater ? diffed.negate() : diffed;
-    };
+    }
     /**
      * Return the difference between this DateTime and right now.
      * See {@link diff}
@@ -7002,7 +7004,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
      * @return {Duration}
      */
-
+    ;
 
     _proto.diffNow = function diffNow(unit, opts) {
       if (unit === void 0) {
@@ -7014,17 +7016,17 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return this.diff(DateTime.local(), unit, opts);
-    };
+    }
     /**
      * Return an Interval spanning between this DateTime and another DateTime
      * @param {DateTime} otherDateTime - the other end point of the Interval
      * @return {Interval}
      */
-
+    ;
 
     _proto.until = function until(otherDateTime) {
       return this.isValid ? Interval.fromDateTimes(this, otherDateTime) : this;
-    };
+    }
     /**
      * Return whether this DateTime is in the same unit of time as another DateTime
      * @param {DateTime} otherDateTime - the other DateTime
@@ -7032,7 +7034,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().hasSame(otherDT, 'day'); //~> true if both the same calendar day
      * @return {boolean}
      */
-
+    ;
 
     _proto.hasSame = function hasSame(otherDateTime, unit) {
       if (!this.isValid) return false;
@@ -7043,7 +7045,7 @@ define(['exports'], function (exports) { 'use strict';
         var inputMs = otherDateTime.valueOf();
         return this.startOf(unit) <= inputMs && inputMs <= this.endOf(unit);
       }
-    };
+    }
     /**
      * Equality check
      * Two DateTimes are equal iff they represent the same millisecond, have the same zone and location, and are both valid.
@@ -7051,11 +7053,11 @@ define(['exports'], function (exports) { 'use strict';
      * @param {DateTime} other - the other DateTime
      * @return {boolean}
      */
-
+    ;
 
     _proto.equals = function equals(other) {
       return this.isValid && other.isValid && this.valueOf() === other.valueOf() && this.zone.equals(other.zone) && this.loc.equals(other.loc);
-    };
+    }
     /**
      * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
      * platform supports Intl.RelativeDateFormat, **which it probably doesn't yet!** (As of this writing, only Chrome supports that). Rounds down by default.
@@ -7074,7 +7076,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
      * @example DateTime.local().minus({ hours: 36 }).toRelative({ round: false }) //=> "1.5 days ago"
      */
-
+    ;
 
     _proto.toRelative = function toRelative(options) {
       if (options === void 0) {
@@ -7090,9 +7092,9 @@ define(['exports'], function (exports) { 'use strict';
         numeric: "always",
         units: ["years", "months", "days", "hours", "minutes", "seconds"]
       }));
-    };
+    }
     /**
-     * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+     * Returns a string representation of this date relative to today, such as "yesterday" or "next month"
      * platform supports Intl.RelativeDateFormat.
      * @param {Object} options - options that affect the output
      * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
@@ -7104,7 +7106,7 @@ define(['exports'], function (exports) { 'use strict';
      * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar({ locale: "fr" }) //=> "demain"
      * @example DateTime.local().minus({ days: 2 }).toRelativeCalendar() //=> "2 days ago"
      */
-
+    ;
 
     _proto.toRelativeCalendar = function toRelativeCalendar(options) {
       if (options === void 0) {
@@ -7119,13 +7121,13 @@ define(['exports'], function (exports) { 'use strict';
         units: ["years", "months", "days"],
         calendary: true
       }));
-    };
+    }
     /**
      * Return the min of several date times
      * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
      * @return {DateTime} the min DateTime, or undefined if called with no argument
      */
-
+    ;
 
     DateTime.min = function min() {
       for (var _len = arguments.length, dateTimes = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -7135,13 +7137,13 @@ define(['exports'], function (exports) { 'use strict';
       return bestBy(dateTimes, function (i) {
         return i.valueOf();
       }, Math.min);
-    };
+    }
     /**
      * Return the max of several date times
      * @param {...DateTime} dateTimes - the DateTimes from which to choose the maximum
      * @return {DateTime} the max DateTime, or undefined if called with no argument
      */
-
+    ;
 
     DateTime.max = function max() {
       for (var _len2 = arguments.length, dateTimes = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
@@ -7151,7 +7153,7 @@ define(['exports'], function (exports) { 'use strict';
       return bestBy(dateTimes, function (i) {
         return i.valueOf();
       }, Math.max);
-    }; // MISC
+    } // MISC
 
     /**
      * Explain how a string would be parsed by fromFormat()
@@ -7160,7 +7162,7 @@ define(['exports'], function (exports) { 'use strict';
      * @param {Object} options - options taken by fromFormat()
      * @return {Object}
      */
-
+    ;
 
     DateTime.fromFormatExplain = function fromFormatExplain(text, fmt, options) {
       if (options === void 0) {
@@ -7178,11 +7180,11 @@ define(['exports'], function (exports) { 'use strict';
         defaultToEN: true
       });
       return explainFromTokens(localeToUse, text, fmt);
-    };
+    }
     /**
      * @deprecated use fromFormatExplain instead
      */
-
+    ;
 
     DateTime.fromStringExplain = function fromStringExplain(text, fmt, options) {
       if (options === void 0) {
@@ -7190,13 +7192,13 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       return DateTime.fromFormatExplain(text, fmt, options);
-    }; // FORMAT PRESETS
+    } // FORMAT PRESETS
 
     /**
      * {@link toLocaleString} format like 10/14/1983
      * @type {Object}
      */
-
+    ;
 
     _createClass(DateTime, [{
       key: "isValid",
@@ -7806,14 +7808,14 @@ define(['exports'], function (exports) { 'use strict';
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
-  exports.Interval = Interval;
-  exports.Info = Info;
-  exports.Zone = Zone;
   exports.FixedOffsetZone = FixedOffsetZone;
   exports.IANAZone = IANAZone;
+  exports.Info = Info;
+  exports.Interval = Interval;
   exports.InvalidZone = InvalidZone;
   exports.LocalZone = LocalZone;
   exports.Settings = Settings;
+  exports.Zone = Zone;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

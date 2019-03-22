@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
   <title data-ice="title">src/datetime.js | Luxon</title>
@@ -50,7 +48,6 @@ import Settings from &quot;./settings.js&quot;;
 import Info from &quot;./info.js&quot;;
 import Formatter from &quot;./impl/formatter.js&quot;;
 import FixedOffsetZone from &quot;./zones/fixedOffsetZone.js&quot;;
-import LocalZone from &quot;./zones/localZone.js&quot;;
 import Locale from &quot;./impl/locale.js&quot;;
 import {
   isUndefined,
@@ -203,7 +200,9 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(
         Object.assign(parsed, opts, {
-          zone: interpretationZone
+          zone: interpretationZone,
+          // setZone is a valid option in the calling methods, but not in fromObject
+          setZone: undefined
         })
       );
     return setZone ? inst : inst.setZone(zone);
@@ -232,7 +231,7 @@ function toTechTimeFormat(
   {
     suppressSeconds = false,
     suppressMilliseconds = false,
-    includeOffset = true,
+    includeOffset,
     includeZone = false,
     spaceZone = false
   }
@@ -298,7 +297,7 @@ const orderedUnits = [&quot;year&quot;, &quot;month&quot;, &quot;day&quot;, &quo
   orderedOrdinalUnits = [&quot;year&quot;, &quot;ordinal&quot;, &quot;hour&quot;, &quot;minute&quot;, &quot;second&quot;, &quot;millisecond&quot;];
 
 // standardize case and plurality in units
-function normalizeUnit(unit, ignoreUnknown = false) {
+function normalizeUnit(unit) {
   const normalized = {
     year: &quot;year&quot;,
     years: &quot;year&quot;,
@@ -322,9 +321,9 @@ function normalizeUnit(unit, ignoreUnknown = false) {
     weekyear: &quot;weekYear&quot;,
     weekyears: &quot;weekYear&quot;,
     ordinal: &quot;ordinal&quot;
-  }[unit ? unit.toLowerCase() : unit];
+  }[unit.toLowerCase()];
 
-  if (!ignoreUnknown &amp;&amp; !normalized) throw new InvalidUnitError(unit);
+  if (!normalized) throw new InvalidUnitError(unit);
 
   return normalized;
 }
@@ -617,11 +616,11 @@ export default class DateTime {
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
    * @param {string|Zone} [obj.zone=&apos;local&apos;] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
-   * @param {string} [obj.locale=&apos;en-US&apos;] - a locale to set on the resulting DateTime instance
+   * @param {string} [obj.locale=&apos;system&apos;s locale&apos;] - a locale to set on the resulting DateTime instance
    * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=&gt; &apos;1982-05-25&apos;
-   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=&gt; &apos;1982-01-01T00&apos;
+   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=&gt; &apos;1982-01-01&apos;
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~&gt; today at 10:26:06
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: &apos;utc&apos; }),
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: &apos;local&apos; })
@@ -637,7 +636,12 @@ export default class DateTime {
 
     const tsNow = Settings.now(),
       offsetProvis = zoneToUse.offset(tsNow),
-      normalized = normalizeObject(obj, normalizeUnit, true),
+      normalized = normalizeObject(obj, normalizeUnit, [
+        &quot;zone&quot;,
+        &quot;locale&quot;,
+        &quot;outputCalendar&quot;,
+        &quot;numberingSystem&quot;
+      ]),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
@@ -736,7 +740,7 @@ export default class DateTime {
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone=&apos;local&apos;] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-   * @param {string} [opts.locale=&apos;en-US&apos;] - a locale to set on the resulting DateTime instance
+   * @param {string} [opts.locale=&apos;system&apos;s locale&apos;] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromISO(&apos;2016-05-25T09:08:34.123&apos;)
@@ -757,11 +761,11 @@ export default class DateTime {
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone=&apos;local&apos;] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-   * @param {string} [opts.locale=&apos;en-US&apos;] - a locale to set on the resulting DateTime instance
+   * @param {string} [opts.locale=&apos;system&apos;s locale&apos;] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromRFC2822(&apos;25 Nov 2016 13:23:12 GMT&apos;)
-   * @example DateTime.fromRFC2822(&apos;Tue, 25 Nov 2016 13:23:12 +0600&apos;)
+   * @example DateTime.fromRFC2822(&apos;Fri, 25 Nov 2016 13:23:12 +0600&apos;)
    * @example DateTime.fromRFC2822(&apos;25 Nov 2016 13:23 Z&apos;)
    * @return {DateTime}
    */
@@ -777,7 +781,7 @@ export default class DateTime {
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone=&apos;local&apos;] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to &apos;utc&apos;, but this option is included for consistency with similar methods.
-   * @param {string} [opts.locale=&apos;en-US&apos;] - a locale to set on the resulting DateTime instance
+   * @param {string} [opts.locale=&apos;system&apos;s locale&apos;] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;)
@@ -795,7 +799,7 @@ export default class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
-   * @param {string} fmt - the format the string is expected to be in (see the link above for the formats)
+   * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone=&apos;local&apos;] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
@@ -1258,7 +1262,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   toLocal() {
-    return this.setZone(Settings.defaultZone || new LocalZone());
+    return this.setZone(Settings.defaultZone);
   }
 
   /**
@@ -1319,7 +1323,7 @@ export default class DateTime {
   set(values) {
     if (!this.isValid) return this;
 
-    const normalized = normalizeObject(values, normalizeUnit),
+    const normalized = normalizeObject(values, normalizeUnit, []),
       settingWeekStuff =
         !isUndefined(normalized.weekYear) ||
         !isUndefined(normalized.weekNumber) ||
@@ -1411,8 +1415,7 @@ export default class DateTime {
         break;
       case &quot;milliseconds&quot;:
         break;
-      default:
-        throw new InvalidUnitError(unit);
+      // no default, invalid units throw in normalizeUnit()
     }
 
     if (normalizedUnit === &quot;weeks&quot;) {
@@ -1467,7 +1470,7 @@ export default class DateTime {
 
   /**
    * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
-   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
+   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
    * of the DateTime in the assigned locale.
    * Defaults to the system&apos;s locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
@@ -1835,7 +1838,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns a string representation this date relative to today, such as &quot;yesterday&quot; or &quot;next month&quot;
+   * Returns a string representation of this date relative to today, such as &quot;yesterday&quot; or &quot;next month&quot;
    * platform supports Intl.RelativeDateFormat.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
@@ -2099,5 +2102,6 @@ export function friendlyDateTime(dateTimeish) {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
-</html>
+
+
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body></html>

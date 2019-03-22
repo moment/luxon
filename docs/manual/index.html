@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../">
   <title data-ice="title">Manual | Luxon</title>
@@ -199,7 +197,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/matrix.html"><a href="manual/matrix.html" data-ice="link">Support matrix</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#official-support" data-ice="link">Official support</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#internet-explorer-and-platform-polyfills" data-ice="link">Internet Explorer and platform polyfills</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#platform-caveats" data-ice="link">Platform caveats</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#effects-of-missing-features" data-ice="link">Effects of missing features</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#polyfills" data-ice="link">Polyfills</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl-tokens" data-ice="link">Intl tokens</a></li>
@@ -245,6 +243,9 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-0" data-ice="link">1.12.0</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-4" data-ice="link">1.11.4</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-3" data-ice="link">1.11.3</a></li>
 <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
@@ -442,11 +443,7 @@ i.toString()    //=&gt; &apos;[2017-09-14T04:07:11.532-04:00 &#x2013; 2020-10-12
 dt.locale; //=&gt; &apos;fr&apos;</code>
 </code></pre><p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p><p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&quot;fr&quot;).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre><p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
-</code></pre><h2>Default locale</h2><h3>Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is <code>null</code>. This means different things in different contexts:</p><ol>
-<li><code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</li>
-<li><code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
-<li>There&apos;s an exception, though: DateTime#toFormat can take &quot;macro&quot; formats like &quot;D&quot; that produce localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be localized.</li>
-</ol><h3>Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
+</code></pre><h2>Default locale</h2><h3>Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</p><p>As a result, <code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will by default generate strings in the user&apos;s locale.</p><p>However, note that <code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</p><p>There&apos;s an exception, though: <code>DateTime#toFormat</code> can take &quot;macro&quot; formats like &quot;D&quot; that produces localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be localized.</p><h3>Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
 DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
 </code></pre><p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p><h3>Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
 </code></pre><h2>Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ locale: &quot;fr-co&quot; }).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
@@ -1638,7 +1635,7 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 </code></pre><p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p><p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({days: 1}).plus({months: 1}).toISODate() //=&gt; &apos;2017-06-01&apos;</code>
 </code></pre><p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p><h2>Comparing DateTimes</h2><p>DateTime implements <code>#valueOf</code> to return the epoch timestamp, so you can compare DateTimes with <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code>. That lets you find out if one DateTime is after or before another DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">d1 &lt; d2 // is d1 before d2?</code>
 </code></pre><p>However, <code>===</code> compares object identity (not a useful concept in a library with immutable types) and <code>#equals</code> compares both the time and additional metadata, such as the locale and time zone. If you&apos;re only interested in checking the equality of the timestamps, you need to coerce them:</p><pre><code class="lang-js"><code class="source-code prettyprint">+d1 === +d2 // are d1 and d2 the same instant in time?</code>
-</code></pre><p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p><pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;milllisecond&apos;); // equivalent to `+d1 === +d2`
+</code></pre><p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p><pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;millisecond&apos;); // equivalent to `+d1 === +d2`
 d1.hasSame(d2, &apos;minute&apos;);       // both DateTimes are in the same minute (and hour, day, month, etc)
 d1.hasSame(d2, &apos;year&apos;);         // etc</code>
 </code></pre><p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p><p>If you&apos;d like to compare using a specific unit, you can achieve this by combining <code>#startOf</code> and the <code>#valueOf</code> comparisions above.</p><pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.fromISO(&apos;2017-04-30&apos;);
@@ -1813,98 +1810,159 @@ DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid Date
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Support matrix</h1><p>This page covers what platforms are supported by Luxon and what caveats apply to them.</p><h2>Official support</h2><p>Luxon officially supports the last two versions of the major browsers, with some caveats.</p><table>
+        <div data-ice="card"><h1>Support matrix</h1><p>This page covers what platforms are supported by Luxon and what caveats apply to them.</p><h2>Official support</h2><p>Luxon officially supports the last two versions of the major browsers, with some caveats. The table below shows which of the not-universally-supported features are available in what environments.</p><table>
 <thead>
 <tr>
 <th>Browser</th>
 <th>Versions</th>
-<th>Caveats</th>
+<th>Zones</th>
+<th>Intl basics</th>
+<th>Intl tokens</th>
+<th>Intl relative time formatting</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Chrome</td>
 <td>&gt;= 71</td>
-<td></td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
 </tr>
 <tr>
 <td></td>
 <td>&gt;= 54</td>
-<td>no intl tokens, no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
-<td>FF</td>
+<td>Firefox</td>
 <td>&gt;= 65</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>&gt;= 56</td>
-<td>no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
 </tr>
 <tr>
 <td>Edge</td>
 <td>18</td>
-<td>no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td></td>
 <td>16</td>
-<td>no intl tokens, no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td>IE</td>
-<td>&gt;= 11</td>
-<td>needs platform polyfills, no intl tokens, no zones, no relative time formatting</td>
+<td>11</td>
+<td>&#x2717;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td></td>
 <td>10</td>
-<td>needs platform polyfills, no basic internationalization, no intl tokens, no zones, no intl relative time formatting</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td>Safari</td>
 <td>11</td>
-<td>no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td></td>
 <td>10</td>
-<td>no intl tokens, no zones, no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+</tr>
+<tr>
+<td>iOS Safari (iOS version numbers)</td>
+<td>&gt;= 11</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+</tr>
+<tr>
+<td></td>
+<td>10</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+</tr>
+<tr>
+<td></td>
+<td>9</td>
+<td>&#x2717;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td>Node w/ICU</td>
 <td>&gt;= 8</td>
-<td>no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td></td>
 <td>6</td>
-<td>no intl tokens, no zones, no intl relative time formatting</td>
+<td>&#x2717;</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td>Node w/o ICU</td>
 <td>&gt;= 8</td>
-<td>no intl tokens, no intl relative time formatting</td>
+<td>&#x2713;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
 </tr>
 <tr>
 <td></td>
 <td>6</td>
-<td>no intl tokens, no zones, no intl relative time formatting</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
+<td>&#x2717;</td>
 </tr>
 </tbody>
 </table><ul>
-<li>Those caveats are explained in the next sections, along with possible polyfill options</li>
+<li>Those capabilities are explained in the next sections, along with possible polyfill options</li>
 <li>&quot;w/ICU&quot; refers to providing Node with ICU data. See the <a href="./manual/install.html#node">install</a> for instructions</li>
 </ul><h2>Internet Explorer and platform polyfills</h2><p>If you&apos;re supporting IE 10 or 11, you need some polyfills just to make Luxon work at all.</p><p>With IE 11, you can just add a polyfill like this to get the JS features you need:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign&quot;&gt;&lt;/script&gt;</code>
-</code></pre><p>So there are now two remaining caveats: Intl <em>token</em> support and zones. Keep reading to see what that means.</p><p>With IE 10, you have the same problems as IE 11, except that you don&apos;t even get basic Intl support. You&apos;ll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.</p><p>Alternatively, you can use a polyfilled build of Luxon, which you can find here:</p><ul>
+</code></pre><p>That hasn&apos;t checked off the other boxes in the chart above though, so keep reading for those.</p><p>With IE 10, you have the same problems as IE 11, except that you don&apos;t even get basic Intl support. You&apos;ll need to tack on the languages you wish to support. See the Basic Internationalization polyfill section below.</p><p>Alternatively, you can use a polyfilled build of Luxon, which you can find here:</p><ul>
 <li><a href="./manual/../../global-filled/luxon.js">Download full polyfilled build</a></li>
 <li><a href="./manual/../../global-filled/luxon.min.js">Download minified polyfilled build</a></li>
-</ul><p>These use global polyfills, though, which means newer browsers will be running the injected code too. And the same doesn&apos;t-include-intl-and-zone-support caveats apply to it too.</p><h2>Platform caveats</h2><p><strong>If the platforms you&apos;re targeting don&apos;t have caveats listed above, ignore this section</strong>.</p><p>In the support table above, you can see that some platforms have caveats. They affect a subset of Luxon&apos;s features that depend on specific APIs that some older browsers don&apos;t support.</p><ol>
+</ul><p>These use global polyfills, though, which means newer browsers will be running the injected code too. And the same doesn&apos;t-include-intl-and-zone-support caveats apply to it too.</p><h2>Effects of missing features</h2><p><strong>If the platforms you&apos;re targeting has all its boxes above check off, ignore this section</strong>.</p><p>In the support table above, you can see that some environments are missing capabilities. They affect a subset of Luxon&apos;s features that depend on specific APIs that some older browsers don&apos;t support.</p><ol>
 <li><strong>Basic internationalization</strong>. Luxon doesn&apos;t have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a>. Most browsers and recent versions of Node support this.</li>
 <li><strong>Internationalized tokens</strong>. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl&apos;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts">formatToParts</a> method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.</li>
 <li><strong>Zones</strong>. Luxon&apos;s support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.</li>
-<li><strong>Relative time formatting</strong>. Luxon&apos;s support for relative time formatting (e.g. <code>DateTime#toRelative()</code> and <code>DateTime#toRelativeCanedar</code>) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.</li>
+<li><strong>Relative time formatting</strong>. Luxon&apos;s support for relative time formatting (e.g. <code>DateTime#toRelative</code> and <code>DateTime#toRelativeCalendar</code>) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.</li>
 </ol><p>If the browser lacks these capabilities, Luxon tries its best:</p><table>
 <thead>
 <tr>
@@ -2023,13 +2081,13 @@ DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid Date
 </tr>
 </tbody>
 </table><p>&#x2020; Specifically, the caveat here is that this English fallback only works as you might expect for Luxon-provided preset arguments, like <code>DateTime.DATETIME_MED</code>. If you provide your own, modify the presets, or even clone them, it will use <code>DateTime.DATETIME_HUGE</code>. If you don&apos;t provide any arguments at all, it defaults to <code>DateTime.DATE_SHORT</code>.</p><p>&#x2021; This means that Luxon can&apos;t parse anything with a word in it like localized versions of &quot;January&quot; or &quot;Tuesday&quot;. It&apos;s fine with numbers, as long as they&apos;re Western numbers.</p><p>&#xA7; This fallback uses a hack that is not guaranteed to work in every locale in every browser. It&apos;s worked where I tested it, though. It will fall back to returning <code>null</code> if it fails.</p><h2>Polyfills</h2><h3>Intl</h3><p>If your platform doesn&apos;t have any kind of Intl support (such as IE 10), you need to load them individually through a polyfill. The easiest way to that is like this:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=Intl.~locale.zh,Intl.~locale.fr&quot;&gt;&lt;/script&gt;</code>
-</code></pre><p>If you&apos;re on a platform that already needs other polyfills, just tack those features to the end of your polyfill list.</p><h3>Intl tokens</h3><p>Polyfilling Intl token support is a bit painful. This caveat applies to Edge &lt; 18 and all the IEs. Fortunately, you probably don&apos;t need Intl token support!</p><p>First, if you don&apos;t have Intl at all (e.g. as in IE 10), you are in luck. The polyfills in the previous section will give you Intl token support too!</p><p>But more likely, you have basic Intl support but not <code>formatToParts</code> (e.g. IE 11 or Edge 16). The problem here is that the polyfill service will ignore the Intl polyfills, so you won&apos;t get the support you need. Instead, you need to override all of Intl with the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a> directly. [help wanted: instructions on exactly how to do that]</p><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p><h2>Older platforms</h2><ul>
-<li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the caveats listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
+</code></pre><p>If you&apos;re on a platform that already needs other polyfills, just tack those features to the end of your polyfill list.</p><h3>Intl tokens</h3><p>Polyfilling Intl token support is a bit painful. This limitation applies to Edge &lt; 18 and all the IEs. Fortunately, you probably don&apos;t need Intl token support!</p><p>First, if you don&apos;t have Intl at all (e.g. as in IE 10), you are in luck. The polyfills in the previous section will give you Intl token support too!</p><p>But more likely, you have basic Intl support but not <code>formatToParts</code> (e.g. IE 11 or Edge 16). The problem here is that the polyfill service will ignore the Intl polyfills, so you won&apos;t get the support you need. Instead, you need to override all of Intl with the <a href="https://github.com/andyearnshaw/Intl.js/">Intl polyfill</a> directly. [help wanted: instructions on exactly how to do that]</p><h3>Zones</h3><p>If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice <a href="https://github.com/yahoo/date-time-format-timezone">DateTime format pollyfill</a>.</p><h2>Older platforms</h2><ul>
+<li><strong>Older versions of both Chrome and Firefox</strong> will most likely work. It&apos;s just that I only officially support the last two versions. As you get to older versions of these browsers, the missing capabilities listed above begin to apply to them. (e.g. FF started supporting <code>formatToParts</code> in 51 and time zones in 52). I haven&apos;t broken that out because it&apos;s complicated, Luxon doesn&apos;t officially support them, and no one runs them anyway.</li>
 <li><strong>Older versions of IE</strong> probably won&apos;t work at all.</li>
-<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon with a different Node target. In which case they&apos;ll work with some of the caveats.</li>
+<li><strong>Older versions of Node</strong> probably won&apos;t work without recompiling Luxon with a different Node target. In which case they&apos;ll work with some features missing.</li>
 </ul><h2>Other platforms</h2><p>If the platform you&apos;re targeting isn&apos;t on the list and you&apos;re unsure what caveats apply, you can check which pieces are supported:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.features(); //=&gt; { intl: true, intlTokens: true, zones: true, relative: false }</code>
 </code></pre><p>Specific notes on other platforms:</p><ul>
-<li><strong>React Native on (specifically) Android</strong> doesn&apos;t come with Intl support, so all three caveats apply to it. Use <a href="https://github.com/SoftwareMansion/jsc-android-buildscripts">jsc-android-buildscripts</a> to fix it.</li>
+<li><strong>React Native on (specifically) Android</strong> doesn&apos;t come with Intl support, so all the possible-to-be-missing capabilities above are unavailable. Use <a href="https://github.com/SoftwareMansion/jsc-android-buildscripts">jsc-android-buildscripts</a> to fix it.</li>
 </ul></div>
         <a data-ice="link" href="manual/matrix.html"></a>
       </div>
@@ -2842,7 +2900,7 @@ npm install full-icu
 <td>Build the Luxon website</td>
 </tr>
 <tr>
-<td><code>npm check-doc-coverage</code></td>
+<td><code>npm run check-doc-coverage</code></td>
 <td>Check whether there&apos;s full doc coverage</td>
 </tr>
 </tbody>
@@ -2865,5 +2923,6 @@ npm install full-icu
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
-</html>
+
+
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body></html>

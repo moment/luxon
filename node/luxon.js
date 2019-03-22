@@ -2,16 +2,84 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+// these aren't really private, but nor are they really useful to document
+
+/**
+ * @private
+ */
+class LuxonError extends Error {}
+/**
+ * @private
+ */
+
+
+class InvalidDateTimeError extends LuxonError {
+  constructor(reason) {
+    super(`Invalid DateTime: ${reason.toMessage()}`);
+  }
+
+}
+/**
+ * @private
+ */
+
+class InvalidIntervalError extends LuxonError {
+  constructor(reason) {
+    super(`Invalid Interval: ${reason.toMessage()}`);
+  }
+
+}
+/**
+ * @private
+ */
+
+class InvalidDurationError extends LuxonError {
+  constructor(reason) {
+    super(`Invalid Duration: ${reason.toMessage()}`);
+  }
+
+}
+/**
+ * @private
+ */
+
+class ConflictingSpecificationError extends LuxonError {}
+/**
+ * @private
+ */
+
+class InvalidUnitError extends LuxonError {
+  constructor(unit) {
+    super(`Invalid unit ${unit}`);
+  }
+
+}
+/**
+ * @private
+ */
+
+class InvalidArgumentError extends LuxonError {}
+/**
+ * @private
+ */
+
+class ZoneIsAbstractError extends LuxonError {
+  constructor() {
+    super("Zone is an abstract class");
+  }
+
+}
+
 /*
   This is just a junk drawer, containing anything used across multiple classes.
   Because Luxon is small(ish), this should stay small and we won't worry about splitting
   it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
 */
-
 /**
  * @private
  */
 // TYPES
+
 function isUndefined(o) {
   return typeof o === "undefined";
 }
@@ -76,9 +144,17 @@ function padStart(input, n = 2) {
     return input.toString();
   }
 }
+function parseInteger(string) {
+  if (isUndefined(string) || string === null || string === "") {
+    return undefined;
+  } else {
+    return parseInt(string, 10);
+  }
+}
 function parseMillis(fraction) {
-  if (isUndefined(fraction)) {
-    return NaN;
+  // Return undefined (instead of 0) in these cases, where fraction is not set
+  if (isUndefined(fraction) || fraction === null || fraction === "") {
+    return undefined;
   } else {
     const f = parseFloat("0." + fraction) * 1000;
     return Math.floor(f);
@@ -171,21 +247,21 @@ function signedOffset(offHourStr, offMinuteStr) {
   return offHour * 60 + offMinSigned;
 } // COERCION
 
-function normalizeObject(obj, normalizer, ignoreUnknown = false) {
+function asNumber(value) {
+  const numericValue = Number(value);
+  if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue)) throw new InvalidArgumentError(`Invalid unit value ${value}`);
+  return numericValue;
+}
+
+function normalizeObject(obj, normalizer, nonUnitKeys) {
   const normalized = {};
 
   for (const u in obj) {
     if (obj.hasOwnProperty(u)) {
+      if (nonUnitKeys.indexOf(u) >= 0) continue;
       const v = obj[u];
-      const numericValue = Number(v);
-
-      if (v !== null && !Number.isNaN(numericValue)) {
-        const mapped = normalizer(u, ignoreUnknown);
-
-        if (mapped) {
-          normalized[mapped] = numericValue;
-        }
-      }
+      if (v === undefined || v === null) continue;
+      normalized[normalizer(u)] = asNumber(v);
     }
   }
 
@@ -548,74 +624,6 @@ function formatString(knownFormat) {
     default:
       return dateTimeHuge;
   }
-}
-
-// these aren't really private, but nor are they really useful to document
-
-/**
- * @private
- */
-class LuxonError extends Error {}
-/**
- * @private
- */
-
-
-class InvalidDateTimeError extends LuxonError {
-  constructor(reason) {
-    super(`Invalid DateTime: ${reason.toMessage()}`);
-  }
-
-}
-/**
- * @private
- */
-
-class InvalidIntervalError extends LuxonError {
-  constructor(reason) {
-    super(`Invalid Interval: ${reason.toMessage()}`);
-  }
-
-}
-/**
- * @private
- */
-
-class InvalidDurationError extends LuxonError {
-  constructor(reason) {
-    super(`Invalid Duration: ${reason.toMessage()}`);
-  }
-
-}
-/**
- * @private
- */
-
-class ConflictingSpecificationError extends LuxonError {}
-/**
- * @private
- */
-
-class InvalidUnitError extends LuxonError {
-  constructor(unit) {
-    super(`Invalid unit ${unit}`);
-  }
-
-}
-/**
- * @private
- */
-
-class InvalidArgumentError extends LuxonError {}
-/**
- * @private
- */
-
-class ZoneIsAbstractError extends LuxonError {
-  constructor() {
-    super("Zone is an abstract class");
-  }
-
 }
 
 /* eslint no-unused-vars: "off" */
@@ -2319,7 +2327,7 @@ function simpleParse(...keys) {
     let i;
 
     for (i = 0; i < keys.length; i++) {
-      ret[keys[i]] = parseInt(match[cursor + i]);
+      ret[keys[i]] = parseInteger(match[cursor + i]);
     }
 
     return [ret, null, cursor + i];
@@ -2343,18 +2351,18 @@ sqlTimeRegex = RegExp(`${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|(${i
 
 function extractISOYmd(match, cursor) {
   const item = {
-    year: parseInt(match[cursor]),
-    month: parseInt(match[cursor + 1]) || 1,
-    day: parseInt(match[cursor + 2]) || 1
+    year: parseInteger(match[cursor]),
+    month: parseInteger(match[cursor + 1]) || 1,
+    day: parseInteger(match[cursor + 2]) || 1
   };
   return [item, null, cursor + 3];
 }
 
 function extractISOTime(match, cursor) {
   const item = {
-    hour: parseInt(match[cursor]) || 0,
-    minute: parseInt(match[cursor + 1]) || 0,
-    second: parseInt(match[cursor + 2]) || 0,
+    hour: parseInteger(match[cursor]) || 0,
+    minute: parseInteger(match[cursor + 1]) || 0,
+    second: parseInteger(match[cursor + 2]) || 0,
     millisecond: parseMillis(match[cursor + 3])
   };
   return [item, null, cursor + 4];
@@ -2378,13 +2386,13 @@ const isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})D)?(?:
 function extractISODuration(match) {
   const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr, weekStr] = match;
   return [{
-    years: parseInt(yearStr),
-    months: parseInt(monthStr),
-    weeks: parseInt(weekStr),
-    days: parseInt(dayStr),
-    hours: parseInt(hourStr),
-    minutes: parseInt(minuteStr),
-    seconds: parseInt(secondStr),
+    years: parseInteger(yearStr),
+    months: parseInteger(monthStr),
+    weeks: parseInteger(weekStr),
+    days: parseInteger(dayStr),
+    hours: parseInteger(hourStr),
+    minutes: parseInteger(minuteStr),
+    seconds: parseInteger(secondStr),
     milliseconds: parseMillis(millisecondsStr)
   }];
 } // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
@@ -2406,13 +2414,13 @@ const obsOffsets = {
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
-    year: yearStr.length === 2 ? untruncateYear(parseInt(yearStr)) : parseInt(yearStr),
-    month: monthStr.length === 2 ? parseInt(monthStr, 10) : monthsShort.indexOf(monthStr) + 1,
-    day: parseInt(dayStr),
-    hour: parseInt(hourStr),
-    minute: parseInt(minuteStr)
+    year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
+    month: monthsShort.indexOf(monthStr) + 1,
+    day: parseInteger(dayStr),
+    hour: parseInteger(hourStr),
+    minute: parseInteger(minuteStr)
   };
-  if (secondStr) result.second = parseInt(secondStr);
+  if (secondStr) result.second = parseInteger(secondStr);
 
   if (weekdayStr) {
     result.weekday = weekdayStr.length > 3 ? weekdaysLong.indexOf(weekdayStr) + 1 : weekdaysShort.indexOf(weekdayStr) + 1;
@@ -2697,7 +2705,7 @@ class Duration {
   }
   /**
    * Create a Duration from a Javascript object with keys like 'years' and 'hours.
-   * If this object is empty then zero  milliseconds duration is returned.
+   * If this object is empty then a zero milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
    * @param {number} obj.quarters
@@ -2721,7 +2729,7 @@ class Duration {
     }
 
     return new Duration({
-      values: normalizeObject(obj, Duration.normalizeUnit, true),
+      values: normalizeObject(obj, Duration.normalizeUnit, ["locale", "numberingSystem", "conversionAccuracy"]),
       loc: Locale.fromObject(obj),
       conversionAccuracy: obj.conversionAccuracy
     });
@@ -2734,7 +2742,7 @@ class Duration {
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
-   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
+   * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
    * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
    * @return {Duration}
@@ -2779,7 +2787,7 @@ class Duration {
    */
 
 
-  static normalizeUnit(unit, ignoreUnknown = false) {
+  static normalizeUnit(unit) {
     const normalized = {
       year: "years",
       years: "years",
@@ -2800,7 +2808,7 @@ class Duration {
       millisecond: "milliseconds",
       milliseconds: "milliseconds"
     }[unit ? unit.toLowerCase() : unit];
-    if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
+    if (!normalized) throw new InvalidUnitError(unit);
     return normalized;
   }
   /**
@@ -2900,7 +2908,8 @@ class Duration {
     let s = "P";
     if (this.years !== 0) s += this.years + "Y";
     if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + "M";
-    if (this.days !== 0 || this.weeks !== 0) s += this.days + this.weeks * 7 + "D";
+    if (this.weeks !== 0) s += this.weeks + "W";
+    if (this.days !== 0) s += this.days + "D";
     if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0) s += "T";
     if (this.hours !== 0) s += this.hours + "H";
     if (this.minutes !== 0) s += this.minutes + "M";
@@ -2992,7 +3001,8 @@ class Duration {
 
 
   set(values) {
-    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit));
+    if (!this.isValid) return this;
+    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit, []));
     return clone(this, {
       values: mixed
     });
@@ -3077,10 +3087,8 @@ class Duration {
         let own = 0; // anything we haven't boiled down yet should get boiled to this unit
 
         for (const ak in accumulated) {
-          if (accumulated.hasOwnProperty(ak)) {
-            own += this.matrix[ak][k] * accumulated[ak];
-            accumulated[ak] = 0;
-          }
+          own += this.matrix[ak][k] * accumulated[ak];
+          accumulated[ak] = 0;
         } // plus anything that's already in this unit
 
 
@@ -3103,15 +3111,12 @@ class Duration {
         accumulated[k] = vals[k];
       }
     } // anything leftover becomes the decimal for the last unit
+    // lastUnit must be defined since units is not empty
 
 
-    if (lastUnit) {
-      for (const key in accumulated) {
-        if (accumulated.hasOwnProperty(key)) {
-          if (accumulated[key] !== 0) {
-            built[lastUnit] += key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
-          }
-        }
+    for (const key in accumulated) {
+      if (accumulated[key] !== 0) {
+        built[lastUnit] += key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
       }
     }
 
@@ -4177,7 +4182,7 @@ const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 function intUnit(regex, post = i => i) {
   return {
     regex,
-    deser: ([s]) => post(parseInt(s))
+    deser: ([s]) => post(parseInt(s, 10))
   };
 }
 
@@ -4841,7 +4846,9 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
           inst = DateTime.fromObject(Object.assign(parsed, opts, {
-      zone: interpretationZone
+      zone: interpretationZone,
+      // setZone is a valid option in the calling methods, but not in fromObject
+      setZone: undefined
     }));
     return setZone ? inst : inst.setZone(zone);
   } else {
@@ -4863,7 +4870,7 @@ function toTechFormat(dt, format) {
 function toTechTimeFormat(dt, {
   suppressSeconds = false,
   suppressMilliseconds = false,
-  includeOffset = true,
+  includeOffset,
   includeZone = false,
   spaceZone = false
 }) {
@@ -4919,7 +4926,7 @@ const orderedUnits$1 = ["year", "month", "day", "hour", "minute", "second", "mil
       orderedWeekUnits = ["weekYear", "weekNumber", "weekday", "hour", "minute", "second", "millisecond"],
       orderedOrdinalUnits = ["year", "ordinal", "hour", "minute", "second", "millisecond"]; // standardize case and plurality in units
 
-function normalizeUnit(unit, ignoreUnknown = false) {
+function normalizeUnit(unit) {
   const normalized = {
     year: "year",
     years: "year",
@@ -4943,8 +4950,8 @@ function normalizeUnit(unit, ignoreUnknown = false) {
     weekyear: "weekYear",
     weekyears: "weekYear",
     ordinal: "ordinal"
-  }[unit ? unit.toLowerCase() : unit];
-  if (!ignoreUnknown && !normalized) throw new InvalidUnitError(unit);
+  }[unit.toLowerCase()];
+  if (!normalized) throw new InvalidUnitError(unit);
   return normalized;
 } // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
@@ -5240,11 +5247,11 @@ class DateTime {
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
    * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
-   * @param {string} [obj.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} [obj.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
-   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01T00'
+   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'utc' }),
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'local' })
@@ -5263,7 +5270,7 @@ class DateTime {
 
     const tsNow = Settings.now(),
           offsetProvis = zoneToUse.offset(tsNow),
-          normalized = normalizeObject(obj, normalizeUnit, true),
+          normalized = normalizeObject(obj, normalizeUnit, ["zone", "locale", "outputCalendar", "numberingSystem"]),
           containsOrdinal = !isUndefined(normalized.ordinal),
           containsGregorYear = !isUndefined(normalized.year),
           containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
@@ -5347,7 +5354,7 @@ class DateTime {
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-   * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
@@ -5369,11 +5376,11 @@ class DateTime {
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
-   * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
-   * @example DateTime.fromRFC2822('Tue, 25 Nov 2016 13:23:12 +0600')
+   * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
    * @return {DateTime}
    */
@@ -5390,7 +5397,7 @@ class DateTime {
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
-   * @param {string} [opts.locale='en-US'] - a locale to set on the resulting DateTime instance
+   * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
@@ -5407,8 +5414,9 @@ class DateTime {
   /**
    * Create a DateTime from an input string and format string
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
+   * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
-   * @param {string} fmt - the format the string is expected to be in (see description)
+   * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
@@ -5933,7 +5941,7 @@ class DateTime {
 
 
   toLocal() {
-    return this.setZone(Settings.defaultZone || new LocalZone());
+    return this.setZone(Settings.defaultZone);
   }
   /**
    * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
@@ -6014,7 +6022,7 @@ class DateTime {
 
   set(values) {
     if (!this.isValid) return this;
-    const normalized = normalizeObject(values, normalizeUnit),
+    const normalized = normalizeObject(values, normalizeUnit, []),
           settingWeekStuff = !isUndefined(normalized.weekYear) || !isUndefined(normalized.weekNumber) || !isUndefined(normalized.weekday);
     let mixed;
 
@@ -6115,9 +6123,7 @@ class DateTime {
 
       case "milliseconds":
         break;
-
-      default:
-        throw new InvalidUnitError(unit);
+      // no default, invalid units throw in normalizeUnit()
     }
 
     if (normalizedUnit === "weeks") {
@@ -6168,7 +6174,7 @@ class DateTime {
   }
   /**
    * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
-   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation.
+   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
    * of the DateTime in the assigned locale.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
@@ -6551,7 +6557,7 @@ class DateTime {
     }));
   }
   /**
-   * Returns a string representation this date relative to today, such as "yesterday" or "next month"
+   * Returns a string representation of this date relative to today, such as "yesterday" or "next month"
    * platform supports Intl.RelativeDateFormat.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
@@ -6826,12 +6832,12 @@ function friendlyDateTime(dateTimeish) {
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;
-exports.Interval = Interval;
-exports.Info = Info;
-exports.Zone = Zone;
 exports.FixedOffsetZone = FixedOffsetZone;
 exports.IANAZone = IANAZone;
+exports.Info = Info;
+exports.Interval = Interval;
 exports.InvalidZone = InvalidZone;
 exports.LocalZone = LocalZone;
 exports.Settings = Settings;
+exports.Zone = Zone;
 //# sourceMappingURL=luxon.js.map

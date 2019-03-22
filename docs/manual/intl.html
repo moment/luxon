@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../">
   <title data-ice="title">Manual | Luxon</title>
@@ -199,7 +197,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/matrix.html"><a href="manual/matrix.html" data-ice="link">Support matrix</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#official-support" data-ice="link">Official support</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#internet-explorer-and-platform-polyfills" data-ice="link">Internet Explorer and platform polyfills</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#platform-caveats" data-ice="link">Platform caveats</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#effects-of-missing-features" data-ice="link">Effects of missing features</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#polyfills" data-ice="link">Polyfills</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl" data-ice="link">Intl</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl-tokens" data-ice="link">Intl tokens</a></li>
@@ -245,6 +243,9 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-0" data-ice="link">1.12.0</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-4" data-ice="link">1.11.4</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-3" data-ice="link">1.11.3</a></li>
 <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
@@ -353,12 +354,10 @@ dt.locale; //=&gt; &apos;fr&apos;</code>
 <p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
-<h2 id="default-locale">Default locale</h2><h3 id="out-of-the-box-behavior">Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is <code>null</code>. This means different things in different contexts:</p>
-<ol>
-<li><code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will fall back on the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</li>
-<li><code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</li>
-<li>There&apos;s an exception, though: DateTime#toFormat can take &quot;macro&quot; formats like &quot;D&quot; that produce localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be localized.</li>
-</ol>
+<h2 id="default-locale">Default locale</h2><h3 id="out-of-the-box-behavior">Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</p>
+<p>As a result, <code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will by default generate strings in the user&apos;s locale.</p>
+<p>However, note that <code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.</p>
+<p>There&apos;s an exception, though: <code>DateTime#toFormat</code> can take &quot;macro&quot; formats like &quot;D&quot; that produces localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be localized.</p>
 <h3 id="setting-the-default">Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
 DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
@@ -419,5 +418,6 @@ dt.toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;&#x9E8;&#x9EA; settembre &#
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
-</html>
+
+
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body></html>
