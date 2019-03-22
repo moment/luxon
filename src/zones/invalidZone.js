@@ -2,7 +2,7 @@ import Zone from "../zone.js";
 
 /**
  * A zone that failed to parse. You should never need to instantiate this.
- * @implments {Zone}
+ * @implements {Zone}
  */
 export default class InvalidZone extends Zone {
   constructor(zoneName) {
