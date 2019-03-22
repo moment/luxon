@@ -49,14 +49,13 @@ Generally speaking, Luxon does not support changing a DateTime's offset, just it
 
 Luxon's API methods that take a zone as an argument all let you specify the zone in a few ways.
 
-| Type         | Example            | Description                                                                                   |
-| ------------ | ------------------ | --------------------------------------------------------------------------------------------- |
-| IANA         | 'America/New_York' | that zone                                                                                     |
-| local        | 'local'            | the [default zone](#changing-the-default-zone) if set. Otherwise uses the system's local zone |                                      |
-| system       | 'system'           | the system's local zone                                                                       |
-| UTC          | 'utc'              | Universal Coordinated Time                                                                    |
-| fixed offset | 'UTC+7'            | a fixed offset zone                                                                           |
-| Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only)                             |
+| Type         | Example            | Description                                                       |
+| ------------ | ------------------ | ----------------------------------------------------------------- |
+| IANA         | 'America/New_York' | that zone                                                         |
+| local        | 'local'            | the system's local zone                                           |
+| UTC          | 'utc'              | Universal Coordinated Time                                        |
+| fixed offset | 'UTC+7'            | a fixed offset zone                                               |
+| Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only) |
 
 ### IANA support
 
