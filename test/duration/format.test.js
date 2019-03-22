@@ -5,6 +5,7 @@ const dur = () =>
   Duration.fromObject({
     years: 1,
     months: 2,
+    weeks: 1,
     days: 3,
     hours: 4,
     minutes: 5,
@@ -16,7 +17,7 @@ const dur = () =>
 // #toISO()
 //------
 test("Duration#toISO fills out every field", () => {
-  expect(dur().toISO()).toBe("P1Y2M3DT4H5M6.007S");
+  expect(dur().toISO()).toBe("P1Y2M1W3DT4H5M6.007S");
 });
 
 test("Duration#toISO creates a minimal string", () => {
@@ -68,7 +69,7 @@ test("Duration#toString returns the ISO representation", () => {
 // #toFormat()
 //------
 test("Duration#toFormat('S') returns milliseconds", () => {
-  expect(dur().toFormat("S")).toBe("36993906007");
+  expect(dur().toFormat("S")).toBe("37598706007");
 
   const lil = Duration.fromMillis(5);
   expect(lil.toFormat("S")).toBe("5");
@@ -77,9 +78,9 @@ test("Duration#toFormat('S') returns milliseconds", () => {
 });
 
 test("Duration#toFormat('s') returns seconds", () => {
-  expect(dur().toFormat("s")).toBe("36993906");
-  expect(dur().toFormat("s", { floor: false })).toBe("36993906.007");
-  expect(dur().toFormat("s.SSS")).toBe("36993906.007");
+  expect(dur().toFormat("s")).toBe("37598706");
+  expect(dur().toFormat("s", { floor: false })).toBe("37598706.007");
+  expect(dur().toFormat("s.SSS")).toBe("37598706.007");
 
   const lil = Duration.fromObject({ seconds: 6 });
   expect(lil.toFormat("s")).toBe("6");
@@ -89,10 +90,10 @@ test("Duration#toFormat('s') returns seconds", () => {
 });
 
 test("Duration#toFormat('m') returns minutes", () => {
-  expect(dur().toFormat("m")).toBe("616565");
-  expect(dur().toFormat("m", { floor: false })).toBe("616565.1");
-  expect(dur().toFormat("m:ss")).toBe("616565:06");
-  expect(dur().toFormat("m:ss.SSS")).toBe("616565:06.007");
+  expect(dur().toFormat("m")).toBe("626645");
+  expect(dur().toFormat("m", { floor: false })).toBe("626645.1");
+  expect(dur().toFormat("m:ss")).toBe("626645:06");
+  expect(dur().toFormat("m:ss.SSS")).toBe("626645:06.007");
 
   const lil = Duration.fromObject({ minutes: 6 });
   expect(lil.toFormat("m")).toBe("6");
@@ -102,10 +103,10 @@ test("Duration#toFormat('m') returns minutes", () => {
 });
 
 test("Duration#toFormat('h') returns hours", () => {
-  expect(dur().toFormat("h")).toBe("10276");
-  expect(dur().toFormat("h", { floor: false })).toBe("10276.085");
-  expect(dur().toFormat("h:ss")).toBe("10276:306");
-  expect(dur().toFormat("h:mm:ss.SSS")).toBe("10276:05:06.007");
+  expect(dur().toFormat("h")).toBe("10444");
+  expect(dur().toFormat("h", { floor: false })).toBe("10444.085");
+  expect(dur().toFormat("h:ss")).toBe("10444:306");
+  expect(dur().toFormat("h:mm:ss.SSS")).toBe("10444:05:06.007");
 
   const lil = Duration.fromObject({ hours: 6 });
   expect(lil.toFormat("h")).toBe("6");
@@ -115,10 +116,10 @@ test("Duration#toFormat('h') returns hours", () => {
 });
 
 test("Duration#toFormat('d') returns days", () => {
-  expect(dur().toFormat("d")).toBe("428");
-  expect(dur().toFormat("d", { floor: false })).toBe("428.17");
-  expect(dur().toFormat("d:h:ss")).toBe("428:4:306");
-  expect(dur().toFormat("d:h:mm:ss.SSS")).toBe("428:4:05:06.007");
+  expect(dur().toFormat("d")).toBe("435");
+  expect(dur().toFormat("d", { floor: false })).toBe("435.17");
+  expect(dur().toFormat("d:h:ss")).toBe("435:4:306");
+  expect(dur().toFormat("d:h:mm:ss.SSS")).toBe("435:4:05:06.007");
 
   const lil = Duration.fromObject({ days: 6 });
   expect(lil.toFormat("d")).toBe("6");
@@ -129,9 +130,9 @@ test("Duration#toFormat('d') returns days", () => {
 
 test("Duration#toFormat('M') returns months", () => {
   expect(dur().toFormat("M")).toBe("14");
-  expect(dur().toFormat("M", { floor: false })).toBe("14.106");
-  expect(dur().toFormat("M:s")).toBe("14:273906");
-  expect(dur().toFormat("M:dd:h:mm:ss.SSS")).toBe("14:03:4:05:06.007");
+  expect(dur().toFormat("M", { floor: false })).toBe("14.356");
+  expect(dur().toFormat("M:s")).toBe("14:878706");
+  expect(dur().toFormat("M:dd:h:mm:ss.SSS")).toBe("14:10:4:05:06.007");
 
   const lil = Duration.fromObject({ months: 6 });
   expect(lil.toFormat("M")).toBe("6");
@@ -142,9 +143,9 @@ test("Duration#toFormat('M') returns months", () => {
 
 test("Duration#toFormat('y') returns years", () => {
   expect(dur().toFormat("y")).toBe("1");
-  expect(dur().toFormat("y", { floor: false })).toBe("1.175");
-  expect(dur().toFormat("y:m")).toBe("1:90965");
-  expect(dur().toFormat("y:M:dd:h:mm:ss.SSS")).toBe("1:2:03:4:05:06.007");
+  expect(dur().toFormat("y", { floor: false })).toBe("1.195");
+  expect(dur().toFormat("y:m")).toBe("1:101045");
+  expect(dur().toFormat("y:M:dd:h:mm:ss.SSS")).toBe("1:2:10:4:05:06.007");
 
   const lil = Duration.fromObject({ years: 5 });
   expect(lil.toFormat("y")).toBe("5");
@@ -153,12 +154,12 @@ test("Duration#toFormat('y') returns years", () => {
 });
 
 test("Duration#toFormat accepts the deprecated 'round' option", () => {
-  expect(dur().toFormat("s", { round: false })).toBe("36993906.007");
-  expect(dur().toFormat("m", { round: false })).toBe("616565.1");
-  expect(dur().toFormat("h", { round: false })).toBe("10276.085");
-  expect(dur().toFormat("d", { round: false })).toBe("428.17");
-  expect(dur().toFormat("M", { round: false })).toBe("14.106");
-  expect(dur().toFormat("y", { round: false })).toBe("1.175");
+  expect(dur().toFormat("s", { round: false })).toBe("37598706.007");
+  expect(dur().toFormat("m", { round: false })).toBe("626645.1");
+  expect(dur().toFormat("h", { round: false })).toBe("10444.085");
+  expect(dur().toFormat("d", { round: false })).toBe("435.17");
+  expect(dur().toFormat("M", { round: false })).toBe("14.356");
+  expect(dur().toFormat("y", { round: false })).toBe("1.195");
 });
 
 test("Duration#toFormat leaves in zeros", () => {
@@ -180,7 +181,7 @@ test("Duration#toFormat localizes the numbers", () => {
     dur()
       .reconfigure({ locale: "bn" })
       .toFormat("yy:MM:dd:h:mm:ss.SSS")
-  ).toBe("০১:০২:০৩:৪:০৫:০৬.০০৭");
+  ).toBe("০১:০২:১০:৪:০৫:০৬.০০৭");
 });
 
 test("Duration#toFormat returns a lame string for invalid durations", () => {

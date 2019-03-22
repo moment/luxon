@@ -248,7 +248,7 @@ export default class Duration {
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
-   * @example Duration.fromISO('P3Y6M4DT12H30M5S').toObject() //=> { years: 3, months: 6, day: 4, hours: 12, minutes: 30, seconds: 5 }
+   * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
    * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
    * @return {Duration}
@@ -406,7 +406,8 @@ export default class Duration {
     let s = "P";
     if (this.years !== 0) s += this.years + "Y";
     if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + "M";
-    if (this.days !== 0 || this.weeks !== 0) s += this.days + this.weeks * 7 + "D";
+    if (this.weeks !== 0) s += this.weeks + "W";
+    if (this.days !== 0) s += this.days + "D";
     if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0)
       s += "T";
     if (this.hours !== 0) s += this.hours + "H";
