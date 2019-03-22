@@ -5,7 +5,7 @@ let singleton = null;
 
 /**
  * Represents the local zone for this Javascript environment.
- * @implments {Zone}
+ * @implements {Zone}
  */
 export default class LocalZone extends Zone {
   /**

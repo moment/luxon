@@ -13,7 +13,7 @@ function hoursMinutesOffset(z) {
 
 /**
  * A zone with a fixed offset (i.e. no DST)
- * @implments {Zone}
+ * @implements {Zone}
  */
 export default class FixedOffsetZone extends Zone {
   /**
@@ -37,7 +37,7 @@ export default class FixedOffsetZone extends Zone {
   }
 
   /**
-   * Get an instance of FixedOffsetZone with from a UTC offset string, like "UTC+6"
+   * Get an instance of FixedOffsetZone from a UTC offset string, like "UTC+6"
    * @param {string} s - The offset string to parse
    * @example FixedOffsetZone.parseSpecifier("UTC+6")
    * @example FixedOffsetZone.parseSpecifier("UTC+06")

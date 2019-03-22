@@ -52,7 +52,7 @@ function partsOffset(dtf, date) {
 
 /**
  * A zone identified by an IANA identifier, like America/New_York
- * @implments {Zone}
+ * @implements {Zone}
  */
 export default class IANAZone extends Zone {
   /**

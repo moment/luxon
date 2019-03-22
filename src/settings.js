@@ -38,7 +38,7 @@ export default class Settings {
    * @type {string}
    */
   static get defaultZoneName() {
-    return (defaultZone || LocalZone.instance).name;
+    return Settings.defaultZone.name;
   }
 
   /**
