@@ -1,5 +1,11 @@
 # Changelog
 
+# 1.12.0
+
+ * Add some explicit CDN support to the NPM package
+ * Add week token to duration ISO support
+ * Lots of cleanup and test coverage changes
+
 # 1.11.4
 
  * `setZone("local")` now returns the defaultZone if it is set
