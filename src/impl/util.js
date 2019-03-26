@@ -244,3 +244,26 @@ export function timeObject(obj) {
 }
 
 export const ianaRegex = /[A-Za-z_+-]{1,256}(:?\/[A-Za-z_+-]{1,256}(\/[A-Za-z_+-]{1,256})?)?/;
+
+export const memoize = fn => {
+  const cache = {};
+  return (...args) => {
+    const n = args[0];
+    if (cache[n]) {
+      return cache[n];
+    } else {
+      const result = fn(n);
+      cache[n] = result;
+      return result;
+    }
+  };
+};
+
+export const isValidZone = memoize(zone => {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
+    return true;
+  } catch (e) {
+    return false;
+  }
+});

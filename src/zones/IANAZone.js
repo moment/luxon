@@ -1,4 +1,4 @@
-import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util.js";
+import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS, isValidZone } from "../impl/util.js";
 import Zone from "../zone.js";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
@@ -76,12 +76,7 @@ export default class IANAZone extends Zone {
    * @return {true}
    */
   static isValidZone(zone) {
-    try {
-      new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return isValidZone(zone);
   }
 
   // Etc/GMT+8 -> -480
