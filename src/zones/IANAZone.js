@@ -64,6 +64,10 @@ function partsOffset(dtf, date) {
  * @implements {Zone}
  */
 export default class IANAZone extends Zone {
+  /**
+   * Reset local caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
   static resetCache() {
     isValidZoneMemoized = memoize(isValidZone);
     dtfCache = {};
