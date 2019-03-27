@@ -249,7 +249,7 @@ export const memoize = fn => {
   const cache = {};
   return (...args) => {
     const n = args[0];
-    if (cache[n]) {
+    if (cache.hasOwnProperty(n)) {
       return cache[n];
     } else {
       const result = fn(n);
