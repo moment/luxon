@@ -1,9 +1,18 @@
-import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS, isValidZone } from "../impl/util.js";
+import {
+  parseZoneInfo,
+  isUndefined,
+  ianaRegex,
+  objToLocalTS,
+  isValidZone,
+  memoize
+} from "../impl/util.js";
 import Zone from "../zone.js";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 
-const dtfCache = {};
+let isValidZoneMemoized = memoize(isValidZone);
+
+let dtfCache = {};
 function makeDTF(zone) {
   if (!dtfCache[zone]) {
     dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
@@ -55,6 +64,10 @@ function partsOffset(dtf, date) {
  * @implements {Zone}
  */
 export default class IANAZone extends Zone {
+  static resetCache() {
+    isValidZoneMemoized = memoize(isValidZone);
+    dtfCache = {};
+  }
   /**
    * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
    * @param {string} s - The string to check validity on
@@ -76,7 +89,7 @@ export default class IANAZone extends Zone {
    * @return {true}
    */
   static isValidZone(zone) {
-    return isValidZone(zone);
+    return isValidZoneMemoized(zone);
   }
 
   // Etc/GMT+8 -> -480

@@ -259,11 +259,11 @@ export const memoize = fn => {
   };
 };
 
-export const isValidZone = memoize(zone => {
+export const isValidZone = zone => {
   try {
     new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
     return true;
   } catch (e) {
     return false;
   }
-});
+};
