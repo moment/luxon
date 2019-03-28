@@ -236,7 +236,7 @@ function dateTimeFromMatches(matches) {
   if (!isUndefined(matches.Z)) {
     zone = new FixedOffsetZone(matches.Z);
   } else if (!isUndefined(matches.z)) {
-    zone = new IANAZone(matches.z);
+    zone = IANAZone.create(matches.z);
   } else {
     zone = null;
   }

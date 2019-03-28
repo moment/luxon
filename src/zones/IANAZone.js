@@ -1,16 +1,7 @@
-import {
-  parseZoneInfo,
-  isUndefined,
-  ianaRegex,
-  objToLocalTS,
-  isValidZone,
-  memoize
-} from "../impl/util.js";
+import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.js";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
-
-let isValidZoneMemoized = memoize(isValidZone);
 
 let dtfCache = {};
 function makeDTF(zone) {
@@ -59,17 +50,28 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
+let ianaZoneCache = {};
 /**
  * A zone identified by an IANA identifier, like America/New_York
  * @implements {Zone}
  */
 export default class IANAZone extends Zone {
   /**
+   * @param {string} name - Zone name
+   * @return {IANAZone}
+   */
+  static create(name) {
+    if (!ianaZoneCache[name]) {
+      ianaZoneCache[name] = new IANAZone(name);
+    }
+    return ianaZoneCache[name];
+  }
+  /**
    * Reset local caches. Should only be necessary in testing scenarios.
    * @return {void}
    */
   static resetCache() {
-    isValidZoneMemoized = memoize(isValidZone);
+    ianaZoneCache = {};
     dtfCache = {};
   }
   /**
@@ -90,10 +92,15 @@ export default class IANAZone extends Zone {
    * @example IANAZone.isValidZone("America/New_York") //=> true
    * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
    * @example IANAZone.isValidZone("Sport~~blorp") //=> false
-   * @return {true}
+   * @return {boolean}
    */
   static isValidZone(zone) {
-    return isValidZoneMemoized(zone);
+    try {
+      new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Etc/GMT+8 -> -480
