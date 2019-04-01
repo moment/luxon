@@ -1,22 +1,22 @@
 # Changelog
 
-# 1.12.0
+## 1.12.0
 
  * Add some explicit CDN support to the NPM package
  * Add week token to duration ISO support
  * Lots of cleanup and test coverage changes
 
-# 1.11.4
+## 1.11.4
 
  * `setZone("local")` now returns the defaultZone if it is set
  * Fixes for the polyfilled build
 
-# 1.11.3
+## 1.11.3
 
  * Allow 24:00 in ISO (and other) strings
  * Fix some bugs with the typecheck functions like `DateTime.isDateTime()`
 
-# 1.11.2
+## 1.11.2
 
  * Fixed handling of some characters in fromFormat literal sections
  * Hanlde string values in object arguments to DateTime methods
