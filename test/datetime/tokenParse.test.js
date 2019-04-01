@@ -535,6 +535,29 @@ test("DateTime.fromFormatExplain() explains a bad match", () => {
   expect(keyCount(ex.result)).toBe(0);
 });
 
+test("DateTime.fromFormatExplain() parses zone correctly", () => {
+  const ex = DateTime.fromFormatExplain(
+    "America/New_York 1-April-2019 04:10:48 PM Mon",
+    "z d-MMMM-yyyy hh:mm:ss a EEE"
+  );
+  expect(ex.rawMatches).toBeInstanceOf(Array);
+  expect(ex.matches).toBeInstanceOf(Object);
+  expect(keyCount(ex.matches)).toBe(9);
+  expect(ex.result).toBeInstanceOf(Object);
+  expect(keyCount(ex.result)).toBe(7);
+  expect(ex.matches).toEqual({
+    E: 1,
+    M: 4,
+    a: 1,
+    d: 1,
+    h: 16,
+    m: 10,
+    s: 48,
+    y: 2019,
+    z: "America/New_York"
+  });
+});
+
 test("DateTime.fromFormatExplain() takes the same options as fromFormat", () => {
   const ex = DateTime.fromFormatExplain("Janv. 25 1982", "LLL dd yyyy", { locale: "fr" });
   expect(keyCount(ex.result)).toBe(3);
