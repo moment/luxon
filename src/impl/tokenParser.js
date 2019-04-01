@@ -157,7 +157,7 @@ function unitForToken(token, loc) {
         // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
         // because we don't have any way to figure out what they are
         case "z":
-          return simple(/[a-z_+-]{1,256}(\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?)?/i);
+          return simple(/[a-z_+-/]{1,256}?/i);
         default:
           return literal(t);
       }
