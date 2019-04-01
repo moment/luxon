@@ -582,7 +582,7 @@ export default class DateTime {
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'local' })
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'America/New_York' })
    * @example DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
-   * @return {DateTime}
+   * @return {DateTime} You should check that the parsing was successful with `.isValid`.
    */
   static fromObject(obj) {
     const zoneToUse = normalizeZone(obj.zone, Settings.defaultZone);
@@ -704,7 +704,7 @@ export default class DateTime {
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
    * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc'})
    * @example DateTime.fromISO('2016-W05-4')
-   * @return {DateTime}
+   * @return {DateTime} You should check that the parsing was successful with `.isValid`.
    */
   static fromISO(text, opts = {}) {
     const [vals, parsedZone] = parseISODate(text);
@@ -723,7 +723,7 @@ export default class DateTime {
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
    * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
-   * @return {DateTime}
+   * @return {DateTime} You should check that the parsing was successful with `.isValid`.
    */
   static fromRFC2822(text, opts = {}) {
     const [vals, parsedZone] = parseRFC2822Date(text);
@@ -743,7 +743,7 @@ export default class DateTime {
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
-   * @return {DateTime}
+   * @return {DateTime} You should check that the parsing was successful with `.isValid`.
    */
   static fromHTTP(text, opts = {}) {
     const [vals, parsedZone] = parseHTTPDate(text);
@@ -762,7 +762,7 @@ export default class DateTime {
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @return {DateTime}
+   * @return {DateTime} You should check that the parsing was successful with `.isValid`.
    */
   static fromFormat(text, fmt, opts = {}) {
     if (isUndefined(text) || isUndefined(fmt)) {
@@ -808,7 +808,7 @@ export default class DateTime {
    * @example DateTime.fromSQL('2017-05-15 09:12:34.342 America/Los_Angeles', { setZone: true })
    * @example DateTime.fromSQL('2017-05-15 09:12:34.342', { zone: 'America/Los_Angeles' })
    * @example DateTime.fromSQL('09:12:34.342')
-   * @return {DateTime}
+   * @return {DateTime} You should check that the parsing was successful with `.isValid`.
    */
   static fromSQL(text, opts = {}) {
     const [vals, parsedZone] = parseSQL(text);
