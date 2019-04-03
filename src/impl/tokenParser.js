@@ -2,11 +2,12 @@ import { parseMillis, isUndefined, untruncateYear, signedOffset } from "./util.j
 import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
+import { digitRegex, parseDigits } from "./digits.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
 function intUnit(regex, post = i => i) {
-  return { regex, deser: ([s]) => post(parseInt(s, 10)) };
+  return { regex, deser: ([s]) => post(parseDigits(s)) };
 }
 
 function fixListRegex(s) {
@@ -44,13 +45,17 @@ function escapeToken(value) {
 }
 
 function unitForToken(token, loc) {
-  const one = /\d/,
-    two = /\d{2}/,
-    three = /\d{3}/,
-    four = /\d{4}/,
-    oneOrTwo = /\d{1,2}/,
-    oneToThree = /\d{1,3}/,
-    twoToFour = /\d{2,4}/,
+  const one = digitRegex(loc),
+    two = digitRegex(loc, "{2}"),
+    three = digitRegex(loc, "{3}"),
+    four = digitRegex(loc, "{4}"),
+    six = digitRegex(loc, "{6}"),
+    oneOrTwo = digitRegex(loc, "{1,2}"),
+    oneToThree = digitRegex(loc, "{1,3}"),
+    oneToSix = digitRegex(loc, "{1,6}"),
+    oneToNine = digitRegex(loc, "{1,9}"),
+    twoToFour = digitRegex(loc, "{2,4}"),
+    fourToSix = digitRegex(loc, "{4,6}"),
     literal = t => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
     unitate = t => {
       if (token.literal) {
@@ -64,32 +69,32 @@ function unitForToken(token, loc) {
           return oneOf(loc.eras("long", false), 0);
         // years
         case "y":
-          return intUnit(/\d{1,6}/);
+          return intUnit(oneToSix);
         case "yy":
           return intUnit(twoToFour, untruncateYear);
         case "yyyy":
           return intUnit(four);
         case "yyyyy":
-          return intUnit(/\d{4,6}/);
+          return intUnit(fourToSix);
         case "yyyyyy":
-          return intUnit(/\d{6}/);
+          return intUnit(six);
         // months
         case "M":
           return intUnit(oneOrTwo);
         case "MM":
           return intUnit(two);
         case "MMM":
-          return oneOf(loc.months("short", false, false), 1);
+          return oneOf(loc.months("short", true, false), 1);
         case "MMMM":
-          return oneOf(loc.months("long", false, false), 1);
+          return oneOf(loc.months("long", true, false), 1);
         case "L":
           return intUnit(oneOrTwo);
         case "LL":
           return intUnit(two);
         case "LLL":
-          return oneOf(loc.months("short", true, false), 1);
+          return oneOf(loc.months("short", false, false), 1);
         case "LLLL":
-          return oneOf(loc.months("long", true, false), 1);
+          return oneOf(loc.months("long", false, false), 1);
         // dates
         case "d":
           return intUnit(oneOrTwo);
@@ -122,7 +127,7 @@ function unitForToken(token, loc) {
         case "SSS":
           return intUnit(three);
         case "u":
-          return simple(/\d{1,9}/);
+          return simple(oneToNine);
         // meridiem
         case "a":
           return oneOf(loc.meridiems(), 0);
@@ -151,9 +156,9 @@ function unitForToken(token, loc) {
         // offset/zone
         case "Z":
         case "ZZ":
-          return offset(/([+-]\d{1,2})(?::(\d{2}))?/, 2);
+          return offset(new RegExp(`([+-]${oneOrTwo.source})(?::(${two.source}))?`), 2);
         case "ZZZ":
-          return offset(/([+-]\d{1,2})(\d{2})?/, 2);
+          return offset(new RegExp(`([+-]${oneOrTwo.source})(${two.source})?`), 2);
         // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
         // because we don't have any way to figure out what they are
         case "z":
