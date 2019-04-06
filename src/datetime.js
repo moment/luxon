@@ -1323,8 +1323,8 @@ export default class DateTime {
    * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
    * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
    * @example DateTime.local().plus({ days: -1 }) //~> this time yesterday
-   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
-   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
+   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 3 hr, 13 min
+   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 3 hr, 13 min
    * @return {DateTime}
    */
   plus(duration) {
