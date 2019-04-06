@@ -212,7 +212,7 @@ test("DateTime#diff handles fractional days as fractions of those specific days"
       { year: 2018, month: 11, day: 3, hour: 1 },
       "days"
     )
-  ).toEqual({ days: 1 + 23.0 / 24 });
+  ).toEqual({ days: 1 + 24 / 25 });
 });
 
 test("DateTime#diff is precise for lower order units", () => {
@@ -258,6 +258,16 @@ test("DateTime#diff results in a duration with the same locale", () => {
 
   expect(dur.locale).toBe("fr");
   expect(dur.numberingSystem).toBe("mong");
+});
+
+// see https://github.com/moment/luxon/issues/487
+test("DateTime#diff results works when needing to backtrack months", () => {
+  const left = DateTime.fromJSDate(new Date(1554036127038));
+  const right = DateTime.fromJSDate(new Date(1554122527128));
+
+  const diff = right.diff(left, ["months", "days", "hours"]);
+  expect(diff.months).toBe(0);
+  expect(diff.days).toBe(1);
 });
 
 //------

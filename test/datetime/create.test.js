@@ -571,7 +571,9 @@ test("DateTime.fromObject accepts a locale string with weird junk in it", () => 
     });
 
     expect(res.locale).toBe("be");
-    expect(res.outputCalendar).toBe("gregory");
+
+    // "coptic" is right, but some versions of Node 10 give "gregory"
+    expect(res.outputCalendar === "gregory" || res.outputCalendar === "coptic").toBe(true);
     expect(res.numberingSystem).toBe("latn");
   });
 });

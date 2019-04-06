@@ -32,11 +32,10 @@ function highOrderDiffs(cursor, later, units) {
       lowestOrder = unit;
 
       let delta = differ(cursor, later);
-
       highWater = cursor.plus({ [unit]: delta });
 
       if (highWater > later) {
-        cursor = highWater.minus({ [unit]: 1 });
+        cursor = cursor.plus({ [unit]: delta - 1 });
         delta -= 1;
       } else {
         cursor = highWater;
