@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.12.1
+
+ * Fix cross-month diffs in some scenarios
+ * Fix time zone parsing when the time zone isn't at the end
+ * Memoize IANA zone creation
+
 ## 1.12.0
 
  * Add some explicit CDN support to the NPM package
