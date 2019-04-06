@@ -35,7 +35,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	var _core = createCommonjsModule(function (module) {
 	  var core = module.exports = {
-	    version: '2.6.5'
+	    version: '2.5.7'
 	  };
 	  if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
@@ -119,29 +119,14 @@ define(['exports'], function (exports) { 'use strict';
 	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 	};
 
-	var _library = false;
-
-	var _shared = createCommonjsModule(function (module) {
-	  var SHARED = '__core-js_shared__';
-	  var store = _global[SHARED] || (_global[SHARED] = {});
-	  (module.exports = function (key, value) {
-	    return store[key] || (store[key] = value !== undefined ? value : {});
-	  })('versions', []).push({
-	    version: _core.version,
-	    mode: 'global',
-	    copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
-	  });
-	});
-
-	var _functionToString = _shared('native-function-to-string', Function.toString);
-
 	var _redefine = createCommonjsModule(function (module) {
 	  var SRC = _uid('src');
 	  var TO_STRING = 'toString';
-	  var TPL = ('' + _functionToString).split(TO_STRING);
+	  var $toString = Function[TO_STRING];
+	  var TPL = ('' + $toString).split(TO_STRING);
 
 	  _core.inspectSource = function (it) {
-	    return _functionToString.call(it);
+	    return $toString.call(it);
 	  };
 
 	  (module.exports = function (O, key, val, safe) {
@@ -162,7 +147,7 @@ define(['exports'], function (exports) { 'use strict';
 	    } // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 
 	  })(Function.prototype, TO_STRING, function toString() {
-	    return typeof this == 'function' && this[SRC] || _functionToString.call(this);
+	    return typeof this == 'function' && this[SRC] || $toString.call(this);
 	  });
 	});
 
@@ -321,6 +306,20 @@ define(['exports'], function (exports) { 'use strict';
 	var _meta_4 = _meta.getWeak;
 	var _meta_5 = _meta.onFreeze;
 
+	var _library = false;
+
+	var _shared = createCommonjsModule(function (module) {
+	  var SHARED = '__core-js_shared__';
+	  var store = _global[SHARED] || (_global[SHARED] = {});
+	  (module.exports = function (key, value) {
+	    return store[key] || (store[key] = value !== undefined ? value : {});
+	  })('versions', []).push({
+	    version: _core.version,
+	    mode: _library ? 'pure' : 'global',
+	    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+	  });
+	});
+
 	var _wks = createCommonjsModule(function (module) {
 	  var store = _shared('wks');
 	  var Symbol = _global.Symbol;
@@ -351,7 +350,7 @@ define(['exports'], function (exports) { 'use strict';
 	var defineProperty = _objectDp.f;
 
 	var _wksDefine = function _wksDefine(name) {
-	  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
+	  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
 	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, {
 	    value: _wksExt.f(name)
 	  });
@@ -2826,7 +2825,7 @@ define(['exports'], function (exports) { 'use strict';
 	var singleton = null;
 	/**
 	 * Represents the local zone for this Javascript environment.
-	 * @implments {Zone}
+	 * @implements {Zone}
 	 */
 
 	var LocalZone =
@@ -2966,17 +2965,39 @@ define(['exports'], function (exports) { 'use strict';
 
 	  return filled;
 	}
+
+	var ianaZoneCache = {};
 	/**
 	 * A zone identified by an IANA identifier, like America/New_York
-	 * @implments {Zone}
+	 * @implements {Zone}
 	 */
-
 
 	var IANAZone =
 	/*#__PURE__*/
 	function (_Zone) {
 	  _inheritsLoose(IANAZone, _Zone);
 
+	  /**
+	   * @param {string} name - Zone name
+	   * @return {IANAZone}
+	   */
+	  IANAZone.create = function create(name) {
+	    if (!ianaZoneCache[name]) {
+	      ianaZoneCache[name] = new IANAZone(name);
+	    }
+
+	    return ianaZoneCache[name];
+	  }
+	  /**
+	   * Reset local caches. Should only be necessary in testing scenarios.
+	   * @return {void}
+	   */
+	  ;
+
+	  IANAZone.resetCache = function resetCache() {
+	    ianaZoneCache = {};
+	    dtfCache = {};
+	  }
 	  /**
 	   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
 	   * @param {string} s - The string to check validity on
@@ -2985,6 +3006,8 @@ define(['exports'], function (exports) { 'use strict';
 	   * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
 	   * @return {true}
 	   */
+	  ;
+
 	  IANAZone.isValidSpecifier = function isValidSpecifier(s) {
 	    return s && s.match(matchingRegex);
 	  }
@@ -2994,7 +3017,7 @@ define(['exports'], function (exports) { 'use strict';
 	   * @example IANAZone.isValidZone("America/New_York") //=> true
 	   * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
 	   * @example IANAZone.isValidZone("Sport~~blorp") //=> false
-	   * @return {true}
+	   * @return {boolean}
 	   */
 	  ;
 
@@ -3123,7 +3146,7 @@ define(['exports'], function (exports) { 'use strict';
 	}
 	/**
 	 * A zone with a fixed offset (i.e. no DST)
-	 * @implments {Zone}
+	 * @implements {Zone}
 	 */
 
 
@@ -3141,7 +3164,7 @@ define(['exports'], function (exports) { 'use strict';
 	    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
 	  }
 	  /**
-	   * Get an instance of FixedOffsetZone with from a UTC offset string, like "UTC+6"
+	   * Get an instance of FixedOffsetZone from a UTC offset string, like "UTC+6"
 	   * @param {string} s - The offset string to parse
 	   * @example FixedOffsetZone.parseSpecifier("UTC+6")
 	   * @example FixedOffsetZone.parseSpecifier("UTC+06")
@@ -3241,7 +3264,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	/**
 	 * A zone that failed to parse. You should never need to instantiate this.
-	 * @implments {Zone}
+	 * @implements {Zone}
 	 */
 
 	var InvalidZone =
@@ -3326,7 +3349,7 @@ define(['exports'], function (exports) { 'use strict';
 	    if (lowered === "local") return defaultZone;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
 	      // handle Etc/GMT-4, which V8 chokes on
 	      return FixedOffsetZone.instance(offset);
-	    } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
+	    } else if (IANAZone.isValidSpecifier(lowered)) return IANAZone.create(input);else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
 	  } else if (isNumber(input)) {
 	    return FixedOffsetZone.instance(input);
 	  } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {
@@ -3363,6 +3386,7 @@ define(['exports'], function (exports) { 'use strict';
 	   */
 	  Settings.resetCaches = function resetCaches() {
 	    Locale.resetCache();
+	    IANAZone.resetCache();
 	  };
 
 	  _createClass(Settings, null, [{
@@ -3394,7 +3418,7 @@ define(['exports'], function (exports) { 'use strict';
 	  }, {
 	    key: "defaultZoneName",
 	    get: function get() {
-	      return (defaultZone || LocalZone.instance).name;
+	      return Settings.defaultZone.name;
 	    }
 	    /**
 	     * Set the default time zone to create DateTimes in. Does not affect existing instances.
@@ -4482,7 +4506,7 @@ define(['exports'], function (exports) { 'use strict';
 	    }));
 	  };
 
-	  _proto4.months = function months$1(length, format, defaultOK) {
+	  _proto4.months = function months$$1(length, format, defaultOK) {
 	    var _this = this;
 
 	    if (format === void 0) {
@@ -4512,7 +4536,7 @@ define(['exports'], function (exports) { 'use strict';
 	    });
 	  };
 
-	  _proto4.weekdays = function weekdays$1(length, format, defaultOK) {
+	  _proto4.weekdays = function weekdays$$1(length, format, defaultOK) {
 	    var _this2 = this;
 
 	    if (format === void 0) {
@@ -4544,7 +4568,7 @@ define(['exports'], function (exports) { 'use strict';
 	    });
 	  };
 
-	  _proto4.meridiems = function meridiems$1(defaultOK) {
+	  _proto4.meridiems = function meridiems$$1(defaultOK) {
 	    var _this3 = this;
 
 	    if (defaultOK === void 0) {
@@ -4570,7 +4594,7 @@ define(['exports'], function (exports) { 'use strict';
 	    });
 	  };
 
-	  _proto4.eras = function eras$1(length, defaultOK) {
+	  _proto4.eras = function eras$$1(length, defaultOK) {
 	    var _this4 = this;
 
 	    if (defaultOK === void 0) {
@@ -4701,12 +4725,10 @@ define(['exports'], function (exports) { 'use strict';
 	    patterns[_key3 - 1] = arguments[_key3];
 	  }
 
-	  var _arr = patterns;
-
-	  for (var _i = 0; _i < _arr.length; _i++) {
-	    var _arr$_i = _arr[_i],
-	        regex = _arr$_i[0],
-	        extractor = _arr$_i[1];
+	  for (var _i = 0, _patterns = patterns; _i < _patterns.length; _i++) {
+	    var _patterns$_i = _patterns[_i],
+	        regex = _patterns$_i[0],
+	        extractor = _patterns$_i[1];
 	    var m = regex.exec(s);
 
 	    if (m) {
@@ -4776,7 +4798,7 @@ define(['exports'], function (exports) { 'use strict';
 	}
 
 	function extractIANAZone(match, cursor) {
-	  var zone = match[cursor] ? new IANAZone(match[cursor]) : null;
+	  var zone = match[cursor] ? IANAZone.create(match[cursor]) : null;
 	  return [{}, zone, cursor + 1];
 	} // ISO duration parsing
 
@@ -5395,10 +5417,9 @@ define(['exports'], function (exports) { 'use strict';
 	    if (!this.isValid) return this;
 	    var dur = friendlyDuration(duration),
 	        result = {};
-	    var _arr = orderedUnits;
 
-	    for (var _i = 0; _i < _arr.length; _i++) {
-	      var k = _arr[_i];
+	    for (var _i = 0, _orderedUnits = orderedUnits; _i < _orderedUnits.length; _i++) {
+	      var k = _orderedUnits[_i];
 
 	      if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
 	        result[k] = dur.get(k) + this.get(k);
@@ -5530,10 +5551,9 @@ define(['exports'], function (exports) { 'use strict';
 	        vals = this.toObject();
 	    var lastUnit;
 	    normalizeValues(this.matrix, vals);
-	    var _arr2 = orderedUnits;
 
-	    for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
-	      var k = _arr2[_i2];
+	    for (var _i2 = 0, _orderedUnits2 = orderedUnits; _i2 < _orderedUnits2.length; _i2++) {
+	      var k = _orderedUnits2[_i2];
 
 	      if (units.indexOf(k) >= 0) {
 	        lastUnit = k;
@@ -5588,10 +5608,8 @@ define(['exports'], function (exports) { 'use strict';
 	    if (!this.isValid) return this;
 	    var negated = {};
 
-	    var _arr3 = Object.keys(this.values);
-
-	    for (var _i3 = 0; _i3 < _arr3.length; _i3++) {
-	      var k = _arr3[_i3];
+	    for (var _i3 = 0, _Object$keys = Object.keys(this.values); _i3 < _Object$keys.length; _i3++) {
+	      var k = _Object$keys[_i3];
 	      negated[k] = -this.values[k];
 	    }
 
@@ -5620,10 +5638,8 @@ define(['exports'], function (exports) { 'use strict';
 	      return false;
 	    }
 
-	    var _arr4 = orderedUnits;
-
-	    for (var _i4 = 0; _i4 < _arr4.length; _i4++) {
-	      var u = _arr4[_i4];
+	    for (var _i4 = 0, _orderedUnits3 = orderedUnits; _i4 < _orderedUnits3.length; _i4++) {
+	      var u = _orderedUnits3[_i4];
 
 	      if (this.values[u] !== other.values[u]) {
 	        return false;
@@ -6506,7 +6522,7 @@ define(['exports'], function (exports) { 'use strict';
 	   */
 	  ;
 
-	  Info.normalizeZone = function normalizeZone$1(input) {
+	  Info.normalizeZone = function normalizeZone$$1(input) {
 	    return normalizeZone(input, Settings.defaultZone);
 	  }
 	  /**
@@ -6730,12 +6746,11 @@ define(['exports'], function (exports) { 'use strict';
 	  }], ["days", dayDiff]];
 	  var results = {};
 	  var lowestOrder, highWater;
-	  var _arr = differs;
 
-	  for (var _i = 0; _i < _arr.length; _i++) {
-	    var _arr$_i = _arr[_i],
-	        unit = _arr$_i[0],
-	        differ = _arr$_i[1];
+	  for (var _i = 0, _differs = differs; _i < _differs.length; _i++) {
+	    var _differs$_i = _differs[_i],
+	        unit = _differs$_i[0],
+	        differ = _differs$_i[1];
 
 	    if (units.indexOf(unit) >= 0) {
 	      var _cursor$plus;
@@ -6745,9 +6760,9 @@ define(['exports'], function (exports) { 'use strict';
 	      highWater = cursor.plus((_cursor$plus = {}, _cursor$plus[unit] = delta, _cursor$plus));
 
 	      if (highWater > later) {
-	        var _highWater$minus;
+	        var _cursor$plus2;
 
-	        cursor = highWater.minus((_highWater$minus = {}, _highWater$minus[unit] = 1, _highWater$minus));
+	        cursor = cursor.plus((_cursor$plus2 = {}, _cursor$plus2[unit] = delta - 1, _cursor$plus2));
 	        delta -= 1;
 	      } else {
 	        cursor = highWater;
@@ -6774,9 +6789,9 @@ define(['exports'], function (exports) { 'use strict';
 
 	  if (lowerOrderUnits.length === 0) {
 	    if (highWater < later) {
-	      var _cursor$plus2;
+	      var _cursor$plus3;
 
-	      highWater = cursor.plus((_cursor$plus2 = {}, _cursor$plus2[lowestOrder] = 1, _cursor$plus2));
+	      highWater = cursor.plus((_cursor$plus3 = {}, _cursor$plus3[lowestOrder] = 1, _cursor$plus3));
 	    }
 
 	    if (highWater !== cursor) {
@@ -7031,7 +7046,7 @@ define(['exports'], function (exports) { 'use strict';
 	      // because we don't have any way to figure out what they are
 
 	      case "z":
-	        return simple(/[a-z_+-]{1,256}(\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?)?/i);
+	        return simple(/[a-z_+-/]{1,256}?/i);
 
 	      default:
 	        return literal(t);
@@ -7129,7 +7144,7 @@ define(['exports'], function (exports) { 'use strict';
 	  if (!isUndefined(matches.Z)) {
 	    zone = new FixedOffsetZone(matches.Z);
 	  } else if (!isUndefined(matches.z)) {
-	    zone = new IANAZone(matches.z);
+	    zone = IANAZone.create(matches.z);
 	  } else {
 	    zone = null;
 	  }
@@ -7615,10 +7630,8 @@ define(['exports'], function (exports) { 'use strict';
 
 	function quickDT(obj, zone) {
 	  // assume we have the higher-order units
-	  var _arr = orderedUnits$1;
-
-	  for (var _i = 0; _i < _arr.length; _i++) {
-	    var u = _arr[_i];
+	  for (var _i = 0, _orderedUnits = orderedUnits$1; _i < _orderedUnits.length; _i++) {
+	    var u = _orderedUnits[_i];
 
 	    if (isUndefined(obj[u])) {
 	      obj[u] = defaultUnitValues[u];
@@ -8344,8 +8357,8 @@ define(['exports'], function (exports) { 'use strict';
 	  /**
 	   * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
 	   *
-	   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
-	   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'utc+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
+	   * By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
+	   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
 	   * @param {Object} opts - options
 	   * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
 	   * @return {DateTime}
@@ -8459,8 +8472,8 @@ define(['exports'], function (exports) { 'use strict';
 	   * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
 	   * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
 	   * @example DateTime.local().plus({ days: -1 }) //~> this time yesterday
-	   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
-	   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
+	   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 3 hr, 13 min
+	   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 3 hr, 13 min
 	   * @return {DateTime}
 	   */
 	  ;
@@ -9731,14 +9744,14 @@ define(['exports'], function (exports) { 'use strict';
 
 	exports.DateTime = DateTime;
 	exports.Duration = Duration;
+	exports.Interval = Interval;
+	exports.Info = Info;
+	exports.Zone = Zone;
 	exports.FixedOffsetZone = FixedOffsetZone;
 	exports.IANAZone = IANAZone;
-	exports.Info = Info;
-	exports.Interval = Interval;
 	exports.InvalidZone = InvalidZone;
 	exports.LocalZone = LocalZone;
 	exports.Settings = Settings;
-	exports.Zone = Zone;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 

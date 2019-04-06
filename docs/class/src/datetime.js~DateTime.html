@@ -1,4 +1,6 @@
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html>
+<head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
   <title data-ice="title">DateTime | Luxon</title>
@@ -2556,7 +2558,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
         
         
         <div data-ice="description"><p>&quot;Set&quot; the DateTime&apos;s zone to specified zone. Returns a newly-constructed DateTime.</p>
-<p>By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plus</a></span>. You may wish to use <span><a href="class/src/datetime.js~DateTime.html#instance-method-toLocal">toLocal</a></span> and <span><a href="class/src/datetime.js~DateTime.html#instance-method-toUTC">toUTC</a></span> which provide simple convenience wrappers for commonly used zones.</p>
+<p>By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plus</a></span>. You may wish to use <span><a href="class/src/datetime.js~DateTime.html#instance-method-toLocal">toLocal</a></span> and <span><a href="class/src/datetime.js~DateTime.html#instance-method-toUTC">toUTC</a></span> which provide simple convenience wrappers for commonly used zones.</p>
 </div>
       </div>
     </td>
@@ -8619,11 +8621,11 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">DateTime.local().plus({ hours: 3, minutes: 13 }) //~&gt; in 1 hr, 13 min</code></pre>
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">DateTime.local().plus({ hours: 3, minutes: 13 }) //~&gt; in 3 hr, 13 min</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~&gt; in 1 hr, 13 min</code></pre>
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~&gt; in 3 hr, 13 min</code></pre>
     </div>
 </div>
 
@@ -8979,7 +8981,7 @@ Just a convenient alias for reconfigure({ locale })</p>
   
   
   <div data-ice="description"><p>&quot;Set&quot; the DateTime&apos;s zone to specified zone. Returns a newly-constructed DateTime.</p>
-<p>By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plus</a></span>. You may wish to use <span><a href="class/src/datetime.js~DateTime.html#instance-method-toLocal">toLocal</a></span> and <span><a href="class/src/datetime.js~DateTime.html#instance-method-toUTC">toUTC</a></span> which provide simple convenience wrappers for commonly used zones.</p>
+<p>By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plus</a></span>. You may wish to use <span><a href="class/src/datetime.js~DateTime.html#instance-method-toLocal">toLocal</a></span> and <span><a href="class/src/datetime.js~DateTime.html#instance-method-toUTC">toUTC</a></span> which provide simple convenience wrappers for commonly used zones.</p>
 </div>
 
   
@@ -8997,7 +8999,7 @@ Just a convenient alias for reconfigure({ locale })</p>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/zone.js~Zone.html">Zone</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;local&apos;</li></ul></td>
-      <td data-ice="description"><p>a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form &apos;utc+3&apos;, or the strings &apos;local&apos; or &apos;utc&apos;. You may also supply an instance of a <span><a href="class/src/zone.js~Zone.html">Zone</a></span> class.</p>
+      <td data-ice="description"><p>a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form &apos;UTC+3&apos;, or the strings &apos;local&apos; or &apos;utc&apos;. You may also supply an instance of a <span><a href="class/src/zone.js~Zone.html">Zone</a></span> class.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
@@ -11187,6 +11189,5 @@ platform supports Intl.RelativeDateFormat.</p>
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-
-
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body></html>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+</html>

@@ -1,4 +1,6 @@
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html>
+<head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
   <title data-ice="title">src/zones/IANAZone.js | Luxon</title>
@@ -47,7 +49,7 @@ import Zone from &quot;../zone.js&quot;;
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 
-const dtfCache = {};
+let dtfCache = {};
 function makeDTF(zone) {
   if (!dtfCache[zone]) {
     dtfCache[zone] = new Intl.DateTimeFormat(&quot;en-US&quot;, {
@@ -94,11 +96,30 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
+let ianaZoneCache = {};
 /**
  * A zone identified by an IANA identifier, like America/New_York
- * @implments {Zone}
+ * @implements {Zone}
  */
 export default class IANAZone extends Zone {
+  /**
+   * @param {string} name - Zone name
+   * @return {IANAZone}
+   */
+  static create(name) {
+    if (!ianaZoneCache[name]) {
+      ianaZoneCache[name] = new IANAZone(name);
+    }
+    return ianaZoneCache[name];
+  }
+  /**
+   * Reset local caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCache() {
+    ianaZoneCache = {};
+    dtfCache = {};
+  }
   /**
    * Returns whether the provided string is a valid specifier. This only checks the string&apos;s format, not that the specifier identifies a known zone; see isValidZone for that.
    * @param {string} s - The string to check validity on
@@ -117,7 +138,7 @@ export default class IANAZone extends Zone {
    * @example IANAZone.isValidZone(&quot;America/New_York&quot;) //=&gt; true
    * @example IANAZone.isValidZone(&quot;Fantasia/Castle&quot;) //=&gt; false
    * @example IANAZone.isValidZone(&quot;Sport~~blorp&quot;) //=&gt; false
-   * @return {true}
+   * @return {boolean}
    */
   static isValidZone(zone) {
     try {
@@ -206,6 +227,5 @@ export default class IANAZone extends Zone {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-
-
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body></html>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+</html>

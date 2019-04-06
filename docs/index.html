@@ -1,4 +1,6 @@
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html>
+<head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="./">
   <title data-ice="title">Manual | Luxon</title>
@@ -242,11 +244,12 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-0" data-ice="link">1.12.0</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-4" data-ice="link">1.11.4</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-3" data-ice="link">1.11.3</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-1" data-ice="link">1.12.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-0" data-ice="link">1.12.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-4" data-ice="link">1.11.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-3" data-ice="link">1.11.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-2" data-ice="link">1.11.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-1" data-ice="link">1.11.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-0" data-ice="link">1.11.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-10-0" data-ice="link">1.10.0</a></li>
@@ -2629,7 +2632,21 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>1.11.2</h1><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.12.1</h2><ul>
+<li>Fix cross-month diffs in some scenarios</li>
+<li>Fix time zone parsing when the time zone isn&apos;t at the end</li>
+<li>Memoize IANA zone creation</li>
+</ul><h2>1.12.0</h2><ul>
+<li>Add some explicit CDN support to the NPM package</li>
+<li>Add week token to duration ISO support</li>
+<li>Lots of cleanup and test coverage changes</li>
+</ul><h2>1.11.4</h2><ul>
+<li><code>setZone(&quot;local&quot;)</code> now returns the defaultZone if it is set</li>
+<li>Fixes for the polyfilled build</li>
+</ul><h2>1.11.3</h2><ul>
+<li>Allow 24:00 in ISO (and other) strings</li>
+<li>Fix some bugs with the typecheck functions like <code>DateTime.isDateTime()</code></li>
+</ul><h2>1.11.2</h2><ul>
 <li>Fixed handling of some characters in fromFormat literal sections</li>
 <li>Hanlde string values in object arguments to DateTime methods</li>
 <li>Fixed toRelativeCalendar&apos;s handling of zones in the base date</li>
@@ -2836,7 +2853,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li><code>fromISO</code> now supports <code>year</code> and <code>year-month</code> formats</li>
 <li>More graceful degradation in the absence of platform features</li>
 </ul><h2>0.0.5</h2><p>Experimental, but now broadly useful.</p></div>
-        <a data-ice="link" href="manual/changelog.html#1-11-2"></a>
+        <a data-ice="link" href="manual/changelog.html"></a>
       </div>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
@@ -2923,6 +2940,5 @@ npm install full-icu
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-
-
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body></html>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+</html>

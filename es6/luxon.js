@@ -781,7 +781,7 @@ let singleton = null;
 
 /**
  * Represents the local zone for this Javascript environment.
- * @implments {Zone}
+ * @implements {Zone}
  */
 class LocalZone extends Zone {
   /**
@@ -835,7 +835,7 @@ class LocalZone extends Zone {
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 
-const dtfCache = {};
+let dtfCache = {};
 function makeDTF(zone) {
   if (!dtfCache[zone]) {
     dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
@@ -882,11 +882,30 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
+let ianaZoneCache = {};
 /**
  * A zone identified by an IANA identifier, like America/New_York
- * @implments {Zone}
+ * @implements {Zone}
  */
 class IANAZone extends Zone {
+  /**
+   * @param {string} name - Zone name
+   * @return {IANAZone}
+   */
+  static create(name) {
+    if (!ianaZoneCache[name]) {
+      ianaZoneCache[name] = new IANAZone(name);
+    }
+    return ianaZoneCache[name];
+  }
+  /**
+   * Reset local caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCache() {
+    ianaZoneCache = {};
+    dtfCache = {};
+  }
   /**
    * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
    * @param {string} s - The string to check validity on
@@ -905,7 +924,7 @@ class IANAZone extends Zone {
    * @example IANAZone.isValidZone("America/New_York") //=> true
    * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
    * @example IANAZone.isValidZone("Sport~~blorp") //=> false
-   * @return {true}
+   * @return {boolean}
    */
   static isValidZone(zone) {
     try {
@@ -992,7 +1011,7 @@ function hoursMinutesOffset(z) {
 
 /**
  * A zone with a fixed offset (i.e. no DST)
- * @implments {Zone}
+ * @implements {Zone}
  */
 class FixedOffsetZone extends Zone {
   /**
@@ -1016,7 +1035,7 @@ class FixedOffsetZone extends Zone {
   }
 
   /**
-   * Get an instance of FixedOffsetZone with from a UTC offset string, like "UTC+6"
+   * Get an instance of FixedOffsetZone from a UTC offset string, like "UTC+6"
    * @param {string} s - The offset string to parse
    * @example FixedOffsetZone.parseSpecifier("UTC+6")
    * @example FixedOffsetZone.parseSpecifier("UTC+06")
@@ -1077,7 +1096,7 @@ class FixedOffsetZone extends Zone {
 
 /**
  * A zone that failed to parse. You should never need to instantiate this.
- * @implments {Zone}
+ * @implements {Zone}
  */
 class InvalidZone extends Zone {
   constructor(zoneName) {
@@ -1139,7 +1158,7 @@ function normalizeZone(input, defaultZone) {
     else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
       // handle Etc/GMT-4, which V8 chokes on
       return FixedOffsetZone.instance(offset);
-    } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);
+    } else if (IANAZone.isValidSpecifier(lowered)) return IANAZone.create(input);
     else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);
@@ -1187,7 +1206,7 @@ class Settings {
    * @type {string}
    */
   static get defaultZoneName() {
-    return (defaultZone || LocalZone.instance).name;
+    return Settings.defaultZone.name;
   }
 
   /**
@@ -1280,6 +1299,7 @@ class Settings {
    */
   static resetCaches() {
     Locale.resetCache();
+    IANAZone.resetCache();
   }
 }
 
@@ -2234,7 +2254,7 @@ function extractISOOffset(match, cursor) {
 }
 
 function extractIANAZone(match, cursor) {
-  const zone = match[cursor] ? new IANAZone(match[cursor]) : null;
+  const zone = match[cursor] ? IANAZone.create(match[cursor]) : null;
   return [{}, zone, cursor + 1];
 }
 
@@ -3946,11 +3966,10 @@ function highOrderDiffs(cursor, later, units) {
       lowestOrder = unit;
 
       let delta = differ(cursor, later);
-
       highWater = cursor.plus({ [unit]: delta });
 
       if (highWater > later) {
-        cursor = highWater.minus({ [unit]: 1 });
+        cursor = cursor.plus({ [unit]: delta - 1 });
         delta -= 1;
       } else {
         cursor = highWater;
@@ -4147,7 +4166,7 @@ function unitForToken(token, loc) {
         // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
         // because we don't have any way to figure out what they are
         case "z":
-          return simple(/[a-z_+-]{1,256}(\/[a-z_+-]{1,256}(\/[a-z_+-]{1,256})?)?/i);
+          return simple(/[a-z_+-/]{1,256}?/i);
         default:
           return literal(t);
       }
@@ -4226,7 +4245,7 @@ function dateTimeFromMatches(matches) {
   if (!isUndefined(matches.Z)) {
     zone = new FixedOffsetZone(matches.Z);
   } else if (!isUndefined(matches.z)) {
-    zone = new IANAZone(matches.z);
+    zone = IANAZone.create(matches.z);
   } else {
     zone = null;
   }
@@ -5614,8 +5633,8 @@ class DateTime {
   /**
    * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
    *
-   * By default, the setter keeps the underlying time the same (as in, the same UTC timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
-   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'utc+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
+   * By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
+   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
    * @param {Object} opts - options
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
@@ -5703,8 +5722,8 @@ class DateTime {
    * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
    * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
    * @example DateTime.local().plus({ days: -1 }) //~> this time yesterday
-   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 1 hr, 13 min
-   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 1 hr, 13 min
+   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~> in 3 hr, 13 min
+   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 3 hr, 13 min
    * @return {DateTime}
    */
   plus(duration) {
@@ -6434,5 +6453,5 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, LocalZone, Settings, Zone };
+export { DateTime, Duration, Interval, Info, Zone, FixedOffsetZone, IANAZone, InvalidZone, LocalZone, Settings };
 //# sourceMappingURL=luxon.js.map

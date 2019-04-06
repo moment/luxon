@@ -1543,13 +1543,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
+    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
@@ -1573,13 +1573,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-get-defaultZoneName",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
@@ -1716,6 +1716,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/zones/ianazone.js~ianazone.create",
+    "class/src/zones/IANAZone.js~IANAZone.html#static-method-create",
+    "src/zones/IANAZone.js~IANAZone.create",
+    "method"
+  ],
+  [
     "src/zones/ianazone.js~ianazone.isvalidspecifier",
     "class/src/zones/IANAZone.js~IANAZone.html#static-method-isValidSpecifier",
     "src/zones/IANAZone.js~IANAZone.isValidSpecifier",
@@ -1725,6 +1731,12 @@ window.esdocSearchIndex = [
     "src/zones/ianazone.js~ianazone.isvalidzone",
     "class/src/zones/IANAZone.js~IANAZone.html#static-method-isValidZone",
     "src/zones/IANAZone.js~IANAZone.isValidZone",
+    "method"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone.resetcache",
+    "class/src/zones/IANAZone.js~IANAZone.html#static-method-resetCache",
+    "src/zones/IANAZone.js~IANAZone.resetCache",
     "method"
   ],
   [

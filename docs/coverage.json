@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 289,
-  "actualCount": 289,
+  "expectCount": 291,
+  "actualCount": 291,
   "files": {
     "src/datetime.js": {
       "expectCount": 119,
@@ -39,8 +39,8 @@
       "undocumentLines": []
     },
     "src/zones/IANAZone.js": {
-      "expectCount": 13,
-      "actualCount": 13,
+      "expectCount": 15,
+      "actualCount": 15,
       "undocumentLines": []
     },
     "src/zones/fixedOffsetZone.js": {
