@@ -22,7 +22,7 @@ export function normalizeZone(input, defaultZone) {
     else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
       // handle Etc/GMT-4, which V8 chokes on
       return FixedOffsetZone.instance(offset);
-    } else if (IANAZone.isValidSpecifier(lowered)) return new IANAZone(input);
+    } else if (IANAZone.isValidSpecifier(lowered)) return IANAZone.create(input);
     else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);

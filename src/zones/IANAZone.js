@@ -3,7 +3,7 @@ import Zone from "../zone.js";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 
-const dtfCache = {};
+let dtfCache = {};
 function makeDTF(zone) {
   if (!dtfCache[zone]) {
     dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
@@ -50,11 +50,30 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
+let ianaZoneCache = {};
 /**
  * A zone identified by an IANA identifier, like America/New_York
  * @implements {Zone}
  */
 export default class IANAZone extends Zone {
+  /**
+   * @param {string} name - Zone name
+   * @return {IANAZone}
+   */
+  static create(name) {
+    if (!ianaZoneCache[name]) {
+      ianaZoneCache[name] = new IANAZone(name);
+    }
+    return ianaZoneCache[name];
+  }
+  /**
+   * Reset local caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCache() {
+    ianaZoneCache = {};
+    dtfCache = {};
+  }
   /**
    * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
    * @param {string} s - The string to check validity on
@@ -73,7 +92,7 @@ export default class IANAZone extends Zone {
    * @example IANAZone.isValidZone("America/New_York") //=> true
    * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
    * @example IANAZone.isValidZone("Sport~~blorp") //=> false
-   * @return {true}
+   * @return {boolean}
    */
   static isValidZone(zone) {
     try {

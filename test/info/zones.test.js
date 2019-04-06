@@ -59,6 +59,21 @@ test("Info.isValidIANAZone returns false for well-specified but invalid zones li
 });
 
 //------
+// IANAZone.create()
+//------
+
+test("IANAZone.create should be memoized", () => {
+  const instance1 = IANAZone.create("America/Cancun");
+  const instance2 = IANAZone.create("America/Cancun");
+  expect(instance1).toBe(instance2);
+});
+
+test("IANAZone.create should return IANAZone instance", () => {
+  const result = IANAZone.create("America/Cancun");
+  expect(result).toBeInstanceOf(IANAZone);
+});
+
+//------
 // .normalizeZone()
 //------
 

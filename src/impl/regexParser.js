@@ -102,7 +102,7 @@ function extractISOOffset(match, cursor) {
 }
 
 function extractIANAZone(match, cursor) {
-  const zone = match[cursor] ? new IANAZone(match[cursor]) : null;
+  const zone = match[cursor] ? IANAZone.create(match[cursor]) : null;
   return [{}, zone, cursor + 1];
 }
 
