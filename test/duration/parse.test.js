@@ -15,6 +15,7 @@ test("Duration.fromISO can parse a variety of ISO formats", () => {
   check("PT54M32S", { minutes: 54, seconds: 32 });
   check("P3DT54M32S", { days: 3, minutes: 54, seconds: 32 });
   check("P1YT34000S", { years: 1, seconds: 34000 });
+  check("P1W1DT13H23M34S", { weeks: 1, days: 1, hours: 13, minutes: 23, seconds: 34 });
   check("P2W", { weeks: 2 });
 });
 
@@ -23,6 +24,7 @@ test("Duration.fromISO can parse mixed or negative durations", () => {
   check("PT-54M32S", { minutes: -54, seconds: 32 });
   check("P-3DT54M-32S", { days: -3, minutes: 54, seconds: -32 });
   check("P1YT-34000S", { years: 1, seconds: -34000 });
+  check("P-1W1DT13H23M34S", { weeks: -1, days: 1, hours: 13, minutes: 23, seconds: 34 });
   check("P-2W", { weeks: -2 });
 });
 
