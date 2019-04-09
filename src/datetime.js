@@ -691,7 +691,9 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from an ISO 8601 string
+   * Create a DateTime from an ISO 8601 string.
+   * Fails silently by default if the string provided is not a valid ISO 8601 string.
+   * Check validity: https://moment.github.io/luxon/docs/manual/validity.html.
    * @param {string} text - the ISO string
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
