@@ -1,11 +1,11 @@
-import LocalZone from "./zones/localZone.js";
+import SystemZone from "./zones/systemZone.js";
 import IANAZone from "./zones/IANAZone.js";
 import Locale from "./impl/locale.js";
 
 import { normalizeZone } from "./impl/zoneUtil.js";
 
 let now = () => Date.now(),
-  defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
+  defaultZone = null, // not setting this directly to SystemZone.instance bc loading order issues
   defaultLocale = null,
   defaultNumberingSystem = null,
   defaultOutputCalendar = null,
@@ -59,7 +59,7 @@ export default class Settings {
    * @type {Zone}
    */
   static get defaultZone() {
-    return defaultZone || LocalZone.instance;
+    return defaultZone || SystemZone.instance;
   }
 
   /**

@@ -7,28 +7,28 @@ let singleton = null;
  * Represents the local zone for this Javascript environment.
  * @implements {Zone}
  */
-export default class LocalZone extends Zone {
+export default class SystemZone extends Zone {
   /**
    * Get a singleton instance of the local zone
    * @return {LocalZone}
    */
   static get instance() {
     if (singleton === null) {
-      singleton = new LocalZone();
+      singleton = new SystemZone();
     }
     return singleton;
   }
 
   /** @override **/
   get type() {
-    return "local";
+    return "system";
   }
 
   /** @override **/
   get name() {
     if (hasIntl()) {
       return new Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } else return "local";
+    } else return "system";
   }
 
   /** @override **/
@@ -53,7 +53,7 @@ export default class LocalZone extends Zone {
 
   /** @override **/
   equals(otherZone) {
-    return otherZone.type === "local";
+    return otherZone.type === "system";
   }
 
   /** @override **/

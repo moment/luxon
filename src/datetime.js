@@ -41,6 +41,7 @@ import {
   InvalidDateTimeError
 } from "./errors.js";
 import Invalid from "./impl/invalid.js";
+import SystemZone from "./zones/systemZone.js";
 
 const INVALID = "Invalid DateTime";
 
@@ -359,7 +360,7 @@ function diffRelative(start, end, opts) {
  * {@link day}, {@link hour}, {@link minute}, {@link second}, {@link millisecond} accessors.
  * * **Week calendar**: For ISO week calendar attributes, see the {@link weekYear}, {@link weekNumber}, and {@link weekday} accessors.
  * * **Configuration** See the {@link locale} and {@link numberingSystem} accessors.
- * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toLocal}.
+ * * **Transformation**: To transform the DateTime into other DateTimes, use {@link set}, {@link reconfigure}, {@link setZone}, {@link setLocale}, {@link plus}, {@link minus}, {@link endOf}, {@link startOf}, {@link toUTC}, and {@link toSystemZone}.
  * * **Output**: To convert the DateTime to other representations, use the {@link toRelative}, {@link toRelativeCalendar}, {@link toJSON}, {@link toISO}, {@link toHTTP}, {@link toObject}, {@link toRFC2822}, {@link toString}, {@link toLocaleString}, {@link toFormat}, {@link toMillis} and {@link toJSDate}.
  *
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
@@ -1224,11 +1225,28 @@ export default class DateTime {
   /**
    * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
    *
-   * Equivalent to `setZone('local')`
+   * Equivalent to `setZone("system")`
    * @return {DateTime}
    */
-  toLocal() {
+  toSystemZone() {
+    return this.setZone(SystemZone.instance);
+  }
+
+  /**
+   * "Set" the DateTime's zone to the default zone. Returns a newly-constructed DateTime.
+   *
+   * Equivalent to `setZone("default")`
+   * @return {DateTime}
+   */
+  toDefaultZone() {
     return this.setZone(Settings.defaultZone);
+  }
+
+  /**
+   * @deprecated use fromFormatExplain instead
+   */
+  toLocal() {
+    return this.toDefaultZone();
   }
 
   /**
