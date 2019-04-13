@@ -1,6 +1,13 @@
 /* global test expect */
 
-import { Info, FixedOffsetZone, IANAZone, InvalidZone, LocalZone, Settings } from "../../src/luxon";
+import {
+  Info,
+  FixedOffsetZone,
+  IANAZone,
+  InvalidZone,
+  SystemZone,
+  Settings
+} from "../../src/luxon";
 
 const Helpers = require("../helpers");
 
@@ -72,12 +79,12 @@ test("Info.normalizeZone returns Zone objects unchanged", () => {
   const invalidZone = new InvalidZone("bumblebee");
   expect(Info.normalizeZone(invalidZone)).toBe(invalidZone);
 
-  const localZone = LocalZone.instance;
-  expect(Info.normalizeZone(localZone)).toBe(localZone);
+  const sysZone = SystemZone.instance;
+  expect(Info.normalizeZone(sysZone)).toBe(sysZone);
 });
 
 test.each([
-  ["Local", LocalZone.instance],
+  ["SySTEM", SystemZone.instance],
   ["UTC", FixedOffsetZone.utcInstance],
   ["GMT", FixedOffsetZone.utcInstance],
   ["Etc/GMT+5", FixedOffsetZone.instance(-5 * 60)],
@@ -100,8 +107,8 @@ test("Info.normalizeZone converts null and undefined to default Zone", () => {
 });
 
 test("Info.normalizeZone converts local to default Zone", () => {
-  expect(Info.normalizeZone("local")).toBe(Settings.defaultZone);
+  expect(Info.normalizeZone("default")).toBe(Settings.defaultZone);
   Helpers.withDefaultZone("Europe/Paris", () => {
-    expect(Info.normalizeZone("local").name).toBe("Europe/Paris");
+    expect(Info.normalizeZone("default").name).toBe("Europe/Paris");
   });
 });

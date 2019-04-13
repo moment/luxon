@@ -94,8 +94,8 @@ Helpers.withoutIntl("using time zones results in invalid DateTimes", () => {
   expect(DateTime.local().setZone("America/New_York").isValid).toBe(false);
 });
 
-Helpers.withoutIntl("DateTime#zoneName falls back to 'local'", () => {
-  expect(DateTime.local().zoneName).toBe("local");
+Helpers.withoutIntl("DateTime#zoneName falls back to 'system'", () => {
+  expect(DateTime.local().zoneName).toBe("system");
 });
 
 Helpers.withoutIntl("DateTime#toLocaleString can use fixed-offset zones", () => {

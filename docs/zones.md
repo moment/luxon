@@ -289,6 +289,6 @@ DateTime.local().zoneName; //=> 'UTC'
 
 // you can reset by setting to 'local'
 
-Settings.defaultZoneName = "local";
+Settings.defaultZoneName = "system";
 DateTime.local().zoneName; //=> 'America/New_York'
 ```
