@@ -149,7 +149,7 @@ See the [formatting guide](formatting.html) for more about the string-outputting
 
 #### Humanization
 
-Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they use Int.RelativeTimeFormat, which isn't currently supported by most browsers; in those cases, they fall back to English.
+Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they use Intl.RelativeTimeFormat, which isn't currently supported by most browsers; in those cases, they fall back to English.
 
 | Operation            | Moment         | Luxon                                         |
 | -------------------- | -------------- | --------------------------------------------- |
