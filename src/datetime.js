@@ -506,9 +506,19 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromJSDate(date, options = {}) {
+    const ts = isDate(date) ? date.valueOf() : NaN;
+    if (Number.isNaN(ts)) {
+      return DateTime.invalid("invalid input");
+    }
+
+    const zoneToUse = normalizeZone(options.zone, Settings.defaultZone);
+    if (!zoneToUse.isValid) {
+      return DateTime.invalid(unsupportedZone(zoneToUse));
+    }
+
     return new DateTime({
-      ts: isDate(date) ? date.valueOf() : NaN,
-      zone: normalizeZone(options.zone, Settings.defaultZone),
+      ts: ts,
+      zone: zoneToUse,
       loc: Locale.fromObject(options)
     });
   }
