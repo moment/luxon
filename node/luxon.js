@@ -2406,10 +2406,10 @@ function extractIANAZone(match, cursor) {
 } // ISO duration parsing
 
 
-const isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?|(-?\d{1,9})W)$/;
+const isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 
 function extractISODuration(match) {
-  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr, weekStr] = match;
+  const [, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] = match;
   return [{
     years: parseInteger(yearStr),
     months: parseInteger(monthStr),
@@ -4202,12 +4202,91 @@ function diff (earlier, later, units, opts) {
   }
 }
 
+const numberingSystems = {
+  arab: "[\u0660-\u0669]",
+  arabext: "[\u06F0-\u06F9]",
+  bali: "[\u1B50-\u1B59]",
+  beng: "[\u09E6-\u09EF]",
+  deva: "[\u0966-\u096F]",
+  fullwide: "[\uFF10-\uFF19]",
+  gujr: "[\u0AE6-\u0AEF]",
+  hanidec: "[〇|一|二|三|四|五|六|七|八|九]",
+  khmr: "[\u17E0-\u17E9]",
+  knda: "[\u0CE6-\u0CEF]",
+  laoo: "[\u0ED0-\u0ED9]",
+  limb: "[\u1946-\u194F]",
+  mlym: "[\u0D66-\u0D6F]",
+  mong: "[\u1810-\u1819]",
+  mymr: "[\u1040-\u1049]",
+  orya: "[\u0B66-\u0B6F]",
+  tamldec: "[\u0BE6-\u0BEF]",
+  telu: "[\u0C66-\u0C6F]",
+  thai: "[\u0E50-\u0E59]",
+  tibt: "[\u0F20-\u0F29]",
+  latn: "\\d"
+};
+const numberingSystemsUTF16 = {
+  arab: [1632, 1641],
+  arabext: [1776, 1785],
+  bali: [6992, 7001],
+  beng: [2534, 2543],
+  deva: [2406, 2415],
+  fullwide: [65296, 65303],
+  gujr: [2790, 2799],
+  khmr: [6112, 6121],
+  knda: [3302, 3311],
+  laoo: [3792, 3801],
+  limb: [6470, 6479],
+  mlym: [3430, 3439],
+  mong: [6160, 6169],
+  mymr: [4160, 4169],
+  orya: [2918, 2927],
+  tamldec: [3046, 3055],
+  telu: [3174, 3183],
+  thai: [3664, 3673],
+  tibt: [3872, 3881]
+}; // eslint-disable-next-line
+
+const hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
+function parseDigits(str) {
+  let value = parseInt(str, 10);
+
+  if (isNaN(value)) {
+    value = "";
+
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+
+      if (str[i].search(numberingSystems.hanidec) !== -1) {
+        value += hanidecChars.indexOf(str[i]);
+      } else {
+        for (let key in numberingSystemsUTF16) {
+          const [min, max] = numberingSystemsUTF16[key];
+
+          if (code >= min && code <= max) {
+            value += code - min;
+          }
+        }
+      }
+    }
+
+    return parseInt(value, 10);
+  } else {
+    return value;
+  }
+}
+function digitRegex({
+  numberingSystem
+}, append = "") {
+  return new RegExp(`${numberingSystems[numberingSystem || "latn"]}${append}`);
+}
+
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
 function intUnit(regex, post = i => i) {
   return {
     regex,
-    deser: ([s]) => post(parseInt(s, 10))
+    deser: ([s]) => post(parseDigits(s))
   };
 }
 
@@ -4252,13 +4331,17 @@ function escapeToken(value) {
 }
 
 function unitForToken(token, loc) {
-  const one = /\d/,
-        two = /\d{2}/,
-        three = /\d{3}/,
-        four = /\d{4}/,
-        oneOrTwo = /\d{1,2}/,
-        oneToThree = /\d{1,3}/,
-        twoToFour = /\d{2,4}/,
+  const one = digitRegex(loc),
+        two = digitRegex(loc, "{2}"),
+        three = digitRegex(loc, "{3}"),
+        four = digitRegex(loc, "{4}"),
+        six = digitRegex(loc, "{6}"),
+        oneOrTwo = digitRegex(loc, "{1,2}"),
+        oneToThree = digitRegex(loc, "{1,3}"),
+        oneToSix = digitRegex(loc, "{1,6}"),
+        oneToNine = digitRegex(loc, "{1,9}"),
+        twoToFour = digitRegex(loc, "{2,4}"),
+        fourToSix = digitRegex(loc, "{4,6}"),
         literal = t => ({
     regex: RegExp(escapeToken(t.val)),
     deser: ([s]) => s,
@@ -4279,7 +4362,7 @@ function unitForToken(token, loc) {
       // years
 
       case "y":
-        return intUnit(/\d{1,6}/);
+        return intUnit(oneToSix);
 
       case "yy":
         return intUnit(twoToFour, untruncateYear);
@@ -4288,10 +4371,10 @@ function unitForToken(token, loc) {
         return intUnit(four);
 
       case "yyyyy":
-        return intUnit(/\d{4,6}/);
+        return intUnit(fourToSix);
 
       case "yyyyyy":
-        return intUnit(/\d{6}/);
+        return intUnit(six);
       // months
 
       case "M":
@@ -4301,10 +4384,10 @@ function unitForToken(token, loc) {
         return intUnit(two);
 
       case "MMM":
-        return oneOf(loc.months("short", false, false), 1);
+        return oneOf(loc.months("short", true, false), 1);
 
       case "MMMM":
-        return oneOf(loc.months("long", false, false), 1);
+        return oneOf(loc.months("long", true, false), 1);
 
       case "L":
         return intUnit(oneOrTwo);
@@ -4313,10 +4396,10 @@ function unitForToken(token, loc) {
         return intUnit(two);
 
       case "LLL":
-        return oneOf(loc.months("short", true, false), 1);
+        return oneOf(loc.months("short", false, false), 1);
 
       case "LLLL":
-        return oneOf(loc.months("long", true, false), 1);
+        return oneOf(loc.months("long", false, false), 1);
       // dates
 
       case "d":
@@ -4364,7 +4447,7 @@ function unitForToken(token, loc) {
         return intUnit(three);
 
       case "u":
-        return simple(/\d{1,9}/);
+        return simple(oneToNine);
       // meridiem
 
       case "a":
@@ -4404,10 +4487,10 @@ function unitForToken(token, loc) {
 
       case "Z":
       case "ZZ":
-        return offset(/([+-]\d{1,2})(?::(\d{2}))?/, 2);
+        return offset(new RegExp(`([+-]${oneOrTwo.source})(?::(${two.source}))?`), 2);
 
       case "ZZZ":
-        return offset(/([+-]\d{1,2})(\d{2})?/, 2);
+        return offset(new RegExp(`([+-]${oneOrTwo.source})(${two.source})?`), 2);
       // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
       // because we don't have any way to figure out what they are
 
@@ -5205,9 +5288,21 @@ class DateTime {
 
 
   static fromJSDate(date, options = {}) {
+    const ts = isDate(date) ? date.valueOf() : NaN;
+
+    if (Number.isNaN(ts)) {
+      return DateTime.invalid("invalid input");
+    }
+
+    const zoneToUse = normalizeZone(options.zone, Settings.defaultZone);
+
+    if (!zoneToUse.isValid) {
+      return DateTime.invalid(unsupportedZone(zoneToUse));
+    }
+
     return new DateTime({
-      ts: isDate(date) ? date.valueOf() : NaN,
-      zone: normalizeZone(options.zone, Settings.defaultZone),
+      ts: ts,
+      zone: zoneToUse,
       loc: Locale.fromObject(options)
     });
   }
@@ -6857,12 +6952,12 @@ function friendlyDateTime(dateTimeish) {
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;
-exports.Interval = Interval;
-exports.Info = Info;
-exports.Zone = Zone;
 exports.FixedOffsetZone = FixedOffsetZone;
 exports.IANAZone = IANAZone;
+exports.Info = Info;
+exports.Interval = Interval;
 exports.InvalidZone = InvalidZone;
 exports.LocalZone = LocalZone;
 exports.Settings = Settings;
+exports.Zone = Zone;
 //# sourceMappingURL=luxon.js.map

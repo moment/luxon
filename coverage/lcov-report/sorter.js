@@ -161,7 +161,7 @@ var addSorting = (function() {
             return;
         }
         cols = loadColumns();
-        loadData(cols);
+        loadData();
         addSortIndicators();
         enableUI();
     };

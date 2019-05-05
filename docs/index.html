@@ -245,6 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-0" data-ice="link">1.13.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-1" data-ice="link">1.12.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-0" data-ice="link">1.12.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-11-4" data-ice="link">1.11.4</a></li>
@@ -2557,7 +2558,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>Moment&apos;s diff returns a count of milliseconds, but Luxon&apos;s returns a Duration. To replicate the Moment behavior, use <code>dt1.diff(d2).milliseconds</code>.</td>
 </tr>
 </tbody>
-</table><h4>Humanization</h4><p>Luxon has <code>toRelative</code> and <code>toRelativeCalendar</code>. For internationalization, they use Int.RelativeTimeFormat, which isn&apos;t currently supported by most browsers; in those cases, they fall back to English.</p><table>
+</table><h4>Humanization</h4><p>Luxon has <code>toRelative</code> and <code>toRelativeCalendar</code>. For internationalization, they use Intl.RelativeTimeFormat, which isn&apos;t currently supported by most browsers; in those cases, they fall back to English.</p><table>
 <thead>
 <tr>
 <th>Operation</th>
@@ -2632,7 +2633,10 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.12.1</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.13.0</h2><ul>
+<li>Support numberSystem in fromFormat</li>
+<li>Fix validity for bad initial zone specifiers</li>
+</ul><h2>1.12.1</h2><ul>
 <li>Fix cross-month diffs in some scenarios</li>
 <li>Fix time zone parsing when the time zone isn&apos;t at the end</li>
 <li>Memoize IANA zone creation</li>

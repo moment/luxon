@@ -316,7 +316,7 @@ var luxon = (function (exports) {
 	    return store[key] || (store[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
 	    version: _core.version,
-	    mode: _library ? 'pure' : 'global',
+	    mode: 'global',
 	    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 	  });
 	});
@@ -351,7 +351,7 @@ var luxon = (function (exports) {
 	var defineProperty = _objectDp.f;
 
 	var _wksDefine = function _wksDefine(name) {
-	  var $Symbol = _core.Symbol || (_core.Symbol = _library ? {} : _global.Symbol || {});
+	  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
 	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, {
 	    value: _wksExt.f(name)
 	  });
@@ -4507,7 +4507,7 @@ var luxon = (function (exports) {
 	    }));
 	  };
 
-	  _proto4.months = function months$$1(length, format, defaultOK) {
+	  _proto4.months = function months$1(length, format, defaultOK) {
 	    var _this = this;
 
 	    if (format === void 0) {
@@ -4537,7 +4537,7 @@ var luxon = (function (exports) {
 	    });
 	  };
 
-	  _proto4.weekdays = function weekdays$$1(length, format, defaultOK) {
+	  _proto4.weekdays = function weekdays$1(length, format, defaultOK) {
 	    var _this2 = this;
 
 	    if (format === void 0) {
@@ -4569,7 +4569,7 @@ var luxon = (function (exports) {
 	    });
 	  };
 
-	  _proto4.meridiems = function meridiems$$1(defaultOK) {
+	  _proto4.meridiems = function meridiems$1(defaultOK) {
 	    var _this3 = this;
 
 	    if (defaultOK === void 0) {
@@ -4595,7 +4595,7 @@ var luxon = (function (exports) {
 	    });
 	  };
 
-	  _proto4.eras = function eras$$1(length, defaultOK) {
+	  _proto4.eras = function eras$1(length, defaultOK) {
 	    var _this4 = this;
 
 	    if (defaultOK === void 0) {
@@ -4804,17 +4804,17 @@ var luxon = (function (exports) {
 	} // ISO duration parsing
 
 
-	var isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?|(-?\d{1,9})W)$/;
+	var isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 
 	function extractISODuration(match) {
 	  var yearStr = match[1],
 	      monthStr = match[2],
-	      dayStr = match[3],
-	      hourStr = match[4],
-	      minuteStr = match[5],
-	      secondStr = match[6],
-	      millisecondsStr = match[7],
-	      weekStr = match[8];
+	      weekStr = match[3],
+	      dayStr = match[4],
+	      hourStr = match[5],
+	      minuteStr = match[6],
+	      secondStr = match[7],
+	      millisecondsStr = match[8];
 	  return [{
 	    years: parseInteger(yearStr),
 	    months: parseInteger(monthStr),
@@ -6523,7 +6523,7 @@ var luxon = (function (exports) {
 	   */
 	  ;
 
-	  Info.normalizeZone = function normalizeZone$$1(input) {
+	  Info.normalizeZone = function normalizeZone$1(input) {
 	    return normalizeZone(input, Settings.defaultZone);
 	  }
 	  /**
@@ -6811,6 +6811,91 @@ var luxon = (function (exports) {
 	  }
 	}
 
+	var numberingSystems = {
+	  arab: "[\u0660-\u0669]",
+	  arabext: "[\u06F0-\u06F9]",
+	  bali: "[\u1B50-\u1B59]",
+	  beng: "[\u09E6-\u09EF]",
+	  deva: "[\u0966-\u096F]",
+	  fullwide: "[\uFF10-\uFF19]",
+	  gujr: "[\u0AE6-\u0AEF]",
+	  hanidec: "[〇|一|二|三|四|五|六|七|八|九]",
+	  khmr: "[\u17E0-\u17E9]",
+	  knda: "[\u0CE6-\u0CEF]",
+	  laoo: "[\u0ED0-\u0ED9]",
+	  limb: "[\u1946-\u194F]",
+	  mlym: "[\u0D66-\u0D6F]",
+	  mong: "[\u1810-\u1819]",
+	  mymr: "[\u1040-\u1049]",
+	  orya: "[\u0B66-\u0B6F]",
+	  tamldec: "[\u0BE6-\u0BEF]",
+	  telu: "[\u0C66-\u0C6F]",
+	  thai: "[\u0E50-\u0E59]",
+	  tibt: "[\u0F20-\u0F29]",
+	  latn: "\\d"
+	};
+	var numberingSystemsUTF16 = {
+	  arab: [1632, 1641],
+	  arabext: [1776, 1785],
+	  bali: [6992, 7001],
+	  beng: [2534, 2543],
+	  deva: [2406, 2415],
+	  fullwide: [65296, 65303],
+	  gujr: [2790, 2799],
+	  khmr: [6112, 6121],
+	  knda: [3302, 3311],
+	  laoo: [3792, 3801],
+	  limb: [6470, 6479],
+	  mlym: [3430, 3439],
+	  mong: [6160, 6169],
+	  mymr: [4160, 4169],
+	  orya: [2918, 2927],
+	  tamldec: [3046, 3055],
+	  telu: [3174, 3183],
+	  thai: [3664, 3673],
+	  tibt: [3872, 3881]
+	}; // eslint-disable-next-line
+
+	var hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
+	function parseDigits(str) {
+	  var value = parseInt(str, 10);
+
+	  if (isNaN(value)) {
+	    value = "";
+
+	    for (var i = 0; i < str.length; i++) {
+	      var code = str.charCodeAt(i);
+
+	      if (str[i].search(numberingSystems.hanidec) !== -1) {
+	        value += hanidecChars.indexOf(str[i]);
+	      } else {
+	        for (var key in numberingSystemsUTF16) {
+	          var _numberingSystemsUTF = numberingSystemsUTF16[key],
+	              min = _numberingSystemsUTF[0],
+	              max = _numberingSystemsUTF[1];
+
+	          if (code >= min && code <= max) {
+	            value += code - min;
+	          }
+	        }
+	      }
+	    }
+
+	    return parseInt(value, 10);
+	  } else {
+	    return value;
+	  }
+	}
+	function digitRegex(_ref, append) {
+	  var numberingSystem = _ref.numberingSystem;
+
+	  if (append === void 0) {
+	    append = "";
+	  }
+
+	  return new RegExp("" + numberingSystems[numberingSystem || "latn"] + append);
+	}
+
 	var MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
 	function intUnit(regex, post) {
@@ -6824,7 +6909,7 @@ var luxon = (function (exports) {
 	    regex: regex,
 	    deser: function deser(_ref) {
 	      var s = _ref[0];
-	      return post(parseInt(s, 10));
+	      return post(parseDigits(s));
 	    }
 	  };
 	}
@@ -6882,13 +6967,17 @@ var luxon = (function (exports) {
 	}
 
 	function unitForToken(token, loc) {
-	  var one = /\d/,
-	      two = /\d{2}/,
-	      three = /\d{3}/,
-	      four = /\d{4}/,
-	      oneOrTwo = /\d{1,2}/,
-	      oneToThree = /\d{1,3}/,
-	      twoToFour = /\d{2,4}/,
+	  var one = digitRegex(loc),
+	      two = digitRegex(loc, "{2}"),
+	      three = digitRegex(loc, "{3}"),
+	      four = digitRegex(loc, "{4}"),
+	      six = digitRegex(loc, "{6}"),
+	      oneOrTwo = digitRegex(loc, "{1,2}"),
+	      oneToThree = digitRegex(loc, "{1,3}"),
+	      oneToSix = digitRegex(loc, "{1,6}"),
+	      oneToNine = digitRegex(loc, "{1,9}"),
+	      twoToFour = digitRegex(loc, "{2,4}"),
+	      fourToSix = digitRegex(loc, "{4,6}"),
 	      literal = function literal(t) {
 	    return {
 	      regex: RegExp(escapeToken(t.val)),
@@ -6914,7 +7003,7 @@ var luxon = (function (exports) {
 	      // years
 
 	      case "y":
-	        return intUnit(/\d{1,6}/);
+	        return intUnit(oneToSix);
 
 	      case "yy":
 	        return intUnit(twoToFour, untruncateYear);
@@ -6923,10 +7012,10 @@ var luxon = (function (exports) {
 	        return intUnit(four);
 
 	      case "yyyyy":
-	        return intUnit(/\d{4,6}/);
+	        return intUnit(fourToSix);
 
 	      case "yyyyyy":
-	        return intUnit(/\d{6}/);
+	        return intUnit(six);
 	      // months
 
 	      case "M":
@@ -6936,10 +7025,10 @@ var luxon = (function (exports) {
 	        return intUnit(two);
 
 	      case "MMM":
-	        return oneOf(loc.months("short", false, false), 1);
+	        return oneOf(loc.months("short", true, false), 1);
 
 	      case "MMMM":
-	        return oneOf(loc.months("long", false, false), 1);
+	        return oneOf(loc.months("long", true, false), 1);
 
 	      case "L":
 	        return intUnit(oneOrTwo);
@@ -6948,10 +7037,10 @@ var luxon = (function (exports) {
 	        return intUnit(two);
 
 	      case "LLL":
-	        return oneOf(loc.months("short", true, false), 1);
+	        return oneOf(loc.months("short", false, false), 1);
 
 	      case "LLLL":
-	        return oneOf(loc.months("long", true, false), 1);
+	        return oneOf(loc.months("long", false, false), 1);
 	      // dates
 
 	      case "d":
@@ -6999,7 +7088,7 @@ var luxon = (function (exports) {
 	        return intUnit(three);
 
 	      case "u":
-	        return simple(/\d{1,9}/);
+	        return simple(oneToNine);
 	      // meridiem
 
 	      case "a":
@@ -7039,10 +7128,10 @@ var luxon = (function (exports) {
 
 	      case "Z":
 	      case "ZZ":
-	        return offset(/([+-]\d{1,2})(?::(\d{2}))?/, 2);
+	        return offset(new RegExp("([+-]" + oneOrTwo.source + ")(?::(" + two.source + "))?"), 2);
 
 	      case "ZZZ":
-	        return offset(/([+-]\d{1,2})(\d{2})?/, 2);
+	        return offset(new RegExp("([+-]" + oneOrTwo.source + ")(" + two.source + ")?"), 2);
 	      // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
 	      // because we don't have any way to figure out what they are
 
@@ -7874,9 +7963,21 @@ var luxon = (function (exports) {
 	      options = {};
 	    }
 
+	    var ts = isDate(date) ? date.valueOf() : NaN;
+
+	    if (Number.isNaN(ts)) {
+	      return DateTime.invalid("invalid input");
+	    }
+
+	    var zoneToUse = normalizeZone(options.zone, Settings.defaultZone);
+
+	    if (!zoneToUse.isValid) {
+	      return DateTime.invalid(unsupportedZone(zoneToUse));
+	    }
+
 	    return new DateTime({
-	      ts: isDate(date) ? date.valueOf() : NaN,
-	      zone: normalizeZone(options.zone, Settings.defaultZone),
+	      ts: ts,
+	      zone: zoneToUse,
 	      loc: Locale.fromObject(options)
 	    });
 	  }
@@ -9745,14 +9846,14 @@ var luxon = (function (exports) {
 
 	exports.DateTime = DateTime;
 	exports.Duration = Duration;
-	exports.Interval = Interval;
-	exports.Info = Info;
-	exports.Zone = Zone;
 	exports.FixedOffsetZone = FixedOffsetZone;
 	exports.IANAZone = IANAZone;
+	exports.Info = Info;
+	exports.Interval = Interval;
 	exports.InvalidZone = InvalidZone;
 	exports.LocalZone = LocalZone;
 	exports.Settings = Settings;
+	exports.Zone = Zone;
 
 	return exports;
 
