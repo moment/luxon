@@ -67,8 +67,8 @@
     "prettier": "1.14.3",
     "rollup": "latest",
     "rollup-plugin-babel": "latest",
-    "rollup-plugin-babel-minify": "^6.1.1",
-    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-babel-minify": "latest",
+    "rollup-plugin-commonjs": "latest",
     "rollup-plugin-node-resolve": "latest",
     "uglify-js": "latest"
   },

@@ -98,7 +98,7 @@ exports.withDefaultLocale = function(locale, f) {
   }
 };
 
-exports.setUnset = function(prop) {
+const setUnset = function(prop) {
   return (value, f) => {
     const existing = Settings[prop];
     try {
@@ -109,6 +109,10 @@ exports.setUnset = function(prop) {
     }
   };
 };
+
+exports.setUnset = setUnset;
+
+exports.withDefaultZone = setUnset("defaultZoneName");
 
 exports.atHour = function(hour) {
   return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
