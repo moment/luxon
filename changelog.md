@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.13.0
+
+ * Support numberSystem in fromFormat
+ * Fix validity for bad initial zone specifiers
+
 ## 1.12.1
 
  * Fix cross-month diffs in some scenarios
