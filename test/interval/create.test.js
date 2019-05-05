@@ -1,5 +1,6 @@
 /* global test expect */
-import { DateTime, Interval, Duration, Settings } from "../../src/luxon";
+import { DateTime, Interval, Duration } from "../../src/luxon";
+import { InvalidArgumentError } from "../../src/errors";
 
 //------
 // .fromObject()
@@ -35,24 +36,14 @@ test("Interval.fromDateTimes creates an interval from Dates", () => {
   expect(int.end.toJSDate()).toEqual(end);
 });
 
-test("Interval.fromDateTimes results in an invalid Interval if the endpoints are invalid", () => {
-  const validDate = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
-    invalidDate = DateTime.invalid("because");
-
-  expect(Interval.fromDateTimes(validDate, invalidDate).invalidReason).toBe(
-    "missing or invalid end"
+test("Interval.fromDateTimes rejects missing or invalid arguments", () => {
+  const validDate = DateTime.fromObject({ year: 2016, month: 5, day: 25 });
+  expect(() => Interval.fromDateTimes(validDate, null)).toThrow(InvalidArgumentError);
+  expect(() => Interval.fromDateTimes(null, validDate)).toThrow(InvalidArgumentError);
+  expect(() => Interval.fromDateTimes(validDate.plus({ days: 1 }), validDate)).toThrow(
+    InvalidArgumentError
   );
-  expect(Interval.fromDateTimes(invalidDate, validDate).invalidReason).toBe(
-    "missing or invalid start"
-  );
-
-  expect(Interval.fromDateTimes(validDate.plus({ days: 1 }), validDate).invalidReason).toBe(
-    "end before start"
-  );
-});
-
-test("Interval.fromDateTimes throws with invalid input", () => {
-  expect(() => Interval.fromDateTimes(DateTime.local(), true)).toThrow();
+  expect(() => Interval.fromDateTimes(DateTime.local(), true)).toThrow(InvalidArgumentError);
 });
 
 //------
@@ -91,24 +82,4 @@ test("Interval.before takes a number and unit", () => {
 
   expect(int.start.day).toBe(22);
   expect(int.end).toBe(end);
-});
-
-//------
-// .invalid()
-//-------
-test("Interval.invalid produces invalid Intervals", () => {
-  expect(Interval.invalid("because").isValid).toBe(false);
-});
-
-test("Interval.invalid throws if throwOnInvalid is set", () => {
-  try {
-    Settings.throwOnInvalid = true;
-    expect(() => Interval.invalid("because")).toThrow();
-  } finally {
-    Settings.throwOnInvalid = false;
-  }
-});
-
-test("Interval.invalid throws if no reason is specified", () => {
-  expect(() => Interval.invalid()).toThrow();
 });

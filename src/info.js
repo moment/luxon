@@ -16,8 +16,14 @@ export default class Info {
    * @return {boolean}
    */
   static hasDST(zone = Settings.defaultZone) {
+    const zoneObj = normalizeZone(zone);
+
+    if (!zoneObj.valid) {
+      return false;
+    }
+
     const proto = DateTime.local()
-      .setZone(zone)
+      .setZone(zoneObj)
       .set({ month: 12 });
 
     return !zone.universal && proto.offset !== proto.set({ month: 6 }).offset;

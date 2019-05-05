@@ -41,10 +41,6 @@ test("Duration#toISO handles zero durations", () => {
   expect(Duration.fromMillis(0).toISO()).toBe("PT0S");
 });
 
-test("Duration#toISO returns null for invalid durations", () => {
-  expect(Duration.invalid("because").toISO()).toBe(null);
-});
-
 test("Duration#toISO handles milliseconds duration", () => {
   expect(Duration.fromObject({ milliseconds: 7 }).toISO()).toBe("PT0.007S");
 });
@@ -182,8 +178,4 @@ test("Duration#toFormat localizes the numbers", () => {
       .reconfigure({ locale: "bn" })
       .toFormat("yy:MM:dd:h:mm:ss.SSS")
   ).toBe("০১:০২:১০:৪:০৫:০৬.০০৭");
-});
-
-test("Duration#toFormat returns a lame string for invalid durations", () => {
-  expect(Duration.invalid("because").toFormat("yy")).toBe("Invalid Duration");
 });

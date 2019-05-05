@@ -233,12 +233,6 @@ test("DateTime#diff passes through options", () => {
   expect(dur2.conversionAccuracy).toBe("longterm");
 });
 
-test("DateTime#diff returns invalid Durations if the DateTimes are invalid", () => {
-  const i = DateTime.invalid("because");
-  expect(i.diff(DateTime.local()).isValid).toBe(false);
-  expect(DateTime.local().diff(i).isValid).toBe(false);
-});
-
 test("DateTime#diff results in a duration with the same locale", () => {
   const dt1 = DateTime.fromObject({
       year: 2016,
@@ -290,9 +284,4 @@ Helpers.withNow("DateTime#diffNow passes through options", DateTime.local(2017, 
   const dt = DateTime.local(2014, 8, 6),
     dur = dt.diffNow("days", { conversionAccuracy: "longterm" });
   expect(dur.conversionAccuracy).toBe("longterm");
-});
-
-test("DateTime#diffNow returns invalid Durations if the DateTime is invalid", () => {
-  const i = DateTime.invalid("because");
-  expect(i.diffNow().isValid).toBe(false);
 });

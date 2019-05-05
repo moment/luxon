@@ -4,8 +4,7 @@ import { DateTime } from "../../src/luxon";
 import Settings from "../../src/settings";
 
 const dateTime = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123)),
-  utc = DateTime.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).toUTC(),
-  inv = DateTime.invalid("I said so");
+  utc = DateTime.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).toUTC();
 
 //------
 // year/month/day/hour/minute/second/millisecond
@@ -13,43 +12,36 @@ const dateTime = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123)),
 test("DateTime#year returns the year", () => {
   expect(dateTime.year).toBe(1982);
   expect(utc.year).toBe(1982);
-  expect(inv.year).toBeFalsy();
 });
 
 test("DateTime#month returns the (1-indexed) month", () => {
   expect(dateTime.month).toBe(5);
   expect(utc.month).toBe(5);
-  expect(inv.month).toBeFalsy();
 });
 
 test("DateTime#day returns the day", () => {
   expect(dateTime.day).toBe(25);
   expect(utc.day).toBe(25);
-  expect(inv.day).toBeFalsy();
 });
 
 test("DateTime#hour returns the hour", () => {
   expect(dateTime.hour).toBe(9);
   expect(utc.hour).toBe(9);
-  expect(inv.hour).toBeFalsy();
 });
 
 test("DateTime#minute returns the minute", () => {
   expect(dateTime.minute).toBe(23);
   expect(utc.minute).toBe(23);
-  expect(inv.minute).toBeFalsy();
 });
 
 test("DateTime#second returns the second", () => {
   expect(dateTime.second).toBe(54);
   expect(utc.second).toBe(54);
-  expect(inv.second).toBeFalsy();
 });
 
 test("DateTime#millisecond returns the millisecond", () => {
   expect(dateTime.millisecond).toBe(123);
   expect(utc.millisecond).toBe(123);
-  expect(inv.millisecond).toBeFalsy();
 });
 
 //------
@@ -92,14 +84,6 @@ test("DateTime#weekdayLong returns the human readable weekday for fr locale", ()
   expect(dateTime.setLocale("fr").weekdayLong).toBe("mardi");
 });
 
-test("DateTime#weekdayShort returns null for invalid DateTimes", () => {
-  expect(inv.weekdayShort).toBe(null);
-});
-
-test("DateTime#weekdayLong returns null for invalid DateTimes", () => {
-  expect(inv.weekdayLong).toBe(null);
-});
-
 //------
 // monthShort/monthLong
 //------
@@ -127,24 +111,12 @@ test("DateTime#monthLong returns the human readable month for fr locale", () => 
   expect(dateTime.minus({ months: 1 }).setLocale("fr").monthLong).toBe("avril");
 });
 
-test("DateTime#monthLong returns null for invalid DateTimes", () => {
-  expect(inv.monthLong).toBe(null);
-});
-
-test("DateTime#monthShort returns null for invalid DateTimes", () => {
-  expect(inv.monthShort).toBe(null);
-});
-
 //------
 // ordinal
 //------
 
 test("DateTime#ordinal returns the ordinal", () => {
   expect(dateTime.ordinal).toBe(145);
-});
-
-test("DateTime#ordinal returns NaN for invalid DateTimes", () => {
-  expect(inv.ordinal).toBeFalsy();
 });
 
 //------
@@ -154,10 +126,6 @@ test("DateTime#get can retrieve any unit", () => {
   expect(dateTime.get("ordinal")).toBe(145);
   expect(dateTime.get("year")).toBe(1982);
   expect(dateTime.get("weekNumber")).toBe(21);
-});
-
-test("DateTime#get returns undefined for invalid units", () => {
-  expect(dateTime.get("plurp")).toBeUndefined();
 });
 
 //------
@@ -177,21 +145,4 @@ test("DateTime#zone returns the time zone", () => {
 
 test("DateTime#zoneName returns the name of the time zone", () => {
   expect(dateTime.zoneName).toBe(Settings.defaultZone.name);
-});
-
-//------
-// Misc
-//------
-test("Invalid DateTimes have unhelpful getters", () => {
-  const i = DateTime.invalid("because");
-  expect(i.year).toBeFalsy();
-  expect(i.month).toBeFalsy();
-  expect(i.day).toBeFalsy();
-  expect(i.hour).toBeFalsy();
-  expect(i.minute).toBeFalsy();
-  expect(i.second).toBeFalsy();
-  expect(i.millisecond).toBeFalsy();
-  expect(i.weekYear).toBeFalsy();
-  expect(i.weekNumber).toBeFalsy();
-  expect(i.weekday).toBeFalsy();
 });

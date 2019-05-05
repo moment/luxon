@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime, Settings } from "../../src/luxon";
+import { InvalidZoneError } from "../../src/errors";
 
 var Helpers = require("../helpers");
 
@@ -36,27 +37,46 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
   expect(zoned.isInDST).toBe(false);
 });
 
-test("DateTime#utc maintains invalidity", () => {
-  expect(DateTime.invalid("because").toUTC().isValid).toBe(false);
-});
-
 //------
-// #toLocal()
+// #toDefaultZone()
 //------
-test("DateTime#toLocal() sets the calendar back to local", () => {
+test("DateTime#toDefaultZone() sets the calendar back to local", () => {
   const relocaled = dt()
       .toUTC()
-      .toLocal(),
+      .toDefaultZone(),
     expected = new Date(millis).getHours();
   expect(relocaled.isOffsetFixed).toBe(false);
   expect(relocaled.valueOf()).toBe(millis);
   expect(relocaled.hour).toBe(expected);
 });
 
-test("DateTime#toLocal() accepts the default locale", () => {
+test("DateTime#toDefaultZone() accepts the default locale", () => {
   Helpers.withDefaultZone("Asia/Tokyo", () => {
     const tokyoLocal = DateTime.local();
-    Helpers.withDefaultZone("UTC", () => expect(tokyoLocal.toLocal().zoneName).toBe("UTC"));
+    expect(tokyoLocal.toDefaultZone().zoneName).toBe("Asia/Tokyo");
+  });
+});
+
+//------
+// #toSystemZone()
+//------
+test("DateTime#SystemZone() sets the calendar back to local", () => {
+  const relocaled = dt()
+      .toUTC()
+      .toSystemZone(),
+    expected = new Date(millis).getHours();
+  expect(relocaled.isOffsetFixed).toBe(false);
+  expect(relocaled.valueOf()).toBe(millis);
+  expect(relocaled.hour).toBe(expected);
+});
+
+test("DateTime#SystemZone() ignores the default locale", () => {
+  const localZoneName = DateTime.local().zoneName;
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    const tokyoLocal = DateTime.local();
+    Helpers.withDefaultZone("UTC", () =>
+      expect(tokyoLocal.toSystemZone().zoneName).toBe(localZoneName)
+    );
   });
 });
 
@@ -80,9 +100,21 @@ test("DateTime#setZone accepts 'system'", () => {
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 
-test("DateTime#setZone accepts 'system' and uses the default zone", () => {
+test("DateTime#setZone accepts 'system' and ignores the default zone", () => {
+  const localZoneName = DateTime.local().zoneName;
   Helpers.withDefaultZone("Europe/Paris", () => {
-    expect(DateTime.utc().setZone("system").zoneName).toBe("Europe/Paris");
+    expect(DateTime.utc().setZone("system").zoneName).toBe(localZoneName);
+  });
+});
+
+test("DateTime#setZone accepts 'default'", () => {
+  let zoned = DateTime.utc().setZone("default");
+  expect(zoned.offset).toBe(DateTime.local().offset);
+});
+
+test("DateTime#setZone accepts 'default' and uses the default zone", () => {
+  Helpers.withDefaultZone("Europe/Paris", () => {
+    expect(DateTime.utc().setZone("default").zoneName).toBe("Europe/Paris");
   });
 });
 
@@ -125,11 +157,7 @@ test('DateTime#setZone accepts "utc-3:30"', () => {
 });
 
 test("DateTime#setZone does not accept dumb things", () => {
-  Helpers.withDefaultZone("system", () => {
-    const zoned = DateTime.local().setZone("utc-yo");
-    // this is questionable; should this be invalid instead?
-    expect(zoned.zone.type).toBe("system");
-  });
+  expect(() => DateTime.local().setZone("utc-yo")).toThrow(InvalidZoneError);
 });
 
 test("DateTime#setZone accepts IANA zone names", () => {
@@ -175,9 +203,7 @@ test("DateTime#setZone with keepLocalTime can span wacky offsets", () => {
 });
 
 test("DateTime#setZone rejects jibberish", () => {
-  const zoned = dt().setZone("blorp");
-  expect(zoned.isValid).toBe(false);
-  expect(zoned.invalidReason).toBe("unsupported zone");
+  expect(() => dt().setZone("blorp")).toThrow(InvalidZoneError);
 });
 
 //------
@@ -196,27 +222,6 @@ test("DateTime#isInDST() returns true for during-DST times", () => {
 test("DateTime#isInDST() returns false for post-DST times", () => {
   const zoned = dt().setZone("America/Los_Angeles");
   expect(zoned.set({ month: 12 }).isInDST).toBe(false);
-});
-
-//------
-// #invalid
-//------
-
-// these functions got tested in the individual zones, but let's do invalid DateTimes
-
-test("DateTime#offset returns NaN for invalid times", () => {
-  const zoned = DateTime.invalid("because");
-  expect(zoned.isInDST).toBeFalsy();
-});
-
-test("DateTime#offsetNameLong returns null for invalid times", () => {
-  const zoned = DateTime.invalid("because");
-  expect(zoned.offsetNameLong).toBe(null);
-});
-
-test("DateTime#offsetNameShort returns null for invalid times", () => {
-  const zoned = DateTime.invalid("because");
-  expect(zoned.offsetNameShort).toBe(null);
 });
 
 //------
@@ -259,12 +264,4 @@ test("Setting the default zone to 'system' gives you back a local zone", () => {
     Settings.defaultZoneName = "system";
     expect(DateTime.local().zoneName).toBe(sysZone);
   });
-});
-
-//------
-// invalid
-//------
-
-test("invalid DateTimes have no zone", () => {
-  expect(DateTime.invalid("because").zoneName).toBe(null);
 });

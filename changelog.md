@@ -28,42 +28,42 @@
 
 ## 1.12.1
 
- * Fix cross-month diffs in some scenarios
- * Fix time zone parsing when the time zone isn't at the end
- * Memoize IANA zone creation
+- Fix cross-month diffs in some scenarios
+- Fix time zone parsing when the time zone isn't at the end
+- Memoize IANA zone creation
 
 ## 1.12.0
 
- * Add some explicit CDN support to the NPM package
- * Add week token to duration ISO support
- * Lots of cleanup and test coverage changes
+- Add some explicit CDN support to the NPM package
+- Add week token to duration ISO support
+- Lots of cleanup and test coverage changes
 
 ## 1.11.4
 
- * `setZone("local")` now returns the defaultZone if it is set
- * Fixes for the polyfilled build
+- `setZone("local")` now returns the defaultZone if it is set
+- Fixes for the polyfilled build
 
 ## 1.11.3
 
- * Allow 24:00 in ISO (and other) strings
- * Fix some bugs with the typecheck functions like `DateTime.isDateTime()`
+- Allow 24:00 in ISO (and other) strings
+- Fix some bugs with the typecheck functions like `DateTime.isDateTime()`
 
 ## 1.11.2
 
- * Fixed handling of some characters in fromFormat literal sections
- * Hanlde string values in object arguments to DateTime methods
- * Fixed toRelativeCalendar's handling of zones in the base date
+- Fixed handling of some characters in fromFormat literal sections
+- Hanlde string values in object arguments to DateTime methods
+- Fixed toRelativeCalendar's handling of zones in the base date
 
 ## 1.11.1
 
- * Fix DateTime#plus() when spanning across AD 100
+- Fix DateTime#plus() when spanning across AD 100
 
 ## 1.11.0
 
- * Fix low-year handling for IANA zones
- * `DateTime#toLocal()` now uses the default locale
- * Fix zero duration formatting
- * Many documentation fixes
+- Fix low-year handling for IANA zones
+- `DateTime#toLocal()` now uses the default locale
+- Fix zero duration formatting
+- Many documentation fixes
 
 ## 1.10.0
 
@@ -229,7 +229,7 @@ Documentation fixes
 ## 0.5.0
 
 - `isBefore()` returns true for the end of the interval, consistent with being half-open
-- `zoneName` now rturns `null` for invalid DateTimes
+- `zoneName` now returns `null` for invalid DateTimes
 - Added quarter support
 - Adding a month to Jan 31 gives Feb 28/29
 

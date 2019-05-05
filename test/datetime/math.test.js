@@ -85,10 +85,6 @@ test("DateTime#plus(multiple) adds the right amount of time", () => {
   expect(later.minute).toBe(41);
 });
 
-test("DateTime#plus maintains invalidity", () => {
-  expect(DateTime.invalid("because").plus({ day: 1 }).isValid).toBe(false);
-});
-
 test("DateTime#plus works across the 100 barrier", () => {
   const d = DateTime.fromISO("0099-12-31").plus({ day: 2 });
   expect(d.year).toBe(100);
@@ -131,10 +127,6 @@ test("DateTime#minus({ months: 13 }) at the end of the month", () => {
   expect(earlier.day).toBe(29);
   expect(earlier.month).toBe(2);
   expect(earlier.year).toBe(2016);
-});
-
-test("DateTime#minus maintains invalidity", () => {
-  expect(DateTime.invalid("because").minus({ day: 1 }).isValid).toBe(false);
 });
 
 test("DateTime#minus works across the 100 barrier", () => {
@@ -265,15 +257,6 @@ test("DateTime#startOf('week') goes to the start of the week", () => {
   expect(dt.minute).toBe(0);
   expect(dt.second).toBe(0);
   expect(dt.millisecond).toBe(0);
-});
-
-test("DateTime#startOf maintains invalidity", () => {
-  expect(DateTime.invalid("because").startOf("day").isValid).toBe(false);
-});
-
-test("DateTime#startOf throws on invalid units", () => {
-  expect(() => DateTime.fromISO("2016-03-12T10:00").startOf("splork")).toThrow();
-  expect(() => DateTime.fromISO("2016-03-12T10:00").startOf("")).toThrow();
 });
 
 //------
@@ -409,12 +392,4 @@ test("DateTime#endOf('week') goes to the end of the week", () => {
   expect(dt.minute).toBe(59);
   expect(dt.second).toBe(59);
   expect(dt.millisecond).toBe(999);
-});
-
-test("DateTime#endOf maintains invalidity", () => {
-  expect(DateTime.invalid("because").endOf("day").isValid).toBe(false);
-});
-
-test("DateTime#endOf throws on invalid units", () => {
-  expect(() => DateTime.fromISO("2016-03-12T10:00").endOf("splork")).toThrow();
 });

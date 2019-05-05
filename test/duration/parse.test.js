@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { Duration } from "../../src/luxon";
+import { UnparsableStringError } from "../../src/errors";
 
 //------
 // #fromISO()
@@ -58,7 +59,7 @@ test("Duration.fromISO can parse fractions of seconds", () => {
 
 test("Duration.fromISO rejects junk", () => {
   const rejects = s => {
-    expect(Duration.fromISO(s).isValid).toBe(false);
+    expect(() => Duration.fromISO(s)).toThrow(UnparsableStringError);
   };
 
   rejects("poop");
@@ -68,4 +69,8 @@ test("Duration.fromISO rejects junk", () => {
   rejects("P34S");
   rejects("P34K");
   rejects("P5D2W");
+});
+
+test("Duration.fromISO accpets a nullOnInvalid option", () => {
+  expect(Duration.fromISO("sprok", { nullOnInvalid: true })).toBe(null);
 });

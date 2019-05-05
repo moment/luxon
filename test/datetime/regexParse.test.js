@@ -1,6 +1,11 @@
 /* global test expect */
 
 import { DateTime } from "../../src/luxon";
+import {
+  MismatchedWeekdayError,
+  UnparsableStringError,
+  UnitOutOfRangeError
+} from "../../src/errors";
 
 //------
 // .fromISO
@@ -489,7 +494,7 @@ test("DateTime.fromISO() accepts 24:00", () => {
 });
 
 test("DateTime.fromISO() doesn't accept 24:23", () => {
-  expect(DateTime.fromISO("2018-05-25T24:23").isValid).toBe(false);
+  expect(() => DateTime.fromISO("2018-05-25T24:23")).toThrow(UnitOutOfRangeError);
 });
 
 test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
@@ -527,7 +532,7 @@ test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
 });
 
 test("DateTime.fromISO() rejects poop", () => {
-  const rejects = s => expect(DateTime.fromISO(s).isValid).toBeFalsy();
+  const rejects = s => expect(() => DateTime.fromISO(s)).toThrow(UnparsableStringError);
 
   rejects(null);
   rejects("");
@@ -545,13 +550,17 @@ test("DateTime.fromISO() rejects poop", () => {
   rejects("2016-W32-02");
 });
 
+test("DateTime.fromISO() accepts a nullOnInvalid argument", () => {
+  expect(DateTime.fromISO("sporks", { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromHTTP("2019-34-34", { nullOnInvalid: true })).toBe(null);
+});
+
 //------
 // .fromRFC2822
 //-------
 
 test("DateTime.fromRFC2822() accepts full format", () => {
   const dt = DateTime.fromRFC2822("Tue, 01 Nov 2016 13:23:12 +0630");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -588,13 +597,13 @@ test("DateTime.fromRFC2822 parses a range of dates", () => {
 });
 
 test("DateTime.fromRFC2822() rejects incorrect days of the week", () => {
-  const dt = DateTime.fromRFC2822("Wed, 01 Nov 2016 13:23:12 +0600");
-  expect(dt.isValid).toBe(false);
+  expect(() => DateTime.fromRFC2822("Wed, 01 Nov 2016 13:23:12 +0600")).toThrow(
+    MismatchedWeekdayError
+  );
 });
 
 test("DateTime.fromRFC2822() can elide the day of the week", () => {
   const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 +0600");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -608,7 +617,6 @@ test("DateTime.fromRFC2822() can elide the day of the week", () => {
 
 test("DateTime.fromRFC2822() can elide seconds", () => {
   const dt = DateTime.fromRFC2822("01 Nov 2016 13:23 +0600");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -622,7 +630,6 @@ test("DateTime.fromRFC2822() can elide seconds", () => {
 
 test("DateTime.fromRFC2822() can use Z", () => {
   const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 Z");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -636,7 +643,6 @@ test("DateTime.fromRFC2822() can use Z", () => {
 
 test("DateTime.fromRFC2822() can use a weird subset of offset abbreviations", () => {
   const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 EST");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 11,
@@ -648,13 +654,15 @@ test("DateTime.fromRFC2822() can use a weird subset of offset abbreviations", ()
   });
 });
 
+test("DateTime.fromRFC2822() accepts a nullOnInvalid argument", () =>
+  expect(DateTime.fromRFC2822("sporks", { nullOnInvalid: true })).toBe(null));
+
 //------
 // .fromHTTP
 //-------
 
 test("DateTime.fromHTTP() can parse RFC 1123", () => {
   const dt = DateTime.fromHTTP("Sun, 06 Nov 1994 08:49:37 GMT");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,
@@ -668,7 +676,6 @@ test("DateTime.fromHTTP() can parse RFC 1123", () => {
 
 test("DateTime.fromHTTP() can parse RFC 850", () => {
   const dt = DateTime.fromHTTP("Sunday, 06-Nov-94 08:49:37 GMT");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,
@@ -682,7 +689,6 @@ test("DateTime.fromHTTP() can parse RFC 850", () => {
 
 test("DateTime.fromHTTP() can parse ASCII dates with one date digit", () => {
   const dt = DateTime.fromHTTP("Sun Nov  6 08:49:37 1994");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,
@@ -696,7 +702,6 @@ test("DateTime.fromHTTP() can parse ASCII dates with one date digit", () => {
 
 test("DateTime.fromHTTP() can parse ASCII dates with two date digits", () => {
   const dt = DateTime.fromHTTP("Wed Nov 16 08:49:37 1994");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 1994,
     month: 11,
@@ -708,13 +713,16 @@ test("DateTime.fromHTTP() can parse ASCII dates with two date digits", () => {
   });
 });
 
+test("DateTime.fromHTTP() accepts a nullOnInvalid argument", () => {
+  expect(DateTime.fromHTTP("sporks", { nullOnInvalid: true })).toBe(null);
+});
+
 //------
 // .fromSQL
 //-------
 
 test("DateTime.fromSQL() can parse SQL dates", () => {
   const dt = DateTime.fromSQL("2016-05-14");
-  expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -728,7 +736,6 @@ test("DateTime.fromSQL() can parse SQL dates", () => {
 
 test("DateTime.fromSQL() can parse SQL times", () => {
   const dt = DateTime.fromSQL("04:12:00.123");
-  expect(dt.isValid).toBe(true);
   const now = new Date();
   expect(dt.toObject()).toEqual({
     year: now.getFullYear(),
@@ -743,7 +750,6 @@ test("DateTime.fromSQL() can parse SQL times", () => {
 
 test("DateTime.fromSQL() handles times without fractional seconds", () => {
   const dt = DateTime.fromSQL("04:12:00");
-  expect(dt.isValid).toBe(true);
   const now = new Date();
   expect(dt.toObject()).toEqual({
     year: now.getFullYear(),
@@ -758,7 +764,6 @@ test("DateTime.fromSQL() handles times without fractional seconds", () => {
 
 test("DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision", () => {
   let dt = DateTime.fromSQL("2016-05-14 10:23:54.2346");
-  expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -770,7 +775,6 @@ test("DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision"
   });
 
   dt = DateTime.fromSQL("2016-05-14 10:23:54.2341");
-  expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -784,7 +788,6 @@ test("DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision"
 
 test("DateTime.fromSQL() handles deciseconds in SQL datetimes", () => {
   const dt = DateTime.fromSQL("2016-05-14 10:23:54.1");
-  expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -798,7 +801,6 @@ test("DateTime.fromSQL() handles deciseconds in SQL datetimes", () => {
 
 test("DateTime.fromSQL() handles datetimes without fractional seconds", () => {
   const dt = DateTime.fromSQL("2016-05-14 10:23:54");
-  expect(dt.isValid).toBe(true);
   expect(dt.toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -812,7 +814,6 @@ test("DateTime.fromSQL() handles datetimes without fractional seconds", () => {
 
 test("DateTime.fromSQL() accepts a zone to default to", () => {
   const dt = DateTime.fromSQL("2016-05-14 10:23:54.023", { zone: "utc" });
-  expect(dt.isValid).toBe(true);
   expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -827,7 +828,6 @@ test("DateTime.fromSQL() accepts a zone to default to", () => {
 
 test("DateTime.fromSQL() can parse an optional offset", () => {
   let dt = DateTime.fromSQL("2016-05-14 10:23:54.023 +06:00");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -840,7 +840,6 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
 
   // no space before the zone
   dt = DateTime.fromSQL("2016-05-14 10:23:54.023+06:00");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -853,7 +852,6 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
 
   // no milliseconds
   dt = DateTime.fromSQL("2016-05-14 10:23:54 +06:00");
-  expect(dt.isValid).toBe(true);
   expect(dt.toUTC().toObject()).toEqual({
     year: 2016,
     month: 5,
@@ -869,7 +867,6 @@ test("DateTime.fromSQL() can parse an optional zone", () => {
   let dt = DateTime.fromSQL("2016-05-14 10:23:54 Europe/Paris", {
     setZone: true
   });
-  expect(dt.isValid).toBe(true);
   expect(dt.zoneName).toBe("Europe/Paris");
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -882,7 +879,6 @@ test("DateTime.fromSQL() can parse an optional zone", () => {
   });
 
   dt = DateTime.fromSQL("2016-05-14 10:23:54 UTC", { setZone: true });
-  expect(dt.isValid).toBe(true);
   expect(dt.zoneName).toBe("UTC");
   expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
@@ -895,3 +891,6 @@ test("DateTime.fromSQL() can parse an optional zone", () => {
     millisecond: 0
   });
 });
+
+test("DateTime.fromSQL() accepts a nullOnInvalid argument", () =>
+  expect(DateTime.fromSQL("sporks", { nullOnInvalid: true })).toBe(null));

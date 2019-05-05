@@ -81,14 +81,12 @@ exports.withNow = function(name, dt, f) {
 
 // not a tester!
 exports.withDefaultZone = function(zone, f) {
-  return (value, f) => {
-    try {
-      Settings.defaultZoneName = value;
-      f();
-    } finally {
-      Settings.defaultZoneName = null;
-    }
-  };
+  try {
+    Settings.defaultZoneName = zone;
+    f();
+  } finally {
+    Settings.defaultZoneName = null;
+  }
 };
 
 exports.setUnset = function(prop) {

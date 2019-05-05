@@ -32,7 +32,3 @@ test("Duration#toObject accepts a flag to return config", () => {
     conversionAccuracy: "longterm"
   });
 });
-
-test("Duration#toObject returns an empty object for invalid durations", () => {
-  expect(Duration.invalid("because").toObject()).toEqual({});
-});

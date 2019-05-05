@@ -8,11 +8,11 @@ Luxon's objects are immutable, whereas Moment's are mutable. For example, in Mom
 
 ```js
 var m1 = moment();
-var m2 = m1.add(1, 'hours');
+var m2 = m1.add(1, "hours");
 m1.valueOf() === m2.valueOf(); //=> true
 ```
 
-This happens because `m1` and `m2` are really the same object; `add()` *mutated* the object to be an hour later. Compare that to Luxon:
+This happens because `m1` and `m2` are really the same object; `add()` _mutated_ the object to be an hour later. Compare that to Luxon:
 
 ```js
 var d1 = DateTime.local();
@@ -63,11 +63,11 @@ Here's a rough mapping of DateTime methods in Moment to ones in Luxon. I haven't
 
 #### Basic information getters
 
-| Property | Moment      | Luxon     | Notes                                            |
-| -------- | ----------- | --------- | ------------------------------------------------ |
-| Validity | `isValid()` | `isValid` | See also `invalidReason`                         |
-| Locale   | `locale()`  | `locale`  |                                                  |
-| Zone     | `tz()`      | `zone`    | Moment requires a plugin for this, but not Luxon |
+| Property | Moment      | Luxon                | Notes                                            |
+| -------- | ----------- | -------------------- | ------------------------------------------------ |
+| Validity | `isValid()` | N/A, throws an error |                                                  |
+| Locale   | `locale()`  | `locale`             |                                                  |
+| Zone     | `tz()`      | `zone`               | Moment requires a plugin for this, but not Luxon |
 
 #### Unit getters
 
@@ -76,8 +76,8 @@ Here's a rough mapping of DateTime methods in Moment to ones in Luxon. I haven't
 | Year                   | `year()`                             | `year`        |                                        |
 | Month                  | `month()`                            | `month`       |                                        |
 | Day of month           | `date()`                             | `day`         |                                        |
-| Day of week            | `day()`, `weekday()`, `isoWeekday()` | `weekday `    | 1-7, Monday is 1, Sunday is 7, per ISO |
-| Day of year            | `dayOfYear()`                        | `ordinal `    |                                        |
+| Day of week            | `day()`, `weekday()`, `isoWeekday()` | `weekday`     | 1-7, Monday is 1, Sunday is 7, per ISO |
+| Day of year            | `dayOfYear()`                        | `ordinal`     |                                        |
 | Hour of day            | `hour()`                             | `hour`        |                                        |
 | Minute of hour         | `minute()`                           | `minute`      |                                        |
 | Second of minute       | `second()`                           | `second`      |                                        |
@@ -163,9 +163,9 @@ Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they 
 
 Moment Durations and Luxon Durations are broadly similar in purpose and capabilities. The main differences are:
 
- 1. Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using `shiftTo`. They can also be configured to use different unit conversions. See [Duration Math](math.html#duration-math) for more.
- 1. Luxon does not (yet) have an equivalent of Moment's Duration `humanize` method. Luxon will add that when [Intl.UnitFormat](https://github.com/tc39/proposal-intl-unit-format) is supported by browsers.
- 1. Like DateTimes, Luxon Durations have separate methods for creating objects from different sources.
+1.  Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using `shiftTo`. They can also be configured to use different unit conversions. See [Duration Math](math.html#duration-math) for more.
+1.  Luxon does not (yet) have an equivalent of Moment's Duration `humanize` method. Luxon will add that when [Intl.UnitFormat](https://github.com/tc39/proposal-intl-unit-format) is supported by browsers.
+1.  Like DateTimes, Luxon Durations have separate methods for creating objects from different sources.
 
 See the [Duration API docs](../class/src/duration.js~Duration.html) for more.
 

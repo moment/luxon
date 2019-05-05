@@ -19,12 +19,6 @@ test("does not equal a different zone", () => {
   expect(l1.equals(l2)).toBe(false);
 });
 
-test("does not equal an invalid DateTime", () => {
-  const l1 = DateTime.local(2017, 5, 15),
-    l2 = DateTime.invalid("whatever");
-  expect(l1.equals(l2)).toBe(false);
-});
-
 test("does not equal a different locale", () => {
   const l1 = DateTime.local(2017, 5, 15),
     l2 = DateTime.local(2017, 5, 15).setLocale("fr");
