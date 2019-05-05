@@ -1,5 +1,7 @@
 /* global test expect */
+
 import { Interval } from "../../src/luxon";
+import { UnparsableStringError } from "../../src/errors";
 
 //------
 // .fromISO()
@@ -125,8 +127,6 @@ const badInputs = [
   "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M" // valid ISO 8601 interval with a repeat, but not supported here
 ];
 
-test.each(badInputs)("Interval.fromISO will return invalid for [%s]", s => {
-  const i = Interval.fromISO(s);
-  expect(i.isValid).toBe(false);
-  expect(i.invalidReason).toBe("unparsable");
+test.each(badInputs)("Interval.fromISO will reject [%s]", s => {
+  expect(() => Interval.fromISO(s)).toThrow(UnparsableStringError);
 });

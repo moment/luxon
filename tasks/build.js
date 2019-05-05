@@ -43,7 +43,8 @@ function rollupInputOpts(opts) {
     inputOpts.plugins.push(
       rollupBabel({
         babelrc: false,
-        presets: [["@babel/preset-env", presetOpts]]
+        presets: [["@babel/preset-env", presetOpts]],
+        plugins: ["@babel/plugin-proposal-optional-chaining"]
       })
     );
   }
@@ -175,7 +176,7 @@ async function cjsBrowser() {
 async function es6() {
   await buildLibrary("es6", {
     format: "es",
-    compile: false
+    compile: true
   });
 }
 
@@ -183,7 +184,7 @@ async function globalEs6() {
   await buildLibrary("global-es6", {
     format: "iife",
     name: "luxon",
-    compile: false,
+    compile: true,
     global: true
   });
 }

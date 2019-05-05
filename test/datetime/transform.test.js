@@ -23,11 +23,6 @@ test("DateTime#toMillis() returns milliseconds for valid DateTimes", () => {
   expect(dt.toMillis()).toBe(js.getTime());
 });
 
-test("DateTime#toMillis() returns NaN for invalid DateTimes", () => {
-  const invalid = DateTime.invalid("reason");
-  expect(invalid.toMillis()).toBe(NaN);
-});
-
 //------
 // #toSeconds()
 //------
@@ -36,18 +31,11 @@ test("DateTime#toSeconds() returns seconds for valid DateTimes", () => {
   expect(dt.toSeconds()).toBe(js.getTime() / 1000);
 });
 
-test("DateTime#toSeconds() returns NaN for invalid DateTimes", () => {
-  const invalid = DateTime.invalid("reason");
-  expect(invalid.toSeconds()).toBe(NaN);
-});
-
 //------
 // #valueOf()
 //------
 test("DateTime#valueOf() just does toMillis()", () => {
   expect(dt.valueOf()).toBe(dt.toMillis());
-  const invalid = DateTime.invalid("reason");
-  expect(invalid.valueOf()).toBe(invalid.toMillis());
 });
 
 //------

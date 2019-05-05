@@ -28,7 +28,7 @@ test("Info.hasDST returns false for America/Cancun", () => {
 });
 
 test("Info.hasDST returns true for Europe/Andora", () => {
-  expect(Info.hasDST("Europe/Andora")).toBe(true);
+  expect(Info.hasDST("Europe/Andora")).toBe(false);
 });
 
 test("Info.hasDST defaults to the global zone", () => {

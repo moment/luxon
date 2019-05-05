@@ -7,17 +7,9 @@ import {
   weeksInWeekYear,
   isNumber
 } from "./util.js";
-import Invalid from "./invalid.js";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
-
-function unitOutOfRange(unit, value) {
-  return new Invalid(
-    "unit out of range",
-    `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
-  );
-}
 
 function dayOfWeek(year, month, day) {
   const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
@@ -103,12 +95,12 @@ export function hasInvalidWeekData(obj) {
     validWeekday = numberBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
-    return unitOutOfRange("weekYear", obj.weekYear);
+    return ["weekYear", obj.weekYear];
   } else if (!validWeek) {
-    return unitOutOfRange("week", obj.week);
+    return ["week", obj.week];
   } else if (!validWeekday) {
-    return unitOutOfRange("weekday", obj.weekday);
-  } else return false;
+    return ["weekday", obj.weekday];
+  } else return null;
 }
 
 export function hasInvalidOrdinalData(obj) {
@@ -116,10 +108,10 @@ export function hasInvalidOrdinalData(obj) {
     validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
 
   if (!validYear) {
-    return unitOutOfRange("year", obj.year);
+    return ["year", obj.year];
   } else if (!validOrdinal) {
-    return unitOutOfRange("ordinal", obj.ordinal);
-  } else return false;
+    return ["ordinal", obj.ordinal];
+  } else return null;
 }
 
 export function hasInvalidGregorianData(obj) {
@@ -128,12 +120,12 @@ export function hasInvalidGregorianData(obj) {
     validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 
   if (!validYear) {
-    return unitOutOfRange("year", obj.year);
+    return ["year", obj.year];
   } else if (!validMonth) {
-    return unitOutOfRange("month", obj.month);
+    return ["month", obj.month];
   } else if (!validDay) {
-    return unitOutOfRange("day", obj.day);
-  } else return false;
+    return ["day", obj.day];
+  } else return null;
 }
 
 export function hasInvalidTimeData(obj) {
@@ -146,12 +138,12 @@ export function hasInvalidTimeData(obj) {
     validMillisecond = numberBetween(millisecond, 0, 999);
 
   if (!validHour) {
-    return unitOutOfRange("hour", hour);
+    return ["hour", obj.hour];
   } else if (!validMinute) {
-    return unitOutOfRange("minute", minute);
+    return ["minute", obj.minute];
   } else if (!validSecond) {
-    return unitOutOfRange("second", second);
+    return ["second", obj.second];
   } else if (!validMillisecond) {
-    return unitOutOfRange("millisecond", millisecond);
-  } else return false;
+    return ["millisecond", obj.millisecond];
+  } else return null;
 }

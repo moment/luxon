@@ -18,12 +18,6 @@ test("equals identically constructed but one has sting type values", () => {
   expect(l1.equals(l2)).toBe(true);
 });
 
-test("does not equal an invalid duration", () => {
-  const l1 = Duration.fromObject({ years: 5, days: 6 }),
-    l2 = Duration.invalid("because");
-  expect(l1.equals(l2)).toBe(false);
-});
-
 test("does not equal a different locale", () => {
   const l1 = Duration.fromObject({ years: 5, days: 6 }),
     l2 = Duration.fromObject({ years: 5, days: 6 }).reconfigure({ locale: "fr" });

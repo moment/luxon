@@ -22,16 +22,6 @@ test("Interval#equals returns true iff the times are the same", () => {
   expect(first.equals(fromISOs(s2, e2))).toBeFalsy();
 });
 
-test("Interval#equals returns false for invalid intervals", () => {
-  const invalid = Interval.invalid("blarg"),
-    normal = fromISOs("2017-01-01", "2017-01-02");
-
-  expect(invalid.equals(invalid)).toBeFalsy();
-  expect(normal.equals(invalid)).toBeFalsy();
-  expect(invalid.equals(normal)).toBeFalsy();
-  expect(normal.equals(normal)).toBeTruthy();
-});
-
 //-------
 // #union()
 //-------
@@ -91,10 +81,6 @@ test("Interval#union spans adjacent intervals", () => {
   ).toBeTruthy();
 });
 
-test("Interval#union returns invalid for invalid intervals", () => {
-  expect(Interval.invalid("any reason").union(todayFrom(8, 10)).isValid).toBeFalsy();
-});
-
 //-------
 // #intersection()
 //-------
@@ -117,10 +103,6 @@ test("Interval#intersection returns empty for adjacent intervals", () => {
       .intersection(todayFrom(8, 10))
       .isEmpty()
   ).toBeTruthy();
-});
-
-test("Interval#intersection returns invalid for invalid intervals", () => {
-  expect(Interval.invalid("any reason").intersection(todayFrom(8, 10)).isValid).toBeFalsy();
 });
 
 //-------
@@ -266,11 +248,6 @@ test("Interval#engulfs", () => {
   expect(i.engulfs(todayFrom(9, 12), "equal")).toBeTruthy();
 });
 
-test("Interval#engulfs returns false for invalid intervals", () => {
-  expect(Interval.invalid("because").engulfs(todayFrom(9, 12))).toBe(false);
-  expect(todayFrom(9, 12).engulfs(Interval.invalid("because"))).toBe(false);
-});
-
 //-------
 // #abutsStart()
 //-------
@@ -279,11 +256,6 @@ test("Interval#abutsStart", () => {
   expect(todayFrom(9, 10).abutsStart(todayFrom(11, 12))).toBeFalsy();
   expect(todayFrom(9, 10).abutsStart(todayFrom(8, 11))).toBeFalsy();
   expect(todayFrom(9, 10).abutsStart(todayFrom(9, 10))).toBeFalsy();
-});
-
-test("Interval#abutsStart returns false for invalid intervals", () => {
-  expect(Interval.invalid("because").abutsStart(todayFrom(9, 12))).toBe(false);
-  expect(todayFrom(9, 12).abutsStart(Interval.invalid("because"))).toBe(false);
 });
 
 //-------
@@ -296,11 +268,6 @@ test("Interval#abutsEnd", () => {
   expect(todayFrom(9, 11).abutsEnd(todayFrom(9, 11))).toBeFalsy();
 });
 
-test("Interval#abutsEnd returns false for invalid intervals", () => {
-  expect(Interval.invalid("because").abutsEnd(todayFrom(9, 12))).toBe(false);
-  expect(todayFrom(9, 12).abutsEnd(Interval.invalid("because"))).toBe(false);
-});
-
 //-------
 // #splitAt()
 //-------
@@ -310,11 +277,6 @@ test("Interval#splitAt breaks up the interval", () => {
   expect(split[0].equals(todayFrom(8, 9))).toBeTruthy();
   expect(split[1].equals(todayFrom(9, 11))).toBeTruthy();
   expect(split[2].equals(todayFrom(11, 13))).toBeTruthy();
-});
-
-test("Interval#splitAt returns [] for invalid intervals", () => {
-  const split = Interval.invalid("because").splitAt(Helpers.atHour(9), Helpers.atHour(11));
-  expect(split).toEqual([]);
 });
 
 //-------
@@ -336,18 +298,8 @@ test("Interval#splitBy accepts a duration", () => {
   expect(split[2].equals(todayFrom(12, 13))).toBeTruthy();
 });
 
-test("Interval#splitBy returns [] for invalid intervals", () => {
-  const split = Interval.invalid("because").splitBy({ hours: 2 });
-  expect(split).toEqual([]);
-});
-
-test("Interval#split by returns [] for invalid durations", () => {
-  const split = todayFrom(8, 3).splitBy(Duration.invalid("because"));
-  expect(split).toEqual([]);
-});
-
 test("Interval#split by returns [] for durations of length 0", () => {
-  const split = todayFrom(8, 3).splitBy(Duration.fromObject({}));
+  const split = todayFrom(8, 8).splitBy(Duration.fromObject({}));
   expect(split).toEqual([]);
 });
 
@@ -373,11 +325,6 @@ test("Interval#divideEqually always gives you the right number of parts", () => 
   const int = Interval.after(Helpers.atHour(9), { minutes: 7 }),
     split = int.divideEqually(17);
   expect(split.length).toBe(17);
-});
-
-test("Interval#divideEqually returns [] for invalid intervals", () => {
-  const split = Interval.invalid("because").divideEqually(3);
-  expect(split).toEqual([]);
 });
 
 test("Interval#mapEndpoints returns a new Interval with the mapped endpoints", () => {

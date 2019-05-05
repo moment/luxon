@@ -617,10 +617,6 @@ test("DateTime#toFormat() uses the output calendar", () => {
   expect(dt.toFormat("MMMM yyyy", { outputCalendar: "islamic" })).toBe("Shaʻban 1402");
 });
 
-test("DateTime#toFormat() returns something different for invalid DateTimes", () => {
-  expect(DateTime.invalid("because").toFormat("dd MM yyyy")).toBe("Invalid DateTime");
-});
-
 test("DateTime#toFormat('X') returns a Unix timestamp in seconds", () => {
   expect(dt.toFormat("X")).toBe("391166634");
 });

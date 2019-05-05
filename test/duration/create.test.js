@@ -88,5 +88,4 @@ test("Duration.fromObject is valid if providing options only", () => {
   expect(dur.minutes).toBe(0);
   expect(dur.seconds).toBe(0);
   expect(dur.milliseconds).toBe(0);
-  expect(dur.isValid).toBe(true);
 });

@@ -26,8 +26,11 @@ suite
   .add("DateTime.fromString", () => {
     DateTime.fromString("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
   })
-  .add("DateTime.fromString with zone", () => {
-    DateTime.fromString("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
+  .add("DateTime.fromFormat", () => {
+    DateTime.froFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
+  })
+  .add("DateTime.froFormat with zone", () => {
+    DateTime.froFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
       zone: "America/Los_Angeles"
     });
   })
