@@ -5,7 +5,7 @@ import Locale from "./impl/locale.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 
 let now = () => Date.now(),
-  defaultZone = null, // not setting this directly to SystemZone.instance bc loading order issues
+  defaultZoneName = "system",
   defaultLocale = null,
   defaultNumberingSystem = null,
   defaultOutputCalendar = null;
@@ -38,7 +38,7 @@ export default class Settings {
    * @type {string}
    */
   static get defaultZoneName() {
-    return Settings.defaultZone.name;
+    return defaultZoneName;
   }
 
   /**
@@ -46,11 +46,7 @@ export default class Settings {
    * @type {string}
    */
   static set defaultZoneName(z) {
-    if (!z) {
-      defaultZone = null;
-    } else {
-      defaultZone = normalizeZone(z);
-    }
+    defaultZoneName = z || "system";
   }
 
   /**
@@ -58,7 +54,7 @@ export default class Settings {
    * @type {Zone}
    */
   static get defaultZone() {
-    return defaultZone || SystemZone.instance;
+    return normalizeZone(this.defaultZoneName) || SystemZone.instance;
   }
 
   /**

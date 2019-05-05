@@ -13,12 +13,12 @@ import { SystemZone } from "../luxon.js";
 export function normalizeZone(input, defaultZone) {
   let offset;
   if (isUndefined(input) || input === null) {
-    return defaultZone;
+    return defaultZone || SystemZone.instance;
   } else if (input instanceof Zone) {
     return input;
   } else if (isString(input)) {
     const lowered = input.toLowerCase();
-    if (lowered === "local" || lowered === "default") return defaultZone;
+    if (lowered === "default") return defaultZone || SystemZone.instance;
     if (lowered === "system") return SystemZone.instance;
     else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
     else if ((offset = IANAZone.parseGMTOffset(input)) != null) {

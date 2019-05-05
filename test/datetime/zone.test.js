@@ -237,7 +237,7 @@ test("Etc/GMT zones work even though V8 does not support them", () => {
 });
 
 //------
-// local zone
+// default zone
 //------
 
 test("The local zone does local stuff", () => {
@@ -247,10 +247,6 @@ test("The local zone does local stuff", () => {
   }
 });
 
-//------
-// default zone
-//------
-
 test("Setting the default zone results in a different creation zone", () => {
   Helpers.withDefaultZone("Asia/Tokyo", () => {
     expect(DateTime.local().zoneName).toBe("Asia/Tokyo");
@@ -258,10 +254,20 @@ test("Setting the default zone results in a different creation zone", () => {
   });
 });
 
-test("Setting the default zone to 'system' gives you back a local zone", () => {
-  const sysZone = Settings.defaultZoneName;
+test("Setting the default zone to null gives you back a system zone", () => {
+  const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZoneName = "system";
-    expect(DateTime.local().zoneName).toBe(sysZone);
+    Helpers.withDefaultZone(null, () => {
+      expect(DateTime.local().zoneName).toBe(sysZone);
+    });
+  });
+});
+
+test("Setting the default zone to 'system' gives you back a system zone", () => {
+  const sysZone = Settings.defaultZone.name;
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    Helpers.withDefaultZone("system", () => {
+      expect(DateTime.local().zoneName).toBe(sysZone);
+    });
   });
 });
