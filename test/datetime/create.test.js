@@ -12,8 +12,7 @@ const Helpers = require("../helpers");
 
 const withDefaultLocale = Helpers.setUnset("defaultLocale"),
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
-  withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar"),
-  withthrowOnInvalid = Helpers.setUnset("throwOnInvalid");
+  withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar");
 
 //------
 // .local()
@@ -235,14 +234,14 @@ test("DateTime.fromJSDate accepts the default locale", () => {
   withDefaultLocale("fr", () => expect(DateTime.fromJSDate(new Date()).locale).toBe("fr"));
 });
 
-test("DateTime.fromJSDate(date) throw errors for invalid values when throwOnInvalid is true", () => {
-  withthrowOnInvalid(true, () => {
-    expect(() => DateTime.fromJSDate("")).toThrow();
-    expect(() => DateTime.fromJSDate(new Date(""))).toThrow();
-    expect(() => DateTime.fromJSDate(new Date().valueOf())).toThrow();
-    expect(() => DateTime.fromJSDate(new Date(), { zone: "America/Blorp" })).toThrow();
-    expect(() => DateTime.fromJSDate("2019-04-16T11:32:32Z")).toThrow();
-  });
+test("DateTime.fromJSDate(date) throw errors for invalid values", () => {
+  expect(() => DateTime.fromJSDate("")).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromJSDate(new Date(""))).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromJSDate(new Date().valueOf())).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromJSDate(new Date(), { zone: "America/Blorp" })).toThrow(
+    InvalidZoneError
+  );
+  expect(() => DateTime.fromJSDate("2019-04-16T11:32:32Z")).toThrow(InvalidArgumentError);
 });
 
 //------

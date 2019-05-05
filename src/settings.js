@@ -8,8 +8,7 @@ let now = () => Date.now(),
   defaultZone = null, // not setting this directly to SystemZone.instance bc loading order issues
   defaultLocale = null,
   defaultNumberingSystem = null,
-  defaultOutputCalendar = null,
-  throwOnInvalid = false;
+  defaultOutputCalendar = null;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -108,22 +107,6 @@ export default class Settings {
    */
   static set defaultOutputCalendar(outputCalendar) {
     defaultOutputCalendar = outputCalendar;
-  }
-
-  /**
-   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {boolean}
-   */
-  static get throwOnInvalid() {
-    return throwOnInvalid;
-  }
-
-  /**
-   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {boolean}
-   */
-  static set throwOnInvalid(t) {
-    throwOnInvalid = t;
   }
 
   /**

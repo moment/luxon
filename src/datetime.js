@@ -363,11 +363,16 @@ export default class DateTime {
    * @access private
    */
   constructor(config) {
-    const zone = config.zone || Settings.defaultZone,
-      invalid =
-        config.invalid ||
-        (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
-        (!zone.isValid ? unsupportedZone(zone) : null);
+    // when can this even happen?
+    if (Number.isNaN(config.ts)) {
+      throw new InvalidArgumentError("invalid timestamp");
+    }
+
+    const zone = config.zone || Settings.defaultZone;
+    if (!zone.isValid) {
+      throw new InvalidZoneError(zone);
+    }
+
     /**
      * @access private
      */
@@ -375,11 +380,10 @@ export default class DateTime {
 
     let c = null,
       o = null;
-    if (!invalid) {
-      const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
-      c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
-      o = unchanged ? config.old.o : zone.offset(this.ts);
-    }
+    const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
+
+    c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
+    o = unchanged ? config.old.o : zone.offset(this.ts);
 
     /**
      * @access private
@@ -500,14 +504,9 @@ export default class DateTime {
       throw new InvalidArgumentError("date argument must be a valid Date");
     }
 
-    const zoneToUse = normalizeZone(options.zone, Settings.defaultZone);
-    if (!zoneToUse.isValid) {
-      throw new InvalidZoneError(zoneToUse);
-    }
-
     return new DateTime({
       ts: date.valueOf(),
-      zone: zoneToUse,
+      zone: normalizeZone(options.zone, Settings.defaultZone),
       loc: Locale.fromObject(options)
     });
   }
