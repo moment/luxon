@@ -7,7 +7,7 @@ Luxon provides different builds for different JS environments. See below for a l
 - [Download full](../../global/luxon.js)
 - [Download minified](../../global/luxon.min.js)
 
-Yout can also load the files from a [CDN](https://www.jsdelivr.com/package/npm/luxon).
+You can also load the files from a [CDN](https://www.jsdelivr.com/package/npm/luxon).
 
 Just include Luxon in a script tag. You can access its various classes through the `luxon` global.
 
