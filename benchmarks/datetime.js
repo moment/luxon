@@ -17,6 +17,12 @@ suite
   .add("DateTime.local with numbers", () => {
     DateTime.local(2017, 5, 15);
   })
+  .add("DateTime.fromISO", () => {
+    DateTime.fromISO("1982-05-25T09:10:11.445Z");
+  })
+  .add("DateTime.fromSQL", () => {
+    DateTime.fromSQL("2016-05-14 10:23:54.2346");
+  })
   .add("DateTime.fromString", () => {
     DateTime.fromString("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
   })
