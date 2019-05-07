@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.13.1
+
+ * Performance improvements for regex parsing
+
 ## 1.13.0
 
  * Support numberSystem in fromFormat
