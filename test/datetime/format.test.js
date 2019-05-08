@@ -54,6 +54,11 @@ test("DateTime#toISODate() returns null for invalid DateTimes", () => {
   expect(invalid.toISODate()).toBe(null);
 });
 
+test("DateTime#toISODate() returns ISO 8601 date in format [±YYYYY]", () => {
+  expect(dt.fromObject({ year: 118040, month: 5, day: 25 }).toISODate()).toBe("+118040-05-25");
+  expect(dt.fromObject({ year: -118040, month: 5, day: 25 }).toISODate()).toBe("-118040-05-25");
+});
+
 //------
 // #toISOWeekDate()
 //------
