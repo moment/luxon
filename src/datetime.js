@@ -1502,7 +1502,12 @@ export default class DateTime {
    * @return {string}
    */
   toISODate() {
-    return toTechFormat(this, "yyyy-MM-dd");
+    let format = "yyyy-MM-dd";
+    if (this.year > 9999) {
+      format = "+" + format;
+    }
+
+    return toTechFormat(this, format);
   }
 
   /**
