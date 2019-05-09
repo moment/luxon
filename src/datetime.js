@@ -1347,7 +1347,7 @@ export default class DateTime {
 
   /**
    * "Set" this DateTime to the beginning of a unit of time.
-   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
    * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'
