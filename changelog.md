@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.13.2
+
+ * Fixed ISO formatting for dates > 999
+
 ## 1.13.1
 
  * Performance improvements for regex parsing
