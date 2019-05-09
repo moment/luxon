@@ -80,7 +80,7 @@ export default class IANAZone extends Zone {
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @return {true}
+   * @return {boolean}
    */
   static isValidSpecifier(s) {
     return s && s.match(matchingRegex);
