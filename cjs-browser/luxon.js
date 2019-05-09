@@ -1086,7 +1086,7 @@ function (_Zone) {
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @return {true}
+   * @return {boolean}
    */
   ;
 
@@ -6344,8 +6344,8 @@ function () {
     return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
   }
   /**
-   * Create a DateTime from an input string and format string
-   * Defaults to en-US if no locale has been specified, regardless of the system's locale
+   * Create a DateTime from an input string and format string.
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale.
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -6870,7 +6870,13 @@ function () {
   ;
 
   _proto.toISODate = function toISODate() {
-    return toTechFormat(this, "yyyy-MM-dd");
+    var format = "yyyy-MM-dd";
+
+    if (this.year > 9999) {
+      format = "+" + format;
+    }
+
+    return toTechFormat(this, format);
   }
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime's week date

@@ -915,7 +915,7 @@ var luxon = (function (exports) {
      * @example IANAZone.isValidSpecifier("America/New_York") //=> true
      * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
      * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-     * @return {true}
+     * @return {boolean}
      */
     static isValidSpecifier(s) {
       return s && s.match(matchingRegex);
@@ -5272,8 +5272,8 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Create a DateTime from an input string and format string
-     * Defaults to en-US if no locale has been specified, regardless of the system's locale
+     * Create a DateTime from an input string and format string.
+     * Defaults to en-US if no locale has been specified, regardless of the system's locale.
      * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
      * @param {string} text - the string to parse
      * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -6013,7 +6013,12 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toISODate() {
-      return toTechFormat(this, "yyyy-MM-dd");
+      let format = "yyyy-MM-dd";
+      if (this.year > 9999) {
+        format = "+" + format;
+      }
+
+      return toTechFormat(this, format);
     }
 
     /**
