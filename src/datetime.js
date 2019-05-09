@@ -761,8 +761,8 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from an input string and format string
-   * Defaults to en-US if no locale has been specified, regardless of the system's locale
+   * Create a DateTime from an input string and format string.
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale.
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
