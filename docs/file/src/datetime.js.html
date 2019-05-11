@@ -807,8 +807,8 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from an input string and format string
-   * Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale
+   * Create a DateTime from an input string and format string.
+   * Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale.
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -1393,7 +1393,7 @@ export default class DateTime {
 
   /**
    * &quot;Set&quot; this DateTime to the beginning of a unit of time.
-   * @param {string} unit - The unit to go to the beginning of. Can be &apos;year&apos;, &apos;month&apos;, &apos;day&apos;, &apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, or &apos;millisecond&apos;.
+   * @param {string} unit - The unit to go to the beginning of. Can be &apos;year&apos;, &apos;quarter&apos;, &apos;month&apos;, &apos;week&apos;, &apos;day&apos;, &apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, or &apos;millisecond&apos;.
    * @example DateTime.local(2014, 3, 3).startOf(&apos;month&apos;).toISODate(); //=&gt; &apos;2014-03-01&apos;
    * @example DateTime.local(2014, 3, 3).startOf(&apos;year&apos;).toISODate(); //=&gt; &apos;2014-01-01&apos;
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf(&apos;day&apos;).toISOTime(); //=&gt; &apos;00:00.000-05:00&apos;
@@ -1548,7 +1548,12 @@ export default class DateTime {
    * @return {string}
    */
   toISODate() {
-    return toTechFormat(this, &quot;yyyy-MM-dd&quot;);
+    let format = &quot;yyyy-MM-dd&quot;;
+    if (this.year &gt; 9999) {
+      format = &quot;+&quot; + format;
+    }
+
+    return toTechFormat(this, format);
   }
 
   /**
