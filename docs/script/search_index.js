@@ -1531,13 +1531,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-set-defaultLocale",
+    "class/src/settings.js~Settings.html#static-get-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-get-defaultLocale",
+    "class/src/settings.js~Settings.html#static-set-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
@@ -1573,25 +1573,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
-    "src/settings.js~Settings.defaultZoneName",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultzonename",
     "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
-    "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
-    "src/settings.js~Settings.now",
+    "src/settings.js~settings.defaultzonename",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.now",
     "class/src/settings.js~Settings.html#static-get-now",
+    "src/settings.js~Settings.now",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],

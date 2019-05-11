@@ -245,8 +245,6 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-2" data-ice="link">1.13.2</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-1" data-ice="link">1.13.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-0" data-ice="link">1.13.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-1" data-ice="link">1.12.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-12-0" data-ice="link">1.12.0</a></li>
@@ -353,7 +351,7 @@
         <div data-ice="card"><h1>Install guide</h1><p>Luxon provides different builds for different JS environments. See below for a link to the right one and instructions on how to use it. Luxon supports all modern platforms, but see <a href="./manual/matrix.html">the support matrix</a> for additional details.</p><h2>Basic browser setup</h2><ul>
 <li><a href="./manual/../../global/luxon.js">Download full</a></li>
 <li><a href="./manual/../../global/luxon.min.js">Download minified</a></li>
-</ul><p>You can also load the files from a <a href="https://www.jsdelivr.com/package/npm/luxon">CDN</a>.</p><p>Just include Luxon in a script tag. You can access its various classes through the <code>luxon</code> global.</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;</code>
+</ul><p>Just include Luxon in a script tag. You can access its various classes through the <code>luxon</code> global.</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;</code>
 </code></pre><p>You may wish to alias the classes you use:</p><pre><code class="lang-js"><code class="source-code prettyprint">var DateTime = luxon.DateTime;</code>
 </code></pre><h3>Internet Explorer</h3><p>If you&apos;re supporting IE 10 or 11, you need some polyfills to get Luxon to work. Use polyfill.io:</p><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign&quot;&gt;&lt;/script&gt;</code>
 </code></pre><p>See the <a href="./manual/matrix.html">support matrix</a> for more information on what works and what doesn&apos;t in IE.</p><h2>Node</h2><p>Supports Node 6+. Install via NPM:</p><pre><code><code class="source-code prettyprint">npm install --save luxon</code>
@@ -2635,11 +2633,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.13.2</h2><ul>
-<li>Fixed ISO formatting for dates &gt; 999</li>
-</ul><h2>1.13.1</h2><ul>
-<li>Performance improvements for regex parsing</li>
-</ul><h2>1.13.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.13.0</h2><ul>
 <li>Support numberSystem in fromFormat</li>
 <li>Fix validity for bad initial zone specifiers</li>
 </ul><h2>1.12.1</h2><ul>

@@ -912,7 +912,7 @@ class IANAZone extends Zone {
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @return {boolean}
+   * @return {true}
    */
   static isValidSpecifier(s) {
     return s && s.match(matchingRegex);
@@ -2382,24 +2382,6 @@ function extractASCII(match) {
   return [result, FixedOffsetZone.utcInstance];
 }
 
-const isoYmdWithTimeExtensionRegex = combineRegexes(isoYmdRegex, isoTimeExtensionRegex);
-const isoWeekWithTimeExtensionRegex = combineRegexes(isoWeekRegex, isoTimeExtensionRegex);
-const isoOrdinalWithTimeExtensionRegex = combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex);
-const isoTimeCombinedRegex = combineRegexes(isoTimeRegex);
-
-const extractISOYmdTimeAndOffset = combineExtractors(
-  extractISOYmd,
-  extractISOTime,
-  extractISOOffset
-);
-const extractISOWeekTimeAndOffset = combineExtractors(
-  extractISOWeekData,
-  extractISOTime,
-  extractISOOffset
-);
-const extractISOOrdinalDataAndTime = combineExtractors(extractISOOrdinalData, extractISOTime);
-const extractISOTimeAndOffset = combineExtractors(extractISOTime, extractISOOffset);
-
 /**
  * @private
  */
@@ -2407,10 +2389,19 @@ const extractISOTimeAndOffset = combineExtractors(extractISOTime, extractISOOffs
 function parseISODate(s) {
   return parse(
     s,
-    [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
-    [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
-    [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDataAndTime],
-    [isoTimeCombinedRegex, extractISOTimeAndOffset]
+    [
+      combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOYmd, extractISOTime, extractISOOffset)
+    ],
+    [
+      combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset)
+    ],
+    [
+      combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
+      combineExtractors(extractISOOrdinalData, extractISOTime)
+    ],
+    [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime, extractISOOffset)]
   );
 }
 
@@ -2431,26 +2422,17 @@ function parseISODuration(s) {
   return parse(s, [isoDuration, extractISODuration]);
 }
 
-const sqlYmdWithTimeExtensionRegex = combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex);
-const sqlTimeCombinedRegex = combineRegexes(sqlTimeRegex);
-
-const extractISOYmdTimeOffsetAndIANAZone = combineExtractors(
-  extractISOYmd,
-  extractISOTime,
-  extractISOOffset,
-  extractIANAZone
-);
-const extractISOTimeOffsetAndIANAZone = combineExtractors(
-  extractISOTime,
-  extractISOOffset,
-  extractIANAZone
-);
-
 function parseSQL(s) {
   return parse(
     s,
-    [sqlYmdWithTimeExtensionRegex, extractISOYmdTimeOffsetAndIANAZone],
-    [sqlTimeCombinedRegex, extractISOTimeOffsetAndIANAZone]
+    [
+      combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
+      combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)
+    ],
+    [
+      combineRegexes(sqlTimeRegex),
+      combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)
+    ]
   );
 }
 
@@ -5269,8 +5251,8 @@ class DateTime {
   }
 
   /**
-   * Create a DateTime from an input string and format string.
-   * Defaults to en-US if no locale has been specified, regardless of the system's locale.
+   * Create a DateTime from an input string and format string
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -6010,12 +5992,7 @@ class DateTime {
    * @return {string}
    */
   toISODate() {
-    let format = "yyyy-MM-dd";
-    if (this.year > 9999) {
-      format = "+" + format;
-    }
-
-    return toTechFormat(this, format);
+    return toTechFormat(this, "yyyy-MM-dd");
   }
 
   /**

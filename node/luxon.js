@@ -5544,8 +5544,8 @@ class DateTime {
     return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
   }
   /**
-   * Create a DateTime from an input string and format string.
-   * Defaults to en-US if no locale has been specified, regardless of the system's locale.
+   * Create a DateTime from an input string and format string
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -6097,6 +6097,9 @@ class DateTime {
     } else if (!zone.isValid) {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
+      console.log("this.o", this.o);
+      console.log("this.ts", this.ts);
+      console.log("zone.offset(this.ts", zone.offset(this.ts));
       const newTS = keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
       ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000 : this.ts;
       return clone$1(this, {

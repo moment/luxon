@@ -807,8 +807,8 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from an input string and format string.
-   * Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale.
+   * Create a DateTime from an input string and format string
+   * Defaults to en-US if no locale has been specified, regardless of the system&apos;s locale
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -1548,12 +1548,7 @@ export default class DateTime {
    * @return {string}
    */
   toISODate() {
-    let format = &quot;yyyy-MM-dd&quot;;
-    if (this.year &gt; 9999) {
-      format = &quot;+&quot; + format;
-    }
-
-    return toTechFormat(this, format);
+    return toTechFormat(this, &quot;yyyy-MM-dd&quot;);
   }
 
   /**
