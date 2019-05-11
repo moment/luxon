@@ -1,0 +1,3 @@
+npm run docs
+npm run site
+./scripts/deploy-site
