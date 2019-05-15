@@ -132,21 +132,7 @@ export default class Formatter {
           return "Z";
         }
 
-        const hours = Math.trunc(dt.offset / 60),
-          minutes = Math.abs(dt.offset % 60),
-          sign = hours >= 0 ? "+" : "-",
-          base = `${sign}${Math.abs(hours)}`;
-
-        switch (opts.format) {
-          case "short":
-            return `${sign}${this.num(Math.abs(hours), 2)}:${this.num(minutes, 2)}`;
-          case "narrow":
-            return minutes > 0 ? `${base}:${minutes}` : base;
-          case "techie":
-            return `${sign}${this.num(Math.abs(hours), 2)}${this.num(minutes, 2)}`;
-          default:
-            throw new RangeError(`Value format ${opts.format} is out of range for property format`);
-        }
+        return dt.isValid ? dt.zone.formatOffset(dt.ts, opts.format) : "";
       },
       meridiem = () =>
         knownEnglish
