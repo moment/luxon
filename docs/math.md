@@ -120,7 +120,7 @@ If you'd like to compare using a specific unit, you can achieve this by combinin
 var d1 = DateTime.fromISO('2017-04-30');
 var d2 = DateTime.fromISO('2017-04-01');
 
-d2 < d2                                   //=> true
+d2 < d1                                   //=> true
 d2.startOf('year') < d1.startOf('year')   //=> false
 d2.startOf('month') < d1.startOf('month') //=> false
 d2.startOf('day') < d1.startOf('day')     //=> true
