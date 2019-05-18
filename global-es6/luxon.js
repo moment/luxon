@@ -197,6 +197,7 @@ var luxon = (function (exports) {
       return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
     }
   }
+
   // covert a calendar object to a local timestamp (epoch, but with the offset baked in)
   function objToLocalTS(obj) {
     let d = Date.UTC(
@@ -915,7 +916,7 @@ var luxon = (function (exports) {
      * @example IANAZone.isValidSpecifier("America/New_York") //=> true
      * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
      * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-     * @return {true}
+     * @return {boolean}
      */
     static isValidSpecifier(s) {
       return s && s.match(matchingRegex);
@@ -2385,6 +2386,24 @@ var luxon = (function (exports) {
     return [result, FixedOffsetZone.utcInstance];
   }
 
+  const isoYmdWithTimeExtensionRegex = combineRegexes(isoYmdRegex, isoTimeExtensionRegex);
+  const isoWeekWithTimeExtensionRegex = combineRegexes(isoWeekRegex, isoTimeExtensionRegex);
+  const isoOrdinalWithTimeExtensionRegex = combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex);
+  const isoTimeCombinedRegex = combineRegexes(isoTimeRegex);
+
+  const extractISOYmdTimeAndOffset = combineExtractors(
+    extractISOYmd,
+    extractISOTime,
+    extractISOOffset
+  );
+  const extractISOWeekTimeAndOffset = combineExtractors(
+    extractISOWeekData,
+    extractISOTime,
+    extractISOOffset
+  );
+  const extractISOOrdinalDataAndTime = combineExtractors(extractISOOrdinalData, extractISOTime);
+  const extractISOTimeAndOffset = combineExtractors(extractISOTime, extractISOOffset);
+
   /**
    * @private
    */
@@ -2392,19 +2411,10 @@ var luxon = (function (exports) {
   function parseISODate(s) {
     return parse(
       s,
-      [
-        combineRegexes(isoYmdRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOYmd, extractISOTime, extractISOOffset)
-      ],
-      [
-        combineRegexes(isoWeekRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset)
-      ],
-      [
-        combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex),
-        combineExtractors(extractISOOrdinalData, extractISOTime)
-      ],
-      [combineRegexes(isoTimeRegex), combineExtractors(extractISOTime, extractISOOffset)]
+      [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
+      [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
+      [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDataAndTime],
+      [isoTimeCombinedRegex, extractISOTimeAndOffset]
     );
   }
 
@@ -2425,17 +2435,26 @@ var luxon = (function (exports) {
     return parse(s, [isoDuration, extractISODuration]);
   }
 
+  const sqlYmdWithTimeExtensionRegex = combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex);
+  const sqlTimeCombinedRegex = combineRegexes(sqlTimeRegex);
+
+  const extractISOYmdTimeOffsetAndIANAZone = combineExtractors(
+    extractISOYmd,
+    extractISOTime,
+    extractISOOffset,
+    extractIANAZone
+  );
+  const extractISOTimeOffsetAndIANAZone = combineExtractors(
+    extractISOTime,
+    extractISOOffset,
+    extractIANAZone
+  );
+
   function parseSQL(s) {
     return parse(
       s,
-      [
-        combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex),
-        combineExtractors(extractISOYmd, extractISOTime, extractISOOffset, extractIANAZone)
-      ],
-      [
-        combineRegexes(sqlTimeRegex),
-        combineExtractors(extractISOTime, extractISOOffset, extractIANAZone)
-      ]
+      [sqlYmdWithTimeExtensionRegex, extractISOYmdTimeOffsetAndIANAZone],
+      [sqlTimeCombinedRegex, extractISOTimeOffsetAndIANAZone]
     );
   }
 
@@ -5254,8 +5273,8 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Create a DateTime from an input string and format string
-     * Defaults to en-US if no locale has been specified, regardless of the system's locale
+     * Create a DateTime from an input string and format string.
+     * Defaults to en-US if no locale has been specified, regardless of the system's locale.
      * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
      * @param {string} text - the string to parse
      * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -5740,10 +5759,12 @@ var luxon = (function (exports) {
       } else if (!zone.isValid) {
         return DateTime.invalid(unsupportedZone(zone));
       } else {
-        const newTS =
-          keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
-            ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
-            : this.ts;
+        let newTS = this.ts;
+        if (keepLocalTime || keepCalendarTime) {
+          const offsetGuess = this.o - zone.offset(this.ts);
+          const asObj = this.toObject();
+          [newTS] = objToTS(asObj, offsetGuess, zone);
+        }
         return clone$1(this, { ts: newTS, zone });
       }
     }
@@ -5840,7 +5861,7 @@ var luxon = (function (exports) {
 
     /**
      * "Set" this DateTime to the beginning of a unit of time.
-     * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+     * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
      * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
      * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
      * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'
@@ -5995,7 +6016,12 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toISODate() {
-      return toTechFormat(this, "yyyy-MM-dd");
+      let format = "yyyy-MM-dd";
+      if (this.year > 9999) {
+        format = "+" + format;
+      }
+
+      return toTechFormat(this, format);
     }
 
     /**

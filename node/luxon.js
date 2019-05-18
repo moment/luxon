@@ -5544,8 +5544,8 @@ class DateTime {
     return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
   }
   /**
-   * Create a DateTime from an input string and format string
-   * Defaults to en-US if no locale has been specified, regardless of the system's locale
+   * Create a DateTime from an input string and format string.
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale.
    * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
@@ -6097,11 +6097,14 @@ class DateTime {
     } else if (!zone.isValid) {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
-      console.log("this.o", this.o);
-      console.log("this.ts", this.ts);
-      console.log("zone.offset(this.ts", zone.offset(this.ts));
-      const newTS = keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
-      ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000 : this.ts;
+      let newTS = this.ts;
+
+      if (keepLocalTime || keepCalendarTime) {
+        const offsetGuess = this.o - zone.offset(this.ts);
+        const asObj = this.toObject();
+        [newTS] = objToTS(asObj, offsetGuess, zone);
+      }
+
       return clone$1(this, {
         ts: newTS,
         zone
@@ -6215,7 +6218,7 @@ class DateTime {
   }
   /**
    * "Set" this DateTime to the beginning of a unit of time.
-   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
    * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'

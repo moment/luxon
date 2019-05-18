@@ -245,6 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-3" data-ice="link">1.13.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-2" data-ice="link">1.13.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-1" data-ice="link">1.13.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-0" data-ice="link">1.13.0</a></li>
@@ -1647,7 +1648,7 @@ d1.hasSame(d2, &apos;year&apos;);         // etc</code>
 </code></pre><p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p><p>If you&apos;d like to compare using a specific unit, you can achieve this by combining <code>#startOf</code> and the <code>#valueOf</code> comparisions above.</p><pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.fromISO(&apos;2017-04-30&apos;);
 var d2 = DateTime.fromISO(&apos;2017-04-01&apos;);
 
-d2 &lt; d2                                   //=&gt; true
+d2 &lt; d1                                   //=&gt; true
 d2.startOf(&apos;year&apos;) &lt; d1.startOf(&apos;year&apos;)   //=&gt; false
 d2.startOf(&apos;month&apos;) &lt; d1.startOf(&apos;month&apos;) //=&gt; false
 d2.startOf(&apos;day&apos;) &lt; d1.startOf(&apos;day&apos;)     //=&gt; true</code>
@@ -2635,7 +2636,9 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.13.2</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.13.3</h2><ul>
+<li>Fix keepLocalTime calculations that span offset changes</li>
+</ul><h2>1.13.2</h2><ul>
 <li>Fixed ISO formatting for dates &gt; 999</li>
 </ul><h2>1.13.1</h2><ul>
 <li>Performance improvements for regex parsing</li>

@@ -245,6 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-3" data-ice="link">1.13.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-2" data-ice="link">1.13.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-1" data-ice="link">1.13.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-0" data-ice="link">1.13.0</a></li>
@@ -406,7 +407,7 @@ d1.hasSame(d2, &apos;year&apos;);         // etc</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.fromISO(&apos;2017-04-30&apos;);
 var d2 = DateTime.fromISO(&apos;2017-04-01&apos;);
 
-d2 &lt; d2                                   //=&gt; true
+d2 &lt; d1                                   //=&gt; true
 d2.startOf(&apos;year&apos;) &lt; d1.startOf(&apos;year&apos;)   //=&gt; false
 d2.startOf(&apos;month&apos;) &lt; d1.startOf(&apos;month&apos;) //=&gt; false
 d2.startOf(&apos;day&apos;) &lt; d1.startOf(&apos;day&apos;)     //=&gt; true</code>
