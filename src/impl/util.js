@@ -134,6 +134,7 @@ export function daysInMonth(year, month) {
     return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
   }
 }
+
 // covert a calendar object to a local timestamp (epoch, but with the offset baked in)
 export function objToLocalTS(obj) {
   let d = Date.UTC(

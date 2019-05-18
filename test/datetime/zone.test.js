@@ -165,6 +165,15 @@ test("DateTime#setZone accepts a keepLocalTime option", () => {
   expect(zonedMore.isOffsetFixed).toBe(false);
 });
 
+test("DateTime#setZone with keepLocalTime can span wacky offsets", () => {
+  const d = DateTime.fromISO("0001-01-01", { zone: "UTC" });
+  const d2 = d.setZone("America/Curacao", { keepLocalTime: true });
+  expect(d2.year).toBe(1);
+  expect(d2.month).toBe(1);
+  expect(d2.day).toBe(1);
+  expect(d2.hour).toBe(0);
+});
+
 test("DateTime#setZone rejects jibberish", () => {
   const zoned = dt().setZone("blorp");
   expect(zoned.isValid).toBe(false);

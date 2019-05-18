@@ -1247,10 +1247,12 @@ export default class DateTime {
     } else if (!zone.isValid) {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
-      const newTS =
-        keepLocalTime || keepCalendarTime // keepCalendarTime is the deprecated name for keepLocalTime
-          ? this.ts + (this.o - zone.offset(this.ts)) * 60 * 1000
-          : this.ts;
+      let newTS = this.ts;
+      if (keepLocalTime || keepCalendarTime) {
+        const offsetGuess = this.o - zone.offset(this.ts);
+        const asObj = this.toObject();
+        [newTS] = objToTS(asObj, offsetGuess, zone);
+      }
       return clone(this, { ts: newTS, zone });
     }
   }
