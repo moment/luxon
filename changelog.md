@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.13.3
+
+ * Fix keepLocalTime calculations that span offset changes
+
 ## 1.13.2
 
  * Fixed ISO formatting for dates > 999
