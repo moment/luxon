@@ -32,6 +32,11 @@ export default class InvalidZone extends Zone {
   }
 
   /** @override **/
+  formatOffset() {
+    return "";
+  }
+
+  /** @override **/
   offset() {
     return NaN;
   }

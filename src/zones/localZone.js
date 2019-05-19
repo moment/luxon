@@ -1,4 +1,4 @@
-import { parseZoneInfo, hasIntl } from "../impl/util.js";
+import { formatOffset, parseZoneInfo, hasIntl } from "../impl/util.js";
 import Zone from "../zone.js";
 
 let singleton = null;
@@ -39,6 +39,11 @@ export default class LocalZone extends Zone {
   /** @override **/
   offsetName(ts, { format, locale }) {
     return parseZoneInfo(ts, format, locale);
+  }
+
+  /** @override **/
+  formatOffset(ts, format) {
+    return formatOffset(this.offset(ts), format);
   }
 
   /** @override **/

@@ -1,4 +1,4 @@
-import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util.js";
+import { formatOffset, parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.js";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
@@ -83,7 +83,7 @@ export default class IANAZone extends Zone {
    * @return {boolean}
    */
   static isValidSpecifier(s) {
-    return s && s.match(matchingRegex);
+    return !!(s && s.match(matchingRegex));
   }
 
   /**
@@ -141,6 +141,11 @@ export default class IANAZone extends Zone {
   /** @override **/
   offsetName(ts, { format, locale }) {
     return parseZoneInfo(ts, format, locale, this.name);
+  }
+
+  /** @override **/
+  formatOffset(ts, format) {
+    return formatOffset(this.offset(ts), format);
   }
 
   /** @override **/

@@ -1,15 +1,7 @@
-import { padStart, signedOffset } from "../impl/util.js";
+import { formatOffset, signedOffset } from "../impl/util.js";
 import Zone from "../zone.js";
 
 let singleton = null;
-
-function hoursMinutesOffset(z) {
-  const hours = Math.trunc(z.fixed / 60),
-    minutes = Math.abs(z.fixed % 60),
-    sign = hours > 0 ? "+" : "-",
-    base = sign + Math.abs(hours);
-  return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;
-}
 
 /**
  * A zone with a fixed offset (i.e. no DST)
@@ -67,12 +59,17 @@ export default class FixedOffsetZone extends Zone {
 
   /** @override **/
   get name() {
-    return this.fixed === 0 ? "UTC" : `UTC${hoursMinutesOffset(this)}`;
+    return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
   }
 
   /** @override **/
   offsetName() {
     return this.name;
+  }
+
+  /** @override **/
+  formatOffset(ts, format) {
+    return formatOffset(this.fixed, format);
   }
 
   /** @override **/
