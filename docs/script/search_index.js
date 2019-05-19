@@ -1543,13 +1543,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
+    "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
@@ -1573,25 +1573,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultzonename",
-    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
-    "src/settings.js~Settings.defaultZoneName",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultzonename",
     "class/src/settings.js~Settings.html#static-get-defaultZoneName",
     "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
-    "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
-    "src/settings.js~Settings.now",
+    "src/settings.js~settings.defaultzonename",
+    "class/src/settings.js~Settings.html#static-set-defaultZoneName",
+    "src/settings.js~Settings.defaultZoneName",
     "member"
   ],
   [
     "src/settings.js~settings.now",
     "class/src/settings.js~Settings.html#static-get-now",
+    "src/settings.js~Settings.now",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],
@@ -1623,6 +1623,12 @@ window.esdocSearchIndex = [
     "src/zone.js~zone#equals",
     "class/src/zone.js~Zone.html#instance-method-equals",
     "src/zone.js~Zone#equals",
+    "method"
+  ],
+  [
+    "src/zone.js~zone#formatoffset",
+    "class/src/zone.js~Zone.html#instance-method-formatOffset",
+    "src/zone.js~Zone#formatOffset",
     "method"
   ],
   [
@@ -1677,6 +1683,12 @@ window.esdocSearchIndex = [
     "src/zones/ianazone.js~ianazone#equals",
     "class/src/zones/IANAZone.js~IANAZone.html#instance-method-equals",
     "src/zones/IANAZone.js~IANAZone#equals",
+    "method"
+  ],
+  [
+    "src/zones/ianazone.js~ianazone#formatoffset",
+    "class/src/zones/IANAZone.js~IANAZone.html#instance-method-formatOffset",
+    "src/zones/IANAZone.js~IANAZone#formatOffset",
     "method"
   ],
   [
@@ -1758,6 +1770,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/zones/fixedoffsetzone.js~fixedoffsetzone#formatoffset",
+    "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-method-formatOffset",
+    "src/zones/fixedOffsetZone.js~FixedOffsetZone#formatOffset",
+    "method"
+  ],
+  [
     "src/zones/fixedoffsetzone.js~fixedoffsetzone#isvalid",
     "class/src/zones/fixedOffsetZone.js~FixedOffsetZone.html#instance-get-isValid",
     "src/zones/fixedOffsetZone.js~FixedOffsetZone#isValid",
@@ -1830,6 +1848,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/zones/invalidzone.js~invalidzone#formatoffset",
+    "class/src/zones/invalidZone.js~InvalidZone.html#instance-method-formatOffset",
+    "src/zones/invalidZone.js~InvalidZone#formatOffset",
+    "method"
+  ],
+  [
     "src/zones/invalidzone.js~invalidzone#isvalid",
     "class/src/zones/invalidZone.js~InvalidZone.html#instance-get-isValid",
     "src/zones/invalidZone.js~InvalidZone#isValid",
@@ -1881,6 +1905,12 @@ window.esdocSearchIndex = [
     "src/zones/localzone.js~localzone#equals",
     "class/src/zones/localZone.js~LocalZone.html#instance-method-equals",
     "src/zones/localZone.js~LocalZone#equals",
+    "method"
+  ],
+  [
+    "src/zones/localzone.js~localzone#formatoffset",
+    "class/src/zones/localZone.js~LocalZone.html#instance-method-formatOffset",
+    "src/zones/localZone.js~LocalZone#formatOffset",
     "method"
   ],
   [

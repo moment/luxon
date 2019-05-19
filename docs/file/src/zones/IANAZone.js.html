@@ -44,7 +44,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/zones/IANAZone.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from &quot;../impl/util.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { formatOffset, parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from &quot;../impl/util.js&quot;;
 import Zone from &quot;../zone.js&quot;;
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
@@ -129,7 +129,7 @@ export default class IANAZone extends Zone {
    * @return {boolean}
    */
   static isValidSpecifier(s) {
-    return s &amp;&amp; s.match(matchingRegex);
+    return !!(s &amp;&amp; s.match(matchingRegex));
   }
 
   /**
@@ -187,6 +187,11 @@ export default class IANAZone extends Zone {
   /** @override **/
   offsetName(ts, { format, locale }) {
     return parseZoneInfo(ts, format, locale, this.name);
+  }
+
+  /** @override **/
+  formatOffset(ts, format) {
+    return formatOffset(this.offset(ts), format);
   }
 
   /** @override **/

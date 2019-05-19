@@ -441,6 +441,26 @@ var luxon = (function (exports) {
 
     return normalized;
   }
+  function formatOffset(offset, format) {
+    var hours = Math.trunc(offset / 60),
+        minutes = Math.abs(offset % 60),
+        sign = hours >= 0 ? "+" : "-",
+        base = "" + sign + Math.abs(hours);
+
+    switch (format) {
+      case "short":
+        return "" + sign + padStart(Math.abs(hours), 2) + ":" + padStart(minutes, 2);
+
+      case "narrow":
+        return minutes > 0 ? base + ":" + minutes : base;
+
+      case "techie":
+        return "" + sign + padStart(Math.abs(hours), 2) + padStart(minutes, 2);
+
+      default:
+        throw new RangeError("Value format " + format + " is out of range for property format");
+    }
+  }
   function timeObject(obj) {
     return pick(obj, ["hour", "minute", "second", "millisecond"]);
   }
@@ -832,6 +852,19 @@ var luxon = (function (exports) {
       throw new ZoneIsAbstractError();
     }
     /**
+     * Returns the offset's value as a string
+     * @abstract
+     * @param {number} ts - Epoch milliseconds for which to get the offset
+     * @param {string} format - What style of offset to return.
+     *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+     * @return {string}
+     */
+    ;
+
+    _proto.formatOffset = function formatOffset(ts, format) {
+      throw new ZoneIsAbstractError();
+    }
+    /**
      * Return the offset in minutes for this zone at the specified timestamp.
      * @abstract
      * @param {number} ts - Epoch milliseconds for which to compute the offset
@@ -925,6 +958,12 @@ var luxon = (function (exports) {
       var format = _ref.format,
           locale = _ref.locale;
       return parseZoneInfo(ts, format, locale);
+    }
+    /** @override **/
+    ;
+
+    _proto.formatOffset = function formatOffset$1(ts, format) {
+      return formatOffset(this.offset(ts), format);
     }
     /** @override **/
     ;
@@ -1090,7 +1129,7 @@ var luxon = (function (exports) {
     ;
 
     IANAZone.isValidSpecifier = function isValidSpecifier(s) {
-      return s && s.match(matchingRegex);
+      return !!(s && s.match(matchingRegex));
     }
     /**
      * Returns whether the provided string identifies a real zone
@@ -1150,6 +1189,12 @@ var luxon = (function (exports) {
       var format = _ref.format,
           locale = _ref.locale;
       return parseZoneInfo(ts, format, locale, this.name);
+    }
+    /** @override **/
+    ;
+
+    _proto.formatOffset = function formatOffset$1(ts, format) {
+      return formatOffset(this.offset(ts), format);
     }
     /** @override **/
     ;
@@ -1217,19 +1262,10 @@ var luxon = (function (exports) {
   }(Zone);
 
   var singleton$1 = null;
-
-  function hoursMinutesOffset(z) {
-    var hours = Math.trunc(z.fixed / 60),
-        minutes = Math.abs(z.fixed % 60),
-        sign = hours > 0 ? "+" : "-",
-        base = sign + Math.abs(hours);
-    return minutes > 0 ? base + ":" + padStart(minutes, 2) : base;
-  }
   /**
    * A zone with a fixed offset (i.e. no DST)
    * @implements {Zone}
    */
-
 
   var FixedOffsetZone =
   /*#__PURE__*/
@@ -1303,6 +1339,12 @@ var luxon = (function (exports) {
     /** @override **/
     ;
 
+    _proto.formatOffset = function formatOffset$1(ts, format) {
+      return formatOffset(this.fixed, format);
+    }
+    /** @override **/
+    ;
+
     /** @override **/
     _proto.offset = function offset() {
       return this.fixed;
@@ -1326,7 +1368,7 @@ var luxon = (function (exports) {
     }, {
       key: "name",
       get: function get() {
-        return this.fixed === 0 ? "UTC" : "UTC" + hoursMinutesOffset(this);
+        return this.fixed === 0 ? "UTC" : "UTC" + formatOffset(this.fixed, "narrow");
       }
     }, {
       key: "universal",
@@ -1370,6 +1412,12 @@ var luxon = (function (exports) {
     /** @override **/
     _proto.offsetName = function offsetName() {
       return null;
+    }
+    /** @override **/
+    ;
+
+    _proto.formatOffset = function formatOffset() {
+      return "";
     }
     /** @override **/
     ;
@@ -1787,24 +1835,7 @@ var luxon = (function (exports) {
           return "Z";
         }
 
-        var hours = Math.trunc(dt.offset / 60),
-            minutes = Math.abs(dt.offset % 60),
-            sign = hours >= 0 ? "+" : "-",
-            base = "" + sign + Math.abs(hours);
-
-        switch (opts.format) {
-          case "short":
-            return "" + sign + _this.num(Math.abs(hours), 2) + ":" + _this.num(minutes, 2);
-
-          case "narrow":
-            return minutes > 0 ? base + ":" + minutes : base;
-
-          case "techie":
-            return "" + sign + _this.num(Math.abs(hours), 2) + _this.num(minutes, 2);
-
-          default:
-            throw new RangeError("Value format " + opts.format + " is out of range for property format");
-        }
+        return dt.isValid ? dt.zone.formatOffset(dt.ts, opts.format) : "";
       },
           meridiem = function meridiem() {
         return knownEnglish ? meridiemForDateTime(dt) : string({
@@ -4598,7 +4629,7 @@ var luxon = (function (exports) {
     ;
 
     Info.isValidIANAZone = function isValidIANAZone(zone) {
-      return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
+      return IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
     }
     /**
      * Converts the input into a {@link Zone} instance.

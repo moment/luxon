@@ -44,7 +44,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/zones/localZone.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { parseZoneInfo, hasIntl } from &quot;../impl/util.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { formatOffset, parseZoneInfo, hasIntl } from &quot;../impl/util.js&quot;;
 import Zone from &quot;../zone.js&quot;;
 
 let singleton = null;
@@ -85,6 +85,11 @@ export default class LocalZone extends Zone {
   /** @override **/
   offsetName(ts, { format, locale }) {
     return parseZoneInfo(ts, format, locale);
+  }
+
+  /** @override **/
+  formatOffset(ts, format) {
+    return formatOffset(this.offset(ts), format);
   }
 
   /** @override **/

@@ -44,18 +44,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/zones/fixedOffsetZone.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { padStart, signedOffset } from &quot;../impl/util.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { formatOffset, signedOffset } from &quot;../impl/util.js&quot;;
 import Zone from &quot;../zone.js&quot;;
 
 let singleton = null;
-
-function hoursMinutesOffset(z) {
-  const hours = Math.trunc(z.fixed / 60),
-    minutes = Math.abs(z.fixed % 60),
-    sign = hours &gt; 0 ? &quot;+&quot; : &quot;-&quot;,
-    base = sign + Math.abs(hours);
-  return minutes &gt; 0 ? `${base}:${padStart(minutes, 2)}` : base;
-}
 
 /**
  * A zone with a fixed offset (i.e. no DST)
@@ -113,12 +105,17 @@ export default class FixedOffsetZone extends Zone {
 
   /** @override **/
   get name() {
-    return this.fixed === 0 ? &quot;UTC&quot; : `UTC${hoursMinutesOffset(this)}`;
+    return this.fixed === 0 ? &quot;UTC&quot; : `UTC${formatOffset(this.fixed, &quot;narrow&quot;)}`;
   }
 
   /** @override **/
   offsetName() {
     return this.name;
+  }
+
+  /** @override **/
+  formatOffset(ts, format) {
+    return formatOffset(this.fixed, format);
   }
 
   /** @override **/

@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 291,
-  "actualCount": 291,
+  "expectCount": 296,
+  "actualCount": 296,
   "files": {
     "src/datetime.js": {
       "expectCount": 119,
@@ -34,28 +34,28 @@
       "undocumentLines": []
     },
     "src/zone.js": {
-      "expectCount": 8,
-      "actualCount": 8,
+      "expectCount": 9,
+      "actualCount": 9,
       "undocumentLines": []
     },
     "src/zones/IANAZone.js": {
-      "expectCount": 15,
-      "actualCount": 15,
+      "expectCount": 16,
+      "actualCount": 16,
       "undocumentLines": []
     },
     "src/zones/fixedOffsetZone.js": {
-      "expectCount": 12,
-      "actualCount": 12,
+      "expectCount": 13,
+      "actualCount": 13,
       "undocumentLines": []
     },
     "src/zones/invalidZone.js": {
-      "expectCount": 9,
-      "actualCount": 9,
+      "expectCount": 10,
+      "actualCount": 10,
       "undocumentLines": []
     },
     "src/zones/localZone.js": {
-      "expectCount": 9,
-      "actualCount": 9,
+      "expectCount": 10,
+      "actualCount": 10,
       "undocumentLines": []
     }
   }

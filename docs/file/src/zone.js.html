@@ -92,6 +92,18 @@ export default class Zone {
   }
 
   /**
+   * Returns the offset&apos;s value as a string
+   * @abstract
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts &apos;narrow&apos;, &apos;short&apos;, or &apos;techie&apos;. Returning &apos;+6&apos;, &apos;+06:00&apos;, or &apos;+0600&apos; respectively
+   * @return {string}
+   */
+  formatOffset(ts, format) {
+    throw new ZoneIsAbstractError();
+  }
+
+  /**
    * Return the offset in minutes for this zone at the specified timestamp.
    * @abstract
    * @param {number} ts - Epoch milliseconds for which to compute the offset

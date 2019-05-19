@@ -303,6 +303,24 @@ var luxon = (function (exports) {
     return normalized;
   }
 
+  function formatOffset(offset, format) {
+    const hours = Math.trunc(offset / 60),
+      minutes = Math.abs(offset % 60),
+      sign = hours >= 0 ? "+" : "-",
+      base = `${sign}${Math.abs(hours)}`;
+
+    switch (format) {
+      case "short":
+        return `${sign}${padStart(Math.abs(hours), 2)}:${padStart(minutes, 2)}`;
+      case "narrow":
+        return minutes > 0 ? `${base}:${minutes}` : base;
+      case "techie":
+        return `${sign}${padStart(Math.abs(hours), 2)}${padStart(minutes, 2)}`;
+      default:
+        throw new RangeError(`Value format ${format} is out of range for property format`);
+    }
+  }
+
   function timeObject(obj) {
     return pick(obj, ["hour", "minute", "second", "millisecond"]);
   }
@@ -752,6 +770,18 @@ var luxon = (function (exports) {
     }
 
     /**
+     * Returns the offset's value as a string
+     * @abstract
+     * @param {number} ts - Epoch milliseconds for which to get the offset
+     * @param {string} format - What style of offset to return.
+     *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+     * @return {string}
+     */
+    formatOffset(ts, format) {
+      throw new ZoneIsAbstractError();
+    }
+
+    /**
      * Return the offset in minutes for this zone at the specified timestamp.
      * @abstract
      * @param {number} ts - Epoch milliseconds for which to compute the offset
@@ -819,6 +849,11 @@ var luxon = (function (exports) {
     /** @override **/
     offsetName(ts, { format, locale }) {
       return parseZoneInfo(ts, format, locale);
+    }
+
+    /** @override **/
+    formatOffset(ts, format) {
+      return formatOffset(this.offset(ts), format);
     }
 
     /** @override **/
@@ -919,7 +954,7 @@ var luxon = (function (exports) {
      * @return {boolean}
      */
     static isValidSpecifier(s) {
-      return s && s.match(matchingRegex);
+      return !!(s && s.match(matchingRegex));
     }
 
     /**
@@ -980,6 +1015,11 @@ var luxon = (function (exports) {
     }
 
     /** @override **/
+    formatOffset(ts, format) {
+      return formatOffset(this.offset(ts), format);
+    }
+
+    /** @override **/
     offset(ts) {
       const date = new Date(ts),
         dtf = makeDTF(this.name),
@@ -1004,14 +1044,6 @@ var luxon = (function (exports) {
   }
 
   let singleton$1 = null;
-
-  function hoursMinutesOffset(z) {
-    const hours = Math.trunc(z.fixed / 60),
-      minutes = Math.abs(z.fixed % 60),
-      sign = hours > 0 ? "+" : "-",
-      base = sign + Math.abs(hours);
-    return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;
-  }
 
   /**
    * A zone with a fixed offset (i.e. no DST)
@@ -1069,12 +1101,17 @@ var luxon = (function (exports) {
 
     /** @override **/
     get name() {
-      return this.fixed === 0 ? "UTC" : `UTC${hoursMinutesOffset(this)}`;
+      return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
     }
 
     /** @override **/
     offsetName() {
       return this.name;
+    }
+
+    /** @override **/
+    formatOffset(ts, format) {
+      return formatOffset(this.fixed, format);
     }
 
     /** @override **/
@@ -1127,6 +1164,11 @@ var luxon = (function (exports) {
     /** @override **/
     offsetName() {
       return null;
+    }
+
+    /** @override **/
+    formatOffset() {
+      return "";
     }
 
     /** @override **/
@@ -1437,21 +1479,7 @@ var luxon = (function (exports) {
             return "Z";
           }
 
-          const hours = Math.trunc(dt.offset / 60),
-            minutes = Math.abs(dt.offset % 60),
-            sign = hours >= 0 ? "+" : "-",
-            base = `${sign}${Math.abs(hours)}`;
-
-          switch (opts.format) {
-            case "short":
-              return `${sign}${this.num(Math.abs(hours), 2)}:${this.num(minutes, 2)}`;
-            case "narrow":
-              return minutes > 0 ? `${base}:${minutes}` : base;
-            case "techie":
-              return `${sign}${this.num(Math.abs(hours), 2)}${this.num(minutes, 2)}`;
-            default:
-              throw new RangeError(`Value format ${opts.format} is out of range for property format`);
-          }
+          return dt.isValid ? dt.zone.formatOffset(dt.ts, opts.format) : "";
         },
         meridiem = () =>
           knownEnglish
@@ -3802,7 +3830,7 @@ var luxon = (function (exports) {
      * @return {boolean}
      */
     static isValidIANAZone(zone) {
-      return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
+      return IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
     }
 
     /**

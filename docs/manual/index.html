@@ -245,6 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-15-0" data-ice="link">1.15.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-14-0" data-ice="link">1.14.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-3" data-ice="link">1.13.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-13-2" data-ice="link">1.13.2</a></li>
@@ -559,7 +560,7 @@ overrideZone.toString(); //=&gt; &apos;2017-05-15T09:10:23.000+02:00&apos;</code
 
 utc.zoneName; //=&gt; &apos;UTC&apos;
 utc.toString(); //=&gt; &apos;2017-05-15T09:10:23.000Z&apos;</code>
-</code></pre><h3>Strings that specify an offset</h3><p>Some input strings may specify an offset as part of the string itself. In these case, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system&apos;s local zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var specifyOffset = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;);
+</code></pre><h3>Strings that specify an offset</h3><p>Some input strings may specify an offset as part of the string itself. In these cases, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system&apos;s local zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var specifyOffset = DateTime.fromISO(&quot;2017-05-15T09:10:23-09:00&quot;);
 
 specifyOffset.zoneName; //=&gt; &apos;America/New_York&apos;
 specifyOffset.toString(); //=&gt; &apos;2017-05-15T14:10:23.000-04:00&apos;
@@ -2637,7 +2638,9 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.14.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.15.0</h2><ul>
+<li>Added <code>formatOffset</code> to Zones</li>
+</ul><h2>1.14.0</h2><ul>
 <li>Allow the zone argument to Interval.fromISO with duration components</li>
 <li>Ignore the zone argument to Duration factory methods</li>
 </ul><h2>1.13.3</h2><ul>

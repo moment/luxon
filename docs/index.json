@@ -7580,7 +7580,7 @@
     "__docId__": 254,
     "kind": "file",
     "name": "src/info.js",
-    "content": "import DateTime from \"./datetime.js\";\r\nimport Settings from \"./settings.js\";\r\nimport Locale from \"./impl/locale.js\";\r\nimport IANAZone from \"./zones/IANAZone.js\";\r\nimport { normalizeZone } from \"./impl/zoneUtil.js\";\r\n\r\nimport { hasFormatToParts, hasIntl, hasRelative } from \"./impl/util.js\";\r\n\r\n/**\r\n * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.\r\n */\r\nexport default class Info {\r\n  /**\r\n   * Return whether the specified zone contains a DST.\r\n   * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.\r\n   * @return {boolean}\r\n   */\r\n  static hasDST(zone = Settings.defaultZone) {\r\n    const proto = DateTime.local()\r\n      .setZone(zone)\r\n      .set({ month: 12 });\r\n\r\n    return !zone.universal && proto.offset !== proto.set({ month: 6 }).offset;\r\n  }\r\n\r\n  /**\r\n   * Return whether the specified zone is a valid IANA specifier.\r\n   * @param {string} zone - Zone to check\r\n   * @return {boolean}\r\n   */\r\n  static isValidIANAZone(zone) {\r\n    return !!IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);\r\n  }\r\n\r\n  /**\r\n   * Converts the input into a {@link Zone} instance.\r\n   *\r\n   * * If `input` is already a Zone instance, it is returned unchanged.\r\n   * * If `input` is a string containing a valid time zone name, a Zone instance\r\n   *   with that name is returned.\r\n   * * If `input` is a string that doesn't refer to a known time zone, a Zone\r\n   *   instance with {@link Zone.isValid} == false is returned.\r\n   * * If `input is a number, a Zone instance with the specified fixed offset\r\n   *   in minutes is returned.\r\n   * * If `input` is `null` or `undefined`, the default zone is returned.\r\n   * @param {string|Zone|number} [input] - the value to be converted\r\n   * @return {Zone}\r\n   */\r\n  static normalizeZone(input) {\r\n    return normalizeZone(input, Settings.defaultZone);\r\n  }\r\n\r\n  /**\r\n   * Return an array of standalone month names.\r\n   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat\r\n   * @param {string} [length='long'] - the length of the month representation, such as \"numeric\", \"2-digit\", \"narrow\", \"short\", \"long\"\r\n   * @param {Object} opts - options\r\n   * @param {string} [opts.locale] - the locale code\r\n   * @param {string} [opts.numberingSystem=null] - the numbering system\r\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\r\n   * @example Info.months()[0] //=> 'January'\r\n   * @example Info.months('short')[0] //=> 'Jan'\r\n   * @example Info.months('numeric')[0] //=> '1'\r\n   * @example Info.months('short', { locale: 'fr-CA' } )[0] //=> 'janv.'\r\n   * @example Info.months('numeric', { locale: 'ar' })[0] //=> '١'\r\n   * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'\r\n   * @return {[string]}\r\n   */\r\n  static months(\r\n    length = \"long\",\r\n    { locale = null, numberingSystem = null, outputCalendar = \"gregory\" } = {}\r\n  ) {\r\n    return Locale.create(locale, numberingSystem, outputCalendar).months(length);\r\n  }\r\n\r\n  /**\r\n   * Return an array of format month names.\r\n   * Format months differ from standalone months in that they're meant to appear next to the day of the month. In some languages, that\r\n   * changes the string.\r\n   * See {@link months}\r\n   * @param {string} [length='long'] - the length of the month representation, such as \"numeric\", \"2-digit\", \"narrow\", \"short\", \"long\"\r\n   * @param {Object} opts - options\r\n   * @param {string} [opts.locale] - the locale code\r\n   * @param {string} [opts.numberingSystem=null] - the numbering system\r\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\r\n   * @return {[string]}\r\n   */\r\n  static monthsFormat(\r\n    length = \"long\",\r\n    { locale = null, numberingSystem = null, outputCalendar = \"gregory\" } = {}\r\n  ) {\r\n    return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);\r\n  }\r\n\r\n  /**\r\n   * Return an array of standalone week names.\r\n   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat\r\n   * @param {string} [length='long'] - the length of the month representation, such as \"narrow\", \"short\", \"long\".\r\n   * @param {Object} opts - options\r\n   * @param {string} [opts.locale] - the locale code\r\n   * @param {string} [opts.numberingSystem=null] - the numbering system\r\n   * @example Info.weekdays()[0] //=> 'Monday'\r\n   * @example Info.weekdays('short')[0] //=> 'Mon'\r\n   * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'\r\n   * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'\r\n   * @return {[string]}\r\n   */\r\n  static weekdays(length = \"long\", { locale = null, numberingSystem = null } = {}) {\r\n    return Locale.create(locale, numberingSystem, null).weekdays(length);\r\n  }\r\n\r\n  /**\r\n   * Return an array of format week names.\r\n   * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that\r\n   * changes the string.\r\n   * See {@link weekdays}\r\n   * @param {string} [length='long'] - the length of the month representation, such as \"narrow\", \"short\", \"long\".\r\n   * @param {Object} opts - options\r\n   * @param {string} [opts.locale=null] - the locale code\r\n   * @param {string} [opts.numberingSystem=null] - the numbering system\r\n   * @return {[string]}\r\n   */\r\n  static weekdaysFormat(length = \"long\", { locale = null, numberingSystem = null } = {}) {\r\n    return Locale.create(locale, numberingSystem, null).weekdays(length, true);\r\n  }\r\n\r\n  /**\r\n   * Return an array of meridiems.\r\n   * @param {Object} opts - options\r\n   * @param {string} [opts.locale] - the locale code\r\n   * @example Info.meridiems() //=> [ 'AM', 'PM' ]\r\n   * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]\r\n   * @return {[string]}\r\n   */\r\n  static meridiems({ locale = null } = {}) {\r\n    return Locale.create(locale).meridiems();\r\n  }\r\n\r\n  /**\r\n   * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.\r\n   * @param {string} [length='short'] - the length of the era representation, such as \"short\" or \"long\".\r\n   * @param {Object} opts - options\r\n   * @param {string} [opts.locale] - the locale code\r\n   * @example Info.eras() //=> [ 'BC', 'AD' ]\r\n   * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]\r\n   * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]\r\n   * @return {[string]}\r\n   */\r\n  static eras(length = \"short\", { locale = null } = {}) {\r\n    return Locale.create(locale, null, \"gregory\").eras(length);\r\n  }\r\n\r\n  /**\r\n   * Return the set of available features in this environment.\r\n   * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.\r\n   * Keys:\r\n   * * `zones`: whether this environment supports IANA timezones\r\n   * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing\r\n   * * `intl`: whether this environment supports general internationalization\r\n   * * `relative`: whether this environment supports relative time formatting\r\n   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true, relative: false }\r\n   * @return {Object}\r\n   */\r\n  static features() {\r\n    let intl = false,\r\n      intlTokens = false,\r\n      zones = false,\r\n      relative = hasRelative();\r\n\r\n    if (hasIntl()) {\r\n      intl = true;\r\n      intlTokens = hasFormatToParts();\r\n\r\n      try {\r\n        zones =\r\n          new Intl.DateTimeFormat(\"en\", { timeZone: \"America/New_York\" }).resolvedOptions()\r\n            .timeZone === \"America/New_York\";\r\n      } catch (e) {\r\n        zones = false;\r\n      }\r\n    }\r\n\r\n    return { intl, intlTokens, zones, relative };\r\n  }\r\n}\r\n",
+    "content": "import DateTime from \"./datetime.js\";\nimport Settings from \"./settings.js\";\nimport Locale from \"./impl/locale.js\";\nimport IANAZone from \"./zones/IANAZone.js\";\nimport { normalizeZone } from \"./impl/zoneUtil.js\";\n\nimport { hasFormatToParts, hasIntl, hasRelative } from \"./impl/util.js\";\n\n/**\n * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.\n */\nexport default class Info {\n  /**\n   * Return whether the specified zone contains a DST.\n   * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.\n   * @return {boolean}\n   */\n  static hasDST(zone = Settings.defaultZone) {\n    const proto = DateTime.local()\n      .setZone(zone)\n      .set({ month: 12 });\n\n    return !zone.universal && proto.offset !== proto.set({ month: 6 }).offset;\n  }\n\n  /**\n   * Return whether the specified zone is a valid IANA specifier.\n   * @param {string} zone - Zone to check\n   * @return {boolean}\n   */\n  static isValidIANAZone(zone) {\n    return IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);\n  }\n\n  /**\n   * Converts the input into a {@link Zone} instance.\n   *\n   * * If `input` is already a Zone instance, it is returned unchanged.\n   * * If `input` is a string containing a valid time zone name, a Zone instance\n   *   with that name is returned.\n   * * If `input` is a string that doesn't refer to a known time zone, a Zone\n   *   instance with {@link Zone.isValid} == false is returned.\n   * * If `input is a number, a Zone instance with the specified fixed offset\n   *   in minutes is returned.\n   * * If `input` is `null` or `undefined`, the default zone is returned.\n   * @param {string|Zone|number} [input] - the value to be converted\n   * @return {Zone}\n   */\n  static normalizeZone(input) {\n    return normalizeZone(input, Settings.defaultZone);\n  }\n\n  /**\n   * Return an array of standalone month names.\n   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat\n   * @param {string} [length='long'] - the length of the month representation, such as \"numeric\", \"2-digit\", \"narrow\", \"short\", \"long\"\n   * @param {Object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @param {string} [opts.numberingSystem=null] - the numbering system\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\n   * @example Info.months()[0] //=> 'January'\n   * @example Info.months('short')[0] //=> 'Jan'\n   * @example Info.months('numeric')[0] //=> '1'\n   * @example Info.months('short', { locale: 'fr-CA' } )[0] //=> 'janv.'\n   * @example Info.months('numeric', { locale: 'ar' })[0] //=> '١'\n   * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'\n   * @return {[string]}\n   */\n  static months(\n    length = \"long\",\n    { locale = null, numberingSystem = null, outputCalendar = \"gregory\" } = {}\n  ) {\n    return Locale.create(locale, numberingSystem, outputCalendar).months(length);\n  }\n\n  /**\n   * Return an array of format month names.\n   * Format months differ from standalone months in that they're meant to appear next to the day of the month. In some languages, that\n   * changes the string.\n   * See {@link months}\n   * @param {string} [length='long'] - the length of the month representation, such as \"numeric\", \"2-digit\", \"narrow\", \"short\", \"long\"\n   * @param {Object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @param {string} [opts.numberingSystem=null] - the numbering system\n   * @param {string} [opts.outputCalendar='gregory'] - the calendar\n   * @return {[string]}\n   */\n  static monthsFormat(\n    length = \"long\",\n    { locale = null, numberingSystem = null, outputCalendar = \"gregory\" } = {}\n  ) {\n    return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);\n  }\n\n  /**\n   * Return an array of standalone week names.\n   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat\n   * @param {string} [length='long'] - the length of the month representation, such as \"narrow\", \"short\", \"long\".\n   * @param {Object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @param {string} [opts.numberingSystem=null] - the numbering system\n   * @example Info.weekdays()[0] //=> 'Monday'\n   * @example Info.weekdays('short')[0] //=> 'Mon'\n   * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'\n   * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'\n   * @return {[string]}\n   */\n  static weekdays(length = \"long\", { locale = null, numberingSystem = null } = {}) {\n    return Locale.create(locale, numberingSystem, null).weekdays(length);\n  }\n\n  /**\n   * Return an array of format week names.\n   * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that\n   * changes the string.\n   * See {@link weekdays}\n   * @param {string} [length='long'] - the length of the month representation, such as \"narrow\", \"short\", \"long\".\n   * @param {Object} opts - options\n   * @param {string} [opts.locale=null] - the locale code\n   * @param {string} [opts.numberingSystem=null] - the numbering system\n   * @return {[string]}\n   */\n  static weekdaysFormat(length = \"long\", { locale = null, numberingSystem = null } = {}) {\n    return Locale.create(locale, numberingSystem, null).weekdays(length, true);\n  }\n\n  /**\n   * Return an array of meridiems.\n   * @param {Object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @example Info.meridiems() //=> [ 'AM', 'PM' ]\n   * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]\n   * @return {[string]}\n   */\n  static meridiems({ locale = null } = {}) {\n    return Locale.create(locale).meridiems();\n  }\n\n  /**\n   * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.\n   * @param {string} [length='short'] - the length of the era representation, such as \"short\" or \"long\".\n   * @param {Object} opts - options\n   * @param {string} [opts.locale] - the locale code\n   * @example Info.eras() //=> [ 'BC', 'AD' ]\n   * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]\n   * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]\n   * @return {[string]}\n   */\n  static eras(length = \"short\", { locale = null } = {}) {\n    return Locale.create(locale, null, \"gregory\").eras(length);\n  }\n\n  /**\n   * Return the set of available features in this environment.\n   * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.\n   * Keys:\n   * * `zones`: whether this environment supports IANA timezones\n   * * `intlTokens`: whether this environment supports internationalized token-based formatting/parsing\n   * * `intl`: whether this environment supports general internationalization\n   * * `relative`: whether this environment supports relative time formatting\n   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true, relative: false }\n   * @return {Object}\n   */\n  static features() {\n    let intl = false,\n      intlTokens = false,\n      zones = false,\n      relative = hasRelative();\n\n    if (hasIntl()) {\n      intl = true;\n      intlTokens = hasFormatToParts();\n\n      try {\n        zones =\n          new Intl.DateTimeFormat(\"en\", { timeZone: \"America/New_York\" }).resolvedOptions()\n            .timeZone === \"America/New_York\";\n      } catch (e) {\n        zones = false;\n      }\n    }\n\n    return { intl, intlTokens, zones, relative };\n  }\n}\n",
     "static": true,
     "longname": "/mnt/c/code/luxon/src/info.js",
     "access": "public",
@@ -9958,7 +9958,7 @@
     "__docId__": 329,
     "kind": "file",
     "name": "src/zone.js",
-    "content": "/* eslint no-unused-vars: \"off\" */\r\nimport { ZoneIsAbstractError } from \"./errors.js\";\r\n\r\n/**\r\n * @interface\r\n */\r\nexport default class Zone {\r\n  /**\r\n   * The type of zone\r\n   * @abstract\r\n   * @type {string}\r\n   */\r\n  get type() {\r\n    throw new ZoneIsAbstractError();\r\n  }\r\n\r\n  /**\r\n   * The name of this zone.\r\n   * @abstract\r\n   * @type {string}\r\n   */\r\n  get name() {\r\n    throw new ZoneIsAbstractError();\r\n  }\r\n\r\n  /**\r\n   * Returns whether the offset is known to be fixed for the whole year.\r\n   * @abstract\r\n   * @type {boolean}\r\n   */\r\n  get universal() {\r\n    throw new ZoneIsAbstractError();\r\n  }\r\n\r\n  /**\r\n   * Returns the offset's common name (such as EST) at the specified timestamp\r\n   * @abstract\r\n   * @param {number} ts - Epoch milliseconds for which to get the name\r\n   * @param {Object} opts - Options to affect the format\r\n   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.\r\n   * @param {string} opts.locale - What locale to return the offset name in.\r\n   * @return {string}\r\n   */\r\n  offsetName(ts, opts) {\r\n    throw new ZoneIsAbstractError();\r\n  }\r\n\r\n  /**\r\n   * Return the offset in minutes for this zone at the specified timestamp.\r\n   * @abstract\r\n   * @param {number} ts - Epoch milliseconds for which to compute the offset\r\n   * @return {number}\r\n   */\r\n  offset(ts) {\r\n    throw new ZoneIsAbstractError();\r\n  }\r\n\r\n  /**\r\n   * Return whether this Zone is equal to another zone\r\n   * @abstract\r\n   * @param {Zone} otherZone - the zone to compare\r\n   * @return {boolean}\r\n   */\r\n  equals(otherZone) {\r\n    throw new ZoneIsAbstractError();\r\n  }\r\n\r\n  /**\r\n   * Return whether this Zone is valid.\r\n   * @abstract\r\n   * @type {boolean}\r\n   */\r\n  get isValid() {\r\n    throw new ZoneIsAbstractError();\r\n  }\r\n}\r\n",
+    "content": "/* eslint no-unused-vars: \"off\" */\nimport { ZoneIsAbstractError } from \"./errors.js\";\n\n/**\n * @interface\n */\nexport default class Zone {\n  /**\n   * The type of zone\n   * @abstract\n   * @type {string}\n   */\n  get type() {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * The name of this zone.\n   * @abstract\n   * @type {string}\n   */\n  get name() {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Returns whether the offset is known to be fixed for the whole year.\n   * @abstract\n   * @type {boolean}\n   */\n  get universal() {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Returns the offset's common name (such as EST) at the specified timestamp\n   * @abstract\n   * @param {number} ts - Epoch milliseconds for which to get the name\n   * @param {Object} opts - Options to affect the format\n   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.\n   * @param {string} opts.locale - What locale to return the offset name in.\n   * @return {string}\n   */\n  offsetName(ts, opts) {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Returns the offset's value as a string\n   * @abstract\n   * @param {number} ts - Epoch milliseconds for which to get the offset\n   * @param {string} format - What style of offset to return.\n   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively\n   * @return {string}\n   */\n  formatOffset(ts, format) {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Return the offset in minutes for this zone at the specified timestamp.\n   * @abstract\n   * @param {number} ts - Epoch milliseconds for which to compute the offset\n   * @return {number}\n   */\n  offset(ts) {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Return whether this Zone is equal to another zone\n   * @abstract\n   * @param {Zone} otherZone - the zone to compare\n   * @return {boolean}\n   */\n  equals(otherZone) {\n    throw new ZoneIsAbstractError();\n  }\n\n  /**\n   * Return whether this Zone is valid.\n   * @abstract\n   * @type {boolean}\n   */\n  get isValid() {\n    throw new ZoneIsAbstractError();\n  }\n}\n",
     "static": true,
     "longname": "/mnt/c/code/luxon/src/zone.js",
     "access": "public",
@@ -10113,6 +10113,50 @@
   {
     "__docId__": 335,
     "kind": "method",
+    "name": "formatOffset",
+    "memberof": "src/zone.js~Zone",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/zone.js~Zone#formatOffset",
+    "access": "public",
+    "description": "Returns the offset's value as a string",
+    "lineNumber": 56,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "ts",
+        "description": "Epoch milliseconds for which to get the offset"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "format",
+        "description": "What style of offset to return.\n                         Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "abstract": true
+  },
+  {
+    "__docId__": 336,
+    "kind": "method",
     "name": "offset",
     "memberof": "src/zone.js~Zone",
     "generator": false,
@@ -10121,7 +10165,7 @@
     "longname": "src/zone.js~Zone#offset",
     "access": "public",
     "description": "Return the offset in minutes for this zone at the specified timestamp.",
-    "lineNumber": 54,
+    "lineNumber": 66,
     "params": [
       {
         "nullable": null,
@@ -10145,7 +10189,7 @@
     "abstract": true
   },
   {
-    "__docId__": 336,
+    "__docId__": 337,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zone.js~Zone",
@@ -10155,7 +10199,7 @@
     "longname": "src/zone.js~Zone#equals",
     "access": "public",
     "description": "Return whether this Zone is equal to another zone",
-    "lineNumber": 64,
+    "lineNumber": 76,
     "params": [
       {
         "nullable": null,
@@ -10179,7 +10223,7 @@
     "abstract": true
   },
   {
-    "__docId__": 337,
+    "__docId__": 338,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zone.js~Zone",
@@ -10189,7 +10233,7 @@
     "longname": "src/zone.js~Zone#isValid",
     "access": "public",
     "description": "Return whether this Zone is valid.",
-    "lineNumber": 73,
+    "lineNumber": 85,
     "type": {
       "nullable": null,
       "types": [
@@ -10201,10 +10245,10 @@
     "abstract": true
   },
   {
-    "__docId__": 338,
+    "__docId__": 339,
     "kind": "file",
     "name": "src/zones/IANAZone.js",
-    "content": "import { parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from \"../impl/util.js\";\nimport Zone from \"../zone.js\";\n\nconst matchingRegex = RegExp(`^${ianaRegex.source}$`);\n\nlet dtfCache = {};\nfunction makeDTF(zone) {\n  if (!dtfCache[zone]) {\n    dtfCache[zone] = new Intl.DateTimeFormat(\"en-US\", {\n      hour12: false,\n      timeZone: zone,\n      year: \"numeric\",\n      month: \"2-digit\",\n      day: \"2-digit\",\n      hour: \"2-digit\",\n      minute: \"2-digit\",\n      second: \"2-digit\"\n    });\n  }\n  return dtfCache[zone];\n}\n\nconst typeToPos = {\n  year: 0,\n  month: 1,\n  day: 2,\n  hour: 3,\n  minute: 4,\n  second: 5\n};\n\nfunction hackyOffset(dtf, date) {\n  const formatted = dtf.format(date).replace(/\\u200E/g, \"\"),\n    parsed = /(\\d+)\\/(\\d+)\\/(\\d+),? (\\d+):(\\d+):(\\d+)/.exec(formatted),\n    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;\n  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];\n}\n\nfunction partsOffset(dtf, date) {\n  const formatted = dtf.formatToParts(date),\n    filled = [];\n  for (let i = 0; i < formatted.length; i++) {\n    const { type, value } = formatted[i],\n      pos = typeToPos[type];\n\n    if (!isUndefined(pos)) {\n      filled[pos] = parseInt(value, 10);\n    }\n  }\n  return filled;\n}\n\nlet ianaZoneCache = {};\n/**\n * A zone identified by an IANA identifier, like America/New_York\n * @implements {Zone}\n */\nexport default class IANAZone extends Zone {\n  /**\n   * @param {string} name - Zone name\n   * @return {IANAZone}\n   */\n  static create(name) {\n    if (!ianaZoneCache[name]) {\n      ianaZoneCache[name] = new IANAZone(name);\n    }\n    return ianaZoneCache[name];\n  }\n  /**\n   * Reset local caches. Should only be necessary in testing scenarios.\n   * @return {void}\n   */\n  static resetCache() {\n    ianaZoneCache = {};\n    dtfCache = {};\n  }\n  /**\n   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.\n   * @param {string} s - The string to check validity on\n   * @example IANAZone.isValidSpecifier(\"America/New_York\") //=> true\n   * @example IANAZone.isValidSpecifier(\"Fantasia/Castle\") //=> true\n   * @example IANAZone.isValidSpecifier(\"Sport~~blorp\") //=> false\n   * @return {boolean}\n   */\n  static isValidSpecifier(s) {\n    return s && s.match(matchingRegex);\n  }\n\n  /**\n   * Returns whether the provided string identifies a real zone\n   * @param {string} zone - The string to check\n   * @example IANAZone.isValidZone(\"America/New_York\") //=> true\n   * @example IANAZone.isValidZone(\"Fantasia/Castle\") //=> false\n   * @example IANAZone.isValidZone(\"Sport~~blorp\") //=> false\n   * @return {boolean}\n   */\n  static isValidZone(zone) {\n    try {\n      new Intl.DateTimeFormat(\"en-US\", { timeZone: zone }).format();\n      return true;\n    } catch (e) {\n      return false;\n    }\n  }\n\n  // Etc/GMT+8 -> -480\n  /** @ignore */\n  static parseGMTOffset(specifier) {\n    if (specifier) {\n      const match = specifier.match(/^Etc\\/GMT([+-]\\d{1,2})$/i);\n      if (match) {\n        return -60 * parseInt(match[1]);\n      }\n    }\n    return null;\n  }\n\n  constructor(name) {\n    super();\n    /** @private **/\n    this.zoneName = name;\n    /** @private **/\n    this.valid = IANAZone.isValidZone(name);\n  }\n\n  /** @override **/\n  get type() {\n    return \"iana\";\n  }\n\n  /** @override **/\n  get name() {\n    return this.zoneName;\n  }\n\n  /** @override **/\n  get universal() {\n    return false;\n  }\n\n  /** @override **/\n  offsetName(ts, { format, locale }) {\n    return parseZoneInfo(ts, format, locale, this.name);\n  }\n\n  /** @override **/\n  offset(ts) {\n    const date = new Date(ts),\n      dtf = makeDTF(this.name),\n      [year, month, day, hour, minute, second] = dtf.formatToParts\n        ? partsOffset(dtf, date)\n        : hackyOffset(dtf, date);\n    const asUTC = objToLocalTS({ year, month, day, hour, minute, second, millisecond: 0 });\n    let asTS = date.valueOf();\n    asTS -= asTS % 1000;\n    return (asUTC - asTS) / (60 * 1000);\n  }\n\n  /** @override **/\n  equals(otherZone) {\n    return otherZone.type === \"iana\" && otherZone.name === this.name;\n  }\n\n  /** @override **/\n  get isValid() {\n    return this.valid;\n  }\n}\n",
+    "content": "import { formatOffset, parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from \"../impl/util.js\";\nimport Zone from \"../zone.js\";\n\nconst matchingRegex = RegExp(`^${ianaRegex.source}$`);\n\nlet dtfCache = {};\nfunction makeDTF(zone) {\n  if (!dtfCache[zone]) {\n    dtfCache[zone] = new Intl.DateTimeFormat(\"en-US\", {\n      hour12: false,\n      timeZone: zone,\n      year: \"numeric\",\n      month: \"2-digit\",\n      day: \"2-digit\",\n      hour: \"2-digit\",\n      minute: \"2-digit\",\n      second: \"2-digit\"\n    });\n  }\n  return dtfCache[zone];\n}\n\nconst typeToPos = {\n  year: 0,\n  month: 1,\n  day: 2,\n  hour: 3,\n  minute: 4,\n  second: 5\n};\n\nfunction hackyOffset(dtf, date) {\n  const formatted = dtf.format(date).replace(/\\u200E/g, \"\"),\n    parsed = /(\\d+)\\/(\\d+)\\/(\\d+),? (\\d+):(\\d+):(\\d+)/.exec(formatted),\n    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;\n  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];\n}\n\nfunction partsOffset(dtf, date) {\n  const formatted = dtf.formatToParts(date),\n    filled = [];\n  for (let i = 0; i < formatted.length; i++) {\n    const { type, value } = formatted[i],\n      pos = typeToPos[type];\n\n    if (!isUndefined(pos)) {\n      filled[pos] = parseInt(value, 10);\n    }\n  }\n  return filled;\n}\n\nlet ianaZoneCache = {};\n/**\n * A zone identified by an IANA identifier, like America/New_York\n * @implements {Zone}\n */\nexport default class IANAZone extends Zone {\n  /**\n   * @param {string} name - Zone name\n   * @return {IANAZone}\n   */\n  static create(name) {\n    if (!ianaZoneCache[name]) {\n      ianaZoneCache[name] = new IANAZone(name);\n    }\n    return ianaZoneCache[name];\n  }\n  /**\n   * Reset local caches. Should only be necessary in testing scenarios.\n   * @return {void}\n   */\n  static resetCache() {\n    ianaZoneCache = {};\n    dtfCache = {};\n  }\n  /**\n   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.\n   * @param {string} s - The string to check validity on\n   * @example IANAZone.isValidSpecifier(\"America/New_York\") //=> true\n   * @example IANAZone.isValidSpecifier(\"Fantasia/Castle\") //=> true\n   * @example IANAZone.isValidSpecifier(\"Sport~~blorp\") //=> false\n   * @return {boolean}\n   */\n  static isValidSpecifier(s) {\n    return !!(s && s.match(matchingRegex));\n  }\n\n  /**\n   * Returns whether the provided string identifies a real zone\n   * @param {string} zone - The string to check\n   * @example IANAZone.isValidZone(\"America/New_York\") //=> true\n   * @example IANAZone.isValidZone(\"Fantasia/Castle\") //=> false\n   * @example IANAZone.isValidZone(\"Sport~~blorp\") //=> false\n   * @return {boolean}\n   */\n  static isValidZone(zone) {\n    try {\n      new Intl.DateTimeFormat(\"en-US\", { timeZone: zone }).format();\n      return true;\n    } catch (e) {\n      return false;\n    }\n  }\n\n  // Etc/GMT+8 -> -480\n  /** @ignore */\n  static parseGMTOffset(specifier) {\n    if (specifier) {\n      const match = specifier.match(/^Etc\\/GMT([+-]\\d{1,2})$/i);\n      if (match) {\n        return -60 * parseInt(match[1]);\n      }\n    }\n    return null;\n  }\n\n  constructor(name) {\n    super();\n    /** @private **/\n    this.zoneName = name;\n    /** @private **/\n    this.valid = IANAZone.isValidZone(name);\n  }\n\n  /** @override **/\n  get type() {\n    return \"iana\";\n  }\n\n  /** @override **/\n  get name() {\n    return this.zoneName;\n  }\n\n  /** @override **/\n  get universal() {\n    return false;\n  }\n\n  /** @override **/\n  offsetName(ts, { format, locale }) {\n    return parseZoneInfo(ts, format, locale, this.name);\n  }\n\n  /** @override **/\n  formatOffset(ts, format) {\n    return formatOffset(this.offset(ts), format);\n  }\n\n  /** @override **/\n  offset(ts) {\n    const date = new Date(ts),\n      dtf = makeDTF(this.name),\n      [year, month, day, hour, minute, second] = dtf.formatToParts\n        ? partsOffset(dtf, date)\n        : hackyOffset(dtf, date);\n    const asUTC = objToLocalTS({ year, month, day, hour, minute, second, millisecond: 0 });\n    let asTS = date.valueOf();\n    asTS -= asTS % 1000;\n    return (asUTC - asTS) / (60 * 1000);\n  }\n\n  /** @override **/\n  equals(otherZone) {\n    return otherZone.type === \"iana\" && otherZone.name === this.name;\n  }\n\n  /** @override **/\n  get isValid() {\n    return this.valid;\n  }\n}\n",
     "static": true,
     "longname": "/mnt/c/code/luxon/src/zones/IANAZone.js",
     "access": "public",
@@ -10212,7 +10256,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 339,
+    "__docId__": 340,
     "kind": "variable",
     "name": "matchingRegex",
     "memberof": "src/zones/IANAZone.js",
@@ -10233,7 +10277,7 @@
     "ignore": true
   },
   {
-    "__docId__": 340,
+    "__docId__": 341,
     "kind": "variable",
     "name": "dtfCache",
     "memberof": "src/zones/IANAZone.js",
@@ -10254,7 +10298,7 @@
     "ignore": true
   },
   {
-    "__docId__": 341,
+    "__docId__": 342,
     "kind": "function",
     "name": "makeDTF",
     "memberof": "src/zones/IANAZone.js",
@@ -10285,7 +10329,7 @@
     "ignore": true
   },
   {
-    "__docId__": 342,
+    "__docId__": 343,
     "kind": "variable",
     "name": "typeToPos",
     "memberof": "src/zones/IANAZone.js",
@@ -10306,7 +10350,7 @@
     "ignore": true
   },
   {
-    "__docId__": 343,
+    "__docId__": 344,
     "kind": "function",
     "name": "hackyOffset",
     "memberof": "src/zones/IANAZone.js",
@@ -10343,7 +10387,7 @@
     "ignore": true
   },
   {
-    "__docId__": 344,
+    "__docId__": 345,
     "kind": "function",
     "name": "partsOffset",
     "memberof": "src/zones/IANAZone.js",
@@ -10380,7 +10424,7 @@
     "ignore": true
   },
   {
-    "__docId__": 345,
+    "__docId__": 346,
     "kind": "variable",
     "name": "ianaZoneCache",
     "memberof": "src/zones/IANAZone.js",
@@ -10401,7 +10445,7 @@
     "ignore": true
   },
   {
-    "__docId__": 346,
+    "__docId__": 347,
     "kind": "class",
     "name": "IANAZone",
     "memberof": "src/zones/IANAZone.js",
@@ -10422,7 +10466,7 @@
     ]
   },
   {
-    "__docId__": 347,
+    "__docId__": 348,
     "kind": "method",
     "name": "create",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10455,7 +10499,7 @@
     }
   },
   {
-    "__docId__": 348,
+    "__docId__": 349,
     "kind": "method",
     "name": "resetCache",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10477,7 +10521,7 @@
     "params": []
   },
   {
-    "__docId__": 349,
+    "__docId__": 350,
     "kind": "method",
     "name": "isValidSpecifier",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10515,7 +10559,7 @@
     }
   },
   {
-    "__docId__": 350,
+    "__docId__": 351,
     "kind": "method",
     "name": "isValidZone",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10553,7 +10597,7 @@
     }
   },
   {
-    "__docId__": 351,
+    "__docId__": 352,
     "kind": "method",
     "name": "parseGMTOffset",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10580,7 +10624,7 @@
     }
   },
   {
-    "__docId__": 352,
+    "__docId__": 353,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10594,7 +10638,7 @@
     "undocument": true
   },
   {
-    "__docId__": 353,
+    "__docId__": 354,
     "kind": "member",
     "name": "zoneName",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10611,7 +10655,7 @@
     }
   },
   {
-    "__docId__": 354,
+    "__docId__": 355,
     "kind": "member",
     "name": "valid",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10628,7 +10672,7 @@
     }
   },
   {
-    "__docId__": 355,
+    "__docId__": 356,
     "kind": "get",
     "name": "type",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10647,7 +10691,7 @@
     }
   },
   {
-    "__docId__": 356,
+    "__docId__": 357,
     "kind": "get",
     "name": "name",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10666,7 +10710,7 @@
     }
   },
   {
-    "__docId__": 357,
+    "__docId__": 358,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10685,7 +10729,7 @@
     }
   },
   {
-    "__docId__": 358,
+    "__docId__": 359,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10723,7 +10767,40 @@
     }
   },
   {
-    "__docId__": 359,
+    "__docId__": 360,
+    "kind": "method",
+    "name": "formatOffset",
+    "memberof": "src/zones/IANAZone.js~IANAZone",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/zones/IANAZone.js~IANAZone#formatOffset",
+    "access": "public",
+    "description": null,
+    "lineNumber": 147,
+    "override": true,
+    "params": [
+      {
+        "name": "ts",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "format",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 361,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10733,7 +10810,7 @@
     "longname": "src/zones/IANAZone.js~IANAZone#offset",
     "access": "public",
     "description": null,
-    "lineNumber": 147,
+    "lineNumber": 152,
     "override": true,
     "params": [
       {
@@ -10750,7 +10827,7 @@
     }
   },
   {
-    "__docId__": 360,
+    "__docId__": 362,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10760,7 +10837,7 @@
     "longname": "src/zones/IANAZone.js~IANAZone#equals",
     "access": "public",
     "description": null,
-    "lineNumber": 160,
+    "lineNumber": 165,
     "override": true,
     "params": [
       {
@@ -10777,7 +10854,7 @@
     }
   },
   {
-    "__docId__": 361,
+    "__docId__": 363,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zones/IANAZone.js~IANAZone",
@@ -10787,7 +10864,7 @@
     "longname": "src/zones/IANAZone.js~IANAZone#isValid",
     "access": "public",
     "description": null,
-    "lineNumber": 165,
+    "lineNumber": 170,
     "override": true,
     "type": {
       "types": [
@@ -10796,10 +10873,10 @@
     }
   },
   {
-    "__docId__": 362,
+    "__docId__": 364,
     "kind": "file",
     "name": "src/zones/fixedOffsetZone.js",
-    "content": "import { padStart, signedOffset } from \"../impl/util.js\";\nimport Zone from \"../zone.js\";\n\nlet singleton = null;\n\nfunction hoursMinutesOffset(z) {\n  const hours = Math.trunc(z.fixed / 60),\n    minutes = Math.abs(z.fixed % 60),\n    sign = hours > 0 ? \"+\" : \"-\",\n    base = sign + Math.abs(hours);\n  return minutes > 0 ? `${base}:${padStart(minutes, 2)}` : base;\n}\n\n/**\n * A zone with a fixed offset (i.e. no DST)\n * @implements {Zone}\n */\nexport default class FixedOffsetZone extends Zone {\n  /**\n   * Get a singleton instance of UTC\n   * @return {FixedOffsetZone}\n   */\n  static get utcInstance() {\n    if (singleton === null) {\n      singleton = new FixedOffsetZone(0);\n    }\n    return singleton;\n  }\n\n  /**\n   * Get an instance with a specified offset\n   * @param {number} offset - The offset in minutes\n   * @return {FixedOffsetZone}\n   */\n  static instance(offset) {\n    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);\n  }\n\n  /**\n   * Get an instance of FixedOffsetZone from a UTC offset string, like \"UTC+6\"\n   * @param {string} s - The offset string to parse\n   * @example FixedOffsetZone.parseSpecifier(\"UTC+6\")\n   * @example FixedOffsetZone.parseSpecifier(\"UTC+06\")\n   * @example FixedOffsetZone.parseSpecifier(\"UTC-6:00\")\n   * @return {FixedOffsetZone}\n   */\n  static parseSpecifier(s) {\n    if (s) {\n      const r = s.match(/^utc(?:([+-]\\d{1,2})(?::(\\d{2}))?)?$/i);\n      if (r) {\n        return new FixedOffsetZone(signedOffset(r[1], r[2]));\n      }\n    }\n    return null;\n  }\n\n  constructor(offset) {\n    super();\n    /** @private **/\n    this.fixed = offset;\n  }\n\n  /** @override **/\n  get type() {\n    return \"fixed\";\n  }\n\n  /** @override **/\n  get name() {\n    return this.fixed === 0 ? \"UTC\" : `UTC${hoursMinutesOffset(this)}`;\n  }\n\n  /** @override **/\n  offsetName() {\n    return this.name;\n  }\n\n  /** @override **/\n  get universal() {\n    return true;\n  }\n\n  /** @override **/\n  offset() {\n    return this.fixed;\n  }\n\n  /** @override **/\n  equals(otherZone) {\n    return otherZone.type === \"fixed\" && otherZone.fixed === this.fixed;\n  }\n\n  /** @override **/\n  get isValid() {\n    return true;\n  }\n}\n",
+    "content": "import { formatOffset, signedOffset } from \"../impl/util.js\";\nimport Zone from \"../zone.js\";\n\nlet singleton = null;\n\n/**\n * A zone with a fixed offset (i.e. no DST)\n * @implements {Zone}\n */\nexport default class FixedOffsetZone extends Zone {\n  /**\n   * Get a singleton instance of UTC\n   * @return {FixedOffsetZone}\n   */\n  static get utcInstance() {\n    if (singleton === null) {\n      singleton = new FixedOffsetZone(0);\n    }\n    return singleton;\n  }\n\n  /**\n   * Get an instance with a specified offset\n   * @param {number} offset - The offset in minutes\n   * @return {FixedOffsetZone}\n   */\n  static instance(offset) {\n    return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);\n  }\n\n  /**\n   * Get an instance of FixedOffsetZone from a UTC offset string, like \"UTC+6\"\n   * @param {string} s - The offset string to parse\n   * @example FixedOffsetZone.parseSpecifier(\"UTC+6\")\n   * @example FixedOffsetZone.parseSpecifier(\"UTC+06\")\n   * @example FixedOffsetZone.parseSpecifier(\"UTC-6:00\")\n   * @return {FixedOffsetZone}\n   */\n  static parseSpecifier(s) {\n    if (s) {\n      const r = s.match(/^utc(?:([+-]\\d{1,2})(?::(\\d{2}))?)?$/i);\n      if (r) {\n        return new FixedOffsetZone(signedOffset(r[1], r[2]));\n      }\n    }\n    return null;\n  }\n\n  constructor(offset) {\n    super();\n    /** @private **/\n    this.fixed = offset;\n  }\n\n  /** @override **/\n  get type() {\n    return \"fixed\";\n  }\n\n  /** @override **/\n  get name() {\n    return this.fixed === 0 ? \"UTC\" : `UTC${formatOffset(this.fixed, \"narrow\")}`;\n  }\n\n  /** @override **/\n  offsetName() {\n    return this.name;\n  }\n\n  /** @override **/\n  formatOffset(ts, format) {\n    return formatOffset(this.fixed, format);\n  }\n\n  /** @override **/\n  get universal() {\n    return true;\n  }\n\n  /** @override **/\n  offset() {\n    return this.fixed;\n  }\n\n  /** @override **/\n  equals(otherZone) {\n    return otherZone.type === \"fixed\" && otherZone.fixed === this.fixed;\n  }\n\n  /** @override **/\n  get isValid() {\n    return true;\n  }\n}\n",
     "static": true,
     "longname": "/mnt/c/code/luxon/src/zones/fixedOffsetZone.js",
     "access": "public",
@@ -10807,7 +10884,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 363,
+    "__docId__": 365,
     "kind": "variable",
     "name": "singleton",
     "memberof": "src/zones/fixedOffsetZone.js",
@@ -10828,38 +10905,7 @@
     "ignore": true
   },
   {
-    "__docId__": 364,
-    "kind": "function",
-    "name": "hoursMinutesOffset",
-    "memberof": "src/zones/fixedOffsetZone.js",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/zones/fixedOffsetZone.js~hoursMinutesOffset",
-    "access": "public",
-    "export": false,
-    "importPath": "luxon/src/zones/fixedOffsetZone.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 6,
-    "undocument": true,
-    "params": [
-      {
-        "name": "z",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 365,
+    "__docId__": 366,
     "kind": "class",
     "name": "FixedOffsetZone",
     "memberof": "src/zones/fixedOffsetZone.js",
@@ -10870,7 +10916,7 @@
     "importPath": "luxon/src/zones/fixedOffsetZone.js",
     "importStyle": "FixedOffsetZone",
     "description": "A zone with a fixed offset (i.e. no DST)",
-    "lineNumber": 18,
+    "lineNumber": 10,
     "interface": false,
     "extends": [
       "src/zone.js~Zone"
@@ -10880,7 +10926,7 @@
     ]
   },
   {
-    "__docId__": 366,
+    "__docId__": 367,
     "kind": "get",
     "name": "utcInstance",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -10890,7 +10936,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone.utcInstance",
     "access": "public",
     "description": "Get a singleton instance of UTC",
-    "lineNumber": 23,
+    "lineNumber": 15,
     "return": {
       "nullable": null,
       "types": [
@@ -10906,7 +10952,7 @@
     }
   },
   {
-    "__docId__": 367,
+    "__docId__": 368,
     "kind": "method",
     "name": "instance",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -10916,7 +10962,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone.instance",
     "access": "public",
     "description": "Get an instance with a specified offset",
-    "lineNumber": 35,
+    "lineNumber": 27,
     "params": [
       {
         "nullable": null,
@@ -10939,7 +10985,7 @@
     }
   },
   {
-    "__docId__": 368,
+    "__docId__": 369,
     "kind": "method",
     "name": "parseSpecifier",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -10954,7 +11000,7 @@
       "FixedOffsetZone.parseSpecifier(\"UTC+06\")",
       "FixedOffsetZone.parseSpecifier(\"UTC-6:00\")"
     ],
-    "lineNumber": 47,
+    "lineNumber": 39,
     "params": [
       {
         "nullable": null,
@@ -10977,7 +11023,7 @@
     }
   },
   {
-    "__docId__": 369,
+    "__docId__": 370,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -10987,11 +11033,11 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 57,
+    "lineNumber": 49,
     "undocument": true
   },
   {
-    "__docId__": 370,
+    "__docId__": 371,
     "kind": "member",
     "name": "fixed",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -10999,7 +11045,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#fixed",
     "access": "private",
     "description": null,
-    "lineNumber": 60,
+    "lineNumber": 52,
     "ignore": true,
     "type": {
       "types": [
@@ -11008,7 +11054,7 @@
     }
   },
   {
-    "__docId__": 371,
+    "__docId__": 372,
     "kind": "get",
     "name": "type",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -11018,7 +11064,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#type",
     "access": "public",
     "description": null,
-    "lineNumber": 64,
+    "lineNumber": 56,
     "override": true,
     "type": {
       "types": [
@@ -11027,7 +11073,7 @@
     }
   },
   {
-    "__docId__": 372,
+    "__docId__": 373,
     "kind": "get",
     "name": "name",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -11037,7 +11083,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#name",
     "access": "public",
     "description": null,
-    "lineNumber": 69,
+    "lineNumber": 61,
     "override": true,
     "type": {
       "types": [
@@ -11046,7 +11092,7 @@
     }
   },
   {
-    "__docId__": 373,
+    "__docId__": 374,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -11056,7 +11102,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#offsetName",
     "access": "public",
     "description": null,
-    "lineNumber": 74,
+    "lineNumber": 66,
     "override": true,
     "params": [],
     "return": {
@@ -11066,7 +11112,40 @@
     }
   },
   {
-    "__docId__": 374,
+    "__docId__": 375,
+    "kind": "method",
+    "name": "formatOffset",
+    "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#formatOffset",
+    "access": "public",
+    "description": null,
+    "lineNumber": 71,
+    "override": true,
+    "params": [
+      {
+        "name": "ts",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "format",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 376,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -11076,7 +11155,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#universal",
     "access": "public",
     "description": null,
-    "lineNumber": 79,
+    "lineNumber": 76,
     "override": true,
     "type": {
       "types": [
@@ -11085,7 +11164,7 @@
     }
   },
   {
-    "__docId__": 375,
+    "__docId__": 377,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -11095,7 +11174,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#offset",
     "access": "public",
     "description": null,
-    "lineNumber": 84,
+    "lineNumber": 81,
     "override": true,
     "params": [],
     "return": {
@@ -11105,7 +11184,7 @@
     }
   },
   {
-    "__docId__": 376,
+    "__docId__": 378,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -11115,7 +11194,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#equals",
     "access": "public",
     "description": null,
-    "lineNumber": 89,
+    "lineNumber": 86,
     "override": true,
     "params": [
       {
@@ -11132,7 +11211,7 @@
     }
   },
   {
-    "__docId__": 377,
+    "__docId__": 379,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zones/fixedOffsetZone.js~FixedOffsetZone",
@@ -11142,7 +11221,7 @@
     "longname": "src/zones/fixedOffsetZone.js~FixedOffsetZone#isValid",
     "access": "public",
     "description": null,
-    "lineNumber": 94,
+    "lineNumber": 91,
     "override": true,
     "type": {
       "types": [
@@ -11151,10 +11230,10 @@
     }
   },
   {
-    "__docId__": 378,
+    "__docId__": 380,
     "kind": "file",
     "name": "src/zones/invalidZone.js",
-    "content": "import Zone from \"../zone.js\";\n\n/**\n * A zone that failed to parse. You should never need to instantiate this.\n * @implements {Zone}\n */\nexport default class InvalidZone extends Zone {\n  constructor(zoneName) {\n    super();\n    /**  @private */\n    this.zoneName = zoneName;\n  }\n\n  /** @override **/\n  get type() {\n    return \"invalid\";\n  }\n\n  /** @override **/\n  get name() {\n    return this.zoneName;\n  }\n\n  /** @override **/\n  get universal() {\n    return false;\n  }\n\n  /** @override **/\n  offsetName() {\n    return null;\n  }\n\n  /** @override **/\n  offset() {\n    return NaN;\n  }\n\n  /** @override **/\n  equals() {\n    return false;\n  }\n\n  /** @override **/\n  get isValid() {\n    return false;\n  }\n}\n",
+    "content": "import Zone from \"../zone.js\";\n\n/**\n * A zone that failed to parse. You should never need to instantiate this.\n * @implements {Zone}\n */\nexport default class InvalidZone extends Zone {\n  constructor(zoneName) {\n    super();\n    /**  @private */\n    this.zoneName = zoneName;\n  }\n\n  /** @override **/\n  get type() {\n    return \"invalid\";\n  }\n\n  /** @override **/\n  get name() {\n    return this.zoneName;\n  }\n\n  /** @override **/\n  get universal() {\n    return false;\n  }\n\n  /** @override **/\n  offsetName() {\n    return null;\n  }\n\n  /** @override **/\n  formatOffset() {\n    return \"\";\n  }\n\n  /** @override **/\n  offset() {\n    return NaN;\n  }\n\n  /** @override **/\n  equals() {\n    return false;\n  }\n\n  /** @override **/\n  get isValid() {\n    return false;\n  }\n}\n",
     "static": true,
     "longname": "/mnt/c/code/luxon/src/zones/invalidZone.js",
     "access": "public",
@@ -11162,7 +11241,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 379,
+    "__docId__": 381,
     "kind": "class",
     "name": "InvalidZone",
     "memberof": "src/zones/invalidZone.js",
@@ -11183,7 +11262,7 @@
     ]
   },
   {
-    "__docId__": 380,
+    "__docId__": 382,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11197,7 +11276,7 @@
     "undocument": true
   },
   {
-    "__docId__": 381,
+    "__docId__": 383,
     "kind": "member",
     "name": "zoneName",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11213,7 +11292,7 @@
     }
   },
   {
-    "__docId__": 382,
+    "__docId__": 384,
     "kind": "get",
     "name": "type",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11232,7 +11311,7 @@
     }
   },
   {
-    "__docId__": 383,
+    "__docId__": 385,
     "kind": "get",
     "name": "name",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11251,7 +11330,7 @@
     }
   },
   {
-    "__docId__": 384,
+    "__docId__": 386,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11270,7 +11349,7 @@
     }
   },
   {
-    "__docId__": 385,
+    "__docId__": 387,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11290,7 +11369,27 @@
     }
   },
   {
-    "__docId__": 386,
+    "__docId__": 388,
+    "kind": "method",
+    "name": "formatOffset",
+    "memberof": "src/zones/invalidZone.js~InvalidZone",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/zones/invalidZone.js~InvalidZone#formatOffset",
+    "access": "public",
+    "description": null,
+    "lineNumber": 35,
+    "override": true,
+    "params": [],
+    "return": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 389,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11300,7 +11399,7 @@
     "longname": "src/zones/invalidZone.js~InvalidZone#offset",
     "access": "public",
     "description": null,
-    "lineNumber": 35,
+    "lineNumber": 40,
     "override": true,
     "params": [],
     "return": {
@@ -11310,7 +11409,7 @@
     }
   },
   {
-    "__docId__": 387,
+    "__docId__": 390,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11320,7 +11419,7 @@
     "longname": "src/zones/invalidZone.js~InvalidZone#equals",
     "access": "public",
     "description": null,
-    "lineNumber": 40,
+    "lineNumber": 45,
     "override": true,
     "params": [],
     "return": {
@@ -11330,7 +11429,7 @@
     }
   },
   {
-    "__docId__": 388,
+    "__docId__": 391,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zones/invalidZone.js~InvalidZone",
@@ -11340,7 +11439,7 @@
     "longname": "src/zones/invalidZone.js~InvalidZone#isValid",
     "access": "public",
     "description": null,
-    "lineNumber": 45,
+    "lineNumber": 50,
     "override": true,
     "type": {
       "types": [
@@ -11349,10 +11448,10 @@
     }
   },
   {
-    "__docId__": 389,
+    "__docId__": 392,
     "kind": "file",
     "name": "src/zones/localZone.js",
-    "content": "import { parseZoneInfo, hasIntl } from \"../impl/util.js\";\nimport Zone from \"../zone.js\";\n\nlet singleton = null;\n\n/**\n * Represents the local zone for this Javascript environment.\n * @implements {Zone}\n */\nexport default class LocalZone extends Zone {\n  /**\n   * Get a singleton instance of the local zone\n   * @return {LocalZone}\n   */\n  static get instance() {\n    if (singleton === null) {\n      singleton = new LocalZone();\n    }\n    return singleton;\n  }\n\n  /** @override **/\n  get type() {\n    return \"local\";\n  }\n\n  /** @override **/\n  get name() {\n    if (hasIntl()) {\n      return new Intl.DateTimeFormat().resolvedOptions().timeZone;\n    } else return \"local\";\n  }\n\n  /** @override **/\n  get universal() {\n    return false;\n  }\n\n  /** @override **/\n  offsetName(ts, { format, locale }) {\n    return parseZoneInfo(ts, format, locale);\n  }\n\n  /** @override **/\n  offset(ts) {\n    return -new Date(ts).getTimezoneOffset();\n  }\n\n  /** @override **/\n  equals(otherZone) {\n    return otherZone.type === \"local\";\n  }\n\n  /** @override **/\n  get isValid() {\n    return true;\n  }\n}\n",
+    "content": "import { formatOffset, parseZoneInfo, hasIntl } from \"../impl/util.js\";\nimport Zone from \"../zone.js\";\n\nlet singleton = null;\n\n/**\n * Represents the local zone for this Javascript environment.\n * @implements {Zone}\n */\nexport default class LocalZone extends Zone {\n  /**\n   * Get a singleton instance of the local zone\n   * @return {LocalZone}\n   */\n  static get instance() {\n    if (singleton === null) {\n      singleton = new LocalZone();\n    }\n    return singleton;\n  }\n\n  /** @override **/\n  get type() {\n    return \"local\";\n  }\n\n  /** @override **/\n  get name() {\n    if (hasIntl()) {\n      return new Intl.DateTimeFormat().resolvedOptions().timeZone;\n    } else return \"local\";\n  }\n\n  /** @override **/\n  get universal() {\n    return false;\n  }\n\n  /** @override **/\n  offsetName(ts, { format, locale }) {\n    return parseZoneInfo(ts, format, locale);\n  }\n\n  /** @override **/\n  formatOffset(ts, format) {\n    return formatOffset(this.offset(ts), format);\n  }\n\n  /** @override **/\n  offset(ts) {\n    return -new Date(ts).getTimezoneOffset();\n  }\n\n  /** @override **/\n  equals(otherZone) {\n    return otherZone.type === \"local\";\n  }\n\n  /** @override **/\n  get isValid() {\n    return true;\n  }\n}\n",
     "static": true,
     "longname": "/mnt/c/code/luxon/src/zones/localZone.js",
     "access": "public",
@@ -11360,7 +11459,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 390,
+    "__docId__": 393,
     "kind": "variable",
     "name": "singleton",
     "memberof": "src/zones/localZone.js",
@@ -11381,7 +11480,7 @@
     "ignore": true
   },
   {
-    "__docId__": 391,
+    "__docId__": 394,
     "kind": "class",
     "name": "LocalZone",
     "memberof": "src/zones/localZone.js",
@@ -11402,7 +11501,7 @@
     ]
   },
   {
-    "__docId__": 392,
+    "__docId__": 395,
     "kind": "get",
     "name": "instance",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11428,7 +11527,7 @@
     }
   },
   {
-    "__docId__": 393,
+    "__docId__": 396,
     "kind": "get",
     "name": "type",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11447,7 +11546,7 @@
     }
   },
   {
-    "__docId__": 394,
+    "__docId__": 397,
     "kind": "get",
     "name": "name",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11466,7 +11565,7 @@
     }
   },
   {
-    "__docId__": 395,
+    "__docId__": 398,
     "kind": "get",
     "name": "universal",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11485,7 +11584,7 @@
     }
   },
   {
-    "__docId__": 396,
+    "__docId__": 399,
     "kind": "method",
     "name": "offsetName",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11523,7 +11622,40 @@
     }
   },
   {
-    "__docId__": 397,
+    "__docId__": 400,
+    "kind": "method",
+    "name": "formatOffset",
+    "memberof": "src/zones/localZone.js~LocalZone",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/zones/localZone.js~LocalZone#formatOffset",
+    "access": "public",
+    "description": null,
+    "lineNumber": 45,
+    "override": true,
+    "params": [
+      {
+        "name": "ts",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "format",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 401,
     "kind": "method",
     "name": "offset",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11533,7 +11665,7 @@
     "longname": "src/zones/localZone.js~LocalZone#offset",
     "access": "public",
     "description": null,
-    "lineNumber": 45,
+    "lineNumber": 50,
     "override": true,
     "params": [
       {
@@ -11550,7 +11682,7 @@
     }
   },
   {
-    "__docId__": 398,
+    "__docId__": 402,
     "kind": "method",
     "name": "equals",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11560,7 +11692,7 @@
     "longname": "src/zones/localZone.js~LocalZone#equals",
     "access": "public",
     "description": null,
-    "lineNumber": 50,
+    "lineNumber": 55,
     "override": true,
     "params": [
       {
@@ -11577,7 +11709,7 @@
     }
   },
   {
-    "__docId__": 399,
+    "__docId__": 403,
     "kind": "get",
     "name": "isValid",
     "memberof": "src/zones/localZone.js~LocalZone",
@@ -11587,7 +11719,7 @@
     "longname": "src/zones/localZone.js~LocalZone#isValid",
     "access": "public",
     "description": null,
-    "lineNumber": 55,
+    "lineNumber": 60,
     "override": true,
     "type": {
       "types": [
@@ -11648,7 +11780,7 @@
     "kind": "manual",
     "longname": "/mnt/c/code/luxon/docs/zones.md",
     "name": "./docs/zones.md",
-    "content": "# Time zones and offsets\r\n\r\nLuxon has support for time zones. This page explains how to use them.\r\n\r\n## Don't worry!\r\n\r\nYou _usually_ don't need to worry about time zones. Your code runs on a computer with a particular time zone and everything will work consistently in that zone without you doing anything. It's when you want to do complicated stuff _across_ zones that you have to think about it. Even then, here are some pointers to help you avoid situations where you have to think carefully about time zones:\r\n\r\n1.  Don't make servers think about _local_ times. Configure them to use UTC and write your server's code to work in UTC. Times can often be thought of as a simple count of epoch milliseconds; what you would call that time (e.g. 9:30) in what zone doesn't (again, often) matter.\r\n2.  Communicate times between systems in ISO 8601, like \"2017-05-15T13:30:34Z\" where possible (it doesn't matter if you use Z or some local offset; the point is that it precisely identifies the millisecond on the global timeline).\r\n3.  Where possible, only think of time zones as a formatting concern; your application ideally never knows that the time it's working with is called \"9:00\" until it's being rendered to the user.\r\n4.  Barring 3, do as much manipulation of the time (say, adding an hour to the current time) in the client code that's already running in the time zone where the results will matter.\r\n\r\nAll those things will make it less likely you ever need to work explicitly with time zones and may also save you plenty of other headaches. But those aren't possible for some applications; you might need to work with times in zones other than the one the program is running in, for any number of reasons. And that's where Luxon's time zone support comes in.\r\n\r\n## Terminology\r\n\r\nBear with me here. Time zones are pain in the ass. Luxon has lots of tools to deal with them, but there's no getting around the fact that they're complicated. The terminology for time zones and offsets isn't well-established. But let's try to impose some order:\r\n\r\n1.  An **offset** is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we'll use hours.\r\n1.  A **time zone** is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as \"America/New_York\". That zone says something to the effect of \"The offset is -4, except between March and November, when it's -5\".\r\n1.  A **fixed-offset time zone** is any time zone that never changes offsets, such as UTC. Luxon supports fixed-offset zones directly; they're specified like UTC+7, which you can interpret as \"always with an offset of +7\".\r\n1.  A **named offset** is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America's EST roughly implies America/New_York) and the current offset (EST means -4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it's always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US's EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.\r\n\r\nSome subtleties:\r\n\r\n1.  Multiple zones can have the same offset (think about the US's zones and their Canadian equivalents), though they might not have the same offset all the time, depending on when their DSTs are. Thus zones and offsets have a many-to-many relationship.\r\n1.  Just because a time zone doesn't have a DST now doesn't mean it's fixed. Perhaps it had one in the past. Regardless, Luxon does not have first-class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.\r\n\r\nIf all this seems too terse, check out these articles. The terminology in them is subtly different but the concepts are the same:\r\n\r\n- [Time Zones Aren’t Offsets – Offsets Aren’t Time Zones](https://spin.atomicobject.com/2016/07/06/time-zones-offsets/)\r\n- [Stack Overflow's timezone wiki page](https://stackoverflow.com/tags/timezone/info)\r\n\r\n## Luxon works with time zones\r\n\r\nLuxon's DateTime class supports zones directly. By default, a date created in Luxon is \"in\" the local time zone of the machine it's running on. By \"in\" we mean that the DateTime has, as one of its properties, an associated zone.\r\n\r\nIt's important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you're in; the zone is really piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon's behavior too. It just doesn't change _what time it is_.\r\n\r\nSpecifically, a DateTime's zone affects its behavior in these ways:\r\n\r\n1.  Times will be formatted as they would be in that zone.\r\n1.  Transformations to the DateTime (such as `plus` or `startOf`) will obey any DSTs in that zone that affect the calculation (see \"Math across DSTs\" below)\r\n\r\nGenerally speaking, Luxon does not support changing a DateTime's offset, just its zone. That allows it to enforce the behaviors in the list above. The offset for that DateTime is just whatever the zone says it is. If you are unconcerned with the effects above, then you can always give your DateTime a fixed-offset zone.\r\n\r\n## Specifying a zone\r\n\r\nLuxon's API methods that take a zone as an argument all let you specify the zone in a few ways.\r\n\r\n| Type         | Example            | Description                                                       |\r\n| ------------ | ------------------ | ----------------------------------------------------------------- |\r\n| IANA         | 'America/New_York' | that zone                                                         |\r\n| local        | 'local'            | the system's local zone                                           |\r\n| UTC          | 'utc'              | Universal Coordinated Time                                        |\r\n| fixed offset | 'UTC+7'            | a fixed offset zone                                               |\r\n| Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only) |\r\n\r\n### IANA support\r\n\r\nIANA-specified zones are string identifiers like \"America/New_York\" or \"Asia/Tokyo\". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:\r\n\r\n```js\r\nInfo.features().zones; //=> true\r\n```\r\n\r\nIf you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](matrix.html#zones) your environment.\r\n\r\nIf you specify a zone and your environment doesn't support that zone, you'll get an [invalid](validity.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason it doesn't support that _particular_ zone, or because the zone is just bogus. Like this:\r\n\r\n```js\r\nbogus = DateTime.local().setZone(\"America/Bogus\");\r\n\r\nbogus.isValid; //=> false\r\nbogus.invalidReason; //=> 'unsupported zone'\r\n```\r\n\r\n## Creating DateTimes\r\n\r\n### Local by default\r\n\r\nBy default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's local zone. For example, my computer is configured to use `America/New_York`, which has an offset of -4 in May:\r\n\r\n```js\r\nvar local = DateTime.local(2017, 05, 15, 09, 10, 23);\r\n\r\nlocal.zoneName; //=> 'America/New_York'\r\nlocal.toString(); //=> '2017-05-15T09:10:23.000-04:00'\r\n\r\nvar iso = DateTime.fromISO(\"2017-05-15T09:10:23\");\r\n\r\niso.zoneName; //=> 'America/New_York'\r\niso.toString(); //=> '2017-05-15T09:10:23.000-04:00'\r\n```\r\n\r\n### Creating DateTimes in a zone\r\n\r\nMany of Luxon's factory methods allow you to tell it specifically what zone to create the DateTime in:\r\n\r\n```js\r\nvar overrideZone = DateTime.fromISO(\"2017-05-15T09:10:23\", { zone: \"Europe/Paris\" });\r\n\r\noverrideZone.zoneName; //=> 'Europe/Paris'\r\noverrideZone.toString(); //=> '2017-05-15T09:10:23.000+02:00'\r\n```\r\n\r\nNote two things:\r\n\r\n1.  The date and time specified in the string was interpreted as a Parisian local time (i.e. it's the time that corresponds to what would be called 9:10 _there_).\r\n2.  The resulting DateTime object is in Europe/Paris.\r\n\r\nThose are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it's more convenient for the same option to govern both.\r\n\r\nIn addition, one static method, `utc()`, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:\r\n\r\n```js\r\nvar utc = DateTime.utc(2017, 05, 15, 09, 10, 23);\r\n\r\nutc.zoneName; //=> 'UTC'\r\nutc.toString(); //=> '2017-05-15T09:10:23.000Z'\r\n```\r\n\r\n### Strings that specify an offset\r\n\r\nSome input strings may specify an offset as part of the string itself. In these case, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system's local zone:\r\n\r\n```js\r\nvar specifyOffset = DateTime.fromISO(\"2017-05-15T09:10:23-09:00\");\r\n\r\nspecifyOffset.zoneName; //=> 'America/New_York'\r\nspecifyOffset.toString(); //=> '2017-05-15T14:10:23.000-04:00'\r\n\r\nvar specifyZone = DateTime.fromFormat(\r\n  \"2017-05-15T09:10:23 Europe/Paris\",\r\n  \"yyyy-MM-dd'T'HH:mm:ss z\"\r\n);\r\n\r\nspecifyZone.zoneName; //=> 'America/New_York'\r\nspecifyZone.toString(); //=> '2017-05-15T03:10:23.000-04:00'\r\n```\r\n\r\n...unless a zone is specified as an option (see previous section), in which case the DateTime gets converted to _that_ zone:\r\n\r\n```js\r\nvar specifyOffsetAndOverrideZone = DateTime.fromISO(\"2017-05-15T09:10:23-09:00\", {\r\n  zone: \"Europe/Paris\"\r\n});\r\n\r\nspecifyOffsetAndOverrideZone.zoneName; //=> 'Europe/Paris'\r\nspecifyOffsetAndOverrideZone.toString(); //=> '2017-05-15T20:10:23.000+02:00'\r\n```\r\n\r\n### setZone\r\n\r\nFinally, some parsing functions allow you to \"keep\" the zone in the string as the DateTime's zone. Note that if only an offset is provided by the string, the zone will be a fixed-offset one, since Luxon doesn't know which zone is meant, even if you do.\r\n\r\n```js\r\nvar keepOffset = DateTime.fromISO(\"2017-05-15T09:10:23-09:00\", { setZone: true });\r\n\r\nkeepOffset.zoneName; //=> 'UTC-9'\r\nkeepOffset.toString(); //=> '2017-05-15T09:10:23.000-09:00'\r\n\r\nvar keepZone = DateTime.fromFormat(\"2017-05-15T09:10:23 Europe/Paris\", \"yyyy-MM-dd'T'HH:mm:ss z\", {\r\n  setZone: true\r\n});\r\n\r\nkeepZone.zoneName; //=> 'Europe/Paris'\r\nkeepZone.toString(); //=> '2017-05-15T09:10:23.000+02:00'\r\n```\r\n\r\n## Changing zones\r\n\r\n### setZone\r\n\r\nLuxon objects are immutable, so when we say \"changing zones\" we really mean \"creating a new instance with a different zone\". Changing zone generally means \"change the zone in which this DateTime is expressed (and according to which rules it is manipulated), but don't change the underlying timestamp.\" For example:\r\n\r\n```js\r\nvar local = DateTime.local();\r\nvar rezoned = local.setZone(\"America/Los_Angeles\");\r\n\r\n// different local times with different offsets\r\nlocal.toString(); //=> '2017-09-13T18:30:51.141-04:00'\r\nrezoned.toString(); //=> '2017-09-13T15:30:51.141-07:00'\r\n\r\n// but actually the same time\r\nlocal.valueOf() === rezoned.valueOf(); //=> true\r\n```\r\n\r\n### keepLocalTime\r\n\r\nGenerally, it's best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that's not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:\r\n\r\n```js\r\nvar local = DateTime.local();\r\nvar rezoned = local.setZone(\"America/Los_Angeles\", { keepLocalTime: true });\r\n\r\nlocal.toString(); //=> '2017-09-13T18:36:23.187-04:00'\r\nrezoned.toString(); //=> '2017-09-13T18:36:23.187-07:00'\r\n\r\nlocal.valueOf() === rezoned.valueOf(); //=> false\r\n```\r\n\r\nIf you find that confusing, I recommend just not using it. On the other hand, if you find yourself using this all the time, you are probably doing something wrong.\r\n\r\n## Accessors\r\n\r\nLuxon DateTimes have a few different accessors that let you find out about the zone and offset:\r\n\r\n```js\r\nvar dt = DateTime.local();\r\n\r\ndt.zoneName; //=> 'America/New_York'\r\ndt.offset; //=> -240\r\ndt.offsetNameShort; //=> 'EDT'\r\ndt.offsetNameLong; //=> 'Eastern Daylight Time'\r\ndt.isOffsetFixed; //=> false\r\ndt.isInDST; //=> true\r\n```\r\n\r\nThose are all documented in the [DateTime API docs](../class/src/datetime.js~DateTime.html).\r\n\r\n## DST weirdness\r\n\r\nBecause our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This is all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and a time library has to deal with it.\r\n\r\nMost of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.\r\n\r\n### Invalid times\r\n\r\nSome local times simply don't exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, `America/New_York`, on March 12, 2017 the millisecond after 1:59:59.999 is 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don't exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.\r\n\r\nIf you create such a DateTime from scratch, the missing time will be advanced by an hour:\r\n\r\n```js\r\nDateTime.local(2017, 3, 12, 2, 30).toString(); //=> '2017-03-12T03:30:00.000-04:00'\r\n```\r\n\r\nYou can also do date math that lands you in the middle of the shift. These also push forward:\r\n\r\n```js\r\nDateTime.local(2017, 3, 11, 2, 30)\r\n  .plus({ days: 1 })\r\n  .toString(); //=> '2017-03-12T03:30:00.000-04:00'\r\nDateTime.local(2017, 3, 13, 2, 30)\r\n  .minus({ days: 1 })\r\n  .toString(); //=> '2017-03-12T03:30:00.000-04:00'\r\n```\r\n\r\n### Ambiguous times\r\n\r\nHarder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day, one hour before before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because they correspond to different moments in time.\r\n\r\nHowever, Luxon's behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:\r\n\r\n```js\r\nDateTime.local(2017, 11, 5, 1, 30).offset / 60; //=> -4\r\nDateTime.local(2017, 11, 4, 1, 30).plus({ days: 1 }).offset / 60; //=> -4\r\nDateTime.local(2017, 11, 6, 1, 30).minus({ days: 1 }).offset / 60; //=> -5\r\n```\r\n\r\nIn other words, sometimes it picks one and sometimes the other. Luxon doesn't guarantee the specific behavior above. That's just what it happens to do.\r\n\r\nIf you're curious, this lack of definition is because Luxon doesn't actually know that any particular DateTime is an ambiguous time. It doesn't know the time zones rules at all. It just knows the local time does not contradict the offset and leaves it at that. To find out the time is ambiguous and define exact rules for how to resolve it, Luxon would have to test nearby times to see if it can find duplicate local time, and it would have to do that on every creation of a DateTime, regardless of whether it was anywhere near a real DST shift. Because that's onerous, Luxon doesn't bother.\r\n\r\n### Math across DSTs\r\n\r\nThere's a whole [section](math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher-order, variable-length units like days, weeks, months, and years. When working with lower-order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.\r\n\r\nAn easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is `America/New_York`, which had a Spring Forward DST in the early hours of March 12.\r\n\r\n```js\r\nvar start = DateTime.local(2017, 3, 11, 10);\r\nstart.hour; //=> 10, just for comparison\r\nstart.plus({ days: 1 }).hour; //=> 10, stayed the same\r\nstart.plus({ hours: 24 }).hour; //=> 11, DST pushed forward an hour\r\n```\r\n\r\n## Changing the default zone\r\n\r\nBy default, Luxon creates DateTimes in the system's local zone. However, you can override this behavior globally:\r\n\r\n```js\r\nSettings.defaultZoneName = \"Asia/Tokyo\";\r\nDateTime.local().zoneName; //=> 'Asia/Tokyo'\r\n\r\nSettings.defaultZoneName = \"utc\";\r\nDateTime.local().zoneName; //=> 'UTC'\r\n\r\n// you can reset by setting to 'local'\r\n\r\nSettings.defaultZoneName = \"local\";\r\nDateTime.local().zoneName; //=> 'America/New_York'\r\n```\r\n",
+    "content": "# Time zones and offsets\n\nLuxon has support for time zones. This page explains how to use them.\n\n## Don't worry!\n\nYou _usually_ don't need to worry about time zones. Your code runs on a computer with a particular time zone and everything will work consistently in that zone without you doing anything. It's when you want to do complicated stuff _across_ zones that you have to think about it. Even then, here are some pointers to help you avoid situations where you have to think carefully about time zones:\n\n1.  Don't make servers think about _local_ times. Configure them to use UTC and write your server's code to work in UTC. Times can often be thought of as a simple count of epoch milliseconds; what you would call that time (e.g. 9:30) in what zone doesn't (again, often) matter.\n2.  Communicate times between systems in ISO 8601, like \"2017-05-15T13:30:34Z\" where possible (it doesn't matter if you use Z or some local offset; the point is that it precisely identifies the millisecond on the global timeline).\n3.  Where possible, only think of time zones as a formatting concern; your application ideally never knows that the time it's working with is called \"9:00\" until it's being rendered to the user.\n4.  Barring 3, do as much manipulation of the time (say, adding an hour to the current time) in the client code that's already running in the time zone where the results will matter.\n\nAll those things will make it less likely you ever need to work explicitly with time zones and may also save you plenty of other headaches. But those aren't possible for some applications; you might need to work with times in zones other than the one the program is running in, for any number of reasons. And that's where Luxon's time zone support comes in.\n\n## Terminology\n\nBear with me here. Time zones are pain in the ass. Luxon has lots of tools to deal with them, but there's no getting around the fact that they're complicated. The terminology for time zones and offsets isn't well-established. But let's try to impose some order:\n\n1.  An **offset** is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we'll use hours.\n1.  A **time zone** is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as \"America/New_York\". That zone says something to the effect of \"The offset is -4, except between March and November, when it's -5\".\n1.  A **fixed-offset time zone** is any time zone that never changes offsets, such as UTC. Luxon supports fixed-offset zones directly; they're specified like UTC+7, which you can interpret as \"always with an offset of +7\".\n1.  A **named offset** is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America's EST roughly implies America/New_York) and the current offset (EST means -4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it's always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US's EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.\n\nSome subtleties:\n\n1.  Multiple zones can have the same offset (think about the US's zones and their Canadian equivalents), though they might not have the same offset all the time, depending on when their DSTs are. Thus zones and offsets have a many-to-many relationship.\n1.  Just because a time zone doesn't have a DST now doesn't mean it's fixed. Perhaps it had one in the past. Regardless, Luxon does not have first-class access to the list of rules, so it assumes any IANA-specified zone is not fixed and checks for its current offset programmatically.\n\nIf all this seems too terse, check out these articles. The terminology in them is subtly different but the concepts are the same:\n\n- [Time Zones Aren’t Offsets – Offsets Aren’t Time Zones](https://spin.atomicobject.com/2016/07/06/time-zones-offsets/)\n- [Stack Overflow's timezone wiki page](https://stackoverflow.com/tags/timezone/info)\n\n## Luxon works with time zones\n\nLuxon's DateTime class supports zones directly. By default, a date created in Luxon is \"in\" the local time zone of the machine it's running on. By \"in\" we mean that the DateTime has, as one of its properties, an associated zone.\n\nIt's important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you're in; the zone is really piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon's behavior too. It just doesn't change _what time it is_.\n\nSpecifically, a DateTime's zone affects its behavior in these ways:\n\n1.  Times will be formatted as they would be in that zone.\n1.  Transformations to the DateTime (such as `plus` or `startOf`) will obey any DSTs in that zone that affect the calculation (see \"Math across DSTs\" below)\n\nGenerally speaking, Luxon does not support changing a DateTime's offset, just its zone. That allows it to enforce the behaviors in the list above. The offset for that DateTime is just whatever the zone says it is. If you are unconcerned with the effects above, then you can always give your DateTime a fixed-offset zone.\n\n## Specifying a zone\n\nLuxon's API methods that take a zone as an argument all let you specify the zone in a few ways.\n\n| Type         | Example            | Description                                                       |\n| ------------ | ------------------ | ----------------------------------------------------------------- |\n| IANA         | 'America/New_York' | that zone                                                         |\n| local        | 'local'            | the system's local zone                                           |\n| UTC          | 'utc'              | Universal Coordinated Time                                        |\n| fixed offset | 'UTC+7'            | a fixed offset zone                                               |\n| Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only) |\n\n### IANA support\n\nIANA-specified zones are string identifiers like \"America/New_York\" or \"Asia/Tokyo\". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:\n\n```js\nInfo.features().zones; //=> true\n```\n\nIf you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](matrix.html#zones) your environment.\n\nIf you specify a zone and your environment doesn't support that zone, you'll get an [invalid](validity.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason it doesn't support that _particular_ zone, or because the zone is just bogus. Like this:\n\n```js\nbogus = DateTime.local().setZone(\"America/Bogus\");\n\nbogus.isValid; //=> false\nbogus.invalidReason; //=> 'unsupported zone'\n```\n\n## Creating DateTimes\n\n### Local by default\n\nBy default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's local zone. For example, my computer is configured to use `America/New_York`, which has an offset of -4 in May:\n\n```js\nvar local = DateTime.local(2017, 05, 15, 09, 10, 23);\n\nlocal.zoneName; //=> 'America/New_York'\nlocal.toString(); //=> '2017-05-15T09:10:23.000-04:00'\n\nvar iso = DateTime.fromISO(\"2017-05-15T09:10:23\");\n\niso.zoneName; //=> 'America/New_York'\niso.toString(); //=> '2017-05-15T09:10:23.000-04:00'\n```\n\n### Creating DateTimes in a zone\n\nMany of Luxon's factory methods allow you to tell it specifically what zone to create the DateTime in:\n\n```js\nvar overrideZone = DateTime.fromISO(\"2017-05-15T09:10:23\", { zone: \"Europe/Paris\" });\n\noverrideZone.zoneName; //=> 'Europe/Paris'\noverrideZone.toString(); //=> '2017-05-15T09:10:23.000+02:00'\n```\n\nNote two things:\n\n1.  The date and time specified in the string was interpreted as a Parisian local time (i.e. it's the time that corresponds to what would be called 9:10 _there_).\n2.  The resulting DateTime object is in Europe/Paris.\n\nThose are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it's more convenient for the same option to govern both.\n\nIn addition, one static method, `utc()`, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:\n\n```js\nvar utc = DateTime.utc(2017, 05, 15, 09, 10, 23);\n\nutc.zoneName; //=> 'UTC'\nutc.toString(); //=> '2017-05-15T09:10:23.000Z'\n```\n\n### Strings that specify an offset\n\nSome input strings may specify an offset as part of the string itself. In these cases, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system's local zone:\n\n```js\nvar specifyOffset = DateTime.fromISO(\"2017-05-15T09:10:23-09:00\");\n\nspecifyOffset.zoneName; //=> 'America/New_York'\nspecifyOffset.toString(); //=> '2017-05-15T14:10:23.000-04:00'\n\nvar specifyZone = DateTime.fromFormat(\n  \"2017-05-15T09:10:23 Europe/Paris\",\n  \"yyyy-MM-dd'T'HH:mm:ss z\"\n);\n\nspecifyZone.zoneName; //=> 'America/New_York'\nspecifyZone.toString(); //=> '2017-05-15T03:10:23.000-04:00'\n```\n\n...unless a zone is specified as an option (see previous section), in which case the DateTime gets converted to _that_ zone:\n\n```js\nvar specifyOffsetAndOverrideZone = DateTime.fromISO(\"2017-05-15T09:10:23-09:00\", {\n  zone: \"Europe/Paris\"\n});\n\nspecifyOffsetAndOverrideZone.zoneName; //=> 'Europe/Paris'\nspecifyOffsetAndOverrideZone.toString(); //=> '2017-05-15T20:10:23.000+02:00'\n```\n\n### setZone\n\nFinally, some parsing functions allow you to \"keep\" the zone in the string as the DateTime's zone. Note that if only an offset is provided by the string, the zone will be a fixed-offset one, since Luxon doesn't know which zone is meant, even if you do.\n\n```js\nvar keepOffset = DateTime.fromISO(\"2017-05-15T09:10:23-09:00\", { setZone: true });\n\nkeepOffset.zoneName; //=> 'UTC-9'\nkeepOffset.toString(); //=> '2017-05-15T09:10:23.000-09:00'\n\nvar keepZone = DateTime.fromFormat(\"2017-05-15T09:10:23 Europe/Paris\", \"yyyy-MM-dd'T'HH:mm:ss z\", {\n  setZone: true\n});\n\nkeepZone.zoneName; //=> 'Europe/Paris'\nkeepZone.toString(); //=> '2017-05-15T09:10:23.000+02:00'\n```\n\n## Changing zones\n\n### setZone\n\nLuxon objects are immutable, so when we say \"changing zones\" we really mean \"creating a new instance with a different zone\". Changing zone generally means \"change the zone in which this DateTime is expressed (and according to which rules it is manipulated), but don't change the underlying timestamp.\" For example:\n\n```js\nvar local = DateTime.local();\nvar rezoned = local.setZone(\"America/Los_Angeles\");\n\n// different local times with different offsets\nlocal.toString(); //=> '2017-09-13T18:30:51.141-04:00'\nrezoned.toString(); //=> '2017-09-13T15:30:51.141-07:00'\n\n// but actually the same time\nlocal.valueOf() === rezoned.valueOf(); //=> true\n```\n\n### keepLocalTime\n\nGenerally, it's best to think of the zone as a sort of metadata that you slide around independent of the underlying count of milliseconds. However, sometimes that's not what you want. Sometimes you want to change zones while keeping the local time fixed and instead altering the timestamp. Luxon supports this:\n\n```js\nvar local = DateTime.local();\nvar rezoned = local.setZone(\"America/Los_Angeles\", { keepLocalTime: true });\n\nlocal.toString(); //=> '2017-09-13T18:36:23.187-04:00'\nrezoned.toString(); //=> '2017-09-13T18:36:23.187-07:00'\n\nlocal.valueOf() === rezoned.valueOf(); //=> false\n```\n\nIf you find that confusing, I recommend just not using it. On the other hand, if you find yourself using this all the time, you are probably doing something wrong.\n\n## Accessors\n\nLuxon DateTimes have a few different accessors that let you find out about the zone and offset:\n\n```js\nvar dt = DateTime.local();\n\ndt.zoneName; //=> 'America/New_York'\ndt.offset; //=> -240\ndt.offsetNameShort; //=> 'EDT'\ndt.offsetNameLong; //=> 'Eastern Daylight Time'\ndt.isOffsetFixed; //=> false\ndt.isInDST; //=> true\n```\n\nThose are all documented in the [DateTime API docs](../class/src/datetime.js~DateTime.html).\n\n## DST weirdness\n\nBecause our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This is all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and a time library has to deal with it.\n\nMost of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.\n\n### Invalid times\n\nSome local times simply don't exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, `America/New_York`, on March 12, 2017 the millisecond after 1:59:59.999 is 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.000, inclusive, don't exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.\n\nIf you create such a DateTime from scratch, the missing time will be advanced by an hour:\n\n```js\nDateTime.local(2017, 3, 12, 2, 30).toString(); //=> '2017-03-12T03:30:00.000-04:00'\n```\n\nYou can also do date math that lands you in the middle of the shift. These also push forward:\n\n```js\nDateTime.local(2017, 3, 11, 2, 30)\n  .plus({ days: 1 })\n  .toString(); //=> '2017-03-12T03:30:00.000-04:00'\nDateTime.local(2017, 3, 13, 2, 30)\n  .minus({ days: 1 })\n  .toString(); //=> '2017-03-12T03:30:00.000-04:00'\n```\n\n### Ambiguous times\n\nHarder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after 1:59:59.000 became 1:00:00.000. But of course there was already a 1:00 that day, one hour before before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because they correspond to different moments in time.\n\nHowever, Luxon's behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:\n\n```js\nDateTime.local(2017, 11, 5, 1, 30).offset / 60; //=> -4\nDateTime.local(2017, 11, 4, 1, 30).plus({ days: 1 }).offset / 60; //=> -4\nDateTime.local(2017, 11, 6, 1, 30).minus({ days: 1 }).offset / 60; //=> -5\n```\n\nIn other words, sometimes it picks one and sometimes the other. Luxon doesn't guarantee the specific behavior above. That's just what it happens to do.\n\nIf you're curious, this lack of definition is because Luxon doesn't actually know that any particular DateTime is an ambiguous time. It doesn't know the time zones rules at all. It just knows the local time does not contradict the offset and leaves it at that. To find out the time is ambiguous and define exact rules for how to resolve it, Luxon would have to test nearby times to see if it can find duplicate local time, and it would have to do that on every creation of a DateTime, regardless of whether it was anywhere near a real DST shift. Because that's onerous, Luxon doesn't bother.\n\n### Math across DSTs\n\nThere's a whole [section](math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher-order, variable-length units like days, weeks, months, and years. When working with lower-order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.\n\nAn easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is `America/New_York`, which had a Spring Forward DST in the early hours of March 12.\n\n```js\nvar start = DateTime.local(2017, 3, 11, 10);\nstart.hour; //=> 10, just for comparison\nstart.plus({ days: 1 }).hour; //=> 10, stayed the same\nstart.plus({ hours: 24 }).hour; //=> 11, DST pushed forward an hour\n```\n\n## Changing the default zone\n\nBy default, Luxon creates DateTimes in the system's local zone. However, you can override this behavior globally:\n\n```js\nSettings.defaultZoneName = \"Asia/Tokyo\";\nDateTime.local().zoneName; //=> 'Asia/Tokyo'\n\nSettings.defaultZoneName = \"utc\";\nDateTime.local().zoneName; //=> 'UTC'\n\n// you can reset by setting to 'local'\n\nSettings.defaultZoneName = \"local\";\nDateTime.local().zoneName; //=> 'America/New_York'\n```\n",
     "static": true,
     "access": "public"
   },
@@ -11720,7 +11852,7 @@
     "kind": "manual",
     "longname": "/mnt/c/code/luxon/changelog.md",
     "name": "./changelog.md",
-    "content": "# Changelog\n\n## 1.14.0\n\n * Allow the zone argument to Interval.fromISO with duration components\n * Ignore the zone argument to Duration factory methods\n\n## 1.13.3\n\n * Fix keepLocalTime calculations that span offset changes\n\n## 1.13.2\n\n * Fixed ISO formatting for dates > 999\n\n## 1.13.1\n\n * Performance improvements for regex parsing\n\n## 1.13.0\n\n * Support numberSystem in fromFormat\n * Fix validity for bad initial zone specifiers\n\n## 1.12.1\n\n * Fix cross-month diffs in some scenarios\n * Fix time zone parsing when the time zone isn't at the end\n * Memoize IANA zone creation\n\n## 1.12.0\n\n * Add some explicit CDN support to the NPM package\n * Add week token to duration ISO support\n * Lots of cleanup and test coverage changes\n\n## 1.11.4\n\n * `setZone(\"local\")` now returns the defaultZone if it is set\n * Fixes for the polyfilled build\n\n## 1.11.3\n\n * Allow 24:00 in ISO (and other) strings\n * Fix some bugs with the typecheck functions like `DateTime.isDateTime()`\n\n## 1.11.2\n\n * Fixed handling of some characters in fromFormat literal sections\n * Hanlde string values in object arguments to DateTime methods\n * Fixed toRelativeCalendar's handling of zones in the base date\n\n## 1.11.1\n\n * Fix DateTime#plus() when spanning across AD 100\n\n## 1.11.0\n\n * Fix low-year handling for IANA zones\n * `DateTime#toLocal()` now uses the default locale\n * Fix zero duration formatting\n * Many documentation fixes\n\n## 1.10.0\n\n- Fix endOf(\"day\") during DSTs (#399)\n- Add `Interval#mapEndpoints (#400)\n- Add `DateTime#zone` and `Info.normalizeZone` (#404)\n\n## 1.9.0\n\n- Add `DateTime#toRelative` and `DateTime#toRelativeCalendar`\n\n## 1.8.3\n\n- Allow \"UTC\" in the zone position of `fromSQL`\n- Force `isDateTime` and `isDuration` to return booleans in all cases\n\n## 1.8.2\n\n- Trim leading \\u200e characters from offset names in Edge 16 and 17\n\n## 1.8.1\n\n- Add `DateTime.fromSeconds` and `DateTime#toSeconds`\n\n## 1.7.1\n\n- Floor the seconds instead of rounding them when outputting the 'X' format\n- Change the options to toLocale to override the configuration (the previous options were essentially ignored)\n\n## 1.6.2\n\n- Fixing merge error that resulted in bad error messages\n\n## 1.6.0\n\n- **midly breaking** Rework negative durations\n- Fix handling weekdays at the end of leap week years\n- Add isDuration, isDateTime, and isInterval\n- Fix handling of Luxon object arguments passed from other execution contexts\n\n## 1.5.0\n\n- Improved error message\n- Added DateTime#invalidExplanation, Duration#invalidExplanation, Interval#invalidExplanation to provide more details on invalid objects\n\n## 1.4.6\n\n- Cache Intl objects for an 85x speed up on basic operations using non-en locales\n\n## 1.4.5\n\n- Fix minified builds\n\n## 1.4.4\n\n- Fix hour formatting in RFC822 strings\n- Interval.fromISO accepts formats with durations\n\n## 1.4.3\n\nRemoval accidentally-introduced runtime dependency\n\n## 1.4.2\n\n- Handle locale strings with BCP 47 extensions. Especially helpful for environments with funky default locales\n- Support for [weekYear]-W[weekNumber] ISO 8601 strings\n\n## 1.4.1\n\n- Empty diffs now have all the asked-for units in them, set at 0\n- Duration operations perserve the superset of units\n\n## 1.4.0\n\n- Add x and X to toFormat for formatting Epoch seconds and Epoch milliseconds\n- Parser allows a wider range of IANA zone specifiers\n- BREAKING: Etc/GMT+10 is now interpreted as UTC-10, per spec\n\n## 1.3.3\n\nDocumentation fixes\n\n## 1.3.2\n\n- DateTime.fromMillis will throw if passed a non-number\n- Fixes for type checking across JS contexts\n\n## 1.3.1\n\n- Include milliseconds in Duration#toISO\n- Avoid deprecation warning from DateTime#inspect in Node 10\n\n## 1.3.0\n\n- **mildly breaking change** Duration.toFormat now floors its outputs instead of rounding them (see #224)\n- Added 'floor' option to Duration.toFormat and deprecated the 'round' option\n- Added `Dateime.toBSON`\n- Fixed infinite loop when passing invalid or zero-length durations to Interval#splitBy\n- Added better error handling to Duration.fromObject()\n\n## 1.2.1\n\n- 222x speed-up in DateTime creation for non-en locales\n- Added `DateTime#toMillis` alias for `DateTime#valueOf`\n- Fixed types on zone exports\n\n## 1.2.0\n\n- Export Zone classes\n- Fix `endOf` and `startOf` for quarters\n- Change `toFormat(\"Z\")` to return a number for UTC\n- Allow \"GTM\" as an argument to `setZone`\n\n## 1.1.0\n\n- Support for zone names with more than two components\n- Fixed long-term-accurate conversions for months\n- Added `weeksInWeekYear`\n\n## 1.0.0\n\n- The big one-oh. No changes from 0.5.8.\n\n## 0.5.8\n\n- Large perf improvements for `DateTime#toFormat()`, when using non-intl numbers\n\n## 0.5.7\n\n- Added AMD build to the NPM package\n- Large performance improvements to technical formatting (e.g. `DateTime#toISO`)\n\n## 0.5.6\n\n- Refactor internals\n- Added support for fractional seconds in `Duration.fromISO`\n- Added browser global to the NPM package\n\n## 0.5.5\n\n- Best-we-can-do fix for `DateTime#toLocaleString()` for fixed-offset zones when showing the zone name in the output\n- Fixed `Duration#shiftTo` for unormalized Durations that need a rollup cascade\n\n## 0.5.4\n\n- Fix default locales in Node\n- Fix prototype to help with React inspection\n- Improve REPL output for Durations in Node\n\n## 0.5.3\n\n- Remove errant ICU runtime dep (again)\n\n## 0.5.2\n\n- Remove comments from minified builds (introduced by 0.5.1)\n\n## 0.5.1\n\n- Fixed minified builds (oops)\n- Fix computation of fractional parts of diffs\n\n## 0.5.0\n\n- `isBefore()` returns true for the end of the interval, consistent with being half-open\n- `zoneName` now rturns `null` for invalid DateTimes\n- Added quarter support\n- Adding a month to Jan 31 gives Feb 28/29\n\n## 0.4.0\n\n- Always round down to the nearest millisecond when parsing\n\n## 0.3.1\n\n- Fixed `toLocaleString` for fixed-offset zones in the absence of Intl\n- Added `Info.isValidIANAZone`\n- Made malformed zone specifiers result in invalid DateTime instances\n\n## 0.3.0\n\n- Rename DateTime.fromString to DateTime.fromFormat (leaving deprecated DateTime.fromString)\n- Rename DateTime.fromStringExplain to DateTime.fromFormatExplain (leaving deprecated DateTime.fromStringExplain)\n- Support Etc/GMT IANA zones\n- Perf fixes for zones\n- Rework build infrastructure\n\n## 0.2.12\n\n- Fix DateTime.fromObject's handling of default zones\n- Change `keepCalendarTime` to `keepLocalTime`\n\n## 0.2.11\n\n- Handle no arguments in `DateTime.min` and `DateTime.max`\n- Documentation fixes\n\n## 0.2.10\n\n- Fix bug where Durations could sometimes mutate\n\n## 0.2.9\n\n- Fix `DateTime.fromMillis(0)` more thoroughly\n\n## 0.2.8\n\n- Fix sourcemaps\n\n## 0.2.7\n\n- Fix `DateTime.fromMillis(0)`\n\n## 0.2.6\n\n- Fix 'h' and 'hh' `toFormat` tokens for midnight\n\n## 0.2.5\n\n- Better `shiftTo` behavior for durations with floating point components\n\n## 0.2.4\n\n- Fix `toHTTP` to use 24-hour hours\n- Tighten up regular expressions\n- Various documentation fixes\n\n## 0.2.3\n\n- Fixes for `diff` with multiple units\n\n## 0.2.2\n\n- Fixes for `fromSQL`, `toSQL`, `toSQLTime`, and `toSQLDate`\n- Add `includeOffset` option to `toISO` and `toISOTime`\n\n## 0.2.1\n\n- Add `module` field to package.json\n\n## 0.2.0\n\n- Remove polyfills from main builds\n- Update compilation toolchain to target builds more exactly\n- Fix IE in polyfill build\n\n## 0.1.0\n\n- Add `.fromSQL`, `#toSQL`, `#toSQLTime`, `#toSQLDate`\n- Fix AM/PM parsing\n- Major perf improvements\n- Default to system locale when using macro formats in `#toFormat`\n- `.fromISO` accepts standalone times\n- See https://github.com/moment/luxon/issues/93 for important news concerning field accessibility\n\n## 0.0.22\n\n- Add 'u' formatting and parsing\n- Add 'y', 'yyyyy', and 'yyyyyy' parsing tokens\n- Add 'yyyyyy' formatting token\n- Better error messages for missing arguments to `DateTime.fromString`\n\n## 0.0.21\n\n- Fix zones for Edge\n\n## 0.0.20\n\n- Fix `fromISO` to accept various levels of subsecond precision\n\n## 0.0.19\n\n- Fixed parsing for ordinals\n- Made parsing stricter\n\n## 0.0.18\n\n- Fixed formatting for non-hour aligned fixed-offset zones\n- Fixed longterm conversion accuracy option in diffs\n- Fixed invalid handling in `Interval#set`\n\n## 0.0.17\n\n- Fixing formatting for fixed-offset zones\n\n## 0.0.16\n\n- Fixes for IE 9 & 10\n\n## 0.0.15\n\n- Fixing busted release 0.0.14\n\n## 0.0.13\n\n- toLocaleString() and others default to the system's locale\n- support for ISO week durations in `Duration.fromISO`\n\n## 0.0.12\n\n- Improve non-Intl fallbacks for toLocaleString\n- Fix `offsetNameShort` and `offsetNameLong` for non-Intl environments\n- Added `weekdayShort`, `weekdayLong`, `monthShort`, `monthLong` DateTime getters\n\n## 0.0.10\n\n- Only include build dir in NPM module\n\n## 0.0.9\n\n- Move to Moment Github org\n\n## 0.0.8\n\n- The local zone can now report its IANA name\n- Fixed parsing bug for `yy` and `kk`\n- Improved test coverage\n\n## 0.0.7\n\n- Added `toLocaleParts`\n- Slightly more friendly month/weekday parsing\n- Default locale setting\n\n## 0.0.6\n\n- Stricter `toJSDate`\n- `fromISO` now supports `year` and `year-month` formats\n- More graceful degradation in the absence of platform features\n\n## 0.0.5\n\nExperimental, but now broadly useful.\n",
+    "content": "# Changelog\n\n## 1.15.0\n\n * Added `formatOffset` to Zones\n\n## 1.14.0\n\n * Allow the zone argument to Interval.fromISO with duration components\n * Ignore the zone argument to Duration factory methods\n\n## 1.13.3\n\n * Fix keepLocalTime calculations that span offset changes\n\n## 1.13.2\n\n * Fixed ISO formatting for dates > 999\n\n## 1.13.1\n\n * Performance improvements for regex parsing\n\n## 1.13.0\n\n * Support numberSystem in fromFormat\n * Fix validity for bad initial zone specifiers\n\n## 1.12.1\n\n * Fix cross-month diffs in some scenarios\n * Fix time zone parsing when the time zone isn't at the end\n * Memoize IANA zone creation\n\n## 1.12.0\n\n * Add some explicit CDN support to the NPM package\n * Add week token to duration ISO support\n * Lots of cleanup and test coverage changes\n\n## 1.11.4\n\n * `setZone(\"local\")` now returns the defaultZone if it is set\n * Fixes for the polyfilled build\n\n## 1.11.3\n\n * Allow 24:00 in ISO (and other) strings\n * Fix some bugs with the typecheck functions like `DateTime.isDateTime()`\n\n## 1.11.2\n\n * Fixed handling of some characters in fromFormat literal sections\n * Hanlde string values in object arguments to DateTime methods\n * Fixed toRelativeCalendar's handling of zones in the base date\n\n## 1.11.1\n\n * Fix DateTime#plus() when spanning across AD 100\n\n## 1.11.0\n\n * Fix low-year handling for IANA zones\n * `DateTime#toLocal()` now uses the default locale\n * Fix zero duration formatting\n * Many documentation fixes\n\n## 1.10.0\n\n- Fix endOf(\"day\") during DSTs (#399)\n- Add `Interval#mapEndpoints (#400)\n- Add `DateTime#zone` and `Info.normalizeZone` (#404)\n\n## 1.9.0\n\n- Add `DateTime#toRelative` and `DateTime#toRelativeCalendar`\n\n## 1.8.3\n\n- Allow \"UTC\" in the zone position of `fromSQL`\n- Force `isDateTime` and `isDuration` to return booleans in all cases\n\n## 1.8.2\n\n- Trim leading \\u200e characters from offset names in Edge 16 and 17\n\n## 1.8.1\n\n- Add `DateTime.fromSeconds` and `DateTime#toSeconds`\n\n## 1.7.1\n\n- Floor the seconds instead of rounding them when outputting the 'X' format\n- Change the options to toLocale to override the configuration (the previous options were essentially ignored)\n\n## 1.6.2\n\n- Fixing merge error that resulted in bad error messages\n\n## 1.6.0\n\n- **midly breaking** Rework negative durations\n- Fix handling weekdays at the end of leap week years\n- Add isDuration, isDateTime, and isInterval\n- Fix handling of Luxon object arguments passed from other execution contexts\n\n## 1.5.0\n\n- Improved error message\n- Added DateTime#invalidExplanation, Duration#invalidExplanation, Interval#invalidExplanation to provide more details on invalid objects\n\n## 1.4.6\n\n- Cache Intl objects for an 85x speed up on basic operations using non-en locales\n\n## 1.4.5\n\n- Fix minified builds\n\n## 1.4.4\n\n- Fix hour formatting in RFC822 strings\n- Interval.fromISO accepts formats with durations\n\n## 1.4.3\n\nRemoval accidentally-introduced runtime dependency\n\n## 1.4.2\n\n- Handle locale strings with BCP 47 extensions. Especially helpful for environments with funky default locales\n- Support for [weekYear]-W[weekNumber] ISO 8601 strings\n\n## 1.4.1\n\n- Empty diffs now have all the asked-for units in them, set at 0\n- Duration operations perserve the superset of units\n\n## 1.4.0\n\n- Add x and X to toFormat for formatting Epoch seconds and Epoch milliseconds\n- Parser allows a wider range of IANA zone specifiers\n- BREAKING: Etc/GMT+10 is now interpreted as UTC-10, per spec\n\n## 1.3.3\n\nDocumentation fixes\n\n## 1.3.2\n\n- DateTime.fromMillis will throw if passed a non-number\n- Fixes for type checking across JS contexts\n\n## 1.3.1\n\n- Include milliseconds in Duration#toISO\n- Avoid deprecation warning from DateTime#inspect in Node 10\n\n## 1.3.0\n\n- **mildly breaking change** Duration.toFormat now floors its outputs instead of rounding them (see #224)\n- Added 'floor' option to Duration.toFormat and deprecated the 'round' option\n- Added `Dateime.toBSON`\n- Fixed infinite loop when passing invalid or zero-length durations to Interval#splitBy\n- Added better error handling to Duration.fromObject()\n\n## 1.2.1\n\n- 222x speed-up in DateTime creation for non-en locales\n- Added `DateTime#toMillis` alias for `DateTime#valueOf`\n- Fixed types on zone exports\n\n## 1.2.0\n\n- Export Zone classes\n- Fix `endOf` and `startOf` for quarters\n- Change `toFormat(\"Z\")` to return a number for UTC\n- Allow \"GTM\" as an argument to `setZone`\n\n## 1.1.0\n\n- Support for zone names with more than two components\n- Fixed long-term-accurate conversions for months\n- Added `weeksInWeekYear`\n\n## 1.0.0\n\n- The big one-oh. No changes from 0.5.8.\n\n## 0.5.8\n\n- Large perf improvements for `DateTime#toFormat()`, when using non-intl numbers\n\n## 0.5.7\n\n- Added AMD build to the NPM package\n- Large performance improvements to technical formatting (e.g. `DateTime#toISO`)\n\n## 0.5.6\n\n- Refactor internals\n- Added support for fractional seconds in `Duration.fromISO`\n- Added browser global to the NPM package\n\n## 0.5.5\n\n- Best-we-can-do fix for `DateTime#toLocaleString()` for fixed-offset zones when showing the zone name in the output\n- Fixed `Duration#shiftTo` for unormalized Durations that need a rollup cascade\n\n## 0.5.4\n\n- Fix default locales in Node\n- Fix prototype to help with React inspection\n- Improve REPL output for Durations in Node\n\n## 0.5.3\n\n- Remove errant ICU runtime dep (again)\n\n## 0.5.2\n\n- Remove comments from minified builds (introduced by 0.5.1)\n\n## 0.5.1\n\n- Fixed minified builds (oops)\n- Fix computation of fractional parts of diffs\n\n## 0.5.0\n\n- `isBefore()` returns true for the end of the interval, consistent with being half-open\n- `zoneName` now rturns `null` for invalid DateTimes\n- Added quarter support\n- Adding a month to Jan 31 gives Feb 28/29\n\n## 0.4.0\n\n- Always round down to the nearest millisecond when parsing\n\n## 0.3.1\n\n- Fixed `toLocaleString` for fixed-offset zones in the absence of Intl\n- Added `Info.isValidIANAZone`\n- Made malformed zone specifiers result in invalid DateTime instances\n\n## 0.3.0\n\n- Rename DateTime.fromString to DateTime.fromFormat (leaving deprecated DateTime.fromString)\n- Rename DateTime.fromStringExplain to DateTime.fromFormatExplain (leaving deprecated DateTime.fromStringExplain)\n- Support Etc/GMT IANA zones\n- Perf fixes for zones\n- Rework build infrastructure\n\n## 0.2.12\n\n- Fix DateTime.fromObject's handling of default zones\n- Change `keepCalendarTime` to `keepLocalTime`\n\n## 0.2.11\n\n- Handle no arguments in `DateTime.min` and `DateTime.max`\n- Documentation fixes\n\n## 0.2.10\n\n- Fix bug where Durations could sometimes mutate\n\n## 0.2.9\n\n- Fix `DateTime.fromMillis(0)` more thoroughly\n\n## 0.2.8\n\n- Fix sourcemaps\n\n## 0.2.7\n\n- Fix `DateTime.fromMillis(0)`\n\n## 0.2.6\n\n- Fix 'h' and 'hh' `toFormat` tokens for midnight\n\n## 0.2.5\n\n- Better `shiftTo` behavior for durations with floating point components\n\n## 0.2.4\n\n- Fix `toHTTP` to use 24-hour hours\n- Tighten up regular expressions\n- Various documentation fixes\n\n## 0.2.3\n\n- Fixes for `diff` with multiple units\n\n## 0.2.2\n\n- Fixes for `fromSQL`, `toSQL`, `toSQLTime`, and `toSQLDate`\n- Add `includeOffset` option to `toISO` and `toISOTime`\n\n## 0.2.1\n\n- Add `module` field to package.json\n\n## 0.2.0\n\n- Remove polyfills from main builds\n- Update compilation toolchain to target builds more exactly\n- Fix IE in polyfill build\n\n## 0.1.0\n\n- Add `.fromSQL`, `#toSQL`, `#toSQLTime`, `#toSQLDate`\n- Fix AM/PM parsing\n- Major perf improvements\n- Default to system locale when using macro formats in `#toFormat`\n- `.fromISO` accepts standalone times\n- See https://github.com/moment/luxon/issues/93 for important news concerning field accessibility\n\n## 0.0.22\n\n- Add 'u' formatting and parsing\n- Add 'y', 'yyyyy', and 'yyyyyy' parsing tokens\n- Add 'yyyyyy' formatting token\n- Better error messages for missing arguments to `DateTime.fromString`\n\n## 0.0.21\n\n- Fix zones for Edge\n\n## 0.0.20\n\n- Fix `fromISO` to accept various levels of subsecond precision\n\n## 0.0.19\n\n- Fixed parsing for ordinals\n- Made parsing stricter\n\n## 0.0.18\n\n- Fixed formatting for non-hour aligned fixed-offset zones\n- Fixed longterm conversion accuracy option in diffs\n- Fixed invalid handling in `Interval#set`\n\n## 0.0.17\n\n- Fixing formatting for fixed-offset zones\n\n## 0.0.16\n\n- Fixes for IE 9 & 10\n\n## 0.0.15\n\n- Fixing busted release 0.0.14\n\n## 0.0.13\n\n- toLocaleString() and others default to the system's locale\n- support for ISO week durations in `Duration.fromISO`\n\n## 0.0.12\n\n- Improve non-Intl fallbacks for toLocaleString\n- Fix `offsetNameShort` and `offsetNameLong` for non-Intl environments\n- Added `weekdayShort`, `weekdayLong`, `monthShort`, `monthLong` DateTime getters\n\n## 0.0.10\n\n- Only include build dir in NPM module\n\n## 0.0.9\n\n- Move to Moment Github org\n\n## 0.0.8\n\n- The local zone can now report its IANA name\n- Fixed parsing bug for `yy` and `kk`\n- Improved test coverage\n\n## 0.0.7\n\n- Added `toLocaleParts`\n- Slightly more friendly month/weekday parsing\n- Default locale setting\n\n## 0.0.6\n\n- Stricter `toJSDate`\n- `fromISO` now supports `year` and `year-month` formats\n- More graceful degradation in the absence of platform features\n\n## 0.0.5\n\nExperimental, but now broadly useful.\n",
     "static": true,
     "access": "public"
   },
