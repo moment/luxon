@@ -103,6 +103,20 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
   );
 });
 
+test("Interval.fromISO accepts a zone argument", () => {
+  const dateDate = Interval.fromISO("2016-01-01/2016-12-31", { zone: "Europe/Paris" });
+  expect(dateDate.isValid).toBe(true);
+  expect(dateDate.start.zoneName).toBe("Europe/Paris");
+
+  const dateDur = Interval.fromISO("2016-01-01/P1Y", { zone: "Europe/Paris" });
+  expect(dateDur.isValid).toBe(true);
+  expect(dateDur.start.zoneName).toBe("Europe/Paris");
+
+  const durDate = Interval.fromISO("P1Y/2016-01-01", { zone: "Europe/Paris" });
+  expect(durDate.isValid).toBe(true);
+  expect(durDate.start.zoneName).toBe("Europe/Paris");
+});
+
 const badInputs = [
   null,
   "",
