@@ -83,7 +83,7 @@ export default class IANAZone extends Zone {
    * @return {boolean}
    */
   static isValidSpecifier(s) {
-    return s && s.match(matchingRegex);
+    return !!(s && s.match(matchingRegex));
   }
 
   /**
