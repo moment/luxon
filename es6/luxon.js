@@ -2697,7 +2697,8 @@ class Duration {
       values: normalizeObject(obj, Duration.normalizeUnit, [
         "locale",
         "numberingSystem",
-        "conversionAccuracy"
+        "conversionAccuracy",
+        "zone" // a bit of debt; it's super inconvenient internally not to be able to blindly pass this
       ]),
       loc: Locale.fromObject(obj),
       conversionAccuracy: obj.conversionAccuracy

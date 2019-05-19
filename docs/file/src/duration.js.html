@@ -279,7 +279,8 @@ export default class Duration {
       values: normalizeObject(obj, Duration.normalizeUnit, [
         &quot;locale&quot;,
         &quot;numberingSystem&quot;,
-        &quot;conversionAccuracy&quot;
+        &quot;conversionAccuracy&quot;,
+        &quot;zone&quot; // a bit of debt; it&apos;s super inconvenient internally not to be able to blindly pass this
       ]),
       loc: Locale.fromObject(obj),
       conversionAccuracy: obj.conversionAccuracy
