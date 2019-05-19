@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.15.0
+
+ * Added `formatOffset` to Zones
+
 ## 1.14.0
 
  * Allow the zone argument to Interval.fromISO with duration components
