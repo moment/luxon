@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.14.0
+
+ * Allow the zone argument to Interval.fromISO with duration components
+ * Ignore the zone argument to Duration factory methods
+
 ## 1.13.3
 
  * Fix keepLocalTime calculations that span offset changes
