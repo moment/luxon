@@ -123,7 +123,7 @@ utc.toString(); //=> '2017-05-15T09:10:23.000Z'
 
 ### Strings that specify an offset
 
-Some input strings may specify an offset as part of the string itself. In these case, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system's local zone:
+Some input strings may specify an offset as part of the string itself. In these cases, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system's local zone:
 
 ```js
 var specifyOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00");
