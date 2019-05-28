@@ -226,7 +226,9 @@ export default class Duration {
   static fromObject(obj) {
     if (obj == null || typeof obj !== "object") {
       throw new InvalidArgumentError(
-        `Duration.fromObject: argument expected to be an object, got ${typeof obj}`
+        `Duration.fromObject: argument expected to be an object, got ${
+          obj === null ? "null" : typeof obj
+        }`
       );
     }
     return new Duration({
