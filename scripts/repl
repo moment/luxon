@@ -1,1 +1,2 @@
-TZ="America/New_York" NODE_ICU_DATA="$(pwd)/node_modules/full-icu" LANG=en_US.utf8 node -r ./scripts/bootstrap.js
+#!/bin/bash
+TZ="America/New_York" NODE_ICU_DATA="$(pwd)/node_modules/full-icu" LANG=en_US.utf8 node -i -r "./scripts/bootstrap.js"

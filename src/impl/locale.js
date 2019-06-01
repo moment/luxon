@@ -289,7 +289,6 @@ export default class Locale {
       localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale()),
       numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
       outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
-
     return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
   }
 

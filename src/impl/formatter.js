@@ -202,10 +202,10 @@ export default class Formatter {
             return formatOffset({ format: "techie", allowZ: false });
           case "ZZZZ":
             // like EST
-            return dt.offsetNameShort;
+            return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
           case "ZZZZZ":
             // like Eastern Standard Time
-            return dt.offsetNameLong;
+            return dt.zone.offsetName(dt.ts, { format: "long", locale: this.loc.locale });
           // zone
           case "z":
             // like America/New_York
