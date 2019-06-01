@@ -1939,11 +1939,17 @@ function () {
 
         case "ZZZZ":
           // like EST
-          return dt.offsetNameShort;
+          return dt.zone.offsetName(dt.ts, {
+            format: "short",
+            locale: _this.loc.locale
+          });
 
         case "ZZZZZ":
           // like Eastern Standard Time
-          return dt.offsetNameLong;
+          return dt.zone.offsetName(dt.ts, {
+            format: "long",
+            locale: _this.loc.locale
+          });
         // zone
 
         case "z":
@@ -3312,7 +3318,7 @@ function () {
 
   Duration.fromObject = function fromObject(obj) {
     if (obj == null || typeof obj !== "object") {
-      throw new InvalidArgumentError("Duration.fromObject: argument expected to be an object, got " + typeof obj);
+      throw new InvalidArgumentError("Duration.fromObject: argument expected to be an object, got " + (obj === null ? "null" : typeof obj));
     }
 
     return new Duration({

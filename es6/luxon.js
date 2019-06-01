@@ -1546,10 +1546,10 @@ class Formatter {
             return formatOffset({ format: "techie", allowZ: false });
           case "ZZZZ":
             // like EST
-            return dt.offsetNameShort;
+            return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
           case "ZZZZZ":
             // like Eastern Standard Time
-            return dt.offsetNameLong;
+            return dt.zone.offsetName(dt.ts, { format: "long", locale: this.loc.locale });
           // zone
           case "z":
             // like America/New_York
@@ -2002,7 +2002,6 @@ class Locale {
       localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale()),
       numberingSystemR = numberingSystem || Settings.defaultNumberingSystem,
       outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
-
     return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
   }
 
@@ -2718,7 +2717,9 @@ class Duration {
   static fromObject(obj) {
     if (obj == null || typeof obj !== "object") {
       throw new InvalidArgumentError(
-        `Duration.fromObject: argument expected to be an object, got ${typeof obj}`
+        `Duration.fromObject: argument expected to be an object, got ${
+          obj === null ? "null" : typeof obj
+        }`
       );
     }
     return new Duration({

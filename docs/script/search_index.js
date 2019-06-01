@@ -1531,25 +1531,25 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultlocale",
-    "class/src/settings.js~Settings.html#static-set-defaultLocale",
-    "src/settings.js~Settings.defaultLocale",
-    "member"
-  ],
-  [
-    "src/settings.js~settings.defaultlocale",
     "class/src/settings.js~Settings.html#static-get-defaultLocale",
     "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
-    "src/settings.js~settings.defaultnumberingsystem",
-    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
-    "src/settings.js~Settings.defaultNumberingSystem",
+    "src/settings.js~settings.defaultlocale",
+    "class/src/settings.js~Settings.html#static-set-defaultLocale",
+    "src/settings.js~Settings.defaultLocale",
     "member"
   ],
   [
     "src/settings.js~settings.defaultnumberingsystem",
     "class/src/settings.js~Settings.html#static-get-defaultNumberingSystem",
+    "src/settings.js~Settings.defaultNumberingSystem",
+    "member"
+  ],
+  [
+    "src/settings.js~settings.defaultnumberingsystem",
+    "class/src/settings.js~Settings.html#static-set-defaultNumberingSystem",
     "src/settings.js~Settings.defaultNumberingSystem",
     "member"
   ],
