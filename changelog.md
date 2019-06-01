@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.16.0
+
+ * Fixed locale default logic for `DateTime#toFormat("ZZZZ")
+
 ## 1.15.0
 
  * Added `formatOffset` to Zones
