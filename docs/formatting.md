@@ -122,7 +122,7 @@ You shouldn't create ad-hoc string formats if you can avoid it. If you intend fo
 
 ### toFormat
 
-See [DateTime#toFormat](../class/src/datetime.js~DateTime.html#instance-method-toFormat) for the API signature. As a brief motivating example:
+See [DateTime#toFormat](https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens) for the API signature. As a brief motivating example:
 
 ```js
 DateTime.fromISO('2014-08-06T13:07:04.054').toFormat('yyyy LLL dd'); //=> '2014 Aug 06'
