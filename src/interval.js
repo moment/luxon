@@ -87,11 +87,16 @@ export default class Interval {
     const builtStart = friendlyDateTime(start),
       builtEnd = friendlyDateTime(end);
 
-    return new Interval({
-      start: builtStart,
-      end: builtEnd,
-      invalid: validateStartEnd(builtStart, builtEnd)
-    });
+    const validateError = validateStartEnd(builtStart, builtEnd);
+
+    if (validateError == null) {
+      return new Interval({
+        start: builtStart,
+        end: builtEnd
+      });
+    } else {
+      return Interval.invalid(validateError);
+    }
   }
 
   /**

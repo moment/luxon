@@ -55,6 +55,17 @@ test("Interval.fromDateTimes throws with invalid input", () => {
   expect(() => Interval.fromDateTimes(DateTime.local(), true)).toThrow();
 });
 
+test("Interval.fromDateTimes throws with start date coming after end date", () => {
+  const start = DateTime.fromObject({
+      year: 2016,
+      month: 5,
+      day: 25
+    }).toJSDate(),
+    end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }).toJSDate();
+
+  expect(() => Interval.fromDateTimes(end, start)).toThrow();
+});
+
 //------
 // .after()
 //-------
