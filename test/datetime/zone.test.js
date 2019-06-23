@@ -12,7 +12,7 @@ const millis = 391147200000,
 //------
 // defaults
 //------
-test("setZone defaults to local", () => {
+test("setZone defaults to system's time zone", () => {
   expect(dt().isOffsetFixed).toBe(false);
 });
 
@@ -260,6 +260,14 @@ test("Setting the default zone to null gives you back a system zone", () => {
     Helpers.withDefaultZone(null, () => {
       expect(DateTime.local().zoneName).toBe(sysZone);
     });
+  });
+});
+
+test("Setting the default zone to 'default' gives you back the default zone", () => {
+  const defaultZone = Settings.defaultZoneName;
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    Settings.defaultZoneName = "default";
+    expect(DateTime.local().zoneName).toBe(defaultZone);
   });
 });
 

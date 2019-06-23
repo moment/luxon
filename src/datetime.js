@@ -342,7 +342,7 @@ function diffRelative(start, end, opts) {
  *
  * A DateTime comprises of:
  * * A timestamp. Each DateTime instance refers to a specific millisecond of the Unix epoch.
- * * A time zone. Each instance is considered in the context of a specific zone (by default the local system's zone).
+ * * A time zone. Each instance is considered in the context of a specific zone (by default the system's time zone).
  * * Configuration properties that effect how output strings are formatted, such as `locale`, `numberingSystem`, and `outputCalendar`.
  *
  * Here is a brief overview of the most commonly used functionality it provides:
@@ -495,7 +495,7 @@ export default class DateTime {
    * Create a DateTime from a Javascript Date object. Uses the default zone.
    * @param {Date} date - a Javascript Date object
    * @param {Object} options - configuration options for the DateTime
-   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+   * @param {string|Zone} [options.zone='default'] - the zone to place the DateTime into
    * @return {DateTime}
    */
   static fromJSDate(date, options = {}) {
@@ -514,7 +514,7 @@ export default class DateTime {
    * Create a DateTime from a number of milliseconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
-   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+   * @param {string|Zone} [options.zone='default'] - the zone to place the DateTime into
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
@@ -536,7 +536,7 @@ export default class DateTime {
    * Create a DateTime from a number of seconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
    * @param {number} seconds - a number of seconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
-   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+   * @param {string|Zone} [options.zone='default'] - the zone to place the DateTime into
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
@@ -568,7 +568,7 @@ export default class DateTime {
    * @param {number} obj.minute - minute of the hour, 0-59
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
-   * @param {string|Zone} [obj.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
+   * @param {string|Zone} [obj.zone='default'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
    * @param {string} [obj.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
@@ -576,7 +576,7 @@ export default class DateTime {
    * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'utc' }),
-   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'local' })
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'default' })
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6, zone: 'America/New_York' })
    * @example DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
    * @return {DateTime}
@@ -694,7 +694,7 @@ export default class DateTime {
    * Create a DateTime from an ISO 8601 string
    * @param {string} text - the ISO string
    * @param {Object} opts - options to affect the creation
-   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
+   * @param {string|Zone} [opts.zone='default'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -716,7 +716,7 @@ export default class DateTime {
    * Create a DateTime from an RFC 2822 string
    * @param {string} text - the RFC 2822 string
    * @param {Object} opts - options to affect the creation
-   * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {string|Zone} [opts.zone='default'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -737,7 +737,7 @@ export default class DateTime {
    * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
    * @param {string} text - the HTTP header date
    * @param {Object} opts - options to affect the creation
-   * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {string|Zone} [opts.zone='default'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
    * @param {boolean} [opts.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
@@ -760,7 +760,7 @@ export default class DateTime {
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
    * @param {Object} opts - options to affect the creation
-   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {string|Zone} [opts.zone='default'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
@@ -793,7 +793,7 @@ export default class DateTime {
    * Defaults to en-US if no locale has been specified, regardless of the system's locale
    * @param {string} text - the string to parse
    * @param {Object} opts - options to affect the creation
-   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {string|Zone} [opts.zone='default'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
@@ -1175,7 +1175,7 @@ export default class DateTime {
    * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
    *
    * By default, the setter keeps the underlying instant the same (as in, the same timestamp), but the new instance will report different local time and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
-   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link Zone} class.
+   * @param {string|Zone} [zone='default'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'default' or 'utc'. You may also supply an instance of a {@link Zone} class.
    * @param {Object} opts - options
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}

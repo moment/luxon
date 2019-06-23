@@ -34,7 +34,7 @@ If all this seems too terse, check out these articles. The terminology in them i
 
 ## Luxon works with time zones
 
-Luxon's DateTime class supports zones directly. By default, a date created in Luxon is "in" the local time zone of the machine it's running on. By "in" we mean that the DateTime has, as one of its properties, an associated zone.
+Luxon's DateTime class supports zones directly. By default, a date created in Luxon is "in" the system's time zone (i.e. the time zone set on the machine it's running on). By "in" we mean that the DateTime has, as one of its properties, an associated zone.
 
 It's important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you're in; the zone is really piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon's behavior too. It just doesn't change _what time it is_.
 
@@ -52,14 +52,14 @@ Luxon's API methods that take a zone as an argument all let you specify the zone
 | Type         | Example            | Description                                                       |
 | ------------ | ------------------ | ----------------------------------------------------------------- |
 | IANA         | 'America/New_York' | that zone                                                         |
-| local        | 'local'            | the system's local zone                                           |
+| default      | 'default'          | the system's time zone (unless overridden in Settings)            |
 | UTC          | 'utc'              | Universal Coordinated Time                                        |
 | fixed offset | 'UTC+7'            | a fixed offset zone                                               |
 | Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only) |
 
 ### IANA support
 
-IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
+IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the time zone your system is in (default), UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
 
 ```js
 Info.features().zones; //=> true
@@ -81,7 +81,7 @@ try {
 
 ### Local by default
 
-By default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's local zone. For example, my computer is configured to use `America/New_York`, which has an offset of -4 in May:
+By default, DateTime instances are created in the system's time zone and parsed strings are interpreted as specifying times in the system's time zone. For example, my computer is configured to use `America/New_York`, which has an offset of -4 in May:
 
 ```js
 var local = DateTime.local(2017, 05, 15, 09, 10, 23);
@@ -111,7 +111,7 @@ Note two things:
 1.  The date and time specified in the string was interpreted as a Parisian local time (i.e. it's the time that corresponds to what would be called 9:10 _there_).
 2.  The resulting DateTime object is in Europe/Paris.
 
-Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it's more convenient for the same option to govern both.
+Those are conceptually independent (i.e. Luxon could have converted that instant to the system's time zone), but in practice it's more convenient for the same option to govern both.
 
 In addition, one static method, `utc()`, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:
 
@@ -124,7 +124,7 @@ utc.toString(); //=> '2017-05-15T09:10:23.000Z'
 
 ### Strings that specify an offset
 
-Some input strings may specify an offset as part of the string itself. In these cases, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system's local zone:
+Some input strings may specify an offset as part of the string itself. In these cases, Luxon interprets the time as being specified with that offset, but converts the resulting DateTime into the system's time zone:
 
 ```js
 var specifyOffset = DateTime.fromISO("2017-05-15T09:10:23-09:00");
@@ -180,11 +180,11 @@ Luxon objects are immutable, so when we say "changing zones" we really mean "cre
 var local = DateTime.local();
 var rezoned = local.setZone("America/Los_Angeles");
 
-// different local times with different offsets
+// different times with different offsets
 local.toString(); //=> '2017-09-13T18:30:51.141-04:00'
 rezoned.toString(); //=> '2017-09-13T15:30:51.141-07:00'
 
-// but actually the same time
+// but actually the same timestamp
 local.valueOf() === rezoned.valueOf(); //=> true
 ```
 
@@ -196,6 +196,7 @@ Generally, it's best to think of the zone as a sort of metadata that you slide a
 var local = DateTime.local();
 var rezoned = local.setZone("America/Los_Angeles", { keepLocalTime: true });
 
+// identical times with different offsets
 local.toString(); //=> '2017-09-13T18:36:23.187-04:00'
 rezoned.toString(); //=> '2017-09-13T18:36:23.187-07:00'
 
@@ -211,7 +212,7 @@ Luxon DateTimes have a few different accessors that let you find out about the z
 ```js
 var dt = DateTime.local();
 
-dt.zoneName; //=> 'America/New_York'
+dt.zoneName; //=> 'America/New_York' (for instance)
 dt.offset; //=> -240
 dt.offsetNameShort; //=> 'EDT'
 dt.offsetNameLong; //=> 'Eastern Daylight Time'
@@ -279,7 +280,7 @@ start.plus({ hours: 24 }).hour; //=> 11, DST pushed forward an hour
 
 ## Changing the default zone
 
-By default, Luxon creates DateTimes in the system's local zone. However, you can override this behavior globally:
+By default, Luxon creates DateTimes in the system's time zone, which is normally set to the local time zone where the machine that executes this code is located. However, you can override this behavior globally:
 
 ```js
 Settings.defaultZoneName = "Asia/Tokyo";
@@ -288,8 +289,10 @@ DateTime.local().zoneName; //=> 'Asia/Tokyo'
 Settings.defaultZoneName = "utc";
 DateTime.local().zoneName; //=> 'UTC'
 
-// you can reset by setting to 'local'
+// you can reset by setting to 'system'
 
 Settings.defaultZoneName = "system";
-DateTime.local().zoneName; //=> 'America/New_York'
+DateTime.local().zoneName; //=> 'America/New_York' (for instance)
 ```
+
+Note that changing the default zone will only affect the DateTimes created _after_ this change, not the existing ones.

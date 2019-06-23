@@ -12,7 +12,7 @@ import { hasFormatToParts, hasIntl, hasRelative } from "./impl/util.js";
 export default class Info {
   /**
    * Return whether the specified zone contains a DST.
-   * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.
+   * @param {string|Zone} [zone='default'] - Zone to check. Defaults to the system's time zone, unless overriden in Settings.defaultZone
    * @return {boolean}
    */
   static hasDST(zone = Settings.defaultZone) {
@@ -42,8 +42,10 @@ export default class Info {
    * Converts the input into a {@link Zone} instance.
    *
    * * If `input` is already a Zone instance, it is returned unchanged.
-   * * If `input` is a string containing a valid time zone name, a Zone instance
+   * * If `input` is a string containing a valid IANA time zone name, a Zone instance
    *   with that name is returned.
+   * * If `input` is the string "default", the default time zone, as defined in
+   *   Settings.defaultZone is returned.
    * * If `input` is a string that doesn't refer to a known time zone, a Zone
    *   instance with {@link Zone.isValid} == false is returned.
    * * If `input is a number, a Zone instance with the specified fixed offset
