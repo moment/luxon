@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.16.0
+
+ * Fixed locale default logic for `DateTime#toFormat("ZZZZ")`
+
 ## 1.15.0
 
  * Added `formatOffset` to Zones
@@ -40,7 +44,7 @@
 
 ## 1.11.4
 
-- `setZone("local")` now returns the defaultZone if it is set
+- `setZone("local")` now uses the defaultZone if it is set
 - Fixes for the polyfilled build
 
 ## 1.11.3
@@ -61,7 +65,7 @@
 ## 1.11.0
 
 - Fix low-year handling for IANA zones
-- `DateTime#toLocal()` now uses the default locale
+- `DateTime#toLocal()` now uses the default time zone
 - Fix zero duration formatting
 - Many documentation fixes
 

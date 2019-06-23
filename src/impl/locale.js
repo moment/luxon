@@ -187,7 +187,7 @@ class PolyDateFormatter {
       // So we have to make do. Two cases:
       // 1. The format options tell us to show the zone. We can't do that, so the best
       // we can do is format the date in UTC.
-      // 2. The format options don't tell us to show the zone. Then we can adjust them
+      // 2. The format options don't tell us to show the zone. Then we can adjust
       // the time and tell the formatter to show it to us in UTC, so that the time is right
       // and the bad zone doesn't show up.
       // We can clean all this up when Chrome fixes this.
