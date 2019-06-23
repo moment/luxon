@@ -149,7 +149,7 @@ Helpers.withoutRTF("DateTime#toRelativeCalendar falls back to English", () => {
   ).toBe("next year");
 });
 
-test("DateTime#toRelativeCalendar works down through the units for different zone than local", () => {
+test("DateTime#toRelativeCalendar works down through the units for different zone than default", () => {
   const target = DateTime.local().setZone(`UTC+3`),
     target1 = target.plus({ days: 1 }),
     target2 = target1.plus({ days: 1 }),
@@ -162,7 +162,7 @@ test("DateTime#toRelativeCalendar works down through the units for different zon
   expect(target3.toRelativeCalendar(options)).toBe("in 3 days");
 });
 
-test("DateTime#toRelative works down through the units for diffrent zone than local", () => {
+test("DateTime#toRelative works down through the units for different zone than default", () => {
   const base = DateTime.local().setZone(`UTC+3`);
 
   expect(base.plus({ minutes: 65 }).toRelative()).toBe("in 1 hour");

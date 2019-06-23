@@ -88,6 +88,7 @@ test("Info.normalizeZone returns Zone objects unchanged", () => {
 
 test.each([
   ["SYSTEM", SystemZone.instance],
+  ["Default", SystemZone.instance],
   ["UTC", FixedOffsetZone.utcInstance],
   ["GMT", FixedOffsetZone.utcInstance],
   ["Etc/GMT+5", FixedOffsetZone.instance(-5 * 60)],
@@ -109,7 +110,7 @@ test("Info.normalizeZone converts null and undefined to default Zone", () => {
   expect(Info.normalizeZone(undefined)).toBe(Settings.defaultZone);
 });
 
-test("Info.normalizeZone converts local to default Zone", () => {
+test("Info.normalizeZone converts 'default' to default Zone", () => {
   expect(Info.normalizeZone("default")).toBe(Settings.defaultZone);
   Helpers.withDefaultZone("Europe/Paris", () => {
     expect(Info.normalizeZone("default").name).toBe("Europe/Paris");
