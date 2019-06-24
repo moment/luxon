@@ -160,7 +160,7 @@ Luxon also supports UTC directly:
 DateTime.utc(2017, 5, 15);
 DateTime.utc();
 DateTime.local().toUTC();
-DateTime.utc().toLocal();
+DateTime.utc().toSystemZone();
 ```
 
 ## Durations

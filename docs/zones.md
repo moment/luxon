@@ -52,14 +52,15 @@ Luxon's API methods that take a zone as an argument all let you specify the zone
 | Type         | Example            | Description                                                       |
 | ------------ | ------------------ | ----------------------------------------------------------------- |
 | IANA         | 'America/New_York' | that zone                                                         |
-| default      | 'default'          | the system's time zone (unless overridden in Settings)            |
+| system       | 'system'           | the system's time zone (the one set on the machine)               |
+| default      | 'default'          | the time zone used to create DateTimes (equals system by default) |
 | UTC          | 'utc'              | Universal Coordinated Time                                        |
 | fixed offset | 'UTC+7'            | a fixed offset zone                                               |
 | Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only) |
 
 ### IANA support
 
-IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the time zone your system is in (default), UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
+IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the time zone your system is in (`system`), UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
 
 ```js
 Info.features().zones; //=> true

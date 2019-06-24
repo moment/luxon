@@ -43,7 +43,7 @@ export default class Settings {
 
   /**
    * Set the default time zone to create DateTimes in. Does not affect existing instances.
-   * Use the value "default" to reset this value to the system's time zone.
+   * Use the value "system" to reset this value to the system's time zone.
    * @type {string}
    */
   static set defaultZoneName(z) {

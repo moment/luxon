@@ -44,6 +44,7 @@ export default class Info {
    * * If `input` is already a Zone instance, it is returned unchanged.
    * * If `input` is a string containing a valid IANA time zone name, a Zone instance
    *   with that name is returned.
+   * * If `input` is the string "system", the system's time zone is returned.
    * * If `input` is the string "default", the default time zone, as defined in
    *   Settings.defaultZone is returned.
    * * If `input` is a string that doesn't refer to a known time zone, a Zone

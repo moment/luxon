@@ -1152,7 +1152,8 @@ export default class DateTime {
   }
 
   /**
-   * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
+   * "Set" the DateTime's zone to the system's time zone. Returns a newly-constructed DateTime.
+   * The system time zone is the one set on the machine where this code gets executed.
    *
    * Equivalent to `setZone("system")`
    * @return {DateTime}
@@ -1163,6 +1164,8 @@ export default class DateTime {
 
   /**
    * "Set" the DateTime's zone to the default zone. Returns a newly-constructed DateTime.
+   * The default time zone is used when creating new DateTimes, unless otherwise specified.
+   * It defaults to the system's time zone, but can be overriden in `Settings`.
    *
    * Equivalent to `setZone("default")`
    * @return {DateTime}
@@ -1174,8 +1177,8 @@ export default class DateTime {
   /**
    * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
    *
-   * By default, the setter keeps the underlying instant the same (as in, the same timestamp), but the new instance will report different local time and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toLocal} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
-   * @param {string|Zone} [zone='default'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'default' or 'utc'. You may also supply an instance of a {@link Zone} class.
+   * By default, the setter keeps the underlying instant the same (as in, the same timestamp), but the new instance will report different local time and consider DSTs when making computations, as with {@link plus}. You may wish to use {@link toSystemZone} and {@link toUTC} which provide simple convenience wrappers for commonly used zones.
+   * @param {string|Zone} [zone='default'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'default', 'system' or 'utc'. You may also supply an instance of a {@link Zone} class.
    * @param {Object} opts - options
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}

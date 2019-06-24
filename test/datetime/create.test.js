@@ -111,7 +111,7 @@ test("DateTime.local accepts the default output calendar", () => {
   withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
 });
 
-test("DateTime#local accepts the default locale", () => {
+test("DateTime.local uses the default time zone", () => {
   Helpers.withDefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
 });
 
