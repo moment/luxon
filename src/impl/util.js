@@ -31,7 +31,12 @@ export function isDate(o) {
 // CAPABILITIES
 
 export function hasIntl() {
-  return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+  try {
+    return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }
 
 export function hasFormatToParts() {
