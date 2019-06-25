@@ -61,8 +61,7 @@ function clone(inst, alts) {
     zone: inst.zone,
     c: inst.c,
     o: inst.o,
-    loc: inst.loc,
-    invalid: inst.invalid
+    loc: inst.loc
   };
   return new DateTime(Object.assign({}, current, alts, { old: current }));
 }
@@ -663,9 +662,8 @@ export default class DateTime {
     }
     error = error || hasInvalidTimeData(normalized);
 
-    if (error && obj.nullOnInvalid) {
-      return null;
-    } else if (error) {
+    if (error) {
+      if (obj.nullOnInvalid) return null;
       throw new UnitOutOfRangeError(error[0], error[1]);
     }
 
@@ -685,11 +683,8 @@ export default class DateTime {
 
     // gregorian data + weekday serves only to validate
     if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
-      if (obj.nullOnInvalid) {
-        return null;
-      } else {
-        throw new MismatchedWeekdayError(normalized.weekday, inst);
-      }
+      if (obj.nullOnInvalid) return null;
+      throw new MismatchedWeekdayError(normalized.weekday, inst);
     }
 
     return inst;
@@ -726,7 +721,7 @@ export default class DateTime {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
-   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing
+   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
    * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
@@ -747,7 +742,7 @@ export default class DateTime {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
-   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing
+   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
@@ -770,7 +765,7 @@ export default class DateTime {
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing
+   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
    * @return {DateTime}
    */
   static fromFormat(text, fmt, opts = {}) {
@@ -786,7 +781,8 @@ export default class DateTime {
       }),
       [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
     if (invalid) {
-      return null;
+      if (opts.nullOnInvalid) return null;
+      throw new UnparsableStringError(fmt, text);
     } else {
       return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text);
     }
@@ -818,21 +814,6 @@ export default class DateTime {
   }
 
   /**
-   * Create an invalid DateTime.
-   * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
-   * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
-   * @return {DateTime}
-   */
-  static invalid(reason, explanation = null) {
-    if (!reason) {
-      throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
-    }
-
-    const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
-    return new DateTime({ invalid });
-  }
-
-  /**
    * Check if an object is a DateTime. Works across context boundaries
    * @param {object} o
    * @return {boolean}
@@ -855,28 +836,12 @@ export default class DateTime {
   }
 
   /**
-   * Returns an error code if this DateTime is invalid, or null if the DateTime is valid
-   * @type {string}
-   */
-  get invalidReason() {
-    return this.invalid ? this.invalid.reason : null;
-  }
-
-  /**
-   * Returns an explanation of why this DateTime became invalid, or null if the DateTime is valid
-   * @type {string}
-   */
-  get invalidExplanation() {
-    return this.invalid ? this.invalid.explanation : null;
-  }
-
-  /**
    * Get the locale of a DateTime, such 'en-GB'. The locale is used when formatting the DateTime
    *
    * @type {string}
    */
   get locale() {
-    return this.loc ? this.loc.locale : null;
+    return this.loc?.locale;
   }
 
   /**
@@ -885,7 +850,7 @@ export default class DateTime {
    * @type {string}
    */
   get numberingSystem() {
-    return this.loc ? this.loc.numberingSystem : null;
+    return this.loc?.numberingSystem;
   }
 
   /**
@@ -1215,7 +1180,7 @@ export default class DateTime {
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
-  setZone(zone, { keepLocalTime = false, keepCalendarTime = false } = {}) {
+  setZone(zone, { keepLocalTime = false } = {}) {
     zone = normalizeZone(zone, Settings.defaultZone);
     if (zone.equals(this.zone)) {
       return this;
@@ -1707,7 +1672,7 @@ export default class DateTime {
 
   /**
    * Equality check
-   * Two DateTimes are equal iff they represent the same millisecond, have the same zone and location, and are both valid.
+   * Two DateTimes are equal iff they represent the same millisecond and have the same zone and location.
    * To compare just the millisecond values, use `+dt1 === ~dt2`.
    * @param {DateTime} other - the other DateTime
    * @return {boolean}

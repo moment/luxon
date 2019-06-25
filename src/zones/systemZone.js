@@ -9,7 +9,7 @@ let singleton = null;
  */
 export default class SystemZone extends Zone {
   /**
-   * Get a singleton instance of the local zone
+   * Get a singleton instance of the system's local zone
    * @return {SystemZone}
    */
   static get instance() {

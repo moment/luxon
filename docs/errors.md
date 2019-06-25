@@ -4,13 +4,13 @@ Sometimes Luxon throws errors. Here's a rundown on when and why.
 
 ## InvalidUnitError
 
-## UnitOutofRangeError
+## UnitOutOfRangeError
 
 ## InvalidZoneError
 
 ## MissingPlatformFeatureError
 
-## ConflicingSpecificationError
+## ConflictingSpecificationError
 
 ## InvalidArgumentError
 

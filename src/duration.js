@@ -226,7 +226,7 @@ export default class Duration {
         "locale",
         "numberingSystem",
         "conversionAccuracy",
-        "zone" // a bit of debt; it's super inconvenient internally not to be able to blindly pass this
+        "zone", // a bit of debt; it's super inconvenient internally not to be able to blindly pass this
         "nullOnInvalid"
       ]),
       loc: Locale.fromObject(obj),
@@ -241,7 +241,7 @@ export default class Duration {
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
-   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing
+   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
@@ -254,9 +254,8 @@ export default class Duration {
       const obj = Object.assign(parsed, opts);
       return Duration.fromObject(obj);
     } else {
-      if (opts.nullOnInvalid) {
-        return null;
-      } else throw new UnparsableStringError("ISO 8601", text);
+      if (opts.nullOnInvalid) return null;
+      throw new UnparsableStringError("ISO 8601", text);
     }
   }
 
