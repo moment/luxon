@@ -200,7 +200,7 @@ export default class Duration {
   /**
    * Create a Duration from a Javascript object with keys like 'years' and 'hours.
    * If this object is empty then a zero milliseconds duration is returned.
-   * @param {Object} obj - the object to create the DateTime from
+   * @param {Object} obj - the object to create the Duration from
    * @param {number} obj.years
    * @param {number} obj.quarters
    * @param {number} obj.months
@@ -243,7 +243,7 @@ export default class Duration {
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
-   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing
+   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
@@ -256,9 +256,8 @@ export default class Duration {
       const obj = Object.assign(parsed, opts);
       return Duration.fromObject(obj);
     } else {
-      if (opts.nullOnInvalid) {
-        return null;
-      } else throw new UnparsableStringError("ISO 8601", text);
+      if (opts.nullOnInvalid) return null;
+      throw new UnparsableStringError("ISO 8601", text);
     }
   }
 

@@ -40,17 +40,17 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
 //------
 // #toDefaultZone()
 //------
-test("DateTime#toDefaultZone() sets the calendar back to local", () => {
-  const relocaled = dt()
+test("DateTime#toDefaultZone() sets the DateTime back to default zone", () => {
+  const rezoned = dt()
       .toUTC()
       .toDefaultZone(),
     expected = new Date(millis).getHours();
-  expect(relocaled.isOffsetFixed).toBe(false);
-  expect(relocaled.valueOf()).toBe(millis);
-  expect(relocaled.hour).toBe(expected);
+  expect(rezoned.isOffsetFixed).toBe(false);
+  expect(rezoned.valueOf()).toBe(millis);
+  expect(rezoned.hour).toBe(expected);
 });
 
-test("DateTime#toDefaultZone() accepts the default locale", () => {
+test("DateTime#toDefaultZone() accepts the default time zone", () => {
   Helpers.withDefaultZone("Asia/Tokyo", () => {
     const tokyoLocal = DateTime.local();
     expect(tokyoLocal.toDefaultZone().zoneName).toBe("Asia/Tokyo");
@@ -60,7 +60,7 @@ test("DateTime#toDefaultZone() accepts the default locale", () => {
 //------
 // #toSystemZone()
 //------
-test("DateTime#SystemZone() sets the calendar back to local", () => {
+test("DateTime#SystemZone() sets the DateTime back to system zone", () => {
   const relocaled = dt()
       .toUTC()
       .toSystemZone(),

@@ -149,15 +149,6 @@ test("Duration#toFormat('y') returns years", () => {
   expect(lil.toFormat("yyyyy")).toBe("00005");
 });
 
-test("Duration#toFormat accepts the deprecated 'round' option", () => {
-  expect(dur().toFormat("s", { round: false })).toBe("37598706.007");
-  expect(dur().toFormat("m", { round: false })).toBe("626645.1");
-  expect(dur().toFormat("h", { round: false })).toBe("10444.085");
-  expect(dur().toFormat("d", { round: false })).toBe("435.17");
-  expect(dur().toFormat("M", { round: false })).toBe("14.356");
-  expect(dur().toFormat("y", { round: false })).toBe("1.195");
-});
-
 test("Duration#toFormat leaves in zeros", () => {
   const tiny = Duration.fromObject({ seconds: 5 });
   expect(tiny.toFormat("hh:mm:ss")).toBe("00:00:05");

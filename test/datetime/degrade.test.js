@@ -1,6 +1,6 @@
 /* global expect */
 import { DateTime } from "../../src/luxon";
-import { InvalidZoneError } from "../../src/errors";
+import { InvalidZoneError, UnparsableStringError } from "../../src/errors";
 
 const Helpers = require("../helpers");
 
@@ -86,7 +86,9 @@ Helpers.withoutIntl("DateTime.fromFormat can parse numbers in other locales", ()
 });
 
 Helpers.withoutIntl("DateTime.fromFormat can't parse strings from other locales", () => {
-  expect(DateTime.fromFormat("mai 15, 2017", "LLLL dd, yyyy", { locale: "fr" })).toBeNull();
+  expect(() => DateTime.fromFormat("mai 15, 2017", "LLLL dd, yyyy", { locale: "fr" })).toThrow(
+    UnparsableStringError
+  );
 });
 
 Helpers.withoutIntl("using time zones throws", () => {
@@ -138,7 +140,9 @@ Helpers.withoutFTP("DateTime.fromFormat can parse numbers in other locales", () 
 });
 
 Helpers.withoutFTP("DateTime.fromFormat can't parse strings from other locales", () => {
-  expect(DateTime.fromFormat("mai 15, 2017", "LLLL dd, yyyy", { locale: "fr" })).toBeNull();
+  expect(() => DateTime.fromFormat("mai 15, 2017", "LLLL dd, yyyy", { locale: "fr" })).toThrow(
+    UnparsableStringError
+  );
 });
 
 Helpers.withoutFTP("setting the time zone still works", () => {

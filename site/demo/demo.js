@@ -15,8 +15,6 @@ function demo(luxon) {
       }
 
       switch (true) {
-        case result.isValid === false:
-          return "Invalid";
         case result instanceof DateTime:
           return "[ DateTime " + result.toISO() + " ]";
         case result instanceof Duration:

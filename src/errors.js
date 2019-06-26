@@ -28,7 +28,7 @@ export class InvalidUnitError extends LuxonError {
  */
 export class InvalidZoneError extends LuxonError {
   constructor(zone) {
-    super(`${zone.name} is an invalid or unknown specifier`);
+    super(`${zone.name} is an invalid or unknown zone specifier`);
   }
 }
 
