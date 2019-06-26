@@ -27,13 +27,16 @@ test("Info.hasDST returns false for America/Cancun", () => {
   expect(Info.hasDST("America/Cancun")).toBe(false);
 });
 
-test("Info.hasDST returns true for Europe/Andora", () => {
+test("Info.hasDST returns false for Europe/Andora", () => {
   expect(Info.hasDST("Europe/Andora")).toBe(false);
 });
 
-test("Info.hasDST defaults to the global zone", () => {
+test("Info.hasDST uses the default zone when none is specified", () => {
   Helpers.withDefaultZone("America/Cancun", () => {
     expect(Info.hasDST()).toBe(false);
+  });
+  Helpers.withDefaultZone("America/New_York", () => {
+    expect(Info.hasDST()).toBe(true);
   });
 });
 
@@ -84,7 +87,7 @@ test("Info.normalizeZone returns Zone objects unchanged", () => {
 });
 
 test.each([
-  ["SySTEM", SystemZone.instance],
+  ["SYSTEM", SystemZone.instance],
   ["UTC", FixedOffsetZone.utcInstance],
   ["GMT", FixedOffsetZone.utcInstance],
   ["Etc/GMT+5", FixedOffsetZone.instance(-5 * 60)],

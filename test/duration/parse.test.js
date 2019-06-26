@@ -71,6 +71,6 @@ test("Duration.fromISO rejects junk", () => {
   rejects("P5D2W");
 });
 
-test("Duration.fromISO accpets a nullOnInvalid option", () => {
+test("Duration.fromISO accepts a nullOnInvalid option", () => {
   expect(Duration.fromISO("sprok", { nullOnInvalid: true })).toBe(null);
 });
