@@ -12,7 +12,7 @@ Luxon is not an NLP tool and isn't suitable for all date parsing jobs. But it ca
 Luxon supports a wide range of valid ISO 8601 formats through the [fromISO](../class/src/datetime.js~DateTime.html#static-method-fromISO) method.
 
 ```js
-DateTime.fromISO('2016-05-25');
+DateTime.fromISO("2016-05-25");
 ```
 
 All of these are parsable by `fromISO`:
@@ -53,9 +53,9 @@ All of these are parsable by `fromISO`:
 Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):
 
 ```js
-DateTime.fromRFC2822('Tue, 01 Nov 2016 13:23:12 +0630');
-DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT');
-DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
+DateTime.fromRFC2822("Tue, 01 Nov 2016 13:23:12 +0630");
+DateTime.fromHTTP("Sunday, 06-Nov-94 08:49:37 GMT");
+DateTime.fromHTTP("Sun, 06 Nov 1994 08:49:37 GMT");
 ```
 
 ### SQL
@@ -63,9 +63,9 @@ DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
 Luxon accepts SQL dates, times, and datetimes, via [fromSQL](../class/src/datetime.js~DateTime.html#static-method-fromSQL):
 
 ```js
-DateTime.fromSQL('2017-05-15');
-DateTime.fromSQL('2017-05-15 09:24:15');
-DateTime.fromSQL('09:24:15');
+DateTime.fromSQL("2017-05-15");
+DateTime.fromSQL("2017-05-15 09:24:15");
+DateTime.fromSQL("09:24:15");
 ```
 
 It works similarly to `fromISO`, so see above for additional notes.
@@ -80,7 +80,6 @@ DateTime.fromSeconds(1542674993);
 ```
 
 Both methods accept the same options, which allow you to specify a timezone, calendar, and/or numbering system.
-
 
 ## Ad-hoc parsing
 
@@ -98,7 +97,7 @@ Sometimes, though, you get a string from some legacy system in some terrible ad-
 See [DateTime.fromFormat](../class/src/datetime.js~DateTime.html#static-method-fromFormat) for the method signature. A brief example:
 
 ```js
-DateTime.fromFormat('May 25 1982', 'LLLL dd yyyy');
+DateTime.fromFormat("May 25 1982", "LLLL dd yyyy");
 ```
 
 ### Intl
@@ -106,7 +105,7 @@ DateTime.fromFormat('May 25 1982', 'LLLL dd yyyy');
 Luxon supports parsing internationalized strings:
 
 ```js
-DateTime.fromFormat('mai 25 1982', 'LLLL dd yyyy', { locale: 'fr' });
+DateTime.fromFormat("mai 25 1982", "LLLL dd yyyy", { locale: "fr" });
 ```
 
 Note, however, that Luxon derives the list of strings that can match, say, "LLLL" (and their meaning) by introspecting the environment's Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the [support matrix](matrix.html)).
@@ -144,12 +143,12 @@ For example, here the code is using "MMMM" where "MMM" was needed. You can see t
 If you parse something and get an invalid date, the debugging steps are slightly different. Here, we're attempting to parse August 32nd, which doesn't exist:
 
 ```js
-var d = DateTime.fromFormat('August 32 1982', 'MMMM d yyyy');
+var d = DateTime.fromFormat("August 32 1982", "MMMM d yyyy");
 d.isValid; //=> false
 d.invalidReason; //=> 'day out of range'
 ```
 
-For more on validity and how to debug it, see [validity](validity.html). You may find more comprehensive tips there. But as it applies specifically to `fromFormat`, again try `fromFormatExplain`:
+For more on validity and how to debug it, see [errors](errors.html). You may find more comprehensive tips there. But as it applies specifically to `fromFormat`, again try `fromFormatExplain`:
 
 ```js
 > DateTime.fromFormatExplain("August 32 1982", "MMMM d yyyy")
