@@ -12,7 +12,7 @@ const manualFiles = [
   "formatting",
   "parsing",
   "math",
-  "validity",
+  "errors",
   "matrix",
   "moment",
   "why"
