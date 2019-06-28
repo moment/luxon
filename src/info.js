@@ -15,18 +15,17 @@ export default class Info {
    * @param {string|Zone} [zone='default'] - Zone to check. Defaults to the system's time zone, unless overriden in Settings.defaultZone
    * @return {boolean}
    */
-  static hasDST(zone = Settings.defaultZone) {
-    const zoneObj = normalizeZone(zone);
+  static hasDST(zone) {
+    const zoneObj = normalizeZone(zone, Settings.defaultZone);
 
-    if (!zoneObj.valid) {
+    if (!zoneObj.isValid) {
       return false;
     }
-
     const proto = DateTime.local()
       .setZone(zoneObj)
       .set({ month: 12 });
 
-    return !zone.universal && proto.offset !== proto.set({ month: 6 }).offset;
+    return !zoneObj.universal && proto.offset !== proto.set({ month: 6 }).offset;
   }
 
   /**

@@ -56,7 +56,7 @@ export default class Settings {
    * @type {Zone}
    */
   static get defaultZone() {
-    return normalizeZone(this.defaultZoneName) || SystemZone.instance;
+    return normalizeZone(this.defaultZoneName, SystemZone.instance);
   }
 
   /**

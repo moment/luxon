@@ -125,13 +125,6 @@ test('DateTime#setZone accepts "utc"', () => {
   expect(zoned.offsetNameLong).toBe("UTC");
 });
 
-test('DateTime#setZone accepts "gmt"', () => {
-  const zoned = DateTime.local().setZone("gmt");
-  expect(zoned.offset).toBe(0);
-  expect(zoned.offsetNameShort).toBe("UTC");
-  expect(zoned.offsetNameLong).toBe("UTC");
-});
-
 test('DateTime#setZone accepts "utc+3"', () => {
   const zoned = DateTime.local().setZone("utc+3");
   expect(zoned.zone.name).toBe("UTC+3");

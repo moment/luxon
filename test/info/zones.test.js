@@ -27,8 +27,8 @@ test("Info.hasDST returns false for America/Cancun", () => {
   expect(Info.hasDST("America/Cancun")).toBe(false);
 });
 
-test("Info.hasDST returns false for Europe/Andora", () => {
-  expect(Info.hasDST("Europe/Andora")).toBe(false);
+test("Info.hasDST returns true for Europe/Andorra", () => {
+  expect(Info.hasDST("Europe/Andorra")).toBe(true);
 });
 
 test("Info.hasDST uses the default zone when none is specified", () => {
@@ -90,7 +90,6 @@ test.each([
   ["SYSTEM", SystemZone.instance],
   ["Default", SystemZone.instance],
   ["UTC", FixedOffsetZone.utcInstance],
-  ["GMT", FixedOffsetZone.utcInstance],
   ["Etc/GMT+5", FixedOffsetZone.instance(-5 * 60)],
   ["Etc/GMT-10", FixedOffsetZone.instance(+10 * 60)],
   ["Europe/Paris", new IANAZone("Europe/Paris")],
@@ -106,8 +105,10 @@ test("Info.normalizeZone converts unknown name to invalid Zone", () => {
 });
 
 test("Info.normalizeZone converts null and undefined to default Zone", () => {
-  expect(Info.normalizeZone(null)).toBe(Settings.defaultZone);
-  expect(Info.normalizeZone(undefined)).toBe(Settings.defaultZone);
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    expect(Info.normalizeZone(null)).toBe(Settings.defaultZone);
+    expect(Info.normalizeZone(undefined)).toBe(Settings.defaultZone);
+  });
 });
 
 test("Info.normalizeZone converts 'default' to default Zone", () => {
