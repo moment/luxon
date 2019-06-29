@@ -127,13 +127,10 @@ export default class Formatter {
   formatDateTimeFromString(dt, fmt) {
     const knownEnglish = this.loc.listingMode() === "en";
     const string = (opts, extract) => this.loc.extract(dt, opts, extract),
-      formatOffset = opts => {
-        if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
-          return "Z";
-        }
-
-        return dt.isValid ? dt.zone.formatOffset(dt.ts, opts.format) : "";
-      },
+      formatOffset = opts =>
+        dt.isOffsetFixed && dt.offset === 0 && opts.allowZ
+          ? "Z"
+          : dt.zone.formatOffset(dt.ts, opts.format),
       meridiem = () =>
         knownEnglish
           ? English.meridiemForDateTime(dt)
