@@ -247,19 +247,26 @@ test("Setting the default zone results in a different creation zone", () => {
   });
 });
 
+test("Setting the default zone to undefined gives you back a system zone", () => {
+  const sysZone = Settings.defaultZone.name;
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    Settings.defaultZone = undefined;
+    expect(DateTime.local().zoneName).toBe(sysZone);
+  });
+});
+
 test("Setting the default zone to null gives you back a system zone", () => {
   const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Helpers.withDefaultZone(null, () => {
-      expect(DateTime.local().zoneName).toBe(sysZone);
-    });
+    Settings.defaultZone = null;
+    expect(DateTime.local().zoneName).toBe(sysZone);
   });
 });
 
 test("Setting the default zone to 'default' gives you back the default zone", () => {
   const defaultZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZoneName = "default";
+    Settings.defaultZone = "default";
     expect(DateTime.local().zoneName).toBe(defaultZone);
   });
 });
@@ -267,7 +274,7 @@ test("Setting the default zone to 'default' gives you back the default zone", ()
 test("Setting the default zone to 'system' gives you back a system zone", () => {
   const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZoneName = "system";
+    Settings.defaultZone = "system";
     expect(DateTime.local().zoneName).toBe(sysZone);
   });
 });
