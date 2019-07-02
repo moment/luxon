@@ -106,7 +106,7 @@ For programmatic getting and setting, Luxon and Moment are very similar here:
 | Change unit values | `set(Object)`              | `set(Object)`       | Like `dt.set({ year: 2016, month: 3 })` |
 | Change time zone   | `tz(String)`               | `setZone(string)`   | Luxon doesn't require a plugin          |
 | Change zone to utc | `utc()`                    | `toUTC()`           |                                         |
-| Change local zone  | `local()`                  | `toLocal()`         |                                         |
+| Change local zone  | `local()`                  | `toSystemZone()`    |                                         |
 | Change offset      | `utcOffset(Number)`        | None                | Set the zone instead                    |
 | Change locale      | `locale(String)`           | `setLocale(String)` |                                         |
 

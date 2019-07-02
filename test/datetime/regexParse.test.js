@@ -552,7 +552,6 @@ test("DateTime.fromISO() rejects poop", () => {
 
 test("DateTime.fromISO() accepts a nullOnInvalid argument", () => {
   expect(DateTime.fromISO("sporks", { nullOnInvalid: true })).toBe(null);
-  expect(DateTime.fromHTTP("2019-34-34", { nullOnInvalid: true })).toBe(null);
 });
 
 //------

@@ -15,8 +15,6 @@ function demo(luxon) {
       }
 
       switch (true) {
-        case result.isValid === false:
-          return "Invalid";
         case result instanceof DateTime:
           return "[ DateTime " + result.toISO() + " ]";
         case result instanceof Duration:
@@ -40,7 +38,7 @@ function demo(luxon) {
   example("DateTime.local(2017, 5, 15, 17, 36)");
   example("DateTime.utc(2017, 5, 15, 17, 36)");
   example("DateTime.local().toUTC()");
-  example("DateTime.utc(2017, 5, 15, 17, 36).toLocal()");
+  example("DateTime.utc(2017, 5, 15, 17, 36).toSystemZone()");
   example("DateTime.local().toObject()");
   example("DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36})");
   example(

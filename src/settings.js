@@ -5,7 +5,7 @@ import Locale from "./impl/locale.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 
 let now = () => Date.now(),
-  defaultZoneName = "system",
+  defaultZone = "system",
   defaultLocale = null,
   defaultNumberingSystem = null,
   defaultOutputCalendar = null;
@@ -34,27 +34,21 @@ export default class Settings {
   }
 
   /**
-   * Get the default time zone to create DateTimes in.
-   * @type {string}
-   */
-  static get defaultZoneName() {
-    return defaultZoneName;
-  }
-
-  /**
    * Set the default time zone to create DateTimes in. Does not affect existing instances.
+   * Use the value "system" to reset this value to the system's time zone.
    * @type {string}
    */
-  static set defaultZoneName(z) {
-    defaultZoneName = z || "system";
+  static set defaultZone(zone) {
+    defaultZone = zone;
   }
 
   /**
-   * Get the default time zone object to create DateTimes in. Does not affect existing instances.
+   * Get the default time zone object currently used to create DateTimes. Does not affect existing instances.
+   * The default value is the system's time zone (the one set on the machine that runs this code).
    * @type {Zone}
    */
   static get defaultZone() {
-    return normalizeZone(this.defaultZoneName) || SystemZone.instance;
+    return normalizeZone(defaultZone, SystemZone.instance);
   }
 
   /**

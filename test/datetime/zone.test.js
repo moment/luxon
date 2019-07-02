@@ -12,7 +12,7 @@ const millis = 391147200000,
 //------
 // defaults
 //------
-test("setZone defaults to local", () => {
+test("setZone defaults to system's time zone", () => {
   expect(dt().isOffsetFixed).toBe(false);
 });
 
@@ -40,17 +40,17 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
 //------
 // #toDefaultZone()
 //------
-test("DateTime#toDefaultZone() sets the calendar back to local", () => {
-  const relocaled = dt()
+test("DateTime#toDefaultZone() sets the DateTime back to default zone", () => {
+  const rezoned = dt()
       .toUTC()
       .toDefaultZone(),
     expected = new Date(millis).getHours();
-  expect(relocaled.isOffsetFixed).toBe(false);
-  expect(relocaled.valueOf()).toBe(millis);
-  expect(relocaled.hour).toBe(expected);
+  expect(rezoned.isOffsetFixed).toBe(false);
+  expect(rezoned.valueOf()).toBe(millis);
+  expect(rezoned.hour).toBe(expected);
 });
 
-test("DateTime#toDefaultZone() accepts the default locale", () => {
+test("DateTime#toDefaultZone() returns the default time zone", () => {
   Helpers.withDefaultZone("Asia/Tokyo", () => {
     const tokyoLocal = DateTime.local();
     expect(tokyoLocal.toDefaultZone().zoneName).toBe("Asia/Tokyo");
@@ -60,17 +60,17 @@ test("DateTime#toDefaultZone() accepts the default locale", () => {
 //------
 // #toSystemZone()
 //------
-test("DateTime#SystemZone() sets the calendar back to local", () => {
-  const relocaled = dt()
+test("DateTime#toSystemZone() sets the zone back to system zone", () => {
+  const rezoned = dt()
       .toUTC()
       .toSystemZone(),
     expected = new Date(millis).getHours();
-  expect(relocaled.isOffsetFixed).toBe(false);
-  expect(relocaled.valueOf()).toBe(millis);
-  expect(relocaled.hour).toBe(expected);
+  expect(rezoned.isOffsetFixed).toBe(false);
+  expect(rezoned.valueOf()).toBe(millis);
+  expect(rezoned.hour).toBe(expected);
 });
 
-test("DateTime#SystemZone() ignores the default locale", () => {
+test("DateTime#toSystemZone() is independent of the default zone", () => {
   const localZoneName = DateTime.local().zoneName;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
     const tokyoLocal = DateTime.local();
@@ -120,13 +120,6 @@ test("DateTime#setZone accepts 'default' and uses the default zone", () => {
 
 test('DateTime#setZone accepts "utc"', () => {
   const zoned = DateTime.local().setZone("utc");
-  expect(zoned.offset).toBe(0);
-  expect(zoned.offsetNameShort).toBe("UTC");
-  expect(zoned.offsetNameLong).toBe("UTC");
-});
-
-test('DateTime#setZone accepts "gmt"', () => {
-  const zoned = DateTime.local().setZone("gmt");
   expect(zoned.offset).toBe(0);
   expect(zoned.offsetNameShort).toBe("UTC");
   expect(zoned.offsetNameLong).toBe("UTC");
@@ -254,20 +247,34 @@ test("Setting the default zone results in a different creation zone", () => {
   });
 });
 
+test("Setting the default zone to undefined gives you back a system zone", () => {
+  const sysZone = Settings.defaultZone.name;
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    Settings.defaultZone = undefined;
+    expect(DateTime.local().zoneName).toBe(sysZone);
+  });
+});
+
 test("Setting the default zone to null gives you back a system zone", () => {
   const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Helpers.withDefaultZone(null, () => {
-      expect(DateTime.local().zoneName).toBe(sysZone);
-    });
+    Settings.defaultZone = null;
+    expect(DateTime.local().zoneName).toBe(sysZone);
+  });
+});
+
+test("Setting the default zone to 'default' gives you back the default zone", () => {
+  const defaultZone = Settings.defaultZone.name;
+  Helpers.withDefaultZone("Asia/Tokyo", () => {
+    Settings.defaultZone = "default";
+    expect(DateTime.local().zoneName).toBe(defaultZone);
   });
 });
 
 test("Setting the default zone to 'system' gives you back a system zone", () => {
   const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Helpers.withDefaultZone("system", () => {
-      expect(DateTime.local().zoneName).toBe(sysZone);
-    });
+    Settings.defaultZone = "system";
+    expect(DateTime.local().zoneName).toBe(sysZone);
   });
 });

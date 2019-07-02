@@ -2,7 +2,7 @@
 import { SystemZone } from "../../src/luxon";
 import { withoutIntl } from "../helpers";
 
-test("LocalZone.instance returns a singleton", () => {
+test("SystemZone.instance returns a singleton", () => {
   expect(SystemZone.instance).toBe(SystemZone.instance);
 });
 

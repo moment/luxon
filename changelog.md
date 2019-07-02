@@ -2,33 +2,33 @@
 
 ## 1.16.0
 
- * Fixed locale default logic for `DateTime#toFormat("ZZZZ")
+- Fixed locale default logic for `DateTime#toFormat("ZZZZ")`
 
 ## 1.15.0
 
- * Added `formatOffset` to Zones
+- Added `formatOffset` to Zones
 
 ## 1.14.0
 
- * Allow the zone argument to Interval.fromISO with duration components
- * Ignore the zone argument to Duration factory methods
+- Allow the zone argument to Interval.fromISO with duration components
+- Ignore the zone argument to Duration factory methods
 
 ## 1.13.3
 
- * Fix keepLocalTime calculations that span offset changes
+- Fix keepLocalTime calculations that span offset changes
 
 ## 1.13.2
 
- * Fixed ISO formatting for dates > 999
+- Fixed ISO formatting for dates > 999
 
 ## 1.13.1
 
- * Performance improvements for regex parsing
+- Performance improvements for regex parsing
 
 ## 1.13.0
 
- * Support numberSystem in fromFormat
- * Fix validity for bad initial zone specifiers
+- Support numberSystem in fromFormat
+- Fix validity for bad initial zone specifiers
 
 ## 1.12.1
 
@@ -44,7 +44,7 @@
 
 ## 1.11.4
 
-- `setZone("local")` now returns the defaultZone if it is set
+- `setZone("local")` now uses the defaultZone if it is set
 - Fixes for the polyfilled build
 
 ## 1.11.3
@@ -65,7 +65,7 @@
 ## 1.11.0
 
 - Fix low-year handling for IANA zones
-- `DateTime#toLocal()` now uses the default locale
+- `DateTime#toLocal()` now uses the default time zone
 - Fix zero duration formatting
 - Many documentation fixes
 

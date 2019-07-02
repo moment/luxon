@@ -82,10 +82,10 @@ exports.withNow = function(name, dt, f) {
 // not a tester!
 exports.withDefaultZone = function(zone, f) {
   try {
-    Settings.defaultZoneName = zone;
+    Settings.defaultZone = zone;
     f();
   } finally {
-    Settings.defaultZoneName = null;
+    Settings.defaultZone = null;
   }
 };
 
@@ -112,7 +112,7 @@ const setUnset = function(prop) {
 
 exports.setUnset = setUnset;
 
-exports.withDefaultZone = setUnset("defaultZoneName");
+exports.withDefaultZone = setUnset("defaultZone");
 
 exports.atHour = function(hour) {
   return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
