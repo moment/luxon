@@ -316,7 +316,7 @@ var luxon = (function (exports) {
 	    return store[key] || (store[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
 	    version: _core.version,
-	    mode: 'global',
+	    mode:  'global',
 	    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 	  });
 	});
@@ -351,7 +351,7 @@ var luxon = (function (exports) {
 	var defineProperty = _objectDp.f;
 
 	var _wksDefine = function _wksDefine(name) {
-	  var $Symbol = _core.Symbol || (_core.Symbol = _global.Symbol || {});
+	  var $Symbol = _core.Symbol || (_core.Symbol =  _global.Symbol || {});
 	  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, {
 	    value: _wksExt.f(name)
 	  });
@@ -1156,7 +1156,7 @@ var luxon = (function (exports) {
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true); // fix for some old engines
 
-	      if (typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
+	      if ( typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  } // fix Array#{values, @@iterator}.name in V8 / FF
 
@@ -1170,7 +1170,7 @@ var luxon = (function (exports) {
 	  } // Define iterator
 
 
-	  if (BUGGY || VALUES_BUG || !proto[ITERATOR]) {
+	  if ( (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
 	    _hide(proto, ITERATOR, $default);
 	  } // Plug for library
 
@@ -1370,6 +1370,11 @@ var luxon = (function (exports) {
 	  riter['return'] = function () {
 	    SAFE_CLOSING = true;
 	  }; // eslint-disable-next-line no-throw-literal
+
+
+	  Array.from(riter, function () {
+	    throw 2;
+	  });
 	} catch (e) {
 	  /* empty */
 	}
@@ -1401,6 +1406,7 @@ var luxon = (function (exports) {
 	};
 
 	_export(_export.S + _export.F * !_iterDetect(function (iter) {
+	  Array.from(iter);
 	}), 'Array', {
 	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
 	  from: function from(arrayLike
@@ -2174,13 +2180,21 @@ var luxon = (function (exports) {
 	} // CAPABILITIES
 
 	function hasIntl() {
-	  return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+	  try {
+	    return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+	  } catch (e) {
+	    return false;
+	  }
 	}
 	function hasFormatToParts() {
 	  return !isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
 	}
 	function hasRelative() {
-	  return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+	  try {
+	    return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+	  } catch (e) {
+	    return false;
+	  }
 	} // OBJECTS AND ARRAYS
 
 	function maybeArray(thing) {
@@ -9165,7 +9179,7 @@ var luxon = (function (exports) {
 	   * @param {Object} options - options that affect the output
 	   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
 	   * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
-	   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", "day", "hour", "minute", or "second"
+	   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
 	   * @param {boolean} [options.round=true] - whether to round the numbers in the output.
 	   * @param {boolean} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
 	   * @param {string} options.locale - override the locale of this DateTime
@@ -9200,7 +9214,7 @@ var luxon = (function (exports) {
 	   * @param {Object} options - options that affect the output
 	   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
 	   * @param {string} options.locale - override the locale of this DateTime
-	   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "year", "quarter", "month", "week", or "day"
+	   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "years", "quarters", "months", "weeks", or "days"
 	   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
 	   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar() //=> "tomorrow"
 	   * @example DateTime.local().setLocale("es").plus({ days: 1 }).toRelative() //=> ""mañana"
@@ -9906,8 +9920,6 @@ var luxon = (function (exports) {
 	    throw new InvalidArgumentError("Unknown datetime argument: " + dateTimeish + ", of type " + typeof dateTimeish);
 	  }
 	}
-
-	/* eslint import/no-extraneous-dependencies: off */
 
 	exports.DateTime = DateTime;
 	exports.Duration = Duration;
