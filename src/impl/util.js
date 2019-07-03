@@ -31,7 +31,11 @@ export function isDate(o) {
 // CAPABILITIES
 
 export function hasIntl() {
-  return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+  try {
+    return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+  } catch (e) {
+    return false;
+  }
 }
 
 export function hasFormatToParts() {
@@ -39,7 +43,11 @@ export function hasFormatToParts() {
 }
 
 export function hasRelative() {
-  return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+  try {
+    return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+  } catch (e) {
+    return false;
+  }
 }
 
 // OBJECTS AND ARRAYS
