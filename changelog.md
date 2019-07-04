@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.16.1
+
+ * Catch errors trying to use Intl in weird versions of IE 11
+
 ## 1.16.0
 
  * Fixed locale default logic for `DateTime#toFormat("ZZZZ")
