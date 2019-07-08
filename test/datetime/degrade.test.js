@@ -45,6 +45,7 @@ Helpers.withoutIntl("DateTime#toLocaleString supports known configurations", () 
   expected.set(DateTime.DATETIME_HUGE, "Wednesday, August 6, 2014, 9:15 AM");
   expected.set(DateTime.DATETIME_SHORT_WITH_SECONDS, "8/6/2014, 9:15:36 AM");
   expected.set(DateTime.DATETIME_MED_WITH_SECONDS, "Aug 6, 2014, 9:15:36 AM");
+  expected.set(DateTime.DATETIME_MED_WITH_WEEKDAY, "Wed, 6 Aug 2014, 9:15 AM");
   expected.set(DateTime.DATETIME_FULL_WITH_SECONDS, "August 6, 2014, 9:15:36 AM");
   expected.set(DateTime.DATETIME_HUGE_WITH_SECONDS, "Wednesday, August 6, 2014, 9:15:36 AM");
 

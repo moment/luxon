@@ -135,6 +135,15 @@ export const DATETIME_MED_WITH_SECONDS = {
   second: d2
 };
 
+export const DATETIME_MED_WITH_WEEKDAY = {
+  year: n,
+  month: s,
+  day: n,
+  weekday: s,
+  hour: n,
+  minute: d2
+};
+
 export const DATETIME_FULL = {
   year: n,
   month: l,
