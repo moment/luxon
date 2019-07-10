@@ -211,6 +211,8 @@ export function formatString(knownFormat) {
       return "M/d/yyyy, h:mm:ss a";
     case stringify(Formats.DATETIME_MED_WITH_SECONDS):
       return "LLL d, yyyy, h:mm:ss a";
+    case stringify(Formats.DATETIME_MED_WITH_WEEKDAY):
+      return "EEE, d LLL yyyy, h:mm a";
     case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
       return "LLLL d, yyyy, h:mm:ss a";
     case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):

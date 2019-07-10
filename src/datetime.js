@@ -2012,6 +2012,14 @@ export default class DateTime {
   }
 
   /**
+   * {@link toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_MED_WITH_WEEKDAY() {
+    return Formats.DATETIME_MED_WITH_WEEKDAY;
+  }
+
+  /**
    * {@link toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
    * @type {Object}
    */
