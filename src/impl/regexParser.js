@@ -1,4 +1,11 @@
-import { untruncateYear, signedOffset, parseInteger, parseMillis, ianaRegex } from "./util.js";
+import {
+  untruncateYear,
+  signedOffset,
+  parseInteger,
+  parseMillis,
+  ianaRegex,
+  isUndefined
+} from "./util.js";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
@@ -73,11 +80,16 @@ const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
   ),
   sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
+function int(match, pos, fallback) {
+  const m = match[pos];
+  return isUndefined(m) ? fallback : parseInteger(m);
+}
+
 function extractISOYmd(match, cursor) {
   const item = {
-    year: parseInteger(match[cursor]),
-    month: parseInteger(match[cursor + 1]) || 1,
-    day: parseInteger(match[cursor + 2]) || 1
+    year: int(match, cursor),
+    month: int(match, cursor + 1, 1),
+    day: int(match, cursor + 2, 1)
   };
 
   return [item, null, cursor + 3];
@@ -85,9 +97,9 @@ function extractISOYmd(match, cursor) {
 
 function extractISOTime(match, cursor) {
   const item = {
-    hour: parseInteger(match[cursor]) || 0,
-    minute: parseInteger(match[cursor + 1]) || 0,
-    second: parseInteger(match[cursor + 2]) || 0,
+    hour: int(match, cursor, 0),
+    minute: int(match, cursor + 1, 0),
+    second: int(match, cursor + 2, 0),
     millisecond: parseMillis(match[cursor + 3])
   };
 

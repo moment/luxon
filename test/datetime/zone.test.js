@@ -96,7 +96,7 @@ test("DateTime#setZone setZone sets the TZ to the specified zone", () => {
 });
 
 test("DateTime#setZone accepts 'system'", () => {
-  let zoned = DateTime.utc().setZone("system");
+  const zoned = DateTime.utc().setZone("system");
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 
@@ -108,7 +108,7 @@ test("DateTime#setZone accepts 'system' and ignores the default zone", () => {
 });
 
 test("DateTime#setZone accepts 'default'", () => {
-  let zoned = DateTime.utc().setZone("default");
+  const zoned = DateTime.utc().setZone("default");
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 

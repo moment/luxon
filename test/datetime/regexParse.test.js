@@ -550,6 +550,12 @@ test("DateTime.fromISO() rejects poop", () => {
   rejects("2016-W32-02");
 });
 
+test("DateTime.fromISO() rejects 0s in dates", () => {
+  const rejects = s => expect(() => DateTime.fromISO(s)).toThrow(UnitOutOfRangeError);
+  rejects("2016-01-00");
+  rejects("2016-00-01");
+});
+
 test("DateTime.fromISO() accepts a nullOnInvalid argument", () => {
   expect(DateTime.fromISO("sporks", { nullOnInvalid: true })).toBe(null);
 });
@@ -586,7 +592,7 @@ test("DateTime.fromRFC2822 parses a range of dates", () => {
   };
 
   for (const testString in testCases) {
-    if (testCases.hasOwnProperty(testString)) {
+    if (Object.prototype.hasOwnProperty.call(testCases, testString)) {
       const expected = testCases[testString],
         r = DateTime.fromRFC2822(testString).toUTC(),
         actual = [r.year, r.month, r.day, r.hour, r.minute, r.second];

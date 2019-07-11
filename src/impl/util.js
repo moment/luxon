@@ -31,7 +31,11 @@ export function isDate(o) {
 // CAPABILITIES
 
 export function hasIntl() {
-  return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+  try {
+    return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+  } catch (e) {
+    return false;
+  }
 }
 
 export function hasFormatToParts() {
@@ -39,7 +43,11 @@ export function hasFormatToParts() {
 }
 
 export function hasRelative() {
-  return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+  try {
+    return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+  } catch (e) {
+    return false;
+  }
 }
 
 // OBJECTS AND ARRAYS
@@ -69,6 +77,10 @@ export function pick(obj, keys) {
     a[k] = obj[k];
     return a;
   }, {});
+}
+
+export function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
 // NUMBERS AND STRINGS
@@ -229,7 +241,7 @@ function asNumber(value) {
 export function normalizeObject(obj, normalizer, nonUnitKeys = []) {
   const normalized = {};
   for (const u in obj) {
-    if (obj.hasOwnProperty(u)) {
+    if (hasOwnProperty(obj, u)) {
       if (nonUnitKeys.indexOf(u) >= 0) continue;
       const v = obj[u];
       if (v === undefined || v === null) continue;

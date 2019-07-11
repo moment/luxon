@@ -66,6 +66,7 @@ export default class IANAZone extends Zone {
     }
     return ianaZoneCache[name];
   }
+
   /**
    * Reset local caches. Should only be necessary in testing scenarios.
    * @return {void}
@@ -74,6 +75,7 @@ export default class IANAZone extends Zone {
     ianaZoneCache = {};
     dtfCache = {};
   }
+
   /**
    * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
    * @param {string} s - The string to check validity on

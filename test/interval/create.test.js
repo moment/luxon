@@ -1,6 +1,9 @@
 /* global test expect */
 import { DateTime, Interval, Duration } from "../../src/luxon";
 import { InvalidArgumentError } from "../../src/errors";
+import Helpers from "../helpers";
+
+const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
 //------
 // .fromObject()
@@ -44,6 +47,19 @@ test("Interval.fromDateTimes rejects missing or invalid arguments", () => {
     InvalidArgumentError
   );
   expect(() => Interval.fromDateTimes(DateTime.local(), true)).toThrow(InvalidArgumentError);
+});
+
+test("Interval.fromDateTimes throws with start date coming after end date", () => {
+  const start = DateTime.fromObject({
+      year: 2016,
+      month: 5,
+      day: 25
+    }).toJSDate(),
+    end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }).toJSDate();
+
+  withThrowOnInvalid(true, () => {
+    expect(() => Interval.fromDateTimes(end, start)).toThrow();
+  });
 });
 
 //------

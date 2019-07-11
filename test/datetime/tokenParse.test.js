@@ -251,7 +251,7 @@ test("DateTime.fromFormat() uses case-insensitive matching", () => {
 test("DateTime.fromFormat() parses offsets", () => {});
 
 test("DateTime.fromFormat() validates weekday numbers", () => {
-  let d = DateTime.fromFormat("2, 05/25/1982", "E, LL/dd/yyyy");
+  const d = DateTime.fromFormat("2, 05/25/1982", "E, LL/dd/yyyy");
   expect(d.year).toBe(1982);
   expect(d.month).toBe(5);
   expect(d.day).toBe(25);
@@ -436,7 +436,7 @@ test("DateTime.fromFormat() parses fixed offsets", () => {
   const formats = [["Z", "-4"], ["ZZ", "-4:00"], ["ZZZ", "-0400"]];
 
   for (const i in formats) {
-    if (formats.hasOwnProperty(i)) {
+    if (Object.prototype.hasOwnProperty.call(formats, i)) {
       const [format, example] = formats[i],
         dt = DateTime.fromFormat(
           `1982/05/25 09:10:11.445 ${example}`,
@@ -452,7 +452,7 @@ test("DateTime.fromFormat() with setZone parses fixed offsets and sets it", () =
   const formats = [["Z", "-4"], ["ZZ", "-4:00"], ["ZZZ", "-0400"]];
 
   for (const i in formats) {
-    if (formats.hasOwnProperty(i)) {
+    if (Object.prototype.hasOwnProperty.call(formats, i)) {
       const [format, example] = formats[i],
         dt = DateTime.fromFormat(
           `1982/05/25 09:10:11.445 ${example}`,

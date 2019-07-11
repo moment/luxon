@@ -45,6 +45,8 @@ import {
 } from "./errors.js";
 import SystemZone from "./zones/systemZone.js";
 
+const MAX_DATE = 8.64e15;
+
 // we cache week data on the DT object and this intermediates the cache
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
@@ -488,7 +490,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   static utc() {
-    let [opts, args] = lastOpts(arguments),
+    const [opts, args] = lastOpts(arguments),
       [year, month, day, hour, minute, second, millisecond] = args;
 
     opts.zone = FixedOffsetZone.utcInstance;
@@ -527,6 +529,9 @@ export default class DateTime {
   static fromMillis(milliseconds, options = {}) {
     if (!isNumber(milliseconds)) {
       throw new InvalidArgumentError("fromMillis requires a numerical input");
+    } else if (milliseconds < -MAX_DATE || milliseconds > MAX_DATE) {
+      // this isn't perfect because because we can still end up out of range because of additional shifting, but it's a start
+      throw new InvalidArgumentError("Timestamp out of range");
     } else {
       return new DateTime({
         ts: milliseconds,
@@ -1739,6 +1744,9 @@ export default class DateTime {
    * @return {DateTime} the min DateTime, or undefined if called with no argument
    */
   static min(...dateTimes) {
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError("min requires all arguments be DateTimes");
+    }
     return bestBy(dateTimes, i => i.valueOf(), Math.min);
   }
 
@@ -1748,6 +1756,9 @@ export default class DateTime {
    * @return {DateTime} the max DateTime, or undefined if called with no argument
    */
   static max(...dateTimes) {
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError("max requires all arguments be DateTimes");
+    }
     return bestBy(dateTimes, i => i.valueOf(), Math.max);
   }
 
@@ -1898,6 +1909,14 @@ export default class DateTime {
    */
   static get DATETIME_MED_WITH_SECONDS() {
     return Formats.DATETIME_MED_WITH_SECONDS;
+  }
+
+  /**
+   * {@link toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_MED_WITH_WEEKDAY() {
+    return Formats.DATETIME_MED_WITH_WEEKDAY;
   }
 
   /**

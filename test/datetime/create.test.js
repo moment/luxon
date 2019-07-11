@@ -8,7 +8,7 @@ import {
   InvalidZoneError
 } from "../../src/errors";
 
-const Helpers = require("../helpers");
+import Helpers from "../helpers";
 
 const withDefaultLocale = Helpers.setUnset("defaultLocale"),
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -342,6 +342,11 @@ test("DateTime.fromMillis accepts the default locale", () => {
 
 test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input", () => {
   expect(() => DateTime.fromMillis("slurp")).toThrow();
+});
+
+test("DateTime.fromMillis(ms) does not accept out-of-bounds numbers", () => {
+  expect(() => DateTime.fromMillis(-8.64e15 - 1)).toThrow();
+  expect(() => DateTime.fromMillis(8.64e15 + 1)).toThrow();
 });
 
 //------

@@ -296,6 +296,7 @@ export default class Locale {
     sysLocaleCache = null;
     intlDTCache = {};
     intlNumCache = {};
+    intlRelCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
@@ -303,7 +304,7 @@ export default class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, specifiedLocale) {
-    let [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
+    const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
 
     this.locale = parsedLocale;
     this.numberingSystem = numbering || parsedNumberingSystem || null;

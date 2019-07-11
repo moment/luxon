@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.17.1
+
+ * Reject out-of-range numbers in DateTime.fromMillis
+ * Reject 0s in ISO date inputs
+
+## 1.17.0
+
+ * DateTime.min and DateTime.max throw if they get the wrong kind of arguments
+ * Fixed throwOnInvalid logic for Interval
+ * Added `DATETIME_MED_WITH_WEEKDAY` preset
+
+## 1.16.1
+
+ * Catch errors trying to use Intl in weird versions of IE 11
+
 ## 1.16.0
 
 - Fixed locale default logic for `DateTime#toFormat("ZZZZ")`

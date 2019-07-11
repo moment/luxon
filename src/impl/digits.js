@@ -57,7 +57,7 @@ export function parseDigits(str) {
       if (str[i].search(numberingSystems.hanidec) !== -1) {
         value += hanidecChars.indexOf(str[i]);
       } else {
-        for (let key in numberingSystemsUTF16) {
+        for (const key in numberingSystemsUTF16) {
           const [min, max] = numberingSystemsUTF16[key];
           if (code >= min && code <= max) {
             value += code - min;
