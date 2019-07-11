@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.17.1
+
+ * Reject out-of-range numbers in DateTime.fromMillis
+ * Reject 0s in ISO date inputs
+
 ## 1.17.0
 
  * DateTime.min and DateTime.max throw if they get the wrong kind of arguments
