@@ -79,6 +79,10 @@ export function pick(obj, keys) {
   }, {});
 }
 
+export function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
 // NUMBERS AND STRINGS
 
 export function numberBetween(thing, bottom, top) {
@@ -238,7 +242,7 @@ function asNumber(value) {
 export function normalizeObject(obj, normalizer, nonUnitKeys) {
   const normalized = {};
   for (const u in obj) {
-    if (obj.hasOwnProperty(u)) {
+    if (hasOwnProperty(obj, u)) {
       if (nonUnitKeys.indexOf(u) >= 0) continue;
       const v = obj[u];
       if (v === undefined || v === null) continue;

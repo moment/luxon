@@ -153,7 +153,7 @@ function xor(items, expected) {
   const r = Interval.xor(items);
   expect(r.length).toBe(expected.length);
   for (const i in expected) {
-    if (expected.hasOwnProperty(i)) {
+    if (Object.prototype.hasOwnProperty.call(expected, i)) {
       expect(r[i] && r[i].equals(expected[i])).toBeTruthy();
     }
   }
@@ -209,7 +209,7 @@ function diff(interval, items, expected) {
   const r = interval.difference(...items);
   expect(r.length).toBe(expected.length);
   for (const i in expected) {
-    if (expected.hasOwnProperty(i)) {
+    if (Object.prototype.hasOwnProperty.call(expected, i)) {
       expect(r[i] && r[i].equals(expected[i])).toBeTruthy();
     }
   }

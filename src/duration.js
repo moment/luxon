@@ -1,4 +1,4 @@
-import { isUndefined, isNumber, normalizeObject } from "./impl/util.js";
+import { isUndefined, isNumber, normalizeObject, hasOwnProperty } from "./impl/util.js";
 import Locale from "./impl/locale.js";
 import Formatter from "./impl/formatter.js";
 import { parseISODuration } from "./impl/regexParser.js";
@@ -457,7 +457,7 @@ export default class Duration {
       result = {};
 
     for (const k of orderedUnits) {
-      if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
+      if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
         result[k] = dur.get(k) + this.get(k);
       }
     }

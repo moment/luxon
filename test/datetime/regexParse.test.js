@@ -580,7 +580,7 @@ test("DateTime.fromRFC2822 parses a range of dates", () => {
   };
 
   for (const testString in testCases) {
-    if (testCases.hasOwnProperty(testString)) {
+    if (Object.prototype.hasOwnProperty.call(testCases, testString)) {
       const expected = testCases[testString],
         r = DateTime.fromRFC2822(testString).toUTC(),
         actual = [r.year, r.month, r.day, r.hour, r.minute, r.second];

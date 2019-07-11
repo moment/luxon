@@ -1,4 +1,4 @@
-import { parseMillis, isUndefined, untruncateYear, signedOffset } from "./util.js";
+import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.js";
 import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
@@ -189,7 +189,7 @@ function match(input, regex, handlers) {
     const all = {};
     let matchIndex = 1;
     for (const i in handlers) {
-      if (handlers.hasOwnProperty(i)) {
+      if (hasOwnProperty(handlers, i)) {
         const h = handlers[i],
           groups = h.groups ? h.groups + 1 : 1;
         if (!h.literal && h.token) {

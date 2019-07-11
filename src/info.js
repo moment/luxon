@@ -165,11 +165,12 @@ export default class Info {
     let intl = false,
       intlTokens = false,
       zones = false,
-      relative = hasRelative();
+      relative = false;
 
     if (hasIntl()) {
       intl = true;
       intlTokens = hasFormatToParts();
+      relative = hasRelative();
 
       try {
         zones =
