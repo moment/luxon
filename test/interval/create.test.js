@@ -1,5 +1,8 @@
 /* global test expect */
 import { DateTime, Interval, Duration, Settings } from "../../src/luxon";
+import Helpers from "../helpers";
+
+const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
 //------
 // .fromObject()
@@ -63,7 +66,9 @@ test("Interval.fromDateTimes throws with start date coming after end date", () =
     }).toJSDate(),
     end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }).toJSDate();
 
-  expect(() => Interval.fromDateTimes(end, start)).toThrow();
+  withThrowOnInvalid(true, () => {
+    expect(() => Interval.fromDateTimes(end, start)).toThrow();
+  });
 });
 
 //------
