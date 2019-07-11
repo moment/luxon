@@ -267,6 +267,11 @@ test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input"
   expect(() => DateTime.fromMillis("slurp")).toThrow();
 });
 
+test("DateTime.fromMillis(ms) does not accept out-of-bounds numbers", () => {
+  expect(DateTime.fromMillis(-8.64e15 - 1).isValid).toBe(false);
+  expect(DateTime.fromMillis(8.64e15 + 1).isValid).toBe(false);
+});
+
 //------
 // .fromSeconds()
 //-------
