@@ -535,6 +535,8 @@ test("DateTime.fromISO() rejects poop", () => {
   rejects("2016-1");
   rejects("2016-1-15");
   rejects("2016-01-5");
+  rejects("2016-01-00");
+  rejects("2016-00-01");
   rejects("2016-05-25 08:34:34");
   rejects("2016-05-25Q08:34:34");
   rejects("2016-05-25T8:04:34");
