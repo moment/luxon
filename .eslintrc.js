@@ -6,7 +6,8 @@ module.exports = {
     "linebreak-style": "off",
     "one-var": "off",
     "spaced-comment": ["error", "always", { exceptions: ["-"] }],
-    "valid-jsdoc": "off"
+    "valid-jsdoc": "off",
+    "prettier/prettier": "warn"
   },
   env: {
     es6: true

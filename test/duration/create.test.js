@@ -44,8 +44,14 @@ test("Duration.fromObject sets all the values from the object having string type
 });
 
 test("Duration.fromObject accepts a conversionAccuracy", () => {
-  const dur = Duration.fromObject({ days: 1, conversionAccuracy: "longterm" });
+  const dur = Duration.fromObject({ days: 1 }, { conversionAccuracy: "longterm" });
   expect(dur.conversionAccuracy).toBe("longterm");
+});
+
+test("Duration.fromObject accepts locale settings", () => {
+  const dur = Duration.fromObject({ days: 1 }, { locale: "fr", numberingSystem: "beng" });
+  expect(dur.numberingSystem).toBe("beng");
+  expect(dur.locale).toBe("fr");
 });
 
 test("Duration.fromObject throws if the argument is not an object", () => {
@@ -80,7 +86,7 @@ test("Duration.fromObject throws if the initial object has invalid values", () =
 });
 
 test("Duration.fromObject is valid if providing options only", () => {
-  const dur = Duration.fromObject({ conversionAccuracy: "longterm" });
+  const dur = Duration.fromObject({}, { conversionAccuracy: "longterm" });
   expect(dur.years).toBe(0);
   expect(dur.months).toBe(0);
   expect(dur.days).toBe(0);

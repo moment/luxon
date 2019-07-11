@@ -194,7 +194,7 @@ export default class Duration {
    * @return {Duration}
    */
   static fromMillis(count, opts) {
-    return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
+    return Duration.fromObject({ milliseconds: count }, opts);
   }
 
   /**
@@ -215,7 +215,7 @@ export default class Duration {
    * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  static fromObject(obj) {
+  static fromObject(obj, opts = {}) {
     if (obj == null || typeof obj !== "object") {
       throw new InvalidArgumentError(
         `Duration.fromObject: argument expected to be an object, got ${
@@ -224,15 +224,9 @@ export default class Duration {
       );
     }
     return new Duration({
-      values: normalizeObject(obj, Duration.normalizeUnit, [
-        "locale",
-        "numberingSystem",
-        "conversionAccuracy",
-        "zone", // a bit of debt; it's super inconvenient internally not to be able to blindly pass this
-        "nullOnInvalid"
-      ]),
-      loc: Locale.fromObject(obj),
-      conversionAccuracy: obj.conversionAccuracy
+      values: normalizeObject(obj, Duration.normalizeUnit),
+      loc: Locale.fromObject(opts),
+      conversionAccuracy: opts.conversionAccuracy
     });
   }
 
@@ -253,8 +247,7 @@ export default class Duration {
   static fromISO(text, opts = {}) {
     const [parsed] = parseISODuration(text);
     if (parsed) {
-      const obj = Object.assign(parsed, opts);
-      return Duration.fromObject(obj);
+      return Duration.fromObject(parsed, opts);
     } else {
       if (opts.nullOnInvalid) return null;
       throw new UnparsableStringError("ISO 8601", text);
@@ -347,20 +340,11 @@ export default class Duration {
 
   /**
    * Returns a Javascript object with this Duration's values.
-   * @param opts - options for generating the object
-   * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=> { years: 1, days: 6, seconds: 2 }
    * @return {Object}
    */
-  toObject(opts = {}) {
-    const base = Object.assign({}, this.values);
-
-    if (opts.includeConfig) {
-      base.conversionAccuracy = this.conversionAccuracy;
-      base.numberingSystem = this.loc.numberingSystem;
-      base.locale = this.loc.locale;
-    }
-    return base;
+  toObject() {
+    return Object.assign({}, this.values);
   }
 
   /**
@@ -501,6 +485,7 @@ export default class Duration {
    * @return {Duration}
    */
   normalize() {
+    // todo - this should keep the opts...
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
     return Duration.fromObject(vals);

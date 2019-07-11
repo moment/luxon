@@ -18,18 +18,3 @@ test("DateTime#toObject returns the object", () => {
     millisecond: 123
   });
 });
-
-test("DateTime#toObject accepts a flag to return config", () => {
-  expect(dateTime.toObject({ includeConfig: true })).toEqual({
-    year: 1982,
-    month: 5,
-    day: 25,
-    hour: 9,
-    minute: 23,
-    second: 54,
-    millisecond: 123,
-    locale: "en-US",
-    numberingSystem: null,
-    outputCalendar: null
-  });
-});

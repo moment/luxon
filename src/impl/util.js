@@ -226,7 +226,7 @@ function asNumber(value) {
   return numericValue;
 }
 
-export function normalizeObject(obj, normalizer, nonUnitKeys) {
+export function normalizeObject(obj, normalizer, nonUnitKeys = []) {
   const normalized = {};
   for (const u in obj) {
     if (obj.hasOwnProperty(u)) {

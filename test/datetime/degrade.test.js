@@ -152,12 +152,16 @@ Helpers.withoutFTP("setting the time zone still works", () => {
 Helpers.withoutFTP("DateTime#offsetNameLong still works", () => {
   // can still generate offset name
   expect(
-    DateTime.fromObject({
-      year: 2014,
-      month: 8,
-      day: 6,
-      zone: "America/New_York"
-    }).offsetNameLong
+    DateTime.fromObject(
+      {
+        year: 2014,
+        month: 8,
+        day: 6
+      },
+      {
+        zone: "America/New_York"
+      }
+    ).offsetNameLong
   ).toBe("Eastern Daylight Time");
 });
 

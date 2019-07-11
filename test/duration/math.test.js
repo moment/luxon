@@ -109,12 +109,16 @@ test("Duration#negate doesn't mutate", () => {
 });
 
 test("Duration#negate preserves conversionAccuracy", () => {
-  const dur = Duration.fromObject({
-      hours: 4,
-      minutes: -12,
-      seconds: 2,
-      conversionAccuracy: "longterm"
-    }),
+  const dur = Duration.fromObject(
+      {
+        hours: 4,
+        minutes: -12,
+        seconds: 2
+      },
+      {
+        conversionAccuracy: "longterm"
+      }
+    ),
     result = dur.negate();
   expect(result.conversionAccuracy).toBe("longterm");
 });
