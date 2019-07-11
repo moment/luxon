@@ -1843,6 +1843,9 @@ export default class DateTime {
    * @return {DateTime} the min DateTime, or undefined if called with no argument
    */
   static min(...dateTimes) {
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError("min requires all arguments be DateTimes");
+    }
     return bestBy(dateTimes, i => i.valueOf(), Math.min);
   }
 
@@ -1852,6 +1855,9 @@ export default class DateTime {
    * @return {DateTime} the max DateTime, or undefined if called with no argument
    */
   static max(...dateTimes) {
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError("max requires all arguments be DateTimes");
+    }
     return bestBy(dateTimes, i => i.valueOf(), Math.max);
   }
 

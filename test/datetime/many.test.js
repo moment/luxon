@@ -34,6 +34,15 @@ test("DateTime.min is stable", () => {
   expect(m.locale).toBe("en-GB");
 });
 
+test("DateTime.min throws if you don't pass it DateTimes", () => {
+  const dt = DateTime.fromJSDate(new Date(1982, 2, 25));
+  const notADt = "flob";
+
+  expect(() => DateTime.min(dt, notADt)).toThrow();
+  expect(() => DateTime.min(notADt)).toThrow();
+  expect(() => DateTime.min(notADt, notADt)).toThrow();
+});
+
 //------
 // max
 //-------
@@ -64,4 +73,13 @@ test("DateTime.max is stable", () => {
     DateTime.fromJSDate(new Date(1982, 3, 25)).reconfigure({ locale: "en-US" })
   );
   expect(m.locale).toBe("en-GB");
+});
+
+test("DateTime.max throws if you don't pass it DateTimes", () => {
+  const dt = DateTime.fromJSDate(new Date(1982, 2, 25));
+  const notADt = "flob";
+
+  expect(() => DateTime.max(dt, notADt)).toThrow();
+  expect(() => DateTime.max(notADt)).toThrow();
+  expect(() => DateTime.max(notADt, notADt)).toThrow();
 });
