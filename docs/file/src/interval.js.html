@@ -55,11 +55,11 @@ const INVALID = &quot;Invalid Interval&quot;;
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
   if (!start || !start.isValid) {
-    return new Invalid(&quot;missing or invalid start&quot;);
+    return Interval.invalid(&quot;missing or invalid start&quot;);
   } else if (!end || !end.isValid) {
-    return new Invalid(&quot;missing or invalid end&quot;);
+    return Interval.invalid(&quot;missing or invalid end&quot;);
   } else if (end &lt; start) {
-    return new Invalid(
+    return Interval.invalid(
       &quot;end before start&quot;,
       `The end of an interval must be after its start, but you had start=${start.toISO()} and end=${end.toISO()}`
     );
@@ -133,11 +133,16 @@ export default class Interval {
     const builtStart = friendlyDateTime(start),
       builtEnd = friendlyDateTime(end);
 
-    return new Interval({
-      start: builtStart,
-      end: builtEnd,
-      invalid: validateStartEnd(builtStart, builtEnd)
-    });
+    const validateError = validateStartEnd(builtStart, builtEnd);
+
+    if (validateError == null) {
+      return new Interval({
+        start: builtStart,
+        end: builtEnd
+      });
+    } else {
+      return validateError;
+    }
   }
 
   /**

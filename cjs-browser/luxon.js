@@ -599,6 +599,14 @@ var DATETIME_MED_WITH_SECONDS = {
   minute: d2,
   second: d2
 };
+var DATETIME_MED_WITH_WEEKDAY = {
+  year: n,
+  month: s,
+  day: n,
+  weekday: s,
+  hour: n,
+  minute: d2
+};
 var DATETIME_FULL = {
   year: n,
   month: l,
@@ -825,6 +833,9 @@ function formatString(knownFormat) {
 
     case stringify(DATETIME_MED_WITH_SECONDS):
       return "LLL d, yyyy, h:mm:ss a";
+
+    case stringify(DATETIME_MED_WITH_WEEKDAY):
+      return "EEE, d LLL yyyy, h:mm a";
 
     case stringify(DATETIME_FULL_WITH_SECONDS):
       return "LLLL d, yyyy, h:mm:ss a";
@@ -3941,11 +3952,11 @@ var INVALID$1 = "Invalid Interval"; // checks if the start is equal to or before
 
 function validateStartEnd(start, end) {
   if (!start || !start.isValid) {
-    return new Invalid("missing or invalid start");
+    return Interval.invalid("missing or invalid start");
   } else if (!end || !end.isValid) {
-    return new Invalid("missing or invalid end");
+    return Interval.invalid("missing or invalid end");
   } else if (end < start) {
-    return new Invalid("end before start", "The end of an interval must be after its start, but you had start=" + start.toISO() + " and end=" + end.toISO());
+    return Interval.invalid("end before start", "The end of an interval must be after its start, but you had start=" + start.toISO() + " and end=" + end.toISO());
   } else {
     return null;
   }
@@ -4029,11 +4040,16 @@ function () {
   Interval.fromDateTimes = function fromDateTimes(start, end) {
     var builtStart = friendlyDateTime(start),
         builtEnd = friendlyDateTime(end);
-    return new Interval({
-      start: builtStart,
-      end: builtEnd,
-      invalid: validateStartEnd(builtStart, builtEnd)
-    });
+    var validateError = validateStartEnd(builtStart, builtEnd);
+
+    if (validateError == null) {
+      return new Interval({
+        start: builtStart,
+        end: builtEnd
+      });
+    } else {
+      return validateError;
+    }
   }
   /**
    * Create an Interval from a start DateTime and a Duration to extend to.
@@ -7324,6 +7340,10 @@ function () {
       dateTimes[_key] = arguments[_key];
     }
 
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError("min requires all arguments be DateTimes");
+    }
+
     return bestBy(dateTimes, function (i) {
       return i.valueOf();
     }, Math.min);
@@ -7338,6 +7358,10 @@ function () {
   DateTime.max = function max() {
     for (var _len2 = arguments.length, dateTimes = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       dateTimes[_key2] = arguments[_key2];
+    }
+
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError("max requires all arguments be DateTimes");
     }
 
     return bestBy(dateTimes, function (i) {
@@ -7939,6 +7963,16 @@ function () {
     key: "DATETIME_MED_WITH_SECONDS",
     get: function get() {
       return DATETIME_MED_WITH_SECONDS;
+    }
+    /**
+     * {@link toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
+     * @type {Object}
+     */
+
+  }, {
+    key: "DATETIME_MED_WITH_WEEKDAY",
+    get: function get() {
+      return DATETIME_MED_WITH_WEEKDAY;
     }
     /**
      * {@link toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.

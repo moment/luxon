@@ -472,6 +472,15 @@ var luxon = (function (exports) {
     second: d2
   };
 
+  const DATETIME_MED_WITH_WEEKDAY = {
+    year: n,
+    month: s,
+    day: n,
+    weekday: s,
+    hour: n,
+    minute: d2
+  };
+
   const DATETIME_FULL = {
     year: n,
     month: l,
@@ -722,6 +731,8 @@ var luxon = (function (exports) {
         return "M/d/yyyy, h:mm:ss a";
       case stringify(DATETIME_MED_WITH_SECONDS):
         return "LLL d, yyyy, h:mm:ss a";
+      case stringify(DATETIME_MED_WITH_WEEKDAY):
+        return "EEE, d LLL yyyy, h:mm a";
       case stringify(DATETIME_FULL_WITH_SECONDS):
         return "LLLL d, yyyy, h:mm:ss a";
       case stringify(DATETIME_HUGE_WITH_SECONDS):
@@ -3269,11 +3280,11 @@ var luxon = (function (exports) {
   // checks if the start is equal to or before the end
   function validateStartEnd(start, end) {
     if (!start || !start.isValid) {
-      return new Invalid("missing or invalid start");
+      return Interval.invalid("missing or invalid start");
     } else if (!end || !end.isValid) {
-      return new Invalid("missing or invalid end");
+      return Interval.invalid("missing or invalid end");
     } else if (end < start) {
-      return new Invalid(
+      return Interval.invalid(
         "end before start",
         `The end of an interval must be after its start, but you had start=${start.toISO()} and end=${end.toISO()}`
       );
@@ -3347,11 +3358,16 @@ var luxon = (function (exports) {
       const builtStart = friendlyDateTime(start),
         builtEnd = friendlyDateTime(end);
 
-      return new Interval({
-        start: builtStart,
-        end: builtEnd,
-        invalid: validateStartEnd(builtStart, builtEnd)
-      });
+      const validateError = validateStartEnd(builtStart, builtEnd);
+
+      if (validateError == null) {
+        return new Interval({
+          start: builtStart,
+          end: builtEnd
+        });
+      } else {
+        return validateError;
+      }
     }
 
     /**
@@ -6393,6 +6409,9 @@ var luxon = (function (exports) {
      * @return {DateTime} the min DateTime, or undefined if called with no argument
      */
     static min(...dateTimes) {
+      if (!dateTimes.every(DateTime.isDateTime)) {
+        throw new InvalidArgumentError("min requires all arguments be DateTimes");
+      }
       return bestBy(dateTimes, i => i.valueOf(), Math.min);
     }
 
@@ -6402,6 +6421,9 @@ var luxon = (function (exports) {
      * @return {DateTime} the max DateTime, or undefined if called with no argument
      */
     static max(...dateTimes) {
+      if (!dateTimes.every(DateTime.isDateTime)) {
+        throw new InvalidArgumentError("max requires all arguments be DateTimes");
+      }
       return bestBy(dateTimes, i => i.valueOf(), Math.max);
     }
 
@@ -6559,6 +6581,14 @@ var luxon = (function (exports) {
      */
     static get DATETIME_MED_WITH_SECONDS() {
       return DATETIME_MED_WITH_SECONDS;
+    }
+
+    /**
+     * {@link toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
+     * @type {Object}
+     */
+    static get DATETIME_MED_WITH_WEEKDAY() {
+      return DATETIME_MED_WITH_WEEKDAY;
     }
 
     /**

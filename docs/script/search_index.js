@@ -816,6 +816,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/datetime.js~datetime.datetime_med_with_weekday",
+    "class/src/datetime.js~DateTime.html#static-get-DATETIME_MED_WITH_WEEKDAY",
+    "src/datetime.js~DateTime.DATETIME_MED_WITH_WEEKDAY",
+    "member"
+  ],
+  [
     "src/datetime.js~datetime.datetime_short",
     "class/src/datetime.js~DateTime.html#static-get-DATETIME_SHORT",
     "src/datetime.js~DateTime.DATETIME_SHORT",
@@ -1555,13 +1561,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
   [
     "src/settings.js~settings.defaultoutputcalendar",
-    "class/src/settings.js~Settings.html#static-set-defaultOutputCalendar",
+    "class/src/settings.js~Settings.html#static-get-defaultOutputCalendar",
     "src/settings.js~Settings.defaultOutputCalendar",
     "member"
   ],
@@ -1585,13 +1591,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-get-now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
+    "class/src/settings.js~Settings.html#static-get-now",
     "src/settings.js~Settings.now",
     "member"
   ],

@@ -1889,6 +1889,9 @@ export default class DateTime {
    * @return {DateTime} the min DateTime, or undefined if called with no argument
    */
   static min(...dateTimes) {
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError(&quot;min requires all arguments be DateTimes&quot;);
+    }
     return bestBy(dateTimes, i =&gt; i.valueOf(), Math.min);
   }
 
@@ -1898,6 +1901,9 @@ export default class DateTime {
    * @return {DateTime} the max DateTime, or undefined if called with no argument
    */
   static max(...dateTimes) {
+    if (!dateTimes.every(DateTime.isDateTime)) {
+      throw new InvalidArgumentError(&quot;max requires all arguments be DateTimes&quot;);
+    }
     return bestBy(dateTimes, i =&gt; i.valueOf(), Math.max);
   }
 
@@ -2055,6 +2061,14 @@ export default class DateTime {
    */
   static get DATETIME_MED_WITH_SECONDS() {
     return Formats.DATETIME_MED_WITH_SECONDS;
+  }
+
+  /**
+   * {@link toLocaleString} format like &apos;Fri, 14 Oct 1983, 9:30 AM&apos;. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_MED_WITH_WEEKDAY() {
+    return Formats.DATETIME_MED_WITH_WEEKDAY;
   }
 
   /**
