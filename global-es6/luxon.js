@@ -2275,11 +2275,16 @@ var luxon = (function (exports) {
     ),
     sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
+  function int(match, pos, fallback) {
+    const m = match[pos];
+    return isUndefined(m) ? fallback : parseInteger(m);
+  }
+
   function extractISOYmd(match, cursor) {
     const item = {
-      year: parseInteger(match[cursor]),
-      month: parseInteger(match[cursor + 1]) || 1,
-      day: parseInteger(match[cursor + 2]) || 1
+      year: int(match, cursor),
+      month: int(match, cursor + 1, 1),
+      day: int(match, cursor + 2, 1)
     };
 
     return [item, null, cursor + 3];
@@ -2287,9 +2292,9 @@ var luxon = (function (exports) {
 
   function extractISOTime(match, cursor) {
     const item = {
-      hour: parseInteger(match[cursor]) || 0,
-      minute: parseInteger(match[cursor + 1]) || 0,
-      second: parseInteger(match[cursor + 2]) || 0,
+      hour: int(match, cursor, 0),
+      minute: int(match, cursor + 1, 0),
+      second: int(match, cursor + 2, 0),
       millisecond: parseMillis(match[cursor + 3])
     };
 
@@ -4609,6 +4614,7 @@ var luxon = (function (exports) {
   }
 
   const INVALID$2 = "Invalid DateTime";
+  const MAX_DATE = 8.64e15;
 
   function unsupportedZone(zone) {
     return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
@@ -5102,6 +5108,9 @@ var luxon = (function (exports) {
     static fromMillis(milliseconds, options = {}) {
       if (!isNumber(milliseconds)) {
         throw new InvalidArgumentError("fromMillis requires a numerical input");
+      } else if (milliseconds < -MAX_DATE || milliseconds > MAX_DATE) {
+        // this isn't perfect because because we can still end up out of range because of additional shifting, but it's a start
+        return DateTime.invalid("Timestamp out of range");
       } else {
         return new DateTime({
           ts: milliseconds,

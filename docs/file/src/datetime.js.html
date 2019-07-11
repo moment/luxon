@@ -89,6 +89,7 @@ import {
 import Invalid from &quot;./impl/invalid.js&quot;;
 
 const INVALID = &quot;Invalid DateTime&quot;;
+const MAX_DATE = 8.64e15;
 
 function unsupportedZone(zone) {
   return new Invalid(&quot;unsupported zone&quot;, `the zone &quot;${zone.name}&quot; is not supported`);
@@ -582,6 +583,9 @@ export default class DateTime {
   static fromMillis(milliseconds, options = {}) {
     if (!isNumber(milliseconds)) {
       throw new InvalidArgumentError(&quot;fromMillis requires a numerical input&quot;);
+    } else if (milliseconds &lt; -MAX_DATE || milliseconds &gt; MAX_DATE) {
+      // this isn&apos;t perfect because because we can still end up out of range because of additional shifting, but it&apos;s a start
+      return DateTime.invalid(&quot;Timestamp out of range&quot;);
     } else {
       return new DateTime({
         ts: milliseconds,
