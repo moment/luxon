@@ -366,7 +366,7 @@ test("DateTime.fromFormat() allows regex content", () => {
 });
 
 test("DateTime.fromFormat() allows literals", () => {
-  const i = DateTime.fromFormat("1982/05/25 hello 09:10:11.445", "yyyy/MM/dd 'hello' HH:mm:ss.SSS");
+  const i = DateTime.fromFormat("1982/05/25 hello 09:10:11.445", "yyyy/MM/dd [hello] HH:mm:ss.SSS");
 
   expect(i.year).toBe(1982);
   expect(i.month).toBe(5);
@@ -493,22 +493,22 @@ test("DateTime.fromFormat validates weekdays", () => {
 });
 
 test("DateTime.fromFormat containg special regex token", () => {
-  const ianaFormat = "yyyy-MM-dd'T'HH-mm[z]";
-  const dt = DateTime.fromFormat("2019-01-14T11-30[Indian/Maldives]", ianaFormat, {
+  const ianaFormat = "yyyy-MM-dd[T]HH-mm[']z[']";
+  const dt = DateTime.fromFormat("2019-01-14T11-30'Indian/Maldives'", ianaFormat, {
     setZone: true
   });
   expect(dt.zoneName).toBe("Indian/Maldives");
 
   expect(
-    DateTime.fromFormat("2019-01-14T11-30[[Indian/Maldives]]", "yyyy-MM-dd'T'HH-mm[[z]]")
+    DateTime.fromFormat("2019-01-14T11-30(Indian/Maldives)", "yyyy-MM-dd[T]HH-mm(z)")
   ).toBeTruthy();
 
   expect(
-    DateTime.fromFormat("2019-01-14T11-30tIndian/Maldivest", "yyyy-MM-dd'T'HH-mm't'z't'")
+    DateTime.fromFormat("2019-01-14T11-30tIndian/Maldivest", "yyyy-MM-dd[T]HH-mm[t]z[t]")
   ).toBeTruthy();
 
   expect(() =>
-    DateTime.fromFormat("2019-01-14T11-30\tIndian/Maldives\t", "yyyy-MM-dd'T'HH-mm't'z't'")
+    DateTime.fromFormat("2019-01-14T11-30\tIndian/Maldives\t", "yyyy-MM-dd[T]HH-mm[t]z[t]")
   ).toThrow(UnparsableStringError);
 });
 

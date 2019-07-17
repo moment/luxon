@@ -49,18 +49,30 @@ export default class Formatter {
   static parseFormat(fmt) {
     let current = null,
       currentFull = "",
-      bracketed = false;
+      bracketedLevel = 0;
+
     const splits = [];
     for (let i = 0; i < fmt.length; i++) {
       const c = fmt.charAt(i);
-      if (c === "'") {
-        if (currentFull.length > 0) {
-          splits.push({ literal: bracketed, val: currentFull });
-        }
-        current = null;
-        currentFull = "";
-        bracketed = !bracketed;
-      } else if (bracketed) {
+      if (c === "[") {
+        if (bracketedLevel === 0) {
+          if (currentFull.length > 0) {
+            splits.push({ literal: false, val: currentFull });
+          }
+          current = null;
+          currentFull = "";
+        } else currentFull += c;
+        bracketedLevel = bracketedLevel + 1;
+      } else if (c === "]") {
+        bracketedLevel = bracketedLevel - 1;
+        if (bracketedLevel === 0) {
+          if (currentFull.length > 0) {
+            splits.push({ literal: true, val: currentFull });
+          }
+          current = null;
+          currentFull = "";
+        } else currentFull += c;
+      } else if (bracketedLevel > 0) {
         currentFull += c;
       } else if (c === current) {
         currentFull += c;
@@ -74,7 +86,7 @@ export default class Formatter {
     }
 
     if (currentFull.length > 0) {
-      splits.push({ literal: bracketed, val: currentFull });
+      splits.push({ literal: bracketedLevel > 0, val: currentFull });
     }
 
     return splits;

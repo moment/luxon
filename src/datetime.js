@@ -1081,7 +1081,7 @@ export default class DateTime {
    */
   get isInDST() {
     return this.c
-      ? this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
+      ? this.offset > this.set({ month: 12 }).offset || this.offset > this.set({ month: 6 }).offset
       : null;
   }
 
@@ -1264,7 +1264,7 @@ export default class DateTime {
    * Add a period of time to this DateTime and return the resulting DateTime
    *
    * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
-   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.tructoromObject()
+   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @example DateTime.local().plus(123) //~> in 123 milliseconds
    * @example DateTime.local().plus({ minutes: 15 }) //~> in 15 minutes
    * @example DateTime.local().plus({ days: 1 }) //~> this time tomorrow
@@ -1447,7 +1447,7 @@ export default class DateTime {
    * @return {string}
    */
   toISOWeekDate() {
-    return toTechFormat(this, "kkkk-'W'WW-c");
+    return toTechFormat(this, "kkkk-[W]WW-c");
   }
 
   /**
@@ -1487,7 +1487,7 @@ export default class DateTime {
    * @return {string}
    */
   toHTTP() {
-    return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy HH:mm:ss 'GMT'");
+    return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy HH:mm:ss [GMT]");
   }
 
   /**

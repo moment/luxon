@@ -606,9 +606,26 @@ test("DateTime#toFormat returns a full formatted string", () => {
   expect(dt.toFormat("MM/yyyy GG")).toBe("05/1982 Anno Domini");
 });
 
-test("DateTime#toFormat() accepts literals in single quotes", () => {
-  expect(dt.toFormat("dd/MM/yyyy 'at' hh:mm")).toBe("25/05/1982 at 09:23");
-  expect(dt.toFormat("MMdd'T'hh")).toBe("0525T09");
+test("DateTime#toFormat() accepts literals in brackets", () => {
+  expect(dt.toFormat("dd/MM/yyyy [at] hh:mm")).toBe("25/05/1982 at 09:23");
+  expect(dt.toFormat("MMdd[T]hh")).toBe("0525T09");
+  expect(dt.toFormat("[start]MMdd[middle]hh[end]")).toBe("start0525middle09end");
+});
+
+test("DateTime#toFormat() fails on invalid literals", () => {
+  expect(dt.toFormat("dd/MM/yyyy [no end")).toBe("25/05/1982 no end");
+  expect(dt.toFormat("MMdd]")).toBe("05dd]");
+  expect(dt.toFormat("[two ends]]")).toBe("two ends]");
+});
+
+test("DateTime#toFormat() accepts nested literals in brackets", () => {
+  expect(dt.toFormat("dd/MM/yyyy [at [almost]] hh:mm")).toBe("25/05/1982 at [almost] 09:23");
+  expect(dt.toFormat("MMdd[[[T]]]hh")).toBe("0525[[T]]09");
+});
+
+test("DateTime#toFormat() simply outputs non token characters", () => {
+  expect(dt.toFormat("begijklnprvw")).toBe("begijklnprvw");
+  expect(dt.toFormat("ABCIJKNOPQRUVY")).toBe("ABCIJKNOPQRUVY");
 });
 
 test("DateTime#toFormat() uses the numbering system", () => {
