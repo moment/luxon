@@ -7,6 +7,7 @@ import {
   MismatchedWeekdayError,
   InvalidZoneError
 } from "../../src/errors";
+import Settings from "../../src/settings";
 
 import Helpers from "../helpers";
 
@@ -136,6 +137,10 @@ const badInputs = [
 ];
 
 test.each(badInputs)("Interval.fromISO will reject [%s]", s => {
+  expect(() => DateTime.fromISO(s)).toThrow();
+});
+
+test("local with no options", () => {
   const dt = DateTime.local(2017, 6, 12, 5, 25, 16, 255);
   expect(dt.year).toBe(2017);
   expect(dt.month).toBe(6);
@@ -144,6 +149,7 @@ test.each(badInputs)("Interval.fromISO will reject [%s]", s => {
   expect(dt.minute).toBe(25);
   expect(dt.second).toBe(16);
   expect(dt.millisecond).toBe(255);
+  expect(dt.zoneName).toBe(Settings.defaultZone.name);
 });
 
 test("DateTime.local accepts the default locale", () => {
