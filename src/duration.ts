@@ -1,15 +1,34 @@
-import { InvalidArgumentError, InvalidUnitError, UnparsableStringError } from "./errors.js";
-import Formatter from "./impl/formatter.js";
-import Locale from "./impl/locale.js";
-import { parseISODuration } from "./impl/regexParser.js";
+import { asNumber, isUndefined, isNumber, normalizeObject, roundTo } from "./impl/util";
+import Locale from "./impl/locale";
+import Formatter from "./impl/formatter";
+import { parseISODuration } from "./impl/regexParser";
+import { InvalidArgumentError, InvalidUnitError, UnparsableStringError } from "./errors";
 import {
-  asNumber,
-  hasOwnProperty,
-  isNumber,
-  isUndefined,
-  normalizeObject,
-  roundTo
-} from "./impl/util.js";
+  DurationObject,
+  DurationOptions,
+  DurationToFormatOptions,
+  DurationUnit,
+  DurationFromISOOptions
+} from "./types/duration";
+import { ConversionAccuracy, ThrowOnInvalid } from "./types/common";
+
+interface NormalizedDurationObject {
+  years?: number;
+  quarters?: number;
+  months?: number;
+  weeks?: number;
+  days?: number;
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+  milliseconds?: number;
+}
+type NormalizedDurationUnit = keyof NormalizedDurationObject;
+
+type ConversionMatrixUnit = Exclude<NormalizedDurationUnit, "milliseconds">;
+type ConversionMatrix = Readonly<
+  { [key in ConversionMatrixUnit]: { [key in NormalizedDurationUnit]?: number } }
+>;
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -30,9 +49,10 @@ const lowOrderMatrix = {
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
     seconds: { milliseconds: 1000 }
   },
-  casualMatrix = Object.assign(
+  casualMatrix: ConversionMatrix = Object.assign(
     {
       years: {
+        quarters: 4,
         months: 12,
         weeks: 52,
         days: 365,
@@ -47,6 +67,7 @@ const lowOrderMatrix = {
         days: 91,
         hours: 91 * 24,
         minutes: 91 * 24 * 60,
+        seconds: 91 * 24 * 60 * 60,
         milliseconds: 91 * 24 * 60 * 60 * 1000
       },
       months: {
@@ -62,9 +83,10 @@ const lowOrderMatrix = {
   ),
   daysInYearAccurate = 146097.0 / 400,
   daysInMonthAccurate = 146097.0 / 4800,
-  accurateMatrix = Object.assign(
+  accurateMatrix: ConversionMatrix = Object.assign(
     {
       years: {
+        quarters: 4,
         months: 12,
         weeks: daysInYearAccurate / 7,
         days: daysInYearAccurate,
@@ -95,7 +117,7 @@ const lowOrderMatrix = {
   );
 
 // units ordered by size
-const orderedUnits = [
+const orderedUnits: NormalizedDurationUnit[] = [
   "years",
   "quarters",
   "months",
@@ -109,45 +131,46 @@ const orderedUnits = [
 
 const reverseUnits = orderedUnits.slice(0).reverse();
 
-// clone really means "create another instance just like this one, but with these changes"
-function clone(dur, alts, clear = false) {
-  // deep merge for vals
-  const conf = {
-    values: clear ? alts.values : Object.assign({}, dur.values, alts.values || {}),
-    loc: dur.loc.clone(alts.loc),
-    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
-  };
-  return new Duration(conf);
-}
-
-function antiTrunc(n) {
+function antiTrunc(n: number) {
   return n < 0 ? Math.floor(n) : Math.ceil(n);
 }
 
 // NB: mutates parameters
-function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-  const conv = matrix[toUnit][fromUnit],
-    raw = fromMap[fromUnit] / conv,
-    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
+function convert(
+  matrix: ConversionMatrix,
+  fromMap: NormalizedDurationObject,
+  fromUnit: NormalizedDurationUnit,
+  toMap: NormalizedDurationObject,
+  toUnit: ConversionMatrixUnit
+) {
+  const conv = matrix[toUnit][fromUnit] as number,
+    raw = (fromMap[fromUnit] as number) / conv,
+    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit] as number),
     // ok, so this is wild, but see the matrix in the tests
     added =
       !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
-  toMap[toUnit] += added;
-  fromMap[fromUnit] -= added * conv;
+
+  toMap[toUnit] = (toMap[toUnit] as number) + added;
+  fromMap[fromUnit] = (fromMap[fromUnit] as number) - added * conv;
 }
 
-// NB: mutates parameters
-function normalizeValues(matrix, vals) {
-  reverseUnits.reduce((previous, current) => {
-    if (!isUndefined(vals[current])) {
-      if (previous) {
-        convert(matrix, vals, previous, vals, current);
+// NB: mutates vals parameters
+function normalizeValues(matrix: ConversionMatrix, vals: NormalizedDurationObject) {
+  let previousUnit: NormalizedDurationUnit | undefined;
+  reverseUnits.forEach(unit => {
+    if (!isUndefined(vals[unit])) {
+      if (previousUnit) {
+        convert(matrix, vals, previousUnit, vals, unit as ConversionMatrixUnit);
       }
-      return current;
-    } else {
-      return previous;
+      previousUnit = unit;
     }
-  }, null);
+  });
+}
+
+interface Config {
+  conversionAccuracy?: ConversionAccuracy;
+  values: NormalizedDurationObject;
+  loc: Locale;
 }
 
 /**
@@ -161,13 +184,19 @@ function normalizeValues(matrix, vals) {
  * * **Transformation** To create new Durations out of old ones use {@link Duration#plus}, {@link Duration#minus}, {@link Duration#normalize}, {@link Duration#set}, {@link Duration#reconfigure}, {@link Duration#shiftTo}, and {@link Duration#negate}.
  * * **Output** To convert the Duration into other representations, see {@link Duration#as}, {@link Duration#toISO}, {@link Duration#toFormat}, and {@link Duration#toJSON}
  *
- * There's are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
+ * There are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
  */
 export default class Duration {
+  // Private readonly fields
+  private values: Readonly<NormalizedDurationObject>;
+  private loc: Locale;
+  private matrix: ConversionMatrix;
+  private isLuxonDuration: Readonly<true>;
+
   /**
    * @private
    */
-  constructor(config) {
+  private constructor(config: Config) {
     const accurate = config.conversionAccuracy === "longterm" || false;
     /**
      * @access private
@@ -177,10 +206,6 @@ export default class Duration {
      * @access private
      */
     this.loc = config.loc || Locale.create();
-    /**
-     * @access private
-     */
-    this.conversionAccuracy = accurate ? "longterm" : "casual";
     /**
      * @access private
      */
@@ -194,14 +219,14 @@ export default class Duration {
   /**
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
-   * @param {Object} opts - options for parsing
-   * @param {string} [opts.locale='en-US'] - the locale to use
-   * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @param {Object} options - options for parsing
+   * @param {string} [options.locale='en-US'] - the locale to use
+   * @param {string} options.numberingSystem - the numbering system to use
+   * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  static fromMillis(count, opts) {
-    return Duration.fromObject({ milliseconds: count }, opts);
+  static fromMillis(count: number, options: DurationOptions = {}) {
+    return Duration.fromObject({ milliseconds: count }, options);
   }
 
   /**
@@ -217,14 +242,15 @@ export default class Duration {
    * @param {number} obj.minutes
    * @param {number} obj.seconds
    * @param {number} obj.milliseconds
-   * @param {string} [obj.locale='en-US'] - the locale to use
-   * @param {string} obj.numberingSystem - the numbering system to use
-   * @param {string} [obj.conversionAccuracy='casual'] - the conversion system to use
+   * @param {Object} options - options for parsing
+   * @param {string} [options.locale='en-US'] - the locale to use
+   * @param {string} options.numberingSystem - the numbering system to use
+   * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  static fromObject(obj, opts = {}) {
-    if (obj == null || typeof obj !== "object") {
-      if (opts.nullOnInvalid) return null;
+  static fromObject(obj: DurationObject, options: DurationOptions = {}) {
+    if (obj === undefined || obj === null || typeof obj !== "object") {
+      if (options.nullOnInvalid) return null;
       throw new InvalidArgumentError(
         `Duration.fromObject: argument expected to be an object, got ${
           obj === null ? "null" : typeof obj
@@ -234,39 +260,42 @@ export default class Duration {
 
     let values;
     try {
-      values = normalizeObject(obj, Duration.normalizeUnit);
+      values = normalizeObject(obj as Record<string, number>, Duration.normalizeUnit);
     } catch (error) {
-      if (opts.nullOnInvalid) return null;
+      if (options.nullOnInvalid) return null;
       throw error;
     }
 
     return new Duration({
       values,
-      loc: Locale.fromObject(opts),
-      conversionAccuracy: opts.conversionAccuracy
+      loc: Locale.fromObject(options),
+      conversionAccuracy: options.conversionAccuracy
     });
   }
 
+  static fromISO(text: string): Duration;
+  static fromISO(text: string, options: DurationFromISOOptions & ThrowOnInvalid): Duration;
+  static fromISO(text: string, options: DurationFromISOOptions): Duration | null;
   /**
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
-   * @param {Object} opts - options for parsing
-   * @param {string} [opts.locale='en-US'] - the locale to use
-   * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
-   * @param {string} [opts.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
+   * @param {Object} options - options for parsing
+   * @param {string} [options.locale='en-US'] - the locale to use
+   * @param {string} options.numberingSystem - the numbering system to use
+   * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
+   * @param {bool} [options.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
    * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
    * @return {Duration}
    */
-  static fromISO(text, opts = {}) {
-    const [parsed] = parseISODuration(text);
+  static fromISO(text: string, options: DurationFromISOOptions = {}) {
+    const parsed = parseISODuration(text);
     if (parsed) {
-      return Duration.fromObject(parsed, opts);
+      return Duration.fromObject(parsed, options);
     } else {
-      if (opts.nullOnInvalid) return null;
+      if (options.nullOnInvalid) return null;
       throw new UnparsableStringError("ISO 8601", text);
     }
   }
@@ -274,8 +303,9 @@ export default class Duration {
   /**
    * @private
    */
-  static normalizeUnit(unit) {
-    const normalized = {
+  static normalizeUnit(unit: string) {
+    // TODO should be private
+    const pluralMapping: { [key in DurationUnit]: NormalizedDurationUnit } = {
       year: "years",
       years: "years",
       quarter: "quarters",
@@ -294,7 +324,8 @@ export default class Duration {
       seconds: "seconds",
       millisecond: "milliseconds",
       milliseconds: "milliseconds"
-    }[unit ? unit.toLowerCase() : unit];
+    };
+    const normalized = pluralMapping[(unit ? unit.toLowerCase() : unit) as DurationUnit];
 
     if (!normalized) throw new InvalidUnitError(unit);
 
@@ -306,8 +337,8 @@ export default class Duration {
    * @param {Object} o
    * @return {boolean}
    */
-  static isDuration(o) {
-    return (o && o.isLuxonDuration) || false;
+  static isDuration(o: unknown): o is Duration {
+    return (o && (o as Duration).isLuxonDuration) || false;
   }
 
   /**
@@ -315,16 +346,16 @@ export default class Duration {
    * @type {string}
    */
   get locale() {
-    return this.loc?.locale;
+    return this.loc.locale;
   }
 
   /**
    * Get the numbering system of a Duration, such 'beng'. The numbering system is used when formatting the Duration
    *
-   * @type {string}
+   * @type {NumberingSystem}
    */
   get numberingSystem() {
-    return this.loc?.numberingSystem;
+    return this.loc.numberingSystem;
   }
 
   /**
@@ -339,20 +370,20 @@ export default class Duration {
    * Notes:
    * * Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits
    * * The duration will be converted to the set of units in the format string using {@link Duration.shiftTo} and the Durations's conversion accuracy setting.
-   * @param {string} fmt - the format string
-   * @param {Object} opts - options
-   * @param {boolean} [opts.floor=true] - floor numerical values
+   * @param {string} format - the format string
+   * @param {Object} options - options
+   * @param {boolean} [options.floor=true] - floor numerical values
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("y d s") //=> "1 6 2"
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("yy dd sss") //=> "01 06 002"
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("M S") //=> "12 518402000"
    * @return {string}
    */
-  toFormat(fmt, opts = {}) {
+  toFormat(format: string, options: DurationToFormatOptions = {}) {
     // reverse-compat since 1.2; we always round down now, never up, and we do it by default
-    const fmtOpts = Object.assign({}, opts, {
-      floor: opts.round !== false && opts.floor !== false
+    const formatOptions = Object.assign({}, options, {
+      floor: options.round !== false && options.floor !== false
     });
-    return Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt);
+    return Formatter.create(this.loc, formatOptions).formatDurationFromString(this, format);
   }
 
   /**
@@ -360,7 +391,7 @@ export default class Duration {
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=> { years: 1, days: 6, seconds: 2 }
    * @return {Object}
    */
-  toObject() {
+  toObject(): DurationObject {
     return Object.assign({}, this.values);
   }
 
@@ -422,17 +453,17 @@ export default class Duration {
    * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
-  plus(duration) {
+  plus(duration: DurationLike) {
     const dur = friendlyDuration(duration),
-      result = {};
+      result: NormalizedDurationObject = {};
 
-    for (const k of orderedUnits) {
-      if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
-        result[k] = dur.get(k) + this.get(k);
+    orderedUnits.forEach(unit => {
+      if (dur.values[unit] !== undefined || this.values[unit] !== undefined) {
+        result[unit] = dur.get(unit) + this.get(unit);
       }
-    }
+    });
 
-    return clone(this, { values: result }, true);
+    return this.clone(result);
   }
 
   /**
@@ -440,7 +471,7 @@ export default class Duration {
    * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    * @return {Duration}
    */
-  minus(duration) {
+  minus(duration: DurationLike) {
     const dur = friendlyDuration(duration);
     return this.plus(dur.negate());
   }
@@ -452,12 +483,13 @@ export default class Duration {
    * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit((x, u) => u === "hour" ? x * 2 : x) //=> { hours: 2, minutes: 30 }
    * @return {Duration}
    */
-  mapUnits(fn) {
-    const result = {};
-    for (const k of Object.keys(this.values)) {
-      result[k] = asNumber(fn(this.values[k], k));
+  mapUnits(fn: (x: number, unit: DurationUnit) => number) {
+    const result: NormalizedDurationObject = {};
+    for (const k in this.values) {
+      const unit = k as NormalizedDurationUnit;
+      result[unit] = asNumber(fn(this.values[unit] as number, unit));
     }
-    return clone(this, { values: result }, true);
+    return this.clone(result);
   }
 
   /**
@@ -468,36 +500,37 @@ export default class Duration {
    * @example Duration.fromObject({years: 2, days: 3}).days //=> 3
    * @return {number}
    */
-  get(unit) {
+  get(unit: DurationUnit) {
     return this[Duration.normalizeUnit(unit)];
   }
 
   /**
-   * "Set" the values of specified units. Return a newly-constructed Duration.
+   * "Set" the values of specified units. Non-specified units stay unchanged. Return a newly-constructed Duration.
    * @param {Object} values - a mapping of units to numbers
    * @example dur.set({ years: 2017 })
    * @example dur.set({ hours: 8, minutes: 30 })
    * @return {Duration}
    */
-  set(values) {
-    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit, []));
-    return clone(this, { values: mixed });
+  set(values: DurationObject) {
+    const mixed = Object.assign(
+      this.values,
+      normalizeObject(values as Record<string, number>, Duration.normalizeUnit)
+    );
+    return this.clone(mixed, false /* do not clean, merge with existing */);
   }
 
   /**
-   * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
+   * "Set" the locale and/or numberingSystem and/or conversionAccuracy. Returns a newly-constructed Duration.
    * @example dur.reconfigure({ locale: 'en-GB' })
    * @return {Duration}
    */
-  reconfigure({ locale, numberingSystem, conversionAccuracy } = {}) {
-    const loc = this.loc.clone({ locale, numberingSystem }),
-      opts = { loc };
-
-    if (conversionAccuracy) {
-      opts.conversionAccuracy = conversionAccuracy;
-    }
-
-    return clone(this, opts);
+  reconfigure({ locale, numberingSystem, conversionAccuracy }: DurationOptions = {}) {
+    const conf = {
+      values: this.values,
+      loc: this.loc.clone({ locale, numberingSystem }),
+      conversionAccuracy: conversionAccuracy || this.conversionAccuracy()
+    };
+    return new Duration(conf);
   }
 
   /**
@@ -508,7 +541,7 @@ export default class Duration {
    * @example Duration.fromObject({hours: 60}).as('days') //=> 2.5
    * @return {number}
    */
-  as(unit) {
+  as(unit: DurationUnit) {
     return this.shiftTo(unit).get(unit);
   }
 
@@ -519,10 +552,10 @@ export default class Duration {
    * @return {Duration}
    */
   normalize() {
-    // todo - this should keep the opts...
+    // todo - this should keep the options...
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    return clone(this, { values: vals }, true);
+    return this.clone(vals);
   }
 
   /**
@@ -530,36 +563,36 @@ export default class Duration {
    * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
    * @return {Duration}
    */
-  shiftTo(...units) {
-    if (units.length === 0) {
+  shiftTo(...units: DurationUnit[]) {
+    const normalizedUnits = units.map(u => Duration.normalizeUnit(u));
+
+    if (normalizedUnits.length === 0) {
       return this;
     }
 
-    units = units.map(u => Duration.normalizeUnit(u));
-
-    const built = {},
-      accumulated = {},
+    const built: NormalizedDurationObject = {},
+      accumulated: NormalizedDurationObject = {},
       vals = this.toObject();
-    let lastUnit;
+    let lastUnit: NormalizedDurationUnit | undefined = undefined;
 
     normalizeValues(this.matrix, vals);
 
     for (const k of orderedUnits) {
-      if (units.indexOf(k) >= 0) {
+      if (normalizedUnits.indexOf(k) >= 0) {
         lastUnit = k;
 
         let own = 0;
 
         // anything we haven't boiled down yet should get boiled to this unit
-        for (const ak in accumulated) {
-          own += this.matrix[ak][k] * accumulated[ak];
-          accumulated[ak] = 0;
+        for (const acc in accumulated) {
+          const unit = acc as ConversionMatrixUnit;
+          own += (this.matrix[unit][k] as number) * (accumulated[unit] as number);
+          delete accumulated[unit];
         }
 
         // plus anything that's already in this unit
-        if (isNumber(vals[k])) {
-          own += vals[k];
-        }
+        const unitValue = vals[k];
+        if (isNumber(unitValue)) own += unitValue;
 
         const i = Math.trunc(own);
         built[k] = i;
@@ -567,8 +600,14 @@ export default class Duration {
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
-          if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
-            convert(this.matrix, vals, down, built, k);
+          if (orderedUnits.indexOf(down as NormalizedDurationUnit) > orderedUnits.indexOf(k)) {
+            convert(
+              this.matrix,
+              vals,
+              down as NormalizedDurationUnit,
+              built,
+              k as ConversionMatrixUnit // never happens when k is milliseconds
+            );
           }
         }
         // otherwise, keep it in the wings to boil it later
@@ -578,15 +617,22 @@ export default class Duration {
     }
 
     // anything leftover becomes the decimal for the last unit
-    // lastUnit must be defined since units is not empty
+    // lastUnit is defined here since units is not empty
     for (const key in accumulated) {
-      if (accumulated[key] !== 0) {
-        built[lastUnit] +=
-          key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
+      const unit = key as NormalizedDurationUnit;
+      const acc = accumulated[unit];
+      if (acc !== undefined) {
+        built[lastUnit as NormalizedDurationUnit] =
+          (built[lastUnit as NormalizedDurationUnit] as number) +
+          (key === lastUnit
+            ? (accumulated[key] as number)
+            : // lastUnit could be 'milliseconds' but so would then be the unique key in accumulated
+              // Cast to ConversionMatrixUnit is hence safe here
+              acc / (this.matrix[lastUnit as ConversionMatrixUnit][unit] as number));
       }
     }
 
-    return clone(this, { values: built }, true).normalize();
+    return this.clone(built).normalize();
   }
 
   /**
@@ -595,11 +641,12 @@ export default class Duration {
    * @return {Duration}
    */
   negate() {
-    const negated = {};
-    for (const k of Object.keys(this.values)) {
-      negated[k] = -this.values[k];
+    const negated: NormalizedDurationObject = {};
+    for (const k in this.values) {
+      const unit = k as NormalizedDurationUnit;
+      negated[unit] = -(this.values[unit] as number);
     }
-    return clone(this, { values: negated }, true);
+    return this.clone(negated);
   }
 
   /**
@@ -607,7 +654,7 @@ export default class Duration {
    * @type {number}
    */
   get years() {
-    return this.values?.years || 0;
+    return this.values.years || 0;
   }
 
   /**
@@ -615,7 +662,7 @@ export default class Duration {
    * @type {number}
    */
   get quarters() {
-    return this.values?.quarters || 0;
+    return this.values.quarters || 0;
   }
 
   /**
@@ -623,7 +670,7 @@ export default class Duration {
    * @type {number}
    */
   get months() {
-    return this.values?.months || 0;
+    return this.values.months || 0;
   }
 
   /**
@@ -631,7 +678,7 @@ export default class Duration {
    * @type {number}
    */
   get weeks() {
-    return this.values?.weeks || 0;
+    return this.values.weeks || 0;
   }
 
   /**
@@ -639,7 +686,7 @@ export default class Duration {
    * @type {number}
    */
   get days() {
-    return this.values?.days || 0;
+    return this.values.days || 0;
   }
 
   /**
@@ -647,7 +694,7 @@ export default class Duration {
    * @type {number}
    */
   get hours() {
-    return this.values?.hours || 0;
+    return this.values.hours || 0;
   }
 
   /**
@@ -655,7 +702,7 @@ export default class Duration {
    * @type {number}
    */
   get minutes() {
-    return this.values?.minutes || 0;
+    return this.values.minutes || 0;
   }
 
   /**
@@ -663,7 +710,7 @@ export default class Duration {
    * @return {number}
    */
   get seconds() {
-    return this.values?.seconds || 0;
+    return this.values.seconds || 0;
   }
 
   /**
@@ -671,7 +718,7 @@ export default class Duration {
    * @return {number}
    */
   get milliseconds() {
-    return this.values?.milliseconds || 0;
+    return this.values.milliseconds || 0;
   }
 
   /**
@@ -680,7 +727,7 @@ export default class Duration {
    * @param {Duration} other
    * @return {boolean}
    */
-  equals(other) {
+  equals(other: Duration) {
     if (!this.loc.equals(other.loc)) {
       return false;
     }
@@ -690,19 +737,42 @@ export default class Duration {
         return false;
       }
     }
+
     return true;
+  }
+
+  /**
+   * @private
+   */
+  // clone really means "create another instance just like this one, but with these changes"
+  private clone(values: NormalizedDurationObject, clear = true) {
+    // deep merge for vals
+    const conf = {
+      values: clear ? values : Object.assign({}, this.values, values),
+      loc: this.loc,
+      conversionAccuracy: this.conversionAccuracy()
+    };
+    return new Duration(conf);
+  }
+
+  /**
+   * @private
+   */
+  private conversionAccuracy(): ConversionAccuracy {
+    return this.matrix === accurateMatrix ? "longterm" : "casual";
   }
 }
 
+export type DurationLike = Duration | DurationObject | number;
 /**
  * @private
  */
-export function friendlyDuration(durationish) {
+export function friendlyDuration(durationish: DurationLike | unknown) {
   if (isNumber(durationish)) {
     return Duration.fromMillis(durationish);
   } else if (Duration.isDuration(durationish)) {
     return durationish;
-  } else if (typeof durationish === "object") {
+  } else if (typeof durationish === "object" && durationish !== null) {
     return Duration.fromObject(durationish);
   } else {
     throw new InvalidArgumentError(

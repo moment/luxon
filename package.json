@@ -14,24 +14,20 @@
     "build-global": "babel-node tasks/buildGlobal.js",
     "jest": "jest",
     "test": "jest --coverage",
-    "docs": "esdoc -c docs/index.js",
+    "tsc": "tsc",
+    "docs": "npm run tsc -- -noEmit false -target es6 && esdoc -c docs/index.js && rimraf transpiled",
     "site": "cp -r site/** build/",
-    "lint": "eslint --quiet src test benchmarks",
+    "lint": "eslint --ext .ts,.js --quiet src test benchmarks",
     "lint!": "npm run format && npm run lint",
-    "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
+    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/datetime.js",
     "codecov": "codecov",
     "check-doc-coverage": "babel-node tasks/docCoverage"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "pretty-quick --staged"
     }
-  },
-  "lint-staged": {
-    "*.{js,json}": [
-      "prettier --write"
-    ]
   },
   "devDependencies": {
     "@babel/core": "latest",
@@ -42,6 +38,9 @@
     "@babel/preset-env": "latest",
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-node-resolve": "^7.1.3",
+    "@types/jest": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "latest",
     "babel-jest": "^25.3.0",
@@ -65,15 +64,22 @@
     "full-icu": "^1.3.1",
     "husky": "^4.2.5",
     "jest": "^25.3.0",
-    "lint-staged": "^10.1.3",
     "prettier": "1.14.3",
+    "pretty-quick": "^2.0.1",
+    "rimraf": "latest",
     "rollup": "latest",
     "rollup-plugin-babel": "latest",
-    "rollup-plugin-babel-minify": "latest",
     "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-node-resolve": "latest",
+    "rollup-plugin-terser": "latest",
+    "rollup-plugin-typescript": "latest",
+    "ts-jest": "latest",
+    "tslib": "latest",
+    "typescript": "latest",
     "uglify-js": "latest"
   },
   "main": "build/node/luxon.js",
+  "types": "build/node/luxon.d.ts",
   "module": "src/luxon.js",
   "browser": "build/cjs-browser/luxon.js",
   "jsdelivr": "build/global/luxon.min.js",

@@ -1,14 +1,16 @@
-import SystemZone from "./zones/systemZone.js";
-import IANAZone from "./zones/IANAZone.js";
-import Locale from "./impl/locale.js";
+import SystemZone from "./zones/systemZone";
+import IANAZone from "./zones/IANAZone";
+import Locale from "./impl/locale";
 
-import { normalizeZone } from "./impl/zoneUtil.js";
+import { normalizeZone } from "./impl/zoneUtil";
+import { NumberingSystem, CalendarSystem } from "./types/locale";
+import { ZoneLike } from "./types/zone";
 
 let now = () => Date.now(),
-  defaultZone = "system",
-  defaultLocale = null,
-  defaultNumberingSystem = null,
-  defaultOutputCalendar = null;
+  defaultZone: ZoneLike | undefined,
+  defaultLocale: string | undefined,
+  defaultNumberingSystem: NumberingSystem | undefined,
+  defaultOutputCalendar: CalendarSystem | undefined;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -35,10 +37,15 @@ export default class Settings {
 
   /**
    * Set the default time zone to create DateTimes in. Does not affect existing instances.
-   * Use the value "system" to reset this value to the system's time zone.
-   * @type {string}
+   *
+   * Use the value "system" (default) to reset this value to the system's time zone.
+   *
+   * zone can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3'.
+   *
+   * You may also supply an instance of a {@link Zone} class, or a number which will be interpreted as a UTC offset in minutes.
+   * @param {Zone | string | number} [zone='system'] - the zone value
    */
-  static set defaultZone(zone) {
+  static setDefaultZone(zone?: ZoneLike) {
     defaultZone = zone;
   }
 
@@ -63,7 +70,7 @@ export default class Settings {
    * Set the default locale to create DateTimes with. Does not affect existing instances.
    * @type {string}
    */
-  static set defaultLocale(locale) {
+  static set defaultLocale(locale: string | undefined) {
     defaultLocale = locale;
   }
 
@@ -79,7 +86,7 @@ export default class Settings {
    * Set the default numbering system to create DateTimes with. Does not affect existing instances.
    * @type {string}
    */
-  static set defaultNumberingSystem(numberingSystem) {
+  static set defaultNumberingSystem(numberingSystem: NumberingSystem | undefined) {
     defaultNumberingSystem = numberingSystem;
   }
 
@@ -95,7 +102,7 @@ export default class Settings {
    * Set the default output calendar to create DateTimes with. Does not affect existing instances.
    * @type {string}
    */
-  static set defaultOutputCalendar(outputCalendar) {
+  static set defaultOutputCalendar(outputCalendar: CalendarSystem | undefined) {
     defaultOutputCalendar = outputCalendar;
   }
 

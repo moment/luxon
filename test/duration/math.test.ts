@@ -1,6 +1,5 @@
-/* global test expect */
-
 import { Duration } from "../../src/luxon";
+import Helpers from "../helpers";
 
 //------
 // #plus()
@@ -64,6 +63,7 @@ test("Duration#plus results in the superset of units", () => {
 });
 
 test("Duration#plus throws with invalid parameter", () => {
+  // @ts-ignore
   expect(() => Duration.fromObject({}).plus("123")).toThrow();
 });
 
@@ -120,7 +120,7 @@ test("Duration#negate preserves conversionAccuracy", () => {
       }
     ),
     result = dur.negate();
-  expect(result.conversionAccuracy).toBe("longterm");
+  expect(Helpers.conversionAccuracy(result)).toBe("longterm");
 });
 
 //------
@@ -147,7 +147,8 @@ test("Duration#units can take the unit into account", () => {
   expect(result.milliseconds).toBe(-8);
 });
 
-test("Duration#mapUnits requires that fn return a number", () => {
-  const dur = Duration.fromObject({ hours: 1, minutes: 2, seconds: -3, milliseconds: -4 });
+test("Duration#mapUnits requires that fn returns a number", () => {
+  // const dur = Duration.fromObject({ hours: 1, minutes: 2, seconds: -3, milliseconds: -4 });
+  // @ts-ignore
   expect(() => dur.mapUnits(() => "hello?")).toThrow();
 });

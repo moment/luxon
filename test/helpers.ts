@@ -1,22 +1,26 @@
-/* global test */
 /* eslint no-global-assign: "off" */
-import { DateTime, Settings } from "../src/luxon";
+import { DateTime, Settings, Duration } from "../src/luxon";
+import { NumberingSystem, CalendarSystem } from "../src/types/locale";
+import { ZoneLike } from "../src/types/zone";
 
-exports.withoutIntl = function(name, f) {
+const withoutIntl = function(name: string, f: Function) {
   const fullName = `With no Intl support, ${name}`;
   test(fullName, () => {
     const intl = Intl;
     try {
+      // @ts-ignore
       Intl = undefined;
       Settings.resetCaches();
       f();
     } finally {
+      Settings.resetCaches();
+      // @ts-ignore
       Intl = intl;
     }
   });
 };
 
-exports.withoutFTP = function(name, f) {
+const withoutFTP = function(name: string, f: Function) {
   const fullName = `With no FormatToParts support, ${name}`;
   test(fullName, () => {
     const { formatToParts } = Intl.DateTimeFormat.prototype;
@@ -25,97 +29,145 @@ exports.withoutFTP = function(name, f) {
       Settings.resetCaches();
       f();
     } finally {
+      Settings.resetCaches();
       Intl.DateTimeFormat.prototype.formatToParts = formatToParts;
     }
   });
 };
 
-exports.withoutRTF = function(name, f) {
+const withoutRTF = function(name: string, f: Function) {
   const fullName = `With no RelativeTimeFormat support, ${name}`;
   test(fullName, () => {
     const rtf = Intl.RelativeTimeFormat;
     try {
+      // @ts-ignore
       Intl.RelativeTimeFormat = undefined;
       Settings.resetCaches();
       f();
     } finally {
+      Settings.resetCaches();
       Intl.RelativeTimeFormat = rtf;
     }
   });
 };
 
-exports.withoutZones = function(name, f) {
+const withoutZones = function(name: string, f: Function) {
   const fullName = `With no time zone support, ${name}`;
   test(fullName, () => {
     const { DateTimeFormat } = Intl;
     try {
-      Intl.DateTimeFormat = (locale, opts = {}) => {
-        if (opts.timeZone) {
-          // eslint-disable-next-line no-throw-literal
-          throw `Unsupported time zone specified ${opts.timeZone}`;
+      // @ts-ignore
+      Intl.DateTimeFormat = (locale, options = {}) => {
+        if (options.timeZone) {
+          throw new Error(`Unsupported time zone specified ${options.timeZone}`);
         }
-        return DateTimeFormat(locale, opts);
+        return DateTimeFormat(locale, options);
       };
+
       Intl.DateTimeFormat.prototype = DateTimeFormat.prototype;
 
       Settings.resetCaches();
       f();
     } finally {
+      Settings.resetCaches();
       Intl.DateTimeFormat = DateTimeFormat;
     }
   });
 };
 
-exports.withNow = function(name, dt, f) {
+const withNow = function(name: string, dt: DateTime, f: Function) {
   test(name, () => {
-    const oldNow = Settings.now;
+    const previousNow = Settings.now;
 
     try {
       Settings.now = () => dt.valueOf();
       f();
     } finally {
-      Settings.now = oldNow;
+      Settings.now = previousNow;
     }
   });
 };
 
-// not a tester!
-exports.withDefaultZone = function(zone, f) {
+const withDefaultZone = function(zone: ZoneLike, f: Function) {
+  const previousDefaultZone = Settings.defaultZone;
   try {
-    Settings.defaultZone = zone;
+    Settings.setDefaultZone(zone);
     f();
   } finally {
-    Settings.defaultZone = null;
+    Settings.setDefaultZone(previousDefaultZone);
   }
 };
 
-exports.withDefaultLocale = function(locale, f) {
+const withDefaultLocale = function(locale: string | undefined, f: Function) {
+  const previousDefaultLocale = Settings.defaultLocale;
   try {
     Settings.defaultLocale = locale;
     f();
   } finally {
-    Settings.defaultLocale = null;
+    Settings.defaultLocale = previousDefaultLocale;
   }
 };
 
-const setUnset = function(prop) {
-  return (value, f) => {
-    const existing = Settings[prop];
-    try {
-      Settings[prop] = value;
-      f();
-    } finally {
-      Settings[prop] = existing;
-    }
-  };
+const withDefaultNumberingSystem = function(
+  numberingSystem: NumberingSystem | undefined,
+  f: Function
+) {
+  const previousNumberingSystem = Settings.defaultNumberingSystem;
+  try {
+    Settings.defaultNumberingSystem = numberingSystem;
+    f();
+  } finally {
+    Settings.defaultNumberingSystem = previousNumberingSystem;
+  }
 };
 
-exports.setUnset = setUnset;
+const withDefaultOutputCalendar = function(
+  outputCalendar: CalendarSystem | undefined,
+  f: Function
+) {
+  const previousOutputCalendar = Settings.defaultOutputCalendar;
+  try {
+    Settings.defaultOutputCalendar = outputCalendar;
+    f();
+  } finally {
+    Settings.defaultOutputCalendar = previousOutputCalendar;
+  }
+};
 
-exports.withDefaultZone = setUnset("defaultZone");
-
-exports.atHour = function(hour) {
+const atHour = function(hour: number) {
   return DateTime.fromObject({ year: 2017, month: 5, day: 25 })
     .startOf("day")
     .set({ hour });
 };
+
+const conversionAccuracy = function(duration: Duration) {
+  const fourWeeks = {
+    years: 0,
+    quarters: 0,
+    months: 0,
+    weeks: 4,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0
+  };
+  const isCasual = duration.set(fourWeeks).normalize().months === 1;
+  return isCasual ? "casual" : "longterm";
+};
+
+const Helpers = {
+  withoutIntl,
+  withoutFTP,
+  withoutRTF,
+  withoutZones,
+  withNow,
+  withDefaultZone,
+  withDefaultLocale,
+  withDefaultNumberingSystem,
+  withDefaultOutputCalendar,
+  atHour,
+  conversionAccuracy
+};
+
+export default Helpers;

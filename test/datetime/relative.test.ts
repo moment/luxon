@@ -1,8 +1,6 @@
 import DateTime from "../../src/datetime";
 
-const Helpers = require("../helpers");
-
-/* global expect test */
+import Helpers from "../helpers";
 
 //------
 // #toRelative()
@@ -158,7 +156,7 @@ test("DateTime#toRelativeCalendar works down through the units for different zon
     target1 = target.plus({ days: 1 }),
     target2 = target1.plus({ days: 1 }),
     target3 = target2.plus({ days: 1 }),
-    options = { unit: "days" };
+    options = { unit: "days" as const };
 
   expect(target.toRelativeCalendar(options)).toBe("today");
   expect(target1.toRelativeCalendar(options)).toBe("tomorrow");

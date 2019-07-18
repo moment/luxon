@@ -1,4 +1,3 @@
-/* global test expect */
 import { Duration } from "../../src/luxon";
 
 test("equals self", () => {
@@ -12,8 +11,9 @@ test("equals identically constructed", () => {
   expect(l1.equals(l2)).toBe(true);
 });
 
-test("equals identically constructed but one has sting type values", () => {
+test("equals identically constructed but one has string type values", () => {
   const l1 = Duration.fromObject({ years: 5, days: 6 }),
+    // @ts-ignore
     l2 = Duration.fromObject({ years: "5", days: "6" });
   expect(l1.equals(l2)).toBe(true);
 });

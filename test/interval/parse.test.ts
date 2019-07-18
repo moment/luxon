@@ -1,17 +1,16 @@
-/* global test expect */
-
 import { Interval } from "../../src/luxon";
 import { UnparsableStringError } from "../../src/errors";
+import { GregorianDateTime } from "../../src/types/datetime";
 
 //------
 // .fromISO()
 //------
 
 test("Interval.fromISO can parse a variety of ISO formats", () => {
-  const check = (s, ob1, ob2) => {
+  const check = (s: string, obj1: GregorianDateTime, obj2: GregorianDateTime) => {
     const i = Interval.fromISO(s);
-    expect(i.start.toObject()).toEqual(ob1);
-    expect(i.end.toObject()).toEqual(ob2);
+    expect(i.start.toObject()).toEqual(obj1);
+    expect(i.end.toObject()).toEqual(obj2);
   };
 
   // keeping these brief because I don't want to rehash the existing DT ISO tests
@@ -118,6 +117,7 @@ test("Interval.fromISO accepts a zone argument", () => {
 
 const badInputs = [
   null,
+  undefined,
   "",
   "hello",
   "foo/bar",
@@ -125,5 +125,5 @@ const badInputs = [
 ];
 
 test.each(badInputs)("Interval.fromISO will reject [%s]", s => {
-  expect(() => Interval.fromISO(s)).toThrow(UnparsableStringError);
+  expect(() => Interval.fromISO(s as string)).toThrow(UnparsableStringError);
 });

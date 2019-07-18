@@ -9,8 +9,11 @@ class LuxonError extends Error {}
  * @private
  */
 export class UnitOutOfRangeError extends LuxonError {
-  constructor(unit, value) {
+  constructor(unit: string, value: unknown) {
     super(`you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`);
+
+    // See https://github.com/facebook/jest/issues/8279#issuecomment-539775425
+    Object.setPrototypeOf(this, UnitOutOfRangeError.prototype);
   }
 }
 
@@ -18,8 +21,9 @@ export class UnitOutOfRangeError extends LuxonError {
  * @private
  */
 export class InvalidUnitError extends LuxonError {
-  constructor(unit) {
+  constructor(unit: string) {
     super(`Invalid unit ${unit}`);
+    Object.setPrototypeOf(this, InvalidUnitError.prototype);
   }
 }
 
@@ -27,8 +31,9 @@ export class InvalidUnitError extends LuxonError {
  * @private
  */
 export class InvalidZoneError extends LuxonError {
-  constructor(zone) {
-    super(`${zone.name} is an invalid or unknown zone specifier`);
+  constructor(zoneName: string) {
+    super(`${zoneName} is an invalid or unknown zone specifier`);
+    Object.setPrototypeOf(this, InvalidZoneError.prototype);
   }
 }
 
@@ -36,8 +41,9 @@ export class InvalidZoneError extends LuxonError {
  * @private
  */
 export class MissingPlatformFeatureError extends LuxonError {
-  constructor(feature) {
+  constructor(feature: string) {
     super(`missing ${feature} support`);
+    Object.setPrototypeOf(this, MissingPlatformFeatureError.prototype);
   }
 }
 
@@ -45,8 +51,9 @@ export class MissingPlatformFeatureError extends LuxonError {
  * @private
  */
 export class MismatchedWeekdayError extends LuxonError {
-  constructor(weekday, inst) {
-    super(`you can't specify both a weekday of ${weekday} and a date of ${inst.toISO()}`);
+  constructor(weekday: number, date: string) {
+    super(`you can't specify both a weekday of ${weekday} and a date of ${date}`);
+    Object.setPrototypeOf(this, MismatchedWeekdayError.prototype);
   }
 }
 
@@ -54,20 +61,31 @@ export class MismatchedWeekdayError extends LuxonError {
  * @private
  */
 export class UnparsableStringError extends LuxonError {
-  constructor(format, text) {
+  constructor(format: string, text: string) {
     super(`can't parse ${text} into format ${format}`);
+    Object.setPrototypeOf(this, UnparsableStringError.prototype);
   }
 }
 
 /**
  * @private
  */
-export class ConflictingSpecificationError extends LuxonError {}
+export class ConflictingSpecificationError extends LuxonError {
+  constructor(message: string) {
+    super(message);
+    Object.setPrototypeOf(this, ConflictingSpecificationError.prototype);
+  }
+}
 
 /**
  * @private
  */
-export class InvalidArgumentError extends LuxonError {}
+export class InvalidArgumentError extends LuxonError {
+  constructor(message: string) {
+    super(message);
+    Object.setPrototypeOf(this, InvalidArgumentError.prototype);
+  }
+}
 
 /**
  * @private
@@ -75,5 +93,6 @@ export class InvalidArgumentError extends LuxonError {}
 export class ZoneIsAbstractError extends LuxonError {
   constructor() {
     super("Zone is an abstract class");
+    Object.setPrototypeOf(this, ZoneIsAbstractError.prototype);
   }
 }

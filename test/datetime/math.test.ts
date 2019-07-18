@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { DateTime, Duration } from "../../src/luxon";
 import { InvalidArgumentError } from "../../src/errors";
 
@@ -119,7 +117,9 @@ test("DateTime#plus handles fractional months", () => {
   expect(d.plus({ months: 8.7 })).toEqual(
     d.plus({
       months: 8,
-      milliseconds: Duration.fromObject({ months: 0.7 }).shiftTo("milliseconds")
+      milliseconds: Duration.fromObject({ months: 0.7 })
+        .shiftTo("milliseconds")
+        .valueOf()
     })
   );
 });
@@ -194,7 +194,9 @@ test("DateTime#minus handles fractional months", () => {
   expect(d.minus({ months: 8.7 })).toEqual(
     d.minus({
       months: 8,
-      milliseconds: Duration.fromObject({ months: 0.7 }).shiftTo("milliseconds")
+      milliseconds: Duration.fromObject({ months: 0.7 })
+        .shiftTo("milliseconds")
+        .valueOf()
     })
   );
 });
@@ -215,7 +217,7 @@ test("DateTime#startOf('year') goes to the start of the year", () => {
 });
 
 test("DateTime#startOf('quarter') goes to the start of the quarter", () => {
-  const monthToQuarterStart = (month, quarterStart) => {
+  const monthToQuarterStart = (month: number, quarterStart: number) => {
     const dt = DateTime.fromObject({
       year: 2017,
       month,
@@ -350,7 +352,7 @@ test("DateTime#endOf('quarter') goes to the end of the quarter", () => {
 });
 
 test("DateTime#endOf('quarter') goes to the end of the quarter in December", () => {
-  const monthToQuarterEnd = (month, endMonth) => {
+  const monthToQuarterEnd = (month: number, endMonth: number) => {
     const dt = DateTime.fromObject({
       year: 2017,
       month,

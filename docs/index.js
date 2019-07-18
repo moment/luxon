@@ -21,7 +21,7 @@ const manualFiles = [
 const excludeIrrelevant = ["luxon\\.js", "luxonFilled\\.js", "impl/.*\\.js"];
 
 module.exports = {
-  source: "./src",
+  source: "./transpiled/src",
   destination: "./build/docs",
   excludes: excludeIrrelevant,
   plugins: [

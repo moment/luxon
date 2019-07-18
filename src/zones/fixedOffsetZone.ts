@@ -1,19 +1,22 @@
-import { formatOffset, signedOffset } from "../impl/util.js";
-import Zone from "../zone.js";
+import { formatOffset, signedOffset } from "../impl/util";
+import Zone from "../zone";
+import { ZoneOffsetFormat, ZoneOffsetOptions } from "../types/zone";
 
-let singleton = null;
+let singleton: FixedOffsetZone | undefined;
 
 /**
  * A zone with a fixed offset (meaning no DST)
  * @implements {Zone}
  */
 export default class FixedOffsetZone extends Zone {
+  private fixed: Readonly<number>;
+
   /**
    * Get a singleton instance of UTC
    * @return {FixedOffsetZone}
    */
   static get utcInstance() {
-    if (singleton === null) {
+    if (singleton === undefined) {
       singleton = new FixedOffsetZone(0);
     }
     return singleton;
@@ -24,7 +27,7 @@ export default class FixedOffsetZone extends Zone {
    * @param {number} offset - The offset in minutes
    * @return {FixedOffsetZone}
    */
-  static instance(offset) {
+  static instance(offset: number) {
     return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
   }
 
@@ -34,19 +37,20 @@ export default class FixedOffsetZone extends Zone {
    * @example FixedOffsetZone.parseSpecifier("UTC+6")
    * @example FixedOffsetZone.parseSpecifier("UTC+06")
    * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
-   * @return {FixedOffsetZone}
+   * @return {FixedOffsetZone | null}
    */
-  static parseSpecifier(s) {
+  static parseSpecifier(s: string) {
     if (s) {
-      const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
-      if (r) {
+      const regexp = /^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i;
+      const r = regexp.exec(s);
+      if (r !== null) {
         return new FixedOffsetZone(signedOffset(r[1], r[2]));
       }
     }
     return null;
   }
 
-  constructor(offset) {
+  constructor(offset: number) {
     super();
     /** @private **/
     this.fixed = offset;
@@ -63,12 +67,12 @@ export default class FixedOffsetZone extends Zone {
   }
 
   /** @override **/
-  offsetName() {
+  offsetName(_ts?: number, _options?: ZoneOffsetOptions) {
     return this.name;
   }
 
   /** @override **/
-  formatOffset(ts, format) {
+  formatOffset(_ts: number, format: ZoneOffsetFormat) {
     return formatOffset(this.fixed, format);
   }
 
@@ -78,13 +82,13 @@ export default class FixedOffsetZone extends Zone {
   }
 
   /** @override **/
-  offset() {
+  offset(_ts?: number) {
     return this.fixed;
   }
 
   /** @override **/
-  equals(otherZone) {
-    return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
+  equals(other: Zone): boolean {
+    return other.type === "fixed" && (other as FixedOffsetZone).fixed === this.fixed;
   }
 
   /** @override **/

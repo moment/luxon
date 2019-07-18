@@ -1,4 +1,7 @@
-const numberingSystems = {
+import { NumberingSystem } from "../types/locale";
+import Locale from "./locale";
+
+const numberingSystems: { [key in NumberingSystem]: string } = {
   arab: "[\u0660-\u0669]",
   arabext: "[\u06F0-\u06F9]",
   bali: "[\u1B50-\u1B59]",
@@ -22,7 +25,7 @@ const numberingSystems = {
   latn: "\\d"
 };
 
-const numberingSystemsUTF16 = {
+const numberingSystemsUTF16: { [key in NumberingSystem]: [number, number] } = {
   arab: [1632, 1641],
   arabext: [1776, 1785],
   bali: [6992, 7001],
@@ -41,36 +44,37 @@ const numberingSystemsUTF16 = {
   tamldec: [3046, 3055],
   telu: [3174, 3183],
   thai: [3664, 3673],
-  tibt: [3872, 3881]
+  tibt: [3872, 3881],
+  latn: [48, 57], // not used by parseDigits, relying on parseInt instead
+  hanidec: [-1, -1] // see special case for hanidec characters below
 };
 
-// eslint-disable-next-line
+// eslint-disable-next-line no-useless-escape
 const hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
 
-export function parseDigits(str) {
-  let value = parseInt(str, 10);
-  if (isNaN(value)) {
-    value = "";
-    for (let i = 0; i < str.length; i++) {
-      const code = str.charCodeAt(i);
+export function parseDigits(str: string) {
+  const intValue = parseInt(str, 10);
+  if (!isNaN(intValue)) return intValue;
 
-      if (str[i].search(numberingSystems.hanidec) !== -1) {
-        value += hanidecChars.indexOf(str[i]);
-      } else {
-        for (const key in numberingSystemsUTF16) {
-          const [min, max] = numberingSystemsUTF16[key];
-          if (code >= min && code <= max) {
-            value += code - min;
-          }
+  let digits = "";
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+
+    if (str[i].search(numberingSystems.hanidec) !== -1) {
+      digits += hanidecChars.indexOf(str[i]);
+    } else {
+      for (const key in numberingSystemsUTF16) {
+        const [min, max] = numberingSystemsUTF16[key as NumberingSystem];
+        if (code >= min && code <= max) {
+          digits += code - min;
+          break;
         }
       }
     }
-    return parseInt(value, 10);
-  } else {
-    return value;
   }
+  return parseInt(digits, 10);
 }
 
-export function digitRegex({ numberingSystem }, append = "") {
-  return new RegExp(`${numberingSystems[numberingSystem || "latn"]}${append}`);
+export function digitRegex(locale: Locale, append = "") {
+  return new RegExp(`${numberingSystems[locale.numberingSystem || "latn"]}${append}`);
 }

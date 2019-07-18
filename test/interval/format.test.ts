@@ -1,7 +1,6 @@
-/* global test expect */
 import { DateTime } from "../../src/luxon";
 
-const fromISOs = (s, e) =>
+const fromISOs = (s: string, e: string) =>
     DateTime.fromISO(s, { setZone: true }).until(DateTime.fromISO(e, { setZone: true })),
   interval = fromISOs("1982-05-25T09:00Z", "1983-10-14T13:30Z");
 

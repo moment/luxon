@@ -1,4 +1,3 @@
-/* global test expect */
 import { DateTime } from "../../src/luxon";
 
 //------
@@ -15,5 +14,6 @@ test("DateTime#isDateTime return false for primitives", () => {
   expect(DateTime.isDateTime(1)).toBe(false);
   expect(DateTime.isDateTime("")).toBe(false);
   expect(DateTime.isDateTime(null)).toBe(false);
+  // @ts-ignore
   expect(DateTime.isDateTime()).toBe(false);
 });

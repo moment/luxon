@@ -1,11 +1,13 @@
-import { formatOffset, parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util.js";
-import Zone from "../zone.js";
+import { formatOffset, parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util";
+import Zone from "../zone";
+import { ZoneOffsetOptions, ZoneOffsetFormat } from "../types/zone";
 import { InvalidZoneError } from "../errors";
 
 const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 
-let dtfCache = {};
-function makeDTF(zone) {
+let dtfCache: Record<string, Intl.DateTimeFormat> = {};
+
+function makeDTF(zone: string) {
   if (!dtfCache[zone]) {
     try {
       dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
@@ -25,7 +27,7 @@ function makeDTF(zone) {
   return dtfCache[zone];
 }
 
-const typeToPos = {
+const typeToPos: Partial<Record<Intl.DateTimeFormatPartTypes, number>> = {
   year: 0,
   month: 1,
   day: 2,
@@ -34,14 +36,26 @@ const typeToPos = {
   second: 5
 };
 
-function hackyOffset(dtf, date) {
+function hackyOffset(dtf: Intl.DateTimeFormat, date: Date) {
   const formatted = dtf.format(date).replace(/\u200E/g, ""),
-    parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
-    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
-  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
+    parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted);
+
+  if (parsed !== null) {
+    const [, month, day, year, hour, minute, second] = parsed;
+    return [
+      (year as unknown) as number,
+      (month as unknown) as number,
+      (day as unknown) as number,
+      (hour as unknown) as number,
+      (minute as unknown) as number,
+      (second as unknown) as number
+    ];
+  }
+
+  return [0, 0, 0, 0, 0, 0];
 }
 
-function partsOffset(dtf, date) {
+function partsOffset(dtf: Intl.DateTimeFormat, date: Date) {
   const formatted = dtf.formatToParts(date),
     filled = [];
   for (let i = 0; i < formatted.length; i++) {
@@ -55,17 +69,20 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-let ianaZoneCache = {};
+let ianaZoneCache: Record<string, IANAZone> = {};
 /**
  * A zone identified by an IANA identifier, like America/New_York
  * @implements {Zone}
  */
 export default class IANAZone extends Zone {
+  private zoneName: Readonly<string>;
+  private valid: Readonly<boolean>;
+
   /**
    * @param {string} name - Zone name
    * @return {IANAZone}
    */
-  static create(name) {
+  static create(name: string) {
     if (!ianaZoneCache[name]) {
       ianaZoneCache[name] = new IANAZone(name);
     }
@@ -89,8 +106,8 @@ export default class IANAZone extends Zone {
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
    * @return {boolean}
    */
-  static isValidSpecifier(s) {
-    return !!(s && s.match(matchingRegex));
+  static isValidSpecifier(s: string) {
+    return !!(s && matchingRegex.exec(s) !== null);
   }
 
   /**
@@ -101,7 +118,7 @@ export default class IANAZone extends Zone {
    * @example IANAZone.isValidZone("Sport~~blorp") //=> false
    * @return {boolean}
    */
-  static isValidZone(zone) {
+  static isValidZone(zone: string) {
     try {
       new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
       return true;
@@ -112,17 +129,18 @@ export default class IANAZone extends Zone {
 
   // Etc/GMT+8 -> -480
   /** @ignore */
-  static parseGMTOffset(specifier) {
+  static parseGMTOffset(specifier: string) {
     if (specifier) {
-      const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
-      if (match) {
+      const regexp = /^Etc\/GMT([+-]\d{1,2})$/i;
+      const match = regexp.exec(specifier);
+      if (match !== null) {
         return -60 * parseInt(match[1]);
       }
     }
     return null;
   }
 
-  constructor(name) {
+  private constructor(name: string) {
     super();
     /** @private **/
     this.zoneName = name;
@@ -146,17 +164,17 @@ export default class IANAZone extends Zone {
   }
 
   /** @override **/
-  offsetName(ts, { format, locale }) {
+  offsetName(ts: number, { format, locale }: ZoneOffsetOptions = {}) {
     return parseZoneInfo(ts, format, locale, this.name);
   }
 
   /** @override **/
-  formatOffset(ts, format) {
+  formatOffset(ts: number, format: ZoneOffsetFormat) {
     return formatOffset(this.offset(ts), format);
   }
 
   /** @override **/
-  offset(ts) {
+  offset(ts: number) {
     const date = new Date(ts),
       dtf = makeDTF(this.name),
       [year, month, day, hour, minute, second] = dtf.formatToParts
@@ -182,8 +200,8 @@ export default class IANAZone extends Zone {
   }
 
   /** @override **/
-  equals(otherZone) {
-    return otherZone.type === "iana" && otherZone.name === this.name;
+  equals(other: Zone) {
+    return other.type === "iana" && other.name === this.name;
   }
 
   /** @override **/

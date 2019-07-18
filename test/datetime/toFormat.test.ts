@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
 
 const dt = DateTime.fromObject(

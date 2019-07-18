@@ -1,14 +1,13 @@
-/* global test expect */
-
 import { Duration } from "../../src/luxon";
 import { UnparsableStringError } from "../../src/errors";
+import { DurationObject } from "../../src/types/duration";
 
 //------
 // #fromISO()
 //------
 
-const check = (s, ob) => {
-  expect(Duration.fromISO(s).toObject()).toEqual(ob);
+const check = (s: string, obj: DurationObject) => {
+  expect(Duration.fromISO(s).toObject()).toEqual(obj);
 };
 
 test("Duration.fromISO can parse a variety of ISO formats", () => {
@@ -62,7 +61,7 @@ test("Duration.fromISO can parse fractions of seconds", () => {
 });
 
 test("Duration.fromISO rejects junk", () => {
-  const rejects = s => {
+  const rejects = (s: string) => {
     expect(() => Duration.fromISO(s)).toThrow(UnparsableStringError);
   };
 

@@ -1,4 +1,3 @@
-/* global test expect */
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
 
 test("FixedOffsetZone.utcInstance returns a singleton", () => {
@@ -16,24 +15,26 @@ test("FixedOffsetZone.utcInstance provides valid UTC data", () => {
 });
 
 test("FixedOffsetZone.parseSpecifier returns a valid instance from a UTC offset string", () => {
-  let zone = FixedOffsetZone.parseSpecifier("UTC+6");
+  let zone = FixedOffsetZone.parseSpecifier("UTC+6") as FixedOffsetZone;
   expect(zone.isValid).toBe(true);
   expect(zone.offset()).toBe(360);
   expect(zone.name).toBe("UTC+6");
 
-  zone = FixedOffsetZone.parseSpecifier("UTC+06");
+  zone = FixedOffsetZone.parseSpecifier("UTC+06") as FixedOffsetZone;
   expect(zone.isValid).toBe(true);
   expect(zone.offset()).toBe(360);
   expect(zone.name).toBe("UTC+6");
 
-  zone = FixedOffsetZone.parseSpecifier("UTC-6:00");
+  zone = FixedOffsetZone.parseSpecifier("UTC-6:00") as FixedOffsetZone;
   expect(zone.isValid).toBe(true);
   expect(zone.offset()).toBe(-360);
   expect(zone.name).toBe("UTC-6");
 });
 
 test("FixedOffsetZone.parseSpecifier returns null for invalid data", () => {
+  // @ts-ignore
   expect(FixedOffsetZone.parseSpecifier()).toBe(null);
+  // @ts-ignore
   expect(FixedOffsetZone.parseSpecifier(null)).toBe(null);
   expect(FixedOffsetZone.parseSpecifier("")).toBe(null);
   expect(FixedOffsetZone.parseSpecifier("foo")).toBe(null);

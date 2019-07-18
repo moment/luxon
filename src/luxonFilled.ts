@@ -10,4 +10,4 @@ import "core-js/features/string/virtual/repeat";
 import "core-js/features/math/trunc";
 import "core-js/features/math/sign";
 
-export * from "./luxon.js";
+export * from "./luxon";

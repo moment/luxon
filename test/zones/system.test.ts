@@ -1,6 +1,5 @@
-/* global test expect */
 import { SystemZone } from "../../src/luxon";
-import { withoutIntl } from "../helpers";
+import Helpers from "../helpers";
 
 test("SystemZone.instance returns a singleton", () => {
   expect(SystemZone.instance).toBe(SystemZone.instance);
@@ -19,6 +18,6 @@ test("SystemZone.instance provides valid ...", () => {
   // expect(SystemZone.instance.offset()).toBe(0);
 });
 
-withoutIntl("SystemZone.name simply returns 'system'", () => {
+Helpers.withoutIntl("SystemZone.name simply returns 'system'", () => {
   expect(SystemZone.instance.name).toBe("system");
 });

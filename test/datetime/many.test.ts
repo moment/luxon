@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
 
 //------
@@ -38,8 +36,11 @@ test("DateTime.min throws if you don't pass it DateTimes", () => {
   const dt = DateTime.fromJSDate(new Date(1982, 2, 25));
   const notADt = "flob";
 
+  // @ts-ignore
   expect(() => DateTime.min(dt, notADt)).toThrow();
+  // @ts-ignore
   expect(() => DateTime.min(notADt)).toThrow();
+  // @ts-ignore
   expect(() => DateTime.min(notADt, notADt)).toThrow();
 });
 
@@ -79,7 +80,10 @@ test("DateTime.max throws if you don't pass it DateTimes", () => {
   const dt = DateTime.fromJSDate(new Date(1982, 2, 25));
   const notADt = "flob";
 
+  // @ts-ignore
   expect(() => DateTime.max(dt, notADt)).toThrow();
+  // @ts-ignore
   expect(() => DateTime.max(notADt)).toThrow();
+  // @ts-ignore
   expect(() => DateTime.max(notADt, notADt)).toThrow();
 });

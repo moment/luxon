@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { Duration } from "../../src/luxon";
 
 const dur = Duration.fromObject({
@@ -52,4 +50,10 @@ test("Duration#milliseconds returns the milliseconds", () => {
 
 test("Duration#weeks returns the weeks", () => {
   expect(dur.weeks).toBe(8);
+});
+
+test("Duration#get returns the right value or zero", () => {
+  expect(Duration.fromObject({ years: 2, days: 3 }).years).toBe(2);
+  expect(Duration.fromObject({ years: 2, days: 3 }).months).toBe(0);
+  expect(Duration.fromObject({ years: 2, days: 3 }).days).toBe(3);
 });

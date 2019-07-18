@@ -1,11 +1,12 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
+
 import {
   MismatchedWeekdayError,
   UnparsableStringError,
   UnitOutOfRangeError
 } from "../../src/errors";
+
+import { GregorianDateTime } from "../../src/types/datetime";
 
 //------
 // .fromISO
@@ -116,7 +117,8 @@ test("DateTime.fromISO() can optionally specify a zone", () => {
   });
 });
 
-const isSame = (s, expected) => expect(DateTime.fromISO(s).toObject()).toEqual(expected);
+const isSame = (s: string, expected: GregorianDateTime) =>
+  expect(DateTime.fromISO(s).toObject()).toEqual(expected);
 
 test("DateTime.fromISO() accepts just the year", () => {
   isSame("2016", {
@@ -545,8 +547,9 @@ test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
 });
 
 test("DateTime.fromISO() rejects poop", () => {
-  const rejects = s => expect(() => DateTime.fromISO(s)).toThrow(UnparsableStringError);
+  const rejects = (s: string) => expect(() => DateTime.fromISO(s)).toThrow(UnparsableStringError);
 
+  // @ts-ignore
   rejects(null);
   rejects("");
   rejects(" ");
@@ -564,7 +567,7 @@ test("DateTime.fromISO() rejects poop", () => {
 });
 
 test("DateTime.fromISO() rejects 0s in dates", () => {
-  const rejects = s => expect(() => DateTime.fromISO(s)).toThrow(UnitOutOfRangeError);
+  const rejects = (s: string) => expect(() => DateTime.fromISO(s)).toThrow(UnitOutOfRangeError);
   rejects("2016-01-00");
   rejects("2016-00-01");
 });
@@ -591,27 +594,24 @@ test("DateTime.fromRFC2822() accepts full format", () => {
 });
 
 test("DateTime.fromRFC2822 parses a range of dates", () => {
-  const testCases = {
-    "Sun, 12 Apr 2015 05:06:07 GMT": [2015, 4, 12, 5, 6, 7],
-    "Tue, 01 Nov 2016 01:23:45 +0000": [2016, 11, 1, 1, 23, 45],
-    "Tue, 01 Nov 16 04:23:45 Z": [2016, 11, 1, 4, 23, 45],
-    "01 Nov 2016 05:23:45 z": [2016, 11, 1, 5, 23, 45],
-    "Mon, 02 Jan 2017 06:00:00 -0800": [2017, 1, 2, 6 + 8, 0, 0],
-    "Mon, 02 Jan 2017 06:00:00 +0800": [2017, 1, 1, 22, 0, 0],
-    "Mon, 02 Jan 2017 06:00:00 +0330": [2017, 1, 2, 2, 30, 0],
-    "Mon, 02 Jan 2017 06:00:00 -0330": [2017, 1, 2, 9, 30, 0],
-    "Mon, 02 Jan 2017 06:00:00 PST": [2017, 1, 2, 6 + 8, 0, 0],
-    "Mon, 02 Jan 2017 06:00:00 PDT": [2017, 1, 2, 6 + 7, 0, 0]
-  };
+  const testCases: [string, number[]][] = [
+    ["Sun, 12 Apr 2015 05:06:07 GMT", [2015, 4, 12, 5, 6, 7]],
+    ["Tue, 01 Nov 2016 01:23:45 +0000", [2016, 11, 1, 1, 23, 45]],
+    ["Tue, 01 Nov 16 04:23:45 Z", [2016, 11, 1, 4, 23, 45]],
+    ["01 Nov 2016 05:23:45 z", [2016, 11, 1, 5, 23, 45]],
+    ["Mon, 02 Jan 2017 06:00:00 -0800", [2017, 1, 2, 6 + 8, 0, 0]],
+    ["Mon, 02 Jan 2017 06:00:00 +0800", [2017, 1, 1, 22, 0, 0]],
+    ["Mon, 02 Jan 2017 06:00:00 +0330", [2017, 1, 2, 2, 30, 0]],
+    ["Mon, 02 Jan 2017 06:00:00 -0330", [2017, 1, 2, 9, 30, 0]],
+    ["Mon, 02 Jan 2017 06:00:00 PST", [2017, 1, 2, 6 + 8, 0, 0]],
+    ["Mon, 02 Jan 2017 06:00:00 PDT", [2017, 1, 2, 6 + 7, 0, 0]]
+  ];
 
-  for (const testString in testCases) {
-    if (Object.prototype.hasOwnProperty.call(testCases, testString)) {
-      const expected = testCases[testString],
-        r = DateTime.fromRFC2822(testString).toUTC(),
-        actual = [r.year, r.month, r.day, r.hour, r.minute, r.second];
-      expect(expected).toEqual(actual);
-    }
-  }
+  testCases.forEach(([testString, expected]) => {
+    const r = DateTime.fromRFC2822(testString).toUTC(),
+      actual = [r.year, r.month, r.day, r.hour, r.minute, r.second];
+    expect(expected).toEqual(actual);
+  });
 });
 
 test("DateTime.fromRFC2822() rejects incorrect days of the week", () => {

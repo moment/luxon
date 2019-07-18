@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { Interval, DateTime } from "../../src/luxon";
 
 //------
@@ -15,5 +13,6 @@ test("Interval.isInterval return false for primitives", () => {
   expect(Interval.isInterval(1)).toBe(false);
   expect(Interval.isInterval("")).toBe(false);
   expect(Interval.isInterval(null)).toBe(false);
+  // @ts-ignore
   expect(Interval.isInterval()).toBe(false);
 });

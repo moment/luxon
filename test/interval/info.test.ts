@@ -1,9 +1,8 @@
-/* global test expect */
 import { DateTime, Interval } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import Helpers from "../helpers";
 
-const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e));
+const fromISOs = (s: string, e: string) => DateTime.fromISO(s).until(DateTime.fromISO(e));
 
 //------
 // #length()
@@ -86,7 +85,7 @@ test("Interval#toDuration accepts multiple units", () => {
 test("Interval#toDuration accepts duration options", () => {
   const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13)),
     dur = int.toDuration(["hours"], { conversionAccuracy: "longterm" });
-  expect(dur.conversionAccuracy).toBe("longterm");
+  expect(Helpers.conversionAccuracy(dur)).toBe("longterm");
 });
 
 //------
@@ -180,7 +179,7 @@ test("Interval#isAfter returns false for intervals containing the input", () => 
 
 test("Interval#isAfter returns false for fully before the input ", () => {
   const n = DateTime.fromISO("1982-05-25T06:00"),
-    i = Interval.fromDateTimes(n.minus({ day: 2 }), n.minus(1, "day"));
+    i = Interval.fromDateTimes(n.minus({ day: 2 }), n.minus({ day: 1 }));
   expect(i.isAfter(n)).toBe(false);
 });
 

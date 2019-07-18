@@ -4,7 +4,9 @@
   it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
 */
 
-import { InvalidArgumentError } from "../errors.js";
+import { InvalidArgumentError } from "../errors";
+import { TimeObject, GregorianDateTime, DateTimeFormatOptions } from "../types/datetime";
+import { ZoneOffsetFormat } from "../types/zone";
 
 /**
  * @private
@@ -12,23 +14,23 @@ import { InvalidArgumentError } from "../errors.js";
 
 // TYPES
 
-export function isUndefined(o) {
+export function isUndefined(o: unknown): o is undefined {
   return typeof o === "undefined";
 }
 
-export function isNumber(o) {
+export function isNumber(o: unknown): o is number {
   return typeof o === "number";
 }
 
-export function isInteger(o) {
+export function isInteger(o: unknown) {
   return typeof o === "number" && o % 1 === 0;
 }
 
-export function isString(o) {
+export function isString(o: unknown): o is string {
   return typeof o === "string";
 }
 
-export function isDate(o) {
+export function isDate(o: unknown): o is Date {
   return Object.prototype.toString.call(o) === "[object Date]";
 }
 
@@ -36,7 +38,7 @@ export function isDate(o) {
 
 export function hasIntl() {
   try {
-    return typeof Intl !== "undefined" && Intl.DateTimeFormat;
+    return typeof Intl !== "undefined" && !!Intl.DateTimeFormat;
   } catch (e) {
     return false;
   }
@@ -56,49 +58,46 @@ export function hasRelative() {
 
 // OBJECTS AND ARRAYS
 
-export function maybeArray(thing) {
+export function maybeArray<T>(thing: T | T[]) {
   return Array.isArray(thing) ? thing : [thing];
 }
 
-export function bestBy(arr, by, compare) {
-  if (arr.length === 0) {
-    return undefined;
-  }
-  return arr.reduce((best, next) => {
-    const pair = [by(next), next];
-    if (!best) {
+export function bestBy<T, U>(arr: T[], by: (_: T) => U, compare: (_: U, __: U) => U) {
+  const best = arr.reduce<[U, T] | undefined>((best, next) => {
+    const pair: [U, T] = [by(next), next];
+    if (best === undefined) {
       return pair;
     } else if (compare(best[0], pair[0]) === best[0]) {
       return best;
     } else {
       return pair;
     }
-  }, null)[1];
+  }, undefined);
+
+  if (best === undefined) throw new InvalidArgumentError("bestBy expects a non empty array");
+
+  return best[1];
 }
 
-export function pick(obj, keys) {
-  return keys.reduce((a, k) => {
+export function pick<T, K extends keyof T>(obj: T, keys: K[]) {
+  return keys.reduce<Partial<Pick<T, K>>>((a, k) => {
     a[k] = obj[k];
     return a;
-  }, {});
-}
-
-export function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
+  }, {}) as Pick<T, K>;
 }
 
 // NUMBERS AND STRINGS
 
-export function integerBetween(thing, bottom, top) {
+export function integerBetween(thing: number, bottom: number, top: number) {
   return isInteger(thing) && thing >= bottom && thing <= top;
 }
 
 // x % n but takes the sign of n instead of x
-export function floorMod(x, n) {
+export function floorMod(x: number, n: number) {
   return x - n * Math.floor(x / n);
 }
 
-export function padStart(input, n = 2) {
+export function padStart(input: string | number, n = 2) {
   if (input.toString().length < n) {
     return ("0".repeat(n) + input).slice(-n);
   } else {
@@ -106,15 +105,15 @@ export function padStart(input, n = 2) {
   }
 }
 
-export function parseInteger(string) {
-  if (isUndefined(string) || string === null || string === "") {
+export function parseInteger(text: string) {
+  if (isUndefined(text) || text === null || text === "") {
     return undefined;
   } else {
-    return parseInt(string, 10);
+    return parseInt(text, 10);
   }
 }
 
-export function parseMillis(fraction) {
+export function parseMillis(fraction: string | null | undefined) {
   // Return undefined (instead of 0) in these cases, where fraction is not set
   if (isUndefined(fraction) || fraction === null || fraction === "") {
     return undefined;
@@ -124,35 +123,31 @@ export function parseMillis(fraction) {
   }
 }
 
-export function roundTo(number, digits, towardZero = false) {
+export function roundTo(value: number, digits: number, towardZero = false) {
   const factor = 10 ** digits,
     rounder = towardZero ? Math.trunc : Math.round;
-  return rounder(number * factor) / factor;
+  return rounder(value * factor) / factor;
 }
 
 // DATE BASICS
 
-export function isLeapYear(year) {
+export function isLeapYear(year: number) {
   return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
 
-export function daysInYear(year) {
+export function daysInYear(year: number) {
   return isLeapYear(year) ? 366 : 365;
 }
 
-export function daysInMonth(year, month) {
+export function daysInMonth(year: number, month: number) {
   const modMonth = floorMod(month - 1, 12) + 1,
     modYear = year + (month - modMonth) / 12;
-
-  if (modMonth === 2) {
-    return isLeapYear(modYear) ? 29 : 28;
-  } else {
-    return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
-  }
+  return [31, isLeapYear(modYear) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
 }
+
 // convert a calendar object to a local timestamp (epoch, but with the offset baked in)
-export function objToLocalTS(obj) {
-  let d = Date.UTC(
+export function objToLocalTS(obj: GregorianDateTime) {
+  const ts = Date.UTC(
     obj.year,
     obj.month - 1,
     obj.day,
@@ -163,14 +158,16 @@ export function objToLocalTS(obj) {
   );
 
   // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
-  if (obj.year < 100 && obj.year >= 0) {
-    d = new Date(d);
-    d.setUTCFullYear(d.getUTCFullYear() - 1900);
+  if (integerBetween(obj.year, 0, 99)) {
+    const date = new Date(ts);
+    date.setUTCFullYear(date.getUTCFullYear() - 1900);
+    return date.getTime();
   }
-  return +d;
+
+  return ts;
 }
 
-export function weeksInWeekYear(weekYear) {
+export function weeksInWeekYear(weekYear: number) {
   const p1 =
       (weekYear +
         Math.floor(weekYear / 4) -
@@ -182,7 +179,7 @@ export function weeksInWeekYear(weekYear) {
   return p1 === 4 || p2 === 3 ? 53 : 52;
 }
 
-export function untruncateYear(year) {
+export function untruncateYear(year: number) {
   if (year > 99) {
     return year;
   } else return year > 60 ? 1900 + year : 2000 + year;
@@ -190,22 +187,27 @@ export function untruncateYear(year) {
 
 // PARSING
 
-export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
+export function parseZoneInfo(
+  ts: number,
+  offsetFormat?: string,
+  locale?: string,
+  timeZone?: string
+) {
   const date = new Date(ts),
-    intlOpts = {
+    intlOptions = {
       hour12: false,
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
+      timeZone
     };
 
-  if (timeZone) {
-    intlOpts.timeZone = timeZone;
-  }
-
-  const modified = Object.assign({ timeZoneName: offsetFormat }, intlOpts),
+  const modified: DateTimeFormatOptions = Object.assign(
+      { timeZoneName: offsetFormat },
+      intlOptions
+    ),
     intl = hasIntl();
 
   if (intl && hasFormatToParts()) {
@@ -215,7 +217,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     return parsed ? parsed.value : null;
   } else if (intl) {
     // this probably doesn't work for all locales
-    const without = new Intl.DateTimeFormat(locale, intlOpts).format(date),
+    const without = new Intl.DateTimeFormat(locale, intlOptions).format(date),
       included = new Intl.DateTimeFormat(locale, modified).format(date),
       diffed = included.substring(without.length),
       trimmed = diffed.replace(/^[, \u200e]+/, "");
@@ -226,7 +228,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
 }
 
 // signedOffset('-5', '30') -> -330
-export function signedOffset(offHourStr, offMinuteStr) {
+export function signedOffset(offHourStr: string, offMinuteStr: string) {
   let offHour = parseInt(offHourStr, 10);
 
   // don't || this because we want to preserve -0
@@ -241,26 +243,25 @@ export function signedOffset(offHourStr, offMinuteStr) {
 
 // COERCION
 
-export function asNumber(value) {
+export function asNumber(value: unknown) {
   const numericValue = Number(value);
   if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue))
     throw new InvalidArgumentError(`Invalid unit value ${value}`);
   return numericValue;
 }
 
-export function normalizeObject(obj, normalizer) {
-  const normalized = {};
-  for (const u in obj) {
-    if (hasOwnProperty(obj, u)) {
-      const v = obj[u];
-      if (v === undefined || v === null) continue;
-      normalized[normalizer(u)] = asNumber(v);
-    }
-  }
-  return normalized;
+export function normalizeObject<T extends string>(
+  obj: Record<string, unknown>,
+  normalizer: (key: string) => T
+) {
+  return Object.keys(obj).reduce<Partial<Record<T, number>>>((normalized, key) => {
+    const value = obj[key];
+    if (value !== undefined && value !== null) normalized[normalizer(key)] = asNumber(value);
+    return normalized;
+  }, {});
 }
 
-export function formatOffset(offset, format) {
+export function formatOffset(offset: number, format: ZoneOffsetFormat) {
   const hours = Math.trunc(offset / 60),
     minutes = Math.abs(offset % 60),
     sign = hours >= 0 && !Object.is(hours, -0) ? "+" : "-",
@@ -278,7 +279,7 @@ export function formatOffset(offset, format) {
   }
 }
 
-export function timeObject(obj) {
+export function timeObject(obj: TimeObject): TimeObject {
   return pick(obj, ["hour", "minute", "second", "millisecond"]);
 }
 
