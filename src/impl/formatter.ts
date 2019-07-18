@@ -1,8 +1,18 @@
-import * as English from "./english.js";
-import * as Formats from "./formats.js";
-import { hasFormatToParts, padStart } from "./util.js";
+import * as English from "./english";
+import * as Formats from "./formats";
+import { hasFormatToParts, padStart } from "./util";
+import Locale from "./locale";
+import DateTime from "../datetime";
+import Duration from "../duration";
+import { StringUnitLength } from "../types/common";
+import { DateTimeFormatOptions } from "../types/datetime";
+import { DurationUnit } from "../types/duration";
+import { ZoneOffsetFormat } from "../types/zone";
 
-function stringifyTokens(splits, tokenToString) {
+function stringifyTokens(
+  splits: FormatToken[],
+  tokenToString: (token: string) => string | undefined
+) {
   let s = "";
   for (const token of splits) {
     if (token.literal) {
@@ -14,7 +24,7 @@ function stringifyTokens(splits, tokenToString) {
   return s;
 }
 
-const macroTokenToFormatOpts = {
+const TokenToFormatOpts: Record<string, DateTimeFormatOptions> = {
   D: Formats.DATE_SHORT,
   DD: Formats.DATE_MED,
   DDD: Formats.DATE_FULL,
@@ -37,29 +47,46 @@ const macroTokenToFormatOpts = {
   FFFF: Formats.DATETIME_HUGE_WITH_SECONDS
 };
 
+export interface FormatToken {
+  literal: boolean;
+  val: string;
+}
+
+interface FormatterOptions extends DateTimeFormatOptions {
+  allowZ?: boolean;
+  forceSimple?: boolean;
+  format?: ZoneOffsetFormat;
+  padTo?: number;
+}
+
 /**
  * @private
  */
 
 export default class Formatter {
-  static create(locale, opts = {}) {
-    return new Formatter(locale, opts);
+  // Private readonly fields
+  private options: Readonly<FormatterOptions>;
+  private loc: Locale;
+  private systemLoc?: Locale;
+
+  static create(locale: Locale, options: FormatterOptions = {}) {
+    return new Formatter(locale, options);
   }
 
-  static parseFormat(fmt) {
-    let current = null,
+  static parseFormat(format: string) {
+    let current = undefined,
       currentFull = "",
       bracketedLevel = 0;
 
-    const splits = [];
-    for (let i = 0; i < fmt.length; i++) {
-      const c = fmt.charAt(i);
+    const splits: FormatToken[] = [];
+    for (let i = 0; i < format.length; i++) {
+      const c = format.charAt(i);
       if (c === "[") {
         if (bracketedLevel === 0) {
           if (currentFull.length > 0) {
             splits.push({ literal: false, val: currentFull });
           }
-          current = null;
+          current = undefined;
           currentFull = "";
         } else currentFull += c;
         bracketedLevel = bracketedLevel + 1;
@@ -69,7 +96,7 @@ export default class Formatter {
           if (currentFull.length > 0) {
             splits.push({ literal: true, val: currentFull });
           }
-          current = null;
+          current = undefined;
           currentFull = "";
         } else currentFull += c;
       } else if (bracketedLevel > 0) {
@@ -92,81 +119,80 @@ export default class Formatter {
     return splits;
   }
 
-  static macroTokenToFormatOpts(token) {
-    return macroTokenToFormatOpts[token];
+  static macroTokenToFormatOpts(token: string) {
+    return TokenToFormatOpts[token];
   }
 
-  constructor(locale, formatOpts) {
-    this.opts = formatOpts;
+  constructor(locale: Locale, formatOptions: FormatterOptions) {
+    this.options = formatOptions;
     this.loc = locale;
-    this.systemLoc = null;
+    this.systemLoc = undefined;
   }
 
-  formatWithSystemDefault(dt, opts) {
-    if (this.systemLoc === null) {
+  formatWithSystemDefault(dt: DateTime, options: DateTimeFormatOptions) {
+    if (this.systemLoc === undefined) {
       this.systemLoc = this.loc.redefaultToSystem();
     }
-    const df = this.systemLoc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const df = this.systemLoc.dtFormatter(dt, Object.assign({}, this.options, options));
     return df.format();
   }
 
-  formatDateTime(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+  formatDateTime(dt: DateTime) {
+    const df = this.loc.dtFormatter(dt, this.options);
     return df.format();
   }
 
-  formatDateTimeParts(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+  formatDateTimeParts(dt: DateTime) {
+    const df = this.loc.dtFormatter(dt, this.options);
     return df.formatToParts();
   }
 
-  resolvedOptions(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+  resolvedOptions(dt: DateTime) {
+    const df = this.loc.dtFormatter(dt, this.options);
     return df.resolvedOptions();
   }
 
-  num(n, p = 0) {
+  num(n: number, p = 0) {
     // we get some perf out of doing this here, annoyingly
-    if (this.opts.forceSimple) {
+    if (this.options.forceSimple) {
       return padStart(n, p);
     }
 
-    const opts = Object.assign({}, this.opts);
+    const options: FormatterOptions = Object.assign({}, this.options);
 
     if (p > 0) {
-      opts.padTo = p;
+      options.padTo = p;
     }
 
-    return this.loc.numberFormatter(opts).format(n);
+    return this.loc.numberFormatter(options).format(n);
   }
 
-  formatDateTimeFromString(dt, fmt) {
+  formatDateTimeFromString(dt: DateTime, format: string) {
     const knownEnglish = this.loc.listingMode() === "en",
       useDateTimeFormatter =
         this.loc.outputCalendar && this.loc.outputCalendar !== "gregory" && hasFormatToParts(),
-      string = (opts, extract) => this.loc.extract(dt, opts, extract),
-      formatOffset = opts => {
-        if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
-          return "Z";
-        }
-        return dt.zone.formatOffset(dt.ts, opts.format);
-      },
+      string = (options: DateTimeFormatOptions, extract: Intl.DateTimeFormatPartTypes) =>
+        this.loc.extract(dt, options, extract),
+      formatOffset = (options: FormatterOptions & { format: ZoneOffsetFormat }) =>
+        dt.isOffsetFixed && dt.offset === 0 && options.allowZ
+          ? "Z"
+          : dt.zone.formatOffset(dt.toMillis(), options.format),
       meridiem = () =>
         knownEnglish
           ? English.meridiemForDateTime(dt)
-          : string({ hour: "numeric", hour12: true }, "dayperiod"),
-      month = (length, standalone) =>
+          : string({ hour: "numeric", hour12: true }, "dayPeriod"),
+      month = (length: StringUnitLength, standalone: boolean) =>
         knownEnglish
           ? English.monthForDateTime(dt, length)
           : string(standalone ? { month: length } : { month: length, day: "numeric" }, "month"),
-      weekday = (length, standalone) =>
+      weekday = (length: StringUnitLength, standalone: boolean) =>
         knownEnglish
           ? English.weekdayForDateTime(dt, length)
           : string(
               standalone ? { weekday: length } : { weekday: length, month: "long", day: "numeric" },
               "weekday"
             ),
-      maybeMacro = token => {
+      maybeMacro = (token: string) => {
         const formatOpts = Formatter.macroTokenToFormatOpts(token);
         if (formatOpts) {
           return this.formatWithSystemDefault(dt, formatOpts);
@@ -174,9 +200,9 @@ export default class Formatter {
           return token;
         }
       },
-      era = length =>
+      era = (length: StringUnitLength) =>
         knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, "era"),
-      tokenToString = token => {
+      tokenToString = (token: string): string => {
         // Where possible: http://cldr.unicode.org/translation/date-time#TOC-Stand-Alone-vs.-Format-Styles
         switch (token) {
           // ms
@@ -208,19 +234,23 @@ export default class Formatter {
           // offset
           case "Z":
             // like +6
-            return formatOffset({ format: "narrow", allowZ: this.opts.allowZ });
+            return formatOffset({ format: "narrow", allowZ: this.options.allowZ });
           case "ZZ":
             // like +06:00
-            return formatOffset({ format: "short", allowZ: this.opts.allowZ });
+            return formatOffset({ format: "short", allowZ: this.options.allowZ });
           case "ZZZ":
             // like +0600
-            return formatOffset({ format: "techie", allowZ: this.opts.allowZ });
+            return formatOffset({ format: "techie", allowZ: this.options.allowZ });
           case "ZZZZ":
             // like EST
-            return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
+            return (
+              dt.zone.offsetName(dt.toMillis(), { format: "short", locale: this.loc.locale }) || ""
+            );
           case "ZZZZZ":
             // like Eastern Standard Time
-            return dt.zone.offsetName(dt.ts, { format: "long", locale: this.loc.locale });
+            return (
+              dt.zone.offsetName(dt.toMillis(), { format: "long", locale: this.loc.locale }) || ""
+            );
           // zone
           case "z":
             // like America/New_York
@@ -307,7 +337,7 @@ export default class Formatter {
             // like 14
             return useDateTimeFormatter
               ? string({ year: "2-digit" }, "year")
-              : this.num(dt.year.toString().slice(-2), 2);
+              : this.num(parseInt(dt.year.toString(10).slice(-2), 10), 2);
           case "yyyy":
             // like 0012
             return useDateTimeFormatter
@@ -328,7 +358,7 @@ export default class Formatter {
           case "GGGGG":
             return era("narrow");
           case "kk":
-            return this.num(dt.weekYear.toString().slice(-2), 2);
+            return this.num(parseInt(dt.weekYear.toString(10).slice(-2), 10), 2);
           case "kkkk":
             return this.num(dt.weekYear, 4);
           case "W":
@@ -346,39 +376,39 @@ export default class Formatter {
             // like 01
             return this.num(dt.quarter, 2);
           case "X":
-            return this.num(Math.floor(dt.ts / 1000));
+            return this.num(Math.floor(dt.toMillis() / 1000));
           case "x":
-            return this.num(dt.ts);
+            return this.num(dt.toMillis());
           default:
             return maybeMacro(token);
         }
       };
 
-    return stringifyTokens(Formatter.parseFormat(fmt), tokenToString);
+    return stringifyTokens(Formatter.parseFormat(format), tokenToString);
   }
 
-  formatDurationFromString(dur, fmt) {
-    const tokenToField = token => {
+  formatDurationFromString(dur: Duration, format: string) {
+    const tokenToField = (token: string): DurationUnit | undefined => {
         switch (token[0]) {
           case "S":
-            return "millisecond";
+            return "milliseconds";
           case "s":
-            return "second";
+            return "seconds";
           case "m":
-            return "minute";
+            return "minutes";
           case "h":
-            return "hour";
+            return "hours";
           case "d":
-            return "day";
+            return "days";
           case "M":
-            return "month";
+            return "months";
           case "y":
-            return "year";
+            return "years";
           default:
-            return null;
+            return undefined;
         }
       },
-      tokenToString = lildur => token => {
+      tokenToString = (lildur: Duration) => (token: string) => {
         const mapped = tokenToField(token);
         if (mapped) {
           return this.num(lildur.get(mapped), token.length);
@@ -386,12 +416,12 @@ export default class Formatter {
           return token;
         }
       },
-      tokens = Formatter.parseFormat(fmt),
-      realTokens = tokens.reduce(
+      tokens = Formatter.parseFormat(format),
+      realTokens = tokens.reduce<string[]>(
         (found, { literal, val }) => (literal ? found : found.concat(val)),
         []
       ),
-      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter(t => t));
+      collapsed = dur.shiftTo(...(realTokens.map(tokenToField).filter(Boolean) as DurationUnit[]));
     return stringifyTokens(tokens, tokenToString(collapsed));
   }
 }

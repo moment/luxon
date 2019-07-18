@@ -1,4 +1,3 @@
-/* global test expect */
 import { Duration } from "../../src/luxon";
 
 //------
@@ -13,12 +12,12 @@ test("Duration#shiftTo rolls milliseconds up hours and minutes", () => {
 });
 
 test("Duration#shiftTo boils hours down milliseconds", () => {
-  const dur = Duration.fromObject({ hours: 1 }).shiftTo("milliseconds");
+  const dur = Duration.fromObject({ hour: 1 }).shiftTo("milliseconds");
   expect(dur.milliseconds).toBe(3600000);
 });
 
 test("Duration boils hours down shiftTo minutes and milliseconds", () => {
-  const dur = Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo("minutes", "milliseconds");
+  const dur = Duration.fromObject({ hour: 1, seconds: 30 }).shiftTo("minutes", "milliseconds");
   expect(dur.toObject()).toEqual({ minutes: 60, milliseconds: 30000 });
 });
 
@@ -29,6 +28,7 @@ test("Duration#shiftTo boils down and then rolls up", () => {
 
 test("Duration#shiftTo throws on invalid units", () => {
   expect(() => {
+    // @ts-ignore
     Duration.fromObject({ years: 2, hours: 5000 }).shiftTo("months", "glorp");
   }).toThrow();
 });
@@ -167,7 +167,7 @@ test("Duration#valueOf value of zero duration", () => {
 });
 
 test("Duration#valueOf returns as millisecond value (lower order units)", () => {
-  const dur = Duration.fromObject({ hours: 1, minutes: 36, seconds: 0 });
+  const dur = Duration.fromObject({ hour: 1, minutes: 36, seconds: 0 });
   expect(dur.valueOf()).toBe(5760000);
 });
 

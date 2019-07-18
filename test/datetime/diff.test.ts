@@ -1,15 +1,22 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import Helpers from "../helpers";
+import { GenericDateTime } from "../../src/types/datetime";
+import { DurationUnit } from "../../src/types/duration";
 
 //------
 // diff
 //-------
-const diffFromObjs = (o1, o2, units) =>
-  DateTime.fromObject(o1).diff(DateTime.fromObject(o2), units);
-const diffObjs = (o1, o2, units) => diffFromObjs(o1, o2, units).toObject();
+const diffFromObjs = (
+  o1: GenericDateTime,
+  o2: GenericDateTime,
+  units?: DurationUnit | DurationUnit[]
+) => DateTime.fromObject(o1).diff(DateTime.fromObject(o2), units);
+const diffObjs = (
+  o1: GenericDateTime,
+  o2: GenericDateTime,
+  units?: DurationUnit | DurationUnit[]
+) => diffFromObjs(o1, o2, units).toObject();
 
 test("DateTime#diff defaults to milliseconds", () => {
   expect(diffObjs({ year: 2017, millisecond: 12 }, { year: 2017 })).toEqual({
@@ -233,8 +240,8 @@ test("DateTime#diff passes through options", () => {
     dt2 = DateTime.fromObject({ year: 2016, month: 1, day: 1 }),
     dur1 = dt1.diff(dt2, "hours", { conversionAccuracy: "longterm" }),
     dur2 = dt1.diff(dt2, "days", { conversionAccuracy: "longterm" });
-  expect(dur1.conversionAccuracy).toBe("longterm");
-  expect(dur2.conversionAccuracy).toBe("longterm");
+  expect(Helpers.conversionAccuracy(dur1)).toBe("longterm");
+  expect(Helpers.conversionAccuracy(dur2)).toBe("longterm");
 });
 
 test("DateTime#diff results in a duration with the same locale", () => {
@@ -295,5 +302,5 @@ Helpers.withNow("DateTime#diffNow accepts units", DateTime.local(2017, 5, 15), (
 Helpers.withNow("DateTime#diffNow passes through options", DateTime.local(2017, 5, 15), () => {
   const dt = DateTime.local(2014, 8, 6),
     dur = dt.diffNow("days", { conversionAccuracy: "longterm" });
-  expect(dur.conversionAccuracy).toBe("longterm");
+  expect(Helpers.conversionAccuracy(dur)).toBe("longterm");
 });

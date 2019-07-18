@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { DateTime, Duration } from "../../src/luxon";
 import { InvalidArgumentError } from "../../src/errors";
 
@@ -251,7 +249,7 @@ test("DateTime#startOf('year') goes to the start of the year", () => {
 });
 
 test("DateTime#startOf('quarter') goes to the start of the quarter", () => {
-  const monthToQuarterStart = (month, quarterStart) => {
+  const monthToQuarterStart = (month: number, quarterStart: number) => {
     const dt = DateTime.fromObject({
       year: 2017,
       month,
@@ -386,7 +384,7 @@ test("DateTime#endOf('quarter') goes to the end of the quarter", () => {
 });
 
 test("DateTime#endOf('quarter') goes to the end of the quarter in December", () => {
-  const monthToQuarterEnd = (month, endMonth) => {
+  const monthToQuarterEnd = (month: number, endMonth: number) => {
     const dt = DateTime.fromObject({
       year: 2017,
       month,

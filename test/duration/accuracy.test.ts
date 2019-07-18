@@ -1,8 +1,8 @@
-/* global test expect */
-
 import { Duration } from "../../src/luxon";
+import { DurationUnit } from "../../src/types/duration";
+import { ConversionAccuracy } from "../../src/types/common";
 
-const convert = (amt, from, to, accuracy) =>
+const convert = (amt: number, from: DurationUnit, to: DurationUnit, accuracy: ConversionAccuracy) =>
   Duration.fromObject({ [from]: amt }, { conversionAccuracy: accuracy }).as(to);
 
 test("There are slightly more than 365 days in a year", () => {

@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
 
 const dateTime = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));

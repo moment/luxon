@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
 import { InvalidUnitError } from "../../src/errors";
 
@@ -75,7 +73,7 @@ test("DateTime#set({ weekday }) sets the weekday to this week's matching day", (
 });
 
 test("DateTime#set({ weekday }) handles week year edge cases", () => {
-  const endOfWeekIs = (startISO, expectedISO) => {
+  const endOfWeekIs = (startISO: string, expectedISO: string) => {
     const start = DateTime.fromISO(startISO);
     const expected = DateTime.fromISO(expectedISO);
     expect(start.set({ weekday: 7 })).toEqual(expected);
@@ -115,11 +113,15 @@ test("DateTime.set does units in increasing size", () => {
 // set invalid things
 //------
 test("DateTime#set throws for invalid units", () => {
+  // @ts-ignore
   expect(() => dt.set({ glorb: 200 })).toThrow(InvalidUnitError);
 });
 
 test("DateTime#set throws for metadata", () => {
+  // @ts-ignore
   expect(() => dt.set({ zone: "UTC" })).toThrow();
+  // @ts-ignore
   expect(() => dt.set({ locale: "be" })).toThrow();
+  // @ts-ignore
   expect(() => dt.set({ invalid: true })).toThrow();
 });

@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
 
 const dt = DateTime.fromObject(
@@ -35,7 +33,7 @@ test("DateTime#reconfigure() sets the numberingSystem", () => {
   expect(recon.outputCalendar).toBe("coptic");
 });
 
-test("DateTime#reconfigure() with no arguments no opts", () => {
+test("DateTime#reconfigure() with no arguments", () => {
   const recon = dt.reconfigure();
   expect(recon.locale).toBe("fr");
   expect(recon.numberingSystem).toBe("beng");

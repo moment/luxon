@@ -6,21 +6,22 @@ import {
   daysInMonth,
   weeksInWeekYear,
   isInteger
-} from "./util.js";
+} from "./util";
+import { TimeObject, WeekDateTime, GregorianDateTime, OrdinalDateTime } from "../types/datetime";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
 
-function dayOfWeek(year, month, day) {
+function dayOfWeek(year: number, month: number, day: number) {
   const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
   return js === 0 ? 7 : js;
 }
 
-function computeOrdinal(year, month, day) {
+function computeOrdinal(year: number, month: number, day: number) {
   return day + (isLeapYear(year) ? leapLadder : nonLeapLadder)[month - 1];
 }
 
-function uncomputeOrdinal(year, ordinal) {
+function uncomputeOrdinal(year: number, ordinal: number) {
   const table = isLeapYear(year) ? leapLadder : nonLeapLadder,
     month0 = table.findIndex(i => i < ordinal),
     day = ordinal - table[month0];
@@ -31,7 +32,7 @@ function uncomputeOrdinal(year, ordinal) {
  * @private
  */
 
-export function gregorianToWeek(gregObj) {
+export function gregorianToWeek(gregObj: GregorianDateTime): WeekDateTime {
   const { year, month, day } = gregObj,
     ordinal = computeOrdinal(year, month, day),
     weekday = dayOfWeek(year, month, day);
@@ -52,7 +53,7 @@ export function gregorianToWeek(gregObj) {
   return Object.assign({ weekYear, weekNumber, weekday }, timeObject(gregObj));
 }
 
-export function weekToGregorian(weekData) {
+export function weekToGregorian(weekData: WeekDateTime) {
   const { weekYear, weekNumber, weekday } = weekData,
     weekdayOfJan4 = dayOfWeek(weekYear, 1, 4),
     yearInDays = daysInYear(weekYear);
@@ -75,21 +76,23 @@ export function weekToGregorian(weekData) {
   return Object.assign({ year, month, day }, timeObject(weekData));
 }
 
-export function gregorianToOrdinal(gregData) {
+export function gregorianToOrdinal(gregData: GregorianDateTime): OrdinalDateTime {
   const { year, month, day } = gregData,
     ordinal = computeOrdinal(year, month, day);
 
   return Object.assign({ year, ordinal }, timeObject(gregData));
 }
 
-export function ordinalToGregorian(ordinalData) {
+export function ordinalToGregorian(ordinalData: OrdinalDateTime) {
   const { year, ordinal } = ordinalData,
     { month, day } = uncomputeOrdinal(year, ordinal);
 
   return Object.assign({ year, month, day }, timeObject(ordinalData));
 }
 
-export function hasInvalidWeekData(obj) {
+export type UnitError = [string, number] | null;
+
+export function hasInvalidWeekData(obj: WeekDateTime): UnitError {
   const validYear = isInteger(obj.weekYear),
     validWeek = integerBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
     validWeekday = integerBetween(obj.weekday, 1, 7);
@@ -97,13 +100,13 @@ export function hasInvalidWeekData(obj) {
   if (!validYear) {
     return ["weekYear", obj.weekYear];
   } else if (!validWeek) {
-    return ["week", obj.week];
+    return ["weekNumber", obj.weekNumber];
   } else if (!validWeekday) {
     return ["weekday", obj.weekday];
   } else return null;
 }
 
-export function hasInvalidOrdinalData(obj) {
+export function hasInvalidOrdinalData(obj: OrdinalDateTime): UnitError {
   const validYear = isInteger(obj.year),
     validOrdinal = integerBetween(obj.ordinal, 1, daysInYear(obj.year));
 
@@ -114,7 +117,7 @@ export function hasInvalidOrdinalData(obj) {
   } else return null;
 }
 
-export function hasInvalidGregorianData(obj) {
+export function hasInvalidGregorianData(obj: GregorianDateTime): UnitError {
   const validYear = isInteger(obj.year),
     validMonth = integerBetween(obj.month, 1, 12),
     validDay = integerBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
@@ -128,7 +131,7 @@ export function hasInvalidGregorianData(obj) {
   } else return null;
 }
 
-export function hasInvalidTimeData(obj) {
+export function hasInvalidTimeData(obj: TimeObject): UnitError {
   const { hour, minute, second, millisecond } = obj;
   const validHour =
       integerBetween(hour, 0, 23) ||

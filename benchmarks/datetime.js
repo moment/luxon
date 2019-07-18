@@ -29,7 +29,7 @@ suite
   })
   .add("DateTime.fromFormat with zone", () => {
     DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
-      zone: "America/Los_Angeles"
+      zone: "America/Los_Angeles",
     });
   })
   .add("DateTime#setZone", () => {
@@ -57,11 +57,13 @@ suite
   .add("DateTime#toRelativeCalendar", () => {
     dt.toRelativeCalendar({ base: DateTime.now(), locale: "fi" });
   })
-  .on("cycle", event => {
+  .on("cycle", (event) => {
+    // eslint-disable-next-line no-undef
     console.log(String(event.target));
   })
   // eslint-disable-next-line func-names
-  .on("complete", function() {
+  .on("complete", function () {
+    // eslint-disable-next-line no-undef
     console.log("Fastest is " + this.filter("fastest").map("name"));
   })
   .run();

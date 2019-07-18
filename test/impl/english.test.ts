@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { formatRelativeTime } from "../../src/impl/english";
 
 test("today", () => {
@@ -17,12 +15,12 @@ test("yesterday", () => {
   expect(formatRelativeTime("days", -1, "always")).toBe("1 day ago");
 });
 
-test("in 0.5 days", () => {
+test("in 1.5 days", () => {
   expect(formatRelativeTime("days", 1.5, "auto")).toBe("in 1.5 days");
   expect(formatRelativeTime("days", 1.5, "always")).toBe("in 1.5 days");
 });
 
-test("0.5 days ago", () => {
+test("1.5 days ago", () => {
   expect(formatRelativeTime("days", -1.5, "auto")).toBe("1.5 days ago");
   expect(formatRelativeTime("days", -1.5, "always")).toBe("1.5 days ago");
 });
@@ -61,6 +59,13 @@ test("in 3 months", () => {
   expect(formatRelativeTime("months", 3, "always", true)).toBe("in 3 mo.");
 });
 
+test("in 6 months", () => {
+  expect(formatRelativeTime("quarters", 2, "auto")).toBe("in 2 quarters");
+  expect(formatRelativeTime("quarters", 2, "auto", true)).toBe("in 2 qtr.");
+  expect(formatRelativeTime("quarters", 2, "always")).toBe("in 2 quarters");
+  expect(formatRelativeTime("quarters", 2, "always", true)).toBe("in 2 qtr.");
+});
+
 test("in 1 hour", () => {
   expect(formatRelativeTime("hours", 1, "auto")).toBe("in 1 hour");
   expect(formatRelativeTime("hours", 1, "always")).toBe("in 1 hour");
@@ -78,4 +83,11 @@ test("1 hour ago", () => {
   expect(formatRelativeTime("hours", -1, "auto", true)).toBe("1 hr. ago");
   expect(formatRelativeTime("hours", -1, "always")).toBe("1 hour ago");
   expect(formatRelativeTime("hours", -1, "always", true)).toBe("1 hr. ago");
+});
+
+test("with singular units", () => {
+  expect(formatRelativeTime("hour", 1, "auto")).toBe("in 1 hour");
+  expect(formatRelativeTime("hour", 3, "always")).toBe("in 3 hours");
+  expect(formatRelativeTime("day", 1, "auto")).toBe("tomorrow");
+  expect(formatRelativeTime("month", 3, "auto")).toBe("in 3 months");
 });

@@ -1,8 +1,6 @@
-/* global test expect */
-
 import { DateTime, Settings } from "../../src/luxon";
 
-const local = (year, month, day, hour) =>
+const local = (year: number, month: number, day: number, hour: number) =>
   DateTime.fromObject({ year, month, day, hour }, { zone: "America/New_York" });
 
 test("Hole dates are bumped forward", () => {

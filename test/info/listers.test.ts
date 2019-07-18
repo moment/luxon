@@ -1,5 +1,3 @@
-/* global test expect */
-
 import { Info } from "../../src/luxon";
 
 //------

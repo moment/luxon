@@ -1,7 +1,11 @@
-import * as Formats from "./formats.js";
-import { pick } from "./util.js";
+import * as Formats from "./formats";
+import { pick } from "./util";
+import { UnitLength, StringUnitLength } from "../types/common";
+import DateTime from "../datetime";
+import { ToRelativeNumeric, ToRelativeUnit, DateTimeFormatOptions } from "../types/datetime";
+import Duration from "../duration";
 
-function stringify(obj) {
+function stringify(obj: Record<string, unknown>) {
   return JSON.stringify(obj, Object.keys(obj).sort());
 }
 
@@ -41,7 +45,7 @@ export const monthsShort = [
 
 export const monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
 
-export function months(length) {
+export function months(length: UnitLength) {
   switch (length) {
     case "narrow":
       return monthsNarrow;
@@ -53,8 +57,6 @@ export function months(length) {
       return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
     case "2-digit":
       return ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-    default:
-      return null;
   }
 }
 
@@ -72,7 +74,7 @@ export const weekdaysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export const weekdaysNarrow = ["M", "T", "W", "T", "F", "S", "S"];
 
-export function weekdays(length) {
+export function weekdays(length: StringUnitLength) {
   switch (length) {
     case "narrow":
       return weekdaysNarrow;
@@ -80,10 +82,6 @@ export function weekdays(length) {
       return weekdaysShort;
     case "long":
       return weekdaysLong;
-    case "numeric":
-      return ["1", "2", "3", "4", "5", "6", "7"];
-    default:
-      return null;
   }
 }
 
@@ -95,7 +93,7 @@ export const erasShort = ["BC", "AD"];
 
 export const erasNarrow = ["B", "A"];
 
-export function eras(length) {
+export function eras(length: StringUnitLength) {
   switch (length) {
     case "narrow":
       return erasNarrow;
@@ -103,28 +101,31 @@ export function eras(length) {
       return erasShort;
     case "long":
       return erasLong;
-    default:
-      return null;
   }
 }
 
-export function meridiemForDateTime(dt) {
+export function meridiemForDateTime(dt: DateTime) {
   return meridiems[dt.hour < 12 ? 0 : 1];
 }
 
-export function weekdayForDateTime(dt, length) {
+export function weekdayForDateTime(dt: DateTime, length: StringUnitLength) {
   return weekdays(length)[dt.weekday - 1];
 }
 
-export function monthForDateTime(dt, length) {
+export function monthForDateTime(dt: DateTime, length: UnitLength) {
   return months(length)[dt.month - 1];
 }
 
-export function eraForDateTime(dt, length) {
+export function eraForDateTime(dt: DateTime, length: StringUnitLength) {
   return eras(length)[dt.year < 0 ? 0 : 1];
 }
 
-export function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
+export function formatRelativeTime(
+  unit: ToRelativeUnit,
+  count: number,
+  numeric: ToRelativeNumeric = "always",
+  narrow = false
+) {
   const units = {
     years: ["year", "yr."],
     quarters: ["quarter", "qtr."],
@@ -133,39 +134,41 @@ export function formatRelativeTime(unit, count, numeric = "always", narrow = fal
     days: ["day", "day", "days"],
     hours: ["hour", "hr."],
     minutes: ["minute", "min."],
-    seconds: ["second", "sec."]
+    seconds: ["second", "sec."],
+    milliseconds: [] // never used
   };
 
-  const lastable = ["hours", "minutes", "seconds"].indexOf(unit) === -1;
+  const normalizedUnit = Duration.normalizeUnit(unit),
+    unitTexts = units[normalizedUnit],
+    lastable = ["hours", "minutes", "seconds"].indexOf(normalizedUnit) === -1;
 
   if (numeric === "auto" && lastable) {
-    const isDay = unit === "days";
+    const isDay = normalizedUnit === "days";
     switch (count) {
       case 1:
-        return isDay ? "tomorrow" : `next ${units[unit][0]}`;
+        return isDay ? "tomorrow" : `next ${unitTexts[0]}`;
       case -1:
-        return isDay ? "yesterday" : `last ${units[unit][0]}`;
+        return isDay ? "yesterday" : `last ${unitTexts[0]}`;
       case 0:
-        return isDay ? "today" : `this ${units[unit][0]}`;
+        return isDay ? "today" : `this ${unitTexts[0]}`;
       default: // fall through
     }
   }
 
   const isInPast = Object.is(count, -0) || count < 0,
-    fmtValue = Math.abs(count),
-    singular = fmtValue === 1,
-    lilUnits = units[unit],
-    fmtUnit = narrow
+    formatValue = Math.abs(count),
+    singular = formatValue === 1,
+    formatUnit = narrow
       ? singular
-        ? lilUnits[1]
-        : lilUnits[2] || lilUnits[1]
+        ? unitTexts[1]
+        : unitTexts[2] || unitTexts[1]
       : singular
-        ? units[unit][0]
-        : unit;
-  return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
+        ? unitTexts[0]
+        : normalizedUnit;
+  return isInPast ? `${formatValue} ${formatUnit} ago` : `in ${formatValue} ${formatUnit}`;
 }
 
-export function formatString(knownFormat) {
+export function formatString(knownFormat: DateTimeFormatOptions) {
   // these all have the offsets removed because we don't have access to them
   // without all the intl stuff this is backfilling
   const filtered = pick(knownFormat, [

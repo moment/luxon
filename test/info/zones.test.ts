@@ -1,9 +1,7 @@
-/* global test expect */
-
-import { Info, FixedOffsetZone, IANAZone, SystemZone, Settings } from "../../src/luxon";
+import { Info, FixedOffsetZone, IANAZone, SystemZone, Settings, Zone } from "../../src/luxon";
 import { InvalidZoneError } from "../../src/errors";
 
-const Helpers = require("../helpers");
+import Helpers from "../helpers";
 
 //------
 // .hasDST()
@@ -70,20 +68,20 @@ test("Info.normalizeZone returns Zone objects unchanged", () => {
   const fixedOffsetZone = FixedOffsetZone.instance(5);
   expect(Info.normalizeZone(fixedOffsetZone)).toBe(fixedOffsetZone);
 
-  const ianaZone = new IANAZone("Europe/Paris");
+  const ianaZone = IANAZone.create("Europe/Paris");
   expect(Info.normalizeZone(ianaZone)).toBe(ianaZone);
 
   const sysZone = SystemZone.instance;
   expect(Info.normalizeZone(sysZone)).toBe(sysZone);
 });
 
-test.each([
+test.each<[string | number, Zone]>([
   ["SYSTEM", SystemZone.instance],
   ["Default", SystemZone.instance],
   ["UTC", FixedOffsetZone.utcInstance],
   ["Etc/GMT+5", FixedOffsetZone.instance(-5 * 60)],
   ["Etc/GMT-10", FixedOffsetZone.instance(+10 * 60)],
-  ["Europe/Paris", new IANAZone("Europe/Paris")],
+  ["Europe/Paris", IANAZone.create("Europe/Paris")],
   [0, FixedOffsetZone.utcInstance],
   [3, FixedOffsetZone.instance(3)],
   [-11, FixedOffsetZone.instance(-11)]

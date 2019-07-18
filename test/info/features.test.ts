@@ -1,7 +1,6 @@
-/* global test expect */
 import { Info } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import Helpers from "../helpers";
 
 test("Info.features shows this environment supports all the features", () => {
   expect(Info.features().intl).toBe(true);

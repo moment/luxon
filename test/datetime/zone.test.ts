@@ -1,9 +1,7 @@
-/* global test expect */
-
 import { DateTime, Settings } from "../../src/luxon";
 import { InvalidZoneError } from "../../src/errors";
 
-var Helpers = require("../helpers");
+import Helpers from "../helpers";
 
 const millis = 391147200000,
   // 1982-05-25T04:00:00.000Z
@@ -262,7 +260,7 @@ test("Setting the default zone results in a different creation zone", () => {
 test("Setting the default zone to undefined gives you back a system zone", () => {
   const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZone = undefined;
+    Settings.setDefaultZone(undefined);
     expect(DateTime.local().zoneName).toBe(sysZone);
   });
 });
@@ -270,7 +268,7 @@ test("Setting the default zone to undefined gives you back a system zone", () =>
 test("Setting the default zone to null gives you back a system zone", () => {
   const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZone = null;
+    Settings.setDefaultZone(null);
     expect(DateTime.local().zoneName).toBe(sysZone);
   });
 });
@@ -278,7 +276,7 @@ test("Setting the default zone to null gives you back a system zone", () => {
 test("Setting the default zone to 'default' gives you back the default zone", () => {
   const defaultZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZone = "default";
+    Settings.setDefaultZone("default");
     expect(DateTime.local().zoneName).toBe(defaultZone);
   });
 });
@@ -286,7 +284,7 @@ test("Setting the default zone to 'default' gives you back the default zone", ()
 test("Setting the default zone to 'system' gives you back a system zone", () => {
   const sysZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZone = "system";
+    Settings.setDefaultZone("system");
     expect(DateTime.local().zoneName).toBe(sysZone);
   });
 });

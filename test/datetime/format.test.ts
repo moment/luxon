@@ -1,6 +1,5 @@
-/* global test expect */
-
 import { DateTime } from "../../src/luxon";
+import Helpers from "../helpers";
 
 const dtMaker = () =>
     DateTime.fromObject(
@@ -328,6 +327,14 @@ test("DateTime#resolvedLocaleOpts can override with options", () => {
   expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
   expect(res.numberingSystem).toBe("mong");
+});
+
+Helpers.withoutIntl("DateTime#resolvedLocaleOpts default values without intl", () => {
+  const res = DateTime.local().resolvedLocaleOpts();
+
+  expect(res.outputCalendar).toBe("gregory");
+  expect(res.locale).toBe("en-US");
+  expect(res.numberingSystem).toBe("latn");
 });
 
 //------

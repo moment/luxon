@@ -1,4 +1,3 @@
-/* global test expect */
 import { Duration } from "../../src/luxon";
 
 const dur = () =>

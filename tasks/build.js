@@ -2,9 +2,10 @@
 /* eslint no-console: off */
 const rollup = require("rollup"),
   rollupBabel = require("rollup-plugin-babel"),
-  rollupMinify = require("rollup-plugin-babel-minify"),
+  rollupMinify = require("rollup-plugin-terser"),
   rollupNode = require("@rollup/plugin-node-resolve"),
   rollupCommonJS = require("@rollup/plugin-commonjs"),
+  typescript = require("rollup-plugin-typescript"),
   UglifyJS = require("uglify-js"),
   fs = require("fs");
 
@@ -23,7 +24,7 @@ function rollupInputOpts(opts) {
   }
 
   const inputOpts = {
-    input: opts.src || "./src/luxon.js",
+    input: opts.src || "./src/luxon.ts",
     onwarn: warning => {
       // I don't care about these for now
       if (warning.code !== "CIRCULAR_DEPENDENCY") {
@@ -32,6 +33,7 @@ function rollupInputOpts(opts) {
     },
 
     plugins: [
+      typescript(),
       rollupNode(),
       rollupCommonJS({
         include: "node_modules/**"
@@ -126,7 +128,7 @@ async function buildLibrary(dest, opts) {
   console.log("Built", dest);
 }
 
-const browsersOld = "last 2 major versions";
+const browsersOld = [">0.25%", "not op_mini all"];
 
 async function global() {
   await buildLibrary("global", {
@@ -144,7 +146,7 @@ async function globalFilled() {
     global: true,
     name: "luxon",
     target: browsersOld,
-    src: "./src/luxonFilled.js",
+    src: "./src/luxonFilled.ts",
     minify: true
   });
 }
@@ -163,7 +165,7 @@ async function amdFilled() {
     format: "amd",
     name: "luxon",
     target: browsersOld,
-    src: "./src/luxonFilled.js",
+    src: "./src/luxonFilled.ts",
     minify: true
   });
 }

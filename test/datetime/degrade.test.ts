@@ -1,8 +1,7 @@
-/* global expect */
 import { DateTime } from "../../src/luxon";
 import { InvalidZoneError, UnparsableStringError } from "../../src/errors";
 
-const Helpers = require("../helpers");
+import Helpers from "../helpers";
 
 //------
 // No Intl support
