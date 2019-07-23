@@ -44,7 +44,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/duration.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject } from &quot;./impl/util.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject, hasOwnProperty } from &quot;./impl/util.js&quot;;
 import Locale from &quot;./impl/locale.js&quot;;
 import Formatter from &quot;./impl/formatter.js&quot;;
 import { parseISODuration } from &quot;./impl/regexParser.js&quot;;
@@ -503,7 +503,7 @@ export default class Duration {
       result = {};
 
     for (const k of orderedUnits) {
-      if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
+      if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
         result[k] = dur.get(k) + this.get(k);
       }
     }

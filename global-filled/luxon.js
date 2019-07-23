@@ -2222,6 +2222,9 @@ var luxon = (function (exports) {
 	    a[k] = obj[k];
 	    return a;
 	  }, {});
+	}
+	function hasOwnProperty$1(obj, prop) {
+	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	} // NUMBERS AND STRINGS
 
 	function numberBetween(thing, bottom, top) {
@@ -2365,7 +2368,7 @@ var luxon = (function (exports) {
 	  var normalized = {};
 
 	  for (var u in obj) {
-	    if (obj.hasOwnProperty(u)) {
+	    if (hasOwnProperty$1(obj, u)) {
 	      if (nonUnitKeys.indexOf(u) >= 0) continue;
 	      var v = obj[u];
 	      if (v === undefined || v === null) continue;
@@ -2664,10 +2667,10 @@ var luxon = (function (exports) {
 
 	  var units = {
 	    years: ["year", "yr."],
-	    quarters: ["quarer", "qtr."],
+	    quarters: ["quarter", "qtr."],
 	    months: ["month", "mo."],
 	    weeks: ["week", "wk."],
-	    days: ["day", "day"],
+	    days: ["day", "day", "days"],
 	    hours: ["hour", "hr."],
 	    minutes: ["minute", "min."],
 	    seconds: ["second", "sec."]
@@ -2694,7 +2697,9 @@ var luxon = (function (exports) {
 
 	  var isInPast = Object.is(count, -0) || count < 0,
 	      fmtValue = Math.abs(count),
-	      fmtUnit = narrow ? units[unit][1] : fmtValue === 1 ? units[unit][0] : unit;
+	      singular = fmtValue === 1,
+	      lilUnits = units[unit],
+	      fmtUnit = narrow ? singular ? lilUnits[1] : lilUnits[2] || lilUnits[1] : singular ? units[unit][0] : unit;
 	  return isInPast ? fmtValue + " " + fmtUnit + " ago" : "in " + fmtValue + " " + fmtUnit;
 	}
 	function formatString(knownFormat) {
@@ -4485,6 +4490,7 @@ var luxon = (function (exports) {
 	    sysLocaleCache = null;
 	    intlDTCache = {};
 	    intlNumCache = {};
+	    intlRelCache = {};
 	  };
 
 	  Locale.fromObject = function fromObject(_temp) {
@@ -5502,7 +5508,7 @@ var luxon = (function (exports) {
 	    for (var _i = 0, _orderedUnits = orderedUnits; _i < _orderedUnits.length; _i++) {
 	      var k = _orderedUnits[_i];
 
-	      if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
+	      if (hasOwnProperty$1(dur.values, k) || hasOwnProperty$1(this.values, k)) {
 	        result[k] = dur.get(k) + this.get(k);
 	      }
 	    }
@@ -6784,11 +6790,12 @@ var luxon = (function (exports) {
 	    var intl = false,
 	        intlTokens = false,
 	        zones = false,
-	        relative = hasRelative();
+	        relative = false;
 
 	    if (hasIntl()) {
 	      intl = true;
 	      intlTokens = hasFormatToParts();
+	      relative = hasRelative();
 
 	      try {
 	        zones = new Intl.DateTimeFormat("en", {
@@ -7252,7 +7259,7 @@ var luxon = (function (exports) {
 	    var matchIndex = 1;
 
 	    for (var i in handlers) {
-	      if (handlers.hasOwnProperty(i)) {
+	      if (hasOwnProperty$1(handlers, i)) {
 	        var h = handlers[i],
 	            groups = h.groups ? h.groups + 1 : 1;
 

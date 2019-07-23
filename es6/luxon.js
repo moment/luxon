@@ -139,6 +139,10 @@ function pick(obj, keys) {
   }, {});
 }
 
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
 // NUMBERS AND STRINGS
 
 function numberBetween(thing, bottom, top) {
@@ -298,7 +302,7 @@ function asNumber(value) {
 function normalizeObject(obj, normalizer, nonUnitKeys) {
   const normalized = {};
   for (const u in obj) {
-    if (obj.hasOwnProperty(u)) {
+    if (hasOwnProperty(obj, u)) {
       if (nonUnitKeys.indexOf(u) >= 0) continue;
       const v = obj[u];
       if (v === undefined || v === null) continue;
@@ -644,10 +648,10 @@ function eraForDateTime(dt, length) {
 function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
   const units = {
     years: ["year", "yr."],
-    quarters: ["quarer", "qtr."],
+    quarters: ["quarter", "qtr."],
     months: ["month", "mo."],
     weeks: ["week", "wk."],
-    days: ["day", "day"],
+    days: ["day", "day", "days"],
     hours: ["hour", "hr."],
     minutes: ["minute", "min."],
     seconds: ["second", "sec."]
@@ -670,7 +674,15 @@ function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
 
   const isInPast = Object.is(count, -0) || count < 0,
     fmtValue = Math.abs(count),
-    fmtUnit = narrow ? units[unit][1] : fmtValue === 1 ? units[unit][0] : unit;
+    singular = fmtValue === 1,
+    lilUnits = units[unit],
+    fmtUnit = narrow
+      ? singular
+        ? lilUnits[1]
+        : lilUnits[2] || lilUnits[1]
+      : singular
+        ? units[unit][0]
+        : unit;
   return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
 }
 
@@ -953,6 +965,7 @@ class IANAZone extends Zone {
     }
     return ianaZoneCache[name];
   }
+
   /**
    * Reset local caches. Should only be necessary in testing scenarios.
    * @return {void}
@@ -961,6 +974,7 @@ class IANAZone extends Zone {
     ianaZoneCache = {};
     dtfCache = {};
   }
+
   /**
    * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
    * @param {string} s - The string to check validity on
@@ -2028,6 +2042,7 @@ class Locale {
     sysLocaleCache = null;
     intlDTCache = {};
     intlNumCache = {};
+    intlRelCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
@@ -2035,7 +2050,7 @@ class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, specifiedLocale) {
-    let [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
+    const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
 
     this.locale = parsedLocale;
     this.numberingSystem = numbering || parsedNumberingSystem || null;
@@ -2972,7 +2987,7 @@ class Duration {
       result = {};
 
     for (const k of orderedUnits) {
-      if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
+      if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
         result[k] = dur.get(k) + this.get(k);
       }
     }
@@ -3993,11 +4008,12 @@ class Info {
     let intl = false,
       intlTokens = false,
       zones = false,
-      relative = hasRelative();
+      relative = false;
 
     if (hasIntl()) {
       intl = true;
       intlTokens = hasFormatToParts();
+      relative = hasRelative();
 
       try {
         zones =
@@ -4149,7 +4165,7 @@ function parseDigits(str) {
       if (str[i].search(numberingSystems.hanidec) !== -1) {
         value += hanidecChars.indexOf(str[i]);
       } else {
-        for (let key in numberingSystemsUTF16) {
+        for (const key in numberingSystemsUTF16) {
           const [min, max] = numberingSystemsUTF16[key];
           if (code >= min && code <= max) {
             value += code - min;
@@ -4352,7 +4368,7 @@ function match(input, regex, handlers) {
     const all = {};
     let matchIndex = 1;
     for (const i in handlers) {
-      if (handlers.hasOwnProperty(i)) {
+      if (hasOwnProperty(handlers, i)) {
         const h = handlers[i],
           groups = h.groups ? h.groups + 1 : 1;
         if (!h.literal && h.token) {

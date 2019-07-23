@@ -295,6 +295,9 @@ define(['exports'], function (exports) { 'use strict';
       a[k] = obj[k];
       return a;
     }, {});
+  }
+  function hasOwnProperty(obj, prop) {
+    return Object.prototype.hasOwnProperty.call(obj, prop);
   } // NUMBERS AND STRINGS
 
   function numberBetween(thing, bottom, top) {
@@ -438,7 +441,7 @@ define(['exports'], function (exports) { 'use strict';
     var normalized = {};
 
     for (var u in obj) {
-      if (obj.hasOwnProperty(u)) {
+      if (hasOwnProperty(obj, u)) {
         if (nonUnitKeys.indexOf(u) >= 0) continue;
         var v = obj[u];
         if (v === undefined || v === null) continue;
@@ -737,10 +740,10 @@ define(['exports'], function (exports) { 'use strict';
 
     var units = {
       years: ["year", "yr."],
-      quarters: ["quarer", "qtr."],
+      quarters: ["quarter", "qtr."],
       months: ["month", "mo."],
       weeks: ["week", "wk."],
-      days: ["day", "day"],
+      days: ["day", "day", "days"],
       hours: ["hour", "hr."],
       minutes: ["minute", "min."],
       seconds: ["second", "sec."]
@@ -767,7 +770,9 @@ define(['exports'], function (exports) { 'use strict';
 
     var isInPast = Object.is(count, -0) || count < 0,
         fmtValue = Math.abs(count),
-        fmtUnit = narrow ? units[unit][1] : fmtValue === 1 ? units[unit][0] : unit;
+        singular = fmtValue === 1,
+        lilUnits = units[unit],
+        fmtUnit = narrow ? singular ? lilUnits[1] : lilUnits[2] || lilUnits[1] : singular ? units[unit][0] : unit;
     return isInPast ? fmtValue + " " + fmtUnit + " ago" : "in " + fmtValue + " " + fmtUnit;
   }
   function formatString(knownFormat) {
@@ -2558,6 +2563,7 @@ define(['exports'], function (exports) { 'use strict';
       sysLocaleCache = null;
       intlDTCache = {};
       intlNumCache = {};
+      intlRelCache = {};
     };
 
     Locale.fromObject = function fromObject(_temp) {
@@ -3575,7 +3581,7 @@ define(['exports'], function (exports) { 'use strict';
       for (var _i = 0, _orderedUnits = orderedUnits; _i < _orderedUnits.length; _i++) {
         var k = _orderedUnits[_i];
 
-        if (dur.values.hasOwnProperty(k) || this.values.hasOwnProperty(k)) {
+        if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
           result[k] = dur.get(k) + this.get(k);
         }
       }
@@ -4857,11 +4863,12 @@ define(['exports'], function (exports) { 'use strict';
       var intl = false,
           intlTokens = false,
           zones = false,
-          relative = hasRelative();
+          relative = false;
 
       if (hasIntl()) {
         intl = true;
         intlTokens = hasFormatToParts();
+        relative = hasRelative();
 
         try {
           zones = new Intl.DateTimeFormat("en", {
@@ -5325,7 +5332,7 @@ define(['exports'], function (exports) { 'use strict';
       var matchIndex = 1;
 
       for (var i in handlers) {
-        if (handlers.hasOwnProperty(i)) {
+        if (hasOwnProperty(handlers, i)) {
           var h = handlers[i],
               groups = h.groups ? h.groups + 1 : 1;
 
