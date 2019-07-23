@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.17.2
+
+ * Fix issue with `toRelative` using `style: short` with plural days
+
 ## 1.17.1
 
  * Reject out-of-range numbers in DateTime.fromMillis
