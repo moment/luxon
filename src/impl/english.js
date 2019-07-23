@@ -127,10 +127,10 @@ export function eraForDateTime(dt, length) {
 export function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
   const units = {
     years: ["year", "yr."],
-    quarters: ["quarer", "qtr."],
+    quarters: ["quarter", "qtr."],
     months: ["month", "mo."],
     weeks: ["week", "wk."],
-    days: ["day", "day"],
+    days: ["day", "day", "days"],
     hours: ["hour", "hr."],
     minutes: ["minute", "min."],
     seconds: ["second", "sec."]
@@ -153,7 +153,15 @@ export function formatRelativeTime(unit, count, numeric = "always", narrow = fal
 
   const isInPast = Object.is(count, -0) || count < 0,
     fmtValue = Math.abs(count),
-    fmtUnit = narrow ? units[unit][1] : fmtValue === 1 ? units[unit][0] : unit;
+    singular = fmtValue === 1,
+    lilUnits = units[unit],
+    fmtUnit = narrow
+      ? singular
+        ? lilUnits[1]
+        : lilUnits[2] || lilUnits[1]
+      : singular
+        ? units[unit][0]
+        : unit;
   return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
 }
 
