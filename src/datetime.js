@@ -440,9 +440,12 @@ export default class DateTime {
    * @return {DateTime}
    */
   static local(year, month, day, hour, minute, second, millisecond) {
-    if (isUndefined(year)) {
+    if (arguments.length == 0) {
       return new DateTime({ ts: Settings.now() });
     } else {
+      if (isUndefined(year)) {
+        year = null;
+      }
       return quickDT(
         {
           year,
@@ -478,12 +481,15 @@ export default class DateTime {
    * @return {DateTime}
    */
   static utc(year, month, day, hour, minute, second, millisecond) {
-    if (isUndefined(year)) {
+    if (arguments.length == 0) {
       return new DateTime({
         ts: Settings.now(),
         zone: FixedOffsetZone.utcInstance
       });
     } else {
+      if (isUndefined(year)) {
+        year = null;
+      }
       return quickDT(
         {
           year,
