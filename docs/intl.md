@@ -51,9 +51,7 @@ By default the `locale` property of a new DateTime or Duration is the system loc
 
 As a result, `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will by default generate strings in the user's locale.
 
-However, note that `DateTime.fromFormat` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in.
-
-There's an exception, though: `DateTime#toFormat` can take "macro" formats like "D" that produces localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be localized.
+However, note that `DateTime.fromFormat` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in. There's an exception, though: `DateTime#toFormat` can take "macro" formats like "D" that produces localized strings as part of a larger string. These *do* default to the system locale because their entire purpose is to be provide localized strings.
 
 ### Setting the default
 
