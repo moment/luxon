@@ -3108,8 +3108,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-plus">plu
       <div>
         
         
-        <div data-ice="description"><p>Returns a string representation of this date relative to today, such as &quot;yesterday&quot; or &quot;next month&quot;
-platform supports Intl.RelativeDateFormat.</p>
+        <div data-ice="description"><p>Returns a string representation of this date relative to today, such as &quot;yesterday&quot; or &quot;next month&quot;.</p>
 </div>
       </div>
     </td>
@@ -5933,7 +5932,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">year</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
-      <td data-ice="appendix"></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>The calendar year. If omitted (as in, call <code>local()</code> with no arguments), the current time will be used</p>
 </td>
     </tr>
@@ -6237,7 +6236,7 @@ Defaults to en-US if no locale has been specified, regardless of the system&apos
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">year</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
-      <td data-ice="appendix"></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>The calendar year. If omitted (as in, call <code>utc()</code> with no arguments), the current time will be used</p>
 </td>
     </tr>
@@ -8306,7 +8305,7 @@ See <span><a href="class/src/datetime.js~DateTime.html#instance-method-diff">dif
   
   <div data-ice="description"><p>Equality check
 Two DateTimes are equal iff they represent the same millisecond, have the same zone and location, and are both valid.
-To compare just the millisecond values, use <code>+dt1 === ~dt2</code>.</p>
+To compare just the millisecond values, use <code>+dt1 === +dt2</code>.</p>
 </div>
 
   
@@ -10388,7 +10387,7 @@ Defaults to the system&apos;s locale if no locale has been specified</p>
   
   
   <div data-ice="description"><p>Returns a string representation of a this time relative to now, such as &quot;in two days&quot;. Can only internationalize if your
-platform supports Intl.RelativeDateFormat, <strong>which it probably doesn&apos;t yet!</strong> (As of this writing, only Chrome supports that). Rounds down by default.</p>
+platform supports Intl.RelativeTimeFormat. Rounds down by default.</p>
 </div>
 
   
@@ -10541,8 +10540,8 @@ platform supports Intl.RelativeDateFormat, <strong>which it probably doesn&apos;
   
   
   
-  <div data-ice="description"><p>Returns a string representation of this date relative to today, such as &quot;yesterday&quot; or &quot;next month&quot;
-platform supports Intl.RelativeDateFormat.</p>
+  <div data-ice="description"><p>Returns a string representation of this date relative to today, such as &quot;yesterday&quot; or &quot;next month&quot;.
+Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
 </div>
 
   

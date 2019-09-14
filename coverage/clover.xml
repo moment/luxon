@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1563909115456" clover="3.2.0">
-  <project timestamp="1563909115456" name="All files">
+<coverage generated="1567057336698" clover="3.2.0">
+  <project timestamp="1567057336698" name="All files">
     <metrics statements="1754" coveredstatements="1727" conditionals="1472" coveredconditionals="1407" methods="489" coveredmethods="485" elements="3715" coveredelements="3619" complexity="0" loc="1754" ncloc="1754" packages="3" files="23" classes="23"/>
     <package name="src">
       <metrics statements="743" coveredstatements="742" conditionals="741" coveredconditionals="734" methods="249" coveredmethods="248"/>
@@ -874,9 +874,9 @@
         <line num="34" count="162" type="stmt"/>
         <line num="35" count="162" type="stmt"/>
         <line num="37" count="162" type="cond" truecount="2" falsecount="0"/>
-        <line num="38" count="29" type="stmt"/>
-        <line num="39" count="29" type="stmt"/>
-        <line num="41" count="133" type="stmt"/>
+        <line num="38" count="28" type="stmt"/>
+        <line num="39" count="28" type="stmt"/>
+        <line num="41" count="134" type="stmt"/>
         <line num="44" count="162" type="stmt"/>
         <line num="48" count="197" type="stmt"/>
         <line num="52" count="197" type="stmt"/>
@@ -885,7 +885,7 @@
         <line num="57" count="214" type="stmt"/>
         <line num="60" count="197" type="cond" truecount="2" falsecount="0"/>
         <line num="61" count="148" type="cond" truecount="2" falsecount="0"/>
-        <line num="62" count="71" type="stmt"/>
+        <line num="62" count="72" type="stmt"/>
         <line num="65" count="148" type="cond" truecount="2" falsecount="0"/>
         <line num="66" count="94" type="cond" truecount="2" falsecount="0"/>
         <line num="70" count="197" type="stmt"/>
