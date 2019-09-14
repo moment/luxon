@@ -1768,7 +1768,7 @@ export default class DateTime {
   /**
    * Equality check
    * Two DateTimes are equal iff they represent the same millisecond, have the same zone and location, and are both valid.
-   * To compare just the millisecond values, use `+dt1 === ~dt2`.
+   * To compare just the millisecond values, use `+dt1 === +dt2`.
    * @param {DateTime} other - the other DateTime
    * @return {boolean}
    */
