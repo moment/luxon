@@ -14,7 +14,7 @@ function stringifyTokens(splits, tokenToString) {
   return s;
 }
 
-const tokenToObject = {
+const macroTokenToFormatOpts = {
   D: Formats.DATE_SHORT,
   DD: Formats.DATE_MED,
   DDD: Formats.DATE_FULL,
@@ -78,6 +78,10 @@ export default class Formatter {
     }
 
     return splits;
+  }
+
+  static macroTokenToFormatOpts(token) {
+    return macroTokenToFormatOpts[token];
   }
 
   constructor(locale, formatOpts) {
@@ -150,9 +154,9 @@ export default class Formatter {
               "weekday"
             ),
       maybeMacro = token => {
-        const macro = tokenToObject[token];
-        if (macro) {
-          return this.formatWithSystemDefault(dt, macro);
+        const formatOpts = Formatter.macroTokenToFormatOpts(token);
+        if (formatOpts) {
+          return this.formatWithSystemDefault(dt, formatOpts);
         } else {
           return token;
         }

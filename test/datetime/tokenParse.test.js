@@ -462,6 +462,72 @@ test("DateTime.fromFormat() with setZone parses fixed offsets and sets it", () =
   }
 });
 
+test("DateTime.fromFormat() parses localized macro tokens", () => {
+  const formatGroups = [
+    {
+      formats: ["D", "DD", "DDD", "DDDD"],
+      expectEqual: {
+        year: true,
+        month: true,
+        day: true
+      }
+    },
+
+    {
+      formats: ["t", "T"],
+      expectEqual: {
+        hour: true,
+        minute: true
+      }
+    },
+    {
+      formats: ["tt", "TT"],
+      expectEqual: {
+        hour: true,
+        minute: true,
+        second: true
+      }
+    },
+
+    {
+      formats: ["F", "FF"],
+      expectEqual: {
+        year: true,
+        month: true,
+        day: true,
+        hour: true,
+        minute: true,
+        second: true
+      }
+    },
+
+    // Parsing time zone names like `EDT` or `Eastern Daylight Time` is not supported
+    {
+      formats: ["ttt", "tttt", "TTT", "TTTT", "FFF", "FFFF"],
+      expectInvalid: true
+    }
+  ];
+
+  const sampleDateTime = DateTime.fromMillis(1555555555555);
+
+  for (const { formats, expectEqual, expectInvalid } of formatGroups) {
+    for (const format of formats) {
+      const formatted = sampleDateTime.toFormat(format);
+      const parsed = DateTime.fromFormat(formatted, format);
+
+      if (expectInvalid) {
+        expect(parsed.isValid).toBe(false);
+      } else {
+        expect(parsed.isValid).toBe(true);
+
+        for (const key of Object.keys(expectEqual)) {
+          expect(parsed[key]).toBe(sampleDateTime[key]);
+        }
+      }
+    }
+  }
+});
+
 test("DateTime.fromFormat() throws if you don't provide a format", () => {
   expect(() => DateTime.fromFormat("yo")).toThrowError();
 });
