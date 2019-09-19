@@ -1408,7 +1408,7 @@ function stringifyTokens(splits, tokenToString) {
   return s;
 }
 
-const tokenToObject = {
+const macroTokenToFormatOpts = {
   D: DATE_SHORT,
   DD: DATE_MED,
   DDD: DATE_FULL,
@@ -1486,6 +1486,10 @@ class Formatter {
     return splits;
   }
 
+  static macroTokenToFormatOpts(token) {
+    return macroTokenToFormatOpts[token];
+  }
+
   constructor(locale, formatOpts) {
     this.opts = formatOpts;
     this.loc = locale;
@@ -1560,10 +1564,10 @@ class Formatter {
       day: "numeric"
     }, "weekday"),
           maybeMacro = token => {
-      const macro = tokenToObject[token];
+      const formatOpts = Formatter.macroTokenToFormatOpts(token);
 
-      if (macro) {
-        return this.formatWithSystemDefault(dt, macro);
+      if (formatOpts) {
+        return this.formatWithSystemDefault(dt, formatOpts);
       } else {
         return token;
       }
@@ -4595,6 +4599,70 @@ function unitForToken(token, loc) {
   return unit;
 }
 
+const partTypeStyleToTokenVal = {
+  year: {
+    "2-digit": "yy",
+    numeric: "yyyyy"
+  },
+  month: {
+    numeric: "M",
+    "2-digit": "MM",
+    short: "MMM",
+    long: "MMMM"
+  },
+  day: {
+    numeric: "d",
+    "2-digit": "dd"
+  },
+  weekday: {
+    short: "EEE",
+    long: "EEEE"
+  },
+  dayperiod: "a",
+  hour: {
+    numeric: "h",
+    "2-digit": "hh"
+  },
+  minute: {
+    numeric: "m",
+    "2-digit": "mm"
+  },
+  second: {
+    numeric: "s",
+    "2-digit": "ss"
+  }
+};
+
+function tokenForPart(part, locale, formatOpts) {
+  const {
+    type,
+    value
+  } = part;
+
+  if (type === "literal") {
+    return {
+      literal: true,
+      val: value
+    };
+  }
+
+  const style = formatOpts[type];
+  let val = partTypeStyleToTokenVal[type];
+
+  if (typeof val === "object") {
+    val = val[style];
+  }
+
+  if (val) {
+    return {
+      literal: false,
+      val
+    };
+  }
+
+  return undefined;
+}
+
 function buildRegex(units) {
   const re = units.map(u => u.regex).reduce((f, r) => `${f}(${r.source})`, "");
   return [`^${re}$`, units];
@@ -4707,13 +4775,49 @@ function dateTimeFromMatches(matches) {
   }, {});
   return [vals, zone];
 }
+
+let dummyDateTimeCache = null;
+
+function getDummyDateTime() {
+  if (!dummyDateTimeCache) {
+    dummyDateTimeCache = DateTime.fromMillis(1555555555555);
+  }
+
+  return dummyDateTimeCache;
+}
+
+function maybeExpandMacroToken(token, locale) {
+  if (token.literal) {
+    return token;
+  }
+
+  const formatOpts = Formatter.macroTokenToFormatOpts(token.val);
+
+  if (!formatOpts) {
+    return token;
+  }
+
+  const formatter = Formatter.create(locale, formatOpts);
+  const parts = formatter.formatDateTimeParts(getDummyDateTime());
+  const tokens = parts.map(p => tokenForPart(p, locale, formatOpts));
+
+  if (tokens.includes(undefined)) {
+    return token;
+  }
+
+  return tokens;
+}
+
+function expandMacroTokens(tokens, locale) {
+  return Array.prototype.concat(...tokens.map(t => maybeExpandMacroToken(t, locale)));
+}
 /**
  * @private
  */
 
 
 function explainFromTokens(locale, input, format) {
-  const tokens = Formatter.parseFormat(format),
+  const tokens = expandMacroTokens(Formatter.parseFormat(format), locale),
         units = tokens.map(t => unitForToken(t, locale)),
         disqualifyingUnit = units.find(t => t.invalidReason);
 

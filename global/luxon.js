@@ -1699,7 +1699,7 @@ var luxon = (function (exports) {
     return s;
   }
 
-  var tokenToObject = {
+  var _macroTokenToFormatOpts = {
     D: DATE_SHORT,
     DD: DATE_MED,
     DDD: DATE_FULL,
@@ -1781,6 +1781,10 @@ var luxon = (function (exports) {
       }
 
       return splits;
+    };
+
+    Formatter.macroTokenToFormatOpts = function macroTokenToFormatOpts(token) {
+      return _macroTokenToFormatOpts[token];
     };
 
     function Formatter(locale, formatOpts) {
@@ -1885,10 +1889,10 @@ var luxon = (function (exports) {
         }, "weekday");
       },
           maybeMacro = function maybeMacro(token) {
-        var macro = tokenToObject[token];
+        var formatOpts = Formatter.macroTokenToFormatOpts(token);
 
-        if (macro) {
-          return _this.formatWithSystemDefault(dt, macro);
+        if (formatOpts) {
+          return _this.formatWithSystemDefault(dt, formatOpts);
         } else {
           return token;
         }
@@ -5316,6 +5320,68 @@ var luxon = (function (exports) {
     return unit;
   }
 
+  var partTypeStyleToTokenVal = {
+    year: {
+      "2-digit": "yy",
+      numeric: "yyyyy"
+    },
+    month: {
+      numeric: "M",
+      "2-digit": "MM",
+      short: "MMM",
+      long: "MMMM"
+    },
+    day: {
+      numeric: "d",
+      "2-digit": "dd"
+    },
+    weekday: {
+      short: "EEE",
+      long: "EEEE"
+    },
+    dayperiod: "a",
+    hour: {
+      numeric: "h",
+      "2-digit": "hh"
+    },
+    minute: {
+      numeric: "m",
+      "2-digit": "mm"
+    },
+    second: {
+      numeric: "s",
+      "2-digit": "ss"
+    }
+  };
+
+  function tokenForPart(part, locale, formatOpts) {
+    var type = part.type,
+        value = part.value;
+
+    if (type === "literal") {
+      return {
+        literal: true,
+        val: value
+      };
+    }
+
+    var style = formatOpts[type];
+    var val = partTypeStyleToTokenVal[type];
+
+    if (typeof val === "object") {
+      val = val[style];
+    }
+
+    if (val) {
+      return {
+        literal: false,
+        val: val
+      };
+    }
+
+    return undefined;
+  }
+
   function buildRegex(units) {
     var re = units.map(function (u) {
       return u.regex;
@@ -5432,13 +5498,55 @@ var luxon = (function (exports) {
     }, {});
     return [vals, zone];
   }
+
+  var dummyDateTimeCache = null;
+
+  function getDummyDateTime() {
+    if (!dummyDateTimeCache) {
+      dummyDateTimeCache = DateTime.fromMillis(1555555555555);
+    }
+
+    return dummyDateTimeCache;
+  }
+
+  function maybeExpandMacroToken(token, locale) {
+    if (token.literal) {
+      return token;
+    }
+
+    var formatOpts = Formatter.macroTokenToFormatOpts(token.val);
+
+    if (!formatOpts) {
+      return token;
+    }
+
+    var formatter = Formatter.create(locale, formatOpts);
+    var parts = formatter.formatDateTimeParts(getDummyDateTime());
+    var tokens = parts.map(function (p) {
+      return tokenForPart(p, locale, formatOpts);
+    });
+
+    if (tokens.includes(undefined)) {
+      return token;
+    }
+
+    return tokens;
+  }
+
+  function expandMacroTokens(tokens, locale) {
+    var _Array$prototype;
+
+    return (_Array$prototype = Array.prototype).concat.apply(_Array$prototype, tokens.map(function (t) {
+      return maybeExpandMacroToken(t, locale);
+    }));
+  }
   /**
    * @private
    */
 
 
   function explainFromTokens(locale, input, format) {
-    var tokens = Formatter.parseFormat(format),
+    var tokens = expandMacroTokens(Formatter.parseFormat(format), locale),
         units = tokens.map(function (t) {
       return unitForToken(t, locale);
     }),

@@ -245,6 +245,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-18-0" data-ice="link">1.18.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-17-2" data-ice="link">1.17.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-17-1" data-ice="link">1.17.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-17-0" data-ice="link">1.17.0</a></li>
@@ -354,7 +355,7 @@
 <li>An ad-hoc parser for parsing specific formats</li>
 </ol>
 <h2 id="parsing-technical-formats">Parsing technical formats</h2><h3 id="iso-8601">ISO 8601</h3><p>Luxon supports a wide range of valid ISO 8601 formats through the <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">fromISO</a> method.</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2016-05-25&apos;);</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&quot;2016-05-25&quot;);</code>
 </code></pre>
 <p>All of these are parsable by <code>fromISO</code>:</p>
 <pre><code><code class="source-code prettyprint">2016
@@ -387,14 +388,14 @@
 <li>The time is parsed as a local time if no offset is specified, but see the method docs to see your options, and also check out <a href="./manual/zones.html">time zone docs</a> for more details.</li>
 </ul>
 <h3 id="http-and-rfc2822">HTTP and RFC2822</h3><p>Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&apos;Tue, 01 Nov 2016 13:23:12 +0630&apos;);
-DateTime.fromHTTP(&apos;Sunday, 06-Nov-94 08:49:37 GMT&apos;);
-DateTime.fromHTTP(&apos;Sun, 06 Nov 1994 08:49:37 GMT&apos;);</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromRFC2822(&quot;Tue, 01 Nov 2016 13:23:12 +0630&quot;);
+DateTime.fromHTTP(&quot;Sunday, 06-Nov-94 08:49:37 GMT&quot;);
+DateTime.fromHTTP(&quot;Sun, 06 Nov 1994 08:49:37 GMT&quot;);</code>
 </code></pre>
 <h3 id="sql">SQL</h3><p>Luxon accepts SQL dates, times, and datetimes, via <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromSQL">fromSQL</a>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromSQL(&apos;2017-05-15&apos;);
-DateTime.fromSQL(&apos;2017-05-15 09:24:15&apos;);
-DateTime.fromSQL(&apos;09:24:15&apos;);</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromSQL(&quot;2017-05-15&quot;);
+DateTime.fromSQL(&quot;2017-05-15 09:24:15&quot;);
+DateTime.fromSQL(&quot;09:24:15&quot;);</code>
 </code></pre>
 <p>It works similarly to <code>fromISO</code>, so see above for additional notes.</p>
 <h3 id="unix-timestamps">Unix timestamps</h3><p>Luxon can parse numerical <a href="https://en.wikipedia.org/wiki/Unix_time">Unix timestamps</a>:</p>
@@ -409,17 +410,17 @@ DateTime.fromSeconds(1542674993);</code>
 </ol>
 <p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p>
 <h3 id="fromformat">fromFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormat">DateTime.fromFormat</a> for the method signature. A brief example:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;May 25 1982&apos;, &apos;LLLL dd yyyy&apos;);</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&quot;May 25 1982&quot;, &quot;LLLL dd yyyy&quot;);</code>
 </code></pre>
 <h3 id="intl">Intl</h3><p>Luxon supports parsing internationalized strings:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&apos;mai 25 1982&apos;, &apos;LLLL dd yyyy&apos;, { locale: &apos;fr&apos; });</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&quot;mai 25 1982&quot;, &quot;LLLL dd yyyy&quot;, { locale: &quot;fr&quot; });</code>
 </code></pre>
 <p>Note, however, that Luxon derives the list of strings that can match, say, &quot;LLLL&quot; (and their meaning) by introspecting the environment&apos;s Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the <a href="./manual/matrix.html">support matrix</a>).</p>
 <h3 id="limitations">Limitations</h3><p>Not every token supported by <code>DateTime#toFormat</code> is supported in the parser. For example, there&apos;s no <code>ZZZZ</code> or <code>ZZZZZ</code> tokens. This is for a few reasons:</p>
 <ul>
 <li>Luxon relies on natively-available functionality that only provides the mapping in one direction. We can ask what the named offset is and get &quot;Eastern Standard Time&quot; but not ask what &quot;Eastern Standard Time&quot; is most likely to mean.</li>
 <li>Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can&apos;t be parsed because of their ambiguity.</li>
-<li>Luxon doesn&apos;t yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.</li>
+<li>Because of the limitations above, Luxon also doesn&apos;t support the &quot;macro&quot; tokens that include offset names, such ass &quot;ttt&quot; and &quot;FFFF&quot;.</li>
 </ul>
 <h3 id="debugging">Debugging</h3><p>There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormatExplain">fromFormatExplain</a>. It takes the same arguments as <code>fromFormat</code> but returns a map of information about the parse that can be useful in debugging.</p>
 <p>For example, here the code is using &quot;MMMM&quot; where &quot;MMM&quot; was needed. You can see the regex Luxon uses and see that it didn&apos;t match anything:</p>
@@ -438,7 +439,7 @@ DateTime.fromSeconds(1542674993);</code>
   zone: null }</code>
 </code></pre>
 <p>If you parse something and get an invalid date, the debugging steps are slightly different. Here, we&apos;re attempting to parse August 32nd, which doesn&apos;t exist:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromFormat(&apos;August 32 1982&apos;, &apos;MMMM d yyyy&apos;);
+<pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromFormat(&quot;August 32 1982&quot;, &quot;MMMM d yyyy&quot;);
 d.isValid; //=&gt; false
 d.invalidReason; //=&gt; &apos;day out of range&apos;</code>
 </code></pre>
@@ -702,6 +703,84 @@ d.invalidReason; //=&gt; &apos;day out of range&apos;</code>
 <td></td>
 <td>ordinal (day of year), padded to 3</td>
 <td>218</td>
+</tr>
+<tr>
+<td>D</td>
+<td></td>
+<td>localized numeric date</td>
+<td>9/4/2017</td>
+</tr>
+<tr>
+<td>DD</td>
+<td></td>
+<td>localized date with abbreviated month</td>
+<td>Aug 6, 2014</td>
+</tr>
+<tr>
+<td>DDD</td>
+<td></td>
+<td>localized date with full month</td>
+<td>August 6, 2014</td>
+</tr>
+<tr>
+<td>DDDD</td>
+<td></td>
+<td>localized date with full month and weekday</td>
+<td>Wednesday, August 6, 2014</td>
+</tr>
+<tr>
+<td>t</td>
+<td></td>
+<td>localized time</td>
+<td>9:07 AM</td>
+</tr>
+<tr>
+<td>tt</td>
+<td></td>
+<td>localized time with seconds</td>
+<td>1:07:04 PM</td>
+</tr>
+<tr>
+<td>T</td>
+<td></td>
+<td>localized 24-hour time</td>
+<td>13:07</td>
+</tr>
+<tr>
+<td>TT</td>
+<td></td>
+<td>localized 24-hour time with seconds</td>
+<td>13:07:04</td>
+</tr>
+<tr>
+<td>TTT</td>
+<td></td>
+<td>localized 24-hour time with seconds and abbreviated offset</td>
+<td>13:07:04 EDT</td>
+</tr>
+<tr>
+<td>f</td>
+<td></td>
+<td>short localized date and time</td>
+<td>8/6/2014, 1:07 PM</td>
+</tr>
+<tr>
+<td>ff</td>
+<td></td>
+<td>less short localized date and time</td>
+<td>Aug 6, 2014, 1:07 PM</td>
+</tr>
+<tr>
+<td>F</td>
+<td></td>
+<td>short localized date and time with seconds</td>
+<td>8/6/2014, 1:07:04 PM</td>
+</tr>
+<tr>
+<td>FF</td>
+<td></td>
+<td>less short localized date and time with seconds</td>
+<td>Aug 6, 2014, 1:07:04 PM</td>
 </tr>
 </tbody>
 </table>
