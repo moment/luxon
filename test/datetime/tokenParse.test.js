@@ -511,17 +511,19 @@ test("DateTime.fromFormat() parses localized macro tokens", () => {
   const sampleDateTime = DateTime.fromMillis(1555555555555);
 
   for (const { formats, expectEqual, expectInvalid } of formatGroups) {
-    for (const format of formats) {
-      const formatted = sampleDateTime.toFormat(format);
-      const parsed = DateTime.fromFormat(formatted, format);
+    for (const locale of [null, "en-gb", "de"]) {
+      for (const format of formats) {
+        const formatted = sampleDateTime.toFormat(format, { locale });
+        const parsed = DateTime.fromFormat(formatted, format, { locale });
 
-      if (expectInvalid) {
-        expect(parsed.isValid).toBe(false);
-      } else {
-        expect(parsed.isValid).toBe(true);
+        if (expectInvalid) {
+          expect(parsed.isValid).toBe(false);
+        } else {
+          expect(parsed.isValid).toBe(true);
 
-        for (const key of Object.keys(expectEqual)) {
-          expect(parsed[key]).toBe(sampleDateTime[key]);
+          for (const key of Object.keys(expectEqual)) {
+            expect(parsed[key]).toBe(sampleDateTime[key]);
+          }
         }
       }
     }

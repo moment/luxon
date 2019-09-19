@@ -12,7 +12,7 @@ Luxon is not an NLP tool and isn't suitable for all date parsing jobs. But it ca
 Luxon supports a wide range of valid ISO 8601 formats through the [fromISO](../class/src/datetime.js~DateTime.html#static-method-fromISO) method.
 
 ```js
-DateTime.fromISO('2016-05-25');
+DateTime.fromISO("2016-05-25");
 ```
 
 All of these are parsable by `fromISO`:
@@ -53,9 +53,9 @@ All of these are parsable by `fromISO`:
 Luxon also provides parsing for strings formatted according to RFC 2822 and the HTTP header specs (RFC 850 and 1123):
 
 ```js
-DateTime.fromRFC2822('Tue, 01 Nov 2016 13:23:12 +0630');
-DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT');
-DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
+DateTime.fromRFC2822("Tue, 01 Nov 2016 13:23:12 +0630");
+DateTime.fromHTTP("Sunday, 06-Nov-94 08:49:37 GMT");
+DateTime.fromHTTP("Sun, 06 Nov 1994 08:49:37 GMT");
 ```
 
 ### SQL
@@ -63,9 +63,9 @@ DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT');
 Luxon accepts SQL dates, times, and datetimes, via [fromSQL](../class/src/datetime.js~DateTime.html#static-method-fromSQL):
 
 ```js
-DateTime.fromSQL('2017-05-15');
-DateTime.fromSQL('2017-05-15 09:24:15');
-DateTime.fromSQL('09:24:15');
+DateTime.fromSQL("2017-05-15");
+DateTime.fromSQL("2017-05-15 09:24:15");
+DateTime.fromSQL("09:24:15");
 ```
 
 It works similarly to `fromISO`, so see above for additional notes.
@@ -80,7 +80,6 @@ DateTime.fromSeconds(1542674993);
 ```
 
 Both methods accept the same options, which allow you to specify a timezone, calendar, and/or numbering system.
-
 
 ## Ad-hoc parsing
 
@@ -98,7 +97,7 @@ Sometimes, though, you get a string from some legacy system in some terrible ad-
 See [DateTime.fromFormat](../class/src/datetime.js~DateTime.html#static-method-fromFormat) for the method signature. A brief example:
 
 ```js
-DateTime.fromFormat('May 25 1982', 'LLLL dd yyyy');
+DateTime.fromFormat("May 25 1982", "LLLL dd yyyy");
 ```
 
 ### Intl
@@ -106,7 +105,7 @@ DateTime.fromFormat('May 25 1982', 'LLLL dd yyyy');
 Luxon supports parsing internationalized strings:
 
 ```js
-DateTime.fromFormat('mai 25 1982', 'LLLL dd yyyy', { locale: 'fr' });
+DateTime.fromFormat("mai 25 1982", "LLLL dd yyyy", { locale: "fr" });
 ```
 
 Note, however, that Luxon derives the list of strings that can match, say, "LLLL" (and their meaning) by introspecting the environment's Intl implementation. Thus the exact strings may in some cases be environment-specific. You also need the Intl API available on the target platform (see the [support matrix](matrix.html)).
@@ -117,7 +116,7 @@ Not every token supported by `DateTime#toFormat` is supported in the parser. For
 
 - Luxon relies on natively-available functionality that only provides the mapping in one direction. We can ask what the named offset is and get "Eastern Standard Time" but not ask what "Eastern Standard Time" is most likely to mean.
 - Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can't be parsed because of their ambiguity.
-- Luxon doesn't yet support parsing the macro tokens it provides for formatting. This may eventually be addressed.
+- Because of the limitations above, Luxon also doesn't support the "macro" tokens that include offset names, such ass "ttt" and "FFFF".
 
 ### Debugging
 
@@ -144,7 +143,7 @@ For example, here the code is using "MMMM" where "MMM" was needed. You can see t
 If you parse something and get an invalid date, the debugging steps are slightly different. Here, we're attempting to parse August 32nd, which doesn't exist:
 
 ```js
-var d = DateTime.fromFormat('August 32 1982', 'MMMM d yyyy');
+var d = DateTime.fromFormat("August 32 1982", "MMMM d yyyy");
 d.isValid; //=> false
 d.invalidReason; //=> 'day out of range'
 ```
@@ -173,44 +172,57 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 
 (Examples below given for 2014-08-06T13:07:04.054 considered as a local time in America/New_York). Note that many tokens supported by the [formatter](formatting.md) are **not** supported by the parser. That includes all the "macro" formats like "D" for "localized numeric date".
 
-| Standalone token | Format token | Description                                                    | Example          |
-| ---------------- | ------------ | -------------------------------------------------------------- | ---------------- |
-| S                |              | millisecond, no padding                                        | 54               |
-| SSS              |              | millisecond, padded to 3                                       | 054              |
-| u                |              | fractional seconds, (5 is a half second, 54 is slightly more)  | 54               |
-| s                |              | second, no padding                                             | 4                |
-| ss               |              | second, padded to 2 padding                                    | 04               |
-| m                |              | minute, no padding                                             | 7                |
-| mm               |              | minute, padded to 2                                            | 07               |
-| h                |              | hour in 12-hour time, no padding                               | 1                |
-| hh               |              | hour in 12-hour time, padded to 2                              | 01               |
-| H                |              | hour in 24-hour time, no padding                               | 9                |
-| HH               |              | hour in 24-hour time, padded to 2                              | 13               |
-| Z                |              | narrow offset                                                  | +5               |
-| ZZ               |              | short offset                                                   | +05:00           |
-| ZZZ              |              | techie offset                                                  | +0500            |
-| z                |              | IANA zone                                                      | America/New_York |
-| a                |              | meridiem                                                       | AM               |
-| d                |              | day of the month, no padding                                   | 6                |
-| dd               |              | day of the month, padded to 2                                  | 06               |
-| E                | c            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | 3                |
-| EEE              | ccc          | day of the week, as an abbreviate localized string             | Wed              |
-| EEEE             | cccc         | day of the week, as an unabbreviated localized string          | Wednesday        |
-| M                | L            | month as an unpadded number                                    | 8                |
-| MM               | LL           | month as an padded number                                      | 08               |
-| MMM              | LLL          | month as an abbreviated localized string                       | Aug              |
-| MMMM             | LLLL         | month as an unabbreviated localized string                     | August           |
-| y                |              | year, 1-6 digits, very literally                               | 2014             |
-| yy               |              | two-digit year, interpreted as > 1960 (also accepts 4)         | 14               |
-| yyyy             |              | four-digit year                                                | 2014             |
-| yyyyy            |              | four- to six-digit years                                       | 10340            |
-| yyyyyy           |              | six-digit years                                                | 010340           |
-| G                |              | abbreviated localized era                                      | AD               |
-| GG               |              | unabbreviated localized era                                    | Anno Domini      |
-| GGGGG            |              | one-letter localized era                                       | A                |
-| kk               |              | ISO week year, unpadded                                        | 17               |
-| kkkk             |              | ISO week year, padded to 4                                     | 2014             |
-| W                |              | ISO week number, unpadded                                      | 32               |
-| WW               |              | ISO week number, padded to 2                                   | 32               |
-| o                |              | ordinal (day of year), unpadded                                | 218              |
-| ooo              |              | ordinal (day of year), padded to 3                             | 218              |
+| Standalone token | Format token | Description                                                    | Example                   |
+| ---------------- | ------------ | -------------------------------------------------------------- | ------------------------- |
+| S                |              | millisecond, no padding                                        | 54                        |
+| SSS              |              | millisecond, padded to 3                                       | 054                       |
+| u                |              | fractional seconds, (5 is a half second, 54 is slightly more)  | 54                        |
+| s                |              | second, no padding                                             | 4                         |
+| ss               |              | second, padded to 2 padding                                    | 04                        |
+| m                |              | minute, no padding                                             | 7                         |
+| mm               |              | minute, padded to 2                                            | 07                        |
+| h                |              | hour in 12-hour time, no padding                               | 1                         |
+| hh               |              | hour in 12-hour time, padded to 2                              | 01                        |
+| H                |              | hour in 24-hour time, no padding                               | 9                         |
+| HH               |              | hour in 24-hour time, padded to 2                              | 13                        |
+| Z                |              | narrow offset                                                  | +5                        |
+| ZZ               |              | short offset                                                   | +05:00                    |
+| ZZZ              |              | techie offset                                                  | +0500                     |
+| z                |              | IANA zone                                                      | America/New_York          |
+| a                |              | meridiem                                                       | AM                        |
+| d                |              | day of the month, no padding                                   | 6                         |
+| dd               |              | day of the month, padded to 2                                  | 06                        |
+| E                | c            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | 3                         |
+| EEE              | ccc          | day of the week, as an abbreviate localized string             | Wed                       |
+| EEEE             | cccc         | day of the week, as an unabbreviated localized string          | Wednesday                 |
+| M                | L            | month as an unpadded number                                    | 8                         |
+| MM               | LL           | month as an padded number                                      | 08                        |
+| MMM              | LLL          | month as an abbreviated localized string                       | Aug                       |
+| MMMM             | LLLL         | month as an unabbreviated localized string                     | August                    |
+| y                |              | year, 1-6 digits, very literally                               | 2014                      |
+| yy               |              | two-digit year, interpreted as > 1960 (also accepts 4)         | 14                        |
+| yyyy             |              | four-digit year                                                | 2014                      |
+| yyyyy            |              | four- to six-digit years                                       | 10340                     |
+| yyyyyy           |              | six-digit years                                                | 010340                    |
+| G                |              | abbreviated localized era                                      | AD                        |
+| GG               |              | unabbreviated localized era                                    | Anno Domini               |
+| GGGGG            |              | one-letter localized era                                       | A                         |
+| kk               |              | ISO week year, unpadded                                        | 17                        |
+| kkkk             |              | ISO week year, padded to 4                                     | 2014                      |
+| W                |              | ISO week number, unpadded                                      | 32                        |
+| WW               |              | ISO week number, padded to 2                                   | 32                        |
+| o                |              | ordinal (day of year), unpadded                                | 218                       |
+| ooo              |              | ordinal (day of year), padded to 3                             | 218                       |
+| D                |              | localized numeric date                                         | 9/4/2017                  |
+| DD               |              | localized date with abbreviated month                          | Aug 6, 2014               |
+| DDD              |              | localized date with full month                                 | August 6, 2014            |
+| DDDD             |              | localized date with full month and weekday                     | Wednesday, August 6, 2014 |
+| t                |              | localized time                                                 | 9:07 AM                   |
+| tt               |              | localized time with seconds                                    | 1:07:04 PM                |
+| T                |              | localized 24-hour time                                         | 13:07                     |
+| TT               |              | localized 24-hour time with seconds                            | 13:07:04                  |
+| TTT              |              | localized 24-hour time with seconds and abbreviated offset     | 13:07:04 EDT              |
+| f                |              | short localized date and time                                  | 8/6/2014, 1:07 PM         |
+| ff               |              | less short localized date and time                             | Aug 6, 2014, 1:07 PM      |
+| F                |              | short localized date and time with seconds                     | 8/6/2014, 1:07:04 PM      |
+| FF               |              | less short localized date and time with seconds                | Aug 6, 2014, 1:07:04 PM   |
