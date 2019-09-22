@@ -6093,8 +6093,8 @@ define(['exports'], function (exports) { 'use strict';
      * @access private
      */
     function DateTime(config) {
-      var zone = config.zone || Settings.defaultZone,
-          invalid = config.invalid || (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) || (!zone.isValid ? unsupportedZone(zone) : null);
+      var zone = config.zone || Settings.defaultZone;
+      var invalid = config.invalid || (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) || (!zone.isValid ? unsupportedZone(zone) : null);
       /**
        * @access private
        */
@@ -6105,8 +6105,17 @@ define(['exports'], function (exports) { 'use strict';
 
       if (!invalid) {
         var unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
-        c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
-        o = unchanged ? config.old.o : zone.offset(this.ts);
+
+        if (unchanged) {
+          var _ref3 = [config.old.c, config.old.o];
+          c = _ref3[0];
+          o = _ref3[1];
+        } else {
+          c = tsToObj(this.ts, zone.offset(this.ts));
+          invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
+          c = invalid ? null : c;
+          o = invalid ? null : zone.offset(this.ts);
+        }
       }
       /**
        * @access private
@@ -6393,18 +6402,18 @@ define(['exports'], function (exports) { 'use strict';
       var foundFirst = false;
 
       for (var _iterator2 = units, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-        var _ref3;
+        var _ref4;
 
         if (_isArray2) {
           if (_i3 >= _iterator2.length) break;
-          _ref3 = _iterator2[_i3++];
+          _ref4 = _iterator2[_i3++];
         } else {
           _i3 = _iterator2.next();
           if (_i3.done) break;
-          _ref3 = _i3.value;
+          _ref4 = _i3.value;
         }
 
-        var u = _ref3;
+        var u = _ref4;
         var v = normalized[u];
 
         if (!isUndefined(v)) {
@@ -6745,11 +6754,11 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.setZone = function setZone(zone, _temp) {
-      var _ref4 = _temp === void 0 ? {} : _temp,
-          _ref4$keepLocalTime = _ref4.keepLocalTime,
-          keepLocalTime = _ref4$keepLocalTime === void 0 ? false : _ref4$keepLocalTime,
-          _ref4$keepCalendarTim = _ref4.keepCalendarTime,
-          keepCalendarTime = _ref4$keepCalendarTim === void 0 ? false : _ref4$keepCalendarTim;
+      var _ref5 = _temp === void 0 ? {} : _temp,
+          _ref5$keepLocalTime = _ref5.keepLocalTime,
+          keepLocalTime = _ref5$keepLocalTime === void 0 ? false : _ref5$keepLocalTime,
+          _ref5$keepCalendarTim = _ref5.keepCalendarTime,
+          keepCalendarTime = _ref5$keepCalendarTim === void 0 ? false : _ref5$keepCalendarTim;
 
       zone = normalizeZone(zone, Settings.defaultZone);
 
@@ -6784,10 +6793,10 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.reconfigure = function reconfigure(_temp2) {
-      var _ref5 = _temp2 === void 0 ? {} : _temp2,
-          locale = _ref5.locale,
-          numberingSystem = _ref5.numberingSystem,
-          outputCalendar = _ref5.outputCalendar;
+      var _ref6 = _temp2 === void 0 ? {} : _temp2,
+          locale = _ref6.locale,
+          numberingSystem = _ref6.numberingSystem,
+          outputCalendar = _ref6.outputCalendar;
 
       var loc = this.loc.clone({
         locale: locale,
@@ -7094,13 +7103,13 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.toISOTime = function toISOTime(_temp3) {
-      var _ref6 = _temp3 === void 0 ? {} : _temp3,
-          _ref6$suppressMillise = _ref6.suppressMilliseconds,
-          suppressMilliseconds = _ref6$suppressMillise === void 0 ? false : _ref6$suppressMillise,
-          _ref6$suppressSeconds = _ref6.suppressSeconds,
-          suppressSeconds = _ref6$suppressSeconds === void 0 ? false : _ref6$suppressSeconds,
-          _ref6$includeOffset = _ref6.includeOffset,
-          includeOffset = _ref6$includeOffset === void 0 ? true : _ref6$includeOffset;
+      var _ref7 = _temp3 === void 0 ? {} : _temp3,
+          _ref7$suppressMillise = _ref7.suppressMilliseconds,
+          suppressMilliseconds = _ref7$suppressMillise === void 0 ? false : _ref7$suppressMillise,
+          _ref7$suppressSeconds = _ref7.suppressSeconds,
+          suppressSeconds = _ref7$suppressSeconds === void 0 ? false : _ref7$suppressSeconds,
+          _ref7$includeOffset = _ref7.includeOffset,
+          includeOffset = _ref7$includeOffset === void 0 ? true : _ref7$includeOffset;
 
       return toTechTimeFormat(this, {
         suppressSeconds: suppressSeconds,
@@ -7156,11 +7165,11 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.toSQLTime = function toSQLTime(_temp4) {
-      var _ref7 = _temp4 === void 0 ? {} : _temp4,
-          _ref7$includeOffset = _ref7.includeOffset,
-          includeOffset = _ref7$includeOffset === void 0 ? true : _ref7$includeOffset,
-          _ref7$includeZone = _ref7.includeZone,
-          includeZone = _ref7$includeZone === void 0 ? false : _ref7$includeZone;
+      var _ref8 = _temp4 === void 0 ? {} : _temp4,
+          _ref8$includeOffset = _ref8.includeOffset,
+          includeOffset = _ref8$includeOffset === void 0 ? true : _ref8$includeOffset,
+          _ref8$includeZone = _ref8.includeZone,
+          includeZone = _ref8$includeZone === void 0 ? false : _ref8$includeZone;
 
       return toTechTimeFormat(this, {
         includeOffset: includeOffset,

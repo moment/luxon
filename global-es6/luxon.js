@@ -1797,7 +1797,7 @@ var luxon = (function (exports) {
     } else if (hasIntl()) {
       const computedSys = new Intl.DateTimeFormat().resolvedOptions().locale;
       // node sometimes defaults to "und". Override that because that is dumb
-      sysLocaleCache = (!computedSys || computedSys === "und") ? "en-US" : computedSys;
+      sysLocaleCache = !computedSys || computedSys === "und" ? "en-US" : computedSys;
       return sysLocaleCache;
     } else {
       sysLocaleCache = "en-US";
@@ -5059,11 +5059,12 @@ var luxon = (function (exports) {
      * @access private
      */
     constructor(config) {
-      const zone = config.zone || Settings.defaultZone,
-        invalid =
-          config.invalid ||
-          (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
-          (!zone.isValid ? unsupportedZone(zone) : null);
+      const zone = config.zone || Settings.defaultZone;
+
+      let invalid =
+        config.invalid ||
+        (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
+        (!zone.isValid ? unsupportedZone(zone) : null);
       /**
        * @access private
        */
@@ -5073,8 +5074,15 @@ var luxon = (function (exports) {
         o = null;
       if (!invalid) {
         const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
-        c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
-        o = unchanged ? config.old.o : zone.offset(this.ts);
+
+        if (unchanged) {
+          [c, o] = [config.old.c, config.old.o];
+        } else {
+          c = tsToObj(this.ts, zone.offset(this.ts));
+          invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
+          c = invalid ? null : c;
+          o = invalid ? null : zone.offset(this.ts);
+        }
       }
 
       /**
