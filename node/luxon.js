@@ -3167,7 +3167,9 @@ class Duration {
     if (!this.isValid) return this;
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    return Duration.fromObject(vals);
+    return clone(this, {
+      values: vals
+    }, true);
   }
   /**
    * Convert this Duration into its representation in a different set of units.
@@ -3231,7 +3233,7 @@ class Duration {
 
     return clone(this, {
       values: built
-    }, true);
+    }, true).normalize();
   }
   /**
    * Return the negative of this Duration.
@@ -5105,6 +5107,13 @@ function objToTS(obj, offset, zone) {
 
 
 function adjustTime(inst, dur) {
+  const keys = Object.keys(dur.values);
+
+  if (keys.indexOf("milliseconds") === -1) {
+    keys.push("milliseconds");
+  }
+
+  dur = dur.shiftTo(...keys);
   const oPre = inst.o,
         year = inst.c.year + dur.years,
         month = inst.c.month + dur.months + dur.quarters * 3,

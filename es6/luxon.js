@@ -3075,7 +3075,7 @@ class Duration {
     if (!this.isValid) return this;
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    return Duration.fromObject(vals);
+    return clone(this, { values: vals }, true);
   }
 
   /**
@@ -3141,7 +3141,7 @@ class Duration {
       }
     }
 
-    return clone(this, { values: built }, true);
+    return clone(this, { values: built }, true).normalize();
   }
 
   /**
@@ -4808,6 +4808,13 @@ function objToTS(obj, offset, zone) {
 
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
+  const keys = Object.keys(dur.values);
+  if (keys.indexOf("milliseconds") === -1) {
+    keys.push("milliseconds");
+  }
+
+  dur = dur.shiftTo(...keys);
+
   const oPre = inst.o,
     year = inst.c.year + dur.years,
     month = inst.c.month + dur.months + dur.quarters * 3,

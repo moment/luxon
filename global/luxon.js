@@ -3688,7 +3688,9 @@ var luxon = (function (exports) {
       if (!this.isValid) return this;
       var vals = this.toObject();
       normalizeValues(this.matrix, vals);
-      return Duration.fromObject(vals);
+      return clone(this, {
+        values: vals
+      }, true);
     }
     /**
      * Convert this Duration into its representation in a different set of units.
@@ -3760,7 +3762,7 @@ var luxon = (function (exports) {
 
       return clone(this, {
         values: built
-      }, true);
+      }, true).normalize();
     }
     /**
      * Return the negative of this Duration.
@@ -5837,6 +5839,15 @@ var luxon = (function (exports) {
 
 
   function adjustTime(inst, dur) {
+    var _dur;
+
+    var keys = Object.keys(dur.values);
+
+    if (keys.indexOf("milliseconds") === -1) {
+      keys.push("milliseconds");
+    }
+
+    dur = (_dur = dur).shiftTo.apply(_dur, keys);
     var oPre = inst.o,
         year = inst.c.year + dur.years,
         month = inst.c.month + dur.months + dur.quarters * 3,
