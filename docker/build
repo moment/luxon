@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+docker build docker -t icambron/luxon

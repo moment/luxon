@@ -317,6 +317,26 @@ test("Interval#splitAt returns [] for invalid intervals", () => {
   expect(split).toEqual([]);
 });
 
+test("Interval#splitAt ignores times outside the interval", () => {
+  const allBefore = todayFrom(8, 13).splitAt(Helpers.atHour(7));
+  expect(allBefore.length).toBe(1);
+  expect(allBefore[0]).toEqual(todayFrom(8, 13));
+
+  const allAfter = todayFrom(8, 13).splitAt(Helpers.atHour(14));
+  expect(allAfter.length).toBe(1);
+  expect(allAfter[0]).toEqual(todayFrom(8, 13));
+
+  const oneBeforeOneDuring = todayFrom(8, 13).splitAt(Helpers.atHour(7), Helpers.atHour(11));
+  expect(oneBeforeOneDuring.length).toBe(2);
+  expect(oneBeforeOneDuring[0]).toEqual(todayFrom(8, 11));
+  expect(oneBeforeOneDuring[1]).toEqual(todayFrom(11, 13));
+
+  const oneAfterOneDuring = todayFrom(8, 13).splitAt(Helpers.atHour(11), Helpers.atHour(15));
+  expect(oneAfterOneDuring.length).toBe(2);
+  expect(oneAfterOneDuring[0]).toEqual(todayFrom(8, 11));
+  expect(oneAfterOneDuring[1]).toEqual(todayFrom(11, 13));
+});
+
 //-------
 // #splitBy()
 //-------

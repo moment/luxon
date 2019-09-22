@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.19.0
+
+ * Interval#splitAt now ignores input dates outside the interval
+ * Don't allow decimals in DateTime creation
+
+## 1.18.2
+
+ * Fix handling of decimals in DateTime#plus and #minus
+
+## 1.18.1
+
+ * Fix validity when adding or subtracting time that exceeds Date max/min boundaries
+
 ## 1.18.0
 
  * Add support for macro tokens in the parser

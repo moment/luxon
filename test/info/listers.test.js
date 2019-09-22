@@ -132,6 +132,23 @@ test("Info.months respects the locale", () => {
     "১১",
     "১২"
   ]);
+
+  // these should arguably be 1月, 2月, etc, but this at least documents how it works
+  expect(Info.months("short", { locale: "ja-JP" })).toEqual([
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12"
+  ]);
+
   expect(Info.monthsFormat("long", { locale: "ru" })).toEqual([
     "января",
     "февраля",

@@ -8,6 +8,9 @@ module.exports = {
     "valid-jsdoc": "off",
     "prefer-const": ["error", { destructuring: "all" }]
   },
+  parserOptions: {
+    ecmaVersion: "2020"
+  },
   env: {
     es6: true
   }
