@@ -25,9 +25,9 @@
         <span class='fraction'>152/153</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">89.13% </span>
+        <span class="strong">89.36% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>123/138</span>
+        <span class='fraction'>126/141</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -424,7 +424,15 @@
 <a name='L376'></a><a href='#L376'>376</a>
 <a name='L377'></a><a href='#L377'>377</a>
 <a name='L378'></a><a href='#L378'>378</a>
-<a name='L379'></a><a href='#L379'>379</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -556,6 +564,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">413x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">413x</span>
 <span class="cline-any cline-yes">413x</span>
 <span class="cline-any cline-yes">413x</span>
 <span class="cline-any cline-yes">62x</span>
@@ -590,8 +600,6 @@
 <span class="cline-any cline-yes">413x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">413x</span>
-<span class="cline-any cline-yes">1302x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1302x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -700,7 +708,11 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -724,7 +736,11 @@
 <span class="cline-any cline-yes">82x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -804,7 +820,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as English from "./english.js";
 import * as Formats from "./formats.js";
-import { padStart } from "./util.js";
+import { hasFormatToParts, padStart } from "./util.js";
 &nbsp;
 function stringifyTokens(splits, tokenToString) {
   let s = "";
@@ -933,8 +949,10 @@ export default class Formatter {
   }
 &nbsp;
   formatDateTimeFromString(dt, fmt) {
-    const knownEnglish = this.loc.listingMode() === "en";
-    const string = (opts, extract) =&gt; this.loc.extract(dt, opts, extract),
+    const knownEnglish = this.loc.listingMode() === "en",
+      useDateTimeFormatter =
+        this.loc.outputCalendar &amp;&amp; this.loc.outputCalendar !== "gregory" &amp;&amp; hasFormatToParts(),
+      string = (opts, extract) =&gt; this.loc.extract(dt, opts, extract),
       formatOffset = opts =&gt; {
         if (dt.isOffsetFixed &amp;&amp; dt.offset === 0 &amp;&amp; opts.allowZ) {
           return "Z";
@@ -968,8 +986,6 @@ export default class Formatter {
       era = length =&gt;
         knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, "era"),
       tokenToString = token =&gt; {
-        const outputCal = this.loc.outputCalendar;
-&nbsp;
         // Where possible: http://cldr.unicode.org/translation/date-time#TOC-Stand-Alone-vs.-Format-Styles
         switch (token) {
           // ms
@@ -1023,9 +1039,9 @@ export default class Formatter {
             return meridiem();
           // dates
           case "d":
-            return outputCal ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ day: "numeric" }, "day") </span>: this.num(dt.day);
+            return useDateTimeFormatter ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ day: "numeric" }, "day") </span>: this.num(dt.day);
           case "dd":
-            return outputCal ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ day: "2-digit" }, "day") </span>: this.num(dt.day, 2);
+            return useDateTimeFormatter ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ day: "2-digit" }, "day") </span>: this.num(dt.day, 2);
           // weekdays - standalone
           case "c":
             // like 1
@@ -1055,12 +1071,12 @@ export default class Formatter {
           // months - standalone
           case "L":
             // like 1
-            return outputCal
+            return useDateTimeFormatter
               ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ month: "numeric", day: "numeric" }, "month")</span>
               : this.num(dt.month);
 <span class="branch-29 cbranch-no" title="branch not covered" >          case "LL":</span>
             // like 01, doesn't seem to work
-<span class="cstat-no" title="statement not covered" >            return outputCal</span>
+<span class="cstat-no" title="statement not covered" >            return useDateTimeFormatter</span>
               ? string({ month: "2-digit", day: "numeric" }, "month")
               : this.num(dt.month, 2);
           case "LLL":
@@ -1075,10 +1091,14 @@ export default class Formatter {
           // months - format
           case "M":
             // like 1
-            return outputCal ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ month: "numeric" }, "month") </span>: this.num(dt.month);
+            return useDateTimeFormatter
+              ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ month: "numeric" }, "month")</span>
+              : this.num(dt.month);
           case "MM":
             // like 01
-            return outputCal ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ month: "2-digit" }, "month") </span>: this.num(dt.month, 2);
+            return useDateTimeFormatter
+              ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ month: "2-digit" }, "month")</span>
+              : this.num(dt.month, 2);
           case "MMM":
             // like Jan
             return month("short", false);
@@ -1091,18 +1111,22 @@ export default class Formatter {
           // years
           case "y":
             // like 2014
-            return outputCal ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ year: "numeric" }, "year") </span>: this.num(dt.year);
+            return useDateTimeFormatter ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ year: "numeric" }, "year") </span>: this.num(dt.year);
           case "yy":
             // like 14
-            return outputCal
+            return useDateTimeFormatter
               ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ year: "2-digit" }, "year")</span>
               : this.num(dt.year.toString().slice(-2), 2);
           case "yyyy":
             // like 0012
-            return outputCal ? string({ year: "numeric" }, "year") : this.num(dt.year, 4);
+            return useDateTimeFormatter
+              ? string({ year: "numeric" }, "year")
+              : this.num(dt.year, 4);
           case "yyyyyy":
             // like 000012
-            return outputCal ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ year: "numeric" }, "year") </span>: this.num(dt.year, 6);
+            return useDateTimeFormatter
+              ? <span class="branch-0 cbranch-no" title="branch not covered" >string({ year: "numeric" }, "year")</span>
+              : this.num(dt.year, 6);
           // eras
           case "G":
             // like AD
@@ -1186,7 +1210,7 @@ export default class Formatter {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Sep 22 2019 17:51:51 GMT-0400 (Eastern Daylight Time)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Sep 22 2019 19:37:05 GMT-0400 (Eastern Daylight Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>
