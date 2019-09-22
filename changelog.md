@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.19.1
+
+ * Fix Intl.DateTimeFormat usage for polyfills
+
 ## 1.19.0
 
  * Interval#splitAt now ignores input dates outside the interval
