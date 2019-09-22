@@ -433,7 +433,6 @@ export default class Locale {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
       matching = results.find(m => m.type.toLowerCase() === field);
-
     return matching ? matching.value : null;
   }
 
