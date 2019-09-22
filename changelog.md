@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.19.0
+
+ * Interval#splitAt now ignores input dates outside the interval
+ * Don't allow decimals in DateTime creation
+
 ## 1.18.2
 
  * Fix handling of decimals in DateTime#plus and #minus
