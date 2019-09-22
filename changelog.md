@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.19.2
+
+ * Speculative fix for Node 6
+
 # 1.19.1
 
  * Fix Intl.DateTimeFormat usage for polyfills
