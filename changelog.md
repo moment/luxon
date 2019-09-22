@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.18.1
+
+ * Fix validity when adding or subtracting time that exceeds Date max/min boundaries
+
 ## 1.18.0
 
  * Add support for macro tokens in the parser
