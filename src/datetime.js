@@ -370,11 +370,12 @@ export default class DateTime {
    * @access private
    */
   constructor(config) {
-    const zone = config.zone || Settings.defaultZone,
-      invalid =
-        config.invalid ||
-        (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
-        (!zone.isValid ? unsupportedZone(zone) : null);
+    const zone = config.zone || Settings.defaultZone;
+
+    let invalid =
+      config.invalid ||
+      (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
+      (!zone.isValid ? unsupportedZone(zone) : null);
     /**
      * @access private
      */
