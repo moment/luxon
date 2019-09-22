@@ -132,6 +132,7 @@ Helpers.withoutFTP("DateTime#toLocaleString is unaffected", () => {
 
 Helpers.withoutFTP("DateTime#toFormat works in English", () => {
   expect(DateTime.local(2014, 8, 6).toFormat("ccc")).toBe("Wed");
+  expect(DateTime.local(2014, 8, 6).toFormat("yyyyMMdd")).toBe("20140806");
 });
 
 Helpers.withoutFTP("DateTime#toFormat falls back to English", () => {
