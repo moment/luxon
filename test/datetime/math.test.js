@@ -96,6 +96,16 @@ test("DateTime#plus works across the 100 barrier", () => {
   expect(d.day).toBe(2);
 });
 
+test("DateTime#plus renders invalid when out of max. datetime range using days", () => {
+  const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0).plus({ day: 1e8 + 1 });
+  expect(d.isValid).toBe(false);
+});
+
+test("DateTime#plus renders invalid when out of max. datetime range using seconds", () => {
+  const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0).plus({ second: 1e8 * 24 * 60 * 60 + 1 });
+  expect(d.isValid).toBe(false);
+});
+
 //------
 // #minus()
 //------
@@ -142,6 +152,16 @@ test("DateTime#minus works across the 100 barrier", () => {
   expect(d.year).toBe(99);
   expect(d.month).toBe(12);
   expect(d.day).toBe(31);
+});
+
+test("DateTime#minus renders invalid when out of max. datetime range using days", () => {
+  const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0).minus({ day: 1e8 + 1 });
+  expect(d.isValid).toBe(false);
+});
+
+test("DateTime#minus renders invalid when out of max. datetime range using seconds", () => {
+  const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0).minus({ second: 1e8 * 24 * 60 * 60 + 1 });
+  expect(d.isValid).toBe(false);
 });
 
 //------

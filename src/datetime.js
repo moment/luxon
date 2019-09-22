@@ -384,8 +384,15 @@ export default class DateTime {
       o = null;
     if (!invalid) {
       const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
-      c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
-      o = unchanged ? config.old.o : zone.offset(this.ts);
+
+      if (unchanged) {
+        [c, o] = [config.old.c, config.old.o];
+      } else {
+        c = tsToObj(this.ts, zone.offset(this.ts));
+        invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
+        c = invalid ? null : c;
+        o = invalid ? null : zone.offset(this.ts);
+      }
     }
 
     /**
