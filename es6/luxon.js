@@ -1892,7 +1892,7 @@ function supportsFastNumbers(loc) {
       loc.numberingSystem === "latn" ||
       !loc.locale ||
       loc.locale.startsWith("en") ||
-      (hasIntl() && Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn")
+      (hasIntl() && new Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn")
     );
   }
 }
@@ -2208,10 +2208,7 @@ class Locale {
     return (
       this.locale === "en" ||
       this.locale.toLowerCase() === "en-us" ||
-      (hasIntl() &&
-        Intl.DateTimeFormat(this.intl)
-          .resolvedOptions()
-          .locale.startsWith("en-us"))
+      (hasIntl() && new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us"))
     );
   }
 

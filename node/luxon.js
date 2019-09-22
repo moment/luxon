@@ -2034,7 +2034,7 @@ function supportsFastNumbers(loc) {
   if (loc.numberingSystem && loc.numberingSystem !== "latn") {
     return false;
   } else {
-    return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || hasIntl() && Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn";
+    return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || hasIntl() && new Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn";
   }
 }
 /**
@@ -2368,7 +2368,7 @@ class Locale {
   }
 
   isEnglish() {
-    return this.locale === "en" || this.locale.toLowerCase() === "en-us" || hasIntl() && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us");
+    return this.locale === "en" || this.locale.toLowerCase() === "en-us" || hasIntl() && new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us");
   }
 
   equals(other) {

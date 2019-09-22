@@ -2379,7 +2379,7 @@ define(['exports'], function (exports) { 'use strict';
     if (loc.numberingSystem && loc.numberingSystem !== "latn") {
       return false;
     } else {
-      return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || hasIntl() && Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn";
+      return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || hasIntl() && new Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn";
     }
   }
   /**
@@ -2802,7 +2802,7 @@ define(['exports'], function (exports) { 'use strict';
     };
 
     _proto4.isEnglish = function isEnglish() {
-      return this.locale === "en" || this.locale.toLowerCase() === "en-us" || hasIntl() && Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us");
+      return this.locale === "en" || this.locale.toLowerCase() === "en-us" || hasIntl() && new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us");
     };
 
     _proto4.equals = function equals(other) {
