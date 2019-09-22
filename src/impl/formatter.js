@@ -1,6 +1,6 @@
 import * as English from "./english.js";
 import * as Formats from "./formats.js";
-import { padStart } from "./util.js";
+import { hasFormatToParts, padStart } from "./util.js";
 
 function stringifyTokens(splits, tokenToString) {
   let s = "";
@@ -129,8 +129,10 @@ export default class Formatter {
   }
 
   formatDateTimeFromString(dt, fmt) {
-    const knownEnglish = this.loc.listingMode() === "en";
-    const string = (opts, extract) => this.loc.extract(dt, opts, extract),
+    const knownEnglish = this.loc.listingMode() === "en",
+      useDateTimeFormatter =
+        this.loc.outputCalendar && this.loc.outputCalendar !== "gregory" && hasFormatToParts(),
+      string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
         if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
           return "Z";
@@ -164,8 +166,6 @@ export default class Formatter {
       era = length =>
         knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, "era"),
       tokenToString = token => {
-        const outputCal = this.loc.outputCalendar;
-
         // Where possible: http://cldr.unicode.org/translation/date-time#TOC-Stand-Alone-vs.-Format-Styles
         switch (token) {
           // ms
@@ -219,9 +219,9 @@ export default class Formatter {
             return meridiem();
           // dates
           case "d":
-            return outputCal ? string({ day: "numeric" }, "day") : this.num(dt.day);
+            return useDateTimeFormatter ? string({ day: "numeric" }, "day") : this.num(dt.day);
           case "dd":
-            return outputCal ? string({ day: "2-digit" }, "day") : this.num(dt.day, 2);
+            return useDateTimeFormatter ? string({ day: "2-digit" }, "day") : this.num(dt.day, 2);
           // weekdays - standalone
           case "c":
             // like 1
@@ -251,12 +251,12 @@ export default class Formatter {
           // months - standalone
           case "L":
             // like 1
-            return outputCal
+            return useDateTimeFormatter
               ? string({ month: "numeric", day: "numeric" }, "month")
               : this.num(dt.month);
           case "LL":
             // like 01, doesn't seem to work
-            return outputCal
+            return useDateTimeFormatter
               ? string({ month: "2-digit", day: "numeric" }, "month")
               : this.num(dt.month, 2);
           case "LLL":
@@ -271,10 +271,14 @@ export default class Formatter {
           // months - format
           case "M":
             // like 1
-            return outputCal ? string({ month: "numeric" }, "month") : this.num(dt.month);
+            return useDateTimeFormatter
+              ? string({ month: "numeric" }, "month")
+              : this.num(dt.month);
           case "MM":
             // like 01
-            return outputCal ? string({ month: "2-digit" }, "month") : this.num(dt.month, 2);
+            return useDateTimeFormatter
+              ? string({ month: "2-digit" }, "month")
+              : this.num(dt.month, 2);
           case "MMM":
             // like Jan
             return month("short", false);
@@ -287,18 +291,22 @@ export default class Formatter {
           // years
           case "y":
             // like 2014
-            return outputCal ? string({ year: "numeric" }, "year") : this.num(dt.year);
+            return useDateTimeFormatter ? string({ year: "numeric" }, "year") : this.num(dt.year);
           case "yy":
             // like 14
-            return outputCal
+            return useDateTimeFormatter
               ? string({ year: "2-digit" }, "year")
               : this.num(dt.year.toString().slice(-2), 2);
           case "yyyy":
             // like 0012
-            return outputCal ? string({ year: "numeric" }, "year") : this.num(dt.year, 4);
+            return useDateTimeFormatter
+              ? string({ year: "numeric" }, "year")
+              : this.num(dt.year, 4);
           case "yyyyyy":
             // like 000012
-            return outputCal ? string({ year: "numeric" }, "year") : this.num(dt.year, 6);
+            return useDateTimeFormatter
+              ? string({ year: "numeric" }, "year")
+              : this.num(dt.year, 6);
           // eras
           case "G":
             // like AD
