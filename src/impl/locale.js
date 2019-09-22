@@ -44,7 +44,7 @@ function systemLocale() {
   } else if (hasIntl()) {
     const computedSys = new Intl.DateTimeFormat().resolvedOptions().locale;
     // node sometimes defaults to "und". Override that because that is dumb
-    sysLocaleCache = computedSys === "und" ? "en-US" : computedSys;
+    sysLocaleCache = !computedSys || computedSys === "und" ? "en-US" : computedSys;
     return sysLocaleCache;
   } else {
     sysLocaleCache = "en-US";
@@ -433,7 +433,6 @@ export default class Locale {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
       matching = results.find(m => m.type.toLowerCase() === field);
-
     return matching ? matching.value : null;
   }
 

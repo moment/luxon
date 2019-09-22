@@ -20,6 +20,10 @@ export function isNumber(o) {
   return typeof o === "number";
 }
 
+export function isInteger(o) {
+  return typeof o === "number" && o % 1 === 0;
+}
+
 export function isString(o) {
   return typeof o === "string";
 }
@@ -85,8 +89,8 @@ export function hasOwnProperty(obj, prop) {
 
 // NUMBERS AND STRINGS
 
-export function numberBetween(thing, bottom, top) {
-  return isNumber(thing) && thing >= bottom && thing <= top;
+export function integerBetween(thing, bottom, top) {
+  return isInteger(thing) && thing >= bottom && thing <= top;
 }
 
 // x % n but takes the sign of n instead of x

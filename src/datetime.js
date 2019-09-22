@@ -119,6 +119,13 @@ function objToTS(obj, offset, zone) {
 
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
+  const keys = Object.keys(dur.values);
+  if (keys.indexOf("milliseconds") === -1) {
+    keys.push("milliseconds");
+  }
+
+  dur = dur.shiftTo(...keys);
+
   const oPre = inst.o,
     year = inst.c.year + dur.years,
     month = inst.c.month + dur.months + dur.quarters * 3,
@@ -382,7 +389,7 @@ export default class DateTime {
    * @access private
    */
   constructor(config) {
-    // when can this even happen?
+    // can happen when using plus or minus with 1E8 days resulting in overflows
     if (Number.isNaN(config.ts)) {
       throw new InvalidArgumentError("invalid timestamp");
     }
@@ -402,6 +409,7 @@ export default class DateTime {
     const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
 
     c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
+    if (Number.isNaN(c.year)) throw new InvalidArgumentError("invalid timestamp");
     o = unchanged ? config.old.o : zone.offset(this.ts);
 
     /**
@@ -434,7 +442,7 @@ export default class DateTime {
 
   /**
    * Create a local DateTime
-   * @param {number} year - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
+   * @param {number} [year] - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
    * @param {number} [month=1] - The month, 1-indexed
    * @param {number} [day=1] - The day of the month
    * @param {number} [hour=0] - The hour of the day, in 24-hour time
@@ -467,7 +475,7 @@ export default class DateTime {
 
   /**
    * Create a DateTime in UTC
-   * @param {number} year - The calendar year. If omitted (as in, call `utc()` with no arguments), the current time will be used
+   * @param {number} [year] - The calendar year. If omitted (as in, call `utc()` with no arguments), the current time will be used
    * @param {number} [month=1] - The month, 1-indexed
    * @param {number} [day=1] - The day of the month
    * @param {number} [hour=0] - The hour of the day, in 24-hour time
@@ -1670,7 +1678,7 @@ export default class DateTime {
   /**
    * Equality check
    * Two DateTimes are equal iff they represent the same millisecond and have the same zone and location.
-   * To compare just the millisecond values, use `+dt1 === ~dt2`.
+   * To compare just the millisecond values, use `+dt1 === +dt2`.
    * @param {DateTime} other - the other DateTime
    * @return {boolean}
    */
@@ -1684,7 +1692,7 @@ export default class DateTime {
 
   /**
    * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-   * platform supports Intl.RelativeDateFormat, **which it probably doesn't yet!** (As of this writing, only Chrome supports that). Rounds down by default.
+   * platform supports Intl.RelativeTimeFormat. Rounds down by default.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
@@ -1714,8 +1722,8 @@ export default class DateTime {
   }
 
   /**
-   * Returns a string representation of this date relative to today, such as "yesterday" or "next month"
-   * platform supports Intl.RelativeDateFormat.
+   * Returns a string representation of this date relative to today, such as "yesterday" or "next month".
+   * Only internationalizes on platforms that supports Intl.RelativeTimeFormat.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} options.locale - override the locale of this DateTime

@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime, Duration } from "../../src/luxon";
+import { InvalidArgumentError } from "../../src/errors";
 
 function createDateTime() {
   return DateTime.fromObject({
@@ -92,6 +93,37 @@ test("DateTime#plus works across the 100 barrier", () => {
   expect(d.day).toBe(2);
 });
 
+test("DateTime#plus throws when out of max. datetime range using days", () => {
+  expect(() => DateTime.utc(1970, 1, 1, 0, 0, 0, 0).plus({ day: 1e8 + 1 })).toThrow(
+    InvalidArgumentError
+  );
+});
+
+test("DateTime#plus renders invalid when out of max. datetime range using seconds", () => {
+  expect(() =>
+    DateTime.utc(1970, 1, 1, 0, 0, 0, 0).plus({ second: 1e8 * 24 * 60 * 60 + 1 })
+  ).toThrow(InvalidArgumentError);
+});
+
+test("DateTime#plus handles fractional days", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.plus({ days: 0.8 })).toEqual(d.plus({ hours: (24 * 4) / 5 }));
+  expect(d.plus({ days: 6.8 })).toEqual(d.plus({ days: 6, hours: (24 * 4) / 5 }));
+  expect(d.plus({ days: 6.8, milliseconds: 17 })).toEqual(
+    d.plus({ days: 6, milliseconds: 0.8 * 24 * 60 * 60 * 1000 + 17 })
+  );
+});
+
+test("DateTime#plus handles fractional months", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.plus({ months: 8.7 })).toEqual(
+    d.plus({
+      months: 8,
+      milliseconds: Duration.fromObject({ months: 0.7 }).shiftTo("milliseconds")
+    })
+  );
+});
+
 //------
 // #minus()
 //------
@@ -134,6 +166,37 @@ test("DateTime#minus works across the 100 barrier", () => {
   expect(d.year).toBe(99);
   expect(d.month).toBe(12);
   expect(d.day).toBe(31);
+});
+
+test("DateTime#minus renders invalid when out of max. datetime range using days", () => {
+  expect(() => DateTime.utc(1970, 1, 1, 0, 0, 0, 0).minus({ day: 1e8 + 1 })).toThrow(
+    InvalidArgumentError
+  );
+});
+
+test("DateTime#minus renders invalid when out of max. datetime range using seconds", () => {
+  expect(() =>
+    DateTime.utc(1970, 1, 1, 0, 0, 0, 0).minus({ second: 1e8 * 24 * 60 * 60 + 1 })
+  ).toThrow(InvalidArgumentError);
+});
+
+test("DateTime#minus handles fractional days", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.minus({ days: 0.8 })).toEqual(d.minus({ hours: (24 * 4) / 5 }));
+  expect(d.minus({ days: 6.8 })).toEqual(d.minus({ days: 6, hours: (24 * 4) / 5 }));
+  expect(d.minus({ days: 6.8, milliseconds: 17 })).toEqual(
+    d.minus({ days: 6, milliseconds: 0.8 * 24 * 60 * 60 * 1000 + 17 })
+  );
+});
+
+test("DateTime#minus handles fractional months", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.minus({ months: 8.7 })).toEqual(
+    d.minus({
+      months: 8,
+      milliseconds: Duration.fromObject({ months: 0.7 }).shiftTo("milliseconds")
+    })
+  );
 });
 
 //------

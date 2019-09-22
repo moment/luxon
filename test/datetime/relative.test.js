@@ -74,6 +74,9 @@ Helpers.withoutRTF("DateTime#toRelative works without RTF", () => {
   expect(base.plus({ months: 1 }).toRelative({ base })).toBe("in 1 month");
   expect(base.plus({ months: 1 }).toRelative({ base, style: "narrow" })).toBe("in 1 mo.");
   expect(base.plus({ months: 1 }).toRelative({ base, unit: "days" })).toBe("in 31 days");
+  expect(base.plus({ months: 1 }).toRelative({ base, style: "short", unit: "days" })).toBe(
+    "in 31 days"
+  );
   expect(base.plus({ months: 1, days: 2 }).toRelative({ base, round: false })).toBe(
     "in 1.06 months"
   );

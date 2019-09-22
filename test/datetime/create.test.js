@@ -164,6 +164,10 @@ test("DateTime.local accepts the default output calendar", () => {
   withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
 });
 
+test("DateTime.local does not accept non-integer values", () => {
+  expect(() => DateTime.local(2017, 6.7, 12)).toThrow(UnitOutOfRangeError);
+});
+
 test("DateTime.local uses the default time zone", () => {
   Helpers.withDefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
 });
@@ -609,6 +613,9 @@ test("DateTime.fromObject() w/ordinal defaults to the current year", () => {
 
 test("DateTime.fromObject() rejects invalid values", () => {
   expect(() => DateTime.fromObject({ weekYear: 2017, weekNumber: 54 })).toThrow(
+    UnitOutOfRangeError
+  );
+  expect(() => DateTime.fromObject({ weekYear: 2017, weekNumber: 3.6 })).toThrow(
     UnitOutOfRangeError
   );
   expect(() => DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 })).toThrow(

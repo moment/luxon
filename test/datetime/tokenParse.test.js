@@ -466,6 +466,78 @@ test("DateTime.fromFormat() with setZone parses fixed offsets and sets it", () =
   }
 });
 
+test("DateTime.fromFormat() does not support macro tokens with time zone", () => {
+  // Parsing time zone names like `EDT` or `Eastern Daylight Time` is not supported
+  const formats = ["ttt", "tttt", "TTT", "TTTT", "FFF", "FFFF"];
+
+  const sampleDateTime = DateTime.fromMillis(1555555555555);
+
+  for (const locale of [null, "en-gb", "de"]) {
+    for (const format of formats) {
+      const formatted = sampleDateTime.toFormat(format, { locale });
+      expect(() => DateTime.fromFormat(formatted, format, { locale })).toThrow(
+        UnparsableStringError
+      );
+    }
+  }
+});
+
+test("DateTime.fromFormat() parses localized macro tokens", () => {
+  const formatGroups = [
+    {
+      formats: ["D", "DD", "DDD", "DDDD"],
+      expectEqual: {
+        year: true,
+        month: true,
+        day: true
+      }
+    },
+
+    {
+      formats: ["t", "T"],
+      expectEqual: {
+        hour: true,
+        minute: true
+      }
+    },
+    {
+      formats: ["tt", "TT"],
+      expectEqual: {
+        hour: true,
+        minute: true,
+        second: true
+      }
+    },
+
+    {
+      formats: ["F", "FF"],
+      expectEqual: {
+        year: true,
+        month: true,
+        day: true,
+        hour: true,
+        minute: true,
+        second: true
+      }
+    }
+  ];
+
+  const sampleDateTime = DateTime.fromMillis(1555555555555);
+
+  for (const { formats, expectEqual } of formatGroups) {
+    for (const locale of [null, "en-gb", "de"]) {
+      for (const format of formats) {
+        const formatted = sampleDateTime.toFormat(format, { locale });
+        const parsed = DateTime.fromFormat(formatted, format, { locale });
+
+        for (const key of Object.keys(expectEqual)) {
+          expect(parsed[key]).toBe(sampleDateTime[key]);
+        }
+      }
+    }
+  }
+});
+
 test("DateTime.fromFormat() throws if you don't provide a format", () => {
   expect(() => DateTime.fromFormat("yo")).toThrowError();
 });

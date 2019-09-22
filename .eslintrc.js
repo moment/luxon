@@ -10,6 +10,9 @@ module.exports = {
     "prettier/prettier": "warn",
     "prefer-const": ["error", { destructuring: "all" }]
   },
+  parserOptions: {
+    ecmaVersion: "2020"
+  },
   env: {
     es6: true
   }
