@@ -246,6 +246,9 @@ var luxon = (function (exports) {
   function isNumber(o) {
     return typeof o === "number";
   }
+  function isInteger(o) {
+    return typeof o === "number" && o % 1 === 0;
+  }
   function isString(o) {
     return typeof o === "string";
   }
@@ -301,8 +304,8 @@ var luxon = (function (exports) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
   } // NUMBERS AND STRINGS
 
-  function numberBetween(thing, bottom, top) {
-    return isNumber(thing) && thing >= bottom && thing <= top;
+  function integerBetween(thing, bottom, top) {
+    return isInteger(thing) && thing >= bottom && thing <= top;
   } // x % n but takes the sign of n instead of x
 
   function floorMod(x, n) {
@@ -4259,13 +4262,17 @@ var luxon = (function (exports) {
     ;
 
     _proto.splitAt = function splitAt() {
+      var _this = this;
+
       if (!this.isValid) return [];
 
       for (var _len = arguments.length, dateTimes = new Array(_len), _key = 0; _key < _len; _key++) {
         dateTimes[_key] = arguments[_key];
       }
 
-      var sorted = dateTimes.map(friendlyDateTime).sort(),
+      var sorted = dateTimes.map(friendlyDateTime).filter(function (d) {
+        return _this.contains(d);
+      }).sort(),
           results = [];
       var s = this.s,
           i = 0;
@@ -4507,14 +4514,14 @@ var luxon = (function (exports) {
     ;
 
     _proto.difference = function difference() {
-      var _this = this;
+      var _this2 = this;
 
       for (var _len2 = arguments.length, intervals = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         intervals[_key2] = arguments[_key2];
       }
 
       return Interval.xor([this].concat(intervals)).map(function (i) {
-        return _this.intersection(i);
+        return _this2.intersection(i);
       }).filter(function (i) {
         return i && !i.isEmpty();
       });
@@ -5704,9 +5711,9 @@ var luxon = (function (exports) {
     }, timeObject(ordinalData));
   }
   function hasInvalidWeekData(obj) {
-    var validYear = isNumber(obj.weekYear),
-        validWeek = numberBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
-        validWeekday = numberBetween(obj.weekday, 1, 7);
+    var validYear = isInteger(obj.weekYear),
+        validWeek = integerBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
+        validWeekday = integerBetween(obj.weekday, 1, 7);
 
     if (!validYear) {
       return unitOutOfRange("weekYear", obj.weekYear);
@@ -5717,8 +5724,8 @@ var luxon = (function (exports) {
     } else return false;
   }
   function hasInvalidOrdinalData(obj) {
-    var validYear = isNumber(obj.year),
-        validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
+    var validYear = isInteger(obj.year),
+        validOrdinal = integerBetween(obj.ordinal, 1, daysInYear(obj.year));
 
     if (!validYear) {
       return unitOutOfRange("year", obj.year);
@@ -5727,9 +5734,9 @@ var luxon = (function (exports) {
     } else return false;
   }
   function hasInvalidGregorianData(obj) {
-    var validYear = isNumber(obj.year),
-        validMonth = numberBetween(obj.month, 1, 12),
-        validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
+    var validYear = isInteger(obj.year),
+        validMonth = integerBetween(obj.month, 1, 12),
+        validDay = integerBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 
     if (!validYear) {
       return unitOutOfRange("year", obj.year);
@@ -5744,10 +5751,10 @@ var luxon = (function (exports) {
         minute = obj.minute,
         second = obj.second,
         millisecond = obj.millisecond;
-    var validHour = numberBetween(hour, 0, 23) || hour === 24 && minute === 0 && second === 0 && millisecond === 0,
-        validMinute = numberBetween(minute, 0, 59),
-        validSecond = numberBetween(second, 0, 59),
-        validMillisecond = numberBetween(millisecond, 0, 999);
+    var validHour = integerBetween(hour, 0, 23) || hour === 24 && minute === 0 && second === 0 && millisecond === 0,
+        validMinute = integerBetween(minute, 0, 59),
+        validSecond = integerBetween(second, 0, 59),
+        validMillisecond = integerBetween(millisecond, 0, 999);
 
     if (!validHour) {
       return unitOutOfRange("hour", hour);

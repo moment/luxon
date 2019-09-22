@@ -86,6 +86,9 @@ function isUndefined(o) {
 function isNumber(o) {
   return typeof o === "number";
 }
+function isInteger(o) {
+  return typeof o === "number" && o % 1 === 0;
+}
 function isString(o) {
   return typeof o === "string";
 }
@@ -141,8 +144,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 } // NUMBERS AND STRINGS
 
-function numberBetween(thing, bottom, top) {
-  return isNumber(thing) && thing >= bottom && thing <= top;
+function integerBetween(thing, bottom, top) {
+  return isInteger(thing) && thing >= bottom && thing <= top;
 } // x % n but takes the sign of n instead of x
 
 function floorMod(x, n) {
@@ -3724,7 +3727,7 @@ class Interval {
 
   splitAt(...dateTimes) {
     if (!this.isValid) return [];
-    const sorted = dateTimes.map(friendlyDateTime).sort(),
+    const sorted = dateTimes.map(friendlyDateTime).filter(d => this.contains(d)).sort(),
           results = [];
     let {
       s
@@ -4970,9 +4973,9 @@ function ordinalToGregorian(ordinalData) {
   }, timeObject(ordinalData));
 }
 function hasInvalidWeekData(obj) {
-  const validYear = isNumber(obj.weekYear),
-        validWeek = numberBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
-        validWeekday = numberBetween(obj.weekday, 1, 7);
+  const validYear = isInteger(obj.weekYear),
+        validWeek = integerBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
+        validWeekday = integerBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
     return unitOutOfRange("weekYear", obj.weekYear);
@@ -4983,8 +4986,8 @@ function hasInvalidWeekData(obj) {
   } else return false;
 }
 function hasInvalidOrdinalData(obj) {
-  const validYear = isNumber(obj.year),
-        validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
+  const validYear = isInteger(obj.year),
+        validOrdinal = integerBetween(obj.ordinal, 1, daysInYear(obj.year));
 
   if (!validYear) {
     return unitOutOfRange("year", obj.year);
@@ -4993,9 +4996,9 @@ function hasInvalidOrdinalData(obj) {
   } else return false;
 }
 function hasInvalidGregorianData(obj) {
-  const validYear = isNumber(obj.year),
-        validMonth = numberBetween(obj.month, 1, 12),
-        validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
+  const validYear = isInteger(obj.year),
+        validMonth = integerBetween(obj.month, 1, 12),
+        validDay = integerBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 
   if (!validYear) {
     return unitOutOfRange("year", obj.year);
@@ -5012,10 +5015,10 @@ function hasInvalidTimeData(obj) {
     second,
     millisecond
   } = obj;
-  const validHour = numberBetween(hour, 0, 23) || hour === 24 && minute === 0 && second === 0 && millisecond === 0,
-        validMinute = numberBetween(minute, 0, 59),
-        validSecond = numberBetween(second, 0, 59),
-        validMillisecond = numberBetween(millisecond, 0, 999);
+  const validHour = integerBetween(hour, 0, 23) || hour === 24 && minute === 0 && second === 0 && millisecond === 0,
+        validMinute = integerBetween(minute, 0, 59),
+        validSecond = integerBetween(second, 0, 59),
+        validMillisecond = integerBetween(millisecond, 0, 999);
 
   if (!validHour) {
     return unitOutOfRange("hour", hour);
