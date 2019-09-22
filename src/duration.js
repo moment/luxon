@@ -541,7 +541,7 @@ export default class Duration {
     if (!this.isValid) return this;
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    return Duration.fromObject(vals);
+    return clone(this, { values: vals }, true);
   }
 
   /**
@@ -607,7 +607,7 @@ export default class Duration {
       }
     }
 
-    return clone(this, { values: built }, true);
+    return clone(this, { values: built }, true).normalize();
   }
 
   /**
