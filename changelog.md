@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.18.2
+
+ * Fix handling of decimals in DateTime#plus and #minus
+
 ## 1.18.1
 
  * Fix validity when adding or subtracting time that exceeds Date max/min boundaries
