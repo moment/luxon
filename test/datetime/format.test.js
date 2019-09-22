@@ -232,6 +232,10 @@ test("DateTime#toLocaleString returns a sensible string by default", () => {
   expect(dt.reconfigure({ locale: "en-US" }).toLocaleString()).toBe("5/25/1982");
 });
 
+test("DateTime#toLocaleString lets the locale set the numbering system", () => {
+  expect(dt.reconfigure({ locale: "ja-JP" }).toLocaleString({ hour: "numeric" })).toBe("9時");
+});
+
 test("DateTime#toLocaleString accepts locale settings from the dateTime", () => {
   expect(dt.reconfigure({ locale: "be" }).toLocaleString()).toBe("25.5.1982");
 });

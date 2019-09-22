@@ -1,11 +1,11 @@
 import {
-  numberBetween,
+  integerBetween,
   isLeapYear,
   timeObject,
   daysInYear,
   daysInMonth,
   weeksInWeekYear,
-  isNumber
+  isInteger
 } from "./util.js";
 import Invalid from "./invalid.js";
 
@@ -98,9 +98,9 @@ export function ordinalToGregorian(ordinalData) {
 }
 
 export function hasInvalidWeekData(obj) {
-  const validYear = isNumber(obj.weekYear),
-    validWeek = numberBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
-    validWeekday = numberBetween(obj.weekday, 1, 7);
+  const validYear = isInteger(obj.weekYear),
+    validWeek = integerBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
+    validWeekday = integerBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
     return unitOutOfRange("weekYear", obj.weekYear);
@@ -112,8 +112,8 @@ export function hasInvalidWeekData(obj) {
 }
 
 export function hasInvalidOrdinalData(obj) {
-  const validYear = isNumber(obj.year),
-    validOrdinal = numberBetween(obj.ordinal, 1, daysInYear(obj.year));
+  const validYear = isInteger(obj.year),
+    validOrdinal = integerBetween(obj.ordinal, 1, daysInYear(obj.year));
 
   if (!validYear) {
     return unitOutOfRange("year", obj.year);
@@ -123,9 +123,9 @@ export function hasInvalidOrdinalData(obj) {
 }
 
 export function hasInvalidGregorianData(obj) {
-  const validYear = isNumber(obj.year),
-    validMonth = numberBetween(obj.month, 1, 12),
-    validDay = numberBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
+  const validYear = isInteger(obj.year),
+    validMonth = integerBetween(obj.month, 1, 12),
+    validDay = integerBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
 
   if (!validYear) {
     return unitOutOfRange("year", obj.year);
@@ -139,11 +139,11 @@ export function hasInvalidGregorianData(obj) {
 export function hasInvalidTimeData(obj) {
   const { hour, minute, second, millisecond } = obj;
   const validHour =
-      numberBetween(hour, 0, 23) ||
+      integerBetween(hour, 0, 23) ||
       (hour === 24 && minute === 0 && second === 0 && millisecond === 0),
-    validMinute = numberBetween(minute, 0, 59),
-    validSecond = numberBetween(second, 0, 59),
-    validMillisecond = numberBetween(millisecond, 0, 999);
+    validMinute = integerBetween(minute, 0, 59),
+    validSecond = integerBetween(second, 0, 59),
+    validMillisecond = integerBetween(millisecond, 0, 999);
 
   if (!validHour) {
     return unitOutOfRange("hour", hour);

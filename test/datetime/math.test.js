@@ -106,6 +106,25 @@ test("DateTime#plus renders invalid when out of max. datetime range using second
   expect(d.isValid).toBe(false);
 });
 
+test("DateTime#plus handles franctional days", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.plus({ days: 0.8 })).toEqual(d.plus({ hours: (24 * 4) / 5 }));
+  expect(d.plus({ days: 6.8 })).toEqual(d.plus({ days: 6, hours: (24 * 4) / 5 }));
+  expect(d.plus({ days: 6.8, milliseconds: 17 })).toEqual(
+    d.plus({ days: 6, milliseconds: 0.8 * 24 * 60 * 60 * 1000 + 17 })
+  );
+});
+
+test("DateTime#plus handles franctional months", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.plus({ months: 8.7 })).toEqual(
+    d.plus({
+      months: 8,
+      milliseconds: Duration.fromObject({ months: 0.7 }).shiftTo("milliseconds")
+    })
+  );
+});
+
 //------
 // #minus()
 //------
@@ -162,6 +181,25 @@ test("DateTime#minus renders invalid when out of max. datetime range using days"
 test("DateTime#minus renders invalid when out of max. datetime range using seconds", () => {
   const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0).minus({ second: 1e8 * 24 * 60 * 60 + 1 });
   expect(d.isValid).toBe(false);
+});
+
+test("DateTime#minus handles franctional days", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.minus({ days: 0.8 })).toEqual(d.minus({ hours: (24 * 4) / 5 }));
+  expect(d.minus({ days: 6.8 })).toEqual(d.minus({ days: 6, hours: (24 * 4) / 5 }));
+  expect(d.minus({ days: 6.8, milliseconds: 17 })).toEqual(
+    d.minus({ days: 6, milliseconds: 0.8 * 24 * 60 * 60 * 1000 + 17 })
+  );
+});
+
+test("DateTime#minus handles franctional months", () => {
+  const d = DateTime.fromISO("2016-01-31T10:00");
+  expect(d.minus({ months: 8.7 })).toEqual(
+    d.minus({
+      months: 8,
+      milliseconds: Duration.fromObject({ months: 0.7 }).shiftTo("milliseconds")
+    })
+  );
 });
 
 //------

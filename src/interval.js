@@ -294,7 +294,10 @@ export default class Interval {
    */
   splitAt(...dateTimes) {
     if (!this.isValid) return [];
-    const sorted = dateTimes.map(friendlyDateTime).sort(),
+    const sorted = dateTimes
+        .map(friendlyDateTime)
+        .filter(d => this.contains(d))
+        .sort(),
       results = [];
     let { s } = this,
       i = 0;

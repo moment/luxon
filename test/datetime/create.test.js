@@ -105,6 +105,11 @@ test("DateTime.local accepts the default output calendar", () => {
   withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
 });
 
+test("DateTime.local does not accept non-integer values", () => {
+  const dt = DateTime.local(2017, 6.7, 12);
+  expect(dt.isValid).toBe(false);
+});
+
 //------
 // #toLocal()
 //-------
@@ -531,6 +536,7 @@ test("DateTime.fromObject() w/ordinal defaults to the current year", () => {
 
 test("DateTime.fromObject() returns invalid for invalid values", () => {
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid).toBe(false);
+  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 3.6 }).isValid).toBe(false);
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid).toBe(false);
 });
 
