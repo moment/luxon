@@ -1114,7 +1114,7 @@ export default class DateTime {
    * @type {number}
    */
   get offset() {
-    return this.isValid ? this.zone.offset(this.ts) : NaN;
+    return this.isValid ? +this.o : NaN;
   }
 
   /**
