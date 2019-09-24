@@ -70,6 +70,19 @@ test("DateTime.fromISO() optionally adopts the UTC offset provided", () => {
     second: 0,
     millisecond: 0
   });
+
+  // #580
+  dt = DateTime.fromISO("2016-05-25T09:08:34.123-00:30", { setZone: true });
+  expect(dt.zone.name).toBe("UTC-0:30");
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 9,
+    minute: 8,
+    second: 34,
+    millisecond: 123
+  });
 });
 
 test("DateTime.fromISO() can optionally specify a zone", () => {
