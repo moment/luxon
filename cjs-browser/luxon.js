@@ -430,9 +430,14 @@ function parseZoneInfo(ts, offsetFormat, locale, timeZone) {
 } // signedOffset('-5', '30') -> -330
 
 function signedOffset(offHourStr, offMinuteStr) {
-  var offHour = parseInt(offHourStr, 10) || 0,
-      offMin = parseInt(offMinuteStr, 10) || 0,
-      offMinSigned = offHour < 0 ? -offMin : offMin;
+  var offHour = parseInt(offHourStr, 10); // don't || this because we want to preserve -0
+
+  if (Number.isNaN(offHour)) {
+    offHour = 0;
+  }
+
+  var offMin = parseInt(offMinuteStr, 10) || 0,
+      offMinSigned = offHour < 0 || Object.is(offHour, -0) ? -offMin : offMin;
   return offHour * 60 + offMinSigned;
 } // COERCION
 
@@ -459,7 +464,7 @@ function normalizeObject(obj, normalizer, nonUnitKeys) {
 function formatOffset(offset, format) {
   var hours = Math.trunc(offset / 60),
       minutes = Math.abs(offset % 60),
-      sign = hours >= 0 ? "+" : "-",
+      sign = hours >= 0 && !Object.is(hours, -0) ? "+" : "-",
       base = "" + sign + Math.abs(hours);
 
   switch (format) {
@@ -7844,7 +7849,7 @@ function () {
   }, {
     key: "offset",
     get: function get() {
-      return this.isValid ? this.zone.offset(this.ts) : NaN;
+      return this.isValid ? +this.o : NaN;
     }
     /**
      * Get the short human name for the zone's current offset, for example "EST" or "EDT".
