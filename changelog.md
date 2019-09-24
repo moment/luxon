@@ -1,5 +1,10 @@
 # Changelog
 
+# 1.19.3
+
+ * Cache offset values
+ * Fix handling of negative sub 1-hour offsets
+
 # 1.19.2
 
  * Speculative fix for Node 6
