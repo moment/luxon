@@ -77,7 +77,7 @@ This also means you can modify the presets as you choose:
 
 ```js
 dt.toLocaleString(DateTime.DATE_SHORT); //=>  '4/20/2017'
-var newFormat = Object.assign({ weekday: 'long' }, DateTime.DATE_SHORT);
+var newFormat = Object.assign(DateTime.DATE_SHORT, { weekday: 'long' });
 dt.toLocaleString(newFormat); //=>  'Thursday, 4/20/2017'
 ```
 
