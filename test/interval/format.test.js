@@ -30,6 +30,31 @@ test("Interval#toISO returns an unfriendly string for invalid intervals", () =>
   expect(invalid.toISO()).toBe("Invalid Interval"));
 
 //------
+// .toISODate()
+//------
+
+test("Interval#toISODate returns a simple ISO date interval format", () =>
+  expect(interval.toISODate()).toBe("1982-05-25/1983-10-14"));
+
+test("Interval#toISODate returns an unfriendly string for invalid intervals", () =>
+  expect(invalid.toISODate()).toBe("Invalid Interval"));
+
+//------
+// .toISOTime()
+//------
+
+test("Interval#toISOTime returns a simple ISO time interval format", () =>
+  expect(interval.toISOTime()).toBe("09:00:00.000Z/13:30:00.000Z"));
+
+test("Interval#toISOTime returns an unfriendly string for invalid intervals", () =>
+  expect(invalid.toISOTime()).toBe("Invalid Interval"));
+
+test("Interval#toISOTime accepts ISO options", () => {
+  expect(interval.toISOTime({ suppressSeconds: true })).toBe("09:00Z/13:30Z");
+  expect(interval.toISOTime({ suppressMilliseconds: true })).toBe("09:00:00Z/13:30:00Z");
+});
+
+//------
 // .toFormat()
 //------
 
