@@ -103,6 +103,26 @@ test("Duration#minus maintains invalidity", () => {
 });
 
 //------
+// #times()
+//------
+
+test("Duration#times multiplies durations", () => {
+  const dur = Duration.fromObject({ hours: 1, minutes: 2, seconds: -3, milliseconds: -4 }),
+    result = dur.times(5);
+
+  expect(result.hours).toBe(5);
+  expect(result.minutes).toBe(10);
+  expect(result.seconds).toBe(-15);
+  expect(result.milliseconds).toBe(-20);
+});
+
+test("Duration#times maintains invalidity", () => {
+  const dur = Duration.invalid("because").times(5);
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe("because");
+});
+
+//------
 // #negate()
 //------
 

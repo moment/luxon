@@ -478,6 +478,26 @@ export default class Duration {
   }
 
   /**
+   * Scale this Duration by the specified amount. Return a newly-constructed Duration.
+   * @param {number} scalar - The amount to multiply by.
+   * @example Duration.fromObject({ hours: 1, minutes: 30 }).times(2) //=> { hours: 2, minutes: 60 }
+   * @return {Duration}
+   */
+  times(scalar) {
+    if (!this.isValid) return this;
+
+    const result = {};
+
+    for (const k of orderedUnits) {
+      if (hasOwnProperty(this.values, k)) {
+        result[k] = this.get(k) * scalar;
+      }
+    }
+
+    return clone(this, { values: result }, true);
+  }
+
+  /**
    * Get the value of unit.
    * @param {string} unit - a unit such as 'minute' or 'day'
    * @example Duration.fromObject({years: 2, days: 3}).years //=> 2
