@@ -137,3 +137,15 @@ test("Duration#negate preserves conversionAccuracy", () => {
     result = dur.negate();
   expect(result.conversionAccuracy).toBe("longterm");
 });
+
+//------
+// #multiply(int)
+//------
+
+test("Duration#multiply returns duration of multiple all units by the coefficient", () => {
+  const dur = Duration.fromObject({ hours: 1, minutes: 0, seconds: 30 }),
+    result = dur.multiply(5);
+  expect(result.hours).toBe(5);
+  expect(result.minutes).toBe(0);
+  expect(result.seconds).toBe(150);
+});

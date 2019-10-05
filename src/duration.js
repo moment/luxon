@@ -625,6 +625,21 @@ export default class Duration {
   }
 
   /**
+   * Return the multiply of all units by the coefficient)
+   * @param {number} count of multiply coefficient
+   * @example Duration.fromObject({ hours: 1, seconds: 30 }).multiply(2).toObject() //=> { hours: 2, minutes: 1, seconds: 0 }
+   * @return {Duration}
+   */
+  multiply(coefficient) {
+    if (!this.isValid) return this;
+    const multiply = {};
+    for (const k of Object.keys(this.values)) {
+      multiply[k] = this.values[k] * coefficient;
+    }
+    return clone(this, { values: multiply }, true);
+  }
+
+  /**
    * Get the years.
    * @type {number}
    */
