@@ -1,5 +1,18 @@
 # Changelog
 
+# 1.19.3
+
+ * Cache offset values
+ * Fix handling of negative sub 1-hour offsets
+
+# 1.19.2
+
+ * Speculative fix for Node 6
+
+# 1.19.1
+
+ * Fix Intl.DateTimeFormat usage for polyfills
+
 ## 1.19.0
 
  * Interval#splitAt now ignores input dates outside the interval
