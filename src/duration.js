@@ -1,4 +1,4 @@
-import { isUndefined, isNumber, normalizeObject, hasOwnProperty } from "./impl/util.js";
+import { isUndefined, isNumber, normalizeObject, hasOwnProperty, asNumber } from "./impl/util.js";
 import Locale from "./impl/locale.js";
 import Formatter from "./impl/formatter.js";
 import { parseISODuration } from "./impl/regexParser.js";
@@ -475,6 +475,22 @@ export default class Duration {
 
     const dur = friendlyDuration(duration);
     return this.plus(dur.negate());
+  }
+
+  /**
+   * Scale this Duration by the specified amount. Return a newly-constructed Duration.
+   * @param {function} fn - The function to apply to each unit. Arity is 1 or 2: the value of the unit and, optionally, the unit name. Must return a number.
+   * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit(x => x * 2) //=> { hours: 2, minutes: 60 }
+   * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit((x, u) => u === "hour" ? x * 2 : x) //=> { hours: 2, minutes: 30 }
+   * @return {Duration}
+   */
+  mapUnits(fn) {
+    if (!this.isValid) return this;
+    const result = {};
+    for (const k of Object.keys(this.values)) {
+      result[k] = asNumber(fn(this.values[k], k));
+    }
+    return clone(this, { values: result }, true);
   }
 
   /**
