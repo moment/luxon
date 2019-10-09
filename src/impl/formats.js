@@ -4,8 +4,7 @@
 
 const n = "numeric",
   s = "short",
-  l = "long",
-  d2 = "2-digit";
+  l = "long";
 
 export const DATE_SHORT = {
   year: n,
@@ -34,32 +33,32 @@ export const DATE_HUGE = {
 
 export const TIME_SIMPLE = {
   hour: n,
-  minute: d2
+  minute: n
 };
 
 export const TIME_WITH_SECONDS = {
   hour: n,
-  minute: d2,
-  second: d2
+  minute: n,
+  second: n
 };
 
 export const TIME_WITH_SHORT_OFFSET = {
   hour: n,
-  minute: d2,
-  second: d2,
+  minute: n,
+  second: n,
   timeZoneName: s
 };
 
 export const TIME_WITH_LONG_OFFSET = {
   hour: n,
-  minute: d2,
-  second: d2,
+  minute: n,
+  second: n,
   timeZoneName: l
 };
 
 export const TIME_24_SIMPLE = {
   hour: n,
-  minute: d2,
+  minute: n,
   hour12: false
 };
 
@@ -68,8 +67,8 @@ export const TIME_24_SIMPLE = {
  */
 export const TIME_24_WITH_SECONDS = {
   hour: n,
-  minute: d2,
-  second: d2,
+  minute: n,
+  second: n,
   hour12: false
 };
 
@@ -78,8 +77,8 @@ export const TIME_24_WITH_SECONDS = {
  */
 export const TIME_24_WITH_SHORT_OFFSET = {
   hour: n,
-  minute: d2,
-  second: d2,
+  minute: n,
+  second: n,
   hour12: false,
   timeZoneName: s
 };
@@ -89,8 +88,8 @@ export const TIME_24_WITH_SHORT_OFFSET = {
  */
 export const TIME_24_WITH_LONG_OFFSET = {
   hour: n,
-  minute: d2,
-  second: d2,
+  minute: n,
+  second: n,
   hour12: false,
   timeZoneName: l
 };
@@ -103,7 +102,7 @@ export const DATETIME_SHORT = {
   month: n,
   day: n,
   hour: n,
-  minute: d2
+  minute: n
 };
 
 /**
@@ -114,8 +113,8 @@ export const DATETIME_SHORT_WITH_SECONDS = {
   month: n,
   day: n,
   hour: n,
-  minute: d2,
-  second: d2
+  minute: n,
+  second: n
 };
 
 export const DATETIME_MED = {
@@ -123,7 +122,7 @@ export const DATETIME_MED = {
   month: s,
   day: n,
   hour: n,
-  minute: d2
+  minute: n
 };
 
 export const DATETIME_MED_WITH_SECONDS = {
@@ -131,8 +130,8 @@ export const DATETIME_MED_WITH_SECONDS = {
   month: s,
   day: n,
   hour: n,
-  minute: d2,
-  second: d2
+  minute: n,
+  second: n
 };
 
 export const DATETIME_MED_WITH_WEEKDAY = {
@@ -141,7 +140,7 @@ export const DATETIME_MED_WITH_WEEKDAY = {
   day: n,
   weekday: s,
   hour: n,
-  minute: d2
+  minute: n
 };
 
 export const DATETIME_FULL = {
@@ -149,7 +148,7 @@ export const DATETIME_FULL = {
   month: l,
   day: n,
   hour: n,
-  minute: d2,
+  minute: n,
   timeZoneName: s
 };
 
@@ -158,8 +157,8 @@ export const DATETIME_FULL_WITH_SECONDS = {
   month: l,
   day: n,
   hour: n,
-  minute: d2,
-  second: d2,
+  minute: n,
+  second: n,
   timeZoneName: s
 };
 
@@ -169,7 +168,7 @@ export const DATETIME_HUGE = {
   day: n,
   weekday: l,
   hour: n,
-  minute: d2,
+  minute: n,
   timeZoneName: l
 };
 
@@ -179,7 +178,7 @@ export const DATETIME_HUGE_WITH_SECONDS = {
   day: n,
   weekday: l,
   hour: n,
-  minute: d2,
-  second: d2,
+  minute: n,
+  second: n,
   timeZoneName: l
 };

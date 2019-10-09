@@ -288,6 +288,19 @@ test("DateTime#toLocaleString() does the best it can with a fixed-offset zone wh
   );
 });
 
+test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
+  expect(dt.reconfigure({ locale: "en-US" }).toLocaleString(DateTime.TIME_SIMPLE)).toBe("9:23 AM");
+  expect(dt.reconfigure({ locale: "en-US" }).toLocaleString(DateTime.TIME_24_SIMPLE)).toBe("09:23");
+
+  // France has 24-hour time by default
+  expect(dt.reconfigure({ locale: "fr" }).toLocaleString(DateTime.TIME_SIMPLE)).toBe("09:23");
+  expect(dt.reconfigure({ locale: "fr" }).toLocaleString(DateTime.TIME_24_SIMPLE)).toBe("09:23");
+
+  // For whatever reason, Spain doesn't prefix with "0"
+  expect(dt.reconfigure({ locale: "es" }).toLocaleString(DateTime.TIME_SIMPLE)).toBe("9:23");
+  expect(dt.reconfigure({ locale: "es" }).toLocaleString(DateTime.TIME_24_SIMPLE)).toBe("9:23");
+});
+
 //------
 // #resolvedLocaleOpts()
 //------
