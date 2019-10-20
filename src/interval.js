@@ -182,7 +182,7 @@ export default class Interval {
   }
 
   /**
-   * Returns whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
+   * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
    * @type {boolean}
    */
   get isValid() {
@@ -406,7 +406,7 @@ export default class Interval {
   /**
    * Return an Interval representing the intersection of this Interval and the specified Interval.
    * Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.
-   * Returns null if the intersection is empty, i.e., the intervals don't intersect.
+   * Returns null if the intersection is empty, meaning, the intervals don't intersect.
    * @param {Interval} other
    * @return {Interval}
    */
