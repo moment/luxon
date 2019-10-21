@@ -441,9 +441,9 @@ export default class DateTime {
    * @param {number} [month=1] - The month, 1-indexed
    * @param {number} [day=1] - The day of the month
    * @param {number} [hour=0] - The hour of the day, in 24-hour time
-   * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
-   * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
-   * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
+   * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+   * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+   * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
    * @example DateTime.local()                            //~> now
    * @example DateTime.local(2017)                        //~> 2017-01-01T00:00:00
    * @example DateTime.local(2017, 3)                     //~> 2017-03-01T00:00:00
@@ -479,9 +479,9 @@ export default class DateTime {
    * @param {number} [month=1] - The month, 1-indexed
    * @param {number} [day=1] - The day of the month
    * @param {number} [hour=0] - The hour of the day, in 24-hour time
-   * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
-   * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
-   * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
+   * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+   * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+   * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
    * @example DateTime.utc()                            //~> now
    * @example DateTime.utc(2017)                        //~> 2017-01-01T00:00:00Z
    * @example DateTime.utc(2017, 3)                     //~> 2017-03-01T00:00:00Z
@@ -540,7 +540,7 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from a number of milliseconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
+   * Create a DateTime from a number of milliseconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
    * @param {number} milliseconds - a number of milliseconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -565,7 +565,7 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from a number of seconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
+   * Create a DateTime from a number of seconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
    * @param {number} seconds - a number of seconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -1059,7 +1059,7 @@ export default class DateTime {
   }
 
   /**
-   * Get the ordinal (i.e. the day of the year)
+   * Get the ordinal (meaning the day of the year)
    * @example DateTime.local(2017, 5, 25).ordinal //=> 145
    * @type {number|DateTime}
    */
@@ -1418,7 +1418,7 @@ export default class DateTime {
   }
 
   /**
-   * "Set" this DateTime to the end (i.e. the last millisecond) of a unit of time
+   * "Set" this DateTime to the end (meaning the last millisecond) of a unit of time
    * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-31T23:59:59.999-05:00'
    * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
@@ -1480,7 +1480,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+   * Returns an array of format "parts", meaning individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
    * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.

@@ -4,7 +4,7 @@ import Zone from "../zone.js";
 let singleton = null;
 
 /**
- * A zone with a fixed offset (i.e. no DST)
+ * A zone with a fixed offset (meaning no DST)
  * @implements {Zone}
  */
 export default class FixedOffsetZone extends Zone {
