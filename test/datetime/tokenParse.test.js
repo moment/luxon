@@ -217,6 +217,21 @@ test("DateTime.fromFormat() parses format month names", () => {
   expect(i.day).toBe(25);
 });
 
+test("DateTime.fromFormat() parses quarters", () => {
+  const i = DateTime.fromFormat("1982Q2", "yyyy'Q'q");
+  expect(i.year).toBe(1982);
+  expect(i.month).toBe(4);
+  expect(i.quarter).toBe(2);
+  expect(DateTime.fromFormat("2019Q1", "yyyy'Q'q").month).toBe(1);
+  expect(DateTime.fromFormat("2019Q2", "yyyy'Q'q").month).toBe(4);
+  expect(DateTime.fromFormat("2019Q3", "yyyy'Q'q").month).toBe(7);
+  expect(DateTime.fromFormat("2019Q4", "yyyy'Q'q").month).toBe(10);
+  expect(DateTime.fromFormat("2019Q01", "yyyy'Q'qq").month).toBe(1);
+  expect(DateTime.fromFormat("2019Q02", "yyyy'Q'qq").month).toBe(4);
+  expect(DateTime.fromFormat("2019Q03", "yyyy'Q'qq").month).toBe(7);
+  expect(DateTime.fromFormat("2019Q04", "yyyy'Q'qq").month).toBe(10);
+});
+
 test("DateTime.fromFormat() makes trailing periods in month names optional", () => {
   const i = DateTime.fromFormat("janv 25 1982", "LLL dd yyyy", {
     locale: "fr"
