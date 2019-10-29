@@ -391,6 +391,8 @@ test("DateTime.fromFormat() returns invalid when unparsed", () => {
 });
 
 test("DateTime.fromFormat() returns invalid when quarter value is not valid", () => {
+  expect(DateTime.fromFormat("2019Qaa", "yyyy'Q'qq").isValid).toBe(false);
+  expect(DateTime.fromFormat("2019Q00", "yyyy'Q'qq").isValid).toBe(false);
   expect(DateTime.fromFormat("2019Q0", "yyyy'Q'q").isValid).toBe(false);
   expect(DateTime.fromFormat("2019Q1", "yyyy'Q'q").isValid).toBe(true);
   expect(DateTime.fromFormat("2019Q5", "yyyy'Q'q").isValid).toBe(false);
