@@ -1,10 +1,17 @@
-import { isUndefined, isNumber, normalizeObject, hasOwnProperty, asNumber } from "./impl/util.js";
-import Locale from "./impl/locale.js";
-import Formatter from "./impl/formatter.js";
-import { parseISODuration } from "./impl/regexParser.js";
-import Settings from "./settings.js";
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
+import Formatter from "./impl/formatter.js";
 import Invalid from "./impl/invalid.js";
+import Locale from "./impl/locale.js";
+import { parseISODuration } from "./impl/regexParser.js";
+import {
+  asNumber,
+  hasOwnProperty,
+  isNumber,
+  isUndefined,
+  normalizeObject,
+  roundTo
+} from "./impl/util.js";
+import Settings from "./settings.js";
 
 const INVALID = "Invalid Duration";
 
@@ -416,7 +423,9 @@ export default class Duration {
     if (this.hours !== 0) s += this.hours + "H";
     if (this.minutes !== 0) s += this.minutes + "M";
     if (this.seconds !== 0 || this.milliseconds !== 0)
-      s += this.seconds + this.milliseconds / 1000 + "S";
+      // this will handle "floating point madness" by removing extra decimal places
+      // https://stackoverflow.com/questions/588004/is-floating-point-math-broken
+      s += roundTo(this.seconds + this.milliseconds / 1000, 3) + "S";
     if (s === "P") s += "T0S";
     return s;
   }

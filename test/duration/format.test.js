@@ -49,6 +49,19 @@ test("Duration#toISO handles milliseconds duration", () => {
   expect(Duration.fromObject({ milliseconds: 7 }).toISO()).toBe("PT0.007S");
 });
 
+test("Duration#toISO handles seconds/milliseconds duration", () => {
+  expect(Duration.fromObject({ seconds: 17, milliseconds: 548 }).toISO()).toBe("PT17.548S");
+});
+
+test("Duration#toISO handles negative seconds/milliseconds duration", () => {
+  expect(Duration.fromObject({ seconds: -17, milliseconds: -548 }).toISO()).toBe("PT-17.548S");
+});
+
+test("Duration#toISO handles mixed negative/positive numbers in seconds/milliseconds durations", () => {
+  expect(Duration.fromObject({ seconds: 17, milliseconds: -548 }).toISO()).toBe("PT16.452S");
+  expect(Duration.fromObject({ seconds: -17, milliseconds: 548 }).toISO()).toBe("PT-16.452S");
+});
+
 //------
 // #toJSON()
 //------
