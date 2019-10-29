@@ -244,10 +244,11 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-3" data-ice="link">1.19.3</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-2" data-ice="link">1.19.2</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-1" data-ice="link">1.19.1</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-20-0" data-ice="link">1.20.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-3" data-ice="link">1.19.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-2" data-ice="link">1.19.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-1" data-ice="link">1.19.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-0" data-ice="link">1.19.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-18-2" data-ice="link">1.18.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-18-1" data-ice="link">1.18.1</a></li>
@@ -396,7 +397,7 @@ dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &ap
                          //   }</code>
 </code></pre><p>This also means you can modify the presets as you choose:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(DateTime.DATE_SHORT); //=&gt;  &apos;4/20/2017&apos;
-var newFormat = Object.assign({ weekday: &apos;long&apos; }, DateTime.DATE_SHORT);
+var newFormat = Object.assign(DateTime.DATE_SHORT, { weekday: &apos;long&apos; });
 dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 </code></pre>
 <h3 id="presets">Presets</h3><p>Here&apos;s the full set of provided presets using the October 14, 1983 at 13:30:23 as an example.</p>

@@ -355,8 +355,7 @@ var luxon = (function (exports) {
 
   const n = "numeric",
     s = "short",
-    l = "long",
-    d2 = "2-digit";
+    l = "long";
 
   const DATE_SHORT = {
     year: n,
@@ -385,32 +384,32 @@ var luxon = (function (exports) {
 
   const TIME_SIMPLE = {
     hour: n,
-    minute: d2
+    minute: n
   };
 
   const TIME_WITH_SECONDS = {
     hour: n,
-    minute: d2,
-    second: d2
+    minute: n,
+    second: n
   };
 
   const TIME_WITH_SHORT_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: s
   };
 
   const TIME_WITH_LONG_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: l
   };
 
   const TIME_24_SIMPLE = {
     hour: n,
-    minute: d2,
+    minute: n,
     hour12: false
   };
 
@@ -419,8 +418,8 @@ var luxon = (function (exports) {
    */
   const TIME_24_WITH_SECONDS = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     hour12: false
   };
 
@@ -429,8 +428,8 @@ var luxon = (function (exports) {
    */
   const TIME_24_WITH_SHORT_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     hour12: false,
     timeZoneName: s
   };
@@ -440,8 +439,8 @@ var luxon = (function (exports) {
    */
   const TIME_24_WITH_LONG_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     hour12: false,
     timeZoneName: l
   };
@@ -454,7 +453,7 @@ var luxon = (function (exports) {
     month: n,
     day: n,
     hour: n,
-    minute: d2
+    minute: n
   };
 
   /**
@@ -465,8 +464,8 @@ var luxon = (function (exports) {
     month: n,
     day: n,
     hour: n,
-    minute: d2,
-    second: d2
+    minute: n,
+    second: n
   };
 
   const DATETIME_MED = {
@@ -474,7 +473,7 @@ var luxon = (function (exports) {
     month: s,
     day: n,
     hour: n,
-    minute: d2
+    minute: n
   };
 
   const DATETIME_MED_WITH_SECONDS = {
@@ -482,8 +481,8 @@ var luxon = (function (exports) {
     month: s,
     day: n,
     hour: n,
-    minute: d2,
-    second: d2
+    minute: n,
+    second: n
   };
 
   const DATETIME_MED_WITH_WEEKDAY = {
@@ -492,7 +491,7 @@ var luxon = (function (exports) {
     day: n,
     weekday: s,
     hour: n,
-    minute: d2
+    minute: n
   };
 
   const DATETIME_FULL = {
@@ -500,7 +499,7 @@ var luxon = (function (exports) {
     month: l,
     day: n,
     hour: n,
-    minute: d2,
+    minute: n,
     timeZoneName: s
   };
 
@@ -509,8 +508,8 @@ var luxon = (function (exports) {
     month: l,
     day: n,
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: s
   };
 
@@ -520,7 +519,7 @@ var luxon = (function (exports) {
     day: n,
     weekday: l,
     hour: n,
-    minute: d2,
+    minute: n,
     timeZoneName: l
   };
 
@@ -530,8 +529,8 @@ var luxon = (function (exports) {
     day: n,
     weekday: l,
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: l
   };
 
@@ -1089,7 +1088,7 @@ var luxon = (function (exports) {
   let singleton$1 = null;
 
   /**
-   * A zone with a fixed offset (i.e. no DST)
+   * A zone with a fixed offset (meaning no DST)
    * @implements {Zone}
    */
   class FixedOffsetZone extends Zone {
@@ -1787,7 +1786,7 @@ var luxon = (function (exports) {
   }
 
   let intlNumCache = {};
-  function getCachendINF(locString, opts = {}) {
+  function getCachedINF(locString, opts = {}) {
     const key = JSON.stringify([locString, opts]);
     let inf = intlNumCache[key];
     if (!inf) {
@@ -1798,7 +1797,7 @@ var luxon = (function (exports) {
   }
 
   let intlRelCache = {};
-  function getCachendRTF(locString, opts = {}) {
+  function getCachedRTF(locString, opts = {}) {
     const key = JSON.stringify([locString, opts]);
     let inf = intlRelCache[key];
     if (!inf) {
@@ -1926,7 +1925,7 @@ var luxon = (function (exports) {
       if (!forceSimple && hasIntl()) {
         const intlOpts = { useGrouping: false };
         if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
-        this.inf = getCachendINF(intl, intlOpts);
+        this.inf = getCachedINF(intl, intlOpts);
       }
     }
 
@@ -2024,7 +2023,7 @@ var luxon = (function (exports) {
     constructor(intl, isEnglish, opts) {
       this.opts = Object.assign({ style: "long" }, opts);
       if (!isEnglish && hasRelative()) {
-        this.rtf = getCachendRTF(intl, opts);
+        this.rtf = getCachedRTF(intl, opts);
       }
     }
 
@@ -3029,6 +3028,22 @@ var luxon = (function (exports) {
     }
 
     /**
+     * Scale this Duration by the specified amount. Return a newly-constructed Duration.
+     * @param {function} fn - The function to apply to each unit. Arity is 1 or 2: the value of the unit and, optionally, the unit name. Must return a number.
+     * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit(x => x * 2) //=> { hours: 2, minutes: 60 }
+     * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit((x, u) => u === "hour" ? x * 2 : x) //=> { hours: 2, minutes: 30 }
+     * @return {Duration}
+     */
+    mapUnits(fn) {
+      if (!this.isValid) return this;
+      const result = {};
+      for (const k of Object.keys(this.values)) {
+        result[k] = asNumber(fn(this.values[k], k));
+      }
+      return clone(this, { values: result }, true);
+    }
+
+    /**
      * Get the value of unit.
      * @param {string} unit - a unit such as 'minute' or 'day'
      * @example Duration.fromObject({years: 2, days: 3}).years //=> 2
@@ -3341,7 +3356,7 @@ var luxon = (function (exports) {
    * * **Interrogation** To analyze the Interval, use {@link count}, {@link length}, {@link hasSame}, {@link contains}, {@link isAfter}, or {@link isBefore}.
    * * **Transformation** To create other Intervals out of this one, use {@link set}, {@link splitAt}, {@link splitBy}, {@link divideEqually}, {@link merge}, {@link xor}, {@link union}, {@link intersection}, or {@link difference}.
    * * **Comparison** To compare this Interval to another one, use {@link equals}, {@link overlaps}, {@link abutsStart}, {@link abutsEnd}, {@link engulfs}
-   * * **Output*** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toFormat}, and {@link toDuration}.
+   * * **Output** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toISODate}, {@link toISOTime}, {@link toFormat}, and {@link toDuration}.
    */
   class Interval {
     /**
@@ -3491,7 +3506,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Returns whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
+     * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
      * @type {boolean}
      */
     get isValid() {
@@ -3715,7 +3730,7 @@ var luxon = (function (exports) {
     /**
      * Return an Interval representing the intersection of this Interval and the specified Interval.
      * Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.
-     * Returns null if the intersection is empty, i.e., the intervals don't intersect.
+     * Returns null if the intersection is empty, meaning, the intervals don't intersect.
      * @param {Interval} other
      * @return {Interval}
      */
@@ -3828,6 +3843,29 @@ var luxon = (function (exports) {
     toISO(opts) {
       if (!this.isValid) return INVALID$1;
       return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;
+    }
+
+    /**
+     * Returns an ISO 8601-compliant string representation of date of this Interval.
+     * The time components are ignored.
+     * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+     * @return {string}
+     */
+    toISODate() {
+      if (!this.isValid) return INVALID$1;
+      return `${this.s.toISODate()}/${this.e.toISODate()}`;
+    }
+
+    /**
+     * Returns an ISO 8601-compliant string representation of time of this Interval.
+     * The date components are ignored.
+     * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+     * @param {Object} opts - The same options as {@link DateTime.toISO}
+     * @return {string}
+     */
+    toISOTime(opts) {
+      if (!this.isValid) return INVALID$1;
+      return `${this.s.toISOTime(opts)}/${this.e.toISOTime(opts)}`;
     }
 
     /**
@@ -5147,9 +5185,9 @@ var luxon = (function (exports) {
      * @param {number} [month=1] - The month, 1-indexed
      * @param {number} [day=1] - The day of the month
      * @param {number} [hour=0] - The hour of the day, in 24-hour time
-     * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
-     * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
-     * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
+     * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+     * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+     * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
      * @example DateTime.local()                            //~> now
      * @example DateTime.local(2017)                        //~> 2017-01-01T00:00:00
      * @example DateTime.local(2017, 3)                     //~> 2017-03-01T00:00:00
@@ -5185,9 +5223,9 @@ var luxon = (function (exports) {
      * @param {number} [month=1] - The month, 1-indexed
      * @param {number} [day=1] - The day of the month
      * @param {number} [hour=0] - The hour of the day, in 24-hour time
-     * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
-     * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
-     * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
+     * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+     * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+     * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
      * @example DateTime.utc()                            //~> now
      * @example DateTime.utc(2017)                        //~> 2017-01-01T00:00:00Z
      * @example DateTime.utc(2017, 3)                     //~> 2017-03-01T00:00:00Z
@@ -5246,7 +5284,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Create a DateTime from a number of milliseconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
+     * Create a DateTime from a number of milliseconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
      * @param {number} milliseconds - a number of milliseconds since 1970 UTC
      * @param {Object} options - configuration options for the DateTime
      * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -5271,7 +5309,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Create a DateTime from a number of seconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
+     * Create a DateTime from a number of seconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
      * @param {number} seconds - a number of seconds since 1970 UTC
      * @param {Object} options - configuration options for the DateTime
      * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -5765,7 +5803,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Get the ordinal (i.e. the day of the year)
+     * Get the ordinal (meaning the day of the year)
      * @example DateTime.local(2017, 5, 25).ordinal //=> 145
      * @type {number|DateTime}
      */
@@ -6124,7 +6162,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * "Set" this DateTime to the end (i.e. the last millisecond) of a unit of time
+     * "Set" this DateTime to the end (meaning the last millisecond) of a unit of time
      * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
      * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-31T23:59:59.999-05:00'
      * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
@@ -6186,7 +6224,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+     * Returns an array of format "parts", meaning individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
      * Defaults to the system's locale if no locale has been specified
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
      * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.

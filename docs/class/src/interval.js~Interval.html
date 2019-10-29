@@ -78,7 +78,7 @@
 <li><strong>Interrogation</strong> To analyze the Interval, use <span><a href="class/src/interval.js~Interval.html#instance-method-count">count</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-length">length</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-method-hasSame">hasSame</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-contains">contains</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-isAfter">isAfter</a></span>, or <span><a href="class/src/interval.js~Interval.html#instance-method-isBefore">isBefore</a></span>.</li>
 <li><strong>Transformation</strong> To create other Intervals out of this one, use <span><a href="class/src/datetime.js~DateTime.html#instance-method-set">set</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-splitAt">splitAt</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-splitBy">splitBy</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-divideEqually">divideEqually</a></span>, <span><a href="class/src/interval.js~Interval.html#static-method-merge">merge</a></span>, <span><a href="class/src/interval.js~Interval.html#static-method-xor">xor</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-union">union</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-intersection">intersection</a></span>, or <span><a href="class/src/interval.js~Interval.html#instance-method-difference">difference</a></span>.</li>
 <li><strong>Comparison</strong> To compare this Interval to another one, use <span><a href="class/src/datetime.js~DateTime.html#instance-method-equals">equals</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-overlaps">overlaps</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-abutsStart">abutsStart</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-abutsEnd">abutsEnd</a></span>, <span><a href="class/src/interval.js~Interval.html#instance-method-engulfs">engulfs</a></span></li>
-<li><strong>Output*</strong> To convert the Interval into other representations, see <span><a href="class/src/datetime.js~DateTime.html#instance-method-toString">toString</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-method-toISO">toISO</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-method-toFormat">toFormat</a></span>, and <span><a href="class/src/interval.js~Interval.html#instance-method-toDuration">toDuration</a></span>.</li>
+<li><strong>Output</strong> To convert the Interval into other representations, see <span><a href="class/src/datetime.js~DateTime.html#instance-method-toString">toString</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-method-toISO">toISO</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-method-toISODate">toISODate</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-method-toISOTime">toISOTime</a></span>, <span><a href="class/src/datetime.js~DateTime.html#instance-method-toFormat">toFormat</a></span>, and <span><a href="class/src/interval.js~Interval.html#instance-method-toDuration">toDuration</a></span>.</li>
 </ul>
 </div>
   
@@ -444,7 +444,7 @@
       <div>
         
         
-        <div data-ice="description"><p>Returns whether this Interval&apos;s end is at least its start, i.e. that the Interval isn&apos;t &apos;backwards&apos;.</p>
+        <div data-ice="description"><p>Returns whether this Interval&apos;s end is at least its start, meaning that the Interval isn&apos;t &apos;backwards&apos;.</p>
 </div>
       </div>
     </td>
@@ -1119,6 +1119,64 @@
         
         
         <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of this Interval.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#instance-method-toISODate">toISODate</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of date of this Interval.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/interval.js~Interval.html#instance-method-toISOTime">toISOTime</a></span></span><span class="code" data-ice="signature">(opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of time of this Interval.</p>
 </div>
       </div>
     </td>
@@ -1964,7 +2022,7 @@ Combines overlapping and adjacent Intervals.</p>
   
   
   
-  <div data-ice="description"><p>Returns whether this Interval&apos;s end is at least its start, i.e. that the Interval isn&apos;t &apos;backwards&apos;.</p>
+  <div data-ice="description"><p>Returns whether this Interval&apos;s end is at least its start, meaning that the Interval isn&apos;t &apos;backwards&apos;.</p>
 </div>
 
   
@@ -2711,7 +2769,7 @@ asks &apos;what dates are included in this interval?&apos;, not &apos;how many d
   
   <div data-ice="description"><p>Return an Interval representing the intersection of this Interval and the specified Interval.
 Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.
-Returns null if the intersection is empty, i.e., the intervals don&apos;t intersect.</p>
+Returns null if the intersection is empty, meaning, the intervals don&apos;t intersect.</p>
 </div>
 
   
@@ -3049,7 +3107,7 @@ Returns null if the intersection is empty, i.e., the intervals don&apos;t inters
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber562">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber585">source</a></span></span>
     </span>
   </h3>
 
@@ -3438,7 +3496,7 @@ Left over time is grouped into a smaller interval</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber548">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber571">source</a></span></span>
     </span>
   </h3>
 
@@ -3550,7 +3608,7 @@ Left over time is grouped into a smaller interval</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber531">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber554">source</a></span></span>
     </span>
   </h3>
 
@@ -3646,6 +3704,137 @@ Left over time is grouped into a smaller interval</p>
   
   
   <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of this Interval.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The same options as <span><a href="class/src/datetime.js~DateTime.html#instance-method-toISO">DateTime.toISO</a></span></p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://en.wikipedia.org/wiki/ISO_8601#Time_intervals">https://en.wikipedia.org/wiki/ISO_8601#Time_intervals</a></span></li></ul></div>
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-toISODate">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">toISODate</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber530">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of date of this Interval.
+The time components are ignored.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://en.wikipedia.org/wiki/ISO_8601#Time_intervals">https://en.wikipedia.org/wiki/ISO_8601#Time_intervals</a></span></li></ul></div>
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-toISOTime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">toISOTime</span><span class="code" data-ice="signature">(opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/interval.js.html#lineNumber542">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of time of this Interval.
+The date components are ignored.</p>
 </div>
 
   

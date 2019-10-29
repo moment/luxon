@@ -244,10 +244,11 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#changelog" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-3" data-ice="link">1.19.3</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-2" data-ice="link">1.19.2</a></li>
-<li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-1" data-ice="link">1.19.1</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/changelog.html"><a href="manual/changelog.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-20-0" data-ice="link">1.20.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-3" data-ice="link">1.19.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-2" data-ice="link">1.19.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-1" data-ice="link">1.19.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-19-0" data-ice="link">1.19.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-18-2" data-ice="link">1.18.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/changelog.html"><a href="manual/changelog.html#1-18-1" data-ice="link">1.18.1</a></li>
@@ -750,7 +751,7 @@ dt.setLocale(&apos;fr&apos;).toLocaleString(DateTime.DATETIME_FULL); //=&gt; &ap
                          //     timeZoneName: &apos;short&apos;
                          //   }</code>
 </code></pre><p>This also means you can modify the presets as you choose:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString(DateTime.DATE_SHORT); //=&gt;  &apos;4/20/2017&apos;
-var newFormat = Object.assign({ weekday: &apos;long&apos; }, DateTime.DATE_SHORT);
+var newFormat = Object.assign(DateTime.DATE_SHORT, { weekday: &apos;long&apos; });
 dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 </code></pre><h3>Presets</h3><p>Here&apos;s the full set of provided presets using the October 14, 1983 at 13:30:23 as an example.</p><table>
 <thead>
@@ -2728,7 +2729,16 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>1.19.1</h1><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.20.0</h2><ul>
+<li>Added Duration#mapUnits</li>
+<li>added Interval#toISODate and Interval#toISOTime</li>
+<li>Some documentation fixes</li>
+</ul><h2>1.19.3</h2><ul>
+<li>Cache offset values</li>
+<li>Fix handling of negative sub 1-hour offsets</li>
+</ul><h2>1.19.2</h2><ul>
+<li>Speculative fix for Node 6</li>
+</ul><h2>1.19.1</h2><ul>
 <li>Fix Intl.DateTimeFormat usage for polyfills</li>
 </ul><h2>1.19.0</h2><ul>
 <li>Interval#splitAt now ignores input dates outside the interval</li>
@@ -2987,7 +2997,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <li><code>fromISO</code> now supports <code>year</code> and <code>year-month</code> formats</li>
 <li>More graceful degradation in the absence of platform features</li>
 </ul><h2>0.0.5</h2><p>Experimental, but now broadly useful.</p></div>
-        <a data-ice="link" href="manual/changelog.html#1-19-1"></a>
+        <a data-ice="link" href="manual/changelog.html"></a>
       </div>
     </div>
 <div class="manual-card-wrap" data-ice="cards">

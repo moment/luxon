@@ -444,7 +444,6 @@ define(['exports'], function (exports) { 'use strict';
     if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue)) throw new InvalidArgumentError("Invalid unit value " + value);
     return numericValue;
   }
-
   function normalizeObject(obj, normalizer, nonUnitKeys) {
     var normalized = {};
 
@@ -489,8 +488,7 @@ define(['exports'], function (exports) { 'use strict';
    */
   var n = "numeric",
       s = "short",
-      l = "long",
-      d2 = "2-digit";
+      l = "long";
   var DATE_SHORT = {
     year: n,
     month: n,
@@ -514,28 +512,28 @@ define(['exports'], function (exports) { 'use strict';
   };
   var TIME_SIMPLE = {
     hour: n,
-    minute: d2
+    minute: n
   };
   var TIME_WITH_SECONDS = {
     hour: n,
-    minute: d2,
-    second: d2
+    minute: n,
+    second: n
   };
   var TIME_WITH_SHORT_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: s
   };
   var TIME_WITH_LONG_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: l
   };
   var TIME_24_SIMPLE = {
     hour: n,
-    minute: d2,
+    minute: n,
     hour12: false
   };
   /**
@@ -544,8 +542,8 @@ define(['exports'], function (exports) { 'use strict';
 
   var TIME_24_WITH_SECONDS = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     hour12: false
   };
   /**
@@ -554,8 +552,8 @@ define(['exports'], function (exports) { 'use strict';
 
   var TIME_24_WITH_SHORT_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     hour12: false,
     timeZoneName: s
   };
@@ -565,8 +563,8 @@ define(['exports'], function (exports) { 'use strict';
 
   var TIME_24_WITH_LONG_OFFSET = {
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     hour12: false,
     timeZoneName: l
   };
@@ -579,7 +577,7 @@ define(['exports'], function (exports) { 'use strict';
     month: n,
     day: n,
     hour: n,
-    minute: d2
+    minute: n
   };
   /**
    * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
@@ -590,23 +588,23 @@ define(['exports'], function (exports) { 'use strict';
     month: n,
     day: n,
     hour: n,
-    minute: d2,
-    second: d2
+    minute: n,
+    second: n
   };
   var DATETIME_MED = {
     year: n,
     month: s,
     day: n,
     hour: n,
-    minute: d2
+    minute: n
   };
   var DATETIME_MED_WITH_SECONDS = {
     year: n,
     month: s,
     day: n,
     hour: n,
-    minute: d2,
-    second: d2
+    minute: n,
+    second: n
   };
   var DATETIME_MED_WITH_WEEKDAY = {
     year: n,
@@ -614,14 +612,14 @@ define(['exports'], function (exports) { 'use strict';
     day: n,
     weekday: s,
     hour: n,
-    minute: d2
+    minute: n
   };
   var DATETIME_FULL = {
     year: n,
     month: l,
     day: n,
     hour: n,
-    minute: d2,
+    minute: n,
     timeZoneName: s
   };
   var DATETIME_FULL_WITH_SECONDS = {
@@ -629,8 +627,8 @@ define(['exports'], function (exports) { 'use strict';
     month: l,
     day: n,
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: s
   };
   var DATETIME_HUGE = {
@@ -639,7 +637,7 @@ define(['exports'], function (exports) { 'use strict';
     day: n,
     weekday: l,
     hour: n,
-    minute: d2,
+    minute: n,
     timeZoneName: l
   };
   var DATETIME_HUGE_WITH_SECONDS = {
@@ -648,8 +646,8 @@ define(['exports'], function (exports) { 'use strict';
     day: n,
     weekday: l,
     hour: n,
-    minute: d2,
-    second: d2,
+    minute: n,
+    second: n,
     timeZoneName: l
   };
 
@@ -1294,7 +1292,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var singleton$1 = null;
   /**
-   * A zone with a fixed offset (i.e. no DST)
+   * A zone with a fixed offset (meaning no DST)
    * @implements {Zone}
    */
 
@@ -2244,7 +2242,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var intlNumCache = {};
 
-  function getCachendINF(locString, opts) {
+  function getCachedINF(locString, opts) {
     if (opts === void 0) {
       opts = {};
     }
@@ -2262,7 +2260,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var intlRelCache = {};
 
-  function getCachendRTF(locString, opts) {
+  function getCachedRTF(locString, opts) {
     if (opts === void 0) {
       opts = {};
     }
@@ -2403,7 +2401,7 @@ define(['exports'], function (exports) { 'use strict';
           useGrouping: false
         };
         if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
-        this.inf = getCachendINF(intl, intlOpts);
+        this.inf = getCachedINF(intl, intlOpts);
       }
     }
 
@@ -2521,7 +2519,7 @@ define(['exports'], function (exports) { 'use strict';
       }, opts);
 
       if (!isEnglish && hasRelative()) {
-        this.rtf = getCachendRTF(intl, opts);
+        this.rtf = getCachedRTF(intl, opts);
       }
     }
 
@@ -3589,8 +3587,19 @@ define(['exports'], function (exports) { 'use strict';
       var dur = friendlyDuration(duration),
           result = {};
 
-      for (var _i = 0, _orderedUnits = orderedUnits; _i < _orderedUnits.length; _i++) {
-        var k = _orderedUnits[_i];
+      for (var _iterator = orderedUnits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+        var _ref;
+
+        if (_isArray) {
+          if (_i >= _iterator.length) break;
+          _ref = _iterator[_i++];
+        } else {
+          _i = _iterator.next();
+          if (_i.done) break;
+          _ref = _i.value;
+        }
+
+        var k = _ref;
 
         if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
           result[k] = dur.get(k) + this.get(k);
@@ -3612,6 +3621,28 @@ define(['exports'], function (exports) { 'use strict';
       if (!this.isValid) return this;
       var dur = friendlyDuration(duration);
       return this.plus(dur.negate());
+    }
+    /**
+     * Scale this Duration by the specified amount. Return a newly-constructed Duration.
+     * @param {function} fn - The function to apply to each unit. Arity is 1 or 2: the value of the unit and, optionally, the unit name. Must return a number.
+     * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit(x => x * 2) //=> { hours: 2, minutes: 60 }
+     * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit((x, u) => u === "hour" ? x * 2 : x) //=> { hours: 2, minutes: 30 }
+     * @return {Duration}
+     */
+    ;
+
+    _proto.mapUnits = function mapUnits(fn) {
+      if (!this.isValid) return this;
+      var result = {};
+
+      for (var _i2 = 0, _Object$keys = Object.keys(this.values); _i2 < _Object$keys.length; _i2++) {
+        var k = _Object$keys[_i2];
+        result[k] = asNumber(fn(this.values[k], k));
+      }
+
+      return clone(this, {
+        values: result
+      }, true);
     }
     /**
      * Get the value of unit.
@@ -3650,10 +3681,10 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.reconfigure = function reconfigure(_temp) {
-      var _ref = _temp === void 0 ? {} : _temp,
-          locale = _ref.locale,
-          numberingSystem = _ref.numberingSystem,
-          conversionAccuracy = _ref.conversionAccuracy;
+      var _ref2 = _temp === void 0 ? {} : _temp,
+          locale = _ref2.locale,
+          numberingSystem = _ref2.numberingSystem,
+          conversionAccuracy = _ref2.conversionAccuracy;
 
       var loc = this.loc.clone({
         locale: locale,
@@ -3725,8 +3756,19 @@ define(['exports'], function (exports) { 'use strict';
       var lastUnit;
       normalizeValues(this.matrix, vals);
 
-      for (var _i2 = 0, _orderedUnits2 = orderedUnits; _i2 < _orderedUnits2.length; _i2++) {
-        var k = _orderedUnits2[_i2];
+      for (var _iterator2 = orderedUnits, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+        var _ref3;
+
+        if (_isArray2) {
+          if (_i3 >= _iterator2.length) break;
+          _ref3 = _iterator2[_i3++];
+        } else {
+          _i3 = _iterator2.next();
+          if (_i3.done) break;
+          _ref3 = _i3.value;
+        }
+
+        var k = _ref3;
 
         if (units.indexOf(k) >= 0) {
           lastUnit = k;
@@ -3781,8 +3823,8 @@ define(['exports'], function (exports) { 'use strict';
       if (!this.isValid) return this;
       var negated = {};
 
-      for (var _i3 = 0, _Object$keys = Object.keys(this.values); _i3 < _Object$keys.length; _i3++) {
-        var k = _Object$keys[_i3];
+      for (var _i4 = 0, _Object$keys2 = Object.keys(this.values); _i4 < _Object$keys2.length; _i4++) {
+        var k = _Object$keys2[_i4];
         negated[k] = -this.values[k];
       }
 
@@ -3811,8 +3853,19 @@ define(['exports'], function (exports) { 'use strict';
         return false;
       }
 
-      for (var _i4 = 0, _orderedUnits3 = orderedUnits; _i4 < _orderedUnits3.length; _i4++) {
-        var u = _orderedUnits3[_i4];
+      for (var _iterator3 = orderedUnits, _isArray3 = Array.isArray(_iterator3), _i5 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+        var _ref4;
+
+        if (_isArray3) {
+          if (_i5 >= _iterator3.length) break;
+          _ref4 = _iterator3[_i5++];
+        } else {
+          _i5 = _iterator3.next();
+          if (_i5.done) break;
+          _ref4 = _i5.value;
+        }
+
+        var u = _ref4;
 
         if (this.values[u] !== other.values[u]) {
           return false;
@@ -3993,7 +4046,7 @@ define(['exports'], function (exports) { 'use strict';
    * * **Interrogation** To analyze the Interval, use {@link count}, {@link length}, {@link hasSame}, {@link contains}, {@link isAfter}, or {@link isBefore}.
    * * **Transformation** To create other Intervals out of this one, use {@link set}, {@link splitAt}, {@link splitBy}, {@link divideEqually}, {@link merge}, {@link xor}, {@link union}, {@link intersection}, or {@link difference}.
    * * **Comparison** To compare this Interval to another one, use {@link equals}, {@link overlaps}, {@link abutsStart}, {@link abutsEnd}, {@link engulfs}
-   * * **Output*** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toFormat}, and {@link toDuration}.
+   * * **Output** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toISODate}, {@link toISOTime}, {@link toFormat}, and {@link toDuration}.
    */
 
 
@@ -4390,7 +4443,7 @@ define(['exports'], function (exports) { 'use strict';
     /**
      * Return an Interval representing the intersection of this Interval and the specified Interval.
      * Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.
-     * Returns null if the intersection is empty, i.e., the intervals don't intersect.
+     * Returns null if the intersection is empty, meaning, the intervals don't intersect.
      * @param {Interval} other
      * @return {Interval}
      */
@@ -4552,6 +4605,31 @@ define(['exports'], function (exports) { 'use strict';
       return this.s.toISO(opts) + "/" + this.e.toISO(opts);
     }
     /**
+     * Returns an ISO 8601-compliant string representation of date of this Interval.
+     * The time components are ignored.
+     * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+     * @return {string}
+     */
+    ;
+
+    _proto.toISODate = function toISODate() {
+      if (!this.isValid) return INVALID$1;
+      return this.s.toISODate() + "/" + this.e.toISODate();
+    }
+    /**
+     * Returns an ISO 8601-compliant string representation of time of this Interval.
+     * The date components are ignored.
+     * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+     * @param {Object} opts - The same options as {@link DateTime.toISO}
+     * @return {string}
+     */
+    ;
+
+    _proto.toISOTime = function toISOTime(opts) {
+      if (!this.isValid) return INVALID$1;
+      return this.s.toISOTime(opts) + "/" + this.e.toISOTime(opts);
+    }
+    /**
      * Returns a string representation of this Interval formatted according to the specified format string.
      * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime.toFormat} for details.
      * @param {Object} opts - options
@@ -4618,7 +4696,7 @@ define(['exports'], function (exports) { 'use strict';
         return this.isValid ? this.e : null;
       }
       /**
-       * Returns whether this Interval's end is at least its start, i.e. that the Interval isn't 'backwards'.
+       * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
        * @type {boolean}
        */
 
@@ -6016,8 +6094,19 @@ define(['exports'], function (exports) { 'use strict';
 
   function quickDT(obj, zone) {
     // assume we have the higher-order units
-    for (var _i = 0, _orderedUnits = orderedUnits$1; _i < _orderedUnits.length; _i++) {
-      var u = _orderedUnits[_i];
+    for (var _iterator = orderedUnits$1, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+      var _ref2;
+
+      if (_isArray) {
+        if (_i >= _iterator.length) break;
+        _ref2 = _iterator[_i++];
+      } else {
+        _i = _iterator.next();
+        if (_i.done) break;
+        _ref2 = _i.value;
+      }
+
+      var u = _ref2;
 
       if (isUndefined(obj[u])) {
         obj[u] = defaultUnitValues[u];
@@ -6064,19 +6153,19 @@ define(['exports'], function (exports) { 'use strict';
       return format(differ(opts.unit), opts.unit);
     }
 
-    for (var _iterator = opts.units, _isArray = Array.isArray(_iterator), _i2 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref2;
+    for (var _iterator2 = opts.units, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+      var _ref3;
 
-      if (_isArray) {
-        if (_i2 >= _iterator.length) break;
-        _ref2 = _iterator[_i2++];
+      if (_isArray2) {
+        if (_i2 >= _iterator2.length) break;
+        _ref3 = _iterator2[_i2++];
       } else {
-        _i2 = _iterator.next();
+        _i2 = _iterator2.next();
         if (_i2.done) break;
-        _ref2 = _i2.value;
+        _ref3 = _i2.value;
       }
 
-      var unit = _ref2;
+      var unit = _ref3;
       var count = differ(unit);
 
       if (Math.abs(count) >= 1) {
@@ -6129,9 +6218,9 @@ define(['exports'], function (exports) { 'use strict';
         var unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
 
         if (unchanged) {
-          var _ref3 = [config.old.c, config.old.o];
-          c = _ref3[0];
-          o = _ref3[1];
+          var _ref4 = [config.old.c, config.old.o];
+          c = _ref4[0];
+          o = _ref4[1];
         } else {
           c = tsToObj(this.ts, zone.offset(this.ts));
           invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
@@ -6183,9 +6272,9 @@ define(['exports'], function (exports) { 'use strict';
      * @param {number} [month=1] - The month, 1-indexed
      * @param {number} [day=1] - The day of the month
      * @param {number} [hour=0] - The hour of the day, in 24-hour time
-     * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
-     * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
-     * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
+     * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+     * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+     * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
      * @example DateTime.local()                            //~> now
      * @example DateTime.local(2017)                        //~> 2017-01-01T00:00:00
      * @example DateTime.local(2017, 3)                     //~> 2017-03-01T00:00:00
@@ -6221,9 +6310,9 @@ define(['exports'], function (exports) { 'use strict';
      * @param {number} [month=1] - The month, 1-indexed
      * @param {number} [day=1] - The day of the month
      * @param {number} [hour=0] - The hour of the day, in 24-hour time
-     * @param {number} [minute=0] - The minute of the hour, i.e. a number between 0 and 59
-     * @param {number} [second=0] - The second of the minute, i.e. a number between 0 and 59
-     * @param {number} [millisecond=0] - The millisecond of the second, i.e. a number between 0 and 999
+     * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+     * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+     * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
      * @example DateTime.utc()                            //~> now
      * @example DateTime.utc(2017)                        //~> 2017-01-01T00:00:00Z
      * @example DateTime.utc(2017, 3)                     //~> 2017-03-01T00:00:00Z
@@ -6287,7 +6376,7 @@ define(['exports'], function (exports) { 'use strict';
       });
     }
     /**
-     * Create a DateTime from a number of milliseconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
+     * Create a DateTime from a number of milliseconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
      * @param {number} milliseconds - a number of milliseconds since 1970 UTC
      * @param {Object} options - configuration options for the DateTime
      * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -6317,7 +6406,7 @@ define(['exports'], function (exports) { 'use strict';
       }
     }
     /**
-     * Create a DateTime from a number of seconds since the epoch (i.e. since 1 January 1970 00:00:00 UTC). Uses the default zone.
+     * Create a DateTime from a number of seconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
      * @param {number} seconds - a number of seconds since 1970 UTC
      * @param {Object} options - configuration options for the DateTime
      * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
@@ -6423,19 +6512,19 @@ define(['exports'], function (exports) { 'use strict';
 
       var foundFirst = false;
 
-      for (var _iterator2 = units, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-        var _ref4;
+      for (var _iterator3 = units, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+        var _ref5;
 
-        if (_isArray2) {
-          if (_i3 >= _iterator2.length) break;
-          _ref4 = _iterator2[_i3++];
+        if (_isArray3) {
+          if (_i3 >= _iterator3.length) break;
+          _ref5 = _iterator3[_i3++];
         } else {
-          _i3 = _iterator2.next();
+          _i3 = _iterator3.next();
           if (_i3.done) break;
-          _ref4 = _i3.value;
+          _ref5 = _i3.value;
         }
 
-        var u = _ref4;
+        var u = _ref5;
         var v = normalized[u];
 
         if (!isUndefined(v)) {
@@ -6776,11 +6865,11 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.setZone = function setZone(zone, _temp) {
-      var _ref5 = _temp === void 0 ? {} : _temp,
-          _ref5$keepLocalTime = _ref5.keepLocalTime,
-          keepLocalTime = _ref5$keepLocalTime === void 0 ? false : _ref5$keepLocalTime,
-          _ref5$keepCalendarTim = _ref5.keepCalendarTime,
-          keepCalendarTime = _ref5$keepCalendarTim === void 0 ? false : _ref5$keepCalendarTim;
+      var _ref6 = _temp === void 0 ? {} : _temp,
+          _ref6$keepLocalTime = _ref6.keepLocalTime,
+          keepLocalTime = _ref6$keepLocalTime === void 0 ? false : _ref6$keepLocalTime,
+          _ref6$keepCalendarTim = _ref6.keepCalendarTime,
+          keepCalendarTime = _ref6$keepCalendarTim === void 0 ? false : _ref6$keepCalendarTim;
 
       zone = normalizeZone(zone, Settings.defaultZone);
 
@@ -6815,10 +6904,10 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.reconfigure = function reconfigure(_temp2) {
-      var _ref6 = _temp2 === void 0 ? {} : _temp2,
-          locale = _ref6.locale,
-          numberingSystem = _ref6.numberingSystem,
-          outputCalendar = _ref6.outputCalendar;
+      var _ref7 = _temp2 === void 0 ? {} : _temp2,
+          locale = _ref7.locale,
+          numberingSystem = _ref7.numberingSystem,
+          outputCalendar = _ref7.outputCalendar;
 
       var loc = this.loc.clone({
         locale: locale,
@@ -6975,7 +7064,7 @@ define(['exports'], function (exports) { 'use strict';
       return this.set(o);
     }
     /**
-     * "Set" this DateTime to the end (i.e. the last millisecond) of a unit of time
+     * "Set" this DateTime to the end (meaning the last millisecond) of a unit of time
      * @param {string} unit - The unit to go to the end of. Can be 'year', 'month', 'day', 'hour', 'minute', 'second', or 'millisecond'.
      * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-31T23:59:59.999-05:00'
      * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
@@ -7041,7 +7130,7 @@ define(['exports'], function (exports) { 'use strict';
       return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTime(this) : INVALID$2;
     }
     /**
-     * Returns an array of format "parts", i.e. individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+     * Returns an array of format "parts", meaning individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
      * Defaults to the system's locale if no locale has been specified
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
      * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
@@ -7125,13 +7214,13 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.toISOTime = function toISOTime(_temp3) {
-      var _ref7 = _temp3 === void 0 ? {} : _temp3,
-          _ref7$suppressMillise = _ref7.suppressMilliseconds,
-          suppressMilliseconds = _ref7$suppressMillise === void 0 ? false : _ref7$suppressMillise,
-          _ref7$suppressSeconds = _ref7.suppressSeconds,
-          suppressSeconds = _ref7$suppressSeconds === void 0 ? false : _ref7$suppressSeconds,
-          _ref7$includeOffset = _ref7.includeOffset,
-          includeOffset = _ref7$includeOffset === void 0 ? true : _ref7$includeOffset;
+      var _ref8 = _temp3 === void 0 ? {} : _temp3,
+          _ref8$suppressMillise = _ref8.suppressMilliseconds,
+          suppressMilliseconds = _ref8$suppressMillise === void 0 ? false : _ref8$suppressMillise,
+          _ref8$suppressSeconds = _ref8.suppressSeconds,
+          suppressSeconds = _ref8$suppressSeconds === void 0 ? false : _ref8$suppressSeconds,
+          _ref8$includeOffset = _ref8.includeOffset,
+          includeOffset = _ref8$includeOffset === void 0 ? true : _ref8$includeOffset;
 
       return toTechTimeFormat(this, {
         suppressSeconds: suppressSeconds,
@@ -7187,11 +7276,11 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.toSQLTime = function toSQLTime(_temp4) {
-      var _ref8 = _temp4 === void 0 ? {} : _temp4,
-          _ref8$includeOffset = _ref8.includeOffset,
-          includeOffset = _ref8$includeOffset === void 0 ? true : _ref8$includeOffset,
-          _ref8$includeZone = _ref8.includeZone,
-          includeZone = _ref8$includeZone === void 0 ? false : _ref8$includeZone;
+      var _ref9 = _temp4 === void 0 ? {} : _temp4,
+          _ref9$includeOffset = _ref9.includeOffset,
+          includeOffset = _ref9$includeOffset === void 0 ? true : _ref9$includeOffset,
+          _ref9$includeZone = _ref9.includeZone,
+          includeZone = _ref9$includeZone === void 0 ? false : _ref9$includeZone;
 
       return toTechTimeFormat(this, {
         includeOffset: includeOffset,
@@ -7771,7 +7860,7 @@ define(['exports'], function (exports) { 'use strict';
         return this.isValid ? possiblyCachedWeekData(this).weekday : NaN;
       }
       /**
-       * Get the ordinal (i.e. the day of the year)
+       * Get the ordinal (meaning the day of the year)
        * @example DateTime.local(2017, 5, 25).ordinal //=> 145
        * @type {number|DateTime}
        */

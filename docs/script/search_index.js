@@ -1074,6 +1074,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/duration.js~duration#mapunits",
+    "class/src/duration.js~Duration.html#instance-method-mapUnits",
+    "src/duration.js~Duration#mapUnits",
+    "method"
+  ],
+  [
     "src/duration.js~duration#milliseconds",
     "class/src/duration.js~Duration.html#instance-get-milliseconds",
     "src/duration.js~Duration#milliseconds",
@@ -1470,6 +1476,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/interval.js~interval#toisodate",
+    "class/src/interval.js~Interval.html#instance-method-toISODate",
+    "src/interval.js~Interval#toISODate",
+    "method"
+  ],
+  [
+    "src/interval.js~interval#toisotime",
+    "class/src/interval.js~Interval.html#instance-method-toISOTime",
+    "src/interval.js~Interval#toISOTime",
+    "method"
+  ],
+  [
     "src/interval.js~interval#tostring",
     "class/src/interval.js~Interval.html#instance-method-toString",
     "src/interval.js~Interval#toString",
@@ -1591,13 +1609,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-set-now",
+    "class/src/settings.js~Settings.html#static-get-now",
     "src/settings.js~Settings.now",
     "member"
   ],
   [
     "src/settings.js~settings.now",
-    "class/src/settings.js~Settings.html#static-get-now",
+    "class/src/settings.js~Settings.html#static-set-now",
     "src/settings.js~Settings.now",
     "member"
   ],
@@ -1609,13 +1627,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
   [
     "src/settings.js~settings.throwoninvalid",
-    "class/src/settings.js~Settings.html#static-set-throwOnInvalid",
+    "class/src/settings.js~Settings.html#static-get-throwOnInvalid",
     "src/settings.js~Settings.throwOnInvalid",
     "member"
   ],
