@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.20.0
+
+ * Added Duration#mapUnits
+ * added Interval#toISODate and Interval#toISOTime
+ * Some documentation fixes
+
 ## 1.19.3
 
  * Cache offset values
