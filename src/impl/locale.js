@@ -16,7 +16,7 @@ function getCachedDTF(locString, opts = {}) {
 }
 
 let intlNumCache = {};
-function getCachendINF(locString, opts = {}) {
+function getCachedINF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
   let inf = intlNumCache[key];
   if (!inf) {
@@ -27,7 +27,7 @@ function getCachendINF(locString, opts = {}) {
 }
 
 let intlRelCache = {};
-function getCachendRTF(locString, opts = {}) {
+function getCachedRTF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
   let inf = intlRelCache[key];
   if (!inf) {
@@ -155,7 +155,7 @@ class PolyNumberFormatter {
     if (!forceSimple && hasIntl()) {
       const intlOpts = { useGrouping: false };
       if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
-      this.inf = getCachendINF(intl, intlOpts);
+      this.inf = getCachedINF(intl, intlOpts);
     }
   }
 
@@ -253,7 +253,7 @@ class PolyRelFormatter {
   constructor(intl, isEnglish, opts) {
     this.opts = Object.assign({ style: "long" }, opts);
     if (!isEnglish && hasRelative()) {
-      this.rtf = getCachendRTF(intl, opts);
+      this.rtf = getCachedRTF(intl, opts);
     }
   }
 
