@@ -390,6 +390,12 @@ test("DateTime.fromFormat() returns invalid when unparsed", () => {
   expect(DateTime.fromFormat("Splurk", "EEEE").isValid).toBe(false);
 });
 
+test("DateTime.fromFormat() returns invalid when quarter value is not valid", () => {
+  expect(DateTime.fromFormat("2019Q0", "yyyy'Q'q").isValid).toBe(false);
+  expect(DateTime.fromFormat("2019Q1", "yyyy'Q'q").isValid).toBe(true);
+  expect(DateTime.fromFormat("2019Q5", "yyyy'Q'q").isValid).toBe(false);
+});
+
 test("DateTime.fromFormat() returns invalid for out-of-range values", () => {
   const rejects = (s, fmt, opts = {}) =>
     expect(DateTime.fromFormat(s, fmt, opts).isValid).toBeFalsy();
