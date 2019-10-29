@@ -3,7 +3,14 @@ import Formatter from "./impl/formatter.js";
 import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.js";
 import { parseISODuration } from "./impl/regexParser.js";
-import { asNumber, hasOwnProperty, isNumber, isUndefined, normalizeObject } from "./impl/util.js";
+import {
+  asNumber,
+  hasOwnProperty,
+  isNumber,
+  isUndefined,
+  normalizeObject,
+  roundTo
+} from "./impl/util.js";
 import Settings from "./settings.js";
 
 const INVALID = "Invalid Duration";
@@ -418,7 +425,7 @@ export default class Duration {
     if (this.seconds !== 0 || this.milliseconds !== 0)
       // this will handle "floating point madness" by removing extra decimal places
       // https://stackoverflow.com/questions/588004/is-floating-point-math-broken
-      s += Math.round((this.seconds + this.milliseconds / 1000) * 1000) / 1000 + "S";
+      s += roundTo(this.seconds + this.milliseconds / 1000, 3) + "S";
     if (s === "P") s += "T0S";
     return s;
   }
