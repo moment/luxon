@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.21.0
+
+ * Added quarter support to the parser
+ * Fix some rounding issues in ISO formatting
+
 ## 1.20.0
 
  * Added Duration#mapUnits
