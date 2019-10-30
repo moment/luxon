@@ -44,13 +44,20 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/duration.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isUndefined, isNumber, normalizeObject, hasOwnProperty, asNumber } from &quot;./impl/util.js&quot;;
-import Locale from &quot;./impl/locale.js&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &quot;./errors.js&quot;;
 import Formatter from &quot;./impl/formatter.js&quot;;
-import { parseISODuration } from &quot;./impl/regexParser.js&quot;;
-import Settings from &quot;./settings.js&quot;;
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from &quot;./errors.js&quot;;
 import Invalid from &quot;./impl/invalid.js&quot;;
+import Locale from &quot;./impl/locale.js&quot;;
+import { parseISODuration } from &quot;./impl/regexParser.js&quot;;
+import {
+  asNumber,
+  hasOwnProperty,
+  isNumber,
+  isUndefined,
+  normalizeObject,
+  roundTo
+} from &quot;./impl/util.js&quot;;
+import Settings from &quot;./settings.js&quot;;
 
 const INVALID = &quot;Invalid Duration&quot;;
 
@@ -462,7 +469,9 @@ export default class Duration {
     if (this.hours !== 0) s += this.hours + &quot;H&quot;;
     if (this.minutes !== 0) s += this.minutes + &quot;M&quot;;
     if (this.seconds !== 0 || this.milliseconds !== 0)
-      s += this.seconds + this.milliseconds / 1000 + &quot;S&quot;;
+      // this will handle &quot;floating point madness&quot; by removing extra decimal places
+      // https://stackoverflow.com/questions/588004/is-floating-point-math-broken
+      s += roundTo(this.seconds + this.milliseconds / 1000, 3) + &quot;S&quot;;
     if (s === &quot;P&quot;) s += &quot;T0S&quot;;
     return s;
   }
