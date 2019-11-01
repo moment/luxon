@@ -124,4 +124,16 @@ Info.features(); //=> { intl: true, intlTokens: true, zones: true, relative: fal
 
 Specific notes on other platforms:
 
-- **React Native on (specifically) Android** doesn't come with Intl support, so all the possible-to-be-missing capabilities above are unavailable. Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
+- **React Native on (specifically) Android** doesn't come with Intl support, so all the possible-to-be-missing capabilities above are unavailable. Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it. After React Native 0.60, you can edit `android/app/build.gradle` there is an option for changing jsc
+
+```diff
+@@ -109,7 +109,7 @@ def enableProguardInReleaseBuilds = false
+  * give correct results when using with locales other than en-US.  Note that
+  * this variant is about 6MiB larger per architecture than default.
+  */
+-def jscFlavor = 'org.webkit:android-jsc:+'
++def jscFlavor = 'org.webkit:android-jsc-intl:+'
+ 
+ /**
+  * Whether to enable the Hermes VM.
+```
