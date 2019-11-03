@@ -1,15 +1,26 @@
 # Changelog
 
-# 1.19.3
+## 1.21.0
+
+ * Added quarter support to the parser
+ * Fix some rounding issues in ISO formatting
+
+## 1.20.0
+
+ * Added Duration#mapUnits
+ * added Interval#toISODate and Interval#toISOTime
+ * Some documentation fixes
+
+## 1.19.3
 
  * Cache offset values
  * Fix handling of negative sub 1-hour offsets
 
-# 1.19.2
+## 1.19.2
 
  * Speculative fix for Node 6
 
-# 1.19.1
+## 1.19.1
 
  * Fix Intl.DateTimeFormat usage for polyfills
 

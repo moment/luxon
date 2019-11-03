@@ -2,6 +2,7 @@
 /* eslint no-console: off */
 import Benchmark from "benchmark";
 import DateTime from "../src/datetime";
+import Settings from "../src/settings";
 
 const suite = new Benchmark.Suite();
 
@@ -37,13 +38,20 @@ suite
   .add("DateTime#toFormat", () => {
     dt.toFormat("yyyy-MM-dd");
   })
+  .add("DateTime#toFormat with macro", () => {
+    dt.toFormat("T");
+  })
+  .add("DateTime#toFormat with macro no cache", () => {
+    dt.toFormat("T");
+    Settings.resetCaches();
+  })
   .add("DateTime#add", () => {
     dt.plus({ milliseconds: 3434 });
   })
   .add("DateTime#toISO", () => {
     dt.toISO();
   })
-  .add("DateTime#toFormatString", () => {
+  .add("DateTime#toLocaleString", () => {
     dt.toLocaleString();
   })
   .on("cycle", event => {
