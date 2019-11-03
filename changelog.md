@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.21.1
+
+ * Fix for quarter parsing
+ * Some documentation updates
+
 ## 1.21.0
 
  * Added quarter support to the parser

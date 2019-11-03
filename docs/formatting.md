@@ -209,7 +209,7 @@ The macro options available correspond one-to-one with the preset formats define
 | G                |              | abbreviated localized era                                      | AD                                                          |
 | GG               |              | unabbreviated localized era                                    | Anno Domini                                                 |
 | GGGGG            |              | one-letter localized era                                       | A                                                           |
-| kk               |              | ISO week year, unpadded                                        | 17                                                          |
+| kk               |              | ISO week year, unpadded                                        | 14                                                          |
 | kkkk             |              | ISO week year, padded to 4                                     | 2014                                                        |
 | W                |              | ISO week number, unpadded                                      | 32                                                          |
 | WW               |              | ISO week number, padded to 2                                   | 32                                                          |
