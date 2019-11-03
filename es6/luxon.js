@@ -5027,7 +5027,7 @@ function normalizeUnit(unit) {
     minute: "minute",
     minutes: "minute",
     quarter: "quarter",
-    quarters: "quarters",
+    quarters: "quarter",
     second: "second",
     seconds: "second",
     millisecond: "millisecond",
