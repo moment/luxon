@@ -1,8 +1,15 @@
-import { isUndefined, isNumber, normalizeObject, hasOwnProperty } from "./impl/util.js";
-import Locale from "./impl/locale.js";
 import Formatter from "./impl/formatter.js";
+import Locale from "./impl/locale.js";
 import { parseISODuration } from "./impl/regexParser.js";
 import { InvalidArgumentError, InvalidUnitError, UnparsableStringError } from "./errors.js";
+import {
+  asNumber,
+  hasOwnProperty,
+  isNumber,
+  isUndefined,
+  normalizeObject,
+  roundTo
+} from "./impl/util.js";
 
 // unit conversion constants
 const lowOrderMatrix = {
@@ -369,7 +376,9 @@ export default class Duration {
     if (this.hours !== 0) s += this.hours + "H";
     if (this.minutes !== 0) s += this.minutes + "M";
     if (this.seconds !== 0 || this.milliseconds !== 0)
-      s += this.seconds + this.milliseconds / 1000 + "S";
+      // this will handle "floating point madness" by removing extra decimal places
+      // https://stackoverflow.com/questions/588004/is-floating-point-math-broken
+      s += roundTo(this.seconds + this.milliseconds / 1000, 3) + "S";
     if (s === "P") s += "T0S";
     return s;
   }
@@ -424,6 +433,21 @@ export default class Duration {
   minus(duration) {
     const dur = friendlyDuration(duration);
     return this.plus(dur.negate());
+  }
+
+  /**
+   * Scale this Duration by the specified amount. Return a newly-constructed Duration.
+   * @param {function} fn - The function to apply to each unit. Arity is 1 or 2: the value of the unit and, optionally, the unit name. Must return a number.
+   * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit(x => x * 2) //=> { hours: 2, minutes: 60 }
+   * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnit((x, u) => u === "hour" ? x * 2 : x) //=> { hours: 2, minutes: 30 }
+   * @return {Duration}
+   */
+  mapUnits(fn) {
+    const result = {};
+    for (const k of Object.keys(this.values)) {
+      result[k] = asNumber(fn(this.values[k], k));
+    }
+    return clone(this, { values: result }, true);
   }
 
   /**

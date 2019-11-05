@@ -119,6 +119,10 @@ function unitForToken(token, loc) {
           return intUnit(two);
         case "m":
           return intUnit(oneOrTwo);
+        case "q":
+          return intUnit(oneOrTwo);
+        case "qq":
+          return intUnit(two);
         case "s":
           return intUnit(oneOrTwo);
         case "ss":
@@ -294,6 +298,8 @@ function dateTimeFromMatches(matches) {
         return "weekNumber";
       case "k":
         return "weekYear";
+      case "q":
+        return "quarter";
       default:
         return null;
     }
@@ -306,6 +312,10 @@ function dateTimeFromMatches(matches) {
     zone = IANAZone.create(matches.z);
   } else {
     zone = null;
+  }
+
+  if (!isUndefined(matches.q)) {
+    matches.M = (matches.q - 1) * 3 + 1;
   }
 
   if (!isUndefined(matches.h)) {
