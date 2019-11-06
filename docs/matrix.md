@@ -20,7 +20,8 @@ Luxon officially supports the last two versions of the major browsers, with some
 | iOS Safari (iOS version numbers) | >= 11    | ✓     | ✓           | ✓           | ✗                             |
 |                                  | 10       | ✓     | ✗           | ✗           | ✗                             |
 |                                  | 9        | ✗     | ✓           | ✗           | ✗                             |
-| Node w/ICU                       | >= 8     | ✓     | ✓           | ✓           | ✗                             |
+| Node w/ICU                       | >= 12    | ✓     | ✓           | ✓           | ✓                             |
+|                                  | >= 8     | ✓     | ✓           | ✓           | ✗                             |
 |                                  | 6        | ✗     | ✓           | ✗           | ✗                             |
 | Node w/o ICU                     | >= 8     | ✓     | ✗           | ✗           | ✗                             |
 |                                  | 6        | ✗     | ✗           | ✗           | ✗                             |
