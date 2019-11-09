@@ -34,7 +34,7 @@ See [contributing](contributing.md).
 ![Phasers to stun][phasers-image]
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg
-[license]: license.txt
+[license]: license.md
 
 [travis-url]: http://travis-ci.org/moment/luxon
 [travis-image]: https://api.travis-ci.org/moment/luxon.svg?branch=master
