@@ -1530,12 +1530,14 @@ class IANAZone extends Zone {
   offset(ts) {
     const date = new Date(ts),
           dtf = makeDTF(this.name),
-          [year, month, day, hour, minute, second] = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date);
+          [year, month, day, hour, minute, second] = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
+          // work around https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
+    adjustedHour = hour === 24 ? 0 : hour;
     const asUTC = objToLocalTS({
       year,
       month,
       day,
-      hour,
+      hour: adjustedHour,
       minute,
       second,
       millisecond: 0

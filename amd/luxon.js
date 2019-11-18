@@ -1803,13 +1803,14 @@ define(['exports'], function (exports) { 'use strict';
           day = _ref2[2],
           hour = _ref2[3],
           minute = _ref2[4],
-          second = _ref2[5];
+          second = _ref2[5],
+          adjustedHour = hour === 24 ? 0 : hour;
 
       var asUTC = objToLocalTS({
         year: year,
         month: month,
         day: day,
-        hour: hour,
+        hour: adjustedHour,
         minute: minute,
         second: second,
         millisecond: 0
@@ -3589,19 +3590,8 @@ define(['exports'], function (exports) { 'use strict';
       var dur = friendlyDuration(duration),
           result = {};
 
-      for (var _iterator = orderedUnits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-        var _ref;
-
-        if (_isArray) {
-          if (_i >= _iterator.length) break;
-          _ref = _iterator[_i++];
-        } else {
-          _i = _iterator.next();
-          if (_i.done) break;
-          _ref = _i.value;
-        }
-
-        var k = _ref;
+      for (var _i = 0, _orderedUnits = orderedUnits; _i < _orderedUnits.length; _i++) {
+        var k = _orderedUnits[_i];
 
         if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
           result[k] = dur.get(k) + this.get(k);
@@ -3683,10 +3673,10 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.reconfigure = function reconfigure(_temp) {
-      var _ref2 = _temp === void 0 ? {} : _temp,
-          locale = _ref2.locale,
-          numberingSystem = _ref2.numberingSystem,
-          conversionAccuracy = _ref2.conversionAccuracy;
+      var _ref = _temp === void 0 ? {} : _temp,
+          locale = _ref.locale,
+          numberingSystem = _ref.numberingSystem,
+          conversionAccuracy = _ref.conversionAccuracy;
 
       var loc = this.loc.clone({
         locale: locale,
@@ -3758,19 +3748,8 @@ define(['exports'], function (exports) { 'use strict';
       var lastUnit;
       normalizeValues(this.matrix, vals);
 
-      for (var _iterator2 = orderedUnits, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-        var _ref3;
-
-        if (_isArray2) {
-          if (_i3 >= _iterator2.length) break;
-          _ref3 = _iterator2[_i3++];
-        } else {
-          _i3 = _iterator2.next();
-          if (_i3.done) break;
-          _ref3 = _i3.value;
-        }
-
-        var k = _ref3;
+      for (var _i3 = 0, _orderedUnits2 = orderedUnits; _i3 < _orderedUnits2.length; _i3++) {
+        var k = _orderedUnits2[_i3];
 
         if (units.indexOf(k) >= 0) {
           lastUnit = k;
@@ -3855,19 +3834,8 @@ define(['exports'], function (exports) { 'use strict';
         return false;
       }
 
-      for (var _iterator3 = orderedUnits, _isArray3 = Array.isArray(_iterator3), _i5 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-        var _ref4;
-
-        if (_isArray3) {
-          if (_i5 >= _iterator3.length) break;
-          _ref4 = _iterator3[_i5++];
-        } else {
-          _i5 = _iterator3.next();
-          if (_i5.done) break;
-          _ref4 = _i5.value;
-        }
-
-        var u = _ref4;
+      for (var _i5 = 0, _orderedUnits3 = orderedUnits; _i5 < _orderedUnits3.length; _i5++) {
+        var u = _orderedUnits3[_i5];
 
         if (this.values[u] !== other.values[u]) {
           return false;
@@ -6111,19 +6079,8 @@ define(['exports'], function (exports) { 'use strict';
 
   function quickDT(obj, zone) {
     // assume we have the higher-order units
-    for (var _iterator = orderedUnits$1, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref2 = _iterator[_i++];
-      } else {
-        _i = _iterator.next();
-        if (_i.done) break;
-        _ref2 = _i.value;
-      }
-
-      var u = _ref2;
+    for (var _i = 0, _orderedUnits = orderedUnits$1; _i < _orderedUnits.length; _i++) {
+      var u = _orderedUnits[_i];
 
       if (isUndefined(obj[u])) {
         obj[u] = defaultUnitValues[u];
@@ -6170,19 +6127,19 @@ define(['exports'], function (exports) { 'use strict';
       return format(differ(opts.unit), opts.unit);
     }
 
-    for (var _iterator2 = opts.units, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref3;
+    for (var _iterator = opts.units, _isArray = Array.isArray(_iterator), _i2 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+      var _ref2;
 
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref3 = _iterator2[_i2++];
+      if (_isArray) {
+        if (_i2 >= _iterator.length) break;
+        _ref2 = _iterator[_i2++];
       } else {
-        _i2 = _iterator2.next();
+        _i2 = _iterator.next();
         if (_i2.done) break;
-        _ref3 = _i2.value;
+        _ref2 = _i2.value;
       }
 
-      var unit = _ref3;
+      var unit = _ref2;
       var count = differ(unit);
 
       if (Math.abs(count) >= 1) {
@@ -6235,9 +6192,9 @@ define(['exports'], function (exports) { 'use strict';
         var unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
 
         if (unchanged) {
-          var _ref4 = [config.old.c, config.old.o];
-          c = _ref4[0];
-          o = _ref4[1];
+          var _ref3 = [config.old.c, config.old.o];
+          c = _ref3[0];
+          o = _ref3[1];
         } else {
           c = tsToObj(this.ts, zone.offset(this.ts));
           invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
@@ -6529,19 +6486,19 @@ define(['exports'], function (exports) { 'use strict';
 
       var foundFirst = false;
 
-      for (var _iterator3 = units, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-        var _ref5;
+      for (var _iterator2 = units, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+        var _ref4;
 
-        if (_isArray3) {
-          if (_i3 >= _iterator3.length) break;
-          _ref5 = _iterator3[_i3++];
+        if (_isArray2) {
+          if (_i3 >= _iterator2.length) break;
+          _ref4 = _iterator2[_i3++];
         } else {
-          _i3 = _iterator3.next();
+          _i3 = _iterator2.next();
           if (_i3.done) break;
-          _ref5 = _i3.value;
+          _ref4 = _i3.value;
         }
 
-        var u = _ref5;
+        var u = _ref4;
         var v = normalized[u];
 
         if (!isUndefined(v)) {
@@ -6882,11 +6839,11 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.setZone = function setZone(zone, _temp) {
-      var _ref6 = _temp === void 0 ? {} : _temp,
-          _ref6$keepLocalTime = _ref6.keepLocalTime,
-          keepLocalTime = _ref6$keepLocalTime === void 0 ? false : _ref6$keepLocalTime,
-          _ref6$keepCalendarTim = _ref6.keepCalendarTime,
-          keepCalendarTime = _ref6$keepCalendarTim === void 0 ? false : _ref6$keepCalendarTim;
+      var _ref5 = _temp === void 0 ? {} : _temp,
+          _ref5$keepLocalTime = _ref5.keepLocalTime,
+          keepLocalTime = _ref5$keepLocalTime === void 0 ? false : _ref5$keepLocalTime,
+          _ref5$keepCalendarTim = _ref5.keepCalendarTime,
+          keepCalendarTime = _ref5$keepCalendarTim === void 0 ? false : _ref5$keepCalendarTim;
 
       zone = normalizeZone(zone, Settings.defaultZone);
 
@@ -6921,10 +6878,10 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.reconfigure = function reconfigure(_temp2) {
-      var _ref7 = _temp2 === void 0 ? {} : _temp2,
-          locale = _ref7.locale,
-          numberingSystem = _ref7.numberingSystem,
-          outputCalendar = _ref7.outputCalendar;
+      var _ref6 = _temp2 === void 0 ? {} : _temp2,
+          locale = _ref6.locale,
+          numberingSystem = _ref6.numberingSystem,
+          outputCalendar = _ref6.outputCalendar;
 
       var loc = this.loc.clone({
         locale: locale,
@@ -7231,13 +7188,13 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.toISOTime = function toISOTime(_temp3) {
-      var _ref8 = _temp3 === void 0 ? {} : _temp3,
-          _ref8$suppressMillise = _ref8.suppressMilliseconds,
-          suppressMilliseconds = _ref8$suppressMillise === void 0 ? false : _ref8$suppressMillise,
-          _ref8$suppressSeconds = _ref8.suppressSeconds,
-          suppressSeconds = _ref8$suppressSeconds === void 0 ? false : _ref8$suppressSeconds,
-          _ref8$includeOffset = _ref8.includeOffset,
-          includeOffset = _ref8$includeOffset === void 0 ? true : _ref8$includeOffset;
+      var _ref7 = _temp3 === void 0 ? {} : _temp3,
+          _ref7$suppressMillise = _ref7.suppressMilliseconds,
+          suppressMilliseconds = _ref7$suppressMillise === void 0 ? false : _ref7$suppressMillise,
+          _ref7$suppressSeconds = _ref7.suppressSeconds,
+          suppressSeconds = _ref7$suppressSeconds === void 0 ? false : _ref7$suppressSeconds,
+          _ref7$includeOffset = _ref7.includeOffset,
+          includeOffset = _ref7$includeOffset === void 0 ? true : _ref7$includeOffset;
 
       return toTechTimeFormat(this, {
         suppressSeconds: suppressSeconds,
@@ -7293,11 +7250,11 @@ define(['exports'], function (exports) { 'use strict';
     ;
 
     _proto.toSQLTime = function toSQLTime(_temp4) {
-      var _ref9 = _temp4 === void 0 ? {} : _temp4,
-          _ref9$includeOffset = _ref9.includeOffset,
-          includeOffset = _ref9$includeOffset === void 0 ? true : _ref9$includeOffset,
-          _ref9$includeZone = _ref9.includeZone,
-          includeZone = _ref9$includeZone === void 0 ? false : _ref9$includeZone;
+      var _ref8 = _temp4 === void 0 ? {} : _temp4,
+          _ref8$includeOffset = _ref8.includeOffset,
+          includeOffset = _ref8$includeOffset === void 0 ? true : _ref8$includeOffset,
+          _ref8$includeZone = _ref8.includeZone,
+          includeZone = _ref8$includeZone === void 0 ? false : _ref8$includeZone;
 
       return toTechTimeFormat(this, {
         includeOffset: includeOffset,
