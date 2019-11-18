@@ -258,6 +258,8 @@ Be careful of converting between units. It's easy to lose information. Let's say
 ```js
 var end = DateTime.fromISO('2017-03-13');
 var start = DateTime.fromISO('2017-02-13');
+
+var diffInMonths = end.diff(start, 'months');
 diffInMonths.as('days'); //=> 30
 ```
 
@@ -306,3 +308,5 @@ end = DateTime.fromISO('2018-05-25');
 i = start.until(end);
 i.toDuration(['years', 'months', 'days']).toObject(); //=> { years: 1, months: 3, days: 12 }
 ```
+
+Of course, once you've converted to a Duration, you're back in the same spot you were with the diff case; *further* conversions will be lossy. So the point is to think carefully about what information you have when.
