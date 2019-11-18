@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.21.2
+
+ * Fix bug in Chrome Canary that threw off time zone calculations
+
 ## 1.21.1
 
  * Fix for quarter parsing
