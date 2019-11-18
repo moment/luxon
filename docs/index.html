@@ -1859,6 +1859,8 @@ end.diff(start, &apos;days&apos;, { conversionAccuracy: &apos;longterm&apos; })<
 </code></pre><p>You can also create an accurate Duration out of an existing one:</p><pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({ conversionAccuracy: &apos;longterm&apos; });</code>
 </code></pre><p>These Durations will do their conversions differently.</p><h3>Losing information</h3><p>Be careful of converting between units. It&apos;s easy to lose information. Let&apos;s say we converted a diff into days:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
 var start = DateTime.fromISO(&apos;2017-02-13&apos;);
+
+var diffInMonths = end.diff(start, &apos;months&apos;);
 diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
 </code></pre><p>That&apos;s our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 15 and March 15!</p><pre><code class="lang-js"><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
 diffInDays.toObject(); //=&gt; { days: 28 }</code>
@@ -1880,7 +1882,7 @@ i.toDuration(&apos;days&apos;).toObject(); //=&gt; { days: 28 }</code>
 </code></pre><p>You can even pick multiple units:</p><pre><code class="lang-js"><code class="source-code prettyprint">end = DateTime.fromISO(&apos;2018-05-25&apos;);
 i = start.until(end);
 i.toDuration([&apos;years&apos;, &apos;months&apos;, &apos;days&apos;]).toObject(); //=&gt; { years: 1, months: 3, days: 12 }</code>
-</code></pre></div>
+</code></pre><p>Of course, once you&apos;ve converted to a Duration, you&apos;re back in the same spot you were with the diff case; <em>further</em> conversions will be lossy. So the point is to think carefully about what information you have when.</p></div>
         <a data-ice="link" href="manual/math.html"></a>
       </div>
     </div>
