@@ -4456,6 +4456,7 @@ var luxon = (function (exports) {
       long: "EEEE"
     },
     dayperiod: "a",
+    dayPeriod: "a",
     hour: {
       numeric: "h",
       "2-digit": "hh"
