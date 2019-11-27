@@ -1,6 +1,6 @@
 {
   "name": "luxon",
-  "version": "1.21.2",
+  "version": "1.21.3",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": [
@@ -59,7 +59,7 @@
     "eslint-plugin-react": "latest",
     "eslint-plugin-standard": "latest",
     "fs-extra": "^6.0.1",
-    "full-icu": "latest",
+    "full-icu": "^1.3.0",
     "husky": "latest",
     "jest": "^24.7.1",
     "lint-staged": "latest",

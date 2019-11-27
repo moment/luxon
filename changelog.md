@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.21.3
+
+ * Fix parsing of meridiems in macro tokens in newer versions of v8
+
 ## 1.21.2
 
  * Fix bug in Chrome Canary that threw off time zone calculations
