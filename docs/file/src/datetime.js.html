@@ -1532,13 +1532,13 @@ export default class DateTime {
    * Defaults to the system&apos;s locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
    * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
-   * @example DateTime.local().toLocaleString(); //=&gt; [
-   *                                    //=&gt;   { type: &apos;day&apos;, value: &apos;25&apos; },
-   *                                    //=&gt;   { type: &apos;literal&apos;, value: &apos;/&apos; },
-   *                                    //=&gt;   { type: &apos;month&apos;, value: &apos;05&apos; },
-   *                                    //=&gt;   { type: &apos;literal&apos;, value: &apos;/&apos; },
-   *                                    //=&gt;   { type: &apos;year&apos;, value: &apos;1982&apos; }
-   *                                    //=&gt; ]
+   * @example DateTime.local().toLocaleParts(); //=&gt; [
+   *                                   //=&gt;   { type: &apos;day&apos;, value: &apos;25&apos; },
+   *                                   //=&gt;   { type: &apos;literal&apos;, value: &apos;/&apos; },
+   *                                   //=&gt;   { type: &apos;month&apos;, value: &apos;05&apos; },
+   *                                   //=&gt;   { type: &apos;literal&apos;, value: &apos;/&apos; },
+   *                                   //=&gt;   { type: &apos;year&apos;, value: &apos;1982&apos; }
+   *                                   //=&gt; ]
    */
   toLocaleParts(opts = {}) {
     return this.isValid
