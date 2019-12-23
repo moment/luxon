@@ -1,5 +1,6 @@
 /* global test expect */
 import { DateTime } from "../../src/luxon";
+import { ConflictingSpecificationError } from "../../src/errors";
 
 //------
 // .fromFormat
@@ -59,6 +60,10 @@ test("DateTime.fromFormat() parses meridiems", () => {
   expect(i.month).toBe(5);
   expect(i.day).toBe(25);
   expect(i.hour).toBe(12);
+});
+
+test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", () => {
+  expect(() => DateTime.fromFormat("930PM", "Hmma")).toThrow(ConflictingSpecificationError);
 });
 
 test("DateTime.fromFormat() parses variable-digit years", () => {
