@@ -401,9 +401,7 @@ export function explainFromTokens(locale, input, format) {
       regex = RegExp(regexString, "i"),
       [rawMatches, matches] = match(input, regex, handlers),
       [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
-    const includes24Hr = hasOwnProperty(matches, "H");
-    const includesMeridiem = rawMatches && rawMatches.some(m => m === "AM" || m === "PM");
-    if (includes24Hr && includesMeridiem) {
+    if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
       throw new ConflictingSpecificationError(
         "Can't include meridiem when specifying 24-hour format"
       );
