@@ -4,6 +4,7 @@ import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";
+import { ConflictingSpecificationError } from "../errors.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
@@ -400,7 +401,11 @@ export function explainFromTokens(locale, input, format) {
       regex = RegExp(regexString, "i"),
       [rawMatches, matches] = match(input, regex, handlers),
       [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
-
+    if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
+      throw new ConflictingSpecificationError(
+        "Can't include meridiem when specifying 24-hour format"
+      );
+    }
     return { input, tokens, regex, rawMatches, matches, result, zone };
   }
 }
