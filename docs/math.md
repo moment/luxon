@@ -274,7 +274,7 @@ It's important to remember that diffs are Duration objects, and a Duration is ju
 
 
 ```js
-var diff = end.diff(start) // default unit is milliseconds
+var diff = end.diff(start); // default unit is milliseconds
 
 // wtf, that's not a month!
 diff.as('months'); //=> 0.9319444 
@@ -283,7 +283,14 @@ diff.as('months'); //=> 0.9319444
 diff.shiftTo('hours').as('days'); //=> 27.958333333333332
 ```
 
-Normally you won't run into this problem if you think clearly about what you want to do with a diff. But sometimes you really do want an object that represents the subtraction itself, not the result. [Intervals](../class/src/interval.js~Interval.html) can help. Intervals are mostly used to keep track of ranges of time, but they make for "anchored" diffs too. For example:
+Normally you won't run into this problem if you think clearly about what you want to do with a diff. Specifically, make sure you diff in the units you actually want to use. Then Luxon knows to answer the question you really want to ask.
+
+```js
+var monthsDiff = end.diff(start, "months");
+var daysDiff = end.diff(start, "days");
+```
+
+But sometimes you really do want an object that represents the subtraction itself, not the result. [Intervals](../class/src/interval.js~Interval.html) can help. Intervals are mostly used to keep track of ranges of time, but they make for "anchored" diffs too. For example:
 
 ```js
 var end = DateTime.fromISO('2017-03-13');
