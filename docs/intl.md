@@ -10,7 +10,7 @@ DateTime.local()
 
 ## Making sure you have access to other locales
 
-Please see the [install guide](install.html) for instructions on making sure your platform has access to the Intl APIs and the ICU data to power it. This especially important for Node, which doesn't ship with ICU data by default.
+Please see the [install guide](install.md) for instructions on making sure your platform has access to the Intl APIs and the ICU data to power it. This especially important for Node, which doesn't ship with ICU data by default.
 
 ## How locales work
 
