@@ -202,6 +202,7 @@ const partTypeStyleToTokenVal = {
     short: "EEE",
     long: "EEEE"
   },
+  dayperiod: "a",
   dayPeriod: "a",
   hour: {
     numeric: "h",
