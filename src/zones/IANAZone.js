@@ -156,8 +156,20 @@ export default class IANAZone extends Zone {
       dtf = makeDTF(this.name),
       [year, month, day, hour, minute, second] = dtf.formatToParts
         ? partsOffset(dtf, date)
-        : hackyOffset(dtf, date);
-    const asUTC = objToLocalTS({ year, month, day, hour, minute, second, millisecond: 0 });
+        : hackyOffset(dtf, date),
+      // work around https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
+      adjustedHour = hour === 24 ? 0 : hour;
+
+    const asUTC = objToLocalTS({
+      year,
+      month,
+      day,
+      hour: adjustedHour,
+      minute,
+      second,
+      millisecond: 0
+    });
+
     let asTS = date.valueOf();
     asTS -= asTS % 1000;
     return (asUTC - asTS) / (60 * 1000);
