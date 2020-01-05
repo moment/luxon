@@ -107,7 +107,3 @@ npm install --save-dev @types/luxon
 ## React Native
 
 React Native works just fine, but React Native for Android doesn't ship with Intl support, which you need for [a lot of Luxon's functionality](matrix.html). Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
-
-## Meteor
-
-[Help wanted.]

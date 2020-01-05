@@ -67,6 +67,10 @@ test("DateTime.fromFormat() parses meridiems", () => {
   expect(i.hour).toBe(12);
 });
 
+test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", () => {
+  expect(() => DateTime.fromFormat("930PM", "Hmma")).toThrow(ConflictingSpecificationError);
+});
+
 test("DateTime.fromFormat() parses variable-digit years", () => {
   expect(() => DateTime.fromFormat("", "y")).toThrow(UnparsableStringError);
   expect(DateTime.fromFormat("2", "y").year).toBe(2);

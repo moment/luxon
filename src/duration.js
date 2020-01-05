@@ -1,7 +1,7 @@
+import { InvalidArgumentError, InvalidUnitError, UnparsableStringError } from "./errors.js";
 import Formatter from "./impl/formatter.js";
 import Locale from "./impl/locale.js";
 import { parseISODuration } from "./impl/regexParser.js";
-import { InvalidArgumentError, InvalidUnitError, UnparsableStringError } from "./errors.js";
 import {
   asNumber,
   hasOwnProperty,
