@@ -61,7 +61,7 @@ Invalid DateTime objects are happy to tell you why they're invalid. `invalidReas
 ```js
 var dt = DateTime.local().setZone("America/Blorp");
 dt.invalidReason; //=>  'unsupported zone'
-dt.invalidExplantion; //=> 'the zone "America/Blorp" is not supported'
+dt.invalidExplanation; //=> 'the zone "America/Blorp" is not supported'
 ```
 
 ### throwOnInvalid
