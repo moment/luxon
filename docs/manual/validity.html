@@ -393,7 +393,7 @@ DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=&
 <h3 id="invalidreason-and-invalidexplanation">invalidReason and invalidExplanation</h3><p>Invalid DateTime objects are happy to tell you why they&apos;re invalid. <code>invalidReason</code> will give you a consistent error code you can use, whereas <code>invalidExplanation</code> will spell it out</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setZone(&quot;America/Blorp&quot;);
 dt.invalidReason; //=&gt;  &apos;unsupported zone&apos;
-dt.invalidExplantion; //=&gt; &apos;the zone &quot;America/Blorp&quot; is not supported&apos;</code>
+dt.invalidExplanation; //=&gt; &apos;the zone &quot;America/Blorp&quot; is not supported&apos;</code>
 </code></pre>
 <h3 id="throwoninvalid">throwOnInvalid</h3><p>You can make Luxon throw whenever it creates an invalid DateTime. The message will combine <code>invalidReason</code> and <code>invalidExplanation</code>:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Settings.throwOnInvalid = true;

@@ -450,7 +450,7 @@ later = DateTime.local(2020, 10, 12);
 i = Interval.fromDateTimes(now, later);
 
 i.length()                             //=&gt; 97098768468
-i.length(&apos;years&apos;, true)                //=&gt; 3.0762420239726027
+i.length(&apos;years&apos;)                //=&gt; 3.0762420239726027
 i.contains(DateTime.local(2019))       //=&gt; true
 
 i.toISO()       //=&gt; &apos;2017-09-14T04:07:11.532-04:00/2020-10-12T00:00:00.000-04:00&apos;
@@ -1865,14 +1865,16 @@ var diffInMonths = end.diff(start, &apos;months&apos;);
 diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
 </code></pre><p>That&apos;s our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 15 and March 15!</p><pre><code class="lang-js"><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
 diffInDays.toObject(); //=&gt; { days: 28 }</code>
-</code></pre><p>It&apos;s important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units our computation spat out. Unlike an Interval, a Duration doesn&apos;t &quot;remember&quot; what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:</p><pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start) // default unit is milliseconds
+</code></pre><p>It&apos;s important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units our computation spat out. Unlike an Interval, a Duration doesn&apos;t &quot;remember&quot; what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:</p><pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start); // default unit is milliseconds
 
 // wtf, that&apos;s not a month!
 diff.as(&apos;months&apos;); //=&gt; 0.9319444 
 
 // it&apos;s not even the right number of days! (hint: my time zone has a DST)
 diff.shiftTo(&apos;hours&apos;).as(&apos;days&apos;); //=&gt; 27.958333333333332</code>
-</code></pre><p>Normally you won&apos;t run into this problem if you think clearly about what you want to do with a diff. But sometimes you really do want an object that represents the subtraction itself, not the result. <a href="./manual/../class/src/interval.js~Interval.html">Intervals</a> can help. Intervals are mostly used to keep track of ranges of time, but they make for &quot;anchored&quot; diffs too. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+</code></pre><p>Normally you won&apos;t run into this problem if you think clearly about what you want to do with a diff. Specifically, make sure you diff in the units you actually want to use. Then Luxon knows to answer the question you really want to ask.</p><pre><code class="lang-js"><code class="source-code prettyprint">var monthsDiff = end.diff(start, &quot;months&quot;);
+var daysDiff = end.diff(start, &quot;days&quot;);</code>
+</code></pre><p>But sometimes you really do want an object that represents the subtraction itself, not the result. <a href="./manual/../class/src/interval.js~Interval.html">Intervals</a> can help. Intervals are mostly used to keep track of ranges of time, but they make for &quot;anchored&quot; diffs too. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
 var start = DateTime.fromISO(&apos;2017-02-13&apos;);
 var i = Interval.fromDateTimes(start, end);
 
@@ -1908,7 +1910,7 @@ DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=&
 </code></pre><p>Note that some other kinds of mistakes throw, based on our judgment that they are more likely programmer errors than data issues:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().set({ blorp: 7 }); //=&gt; kerplosion</code>
 </code></pre><h2>Debugging invalid DateTimes</h2><p>Because DateTimes fail silently, they can be a pain to debug. Luxon has some features that can help.</p><h3>invalidReason and invalidExplanation</h3><p>Invalid DateTime objects are happy to tell you why they&apos;re invalid. <code>invalidReason</code> will give you a consistent error code you can use, whereas <code>invalidExplanation</code> will spell it out</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setZone(&quot;America/Blorp&quot;);
 dt.invalidReason; //=&gt;  &apos;unsupported zone&apos;
-dt.invalidExplantion; //=&gt; &apos;the zone &quot;America/Blorp&quot; is not supported&apos;</code>
+dt.invalidExplanation; //=&gt; &apos;the zone &quot;America/Blorp&quot; is not supported&apos;</code>
 </code></pre><h3>throwOnInvalid</h3><p>You can make Luxon throw whenever it creates an invalid DateTime. The message will combine <code>invalidReason</code> and <code>invalidExplanation</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.throwOnInvalid = true;
 DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid DateTime: unsupported zone: the zone &quot;America/Blorp&quot; is not supported</code>
 </code></pre><p>You can of course leave this on in production too, but be sure to try/catch it appropriately.</p><h2>Invalid Durations</h2><p>Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 28).diffNow().isValid; //=&gt; false</code>
