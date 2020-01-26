@@ -180,6 +180,14 @@ test("DateTime#setZone rejects jibberish", () => {
   expect(zoned.invalidReason).toBe("unsupported zone");
 });
 
+// #650
+test("DateTime#setZone works for dates before 1970 with milliseconds", () => {
+  const offset = DateTime.fromJSDate(new Date("1967-01-01T00:00:00.001Z")).setZone(
+    "America/New_York"
+  ).offset;
+  expect(offset).toBe(-300);
+});
+
 //------
 // #isInDST()
 //------

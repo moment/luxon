@@ -398,10 +398,11 @@ export default class DateTime {
       if (unchanged) {
         [c, o] = [config.old.c, config.old.o];
       } else {
-        c = tsToObj(this.ts, zone.offset(this.ts));
+        const ot = zone.offset(this.ts);
+        c = tsToObj(this.ts, ot);
         invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
-        o = invalid ? null : zone.offset(this.ts);
+        o = invalid ? null : ot;
       }
     }
 
