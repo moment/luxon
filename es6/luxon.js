@@ -1476,8 +1476,9 @@ class IANAZone extends Zone {
       millisecond: 0
     });
 
-    let asTS = date.valueOf();
-    asTS -= asTS % 1000;
+    let asTS = +date;
+    const over = asTS % 1000;
+    asTS -= over >= 0 ? over : 1000 + over;
     return (asUTC - asTS) / (60 * 1000);
   }
 
@@ -1822,7 +1823,8 @@ function getCachedINF(locString, opts = {}) {
 
 let intlRelCache = {};
 function getCachedRTF(locString, opts = {}) {
-  const key = JSON.stringify([locString, opts]);
+  const { base, ...cacheKeyOpts } = opts; // exclude `base` from the options
+  const key = JSON.stringify([locString, cacheKeyOpts]);
   let inf = intlRelCache[key];
   if (!inf) {
     inf = new Intl.RelativeTimeFormat(locString, opts);
@@ -4651,7 +4653,11 @@ function explainFromTokens(locale, input, format) {
       regex = RegExp(regexString, "i"),
       [rawMatches, matches] = match(input, regex, handlers),
       [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
-
+    if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
+      throw new ConflictingSpecificationError(
+        "Can't include meridiem when specifying 24-hour format"
+      );
+    }
     return { input, tokens, regex, rawMatches, matches, result, zone };
   }
 }
@@ -5164,10 +5170,11 @@ class DateTime {
       if (unchanged) {
         [c, o] = [config.old.c, config.old.o];
       } else {
-        c = tsToObj(this.ts, zone.offset(this.ts));
+        const ot = zone.offset(this.ts);
+        c = tsToObj(this.ts, ot);
         invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
-        o = invalid ? null : zone.offset(this.ts);
+        o = invalid ? null : ot;
       }
     }
 
@@ -6036,7 +6043,7 @@ class DateTime {
     } else {
       let newTS = this.ts;
       if (keepLocalTime || keepCalendarTime) {
-        const offsetGuess = this.o - zone.offset(this.ts);
+        const offsetGuess = zone.offset(this.ts);
         const asObj = this.toObject();
         [newTS] = objToTS(asObj, offsetGuess, zone);
       }
@@ -6252,13 +6259,13 @@ class DateTime {
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
    * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
-   * @example DateTime.local().toLocaleString(); //=> [
-   *                                    //=>   { type: 'day', value: '25' },
-   *                                    //=>   { type: 'literal', value: '/' },
-   *                                    //=>   { type: 'month', value: '05' },
-   *                                    //=>   { type: 'literal', value: '/' },
-   *                                    //=>   { type: 'year', value: '1982' }
-   *                                    //=> ]
+   * @example DateTime.local().toLocaleParts(); //=> [
+   *                                   //=>   { type: 'day', value: '25' },
+   *                                   //=>   { type: 'literal', value: '/' },
+   *                                   //=>   { type: 'month', value: '05' },
+   *                                   //=>   { type: 'literal', value: '/' },
+   *                                   //=>   { type: 'year', value: '1982' }
+   *                                   //=> ]
    */
   toLocaleParts(opts = {}) {
     return this.isValid

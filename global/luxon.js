@@ -107,6 +107,21 @@ var luxon = (function (exports) {
     return _wrapNativeSuper(Class);
   }
 
+  function _objectWithoutPropertiesLoose(source, excluded) {
+    if (source == null) return {};
+    var target = {};
+    var sourceKeys = Object.keys(source);
+    var key, i;
+
+    for (i = 0; i < sourceKeys.length; i++) {
+      key = sourceKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      target[key] = source[key];
+    }
+
+    return target;
+  }
+
   // these aren't really private, but nor are they really useful to document
 
   /**
@@ -1816,8 +1831,9 @@ var luxon = (function (exports) {
         second: second,
         millisecond: 0
       });
-      var asTS = date.valueOf();
-      asTS -= asTS % 1000;
+      var asTS = +date;
+      var over = asTS % 1000;
+      asTS -= over >= 0 ? over : 1000 + over;
       return (asUTC - asTS) / (60 * 1000);
     }
     /** @override **/
@@ -2288,7 +2304,12 @@ var luxon = (function (exports) {
       opts = {};
     }
 
-    var key = JSON.stringify([locString, opts]);
+    var _opts = opts,
+        base = _opts.base,
+        cacheKeyOpts = _objectWithoutPropertiesLoose(_opts, ["base"]); // exclude `base` from the options
+
+
+    var key = JSON.stringify([locString, cacheKeyOpts]);
     var inf = intlRelCache[key];
 
     if (!inf) {
@@ -5647,6 +5668,10 @@ var luxon = (function (exports) {
           result = _ref6[0],
           zone = _ref6[1];
 
+      if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
+        throw new ConflictingSpecificationError("Can't include meridiem when specifying 24-hour format");
+      }
+
       return {
         input: input,
         tokens: tokens,
@@ -6198,10 +6223,11 @@ var luxon = (function (exports) {
           c = _ref3[0];
           o = _ref3[1];
         } else {
-          c = tsToObj(this.ts, zone.offset(this.ts));
+          var ot = zone.offset(this.ts);
+          c = tsToObj(this.ts, ot);
           invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
           c = invalid ? null : c;
-          o = invalid ? null : zone.offset(this.ts);
+          o = invalid ? null : ot;
         }
       }
       /**
@@ -6857,7 +6883,7 @@ var luxon = (function (exports) {
         var newTS = this.ts;
 
         if (keepLocalTime || keepCalendarTime) {
-          var offsetGuess = this.o - zone.offset(this.ts);
+          var offsetGuess = zone.offset(this.ts);
           var asObj = this.toObject();
 
           var _objToTS3 = objToTS(asObj, offsetGuess, zone);
@@ -7110,13 +7136,13 @@ var luxon = (function (exports) {
      * Defaults to the system's locale if no locale has been specified
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
      * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
-     * @example DateTime.local().toLocaleString(); //=> [
-     *                                    //=>   { type: 'day', value: '25' },
-     *                                    //=>   { type: 'literal', value: '/' },
-     *                                    //=>   { type: 'month', value: '05' },
-     *                                    //=>   { type: 'literal', value: '/' },
-     *                                    //=>   { type: 'year', value: '1982' }
-     *                                    //=> ]
+     * @example DateTime.local().toLocaleParts(); //=> [
+     *                                   //=>   { type: 'day', value: '25' },
+     *                                   //=>   { type: 'literal', value: '/' },
+     *                                   //=>   { type: 'month', value: '05' },
+     *                                   //=>   { type: 'literal', value: '/' },
+     *                                   //=>   { type: 'year', value: '1982' }
+     *                                   //=> ]
      */
     ;
 
