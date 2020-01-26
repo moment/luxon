@@ -28,7 +28,8 @@ function getCachedINF(locString, opts = {}) {
 
 let intlRelCache = {};
 function getCachedRTF(locString, opts = {}) {
-  const key = JSON.stringify([locString, opts]);
+  const { base, ...cacheKeyOpts } = opts; // exclude `base` from the options
+  const key = JSON.stringify([locString, cacheKeyOpts]);
   let inf = intlRelCache[key];
   if (!inf) {
     inf = new Intl.RelativeTimeFormat(locString, opts);
