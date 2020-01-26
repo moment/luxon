@@ -1271,7 +1271,7 @@ export default class DateTime {
     } else {
       let newTS = this.ts;
       if (keepLocalTime || keepCalendarTime) {
-        const offsetGuess = this.o - zone.offset(this.ts);
+        const offsetGuess = zone.offset(this.ts);
         const asObj = this.toObject();
         [newTS] = objToTS(asObj, offsetGuess, zone);
       }
