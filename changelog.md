@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.22.0
+
+ * Fix setZone's handling of pre-1970 dates with milisecond components
+ * Fix keepLocalTime for large jumps near the target zone's DST
+ * Fix cache perf for toRelative()
+
 ## 1.21.3
 
  * Fix parsing of meridiems in macro tokens in newer versions of v8
