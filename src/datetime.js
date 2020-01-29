@@ -410,9 +410,10 @@ export default class DateTime {
       o = null;
     const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
 
-    c = unchanged ? config.old.c : tsToObj(this.ts, zone.offset(this.ts));
+    const offset = zone.offset(this.ts);
+    c = unchanged ? config.old.c : tsToObj(this.ts, offset);
     if (Number.isNaN(c.year)) throw new InvalidArgumentError("invalid timestamp");
-    o = unchanged ? config.old.o : zone.offset(this.ts);
+    o = unchanged ? config.old.o : offset;
 
     /**
      * @access private
@@ -1204,7 +1205,7 @@ export default class DateTime {
     } else {
       let newTS = this.ts;
       if (keepLocalTime) {
-        const offsetGuess = this.o - zone.offset(this.ts);
+        const offsetGuess = zone.offset(this.ts);
         const asObj = this.toObject();
         [newTS] = objToTS(asObj, offsetGuess, zone);
       }

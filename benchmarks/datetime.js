@@ -54,6 +54,9 @@ suite
   .add("DateTime#toLocaleString", () => {
     dt.toLocaleString();
   })
+  .add("DateTime#toRelativeCalendar", () => {
+    dt.toRelativeCalendar({ base: DateTime.local(), locale: "fi" });
+  })
   .on("cycle", event => {
     console.log(String(event.target));
   })

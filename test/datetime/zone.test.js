@@ -195,8 +195,22 @@ test("DateTime#setZone with keepLocalTime can span wacky offsets", () => {
   expect(d2.hour).toBe(0);
 });
 
+test("DateTime#setZone with keepLocalTime handles zones with very different offsets than the current one", () => {
+  const local = DateTime.local(2016, 10, 30, 2, 59);
+  const zoned = local.setZone("Europe/Athens", { keepLocalTime: true });
+  expect(zoned.hour).toBe(2);
+});
+
 test("DateTime#setZone rejects jibberish", () => {
   expect(() => dt().setZone("blorp")).toThrow(InvalidZoneError);
+});
+
+// #650
+test("DateTime#setZone works for dates before 1970 with milliseconds", () => {
+  const offset = DateTime.fromJSDate(new Date("1967-01-01T00:00:00.001Z")).setZone(
+    "America/New_York"
+  ).offset;
+  expect(offset).toBe(-300);
 });
 
 //------

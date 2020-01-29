@@ -171,7 +171,8 @@ export default class IANAZone extends Zone {
     });
 
     let asTS = date.valueOf();
-    asTS -= asTS % 1000;
+    const over = asTS % 1000;
+    asTS -= over >= 0 ? over : 1000 + over;
     return (asUTC - asTS) / (60 * 1000);
   }
 

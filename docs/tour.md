@@ -206,7 +206,7 @@ later = DateTime.local(2020, 10, 12);
 i = Interval.fromDateTimes(now, later);
 
 i.length()                             //=> 97098768468
-i.length('years', true)                //=> 3.0762420239726027
+i.length('years')                //=> 3.0762420239726027
 i.contains(DateTime.local(2019))       //=> true
 
 i.toISO()       //=> '2017-09-14T04:07:11.532-04:00/2020-10-12T00:00:00.000-04:00'
