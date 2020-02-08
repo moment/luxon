@@ -50,6 +50,10 @@ test("DateTime#toISODate() is local to the zone", () => {
   expect(dt.toUTC(-10 * 60).toISODate()).toBe("1982-05-24");
 });
 
+test("DateTime#toISODate() can output the basic format", () => {
+  expect(dt.toISODate({ format: "basic" })).toBe("19820525");
+});
+
 test("DateTime#toISODate() returns null for invalid DateTimes", () => {
   expect(invalid.toISODate()).toBe(null);
 });
@@ -115,6 +119,10 @@ test("DateTime#toISOTime() handles other offsets", () => {
 
 test("DateTime#toISOTime() can omit the offset", () => {
   expect(dt.toISOTime({ includeOffset: false })).toBe("09:23:54.123");
+});
+
+test("DateTime#toISOTime() can output the basic format", () => {
+  expect(dt.toISOTime({ format: "basic" })).toBe("092354.123Z");
 });
 
 test("DateTime#toISOTime() returns null for invalid DateTimes", () => {
