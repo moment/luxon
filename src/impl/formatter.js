@@ -203,7 +203,7 @@ export default class Formatter {
             return formatOffset({ format: "short", allowZ: this.opts.allowZ });
           case "ZZZ":
             // like +0600
-            return formatOffset({ format: "techie", allowZ: false });
+            return formatOffset({ format: "techie", allowZ: this.opts.allowZ });
           case "ZZZZ":
             // like EST
             return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
