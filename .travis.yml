@@ -1,5 +1,4 @@
 sudo: true
-language: javascript
 services:
  - docker
 before_install:
