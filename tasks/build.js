@@ -3,8 +3,8 @@
 const rollup = require("rollup"),
   rollupBabel = require("rollup-plugin-babel"),
   rollupMinify = require("rollup-plugin-babel-minify"),
-  rollupNode = require("rollup-plugin-node-resolve"),
-  rollupCommonJS = require("rollup-plugin-commonjs"),
+  rollupNode = require("@rollup/plugin-node-resolve"),
+  rollupCommonJS = require("@rollup/plugin-commonjs"),
   UglifyJS = require("uglify-js"),
   fs = require("fs");
 

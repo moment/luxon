@@ -1,4 +1,4 @@
-FROM library/node:10-slim
+FROM library/node:12-slim
 
 RUN npm install full-icu
 

@@ -558,13 +558,13 @@ test("DateTime#toFormat('FFF') returns a medium date/time representation without
   expect(ny.toFormat("FFF")).toBe("May 25, 1982, 9:23:54 AM EDT");
   expect(ny.set({ hour: 13 }).toFormat("FFF")).toBe("May 25, 1982, 1:23:54 PM EDT");
   expect(ny.set({ month: 8 }).toFormat("FFF")).toBe("August 25, 1982, 9:23:54 AM EDT");
-  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFF")).toBe("25 mai 1982 à 09:23:54 UTC−4");
+  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFF")).toBe("25 mai 1982 à 9:23:54 UTC−4");
   expect(
     ny
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("FFF")
-  ).toBe("25 février 1982 à 09:23:54 UTC−5");
+  ).toBe("25 février 1982 à 9:23:54 UTC−5");
   expect(
     ny
       .set({ hour: 13 })
@@ -582,14 +582,14 @@ test("DateTime#toFormat('FFFF') returns a long date/time representation without 
     "Thursday, February 25, 1982, 9:23:54 AM Eastern Standard Time"
   );
   expect(ny.reconfigure({ locale: "fr" }).toFormat("FFFF")).toBe(
-    "mardi 25 mai 1982 à 09:23:54 heure d’été de l’Est"
+    "mardi 25 mai 1982 à 9:23:54 heure d’été de l’Est"
   );
   expect(
     ny
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("FFFF")
-  ).toBe("jeudi 25 février 1982 à 09:23:54 heure normale de l’Est nord-américain");
+  ).toBe("jeudi 25 février 1982 à 9:23:54 heure normale de l’Est nord-américain");
   expect(
     ny
       .set({ hour: 13 })
