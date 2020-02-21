@@ -153,7 +153,7 @@ export default class Interval {
         }
       }
     }
-    return Interval.invalid("unparsable", `the input "${text}" can't be parsed asISO 8601`);
+    return Interval.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
   }
 
   /**
