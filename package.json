@@ -44,7 +44,7 @@
     "babel-eslint": "latest",
     "babel-jest": "^25.1.0",
     "benchmark": "latest",
-    "codecov": "^3.6.5",
+    "codecov": ">= 3.6.5",
     "core-js": "latest",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "latest",
