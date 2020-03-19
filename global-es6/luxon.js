@@ -680,7 +680,6 @@ var luxon = (function (exports) {
           return isDay ? "yesterday" : `last ${units[unit][0]}`;
         case 0:
           return isDay ? "today" : `this ${units[unit][0]}`;
-        default: // fall through
       }
     }
 
@@ -964,7 +963,7 @@ var luxon = (function (exports) {
               return formatOffset({ format: "short", allowZ: this.opts.allowZ });
             case "ZZZ":
               // like +0600
-              return formatOffset({ format: "techie", allowZ: false });
+              return formatOffset({ format: "techie", allowZ: this.opts.allowZ });
             case "ZZZZ":
               // like EST
               return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
@@ -3493,7 +3492,7 @@ var luxon = (function (exports) {
           }
         }
       }
-      return Interval.invalid("unparsable", `the input "${text}" can't be parsed asISO 8601`);
+      return Interval.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
     }
 
     /**
@@ -4954,10 +4953,10 @@ var luxon = (function (exports) {
 
   // if you want to output a technical format (e.g. RFC 2822), this helper
   // helps handle the details
-  function toTechFormat(dt, format) {
+  function toTechFormat(dt, format, allowZ = true) {
     return dt.isValid
       ? Formatter.create(Locale.create("en-US"), {
-          allowZ: true,
+          allowZ,
           forceSimple: true
         }).formatDateTimeFromString(dt, format)
       : null;
@@ -4972,13 +4971,14 @@ var luxon = (function (exports) {
       suppressMilliseconds = false,
       includeOffset,
       includeZone = false,
-      spaceZone = false
+      spaceZone = false,
+      format = "extended"
     }
   ) {
-    let fmt = "HH:mm";
+    let fmt = format === "basic" ? "HHmm" : "HH:mm";
 
     if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-      fmt += ":ss";
+      fmt += format === "basic" ? "ss" : ":ss";
       if (!suppressMilliseconds || dt.millisecond !== 0) {
         fmt += ".SSS";
       }
@@ -4991,7 +4991,7 @@ var luxon = (function (exports) {
     if (includeZone) {
       fmt += "z";
     } else if (includeOffset) {
-      fmt += "ZZ";
+      fmt += format === "basic" ? "ZZZ" : "ZZ";
     }
 
     return toTechFormat(dt, fmt);
@@ -6178,8 +6178,6 @@ var luxon = (function (exports) {
         case "seconds":
           o.millisecond = 0;
           break;
-        case "milliseconds":
-          break;
         // no default, invalid units throw in normalizeUnit()
       }
 
@@ -6282,9 +6280,11 @@ var luxon = (function (exports) {
      * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
      * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
      * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+     * @param {string} [opts.format='extended'] - choose between the basic and extended format
      * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
      * @example DateTime.local().toISO() //=> '2017-04-22T20:47:05.335-04:00'
      * @example DateTime.local().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
+     * @example DateTime.local().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
      * @return {string}
      */
     toISO(opts = {}) {
@@ -6292,21 +6292,24 @@ var luxon = (function (exports) {
         return null;
       }
 
-      return `${this.toISODate()}T${this.toISOTime(opts)}`;
+      return `${this.toISODate(opts)}T${this.toISOTime(opts)}`;
     }
 
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's date component
+     * @param {Object} opts - options
+     * @param {string} [opts.format='extended'] - choose between the basic and extended format
      * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
+     * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
      * @return {string}
      */
-    toISODate() {
-      let format = "yyyy-MM-dd";
+    toISODate({ format = "extended" } = {}) {
+      let fmt = format === "basic" ? "yyyyMMdd" : "yyyy-MM-dd";
       if (this.year > 9999) {
-        format = "+" + format;
+        fmt = "+" + fmt;
       }
 
-      return toTechFormat(this, format);
+      return toTechFormat(this, fmt);
     }
 
     /**
@@ -6324,15 +6327,23 @@ var luxon = (function (exports) {
      * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
      * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
      * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
-     * @example DateTime.utc().hour(7).minute(34).toISOTime() //=> '07:34:19.361Z'
-     * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
+     * @param {string} [opts.format='extended'] - choose between the basic and extended format
+     * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
+     * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
+     * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: 'basic' }) //=> '073419.361Z'
      * @return {string}
      */
-    toISOTime({ suppressMilliseconds = false, suppressSeconds = false, includeOffset = true } = {}) {
+    toISOTime({
+      suppressMilliseconds = false,
+      suppressSeconds = false,
+      includeOffset = true,
+      format = "extended"
+    } = {}) {
       return toTechTimeFormat(this, {
         suppressSeconds,
         suppressMilliseconds,
-        includeOffset
+        includeOffset,
+        format
       });
     }
 
@@ -6343,7 +6354,7 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toRFC2822() {
-      return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ");
+      return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ", false);
     }
 
     /**

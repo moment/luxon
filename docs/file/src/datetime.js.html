@@ -225,10 +225,10 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
 
 // if you want to output a technical format (e.g. RFC 2822), this helper
 // helps handle the details
-function toTechFormat(dt, format) {
+function toTechFormat(dt, format, allowZ = true) {
   return dt.isValid
     ? Formatter.create(Locale.create(&quot;en-US&quot;), {
-        allowZ: true,
+        allowZ,
         forceSimple: true
       }).formatDateTimeFromString(dt, format)
     : null;
@@ -243,13 +243,14 @@ function toTechTimeFormat(
     suppressMilliseconds = false,
     includeOffset,
     includeZone = false,
-    spaceZone = false
+    spaceZone = false,
+    format = &quot;extended&quot;
   }
 ) {
-  let fmt = &quot;HH:mm&quot;;
+  let fmt = format === &quot;basic&quot; ? &quot;HHmm&quot; : &quot;HH:mm&quot;;
 
   if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-    fmt += &quot;:ss&quot;;
+    fmt += format === &quot;basic&quot; ? &quot;ss&quot; : &quot;:ss&quot;;
     if (!suppressMilliseconds || dt.millisecond !== 0) {
       fmt += &quot;.SSS&quot;;
     }
@@ -262,7 +263,7 @@ function toTechTimeFormat(
   if (includeZone) {
     fmt += &quot;z&quot;;
   } else if (includeOffset) {
-    fmt += &quot;ZZ&quot;;
+    fmt += format === &quot;basic&quot; ? &quot;ZZZ&quot; : &quot;ZZ&quot;;
   }
 
   return toTechFormat(dt, fmt);
@@ -1553,9 +1554,11 @@ export default class DateTime {
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they&apos;re 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
+   * @param {string} [opts.format=&apos;extended&apos;] - choose between the basic and extended format
    * @example DateTime.utc(1982, 5, 25).toISO() //=&gt; &apos;1982-05-25T00:00:00.000Z&apos;
    * @example DateTime.local().toISO() //=&gt; &apos;2017-04-22T20:47:05.335-04:00&apos;
    * @example DateTime.local().toISO({ includeOffset: false }) //=&gt; &apos;2017-04-22T20:47:05.335&apos;
+   * @example DateTime.local().toISO({ format: &apos;basic&apos; }) //=&gt; &apos;20170422T204705.335-0400&apos;
    * @return {string}
    */
   toISO(opts = {}) {
@@ -1563,21 +1566,24 @@ export default class DateTime {
       return null;
     }
 
-    return `${this.toISODate()}T${this.toISOTime(opts)}`;
+    return `${this.toISODate(opts)}T${this.toISOTime(opts)}`;
   }
 
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime&apos;s date component
+   * @param {Object} opts - options
+   * @param {string} [opts.format=&apos;extended&apos;] - choose between the basic and extended format
    * @example DateTime.utc(1982, 5, 25).toISODate() //=&gt; &apos;1982-05-25&apos;
+   * @example DateTime.utc(1982, 5, 25).toISODate({ format: &apos;basic&apos; }) //=&gt; &apos;19820525&apos;
    * @return {string}
    */
-  toISODate() {
-    let format = &quot;yyyy-MM-dd&quot;;
+  toISODate({ format = &quot;extended&quot; } = {}) {
+    let fmt = format === &quot;basic&quot; ? &quot;yyyyMMdd&quot; : &quot;yyyy-MM-dd&quot;;
     if (this.year &gt; 9999) {
-      format = &quot;+&quot; + format;
+      fmt = &quot;+&quot; + fmt;
     }
 
-    return toTechFormat(this, format);
+    return toTechFormat(this, fmt);
   }
 
   /**
@@ -1595,15 +1601,23 @@ export default class DateTime {
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they&apos;re 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
-   * @example DateTime.utc().hour(7).minute(34).toISOTime() //=&gt; &apos;07:34:19.361Z&apos;
-   * @example DateTime.utc().hour(7).minute(34).toISOTime({ suppressSeconds: true }) //=&gt; &apos;07:34Z&apos;
+   * @param {string} [opts.format=&apos;extended&apos;] - choose between the basic and extended format
+   * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=&gt; &apos;07:34:19.361Z&apos;
+   * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=&gt; &apos;07:34Z&apos;
+   * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: &apos;basic&apos; }) //=&gt; &apos;073419.361Z&apos;
    * @return {string}
    */
-  toISOTime({ suppressMilliseconds = false, suppressSeconds = false, includeOffset = true } = {}) {
+  toISOTime({
+    suppressMilliseconds = false,
+    suppressSeconds = false,
+    includeOffset = true,
+    format = &quot;extended&quot;
+  } = {}) {
     return toTechTimeFormat(this, {
       suppressSeconds,
       suppressMilliseconds,
-      includeOffset
+      includeOffset,
+      format
     });
   }
 
@@ -1614,7 +1628,7 @@ export default class DateTime {
    * @return {string}
    */
   toRFC2822() {
-    return toTechFormat(this, &quot;EEE, dd LLL yyyy HH:mm:ss ZZZ&quot;);
+    return toTechFormat(this, &quot;EEE, dd LLL yyyy HH:mm:ss ZZZ&quot;, false);
   }
 
   /**
