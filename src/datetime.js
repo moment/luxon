@@ -556,7 +556,7 @@ export default class DateTime {
   static fromMillis(milliseconds, options = {}) {
     if (!isNumber(milliseconds)) {
       throw new InvalidArgumentError(
-        "fromMillis requires a numerical input, but received " + milliseconds
+        `fromMillis requires a numerical input, but received a ${typeof milliseconds} with value ${milliseconds}`
       );
     } else if (milliseconds < -MAX_DATE || milliseconds > MAX_DATE) {
       // this isn't perfect because because we can still end up out of range because of additional shifting, but it's a start
