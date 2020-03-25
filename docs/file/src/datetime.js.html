@@ -601,7 +601,9 @@ export default class DateTime {
    */
   static fromMillis(milliseconds, options = {}) {
     if (!isNumber(milliseconds)) {
-      throw new InvalidArgumentError(&quot;fromMillis requires a numerical input&quot;);
+      throw new InvalidArgumentError(
+        `fromMillis requires a numerical input, but received a ${typeof milliseconds} with value ${milliseconds}`
+      );
     } else if (milliseconds &lt; -MAX_DATE || milliseconds &gt; MAX_DATE) {
       // this isn&apos;t perfect because because we can still end up out of range because of additional shifting, but it&apos;s a start
       return DateTime.invalid(&quot;Timestamp out of range&quot;);
