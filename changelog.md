@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.23.0
+
+ * Allow minus sign prefix when creating Duration from ISO
+
+# 1.22.2
+
+ * Added more details to error messages for type errors
+
+# 1.22.1
+
+ *  Added support for ISO basic format to DateTime#toISO
+
 ## 1.22.0
 
  * Fix setZone's handling of pre-1970 dates with milisecond components
