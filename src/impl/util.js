@@ -130,14 +130,6 @@ export function roundTo(number, digits, towardZero = false) {
   return rounder(number * factor) / factor;
 }
 
-export function invertNumber(num) {
-  if (!isNumber(num) || Number.isNaN(num)) {
-    return undefined;
-  } else {
-    return num * -1;
-  }
-}
-
 // DATE BASICS
 
 export function isLeapYear(year) {

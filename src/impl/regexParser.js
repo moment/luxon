@@ -3,7 +3,6 @@ import {
   signedOffset,
   parseInteger,
   parseMillis,
-  invertNumber,
   ianaRegex,
   isUndefined
 } from "./util.js";
@@ -138,18 +137,18 @@ function extractISODuration(match) {
 
   const hasNegativePrefix = s[0] === "-";
 
+  const maybeNegate = num => (num && hasNegativePrefix ? -num : num);
+
   return [
     {
-      years: hasNegativePrefix ? invertNumber(parseInteger(yearStr)) : parseInteger(yearStr),
-      months: hasNegativePrefix ? invertNumber(parseInteger(monthStr)) : parseInteger(monthStr),
-      weeks: hasNegativePrefix ? invertNumber(parseInteger(weekStr)) : parseInteger(weekStr),
-      days: hasNegativePrefix ? invertNumber(parseInteger(dayStr)) : parseInteger(dayStr),
-      hours: hasNegativePrefix ? invertNumber(parseInteger(hourStr)) : parseInteger(hourStr),
-      minutes: hasNegativePrefix ? invertNumber(parseInteger(minuteStr)) : parseInteger(minuteStr),
-      seconds: hasNegativePrefix ? invertNumber(parseInteger(secondStr)) : parseInteger(secondStr),
-      milliseconds: hasNegativePrefix
-        ? invertNumber(parseMillis(millisecondsStr))
-        : parseMillis(millisecondsStr)
+      years: maybeNegate(parseInteger(yearStr)),
+      months: maybeNegate(parseInteger(monthStr)),
+      weeks: maybeNegate(parseInteger(weekStr)),
+      days: maybeNegate(parseInteger(dayStr)),
+      hours: maybeNegate(parseInteger(hourStr)),
+      minutes: maybeNegate(parseInteger(minuteStr)),
+      seconds: maybeNegate(parseInteger(secondStr)),
+      milliseconds: maybeNegate(parseMillis(millisecondsStr))
     }
   ];
 }
