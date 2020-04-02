@@ -6579,10 +6579,11 @@ define(['exports'], function (exports) { 'use strict';
 	} // ISO duration parsing
 
 
-	var isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?)$/;
+	var isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 
 	function extractISODuration(match) {
-	  var yearStr = match[1],
+	  var s = match[0],
+	      yearStr = match[1],
 	      monthStr = match[2],
 	      weekStr = match[3],
 	      dayStr = match[4],
@@ -6590,15 +6591,21 @@ define(['exports'], function (exports) { 'use strict';
 	      minuteStr = match[6],
 	      secondStr = match[7],
 	      millisecondsStr = match[8];
+	  var hasNegativePrefix = s[0] === "-";
+
+	  var maybeNegate = function maybeNegate(num) {
+	    return num && hasNegativePrefix ? -num : num;
+	  };
+
 	  return [{
-	    years: parseInteger(yearStr),
-	    months: parseInteger(monthStr),
-	    weeks: parseInteger(weekStr),
-	    days: parseInteger(dayStr),
-	    hours: parseInteger(hourStr),
-	    minutes: parseInteger(minuteStr),
-	    seconds: parseInteger(secondStr),
-	    milliseconds: parseMillis(millisecondsStr)
+	    years: maybeNegate(parseInteger(yearStr)),
+	    months: maybeNegate(parseInteger(monthStr)),
+	    weeks: maybeNegate(parseInteger(weekStr)),
+	    days: maybeNegate(parseInteger(dayStr)),
+	    hours: maybeNegate(parseInteger(hourStr)),
+	    minutes: maybeNegate(parseInteger(minuteStr)),
+	    seconds: maybeNegate(parseInteger(secondStr)),
+	    milliseconds: maybeNegate(parseMillis(millisecondsStr))
 	  }];
 	} // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
 	// and not just that we're in -240 *right now*. But since I don't think these are used that often
