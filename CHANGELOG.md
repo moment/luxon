@@ -1,42 +1,42 @@
 # Changelog
 
-## 1.23.0
+## 1.23.0 (2020-04-02)
 
  * Allow minus sign prefix when creating Duration from ISO
 
-## 1.22.2
+## 1.22.2 (2020-03-25)
 
  * Added more details to error messages for type errors
 
-## 1.22.1
+## 1.22.1 (2020-03-19)
 
  *  Added support for ISO basic format to DateTime#toISO
 
-## 1.22.0
+## 1.22.0 (2020-01-26)
 
  * Fix setZone's handling of pre-1970 dates with milisecond components
  * Fix keepLocalTime for large jumps near the target zone's DST
  * Fix cache perf for toRelative()
 
-## 1.21.3
+## 1.21.3 (2019-11-28)
 
  * Fix parsing of meridiems in macro tokens in newer versions of v8
 
-## 1.21.2
+## 1.21.2 (2019-11-18)
 
  * Fix bug in Chrome Canary that threw off time zone calculations
 
-## 1.21.1
+## 1.21.1 (2019-11-03)
 
  * Fix for quarter parsing
  * Some documentation updates
 
-## 1.21.0
+## 1.21.0 (2019-10-30)
 
  * Added quarter support to the parser
  * Fix some rounding issues in ISO formatting
 
-## 1.20.0
+## 1.20.0 (2019-10-29)
 
  * Added Duration#mapUnits
  * added Interval#toISODate and Interval#toISOTime
