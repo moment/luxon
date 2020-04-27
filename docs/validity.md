@@ -40,7 +40,7 @@ But there are other ways to do it:
 // specify a time zone that doesn't exist
 DateTime.local().setZone("America/Blorp").isValid; //=> false
 
-// provide contradictory information (here, this date is not a Wedensday)
+// provide contradictory information (here, this date is not a Wednesday)
 DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=> false
 ```
 
