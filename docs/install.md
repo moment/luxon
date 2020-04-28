@@ -26,7 +26,7 @@ var DateTime = luxon.DateTime;
 If you're supporting IE 10 or 11, you need some polyfills to get Luxon to work. Use polyfill.io:
 
 ```html
-<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign"></script>
+<script src="https://cdn.polyfill.io/v3/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign,Object.is"></script>
 ```
 
 See the [support matrix](matrix.html) for more information on what works and what doesn't in IE.
