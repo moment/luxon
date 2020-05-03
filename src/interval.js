@@ -125,7 +125,6 @@ export default class Interval {
         }
       }
     }
-
     throw new UnparsableStringError("ISO 8601", text);
   }
 

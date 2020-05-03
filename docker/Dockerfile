@@ -1,4 +1,6 @@
-FROM library/node:10-slim
+FROM library/node:12-slim
+
+ENV HUSKY_SKIP_INSTALL=1
 
 RUN npm install full-icu
 

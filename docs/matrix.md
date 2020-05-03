@@ -107,7 +107,7 @@ But more likely, you have basic Intl support but not `formatToParts` (e.g. IE 11
 
 ### Zones
 
-If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format pollyfill](https://github.com/yahoo/date-time-format-timezone).
+If you have an Intl API (either natively or through the Intl polyfill above) but no zone support, you can add it via the very nice [DateTime format polyfill](https://github.com/yahoo/date-time-format-timezone).
 
 ## Older platforms
 

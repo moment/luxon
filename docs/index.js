@@ -37,7 +37,7 @@ module.exports = {
         manual: {
           globalIndex: true,
           index: "./docs/index.md",
-          files: manualFiles.concat(["./changelog.md", "./contributing.md"])
+          files: manualFiles.concat(["./CHANGELOG.md", "./contributing.md"])
         }
       }
     },
