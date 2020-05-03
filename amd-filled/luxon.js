@@ -205,7 +205,7 @@ define(['exports'], function (exports) { 'use strict';
 	  (module.exports = function (key, value) {
 	    return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
-	    version: '3.6.4',
+	    version: '3.6.5',
 	    mode:  'global',
 	    copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
 	  });
@@ -3617,7 +3617,7 @@ define(['exports'], function (exports) { 'use strict';
 	  return _setPrototypeOf(o, p);
 	}
 
-	function isNativeReflectConstruct() {
+	function _isNativeReflectConstruct() {
 	  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
 	  if (Reflect.construct.sham) return false;
 	  if (typeof Proxy === "function") return true;
@@ -3631,7 +3631,7 @@ define(['exports'], function (exports) { 'use strict';
 	}
 
 	function _construct(Parent, args, Class) {
-	  if (isNativeReflectConstruct()) {
+	  if (_isNativeReflectConstruct()) {
 	    _construct = Reflect.construct;
 	  } else {
 	    _construct = function _construct(Parent, args, Class) {
@@ -3700,14 +3700,49 @@ define(['exports'], function (exports) { 'use strict';
 	  return target;
 	}
 
+	function _unsupportedIterableToArray(o, minLen) {
+	  if (!o) return;
+	  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+	  var n = Object.prototype.toString.call(o).slice(8, -1);
+	  if (n === "Object" && o.constructor) n = o.constructor.name;
+	  if (n === "Map" || n === "Set") return Array.from(n);
+	  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+	}
+
+	function _arrayLikeToArray(arr, len) {
+	  if (len == null || len > arr.length) len = arr.length;
+
+	  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+	  return arr2;
+	}
+
+	function _createForOfIteratorHelperLoose(o) {
+	  var i = 0;
+
+	  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+	    if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) return function () {
+	      if (i >= o.length) return {
+	        done: true
+	      };
+	      return {
+	        done: false,
+	        value: o[i++]
+	      };
+	    };
+	    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+	  }
+
+	  i = o[Symbol.iterator]();
+	  return i.next.bind(i);
+	}
+
 	// these aren't really private, but nor are they really useful to document
 
 	/**
 	 * @private
 	 */
-	var LuxonError =
-	/*#__PURE__*/
-	function (_Error) {
+	var LuxonError = /*#__PURE__*/function (_Error) {
 	  _inheritsLoose(LuxonError, _Error);
 
 	  function LuxonError() {
@@ -3715,15 +3750,13 @@ define(['exports'], function (exports) { 'use strict';
 	  }
 
 	  return LuxonError;
-	}(_wrapNativeSuper(Error));
+	}( /*#__PURE__*/_wrapNativeSuper(Error));
 	/**
 	 * @private
 	 */
 
 
-	var InvalidDateTimeError =
-	/*#__PURE__*/
-	function (_LuxonError) {
+	var InvalidDateTimeError = /*#__PURE__*/function (_LuxonError) {
 	  _inheritsLoose(InvalidDateTimeError, _LuxonError);
 
 	  function InvalidDateTimeError(reason) {
@@ -3736,9 +3769,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @private
 	 */
 
-	var InvalidIntervalError =
-	/*#__PURE__*/
-	function (_LuxonError2) {
+	var InvalidIntervalError = /*#__PURE__*/function (_LuxonError2) {
 	  _inheritsLoose(InvalidIntervalError, _LuxonError2);
 
 	  function InvalidIntervalError(reason) {
@@ -3751,9 +3782,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @private
 	 */
 
-	var InvalidDurationError =
-	/*#__PURE__*/
-	function (_LuxonError3) {
+	var InvalidDurationError = /*#__PURE__*/function (_LuxonError3) {
 	  _inheritsLoose(InvalidDurationError, _LuxonError3);
 
 	  function InvalidDurationError(reason) {
@@ -3766,9 +3795,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @private
 	 */
 
-	var ConflictingSpecificationError =
-	/*#__PURE__*/
-	function (_LuxonError4) {
+	var ConflictingSpecificationError = /*#__PURE__*/function (_LuxonError4) {
 	  _inheritsLoose(ConflictingSpecificationError, _LuxonError4);
 
 	  function ConflictingSpecificationError() {
@@ -3781,9 +3808,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @private
 	 */
 
-	var InvalidUnitError =
-	/*#__PURE__*/
-	function (_LuxonError5) {
+	var InvalidUnitError = /*#__PURE__*/function (_LuxonError5) {
 	  _inheritsLoose(InvalidUnitError, _LuxonError5);
 
 	  function InvalidUnitError(unit) {
@@ -3796,9 +3821,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @private
 	 */
 
-	var InvalidArgumentError =
-	/*#__PURE__*/
-	function (_LuxonError6) {
+	var InvalidArgumentError = /*#__PURE__*/function (_LuxonError6) {
 	  _inheritsLoose(InvalidArgumentError, _LuxonError6);
 
 	  function InvalidArgumentError() {
@@ -3811,9 +3834,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @private
 	 */
 
-	var ZoneIsAbstractError =
-	/*#__PURE__*/
-	function (_LuxonError7) {
+	var ZoneIsAbstractError = /*#__PURE__*/function (_LuxonError7) {
 	  _inheritsLoose(ZoneIsAbstractError, _LuxonError7);
 
 	  function ZoneIsAbstractError() {
@@ -4452,19 +4473,8 @@ define(['exports'], function (exports) { 'use strict';
 	function stringifyTokens(splits, tokenToString) {
 	  var s = "";
 
-	  for (var _iterator = splits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	    var _ref;
-
-	    if (_isArray) {
-	      if (_i >= _iterator.length) break;
-	      _ref = _iterator[_i++];
-	    } else {
-	      _i = _iterator.next();
-	      if (_i.done) break;
-	      _ref = _i.value;
-	    }
-
-	    var token = _ref;
+	  for (var _iterator = _createForOfIteratorHelperLoose(splits), _step; !(_step = _iterator()).done;) {
+	    var token = _step.value;
 
 	    if (token.literal) {
 	      s += token.val;
@@ -4502,9 +4512,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @private
 	 */
 
-	var Formatter =
-	/*#__PURE__*/
-	function () {
+	var Formatter = /*#__PURE__*/function () {
 	  Formatter.create = function create(locale, opts) {
 	    if (opts === void 0) {
 	      opts = {};
@@ -4742,6 +4750,7 @@ define(['exports'], function (exports) { 'use strict';
 
 	        case "ZZZZ":
 	          // like EST
+	          console.log(dt.zone);
 	          return dt.zone.offsetName(dt.ts, {
 	            format: "short",
 	            locale: _this.loc.locale
@@ -4979,9 +4988,9 @@ define(['exports'], function (exports) { 'use strict';
 	      };
 	    },
 	        tokens = Formatter.parseFormat(fmt),
-	        realTokens = tokens.reduce(function (found, _ref2) {
-	      var literal = _ref2.literal,
-	          val = _ref2.val;
+	        realTokens = tokens.reduce(function (found, _ref) {
+	      var literal = _ref.literal,
+	          val = _ref.val;
 	      return literal ? found : found.concat(val);
 	    }, []),
 	        collapsed = dur.shiftTo.apply(dur, realTokens.map(tokenToField).filter(function (t) {
@@ -4994,9 +5003,7 @@ define(['exports'], function (exports) { 'use strict';
 	  return Formatter;
 	}();
 
-	var Invalid =
-	/*#__PURE__*/
-	function () {
+	var Invalid = /*#__PURE__*/function () {
 	  function Invalid(reason, explanation) {
 	    this.reason = reason;
 	    this.explanation = explanation;
@@ -5019,9 +5026,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @interface
 	 */
 
-	var Zone =
-	/*#__PURE__*/
-	function () {
+	var Zone = /*#__PURE__*/function () {
 	  function Zone() {}
 
 	  var _proto = Zone.prototype;
@@ -5129,9 +5134,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @implements {Zone}
 	 */
 
-	var LocalZone =
-	/*#__PURE__*/
-	function (_Zone) {
+	var LocalZone = /*#__PURE__*/function (_Zone) {
 	  _inheritsLoose(LocalZone, _Zone);
 
 	  function LocalZone() {
@@ -5279,9 +5282,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @implements {Zone}
 	 */
 
-	var IANAZone =
-	/*#__PURE__*/
-	function (_Zone) {
+	var IANAZone = /*#__PURE__*/function (_Zone) {
 	  _inheritsLoose(IANAZone, _Zone);
 
 	  /**
@@ -5456,9 +5457,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @implements {Zone}
 	 */
 
-	var FixedOffsetZone =
-	/*#__PURE__*/
-	function (_Zone) {
+	var FixedOffsetZone = /*#__PURE__*/function (_Zone) {
 	  _inheritsLoose(FixedOffsetZone, _Zone);
 
 	  /**
@@ -5579,9 +5578,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * @implements {Zone}
 	 */
 
-	var InvalidZone =
-	/*#__PURE__*/
-	function (_Zone) {
+	var InvalidZone = /*#__PURE__*/function (_Zone) {
 	  _inheritsLoose(InvalidZone, _Zone);
 
 	  function InvalidZone(zoneName) {
@@ -5693,9 +5690,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var Settings =
-	/*#__PURE__*/
-	function () {
+	var Settings = /*#__PURE__*/function () {
 	  function Settings() {}
 
 	  /**
@@ -6009,9 +6004,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var PolyNumberFormatter =
-	/*#__PURE__*/
-	function () {
+	var PolyNumberFormatter = /*#__PURE__*/function () {
 	  function PolyNumberFormatter(intl, forceSimple, opts) {
 	    this.padTo = opts.padTo || 0;
 	    this.floor = opts.floor || false;
@@ -6046,9 +6039,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var PolyDateFormatter =
-	/*#__PURE__*/
-	function () {
+	var PolyDateFormatter = /*#__PURE__*/function () {
 	  function PolyDateFormatter(dt, intl, opts) {
 	    this.opts = opts;
 	    this.hasIntl = hasIntl();
@@ -6130,9 +6121,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var PolyRelFormatter =
-	/*#__PURE__*/
-	function () {
+	var PolyRelFormatter = /*#__PURE__*/function () {
 	  function PolyRelFormatter(intl, isEnglish, opts) {
 	    this.opts = Object.assign({
 	      style: "long"
@@ -6168,9 +6157,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var Locale =
-	/*#__PURE__*/
-	function () {
+	var Locale = /*#__PURE__*/function () {
 	  Locale.fromOpts = function fromOpts(opts) {
 	    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar, opts.defaultToEN);
 	  };
@@ -6884,9 +6871,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var Duration =
-	/*#__PURE__*/
-	function () {
+	var Duration = /*#__PURE__*/function () {
 	  /**
 	   * @private
 	   */
@@ -7195,19 +7180,8 @@ define(['exports'], function (exports) { 'use strict';
 	    var dur = friendlyDuration(duration),
 	        result = {};
 
-	    for (var _iterator = orderedUnits, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	      var _ref;
-
-	      if (_isArray) {
-	        if (_i >= _iterator.length) break;
-	        _ref = _iterator[_i++];
-	      } else {
-	        _i = _iterator.next();
-	        if (_i.done) break;
-	        _ref = _i.value;
-	      }
-
-	      var k = _ref;
+	    for (var _iterator = _createForOfIteratorHelperLoose(orderedUnits), _step; !(_step = _iterator()).done;) {
+	      var k = _step.value;
 
 	      if (hasOwnProperty$1(dur.values, k) || hasOwnProperty$1(this.values, k)) {
 	        result[k] = dur.get(k) + this.get(k);
@@ -7243,8 +7217,8 @@ define(['exports'], function (exports) { 'use strict';
 	    if (!this.isValid) return this;
 	    var result = {};
 
-	    for (var _i2 = 0, _Object$keys = Object.keys(this.values); _i2 < _Object$keys.length; _i2++) {
-	      var k = _Object$keys[_i2];
+	    for (var _i = 0, _Object$keys = Object.keys(this.values); _i < _Object$keys.length; _i++) {
+	      var k = _Object$keys[_i];
 	      result[k] = asNumber(fn(this.values[k], k));
 	    }
 
@@ -7289,10 +7263,10 @@ define(['exports'], function (exports) { 'use strict';
 	  ;
 
 	  _proto.reconfigure = function reconfigure(_temp) {
-	    var _ref2 = _temp === void 0 ? {} : _temp,
-	        locale = _ref2.locale,
-	        numberingSystem = _ref2.numberingSystem,
-	        conversionAccuracy = _ref2.conversionAccuracy;
+	    var _ref = _temp === void 0 ? {} : _temp,
+	        locale = _ref.locale,
+	        numberingSystem = _ref.numberingSystem,
+	        conversionAccuracy = _ref.conversionAccuracy;
 
 	    var loc = this.loc.clone({
 	      locale: locale,
@@ -7364,19 +7338,8 @@ define(['exports'], function (exports) { 'use strict';
 	    var lastUnit;
 	    normalizeValues(this.matrix, vals);
 
-	    for (var _iterator2 = orderedUnits, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-	      var _ref3;
-
-	      if (_isArray2) {
-	        if (_i3 >= _iterator2.length) break;
-	        _ref3 = _iterator2[_i3++];
-	      } else {
-	        _i3 = _iterator2.next();
-	        if (_i3.done) break;
-	        _ref3 = _i3.value;
-	      }
-
-	      var k = _ref3;
+	    for (var _iterator2 = _createForOfIteratorHelperLoose(orderedUnits), _step2; !(_step2 = _iterator2()).done;) {
+	      var k = _step2.value;
 
 	      if (units.indexOf(k) >= 0) {
 	        lastUnit = k;
@@ -7431,8 +7394,8 @@ define(['exports'], function (exports) { 'use strict';
 	    if (!this.isValid) return this;
 	    var negated = {};
 
-	    for (var _i4 = 0, _Object$keys2 = Object.keys(this.values); _i4 < _Object$keys2.length; _i4++) {
-	      var k = _Object$keys2[_i4];
+	    for (var _i2 = 0, _Object$keys2 = Object.keys(this.values); _i2 < _Object$keys2.length; _i2++) {
+	      var k = _Object$keys2[_i2];
 	      negated[k] = -this.values[k];
 	    }
 
@@ -7461,19 +7424,8 @@ define(['exports'], function (exports) { 'use strict';
 	      return false;
 	    }
 
-	    for (var _iterator3 = orderedUnits, _isArray3 = Array.isArray(_iterator3), _i5 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-	      var _ref4;
-
-	      if (_isArray3) {
-	        if (_i5 >= _iterator3.length) break;
-	        _ref4 = _iterator3[_i5++];
-	      } else {
-	        _i5 = _iterator3.next();
-	        if (_i5.done) break;
-	        _ref4 = _i5.value;
-	      }
-
-	      var u = _ref4;
+	    for (var _iterator3 = _createForOfIteratorHelperLoose(orderedUnits), _step3; !(_step3 = _iterator3()).done;) {
+	      var u = _step3.value;
 
 	      if (this.values[u] !== other.values[u]) {
 	        return false;
@@ -7658,9 +7610,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var Interval =
-	/*#__PURE__*/
-	function () {
+	var Interval = /*#__PURE__*/function () {
 	  /**
 	   * @private
 	   */
@@ -8142,19 +8092,8 @@ define(['exports'], function (exports) { 'use strict';
 	      return a.time - b.time;
 	    });
 
-	    for (var _iterator = arr, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	      var _ref3;
-
-	      if (_isArray) {
-	        if (_i >= _iterator.length) break;
-	        _ref3 = _iterator[_i++];
-	      } else {
-	        _i = _iterator.next();
-	        if (_i.done) break;
-	        _ref3 = _i.value;
-	      }
-
-	      var i = _ref3;
+	    for (var _iterator = _createForOfIteratorHelperLoose(arr), _step; !(_step = _iterator()).done;) {
+	      var i = _step.value;
 	      currentCount += i.type === "s" ? 1 : -1;
 
 	      if (currentCount === 1) {
@@ -8247,9 +8186,9 @@ define(['exports'], function (exports) { 'use strict';
 	  ;
 
 	  _proto.toFormat = function toFormat(dateFormat, _temp2) {
-	    var _ref4 = _temp2 === void 0 ? {} : _temp2,
-	        _ref4$separator = _ref4.separator,
-	        separator = _ref4$separator === void 0 ? " – " : _ref4$separator;
+	    var _ref3 = _temp2 === void 0 ? {} : _temp2,
+	        _ref3$separator = _ref3.separator,
+	        separator = _ref3$separator === void 0 ? " – " : _ref3$separator;
 
 	    if (!this.isValid) return INVALID$1;
 	    return "" + this.s.toFormat(dateFormat) + separator + this.e.toFormat(dateFormat);
@@ -8342,9 +8281,7 @@ define(['exports'], function (exports) { 'use strict';
 	 * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
 	 */
 
-	var Info =
-	/*#__PURE__*/
-	function () {
+	var Info = /*#__PURE__*/function () {
 	  function Info() {}
 
 	  /**
@@ -9728,19 +9665,8 @@ define(['exports'], function (exports) { 'use strict';
 
 	function quickDT(obj, zone) {
 	  // assume we have the higher-order units
-	  for (var _iterator = orderedUnits$1, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	    var _ref2;
-
-	    if (_isArray) {
-	      if (_i >= _iterator.length) break;
-	      _ref2 = _iterator[_i++];
-	    } else {
-	      _i = _iterator.next();
-	      if (_i.done) break;
-	      _ref2 = _i.value;
-	    }
-
-	    var u = _ref2;
+	  for (var _iterator = _createForOfIteratorHelperLoose(orderedUnits$1), _step; !(_step = _iterator()).done;) {
+	    var u = _step.value;
 
 	    if (isUndefined(obj[u])) {
 	      obj[u] = defaultUnitValues[u];
@@ -9787,19 +9713,8 @@ define(['exports'], function (exports) { 'use strict';
 	    return format(differ(opts.unit), opts.unit);
 	  }
 
-	  for (var _iterator2 = opts.units, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-	    var _ref3;
-
-	    if (_isArray2) {
-	      if (_i2 >= _iterator2.length) break;
-	      _ref3 = _iterator2[_i2++];
-	    } else {
-	      _i2 = _iterator2.next();
-	      if (_i2.done) break;
-	      _ref3 = _i2.value;
-	    }
-
-	    var unit = _ref3;
+	  for (var _iterator2 = _createForOfIteratorHelperLoose(opts.units), _step2; !(_step2 = _iterator2()).done;) {
+	    var unit = _step2.value;
 	    var count = differ(unit);
 
 	    if (Math.abs(count) >= 1) {
@@ -9831,9 +9746,7 @@ define(['exports'], function (exports) { 'use strict';
 	 */
 
 
-	var DateTime =
-	/*#__PURE__*/
-	function () {
+	var DateTime = /*#__PURE__*/function () {
 	  /**
 	   * @access private
 	   */
@@ -9852,9 +9765,9 @@ define(['exports'], function (exports) { 'use strict';
 	      var unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
 
 	      if (unchanged) {
-	        var _ref4 = [config.old.c, config.old.o];
-	        c = _ref4[0];
-	        o = _ref4[1];
+	        var _ref2 = [config.old.c, config.old.o];
+	        c = _ref2[0];
+	        o = _ref2[1];
 	      } else {
 	        var ot = zone.offset(this.ts);
 	        c = tsToObj(this.ts, ot);
@@ -10147,19 +10060,8 @@ define(['exports'], function (exports) { 'use strict';
 
 	    var foundFirst = false;
 
-	    for (var _iterator3 = units, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-	      var _ref5;
-
-	      if (_isArray3) {
-	        if (_i3 >= _iterator3.length) break;
-	        _ref5 = _iterator3[_i3++];
-	      } else {
-	        _i3 = _iterator3.next();
-	        if (_i3.done) break;
-	        _ref5 = _i3.value;
-	      }
-
-	      var u = _ref5;
+	    for (var _iterator3 = _createForOfIteratorHelperLoose(units), _step3; !(_step3 = _iterator3()).done;) {
+	      var u = _step3.value;
 	      var v = normalized[u];
 
 	      if (!isUndefined(v)) {
@@ -10500,11 +10402,11 @@ define(['exports'], function (exports) { 'use strict';
 	  ;
 
 	  _proto.setZone = function setZone(zone, _temp) {
-	    var _ref6 = _temp === void 0 ? {} : _temp,
-	        _ref6$keepLocalTime = _ref6.keepLocalTime,
-	        keepLocalTime = _ref6$keepLocalTime === void 0 ? false : _ref6$keepLocalTime,
-	        _ref6$keepCalendarTim = _ref6.keepCalendarTime,
-	        keepCalendarTime = _ref6$keepCalendarTim === void 0 ? false : _ref6$keepCalendarTim;
+	    var _ref3 = _temp === void 0 ? {} : _temp,
+	        _ref3$keepLocalTime = _ref3.keepLocalTime,
+	        keepLocalTime = _ref3$keepLocalTime === void 0 ? false : _ref3$keepLocalTime,
+	        _ref3$keepCalendarTim = _ref3.keepCalendarTime,
+	        keepCalendarTime = _ref3$keepCalendarTim === void 0 ? false : _ref3$keepCalendarTim;
 
 	    zone = normalizeZone(zone, Settings.defaultZone);
 
@@ -10539,10 +10441,10 @@ define(['exports'], function (exports) { 'use strict';
 	  ;
 
 	  _proto.reconfigure = function reconfigure(_temp2) {
-	    var _ref7 = _temp2 === void 0 ? {} : _temp2,
-	        locale = _ref7.locale,
-	        numberingSystem = _ref7.numberingSystem,
-	        outputCalendar = _ref7.outputCalendar;
+	    var _ref4 = _temp2 === void 0 ? {} : _temp2,
+	        locale = _ref4.locale,
+	        numberingSystem = _ref4.numberingSystem,
+	        outputCalendar = _ref4.outputCalendar;
 
 	    var loc = this.loc.clone({
 	      locale: locale,
@@ -10820,9 +10722,9 @@ define(['exports'], function (exports) { 'use strict';
 	  ;
 
 	  _proto.toISODate = function toISODate(_temp3) {
-	    var _ref8 = _temp3 === void 0 ? {} : _temp3,
-	        _ref8$format = _ref8.format,
-	        format = _ref8$format === void 0 ? "extended" : _ref8$format;
+	    var _ref5 = _temp3 === void 0 ? {} : _temp3,
+	        _ref5$format = _ref5.format,
+	        format = _ref5$format === void 0 ? "extended" : _ref5$format;
 
 	    var fmt = format === "basic" ? "yyyyMMdd" : "yyyy-MM-dd";
 
@@ -10857,15 +10759,15 @@ define(['exports'], function (exports) { 'use strict';
 	  ;
 
 	  _proto.toISOTime = function toISOTime(_temp4) {
-	    var _ref9 = _temp4 === void 0 ? {} : _temp4,
-	        _ref9$suppressMillise = _ref9.suppressMilliseconds,
-	        suppressMilliseconds = _ref9$suppressMillise === void 0 ? false : _ref9$suppressMillise,
-	        _ref9$suppressSeconds = _ref9.suppressSeconds,
-	        suppressSeconds = _ref9$suppressSeconds === void 0 ? false : _ref9$suppressSeconds,
-	        _ref9$includeOffset = _ref9.includeOffset,
-	        includeOffset = _ref9$includeOffset === void 0 ? true : _ref9$includeOffset,
-	        _ref9$format = _ref9.format,
-	        format = _ref9$format === void 0 ? "extended" : _ref9$format;
+	    var _ref6 = _temp4 === void 0 ? {} : _temp4,
+	        _ref6$suppressMillise = _ref6.suppressMilliseconds,
+	        suppressMilliseconds = _ref6$suppressMillise === void 0 ? false : _ref6$suppressMillise,
+	        _ref6$suppressSeconds = _ref6.suppressSeconds,
+	        suppressSeconds = _ref6$suppressSeconds === void 0 ? false : _ref6$suppressSeconds,
+	        _ref6$includeOffset = _ref6.includeOffset,
+	        includeOffset = _ref6$includeOffset === void 0 ? true : _ref6$includeOffset,
+	        _ref6$format = _ref6.format,
+	        format = _ref6$format === void 0 ? "extended" : _ref6$format;
 
 	    return toTechTimeFormat(this, {
 	      suppressSeconds: suppressSeconds,
@@ -10922,11 +10824,11 @@ define(['exports'], function (exports) { 'use strict';
 	  ;
 
 	  _proto.toSQLTime = function toSQLTime(_temp5) {
-	    var _ref10 = _temp5 === void 0 ? {} : _temp5,
-	        _ref10$includeOffset = _ref10.includeOffset,
-	        includeOffset = _ref10$includeOffset === void 0 ? true : _ref10$includeOffset,
-	        _ref10$includeZone = _ref10.includeZone,
-	        includeZone = _ref10$includeZone === void 0 ? false : _ref10$includeZone;
+	    var _ref7 = _temp5 === void 0 ? {} : _temp5,
+	        _ref7$includeOffset = _ref7.includeOffset,
+	        includeOffset = _ref7$includeOffset === void 0 ? true : _ref7$includeOffset,
+	        _ref7$includeZone = _ref7.includeZone,
+	        includeZone = _ref7$includeZone === void 0 ? false : _ref7$includeZone;
 
 	    return toTechTimeFormat(this, {
 	      includeOffset: includeOffset,
