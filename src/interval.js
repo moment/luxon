@@ -130,7 +130,7 @@ export default class Interval {
 
   /**
    * Check if an object is an Interval. Works across context boundaries
-   * @param {object} o
+   * @param {Object} o
    * @return {boolean}
    */
   static isInterval(o) {
@@ -465,7 +465,7 @@ export default class Interval {
    * Returns an ISO 8601-compliant string representation of time of this Interval.
    * The date components are ignored.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
-   * @param {Object} opts - The same options as {@link DateTime.toISO}
+   * @param {Object} opts - The same options as {@link DateTime#toISO}
    * @return {string}
    */
   toISOTime(opts) {

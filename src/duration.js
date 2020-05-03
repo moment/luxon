@@ -293,7 +293,7 @@ export default class Duration {
 
   /**
    * Check if an object is a Duration. Works across context boundaries
-   * @param {object} o
+   * @param {Object} o
    * @return {boolean}
    */
   static isDuration(o) {
