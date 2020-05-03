@@ -1,13 +1,7 @@
 /* global test expect */
 
-import {
-  Info,
-  FixedOffsetZone,
-  IANAZone,
-  InvalidZone,
-  SystemZone,
-  Settings
-} from "../../src/luxon";
+import { Info, FixedOffsetZone, IANAZone, SystemZone, Settings } from "../../src/luxon";
+import { InvalidZoneError } from "../../src/errors";
 
 const Helpers = require("../helpers");
 
@@ -79,9 +73,6 @@ test("Info.normalizeZone returns Zone objects unchanged", () => {
   const ianaZone = new IANAZone("Europe/Paris");
   expect(Info.normalizeZone(ianaZone)).toBe(ianaZone);
 
-  const invalidZone = new InvalidZone("bumblebee");
-  expect(Info.normalizeZone(invalidZone)).toBe(invalidZone);
-
   const sysZone = SystemZone.instance;
   expect(Info.normalizeZone(sysZone)).toBe(sysZone);
 });
@@ -100,8 +91,8 @@ test.each([
   expect(Info.normalizeZone(input)).toEqual(expected);
 });
 
-test("Info.normalizeZone converts unknown name to invalid Zone", () => {
-  expect(Info.normalizeZone("bumblebee").isValid).toBe(false);
+test("Info.normalizeZone throws on an invalid zone format", () => {
+  expect(() => Info.normalizeZone("%3132400012~")).toThrow(InvalidZoneError);
 });
 
 test("Info.normalizeZone converts null and undefined to default Zone", () => {

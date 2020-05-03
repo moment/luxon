@@ -44,7 +44,10 @@ function rollupInputOpts(opts) {
       rollupBabel({
         babelrc: false,
         presets: [["@babel/preset-env", presetOpts]],
-        plugins: ["@babel/plugin-proposal-optional-chaining"]
+        plugins: [
+          "@babel/plugin-proposal-optional-chaining",
+          "@babel/plugin-proposal-throw-expressions"
+        ]
       })
     );
   }

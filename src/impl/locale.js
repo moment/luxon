@@ -438,7 +438,7 @@ export default class Locale {
   }
 
   numberFormatter(opts = {}) {
-    // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
+    // this forceSimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
     // (in contrast, the rest of the condition is used heavily)
     return new PolyNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
   }

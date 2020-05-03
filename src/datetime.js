@@ -590,10 +590,11 @@ export default class DateTime {
    * @param {number} obj.minute - minute of the hour, 0-59
    * @param {number} obj.second - second of the minute, 0-59
    * @param {number} obj.millisecond - millisecond of the second, 0-999
-   * @param {string|Zone} [obj.zone='default'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
-   * @param {string} [obj.locale='system's locale'] - a locale to set on the resulting DateTime instance
-   * @param {string} obj.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {string} obj.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param opts
+   * @param {string|Zone} [opts.zone='default'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
+   * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
    * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
@@ -605,9 +606,6 @@ export default class DateTime {
    */
   static fromObject(obj, opts = {}) {
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
-    if (!zoneToUse.isValid) {
-      throw new InvalidZoneError(zoneToUse);
-    }
 
     const tsNow = Settings.now(),
       offsetProvis = zoneToUse.offset(tsNow),
