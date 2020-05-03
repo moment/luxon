@@ -206,6 +206,7 @@ export default class Formatter {
             return formatOffset({ format: "techie", allowZ: this.opts.allowZ });
           case "ZZZZ":
             // like EST
+            console.log(dt.zone);
             return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
           case "ZZZZZ":
             // like Eastern Standard Time

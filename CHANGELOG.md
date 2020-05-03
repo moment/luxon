@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.24.0 (2020-05-03)
+
+ * Update polyfills for pollyfilled build
+
 ## 1.23.0 (2020-04-02)
 
  * Allow minus sign prefix when creating Duration from ISO
