@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.24.1 (2020-05-04)
+
+ * Remove erroneous `console.log` call
+
 ## 1.24.0 (2020-05-03)
 
  * Update polyfills for pollyfilled build
