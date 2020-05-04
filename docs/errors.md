@@ -42,6 +42,8 @@ The structure of error is like so:
 ````js
 {
   reason: "invalid zone" // this reason
+}
+````
 
 ##InvalidArgumentError
 

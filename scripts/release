@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 npm run build
 npm run docs
-npm run site
 npm publish
 ./scripts/tag
-./scripts/deploy-site

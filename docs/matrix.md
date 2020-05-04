@@ -27,7 +27,7 @@ Luxon officially supports the last two versions of the major browsers, with some
 |                                  | 6        | ✗     | ✗           | ✗           | ✗                             |
 
 - Those capabilities are explained in the next sections, along with possible polyfill options
-- "w/ICU" refers to providing Node with ICU data. See the [install](install.html#node) for instructions
+- "w/ICU" refers to providing Node with ICU data. See the [install](install.md?id=node) for instructions
 
 ## Internet Explorer and platform polyfills
 
@@ -56,7 +56,7 @@ These use global polyfills, though, which means newer browsers will be running t
 
 In the support table above, you can see that some environments are missing capabilities. They affect a subset of Luxon's features that depend on specific APIs that some older browsers don't support.
 
-1.  **Basic internationalization**. Luxon doesn't have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy [toLocaleString](../class/src/datetime.js~DateTime.html#instance-method-toLocaleString). Most browsers and recent versions of Node support this.
+1.  **Basic internationalization**. Luxon doesn't have internationalized strings in its code; instead it relies on the hosts implementation of the Intl API. This includes the very handy `toLocaleString`. Most browsers and recent versions of Node support this.
 2.  **Internationalized tokens**. Listing the months or weekdays of a locale and outputting or parsing ad-hoc formats in non-English locales requires that Luxon be able to programmatically introspect the results of an Intl call. It does this using Intl's [formatToParts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts) method, which is a relatively recent addition in most browsers. So you could have the Intl API without having that.
 3.  **Zones**. Luxon's support of IANA zones works by abusing the Intl API. That means you have to have that API and that the API must support a reasonable list of time zones. Zones are a recent addition to some platforms.
 4.  **Relative time formatting**. Luxon's support for relative time formatting (e.g. `DateTime#toRelative` and `DateTime#toRelativeCalendar`) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.
