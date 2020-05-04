@@ -605,6 +605,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromObject(obj, opts = {}) {
+    obj = obj || {};
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
 
     const tsNow = Settings.now(),

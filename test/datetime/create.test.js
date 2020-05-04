@@ -715,3 +715,8 @@ test("DateTime.fromObject handles null as a language tag", () => {
     expect(res.numberingSystem).toBe("thai");
   });
 });
+
+test("DateTime.fromObject takes a undefined to mean {}", () => {
+  const res = DateTime.fromObject();
+  expect(res.year).toBe(new Date().getFullYear());
+});
