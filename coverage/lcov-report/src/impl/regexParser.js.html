@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>89/89</span>
+                <span class='fraction'>92/92</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>26/26</span>
+                <span class='fraction'>30/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>24/24</span>
+                <span class='fraction'>25/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>87/87</span>
+                <span class='fraction'>89/89</span>
             </div>
         
             
@@ -372,7 +372,11 @@
 <a name='L313'></a><a href='#L313'>313</a>
 <a name='L314'></a><a href='#L314'>314</a>
 <a name='L315'></a><a href='#L315'>315</a>
-<a name='L316'></a><a href='#L316'>316</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -413,14 +417,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">246x</span>
+<span class="cline-any cline-yes">250x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">245x</span>
-<span class="cline-any cline-yes">343x</span>
-<span class="cline-any cline-yes">343x</span>
-<span class="cline-any cline-yes">215x</span>
+<span class="cline-any cline-yes">249x</span>
+<span class="cline-any cline-yes">347x</span>
+<span class="cline-any cline-yes">347x</span>
+<span class="cline-any cline-yes">219x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">30x</span>
@@ -507,9 +511,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">200x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -662,7 +670,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">33x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">54x</span>
@@ -809,11 +817,11 @@ function extractIANAZone(match, cursor) {
 &nbsp;
 // ISO duration parsing
 &nbsp;
-const isoDuration = /^P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?)$/;
+const isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 &nbsp;
 function extractISODuration(match) {
   const [
-    ,
+    s,
     yearStr,
     monthStr,
     weekStr,
@@ -824,16 +832,20 @@ function extractISODuration(match) {
     millisecondsStr
   ] = match;
 &nbsp;
+  const hasNegativePrefix = s[0] === "-";
+&nbsp;
+  const maybeNegate = num =&gt; (num &amp;&amp; hasNegativePrefix ? -num : num);
+&nbsp;
   return [
     {
-      years: parseInteger(yearStr),
-      months: parseInteger(monthStr),
-      weeks: parseInteger(weekStr),
-      days: parseInteger(dayStr),
-      hours: parseInteger(hourStr),
-      minutes: parseInteger(minuteStr),
-      seconds: parseInteger(secondStr),
-      milliseconds: parseMillis(millisecondsStr)
+      years: maybeNegate(parseInteger(yearStr)),
+      months: maybeNegate(parseInteger(monthStr)),
+      weeks: maybeNegate(parseInteger(weekStr)),
+      days: maybeNegate(parseInteger(dayStr)),
+      hours: maybeNegate(parseInteger(hourStr)),
+      minutes: maybeNegate(parseInteger(minuteStr)),
+      seconds: maybeNegate(parseInteger(secondStr)),
+      milliseconds: maybeNegate(parseMillis(millisecondsStr))
     }
   ];
 }
@@ -1009,7 +1021,7 @@ export function parseSQL(s) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Mar 19 2020 16:31:19 GMT-0400 (Eastern Daylight Time)
+                at Mon May 04 2020 13:45:50 GMT-0400 (Eastern Daylight Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

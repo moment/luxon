@@ -918,7 +918,6 @@ class Formatter {
 
         case "ZZZZ":
           // like EST
-          console.log(dt.zone);
           return dt.zone.offsetName(dt.ts, {
             format: "short",
             locale: this.loc.locale
