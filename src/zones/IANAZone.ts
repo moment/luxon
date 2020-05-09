@@ -75,8 +75,8 @@ let ianaZoneCache: Record<string, IANAZone> = {};
  * @implements {Zone}
  */
 export default class IANAZone extends Zone {
-  private zoneName: Readonly<string>;
-  private valid: Readonly<boolean>;
+  private readonly zoneName: string;
+  private readonly valid: boolean;
 
   /**
    * @param {string} name - Zone name

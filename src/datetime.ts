@@ -335,13 +335,13 @@ interface Config extends DateTimeConfig {
  */
 export default class DateTime {
   // Private readonly fields
-  private ts: Readonly<number>;
+  private readonly ts: number;
   private _zone: Readonly<Zone>;
   private loc: Locale;
   private weekData: WeekDateTime | undefined;
   private c: Readonly<GregorianDateTime>;
-  private o: Readonly<number>;
-  private isLuxonDateTime: Readonly<true>;
+  private readonly o: number;
+  private readonly isLuxonDateTime: true;
 
   /**
    * @access private

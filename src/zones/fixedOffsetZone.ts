@@ -9,7 +9,7 @@ let singleton: FixedOffsetZone | undefined;
  * @implements {Zone}
  */
 export default class FixedOffsetZone extends Zone {
-  private fixed: Readonly<number>;
+  private readonly fixed: number;
 
   /**
    * Get a singleton instance of UTC
