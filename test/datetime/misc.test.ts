@@ -1,4 +1,4 @@
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src";
 
 // you hate to see a class like this, but here we are
 

@@ -1,4 +1,4 @@
-import { DateTime, Interval, Duration } from "../../src/luxon";
+import { DateTime, Interval, Duration } from "../../src";
 
 import Helpers from "../helpers";
 

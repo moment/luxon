@@ -29,7 +29,7 @@ DateTime.now().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toIS
 
 ## Development
 
-See [contributing](contributing.md).
+See [contributing](CONTRIBUTING.md).
 
 ![Phasers to stun][phasers-image]
 

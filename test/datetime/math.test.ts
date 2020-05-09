@@ -1,4 +1,4 @@
-import { DateTime, Duration } from "../../src/luxon";
+import { DateTime, Duration } from "../../src";
 import { InvalidArgumentError } from "../../src/errors";
 
 function createDateTime() {

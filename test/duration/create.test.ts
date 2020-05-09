@@ -1,4 +1,4 @@
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src";
 import { InvalidArgumentError, InvalidUnitError } from "../../src/errors";
 import Helpers from "../helpers";
 

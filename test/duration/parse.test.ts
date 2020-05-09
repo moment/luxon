@@ -1,4 +1,4 @@
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src";
 import { UnparsableStringError } from "../../src/errors";
 import { DurationObject } from "../../src/types/duration";
 

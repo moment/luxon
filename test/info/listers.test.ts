@@ -1,4 +1,4 @@
-import { Info } from "../../src/luxon";
+import { Info } from "../../src";
 
 //------
 // .months()

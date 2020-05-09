@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { StringUnitLength } from "./common";
 import { ToRelativeNumeric, ToRelativeUnit } from "./datetime";
 

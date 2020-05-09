@@ -1,4 +1,4 @@
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src";
 
 test("equals self", () => {
   const l = Duration.fromObject({ years: 5, days: 6 });

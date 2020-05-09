@@ -439,7 +439,10 @@ export default class Interval {
       type: "s" | "e";
     }
     const results = [],
-      ends = intervals.map(i => [{ time: i.s, type: "s" }, { time: i.e, type: "e" }]),
+      ends = intervals.map(i => [
+        { time: i.s, type: "s" },
+        { time: i.e, type: "e" }
+      ]),
       flattened: IntervalBoundary[] = Array.prototype.concat(...ends),
       arr = flattened.sort((a, b) => a.time.valueOf() - b.time.valueOf());
 

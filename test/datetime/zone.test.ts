@@ -1,4 +1,4 @@
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime, Settings } from "../../src";
 import { InvalidZoneError } from "../../src/errors";
 
 import Helpers from "../helpers";

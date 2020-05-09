@@ -1,4 +1,4 @@
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src";
 
 test("equals self", () => {
   const l = DateTime.now();

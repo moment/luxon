@@ -1,4 +1,4 @@
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src";
 
 //------
 // years/months/days/hours/minutes/seconds/milliseconds

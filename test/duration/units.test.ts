@@ -1,4 +1,4 @@
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src";
 
 //------
 // #shiftTo()
@@ -97,18 +97,54 @@ test("Duration#normalize handles fully negative durations", () => {
 
 test("Duration#normalize handles the full grid partially negative durations", () => {
   const sets = [
-    [{ months: 1, days: 32 }, { months: 2, days: 2 }],
-    [{ months: 1, days: 28 }, { months: 1, days: 28 }],
-    [{ months: 1, days: -32 }, { months: 0, days: -2 }],
-    [{ months: 1, days: -28 }, { months: 0, days: 2 }],
-    [{ months: -1, days: 32 }, { months: 0, days: 2 }],
-    [{ months: -1, days: 28 }, { months: 0, days: -2 }],
-    [{ months: -1, days: -32 }, { months: -2, days: -2 }],
-    [{ months: -1, days: -28 }, { months: -1, days: -28 }],
-    [{ months: 0, days: 32 }, { months: 1, days: 2 }],
-    [{ months: 0, days: 28 }, { months: 0, days: 28 }],
-    [{ months: 0, days: -32 }, { months: -1, days: -2 }],
-    [{ months: 0, days: -28 }, { months: 0, days: -28 }]
+    [
+      { months: 1, days: 32 },
+      { months: 2, days: 2 }
+    ],
+    [
+      { months: 1, days: 28 },
+      { months: 1, days: 28 }
+    ],
+    [
+      { months: 1, days: -32 },
+      { months: 0, days: -2 }
+    ],
+    [
+      { months: 1, days: -28 },
+      { months: 0, days: 2 }
+    ],
+    [
+      { months: -1, days: 32 },
+      { months: 0, days: 2 }
+    ],
+    [
+      { months: -1, days: 28 },
+      { months: 0, days: -2 }
+    ],
+    [
+      { months: -1, days: -32 },
+      { months: -2, days: -2 }
+    ],
+    [
+      { months: -1, days: -28 },
+      { months: -1, days: -28 }
+    ],
+    [
+      { months: 0, days: 32 },
+      { months: 1, days: 2 }
+    ],
+    [
+      { months: 0, days: 28 },
+      { months: 0, days: 28 }
+    ],
+    [
+      { months: 0, days: -32 },
+      { months: -1, days: -2 }
+    ],
+    [
+      { months: 0, days: -28 },
+      { months: 0, days: -28 }
+    ]
   ];
 
   sets.forEach(([from, to]) => {

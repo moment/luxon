@@ -1,4 +1,4 @@
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src";
 
 import Helpers from "../helpers";
 import { GenericDateTime } from "../../src/types/datetime";
