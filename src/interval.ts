@@ -53,7 +53,7 @@ export default class Interval {
   // Private readonly fields
   private s: DateTime;
   private e: DateTime;
-  private isLuxonInterval: Readonly<true>;
+  private readonly isLuxonInterval: true;
 
   /**
    * @private

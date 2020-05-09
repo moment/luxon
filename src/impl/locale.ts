@@ -154,8 +154,8 @@ interface NumberFormatterOptions {
 }
 
 class PolyNumberFormatter {
-  private padTo: Readonly<number>;
-  private floor: Readonly<boolean>;
+  private readonly padTo: number;
+  private readonly floor: boolean;
   private inf?: Readonly<Intl.NumberFormat>;
 
   constructor(intl: string, forceSimple: boolean, options: NumberFormatterOptions) {
@@ -313,19 +313,19 @@ type EraCache = Partial<Record<StringUnitLength, string[]>>;
  * @private
  */
 export default class Locale {
-  public locale: Readonly<string>;
+  public readonly locale: string;
   public numberingSystem?: Readonly<NumberingSystem>;
   public outputCalendar?: Readonly<CalendarSystem>;
 
-  private intl: Readonly<string>;
+  private readonly intl: string;
 
   private weekdaysCache: Readonly<WeekDaysCache>;
   private monthsCache: Readonly<MonthCache>;
   private meridiemCache?: Readonly<string[]>;
   private eraCache: EraCache;
 
-  private specifiedLocale?: Readonly<string>;
-  private fastNumbersCached?: Readonly<boolean>;
+  private readonly specifiedLocale?: string;
+  private fastNumbersCached?: boolean;
 
   static create(
     locale?: string,

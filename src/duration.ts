@@ -191,7 +191,7 @@ export default class Duration {
   private values: Readonly<NormalizedDurationObject>;
   private loc: Locale;
   private matrix: ConversionMatrix;
-  private isLuxonDuration: Readonly<true>;
+  private readonly isLuxonDuration: true;
 
   /**
    * @private
