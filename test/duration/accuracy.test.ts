@@ -1,4 +1,4 @@
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src";
 import { DurationUnit } from "../../src/types/duration";
 import { ConversionAccuracy } from "../../src/types/common";
 

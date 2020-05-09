@@ -1,4 +1,4 @@
-import { Info, FixedOffsetZone, IANAZone, SystemZone, Settings, Zone } from "../../src/luxon";
+import { Info, FixedOffsetZone, IANAZone, SystemZone, Settings, Zone } from "../../src";
 import { InvalidZoneError } from "../../src/errors";
 
 import Helpers from "../helpers";

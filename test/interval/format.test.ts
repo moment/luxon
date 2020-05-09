@@ -1,4 +1,4 @@
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src";
 
 const fromISOs = (s: string, e: string) =>
     DateTime.fromISO(s, { setZone: true }).until(DateTime.fromISO(e, { setZone: true })),

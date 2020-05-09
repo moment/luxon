@@ -1,16 +1,22 @@
 {
+  "include": ["src", "types"],
   "compilerOptions": {
+    "module": "esnext",
     "target": "es5",
-    "outDir": "transpiled",
-    "module": "es2015",
-    "moduleResolution": "node",
-    "lib": ["es6", "es2017.intl", "dom"],
+    "lib": ["dom", "esnext"],
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "strict": true,
-    "types": ["jest"],
-    "noEmit": true,
-    "forceConsistentCasingInFileNames": true
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*", "node_modules/*"]
+    },
+    "esModuleInterop": true
   }
 }

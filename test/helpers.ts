@@ -1,7 +1,7 @@
-/* eslint no-global-assign: "off" */
-import { DateTime, Settings, Duration } from "../src/luxon";
+import { DateTime, Settings, Duration } from "../src";
 import { NumberingSystem, CalendarSystem } from "../src/types/locale";
 import { ZoneLike } from "../src/types/zone";
+// import { Intl.RelativeTimeFormat } from "../src/types/intl";
 
 const withoutIntl = function(name: string, f: Function) {
   const fullName = `With no Intl support, ${name}`;
@@ -9,13 +9,13 @@ const withoutIntl = function(name: string, f: Function) {
     const intl = Intl;
     try {
       // @ts-ignore
-      Intl = undefined;
+      Intl = undefined; // eslint-disable-line no-native-reassign
       Settings.resetCaches();
       f();
     } finally {
       Settings.resetCaches();
       // @ts-ignore
-      Intl = intl;
+      Intl = intl; // eslint-disable-line no-native-reassign
     }
   });
 };
@@ -38,6 +38,7 @@ const withoutFTP = function(name: string, f: Function) {
 const withoutRTF = function(name: string, f: Function) {
   const fullName = `With no RelativeTimeFormat support, ${name}`;
   test(fullName, () => {
+    // @ts-ignore
     const rtf = Intl.RelativeTimeFormat;
     try {
       // @ts-ignore
@@ -46,6 +47,7 @@ const withoutRTF = function(name: string, f: Function) {
       f();
     } finally {
       Settings.resetCaches();
+      // @ts-ignore
       Intl.RelativeTimeFormat = rtf;
     }
   });

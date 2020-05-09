@@ -1,4 +1,4 @@
-import { Interval, DateTime } from "../../src/luxon";
+import { Interval, DateTime } from "../../src";
 
 //------
 // #isInterval

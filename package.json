@@ -1,6 +1,7 @@
 {
   "name": "luxon",
-  "version": "1.24.0",
+  "version": "2.0.0",
+  "license": "MIT",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": [
@@ -8,97 +9,41 @@
     "immutable"
   ],
   "repository": "https://github.com/moment/luxon",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
   "scripts": {
-    "build": "babel-node tasks/buildAll.js",
-    "build-node": "babel-node tasks/buildNode.js",
-    "build-global": "babel-node tasks/buildGlobal.js",
-    "jest": "jest",
-    "test": "jest --coverage",
-    "tsc": "tsc",
-    "docs": "npm run tsc -- -noEmit false -target es6 && esdoc -c docs/index.js && rimraf transpiled",
-    "site": "cp -r site/** build/",
-    "lint": "eslint --ext .ts,.js --quiet src test benchmarks",
-    "lint!": "npm run format && npm run lint",
-    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts' 'benchmarks/*.js'",
-    "benchmark": "babel-node benchmarks/datetime.js",
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "docs": "npx tsc -t es6 --outDir transpiled && esdoc -c docs/index.js",
+    "site": "cp -r site dist",
+    "benchmark": "echo todo benchmarks/datetime.ts",
     "codecov": "codecov",
-    "check-doc-coverage": "babel-node tasks/docCoverage"
+    "check-doc-coverage": "grep '\"coverage\": \"100%\"' dist/docs/coverage.json"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "tsdx lint"
     }
   },
+  "module": "dist/luxon.esm.js",
   "devDependencies": {
-    "@babel/core": "latest",
-    "@babel/node": "latest",
-    "@babel/plugin-external-helpers": "latest",
-    "@babel/plugin-proposal-optional-chaining": "latest",
-    "@babel/plugin-proposal-throw-expressions": "^7.8.3",
-    "@babel/preset-env": "latest",
-    "@rollup/plugin-commonjs": "^11.1.0",
-    "@rollup/plugin-node-resolve": "^7.1.3",
-    "@types/jest": "latest",
-    "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/parser": "latest",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "latest",
-    "babel-jest": "^25.3.0",
-    "benchmark": "latest",
-    "codecov": ">= 3.6.5",
-    "core-js": "^3.6.5",
+    "benchmark": "^2.1.4",
+    "codecov": "^3.6.5",
     "esdoc": "^1.1.0",
-    "esdoc-standard-plugin": "latest",
-    "eslint": "6.4.0",
-    "eslint-config-defaults": "latest",
-    "eslint-config-prettier": "6.3.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-babel": "latest",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "10.0.0",
-    "eslint-plugin-prettier": "3.1.1",
-    "eslint-plugin-promise": "latest",
-    "eslint-plugin-react": "^7.19.0",
-    "eslint-plugin-standard": "^4.0.1",
-    "fs-extra": "^6.0.1",
-    "full-icu": "^1.3.1",
+    "esdoc-standard-plugin": "^1.0.0",
     "husky": "^4.2.5",
-    "jest": "^25.3.0",
-    "prettier": "1.14.3",
-    "pretty-quick": "^2.0.1",
-    "rimraf": "latest",
-    "rollup": "latest",
-    "rollup-plugin-babel": "latest",
-    "rollup-plugin-commonjs": "latest",
-    "rollup-plugin-node-resolve": "latest",
-    "rollup-plugin-terser": "latest",
-    "rollup-plugin-typescript": "latest",
-    "ts-jest": "latest",
-    "tslib": "latest",
-    "typescript": "latest",
-    "uglify-js": "latest"
-  },
-  "main": "build/node/luxon.js",
-  "types": "build/node/luxon.d.ts",
-  "module": "src/luxon.js",
-  "browser": "build/cjs-browser/luxon.js",
-  "jsdelivr": "build/global/luxon.min.js",
-  "unpkg": "build/global/luxon.min.js",
-  "engines": {
-    "node": "*"
-  },
-  "files": [
-    "build/node/luxon.js",
-    "build/node/luxon.js.map",
-    "build/cjs-browser/luxon.js",
-    "build/cjs-browser/luxon.js.map",
-    "build/amd/luxon.js",
-    "build/amd/luxon.js.map",
-    "build/global/luxon.js",
-    "build/global/luxon.js.map",
-    "build/global/luxon.min.js",
-    "build/global/luxon.min.js.map",
-    "src"
-  ],
-  "license": "MIT"
+    "tsdx": "^0.13.2",
+    "tslib": "^1.11.2",
+    "typescript": "^3.8.3"
+  }
 }

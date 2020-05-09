@@ -1,4 +1,4 @@
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src";
 import Helpers from "../helpers";
 import {
   ConflictingSpecificationError,
@@ -483,7 +483,11 @@ test("DateTime.fromFormat() with setZone falls back to default zone if no zone i
 });
 
 test("DateTime.fromFormat() parses fixed offsets", () => {
-  const formats = [["Z", "-4"], ["ZZ", "-4:00"], ["ZZZ", "-0400"]];
+  const formats = [
+    ["Z", "-4"],
+    ["ZZ", "-4:00"],
+    ["ZZZ", "-0400"]
+  ];
 
   formats.forEach(([format, offset]) => {
     const dt = DateTime.fromFormat(
@@ -496,7 +500,11 @@ test("DateTime.fromFormat() parses fixed offsets", () => {
 });
 
 test("DateTime.fromFormat() with setZone parses fixed offsets and sets it", () => {
-  const formats = [["Z", "-4"], ["ZZ", "-4:00"], ["ZZZ", "-0400"]];
+  const formats = [
+    ["Z", "-4"],
+    ["ZZ", "-4:00"],
+    ["ZZZ", "-0400"]
+  ];
 
   formats.forEach(([format, offset]) => {
     const dt = DateTime.fromFormat(

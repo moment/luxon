@@ -1,4 +1,4 @@
-import { Interval } from "../../src/luxon";
+import { Interval } from "../../src";
 import { UnparsableStringError } from "../../src/errors";
 import { GregorianDateTime } from "../../src/types/datetime";
 

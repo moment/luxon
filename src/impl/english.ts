@@ -163,8 +163,8 @@ export function formatRelativeTime(
         ? unitTexts[1]
         : unitTexts[2] || unitTexts[1]
       : singular
-        ? unitTexts[0]
-        : normalizedUnit;
+      ? unitTexts[0]
+      : normalizedUnit;
   return isInPast ? `${formatValue} ${formatUnit} ago` : `in ${formatValue} ${formatUnit}`;
 }
 

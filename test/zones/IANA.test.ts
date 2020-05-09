@@ -1,4 +1,4 @@
-import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { FixedOffsetZone, IANAZone } from "../../src";
 import Helpers from "../helpers";
 
 test("IANAZone.create returns a singleton per zone name", () => {
