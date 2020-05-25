@@ -248,3 +248,15 @@ test("Interval#hasSame returns false for invalid intervals", () => {
   const i = Interval.invalid("because");
   expect(i.hasSame("day")).toBe(false);
 });
+
+test.each([
+  ["1982-05-25T00:00:00"],
+  ["1982-05-25T00:00:02"],
+  ["1982-05-25T12:00:00"],
+  ["1982-05-25T23:59:58"],
+  ["1982-05-25T23:59:59"]
+])("Interval#hasSame returns true for empty intervals", dt => {
+  const n = DateTime.fromISO(dt),
+    i = Interval.fromDateTimes(n, n);
+  expect(i.hasSame("day")).toBe(true);
+});
