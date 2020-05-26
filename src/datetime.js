@@ -1944,6 +1944,14 @@ export default class DateTime {
   }
 
   /**
+   * {@link toLocaleString} format like 'Fri, Oct 14, 1983'
+   * @type {Object}
+   */
+  static get DATE_MED_WITH_WEEKDAY() {
+    return Formats.DATE_MED_WITH_WEEKDAY;
+  }
+
+  /**
    * {@link toLocaleString} format like 'October 14, 1983'
    * @type {Object}
    */
