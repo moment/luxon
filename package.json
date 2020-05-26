@@ -91,5 +91,6 @@
     "build/global/luxon.min.js.map",
     "src"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "sideEffects": false
 }
