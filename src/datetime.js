@@ -122,22 +122,23 @@ function objToTS(obj, offset, zone) {
 
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
-  const keys = Object.keys(dur.values);
-  if (keys.indexOf("milliseconds") === -1) {
-    keys.push("milliseconds");
-  }
-
-  dur = dur.shiftTo(...keys);
-
   const oPre = inst.o,
-    year = inst.c.year + dur.years,
-    month = inst.c.month + dur.months + dur.quarters * 3,
+    year = inst.c.year + Math.trunc(dur.years),
+    month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
     c = Object.assign({}, inst.c, {
       year,
       month,
-      day: Math.min(inst.c.day, daysInMonth(year, month)) + dur.days + dur.weeks * 7
+      day:
+        Math.min(inst.c.day, daysInMonth(year, month)) +
+        Math.trunc(dur.days) +
+        Math.trunc(dur.weeks) * 7
     }),
     millisToAdd = Duration.fromObject({
+      years: dur.years - Math.trunc(dur.years),
+      quarters: dur.quarters - Math.trunc(dur.quarters),
+      months: dur.months - Math.trunc(dur.months),
+      weeks: dur.weeks - Math.trunc(dur.weeks),
+      days: dur.days - Math.trunc(dur.days),
       hours: dur.hours,
       minutes: dur.minutes,
       seconds: dur.seconds,
