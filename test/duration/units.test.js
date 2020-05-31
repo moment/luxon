@@ -58,7 +58,7 @@ test("Duration#shiftTo without any units no-ops", () => {
   expect(dur.toObject()).toEqual({ years: 3 });
 });
 
-test("Duration#shifTo accumulates when rolling up", () => {
+test("Duration#shiftTo accumulates when rolling up", () => {
   expect(
     Duration.fromObject({ minutes: 59, seconds: 183 })
       .shiftTo("hours", "minutes", "seconds")
@@ -66,12 +66,22 @@ test("Duration#shifTo accumulates when rolling up", () => {
   ).toEqual({ hours: 1, minutes: 2, seconds: 3 });
 });
 
-test("Duration#shifTo keeps unecessary higher-order negative units 0", () => {
+test("Duration#shiftTo keeps unnecessary higher-order negative units 0", () => {
   expect(
     Duration.fromObject({ milliseconds: -100 })
       .shiftTo("hours", "minutes", "seconds")
       .toObject()
   ).toEqual({ hours: 0, minutes: 0, seconds: -0.1 });
+});
+
+test("Duration#shiftTo does not normalize values", () => {
+  // Normalizing would convert to { quarters: 4, months: 1, days: 10 }
+  // which would be converted back to 404 days instead
+  expect(
+    Duration.fromObject({ quarters: 0, months: 0, days: 400 })
+      .shiftTo("days")
+      .toObject()
+  ).toEqual({ days: 400 });
 });
 
 //------
