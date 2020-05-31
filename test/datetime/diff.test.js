@@ -216,12 +216,10 @@ test("DateTime#diff handles fractional days as fractions of those specific days"
 });
 
 test("DateTime#diff is precise for lower order units", () => {
-  if (DateTime.local().zoneName === "America/New_York") {
-    // spring forward skips one hour
-    expect(
-      diffObjs({ year: 2016, month: 5, day: 5 }, { year: 2016, month: 1, day: 1 }, "hours")
-    ).toEqual({ hours: 2999 });
-  }
+  // spring forward skips one hour
+  expect(
+    diffObjs({ year: 2016, month: 5, day: 5 }, { year: 2016, month: 1, day: 1 }, "hours")
+  ).toEqual({ hours: 2999 });
 });
 
 test("DateTime#diff passes through options", () => {
