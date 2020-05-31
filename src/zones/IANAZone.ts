@@ -43,12 +43,12 @@ function hackyOffset(dtf: Intl.DateTimeFormat, date: Date) {
   if (parsed !== null) {
     const [, month, day, year, hour, minute, second] = parsed;
     return [
-      (year as unknown) as number,
-      (month as unknown) as number,
-      (day as unknown) as number,
-      (hour as unknown) as number,
-      (minute as unknown) as number,
-      (second as unknown) as number
+      parseInt(year, 10),
+      parseInt(month, 10),
+      parseInt(day, 10),
+      parseInt(hour, 10),
+      parseInt(minute, 10),
+      parseInt(second, 10)
     ];
   }
 

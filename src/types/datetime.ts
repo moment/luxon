@@ -1,4 +1,4 @@
-import { ConversionAccuracy, StringUnitLength } from "./common";
+import { StringUnitLength } from "./common";
 import { NumberingSystem, LocaleOptions } from "./locale";
 import DateTime from "../datetime";
 import Zone from "../zone";
@@ -94,10 +94,6 @@ export interface OrdinalDateTime extends TimeObject {
 }
 
 export type GenericDateTime = Partial<GregorianDateTime & WeekDateTime & OrdinalDateTime>;
-
-export interface DiffOptions {
-  conversionAccuracy?: ConversionAccuracy;
-}
 
 export interface ExplainedFormat {
   input: string;

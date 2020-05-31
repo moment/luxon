@@ -1,8 +1,8 @@
 import DateTime, { DateTimeLike } from "./datetime";
 import Duration, { friendlyDuration, DurationLike } from "./duration";
 import { InvalidArgumentError, UnparsableStringError } from "./errors";
-import { ToISOTimeOptions, DiffOptions, DateTimeWithZoneOptions } from "./types/datetime";
-import { DurationUnit } from "./types/duration";
+import { ToISOTimeOptions, DateTimeWithZoneOptions } from "./types/datetime";
+import { DurationUnit, DurationOptions } from "./types/duration";
 import { IntervalObject } from "./types/interval";
 
 // checks if the start is equal to or before the end
@@ -525,6 +525,8 @@ export default class Interval {
    * Return a Duration representing the time spanned by this interval.
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.
    * @param {Object} options - options that affect the creation of the Duration
+   * @param {string} [options.locale='en-US'] - the locale to use
+   * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { milliseconds: 88489257 }
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { days: 1.0241812152777778 }
@@ -533,7 +535,7 @@ export default class Interval {
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }
    * @return {Duration}
    */
-  toDuration(unit: DurationUnit | DurationUnit[] = "milliseconds", options: DiffOptions = {}) {
+  toDuration(unit: DurationUnit | DurationUnit[] = "milliseconds", options: DurationOptions = {}) {
     return this.e.diff(this.s, unit, options);
   }
 
