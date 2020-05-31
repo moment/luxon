@@ -139,5 +139,5 @@ const badInputs = [
 ];
 
 test.each(badInputs)("Interval.fromISO will reject [%s]", s => {
-  expect(() => Interval.fromISO(s)).toThrow(UnparsableStringError);
+  expect(() => Interval.fromISO(s as string)).toThrow(UnparsableStringError);
 });

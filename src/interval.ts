@@ -528,9 +528,10 @@ export default class Interval {
    * Return a Duration representing the time spanned by this interval.
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.
    * @param {Object} options - options that affect the creation of the Duration
-   * @param {string} [options.locale='en-US'] - the locale to use
-   * @param {string} [options.numberingSystem] - the numbering system to use
+   * @param {string} [options.locale=endPoint's locale] - the locale to use
+   * @param {string} [options.numberingSystem=endPoint's numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
+   * @param {bool} [options.nullOnInvalid=false] - whether to return `null` on error instead of throwing
    * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { milliseconds: 88489257 }
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { days: 1.0241812152777778 }
    * @example Interval.fromDateTimes(dt1, dt2).toDuration(['hours', 'minutes']).toObject() //=> { hours: 24, minutes: 34.82095 }
