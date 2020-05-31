@@ -177,9 +177,8 @@ export default class IANAZone extends Zone {
   offset(ts: number) {
     const date = new Date(ts),
       dtf = makeDTF(this.name),
-      [year, month, day, hour, minute, second] = dtf.formatToParts
-        ? partsOffset(dtf, date)
-        : hackyOffset(dtf, date),
+      [year, month, day, hour, minute, second] =
+        dtf.formatToParts === undefined ? hackyOffset(dtf, date) : partsOffset(dtf, date),
       // work around https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
       adjustedHour = hour === 24 ? 0 : hour;
 

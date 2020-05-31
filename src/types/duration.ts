@@ -6,9 +6,6 @@ export interface DurationOptions {
   locale?: string;
   numberingSystem?: NumberingSystem;
   conversionAccuracy?: ConversionAccuracy;
-}
-
-export interface DurationFromISOOptions extends DurationOptions {
   nullOnInvalid?: boolean;
 }
 

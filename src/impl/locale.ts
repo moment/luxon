@@ -354,14 +354,14 @@ export default class Locale {
 
   private constructor(
     locale: string,
-    numbering?: NumberingSystem,
+    numberingSystem?: NumberingSystem,
     outputCalendar?: CalendarSystem,
     specifiedLocale?: string
   ) {
     const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
 
     this.locale = parsedLocale;
-    this.numberingSystem = numbering || parsedNumberingSystem;
+    this.numberingSystem = numberingSystem || parsedNumberingSystem;
     this.outputCalendar = outputCalendar || parsedOutputCalendar;
     this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 

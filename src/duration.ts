@@ -7,8 +7,7 @@ import {
   DurationObject,
   DurationOptions,
   DurationToFormatOptions,
-  DurationUnit,
-  DurationFromISOOptions
+  DurationUnit
 } from "./types/duration";
 import { ConversionAccuracy, ThrowOnInvalid } from "./types/common";
 
@@ -223,6 +222,7 @@ export default class Duration {
    * @param {string} [options.locale='en-US'] - the locale to use
    * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
+   * @param {bool} [options.nullOnInvalid=false] - whether to return `null` on error instead of throwing
    * @return {Duration}
    */
   static fromMillis(count: number, options: DurationOptions = {}) {
@@ -246,6 +246,7 @@ export default class Duration {
    * @param {string} [options.locale='en-US'] - the locale to use
    * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
+   * @param {bool} [options.nullOnInvalid=false] - whether to return `null` on error instead of throwing
    * @return {Duration}
    */
   static fromObject(obj: DurationObject, options: DurationOptions = {}) {
@@ -274,8 +275,8 @@ export default class Duration {
   }
 
   static fromISO(text: string): Duration;
-  static fromISO(text: string, options: DurationFromISOOptions & ThrowOnInvalid): Duration;
-  static fromISO(text: string, options: DurationFromISOOptions): Duration | null;
+  static fromISO(text: string, options: DurationOptions & ThrowOnInvalid): Duration;
+  static fromISO(text: string, options: DurationOptions): Duration | null;
   /**
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
@@ -290,7 +291,7 @@ export default class Duration {
    * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
    * @return {Duration}
    */
-  static fromISO(text: string, options: DurationFromISOOptions = {}) {
+  static fromISO(text: string, options: DurationOptions = {}) {
     const parsed = parseISODuration(text);
     if (parsed) {
       return Duration.fromObject(parsed, options);
