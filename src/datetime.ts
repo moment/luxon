@@ -51,7 +51,6 @@ import {
   ToISOTimeOptions,
   ToISOFormat,
   ToSQLOptions,
-  DiffOptions,
   ToRelativeOptions,
   ToRelativeCalendarOptions,
   DateTimeFormatOptions,
@@ -65,7 +64,7 @@ import {
   ToRelativeNumeric,
   DateTimeWithZoneOptions
 } from "./types/datetime";
-import { DurationUnit } from "./types/duration";
+import { DurationUnit, DurationOptions } from "./types/duration";
 import { LocaleOptions, NumberingSystem, CalendarSystem } from "./types/locale";
 import { ThrowOnInvalid } from "./types/common";
 import { ZoneLike } from "./types/zone";
@@ -1662,6 +1661,8 @@ export default class DateTime {
    * @param {DateTime} other - the DateTime to compare this one to
    * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
    * @param {Object} options - options that affect the creation of the Duration
+   * @param {string} [options.locale='en-US'] - the locale to use
+   * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @example
    * var i1 = DateTime.fromISO('1982-05-25T09:45'),
@@ -1675,7 +1676,7 @@ export default class DateTime {
   diff(
     other: DateTime,
     unit: DurationUnit | DurationUnit[] = "milliseconds",
-    options: DiffOptions = {}
+    options: DurationOptions = {}
   ) {
     const durOpts = Object.assign(
       { locale: this.locale, numberingSystem: this.numberingSystem },
@@ -1699,10 +1700,12 @@ export default class DateTime {
    * See {@link DateTime#diff}
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
    * @param {Object} options - options that affect the creation of the Duration
+   * @param {string} [options.locale='en-US'] - the locale to use
+   * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
-  diffNow(unit: DurationUnit | DurationUnit[] = "milliseconds", options: DiffOptions = {}) {
+  diffNow(unit: DurationUnit | DurationUnit[] = "milliseconds", options: DurationOptions = {}) {
     return this.diff(DateTime.now(), unit, options);
   }
 

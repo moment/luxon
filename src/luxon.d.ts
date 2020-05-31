@@ -91,18 +91,18 @@ export interface DiffOptions {
   conversionAccuracy?: ConversionAccuracy;
 }
 
+export interface FormatToken {
+  literal: boolean;
+  val: string;
+}
+
 export interface ExplainedFormat {
   input: string;
-  tokens: {
-    literal: boolean;
-    val: string;
-  }[];
+  tokens: FormatToken[];
   regex?: RegExp;
   rawMatches?: RegExpMatchArray | null;
   matches?: Record<string, string | number>;
-  result?: {
-    [k: string]: any;
-  } | null;
+  result?: GenericDateTime | null;
   zone?: Zone | null;
   invalidReason?: string;
 }

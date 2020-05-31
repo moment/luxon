@@ -681,7 +681,7 @@ test("DateTime.fromFormat accepts a nullOnInvalid option", () => {
 
 function checkObjectKeyCount(o: unknown, count: number) {
   expect(o).toBeInstanceOf(Object);
-  expect(Object.keys(o as {}).length).toBe(count);
+  expect(Object.keys(o as Object).length).toBe(count);
 }
 
 test("DateTime.fromFormatExplain() explains success", () => {

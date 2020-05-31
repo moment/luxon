@@ -221,7 +221,7 @@ export default class Duration {
    * @param {number} count of milliseconds
    * @param {Object} options - options for parsing
    * @param {string} [options.locale='en-US'] - the locale to use
-   * @param {string} options.numberingSystem - the numbering system to use
+   * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
@@ -244,7 +244,7 @@ export default class Duration {
    * @param {number} obj.milliseconds
    * @param {Object} options - options for parsing
    * @param {string} [options.locale='en-US'] - the locale to use
-   * @param {string} options.numberingSystem - the numbering system to use
+   * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @return {Duration}
    */
@@ -281,7 +281,7 @@ export default class Duration {
    * @param {string} text - text to parse
    * @param {Object} options - options for parsing
    * @param {string} [options.locale='en-US'] - the locale to use
-   * @param {string} options.numberingSystem - the numbering system to use
+   * @param {string} [options.numberingSystem] - the numbering system to use
    * @param {string} [options.conversionAccuracy='casual'] - the conversion system to use
    * @param {bool} [options.nullOnInvalid=false] - whether to return `null` on failed parsing instead of throwing
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
