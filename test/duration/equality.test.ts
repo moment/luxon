@@ -13,7 +13,7 @@ test("equals identically constructed", () => {
 
 test("equals identically constructed but one has string type values", () => {
   const l1 = Duration.fromObject({ years: 5, days: 6 }),
-    // @ts-ignore
+    // @ts-expect-error
     l2 = Duration.fromObject({ years: "5", days: "6" });
   expect(l1.equals(l2)).toBe(true);
 });

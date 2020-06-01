@@ -8,13 +8,13 @@ const withoutIntl = function(name: string, f: Function) {
   test(fullName, () => {
     const intl = Intl;
     try {
-      // @ts-ignore
+      // @ts-expect-error
       Intl = undefined; // eslint-disable-line no-native-reassign
       Settings.resetCaches();
       f();
     } finally {
       Settings.resetCaches();
-      // @ts-ignore
+      // @ts-expect-error
       Intl = intl; // eslint-disable-line no-native-reassign
     }
   });
@@ -41,7 +41,7 @@ const withoutRTF = function(name: string, f: Function) {
     // @ts-ignore
     const rtf = Intl.RelativeTimeFormat;
     try {
-      // @ts-ignore
+      // @ts-expect-error
       Intl.RelativeTimeFormat = undefined;
       Settings.resetCaches();
       f();
@@ -58,7 +58,7 @@ const withoutZones = function(name: string, f: Function) {
   test(fullName, () => {
     const { DateTimeFormat } = Intl;
     try {
-      // @ts-ignore
+      // @ts-expect-error
       Intl.DateTimeFormat = (locale, options = {}) => {
         if (options.timeZone) {
           throw new Error(`Unsupported time zone specified ${options.timeZone}`);

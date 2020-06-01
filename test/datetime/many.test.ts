@@ -36,11 +36,11 @@ test("DateTime.min throws if you don't pass it DateTimes", () => {
   const dt = DateTime.fromJSDate(new Date(1982, 2, 25));
   const notADt = "flob";
 
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.min(dt, notADt)).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.min(notADt)).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.min(notADt, notADt)).toThrow();
 });
 
@@ -80,10 +80,10 @@ test("DateTime.max throws if you don't pass it DateTimes", () => {
   const dt = DateTime.fromJSDate(new Date(1982, 2, 25));
   const notADt = "flob";
 
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.max(dt, notADt)).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.max(notADt)).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.max(notADt, notADt)).toThrow();
 });

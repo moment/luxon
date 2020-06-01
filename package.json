@@ -23,7 +23,6 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
     "docs": "npx tsc -t es6 --outDir transpiled && esdoc -c docs/index.js",
     "site": "cp -r site dist",
     "benchmark": "echo todo benchmarks/datetime.ts",
@@ -38,13 +37,13 @@
   "module": "dist/luxon.esm.js",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "codecov": "^3.6.5",
+    "codecov": "^3.7.0",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "husky": "^4.2.5",
     "tsdx": "^0.13.2",
-    "tslib": "^1.11.2",
-    "typescript": "^3.8.3"
+    "tslib": "^1.13.0",
+    "typescript": "^3.9.3"
   },
   "sideEffects": false
 }

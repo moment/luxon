@@ -28,7 +28,7 @@ test("Duration#shiftTo boils down and then rolls up", () => {
 
 test("Duration#shiftTo throws on invalid units", () => {
   expect(() => {
-    // @ts-ignore
+    // @ts-expect-error
     Duration.fromObject({ years: 2, hours: 5000 }).shiftTo("months", "glorp");
   }).toThrow();
 });

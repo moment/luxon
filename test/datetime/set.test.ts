@@ -113,15 +113,15 @@ test("DateTime.set does units in increasing size", () => {
 // set invalid things
 //------
 test("DateTime#set throws for invalid units", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dt.set({ glorb: 200 })).toThrow(InvalidUnitError);
 });
 
 test("DateTime#set throws for metadata", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dt.set({ zone: "UTC" })).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dt.set({ locale: "be" })).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dt.set({ invalid: true })).toThrow();
 });

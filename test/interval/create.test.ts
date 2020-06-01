@@ -37,14 +37,14 @@ test("Interval.fromDateTimes creates an interval from Dates", () => {
 
 test("Interval.fromDateTimes rejects missing or invalid arguments", () => {
   const validDate = DateTime.fromObject({ year: 2016, month: 5, day: 25 });
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Interval.fromDateTimes(validDate, null)).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Interval.fromDateTimes(null, validDate)).toThrow(InvalidArgumentError);
   expect(() => Interval.fromDateTimes(validDate.plus({ days: 1 }), validDate)).toThrow(
     InvalidArgumentError
   );
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Interval.fromDateTimes(DateTime.now(), true)).toThrow(InvalidArgumentError);
 });
 

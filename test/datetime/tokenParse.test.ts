@@ -625,7 +625,7 @@ test("DateTime.fromFormat() parses localized macro tokens", () => {
 });
 
 test("DateTime.fromFormat() throws if you don't provide a format", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromFormat("yo")).toThrowError();
 });
 

@@ -13,6 +13,6 @@ test("Interval.isInterval return false for primitives", () => {
   expect(Interval.isInterval(1)).toBe(false);
   expect(Interval.isInterval("")).toBe(false);
   expect(Interval.isInterval(null)).toBe(false);
-  // @ts-ignore
+  // @ts-expect-error
   expect(Interval.isInterval()).toBe(false);
 });

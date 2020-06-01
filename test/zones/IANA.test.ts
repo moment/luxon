@@ -20,7 +20,7 @@ test("IANAZone.isValidSpecifier", () => {
   expect(IANAZone.isValidSpecifier("America/New_York")).toBe(true);
   expect(IANAZone.isValidSpecifier("Fantasia/Castle")).toBe(true);
   expect(IANAZone.isValidSpecifier("Sport~~blorp")).toBe(false);
-  // @ts-ignore
+  // @ts-expect-error
   expect(IANAZone.isValidSpecifier(null)).toBe(false);
 });
 
@@ -36,9 +36,9 @@ test("IANAZone.parseGMTOffset returns a number for a valid input", () => {
 });
 
 test("IANAZone.parseGMTOffset returns null for invalid input", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(IANAZone.parseGMTOffset()).toBe(null);
-  // @ts-ignore
+  // @ts-expect-error
   expect(IANAZone.parseGMTOffset(null)).toBe(null);
   expect(IANAZone.parseGMTOffset("")).toBe(null);
   expect(IANAZone.parseGMTOffset("foo")).toBe(null);
@@ -98,7 +98,7 @@ test("IANAZone.formatOffset with a techie format", () => {
 
 test("IANAZone.formatOffset throws for an invalid format", () => {
   const zone = IANAZone.create("America/Santiago");
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => zone.formatOffset(1552089600, "blorp")).toThrow();
 });
 
@@ -124,6 +124,6 @@ test("IANAZone.isValid returns false for invalid zone names", () => {
   expect(IANAZone.create("CEDT").isValid).toBe(false);
   expect(IANAZone.create("GMT+2").isValid).toBe(false);
   expect(IANAZone.create("America/Blorp").isValid).toBe(false);
-  // @ts-ignore
+  // @ts-expect-error
   expect(IANAZone.create(null).isValid).toBe(false);
 });
