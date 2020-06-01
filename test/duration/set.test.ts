@@ -25,10 +25,10 @@ test("Duration#set() sets the values", () => {
 });
 
 test("Duration#set() throws for metadata", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dur.set({ locale: "be" })).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dur.set({ numberingSystem: "thai" })).toThrow();
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dur.set({ invalid: 42 })).toThrow();
 });

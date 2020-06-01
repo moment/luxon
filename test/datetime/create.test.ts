@@ -311,10 +311,10 @@ test("DateTime.fromJSDate(date) accepts a zone option", () => {
 });
 
 test("DateTime.fromJSDate(date) rejects invalid dates", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromJSDate("")).toThrow(InvalidArgumentError);
   expect(() => DateTime.fromJSDate(new Date(""))).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromJSDate(new Date().valueOf())).toThrow(InvalidArgumentError);
 });
 
@@ -323,15 +323,15 @@ test("DateTime.fromJSDate accepts the default locale", () => {
 });
 
 test("DateTime.fromJSDate(date) throw errors for invalid values", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromJSDate("")).toThrow(InvalidArgumentError);
   expect(() => DateTime.fromJSDate(new Date(""))).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromJSDate(new Date().valueOf())).toThrow(InvalidArgumentError);
   expect(() => DateTime.fromJSDate(new Date(), { zone: "America/Blorp" })).toThrow(
     InvalidZoneError
   );
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromJSDate("2019-04-16T11:32:32Z")).toThrow(InvalidArgumentError);
 });
 
@@ -360,7 +360,7 @@ test("DateTime.fromMillis accepts the default locale", () => {
 });
 
 test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromMillis("slurp")).toThrow(InvalidArgumentError);
 });
 
@@ -392,7 +392,7 @@ test("DateTime.fromSeconds accepts the default locale", () => {
 });
 
 test("DateTime.fromSeconds(seconds) throws InvalidArgumentError for non-numeric input", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromSeconds("slurp")).toThrow(InvalidArgumentError);
 });
 
@@ -497,7 +497,7 @@ test("DateTime.fromObject() rejects invalid zones", () => {
 });
 
 test("DateTime.fromObject() ignores the case of object keys", () => {
-  // @ts-ignore
+  // @ts-expect-error
   const dt = DateTime.fromObject({ Year: 2019, MONTH: 4, daYs: 10 });
   expect(dt.year).toBe(2019);
   expect(dt.month).toBe(4);
@@ -505,30 +505,30 @@ test("DateTime.fromObject() ignores the case of object keys", () => {
 });
 
 test("DateTime.fromObject() throws with invalid object key", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow(InvalidUnitError);
 });
 
 test("DateTime.fromObject() throws with invalid value types", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ year: "blorp" })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ year: "" })).toThrow(InvalidArgumentError);
   expect(() => DateTime.fromObject({ month: NaN })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ day: true })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ day: false })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ hour: {} })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ hour: { unit: 42 } })).toThrow(InvalidArgumentError);
 });
 
 test("DateTime.fromObject() rejects invalid values", () => {
   expect(() => DateTime.fromObject({ ordinal: 5000 })).toThrow(UnitOutOfRangeError);
   expect(() => DateTime.fromObject({ minute: -6 })).toThrow(UnitOutOfRangeError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => DateTime.fromObject({ millisecond: new Date() })).toThrow(UnitOutOfRangeError);
 });
 
@@ -682,7 +682,7 @@ test("DateTime.fromObject accepts really low year numbers with IANA zones", () =
 });
 
 test("DateTime.fromObject accepts plurals and weird capitalization", () => {
-  // @ts-ignore
+  // @ts-expect-error
   const dt = DateTime.fromObject({ Year: 2005, MONTHS: 12, dAys: 13 });
   expect(dt.year).toBe(2005);
   expect(dt.month).toBe(12);

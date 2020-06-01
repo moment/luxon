@@ -63,7 +63,7 @@ test("Duration#plus results in the superset of units", () => {
 });
 
 test("Duration#plus throws with invalid parameter", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({}).plus("123")).toThrow();
 });
 
@@ -149,6 +149,6 @@ test("Duration#units can take the unit into account", () => {
 
 test("Duration#mapUnits requires that fn returns a number", () => {
   // const dur = Duration.fromObject({ hours: 1, minutes: 2, seconds: -3, milliseconds: -4 });
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => dur.mapUnits(() => "hello?")).toThrow();
 });

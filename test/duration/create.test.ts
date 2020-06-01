@@ -26,19 +26,19 @@ test("Duration.fromObject sets all the values", () => {
 
 test("Duration.fromObject sets all the values from the object having string type values", () => {
   const dur = Duration.fromObject({
-    // @ts-ignore
+    // @ts-expect-error
     years: "1",
-    // @ts-ignore
+    // @ts-expect-error
     months: "2",
-    // @ts-ignore
+    // @ts-expect-error
     days: "3",
-    // @ts-ignore
+    // @ts-expect-error
     hours: "4",
-    // @ts-ignore
+    // @ts-expect-error
     minutes: "5",
-    // @ts-ignore
+    // @ts-expect-error
     seconds: "6",
-    // @ts-ignore
+    // @ts-expect-error
     milliseconds: "7"
   });
   expect(dur.years).toBe(1);
@@ -62,11 +62,11 @@ test("Duration.fromObject accepts locale settings", () => {
 });
 
 test("Duration.fromObject throws if the argument is not an object", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject()).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject(null)).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject("foo")).toThrow(InvalidArgumentError);
 });
 
@@ -82,23 +82,23 @@ test("Duration.fromObject({}) constructs zero duration", () => {
 });
 
 test("Duration.fromObject throws if the initial object has invalid keys", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({ foo: 0 })).toThrow(InvalidUnitError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({ years: 1, foo: 0 })).toThrow(InvalidUnitError);
 });
 
 test("Duration.fromObject throws if the initial object has invalid values", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({ years: {} })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({ months: "some" })).toThrow(InvalidArgumentError);
   expect(() => Duration.fromObject({ days: NaN })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({ hours: true })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({ minutes: false })).toThrow(InvalidArgumentError);
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => Duration.fromObject({ seconds: "" })).toThrow(InvalidArgumentError);
 });
 

@@ -32,9 +32,9 @@ test("FixedOffsetZone.parseSpecifier returns a valid instance from a UTC offset 
 });
 
 test("FixedOffsetZone.parseSpecifier returns null for invalid data", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(FixedOffsetZone.parseSpecifier()).toBe(null);
-  // @ts-ignore
+  // @ts-expect-error
   expect(FixedOffsetZone.parseSpecifier(null)).toBe(null);
   expect(FixedOffsetZone.parseSpecifier("")).toBe(null);
   expect(FixedOffsetZone.parseSpecifier("foo")).toBe(null);

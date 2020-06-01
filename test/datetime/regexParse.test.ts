@@ -549,7 +549,7 @@ test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
 test("DateTime.fromISO() rejects poop", () => {
   const rejects = (s: string) => expect(() => DateTime.fromISO(s)).toThrow(UnparsableStringError);
 
-  // @ts-ignore
+  // @ts-expect-error
   rejects(null);
   rejects("");
   rejects(" ");

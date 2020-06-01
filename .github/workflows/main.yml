@@ -26,15 +26,26 @@ jobs:
         env:
           CI: true
 
+      - name: Install full-icu
+        run: yarn add full-icu
+        env:
+          CI: true
+
       - name: Lint
         run: yarn lint
         env:
           CI: true
 
+      - name: Setup timezone
+        uses: zcong1993/setup-timezone@master
+        with:
+          timezone: America/New_York
+
       - name: Test
         run: yarn test --ci --coverage --maxWorkers=2
         env:
           CI: true
+          NODE_ICU_DATA: ${{ github.workspace }}/node_modules/full-icu
 
       - name: Build
         run: yarn build

@@ -2,6 +2,6 @@
 import { Zone } from "../../src";
 
 test("You can instantiate Zone directly", () => {
-  // @ts-ignore
+  // @ts-expect-error
   expect(() => new Zone().isValid).toThrow();
 });
