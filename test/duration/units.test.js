@@ -125,6 +125,34 @@ test("Duration#normalize maintains invalidity", () => {
   expect(dur.invalidReason).toBe("because");
 });
 
+test("Duration#normalize can convert all unit pairs", () => {
+  const units = [
+    "years",
+    "quarters",
+    "months",
+    "weeks",
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+    "milliseconds"
+  ];
+
+  for (let i = 0; i < units.length; i++) {
+    for (let j = i + 1; j < units.length; j++) {
+      const duration = Duration.fromObject({ [units[i]]: 1, [units[j]]: 2 });
+      const normalizedDuration = duration.normalize().toObject();
+      expect(normalizedDuration[units[i]]).not.toBe(NaN);
+      expect(normalizedDuration[units[j]]).not.toBe(NaN);
+
+      const accurateDuration = duration.reconfigure({ conversionAccuracy: "longterm" });
+      const normalizedAccurateDuration = accurateDuration.normalize().toObject();
+      expect(normalizedAccurateDuration[units[i]]).not.toBe(NaN);
+      expect(normalizedAccurateDuration[units[j]]).not.toBe(NaN);
+    }
+  }
+});
+
 //------
 // #as()
 //-------
