@@ -18,6 +18,13 @@ export const DATE_MED = {
   day: n
 };
 
+export const DATE_MED_WITH_WEEKDAY = {
+  year: n,
+  month: s,
+  day: n,
+  weekday: s
+};
+
 export const DATE_FULL = {
   year: n,
   month: l,
