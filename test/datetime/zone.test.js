@@ -250,10 +250,8 @@ test("Etc/GMT zones work even though V8 does not support them", () => {
 //------
 
 test("The local zone does local stuff", () => {
-  if (DateTime.local().zoneName === "America/New_York") {
-    expect(DateTime.local(2016, 8, 6).offsetNameLong).toBe("Eastern Daylight Time");
-    expect(DateTime.local(2016, 8, 6).offsetNameShort).toBe("EDT");
-  }
+  expect(DateTime.local(2016, 8, 6).offsetNameLong).toBe("Eastern Daylight Time");
+  expect(DateTime.local(2016, 8, 6).offsetNameShort).toBe("EDT");
 });
 
 //------
