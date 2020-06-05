@@ -591,8 +591,6 @@ export default class Duration {
       vals = this.toObject();
     let lastUnit;
 
-    normalizeValues(this.matrix, vals);
-
     for (const k of orderedUnits) {
       if (units.indexOf(k) >= 0) {
         lastUnit = k;
