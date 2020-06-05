@@ -107,11 +107,11 @@ test("DateTime#toRelativeCalendar uses the calendar", () => {
 });
 
 test("DateTime#toRelativeCalendar picks the correct unit with no options", () => {
-  expect(
-    DateTime.local()
-      .plus({ days: 1 })
-      .toRelativeCalendar()
-  ).toBe("tomorrow");
+  const now = DateTime.local();
+  const isLastDayOfMonth = now.endOf("month").day === now.day;
+  expect(now.plus({ days: 1 }).toRelativeCalendar()).toBe(
+    isLastDayOfMonth ? "next month" : "tomorrow"
+  );
 });
 
 test("DateTime#toRelativeCalendar returns null when used on an invalid date", () => {
