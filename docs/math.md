@@ -102,7 +102,7 @@ However, beware that `===` compares object identity, which not a useful concept 
 
 ```js
 d1.toMillis() === d2.toMillis() // are d1 and d2 the same instant in time?
-+d1 === +d2 // same test, using object coercision
++d1 === +d2 // same test, using object coercion
 ```
 
 You may also use `#hasSame` to make more subtle comparisons:
