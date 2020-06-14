@@ -98,10 +98,11 @@ DateTime implements `#valueOf` to return the epoch timestamp, so you can compare
 d1 < d2 // is d1 before d2?
 ```
 
-However, `===` compares object identity (not a useful concept in a library with immutable types) and `#equals` compares both the time and additional metadata, such as the locale and time zone. If you're only interested in checking the equality of the timestamps, you need to coerce them:
+However, be aware that `===` compares object identity, which is not a useful concept in a library with immutable types. Use `#equals` to compare both the time and additional metadata, such as the locale and time zone. If you're only interested in checking the equality of the timestamps, you can use:
 
 ```js
-+d1 === +d2 // are d1 and d2 the same instant in time?
+d1.toMillis() === d2.toMillis() // are d1 and d2 the same instant in time?
++d1 === +d2 // same test, using object coercion
 ```
 
 You may also use `#hasSame` to make more subtle comparisons:
