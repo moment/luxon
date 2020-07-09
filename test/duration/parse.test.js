@@ -17,6 +17,7 @@ test("Duration.fromISO can parse a variety of ISO formats", () => {
   check("P1YT34000S", { years: 1, seconds: 34000 });
   check("P1W1DT13H23M34S", { weeks: 1, days: 1, hours: 13, minutes: 23, seconds: 34 });
   check("P2W", { weeks: 2 });
+  check("PT10000000000000000000.999S", { seconds: 10000000000000000000, milliseconds: 999 });
 });
 
 test("Duration.fromISO can parse mixed or negative durations", () => {
