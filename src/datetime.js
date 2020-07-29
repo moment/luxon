@@ -45,6 +45,13 @@ import Invalid from "./impl/invalid.js";
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
 
+const Precision = {
+  hours: 1,
+  minutes: 2,
+  seconds: 3,
+  milliseconds: 4
+};
+
 function unsupportedZone(zone) {
   return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
 }
@@ -199,16 +206,52 @@ function toTechTimeFormat(
     includeOffset,
     includeZone = false,
     spaceZone = false,
-    format = "extended"
+    format = "extended",
+    precision = "milliseconds"
   }
 ) {
-  let fmt = format === "basic" ? "HHmm" : "HH:mm";
+  // validate the precision and throw if invalid
+  let desiredPrecision = Precision[Duration.normalizeUnit(precision)];
+  if (desiredPrecision === undefined) throw new InvalidUnitError(precision);
 
-  if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-    fmt += format === "basic" ? "ss" : ":ss";
-    if (!suppressMilliseconds || dt.millisecond !== 0) {
-      fmt += ".SSS";
-    }
+  // ---------------------------------------------------------------------------
+  // Here we adjust the precision if needed, based on whether or not
+  // 'suppressSeconds' or 'suppressMilliseconds' come into play.
+  //
+  // Note that suppressSeconds'/'suppressMilliseconds' take precedence over
+  // 'precision'. If you ask for millisecond precison, but have
+  // 'suppressSeconds' set to true, You'll get back a string with only
+  // hours and minutes when seconds and milliseconds are both zero.
+  // ---------------------------------------------------------------------------
+
+  // adjust desiredPrecision when/if 'suppressMilliseconds' comes into play
+  const suppressingMilliseconds = suppressMilliseconds && dt.millisecond === 0;
+  if (desiredPrecision >= Precision.milliseconds && suppressingMilliseconds) {
+    desiredPrecision = Precision.seconds;
+  }
+
+  // adjust desiredPrecision when/if 'suppressSeconds' comes into play
+  const suppressingSeconds = suppressSeconds && dt.second === 0 && dt.millisecond === 0;
+  if (desiredPrecision >= Precision.seconds && suppressingSeconds) {
+    desiredPrecision = Precision.minutes;
+  }
+
+  const useBasic = format === "basic";
+  let fmt;
+  switch (desiredPrecision) {
+    case Precision.hours:
+      fmt = useBasic ? "HH" : "HH";
+      break;
+    case Precision.minutes:
+      fmt = useBasic ? "HHmm" : "HH:mm";
+      break;
+    case Precision.seconds:
+      fmt = useBasic ? "HHmmss" : "HH:mm:ss";
+      break;
+    case Precision.milliseconds:
+    default:
+      fmt = useBasic ? "HHmmss.SSS" : "HH:mm:ss.SSS";
+      break;
   }
 
   if ((includeZone || includeOffset) && spaceZone) {
@@ -1512,10 +1555,12 @@ export default class DateTime {
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - specify desired time precision: 'hours', 'minutes', 'seconds' or 'milliseconds'
    * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.local().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @example DateTime.local().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
    * @example DateTime.local().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
+   * @example DateTime.utc(2020, 7, 28, 12, 34, 56, 789).toISO({ precision: 'minute' }) //=> '2020-07-28T12:34Z'
    * @return {string}
    */
   toISO(opts = {}) {
@@ -1559,22 +1604,26 @@ export default class DateTime {
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - specify desired time precision: hours, minutes, seconds or milliseconds
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: 'basic' }) //=> '073419.361Z'
+   * @example DateTime.utc().toISOTime({ precision: 'minute' }) //=> '12:34Z'
    * @return {string}
    */
   toISOTime({
     suppressMilliseconds = false,
     suppressSeconds = false,
     includeOffset = true,
-    format = "extended"
+    format = "extended",
+    precision = "milliseconds"
   } = {}) {
     return toTechTimeFormat(this, {
       suppressSeconds,
       suppressMilliseconds,
       includeOffset,
-      format
+      format,
+      precision
     });
   }
 
