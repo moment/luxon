@@ -30,9 +30,24 @@ test("DateTime#toISO() shows 'Z' for UTC", () => {
   expect(dt.toISO()).toBe("1982-05-25T09:23:54.123Z");
 });
 
-test("DateTime#toISO() shows the offset", () => {
+test("DateTime#toISO() shows the offset, unless explicitely asked", () => {
   const offsetted = dt.toUTC(-6 * 60);
   expect(offsetted.toISO()).toBe("1982-05-25T03:23:54.123-06:00");
+  expect(offsetted.toISO({ includeOffset: false })).toBe("1982-05-25T03:23:54.123");
+});
+
+test("DateTime#toISO() supports the 'basic' format", () => {
+  expect(dt.toISO({ format: "basic" })).toBe("19820525T092354.123Z");
+});
+
+test("DateTime#toISO() suppresses [milli]seconds", () => {
+  const noZeroMilliseconds = { suppressMilliseconds: true };
+  expect(dt.toISO(noZeroMilliseconds)).toBe("1982-05-25T09:23:54.123Z");
+  expect(dt.set({ millisecond: 0 }).toISO(noZeroMilliseconds)).toBe("1982-05-25T09:23:54Z");
+
+  const noZeroSeconds = { suppressSeconds: true, suppressMilliseconds: true };
+  expect(dt.set({ millisecond: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23:54Z");
+  expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23Z");
 });
 
 test("DateTime#toISO() returns null for invalid DateTimes", () => {
