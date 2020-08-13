@@ -32,7 +32,7 @@ test("DateTime#toISO() shows 'Z' for UTC", () => {
   expect(dt.toISO()).toBe("1982-05-25T09:23:54.123Z");
 });
 
-test("DateTime#toISO() shows the offset, unless explicitely asked", () => {
+test("DateTime#toISO() shows the offset, unless explicitely asked not to", () => {
   const offsetted = dt.toUTC(-6 * 60);
   expect(offsetted.toISO()).toBe("1982-05-25T03:23:54.123-06:00");
   expect(offsetted.toISO({ includeOffset: false })).toBe("1982-05-25T03:23:54.123");
@@ -49,7 +49,7 @@ test("DateTime#toISO() suppresses [milli]seconds", () => {
 
   const noZeroSeconds = { suppressSeconds: true, suppressMilliseconds: true };
   expect(dt.set({ millisecond: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23:54Z");
-  expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23Z");
+  expect(dt.set({ second: 0, millisecond: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23Z");
 });
 
 // #724, Firefox specific issue, offset prints as '-05:50.60000000000002'
