@@ -1458,7 +1458,7 @@ export default class DateTime {
    * @return {string}
    */
   toISO(options: ToISOTimeOptions = {}) {
-    return `${this.toISODate()}T${this.toISOTime(options)}`;
+    return `${this.toISODate({ format: options.format })}T${this.toISOTime(options)}`;
   }
 
   /**
