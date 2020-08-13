@@ -766,8 +766,7 @@ test("DateTime.fromObject handles null as a language tag", () => {
     const res = DateTime.fromObject(
       {},
       {
-        // @ts-ignore
-        locale: null,
+        locale: undefined,
         numberingSystem: "thai",
         outputCalendar: "islamic"
       }
