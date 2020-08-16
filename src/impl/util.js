@@ -263,18 +263,17 @@ export function normalizeObject(obj, normalizer, nonUnitKeys) {
 }
 
 export function formatOffset(offset, format) {
-  const hours = Math.trunc(offset / 60),
-    minutes = Math.abs(offset % 60),
-    sign = offset >= 0 ? "+" : "-",
-    base = `${sign}${Math.abs(hours)}`;
+  const hours = Math.trunc(Math.abs(offset / 60)),
+    minutes = Math.trunc(Math.abs(offset % 60)),
+    sign = offset >= 0 ? "+" : "-";
 
   switch (format) {
     case "short":
-      return `${sign}${padStart(Math.abs(hours), 2)}:${padStart(minutes, 2)}`;
+      return `${sign}${padStart(hours, 2)}:${padStart(minutes, 2)}`;
     case "narrow":
-      return minutes > 0 ? `${base}:${minutes}` : base;
+      return `${sign}${hours}${minutes > 0 ? `:${minutes}` : ""}`;
     case "techie":
-      return `${sign}${padStart(Math.abs(hours), 2)}${padStart(minutes, 2)}`;
+      return `${sign}${padStart(hours, 2)}${padStart(minutes, 2)}`;
     default:
       throw new RangeError(`Value format ${format} is out of range for property format`);
   }
