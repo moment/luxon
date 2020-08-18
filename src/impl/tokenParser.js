@@ -13,12 +13,20 @@ function intUnit(regex, post = i => i) {
 }
 
 function fixListRegex(s) {
+  const nbsp = String.fromCharCode(160);
+  const spaceOrNBSP = `( |${nbsp})`;
   // make dots optional and also make them literal
-  return s.replace(/\./, "\\.?");
+  // make space and non breakable space characters interchangeable
+  return s.replace(/\./g, "\\.?").replace(new RegExp(spaceOrNBSP, "g"), spaceOrNBSP);
 }
 
 function stripInsensitivities(s) {
-  return s.replace(/\./, "").toLowerCase();
+  const nbsp = String.fromCharCode(160);
+  const spaceOrNBSP = `( |${nbsp})`;
+  return s
+    .replace(/\./g, "") // ignore dots that were made optional
+    .replace(new RegExp(spaceOrNBSP, "g"), " ") // interchange space and nbsp
+    .toLowerCase();
 }
 
 function oneOf(strings, startIndex) {
