@@ -323,7 +323,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     millisecond: 999
   });
 
-  // Support more than 9 digits
+  // Support up to 20 digits
   isSame("2016-05-25T09:24:15.12345678901234567890123456789", {
     year: 2016,
     month: 5,
