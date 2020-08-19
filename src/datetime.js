@@ -608,10 +608,17 @@ export default class DateTime {
     obj = obj || {};
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
 
-    const tsNow = Settings.now(),
-      offsetProvis = zoneToUse.offset(tsNow),
-      normalized = normalizeObject(obj, normalizeUnit),
-      containsOrdinal = !isUndefined(normalized.ordinal),
+    const tsNow = Settings.now();
+    let normalized, offsetProvis;
+    try {
+      normalized = normalizeObject(obj, normalizeUnit);
+      offsetProvis = zoneToUse.offset(tsNow);
+    } catch (error) {
+      if (opts.nullOnInvalid) return null;
+      throw error;
+    }
+
+    const containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
       containsGregor = containsGregorYear || containsGregorMD,
@@ -625,12 +632,14 @@ export default class DateTime {
     // otherwise just use weeks or ordinals or gregorian, depending on what's specified
 
     if ((containsGregor || containsOrdinal) && definiteWeekDef) {
+      if (opts.nullOnInvalid) return null;
       throw new ConflictingSpecificationError(
         "Can't mix weekYear/weekNumber units with year/month/day or ordinals"
       );
     }
 
     if (containsGregorMD && containsOrdinal) {
+      if (opts.nullOnInvalid) return null;
       throw new ConflictingSpecificationError("Can't mix ordinal dates with month/day");
     }
 

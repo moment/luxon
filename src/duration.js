@@ -224,14 +224,24 @@ export default class Duration {
    */
   static fromObject(obj, opts = {}) {
     if (obj == null || typeof obj !== "object") {
+      if (opts.nullOnInvalid) return null;
       throw new InvalidArgumentError(
         `Duration.fromObject: argument expected to be an object, got ${
           obj === null ? "null" : typeof obj
         }`
       );
     }
+
+    let values;
+    try {
+      values = normalizeObject(obj, Duration.normalizeUnit);
+    } catch (error) {
+      if (opts.nullOnInvalid) return null;
+      throw error;
+    }
+
     return new Duration({
-      values: normalizeObject(obj, Duration.normalizeUnit),
+      values,
       loc: Locale.fromObject(opts),
       conversionAccuracy: opts.conversionAccuracy
     });

@@ -5,7 +5,10 @@ import {
   UnitOutOfRangeError,
   InvalidArgumentError,
   MismatchedWeekdayError,
-  InvalidZoneError
+  InvalidZoneError,
+  ConflictingSpecificationError,
+  InvalidUnitError,
+  UnparsableStringError
 } from "../../src/errors";
 import Settings from "../../src/settings";
 
@@ -137,7 +140,7 @@ const badInputs = [
 ];
 
 test.each(badInputs)("Interval.fromISO will reject [%s]", s => {
-  expect(() => DateTime.fromISO(s)).toThrow();
+  expect(() => DateTime.fromISO(s)).toThrow(UnparsableStringError);
 });
 
 test("local with no options", () => {
@@ -351,12 +354,12 @@ test("DateTime.fromMillis accepts the default locale", () => {
 });
 
 test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input", () => {
-  expect(() => DateTime.fromMillis("slurp")).toThrow();
+  expect(() => DateTime.fromMillis("slurp")).toThrow(InvalidArgumentError);
 });
 
 test("DateTime.fromMillis(ms) does not accept out-of-bounds numbers", () => {
-  expect(() => DateTime.fromMillis(-8.64e15 - 1)).toThrow();
-  expect(() => DateTime.fromMillis(8.64e15 + 1)).toThrow();
+  expect(() => DateTime.fromMillis(-8.64e15 - 1)).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromMillis(8.64e15 + 1)).toThrow(InvalidArgumentError);
 });
 
 //------
@@ -382,7 +385,7 @@ test("DateTime.fromSeconds accepts the default locale", () => {
 });
 
 test("DateTime.fromSeconds(seconds) throws InvalidArgumentError for non-numeric input", () => {
-  expect(() => DateTime.fromSeconds("slurp")).toThrow();
+  expect(() => DateTime.fromSeconds("slurp")).toThrow(InvalidArgumentError);
 });
 
 //------
@@ -493,23 +496,43 @@ test("DateTime.fromObject() ignores the case of object keys", () => {
 });
 
 test("DateTime.fromObject() throws with invalid object key", () => {
-  expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow();
+  expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow(InvalidUnitError);
 });
 
 test("DateTime.fromObject() throws with invalid value types", () => {
-  expect(() => DateTime.fromObject({ year: "blorp" })).toThrow();
-  expect(() => DateTime.fromObject({ year: "" })).toThrow();
-  expect(() => DateTime.fromObject({ month: NaN })).toThrow();
-  expect(() => DateTime.fromObject({ day: true })).toThrow();
-  expect(() => DateTime.fromObject({ day: false })).toThrow();
-  expect(() => DateTime.fromObject({ hour: {} })).toThrow();
-  expect(() => DateTime.fromObject({ hour: { unit: 42 } })).toThrow();
+  expect(() => DateTime.fromObject({ year: "blorp" })).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromObject({ year: "" })).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromObject({ month: NaN })).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromObject({ day: true })).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromObject({ day: false })).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromObject({ hour: {} })).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromObject({ hour: { unit: 42 } })).toThrow(InvalidArgumentError);
 });
 
 test("DateTime.fromObject() rejects invalid values", () => {
   expect(() => DateTime.fromObject({ ordinal: 5000 })).toThrow(UnitOutOfRangeError);
   expect(() => DateTime.fromObject({ minute: -6 })).toThrow(UnitOutOfRangeError);
   expect(() => DateTime.fromObject({ millisecond: new Date() })).toThrow(UnitOutOfRangeError);
+});
+
+test("DateTime.fromObject() returns null with nullOnInvalid option", () => {
+  expect(DateTime.fromObject({ invalidUnit: 42 }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({}, { zone: "blorp", nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }, { nullOnInvalid: true })).toBe(
+    null
+  );
+  expect(DateTime.fromObject({ day: true }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ minute: -6 }, { nullOnInvalid: true })).toBe(null);
+  expect(
+    DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 1 }, { nullOnInvalid: true })
+  ).toBe(null);
+
+  expect(DateTime.fromObject({ months: 7, ordinal: 200 }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ day: 12, ordinal: 200 }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ weekYear: 2005, ordinal: 222 }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ weekNumber: 42, ordinal: 222 }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ weekYear: 2005, month: 2 }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ weekNumber: 42, day: 22 }, { nullOnInvalid: true })).toBe(null);
 });
 
 test("DateTime.fromObject() defaults high-order values to the current date", () => {
@@ -652,6 +675,27 @@ test("DateTime.fromObject validates weekdays", () => {
   expect(DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 2 })).toBeTruthy();
   expect(() => DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 1 })).toThrow(
     MismatchedWeekdayError
+  );
+});
+
+test("DateTime.fromObject rejects some ordinal, gregorian, week combinations", () => {
+  expect(() => DateTime.fromObject({ months: 7, ordinal: 200 })).toThrow(
+    ConflictingSpecificationError
+  );
+  expect(() => DateTime.fromObject({ day: 12, ordinal: 200 })).toThrow(
+    ConflictingSpecificationError
+  );
+  expect(() => DateTime.fromObject({ weekYear: 2005, ordinal: 222 })).toThrow(
+    ConflictingSpecificationError
+  );
+  expect(() => DateTime.fromObject({ weekNumber: 42, ordinal: 222 })).toThrow(
+    ConflictingSpecificationError
+  );
+  expect(() => DateTime.fromObject({ weekYear: 2005, month: 2 })).toThrow(
+    ConflictingSpecificationError
+  );
+  expect(() => DateTime.fromObject({ weekNumber: 42, day: 22 })).toThrow(
+    ConflictingSpecificationError
   );
 });
 
