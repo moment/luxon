@@ -3,7 +3,7 @@
 import { DateTime } from "../../src/luxon";
 import Helpers from "../helpers";
 
-const withDefaultLocale = Helpers.setUnset("defaultLocale"),
+const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
   withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar"),
   withthrowOnInvalid = Helpers.setUnset("throwOnInvalid");

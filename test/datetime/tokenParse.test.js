@@ -1,5 +1,7 @@
 /* global test expect */
 import { DateTime } from "../../src/luxon";
+import Helpers from "../helpers";
+
 import { ConflictingSpecificationError } from "../../src/errors";
 
 //------
@@ -16,7 +18,7 @@ test("DateTime.fromFormat() parses basic times", () => {
   expect(i.millisecond).toBe(445);
 });
 
-test("DateTime.fromFormat() parses with variable-length inpus", () => {
+test("DateTime.fromFormat() parses with variable-length input", () => {
   let i = DateTime.fromFormat("1982/05/03 09:07:05.004", "y/M/d H:m:s.S");
   expect(i.year).toBe(1982);
   expect(i.month).toBe(5);
@@ -64,6 +66,41 @@ test("DateTime.fromFormat() parses meridiems", () => {
 
 test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", () => {
   expect(() => DateTime.fromFormat("930PM", "Hmma")).toThrow(ConflictingSpecificationError);
+});
+
+// #714
+test("DateTime.fromFormat() makes dots optional and handles non breakable spaces", () => {
+  function parseMeridiem(input, isAM) {
+    const d = DateTime.fromFormat(input, "hh:mm a");
+    expect(d.hour).toBe(isAM ? 10 : 22);
+    expect(d.minute).toBe(45);
+    expect(d.second).toBe(0);
+  }
+
+  // Meridiem for this locale is "a. m." or "p. m.", with a non breakable space
+  Helpers.withDefaultLocale("es-ES", () => {
+    parseMeridiem("10:45 a. m.", true);
+    parseMeridiem("10:45 a. m", true);
+    parseMeridiem("10:45 a m.", true);
+    parseMeridiem("10:45 a m", true);
+
+    parseMeridiem("10:45 p. m.", false);
+    parseMeridiem("10:45 p. m", false);
+    parseMeridiem("10:45 p m.", false);
+    parseMeridiem("10:45 p m", false);
+
+    const nbsp = String.fromCharCode(160);
+
+    parseMeridiem(`10:45 a.${nbsp}m.`, true);
+    parseMeridiem(`10:45 a.${nbsp}m`, true);
+    parseMeridiem(`10:45 a${nbsp}m.`, true);
+    parseMeridiem(`10:45 a${nbsp}m`, true);
+
+    parseMeridiem(`10:45 p.${nbsp}m.`, false);
+    parseMeridiem(`10:45 p.${nbsp}m`, false);
+    parseMeridiem(`10:45 p${nbsp}m.`, false);
+    parseMeridiem(`10:45 p${nbsp}m`, false);
+  });
 });
 
 test("DateTime.fromFormat() parses variable-digit years", () => {
