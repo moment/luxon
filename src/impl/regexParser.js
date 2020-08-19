@@ -66,7 +66,7 @@ function simpleParse(...keys) {
 
 // ISO and SQL parsing
 const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
-  isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/,
+  isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?/,
   isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${offsetRegex.source}?`),
   isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`),
   isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
