@@ -134,19 +134,32 @@ export default class Interval {
   static fromISO(text, opts) {
     const [s, e] = (text || "").split("/", 2);
     if (s && e) {
-      const start = DateTime.fromISO(s, opts),
-        end = DateTime.fromISO(e, opts);
+      let start, startIsValid;
+      try {
+        start = DateTime.fromISO(s, opts);
+        startIsValid = start.isValid;
+      } catch (e) {
+        startIsValid = false;
+      }
 
-      if (start.isValid && end.isValid) {
+      let end, endIsValid;
+      try {
+        end = DateTime.fromISO(e, opts);
+        endIsValid = end.isValid;
+      } catch (e) {
+        endIsValid = false;
+      }
+
+      if (startIsValid && endIsValid) {
         return Interval.fromDateTimes(start, end);
       }
 
-      if (start.isValid) {
+      if (startIsValid) {
         const dur = Duration.fromISO(e, opts);
         if (dur.isValid) {
           return Interval.after(start, dur);
         }
-      } else if (end.isValid) {
+      } else if (endIsValid) {
         const dur = Duration.fromISO(s, opts);
         if (dur.isValid) {
           return Interval.before(end, dur);

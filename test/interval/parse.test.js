@@ -1,5 +1,8 @@
 /* global test expect */
 import { Interval } from "../../src/luxon";
+import Helpers from "../helpers";
+
+const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
 //------
 // .fromISO()
@@ -115,6 +118,17 @@ test("Interval.fromISO accepts a zone argument", () => {
   const durDate = Interval.fromISO("P1Y/2016-01-01", { zone: "Europe/Paris" });
   expect(durDate.isValid).toBe(true);
   expect(durDate.start.zoneName).toBe("Europe/Paris");
+});
+
+// #728
+test("Interval.fromISO works with Settings.throwOnInvalid", () => {
+  withThrowOnInvalid(true, () => {
+    const dateDur = Interval.fromISO("2020-06-22T17:30:00.000+02:00/PT5H30M");
+    expect(dateDur.isValid).toBe(true);
+
+    const durDate = Interval.fromISO("PT5H30M/2020-06-22T17:30:00.000+02:00");
+    expect(durDate.isValid).toBe(true);
+  });
 });
 
 const badInputs = [
