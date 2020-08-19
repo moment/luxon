@@ -265,7 +265,7 @@ export function normalizeObject(obj, normalizer, nonUnitKeys) {
 export function formatOffset(offset, format) {
   const hours = Math.trunc(offset / 60),
     minutes = Math.abs(offset % 60),
-    sign = hours >= 0 && !Object.is(hours, -0) ? "+" : "-",
+    sign = offset >= 0 ? "+" : "-",
     base = `${sign}${Math.abs(hours)}`;
 
   switch (format) {
