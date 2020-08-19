@@ -12,20 +12,20 @@ function intUnit(regex, post = i => i) {
   return { regex, deser: ([s]) => post(parseDigits(s)) };
 }
 
+const NBSP = String.fromCharCode(160);
+const spaceOrNBSP = `( |${NBSP})`;
+const spaceOrNBSPRegExp = new RegExp(spaceOrNBSP, "g");
+
 function fixListRegex(s) {
-  const nbsp = String.fromCharCode(160);
-  const spaceOrNBSP = `( |${nbsp})`;
   // make dots optional and also make them literal
   // make space and non breakable space characters interchangeable
-  return s.replace(/\./g, "\\.?").replace(new RegExp(spaceOrNBSP, "g"), spaceOrNBSP);
+  return s.replace(/\./g, "\\.?").replace(spaceOrNBSPRegExp, spaceOrNBSP);
 }
 
 function stripInsensitivities(s) {
-  const nbsp = String.fromCharCode(160);
-  const spaceOrNBSP = `( |${nbsp})`;
   return s
     .replace(/\./g, "") // ignore dots that were made optional
-    .replace(new RegExp(spaceOrNBSP, "g"), " ") // interchange space and nbsp
+    .replace(spaceOrNBSPRegExp, " ") // interchange space and nbsp
     .toLowerCase();
 }
 
