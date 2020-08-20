@@ -195,7 +195,7 @@ class PolyDateFormatter {
     const hasIntlDTF = hasIntl();
 
     let z;
-    if (dt.zone.universal && hasIntlDTF) {
+    if (dt.zone.isUniversal && hasIntlDTF) {
       // Chromium doesn't support fixed-offset zones like Etc/GMT+8 in its formatter,
       // See https://bugs.chromium.org/p/chromium/issues/detail?id=364374.
       // So we have to make do. Two cases:

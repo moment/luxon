@@ -57,7 +57,7 @@ test("IANAZone.name returns the zone name passed to the constructor", () => {
 });
 
 test("IANAZone is not universal", () => {
-  expect(IANAZone.create("America/Santiago").universal).toBe(false);
+  expect(IANAZone.create("America/Santiago").isUniversal).toBe(false);
 });
 
 test("IANAZone.offsetName with a long format", () => {
