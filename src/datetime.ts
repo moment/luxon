@@ -1109,7 +1109,7 @@ export default class DateTime {
    * @type {boolean}
    */
   get isOffsetFixed() {
-    return this.zone.universal;
+    return this.zone.isUniversal;
   }
 
   /**

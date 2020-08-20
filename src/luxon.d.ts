@@ -477,7 +477,7 @@ export abstract class Zone {
   readonly isValid: boolean;
   readonly name: string;
   readonly type: string;
-  readonly universal: boolean;
+  readonly isUniversal: boolean;
   equals(other: Zone): boolean;
   offset(ts: number): number;
   offsetName(ts?: number, options?: ZoneOffsetOptions): string | null;
