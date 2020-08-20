@@ -5,7 +5,6 @@ import Locale from "./locale";
 import DateTime from "../datetime";
 import Duration from "../duration";
 import { StringUnitLength } from "../types/common";
-import { DateTimeFormatOptions } from "../types/datetime";
 import { DurationUnit } from "../types/duration";
 import { ZoneOffsetFormat } from "../types/zone";
 
@@ -24,7 +23,7 @@ function stringifyTokens(
   return s;
 }
 
-const TokenToFormatOpts: Record<string, DateTimeFormatOptions> = {
+const TokenToFormatOpts: Record<string, Intl.DateTimeFormatOptions> = {
   D: Formats.DATE_SHORT,
   DD: Formats.DATE_MED,
   DDD: Formats.DATE_FULL,
@@ -52,7 +51,7 @@ export interface FormatToken {
   val: string;
 }
 
-interface FormatterOptions extends DateTimeFormatOptions {
+interface FormatterOptions extends Intl.DateTimeFormatOptions {
   allowZ?: boolean;
   forceSimple?: boolean;
   format?: ZoneOffsetFormat;
@@ -129,7 +128,7 @@ export default class Formatter {
     this.systemLoc = undefined;
   }
 
-  formatWithSystemDefault(dt: DateTime, options: DateTimeFormatOptions) {
+  formatWithSystemDefault(dt: DateTime, options: Intl.DateTimeFormatOptions) {
     if (this.systemLoc === undefined) {
       this.systemLoc = this.loc.redefaultToSystem();
     }
@@ -171,7 +170,7 @@ export default class Formatter {
     const knownEnglish = this.loc.listingMode() === "en",
       useDateTimeFormatter =
         this.loc.outputCalendar && this.loc.outputCalendar !== "gregory" && hasFormatToParts(),
-      string = (options: DateTimeFormatOptions, extract: Intl.DateTimeFormatPartTypes) =>
+      string = (options: Intl.DateTimeFormatOptions, extract: Intl.DateTimeFormatPartTypes) =>
         this.loc.extract(dt, options, extract),
       formatOffset = (options: FormatterOptions & { format: ZoneOffsetFormat }) =>
         dt.isOffsetFixed && dt.offset === 0 && options.allowZ

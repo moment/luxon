@@ -2,7 +2,6 @@ import * as Formats from "./formats";
 import { pick } from "./util";
 import { UnitLength, StringUnitLength } from "../types/common";
 import DateTime from "../datetime";
-import { ToRelativeNumeric, ToRelativeUnit, DateTimeFormatOptions } from "../types/datetime";
 import Duration from "../duration";
 
 function stringify(obj: Record<string, unknown>) {
@@ -121,9 +120,9 @@ export function eraForDateTime(dt: DateTime, length: StringUnitLength) {
 }
 
 export function formatRelativeTime(
-  unit: ToRelativeUnit,
+  unit: Intl.RelativeTimeFormatUnit,
   count: number,
-  numeric: ToRelativeNumeric = "always",
+  numeric: Intl.RelativeTimeFormatNumeric = "always",
   narrow = false
 ) {
   const units = {
@@ -168,7 +167,7 @@ export function formatRelativeTime(
   return isInPast ? `${formatValue} ${formatUnit} ago` : `in ${formatValue} ${formatUnit}`;
 }
 
-export function formatString(knownFormat: DateTimeFormatOptions) {
+export function formatString(knownFormat: Intl.DateTimeFormatOptions) {
   // these all have the offsets removed because we don't have access to them
   // without all the intl stuff this is backfilling
   const filtered = pick(knownFormat, [

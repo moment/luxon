@@ -6,10 +6,9 @@ import Formatter from "./formatter";
 
 import { StringUnitLength, UnitLength } from "../types/common";
 import { LocaleOptions, NumberingSystem, CalendarSystem } from "../types/locale";
-import { ToRelativeUnit, DateTimeFormatOptions } from "../types/datetime";
 
 let intlDTCache: Record<string, Intl.DateTimeFormat> = {};
-function getCachedDTF(locString: string, options: DateTimeFormatOptions = {}) {
+function getCachedDTF(locString: string, options: Intl.DateTimeFormatOptions = {}) {
   const key = JSON.stringify([locString, options]);
   let dtf = intlDTCache[key];
   if (!dtf) {
@@ -31,11 +30,11 @@ function getCachedINF(locString: string, options: Intl.NumberFormatOptions) {
 }
 
 let intlRelCache: Record<string, Intl.RelativeTimeFormat> = {};
-function getCachedRTF(locString: string, options: Intl.RelativeTimeFormatOptions = {}) {
-  const key = JSON.stringify([locString, options]);
+function getCachedRTF(locale: Intl.BCP47LanguageTag, options: Intl.RelativeTimeFormatOptions = {}) {
+  const key = JSON.stringify([locale, options]);
   let inf = intlRelCache[key];
   if (!inf) {
-    inf = new Intl.RelativeTimeFormat(locString, options);
+    inf = new Intl.RelativeTimeFormat(locale, options);
     intlRelCache[key] = inf;
   }
   return inf;
@@ -186,11 +185,11 @@ class PolyNumberFormatter {
  */
 
 class PolyDateFormatter {
-  private options: Readonly<DateTimeFormatOptions>;
+  private options: Readonly<Intl.DateTimeFormatOptions>;
   private dt: DateTime;
   private dtf?: Readonly<Intl.DateTimeFormat>;
 
-  constructor(dt: DateTime, intl: string, options: DateTimeFormatOptions) {
+  constructor(dt: DateTime, intl: string, options: Intl.DateTimeFormatOptions) {
     this.options = options;
     const hasIntlDTF = hasIntl();
 
@@ -219,7 +218,7 @@ class PolyDateFormatter {
     }
 
     if (hasIntlDTF) {
-      const intlOpts: DateTimeFormatOptions = Object.assign({}, this.options);
+      const intlOpts: Intl.DateTimeFormatOptions = Object.assign({}, this.options);
       if (z) {
         intlOpts.timeZone = z;
       }
@@ -268,14 +267,18 @@ class PolyRelFormatter {
   private options: Readonly<Intl.RelativeTimeFormatOptions>;
   private rtf?: Readonly<Intl.RelativeTimeFormat>;
 
-  constructor(intl: string, isEnglish: boolean, options: Intl.RelativeTimeFormatOptions) {
+  constructor(
+    locale: Intl.BCP47LanguageTag,
+    isEnglish: boolean,
+    options: Intl.RelativeTimeFormatOptions
+  ) {
     this.options = Object.assign({ style: "long" }, options);
     if (!isEnglish && hasRelative()) {
-      this.rtf = getCachedRTF(intl, options);
+      this.rtf = getCachedRTF(locale, options);
     }
   }
 
-  format(count: number, unit: ToRelativeUnit) {
+  format(count: number, unit: Intl.RelativeTimeFormatUnit) {
     if (this.rtf) {
       return this.rtf.format(count, unit);
     } else {
@@ -288,7 +291,7 @@ class PolyRelFormatter {
     }
   }
 
-  formatToParts(count: number, unit: ToRelativeUnit) {
+  formatToParts(count: number, unit: Intl.RelativeTimeFormatUnit) {
     if (this.rtf) {
       return this.rtf.formatToParts(count, unit);
     } else {
@@ -495,7 +498,11 @@ export default class Locale {
     });
   }
 
-  extract(dt: DateTime, intlOptions: DateTimeFormatOptions, field: Intl.DateTimeFormatPartTypes) {
+  extract(
+    dt: DateTime,
+    intlOptions: Intl.DateTimeFormatOptions,
+    field: Intl.DateTimeFormatPartTypes
+  ) {
     const df = this.dtFormatter(dt, intlOptions),
       results = df.formatToParts(),
       // Lower case comparison, type is 'dayperiod' instead of 'dayPeriod' in documentation
@@ -511,7 +518,7 @@ export default class Locale {
     return new PolyNumberFormatter(this.intl, this.fastNumbers, options);
   }
 
-  dtFormatter(dt: DateTime, intlOptions: DateTimeFormatOptions = {}) {
+  dtFormatter(dt: DateTime, intlOptions: Intl.DateTimeFormatOptions = {}) {
     return new PolyDateFormatter(dt, this.intl, intlOptions);
   }
 

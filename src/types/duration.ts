@@ -1,6 +1,5 @@
 import { ConversionAccuracy } from "./common";
 import { NumberingSystem } from "./locale";
-import { DateTimeFormatOptions } from "./datetime";
 
 export interface DurationOptions {
   locale?: string;
@@ -32,7 +31,7 @@ export interface DurationObject {
 
 export type DurationUnit = keyof DurationObject;
 
-export interface DurationToFormatOptions extends DateTimeFormatOptions {
+export interface DurationToFormatOptions extends Intl.DateTimeFormatOptions {
   floor?: boolean;
   round?: boolean;
 }
