@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "esnext",
     "target": "es5",
-    "lib": ["dom", "esnext"],
+    "lib": ["es5"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,

@@ -1,25 +1,19 @@
-import { StringUnitLength } from "./common";
 import { NumberingSystem, LocaleOptions } from "./locale";
 import DateTime from "../datetime";
 import Zone from "../zone";
-import { DurationUnit } from "./duration";
 import { FormatToken } from "../impl/formatter";
-
-export type DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 
 export interface ZoneOptions {
   keepLocalTime?: boolean;
 }
 
-export type ToRelativeUnit = Exclude<DurationUnit, "millisecond" | "milliseconds">;
-
 export interface ToRelativeOptions {
   /** The DateTime to use as the basis to which this time is compared. Defaults to now. */
   base?: DateTime;
   locale?: string;
-  style?: StringUnitLength;
+  style?: Intl.RelativeTimeFormatStyle;
   /** If omitted, the method will pick the unit. */
-  unit?: ToRelativeUnit;
+  unit?: Intl.RelativeTimeFormatUnit;
   /** Defaults to `true`. */
   round?: boolean;
   /**
@@ -31,8 +25,6 @@ export interface ToRelativeOptions {
   /** The Intl system may choose not to honor this */
   numberingSystem?: NumberingSystem;
 }
-
-export type ToRelativeNumeric = "auto" | "always";
 
 export type ToRelativeCalendarUnit = "years" | "quarters" | "months" | "weeks" | "days";
 

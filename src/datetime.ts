@@ -53,15 +53,12 @@ import {
   ToSQLOptions,
   ToRelativeOptions,
   ToRelativeCalendarOptions,
-  DateTimeFormatOptions,
   ZoneOptions,
   GregorianDateTime,
   WeekDateTime,
   OrdinalDateTime,
   GenericDateTime,
   TimeObject,
-  ToRelativeUnit,
-  ToRelativeNumeric,
   DateTimeWithZoneOptions
 } from "./types/datetime";
 import { DurationUnit, DurationOptions } from "./types/duration";
@@ -292,8 +289,8 @@ function lastOpts(argList: unknown[]): [DateTimeOptions, number[]] {
 }
 
 type DiffRelativeOptions = ToRelativeOptions & {
-  numeric: ToRelativeNumeric;
-  units: ToRelativeUnit[];
+  numeric: Intl.RelativeTimeFormatNumeric;
+  units: Intl.RelativeTimeFormatUnit[];
   calendary: boolean;
 };
 
@@ -1169,7 +1166,7 @@ export default class DateTime {
    * @param {Object} options - the same options as toLocaleString
    * @return {Object}
    */
-  resolvedLocaleOpts(options: LocaleOptions & DateTimeFormatOptions = {}) {
+  resolvedLocaleOpts(options: LocaleOptions & Intl.DateTimeFormatOptions = {}) {
     const { locale, numberingSystem: ns, calendar } = Formatter.create(
       this.loc.clone(options),
       options
@@ -1434,7 +1431,7 @@ export default class DateTime {
    * @example DateTime.now().toLocaleString({ hour: '2-digit', minute: '2-digit', hour12: false }); //=> '11:32'
    * @return {string}
    */
-  toLocaleString(options: LocaleOptions & DateTimeFormatOptions = Formats.DATE_SHORT) {
+  toLocaleString(options: LocaleOptions & Intl.DateTimeFormatOptions = Formats.DATE_SHORT) {
     return Formatter.create(this.loc.clone(options), options).formatDateTime(this);
   }
 
@@ -1451,7 +1448,7 @@ export default class DateTime {
    *                                   //=>   { type: 'year', value: '1982' }
    *                                   //=> ]
    */
-  toLocaleParts(options: LocaleOptions & DateTimeFormatOptions = {}) {
+  toLocaleParts(options: LocaleOptions & Intl.DateTimeFormatOptions = {}) {
     return Formatter.create(this.loc.clone(options), options).formatDateTimeParts(this);
   }
 
@@ -1777,7 +1774,14 @@ export default class DateTime {
       this.plus(padding),
       Object.assign(options, {
         numeric: "always" as const,
-        units: ["years", "months", "days", "hours", "minutes", "seconds"] as ToRelativeUnit[],
+        units: [
+          "years",
+          "months",
+          "days",
+          "hours",
+          "minutes",
+          "seconds"
+        ] as Intl.RelativeTimeFormatUnit[],
         calendary: false
       })
     );
@@ -1802,7 +1806,7 @@ export default class DateTime {
       this,
       Object.assign(options, {
         numeric: "auto" as const,
-        units: ["years", "months", "days"] as ToRelativeUnit[],
+        units: ["years", "months", "days"] as Intl.RelativeTimeFormatUnit[],
         calendary: true
       })
     );
@@ -2170,14 +2174,14 @@ export default class DateTime {
    */
   private static diffRelative(start: DateTime, end: DateTime, options: DiffRelativeOptions) {
     const round = isUndefined(options.round) ? true : options.round,
-      format = (c: number, unit: ToRelativeUnit) => {
+      format = (c: number, unit: Intl.RelativeTimeFormatUnit) => {
         c = roundTo(c, round || options.calendary ? 0 : 2, true);
         const rtfOptions: Intl.RelativeTimeFormatOptions = { numeric: options.numeric };
         if (options.style) rtfOptions.style = options.style;
         const formatter = end.loc.clone(options).relFormatter(rtfOptions);
         return formatter.format(c, unit);
       },
-      differ = (unit: ToRelativeUnit) => {
+      differ = (unit: Intl.RelativeTimeFormatUnit) => {
         if (options.calendary) {
           if (!end.hasSame(start, unit)) {
             return end

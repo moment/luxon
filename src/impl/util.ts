@@ -5,7 +5,7 @@
 */
 
 import { InvalidArgumentError } from "../errors";
-import { TimeObject, GregorianDateTime, DateTimeFormatOptions } from "../types/datetime";
+import { TimeObject, GregorianDateTime } from "../types/datetime";
 import { ZoneOffsetFormat } from "../types/zone";
 
 /**
@@ -204,7 +204,7 @@ export function parseZoneInfo(
       timeZone
     };
 
-  const modified: DateTimeFormatOptions = Object.assign(
+  const modified: Intl.DateTimeFormatOptions = Object.assign(
       { timeZoneName: offsetFormat },
       intlOptions
     ),

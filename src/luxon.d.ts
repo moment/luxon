@@ -1,20 +1,17 @@
 // Type definitions for luxon 2.0
 // TypeScript Version: 3.6
 
-export type DateTimeFormatOptions = Intl.DateTimeFormatOptions;
-
 export interface ZoneOptions {
   keepLocalTime?: boolean;
 }
 
-export type ToRelativeUnit = Exclude<DurationUnit, "millisecond" | "milliseconds">;
 export interface ToRelativeOptions {
   /** The DateTime to use as the basis to which this time is compared. Defaults to now. */
   base?: DateTime;
   locale?: string;
   style?: StringUnitLength;
   /** If omitted, the method will pick the unit. */
-  unit?: ToRelativeUnit;
+  unit?: Intl.RelativeTimeFormatUnit;
   /** Defaults to `true`. */
   round?: boolean;
   /**
@@ -27,7 +24,6 @@ export interface ToRelativeOptions {
   numberingSystem?: NumberingSystem;
 }
 
-export type ToRelativeNumeric = "auto" | "always";
 export type ToRelativeCalendarUnit = "years" | "quarters" | "months" | "weeks" | "days";
 export interface ToRelativeCalendarOptions {
   /** The DateTime to use as the basis to which this time is compared. Defaults to now. */
@@ -112,27 +108,27 @@ export interface ThrowOnInvalid {
 }
 
 export class DateTime {
-  static readonly DATETIME_FULL: DateTimeFormatOptions;
-  static readonly DATETIME_FULL_WITH_SECONDS: DateTimeFormatOptions;
-  static readonly DATETIME_HUGE: DateTimeFormatOptions;
-  static readonly DATETIME_HUGE_WITH_SECONDS: DateTimeFormatOptions;
-  static readonly DATETIME_MED: DateTimeFormatOptions;
-  static readonly DATETIME_MED_WITH_SECONDS: DateTimeFormatOptions;
-  static readonly DATETIME_SHORT: DateTimeFormatOptions;
-  static readonly DATETIME_SHORT_WITH_SECONDS: DateTimeFormatOptions;
-  static readonly DATE_FULL: DateTimeFormatOptions;
-  static readonly DATE_HUGE: DateTimeFormatOptions;
-  static readonly DATE_MED: DateTimeFormatOptions;
-  static readonly DATETIME_MED_WITH_WEEKDAY: DateTimeFormatOptions;
-  static readonly DATE_SHORT: DateTimeFormatOptions;
-  static readonly TIME_24_SIMPLE: DateTimeFormatOptions;
-  static readonly TIME_24_WITH_LONG_OFFSET: DateTimeFormatOptions;
-  static readonly TIME_24_WITH_SECONDS: DateTimeFormatOptions;
-  static readonly TIME_24_WITH_SHORT_OFFSET: DateTimeFormatOptions;
-  static readonly TIME_SIMPLE: DateTimeFormatOptions;
-  static readonly TIME_WITH_LONG_OFFSET: DateTimeFormatOptions;
-  static readonly TIME_WITH_SECONDS: DateTimeFormatOptions;
-  static readonly TIME_WITH_SHORT_OFFSET: DateTimeFormatOptions;
+  static readonly DATETIME_FULL: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_FULL_WITH_SECONDS: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_HUGE: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_HUGE_WITH_SECONDS: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_MED: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_MED_WITH_SECONDS: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_SHORT: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_SHORT_WITH_SECONDS: Intl.DateTimeFormatOptions;
+  static readonly DATE_FULL: Intl.DateTimeFormatOptions;
+  static readonly DATE_HUGE: Intl.DateTimeFormatOptions;
+  static readonly DATE_MED: Intl.DateTimeFormatOptions;
+  static readonly DATETIME_MED_WITH_WEEKDAY: Intl.DateTimeFormatOptions;
+  static readonly DATE_SHORT: Intl.DateTimeFormatOptions;
+  static readonly TIME_24_SIMPLE: Intl.DateTimeFormatOptions;
+  static readonly TIME_24_WITH_LONG_OFFSET: Intl.DateTimeFormatOptions;
+  static readonly TIME_24_WITH_SECONDS: Intl.DateTimeFormatOptions;
+  static readonly TIME_24_WITH_SHORT_OFFSET: Intl.DateTimeFormatOptions;
+  static readonly TIME_SIMPLE: Intl.DateTimeFormatOptions;
+  static readonly TIME_WITH_LONG_OFFSET: Intl.DateTimeFormatOptions;
+  static readonly TIME_WITH_SECONDS: Intl.DateTimeFormatOptions;
+  static readonly TIME_WITH_SHORT_OFFSET: Intl.DateTimeFormatOptions;
   static fromHTTP(text: string, options: DateTimeWithZoneOptions & ThrowOnInvalid): DateTime;
   static fromHTTP(text: string, options: DateTimeWithZoneOptions): DateTime | null;
   static fromHTTP(text: string): DateTime;
@@ -224,7 +220,7 @@ export class DateTime {
   plus(duration: DurationLike): DateTime;
   reconfigure(options?: LocaleOptions): DateTime;
   resolvedLocaleOpts(
-    options?: LocaleOptions & DateTimeFormatOptions
+    options?: LocaleOptions & Intl.DateTimeFormatOptions
   ): { locale: string; numberingSystem: NumberingSystem; outputCalendar: CalendarSystem };
   set(values: GenericDateTime): DateTime;
   setLocale(locale: string): DateTime;
@@ -240,8 +236,8 @@ export class DateTime {
   toISOWeekDate(): string;
   toJSDate(): Date;
   toJSON(): string;
-  toLocaleParts(options?: LocaleOptions & DateTimeFormatOptions): Intl.DateTimeFormatPart[];
-  toLocaleString(options?: LocaleOptions & DateTimeFormatOptions): string;
+  toLocaleParts(options?: LocaleOptions & Intl.DateTimeFormatOptions): Intl.DateTimeFormatPart[];
+  toLocaleString(options?: LocaleOptions & Intl.DateTimeFormatOptions): string;
   toMillis(): number;
   toObject(): GregorianDateTime;
   toRelative(options?: ToRelativeOptions): string;
@@ -293,7 +289,7 @@ export interface DurationObject {
 
 export type DurationUnit = keyof DurationObject;
 
-export interface DurationToFormatOptions extends DateTimeFormatOptions {
+export interface DurationToFormatOptions extends Intl.DateTimeFormatOptions {
   floor?: boolean;
   round?: boolean;
 }
