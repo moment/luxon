@@ -69,15 +69,15 @@ Note that this also alters the behavior of `DateTime#toFormat` and `DateTime#fro
 You generally don't want `DateTime#fromFormat` and `DateTime#toFormat` to use the system's locale, since your format won't be sensitive to the locale's string ordering. That's why Luxon doesn't behave that way by default. But if you really want that behavior, you can always do this:
 
 ```js
-Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;
+Settings.defaultLocale = DateTime.local().resolvedLocaleOptions().locale;
 ```
 
 ## Checking what you got
 
-The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use `resolvedLocaleOpts`:
+The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use `resolvedLocaleOptions`:
 
 ```js
-DateTime.fromObject(null, { locale: "fr-co" }).resolvedLocaleOpts(); //=> { locale: 'fr',
+DateTime.fromObject(null, { locale: "fr-co" }).resolvedLocaleOptions(); //=> { locale: 'fr',
 //     numberingSystem: 'latn',
 //     outputCalendar: 'gregory' }
 ```
@@ -129,7 +129,7 @@ DateTimes also have a `numberingSystem` setting that lets you control what syste
 ```js
 const dt = DateTime.local().setLocale("ar");
 
-dt.resolvedLocaleOpts(); //=> { locale: 'ar',
+dt.resolvedLocaleOptions(); //=> { locale: 'ar',
 //     numberingSystem: 'arab',
 //     outputCalendar: 'gregory' }
 

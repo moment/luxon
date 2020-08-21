@@ -1155,7 +1155,7 @@ export default class DateTime {
    * @param {Object} options - the same options as toLocaleString
    * @return {Object}
    */
-  resolvedLocaleOpts(options: LocaleOptions & Intl.DateTimeFormatOptions = {}) {
+  resolvedLocaleOptions(options: LocaleOptions & Intl.DateTimeFormatOptions = {}) {
     const { locale, numberingSystem: ns, calendar } = Formatter.create(
       this.loc.clone(options),
       options
