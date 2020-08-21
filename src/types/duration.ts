@@ -31,7 +31,6 @@ export interface DurationObject {
 
 export type DurationUnit = keyof DurationObject;
 
-export interface DurationToFormatOptions extends Intl.DateTimeFormatOptions {
+export interface DurationToFormatOptions {
   floor?: boolean;
-  round?: boolean;
 }

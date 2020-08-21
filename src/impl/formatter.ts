@@ -56,6 +56,7 @@ interface FormatterOptions extends Intl.DateTimeFormatOptions {
   forceSimple?: boolean;
   format?: ZoneOffsetFormat;
   padTo?: number;
+  floor?: boolean;
 }
 
 /**
@@ -157,11 +158,10 @@ export default class Formatter {
       return padStart(n, p);
     }
 
-    const options: FormatterOptions = Object.assign({}, this.options);
-
-    if (p > 0) {
-      options.padTo = p;
-    }
+    const options = {
+      padTo: p,
+      floor: this.options.floor
+    };
 
     return this.loc.numberFormatter(options).format(n);
   }
