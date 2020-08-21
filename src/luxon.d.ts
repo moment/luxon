@@ -219,7 +219,7 @@ export class DateTime {
   minus(duration: DurationLike): DateTime;
   plus(duration: DurationLike): DateTime;
   reconfigure(options?: LocaleOptions): DateTime;
-  resolvedLocaleOpts(
+  resolvedLocaleOptions(
     options?: LocaleOptions & Intl.DateTimeFormatOptions
   ): { locale: string; numberingSystem: NumberingSystem; outputCalendar: CalendarSystem };
   set(values: GenericDateTime): DateTime;
