@@ -6,14 +6,45 @@ import Helpers from "../helpers";
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
   withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar"),
-  withthrowOnInvalid = Helpers.setUnset("throwOnInvalid");
+  withthrowOnInvalid = Helpers.setUnset("throwOnInvalid"),
+  withDefaultZone = Helpers.withDefaultZone;
+
+//------
+// .now()
+//------
+test("DateTime.now has today's date", () => {
+  const date = new Date(),
+    now = DateTime.now();
+  expect(now.toJSDate().getDate()).toBe(date.getDate());
+  // The two instants should be a few milliseconds apart
+  expect(Math.abs(now.valueOf() - date.valueOf()) < 1000).toBe(true);
+});
+
+test("DateTime.now accepts the default locale", () => {
+  withDefaultLocale("fr", () => expect(DateTime.now().locale).toBe("fr"));
+});
+
+test("DateTime.now accepts the default numbering system", () => {
+  withDefaultNumberingSystem("beng", () => expect(DateTime.now().numberingSystem).toBe("beng"));
+});
+
+test("DateTime.now accepts the default output calendar", () => {
+  withDefaultOutputCalendar("hebrew", () => expect(DateTime.now().outputCalendar).toBe("hebrew"));
+});
+
+test("DateTime.now accepts the default time zone", () => {
+  withDefaultZone("Europe/Paris", () => expect(DateTime.now().zoneName).toBe("Europe/Paris"));
+});
 
 //------
 // .local()
 //------
 test("DateTime.local() has today's date", () => {
-  const now = DateTime.local();
-  expect(now.toJSDate().getDate()).toBe(new Date().getDate());
+  const date = new Date(),
+    now = DateTime.local();
+  expect(now.toJSDate().getDate()).toBe(date.getDate());
+  // The two instants should be a few milliseconds apart
+  expect(Math.abs(now.valueOf() - date.valueOf()) < 1000).toBe(true);
 });
 
 test("DateTime.local(2017) is the beginning of the year", () => {
@@ -110,11 +141,8 @@ test("DateTime.local does not accept non-integer values", () => {
   expect(dt.isValid).toBe(false);
 });
 
-//------
-// #toLocal()
-//-------
-test("DateTime#toLocal accepts the default locale", () => {
-  Helpers.withDefaultZone("UTC", () => expect(DateTime.local().zoneName).toBe("UTC"));
+test("DateTime.local accepts the default time zone", () => {
+  withDefaultZone("Europe/Paris", () => expect(DateTime.local().zoneName).toBe("Europe/Paris"));
 });
 
 //------
@@ -437,7 +465,7 @@ test("DateTime.fromObject() reject invalid values", () => {
 
 test("DateTime.fromObject() defaults high-order values to the current date", () => {
   const dateTime = DateTime.fromObject({}),
-    now = DateTime.local();
+    now = DateTime.now();
 
   expect(dateTime.year).toBe(now.year);
   expect(dateTime.month).toBe(now.month);
@@ -493,7 +521,7 @@ test("DateTime.fromObject() w/weekYears handles skew with Gregorian years", () =
 
 test("DateTime.fromObject() w/weeks defaults high-order values to the current date", () => {
   const dt = DateTime.fromObject({ weekday: 2 }),
-    now = DateTime.local();
+    now = DateTime.now();
 
   expect(dt.weekYear).toBe(now.weekYear);
   expect(dt.weekNumber).toBe(now.weekNumber);
@@ -529,7 +557,7 @@ test("DateTime.fromObject() w/ordinals handles fully specified dates", () => {
 
 test("DateTime.fromObject() w/ordinal defaults to the current year", () => {
   const dt = DateTime.fromObject({ ordinal: 200 }),
-    now = DateTime.local();
+    now = DateTime.now();
   expect(dt.year).toBe(now.year);
   expect(dt.ordinal).toBe(200);
 });

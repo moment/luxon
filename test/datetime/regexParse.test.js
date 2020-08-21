@@ -436,7 +436,7 @@ test("DateTime.fromISO() accepts year-ordinalTtime", () => {
 });
 
 test("DateTime.fromISO() accepts hour:minute:second.millisecond", () => {
-  const { year, month, day } = DateTime.local();
+  const { year, month, day } = DateTime.now();
   isSame("09:24:15.123", {
     year,
     month,
@@ -449,7 +449,7 @@ test("DateTime.fromISO() accepts hour:minute:second.millisecond", () => {
 });
 
 test("DateTime.fromISO() accepts hour:minute:second,millisecond", () => {
-  const { year, month, day } = DateTime.local();
+  const { year, month, day } = DateTime.now();
   isSame("09:24:15,123", {
     year,
     month,
@@ -462,7 +462,7 @@ test("DateTime.fromISO() accepts hour:minute:second,millisecond", () => {
 });
 
 test("DateTime.fromISO() accepts hour:minute:second", () => {
-  const { year, month, day } = DateTime.local();
+  const { year, month, day } = DateTime.now();
   isSame("09:24:15", {
     year,
     month,
@@ -475,7 +475,7 @@ test("DateTime.fromISO() accepts hour:minute:second", () => {
 });
 
 test("DateTime.fromISO() accepts hour:minute", () => {
-  const { year, month, day } = DateTime.local();
+  const { year, month, day } = DateTime.now();
   isSame("09:24", {
     year,
     month,
@@ -488,7 +488,7 @@ test("DateTime.fromISO() accepts hour:minute", () => {
 });
 
 test("DateTime.fromISO() accepts hour:minute", () => {
-  const { year, month, day } = DateTime.local();
+  const { year, month, day } = DateTime.now();
   isSame("09:24", {
     year,
     month,

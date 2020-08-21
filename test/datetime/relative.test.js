@@ -107,7 +107,7 @@ test("DateTime#toRelativeCalendar uses the calendar", () => {
 });
 
 test("DateTime#toRelativeCalendar picks the correct unit with no options", () => {
-  const now = DateTime.local();
+  const now = DateTime.now();
   const isLastDayOfMonth = now.endOf("month").day === now.day;
   expect(now.plus({ days: 1 }).toRelativeCalendar()).toBe(
     isLastDayOfMonth ? "next month" : "tomorrow"
@@ -161,7 +161,7 @@ Helpers.withoutRTF("DateTime#toRelativeCalendar falls back to English", () => {
 });
 
 test("DateTime#toRelativeCalendar works down through the units for different zone than local", () => {
-  const target = DateTime.local().setZone(`UTC+3`),
+  const target = DateTime.now().setZone(`UTC+3`),
     target1 = target.plus({ days: 1 }),
     target2 = target1.plus({ days: 1 }),
     target3 = target2.plus({ days: 1 }),
@@ -174,7 +174,7 @@ test("DateTime#toRelativeCalendar works down through the units for different zon
 });
 
 test("DateTime#toRelative works down through the units for diffrent zone than local", () => {
-  const base = DateTime.local().setZone(`UTC+3`);
+  const base = DateTime.now().setZone(`UTC+3`);
 
   expect(base.plus({ minutes: 65 }).toRelative()).toBe("in 1 hour");
   expect(base.plus({ minutes: 165 }).toRelative()).toBe("in 2 hours");

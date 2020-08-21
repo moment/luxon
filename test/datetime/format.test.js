@@ -338,7 +338,7 @@ test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
 //------
 
 test("DateTime#resolvedLocaleOpts returns a thing", () => {
-  const res = DateTime.local().resolvedLocaleOpts();
+  const res = DateTime.now().resolvedLocaleOpts();
 
   expect(res.outputCalendar).toBeDefined();
   expect(res.locale).toBeDefined();
@@ -346,7 +346,7 @@ test("DateTime#resolvedLocaleOpts returns a thing", () => {
 });
 
 test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
-  const res = DateTime.local()
+  const res = DateTime.now()
     .reconfigure({
       locale: "be",
       numberingSystem: "mong",
@@ -360,7 +360,7 @@ test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
 });
 
 test("DateTime#resolvedLocaleOpts can override with options", () => {
-  const res = DateTime.local().resolvedLocaleOpts({
+  const res = DateTime.now().resolvedLocaleOpts({
     locale: "be",
     numberingSystem: "mong",
     outputCalendar: "coptic"

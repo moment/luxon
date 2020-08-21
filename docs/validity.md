@@ -38,7 +38,7 @@ But there are other ways to do it:
 
 ```js
 // specify a time zone that doesn't exist
-DateTime.local().setZone("America/Blorp").isValid; //=> false
+DateTime.now().setZone("America/Blorp").isValid; //=> false
 
 // provide contradictory information (here, this date is not a Wednesday)
 DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=> false
@@ -47,7 +47,7 @@ DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=>
 Note that some other kinds of mistakes throw, based on our judgment that they are more likely programmer errors than data issues:
 
 ```js
-DateTime.local().set({ blorp: 7 }); //=> kerplosion
+DateTime.now().set({ blorp: 7 }); //=> kerplosion
 ```
 
 ## Debugging invalid DateTimes
@@ -59,7 +59,7 @@ Because DateTimes fail silently, they can be a pain to debug. Luxon has some fea
 Invalid DateTime objects are happy to tell you why they're invalid. `invalidReason` will give you a consistent error code you can use, whereas `invalidExplanation` will spell it out
 
 ```js
-var dt = DateTime.local().setZone("America/Blorp");
+var dt = DateTime.now().setZone("America/Blorp");
 dt.invalidReason; //=>  'unsupported zone'
 dt.invalidExplanation; //=> 'the zone "America/Blorp" is not supported'
 ```
@@ -70,7 +70,7 @@ You can make Luxon throw whenever it creates an invalid DateTime. The message wi
 
 ```js
 Settings.throwOnInvalid = true;
-DateTime.local().setZone("America/Blorp"); //=> Error: Invalid DateTime: unsupported zone: the zone "America/Blorp" is not supported
+DateTime.now().setZone("America/Blorp"); //=> Error: Invalid DateTime: unsupported zone: the zone "America/Blorp" is not supported
 ```
 
 You can of course leave this on in production too, but be sure to try/catch it appropriately.

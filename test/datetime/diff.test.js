@@ -233,8 +233,8 @@ test("DateTime#diff passes through options", () => {
 
 test("DateTime#diff returns invalid Durations if the DateTimes are invalid", () => {
   const i = DateTime.invalid("because");
-  expect(i.diff(DateTime.local()).isValid).toBe(false);
-  expect(DateTime.local().diff(i).isValid).toBe(false);
+  expect(i.diff(DateTime.now()).isValid).toBe(false);
+  expect(DateTime.now().diff(i).isValid).toBe(false);
 });
 
 test("DateTime#diff results in a duration with the same locale", () => {

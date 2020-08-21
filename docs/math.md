@@ -219,8 +219,8 @@ This is because 12 * 30 != 365. These errors can be annoying, but they can also 
 
 ```js
 var dur = Duration.fromObject({ years: 50000 });
-DateTime.local().plus(dur.shiftTo('milliseconds')).year //=> 51984
-DateTime.local().plus(dur).year                         //=> 52017
+DateTime.now().plus(dur.shiftTo('milliseconds')).year //=> 51984
+DateTime.now().plus(dur).year                         //=> 52017
 ```
 
 Those are 33 years apart! So Luxon offers an alternative conversion scheme called "longterm", based on the 400-year calendar cycle:

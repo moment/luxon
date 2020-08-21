@@ -10,7 +10,7 @@ exports.onHandleContent = function(ev) {
   // Add Luxon to the page so you can play with it while browsing the docs
   $("body").append("<script src='https://moment.github.io/luxon/global/luxon.js'/>");
   $("body").append(
-    "<script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script>"
+    "<script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script>"
   );
 
   // The little "100% documented" badge was too prominent.

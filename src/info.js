@@ -16,7 +16,7 @@ export default class Info {
    * @return {boolean}
    */
   static hasDST(zone = Settings.defaultZone) {
-    const proto = DateTime.local()
+    const proto = DateTime.now()
       .setZone(zone)
       .set({ month: 12 });
 

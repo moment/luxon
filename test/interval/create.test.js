@@ -55,7 +55,7 @@ test("Interval.fromDateTimes results in an invalid Interval if the endpoints are
 });
 
 test("Interval.fromDateTimes throws with invalid input", () => {
-  expect(() => Interval.fromDateTimes(DateTime.local(), true)).toThrow();
+  expect(() => Interval.fromDateTimes(DateTime.now(), true)).toThrow();
 });
 
 test("Interval.fromDateTimes throws with start date coming after end date", () => {

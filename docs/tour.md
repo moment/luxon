@@ -6,23 +6,27 @@ This is going to be a bit brisk, but keep in mind that the API docs are comprehe
 
 ## Your first DateTime
 
-The most important class in Luxon is [DateTime](../class/src/datetime.js~DateTime.html). A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here's one that represents May 15, 2017 at 8:30 in the morning:
+The most important class in Luxon is [DateTime](../class/src/datetime.js~DateTime.html). A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here's one that represents May 15, 2017 at 8:30 in the morning in the local time zone:
 
 ```js
 var dt = DateTime.local(2017, 5, 15, 8, 30);
 ```
 
-To get the current time, just do this:
-
-```js
-var now = DateTime.local();
-```
-
-[DateTime.local](../class/src/datetime.js~DateTime.html#static-method-local) takes any number of arguments, all the way out to milliseconds. Underneath, this is just a Javascript Date object. But we've decorated it with lots of useful methods.
+[DateTime.local](../class/src/datetime.js~DateTime.html#static-method-local) takes any number of arguments, all the way out to milliseconds. Underneath, this is similar to a Javascript Date object. But we've decorated it with lots of useful methods.
 
 ## Creating a DateTime
 
-There are lots of ways to create a DateTime by parsing strings or constructing them out of parts. You've already seen one, `DateTime.local()`, but let's talk about two more.
+There are lots of ways to create a DateTime by parsing strings or constructing them out of parts. You've already seen one, `DateTime.local()`, but let's talk about three more.
+
+### Get the current date and time
+
+To get the current time, just do this:
+
+```js
+var now = DateTime.now();
+```
+
+Calling [DateTime.now](../class/src/datetime.js~DateTime.html#static-method-now) is equivalent to calling `local()` with no parameter.
 
 ### Create from an object
 
@@ -55,7 +59,7 @@ Now that we've made some DateTimes, let's see what we can ask of it.
 The first thing we want to see is the DateTime as a string. Luxon returns ISO 8601 strings:
 
 ```js
-DateTime.local().toString() //=> '2017-09-14T03:20:34.091-04:00'
+DateTime.now().toString(); //=> '2017-09-14T03:20:34.091-04:00'
 ```
 
 ### Getting at components
@@ -63,7 +67,7 @@ DateTime.local().toString() //=> '2017-09-14T03:20:34.091-04:00'
 We can get at the components of the time individually through getters. For example:
 
 ```js
-dt = DateTime.local()
+dt = DateTime.now();
 dt.year     //=> 2017
 dt.month    //=> 9
 dt.day      //=> 14
@@ -111,9 +115,9 @@ Luxon objects are immutable. That means that you can't alter them in place, just
 This is easier to show than to tell. All of these calls return new DateTime instances:
 
 ```js
-var dt = DateTime.local();
-dt.plus({hours: 3, minutes: 2});
-dt.minus({days: 7});
+var dt = DateTime.now();
+dt.plus({ hours: 3, minutes: 2 });
+dt.minus({ days: 7 });
 dt.startOf('day');
 dt.endOf('hour');
 ```
@@ -123,7 +127,7 @@ dt.endOf('hour');
 You can create new instances by overriding specific properties:
 
 ```js
-var dt = DateTime.local();
+var dt = DateTime.now();
 dt.set({hour: 3}).hour   //=> 3
 ```
 
@@ -132,12 +136,12 @@ dt.set({hour: 3}).hour   //=> 3
 Luxon provides several different Intl capabilities, but the most important one is in formatting:
 
 ```js
-var dt = DateTime.local();
+var dt = DateTime.now();
 var f = {month: 'long', day: 'numeric'};
 dt.setLocale('fr').toLocaleString(f)      //=> '14 septembre'
 dt.setLocale('en-GB').toLocaleString(f)   //=> '14 September'
 dt.setLocale('en-US').toLocaleString(f)  //=> 'September 14'
- ```
+```
 
 Luxon's Info class can also list months or weekdays for different locales:
 
@@ -151,15 +155,15 @@ Luxon supports time zones. There's a whole [big section](zones) about it. But br
 
 ```js
 DateTime.fromObject({zone: 'America/Los_Angeles'}) // now, but expressed in LA's local time
-DateTime.local().setZone('America/Los_Angeles') // same
+DateTime.now().setZone("America/Los_Angeles"); // same
 ```
 
 Luxon also supports UTC directly:
 
 ```js
 DateTime.utc(2017, 5, 15);
-DateTime.utc();
-DateTime.local().toUTC();
+DateTime.utc(); // now, in UTC time zone
+DateTime.now().toUTC();
 DateTime.utc().toLocal();
 ```
 
@@ -168,7 +172,7 @@ DateTime.utc().toLocal();
 The Duration class represents a quantity of time such as "2 hours and 7 minutes". You create them like this:
 
 ```js
-var dur = Duration.fromObject({hours: 2, minutes: 7});
+var dur = Duration.fromObject({ hours: 2, minutes: 7 });
 ```
 
 They can be add or subtracted from DateTimes like this:
@@ -199,9 +203,8 @@ You can also format, negate, and normalize them. See it all in the [Duration API
 
 Intervals are a specific period of time, such as "between now and midnight". They're really a wrapper for two DateTimes that form its endpoints. Here's what you can do with them:
 
-
 ```js
-now = DateTime.local();
+now = DateTime.now();
 later = DateTime.local(2020, 10, 12);
 i = Interval.fromDateTimes(now, later);
 

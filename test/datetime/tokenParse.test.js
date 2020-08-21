@@ -332,7 +332,7 @@ test("DateTime.fromFormat() validates weekday names", () => {
 
 test("DateTime.fromFormat() defaults weekday to this week", () => {
   const d = DateTime.fromFormat("Monday", "EEEE"),
-    now = DateTime.local();
+    now = DateTime.now();
   expect(d.weekYear).toBe(now.weekYear);
   expect(d.weekNumber).toBe(now.weekNumber);
   expect(d.weekday).toBe(1);
@@ -388,7 +388,7 @@ test("DateTime.fromFormat() accepts weekYear by itself", () => {
 });
 
 test("DateTime.fromFormat() accepts weekNumber by itself", () => {
-  const now = DateTime.local();
+  const now = DateTime.now();
 
   let d = DateTime.fromFormat("17", "WW");
   expect(d.weekYear).toBe(now.weekYear);
@@ -410,7 +410,7 @@ test("DateTime.fromFormat() accepts weekYear/weekNumber/weekday", () => {
 
 test("DateTime.fromFormat() allows regex content", () => {
   const d = DateTime.fromFormat("Monday", "EEEE"),
-    now = DateTime.local();
+    now = DateTime.now();
   expect(d.weekYear).toBe(now.weekYear);
   expect(d.weekNumber).toBe(now.weekNumber);
   expect(d.weekday).toBe(1);

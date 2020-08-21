@@ -164,7 +164,7 @@ test("DateTime#get returns undefined for invalid units", () => {
 // locale
 //------
 test("DateTime#locale returns the locale", () => {
-  const dt = DateTime.local().reconfigure({ locale: "be" });
+  const dt = DateTime.now().reconfigure({ locale: "be" });
   expect(dt.locale).toBe("be");
 });
 
