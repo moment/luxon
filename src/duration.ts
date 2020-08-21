@@ -451,7 +451,7 @@ export default class Duration {
 
   /**
    * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object} duration - The amount to add. Either a Luxon Duration or the object argument to Duration.fromObject()
    * @return {Duration}
    */
   plus(duration: DurationLike) {
@@ -469,7 +469,7 @@ export default class Duration {
 
   /**
    * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
-   * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object} duration - The amount to subtract. Either a Luxon Duration or the object argument to Duration.fromObject()
    * @return {Duration}
    */
   minus(duration: DurationLike) {
@@ -762,20 +762,16 @@ export default class Duration {
   }
 }
 
-export type DurationLike = Duration | DurationObject | number;
+export type DurationLike = Duration | DurationObject;
 /**
  * @private
  */
-export function friendlyDuration(durationish: DurationLike | unknown) {
-  if (isNumber(durationish)) {
-    return Duration.fromMillis(durationish);
-  } else if (Duration.isDuration(durationish)) {
-    return durationish;
-  } else if (typeof durationish === "object" && durationish !== null) {
-    return Duration.fromObject(durationish);
-  } else {
-    throw new InvalidArgumentError(
-      `Unknown duration argument ${durationish} of type ${typeof durationish}`
-    );
-  }
+export function friendlyDuration(duration: DurationLike | unknown) {
+  if (Duration.isDuration(duration)) return duration;
+
+  if (typeof duration === "object" && duration !== null) return Duration.fromObject(duration);
+
+  throw new InvalidArgumentError(
+    `Unknown duration argument ${duration} of type ${typeof duration}`
+  );
 }

@@ -47,7 +47,7 @@ test("Duration#plus adds single values", () => {
 
 test("Duration#plus adds number as milliseconds", () => {
   const first = Duration.fromObject({ minutes: 11, seconds: 22 }),
-    result = first.plus(333);
+    result = first.plus({ milliseconds: 333 });
 
   expect(result.minutes).toBe(11);
   expect(result.seconds).toBe(22);

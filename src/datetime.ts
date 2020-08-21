@@ -1303,7 +1303,7 @@ export default class DateTime {
    * Add a period of time to this DateTime and return the resulting DateTime
    *
    * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
-   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object} duration - The amount to add. Either a Luxon Duration or the object argument to Duration.fromObject()
    * @example DateTime.now().plus(123) //~> in 123 milliseconds
    * @example DateTime.now().plus({ minutes: 15 }) //~> in 15 minutes
    * @example DateTime.now().plus({ days: 1 }) //~> this time tomorrow
@@ -1320,7 +1320,7 @@ export default class DateTime {
   /**
    * Subtract a period of time to this DateTime and return the resulting DateTime
    * See {@link DateTime#plus}
-   * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @param {Duration|Object} duration - The amount to subtract. Either a Luxon Duration or the object argument to Duration.fromObject()
    @return {DateTime}
   */
   minus(duration: DurationLike) {
@@ -1391,7 +1391,7 @@ export default class DateTime {
   endOf(unit: DurationUnit) {
     return this.plus({ [unit]: 1 })
       .startOf(unit)
-      .minus(1);
+      .minus({ milliseconds: 1 });
   }
 
   // OUTPUT
@@ -1771,7 +1771,7 @@ export default class DateTime {
     const padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
     return DateTime.diffRelative(
       base,
-      this.plus(padding),
+      this.plus({ milliseconds: padding }),
       Object.assign(options, {
         numeric: "always" as const,
         units: [
