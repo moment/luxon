@@ -218,9 +218,9 @@ export class DateTime {
   hasSame(other: DateTime, unit: DurationUnit): boolean;
   minus(duration: DurationLike): DateTime;
   plus(duration: DurationLike): DateTime;
-  reconfigure(options?: LocaleOptions): DateTime;
+  reconfigure(options: LocaleOptions): DateTime;
   resolvedLocaleOptions(
-    options?: LocaleOptions & Intl.DateTimeFormatOptions
+    options?: Intl.DateTimeFormatOptions
   ): { locale: string; numberingSystem: NumberingSystem; outputCalendar: CalendarSystem };
   set(values: GenericDateTime): DateTime;
   setLocale(locale: string): DateTime;
@@ -236,8 +236,8 @@ export class DateTime {
   toISOWeekDate(): string;
   toJSDate(): Date;
   toJSON(): string;
-  toLocaleParts(options?: LocaleOptions & Intl.DateTimeFormatOptions): Intl.DateTimeFormatPart[];
-  toLocaleString(options?: LocaleOptions & Intl.DateTimeFormatOptions): string;
+  toLocaleParts(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormatPart[];
+  toLocaleString(options?: Intl.DateTimeFormatOptions): string;
   toMillis(): number;
   toObject(): GregorianDateTime;
   toRelative(options?: ToRelativeOptions): string;

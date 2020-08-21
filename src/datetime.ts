@@ -1152,12 +1152,12 @@ export default class DateTime {
   /**
    * Returns the resolved Intl options for this DateTime.
    * This is useful in understanding the behavior of formatting methods
-   * @param {Object} options - the same options as toLocaleString
+   * @param {Object} options - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
    * @return {Object}
    */
-  resolvedLocaleOptions(options: LocaleOptions & Intl.DateTimeFormatOptions = {}) {
+  resolvedLocaleOptions(options: Intl.DateTimeFormatOptions = {}) {
     const { locale, numberingSystem: ns, calendar } = Formatter.create(
-      this.loc.clone(options),
+      this.loc,
       options
     ).resolvedOptions(this);
     const numberingSystem = ns as NumberingSystem;
@@ -1237,7 +1237,7 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
    * @return {DateTime}
    */
-  reconfigure(options: LocaleOptions = {}) {
+  reconfigure(options: LocaleOptions) {
     const loc = this.loc.clone(options);
     return this.clone({ loc });
   }
@@ -1406,26 +1406,24 @@ export default class DateTime {
    * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
    * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
    * of the DateTime in the assigned locale.
-   * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param options {Object} - Intl.DateTimeFormat constructor options and configuration options
    * @example DateTime.local().toLocaleString(); //=> 4/20/2017
    * @example DateTime.local().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
-   * @example DateTime.local().toLocaleString({ locale: 'en-gb' }); //=> '20/04/2017'
    * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
    * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=> '11:32 AM'
    * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=> '4/20/2017, 11:32 AM'
    * @example DateTime.local().toLocaleString({ weekday: 'long', month: 'long', day: '2-digit' }); //=> 'Thursday, April 20'
    * @example DateTime.local().toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }); //=> 'Thu, Apr 20, 11:27 AM'
-   * @example DateTime.local().toLocaleString({ hour: '2-digit', minute: '2-digit', hour12: false }); //=> '11:32'
+   * @example DateTime.local().toLocaleString({ hour: '2-digit', minute: '2-digit', hour12: false }); //=> '21:32'
    * @return {string}
    */
-  toLocaleString(options: LocaleOptions & Intl.DateTimeFormatOptions = Formats.DATE_SHORT) {
-    return Formatter.create(this.loc.clone(options), options).formatDateTime(this);
+  toLocaleString(options: Intl.DateTimeFormatOptions = Formats.DATE_SHORT) {
+    return Formatter.create(this.loc, options).formatDateTime(this);
   }
 
   /**
-   * Returns an array of format "parts", meaning individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+   * Returns an array of format "parts", meaning individual tokens along with metadata. This allows callers to post-process individual sections of the formatted output.
    * Defaults to the system's locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
    * @param options {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
@@ -1437,8 +1435,8 @@ export default class DateTime {
    *                                   //=>   { type: 'year', value: '1982' }
    *                                   //=> ]
    */
-  toLocaleParts(options: LocaleOptions & Intl.DateTimeFormatOptions = {}) {
-    return Formatter.create(this.loc.clone(options), options).formatDateTimeParts(this);
+  toLocaleParts(options: Intl.DateTimeFormatOptions = {}) {
+    return Formatter.create(this.loc, options).formatDateTimeParts(this);
   }
 
   /**

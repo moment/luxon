@@ -237,22 +237,6 @@ test("DateTime#toLocaleString accepts options to the formatter", () => {
   expect(dt.toLocaleString({ weekday: "short" }).indexOf("Tue") >= 0).toBeTruthy();
 });
 
-test("DateTime#toLocaleString can override the dateTime's locale", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleString({ locale: "fr" })).toBe("25/05/1982");
-});
-
-test("DateTime#toLocaleString can override the dateTime's numbering system", () => {
-  expect(
-    dt.reconfigure({ numberingSystem: "beng" }).toLocaleString({ numberingSystem: "mong" })
-  ).toBe("᠕/᠒᠕/᠑᠙᠘᠒");
-});
-
-test("DateTime#toLocaleString can override the dateTime's output calendar", () => {
-  expect(
-    dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString({ outputCalendar: "coptic" })
-  ).toBe("9/17/1698");
-});
-
 test("DateTime#toLocaleString() shows things in the right IANA zone", () => {
   expect(dt.setZone("America/New_York").toLocaleString(DateTime.DATETIME_SHORT)).toBe(
     "5/25/1982, 5:23 AM"
@@ -308,18 +292,6 @@ test("DateTime#resolvedLocaleOptions reflects changes to the locale", () => {
   expect(res.numberingSystem).toBe("mong");
 });
 
-test("DateTime#resolvedLocaleOptions can override with options", () => {
-  const res = DateTime.local().resolvedLocaleOptions({
-    locale: "be",
-    numberingSystem: "mong",
-    outputCalendar: "coptic"
-  });
-
-  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
-  expect(res.outputCalendar).toBe("coptic");
-  expect(res.numberingSystem).toBe("mong");
-});
-
 Helpers.withoutIntl("DateTime#resolvedLocaleOptions default values without intl", () => {
   const res = DateTime.local().resolvedLocaleOptions();
 
@@ -348,16 +320,6 @@ test("DateTime#toLocaleParts accepts locale settings from the dateTime", () => {
     { type: "literal", value: "." },
     { type: "month", value: "5" },
     { type: "literal", value: "." },
-    { type: "year", value: "1982" }
-  ]);
-});
-
-test("DateTime#toLocaleParts can override the dateTime's locale", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleParts({ locale: "fr" })).toEqual([
-    { type: "day", value: "25" },
-    { type: "literal", value: "/" },
-    { type: "month", value: "05" },
-    { type: "literal", value: "/" },
     { type: "year", value: "1982" }
   ]);
 });
