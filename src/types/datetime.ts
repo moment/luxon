@@ -3,7 +3,7 @@ import DateTime from "../datetime";
 import Zone from "../zone";
 import { FormatToken } from "../impl/formatter";
 
-export interface ZoneOptions {
+export interface SetZoneOptions {
   keepLocalTime?: boolean;
 }
 

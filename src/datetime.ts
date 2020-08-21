@@ -53,7 +53,7 @@ import {
   ToSQLOptions,
   ToRelativeOptions,
   ToRelativeCalendarOptions,
-  ZoneOptions,
+  SetZoneOptions,
   GregorianDateTime,
   WeekDateTime,
   OrdinalDateTime,
@@ -1175,7 +1175,7 @@ export default class DateTime {
    * @param {Object} [options={}] - options to pass to `setZone()`
    * @return {DateTime}
    */
-  toUTC(offset = 0, options: ZoneOptions = {}) {
+  toUTC(offset = 0, options: SetZoneOptions = {}) {
     return this.setZone(FixedOffsetZone.instance(offset), options);
   }
 
@@ -1211,7 +1211,7 @@ export default class DateTime {
    * @param {boolean} [options.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
-  setZone(zone: ZoneLike, { keepLocalTime = false }: ZoneOptions = {}) {
+  setZone(zone: ZoneLike, { keepLocalTime = false }: SetZoneOptions = {}) {
     zone = normalizeZone(zone, Settings.defaultZone);
     if (zone.equals(this.zone)) {
       return this;

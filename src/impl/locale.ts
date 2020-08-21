@@ -148,7 +148,7 @@ function listStuff<T extends UnitLength>(
  * @private
  */
 interface NumberFormatterOptions {
-  padTo?: number;
+  padTo: number;
   floor?: boolean;
 }
 
@@ -158,7 +158,7 @@ class PolyNumberFormatter {
   private inf?: Readonly<Intl.NumberFormat>;
 
   constructor(intl: string, forceSimple: boolean, options: NumberFormatterOptions) {
-    this.padTo = options.padTo || 0;
+    this.padTo = options.padTo;
     this.floor = options.floor || false;
 
     if (!forceSimple && hasIntl()) {

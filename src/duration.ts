@@ -373,18 +373,14 @@ export default class Duration {
    * * The duration will be converted to the set of units in the format string using {@link Duration.shiftTo} and the Durations's conversion accuracy setting.
    * @param {string} format - the format string
    * @param {Object} options - options
-   * @param {boolean} [options.floor=true] - floor numerical values
+   * @param {boolean} [options.floor=true] - whether to floor numerical values or not
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("y d s") //=> "1 6 2"
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("yy dd sss") //=> "01 06 002"
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("M S") //=> "12 518402000"
    * @return {string}
    */
-  toFormat(format: string, options: DurationToFormatOptions = {}) {
-    // reverse-compat since 1.2; we always round down now, never up, and we do it by default
-    const formatOptions = Object.assign({}, options, {
-      floor: options.round !== false && options.floor !== false
-    });
-    return Formatter.create(this.loc, formatOptions).formatDurationFromString(this, format);
+  toFormat(format: string, options: DurationToFormatOptions = { floor: true }) {
+    return Formatter.create(this.loc, options).formatDurationFromString(this, format);
   }
 
   /**
