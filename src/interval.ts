@@ -94,7 +94,7 @@ export default class Interval {
   /**
    * Create an Interval from a start DateTime and a Duration to extend to.
    * @param {DateTime|Date|Object} start
-   * @param {Duration|Object|number} duration - the length of the Interval.
+   * @param {Duration|Object} duration - the length of the Interval, as a Duration object.
    * @return {Interval}
    */
   static after(start: DateTimeLike, duration: DurationLike) {
@@ -110,7 +110,7 @@ export default class Interval {
   /**
    * Create an Interval from an end DateTime and a Duration to extend backwards to.
    * @param {DateTime|Date|Object} end
-   * @param {Duration|Object|number} duration - the length of the Interval.
+   * @param {Duration|Object} duration - the length of the Interval, as a Duration object.
    * @return {Interval}
    */
   static before(end: DateTimeLike, duration: DurationLike) {
@@ -210,7 +210,7 @@ export default class Interval {
    * @return {boolean}
    */
   hasSame(unit: DurationUnit) {
-    return this.e.minus(1).hasSame(this.s, unit);
+    return this.e.minus({ milliseconds: 1 }).hasSame(this.s, unit);
   }
 
   /**
@@ -287,7 +287,7 @@ export default class Interval {
   /**
    * Split this Interval into smaller Intervals, each of the specified length.
    * Left over time is grouped into a smaller interval
-   * @param {Duration|Object|number} duration - The length of each resulting interval.
+   * @param {Duration|Object} duration - The length of each resulting interval, as a Duration object.
    * @return {[Interval]}
    */
   splitBy(duration: DurationLike) {
@@ -318,7 +318,7 @@ export default class Interval {
    * @return {[Interval]}
    */
   divideEqually(numberOfParts: number) {
-    return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
+    return this.splitBy({ milliseconds: this.length() / numberOfParts }).slice(0, numberOfParts);
   }
 
   /**

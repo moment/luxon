@@ -159,7 +159,7 @@ test("Interval#isBefore returns true for intervals ending at the input", () => {
 test("Interval#isBefore returns false for intervals just inside the input", () => {
   const n = DateTime.fromISO("1982-05-25T06:00"),
     i = Interval.fromDateTimes(n.minus({ days: 1 }), n);
-  expect(i.isBefore(n.minus(1))).toBe(false);
+  expect(i.isBefore(n.minus({ milliseconds: 1 }))).toBe(false);
 });
 
 //------
