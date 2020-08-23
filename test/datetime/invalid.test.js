@@ -21,7 +21,7 @@ test("Invalid creations are invalid", () => {
 });
 
 test("invalid zones result in invalid dates", () => {
-  expect(DateTime.local().setZone("America/Lasers").isValid).toBe(false);
+  expect(DateTime.now().setZone("America/Lasers").isValid).toBe(false);
   expect(DateTime.fromObject({ zone: "America/Lasers" }).isValid).toBe(false);
   expect(DateTime.fromJSDate(new Date(), { zone: "America/Lasers" }).isValid).toBe(false);
 });
@@ -49,8 +49,8 @@ test("Invalid DateTimes return invalid Dates", () => {
 });
 
 test("Diffing invalid DateTimes creates invalid Durations", () => {
-  expect(organic1.diff(DateTime.local()).isValid).toBe(false);
-  expect(DateTime.local().diff(organic1).isValid).toBe(false);
+  expect(organic1.diff(DateTime.now()).isValid).toBe(false);
+  expect(DateTime.now().diff(organic1).isValid).toBe(false);
 });
 
 test("throwOnInvalid throws", () => {

@@ -19,7 +19,7 @@
     <script src="global/luxon.js"></script>
     <script>
       console.log(
-        "You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`."
+        "You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`."
       );
     </script>
     <style>
@@ -44,10 +44,10 @@
       </p>
 
       <pre>
-                <code>
-DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
-                </code>
-            </pre>
+        <code>
+          DateTime.now().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
+        </code>
+      </pre>
 
       <div class="section">
         <h2>Features</h2>
@@ -95,7 +95,7 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
                 <p>
                   Exports a global variable called "luxon". Use it like this
                 </p>
-                <pre><code>&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;<br/>&lt;script&gt;luxon.DateTime.local();&lt;/script&gt;</code></pre>
+                <pre><code>&lt;script src=&quot;luxon.js&quot;&gt;&lt;/script&gt;<br/>&lt;script&gt;luxon.DateTime.now();&lt;/script&gt;</code></pre>
                 <p>
                   See the
                   <a href="docs/manual/install.html">install instructions</a>
@@ -113,7 +113,7 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
               </td>
               <td>
                 <p>Luxon as a Node.js module</p>
-                <pre><code>var { DateTime } = require('luxon');<br/>DateTime.local();</code></pre>
+                <pre><code>var { DateTime } = require('luxon');<br/>DateTime.now();</code></pre>
               </td>
               <td></td>
             </tr>
@@ -129,10 +129,9 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
               </td>
               <td>
                 <p>
-                  Luxon as an AMD module. Use with Require.js, System.js, and so
-                  on.
+                  Luxon as an AMD module. Use with Require.js, System.js, and so on.
                 </p>
-                <pre><code>requirejs(['luxon'], function(luxon) {<br/>  luxon.DateTime.local();<br/>});</code></pre>
+                <pre><code>requirejs(['luxon'], function(luxon) {<br/>  luxon.DateTime.now();<br/>});</code></pre>
               </td>
               <td><a href="demo/requirejs.html">Demo</a></td>
             </tr>
@@ -146,7 +145,7 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
               <td></td>
               <td>
                 <p>Luxon as an ES6 module.</p>
-                <pre><code>import { DateTime } from 'luxon';<br/>DateTime.local();</code></pre>
+                <pre><code>import { DateTime } from 'luxon';<br/>DateTime.now();</code></pre>
               </td>
               <td></td>
             </tr>

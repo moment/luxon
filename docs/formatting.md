@@ -146,7 +146,7 @@ DateTime.fromISO('2014-08-06T13:07:04.054')
 You may escape strings using single quotes:
 
 ```js
-DateTime.local().toFormat("HH 'hours and' mm 'minutes'"); //=> '20 hours and 55 minutes'
+DateTime.now().toFormat("HH 'hours and' mm 'minutes'"); //=> '20 hours and 55 minutes'
 ```
 
 ### Standalone vs format tokens

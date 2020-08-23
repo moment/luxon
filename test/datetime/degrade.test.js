@@ -79,7 +79,7 @@ Helpers.withoutIntl("DateTime#toLocaleString uses English", () => {
 });
 
 Helpers.withoutIntl("DateTime#toLocaleParts returns an empty array", () => {
-  expect(DateTime.local().toLocaleParts()).toEqual([]);
+  expect(DateTime.now().toLocaleParts()).toEqual([]);
 });
 
 Helpers.withoutIntl("DateTime.fromFormat can parse numbers in other locales", () => {
@@ -93,11 +93,11 @@ Helpers.withoutIntl("DateTime.fromFormat can't parse strings from other locales"
 });
 
 Helpers.withoutIntl("using time zones results in invalid DateTimes", () => {
-  expect(DateTime.local().setZone("America/New_York").isValid).toBe(false);
+  expect(DateTime.now().setZone("America/New_York").isValid).toBe(false);
 });
 
 Helpers.withoutIntl("DateTime#zoneName falls back to 'local'", () => {
-  expect(DateTime.local().zoneName).toBe("local");
+  expect(DateTime.now().zoneName).toBe("local");
 });
 
 Helpers.withoutIntl("DateTime#toLocaleString can use fixed-offset zones", () => {
@@ -159,7 +159,7 @@ Helpers.withoutFTP("DateTime.fromFormat can't parse strings from other locales",
 });
 
 Helpers.withoutFTP("setting the time zone still works", () => {
-  expect(DateTime.local().setZone("America/New_York").isValid).toBe(true);
+  expect(DateTime.now().setZone("America/New_York").isValid).toBe(true);
 });
 
 Helpers.withoutFTP("DateTime#offsetNameLong still works", () => {
@@ -175,7 +175,7 @@ Helpers.withoutFTP("DateTime#offsetNameLong still works", () => {
 });
 
 Helpers.withoutFTP("DateTime#toLocaleParts returns an empty array", () => {
-  expect(DateTime.local().toLocaleParts()).toEqual([]);
+  expect(DateTime.now().toLocaleParts()).toEqual([]);
 });
 
 //------
@@ -205,5 +205,5 @@ Helpers.withoutZones("DateTime#toLocaleParts is unaffected", () => {
 });
 
 Helpers.withoutZones("using time zones results in invalid DateTimes", () => {
-  expect(DateTime.local().setZone("America/New_York").isValid).toBe(false);
+  expect(DateTime.now().setZone("America/New_York").isValid).toBe(false);
 });
