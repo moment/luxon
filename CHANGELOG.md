@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.25.0
+
+ * fix fromFormat with Intl formats containing non-breaking spaces
+ * Support higher precisision in ISO milliseconds
+ * Some fixes for 00:30 timezones
+ * Fix some throwOnInvalid for invalid Intervals
+ * Various doc fixes
+ * Fix Interval#isSame for empty intervals
+ * Mark package as side effect-free
+ * Add support for intervals with a large number of seconds
+
 ## 1.24.1 (2020-05-04)
 
  * Remove erroneous `console.log` call
