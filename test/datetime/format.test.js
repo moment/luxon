@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime } from "../../src/luxon";
+import { InvalidUnitError } from "../../src/errors";
 
 const dtMaker = () =>
     DateTime.fromObject({
@@ -151,6 +152,19 @@ test("DateTime#toISOTime() can output the basic format", () => {
 
 test("DateTime#toISOTime() returns null for invalid DateTimes", () => {
   expect(invalid.toISOTime()).toBe(null);
+});
+
+test("DateTime#toISOTime({precision}) truncates the unwanted time components", () => {
+  expect(dt.toISOTime({ precision: "millisecond" })).toBe("09:23:54.123Z");
+  expect(dt.toISOTime({ precision: "second" })).toBe("09:23:54Z");
+  expect(dt.toISOTime({ precision: "minute" })).toBe("09:23Z");
+  expect(dt.toISOTime({ precision: "hours" })).toBe("09Z");
+});
+
+test("DateTime#toISOTime({precision}) throws when the precision is invalid", () => {
+  expect(() => dt.toISOTime({ precision: "ms" })).toThrow(InvalidUnitError);
+  expect(() => dt.toISOTime({ precision: "xxx" })).toThrow(InvalidUnitError);
+  expect(() => dt.toISOTime({ precision: null })).toThrow(InvalidUnitError);
 });
 
 //------
