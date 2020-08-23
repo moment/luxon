@@ -283,6 +283,12 @@ var DATE_MED = {
   month: s,
   day: n
 };
+var DATE_MED_WITH_WEEKDAY = {
+  year: n,
+  month: s,
+  day: n,
+  weekday: s
+};
 var DATE_FULL = {
   year: n,
   month: l,
@@ -665,20 +671,19 @@ function normalizeObject(obj, normalizer, nonUnitKeys) {
   return normalized;
 }
 function formatOffset(offset, format) {
-  var hours = Math.trunc(offset / 60),
-      minutes = Math.abs(offset % 60),
-      sign = hours >= 0 && !Object.is(hours, -0) ? "+" : "-",
-      base = "" + sign + Math.abs(hours);
+  var hours = Math.trunc(Math.abs(offset / 60)),
+      minutes = Math.trunc(Math.abs(offset % 60)),
+      sign = offset >= 0 ? "+" : "-";
 
   switch (format) {
     case "short":
-      return "" + sign + padStart(Math.abs(hours), 2) + ":" + padStart(minutes, 2);
+      return "" + sign + padStart(hours, 2) + ":" + padStart(minutes, 2);
 
     case "narrow":
-      return minutes > 0 ? base + ":" + minutes : base;
+      return "" + sign + hours + (minutes > 0 ? ":" + minutes : "");
 
     case "techie":
-      return "" + sign + padStart(Math.abs(hours), 2) + padStart(minutes, 2);
+      return "" + sign + padStart(hours, 2) + padStart(minutes, 2);
 
     default:
       throw new RangeError("Value format " + format + " is out of range for property format");
@@ -830,6 +835,9 @@ function formatString(knownFormat) {
 
     case stringify(DATE_MED):
       return "LLL d, yyyy";
+
+    case stringify(DATE_MED_WITH_WEEKDAY):
+      return "EEE, LLL d, yyyy";
 
     case stringify(DATE_FULL):
       return "LLLL d, yyyy";
@@ -2938,7 +2946,7 @@ function simpleParse() {
 
 
 var offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/,
-    isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,9}))?)?)?/,
+    isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?/,
     isoTimeRegex = RegExp("" + isoTimeBaseRegex.source + offsetRegex.source + "?"),
     isoTimeExtensionRegex = RegExp("(?:T" + isoTimeRegex.source + ")?"),
     isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/,
@@ -2988,7 +2996,7 @@ function extractIANAZone(match, cursor) {
 } // ISO duration parsing
 
 
-var isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})(?:[.,](-?\d{1,9}))?S)?)?)$/;
+var isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 
 function extractISODuration(match) {
   var s = match[0],
@@ -3176,6 +3184,7 @@ var lowOrderMatrix = {
 },
     casualMatrix = Object.assign({
   years: {
+    quarters: 4,
     months: 12,
     weeks: 52,
     days: 365,
@@ -3190,6 +3199,7 @@ var lowOrderMatrix = {
     days: 91,
     hours: 91 * 24,
     minutes: 91 * 24 * 60,
+    seconds: 91 * 24 * 60 * 60,
     milliseconds: 91 * 24 * 60 * 60 * 1000
   },
   months: {
@@ -3205,6 +3215,7 @@ var lowOrderMatrix = {
     daysInMonthAccurate = 146097.0 / 4800,
     accurateMatrix = Object.assign({
   years: {
+    quarters: 4,
     months: 12,
     weeks: daysInYearAccurate / 7,
     days: daysInYearAccurate,
@@ -3758,7 +3769,6 @@ var Duration = /*#__PURE__*/function () {
         accumulated = {},
         vals = this.toObject();
     var lastUnit;
-    normalizeValues(this.matrix, vals);
 
     for (var _iterator2 = _createForOfIteratorHelperLoose(orderedUnits), _step2; !(_step2 = _iterator2()).done;) {
       var k = _step2.value;
@@ -4027,7 +4037,7 @@ function validateStartEnd(start, end) {
  * * **Accessors** Use {@link start} and {@link end} to get the start and end.
  * * **Interrogation** To analyze the Interval, use {@link count}, {@link length}, {@link hasSame}, {@link contains}, {@link isAfter}, or {@link isBefore}.
  * * **Transformation** To create other Intervals out of this one, use {@link set}, {@link splitAt}, {@link splitBy}, {@link divideEqually}, {@link merge}, {@link xor}, {@link union}, {@link intersection}, or {@link difference}.
- * * **Comparison** To compare this Interval to another one, use {@link equals}, {@link overlaps}, {@link abutsStart}, {@link abutsEnd}, {@link engulfs}
+ * * **Comparison** To compare this Interval to another one, use {@link equals}, {@link overlaps}, {@link abutsStart}, {@link abutsEnd}, {@link engulfs}.
  * * **Output** To convert the Interval into other representations, see {@link toString}, {@link toISO}, {@link toISODate}, {@link toISOTime}, {@link toFormat}, and {@link toDuration}.
  */
 
@@ -4148,20 +4158,35 @@ var Interval = /*#__PURE__*/function () {
         e = _split[1];
 
     if (s && e) {
-      var start = DateTime.fromISO(s, opts),
-          end = DateTime.fromISO(e, opts);
+      var start, startIsValid;
 
-      if (start.isValid && end.isValid) {
+      try {
+        start = DateTime.fromISO(s, opts);
+        startIsValid = start.isValid;
+      } catch (e) {
+        startIsValid = false;
+      }
+
+      var end, endIsValid;
+
+      try {
+        end = DateTime.fromISO(e, opts);
+        endIsValid = end.isValid;
+      } catch (e) {
+        endIsValid = false;
+      }
+
+      if (startIsValid && endIsValid) {
         return Interval.fromDateTimes(start, end);
       }
 
-      if (start.isValid) {
+      if (startIsValid) {
         var dur = Duration.fromISO(e, opts);
 
         if (dur.isValid) {
           return Interval.after(start, dur);
         }
-      } else if (end.isValid) {
+      } else if (endIsValid) {
         var _dur = Duration.fromISO(s, opts);
 
         if (_dur.isValid) {
@@ -4229,7 +4254,7 @@ var Interval = /*#__PURE__*/function () {
   ;
 
   _proto.hasSame = function hasSame(unit) {
-    return this.isValid ? this.e.minus(1).hasSame(this.s, unit) : false;
+    return this.isValid ? this.isEmpty() || this.e.minus(1).hasSame(this.s, unit) : false;
   }
   /**
    * Return whether this Interval has the same start and end DateTimes.
@@ -4817,7 +4842,7 @@ var Info = /*#__PURE__*/function () {
   /**
    * Return an array of standalone week names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
-   * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
+   * @param {string} [length='long'] - the length of the weekday representation, such as "narrow", "short", "long".
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
@@ -4847,7 +4872,7 @@ var Info = /*#__PURE__*/function () {
    * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that
    * changes the string.
    * See {@link weekdays}
-   * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
+   * @param {string} [length='long'] - the length of the weekday representation, such as "narrow", "short", "long".
    * @param {Object} opts - options
    * @param {string} [opts.locale=null] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
@@ -5141,13 +5166,20 @@ function intUnit(regex, post) {
   };
 }
 
+var NBSP = String.fromCharCode(160);
+var spaceOrNBSP = "( |" + NBSP + ")";
+var spaceOrNBSPRegExp = new RegExp(spaceOrNBSP, "g");
+
 function fixListRegex(s) {
   // make dots optional and also make them literal
-  return s.replace(/\./, "\\.?");
+  // make space and non breakable space characters interchangeable
+  return s.replace(/\./g, "\\.?").replace(spaceOrNBSPRegExp, spaceOrNBSP);
 }
 
 function stripInsensitivities(s) {
-  return s.replace(/\./, "").toLowerCase();
+  return s.replace(/\./g, "") // ignore dots that were made optional
+  .replace(spaceOrNBSPRegExp, " ") // interchange space and nbsp
+  .toLowerCase();
 }
 
 function oneOf(strings, startIndex) {
@@ -5912,24 +5944,20 @@ function objToTS(obj, offset, zone) {
 
 
 function adjustTime(inst, dur) {
-  var _dur;
-
-  var keys = Object.keys(dur.values);
-
-  if (keys.indexOf("milliseconds") === -1) {
-    keys.push("milliseconds");
-  }
-
-  dur = (_dur = dur).shiftTo.apply(_dur, keys);
   var oPre = inst.o,
-      year = inst.c.year + dur.years,
-      month = inst.c.month + dur.months + dur.quarters * 3,
+      year = inst.c.year + Math.trunc(dur.years),
+      month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
       c = Object.assign({}, inst.c, {
     year: year,
     month: month,
-    day: Math.min(inst.c.day, daysInMonth(year, month)) + dur.days + dur.weeks * 7
+    day: Math.min(inst.c.day, daysInMonth(year, month)) + Math.trunc(dur.days) + Math.trunc(dur.weeks) * 7
   }),
       millisToAdd = Duration.fromObject({
+    years: dur.years - Math.trunc(dur.years),
+    quarters: dur.quarters - Math.trunc(dur.quarters),
+    months: dur.months - Math.trunc(dur.months),
+    weeks: dur.weeks - Math.trunc(dur.weeks),
+    days: dur.days - Math.trunc(dur.days),
     hours: dur.hours,
     minutes: dur.minutes,
     seconds: dur.seconds,
@@ -8035,6 +8063,16 @@ var DateTime = /*#__PURE__*/function () {
     key: "DATE_MED",
     get: function get() {
       return DATE_MED;
+    }
+    /**
+     * {@link toLocaleString} format like 'Fri, Oct 14, 1983'
+     * @type {Object}
+     */
+
+  }, {
+    key: "DATE_MED_WITH_WEEKDAY",
+    get: function get() {
+      return DATE_MED_WITH_WEEKDAY;
     }
     /**
      * {@link toLocaleString} format like 'October 14, 1983'

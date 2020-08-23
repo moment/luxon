@@ -852,6 +852,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/datetime.js~datetime.date_med_with_weekday",
+    "class/src/datetime.js~DateTime.html#static-get-DATE_MED_WITH_WEEKDAY",
+    "src/datetime.js~DateTime.DATE_MED_WITH_WEEKDAY",
+    "member"
+  ],
+  [
     "src/datetime.js~datetime.date_short",
     "class/src/datetime.js~DateTime.html#static-get-DATE_SHORT",
     "src/datetime.js~DateTime.DATE_SHORT",

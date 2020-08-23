@@ -244,6 +244,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-23-0--2020-04-02-" data-ice="link">1.23.0 (2020-04-02)</a></li>
@@ -418,8 +419,9 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 <h2 id="comparing-datetimes">Comparing DateTimes</h2><p>DateTime implements <code>#valueOf</code> to return the epoch timestamp, so you can compare DateTimes with <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code>. That lets you find out if one DateTime is after or before another DateTime.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">d1 &lt; d2 // is d1 before d2?</code>
 </code></pre>
-<p>However, <code>===</code> compares object identity (not a useful concept in a library with immutable types) and <code>#equals</code> compares both the time and additional metadata, such as the locale and time zone. If you&apos;re only interested in checking the equality of the timestamps, you need to coerce them:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">+d1 === +d2 // are d1 and d2 the same instant in time?</code>
+<p>However, be aware that <code>===</code> compares object identity, which is not a useful concept in a library with immutable types. Use <code>#equals</code> to compare both the time and additional metadata, such as the locale and time zone. If you&apos;re only interested in checking the equality of the timestamps, you can use:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">d1.toMillis() === d2.toMillis() // are d1 and d2 the same instant in time?
++d1 === +d2 // same test, using object coercion</code>
 </code></pre>
 <p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;millisecond&apos;); // equivalent to `+d1 === +d2`
