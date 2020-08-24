@@ -4,6 +4,7 @@ import { InvalidArgumentError, UnparsableStringError } from "./errors";
 import { ToISOTimeOptions, DateTimeWithZoneOptions } from "./types/datetime";
 import { DurationUnit, DurationOptions } from "./types/duration";
 import { IntervalObject } from "./types/interval";
+import { ThrowOnInvalid } from "./types/common";
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start: DateTime | null, end: DateTime | null) {
@@ -505,6 +506,7 @@ export default class Interval {
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @param {Object} options - The same options as {@link DateTime#toISO}
    * @return {string}
+   *
    */
   toISOTime(options: ToISOTimeOptions = {}) {
     return `${this.s.toISOTime(options)}/${this.e.toISOTime(options)}`;
@@ -521,6 +523,13 @@ export default class Interval {
     return `${this.s.toFormat(dateFormat)}${options.separator}${this.e.toFormat(dateFormat)}`;
   }
 
+  toDuration(): Duration;
+  toDuration(unit: DurationUnit | DurationUnit[]): Duration;
+  toDuration(
+    unit: DurationUnit | DurationUnit[],
+    options: DurationOptions & ThrowOnInvalid
+  ): Duration;
+  toDuration(unit: DurationUnit | DurationUnit[], options: DurationOptions): Duration | null;
   /**
    * Return a Duration representing the time spanned by this interval.
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.

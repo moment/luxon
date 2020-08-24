@@ -215,6 +215,9 @@ export default class Duration {
     this.isLuxonDuration = true;
   }
 
+  static fromMillis(count: number): Duration;
+  static fromMillis(count: number, options: DurationOptions & ThrowOnInvalid): Duration;
+  static fromMillis(count: number, options: DurationOptions): Duration | null;
   /**
    * Create Duration from a number of milliseconds.
    * @param {number} count of milliseconds
@@ -229,6 +232,9 @@ export default class Duration {
     return Duration.fromObject({ milliseconds: count }, options);
   }
 
+  static fromObject(obj: DurationObject): Duration;
+  static fromObject(obj: DurationObject, options: DurationOptions & ThrowOnInvalid): Duration;
+  static fromObject(obj: DurationObject, options: DurationOptions): Duration | null;
   /**
    * Create a Duration from a Javascript object with keys like 'years' and 'hours.
    * If this object is empty then a zero milliseconds duration is returned.

@@ -1640,6 +1640,17 @@ export default class DateTime {
 
   // COMPARE
 
+  diff(other: DateTime, unit?: DurationUnit | DurationUnit[]): Duration;
+  diff(
+    other: DateTime,
+    unit: DurationUnit | DurationUnit[],
+    options: DurationOptions & ThrowOnInvalid
+  ): Duration;
+  diff(
+    other: DateTime,
+    unit: DurationUnit | DurationUnit[],
+    options: DurationOptions
+  ): Duration | null;
   /**
    * Return the difference between two DateTimes as a Duration.
    * @param {DateTime} other - the DateTime to compare this one to
@@ -1665,12 +1676,18 @@ export default class DateTime {
   ) {
     const durOpts = Object.assign(
       { locale: this.locale, numberingSystem: this.numberingSystem },
-      options
-    );
+      options,
+      { nullOnInvalid: false }
+    ) as DurationOptions & ThrowOnInvalid;
 
-    const units = maybeArray(unit).map(Duration.normalizeUnit);
-
-    if (units.length === 0) throw new InvalidArgumentError("At least one unit must be specified");
+    let units;
+    try {
+      units = maybeArray(unit).map(Duration.normalizeUnit);
+      if (units.length === 0) throw new InvalidArgumentError("At least one unit must be specified");
+    } catch (error) {
+      if (options.nullOnInvalid) return null;
+      throw error;
+    }
 
     const otherIsLater = other.valueOf() > this.valueOf(),
       earlier = otherIsLater ? this : other,
@@ -1680,6 +1697,9 @@ export default class DateTime {
     return otherIsLater ? diffed.negate() : diffed;
   }
 
+  diffNow(unit?: DurationUnit | DurationUnit[]): Duration;
+  diffNow(unit: DurationUnit | DurationUnit[], options: DurationOptions & ThrowOnInvalid): Duration;
+  diffNow(unit: DurationUnit | DurationUnit[], options: DurationOptions): Duration | null;
   /**
    * Return the difference between this DateTime and right now.
    * See {@link DateTime#diff}

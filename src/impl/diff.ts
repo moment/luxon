@@ -1,6 +1,7 @@
 import Duration from "../duration";
 import DateTime from "../datetime";
 import { DurationUnit, DurationOptions, DurationObject } from "../types/duration";
+import { ThrowOnInvalid } from "../types/common";
 
 function dayDiff(earlier: DateTime, later: DateTime) {
   const utcDayStart = (dt: DateTime) =>
@@ -60,7 +61,7 @@ export default function(
   earlier: DateTime,
   later: DateTime,
   units: DurationUnit[],
-  options: DurationOptions
+  options: DurationOptions & ThrowOnInvalid
 ) {
   // eslint-disable-next-line prefer-const
   let [cursor, results, highWater, lowestOrder] = highOrderDiffs(earlier, later, units);

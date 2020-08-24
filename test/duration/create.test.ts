@@ -114,15 +114,24 @@ test("Duration.fromObject is valid if providing options only", () => {
 });
 
 test("Duration.fromObject returns null with nullOnInvalid option", () => {
+  // @ts-expect-error
   expect(Duration.fromObject(undefined, { nullOnInvalid: true })).toBe(null);
+  // @ts-expect-error
   expect(Duration.fromObject(null, { nullOnInvalid: true })).toBe(null);
+  // @ts-expect-error
   expect(Duration.fromObject("foo", { nullOnInvalid: true })).toBe(null);
 
+  // @ts-expect-error
   expect(Duration.fromObject({ invalidUnit: 42 }, { nullOnInvalid: true })).toBe(null);
+  // @ts-expect-error
   expect(Duration.fromObject({ years: {} }, { nullOnInvalid: true })).toBe(null);
+  // @ts-expect-error
   expect(Duration.fromObject({ months: "some" }, { nullOnInvalid: true })).toBe(null);
   expect(Duration.fromObject({ days: NaN }, { nullOnInvalid: true })).toBe(null);
+  // @ts-expect-error
   expect(Duration.fromObject({ hours: true }, { nullOnInvalid: true })).toBe(null);
+  // @ts-expect-error
   expect(Duration.fromObject({ minutes: false }, { nullOnInvalid: true })).toBe(null);
+  // @ts-expect-error
   expect(Duration.fromObject({ seconds: "" }, { nullOnInvalid: true })).toBe(null);
 });
