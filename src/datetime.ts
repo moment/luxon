@@ -598,7 +598,7 @@ export default class DateTime {
    * @example DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
    * @return {DateTime}
    */
-  static fromObject(object: GenericDateTime, options: DateTimeOptions = {}) {
+  static fromObject(object?: GenericDateTime, options: DateTimeOptions = {}) {
     object = object || {};
     const zoneToUse = normalizeZone(options.zone, Settings.defaultZone);
 
