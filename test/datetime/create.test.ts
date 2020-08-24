@@ -6,8 +6,7 @@ import {
   MismatchedWeekdayError,
   InvalidZoneError,
   ConflictingSpecificationError,
-  InvalidUnitError,
-  UnparsableStringError
+  InvalidUnitError
 } from "../../src/errors";
 
 import Settings from "../../src/settings";
@@ -569,18 +568,20 @@ test("DateTime.fromObject() rejects invalid values", () => {
 });
 
 test("DateTime.fromObject() returns null with nullOnInvalid option", () => {
+  // @ts-expect-error
   expect(DateTime.fromObject({ invalidUnit: 42 }, { nullOnInvalid: true })).toBe(null);
   expect(DateTime.fromObject({}, { zone: "blorp", nullOnInvalid: true })).toBe(null);
   expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }, { nullOnInvalid: true })).toBe(
     null
   );
+  // @ts-expect-error
   expect(DateTime.fromObject({ day: true }, { nullOnInvalid: true })).toBe(null);
   expect(DateTime.fromObject({ minute: -6 }, { nullOnInvalid: true })).toBe(null);
   expect(
-    DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 1 }, { nullOnInvalid: true })
+    DateTime.fromObject({ year: 2005, month: 12, day: 13, weekday: 1 }, { nullOnInvalid: true })
   ).toBe(null);
 
-  expect(DateTime.fromObject({ months: 7, ordinal: 200 }, { nullOnInvalid: true })).toBe(null);
+  expect(DateTime.fromObject({ month: 7, ordinal: 200 }, { nullOnInvalid: true })).toBe(null);
   expect(DateTime.fromObject({ day: 12, ordinal: 200 }, { nullOnInvalid: true })).toBe(null);
   expect(DateTime.fromObject({ weekYear: 2005, ordinal: 222 }, { nullOnInvalid: true })).toBe(null);
   expect(DateTime.fromObject({ weekNumber: 42, ordinal: 222 }, { nullOnInvalid: true })).toBe(null);
@@ -733,7 +734,7 @@ test("DateTime.fromObject validates weekdays", () => {
 });
 
 test("DateTime.fromObject rejects some ordinal, gregorian, week combinations", () => {
-  expect(() => DateTime.fromObject({ months: 7, ordinal: 200 })).toThrow(
+  expect(() => DateTime.fromObject({ month: 7, ordinal: 200 })).toThrow(
     ConflictingSpecificationError
   );
   expect(() => DateTime.fromObject({ day: 12, ordinal: 200 })).toThrow(
