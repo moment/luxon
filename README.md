@@ -1,6 +1,7 @@
 # Luxon
 
 [![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![Doc coverage][doc-coverage-image]][doc-url] [![PRs welcome][contributing-image]][contributing-url]
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoment%2Fluxon.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoment%2Fluxon?ref=badge_shield)
 
 Luxon is a library for working with dates and times in Javascript.
 
@@ -52,3 +53,7 @@ See [contributing](contributing.md).
 [contributing-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 
 [phasers-image]: https://img.shields.io/badge/phasers-stun-brightgreen.svg
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoment%2Fluxon.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoment%2Fluxon?ref=badge_large)
