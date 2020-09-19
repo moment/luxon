@@ -295,7 +295,7 @@ test("DateTime#diffNow returns invalid Durations if the DateTime is invalid", ()
   expect(i.diffNow().isValid).toBe(false);
 });
 
-test("DateTime#diff can handle 'quarters' as a unit", ()=>{
-  const t = () => DateTime.local().diff(DateTime.fromMillis(0), 'quarters')
-  expect(t).not.toThrow()
-})
+test("DateTime#diff can handle 'quarters' as a unit", () => {
+  const t = () => DateTime.local().diff(DateTime.fromMillis(0), "quarters");
+  expect(t).not.toThrow();
+});
