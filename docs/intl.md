@@ -55,7 +55,7 @@ However, note that `DateTime.fromFormat` and `DateTime#toFormat` fall back on en
 
 ### Setting the default
 
-You can set a default locale so that news instances will always be created with the specified locale:
+You can set a default locale so that new instances will always be created with the specified locale:
 
 ```js
 Settings.defaultLocale = "fr";
