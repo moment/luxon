@@ -26,7 +26,7 @@ function validateStartEnd(start, end) {
  * * **Accessors** Use {@link Interval#start} and {@link Interval#end} to get the start and end.
  * * **Interrogation** To analyze the Interval, use {@link Interval#count}, {@link Interval#length}, {@link Interval#hasSame}, {@link Interval#contains}, {@link Interval#isAfter}, or {@link Interval#isBefore}.
  * * **Transformation** To create other Intervals out of this one, use {@link Interval#set}, {@link Interval#splitAt}, {@link Interval#splitBy}, {@link Interval#divideEqually}, {@link Interval#merge}, {@link Interval#xor}, {@link Interval#union}, {@link Interval#intersection}, or {@link Interval#difference}.
- * * **Comparison** To compare this Interval to another one, use {@link Interval#equals}, {@link Interval#overlaps}, {@link Interval#abutsStart}, {@link Interval#abutsEnd}, {@link Interval#engulfs}
+ * * **Comparison** To compare this Interval to another one, use {@link Interval#equals}, {@link Interval#overlaps}, {@link Interval#abutsStart}, {@link Interval#abutsEnd}, {@link Interval#engulfs}.
  * * **Output** To convert the Interval into other representations, see {@link Interval#toString}, {@link Interval#toISO}, {@link Interval#toISODate}, {@link Interval#toISOTime}, {@link Interval#toFormat}, and {@link Interval#toDuration}.
  */
 export default class Interval {
@@ -44,10 +44,6 @@ export default class Interval {
      * @access private
      */
     this.e = config.end;
-    /**
-     * @access private
-     */
-    this.invalid = config.invalid || null;
     /**
      * @access private
      */
@@ -104,23 +100,26 @@ export default class Interval {
    */
   static fromISO(text, opts) {
     const [s, e] = (text || "").split("/", 2);
-    const realOpts = Object.assign({}, opts, { nullOnInvalid: true });
+    const nullOnInvalidOpts = Object.assign({}, opts, { nullOnInvalid: true });
     if (s && e) {
-      const start = DateTime.fromISO(s, realOpts),
-        end = DateTime.fromISO(e, realOpts);
+      const start = DateTime.fromISO(s, nullOnInvalidOpts);
+      const startIsValid = start !== null;
 
-      if (start && end) {
+      const end = DateTime.fromISO(e, nullOnInvalidOpts);
+      const endIsValid = end !== null;
+
+      if (startIsValid && endIsValid) {
         return Interval.fromDateTimes(start, end);
       }
 
-      if (start) {
-        const dur = Duration.fromISO(e, realOpts);
-        if (dur) {
+      if (startIsValid) {
+        const dur = Duration.fromISO(e, nullOnInvalidOpts);
+        if (dur !== null) {
           return Interval.after(start, dur);
         }
-      } else if (end) {
-        const dur = Duration.fromISO(s, realOpts);
-        if (dur) {
+      } else if (endIsValid) {
+        const dur = Duration.fromISO(s, nullOnInvalidOpts);
+        if (dur !== null) {
           return Interval.before(end, dur);
         }
       }
@@ -181,7 +180,7 @@ export default class Interval {
    * @return {boolean}
    */
   hasSame(unit) {
-    return this.e.minus(1).hasSame(this.s, unit);
+    return this.isEmpty() || this.e.minus(1).hasSame(this.s, unit);
   }
 
   /**

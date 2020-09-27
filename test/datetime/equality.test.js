@@ -3,7 +3,7 @@
 import { DateTime } from "../../src/luxon";
 
 test("equals self", () => {
-  const l = DateTime.local();
+  const l = DateTime.now();
   expect(l.equals(l)).toBe(true);
 });
 

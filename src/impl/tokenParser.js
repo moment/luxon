@@ -12,13 +12,21 @@ function intUnit(regex, post = i => i) {
   return { regex, deser: ([s]) => post(parseDigits(s)) };
 }
 
+const NBSP = String.fromCharCode(160);
+const spaceOrNBSP = `( |${NBSP})`;
+const spaceOrNBSPRegExp = new RegExp(spaceOrNBSP, "g");
+
 function fixListRegex(s) {
   // make dots optional and also make them literal
-  return s.replace(/\./, "\\.?");
+  // make space and non breakable space characters interchangeable
+  return s.replace(/\./g, "\\.?").replace(spaceOrNBSPRegExp, spaceOrNBSP);
 }
 
 function stripInsensitivities(s) {
-  return s.replace(/\./, "").toLowerCase();
+  return s
+    .replace(/\./g, "") // ignore dots that were made optional
+    .replace(spaceOrNBSPRegExp, " ") // interchange space and nbsp
+    .toLowerCase();
 }
 
 function oneOf(strings, startIndex) {

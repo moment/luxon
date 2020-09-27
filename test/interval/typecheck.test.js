@@ -6,7 +6,7 @@ import { Interval, DateTime } from "../../src/luxon";
 // #isInterval
 //-------
 test("Interval.isInterval return true for valid duration", () => {
-  const int = Interval.fromDateTimes(DateTime.local(), DateTime.local());
+  const int = Interval.fromDateTimes(DateTime.now(), DateTime.now());
   expect(Interval.isInterval(int)).toBe(true);
 });
 

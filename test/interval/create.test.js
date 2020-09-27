@@ -46,7 +46,7 @@ test("Interval.fromDateTimes rejects missing or invalid arguments", () => {
   expect(() => Interval.fromDateTimes(validDate.plus({ days: 1 }), validDate)).toThrow(
     InvalidArgumentError
   );
-  expect(() => Interval.fromDateTimes(DateTime.local(), true)).toThrow(InvalidArgumentError);
+  expect(() => Interval.fromDateTimes(DateTime.now(), true)).toThrow(InvalidArgumentError);
 });
 
 test("Interval.fromDateTimes throws with start date coming after end date", () => {

@@ -15,7 +15,7 @@ m1.valueOf() === m2.valueOf(); //=> true
 This happens because `m1` and `m2` are really the same object; `add()` _mutated_ the object to be an hour later. Compare that to Luxon:
 
 ```js
-var d1 = DateTime.local();
+var d1 = DateTime.now();
 var d2 = d1.plus({ hours: 1 });
 d1.valueOf() === d2.valueOf(); //=> false
 ```
@@ -47,7 +47,7 @@ Here's a rough mapping of DateTime methods in Moment to ones in Luxon. I haven't
 
 | Operation               | Moment                   | Luxon                                 | Notes                                                                                                                                 |
 | ----------------------- | ------------------------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Now                     | `moment()`               | `DateTime.local()`                    |                                                                                                                                       |
+| Now                     | `moment()`               | `DateTime.now()`                      |                                                                                                                                       |
 | From ISO                | `moment(String)`         | `DateTime.fromISO(String)`            |                                                                                                                                       |
 | From RFC 2822           | `moment(String)`         | `DateTime.fromRFC2822(String)`        |                                                                                                                                       |
 | From custom format      | `moment(String, String)` | `DateTime.fromFormat(String, String)` | The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.                   |
@@ -149,7 +149,7 @@ See the [formatting guide](formatting.html) for more about the string-outputting
 
 #### Humanization
 
-Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they use Intl.RelativeTimeFormat, which isn't currently supported by most browsers; in those cases, they fall back to English.
+Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they use Intl.RelativeTimeFormat (or fall back to English when it is not supported by the browser).
 
 | Operation            | Moment         | Luxon                                         |
 | -------------------- | -------------- | --------------------------------------------- |
@@ -164,7 +164,7 @@ Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they 
 Moment Durations and Luxon Durations are broadly similar in purpose and capabilities. The main differences are:
 
 1.  Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using `shiftTo`. They can also be configured to use different unit conversions. See [Duration Math](math.html#duration-math) for more.
-1.  Luxon does not (yet) have an equivalent of Moment's Duration `humanize` method. Luxon will add that when [Intl.UnitFormat](https://github.com/tc39/proposal-intl-unit-format) is supported by browsers.
+1.  Luxon does not (yet) have an equivalent of Moment's Duration `humanize` method. Luxon will add that when [Unified Intl.NumberFormat](https://github.com/tc39/proposal-unified-intl-numberformat) is supported by browsers.
 1.  Like DateTimes, Luxon Durations have separate methods for creating objects from different sources.
 
 See the [Duration API docs](../class/src/duration.js~Duration.html) for more.

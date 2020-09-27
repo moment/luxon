@@ -3,7 +3,7 @@
 Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:
 
 ```js
-DateTime.local()
+DateTime.now()
   .setLocale("el")
   .toLocaleString(DateTime.DATE_FULL); //=>  '24 Σεπτεμβρίου 2017'
 ```
@@ -34,13 +34,13 @@ In this case, the specified locale didn't change the how the parsing worked (the
 You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using `setLocale`:
 
 ```js
-DateTime.local().setLocale("fr").locale; //=> 'fr'
+DateTime.now().setLocale("fr").locale; //=> 'fr'
 ```
 
 `setLocale` is just a convenience for `reconfigure`:
 
 ```js
-DateTime.local().reconfigure({ locale: "fr" }).locale; //=> 'fr'
+DateTime.now().reconfigure({ locale: "fr" }).locale; //=> 'fr'
 ```
 
 ## Default locale
@@ -51,7 +51,7 @@ By default, the `locale` property of a new DateTime or Duration is the system lo
 
 As a result, `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will by default generate strings in the user's locale.
 
-However, note that `DateTime.fromFormat` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in. There's an exception, though: `DateTime#toFormat` can take "macro" formats like "D" that produces localized strings as part of a larger string. These *do* default to the system locale because their entire purpose is to be provide localized strings.
+However, note that `DateTime.fromFormat` and `DateTime#toFormat` fall back on en-US. That's because these methods are often used to parse or format strings for consumption by APIs that don't care about the user's locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in. There's an exception, though: `DateTime#toFormat` can take "macro" formats like "D" that produces localized strings as part of a larger string. These _do_ default to the system locale because their entire purpose is to be provide localized strings.
 
 ### Setting the default
 
@@ -59,7 +59,7 @@ You can set a default locale so that news instances will always be created with 
 
 ```js
 Settings.defaultLocale = "fr";
-DateTime.local().locale; //=> 'fr'
+DateTime.now().locale; //=> 'fr'
 ```
 
 Note that this also alters the behavior of `DateTime#toFormat` and `DateTime#fromFormat`.
@@ -69,7 +69,7 @@ Note that this also alters the behavior of `DateTime#toFormat` and `DateTime#fro
 You generally don't want `DateTime#fromFormat` and `DateTime#toFormat` to use the system's locale, since your format won't be sensitive to the locale's string ordering. That's why Luxon doesn't behave that way by default. But if you really want that behavior, you can always do this:
 
 ```js
-Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;
+Settings.defaultLocale = DateTime.now().resolvedLocaleOpts().locale;
 ```
 
 ## Checking what you got
@@ -127,7 +127,7 @@ Info.eras("long", { locale: "fr" }); //=> [ 'avant Jésus-Christ', 'après Jésu
 DateTimes also have a `numberingSystem` setting that lets you control what system of numerals is used in formatting. In general, you shouldn't override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:
 
 ```js
-const dt = DateTime.local().setLocale("ar");
+const dt = DateTime.now().setLocale("ar");
 
 dt.resolvedLocaleOpts(); //=> { locale: 'ar',
 //     numberingSystem: 'arab',
@@ -139,7 +139,7 @@ dt.toLocaleString(); //=> '٢٤‏/٩‏/٢٠١٧'
 For this reason, Luxon defaults its own `numberingSystem` property to null, by which it means "let the Intl API decide". However, you can override it if you want. This example is admittedly ridiculous:
 
 ```js
-const dt = DateTime.local().reconfigure({ locale: "it", numberingSystem: "beng" });
+const dt = DateTime.now().reconfigure({ locale: "it", numberingSystem: "beng" });
 dt.toLocaleString(DateTime.DATE_FULL); //=> '২৪ settembre ২০১৭'
 ```
 

@@ -8,14 +8,14 @@ import { DateTime } from "../../src/luxon";
 //------
 
 test("DateTime#hasSame() can use milliseconds for exact comparisons", () => {
-  const dt = DateTime.local();
+  const dt = DateTime.now();
   expect(dt.hasSame(dt, "millisecond")).toBe(true);
   expect(dt.hasSame(dt.reconfigure({ locale: "fr" }), "millisecond")).toBe(true);
   expect(dt.hasSame(dt.plus({ milliseconds: 1 }), "millisecond")).toBe(false);
 });
 
 test("DateTime#hasSame() checks the unit", () => {
-  const dt = DateTime.local();
+  const dt = DateTime.now();
   expect(dt.hasSame(dt, "day")).toBe(true);
   expect(dt.hasSame(dt.startOf("day"), "day")).toBe(true);
   expect(dt.hasSame(dt.plus({ days: 1 }), "days")).toBe(false);
@@ -26,7 +26,7 @@ test("DateTime#hasSame() checks the unit", () => {
 //------
 
 test("DateTime#until() creates an Interval", () => {
-  const dt = DateTime.local(),
+  const dt = DateTime.now(),
     other = dt.plus({ days: 1 }),
     i = dt.until(other);
 

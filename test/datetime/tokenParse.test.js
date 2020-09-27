@@ -6,6 +6,7 @@ import {
   MismatchedWeekdayError,
   UnitOutOfRangeError
 } from "../../src/errors";
+import Helpers from "../helpers";
 
 //------
 // .fromFormat
@@ -21,7 +22,7 @@ test("DateTime.fromFormat() parses basic times", () => {
   expect(i.millisecond).toBe(445);
 });
 
-test("DateTime.fromFormat() parses with variable-length inpus", () => {
+test("DateTime.fromFormat() parses with variable-length input", () => {
   let i = DateTime.fromFormat("1982/05/03 09:07:05.004", "y/M/d H:m:s.S");
   expect(i.year).toBe(1982);
   expect(i.month).toBe(5);
@@ -69,6 +70,41 @@ test("DateTime.fromFormat() parses meridiems", () => {
 
 test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", () => {
   expect(() => DateTime.fromFormat("930PM", "Hmma")).toThrow(ConflictingSpecificationError);
+});
+
+// #714
+test("DateTime.fromFormat() makes dots optional and handles non breakable spaces", () => {
+  function parseMeridiem(input, isAM) {
+    const d = DateTime.fromFormat(input, "hh:mm a");
+    expect(d.hour).toBe(isAM ? 10 : 22);
+    expect(d.minute).toBe(45);
+    expect(d.second).toBe(0);
+  }
+
+  Helpers.withDefaultLocale("es-ES", () => {
+    // Meridiem for this locale is "a. m." or "p. m.", with a non breakable space
+    parseMeridiem("10:45 a. m.", true);
+    parseMeridiem("10:45 a. m", true);
+    parseMeridiem("10:45 a m.", true);
+    parseMeridiem("10:45 a m", true);
+
+    parseMeridiem("10:45 p. m.", false);
+    parseMeridiem("10:45 p. m", false);
+    parseMeridiem("10:45 p m.", false);
+    parseMeridiem("10:45 p m", false);
+
+    const nbsp = String.fromCharCode(160);
+
+    parseMeridiem(`10:45 a.${nbsp}m.`, true);
+    parseMeridiem(`10:45 a.${nbsp}m`, true);
+    parseMeridiem(`10:45 a${nbsp}m.`, true);
+    parseMeridiem(`10:45 a${nbsp}m`, true);
+
+    parseMeridiem(`10:45 p.${nbsp}m.`, false);
+    parseMeridiem(`10:45 p.${nbsp}m`, false);
+    parseMeridiem(`10:45 p${nbsp}m.`, false);
+    parseMeridiem(`10:45 p${nbsp}m`, false);
+  });
 });
 
 test("DateTime.fromFormat() parses variable-digit years", () => {
@@ -301,7 +337,7 @@ test("DateTime.fromFormat() validates weekday names", () => {
 
 test("DateTime.fromFormat() defaults weekday to this week", () => {
   const d = DateTime.fromFormat("Monday", "EEEE"),
-    now = DateTime.local();
+    now = DateTime.now();
   expect(d.weekYear).toBe(now.weekYear);
   expect(d.weekNumber).toBe(now.weekNumber);
   expect(d.weekday).toBe(1);
@@ -357,7 +393,7 @@ test("DateTime.fromFormat() accepts weekYear by itself", () => {
 });
 
 test("DateTime.fromFormat() accepts weekNumber by itself", () => {
-  const now = DateTime.local();
+  const now = DateTime.now();
 
   let d = DateTime.fromFormat("17", "WW");
   expect(d.weekYear).toBe(now.weekYear);
@@ -379,7 +415,7 @@ test("DateTime.fromFormat() accepts weekYear/weekNumber/weekday", () => {
 
 test("DateTime.fromFormat() allows regex content", () => {
   const d = DateTime.fromFormat("Monday", "EEEE"),
-    now = DateTime.local();
+    now = DateTime.now();
   expect(d.weekYear).toBe(now.weekYear);
   expect(d.weekNumber).toBe(now.weekNumber);
   expect(d.weekday).toBe(1);

@@ -98,10 +98,11 @@ DateTime implements `#valueOf` to return the epoch timestamp, so you can compare
 d1 < d2 // is d1 before d2?
 ```
 
-However, `===` compares object identity (not a useful concept in a library with immutable types) and `#equals` compares both the time and additional metadata, such as the locale and time zone. If you're only interested in checking the equality of the timestamps, you need to coerce them:
+However, be aware that `===` compares object identity, which is not a useful concept in a library with immutable types. Use `#equals` to compare both the time and additional metadata, such as the locale and time zone. If you're only interested in checking the equality of the timestamps, you can use:
 
 ```js
-+d1 === +d2 // are d1 and d2 the same instant in time?
+d1.toMillis() === d2.toMillis() // are d1 and d2 the same instant in time?
++d1 === +d2 // same test, using object coercion
 ```
 
 You may also use `#hasSame` to make more subtle comparisons:
@@ -218,8 +219,8 @@ This is because 12 * 30 != 365. These errors can be annoying, but they can also 
 
 ```js
 var dur = Duration.fromObject({ years: 50000 });
-DateTime.local().plus(dur.shiftTo('milliseconds')).year //=> 51984
-DateTime.local().plus(dur).year                         //=> 52017
+DateTime.now().plus(dur.shiftTo('milliseconds')).year //=> 51984
+DateTime.now().plus(dur).year                         //=> 52017
 ```
 
 Those are 33 years apart! So Luxon offers an alternative conversion scheme called "longterm", based on the 400-year calendar cycle:
