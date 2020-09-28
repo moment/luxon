@@ -9,7 +9,7 @@ const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e));
 // #length()
 //-------
 test("Interval#length defaults to milliseconds", () => {
-  const n = DateTime.local(),
+  const n = DateTime.now(),
     d = n.until(n.plus({ minutes: 1 }));
   expect(d.length()).toBe(60 * 1000);
 });

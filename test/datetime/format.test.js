@@ -33,9 +33,33 @@ test("DateTime#toISO() shows 'Z' for UTC", () => {
   expect(dt.toISO()).toBe("1982-05-25T09:23:54.123Z");
 });
 
-test("DateTime#toISO() shows the offset", () => {
+test("DateTime#toISO() shows the offset, unless explicitely asked", () => {
   const offsetted = dt.toUTC(-6 * 60);
   expect(offsetted.toISO()).toBe("1982-05-25T03:23:54.123-06:00");
+  expect(offsetted.toISO({ includeOffset: false })).toBe("1982-05-25T03:23:54.123");
+});
+
+test("DateTime#toISO() supports the 'basic' format", () => {
+  expect(dt.toISO({ format: "basic" })).toBe("19820525T092354.123Z");
+});
+
+test("DateTime#toISO() suppresses [milli]seconds", () => {
+  const noZeroMilliseconds = { suppressMilliseconds: true };
+  expect(dt.toISO(noZeroMilliseconds)).toBe("1982-05-25T09:23:54.123Z");
+  expect(dt.set({ millisecond: 0 }).toISO(noZeroMilliseconds)).toBe("1982-05-25T09:23:54Z");
+
+  const noZeroSeconds = { suppressSeconds: true, suppressMilliseconds: true };
+  expect(dt.set({ millisecond: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23:54Z");
+  expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23Z");
+});
+
+// #724, Firefox specific issue, offset prints as '-05:50.60000000000002'
+test("DateTime#toISO() rounds fractional timezone minute offsets", () => {
+  expect(
+    DateTime.fromMillis(-62090696591000)
+      .setZone("America/Chicago")
+      .toISO()
+  ).toBe("0002-06-04T10:26:13.000-05:50");
 });
 
 //------
@@ -273,7 +297,7 @@ test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
 //------
 
 test("DateTime#resolvedLocaleOpts returns a thing", () => {
-  const res = DateTime.local().resolvedLocaleOpts();
+  const res = DateTime.now().resolvedLocaleOpts();
 
   expect(res.outputCalendar).toBeDefined();
   expect(res.locale).toBeDefined();
@@ -281,7 +305,7 @@ test("DateTime#resolvedLocaleOpts returns a thing", () => {
 });
 
 test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
-  const res = DateTime.local()
+  const res = DateTime.now()
     .reconfigure({
       locale: "be",
       numberingSystem: "mong",
@@ -295,7 +319,7 @@ test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
 });
 
 test("DateTime#resolvedLocaleOpts can override with options", () => {
-  const res = DateTime.local().resolvedLocaleOpts({
+  const res = DateTime.now().resolvedLocaleOpts({
     locale: "be",
     numberingSystem: "mong",
     outputCalendar: "coptic"

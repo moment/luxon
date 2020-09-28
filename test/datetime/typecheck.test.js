@@ -5,7 +5,7 @@ import { DateTime } from "../../src/luxon";
 // #isDateTime()
 //------
 test("DateTime#isDateTime return true for valid DateTime", () => {
-  const dt = DateTime.local();
+  const dt = DateTime.now();
   expect(DateTime.isDateTime(dt)).toBe(true);
 });
 

@@ -132,7 +132,7 @@ test("DateTime#get can retrieve any unit", () => {
 // locale
 //------
 test("DateTime#locale returns the locale", () => {
-  const dt = DateTime.local().reconfigure({ locale: "be" });
+  const dt = DateTime.now().reconfigure({ locale: "be" });
   expect(dt.locale).toBe("be");
 });
 

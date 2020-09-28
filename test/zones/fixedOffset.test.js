@@ -53,6 +53,16 @@ test("FixedOffsetZone.formatOffset is consistent despite the provided timestamp"
   expect(zone.formatOffset(1552280400, "techie")).toBe("-0500");
 });
 
+test("FixedOffsetZone.formatOffset prints the correct sign before the offset", () => {
+  expect(FixedOffsetZone.instance(-300).formatOffset(0, "short")).toBe("-05:00");
+  expect(FixedOffsetZone.instance(-30).formatOffset(0, "short")).toBe("-00:30");
+  // Note the negative zero results in a + sign
+  expect(FixedOffsetZone.instance(-0).formatOffset(0, "short")).toBe("+00:00");
+  expect(FixedOffsetZone.instance(0).formatOffset(0, "short")).toBe("+00:00");
+  expect(FixedOffsetZone.instance(30).formatOffset(0, "short")).toBe("+00:30");
+  expect(FixedOffsetZone.instance(300).formatOffset(0, "short")).toBe("+05:00");
+});
+
 test("FixedOffsetZone.equals requires both zones to be fixed", () => {
   expect(FixedOffsetZone.utcInstance.equals(IANAZone.create("UTC"))).toBe(false);
 });

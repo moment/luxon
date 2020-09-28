@@ -6,11 +6,11 @@ import Settings from "../src/settings";
 
 const suite = new Benchmark.Suite();
 
-const dt = DateTime.local();
+const dt = DateTime.now();
 
 suite
   .add("DateTime.local", () => {
-    DateTime.local();
+    DateTime.now();
   })
   .add("DateTime.fromObject with locale", () => {
     DateTime.fromObject({ locale: "fr" });
@@ -55,7 +55,7 @@ suite
     dt.toLocaleString();
   })
   .add("DateTime#toRelativeCalendar", () => {
-    dt.toRelativeCalendar({ base: DateTime.local(), locale: "fi" });
+    dt.toRelativeCalendar({ base: DateTime.now(), locale: "fi" });
   })
   .on("cycle", event => {
     console.log(String(event.target));

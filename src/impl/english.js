@@ -187,6 +187,8 @@ export function formatString(knownFormat) {
       return "M/d/yyyy";
     case stringify(Formats.DATE_MED):
       return "LLL d, yyyy";
+    case stringify(Formats.DATE_MED_WITH_WEEKDAY):
+      return "EEE, LLL d, yyyy";
     case stringify(Formats.DATE_FULL):
       return "LLLL d, yyyy";
     case stringify(Formats.DATE_HUGE):
