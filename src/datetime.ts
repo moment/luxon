@@ -1163,14 +1163,12 @@ export default class DateTime {
   /**
    * Returns the resolved Intl options for this DateTime.
    * This is useful in understanding the behavior of formatting methods
-   * @param {Object} options - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
    * @return {Object}
    */
-  resolvedLocaleOptions(options: Intl.DateTimeFormatOptions = {}) {
-    const { locale, numberingSystem: ns, calendar } = Formatter.create(
-      this.loc,
-      options
-    ).resolvedOptions(this);
+  resolvedLocaleOptions() {
+    const { locale, numberingSystem: ns, calendar } = Formatter.create(this.loc).resolvedOptions(
+      this
+    );
     const numberingSystem = ns as NumberingSystem;
     const outputCalendar = calendar as CalendarSystem;
     return { locale, numberingSystem, outputCalendar };
