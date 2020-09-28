@@ -314,7 +314,7 @@ test("DateTime#resolvedLocaleOptions can override with options", () => {
 });
 
 Helpers.withoutIntl("DateTime#resolvedLocaleOptions default values without intl", () => {
-  const res = DateTime.local().resolvedLocaleOptions();
+  const res = DateTime.now().resolvedLocaleOptions();
 
   expect(res.outputCalendar).toBe("gregory");
   expect(res.locale).toBe("en-US");

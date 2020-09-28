@@ -14,8 +14,8 @@ import Settings from "../../src/settings";
 import Helpers from "../helpers";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
-  withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
-  withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar"),
+  withDefaultNumberingSystem = Helpers.withDefaultNumberingSystem,
+  withDefaultOutputCalendar = Helpers.withDefaultOutputCalendar,
   withDefaultZone = Helpers.withDefaultZone;
 
 //------

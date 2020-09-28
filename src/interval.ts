@@ -137,21 +137,18 @@ export default class Interval {
     const nullOnInvalidOpts = Object.assign({}, options, { nullOnInvalid: true });
     if (s && e) {
       const start = DateTime.fromISO(s, nullOnInvalidOpts);
-      const startIsValid = start !== null;
-
       const end = DateTime.fromISO(e, nullOnInvalidOpts);
-      const endIsValid = end !== null;
 
-      if (startIsValid && endIsValid) {
+      if (start !== null && end !== null) {
         return Interval.fromDateTimes(start, end);
       }
 
-      if (startIsValid) {
+      if (start !== null) {
         const dur = Duration.fromISO(e, nullOnInvalidOpts);
         if (dur !== null) {
           return Interval.after(start, dur);
         }
-      } else if (endIsValid) {
+      } else if (end !== null) {
         const dur = Duration.fromISO(s, nullOnInvalidOpts);
         if (dur !== null) {
           return Interval.before(end, dur);
@@ -440,7 +437,10 @@ export default class Interval {
       type: "s" | "e";
     }
     const results = [],
-      ends = intervals.map(i => [{ time: i.s, type: "s" }, { time: i.e, type: "e" }]),
+      ends = intervals.map(i => [
+        { time: i.s, type: "s" },
+        { time: i.e, type: "e" }
+      ]),
       flattened: IntervalBoundary[] = Array.prototype.concat(...ends),
       arr = flattened.sort((a, b) => a.time.valueOf() - b.time.valueOf());
 

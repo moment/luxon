@@ -1,4 +1,5 @@
 import { DateTime } from "../../src";
+import {
   ConflictingSpecificationError,
   UnparsableStringError,
   MismatchedWeekdayError,
@@ -73,7 +74,7 @@ test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", (
 
 // #714
 test("DateTime.fromFormat() makes dots optional and handles non breakable spaces", () => {
-  function parseMeridiem(input, isAM) {
+  function parseMeridiem(input: string, isAM: boolean) {
     const d = DateTime.fromFormat(input, "hh:mm a");
     expect(d.hour).toBe(isAM ? 10 : 22);
     expect(d.minute).toBe(45);

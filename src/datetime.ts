@@ -396,9 +396,6 @@ export default class DateTime {
 
   // CONSTRUCT
 
-  static local(...args: number[]): DateTime;
-  static local(...args: (number | (DateTimeOptions & ThrowOnInvalid))[]): DateTime;
-  static local(...args: (number | DateTimeOptions)[]): DateTime | null;
   /**
    * Create a DateTime for the current instant, in the system's time zone.
    *
@@ -407,9 +404,12 @@ export default class DateTime {
    * @return {DateTime}
    */
   static now() {
-    return new DateTime({});
+    return DateTime.local();
   }
 
+  static local(...args: number[]): DateTime;
+  static local(...args: (number | (DateTimeOptions & ThrowOnInvalid))[]): DateTime;
+  static local(...args: (number | DateTimeOptions)[]): DateTime | null;
   /**
    * Create a local DateTime
    * @param {number} [year] - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
@@ -676,8 +676,8 @@ export default class DateTime {
     const gregorian = useWeekData
         ? weekToGregorian(normalized as WeekDateTime)
         : containsOrdinal
-          ? ordinalToGregorian(normalized as OrdinalDateTime)
-          : (normalized as GregorianDateTime),
+        ? ordinalToGregorian(normalized as OrdinalDateTime)
+        : (normalized as GregorianDateTime),
       ts = objToTS(gregorian, offsetProvis, zoneToUse)[0],
       inst = new DateTime({
         ts,
@@ -1403,10 +1403,10 @@ export default class DateTime {
    * @see https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens
    * @param {string} format - the format string
    * @param {Object} options - overriden configuration options
-   * @example DateTime.local().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
-   * @example DateTime.local().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
-   * @example DateTime.local().toFormat('yyyy LLL dd', { locale: "fr" }) //=> '2017 avr. 22'
-   * @example DateTime.local().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
+   * @example DateTime.now().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
+   * @example DateTime.now().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
+   * @example DateTime.now().toFormat('yyyy LLL dd', { locale: "fr" }) //=> '2017 avr. 22'
+   * @example DateTime.now().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
    * @return {string}
    */
   toFormat(format: string, options: LocaleOptions = {}) {
@@ -2129,14 +2129,14 @@ export default class DateTime {
    */
   // create a new DT instance by adding a duration, adjusting for DSTs
   private adjustTime(dur: Duration) {
-    const previousOffset = inst.o,
-      year = inst.c.year + Math.trunc(dur.years),
-      month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
-      c = Object.assign({}, inst.c, {
+    const previousOffset = this.o,
+      year = this.c.year + Math.trunc(dur.years),
+      month = this.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
+      c = Object.assign({}, this.c, {
         year,
         month,
         day:
-          Math.min(inst.c.day, daysInMonth(year, month)) +
+          Math.min(this.c.day, daysInMonth(year, month)) +
           Math.trunc(dur.days) +
           Math.trunc(dur.weeks) * 7
       }),

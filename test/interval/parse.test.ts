@@ -1,9 +1,6 @@
 import { Interval } from "../../src";
 import { UnparsableStringError } from "../../src/errors";
-import Helpers from "../helpers";
 import { GregorianDateTime } from "../../src/types/datetime";
-
-const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
 //------
 // .fromISO()
@@ -119,14 +116,12 @@ test("Interval.fromISO accepts a zone argument", () => {
 });
 
 // #728
-test("Interval.fromISO works with Settings.throwOnInvalid", () => {
-  withThrowOnInvalid(true, () => {
-    const dateDur = Interval.fromISO("2020-06-22T17:30:00.000+02:00/PT5H30M");
-    expect(dateDur.length("minutes")).toBe(330);
+test("Interval.fromISO works with date and duration", () => {
+  const dateDur = Interval.fromISO("2020-06-22T17:30:00.000+02:00/PT5H30M");
+  expect(dateDur.length("minutes")).toBe(330);
 
-    const durDate = Interval.fromISO("PT5H30M/2020-06-22T17:30:00.000+02:00");
-    expect(durDate.length("minutes")).toBe(330);
-  });
+  const durDate = Interval.fromISO("PT5H30M/2020-06-22T17:30:00.000+02:00");
+  expect(durDate.length("minutes")).toBe(330);
 });
 
 const badInputs = [

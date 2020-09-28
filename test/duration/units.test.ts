@@ -172,12 +172,15 @@ test("Duration#normalize can convert all unit pairs", () => {
   for (let i = 0; i < units.length; i++) {
     for (let j = i + 1; j < units.length; j++) {
       const duration = Duration.fromObject({ [units[i]]: 1, [units[j]]: 2 });
-      const normalizedDuration = duration.normalize().toObject();
+      const normalizedDuration = duration.normalize().toObject() as Record<string, number>;
       expect(normalizedDuration[units[i]]).not.toBe(NaN);
       expect(normalizedDuration[units[j]]).not.toBe(NaN);
 
       const accurateDuration = duration.reconfigure({ conversionAccuracy: "longterm" });
-      const normalizedAccurateDuration = accurateDuration.normalize().toObject();
+      const normalizedAccurateDuration = accurateDuration.normalize().toObject() as Record<
+        string,
+        number
+      >;
       expect(normalizedAccurateDuration[units[i]]).not.toBe(NaN);
       expect(normalizedAccurateDuration[units[j]]).not.toBe(NaN);
     }
