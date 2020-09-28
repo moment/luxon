@@ -5,7 +5,7 @@
 Luxon is a library for working with dates and times in Javascript.
 
 ```js
-DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
+DateTime.now().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
 ```
 
 ## Features
@@ -29,7 +29,7 @@ DateTime.local().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').to
 
 ## Development
 
-See [contributing](contributing.md).
+See [contributing](CONTRIBUTING.md).
 
 ![Phasers to stun][phasers-image]
 

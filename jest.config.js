@@ -1,6 +1,9 @@
 module.exports = {
-  testEnvironment: "node",
-  roots: ["test", "src"],
-  coverageDirectory: "build/coverage",
-  collectCoverageFrom: ["src/**/*.js", "!src/zone.js", "!src/luxonFilled.js"]
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/zone.ts",
+    "!src/luxonFilled.ts",
+    "!src/index.d.ts",
+    "!src/types/intl.d.ts"
+  ]
 };

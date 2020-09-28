@@ -1,6 +1,6 @@
 sudo: true
 services:
- - docker
+  - docker
 before_install:
   - docker pull icambron/luxon
   - ./docker/npm install
@@ -11,4 +11,3 @@ script:
   - ./docker/npm run docs
   - ./docker/npm run check-doc-coverage
   - bash <(curl -s https://codecov.io/bash)
-

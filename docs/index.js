@@ -18,11 +18,11 @@ const manualFiles = [
   "why"
 ].map(d => `./docs/${d}.md`);
 
-const excludeIrrelevant = ["luxon\\.js", "luxonFilled\\.js", "impl/.*\\.js"];
+const excludeIrrelevant = ["index\\.js", "luxonFilled\\.js", "impl/.*\\.js"];
 
 module.exports = {
-  source: "./src",
-  destination: "./build/docs",
+  source: "./transpiled",
+  destination: "./dist/docs",
   excludes: excludeIrrelevant,
   plugins: [
     {
@@ -37,7 +37,7 @@ module.exports = {
         manual: {
           globalIndex: true,
           index: "./docs/index.md",
-          files: manualFiles.concat(["./CHANGELOG.md", "./contributing.md"])
+          files: manualFiles.concat(["./CHANGELOG.md", "./CONTRIBUTING.md"])
         }
       }
     },
