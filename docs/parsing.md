@@ -81,6 +81,13 @@ DateTime.fromSeconds(1542674993);
 
 Both methods accept the same options, which allow you to specify a timezone, calendar, and/or numbering system.
 
+### JS Date Object
+
+A native JS `Date` object can be converted into a `DateTime` using [fromJSDate](../class/src/datetime.js~DateTime.html#static-method-fromJSDate).
+
+An optional `zone` option can be provided for accurate DST date computations.
+
+
 ## Ad-hoc parsing
 
 ### Consider alternatives
