@@ -85,7 +85,7 @@ Both methods accept the same options, which allow you to specify a timezone, cal
 
 A native JS `Date` object can be converted into a `DateTime` using [fromJSDate](../class/src/datetime.js~DateTime.html#static-method-fromJSDate).
 
-An optional `zone` option can be provided for accurate DST date computations.
+An optional `zone` parameter can be provided to set the zone on the resulting object.
 
 
 ## Ad-hoc parsing
