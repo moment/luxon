@@ -65,7 +65,7 @@ export function weekToGregorian(weekData) {
     weekdayOfJan4 = dayOfWeek(weekYear, 1, 4),
     yearInDays = daysInYear(weekYear);
 
-  let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 3,
+  let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 + 3,
     year;
 
   if (ordinal < 1) {
