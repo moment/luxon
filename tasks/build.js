@@ -5,6 +5,7 @@ const rollup = require("rollup"),
   rollupMinify = require("rollup-plugin-babel-minify"),
   rollupNode = require("@rollup/plugin-node-resolve"),
   rollupCommonJS = require("@rollup/plugin-commonjs"),
+  rollupJson = require("@rollup/plugin-json"),
   UglifyJS = require("uglify-js"),
   fs = require("fs");
 
@@ -35,6 +36,9 @@ function rollupInputOpts(opts) {
       rollupNode(),
       rollupCommonJS({
         include: "node_modules/**"
+      }),
+      rollupJson({
+        namedExports: true
       })
     ]
   };

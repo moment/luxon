@@ -39,6 +39,7 @@
     "@babel/plugin-external-helpers": "^7.8.3",
     "@babel/preset-env": "^7.9.5",
     "@rollup/plugin-commonjs": "^11.1.0",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^7.1.3",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "latest",
