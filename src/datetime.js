@@ -1807,7 +1807,8 @@ export default class DateTime {
       return this.valueOf() === otherDateTime.valueOf();
     } else {
       const inputMs = otherDateTime.valueOf();
-      return this.startOf(unit) <= inputMs && inputMs <= this.endOf(unit);
+      const otherZoneDateTime = this.setZone(otherDateTime.zone, { keepLocalTime: true });
+      return otherZoneDateTime.startOf(unit) <= inputMs && inputMs <= otherZoneDateTime.endOf(unit);
     }
   }
 
