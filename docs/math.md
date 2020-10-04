@@ -108,9 +108,8 @@ d1.toMillis() === d2.toMillis() // are d1 and d2 the same instant in time?
 You may also use `#hasSame` to make more subtle comparisons:
 
 ```js
-d1.hasSame(d2, 'millisecond'); // equivalent to `+d1 === +d2`
-d1.hasSame(d2, 'minute');       // both DateTimes are in the same minute (and hour, day, month, etc)
-d1.hasSame(d2, 'year');         // etc
+d1.hasSame(d2, 'year');   // both DateTimes have the same calendar year
+d1.hasSame(d2, 'day');    // both DateTimes have the same calendar day (which implies they also have the same calendar year and month)
 ```
 
 Note that these are checking against the calendar. For example, if `d1` is in 2017, calling `hasSame` with "year" asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you'd need `diff` (see below).
