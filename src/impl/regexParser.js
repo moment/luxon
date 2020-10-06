@@ -118,6 +118,29 @@ function extractIANAZone(match, cursor) {
   return [{}, zone, cursor + 1];
 }
 
+// ISO time parsing
+
+const isoTimeOnly = /^T?(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?$/; 
+
+function extractISOTimeOnly(match) {
+  const [
+    s,
+    hourStr,
+    minuteStr,
+    secondStr,
+    millisecondsStr
+  ] = match;
+
+  return [
+    {
+      hours: parseInteger(hourStr) || 0,
+      minutes: parseInteger(minuteStr),
+      seconds: parseInteger(secondStr),
+      milliseconds: parseMillis(millisecondsStr)
+    }
+  ];
+}
+
 // ISO duration parsing
 
 const isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
@@ -293,6 +316,10 @@ export function parseHTTPDate(s) {
 
 export function parseISODuration(s) {
   return parse(s, [isoDuration, extractISODuration]);
+}
+
+export function parseISOTimeOnly(s) {
+  return parse(s, [isoTimeOnly, extractISOTimeOnly]);
 }
 
 const sqlYmdWithTimeExtensionRegex = combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex);
