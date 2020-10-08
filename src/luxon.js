@@ -1,5 +1,3 @@
-import { version as VERSION } from "../package.json";
-
 import DateTime from "./datetime.js";
 import Duration from "./duration.js";
 import Interval from "./interval.js";
@@ -12,7 +10,6 @@ import LocalZone from "./zones/localZone.js";
 import Settings from "./settings.js";
 
 export {
-  VERSION,
   DateTime,
   Duration,
   Interval,
