@@ -762,8 +762,14 @@ export default class Duration {
       return false;
     }
 
+    function eq(v1, v2) {
+      // Consider 0 and undefined as equal
+      if (v1 === undefined || v1 === 0) return v2 === undefined || v2 === 0;
+      return v1 === v2;
+    }
+
     for (const u of orderedUnits) {
-      if (this.values[u] !== other.values[u]) {
+      if (!eq(this.values[u], other.values[u])) {
         return false;
       }
     }

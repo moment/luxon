@@ -18,6 +18,14 @@ test("equals identically constructed but one has sting type values", () => {
   expect(l1.equals(l2)).toBe(true);
 });
 
+// #809
+test("equals with extra zero units", () => {
+  const l1 = Duration.fromObject({ years: 5, days: 6 }),
+    l2 = Duration.fromObject({ years: 5, days: 6, minutes: 0, seconds: -0 });
+  expect(l1.equals(l2)).toBe(true);
+  expect(l2.equals(l1)).toBe(true);
+});
+
 test("does not equal an invalid duration", () => {
   const l1 = Duration.fromObject({ years: 5, days: 6 }),
     l2 = Duration.invalid("because");
