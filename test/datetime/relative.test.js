@@ -35,6 +35,10 @@ test("DateTime#toRelative allows padding", () => {
   expect(base.minus({ days: 1, milliseconds: -1 }).toRelative({ base, padding: 10 })).toBe(
     "1 day ago"
   );
+  expect(base.plus({ minutes: 1, seconds: 30 }).toRelative({ base, padding: 30000 })).toBe(
+    "in 2 minutes"
+  );
+  expect(base.plus({ seconds: 29 }).toRelative({ base, padding: 30000 })).toBe("in 29 seconds");
 });
 
 test("DateTime#toRelative takes a round argument", () => {
