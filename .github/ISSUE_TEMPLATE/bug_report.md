@@ -16,9 +16,6 @@ A clear and concise description of what you expected to happen.
 
 **Desktop (please complete the following information):**
 
-- OS: [e.g. iOS]
-- Browser [e.g. Chrome 84, safari 14.0]
-- Version [e.g. 22]
 - Luxon version [e.g. 1.25.0]
 
 **Additional context**
