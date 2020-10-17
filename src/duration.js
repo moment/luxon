@@ -470,7 +470,7 @@ export default class Duration {
    * @param {boolean} [opts.suppressMinutes=false] - exclude minutes from the format if they're 0
    * @example Duration.fromObject({ hours: 20, milliseconds: 6 }).toISOTime() //=> '20:00:00.006'
    * @example Duration.fromObject({ hours: 20 }).toISOTime() //=> '20:00'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' }) //=> '2000'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' }) //=> 'T2000'
    * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressPrefix: 'never' }) //=> 'T20:00'
    * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: false }) //=> '20:00:00'
    * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressMinutes: true }) //=> 'T20'

@@ -61,11 +61,11 @@ test("Duration.fromISO can parse fractions of seconds", () => {
   });
 });
 
-test("Duration.fromISO rejects junk", () => {
-  const rejects = s => {
-    expect(Duration.fromISO(s).isValid).toBe(false);
-  };
+const rejects = s => {
+  expect(Duration.fromISO(s).isValid).toBe(false);
+};
 
+test("Duration.fromISO rejects junk", () => {
   rejects("poop");
   rejects("PTglorb");
   rejects("P5Y34S");
@@ -73,4 +73,30 @@ test("Duration.fromISO rejects junk", () => {
   rejects("P34S");
   rejects("P34K");
   rejects("P5D2W");
+});
+
+//------
+// #fromISOTime()
+//------
+
+const checkTime = (s, ob) => {
+  expect(Duration.fromISOTime(s).toObject()).toEqual(ob);
+};
+
+test("Duration.fromISOTime can parse a variety of ISO time formats", () => {
+  checkTime("20:00:00.006", { hours: 20, minutes: 0, seconds: 0, milliseconds: 6 });
+  checkTime("20:00", { hours: 20, minutes: 0 });
+  checkTime("2000", { hours: 20, minutes: 0 });
+  checkTime("T20:00", { hours: 20, minutes: 0 });
+  checkTime("T20", { hours: 20 });
+});
+
+const rejectsTime = s => {
+  expect(Duration.fromISOTime(s).isValid).toBe(false);
+};
+
+test("Duration.fromISOTime rejects junk", () => {
+  rejectsTime("poop");
+  rejectsTime("Tglorb");
+  rejectsTime("-20:00");
 });

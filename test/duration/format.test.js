@@ -16,6 +16,7 @@ const dur = () =>
 //------
 // #toISO()
 //------
+
 test("Duration#toISO fills out every field", () => {
   expect(dur().toISO()).toBe("P1Y2M1W3DT4H5M6.007S");
 });
@@ -63,6 +64,29 @@ test("Duration#toISO handles mixed negative/positive numbers in seconds/millisec
 });
 
 //------
+// #toISOTime()
+//------
+
+test("Duration#toISOTime creates a correct string", () => {
+  expect(Duration.fromObject({ hours: 20, milliseconds: 6 }).toISOTime()).toBe("20:00:00.006");
+  expect(Duration.fromObject({ hours: 20 }).toISOTime()).toBe("20:00");
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: "basic" })).toBe("T2000");
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressPrefix: "never" })).toBe("T20:00");
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: false })).toBe("20:00:00");
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressMinutes: true })).toBe("T20");
+  expect(Duration.fromObject({ hours: 24 }).toISOTime()).toBe(null);
+  expect(Duration.fromObject({ milliseconds: -1 }).toISOTime()).toBe(null);
+});
+
+//------
+// #toMillis()
+//------
+
+test("Duration#toMillis returns the value in milliseconds", () => {
+  expect(dur().toMillis()).toBe(dur().valueOf());
+});
+
+//------
 // #toJSON()
 //------
 
@@ -81,6 +105,7 @@ test("Duration#toString returns the ISO representation", () => {
 //------
 // #toFormat()
 //------
+
 test("Duration#toFormat('S') returns milliseconds", () => {
   expect(dur().toFormat("S")).toBe("37598706007");
 
