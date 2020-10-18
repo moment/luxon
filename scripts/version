@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+abort() {
+  echo "ERROR: $1"
+  exit 1
+}
+
+PACKAGE_VERSION=$(node -p "require('./package.json').version")
+PACKAGE_LOCK_VERSION=$(node -p "require('./package-lock.json').version")
+EXPORTED_VERSION=$(grep -oP "(?<=const VERSION = \").*(?=\";)" ./src/luxon.js)
+
+if [ $PACKAGE_VERSION != $PACKAGE_LOCK_VERSION ]; then
+  abort "package-lock.json's version differs from package.json's"
+elif [ $PACKAGE_VERSION != $EXPORTED_VERSION ]; then
+  abort "exported version differs from package.json's"
+elif [ $(git tag -l "$PACKAGE_VERSION") ]; then
+  abort "tag already exists"
+fi
