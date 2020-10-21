@@ -120,7 +120,7 @@ function extractIANAZone(match, cursor) {
 
 // ISO time parsing
 
-const isoTimeOnly = /^T?(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?$/; 
+const isoTimeOnly = RegExp(`^T?${isoTimeBaseRegex.source}$`);
 
 function extractISOTimeOnly(match) {
   const [
