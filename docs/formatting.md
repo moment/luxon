@@ -222,7 +222,7 @@ The macro options available correspond one-to-one with the preset formats define
 | DD               |              | localized date with abbreviated month                          | Aug 6, 2014                                                 |
 | DDD              |              | localized date with full month                                 | August 6, 2014                                              |
 | DDDD             |              | localized date with full month and weekday                     | Wednesday, August 6, 2014                                   |
-| t                |              | localized time                                                 | 9:07 AM                                                     |
+| t                |              | localized time                                                 | 9:07                                                     |
 | tt               |              | localized time with seconds                                    | 1:07:04 PM                                                  |
 | ttt              |              | localized time with seconds and abbreviated offset             | 1:07:04 PM EDT                                              |
 | tttt             |              | localized time with seconds and full offset                    | 1:07:04 PM Eastern Daylight Time                            |
