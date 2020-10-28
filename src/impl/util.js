@@ -161,6 +161,10 @@ export function trunc(v) {
   return v < 0 ? Math.ceil(v) : Math.floor(v);
 }
 
+export function sign(x) {
+  return (x > 0) - (x < 0) || +x;
+}
+
 // DATE BASICS
 
 export function isLeapYear(year) {

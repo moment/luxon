@@ -11,7 +11,8 @@ import {
   normalizeObject,
   roundTo,
   trunc,
-  assign
+  assign,
+  sign
 } from "./impl/util.js";
 import Settings from "./settings.js";
 
@@ -137,7 +138,7 @@ function antiTrunc(n) {
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   const conv = matrix[toUnit][fromUnit],
     raw = fromMap[fromUnit] / conv,
-    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
+    sameSign = sign(raw) === sign(toMap[toUnit]),
     // ok, so this is wild, but see the matrix in the tests
     added = !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : trunc(raw);
   toMap[toUnit] += added;
