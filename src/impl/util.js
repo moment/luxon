@@ -133,6 +133,11 @@ export function padStart(input, n = 2) {
   }
 }
 
+export function startsWith(str, search, rawPos) {
+  var pos = rawPos > 0 ? rawPos | 0 : 0;
+  return str.substring(pos, pos + search.length) === search;
+}
+
 export function parseInteger(string) {
   if (isUndefined(string) || string === null || string === "") {
     return undefined;

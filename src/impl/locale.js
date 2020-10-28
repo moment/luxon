@@ -1,4 +1,12 @@
-import { hasFormatToParts, hasIntl, padStart, roundTo, hasRelative, assign } from "./util.js";
+import {
+  hasFormatToParts,
+  hasIntl,
+  padStart,
+  roundTo,
+  hasRelative,
+  assign,
+  startsWith
+} from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
@@ -138,7 +146,7 @@ function supportsFastNumbers(loc) {
     return (
       loc.numberingSystem === "latn" ||
       !loc.locale ||
-      loc.locale.startsWith("en") ||
+      startsWith(loc.locale, "en") ||
       (hasIntl() && new Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn")
     );
   }
@@ -455,7 +463,8 @@ export default class Locale {
     return (
       this.locale === "en" ||
       this.locale.toLowerCase() === "en-us" ||
-      (hasIntl() && new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us"))
+      (hasIntl() &&
+        startsWith(new Intl.DateTimeFormat(this.intl).resolvedOptions().locale, "en-us"))
     );
   }
 
