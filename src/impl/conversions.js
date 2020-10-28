@@ -6,7 +6,8 @@ import {
   daysInMonth,
   weeksInWeekYear,
   isInteger,
-  assign
+  assign,
+  findIndex
 } from "./util.js";
 import Invalid from "./invalid.js";
 
@@ -31,7 +32,7 @@ function computeOrdinal(year, month, day) {
 
 function uncomputeOrdinal(year, ordinal) {
   const table = isLeapYear(year) ? leapLadder : nonLeapLadder,
-    month0 = table.findIndex(i => i < ordinal),
+    month0 = findIndex(table, i => i < ordinal),
     day = ordinal - table[month0];
   return { month: month0 + 1, day };
 }

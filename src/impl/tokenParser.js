@@ -4,7 +4,8 @@ import {
   untruncateYear,
   signedOffset,
   hasOwnProperty,
-  find
+  find,
+  findIndex
 } from "./util.js";
 import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
@@ -43,7 +44,7 @@ function oneOf(strings, startIndex) {
     return {
       regex: RegExp(strings.map(fixListRegex).join("|")),
       deser: ([s]) =>
-        strings.findIndex(i => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex
+        findIndex(strings, i => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex
     };
   }
 }
