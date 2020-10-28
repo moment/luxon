@@ -17,7 +17,8 @@ import {
   weeksInWeekYear,
   normalizeObject,
   roundTo,
-  objToLocalTS
+  objToLocalTS,
+  trunc
 } from "./impl/util.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
@@ -123,22 +124,19 @@ function objToTS(obj, offset, zone) {
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
   const oPre = inst.o,
-    year = inst.c.year + Math.trunc(dur.years),
-    month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
+    year = inst.c.year + trunc(dur.years),
+    month = inst.c.month + trunc(dur.months) + trunc(dur.quarters) * 3,
     c = Object.assign({}, inst.c, {
       year,
       month,
-      day:
-        Math.min(inst.c.day, daysInMonth(year, month)) +
-        Math.trunc(dur.days) +
-        Math.trunc(dur.weeks) * 7
+      day: Math.min(inst.c.day, daysInMonth(year, month)) + trunc(dur.days) + trunc(dur.weeks) * 7
     }),
     millisToAdd = Duration.fromObject({
-      years: dur.years - Math.trunc(dur.years),
-      quarters: dur.quarters - Math.trunc(dur.quarters),
-      months: dur.months - Math.trunc(dur.months),
-      weeks: dur.weeks - Math.trunc(dur.weeks),
-      days: dur.days - Math.trunc(dur.days),
+      years: dur.years - trunc(dur.years),
+      quarters: dur.quarters - trunc(dur.quarters),
+      months: dur.months - trunc(dur.months),
+      weeks: dur.weeks - trunc(dur.weeks),
+      days: dur.days - trunc(dur.days),
       hours: dur.hours,
       minutes: dur.minutes,
       seconds: dur.seconds,

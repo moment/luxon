@@ -9,7 +9,8 @@ import {
   isNumber,
   isUndefined,
   normalizeObject,
-  roundTo
+  roundTo,
+  trunc
 } from "./impl/util.js";
 import Settings from "./settings.js";
 
@@ -137,8 +138,7 @@ function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
     raw = fromMap[fromUnit] / conv,
     sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
     // ok, so this is wild, but see the matrix in the tests
-    added =
-      !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
+    added = !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : trunc(raw);
   toMap[toUnit] += added;
   fromMap[fromUnit] -= added * conv;
 }
@@ -608,7 +608,7 @@ export default class Duration {
           own += vals[k];
         }
 
-        const i = Math.trunc(own);
+        const i = trunc(own);
         built[k] = i;
         accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
 

@@ -126,8 +126,12 @@ export function parseMillis(fraction) {
 
 export function roundTo(number, digits, towardZero = false) {
   const factor = 10 ** digits,
-    rounder = towardZero ? Math.trunc : Math.round;
+    rounder = towardZero ? trunc : Math.round;
   return rounder(number * factor) / factor;
+}
+
+export function trunc(v) {
+  return v < 0 ? Math.ceil(v) : Math.floor(v);
 }
 
 // DATE BASICS
@@ -263,8 +267,8 @@ export function normalizeObject(obj, normalizer, nonUnitKeys) {
 }
 
 export function formatOffset(offset, format) {
-  const hours = Math.trunc(Math.abs(offset / 60)),
-    minutes = Math.trunc(Math.abs(offset % 60)),
+  const hours = trunc(Math.abs(offset / 60)),
+    minutes = trunc(Math.abs(offset % 60)),
     sign = offset >= 0 ? "+" : "-";
 
   switch (format) {
