@@ -147,7 +147,7 @@ export function parseMillis(fraction) {
 }
 
 export function roundTo(number, digits, towardZero = false) {
-  const factor = 10 ** digits,
+  const factor = Math.pow(10, digits),
     rounder = towardZero ? trunc : Math.round;
   return rounder(number * factor) / factor;
 }
