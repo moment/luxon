@@ -122,7 +122,12 @@ export function floorMod(x, n) {
 
 export function padStart(input, n = 2) {
   if (input.toString().length < n) {
-    return ("0".repeat(n) + input).slice(-n);
+    let res = "";
+    for (let i = 0; i < n; i++) {
+      res += "0";
+    }
+    res += input;
+    return res.slice(-n);
   } else {
     return input.toString();
   }
