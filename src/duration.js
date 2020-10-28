@@ -10,7 +10,8 @@ import {
   isUndefined,
   normalizeObject,
   roundTo,
-  trunc
+  trunc,
+  assign
 } from "./impl/util.js";
 import Settings from "./settings.js";
 
@@ -35,7 +36,7 @@ const lowOrderMatrix = {
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
     seconds: { milliseconds: 1000 }
   },
-  casualMatrix = Object.assign(
+  casualMatrix = assign(
     {
       years: {
         quarters: 4,
@@ -69,7 +70,7 @@ const lowOrderMatrix = {
   ),
   daysInYearAccurate = 146097.0 / 400,
   daysInMonthAccurate = 146097.0 / 4800,
-  accurateMatrix = Object.assign(
+  accurateMatrix = assign(
     {
       years: {
         quarters: 4,
@@ -121,7 +122,7 @@ const reverseUnits = orderedUnits.slice(0).reverse();
 function clone(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
-    values: clear ? alts.values : Object.assign({}, dur.values, alts.values || {}),
+    values: clear ? alts.values : assign({}, dur.values, alts.values || {}),
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
   };
@@ -212,7 +213,7 @@ export default class Duration {
    * @return {Duration}
    */
   static fromMillis(count, opts) {
-    return Duration.fromObject(Object.assign({ milliseconds: count }, opts));
+    return Duration.fromObject(assign({ milliseconds: count }, opts));
   }
 
   /**
@@ -269,7 +270,7 @@ export default class Duration {
   static fromISO(text, opts) {
     const [parsed] = parseISODuration(text);
     if (parsed) {
-      const obj = Object.assign(parsed, opts);
+      const obj = assign(parsed, opts);
       return Duration.fromObject(obj);
     } else {
       return Duration.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
@@ -374,7 +375,7 @@ export default class Duration {
    */
   toFormat(fmt, opts = {}) {
     // reverse-compat since 1.2; we always round down now, never up, and we do it by default
-    const fmtOpts = Object.assign({}, opts, {
+    const fmtOpts = assign({}, opts, {
       floor: opts.round !== false && opts.floor !== false
     });
     return this.isValid
@@ -392,7 +393,7 @@ export default class Duration {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Object.assign({}, this.values);
+    const base = assign({}, this.values);
 
     if (opts.includeConfig) {
       base.conversionAccuracy = this.conversionAccuracy;
@@ -527,7 +528,7 @@ export default class Duration {
   set(values) {
     if (!this.isValid) return this;
 
-    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit, []));
+    const mixed = assign(this.values, normalizeObject(values, Duration.normalizeUnit, []));
     return clone(this, { values: mixed });
   }
 

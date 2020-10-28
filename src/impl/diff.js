@@ -1,4 +1,5 @@
 import Duration from "../duration.js";
+import { assign } from "./util.js";
 
 function dayDiff(earlier, later) {
   const utcDayStart = dt =>
@@ -67,7 +68,7 @@ export default function(earlier, later, units, opts) {
     }
   }
 
-  const duration = Duration.fromObject(Object.assign(results, opts));
+  const duration = Duration.fromObject(assign(results, opts));
 
   if (lowerOrderUnits.length > 0) {
     return Duration.fromMillis(remainingMillis, opts)

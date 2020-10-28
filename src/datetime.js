@@ -18,7 +18,8 @@ import {
   normalizeObject,
   roundTo,
   objToLocalTS,
-  trunc
+  trunc,
+  assign
 } from "./impl/util.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
@@ -69,7 +70,7 @@ function clone(inst, alts) {
     loc: inst.loc,
     invalid: inst.invalid
   };
-  return new DateTime(Object.assign({}, current, alts, { old: current }));
+  return new DateTime(assign({}, current, alts, { old: current }));
 }
 
 // find the right offset a given local time. The o input is our guess, which determines which
@@ -126,7 +127,7 @@ function adjustTime(inst, dur) {
   const oPre = inst.o,
     year = inst.c.year + trunc(dur.years),
     month = inst.c.month + trunc(dur.months) + trunc(dur.quarters) * 3,
-    c = Object.assign({}, inst.c, {
+    c = assign({}, inst.c, {
       year,
       month,
       day: Math.min(inst.c.day, daysInMonth(year, month)) + trunc(dur.days) + trunc(dur.weeks) * 7
@@ -162,7 +163,7 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(
-        Object.assign(parsed, opts, {
+        assign(parsed, opts, {
           zone: interpretationZone,
           // setZone is a valid option in the calling methods, but not in fromObject
           setZone: undefined
@@ -1334,11 +1335,11 @@ export default class DateTime {
 
     let mixed;
     if (settingWeekStuff) {
-      mixed = weekToGregorian(Object.assign(gregorianToWeek(this.c), normalized));
+      mixed = weekToGregorian(assign(gregorianToWeek(this.c), normalized));
     } else if (!isUndefined(normalized.ordinal)) {
-      mixed = ordinalToGregorian(Object.assign(gregorianToOrdinal(this.c), normalized));
+      mixed = ordinalToGregorian(assign(gregorianToOrdinal(this.c), normalized));
     } else {
-      mixed = Object.assign(this.toObject(), normalized);
+      mixed = assign(this.toObject(), normalized);
 
       // if we didn't set the day but we ended up on an overflow date,
       // use the last day of the right month
@@ -1716,7 +1717,7 @@ export default class DateTime {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Object.assign({}, this.c);
+    const base = assign({}, this.c);
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
@@ -1759,10 +1760,7 @@ export default class DateTime {
       );
     }
 
-    const durOpts = Object.assign(
-      { locale: this.locale, numberingSystem: this.numberingSystem },
-      opts
-    );
+    const durOpts = assign({ locale: this.locale, numberingSystem: this.numberingSystem }, opts);
 
     const units = maybeArray(unit).map(Duration.normalizeUnit),
       otherIsLater = otherDateTime.valueOf() > this.valueOf(),
@@ -1853,7 +1851,7 @@ export default class DateTime {
     return diffRelative(
       base,
       this.plus(padding),
-      Object.assign(options, {
+      assign(options, {
         numeric: "always",
         units: ["years", "months", "days", "hours", "minutes", "seconds"]
       })
@@ -1879,7 +1877,7 @@ export default class DateTime {
     return diffRelative(
       options.base || DateTime.fromObject({ zone: this.zone }),
       this,
-      Object.assign(options, {
+      assign(options, {
         numeric: "auto",
         units: ["years", "months", "days"],
         calendary: true

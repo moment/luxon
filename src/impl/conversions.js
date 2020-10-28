@@ -5,7 +5,8 @@ import {
   daysInYear,
   daysInMonth,
   weeksInWeekYear,
-  isInteger
+  isInteger,
+  assign
 } from "./util.js";
 import Invalid from "./invalid.js";
 
@@ -57,7 +58,7 @@ export function gregorianToWeek(gregObj) {
     weekYear = year;
   }
 
-  return Object.assign({ weekYear, weekNumber, weekday }, timeObject(gregObj));
+  return assign({ weekYear, weekNumber, weekday }, timeObject(gregObj));
 }
 
 export function weekToGregorian(weekData) {
@@ -80,21 +81,21 @@ export function weekToGregorian(weekData) {
 
   const { month, day } = uncomputeOrdinal(year, ordinal);
 
-  return Object.assign({ year, month, day }, timeObject(weekData));
+  return assign({ year, month, day }, timeObject(weekData));
 }
 
 export function gregorianToOrdinal(gregData) {
   const { year, month, day } = gregData,
     ordinal = computeOrdinal(year, month, day);
 
-  return Object.assign({ year, ordinal }, timeObject(gregData));
+  return assign({ year, ordinal }, timeObject(gregData));
 }
 
 export function ordinalToGregorian(ordinalData) {
   const { year, ordinal } = ordinalData,
     { month, day } = uncomputeOrdinal(year, ordinal);
 
-  return Object.assign({ year, month, day }, timeObject(ordinalData));
+  return assign({ year, month, day }, timeObject(ordinalData));
 }
 
 export function hasInvalidWeekData(obj) {

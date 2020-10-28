@@ -87,6 +87,28 @@ export function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
+export function assign(target /*, ...sources*/) {
+  if (target === null || target === undefined) {
+    throw new TypeError("Cannot convert undefined or null to object");
+  }
+
+  var to = Object(target);
+
+  for (var index = 1; index < arguments.length; index++) {
+    var nextSource = arguments[index];
+
+    if (nextSource !== null && nextSource !== undefined) {
+      for (var nextKey in nextSource) {
+        // Avoid bugs when hasOwnProperty is shadowed
+        if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+          to[nextKey] = nextSource[nextKey];
+        }
+      }
+    }
+  }
+  return to;
+}
+
 // NUMBERS AND STRINGS
 
 export function integerBetween(thing, bottom, top) {
@@ -210,7 +232,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     intlOpts.timeZone = timeZone;
   }
 
-  const modified = Object.assign({ timeZoneName: offsetFormat }, intlOpts),
+  const modified = assign({ timeZoneName: offsetFormat }, intlOpts),
     intl = hasIntl();
 
   if (intl && hasFormatToParts()) {

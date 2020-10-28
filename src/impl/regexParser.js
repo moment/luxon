@@ -4,7 +4,8 @@ import {
   parseInteger,
   parseMillis,
   ianaRegex,
-  isUndefined
+  isUndefined,
+  assign
 } from "./util.js";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
@@ -31,7 +32,7 @@ function combineExtractors(...extractors) {
       .reduce(
         ([mergedVals, mergedZone, cursor], ex) => {
           const [val, zone, next] = ex(m, cursor);
-          return [Object.assign(mergedVals, val), mergedZone || zone, next];
+          return [assign(mergedVals, val), mergedZone || zone, next];
         },
         [{}, null, 1]
       )

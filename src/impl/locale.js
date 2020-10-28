@@ -1,4 +1,4 @@
-import { hasFormatToParts, hasIntl, padStart, roundTo, hasRelative } from "./util.js";
+import { hasFormatToParts, hasIntl, padStart, roundTo, hasRelative, assign } from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
@@ -206,7 +206,7 @@ class PolyDateFormatter {
     }
 
     if (this.hasIntl) {
-      const intlOpts = Object.assign({}, this.opts);
+      const intlOpts = assign({}, this.opts);
       if (z) {
         intlOpts.timeZone = z;
       }
@@ -252,7 +252,7 @@ class PolyDateFormatter {
  */
 class PolyRelFormatter {
   constructor(intl, isEnglish, opts) {
-    this.opts = Object.assign({ style: "long" }, opts);
+    this.opts = assign({ style: "long" }, opts);
     if (!isEnglish && hasRelative()) {
       this.rtf = getCachedRTF(intl, opts);
     }
@@ -360,11 +360,11 @@ export default class Locale {
   }
 
   redefaultToEN(alts = {}) {
-    return this.clone(Object.assign({}, alts, { defaultToEN: true }));
+    return this.clone(assign({}, alts, { defaultToEN: true }));
   }
 
   redefaultToSystem(alts = {}) {
-    return this.clone(Object.assign({}, alts, { defaultToEN: false }));
+    return this.clone(assign({}, alts, { defaultToEN: false }));
   }
 
   months(length, format = false, defaultOK = true) {
