@@ -402,7 +402,7 @@ export default class DateTime {
       } else {
         const ot = zone.offset(this.ts);
         c = tsToObj(this.ts, ot);
-        invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
+        invalid = isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
         o = invalid ? null : ot;
       }
