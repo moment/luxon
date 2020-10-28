@@ -87,7 +87,7 @@ export function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-export function assign(target /*, ...sources*/) {
+export function assign(target /* , ...sources */) {
   if (target === null || target === undefined) {
     throw new TypeError("Cannot convert undefined or null to object");
   }
@@ -252,12 +252,17 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
   }
 }
 
+export function isNaN(input) {
+  // eslint-disable-next-line no-self-compare
+  return typeof input === "number" && input !== input;
+}
+
 // signedOffset('-5', '30') -> -330
 export function signedOffset(offHourStr, offMinuteStr) {
   let offHour = parseInt(offHourStr, 10);
 
   // don't || this because we want to preserve -0
-  if (Number.isNaN(offHour)) {
+  if (isNaN(offHour)) {
     offHour = 0;
   }
 
@@ -270,7 +275,7 @@ export function signedOffset(offHourStr, offMinuteStr) {
 
 export function asNumber(value) {
   const numericValue = Number(value);
-  if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue))
+  if (typeof value === "boolean" || value === "" || isNaN(numericValue))
     throw new InvalidArgumentError(`Invalid unit value ${value}`);
   return numericValue;
 }

@@ -19,7 +19,8 @@ import {
   roundTo,
   objToLocalTS,
   trunc,
-  assign
+  assign,
+  isNaN
 } from "./impl/util.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
@@ -384,7 +385,7 @@ export default class DateTime {
 
     let invalid =
       config.invalid ||
-      (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
+      (isNaN(config.ts) ? new Invalid("invalid input") : null) ||
       (!zone.isValid ? unsupportedZone(zone) : null);
     /**
      * @access private
@@ -538,7 +539,7 @@ export default class DateTime {
    */
   static fromJSDate(date, options = {}) {
     const ts = isDate(date) ? date.valueOf() : NaN;
-    if (Number.isNaN(ts)) {
+    if (isNaN(ts)) {
       return DateTime.invalid("invalid input");
     }
 
