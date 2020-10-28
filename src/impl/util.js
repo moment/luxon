@@ -109,6 +109,46 @@ export function assign(target /* , ...sources */) {
   return to;
 }
 
+export function find(array, predicate) {
+  // 1. Let O be ? ToObject(this value).
+  if (array == null) {
+    throw TypeError('"this" is null or not defined');
+  }
+
+  var o = Object(array);
+
+  // 2. Let len be ? ToLength(? Get(O, "length")).
+  var len = o.length >>> 0;
+
+  // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+  if (typeof predicate !== "function") {
+    throw TypeError("predicate must be a function");
+  }
+
+  // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+  var thisArg = arguments[2];
+
+  // 5. Let k be 0.
+  var k = 0;
+
+  // 6. Repeat, while k < len
+  while (k < len) {
+    // a. Let Pk be ! ToString(k).
+    // b. Let kValue be ? Get(O, Pk).
+    // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+    // d. If testResult is true, return kValue.
+    var kValue = o[k];
+    if (predicate.call(thisArg, kValue, k, o)) {
+      return kValue;
+    }
+    // e. Increase k by 1.
+    k++;
+  }
+
+  // 7. Return undefined.
+  return undefined;
+}
+
 // NUMBERS AND STRINGS
 
 export function integerBetween(thing, bottom, top) {
@@ -250,9 +290,10 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     intl = hasIntl();
 
   if (intl && hasFormatToParts()) {
-    const parsed = new Intl.DateTimeFormat(locale, modified)
-      .formatToParts(date)
-      .find(m => m.type.toLowerCase() === "timezonename");
+    const parsed = find(
+      new Intl.DateTimeFormat(locale, modified).formatToParts(date),
+      m => m.type.toLowerCase() === "timezonename"
+    );
     return parsed ? parsed.value : null;
   } else if (intl) {
     // this probably doesn't work for all locales

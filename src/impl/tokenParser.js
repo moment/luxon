@@ -1,4 +1,11 @@
-import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.js";
+import {
+  parseMillis,
+  isUndefined,
+  untruncateYear,
+  signedOffset,
+  hasOwnProperty,
+  find
+} from "./util.js";
 import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
@@ -400,7 +407,7 @@ function expandMacroTokens(tokens, locale) {
 export function explainFromTokens(locale, input, format) {
   const tokens = expandMacroTokens(Formatter.parseFormat(format), locale),
     units = tokens.map(t => unitForToken(t, locale)),
-    disqualifyingUnit = units.find(t => t.invalidReason);
+    disqualifyingUnit = find(units, t => t.invalidReason);
 
   if (disqualifyingUnit) {
     return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };

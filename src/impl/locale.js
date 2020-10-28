@@ -5,7 +5,8 @@ import {
   roundTo,
   hasRelative,
   assign,
-  startsWith
+  startsWith,
+  find
 } from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
@@ -441,7 +442,7 @@ export default class Locale {
   extract(dt, intlOpts, field) {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
-      matching = results.find(m => m.type.toLowerCase() === field);
+      matching = find(results, m => m.type.toLowerCase() === field);
     return matching ? matching.value : null;
   }
 
