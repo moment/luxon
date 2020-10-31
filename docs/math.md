@@ -35,7 +35,7 @@ These units use time math:
  * **Minutes** are always 60 seconds
  * **Seconds** are always 1000 milliseconds
 
-Don't worry about leap seconds. Javascript and most other programming environments don't account for them; they just happen as abrupt, invisible changes to the underlying system's time.
+Don't worry about leap seconds. JavaScript and most other programming environments don't account for them; they just happen as abrupt, invisible changes to the underlying system's time.
 
 ### How to think about calendar math
 

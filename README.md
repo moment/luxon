@@ -2,7 +2,7 @@
 
 [![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![Doc coverage][doc-coverage-image]][doc-url] [![PRs welcome][contributing-image]][contributing-url]
 
-Luxon is a library for working with dates and times in Javascript.
+Luxon is a library for working with dates and times in JavaScript.
 
 ```js
 DateTime.now().setZone("America/New_York").minus({ weeks: 1 }).endOf("day").toISO();
