@@ -1,6 +1,6 @@
 # A quick tour
 
-Luxon is a library that makes it easier to work with dates and times in Javascript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We're going to talk about the most immediately useful subset of that interface.
+Luxon is a library that makes it easier to work with dates and times in JavaScript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We're going to talk about the most immediately useful subset of that interface.
 
 This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to [dive into them](../identifiers.html).
 
@@ -12,7 +12,7 @@ The most important class in Luxon is [DateTime](../class/src/datetime.js~DateTim
 var dt = DateTime.local(2017, 5, 15, 8, 30);
 ```
 
-[DateTime.local](../class/src/datetime.js~DateTime.html#static-method-local) takes any number of arguments, all the way out to milliseconds. Underneath, this is similar to a Javascript Date object. But we've decorated it with lots of useful methods.
+[DateTime.local](../class/src/datetime.js~DateTime.html#static-method-local) takes any number of arguments, all the way out to milliseconds. Underneath, this is similar to a JavaScript Date object. But we've decorated it with lots of useful methods.
 
 ## Creating a DateTime
 

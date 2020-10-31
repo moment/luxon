@@ -4,7 +4,7 @@ import Zone from "../zone.js";
 let singleton = null;
 
 /**
- * Represents the local zone for this Javascript environment.
+ * Represents the local zone for this JavaScript environment.
  * @implements {Zone}
  */
 export default class LocalZone extends Zone {
