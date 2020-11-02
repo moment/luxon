@@ -87,15 +87,19 @@ export function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-export function assign(target /* , ...sources */) {
+export function assign(target, ...sources) {
+  if (typeof Object.assign === "function") {
+    return Object.assign(target, ...sources);
+  }
+
   if (target === null || target === undefined) {
     throw new TypeError("Cannot convert undefined or null to object");
   }
 
   var to = Object(target);
 
-  for (var index = 1; index < arguments.length; index++) {
-    var nextSource = arguments[index];
+  for (var index = 0; index < sources.length; index++) {
+    var nextSource = sources[index];
 
     if (nextSource !== null && nextSource !== undefined) {
       for (var nextKey in nextSource) {
@@ -110,6 +114,10 @@ export function assign(target /* , ...sources */) {
 }
 
 export function find(array, predicate) {
+  if (typeof Array.prototype.find === "function") {
+    return Array.prototype.find.call(array, predicate);
+  }
+
   // 1. Let O be ? ToObject(this value).
   if (array == null) {
     throw TypeError('"this" is null or not defined');
@@ -150,6 +158,10 @@ export function find(array, predicate) {
 }
 
 export function findIndex(array, predicate) {
+  if (typeof Array.prototype.findIndex === "function") {
+    return Array.prototype.findIndex.call(array, predicate);
+  }
+
   // 1. Let O be ? ToObject(this value).
   if (array == null) {
     throw new TypeError('"this" is null or not defined');
@@ -201,6 +213,10 @@ export function floorMod(x, n) {
 }
 
 export function padStart(input, n = 2) {
+  if (typeof String.prototype.padStart === "function") {
+    return String.prototype.padStart.call(input, n);
+  }
+
   if (input.toString().length < n) {
     let res = "";
     for (let i = 0; i < n; i++) {
@@ -214,6 +230,10 @@ export function padStart(input, n = 2) {
 }
 
 export function startsWith(str, search, rawPos) {
+  if (typeof String.prototype.startsWith === "function") {
+    return String.prototype.startsWith.call(str, search, rawPos);
+  }
+
   var pos = rawPos > 0 ? rawPos | 0 : 0;
   return str.substring(pos, pos + search.length) === search;
 }
@@ -243,6 +263,9 @@ export function roundTo(number, digits, towardZero = false) {
 }
 
 export function trunc(v) {
+  if (typeof Math.trunc === "function") {
+    return Math.trunc(v);
+  }
   return v < 0 ? Math.ceil(v) : Math.floor(v);
 }
 
@@ -348,6 +371,9 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
 }
 
 export function isNaN(input) {
+  if (typeof Number.isNaN === "function") {
+    return Number.isNaN(input);
+  }
   // eslint-disable-next-line no-self-compare
   return typeof input === "number" && input !== input;
 }
