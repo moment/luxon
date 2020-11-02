@@ -1,5 +1,5 @@
 import * as Formats from "./formats.js";
-import { pick } from "./util.js";
+import { pick, is } from "./util.js";
 
 function stringify(obj) {
   return JSON.stringify(obj, Object.keys(obj).sort());
@@ -151,7 +151,7 @@ export function formatRelativeTime(unit, count, numeric = "always", narrow = fal
     }
   }
 
-  const isInPast = Object.is(count, -0) || count < 0,
+  const isInPast = is(count, -0) || count < 0,
     fmtValue = Math.abs(count),
     singular = fmtValue === 1,
     lilUnits = units[unit],

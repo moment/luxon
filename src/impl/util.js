@@ -201,6 +201,22 @@ export function findIndex(array, predicate) {
   return -1;
 }
 
+export function is(x, y) {
+  if (typeof Object.is === "function") {
+    return Object.is(x, y);
+  }
+  // SameValue algorithm
+  if (x === y) {
+    // Steps 1-5, 7-10
+    // Steps 6.b-6.e: +0 != -0
+    return x !== 0 || 1 / x === 1 / y;
+  } else {
+    // Step 6.a: NaN == NaN
+    // eslint-disable-next-line no-self-compare
+    return x !== x && y !== y;
+  }
+}
+
 // NUMBERS AND STRINGS
 
 export function integerBetween(thing, bottom, top) {
@@ -388,7 +404,7 @@ export function signedOffset(offHourStr, offMinuteStr) {
   }
 
   const offMin = parseInt(offMinuteStr, 10) || 0,
-    offMinSigned = offHour < 0 || Object.is(offHour, -0) ? -offMin : offMin;
+    offMinSigned = offHour < 0 || is(offHour, -0) ? -offMin : offMin;
   return offHour * 60 + offMinSigned;
 }
 
