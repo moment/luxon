@@ -20,6 +20,8 @@ module.exports = {
       plugins: ["es5"],
       extends: ["plugin:es5/no-es2015", "plugin:es5/no-es2016"],
       rules: {
+        // allow things that can be rewritten from static analysis to ES5
+        // E.g. TypeScript with ES5 target https://www.typescriptlang.org/play?target=1&jsx=0
         "es5/no-arrow-functions": "off",
         "es5/no-block-scoping": "off",
         "es5/no-block-scoping": "off",
