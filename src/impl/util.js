@@ -89,6 +89,7 @@ export function hasOwnProperty(obj, prop) {
 
 export function assign(target, ...sources) {
   if (typeof Object.assign === "function") {
+    // eslint-disable-next-line es5/no-es6-static-methods
     return Object.assign(target, ...sources);
   }
 
@@ -203,6 +204,7 @@ export function findIndex(array, predicate) {
 
 export function is(x, y) {
   if (typeof Object.is === "function") {
+    // eslint-disable-next-line es5/no-es6-static-methods
     return Object.is(x, y);
   }
   // SameValue algorithm
@@ -280,6 +282,7 @@ export function roundTo(number, digits, towardZero = false) {
 
 export function trunc(v) {
   if (typeof Math.trunc === "function") {
+    // eslint-disable-next-line es5/no-es6-static-methods
     return Math.trunc(v);
   }
   return v < 0 ? Math.ceil(v) : Math.floor(v);
@@ -388,6 +391,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
 
 export function isNaN(input) {
   if (typeof Number.isNaN === "function") {
+    // eslint-disable-next-line es5/no-es6-static-methods
     return Number.isNaN(input);
   }
   // eslint-disable-next-line no-self-compare
