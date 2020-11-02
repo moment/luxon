@@ -390,7 +390,7 @@ function maybeExpandMacroToken(token, locale) {
 
   const tokens = parts.map(p => tokenForPart(p, locale, formatOpts));
 
-  if (tokens.includes(undefined)) {
+  if (tokens.indexOf(undefined) >= 0) {
     return token;
   }
 
