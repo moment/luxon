@@ -5,6 +5,7 @@
 */
 
 import { InvalidArgumentError } from "../errors.js";
+import * as Ponyfills from "../ponyfills.js";
 
 /**
  * @private
@@ -88,135 +89,19 @@ export function hasOwnProperty(obj, prop) {
 }
 
 export function assign(target, ...sources) {
-  if (typeof Object.assign === "function") {
-    // eslint-disable-next-line es5/no-es6-static-methods
-    return Object.assign(target, ...sources);
-  }
-
-  if (target === null || target === undefined) {
-    throw new TypeError("Cannot convert undefined or null to object");
-  }
-
-  var to = Object(target);
-
-  for (var index = 0; index < sources.length; index++) {
-    var nextSource = sources[index];
-
-    if (nextSource !== null && nextSource !== undefined) {
-      for (var nextKey in nextSource) {
-        // Avoid bugs when hasOwnProperty is shadowed
-        if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-          to[nextKey] = nextSource[nextKey];
-        }
-      }
-    }
-  }
-  return to;
+  return Ponyfills.assign(target, ...sources);
 }
 
 export function find(array, predicate) {
-  if (typeof Array.prototype.find === "function") {
-    return Array.prototype.find.call(array, predicate);
-  }
-
-  // 1. Let O be ? ToObject(this value).
-  if (array == null) {
-    throw TypeError('"this" is null or not defined');
-  }
-
-  var o = Object(array);
-
-  // 2. Let len be ? ToLength(? Get(O, "length")).
-  var len = o.length >>> 0;
-
-  // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-  if (typeof predicate !== "function") {
-    throw TypeError("predicate must be a function");
-  }
-
-  // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-  var thisArg = arguments[2];
-
-  // 5. Let k be 0.
-  var k = 0;
-
-  // 6. Repeat, while k < len
-  while (k < len) {
-    // a. Let Pk be ! ToString(k).
-    // b. Let kValue be ? Get(O, Pk).
-    // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-    // d. If testResult is true, return kValue.
-    var kValue = o[k];
-    if (predicate.call(thisArg, kValue, k, o)) {
-      return kValue;
-    }
-    // e. Increase k by 1.
-    k++;
-  }
-
-  // 7. Return undefined.
-  return undefined;
+  return Ponyfills.find.call(array, predicate);
 }
 
 export function findIndex(array, predicate) {
-  if (typeof Array.prototype.findIndex === "function") {
-    return Array.prototype.findIndex.call(array, predicate);
-  }
-
-  // 1. Let O be ? ToObject(this value).
-  if (array == null) {
-    throw new TypeError('"this" is null or not defined');
-  }
-
-  var o = Object(array);
-
-  // 2. Let len be ? ToLength(? Get(O, "length")).
-  var len = o.length >>> 0;
-
-  // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-  if (typeof predicate !== "function") {
-    throw new TypeError("predicate must be a function");
-  }
-
-  // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-  var thisArg = arguments[2];
-
-  // 5. Let k be 0.
-  var k = 0;
-
-  // 6. Repeat, while k < len
-  while (k < len) {
-    // a. Let Pk be ! ToString(k).
-    // b. Let kValue be ? Get(O, Pk).
-    // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-    // d. If testResult is true, return k.
-    var kValue = o[k];
-    if (predicate.call(thisArg, kValue, k, o)) {
-      return k;
-    }
-    // e. Increase k by 1.
-    k++;
-  }
-
-  // 7. Return -1.
-  return -1;
+  return Ponyfills.findIndex.call(array, predicate);
 }
 
 export function is(x, y) {
-  if (typeof Object.is === "function") {
-    // eslint-disable-next-line es5/no-es6-static-methods
-    return Object.is(x, y);
-  }
-  // SameValue algorithm
-  if (x === y) {
-    // Steps 1-5, 7-10
-    // Steps 6.b-6.e: +0 != -0
-    return x !== 0 || 1 / x === 1 / y;
-  } else {
-    // Step 6.a: NaN == NaN
-    // eslint-disable-next-line no-self-compare
-    return x !== x && y !== y;
-  }
+  return Ponyfills.is(x, y);
 }
 
 // NUMBERS AND STRINGS
@@ -231,29 +116,11 @@ export function floorMod(x, n) {
 }
 
 export function padStart(input, n = 2) {
-  if (typeof String.prototype.padStart === "function") {
-    return String.prototype.padStart.call(input, n);
-  }
-
-  if (input.toString().length < n) {
-    let res = "";
-    for (let i = 0; i < n; i++) {
-      res += "0";
-    }
-    res += input;
-    return res.slice(-n);
-  } else {
-    return input.toString();
-  }
+  return Ponyfills.padStart.call(input, n);
 }
 
 export function startsWith(str, search, rawPos) {
-  if (typeof String.prototype.startsWith === "function") {
-    return String.prototype.startsWith.call(str, search, rawPos);
-  }
-
-  var pos = rawPos > 0 ? rawPos | 0 : 0;
-  return str.substring(pos, pos + search.length) === search;
+  return Ponyfills.startsWith.call(str, search, rawPos);
 }
 
 export function parseInteger(string) {
@@ -281,11 +148,7 @@ export function roundTo(number, digits, towardZero = false) {
 }
 
 export function trunc(v) {
-  if (typeof Math.trunc === "function") {
-    // eslint-disable-next-line es5/no-es6-static-methods
-    return Math.trunc(v);
-  }
-  return v < 0 ? Math.ceil(v) : Math.floor(v);
+  return Ponyfills.trunc(v);
 }
 
 export function sign(x) {
@@ -390,12 +253,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
 }
 
 export function isNaN(input) {
-  if (typeof Number.isNaN === "function") {
-    // eslint-disable-next-line es5/no-es6-static-methods
-    return Number.isNaN(input);
-  }
-  // eslint-disable-next-line no-self-compare
-  return typeof input === "number" && input !== input;
+  return Ponyfills.isNaN(input);
 }
 
 // signedOffset('-5', '30') -> -330
