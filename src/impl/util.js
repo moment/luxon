@@ -5,7 +5,7 @@
 */
 
 import { InvalidArgumentError } from "../errors.js";
-import * as Ponyfills from "../ponyfills.js";
+import Ponyfills from "../ponyfills.js";
 
 /**
  * @private

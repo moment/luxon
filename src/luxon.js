@@ -8,7 +8,7 @@ import IANAZone from "./zones/IANAZone.js";
 import InvalidZone from "./zones/invalidZone.js";
 import LocalZone from "./zones/localZone.js";
 import Settings from "./settings.js";
-import * as Ponyfills from "./ponyfills.js";
+import Ponyfills from "./ponyfills.js";
 
 export {
   DateTime,
