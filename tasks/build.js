@@ -5,7 +5,7 @@ const rollup = require("rollup"),
   rollupMinify = require("rollup-plugin-babel-minify"),
   rollupNode = require("@rollup/plugin-node-resolve"),
   rollupCommonJS = require("@rollup/plugin-commonjs"),
-  UglifyJS = require("uglify-js"),
+  UglifyES = require("uglify-es"),
   fs = require("fs");
 
 // For some reason, the minifier is currently producing total giberrish, at least for the global build.
@@ -103,7 +103,7 @@ async function buildLibrary(dest, opts) {
 
   if (opts.minify && !TRUST_MINIFY) {
     const code = fs.readFileSync(`build/${dest}/luxon.js`, "utf8"),
-      ugly = UglifyJS.minify(code, {
+      ugly = UglifyES.minify(code, {
         toplevel: !opts.global,
         output: {
           comments: false
@@ -175,7 +175,8 @@ async function cjsBrowser() {
 async function es6() {
   await buildLibrary("es6", {
     format: "es",
-    compile: false
+    compile: false,
+    minify: true
   });
 }
 
