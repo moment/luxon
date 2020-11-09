@@ -9,7 +9,10 @@ import InvalidZone from "./zones/invalidZone.js";
 import LocalZone from "./zones/localZone.js";
 import Settings from "./settings.js";
 
+const VERSION = "1.25.0";
+
 export {
+  VERSION,
   DateTime,
   Duration,
   Interval,

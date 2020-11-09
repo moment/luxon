@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+./scripts/version || exit $?
+
 npm run build
 npm run docs
 npm run site
