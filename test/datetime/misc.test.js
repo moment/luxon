@@ -21,6 +21,34 @@ test("DateTime#hasSame() checks the unit", () => {
   expect(dt.hasSame(dt.plus({ days: 1 }), "days")).toBe(false);
 });
 
+test("DateTime#hasSame() checks high-order units", () => {
+  const dt1 = DateTime.fromISO("2001-02-03");
+  const dt2 = DateTime.fromISO("2001-05-03");
+  expect(dt1.hasSame(dt2, "year")).toBe(true);
+  expect(dt1.hasSame(dt2, "month")).toBe(false);
+  // Even when days are equal, return false when a higher-order unit differs.
+  expect(dt1.hasSame(dt2, "day")).toBe(false);
+});
+
+// #584
+test("DateTime#hasSame() ignores time offsets and is symmetric", () => {
+  const d1 = DateTime.fromISO("2019-10-02T01:02:03.045+03:00", {
+    zone: "Europe/Helsinki"
+  });
+  const d2 = DateTime.fromISO("2019-10-02T01:02:03.045-05:00", {
+    zone: "America/Chicago"
+  });
+
+  expect(d1.hasSame(d2, "day")).toBe(true);
+  expect(d2.hasSame(d1, "day")).toBe(true);
+  expect(d1.hasSame(d2, "hour")).toBe(true);
+  expect(d2.hasSame(d1, "hour")).toBe(true);
+  expect(d1.hasSame(d2, "second")).toBe(true);
+  expect(d2.hasSame(d1, "second")).toBe(true);
+  expect(d1.hasSame(d2, "millisecond")).toBe(true);
+  expect(d2.hasSame(d1, "millisecond")).toBe(true);
+});
+
 test("DateTime#hasSame() returns false for invalid DateTimes", () => {
   const dt = DateTime.now(),
     invalid = DateTime.invalid("because");
