@@ -68,12 +68,14 @@ test("Duration#toISO handles mixed negative/positive numbers in seconds/millisec
 //------
 
 test("Duration#toISOTime creates a correct string", () => {
-  expect(Duration.fromObject({ hours: 20, milliseconds: 6 }).toISOTime()).toBe("20:00:00.006");
-  expect(Duration.fromObject({ hours: 20 }).toISOTime()).toBe("20:00");
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: "basic" })).toBe("T2000");
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressPrefix: "never" })).toBe("T20:00");
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: false })).toBe("20:00:00");
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressMinutes: true })).toBe("T20");
+  expect(Duration.fromObject({ hours: 20 }).toISOTime()).toBe('20:00:00.000');
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressMilliseconds: true })).toBe('20:00:00');
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: true })).toBe('20:00');
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ includePrefix: true })).toBe('T20:00:00.000');
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' })).toBe('200000.000');
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressMilliseconds: true })).toBe('200000');
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressSeconds: true })).toBe('T2000');
+  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressSeconds: true, includePrefix: false })).toBe('2000');
   expect(Duration.fromObject({ hours: 24 }).toISOTime()).toBe(null);
   expect(Duration.fromObject({ milliseconds: -1 }).toISOTime()).toBe(null);
 });

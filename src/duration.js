@@ -463,17 +463,18 @@ export default class Duration {
    * Note that this will return null if the duration is either negative, or equal to or greater than 24 hours.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Times
    * @param {Object} opts - options
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+   * @param {boolean|null} [opts.includePrefix=null] - include the `T` prefix always, never, or only when required by the spec
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
-   * @param {boolean} [opts.suppressPrefix='auto'] - choose between suppressing the `T` prefix auto, always or never
-   * @param {boolean} [opts.suppressMilliseconds=true] - exclude milliseconds from the format if they're 0
-   * @param {boolean} [opts.suppressSeconds=true] - exclude seconds from the format if they're 0
-   * @param {boolean} [opts.suppressMinutes=false] - exclude minutes from the format if they're 0
-   * @example Duration.fromObject({ hours: 20, milliseconds: 6 }).toISOTime() //=> '20:00:00.006'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime() //=> '20:00'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' }) //=> 'T2000'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressPrefix: 'never' }) //=> 'T20:00'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: false }) //=> '20:00:00'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressMinutes: true }) //=> 'T20'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime() //=> '20:00:00.000'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressMilliseconds: true }) //=> '20:00:00'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: true }) //=> '20:00'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ includePrefix: true }) //=> 'T20:00:00.000'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' }) //=> '200000.000'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressMilliseconds: true }) //=> '200000'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressSeconds: true }) //=> 'T2000'
+   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressSeconds: true, includePrefix: false }) //=> '2000'
    * @return {string}
    */
   toISOTime(opts = {}) {
@@ -481,32 +482,30 @@ export default class Duration {
 
     const millis = this.toMillis();
     if (millis < 0 || millis >= 86400000) return null;
-    
+
     opts = Object.assign({
-      format: "extended",
-      suppressPrefix: "auto",
-      suppressMilliseconds: true,
-      suppressSeconds: true,
-      suppressMinutes: false
+      suppressMilliseconds = false,
+      suppressSeconds = false,
+      includePrefix = null,
+      format = "extended"
     }, opts);
 
     const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
-    
-    let format =
-      value.milliseconds > 0 || !opts.suppressMilliseconds ? "hh:mm:ss.SSS" :
-      value.seconds > 0 || !opts.suppressSeconds ? "hh:mm:ss" :
-      value.minutes > 0 || !opts.suppressMinutes ? "hh:mm" :
-      "hh";
 
-    if (opts.format !== "extended") {
-      format = format.replace(/:/g, "");
+    let fmt = format === "basic" ? "hhmm" : "hh:mm";
+
+    if (!opts.suppressSeconds || value.seconds !== 0 || value.milliseconds !== 0) {
+      fmt += format === "basic" ? "ss" : ":ss";
+      if (!opts.suppressMilliseconds || value.milliseconds !== 0) {
+        fmt += ".SSS";
+      }
     }
 
-    if (opts.suppressPrefix === "never" || opts.suppressPrefix === "auto" && (format === "hh" || format === "hhmm")) {
-      format = "T" + format;
+    if (opts.includePrefix === true || opts.includePrefix == null && fmt === "hhmm") {
+      fmt = "T" + fmt;
     }
 
-    return this.toFormat(format);
+    return value.toFormat(fmt);
   }
 
   /**

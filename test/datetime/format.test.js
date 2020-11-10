@@ -133,10 +133,6 @@ test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if 
   expect(dt.set({ second: 0, millisecond: 0 }).toISOTime({ suppressSeconds: true })).toBe("09:23Z");
 });
 
-test("DateTime#toISOTime({suppressSeconds: true}) will suppress milliseconds if they're zero", () => {
-  expect(dt.set({ second: 0, millisecond: 0 }).toISOTime({ suppressSeconds: true })).toBe("09:23Z");
-});
-
 test("DateTime#toISOTime() handles other offsets", () => {
   expect(dt.setZone("America/New_York").toISOTime()).toBe("05:23:54.123-04:00");
 });
@@ -147,6 +143,25 @@ test("DateTime#toISOTime() can omit the offset", () => {
 
 test("DateTime#toISOTime() can output the basic format", () => {
   expect(dt.toISOTime({ format: "basic" })).toBe("092354.123Z");
+  expect(dt.toISOTime({ format: "basic", suppressMilliseconds: true })).toBe("092354Z");
+  expect(dt.toISOTime({ format: "basic", suppressSeconds: true })).toBe("T0923Z");
+});
+
+test("DateTime#toISOTime({includePrefix: true}) will always include the prefix", () => {
+  expect(dt.toISOTime({ includePrefix: true })).toBe("T09:23:54.123Z");
+  expect(dt.toISOTime({ format: "basic", includePrefix: true })).toBe("T092354.123Z");
+});
+
+test("DateTime#toISOTime({includePrefix: false}) will never include the prefix", () => {
+  expect(dt.toISOTime({ suppressSeconds: true, includePrefix: false })).toBe("09:23Z");
+  expect(dt.toISOTime({ format: "basic", suppressSeconds: true, includePrefix: false })).toBe("0923Z");
+});
+
+test("DateTime#toISOTime({includePrefix: null}) will only include the prefix if needed", () => {
+  expect(dt.toISOTime({ suppressSeconds: true, includePrefix: null })).toBe("09:23Z");
+  expect(dt.toISOTime({ format: "basic", includePrefix: null })).toBe("092354.123Z");
+  expect(dt.toISOTime({ format: "basic", suppressMilliseconds: true, includePrefix: null })).toBe("092354Z");
+  expect(dt.toISOTime({ format: "basic", suppressSeconds: true, includePrefix: null })).toBe("T0923Z");
 });
 
 test("DateTime#toISOTime() returns null for invalid DateTimes", () => {
