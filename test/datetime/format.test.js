@@ -144,7 +144,7 @@ test("DateTime#toISOTime() can omit the offset", () => {
 test("DateTime#toISOTime() can output the basic format", () => {
   expect(dt.toISOTime({ format: "basic" })).toBe("092354.123Z");
   expect(dt.toISOTime({ format: "basic", suppressMilliseconds: true })).toBe("092354Z");
-  expect(dt.toISOTime({ format: "basic", suppressSeconds: true })).toBe("T0923Z");
+  expect(dt.toISOTime({ format: "basic", suppressSeconds: true })).toBe("0923Z");
 });
 
 test("DateTime#toISOTime({includePrefix: true}) will always include the prefix", () => {
@@ -155,13 +155,6 @@ test("DateTime#toISOTime({includePrefix: true}) will always include the prefix",
 test("DateTime#toISOTime({includePrefix: false}) will never include the prefix", () => {
   expect(dt.toISOTime({ suppressSeconds: true, includePrefix: false })).toBe("09:23Z");
   expect(dt.toISOTime({ format: "basic", suppressSeconds: true, includePrefix: false })).toBe("0923Z");
-});
-
-test("DateTime#toISOTime({includePrefix: null}) will only include the prefix if needed", () => {
-  expect(dt.toISOTime({ suppressSeconds: true, includePrefix: null })).toBe("09:23Z");
-  expect(dt.toISOTime({ format: "basic", includePrefix: null })).toBe("092354.123Z");
-  expect(dt.toISOTime({ format: "basic", suppressMilliseconds: true, includePrefix: null })).toBe("092354Z");
-  expect(dt.toISOTime({ format: "basic", suppressSeconds: true, includePrefix: null })).toBe("T0923Z");
 });
 
 test("DateTime#toISOTime() returns null for invalid DateTimes", () => {

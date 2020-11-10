@@ -465,16 +465,13 @@ export default class Duration {
    * @param {Object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
-   * @param {boolean|null} [opts.includePrefix=null] - include the `T` prefix always, never, or only when required by the spec
+   * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @example Duration.fromObject({ hours: 20 }).toISOTime() //=> '20:00:00.000'
    * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressMilliseconds: true }) //=> '20:00:00'
    * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: true }) //=> '20:00'
    * @example Duration.fromObject({ hours: 20 }).toISOTime({ includePrefix: true }) //=> 'T20:00:00.000'
    * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' }) //=> '200000.000'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressMilliseconds: true }) //=> '200000'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressSeconds: true }) //=> 'T2000'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressSeconds: true, includePrefix: false }) //=> '2000'
    * @return {string}
    */
   toISOTime(opts = {}) {
@@ -486,7 +483,7 @@ export default class Duration {
     opts = Object.assign({
       suppressMilliseconds = false,
       suppressSeconds = false,
-      includePrefix = null,
+      includePrefix = false,
       format = "extended"
     }, opts);
 
@@ -501,7 +498,7 @@ export default class Duration {
       }
     }
 
-    if (opts.includePrefix === true || opts.includePrefix == null && fmt === "hhmm") {
+    if (opts.includePrefix) {
       fmt = "T" + fmt;
     }
 
