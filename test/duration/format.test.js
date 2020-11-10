@@ -67,15 +67,33 @@ test("Duration#toISO handles mixed negative/positive numbers in seconds/millisec
 // #toISOTime()
 //------
 
-test("Duration#toISOTime creates a correct string", () => {
-  expect(Duration.fromObject({ hours: 20 }).toISOTime()).toBe('20:00:00.000');
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressMilliseconds: true })).toBe('20:00:00');
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: true })).toBe('20:00');
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ includePrefix: true })).toBe('T20:00:00.000');
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' })).toBe('200000.000');
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressMilliseconds: true })).toBe('200000');
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', suppressSeconds: true })).toBe('2000');
-  expect(Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic', includePrefix: true })).toBe('T200000.000');
+test("Duration#toISOTime creates a correct extended string", () => {
+  expect(Duration.fromObject({ hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }).toISOTime()).toBe('11:22:33.444');
+});
+
+test("Duration#toISOTime suppresses milliseconds correctly", () => {
+  expect(Duration.fromObject({ hours: 11, milliseconds: 444 }).toISOTime({ suppressMilliseconds: true })).toBe('11:00:00.444');
+  expect(Duration.fromObject({ hours: 11, seconds: 33 }).toISOTime({ suppressMilliseconds: true })).toBe('11:00:33');
+  expect(Duration.fromObject({ hours: 11 }).toISOTime({ suppressMilliseconds: true })).toBe('11:00:00');
+});
+
+test("Duration#toISOTime suppresses seconds correctly", () => {
+  expect(Duration.fromObject({ hours: 11, milliseconds: 444 }).toISOTime({ suppressSeconds: true })).toBe('11:00:00.444');
+  expect(Duration.fromObject({ hours: 11, seconds: 33 }).toISOTime({ suppressSeconds: true })).toBe('11:00:33.000');
+  expect(Duration.fromObject({ hours: 11 }).toISOTime({ suppressSeconds: true })).toBe('11:00');
+});
+
+test("Duration#toISOTime includes the prefix correctly", () => {
+  expect(Duration.fromObject({ hours: 11 }).toISOTime({ includePrefix: true })).toBe('T11:00:00.000');
+});
+
+test("Duration#toISOTime creates a correct basic string", () => {
+  expect(Duration.fromObject({ hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }).toISOTime({ format: 'basic' })).toBe('112233.444');
+  expect(Duration.fromObject({ hours: 11 }).toISOTime({ format: 'basic', suppressMilliseconds: true })).toBe('110000');
+  expect(Duration.fromObject({ hours: 11 }).toISOTime({ format: 'basic', suppressSeconds: true })).toBe('1100');
+});
+
+test("Duration#toISOTime returns null if the value is outside the range of one day", () => {
   expect(Duration.fromObject({ hours: 24 }).toISOTime()).toBe(null);
   expect(Duration.fromObject({ milliseconds: -1 }).toISOTime()).toBe(null);
 });
