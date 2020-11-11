@@ -284,11 +284,11 @@ export default class Duration {
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Times
-   * @example Duration.fromISOTime('20:00:00.006').toObject() //=> { hours: 20, minutes: 0, seconds: 0, milliseconds: 6 }
-   * @example Duration.fromISOTime('20:00').toObject() //=> { hours: 20, minutes: 0 }
-   * @example Duration.fromISOTime('2000').toObject() //=> { hours: 20, minutes: 0 }
-   * @example Duration.fromISOTime('T20:00').toObject() //=> { hours: 20, minutes: 0 }
-   * @example Duration.fromISOTime('T20').toObject() //=> { hours: 20 }
+   * @example Duration.fromISOTime('11:22:33.444').toObject() //=> { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }
+   * @example Duration.fromISOTime('11:00').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('T11:00').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('1100').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('T1100').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
    * @return {Duration}
    */
   static fromISOTime(text, opts) {
@@ -457,21 +457,21 @@ export default class Duration {
     if (s === "P") s += "T0S";
     return s;
   }
-  
+
   /**
    * Returns an ISO 8601-compliant string representation of this Duration, formatted as a time of day.
-   * Note that this will return null if the duration is either negative, or equal to or greater than 24 hours.
+   * Note that this will return null if the duration is invalid, negative, or equal to or greater than 24 hours.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Times
    * @param {Object} opts - options
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
-   * @example Duration.fromObject({ hours: 20 }).toISOTime() //=> '20:00:00.000'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressMilliseconds: true }) //=> '20:00:00'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ suppressSeconds: true }) //=> '20:00'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ includePrefix: true }) //=> 'T20:00:00.000'
-   * @example Duration.fromObject({ hours: 20 }).toISOTime({ format: 'basic' }) //=> '200000.000'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime() //=> '11:00:00.000'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressMilliseconds: true }) //=> '11:00:00'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressSeconds: true }) //=> '11:00'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ includePrefix: true }) //=> 'T11:00:00.000'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ format: 'basic' }) //=> '110000.000'
    * @return {string}
    */
   toISOTime(opts = {}) {
