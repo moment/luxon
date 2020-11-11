@@ -500,11 +500,13 @@ export default class Duration {
       }
     }
 
+    const str = value.toFormat(fmt);
+
     if (opts.includePrefix) {
-      fmt = "T" + fmt;
+      str = "T" + str;
     }
 
-    return value.toFormat(fmt);
+    return str;
   }
 
   /**

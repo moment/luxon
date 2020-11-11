@@ -212,10 +212,6 @@ function toTechTimeFormat(
     }
   }
 
-  if (includePrefix) {
-    fmt = "T" + fmt;
-  }
-
   if ((includeZone || includeOffset) && spaceZone) {
     fmt += " ";
   }
@@ -226,7 +222,13 @@ function toTechTimeFormat(
     fmt += format === "basic" ? "ZZZ" : "ZZ";
   }
 
-  return toTechFormat(dt, fmt);
+  const str = toTechFormat(dt, fmt);
+
+  if (includePrefix) {
+    str = "T" + str;
+  }
+
+  return str;
 }
 
 // defaults for unspecified units in the supported calendars

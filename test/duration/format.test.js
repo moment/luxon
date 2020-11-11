@@ -69,7 +69,7 @@ test("Duration#toISO handles mixed negative/positive numbers in seconds/millisec
 
 const hhmmssSSS = Duration.fromObject({ hours: 11, minutes: 22, seconds: 33, milliseconds: 444 });
 const hhSSS = Duration.fromObject({ hours: 11, milliseconds: 444 });
-const hhss = Duration.fromObject({ hours: 11, seconds: 22 });
+const hhss = Duration.fromObject({ hours: 11, seconds: 33 });
 const hh = Duration.fromObject({ hours: 11 });
 
 test("Duration#toISOTime creates a correct extended string", () => {
