@@ -481,10 +481,10 @@ export default class Duration {
     if (millis < 0 || millis >= 86400000) return null;
 
     opts = Object.assign({
-      suppressMilliseconds = false,
-      suppressSeconds = false,
-      includePrefix = false,
-      format = "extended"
+      suppressMilliseconds: false,
+      suppressSeconds: false,
+      includePrefix: false,
+      format: "extended"
     }, opts);
 
     const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
