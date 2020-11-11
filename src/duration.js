@@ -487,7 +487,8 @@ export default class Duration {
         includePrefix: false,
         format: "extended"
       },
-      opts);
+      opts
+    );
 
     const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
 
@@ -500,7 +501,7 @@ export default class Duration {
       }
     }
 
-    const str = value.toFormat(fmt);
+    let str = value.toFormat(fmt);
 
     if (opts.includePrefix) {
       str = "T" + str;

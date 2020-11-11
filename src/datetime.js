@@ -222,7 +222,7 @@ function toTechTimeFormat(
     fmt += format === "basic" ? "ZZZ" : "ZZ";
   }
 
-  const str = toTechFormat(dt, fmt);
+  let str = toTechFormat(dt, fmt);
 
   if (includePrefix) {
     str = "T" + str;
