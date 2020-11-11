@@ -480,19 +480,21 @@ export default class Duration {
     const millis = this.toMillis();
     if (millis < 0 || millis >= 86400000) return null;
 
-    opts = Object.assign({
-      suppressMilliseconds: false,
-      suppressSeconds: false,
-      includePrefix: false,
-      format: "extended"
-    }, opts);
+    opts = Object.assign(
+      {
+        suppressMilliseconds: false,
+        suppressSeconds: false,
+        includePrefix: false,
+        format: "extended"
+      },
+      opts);
 
     const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
 
-    let fmt = format === "basic" ? "hhmm" : "hh:mm";
+    let fmt = opts.format === "basic" ? "hhmm" : "hh:mm";
 
     if (!opts.suppressSeconds || value.seconds !== 0 || value.milliseconds !== 0) {
-      fmt += format === "basic" ? "ss" : ":ss";
+      fmt += opts.format === "basic" ? "ss" : ":ss";
       if (!opts.suppressMilliseconds || value.milliseconds !== 0) {
         fmt += ".SSS";
       }
