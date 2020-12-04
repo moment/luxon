@@ -227,6 +227,10 @@ const partTypeStyleToTokenVal = {
     numeric: "s",
     "2-digit": "ss",
   },
+  timeZoneName: {
+    long: "ZZZZZ",
+    short: "ZZZ",
+  },
 };
 
 function tokenForPart(part, locale, formatOpts) {
@@ -379,17 +383,9 @@ function maybeExpandMacroToken(token, locale) {
   }
 
   const formatOpts = Formatter.macroTokenToFormatOpts(token.val);
+  const tokens = formatOptsToTokens(formatOpts, locale);
 
-  if (!formatOpts) {
-    return token;
-  }
-
-  const formatter = Formatter.create(locale, formatOpts);
-  const parts = formatter.formatDateTimeParts(getDummyDateTime());
-
-  const tokens = parts.map((p) => tokenForPart(p, locale, formatOpts));
-
-  if (tokens.includes(undefined)) {
+  if (tokens == null || tokens.includes(undefined)) {
     return token;
   }
 
@@ -430,4 +426,14 @@ export function explainFromTokens(locale, input, format) {
 export function parseFromTokens(locale, input, format) {
   const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
   return [result, zone, specificOffset, invalidReason];
+}
+
+export function formatOptsToTokens(formatOpts, locale) {
+  if (!formatOpts) {
+    return null;
+  }
+
+  const formatter = Formatter.create(locale, formatOpts);
+  const parts = formatter.formatDateTimeParts(getDummyDateTime());
+  return parts.map((p) => tokenForPart(p, locale, formatOpts));
 }

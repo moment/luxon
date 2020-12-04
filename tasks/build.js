@@ -151,8 +151,8 @@ async function cjsBrowser() {
 async function es6() {
   await buildLibrary("es6", {
     format: "es",
-    compile: false,
     minify: true,
+    compile: false,
   });
 }
 
