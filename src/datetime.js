@@ -22,7 +22,7 @@ import {
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
 import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
-import { parseFromTokens, explainFromTokens } from "./impl/tokenParser.js";
+import { parseFromTokens, explainFromTokens, formatOptsToTokens } from "./impl/tokenParser.js";
 import {
   gregorianToWeek,
   weekToGregorian,
@@ -864,7 +864,7 @@ export default class DateTime {
 
   /**
    * Create an invalid DateTime.
-   * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
+   * @param {DateTime} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
    * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
    * @return {DateTime}
    */
@@ -889,6 +889,21 @@ export default class DateTime {
    */
   static isDateTime(o) {
     return (o && o.isLuxonDateTime) || false;
+  }
+
+  /**
+   * @param formatOpts
+   * @param localeOpts
+   * @returns {string}
+   */
+  static parseFormatForOpts(formatOpts, localeOpts = {}) {
+    const tokenList = formatOptsToTokens(formatOpts, Locale.fromObject(localeOpts));
+    return !tokenList
+      ? null
+      : tokenList
+          .map(t => (t ? t.val : null))
+          .join("")
+          .trim();
   }
 
   // INFO
