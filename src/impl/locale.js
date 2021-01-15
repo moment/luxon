@@ -418,7 +418,7 @@ export default class Locale {
     return listStuff(this, length, defaultOK, English.eras, () => {
       const intl = { era: length };
 
-      // This is utter bullshit. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
+      // This is problematic. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
       // to definitely enumerate them.
       if (!this.eraCache[length]) {
         this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
