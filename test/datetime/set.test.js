@@ -123,6 +123,12 @@ test("DateTime#set throws for metadata", () => {
   expect(() => dt.set({ invalid: true })).toThrow();
 });
 
+test("DateTime#set throws for mixing incompatible units", () => {
+  expect(() => dt.set({ year: 2020, weekNumber: 22 })).toThrow();
+  expect(() => dt.set({ ordinal: 200, weekNumber: 22 })).toThrow();
+  expect(() => dt.set({ ordinal: 200, month: 8 })).toThrow();
+});
+
 test("DateTime#set maintains invalidity", () => {
   expect(DateTime.invalid("because").set({ ordinal: 200 }).isValid).toBe(false);
 });
