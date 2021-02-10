@@ -188,7 +188,7 @@ class PolyDateFormatter {
       // 1. Outside of the supported range Etc/GMT-14 to Etc/GMT+12.
       // 2. Not a whole hour, e.g. UTC+4:30.
       const gmtOffset = -1 * (dt.offset / 60);
-      if (gmtOffset >= -14 && gmtOffset < 12 && gmtOffset % 1 === 0) {
+      if (gmtOffset >= -14 && gmtOffset <= 12 && gmtOffset % 1 === 0) {
         z = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
         this.dt = dt;
       } else {
