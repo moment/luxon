@@ -99,11 +99,17 @@ export function floorMod(x, n) {
 }
 
 export function padStart(input, n = 2) {
-  if (input.toString().length < n) {
-    return ("0".repeat(n) + input).slice(-n);
+  const minus = input < 0 ? "-" : "";
+  const target = minus ? input * -1 : input;
+  let result;
+
+  if (target.toString().length < n) {
+    result = ("0".repeat(n) + target).slice(-n);
   } else {
-    return input.toString();
+    result = target.toString();
   }
+
+  return `${minus}${result}`;
 }
 
 export function parseInteger(string) {

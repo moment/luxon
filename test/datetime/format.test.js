@@ -91,6 +91,15 @@ test("DateTime#toISODate() returns ISO 8601 date in format [±YYYYY]", () => {
   );
 });
 
+test("DateTime#toISODate() correctly pads negative years", () => {
+  expect(DateTime.fromObject({ year: -1, month: 1, day: 1, zone: "utc" }).toISODate()).toBe(
+    "-0001-01-01"
+  );
+  expect(DateTime.fromObject({ year: -10, month: 1, day: 1, zone: "utc" }).toISODate()).toBe(
+    "-0010-01-01"
+  );
+});
+
 //------
 // #toISOWeekDate()
 //------
