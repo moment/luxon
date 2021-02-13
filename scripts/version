@@ -5,9 +5,16 @@ abort() {
   exit 1
 }
 
+if [[ -x $(which ggrep) ]]
+then
+  grepper='ggrep'
+else
+  grepper='grep'
+fi
+
 PACKAGE_VERSION=$(node -p "require('./package.json').version")
 PACKAGE_LOCK_VERSION=$(node -p "require('./package-lock.json').version")
-EXPORTED_VERSION=$(grep -oP "(?<=const VERSION = \").*(?=\";)" ./src/luxon.js)
+EXPORTED_VERSION=$($grepper -oP "(?<=const VERSION = \").*(?=\";)" ./src/luxon.js)
 
 if [ $PACKAGE_VERSION != $PACKAGE_LOCK_VERSION ]; then
   abort "package-lock.json's version differs from package.json's"
