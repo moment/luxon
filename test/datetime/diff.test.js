@@ -25,6 +25,14 @@ test("DateTime#diff makes simple diffs", () => {
     years: 1
   });
 
+  expect(diffObjs({ year: 2016, month: 4 }, { year: 2016, month: 1 }, "quarters")).toEqual({
+    quarters: 1
+  });
+
+  expect(diffObjs({ year: 2017, month: 10 }, { year: 2017, month: 4 }, "quarters")).toEqual({
+    quarters: 2
+  });
+
   expect(
     diffObjs({ year: 2016, month: 6, day: 28 }, { year: 2016, month: 5, day: 28 }, "months")
   ).toEqual({ months: 1 });
