@@ -48,6 +48,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/tour.html"><a href="manual/tour.html" data-ice="link">A quick tour</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#get-the-current-date-and-time" data-ice="link">Get the current date and time</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
@@ -151,6 +152,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#js-date-object" data-ice="link">JS Date Object</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
@@ -244,6 +246,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
@@ -407,13 +410,13 @@ node --icu-data-dir=./node_modules/full-icu</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>A quick tour</h1><p>Luxon is a library that makes it easier to work with dates and times in Javascript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We&apos;re going to talk about the most immediately useful subset of that interface.</p><p>This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to <a href="./manual/../identifiers.html">dive into them</a>.</p><h2>Your first DateTime</h2><p>The most important class in Luxon is <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime</a>. A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here&apos;s one that represents May 15, 2017 at 8:30 in the morning:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local(2017, 5, 15, 8, 30);</code>
-</code></pre><p>To get the current time, just do this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var now = DateTime.local();</code>
-</code></pre><p><a href="./manual/../class/src/datetime.js~DateTime.html#static-method-local">DateTime.local</a> takes any number of arguments, all the way out to milliseconds. Underneath, this is just a Javascript Date object. But we&apos;ve decorated it with lots of useful methods.</p><h2>Creating a DateTime</h2><p>There are lots of ways to create a DateTime by parsing strings or constructing them out of parts. You&apos;ve already seen one, <code>DateTime.local()</code>, but let&apos;s talk about two more.</p><h3>Create from an object</h3><p>The most powerful way to create a DateTime instance is to provide an object containing all the information:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.fromObject({day: 22, hour: 12, zone: &apos;America/Los_Angeles&apos;, numberingSystem: &apos;beng&apos;})</code>
+        <div data-ice="card"><h1>A quick tour</h1><p>Luxon is a library that makes it easier to work with dates and times in JavaScript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We&apos;re going to talk about the most immediately useful subset of that interface.</p><p>This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to <a href="./manual/../identifiers.html">dive into them</a>.</p><h2>Your first DateTime</h2><p>The most important class in Luxon is <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime</a>. A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here&apos;s one that represents May 15, 2017 at 8:30 in the morning in the local time zone:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local(2017, 5, 15, 8, 30);</code>
+</code></pre><p><a href="./manual/../class/src/datetime.js~DateTime.html#static-method-local">DateTime.local</a> takes any number of arguments, all the way out to milliseconds. Underneath, this is similar to a JavaScript Date object. But we&apos;ve decorated it with lots of useful methods.</p><h2>Creating a DateTime</h2><p>There are lots of ways to create a DateTime by parsing strings or constructing them out of parts. You&apos;ve already seen one, <code>DateTime.local()</code>, but let&apos;s talk about three more.</p><h3>Get the current date and time</h3><p>To get the current time, just do this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var now = DateTime.now();</code>
+</code></pre><p>Calling <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-now">DateTime.now</a> is equivalent to calling <code>local()</code> with no parameter.</p><h3>Create from an object</h3><p>The most powerful way to create a DateTime instance is to provide an object containing all the information:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.fromObject({day: 22, hour: 12, zone: &apos;America/Los_Angeles&apos;, numberingSystem: &apos;beng&apos;})</code>
 </code></pre><p>Don&apos;t worry too much about the properties you don&apos;t understand yet; the point is that you can set every attribute of a DateTime when you create it. One thing to notice from the example is that we just set the day and hour; the year and month get defaulted to the current one and the minutes, seconds, and milliseconds get defaulted to 0. So <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromObject">DateTime.fromObject</a> is sort of the power user interface.</p><h3>Parse from ISO 8601</h3><p>Luxon has lots of parsing capabilities, but the most important one is parsing <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> strings, because they&apos;re more-or-less the standard wire format for dates and times. Use <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">DateTime.fromISO</a>.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&quot;2017-05-15&quot;)          //=&gt; May 15, 2017 at midnight
 DateTime.fromISO(&quot;2017-05-15T08:30:00&quot;) //=&gt; May 15, 2017 at 8:30</code>
-</code></pre><p>You can parse a bunch of other formats, including <a href="./manual/parsing.html">your own custom ones</a>.</p><h2>Getting to know your DateTime instance</h2><p>Now that we&apos;ve made some DateTimes, let&apos;s see what we can ask of it.</p><h3>toString</h3><p>The first thing we want to see is the DateTime as a string. Luxon returns ISO 8601 strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toString() //=&gt; &apos;2017-09-14T03:20:34.091-04:00&apos;</code>
-</code></pre><h3>Getting at components</h3><p>We can get at the components of the time individually through getters. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.local()
+</code></pre><p>You can parse a bunch of other formats, including <a href="./manual/parsing.html">your own custom ones</a>.</p><h2>Getting to know your DateTime instance</h2><p>Now that we&apos;ve made some DateTimes, let&apos;s see what we can ask of it.</p><h3>toString</h3><p>The first thing we want to see is the DateTime as a string. Luxon returns ISO 8601 strings:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().toString(); //=&gt; &apos;2017-09-14T03:20:34.091-04:00&apos;</code>
+</code></pre><h3>Getting at components</h3><p>We can get at the components of the time individually through getters. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.now();
 dt.year     //=&gt; 2017
 dt.month    //=&gt; 9
 dt.day      //=&gt; 14
@@ -425,26 +428,26 @@ dt.daysInMonth  //=&gt; 30</code>
 </code></pre><p>There are lots more!</p><h2>Formatting your DateTime</h2><p>You may want to output your DateTime to a string for a machine or a human to read. Luxon has lots of tools for this, but two of them are most important. If you want to format a human-readable string, use <code>toLocaleString</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toLocaleString()      //=&gt; &apos;9/14/2017&apos;
 dt.toLocaleString(DateTime.DATETIME_MED) //=&gt; &apos;September 14, 3:21 AM&apos;</code>
 </code></pre><p>This works well across different locales (languages) by letting the browser figure out what order the different parts go in and how to punctuate them.</p><p>If you want the string read by another program, you almost certainly want to use <code>toISO</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.toISO() //=&gt; &apos;2017-09-14T03:21:47.070-04:00&apos;</code>
-</code></pre><p>Custom formats are also supported. See <a href="./manual/formatting">formatting</a>.</p><h2>Transforming your DateTime</h2><h3>Immutability</h3><p>Luxon objects are immutable. That means that you can&apos;t alter them in place, just create altered copies. Throughout the documentation, we use terms like &quot;alter&quot;, &quot;change&quot;, and &quot;set&quot; loosely, but rest assured we mean &quot;create a new instance with different properties&quot;.</p><h3>Math</h3><p>This is easier to show than to tell. All of these calls return new DateTime instances:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
-dt.plus({hours: 3, minutes: 2});
-dt.minus({days: 7});
+</code></pre><p>Custom formats are also supported. See <a href="./manual/formatting">formatting</a>.</p><h2>Transforming your DateTime</h2><h3>Immutability</h3><p>Luxon objects are immutable. That means that you can&apos;t alter them in place, just create altered copies. Throughout the documentation, we use terms like &quot;alter&quot;, &quot;change&quot;, and &quot;set&quot; loosely, but rest assured we mean &quot;create a new instance with different properties&quot;.</p><h3>Math</h3><p>This is easier to show than to tell. All of these calls return new DateTime instances:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now();
+dt.plus({ hours: 3, minutes: 2 });
+dt.minus({ days: 7 });
 dt.startOf(&apos;day&apos;);
 dt.endOf(&apos;hour&apos;);</code>
-</code></pre><h3>Set</h3><p>You can create new instances by overriding specific properties:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+</code></pre><h3>Set</h3><p>You can create new instances by overriding specific properties:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now();
 dt.set({hour: 3}).hour   //=&gt; 3</code>
-</code></pre><h2>Intl</h2><p>Luxon provides several different Intl capabilities, but the most important one is in formatting:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+</code></pre><h2>Intl</h2><p>Luxon provides several different Intl capabilities, but the most important one is in formatting:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now();
 var f = {month: &apos;long&apos;, day: &apos;numeric&apos;};
 dt.setLocale(&apos;fr&apos;).toLocaleString(f)      //=&gt; &apos;14 septembre&apos;
 dt.setLocale(&apos;en-GB&apos;).toLocaleString(f)   //=&gt; &apos;14 September&apos;
 dt.setLocale(&apos;en-US&apos;).toLocaleString(f)  //=&gt; &apos;September 14&apos;</code>
 </code></pre><p>Luxon&apos;s Info class can also list months or weekdays for different locales:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&apos;long&apos;, {locale: &apos;fr&apos;}) //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, &apos;mars&apos;, &apos;avril&apos;, ... ]</code>
 </code></pre><h2>Time zones</h2><p>Luxon supports time zones. There&apos;s a whole <a href="./manual/zones">big section</a> about it. But briefly, you can create DateTimes in specific zones and change their zones:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({zone: &apos;America/Los_Angeles&apos;}) // now, but expressed in LA&apos;s local time
-DateTime.local().setZone(&apos;America/Los_Angeles&apos;) // same</code>
+DateTime.now().setZone(&quot;America/Los_Angeles&quot;); // same</code>
 </code></pre><p>Luxon also supports UTC directly:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.utc(2017, 5, 15);
-DateTime.utc();
-DateTime.local().toUTC();
+DateTime.utc(); // now, in UTC time zone
+DateTime.now().toUTC();
 DateTime.utc().toLocal();</code>
-</code></pre><h2>Durations</h2><p>The Duration class represents a quantity of time such as &quot;2 hours and 7 minutes&quot;. You create them like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({hours: 2, minutes: 7});</code>
+</code></pre><h2>Durations</h2><p>The Duration class represents a quantity of time such as &quot;2 hours and 7 minutes&quot;. You create them like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ hours: 2, minutes: 7 });</code>
 </code></pre><p>They can be add or subtracted from DateTimes like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">dt.plus(dur);</code>
 </code></pre><p>They have getters just like DateTime:</p><pre><code class="lang-js"><code class="source-code prettyprint">dur.hours   //=&gt; 2
 dur.minutes //=&gt; 7
@@ -452,7 +455,7 @@ dur.seconds //=&gt; 0</code>
 </code></pre><p>And some other useful stuff:</p><pre><code class="lang-js"><code class="source-code prettyprint">dur.as(&apos;seconds&apos;) //=&gt; 7620
 dur.toObject()    //=&gt; { hours: 2, minutes: 7 }
 dur.toISO()       //=&gt; &apos;PT2H7M&apos;</code>
-</code></pre><p>You can also format, negate, and normalize them. See it all in the <a href="./manual/../class/src/duration.js~Duration.html">Duration API docs</a>.</p><h2>Intervals</h2><p>Intervals are a specific period of time, such as &quot;between now and midnight&quot;. They&apos;re really a wrapper for two DateTimes that form its endpoints. Here&apos;s what you can do with them:</p><pre><code class="lang-js"><code class="source-code prettyprint">now = DateTime.local();
+</code></pre><p>You can also format, negate, and normalize them. See it all in the <a href="./manual/../class/src/duration.js~Duration.html">Duration API docs</a>.</p><h2>Intervals</h2><p>Intervals are a specific period of time, such as &quot;between now and midnight&quot;. They&apos;re really a wrapper for two DateTimes that form its endpoints. Here&apos;s what you can do with them:</p><pre><code class="lang-js"><code class="source-code prettyprint">now = DateTime.now();
 later = DateTime.local(2020, 10, 12);
 i = Interval.fromDateTimes(now, later);
 
@@ -468,16 +471,16 @@ i.toString()    //=&gt; &apos;[2017-09-14T04:07:11.532-04:00 &#x2013; 2020-10-12
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local()
+        <div data-ice="card"><h1>Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now()
   .setLocale(&quot;el&quot;)
   .toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
 </code></pre><h2>Making sure you have access to other locales</h2><p>Please see the <a href="./manual/install.html">install guide</a> for instructions on making sure your platform has access to the Intl APIs and the ICU data to power it. This especially important for Node, which doesn&apos;t ship with ICU data by default.</p><h2>How locales work</h2><p>Luxon DateTimes can be configured using <a href="https://tools.ietf.org/html/rfc5646">BCP 47</a> locale strings specifying the language to use generating or interpreting strings. The native Intl API provides the actual internationalized strings; Luxon just wraps it with a nice layer of convenience and integrates the localization functionality into the rest of Luxon. The Mozilla MDN Intl docs have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation">good description</a> of how the <code>locale</code> argument works. In Luxon, the methods are different but the semantics are the same, except in that Luxon allows you to specify a numbering system and output calendar independently of the locale string.</p><p>The rest of this document will concentrate on what Luxon does when provided with locale information.</p><h2>Setting the locale</h2><p><code>locale</code> is a property of Luxon object. Thus, locale is a sort of setting on the DateTime object, as opposed to an argument you provide the different methods that need internationalized.</p><p>You can generally set it at construction time:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.fromISO(&quot;2017-09-24&quot;, { locale: &quot;fr&quot; });
 dt.locale; //=&gt; &apos;fr&apos;</code>
-</code></pre><p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p><p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&quot;fr&quot;).locale; //=&gt; &apos;fr&apos;</code>
-</code></pre><p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
-</code></pre><h2>Default locale</h2><h3>Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</p><p>As a result, <code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will by default generate strings in the user&apos;s locale.</p><p>However, note that <code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in. There&apos;s an exception, though: <code>DateTime#toFormat</code> can take &quot;macro&quot; formats like &quot;D&quot; that produces localized strings as part of a larger string. These <em>do</em> default to the system locale because their entire purpose is to be provide localized strings.</p><h3>Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
-DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
-</code></pre><p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p><h3>Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
+</code></pre><p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p><p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().setLocale(&quot;fr&quot;).locale; //=&gt; &apos;fr&apos;</code>
+</code></pre><p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
+</code></pre><h2>Default locale</h2><h3>Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</p><p>As a result, <code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will by default generate strings in the user&apos;s locale.</p><p>However, note that <code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in. There&apos;s an exception, though: <code>DateTime#toFormat</code> can take &quot;macro&quot; formats like &quot;D&quot; that produces localized strings as part of a larger string. These <em>do</em> default to the system locale because their entire purpose is to be provide localized strings.</p><h3>Setting the default</h3><p>You can set a default locale so that new instances will always be created with the specified locale:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
+DateTime.now().locale; //=&gt; &apos;fr&apos;</code>
+</code></pre><p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p><h3>Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = DateTime.now().resolvedLocaleOpts().locale;</code>
 </code></pre><h2>Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ locale: &quot;fr-co&quot; }).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
 //     numberingSystem: &apos;latn&apos;,
 //     outputCalendar: &apos;gregory&apos; }</code>
@@ -488,14 +491,14 @@ DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
 </code></pre><h3>Listing</h3><p>Some of the methods in the <a href="./manual/../class/src/info.js~Info.html">Info</a> class let you list strings like months, weekdays, and eras, and they can be localized:</p><pre><code class="lang-js"><code class="source-code prettyprint">Info.months(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;janvier&apos;, &apos;f&#xE9;vrier&apos;, ...
 Info.weekdays(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;lundi&apos;, &apos;mardi&apos;, ...
 Info.eras(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
-</code></pre><h2>numberingSystem</h2><p>DateTimes also have a <code>numberingSystem</code> setting that lets you control what system of numerals is used in formatting. In general, you shouldn&apos;t override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setLocale(&quot;ar&quot;);
+</code></pre><h2>numberingSystem</h2><p>DateTimes also have a <code>numberingSystem</code> setting that lets you control what system of numerals is used in formatting. In general, you shouldn&apos;t override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now().setLocale(&quot;ar&quot;);
 
 dt.resolvedLocaleOpts(); //=&gt; { locale: &apos;ar&apos;,
 //     numberingSystem: &apos;arab&apos;,
 //     outputCalendar: &apos;gregory&apos; }
 
 dt.toLocaleString(); //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
-</code></pre><p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().reconfigure({ locale: &quot;it&quot;, numberingSystem: &quot;beng&quot; });
+</code></pre><p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now().reconfigure({ locale: &quot;it&quot;, numberingSystem: &quot;beng&quot; });
 dt.toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
 </code></pre><p>Similar to <code>locale</code>, you can set the default numbering system for new instances:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultNumberingSystem = &quot;beng&quot;;</code>
 </code></pre></div>
@@ -667,7 +670,7 @@ DateTime.local().zoneName; //=&gt; &apos;America/New_York&apos;</code>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
         <div data-ice="card"><h1>Calendars</h1><p>This covers Luxon&apos;s support for various calendar systems. If you don&apos;t need to use non-standard calendars, you don&apos;t need to read any of this.</p><h2>Fully supported calendars</h2><p>Luxon has full support for Gregorian and ISO Week calendars. What I mean by that is that Luxon can parse dates specified in those calendars, format dates into strings using those calendars, and transform dates using the units of those calendars. For example, here is Luxon working directly with an ISO calendar:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-W23-3&apos;).plus({ weeks: 1, days: 2 }).toISOWeekDate(); //=&gt;  &apos;2017-W24-5&apos;</code>
-</code></pre><p>The main reason I bring all this is up is to contrast it with the capabilities for other calendars described below.</p><h2>Output calendars</h2><p>Luxon has limited support for other calendaring systems. Which calendars are supported at all is a platform-dependent, but can generally be expected to be these: Buddhist, Chinese, Coptic, Ethioaa, Ethiopic, Hebrew, Indian, Islamic, Islamicc, Japanese, Persian, and ROC. <strong>Support is limited to formatting strings with them</strong>, hence the qualified name &quot;output calendar&quot;.</p><p>In practice this is pretty useful; you can show users the date in their preferred calendaring system while the software works with dates using Gregorian units or Epoch milliseconds. But the limitations are real enough; Luxon doesn&apos;t know how to do things like &quot;add one Islamic month&quot;.</p><p>The output calendar is a property of the DateTime itself. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dtHebrew = DateTime.local().reconfigure({ outputCalendar: &apos;hebrew&apos; })
+</code></pre><p>The main reason I bring all this is up is to contrast it with the capabilities for other calendars described below.</p><h2>Output calendars</h2><p>Luxon has limited support for other calendaring systems. Which calendars are supported at all is a platform-dependent, but can generally be expected to be these: Buddhist, Chinese, Coptic, Ethioaa, Ethiopic, Hebrew, Indian, Islamic, Islamicc, Japanese, Persian, and ROC. <strong>Support is limited to formatting strings with them</strong>, hence the qualified name &quot;output calendar&quot;.</p><p>In practice this is pretty useful; you can show users the date in their preferred calendaring system while the software works with dates using Gregorian units or Epoch milliseconds. But the limitations are real enough; Luxon doesn&apos;t know how to do things like &quot;add one Islamic month&quot;.</p><p>The output calendar is a property of the DateTime itself. For example:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dtHebrew = DateTime.now().reconfigure({ outputCalendar: &quot;hebrew&quot; });
 dtHebrew.outputCalendar; //=&gt; &apos;hebrew&apos;
 dtHebrew.toLocaleString() //=&gt; &apos;4 Tishri 5778&apos;</code>
 </code></pre><p>You can modulate the structure of that string with arguments to <code>toLocaleString</code> (see <a href="./manual/formatting.html#tolocalestring-strings-for-humans-">the docs on that</a>), but the point here is just that you got the alternative calendar.</p><h3>Generally supported calendars</h3><p>Here&apos;s a table of the different calendars with examples generated formatting the same date generated like this:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);</code>
@@ -904,7 +907,7 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
 </code></pre><p>The supported tokens are described in the table below.</p><h3>Intl</h3><p>All of the strings (e.g. month names and weekday names) are internationalized by introspecting strings generated by the Intl API. Thus the exact strings you get are implementation-specific.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;)
   .setLocale(&apos;fr&apos;)
   .toFormat(&apos;yyyy LLL dd&apos;); //=&gt; &apos;2014 ao&#xFB;t 06&apos;</code>
-</code></pre><h3>Escaping</h3><p>You may escape strings using single quotes:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;); //=&gt; &apos;20 hours and 55 minutes&apos;</code>
+</code></pre><h3>Escaping</h3><p>You may escape strings using single quotes:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;); //=&gt; &apos;20 hours and 55 minutes&apos;</code>
 </code></pre><h3>Standalone vs format tokens</h3><p>Some tokens have a &quot;standalone&quot; and &quot;format&quot; version. Some languages require different forms of a word based on whether it is part of a longer phrase or just by itself (e.g. &quot;Monday the 22nd&quot; vs &quot;Monday&quot;). Use them accordingly.</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = DateTime.fromISO(&apos;2014-08-06T13:07:04.054&apos;).setLocale(&apos;ru&apos;);
 d.toFormat(&apos;LLLL&apos;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&apos; (standalone)
 d.toFormat(&apos;MMMM&apos;); //=&gt; &apos;&#x430;&#x432;&#x433;&#x443;&#x441;&#x442;&#x430;&apos; (format)</code>
@@ -1356,7 +1359,7 @@ DateTime.fromSQL(&quot;2017-05-15 09:24:15&quot;);
 DateTime.fromSQL(&quot;09:24:15&quot;);</code>
 </code></pre><p>It works similarly to <code>fromISO</code>, so see above for additional notes.</p><h3>Unix timestamps</h3><p>Luxon can parse numerical <a href="https://en.wikipedia.org/wiki/Unix_time">Unix timestamps</a>:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromMillis(1542674993410);
 DateTime.fromSeconds(1542674993);</code>
-</code></pre><p>Both methods accept the same options, which allow you to specify a timezone, calendar, and/or numbering system.</p><h2>Ad-hoc parsing</h2><h3>Consider alternatives</h3><p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p><ol>
+</code></pre><p>Both methods accept the same options, which allow you to specify a timezone, calendar, and/or numbering system.</p><h3>JS Date Object</h3><p>A native JS <code>Date</code> object can be converted into a <code>DateTime</code> using <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromJSDate">fromJSDate</a>.</p><p>An optional <code>zone</code> parameter can be provided to set the zone on the resulting object.</p><h2>Ad-hoc parsing</h2><h3>Consider alternatives</h3><p>You generally shouldn&apos;t use Luxon to parse arbitrarily formatted date strings:</p><ol>
 <li>If the string was generated by a computer for programmatic access, use a standard format like ISO 8601. Then you can parse it using <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromISO">DateTime.fromISO</a>.</li>
 <li>If the string is typed out by a human, it may not conform to the format you specify when asking Luxon to parse it. Luxon is quite strict about the format matching the string exactly.</li>
 </ol><p>Sometimes, though, you get a string from some legacy system in some terrible ad-hoc format and you need to parse it.</p><h3>fromFormat</h3><p>See <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-fromFormat">DateTime.fromFormat</a> for the method signature. A brief example:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromFormat(&quot;May 25 1982&quot;, &quot;LLLL dd yyyy&quot;);</code>
@@ -1745,7 +1748,7 @@ DateTime.local(2017, 2, 13).plus({ days: 30 }).toISODate() //=&gt; &apos;2017-03
 <li><strong>Hours</strong> are always 60 minutes</li>
 <li><strong>Minutes</strong> are always 60 seconds</li>
 <li><strong>Seconds</strong> are always 1000 milliseconds</li>
-</ul><p>Don&apos;t worry about leap seconds. Javascript and most other programming environments don&apos;t account for them; they just happen as abrupt, invisible changes to the underlying system&apos;s time.</p><h3>How to think about calendar math</h3><p>It&apos;s best not to think of calendar math as requiring arcane checks on the lengths of intervening periods. Instead, think of them as <strong>adjusting that unit directly and keeping lower order date components constant</strong>. Let&apos;s go back to the Feb 13 + 1 month example. If you didn&apos;t have Luxon, you would do something like this to accomplish that:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = new Date(&apos;2017-02-13&apos;)
+</ul><p>Don&apos;t worry about leap seconds. JavaScript and most other programming environments don&apos;t account for them; they just happen as abrupt, invisible changes to the underlying system&apos;s time.</p><h3>How to think about calendar math</h3><p>It&apos;s best not to think of calendar math as requiring arcane checks on the lengths of intervening periods. Instead, think of them as <strong>adjusting that unit directly and keeping lower order date components constant</strong>. Let&apos;s go back to the Feb 13 + 1 month example. If you didn&apos;t have Luxon, you would do something like this to accomplish that:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d = new Date(&apos;2017-02-13&apos;)
 d.setMonth(d.getMonth() + 1)
 d.toLocaleString() //=&gt; &apos;3/13/2017, 12:00:00 AM&apos;</code>
 </code></pre><p>And under the covers, that&apos;s more or less what Luxon does too. It doesn&apos;t boil the operation down to a milliseconds delta because that&apos;s not what&apos;s being asked. Instead, it fiddles with what it thinks the date should be and then uses the built-in Gregorian calendar to compute the new timestamp.</p><h3>DSTs</h3><p>There&apos;s a whole section about this in the <a href="./manual/zones.html#math-across-dsts">time zones documentation</a>. But here&apos;s a quick example (Spring Forward is early on March 12 in my time zone):</p><pre><code><code class="source-code prettyprint">var start = DateTime.local(2017, 3, 11, 10);
@@ -1758,9 +1761,8 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 </code></pre><p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p><h2>Comparing DateTimes</h2><p>DateTime implements <code>#valueOf</code> to return the epoch timestamp, so you can compare DateTimes with <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code>. That lets you find out if one DateTime is after or before another DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">d1 &lt; d2 // is d1 before d2?</code>
 </code></pre><p>However, be aware that <code>===</code> compares object identity, which is not a useful concept in a library with immutable types. Use <code>#equals</code> to compare both the time and additional metadata, such as the locale and time zone. If you&apos;re only interested in checking the equality of the timestamps, you can use:</p><pre><code class="lang-js"><code class="source-code prettyprint">d1.toMillis() === d2.toMillis() // are d1 and d2 the same instant in time?
 +d1 === +d2 // same test, using object coercion</code>
-</code></pre><p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p><pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;millisecond&apos;); // equivalent to `+d1 === +d2`
-d1.hasSame(d2, &apos;minute&apos;);       // both DateTimes are in the same minute (and hour, day, month, etc)
-d1.hasSame(d2, &apos;year&apos;);         // etc</code>
+</code></pre><p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p><pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;year&apos;);   // both DateTimes have the same calendar year
+d1.hasSame(d2, &apos;day&apos;);    // both DateTimes have the same calendar day (which implies they also have the same calendar year and month)</code>
 </code></pre><p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p><p>If you&apos;d like to compare using a specific unit, you can achieve this by combining <code>#startOf</code> and the <code>#valueOf</code> comparisons above.</p><pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.fromISO(&apos;2017-04-30&apos;);
 var d2 = DateTime.fromISO(&apos;2017-04-01&apos;);
 
@@ -1836,8 +1838,8 @@ dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 1
 </tbody>
 </table><p>These should match your intuition and for most purposes they work well. But they&apos;re not just wrong; they&apos;re not even self-consistent:</p><pre><code class="lang-js"><code class="source-code prettyprint">dur.shiftTo(&apos;months&apos;).shiftTo(&apos;days&apos;).as(&apos;years&apos;) //=&gt; 0.9863013698630136</code>
 </code></pre><p>This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:</p><pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ years: 50000 });
-DateTime.local().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
-DateTime.local().plus(dur).year                         //=&gt; 52017</code>
+DateTime.now().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
+DateTime.now().plus(dur).year                         //=&gt; 52017</code>
 </code></pre><p>Those are 33 years apart! So Luxon offers an alternative conversion scheme called &quot;longterm&quot;, based on the 400-year calendar cycle:</p><table>
 <thead>
 <tr>
@@ -1917,16 +1919,16 @@ dt.toObject(); //=&gt; {}</code>
 <li>-4 pm</li>
 <li>etc</li>
 </ul><p>But there are other ways to do it:</p><pre><code class="lang-js"><code class="source-code prettyprint">// specify a time zone that doesn&apos;t exist
-DateTime.local().setZone(&quot;America/Blorp&quot;).isValid; //=&gt; false
+DateTime.now().setZone(&quot;America/Blorp&quot;).isValid; //=&gt; false
 
 // provide contradictory information (here, this date is not a Wednesday)
 DateTime.fromObject({ year: 2017, month: 5, day: 25, weekday: 3 }).isValid; //=&gt; false</code>
-</code></pre><p>Note that some other kinds of mistakes throw, based on our judgment that they are more likely programmer errors than data issues:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().set({ blorp: 7 }); //=&gt; kerplosion</code>
-</code></pre><h2>Debugging invalid DateTimes</h2><p>Because DateTimes fail silently, they can be a pain to debug. Luxon has some features that can help.</p><h3>invalidReason and invalidExplanation</h3><p>Invalid DateTime objects are happy to tell you why they&apos;re invalid. <code>invalidReason</code> will give you a consistent error code you can use, whereas <code>invalidExplanation</code> will spell it out</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setZone(&quot;America/Blorp&quot;);
+</code></pre><p>Note that some other kinds of mistakes throw, based on our judgment that they are more likely programmer errors than data issues:</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().set({ blorp: 7 }); //=&gt; kerplosion</code>
+</code></pre><h2>Debugging invalid DateTimes</h2><p>Because DateTimes fail silently, they can be a pain to debug. Luxon has some features that can help.</p><h3>invalidReason and invalidExplanation</h3><p>Invalid DateTime objects are happy to tell you why they&apos;re invalid. <code>invalidReason</code> will give you a consistent error code you can use, whereas <code>invalidExplanation</code> will spell it out</p><pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now().setZone(&quot;America/Blorp&quot;);
 dt.invalidReason; //=&gt;  &apos;unsupported zone&apos;
 dt.invalidExplanation; //=&gt; &apos;the zone &quot;America/Blorp&quot; is not supported&apos;</code>
 </code></pre><h3>throwOnInvalid</h3><p>You can make Luxon throw whenever it creates an invalid DateTime. The message will combine <code>invalidReason</code> and <code>invalidExplanation</code>:</p><pre><code class="lang-js"><code class="source-code prettyprint">Settings.throwOnInvalid = true;
-DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid DateTime: unsupported zone: the zone &quot;America/Blorp&quot; is not supported</code>
+DateTime.now().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid DateTime: unsupported zone: the zone &quot;America/Blorp&quot; is not supported</code>
 </code></pre><p>You can of course leave this on in production too, but be sure to try/catch it appropriately.</p><h2>Invalid Durations</h2><p>Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime.</p><pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 28).diffNow().isValid; //=&gt; false</code>
 </code></pre><h2>Invalid Intervals</h2><p>Intervals can be invalid. This can happen a few different ways:</p><ul>
 <li>The end time is before the start time</li>
@@ -2232,7 +2234,7 @@ DateTime.local().setZone(&quot;America/Blorp&quot;); //=&gt; Error: Invalid Date
         <div data-ice="card"><h1>For Moment users</h1><p>Luxon borrows lots of ideas from <a href="http://momentjs.com">Moment.js</a>, but there are a lot of differences too. This document clarifies what they are.</p><h2>Immutability</h2><p>Luxon&apos;s objects are immutable, whereas Moment&apos;s are mutable. For example, in Moment:</p><pre><code class="lang-js"><code class="source-code prettyprint">var m1 = moment();
 var m2 = m1.add(1, &apos;hours&apos;);
 m1.valueOf() === m2.valueOf(); //=&gt; true</code>
-</code></pre><p>This happens because <code>m1</code> and <code>m2</code> are really the same object; <code>add()</code> <em>mutated</em> the object to be an hour later. Compare that to Luxon:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.local();
+</code></pre><p>This happens because <code>m1</code> and <code>m2</code> are really the same object; <code>add()</code> <em>mutated</em> the object to be an hour later. Compare that to Luxon:</p><pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.now();
 var d2 = d1.plus({ hours: 1 });
 d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 </code></pre><p>This happens because the <code>plus</code> method returns a new instance, leaving <code>d1</code> unmodified. It also means that Luxon doesn&apos;t require copy constructors or clone methods.</p><h2>Major functional differences</h2><ol>
@@ -2261,7 +2263,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <tr>
 <td>Now</td>
 <td><code>moment()</code></td>
-<td><code>DateTime.local()</code></td>
+<td><code>DateTime.now()</code></td>
 <td></td>
 </tr>
 <tr>
@@ -2689,7 +2691,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>Moment&apos;s diff returns a count of milliseconds, but Luxon&apos;s returns a Duration. To replicate the Moment behavior, use <code>dt1.diff(d2).milliseconds</code>.</td>
 </tr>
 </tbody>
-</table><h4>Humanization</h4><p>Luxon has <code>toRelative</code> and <code>toRelativeCalendar</code>. For internationalization, they use Intl.RelativeTimeFormat, which isn&apos;t currently supported by most browsers; in those cases, they fall back to English.</p><table>
+</table><h4>Humanization</h4><p>Luxon has <code>toRelative</code> and <code>toRelativeCalendar</code>. For internationalization, they use Intl.RelativeTimeFormat (or fall back to English when it is not supported by the browser).</p><table>
 <thead>
 <tr>
 <th>Operation</th>
@@ -2726,7 +2728,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 </tbody>
 </table><h2>Durations</h2><p>Moment Durations and Luxon Durations are broadly similar in purpose and capabilities. The main differences are:</p><ol>
 <li>Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using <code>shiftTo</code>. They can also be configured to use different unit conversions. See <a href="./manual/math.html#duration-math">Duration Math</a> for more.</li>
-<li>Luxon does not (yet) have an equivalent of Moment&apos;s Duration <code>humanize</code> method. Luxon will add that when <a href="https://github.com/tc39/proposal-intl-unit-format">Intl.UnitFormat</a> is supported by browsers.</li>
+<li>Luxon does not (yet) have an equivalent of Moment&apos;s Duration <code>humanize</code> method. Luxon will add that when <a href="https://github.com/tc39/proposal-unified-intl-numberformat">Unified Intl.NumberFormat</a> is supported by browsers.</li>
 <li>Like DateTimes, Luxon Durations have separate methods for creating objects from different sources.</li>
 </ol><p>See the <a href="./manual/../class/src/duration.js~Duration.html">Duration API docs</a> for more.</p><h2>Intervals</h2><p>Moment doesn&apos;t have direct support intervals, which must be provided by plugins like Twix or moment-range. Luxon&apos;s Intervals have similar capabilities to theirs, with the exception of the humanization features. See the <a href="./manual/../class/src/interval.js~Interval.html">Interval API docs</a> for more.</p></div>
         <a data-ice="link" href="manual/moment.html"></a>
@@ -2764,7 +2766,13 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><h2>1.25.0</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><h2>1.26.0</h2><ul>
+<li>Add fromISOTime, toISOTime and toMillis to Duration (#803)</li>
+<li>Fix padding of negative years in IsoDate (#871)</li>
+<li>Fix hasSame unit comparison (#798)</li>
+<li>Export VERSION information (#794)</li>
+<li>Durations are considered equal with extra zero units. Fixes #809 (#811)</li>
+</ul><h2>1.25.0</h2><ul>
 <li>fix fromFormat with Intl formats containing non-breaking spaces</li>
 <li>Support higher precisision in ISO milliseconds</li>
 <li>Some fixes for 00:30 timezones</li>
@@ -3152,5 +3160,5 @@ npm install full-icu
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

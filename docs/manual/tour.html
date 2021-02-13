@@ -48,6 +48,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/tour.html"><a href="manual/tour.html" data-ice="link">A quick tour</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#get-the-current-date-and-time" data-ice="link">Get the current date and time</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
@@ -151,6 +152,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#js-date-object" data-ice="link">JS Date Object</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
@@ -244,6 +246,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
@@ -366,16 +369,17 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="a-quick-tour">A quick tour</h1><p>Luxon is a library that makes it easier to work with dates and times in Javascript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We&apos;re going to talk about the most immediately useful subset of that interface.</p>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="a-quick-tour">A quick tour</h1><p>Luxon is a library that makes it easier to work with dates and times in JavaScript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We&apos;re going to talk about the most immediately useful subset of that interface.</p>
 <p>This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to <a href="./manual/../identifiers.html">dive into them</a>.</p>
-<h2 id="your-first-datetime">Your first DateTime</h2><p>The most important class in Luxon is <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime</a>. A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here&apos;s one that represents May 15, 2017 at 8:30 in the morning:</p>
+<h2 id="your-first-datetime">Your first DateTime</h2><p>The most important class in Luxon is <a href="./manual/../class/src/datetime.js~DateTime.html">DateTime</a>. A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here&apos;s one that represents May 15, 2017 at 8:30 in the morning in the local time zone:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local(2017, 5, 15, 8, 30);</code>
 </code></pre>
-<p>To get the current time, just do this:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var now = DateTime.local();</code>
+<p><a href="./manual/../class/src/datetime.js~DateTime.html#static-method-local">DateTime.local</a> takes any number of arguments, all the way out to milliseconds. Underneath, this is similar to a JavaScript Date object. But we&apos;ve decorated it with lots of useful methods.</p>
+<h2 id="creating-a-datetime">Creating a DateTime</h2><p>There are lots of ways to create a DateTime by parsing strings or constructing them out of parts. You&apos;ve already seen one, <code>DateTime.local()</code>, but let&apos;s talk about three more.</p>
+<h3 id="get-the-current-date-and-time">Get the current date and time</h3><p>To get the current time, just do this:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var now = DateTime.now();</code>
 </code></pre>
-<p><a href="./manual/../class/src/datetime.js~DateTime.html#static-method-local">DateTime.local</a> takes any number of arguments, all the way out to milliseconds. Underneath, this is just a Javascript Date object. But we&apos;ve decorated it with lots of useful methods.</p>
-<h2 id="creating-a-datetime">Creating a DateTime</h2><p>There are lots of ways to create a DateTime by parsing strings or constructing them out of parts. You&apos;ve already seen one, <code>DateTime.local()</code>, but let&apos;s talk about two more.</p>
+<p>Calling <a href="./manual/../class/src/datetime.js~DateTime.html#static-method-now">DateTime.now</a> is equivalent to calling <code>local()</code> with no parameter.</p>
 <h3 id="create-from-an-object">Create from an object</h3><p>The most powerful way to create a DateTime instance is to provide an object containing all the information:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.fromObject({day: 22, hour: 12, zone: &apos;America/Los_Angeles&apos;, numberingSystem: &apos;beng&apos;})</code>
 </code></pre>
@@ -387,10 +391,10 @@ DateTime.fromISO(&quot;2017-05-15T08:30:00&quot;) //=&gt; May 15, 2017 at 8:30</
 <p>You can parse a bunch of other formats, including <a href="./manual/parsing.html">your own custom ones</a>.</p>
 <h2 id="getting-to-know-your-datetime-instance">Getting to know your DateTime instance</h2><p>Now that we&apos;ve made some DateTimes, let&apos;s see what we can ask of it.</p>
 <h3 id="tostring">toString</h3><p>The first thing we want to see is the DateTime as a string. Luxon returns ISO 8601 strings:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().toString() //=&gt; &apos;2017-09-14T03:20:34.091-04:00&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().toString(); //=&gt; &apos;2017-09-14T03:20:34.091-04:00&apos;</code>
 </code></pre>
 <h3 id="getting-at-components">Getting at components</h3><p>We can get at the components of the time individually through getters. For example:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.local()
+<pre><code class="lang-js"><code class="source-code prettyprint">dt = DateTime.now();
 dt.year     //=&gt; 2017
 dt.month    //=&gt; 9
 dt.day      //=&gt; 14
@@ -413,18 +417,18 @@ dt.toLocaleString(DateTime.DATETIME_MED) //=&gt; &apos;September 14, 3:21 AM&apo
 <p>Custom formats are also supported. See <a href="./manual/formatting">formatting</a>.</p>
 <h2 id="transforming-your-datetime">Transforming your DateTime</h2><h3 id="immutability">Immutability</h3><p>Luxon objects are immutable. That means that you can&apos;t alter them in place, just create altered copies. Throughout the documentation, we use terms like &quot;alter&quot;, &quot;change&quot;, and &quot;set&quot; loosely, but rest assured we mean &quot;create a new instance with different properties&quot;.</p>
 <h3 id="math">Math</h3><p>This is easier to show than to tell. All of these calls return new DateTime instances:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
-dt.plus({hours: 3, minutes: 2});
-dt.minus({days: 7});
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now();
+dt.plus({ hours: 3, minutes: 2 });
+dt.minus({ days: 7 });
 dt.startOf(&apos;day&apos;);
 dt.endOf(&apos;hour&apos;);</code>
 </code></pre>
 <h3 id="set">Set</h3><p>You can create new instances by overriding specific properties:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now();
 dt.set({hour: 3}).hour   //=&gt; 3</code>
 </code></pre>
 <h2 id="intl">Intl</h2><p>Luxon provides several different Intl capabilities, but the most important one is in formatting:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local();
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now();
 var f = {month: &apos;long&apos;, day: &apos;numeric&apos;};
 dt.setLocale(&apos;fr&apos;).toLocaleString(f)      //=&gt; &apos;14 septembre&apos;
 dt.setLocale(&apos;en-GB&apos;).toLocaleString(f)   //=&gt; &apos;14 September&apos;
@@ -435,16 +439,16 @@ dt.setLocale(&apos;en-US&apos;).toLocaleString(f)  //=&gt; &apos;September 14&ap
 </code></pre>
 <h2 id="time-zones">Time zones</h2><p>Luxon supports time zones. There&apos;s a whole <a href="./manual/zones">big section</a> about it. But briefly, you can create DateTimes in specific zones and change their zones:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({zone: &apos;America/Los_Angeles&apos;}) // now, but expressed in LA&apos;s local time
-DateTime.local().setZone(&apos;America/Los_Angeles&apos;) // same</code>
+DateTime.now().setZone(&quot;America/Los_Angeles&quot;); // same</code>
 </code></pre>
 <p>Luxon also supports UTC directly:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.utc(2017, 5, 15);
-DateTime.utc();
-DateTime.local().toUTC();
+DateTime.utc(); // now, in UTC time zone
+DateTime.now().toUTC();
 DateTime.utc().toLocal();</code>
 </code></pre>
 <h2 id="durations">Durations</h2><p>The Duration class represents a quantity of time such as &quot;2 hours and 7 minutes&quot;. You create them like this:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({hours: 2, minutes: 7});</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ hours: 2, minutes: 7 });</code>
 </code></pre>
 <p>They can be add or subtracted from DateTimes like this:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.plus(dur);</code>
@@ -461,7 +465,7 @@ dur.toISO()       //=&gt; &apos;PT2H7M&apos;</code>
 </code></pre>
 <p>You can also format, negate, and normalize them. See it all in the <a href="./manual/../class/src/duration.js~Duration.html">Duration API docs</a>.</p>
 <h2 id="intervals">Intervals</h2><p>Intervals are a specific period of time, such as &quot;between now and midnight&quot;. They&apos;re really a wrapper for two DateTimes that form its endpoints. Here&apos;s what you can do with them:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">now = DateTime.local();
+<pre><code class="lang-js"><code class="source-code prettyprint">now = DateTime.now();
 later = DateTime.local(2020, 10, 12);
 i = Interval.fromDateTimes(now, later);
 
@@ -487,5 +491,5 @@ i.toString()    //=&gt; &apos;[2017-09-14T04:07:11.532-04:00 &#x2013; 2020-10-12
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

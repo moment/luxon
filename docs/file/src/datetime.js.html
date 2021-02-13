@@ -243,6 +243,7 @@ function toTechTimeFormat(
     suppressSeconds = false,
     suppressMilliseconds = false,
     includeOffset,
+    includePrefix = false,
     includeZone = false,
     spaceZone = false,
     format = &quot;extended&quot;
@@ -267,7 +268,13 @@ function toTechTimeFormat(
     fmt += format === &quot;basic&quot; ? &quot;ZZZ&quot; : &quot;ZZ&quot;;
   }
 
-  return toTechFormat(dt, fmt);
+  let str = toTechFormat(dt, fmt);
+
+  if (includePrefix) {
+    str = &quot;T&quot; + str;
+  }
+
+  return str;
 }
 
 // defaults for unspecified units in the supported calendars
@@ -487,10 +494,21 @@ export default class DateTime {
   // CONSTRUCT
 
   /**
+   * Create a DateTime for the current instant, in the system&apos;s time zone.
+   *
+   * Use Settings to override these default values if needed.
+   * @example DateTime.now().toISO() //~&gt; now in the ISO format
+   * @return {DateTime}
+   */
+  static now() {
+    return new DateTime({});
+  }
+
+  /**
    * Create a local DateTime
    * @param {number} [year] - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
    * @param {number} [month=1] - The month, 1-indexed
-   * @param {number} [day=1] - The day of the month
+   * @param {number} [day=1] - The day of the month, 1-indexed
    * @param {number} [hour=0] - The hour of the day, in 24-hour time
    * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
    * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
@@ -507,7 +525,7 @@ export default class DateTime {
    */
   static local(year, month, day, hour, minute, second, millisecond) {
     if (isUndefined(year)) {
-      return new DateTime({ ts: Settings.now() });
+      return new DateTime({});
     } else {
       return quickDT(
         {
@@ -566,8 +584,8 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from a Javascript Date object. Uses the default zone.
-   * @param {Date} date - a Javascript Date object
+   * Create a DateTime from a JavaScript Date object. Uses the default zone.
+   * @param {Date} date - a JavaScript Date object
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone=&apos;local&apos;] - the zone to place the DateTime into
    * @return {DateTime}
@@ -640,7 +658,7 @@ export default class DateTime {
   }
 
   /**
-   * Create a DateTime from a Javascript object with keys like &apos;year&apos; and &apos;hour&apos; with reasonable defaults.
+   * Create a DateTime from a JavaScript object with keys like &apos;year&apos; and &apos;hour&apos; with reasonable defaults.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.year - a year, such as 1987
    * @param {number} obj.month - a month, 1-12
@@ -1162,7 +1180,7 @@ export default class DateTime {
 
   /**
    * Get the UTC offset of this DateTime in minutes
-   * @example DateTime.local().offset //=&gt; -240
+   * @example DateTime.now().offset //=&gt; -240
    * @example DateTime.utc().offset //=&gt; 0
    * @type {number}
    */
@@ -1393,12 +1411,12 @@ export default class DateTime {
    *
    * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there&apos;s a DST shift in between.
    * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
-   * @example DateTime.local().plus(123) //~&gt; in 123 milliseconds
-   * @example DateTime.local().plus({ minutes: 15 }) //~&gt; in 15 minutes
-   * @example DateTime.local().plus({ days: 1 }) //~&gt; this time tomorrow
-   * @example DateTime.local().plus({ days: -1 }) //~&gt; this time yesterday
-   * @example DateTime.local().plus({ hours: 3, minutes: 13 }) //~&gt; in 3 hr, 13 min
-   * @example DateTime.local().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~&gt; in 3 hr, 13 min
+   * @example DateTime.now().plus(123) //~&gt; in 123 milliseconds
+   * @example DateTime.now().plus({ minutes: 15 }) //~&gt; in 15 minutes
+   * @example DateTime.now().plus({ days: 1 }) //~&gt; this time tomorrow
+   * @example DateTime.now().plus({ days: -1 }) //~&gt; this time yesterday
+   * @example DateTime.now().plus({ hours: 3, minutes: 13 }) //~&gt; in 3 hr, 13 min
+   * @example DateTime.now().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~&gt; in 3 hr, 13 min
    * @return {DateTime}
    */
   plus(duration) {
@@ -1424,6 +1442,7 @@ export default class DateTime {
    * @param {string} unit - The unit to go to the beginning of. Can be &apos;year&apos;, &apos;quarter&apos;, &apos;month&apos;, &apos;week&apos;, &apos;day&apos;, &apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, or &apos;millisecond&apos;.
    * @example DateTime.local(2014, 3, 3).startOf(&apos;month&apos;).toISODate(); //=&gt; &apos;2014-03-01&apos;
    * @example DateTime.local(2014, 3, 3).startOf(&apos;year&apos;).toISODate(); //=&gt; &apos;2014-01-01&apos;
+   * @example DateTime.local(2014, 3, 3).startOf(&apos;week&apos;).toISODate(); //=&gt; &apos;2014-03-03&apos;, weeks always start on Mondays
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf(&apos;day&apos;).toISOTime(); //=&gt; &apos;00:00.000-05:00&apos;
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf(&apos;hour&apos;).toISOTime(); //=&gt; &apos;05:00:00.000-05:00&apos;
    * @return {DateTime}
@@ -1472,9 +1491,10 @@ export default class DateTime {
 
   /**
    * &quot;Set&quot; this DateTime to the end (meaning the last millisecond) of a unit of time
-   * @param {string} unit - The unit to go to the end of. Can be &apos;year&apos;, &apos;month&apos;, &apos;day&apos;, &apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, or &apos;millisecond&apos;.
+   * @param {string} unit - The unit to go to the end of. Can be &apos;year&apos;, &apos;quarter&apos;, &apos;month&apos;, &apos;week&apos;, &apos;day&apos;, &apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, or &apos;millisecond&apos;.
    * @example DateTime.local(2014, 3, 3).endOf(&apos;month&apos;).toISO(); //=&gt; &apos;2014-03-31T23:59:59.999-05:00&apos;
    * @example DateTime.local(2014, 3, 3).endOf(&apos;year&apos;).toISO(); //=&gt; &apos;2014-12-31T23:59:59.999-05:00&apos;
+   * @example DateTime.local(2014, 3, 3).endOf(&apos;week&apos;).toISO(); // =&gt; &apos;2014-03-09T23:59:59.999-05:00&apos;, weeks start on Mondays
    * @example DateTime.local(2014, 3, 3, 5, 30).endOf(&apos;day&apos;).toISO(); //=&gt; &apos;2014-03-03T23:59:59.999-05:00&apos;
    * @example DateTime.local(2014, 3, 3, 5, 30).endOf(&apos;hour&apos;).toISO(); //=&gt; &apos;2014-03-03T05:59:59.999-05:00&apos;
    * @return {DateTime}
@@ -1496,10 +1516,10 @@ export default class DateTime {
    * @see https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens
    * @param {string} fmt - the format string
    * @param {Object} opts - opts to override the configuration options
-   * @example DateTime.local().toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2017 Apr 22&apos;
-   * @example DateTime.local().setLocale(&apos;fr&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2017 avr. 22&apos;
-   * @example DateTime.local().toFormat(&apos;yyyy LLL dd&apos;, { locale: &quot;fr&quot; }) //=&gt; &apos;2017 avr. 22&apos;
-   * @example DateTime.local().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;) //=&gt; &apos;20 hours and 55 minutes&apos;
+   * @example DateTime.now().toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2017 Apr 22&apos;
+   * @example DateTime.now().setLocale(&apos;fr&apos;).toFormat(&apos;yyyy LLL dd&apos;) //=&gt; &apos;2017 avr. 22&apos;
+   * @example DateTime.now().toFormat(&apos;yyyy LLL dd&apos;, { locale: &quot;fr&quot; }) //=&gt; &apos;2017 avr. 22&apos;
+   * @example DateTime.now().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;) //=&gt; &apos;20 hours and 55 minutes&apos;
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
@@ -1515,15 +1535,15 @@ export default class DateTime {
    * Defaults to the system&apos;s locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param opts {Object} - Intl.DateTimeFormat constructor options and configuration options
-   * @example DateTime.local().toLocaleString(); //=&gt; 4/20/2017
-   * @example DateTime.local().setLocale(&apos;en-gb&apos;).toLocaleString(); //=&gt; &apos;20/04/2017&apos;
-   * @example DateTime.local().toLocaleString({ locale: &apos;en-gb&apos; }); //=&gt; &apos;20/04/2017&apos;
-   * @example DateTime.local().toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;April 20, 2017&apos;
-   * @example DateTime.local().toLocaleString(DateTime.TIME_SIMPLE); //=&gt; &apos;11:32 AM&apos;
-   * @example DateTime.local().toLocaleString(DateTime.DATETIME_SHORT); //=&gt; &apos;4/20/2017, 11:32 AM&apos;
-   * @example DateTime.local().toLocaleString({ weekday: &apos;long&apos;, month: &apos;long&apos;, day: &apos;2-digit&apos; }); //=&gt; &apos;Thursday, April 20&apos;
-   * @example DateTime.local().toLocaleString({ weekday: &apos;short&apos;, month: &apos;short&apos;, day: &apos;2-digit&apos;, hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos; }); //=&gt; &apos;Thu, Apr 20, 11:27 AM&apos;
-   * @example DateTime.local().toLocaleString({ hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos;, hour12: false }); //=&gt; &apos;11:32&apos;
+   * @example DateTime.now().toLocaleString(); //=&gt; 4/20/2017
+   * @example DateTime.now().setLocale(&apos;en-gb&apos;).toLocaleString(); //=&gt; &apos;20/04/2017&apos;
+   * @example DateTime.now().toLocaleString({ locale: &apos;en-gb&apos; }); //=&gt; &apos;20/04/2017&apos;
+   * @example DateTime.now().toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;April 20, 2017&apos;
+   * @example DateTime.now().toLocaleString(DateTime.TIME_SIMPLE); //=&gt; &apos;11:32 AM&apos;
+   * @example DateTime.now().toLocaleString(DateTime.DATETIME_SHORT); //=&gt; &apos;4/20/2017, 11:32 AM&apos;
+   * @example DateTime.now().toLocaleString({ weekday: &apos;long&apos;, month: &apos;long&apos;, day: &apos;2-digit&apos; }); //=&gt; &apos;Thursday, April 20&apos;
+   * @example DateTime.now().toLocaleString({ weekday: &apos;short&apos;, month: &apos;short&apos;, day: &apos;2-digit&apos;, hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos; }); //=&gt; &apos;Thu, Apr 20, 11:27 AM&apos;
+   * @example DateTime.now().toLocaleString({ hour: &apos;2-digit&apos;, minute: &apos;2-digit&apos;, hour12: false }); //=&gt; &apos;11:32&apos;
    * @return {string}
    */
   toLocaleString(opts = Formats.DATE_SHORT) {
@@ -1537,7 +1557,7 @@ export default class DateTime {
    * Defaults to the system&apos;s locale if no locale has been specified
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
    * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
-   * @example DateTime.local().toLocaleParts(); //=&gt; [
+   * @example DateTime.now().toLocaleParts(); //=&gt; [
    *                                   //=&gt;   { type: &apos;day&apos;, value: &apos;25&apos; },
    *                                   //=&gt;   { type: &apos;literal&apos;, value: &apos;/&apos; },
    *                                   //=&gt;   { type: &apos;month&apos;, value: &apos;05&apos; },
@@ -1559,9 +1579,9 @@ export default class DateTime {
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
    * @param {string} [opts.format=&apos;extended&apos;] - choose between the basic and extended format
    * @example DateTime.utc(1982, 5, 25).toISO() //=&gt; &apos;1982-05-25T00:00:00.000Z&apos;
-   * @example DateTime.local().toISO() //=&gt; &apos;2017-04-22T20:47:05.335-04:00&apos;
-   * @example DateTime.local().toISO({ includeOffset: false }) //=&gt; &apos;2017-04-22T20:47:05.335&apos;
-   * @example DateTime.local().toISO({ format: &apos;basic&apos; }) //=&gt; &apos;20170422T204705.335-0400&apos;
+   * @example DateTime.now().toISO() //=&gt; &apos;2017-04-22T20:47:05.335-04:00&apos;
+   * @example DateTime.now().toISO({ includeOffset: false }) //=&gt; &apos;2017-04-22T20:47:05.335&apos;
+   * @example DateTime.now().toISO({ format: &apos;basic&apos; }) //=&gt; &apos;20170422T204705.335-0400&apos;
    * @return {string}
    */
   toISO(opts = {}) {
@@ -1604,22 +1624,26 @@ export default class DateTime {
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they&apos;re 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
+   * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
    * @param {string} [opts.format=&apos;extended&apos;] - choose between the basic and extended format
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=&gt; &apos;07:34:19.361Z&apos;
    * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=&gt; &apos;07:34Z&apos;
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: &apos;basic&apos; }) //=&gt; &apos;073419.361Z&apos;
+   * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ includePrefix: true }) //=&gt; &apos;T07:34:19.361Z&apos;
    * @return {string}
    */
   toISOTime({
     suppressMilliseconds = false,
     suppressSeconds = false,
     includeOffset = true,
+    includePrefix = false,
     format = &quot;extended&quot;
   } = {}) {
     return toTechTimeFormat(this, {
       suppressSeconds,
       suppressMilliseconds,
       includeOffset,
+      includePrefix,
       format
     });
   }
@@ -1661,9 +1685,9 @@ export default class DateTime {
    * @param {boolean} [opts.includeZone=false] - include the zone, such as &apos;America/New_York&apos;. Overrides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as &apos;Z&apos; or &apos;-04:00&apos;
    * @example DateTime.utc().toSQL() //=&gt; &apos;05:15:16.345&apos;
-   * @example DateTime.local().toSQL() //=&gt; &apos;05:15:16.345 -04:00&apos;
-   * @example DateTime.local().toSQL({ includeOffset: false }) //=&gt; &apos;05:15:16.345&apos;
-   * @example DateTime.local().toSQL({ includeZone: false }) //=&gt; &apos;05:15:16.345 America/New_York&apos;
+   * @example DateTime.now().toSQL() //=&gt; &apos;05:15:16.345 -04:00&apos;
+   * @example DateTime.now().toSQL({ includeOffset: false }) //=&gt; &apos;05:15:16.345&apos;
+   * @example DateTime.now().toSQL({ includeZone: false }) //=&gt; &apos;05:15:16.345 America/New_York&apos;
    * @return {string}
    */
   toSQLTime({ includeOffset = true, includeZone = false } = {}) {
@@ -1742,10 +1766,10 @@ export default class DateTime {
   }
 
   /**
-   * Returns a Javascript object with this DateTime&apos;s year, month, day, and so on.
+   * Returns a JavaScript object with this DateTime&apos;s year, month, day, and so on.
    * @param opts - options for generating the object
    * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
-   * @example DateTime.local().toObject() //=&gt; { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
+   * @example DateTime.now().toObject() //=&gt; { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
    * @return {Object}
    */
   toObject(opts = {}) {
@@ -1762,7 +1786,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns a Javascript Date equivalent to this DateTime.
+   * Returns a JavaScript Date equivalent to this DateTime.
    * @return {Date}
    */
   toJSDate() {
@@ -1817,7 +1841,7 @@ export default class DateTime {
    * @return {Duration}
    */
   diffNow(unit = &quot;milliseconds&quot;, opts = {}) {
-    return this.diff(DateTime.local(), unit, opts);
+    return this.diff(DateTime.now(), unit, opts);
   }
 
   /**
@@ -1830,20 +1854,20 @@ export default class DateTime {
   }
 
   /**
-   * Return whether this DateTime is in the same unit of time as another DateTime
+   * Return whether this DateTime is in the same unit of time as another DateTime.
+   * Higher-order units must also be identical for this function to return `true`.
+   * Note that time zones are **ignored** in this comparison, which compares the **local** calendar time. Use {@link setZone} to convert one of the dates if needed.
    * @param {DateTime} otherDateTime - the other DateTime
    * @param {string} unit - the unit of time to check sameness on
-   * @example DateTime.local().hasSame(otherDT, &apos;day&apos;); //~&gt; true if both the same calendar day
+   * @example DateTime.now().hasSame(otherDT, &apos;day&apos;); //~&gt; true if otherDT is in the same current calendar day
    * @return {boolean}
    */
   hasSame(otherDateTime, unit) {
     if (!this.isValid) return false;
-    if (unit === &quot;millisecond&quot;) {
-      return this.valueOf() === otherDateTime.valueOf();
-    } else {
-      const inputMs = otherDateTime.valueOf();
-      return this.startOf(unit) &lt;= inputMs &amp;&amp; inputMs &lt;= this.endOf(unit);
-    }
+
+    const inputMs = otherDateTime.valueOf();
+    const otherZoneDateTime = this.setZone(otherDateTime.zone, { keepLocalTime: true });
+    return otherZoneDateTime.startOf(unit) &lt;= inputMs &amp;&amp; inputMs &lt;= otherZoneDateTime.endOf(unit);
   }
 
   /**
@@ -1867,19 +1891,19 @@ export default class DateTime {
    * Returns a string representation of a this time relative to now, such as &quot;in two days&quot;. Can only internationalize if your
    * platform supports Intl.RelativeTimeFormat. Rounds down by default.
    * @param {Object} options - options that affect the output
-   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style=&quot;long&quot;] - the style of units, must be &quot;long&quot;, &quot;short&quot;, or &quot;narrow&quot;
    * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of &quot;years&quot;, &quot;quarters&quot;, &quot;months&quot;, &quot;weeks&quot;, &quot;days&quot;, &quot;hours&quot;, &quot;minutes&quot;, or &quot;seconds&quot;
    * @param {boolean} [options.round=true] - whether to round the numbers in the output.
-   * @param {boolean} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don&apos;t use in combination with {round: false} because the decimal output will include the padding.
+   * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don&apos;t use in combination with {round: false} because the decimal output will include the padding.
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
-   * @example DateTime.local().plus({ days: 1 }).toRelative() //=&gt; &quot;in 1 day&quot;
-   * @example DateTime.local().setLocale(&quot;es&quot;).toRelative({ days: 1 }) //=&gt; &quot;dentro de 1 d&#xED;a&quot;
-   * @example DateTime.local().plus({ days: 1 }).toRelative({ locale: &quot;fr&quot; }) //=&gt; &quot;dans 23 heures&quot;
-   * @example DateTime.local().minus({ days: 2 }).toRelative() //=&gt; &quot;2 days ago&quot;
-   * @example DateTime.local().minus({ days: 2 }).toRelative({ unit: &quot;hours&quot; }) //=&gt; &quot;48 hours ago&quot;
-   * @example DateTime.local().minus({ hours: 36 }).toRelative({ round: false }) //=&gt; &quot;1.5 days ago&quot;
+   * @example DateTime.now().plus({ days: 1 }).toRelative() //=&gt; &quot;in 1 day&quot;
+   * @example DateTime.now().setLocale(&quot;es&quot;).toRelative({ days: 1 }) //=&gt; &quot;dentro de 1 d&#xED;a&quot;
+   * @example DateTime.now().plus({ days: 1 }).toRelative({ locale: &quot;fr&quot; }) //=&gt; &quot;dans 23 heures&quot;
+   * @example DateTime.now().minus({ days: 2 }).toRelative() //=&gt; &quot;2 days ago&quot;
+   * @example DateTime.now().minus({ days: 2 }).toRelative({ unit: &quot;hours&quot; }) //=&gt; &quot;48 hours ago&quot;
+   * @example DateTime.now().minus({ hours: 36 }).toRelative({ round: false }) //=&gt; &quot;1.5 days ago&quot;
    */
   toRelative(options = {}) {
     if (!this.isValid) return null;
@@ -1899,14 +1923,14 @@ export default class DateTime {
    * Returns a string representation of this date relative to today, such as &quot;yesterday&quot; or &quot;next month&quot;.
    * Only internationalizes on platforms that supports Intl.RelativeTimeFormat.
    * @param {Object} options - options that affect the output
-   * @param {DateTime} [options.base=DateTime.local()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of &quot;years&quot;, &quot;quarters&quot;, &quot;months&quot;, &quot;weeks&quot;, or &quot;days&quot;
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
-   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar() //=&gt; &quot;tomorrow&quot;
-   * @example DateTime.local().setLocale(&quot;es&quot;).plus({ days: 1 }).toRelative() //=&gt; &quot;&quot;ma&#xF1;ana&quot;
-   * @example DateTime.local().plus({ days: 1 }).toRelativeCalendar({ locale: &quot;fr&quot; }) //=&gt; &quot;demain&quot;
-   * @example DateTime.local().minus({ days: 2 }).toRelativeCalendar() //=&gt; &quot;2 days ago&quot;
+   * @example DateTime.now().plus({ days: 1 }).toRelativeCalendar() //=&gt; &quot;tomorrow&quot;
+   * @example DateTime.now().setLocale(&quot;es&quot;).plus({ days: 1 }).toRelative() //=&gt; &quot;&quot;ma&#xF1;ana&quot;
+   * @example DateTime.now().plus({ days: 1 }).toRelativeCalendar({ locale: &quot;fr&quot; }) //=&gt; &quot;demain&quot;
+   * @example DateTime.now().minus({ days: 2 }).toRelativeCalendar() //=&gt; &quot;2 days ago&quot;
    */
   toRelativeCalendar(options = {}) {
     if (!this.isValid) return null;
@@ -2182,5 +2206,5 @@ export function friendlyDateTime(dateTimeish) {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

@@ -348,7 +348,7 @@
         "trailingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Represents the local zone for this Javascript environment.\n * @implements {Zone}\n ",
+            "value": "*\n * Represents the local zone for this JavaScript environment.\n * @implements {Zone}\n ",
             "start": 127,
             "end": 218,
             "loc": {
@@ -2543,7 +2543,7 @@
           "leadingComments": [
             {
               "type": "CommentBlock",
-              "value": "*\n * Represents the local zone for this Javascript environment.\n * @implements {Zone}\n ",
+              "value": "*\n * Represents the local zone for this JavaScript environment.\n * @implements {Zone}\n ",
               "start": 127,
               "end": 218,
               "loc": {
@@ -2563,7 +2563,7 @@
         "leadingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Represents the local zone for this Javascript environment.\n * @implements {Zone}\n ",
+            "value": "*\n * Represents the local zone for this JavaScript environment.\n * @implements {Zone}\n ",
             "start": 127,
             "end": 218,
             "loc": {
@@ -2585,7 +2585,7 @@
   "comments": [
     {
       "type": "CommentBlock",
-      "value": "*\n * Represents the local zone for this Javascript environment.\n * @implements {Zone}\n ",
+      "value": "*\n * Represents the local zone for this JavaScript environment.\n * @implements {Zone}\n ",
       "start": 127,
       "end": 218,
       "loc": {
@@ -3302,7 +3302,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n * Represents the local zone for this Javascript environment.\n * @implements {Zone}\n ",
+      "value": "*\n * Represents the local zone for this JavaScript environment.\n * @implements {Zone}\n ",
       "start": 127,
       "end": 218,
       "loc": {

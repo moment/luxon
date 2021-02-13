@@ -48,6 +48,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/tour.html"><a href="manual/tour.html" data-ice="link">A quick tour</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#get-the-current-date-and-time" data-ice="link">Get the current date and time</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
@@ -151,6 +152,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#js-date-object" data-ice="link">JS Date Object</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
@@ -244,6 +246,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
@@ -366,7 +369,14 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><h2 id="1-25-0">1.25.0</h2><ul>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><h2 id="1-26-0">1.26.0</h2><ul>
+<li>Add fromISOTime, toISOTime and toMillis to Duration (#803)</li>
+<li>Fix padding of negative years in IsoDate (#871)</li>
+<li>Fix hasSame unit comparison (#798)</li>
+<li>Export VERSION information (#794)</li>
+<li>Durations are considered equal with extra zero units. Fixes #809 (#811)</li>
+</ul>
+<h2 id="1-25-0">1.25.0</h2><ul>
 <li>fix fromFormat with Intl formats containing non-breaking spaces</li>
 <li>Support higher precisision in ISO milliseconds</li>
 <li>Some fixes for 00:30 timezones</li>
@@ -783,5 +793,5 @@
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

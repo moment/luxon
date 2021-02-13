@@ -48,6 +48,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/tour.html"><a href="manual/tour.html" data-ice="link">A quick tour</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#get-the-current-date-and-time" data-ice="link">Get the current date and time</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
@@ -151,6 +152,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#js-date-object" data-ice="link">JS Date Object</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
@@ -244,6 +246,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
@@ -373,7 +376,7 @@ var m2 = m1.add(1, &apos;hours&apos;);
 m1.valueOf() === m2.valueOf(); //=&gt; true</code>
 </code></pre>
 <p>This happens because <code>m1</code> and <code>m2</code> are really the same object; <code>add()</code> <em>mutated</em> the object to be an hour later. Compare that to Luxon:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.local();
+<pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.now();
 var d2 = d1.plus({ hours: 1 });
 d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 </code></pre>
@@ -407,7 +410,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <tr>
 <td>Now</td>
 <td><code>moment()</code></td>
-<td><code>DateTime.local()</code></td>
+<td><code>DateTime.now()</code></td>
 <td></td>
 </tr>
 <tr>
@@ -844,7 +847,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 </tr>
 </tbody>
 </table>
-<h4 id="humanization">Humanization</h4><p>Luxon has <code>toRelative</code> and <code>toRelativeCalendar</code>. For internationalization, they use Intl.RelativeTimeFormat, which isn&apos;t currently supported by most browsers; in those cases, they fall back to English.</p>
+<h4 id="humanization">Humanization</h4><p>Luxon has <code>toRelative</code> and <code>toRelativeCalendar</code>. For internationalization, they use Intl.RelativeTimeFormat (or fall back to English when it is not supported by the browser).</p>
 <table>
 <thead>
 <tr>
@@ -884,7 +887,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <h2 id="durations">Durations</h2><p>Moment Durations and Luxon Durations are broadly similar in purpose and capabilities. The main differences are:</p>
 <ol>
 <li>Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using <code>shiftTo</code>. They can also be configured to use different unit conversions. See <a href="./manual/math.html#duration-math">Duration Math</a> for more.</li>
-<li>Luxon does not (yet) have an equivalent of Moment&apos;s Duration <code>humanize</code> method. Luxon will add that when <a href="https://github.com/tc39/proposal-intl-unit-format">Intl.UnitFormat</a> is supported by browsers.</li>
+<li>Luxon does not (yet) have an equivalent of Moment&apos;s Duration <code>humanize</code> method. Luxon will add that when <a href="https://github.com/tc39/proposal-unified-intl-numberformat">Unified Intl.NumberFormat</a> is supported by browsers.</li>
 <li>Like DateTimes, Luxon Durations have separate methods for creating objects from different sources.</li>
 </ol>
 <p>See the <a href="./manual/../class/src/duration.js~Duration.html">Duration API docs</a> for more.</p>
@@ -903,5 +906,5 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

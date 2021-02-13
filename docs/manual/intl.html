@@ -48,6 +48,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/tour.html"><a href="manual/tour.html" data-ice="link">A quick tour</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#get-the-current-date-and-time" data-ice="link">Get the current date and time</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
@@ -151,6 +152,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#js-date-object" data-ice="link">JS Date Object</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
@@ -244,6 +246,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
@@ -367,7 +370,7 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="intl">Intl</h1><p>Luxon uses the native Intl API to provide easy-to-use internationalization. A quick example:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local()
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now()
   .setLocale(&quot;el&quot;)
   .toLocaleString(DateTime.DATE_FULL); //=&gt;  &apos;24 &#x3A3;&#x3B5;&#x3C0;&#x3C4;&#x3B5;&#x3BC;&#x3B2;&#x3C1;&#x3AF;&#x3BF;&#x3C5; 2017&apos;</code>
 </code></pre>
@@ -381,21 +384,21 @@ dt.locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <p>In this case, the specified locale didn&apos;t change the how the parsing worked (there&apos;s nothing localized about it), but it did set the locale property in the resulting instance. For other factory methods, such as <code>fromFormat</code>, the locale argument <em>does</em> affect how the string is parsed. See further down for more.</p>
 <p>You can change the locale of a DateTime instance (meaning, create a clone DateTime with a different locale) using <code>setLocale</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().setLocale(&quot;fr&quot;).locale; //=&gt; &apos;fr&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().setLocale(&quot;fr&quot;).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <p><code>setLocale</code> is just a convenience for <code>reconfigure</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().reconfigure({ locale: &quot;fr&quot; }).locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <h2 id="default-locale">Default locale</h2><h3 id="out-of-the-box-behavior">Out-of-the-box behavior</h3><p>By default the <code>locale</code> property of a new DateTime or Duration is the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.</p>
 <p>As a result, <code>DateTime#toLocaleString</code>, <code>DateTime#toLocaleParts</code>, and other human-readable-string methods like <code>Info.months</code> will by default generate strings in the user&apos;s locale.</p>
 <p>However, note that <code>DateTime.fromFormat</code> and <code>DateTime#toFormat</code> fall back on en-US. That&apos;s because these methods are often used to parse or format strings for consumption by APIs that don&apos;t care about the user&apos;s locale. So we need to pick a locale and stick with it, or the code will break depending on whose browser it runs in. There&apos;s an exception, though: <code>DateTime#toFormat</code> can take &quot;macro&quot; formats like &quot;D&quot; that produces localized strings as part of a larger string. These <em>do</em> default to the system locale because their entire purpose is to be provide localized strings.</p>
-<h3 id="setting-the-default">Setting the default</h3><p>You can set a default locale so that news instances will always be created with the specified locale:</p>
+<h3 id="setting-the-default">Setting the default</h3><p>You can set a default locale so that new instances will always be created with the specified locale:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = &quot;fr&quot;;
-DateTime.local().locale; //=&gt; &apos;fr&apos;</code>
+DateTime.now().locale; //=&gt; &apos;fr&apos;</code>
 </code></pre>
 <p>Note that this also alters the behavior of <code>DateTime#toFormat</code> and <code>DateTime#fromFormat</code>.</p>
 <h3 id="using-the-system-locale-in-string-parsing">Using the system locale in string parsing</h3><p>You generally don&apos;t want <code>DateTime#fromFormat</code> and <code>DateTime#toFormat</code> to use the system&apos;s locale, since your format won&apos;t be sensitive to the locale&apos;s string ordering. That&apos;s why Luxon doesn&apos;t behave that way by default. But if you really want that behavior, you can always do this:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = DateTime.local().resolvedLocaleOpts().locale;</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">Settings.defaultLocale = DateTime.now().resolvedLocaleOpts().locale;</code>
 </code></pre>
 <h2 id="checking-what-you-got">Checking what you got</h2><p>The local environment may not support the exact locale you asked for. The native Intl API will try to find the best match. If you want to know what that match was, use <code>resolvedLocaleOpts</code>:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromObject({ locale: &quot;fr-co&quot; }).resolvedLocaleOpts(); //=&gt; { locale: &apos;fr&apos;,
@@ -420,7 +423,7 @@ Info.weekdays(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;lun
 Info.eras(&quot;long&quot;, { locale: &quot;fr&quot; }); //=&gt; [ &apos;avant J&#xE9;sus-Christ&apos;, &apos;apr&#xE8;s J&#xE9;sus-Christ&apos; ]</code>
 </code></pre>
 <h2 id="numberingsystem">numberingSystem</h2><p>DateTimes also have a <code>numberingSystem</code> setting that lets you control what system of numerals is used in formatting. In general, you shouldn&apos;t override the numbering system provided by the locale. For example, no extra work is needed to get Arabic numbers to show up in Arabic-speaking locales:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().setLocale(&quot;ar&quot;);
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now().setLocale(&quot;ar&quot;);
 
 dt.resolvedLocaleOpts(); //=&gt; { locale: &apos;ar&apos;,
 //     numberingSystem: &apos;arab&apos;,
@@ -429,7 +432,7 @@ dt.resolvedLocaleOpts(); //=&gt; { locale: &apos;ar&apos;,
 dt.toLocaleString(); //=&gt; &apos;&#x662;&#x664;&#x200F;/&#x669;&#x200F;/&#x662;&#x660;&#x661;&#x667;&apos;</code>
 </code></pre>
 <p>For this reason, Luxon defaults its own <code>numberingSystem</code> property to null, by which it means &quot;let the Intl API decide&quot;. However, you can override it if you want. This example is admittedly ridiculous:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.local().reconfigure({ locale: &quot;it&quot;, numberingSystem: &quot;beng&quot; });
+<pre><code class="lang-js"><code class="source-code prettyprint">var dt = DateTime.now().reconfigure({ locale: &quot;it&quot;, numberingSystem: &quot;beng&quot; });
 dt.toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;&#x9E8;&#x9EA; settembre &#x9E8;&#x9E6;&#x9E7;&#x9ED;&apos;</code>
 </code></pre>
 <p>Similar to <code>locale</code>, you can set the default numbering system for new instances:</p>
@@ -449,5 +452,5 @@ dt.toLocaleString(DateTime.DATE_FULL); //=&gt; &apos;&#x9E8;&#x9EA; settembre &#
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

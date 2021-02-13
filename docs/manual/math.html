@@ -48,6 +48,7 @@
     <li data-ice="manualNav" class="indent-h1" data-link="manual/tour.html"><a href="manual/tour.html" data-ice="link">A quick tour</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#get-the-current-date-and-time" data-ice="link">Get the current date and time</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
@@ -151,6 +152,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#js-date-object" data-ice="link">JS Date Object</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
@@ -244,6 +246,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
@@ -391,7 +394,7 @@ DateTime.local(2017, 2, 13).plus({ days: 30 }).toISODate() //=&gt; &apos;2017-03
 <li><strong>Minutes</strong> are always 60 seconds</li>
 <li><strong>Seconds</strong> are always 1000 milliseconds</li>
 </ul>
-<p>Don&apos;t worry about leap seconds. Javascript and most other programming environments don&apos;t account for them; they just happen as abrupt, invisible changes to the underlying system&apos;s time.</p>
+<p>Don&apos;t worry about leap seconds. JavaScript and most other programming environments don&apos;t account for them; they just happen as abrupt, invisible changes to the underlying system&apos;s time.</p>
 <h3 id="how-to-think-about-calendar-math">How to think about calendar math</h3><p>It&apos;s best not to think of calendar math as requiring arcane checks on the lengths of intervening periods. Instead, think of them as <strong>adjusting that unit directly and keeping lower order date components constant</strong>. Let&apos;s go back to the Feb 13 + 1 month example. If you didn&apos;t have Luxon, you would do something like this to accomplish that:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var d = new Date(&apos;2017-02-13&apos;)
 d.setMonth(d.getMonth() + 1)
@@ -424,9 +427,8 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 +d1 === +d2 // same test, using object coercion</code>
 </code></pre>
 <p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;millisecond&apos;); // equivalent to `+d1 === +d2`
-d1.hasSame(d2, &apos;minute&apos;);       // both DateTimes are in the same minute (and hour, day, month, etc)
-d1.hasSame(d2, &apos;year&apos;);         // etc</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;year&apos;);   // both DateTimes have the same calendar year
+d1.hasSame(d2, &apos;day&apos;);    // both DateTimes have the same calendar day (which implies they also have the same calendar year and month)</code>
 </code></pre>
 <p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p>
 <p>If you&apos;d like to compare using a specific unit, you can achieve this by combining <code>#startOf</code> and the <code>#valueOf</code> comparisons above.</p>
@@ -525,8 +527,8 @@ dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 1
 </code></pre>
 <p>This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ years: 50000 });
-DateTime.local().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
-DateTime.local().plus(dur).year                         //=&gt; 52017</code>
+DateTime.now().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
+DateTime.now().plus(dur).year                         //=&gt; 52017</code>
 </code></pre>
 <p>Those are 33 years apart! So Luxon offers an alternative conversion scheme called &quot;longterm&quot;, based on the 400-year calendar cycle:</p>
 <table>
@@ -626,5 +628,5 @@ i.toDuration([&apos;years&apos;, &apos;months&apos;, &apos;days&apos;]).toObject
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

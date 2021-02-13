@@ -140,6 +140,35 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromISOTime">fromISOTime</a></span></span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Create a Duration from an ISO 8601 time string.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#static-method-fromMillis">fromMillis</a></span></span><span class="code" data-ice="signature">(count: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
         </p>
       </div>
@@ -175,7 +204,7 @@
       <div>
         
         
-        <div data-ice="description"><p>Create a Duration from a Javascript object with keys like &apos;years&apos; and &apos;hours.
+        <div data-ice="description"><p>Create a Duration from a JavaScript object with keys like &apos;years&apos; and &apos;hours.
 If this object is empty then a zero milliseconds duration is returned.</p>
 </div>
       </div>
@@ -1056,6 +1085,35 @@ Two Durations are equal iff they have the same units and the same values for eac
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toISOTime">toISOTime</a></span></span><span class="code" data-ice="signature">(opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of this Duration, formatted as a time of day.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toJSON">toJSON</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
@@ -1085,13 +1143,42 @@ Two Durations are equal iff they have the same units and the same values for eac
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toMillis">toMillis</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Returns an milliseconds value of this Duration.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/duration.js~Duration.html#instance-method-toObject">toObject</a></span></span><span class="code" data-ice="signature">(opts: <span>*</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Returns a Javascript object with this Duration&apos;s values.</p>
+        <div data-ice="description"><p>Returns a JavaScript object with this Duration&apos;s values.</p>
 </div>
       </div>
     </td>
@@ -1286,6 +1373,132 @@ Two Durations are equal iff they have the same units and the same values for eac
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-fromISOTime">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">fromISOTime</span><span class="code" data-ice="signature">(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/duration.js~Duration.html">Duration</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber294">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Create a Duration from an ISO 8601 time string.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">text</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>text to parse</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>options for parsing</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">opts.locale</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: &apos;en-US&apos;</li></ul></td>
+      <td data-ice="description"><p>the locale to use</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">opts.numberingSystem</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the numbering system to use</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">opts.conversionAccuracy</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: &apos;casual&apos;</li></ul></td>
+      <td data-ice="description"><p>the conversion system to use</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/duration.js~Duration.html">Duration</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="example">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromISOTime(&apos;11:22:33.444&apos;).toObject() //=&gt; { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromISOTime(&apos;11:00&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromISOTime(&apos;T11:00&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromISOTime(&apos;1100&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromISOTime(&apos;T1100&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }</code></pre>
+    </div>
+</div>
+
+  
+
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://en.wikipedia.org/wiki/ISO_8601#Times">https://en.wikipedia.org/wiki/ISO_8601#Times</a></span></li></ul></div>
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-method-fromMillis">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
@@ -1407,7 +1620,7 @@ Two Durations are equal iff they have the same units and the same values for eac
   
   
   
-  <div data-ice="description"><p>Create a Duration from a Javascript object with keys like &apos;years&apos; and &apos;hours.
+  <div data-ice="description"><p>Create a Duration from a JavaScript object with keys like &apos;years&apos; and &apos;hours.
 If this object is empty then a zero milliseconds duration is returned.</p>
 </div>
 
@@ -1551,7 +1764,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber285">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber310">source</a></span></span>
     </span>
   </h3>
 
@@ -1632,7 +1845,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber334">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber359">source</a></span></span>
     </span>
   </h3>
 
@@ -1708,7 +1921,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber689">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber774">source</a></span></span>
     </span>
   </h3>
 
@@ -1752,7 +1965,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber697">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber782">source</a></span></span>
     </span>
   </h3>
 
@@ -1796,7 +2009,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber746">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber831">source</a></span></span>
     </span>
   </h3>
 
@@ -1840,7 +2053,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber738">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber823">source</a></span></span>
     </span>
   </h3>
 
@@ -1896,7 +2109,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber730">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber815">source</a></span></span>
     </span>
   </h3>
 
@@ -1953,7 +2166,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber342">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber367">source</a></span></span>
     </span>
   </h3>
 
@@ -1997,7 +2210,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber721">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber806">source</a></span></span>
     </span>
   </h3>
 
@@ -2053,7 +2266,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber705">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber790">source</a></span></span>
     </span>
   </h3>
 
@@ -2097,7 +2310,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber673">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber758">source</a></span></span>
     </span>
   </h3>
 
@@ -2141,7 +2354,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber351">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber376">source</a></span></span>
     </span>
   </h3>
 
@@ -2185,7 +2398,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber665">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber750">source</a></span></span>
     </span>
   </h3>
 
@@ -2229,7 +2442,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber713">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber798">source</a></span></span>
     </span>
   </h3>
 
@@ -2285,7 +2498,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber681">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber766">source</a></span></span>
     </span>
   </h3>
 
@@ -2329,7 +2542,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber657">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber742">source</a></span></span>
     </span>
   </h3>
 
@@ -2376,7 +2589,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber558">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber643">source</a></span></span>
     </span>
   </h3>
 
@@ -2464,7 +2677,7 @@ on invalid DateTimes or Intervals.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber756">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber841">source</a></span></span>
     </span>
   </h3>
 
@@ -2537,7 +2750,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber516">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber601">source</a></span></span>
     </span>
   </h3>
 
@@ -2625,7 +2838,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber499">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber584">source</a></span></span>
     </span>
   </h3>
 
@@ -2709,7 +2922,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber485">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber570">source</a></span></span>
     </span>
   </h3>
 
@@ -2782,7 +2995,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber644">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber729">source</a></span></span>
     </span>
   </h3>
 
@@ -2845,7 +3058,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber568">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber653">source</a></span></span>
     </span>
   </h3>
 
@@ -2912,7 +3125,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber465">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber550">source</a></span></span>
     </span>
   </h3>
 
@@ -2985,7 +3198,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber539">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber624">source</a></span></span>
     </span>
   </h3>
 
@@ -3065,7 +3278,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber527">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber612">source</a></span></span>
     </span>
   </h3>
 
@@ -3149,7 +3362,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber580">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber665">source</a></span></span>
     </span>
   </h3>
 
@@ -3228,7 +3441,7 @@ Two Durations are equal iff they have the same units and the same values for eac
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber375">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber400">source</a></span></span>
     </span>
   </h3>
 
@@ -3343,7 +3556,7 @@ Notes:</li>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber415">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber440">source</a></span></span>
     </span>
   </h3>
 
@@ -3411,6 +3624,135 @@ Notes:</li>
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-toISOTime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">toISOTime</span><span class="code" data-ice="signature">(opts: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber477">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Returns an ISO 8601-compliant string representation of this Duration, formatted as a time of day.
+Note that this will return null if the duration is invalid, negative, or equal to or greater than 24 hours.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">opts</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>options</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">opts.suppressMilliseconds</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: false</li></ul></td>
+      <td data-ice="description"><p>exclude milliseconds from the format if they&apos;re 0</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">opts.suppressSeconds</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: false</li></ul></td>
+      <td data-ice="description"><p>exclude seconds from the format if they&apos;re 0</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">opts.includePrefix</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: false</li></ul></td>
+      <td data-ice="description"><p>include the <code>T</code> prefix</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">opts.format</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: &apos;extended&apos;</li></ul></td>
+      <td data-ice="description"><p>choose between the basic and extended format</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="example">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({ hours: 11 }).toISOTime() //=&gt; &apos;11:00:00.000&apos;</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({ hours: 11 }).toISOTime({ suppressMilliseconds: true }) //=&gt; &apos;11:00:00&apos;</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({ hours: 11 }).toISOTime({ suppressSeconds: true }) //=&gt; &apos;11:00&apos;</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({ hours: 11 }).toISOTime({ includePrefix: true }) //=&gt; &apos;T11:00:00.000&apos;</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({ hours: 11 }).toISOTime({ format: &apos;basic&apos; }) //=&gt; &apos;110000.000&apos;</code></pre>
+    </div>
+</div>
+
+  
+
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://en.wikipedia.org/wiki/ISO_8601#Times">https://en.wikipedia.org/wiki/ISO_8601#Times</a></span></li></ul></div>
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-toJSON">
     <span class="access" data-ice="access">public</span>
     
@@ -3422,7 +3764,7 @@ Notes:</li>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber440">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber517">source</a></span></span>
     </span>
   </h3>
 
@@ -3467,6 +3809,62 @@ Notes:</li>
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-toMillis">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">toMillis</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber533">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Returns an milliseconds value of this Duration.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-toObject">
     <span class="access" data-ice="access">public</span>
     
@@ -3478,14 +3876,14 @@ Notes:</li>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber392">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber417">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Returns a Javascript object with this Duration&apos;s values.</p>
+  <div data-ice="description"><p>Returns a JavaScript object with this Duration&apos;s values.</p>
 </div>
 
   
@@ -3566,7 +3964,7 @@ Notes:</li>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber448">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber525">source</a></span></span>
     </span>
   </h3>
 
@@ -3622,14 +4020,14 @@ Notes:</li>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber456">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/duration.js.html#lineNumber541">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Returns an milliseconds value of this Duration.</p>
+  <div data-ice="description"><p>Returns an milliseconds value of this Duration. Alias of <span><a href="class/src/datetime.js~DateTime.html#instance-method-toMillis">toMillis</a></span></p>
 </div>
 
   
@@ -3680,5 +4078,5 @@ Notes:</li>
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

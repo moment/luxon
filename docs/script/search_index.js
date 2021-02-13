@@ -1014,6 +1014,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/datetime.js~datetime.now",
+    "class/src/datetime.js~DateTime.html#static-method-now",
+    "src/datetime.js~DateTime.now",
+    "method"
+  ],
+  [
     "src/datetime.js~datetime.utc",
     "class/src/datetime.js~DateTime.html#static-method-utc",
     "src/datetime.js~DateTime.utc",
@@ -1176,9 +1182,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/duration.js~duration#toisotime",
+    "class/src/duration.js~Duration.html#instance-method-toISOTime",
+    "src/duration.js~Duration#toISOTime",
+    "method"
+  ],
+  [
     "src/duration.js~duration#tojson",
     "class/src/duration.js~Duration.html#instance-method-toJSON",
     "src/duration.js~Duration#toJSON",
+    "method"
+  ],
+  [
+    "src/duration.js~duration#tomillis",
+    "class/src/duration.js~Duration.html#instance-method-toMillis",
+    "src/duration.js~Duration#toMillis",
     "method"
   ],
   [
@@ -1215,6 +1233,12 @@ window.esdocSearchIndex = [
     "src/duration.js~duration.fromiso",
     "class/src/duration.js~Duration.html#static-method-fromISO",
     "src/duration.js~Duration.fromISO",
+    "method"
+  ],
+  [
+    "src/duration.js~duration.fromisotime",
+    "class/src/duration.js~Duration.html#static-method-fromISOTime",
+    "src/duration.js~Duration.fromISOTime",
     "method"
   ],
   [

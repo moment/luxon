@@ -62,7 +62,7 @@ export default class Info {
    * @return {boolean}
    */
   static hasDST(zone = Settings.defaultZone) {
-    const proto = DateTime.local()
+    const proto = DateTime.now()
       .setZone(zone)
       .set({ month: 12 });
 
@@ -245,5 +245,5 @@ export default class Info {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>

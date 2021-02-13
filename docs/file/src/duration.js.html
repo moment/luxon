@@ -48,7 +48,7 @@
 import Formatter from &quot;./impl/formatter.js&quot;;
 import Invalid from &quot;./impl/invalid.js&quot;;
 import Locale from &quot;./impl/locale.js&quot;;
-import { parseISODuration } from &quot;./impl/regexParser.js&quot;;
+import { parseISODuration, parseISOTimeOnly } from &quot;./impl/regexParser.js&quot;;
 import {
   asNumber,
   hasOwnProperty,
@@ -262,7 +262,7 @@ export default class Duration {
   }
 
   /**
-   * Create a Duration from a Javascript object with keys like &apos;years&apos; and &apos;hours.
+   * Create a Duration from a JavaScript object with keys like &apos;years&apos; and &apos;hours.
    * If this object is empty then a zero milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
@@ -314,6 +314,31 @@ export default class Duration {
    */
   static fromISO(text, opts) {
     const [parsed] = parseISODuration(text);
+    if (parsed) {
+      const obj = Object.assign(parsed, opts);
+      return Duration.fromObject(obj);
+    } else {
+      return Duration.invalid(&quot;unparsable&quot;, `the input &quot;${text}&quot; can&apos;t be parsed as ISO 8601`);
+    }
+  }
+
+  /**
+   * Create a Duration from an ISO 8601 time string.
+   * @param {string} text - text to parse
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale=&apos;en-US&apos;] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy=&apos;casual&apos;] - the conversion system to use
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Times
+   * @example Duration.fromISOTime(&apos;11:22:33.444&apos;).toObject() //=&gt; { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }
+   * @example Duration.fromISOTime(&apos;11:00&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime(&apos;T11:00&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime(&apos;1100&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime(&apos;T1100&apos;).toObject() //=&gt; { hours: 11, minutes: 0, seconds: 0 }
+   * @return {Duration}
+   */
+  static fromISOTime(text, opts) {
+    const [parsed] = parseISOTimeOnly(text);
     if (parsed) {
       const obj = Object.assign(parsed, opts);
       return Duration.fromObject(obj);
@@ -429,7 +454,7 @@ export default class Duration {
   }
 
   /**
-   * Returns a Javascript object with this Duration&apos;s values.
+   * Returns a JavaScript object with this Duration&apos;s values.
    * @param opts - options for generating the object
    * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=&gt; { years: 1, days: 6, seconds: 2 }
@@ -480,6 +505,58 @@ export default class Duration {
   }
 
   /**
+   * Returns an ISO 8601-compliant string representation of this Duration, formatted as a time of day.
+   * Note that this will return null if the duration is invalid, negative, or equal to or greater than 24 hours.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Times
+   * @param {Object} opts - options
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they&apos;re 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they&apos;re 0
+   * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
+   * @param {string} [opts.format=&apos;extended&apos;] - choose between the basic and extended format
+   * @example Duration.fromObject({ hours: 11 }).toISOTime() //=&gt; &apos;11:00:00.000&apos;
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressMilliseconds: true }) //=&gt; &apos;11:00:00&apos;
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressSeconds: true }) //=&gt; &apos;11:00&apos;
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ includePrefix: true }) //=&gt; &apos;T11:00:00.000&apos;
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ format: &apos;basic&apos; }) //=&gt; &apos;110000.000&apos;
+   * @return {string}
+   */
+  toISOTime(opts = {}) {
+    if (!this.isValid) return null;
+
+    const millis = this.toMillis();
+    if (millis &lt; 0 || millis &gt;= 86400000) return null;
+
+    opts = Object.assign(
+      {
+        suppressMilliseconds: false,
+        suppressSeconds: false,
+        includePrefix: false,
+        format: &quot;extended&quot;
+      },
+      opts
+    );
+
+    const value = this.shiftTo(&quot;hours&quot;, &quot;minutes&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;);
+
+    let fmt = opts.format === &quot;basic&quot; ? &quot;hhmm&quot; : &quot;hh:mm&quot;;
+
+    if (!opts.suppressSeconds || value.seconds !== 0 || value.milliseconds !== 0) {
+      fmt += opts.format === &quot;basic&quot; ? &quot;ss&quot; : &quot;:ss&quot;;
+      if (!opts.suppressMilliseconds || value.milliseconds !== 0) {
+        fmt += &quot;.SSS&quot;;
+      }
+    }
+
+    let str = value.toFormat(fmt);
+
+    if (opts.includePrefix) {
+      str = &quot;T&quot; + str;
+    }
+
+    return str;
+  }
+
+  /**
    * Returns an ISO 8601 representation of this Duration appropriate for use in JSON.
    * @return {string}
    */
@@ -499,8 +576,16 @@ export default class Duration {
    * Returns an milliseconds value of this Duration.
    * @return {number}
    */
-  valueOf() {
+  toMillis() {
     return this.as(&quot;milliseconds&quot;);
+  }
+
+  /**
+   * Returns an milliseconds value of this Duration. Alias of {@link toMillis}
+   * @return {number}
+   */
+  valueOf() {
+    return this.toMillis();
   }
 
   /**
@@ -808,8 +893,14 @@ export default class Duration {
       return false;
     }
 
+    function eq(v1, v2) {
+      // Consider 0 and undefined as equal
+      if (v1 === undefined || v1 === 0) return v2 === undefined || v2 === 0;
+      return v1 === v2;
+    }
+
     for (const u of orderedUnits) {
-      if (this.values[u] !== other.values[u]) {
+      if (!eq(this.values[u], other.values[u])) {
         return false;
       }
     }
@@ -848,5 +939,5 @@ export function friendlyDuration(durationish) {
 <script src="script/test-summary.js"></script>
 <script src="script/inner-link.js"></script>
 <script src="script/patch-for-local.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.local()`.')</script></body>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
 </html>
