@@ -197,6 +197,7 @@ function toTechTimeFormat(
     suppressSeconds = false,
     suppressMilliseconds = false,
     includeOffset,
+    includePrefix = false,
     includeZone = false,
     spaceZone = false,
     format = "extended"
@@ -221,7 +222,13 @@ function toTechTimeFormat(
     fmt += format === "basic" ? "ZZZ" : "ZZ";
   }
 
-  return toTechFormat(dt, fmt);
+  let str = toTechFormat(dt, fmt);
+
+  if (includePrefix) {
+    str = "T" + str;
+  }
+
+  return str;
 }
 
 // defaults for unspecified units in the supported calendars
@@ -1571,22 +1578,26 @@ export default class DateTime {
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+   * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: 'basic' }) //=> '073419.361Z'
+   * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ includePrefix: true }) //=> 'T07:34:19.361Z'
    * @return {string}
    */
   toISOTime({
     suppressMilliseconds = false,
     suppressSeconds = false,
     includeOffset = true,
+    includePrefix = false,
     format = "extended"
   } = {}) {
     return toTechTimeFormat(this, {
       suppressSeconds,
       suppressMilliseconds,
       includeOffset,
+      includePrefix,
       format
     });
   }

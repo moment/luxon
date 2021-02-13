@@ -2,7 +2,7 @@ import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./
 import Formatter from "./impl/formatter.js";
 import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.js";
-import { parseISODuration } from "./impl/regexParser.js";
+import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
 import {
   asNumber,
   hasOwnProperty,
@@ -277,6 +277,31 @@ export default class Duration {
   }
 
   /**
+   * Create a Duration from an ISO 8601 time string.
+   * @param {string} text - text to parse
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Times
+   * @example Duration.fromISOTime('11:22:33.444').toObject() //=> { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }
+   * @example Duration.fromISOTime('11:00').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('T11:00').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('1100').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('T1100').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @return {Duration}
+   */
+  static fromISOTime(text, opts) {
+    const [parsed] = parseISOTimeOnly(text);
+    if (parsed) {
+      const obj = Object.assign(parsed, opts);
+      return Duration.fromObject(obj);
+    } else {
+      return Duration.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
+    }
+  }
+
+  /**
    * Create an invalid Duration.
    * @param {string} reason - simple string of why this datetime is invalid. Should not contain parameters or anything else data-dependent
    * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
@@ -434,6 +459,58 @@ export default class Duration {
   }
 
   /**
+   * Returns an ISO 8601-compliant string representation of this Duration, formatted as a time of day.
+   * Note that this will return null if the duration is invalid, negative, or equal to or greater than 24 hours.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Times
+   * @param {Object} opts - options
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+   * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
+   * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @example Duration.fromObject({ hours: 11 }).toISOTime() //=> '11:00:00.000'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressMilliseconds: true }) //=> '11:00:00'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressSeconds: true }) //=> '11:00'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ includePrefix: true }) //=> 'T11:00:00.000'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ format: 'basic' }) //=> '110000.000'
+   * @return {string}
+   */
+  toISOTime(opts = {}) {
+    if (!this.isValid) return null;
+
+    const millis = this.toMillis();
+    if (millis < 0 || millis >= 86400000) return null;
+
+    opts = Object.assign(
+      {
+        suppressMilliseconds: false,
+        suppressSeconds: false,
+        includePrefix: false,
+        format: "extended"
+      },
+      opts
+    );
+
+    const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
+
+    let fmt = opts.format === "basic" ? "hhmm" : "hh:mm";
+
+    if (!opts.suppressSeconds || value.seconds !== 0 || value.milliseconds !== 0) {
+      fmt += opts.format === "basic" ? "ss" : ":ss";
+      if (!opts.suppressMilliseconds || value.milliseconds !== 0) {
+        fmt += ".SSS";
+      }
+    }
+
+    let str = value.toFormat(fmt);
+
+    if (opts.includePrefix) {
+      str = "T" + str;
+    }
+
+    return str;
+  }
+
+  /**
    * Returns an ISO 8601 representation of this Duration appropriate for use in JSON.
    * @return {string}
    */
@@ -453,8 +530,16 @@ export default class Duration {
    * Returns an milliseconds value of this Duration.
    * @return {number}
    */
-  valueOf() {
+  toMillis() {
     return this.as("milliseconds");
+  }
+
+  /**
+   * Returns an milliseconds value of this Duration. Alias of {@link toMillis}
+   * @return {number}
+   */
+  valueOf() {
+    return this.toMillis();
   }
 
   /**
