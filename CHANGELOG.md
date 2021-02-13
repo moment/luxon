@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.26.0
+
+ * Add fromISOTime, toISOTime and toMillis to Duration (#803)
+ * Fix padding of negative years in IsoDate (#871)
+ * Fix hasSame unit comparison (#798)
+ * Export VERSION information (#794)
+ * Durations are considered equal with extra zero units. Fixes #809 (#811)
+
 ## 1.25.0
 
  * fix fromFormat with Intl formats containing non-breaking spaces
