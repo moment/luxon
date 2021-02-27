@@ -44,11 +44,11 @@ export const monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "
 export function months(length) {
   switch (length) {
     case "narrow":
-      return monthsNarrow;
+      return [...monthsNarrow];
     case "short":
-      return monthsShort;
+      return [...monthsShort];
     case "long":
-      return monthsLong;
+      return [...monthsLong];
     case "numeric":
       return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
     case "2-digit":
@@ -75,11 +75,11 @@ export const weekdaysNarrow = ["M", "T", "W", "T", "F", "S", "S"];
 export function weekdays(length) {
   switch (length) {
     case "narrow":
-      return weekdaysNarrow;
+      return [...weekdaysNarrow];
     case "short":
-      return weekdaysShort;
+      return [...weekdaysShort];
     case "long":
-      return weekdaysLong;
+      return [...weekdaysLong];
     case "numeric":
       return ["1", "2", "3", "4", "5", "6", "7"];
     default:
@@ -98,11 +98,11 @@ export const erasNarrow = ["B", "A"];
 export function eras(length) {
   switch (length) {
     case "narrow":
-      return erasNarrow;
+      return [...erasNarrow];
     case "short":
-      return erasShort;
+      return [...erasShort];
     case "long":
-      return erasLong;
+      return [...erasLong];
     default:
       return null;
   }
