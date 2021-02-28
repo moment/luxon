@@ -140,8 +140,10 @@ function extractISODuration(match) {
   ] = match;
 
   const hasNegativePrefix = s[0] === "-";
+  const negativeSeconds = secondStr && secondStr[0] === "-";
 
-  const maybeNegate = num => (num && hasNegativePrefix ? -num : num);
+  const maybeNegate = (num, force = false) =>
+    num !== undefined && (force || (num && hasNegativePrefix)) ? -num : num;
 
   return [
     {
@@ -151,8 +153,8 @@ function extractISODuration(match) {
       days: maybeNegate(parseInteger(dayStr)),
       hours: maybeNegate(parseInteger(hourStr)),
       minutes: maybeNegate(parseInteger(minuteStr)),
-      seconds: maybeNegate(parseInteger(secondStr)),
-      milliseconds: maybeNegate(parseMillis(millisecondsStr))
+      seconds: maybeNegate(parseInteger(secondStr), secondStr === "-0"),
+      milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds)
     }
   ];
 }
