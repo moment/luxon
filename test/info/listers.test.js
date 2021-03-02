@@ -2,6 +2,9 @@
 
 import { Info } from "../../src/luxon";
 
+import Helpers from "../helpers";
+const withDefaultLocale = Helpers.withDefaultLocale;
+
 //------
 // .months()
 //------
@@ -373,4 +376,34 @@ test("Info.eras lists both eras", () => {
   expect(Info.eras("long")).toEqual(["Before Christ", "Anno Domini"]);
   expect(Info.eras("short", { locale: "fr" })).toEqual(["av. J.-C.", "ap. J.-C."]);
   expect(Info.eras("long", { locale: "fr" })).toEqual(["avant Jésus-Christ", "après Jésus-Christ"]);
+});
+
+//------
+// general
+//------
+test("Info English lists are not mutable", () => {
+  withDefaultLocale("en-US", () => {
+    const cachingMethods = [
+      ["weekdays", "short"],
+      ["weekdays", "long"],
+      ["weekdays", "narrow"],
+      ["weekdays", "numeric"],
+      ["months", "short"],
+      ["months", "long"],
+      ["months", "narrow"],
+      ["months", "numeric"],
+      ["months", "2-digit"],
+      ["eras", "narrow"],
+      ["eras", "short"],
+      ["eras", "long"]
+    ];
+
+    for (const [method, arg] of cachingMethods) {
+      const fn = Info[method];
+      const original = [...fn(arg)];
+      fn(arg).pop();
+      const expected = fn(arg);
+      expect(expected).toEqual(original);
+    }
+  });
 });
