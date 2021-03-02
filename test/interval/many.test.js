@@ -371,6 +371,31 @@ test("Interval#split by returns [] for durations of length 0", () => {
   expect(split).toEqual([]);
 });
 
+test("Interval#split by works across varying length months", () => {
+  Helpers.withDefaultZone("Europe/London", () => {
+    const start = DateTime.fromISO("2019-12-30T00:00:00.000+00:00");
+    const end = DateTime.fromISO("2020-05-02T23:30:00.000+00:00");
+    const interval = Interval.fromDateTimes(start, end);
+
+    const months = interval.splitBy(Duration.fromISO("P1M"));
+    expect(months.length).toEqual(5);
+
+    for (let i = 0; i < months.length; i++) {
+      const month = months[i];
+      const expectedStart = start.plus({ month: i });
+      const expectedEnd = start.plus({ month: i + 1 });
+
+      expect(month.start).toEqual(expectedStart);
+
+      if (expectedEnd > end) {
+        expect(month.end).toEqual(end);
+      } else {
+        expect(month.end).toEqual(expectedEnd);
+      }
+    }
+  });
+});
+
 //-------
 // #divideEqually()
 //-------

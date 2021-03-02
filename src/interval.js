@@ -340,15 +340,16 @@ export default class Interval {
     }
 
     let { s } = this,
-      added,
+      idx = 1,
       next;
 
     const results = [];
     while (s < this.e) {
-      added = s.plus(dur);
+      const added = this.start.plus(dur.mapUnits(x => x * idx));
       next = +added > +this.e ? this.e : added;
       results.push(Interval.fromDateTimes(s, next));
       s = next;
+      idx += 1;
     }
 
     return results;
