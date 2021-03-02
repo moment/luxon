@@ -19,7 +19,7 @@
     "lint": "eslint --quiet src test benchmarks",
     "lint!": "npm run format && npm run lint",
     "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
-    "benchmark": "babel-node benchmarks/datetime.js",
+    "benchmark": "babel-node benchmarks/index.js",
     "codecov": "codecov",
     "check-doc-coverage": "babel-node tasks/docCoverage"
   },
