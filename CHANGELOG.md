@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.26.0
+## 1.26.0 (2021-02-13)
 
  * Add fromISOTime, toISOTime and toMillis to Duration (#803)
  * Fix padding of negative years in IsoDate (#871)
@@ -8,7 +8,7 @@
  * Export VERSION information (#794)
  * Durations are considered equal with extra zero units. Fixes #809 (#811)
 
-## 1.25.0
+## 1.25.0 (2020-08-23)
 
  * fix fromFormat with Intl formats containing non-breaking spaces
  * Support higher precisision in ISO milliseconds
