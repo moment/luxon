@@ -263,7 +263,7 @@ var diffInMonths = end.diff(start, 'months');
 diffInMonths.as('days'); //=> 30
 ```
 
-That's our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn't fix the issue ahead). But this isn't the number of days between February 15 and March 15!
+That's our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn't fix the issue ahead). But this isn't the number of days between February 13 and March 13!
 
 ```js
 var diffInDays = end.diff(start, 'days');
