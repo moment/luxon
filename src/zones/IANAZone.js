@@ -109,7 +109,7 @@ export default class IANAZone extends Zone {
   /** @ignore */
   static parseGMTOffset(specifier) {
     if (specifier) {
-      const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
+      const match = specifier.match(/^Etc\/GMT(0|[+-]\d{1,2})$/i);
       if (match) {
         return -60 * parseInt(match[1]);
       }

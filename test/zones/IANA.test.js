@@ -33,6 +33,9 @@ test("IANAZone.isValidZone", () => {
 
 test("IANAZone.parseGMTOffset returns a number for a valid input", () => {
   expect(IANAZone.parseGMTOffset("Etc/GMT+8")).toBe(-480);
+  expect(IANAZone.parseGMTOffset("Etc/GMT+0")).toBe(-0);
+  expect(IANAZone.parseGMTOffset("Etc/GMT-0")).toBe(+0);
+  expect(IANAZone.parseGMTOffset("Etc/GMT0")).toBe(-0);
 });
 
 test("IANAZone.parseGMTOffset returns null for invalid input", () => {
