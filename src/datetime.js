@@ -479,7 +479,7 @@ export default class DateTime {
    */
   static local(year, month, day, hour, minute, second, millisecond) {
     if (isUndefined(year)) {
-      return new DateTime({});
+      return DateTime.now();
     } else {
       return quickDT(
         {
