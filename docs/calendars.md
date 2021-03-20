@@ -57,5 +57,5 @@ DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);
 You can set the default output calendar for new DateTime instances like this:
 
 ```js
-Settings.defaultOuputCalendar = 'persian';
+Settings.defaultOutputCalendar = 'persian';
 ```
