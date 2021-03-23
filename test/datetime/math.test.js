@@ -116,6 +116,13 @@ test("DateTime#plus renders invalid when out of max. datetime range using second
   expect(d.isValid).toBe(false);
 });
 
+test("DateTime#plus renders invalid when out of max. datetime range using IANAZone", () => {
+  const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0)
+    .setZone("America/Los_Angeles")
+    .plus({ second: 1e8 * 24 * 60 * 60 + 1 });
+  expect(d.isValid).toBe(false);
+});
+
 test("DateTime#plus handles fractional days", () => {
   const d = DateTime.fromISO("2016-01-31T10:00");
   expect(d.plus({ days: 0.8 })).toEqual(d.plus({ hours: (24 * 4) / 5 }));
@@ -202,6 +209,13 @@ test("DateTime#minus renders invalid when out of max. datetime range using days"
 
 test("DateTime#minus renders invalid when out of max. datetime range using seconds", () => {
   const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0).minus({ second: 1e8 * 24 * 60 * 60 + 1 });
+  expect(d.isValid).toBe(false);
+});
+
+test("DateTime#plus renders invalid when out of max. datetime range using IANAZone", () => {
+  const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0)
+    .setZone("America/Los_Angeles")
+    .minus({ second: 1e8 * 24 * 60 * 60 + 1 });
   expect(d.isValid).toBe(false);
 });
 

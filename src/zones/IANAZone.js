@@ -152,8 +152,11 @@ export default class IANAZone extends Zone {
 
   /** @override **/
   offset(ts) {
-    const date = new Date(ts),
-      dtf = makeDTF(this.name),
+    const date = new Date(ts);
+
+    if (isNaN(date)) return NaN;
+
+    const dtf = makeDTF(this.name),
       [year, month, day, hour, minute, second] = dtf.formatToParts
         ? partsOffset(dtf, date)
         : hackyOffset(dtf, date),
