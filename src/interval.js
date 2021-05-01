@@ -429,7 +429,7 @@ export default class Interval {
     const s = this.s > other.s ? this.s : other.s,
       e = this.e < other.e ? this.e : other.e;
 
-    if (s > e) {
+    if (s >= e) {
       return null;
     } else {
       return Interval.fromDateTimes(s, e);
