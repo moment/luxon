@@ -111,12 +111,8 @@ test("Interval#intersection returns the intersection for overlapping intervals",
   ).toBeTruthy();
 });
 
-test("Interval#intersection returns empty for adjacent intervals", () => {
-  expect(
-    todayFrom(5, 8)
-      .intersection(todayFrom(8, 10))
-      .isEmpty()
-  ).toBeTruthy();
+test("Interval#intersection returns null for adjacent intervals", () => {
+  expect(todayFrom(5, 8).intersection(todayFrom(8, 10))).toBeNull();
 });
 
 test("Interval#intersection returns invalid for invalid intervals", () => {
