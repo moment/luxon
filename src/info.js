@@ -57,6 +57,7 @@ export default class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.months()[0] //=> 'January'
    * @example Info.months('short')[0] //=> 'Jan'
@@ -68,9 +69,9 @@ export default class Info {
    */
   static months(
     length = "long",
-    { locale = null, numberingSystem = null, outputCalendar = "gregory" } = {}
+    { locale = null, numberingSystem = null, locObj = null, outputCalendar = "gregory" } = {}
   ) {
-    return Locale.create(locale, numberingSystem, outputCalendar).months(length);
+    return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length);
   }
 
   /**
@@ -82,14 +83,15 @@ export default class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
   static monthsFormat(
     length = "long",
-    { locale = null, numberingSystem = null, outputCalendar = "gregory" } = {}
+    { locale = null, numberingSystem = null, locObj = null, outputCalendar = "gregory" } = {}
   ) {
-    return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);
+    return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length, true);
   }
 
   /**
@@ -99,14 +101,15 @@ export default class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @example Info.weekdays()[0] //=> 'Monday'
    * @example Info.weekdays('short')[0] //=> 'Mon'
    * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
    * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
    * @return {[string]}
    */
-  static weekdays(length = "long", { locale = null, numberingSystem = null } = {}) {
-    return Locale.create(locale, numberingSystem, null).weekdays(length);
+  static weekdays(length = "long", { locale = null, numberingSystem = null, locObj = null } = {}) {
+    return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length);
   }
 
   /**
@@ -118,10 +121,14 @@ export default class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale=null] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @return {[string]}
    */
-  static weekdaysFormat(length = "long", { locale = null, numberingSystem = null } = {}) {
-    return Locale.create(locale, numberingSystem, null).weekdays(length, true);
+  static weekdaysFormat(
+    length = "long",
+    { locale = null, numberingSystem = null, locObj = null } = {}
+  ) {
+    return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length, true);
   }
 
   /**
