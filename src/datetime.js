@@ -360,7 +360,7 @@ function diffRelative(start, end, opts) {
       return format(count, unit);
     }
   }
-  return format(0, opts.units[opts.units.length - 1]);
+  return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
 }
 
 /**
@@ -1862,7 +1862,7 @@ export default class DateTime {
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
-   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
+   * @param {string|string[]} options.unit - use a specific unit or array of units; if omitted, or an array, the method will pick the best unit. Use an array or one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
    * @param {boolean} [options.round=true] - whether to round the numbers in the output.
    * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
    * @param {string} options.locale - override the locale of this DateTime
@@ -1878,12 +1878,19 @@ export default class DateTime {
     if (!this.isValid) return null;
     const base = options.base || DateTime.fromObject({ zone: this.zone }),
       padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
+    let units = ["years", "months", "days", "hours", "minutes", "seconds"];
+    let unit = options.unit;
+    if (Array.isArray(options.unit)) {
+      units = options.unit;
+      unit = undefined;
+    }
     return diffRelative(
       base,
       this.plus(padding),
       Object.assign(options, {
         numeric: "always",
-        units: ["years", "months", "days", "hours", "minutes", "seconds"]
+        units,
+        unit
       })
     );
   }

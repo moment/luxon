@@ -53,6 +53,23 @@ test("DateTime#toRelative takes a unit argument", () => {
   expect(base.minus({ months: 3 }).toRelative({ base, unit: "years", round: false })).toBe(
     "0.25 years ago"
   );
+  expect(base.minus({ seconds: 30 }).toRelative({ base, unit: ["days", "hours", "minutes"] })).toBe(
+    "0 minutes ago"
+  );
+  expect(base.minus({ seconds: 1 }).toRelative({ base, unit: "minutes" })).toBe("0 minutes ago");
+  expect(base.plus({ seconds: 1 }).toRelative({ base, unit: "minutes" })).toBe("in 0 minutes");
+  expect(
+    base.plus({ seconds: 30 }).toRelative({
+      base,
+      unit: ["days", "hours", "minutes"]
+    })
+  ).toBe("in 0 minutes");
+  expect(
+    base.plus({ years: 2 }).toRelative({
+      base,
+      unit: ["days", "hours", "minutes"]
+    })
+  ).toBe("in 731 days");
 });
 
 test("DateTime#toRelative always rounds toward 0", () => {
