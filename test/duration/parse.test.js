@@ -31,6 +31,10 @@ test("Duration.fromISO can parse mixed or negative durations", () => {
   check("-P5Y3M", { years: -5, months: -3 });
   check("-P-5Y-3M", { years: 5, months: 3 });
   check("-P-1W1DT13H-23M34S", { weeks: 1, days: -1, hours: -13, minutes: 23, seconds: -34 });
+  check("PT-1.5S", { seconds: -1, milliseconds: -500 });
+  check("PT-0.5S", { seconds: 0, milliseconds: -500 });
+  check("PT1.5S", { seconds: 1, milliseconds: 500 });
+  check("PT0.5S", { seconds: 0, milliseconds: 500 });
 });
 
 test("Duration.fromISO can parse fractions of seconds", () => {
