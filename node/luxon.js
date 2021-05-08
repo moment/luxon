@@ -503,13 +503,13 @@ const monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"
 function months(length) {
   switch (length) {
     case "narrow":
-      return monthsNarrow;
+      return [...monthsNarrow];
 
     case "short":
-      return monthsShort;
+      return [...monthsShort];
 
     case "long":
-      return monthsLong;
+      return [...monthsLong];
 
     case "numeric":
       return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
@@ -527,13 +527,13 @@ const weekdaysNarrow = ["M", "T", "W", "T", "F", "S", "S"];
 function weekdays(length) {
   switch (length) {
     case "narrow":
-      return weekdaysNarrow;
+      return [...weekdaysNarrow];
 
     case "short":
-      return weekdaysShort;
+      return [...weekdaysShort];
 
     case "long":
-      return weekdaysLong;
+      return [...weekdaysLong];
 
     case "numeric":
       return ["1", "2", "3", "4", "5", "6", "7"];
@@ -549,13 +549,13 @@ const erasNarrow = ["B", "A"];
 function eras(length) {
   switch (length) {
     case "narrow":
-      return erasNarrow;
+      return [...erasNarrow];
 
     case "short":
-      return erasShort;
+      return [...erasShort];
 
     case "long":
-      return erasLong;
+      return [...erasLong];
 
     default:
       return null;
@@ -1499,7 +1499,7 @@ class IANAZone extends Zone {
 
   static parseGMTOffset(specifier) {
     if (specifier) {
-      const match = specifier.match(/^Etc\/GMT([+-]\d{1,2})$/i);
+      const match = specifier.match(/^Etc\/GMT(0|[+-]\d{1,2})$/i);
 
       if (match) {
         return -60 * parseInt(match[1]);
@@ -1555,8 +1555,9 @@ class IANAZone extends Zone {
 
 
   offset(ts) {
-    const date = new Date(ts),
-          dtf = makeDTF(this.name),
+    const date = new Date(ts);
+    if (isNaN(date)) return NaN;
+    const dtf = makeDTF(this.name),
           [year, month, day, hour, minute, second] = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
           // work around https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
     adjustedHour = hour === 24 ? 0 : hour;
@@ -2133,12 +2134,16 @@ class PolyDateFormatter {
     if (dt.zone.universal && this.hasIntl) {
       // UTC-8 or Etc/UTC-8 are not part of tzdata, only Etc/GMT+8 and the like.
       // That is why fixed-offset TZ is set to that unless it is:
-      // 1. Outside of the supported range Etc/GMT-14 to Etc/GMT+12.
-      // 2. Not a whole hour, e.g. UTC+4:30.
+      // 1. Representing offset 0 when UTC is used to maintain previous behavior and does not become GMT.
+      // 2. Unsupported by the browser:
+      //    - some do not support Etc/
+      //    - < Etc/GMT-14, > Etc/GMT+12, and 30-minute or 45-minute offsets are not part of tzdata
       const gmtOffset = -1 * (dt.offset / 60);
+      const offsetZ = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
+      const isOffsetZoneSupported = IANAZone.isValidZone(offsetZ);
 
-      if (gmtOffset >= -14 && gmtOffset <= 12 && gmtOffset % 1 === 0) {
-        z = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
+      if (dt.offset !== 0 && isOffsetZoneSupported) {
+        z = offsetZ;
         this.dt = dt;
       } else {
         // Not all fixed-offset zones like Etc/+4:30 are present in tzdata.
@@ -2547,8 +2552,9 @@ const isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(
 function extractISODuration(match) {
   const [s, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] = match;
   const hasNegativePrefix = s[0] === "-";
+  const negativeSeconds = secondStr && secondStr[0] === "-";
 
-  const maybeNegate = num => num && hasNegativePrefix ? -num : num;
+  const maybeNegate = (num, force = false) => num !== undefined && (force || num && hasNegativePrefix) ? -num : num;
 
   return [{
     years: maybeNegate(parseInteger(yearStr)),
@@ -2557,8 +2563,8 @@ function extractISODuration(match) {
     days: maybeNegate(parseInteger(dayStr)),
     hours: maybeNegate(parseInteger(hourStr)),
     minutes: maybeNegate(parseInteger(minuteStr)),
-    seconds: maybeNegate(parseInteger(secondStr)),
-    milliseconds: maybeNegate(parseMillis(millisecondsStr))
+    seconds: maybeNegate(parseInteger(secondStr), secondStr === "-0"),
+    milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds)
   }];
 } // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
 // and not just that we're in -240 *right now*. But since I don't think these are used that often
@@ -3256,9 +3262,9 @@ class Duration {
   /**
    * Get the value of unit.
    * @param {string} unit - a unit such as 'minute' or 'day'
-   * @example Duration.fromObject({years: 2, days: 3}).years //=> 2
-   * @example Duration.fromObject({years: 2, days: 3}).months //=> 0
-   * @example Duration.fromObject({years: 2, days: 3}).days //=> 3
+   * @example Duration.fromObject({years: 2, days: 3}).get('years') //=> 2
+   * @example Duration.fromObject({years: 2, days: 3}).get('months') //=> 0
+   * @example Duration.fromObject({years: 2, days: 3}).get('days') //=> 3
    * @return {number}
    */
 
@@ -3945,15 +3951,16 @@ class Interval {
     let {
       s
     } = this,
-        added,
+        idx = 1,
         next;
     const results = [];
 
     while (s < this.e) {
-      added = s.plus(dur);
+      const added = this.start.plus(dur.mapUnits(x => x * idx));
       next = +added > +this.e ? this.e : added;
       results.push(Interval.fromDateTimes(s, next));
       s = next;
+      idx += 1;
     }
 
     return results;
@@ -4040,7 +4047,7 @@ class Interval {
     const s = this.s > other.s ? this.s : other.s,
           e = this.e < other.e ? this.e : other.e;
 
-    if (s > e) {
+    if (s >= e) {
       return null;
     } else {
       return Interval.fromDateTimes(s, e);
@@ -4284,6 +4291,7 @@ class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @example Info.months()[0] //=> 'January'
    * @example Info.months('short')[0] //=> 'Jan'
@@ -4298,9 +4306,10 @@ class Info {
   static months(length = "long", {
     locale = null,
     numberingSystem = null,
+    locObj = null,
     outputCalendar = "gregory"
   } = {}) {
-    return Locale.create(locale, numberingSystem, outputCalendar).months(length);
+    return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length);
   }
   /**
    * Return an array of format month names.
@@ -4311,6 +4320,7 @@ class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
    * @return {[string]}
    */
@@ -4319,9 +4329,10 @@ class Info {
   static monthsFormat(length = "long", {
     locale = null,
     numberingSystem = null,
+    locObj = null,
     outputCalendar = "gregory"
   } = {}) {
-    return Locale.create(locale, numberingSystem, outputCalendar).months(length, true);
+    return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length, true);
   }
   /**
    * Return an array of standalone week names.
@@ -4330,6 +4341,7 @@ class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @example Info.weekdays()[0] //=> 'Monday'
    * @example Info.weekdays('short')[0] //=> 'Mon'
    * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
@@ -4340,9 +4352,10 @@ class Info {
 
   static weekdays(length = "long", {
     locale = null,
-    numberingSystem = null
+    numberingSystem = null,
+    locObj = null
   } = {}) {
-    return Locale.create(locale, numberingSystem, null).weekdays(length);
+    return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length);
   }
   /**
    * Return an array of format week names.
@@ -4353,15 +4366,17 @@ class Info {
    * @param {Object} opts - options
    * @param {string} [opts.locale=null] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
    * @return {[string]}
    */
 
 
   static weekdaysFormat(length = "long", {
     locale = null,
-    numberingSystem = null
+    numberingSystem = null,
+    locObj = null
   } = {}) {
-    return Locale.create(locale, numberingSystem, null).weekdays(length, true);
+    return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length, true);
   }
   /**
    * Return an array of meridiems.
@@ -5564,7 +5579,7 @@ function diffRelative(start, end, opts) {
     }
   }
 
-  return format(0, opts.units[opts.units.length - 1]);
+  return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
 }
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
@@ -5689,7 +5704,7 @@ class DateTime {
 
   static local(year, month, day, hour, minute, second, millisecond) {
     if (isUndefined(year)) {
-      return new DateTime({});
+      return DateTime.now();
     } else {
       return quickDT({
         year,
@@ -5941,8 +5956,8 @@ class DateTime {
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
-   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} [opts.outputCalendar] - the output calendar to set on the resulting DateTime instance
+   * @param {string} [opts.numberingSystem] - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
@@ -6275,7 +6290,7 @@ class DateTime {
   /**
    * Get the week year
    * @see https://en.wikipedia.org/wiki/ISO_week_date
-   * @example DateTime.local(2014, 11, 31).weekYear //=> 2015
+   * @example DateTime.local(2014, 12, 31).weekYear //=> 2015
    * @type {number}
    */
 
@@ -6326,7 +6341,7 @@ class DateTime {
 
   get monthShort() {
     return this.isValid ? Info.months("short", {
-      locale: this.locale
+      locObj: this.loc
     })[this.month - 1] : null;
   }
   /**
@@ -6339,7 +6354,7 @@ class DateTime {
 
   get monthLong() {
     return this.isValid ? Info.months("long", {
-      locale: this.locale
+      locObj: this.loc
     })[this.month - 1] : null;
   }
   /**
@@ -6352,7 +6367,7 @@ class DateTime {
 
   get weekdayShort() {
     return this.isValid ? Info.weekdays("short", {
-      locale: this.locale
+      locObj: this.loc
     })[this.weekday - 1] : null;
   }
   /**
@@ -6365,7 +6380,7 @@ class DateTime {
 
   get weekdayLong() {
     return this.isValid ? Info.weekdays("long", {
-      locale: this.locale
+      locObj: this.loc
     })[this.weekday - 1] : null;
   }
   /**
@@ -6615,7 +6630,21 @@ class DateTime {
   set(values) {
     if (!this.isValid) return this;
     const normalized = normalizeObject(values, normalizeUnit, []),
-          settingWeekStuff = !isUndefined(normalized.weekYear) || !isUndefined(normalized.weekNumber) || !isUndefined(normalized.weekday);
+          settingWeekStuff = !isUndefined(normalized.weekYear) || !isUndefined(normalized.weekNumber) || !isUndefined(normalized.weekday),
+          containsOrdinal = !isUndefined(normalized.ordinal),
+          containsGregorYear = !isUndefined(normalized.year),
+          containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
+          containsGregor = containsGregorYear || containsGregorMD,
+          definiteWeekDef = normalized.weekYear || normalized.weekNumber;
+
+    if ((containsGregor || containsOrdinal) && definiteWeekDef) {
+      throw new ConflictingSpecificationError("Can't mix weekYear/weekNumber units with year/month/day or ordinals");
+    }
+
+    if (containsGregorMD && containsOrdinal) {
+      throw new ConflictingSpecificationError("Can't mix ordinal dates with month/day");
+    }
+
     let mixed;
 
     if (settingWeekStuff) {
@@ -7143,7 +7172,7 @@ class DateTime {
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
-   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
+   * @param {string|string[]} options.unit - use a specific unit or array of units; if omitted, or an array, the method will pick the best unit. Use an array or one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
    * @param {boolean} [options.round=true] - whether to round the numbers in the output.
    * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
    * @param {string} options.locale - override the locale of this DateTime
@@ -7163,9 +7192,18 @@ class DateTime {
       zone: this.zone
     }),
           padding = options.padding ? this < base ? -options.padding : options.padding : 0;
+    let units = ["years", "months", "days", "hours", "minutes", "seconds"];
+    let unit = options.unit;
+
+    if (Array.isArray(options.unit)) {
+      units = options.unit;
+      unit = undefined;
+    }
+
     return diffRelative(base, this.plus(padding), Object.assign(options, {
       numeric: "always",
-      units: ["years", "months", "days", "hours", "minutes", "seconds"]
+      units,
+      unit
     }));
   }
   /**
@@ -7468,7 +7506,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "1.26.0";
+const VERSION = "1.27.0";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

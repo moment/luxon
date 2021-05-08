@@ -245,9 +245,10 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-27-0--2021-05-08-" data-ice="link">1.27.0 (2021-05-08)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0--2021-02-13-" data-ice="link">1.26.0 (2021-02-13)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0--2020-08-23-" data-ice="link">1.25.0 (2020-08-23)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-23-0--2020-04-02-" data-ice="link">1.23.0 (2020-04-02)</a></li>
@@ -389,8 +390,16 @@
 <pre><code><code class="source-code prettyprint">npm install --save luxon</code>
 </code></pre><pre><code class="lang-js"><code class="source-code prettyprint">const { DateTime } = require(&quot;luxon&quot;);</code>
 </code></pre>
-<p>If you want to work with locales, you&apos;ll need to have <code>full-icu</code> support installed in Node. You can <a href="https://github.com/nodejs/node/wiki/Intl">build Node with it</a>, use an <a href="https://www.npmjs.com/package/full-icu">NPM module</a> to provide it, or find it prepackaged for your platform, like <code>brew install node --with-full-icu</code>. If you skip this step, Luxon still works but methods like <code>setLocale()</code> will do nothing.</p>
-<p>The instructions for using full-icu as a package are a little confusing. Node can&apos;t automatically discover that you&apos;ve installed the it, so you need to tell it where to find the data, like this:</p>
+<p>If you want to work with locales, you need ICU support:</p>
+<ol>
+<li><strong>For Node 13+, it comes built-in, no action necessary</strong></li>
+<li>For older Nodes, you need to install it yourself:<ol>
+<li>Install a build of Node with full ICU baked in, such as via nvm: nvm install &lt;version&gt; -s --with-intl=full-icu --download=all or brew: brew install node --with-full-icu</li>
+<li>Install the ICU data externally and point Node to it. The instructions on how to do that are below.</li>
+</ol>
+</li>
+</ol>
+<p>The instructions for using full-icu as a package are a little confusing. Node can&apos;t automatically discover that you&apos;ve installed it, so you need to tell it where to find the data, like this:</p>
 <pre><code><code class="source-code prettyprint">npm install full-icu
 node --icu-data-dir=./node_modules/full-icu</code>
 </code></pre><p>You can also point to the data with an environment var, like this:</p>

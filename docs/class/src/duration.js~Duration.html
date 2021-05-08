@@ -2809,15 +2809,15 @@ Two Durations are equal iff they have the same units and the same values for eac
     
   <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({years: 2, days: 3}).years //=&gt; 2</code></pre>
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({years: 2, days: 3}).get(&apos;years&apos;) //=&gt; 2</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({years: 2, days: 3}).months //=&gt; 0</code></pre>
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({years: 2, days: 3}).get(&apos;months&apos;) //=&gt; 0</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({years: 2, days: 3}).days //=&gt; 3</code></pre>
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">Duration.fromObject({years: 2, days: 3}).get(&apos;days&apos;) //=&gt; 3</code></pre>
     </div>
 </div>
 

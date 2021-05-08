@@ -245,9 +245,10 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0" data-ice="link">1.26.0</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0" data-ice="link">1.25.0</a></li>
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-27-0--2021-05-08-" data-ice="link">1.27.0 (2021-05-08)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0--2021-02-13-" data-ice="link">1.26.0 (2021-02-13)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0--2020-08-23-" data-ice="link">1.25.0 (2020-08-23)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-23-0--2020-04-02-" data-ice="link">1.23.0 (2020-04-02)</a></li>
@@ -415,7 +416,7 @@ start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate();</code>
 </code></pre>
 <p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p>
-<p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p>
+<p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem to reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({days: 1}).plus({months: 1}).toISODate() //=&gt; &apos;2017-06-01&apos;</code>
 </code></pre>
 <p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p>
@@ -579,7 +580,7 @@ var start = DateTime.fromISO(&apos;2017-02-13&apos;);
 var diffInMonths = end.diff(start, &apos;months&apos;);
 diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
 </code></pre>
-<p>That&apos;s our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 15 and March 15!</p>
+<p>That&apos;s our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 13 and March 13!</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
 diffInDays.toObject(); //=&gt; { days: 28 }</code>
 </code></pre>

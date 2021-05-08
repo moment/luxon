@@ -406,7 +406,7 @@ function diffRelative(start, end, opts) {
       return format(count, unit);
     }
   }
-  return format(0, opts.units[opts.units.length - 1]);
+  return format(start &gt; end ? -0 : 0, opts.units[opts.units.length - 1]);
 }
 
 /**
@@ -525,7 +525,7 @@ export default class DateTime {
    */
   static local(year, month, day, hour, minute, second, millisecond) {
     if (isUndefined(year)) {
-      return new DateTime({});
+      return DateTime.now();
     } else {
       return quickDT(
         {
@@ -797,8 +797,8 @@ export default class DateTime {
    * @param {string|Zone} [opts.zone=&apos;local&apos;] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
    * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale=&apos;system&apos;s locale&apos;] - a locale to set on the resulting DateTime instance
-   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} [opts.outputCalendar] - the output calendar to set on the resulting DateTime instance
+   * @param {string} [opts.numberingSystem] - the numbering system to set on the resulting DateTime instance
    * @example DateTime.fromISO(&apos;2016-05-25T09:08:34.123&apos;)
    * @example DateTime.fromISO(&apos;2016-05-25T09:08:34.123+06:00&apos;)
    * @example DateTime.fromISO(&apos;2016-05-25T09:08:34.123+06:00&apos;, {setZone: true})
@@ -1101,7 +1101,7 @@ export default class DateTime {
   /**
    * Get the week year
    * @see https://en.wikipedia.org/wiki/ISO_week_date
-   * @example DateTime.local(2014, 11, 31).weekYear //=&gt; 2015
+   * @example DateTime.local(2014, 12, 31).weekYear //=&gt; 2015
    * @type {number}
    */
   get weekYear() {
@@ -1145,7 +1145,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthShort() {
-    return this.isValid ? Info.months(&quot;short&quot;, { locale: this.locale })[this.month - 1] : null;
+    return this.isValid ? Info.months(&quot;short&quot;, { locObj: this.loc })[this.month - 1] : null;
   }
 
   /**
@@ -1155,7 +1155,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthLong() {
-    return this.isValid ? Info.months(&quot;long&quot;, { locale: this.locale })[this.month - 1] : null;
+    return this.isValid ? Info.months(&quot;long&quot;, { locObj: this.loc })[this.month - 1] : null;
   }
 
   /**
@@ -1165,7 +1165,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayShort() {
-    return this.isValid ? Info.weekdays(&quot;short&quot;, { locale: this.locale })[this.weekday - 1] : null;
+    return this.isValid ? Info.weekdays(&quot;short&quot;, { locObj: this.loc })[this.weekday - 1] : null;
   }
 
   /**
@@ -1175,7 +1175,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayLong() {
-    return this.isValid ? Info.weekdays(&quot;long&quot;, { locale: this.locale })[this.weekday - 1] : null;
+    return this.isValid ? Info.weekdays(&quot;long&quot;, { locObj: this.loc })[this.weekday - 1] : null;
   }
 
   /**
@@ -1385,7 +1385,22 @@ export default class DateTime {
       settingWeekStuff =
         !isUndefined(normalized.weekYear) ||
         !isUndefined(normalized.weekNumber) ||
-        !isUndefined(normalized.weekday);
+        !isUndefined(normalized.weekday),
+      containsOrdinal = !isUndefined(normalized.ordinal),
+      containsGregorYear = !isUndefined(normalized.year),
+      containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
+      containsGregor = containsGregorYear || containsGregorMD,
+      definiteWeekDef = normalized.weekYear || normalized.weekNumber;
+
+    if ((containsGregor || containsOrdinal) &amp;&amp; definiteWeekDef) {
+      throw new ConflictingSpecificationError(
+        &quot;Can&apos;t mix weekYear/weekNumber units with year/month/day or ordinals&quot;
+      );
+    }
+
+    if (containsGregorMD &amp;&amp; containsOrdinal) {
+      throw new ConflictingSpecificationError(&quot;Can&apos;t mix ordinal dates with month/day&quot;);
+    }
 
     let mixed;
     if (settingWeekStuff) {
@@ -1893,7 +1908,7 @@ export default class DateTime {
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style=&quot;long&quot;] - the style of units, must be &quot;long&quot;, &quot;short&quot;, or &quot;narrow&quot;
-   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of &quot;years&quot;, &quot;quarters&quot;, &quot;months&quot;, &quot;weeks&quot;, &quot;days&quot;, &quot;hours&quot;, &quot;minutes&quot;, or &quot;seconds&quot;
+   * @param {string|string[]} options.unit - use a specific unit or array of units; if omitted, or an array, the method will pick the best unit. Use an array or one of &quot;years&quot;, &quot;quarters&quot;, &quot;months&quot;, &quot;weeks&quot;, &quot;days&quot;, &quot;hours&quot;, &quot;minutes&quot;, or &quot;seconds&quot;
    * @param {boolean} [options.round=true] - whether to round the numbers in the output.
    * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don&apos;t use in combination with {round: false} because the decimal output will include the padding.
    * @param {string} options.locale - override the locale of this DateTime
@@ -1909,12 +1924,19 @@ export default class DateTime {
     if (!this.isValid) return null;
     const base = options.base || DateTime.fromObject({ zone: this.zone }),
       padding = options.padding ? (this &lt; base ? -options.padding : options.padding) : 0;
+    let units = [&quot;years&quot;, &quot;months&quot;, &quot;days&quot;, &quot;hours&quot;, &quot;minutes&quot;, &quot;seconds&quot;];
+    let unit = options.unit;
+    if (Array.isArray(options.unit)) {
+      units = options.unit;
+      unit = undefined;
+    }
     return diffRelative(
       base,
       this.plus(padding),
       Object.assign(options, {
         numeric: &quot;always&quot;,
-        units: [&quot;years&quot;, &quot;months&quot;, &quot;days&quot;, &quot;hours&quot;, &quot;minutes&quot;, &quot;seconds&quot;]
+        units,
+        unit
       })
     );
   }

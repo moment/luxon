@@ -386,15 +386,16 @@ export default class Interval {
     }
 
     let { s } = this,
-      added,
+      idx = 1,
       next;
 
     const results = [];
     while (s &lt; this.e) {
-      added = s.plus(dur);
+      const added = this.start.plus(dur.mapUnits(x =&gt; x * idx));
       next = +added &gt; +this.e ? this.e : added;
       results.push(Interval.fromDateTimes(s, next));
       s = next;
+      idx += 1;
     }
 
     return results;
@@ -474,7 +475,7 @@ export default class Interval {
     const s = this.s &gt; other.s ? this.s : other.s,
       e = this.e &lt; other.e ? this.e : other.e;
 
-    if (s &gt; e) {
+    if (s &gt;= e) {
       return null;
     } else {
       return Interval.fromDateTimes(s, e);

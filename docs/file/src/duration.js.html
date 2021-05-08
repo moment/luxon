@@ -639,9 +639,9 @@ export default class Duration {
   /**
    * Get the value of unit.
    * @param {string} unit - a unit such as &apos;minute&apos; or &apos;day&apos;
-   * @example Duration.fromObject({years: 2, days: 3}).years //=&gt; 2
-   * @example Duration.fromObject({years: 2, days: 3}).months //=&gt; 0
-   * @example Duration.fromObject({years: 2, days: 3}).days //=&gt; 3
+   * @example Duration.fromObject({years: 2, days: 3}).get(&apos;years&apos;) //=&gt; 2
+   * @example Duration.fromObject({years: 2, days: 3}).get(&apos;months&apos;) //=&gt; 0
+   * @example Duration.fromObject({years: 2, days: 3}).get(&apos;days&apos;) //=&gt; 3
    * @return {number}
    */
   get(unit) {
