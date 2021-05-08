@@ -3,6 +3,7 @@ import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
 import Formatter from "./formatter.js";
+import IANAZone from "../zones/IANAZone.js";
 
 let intlDTCache = {};
 function getCachedDTF(locString, opts = {}) {
@@ -185,11 +186,15 @@ class PolyDateFormatter {
     if (dt.zone.universal && this.hasIntl) {
       // UTC-8 or Etc/UTC-8 are not part of tzdata, only Etc/GMT+8 and the like.
       // That is why fixed-offset TZ is set to that unless it is:
-      // 1. Outside of the supported range Etc/GMT-14 to Etc/GMT+12.
-      // 2. Not a whole hour, e.g. UTC+4:30.
+      // 1. Representing offset 0 when UTC is used to maintain previous behavior and does not become GMT.
+      // 2. Unsupported by the browser:
+      //    - some do not support Etc/
+      //    - < Etc/GMT-14, > Etc/GMT+12, and 30-minute or 45-minute offsets are not part of tzdata
       const gmtOffset = -1 * (dt.offset / 60);
-      if (gmtOffset >= -14 && gmtOffset <= 12 && gmtOffset % 1 === 0) {
-        z = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
+      const offsetZ = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
+      const isOffsetZoneSupported = IANAZone.isValidZone(offsetZ);
+      if (dt.offset !== 0 && isOffsetZoneSupported) {
+        z = offsetZ;
         this.dt = dt;
       } else {
         // Not all fixed-offset zones like Etc/+4:30 are present in tzdata.
