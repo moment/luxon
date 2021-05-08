@@ -1,5 +1,11 @@
 # Changelog
 
+# 1.27.0 (2021-05-08)
+
+ * Fix GMT zone parsing for older versions of Node
+ * Support multiple units in `toRelative`  
+ * Various documentation updates
+
 ## 1.26.0 (2021-02-13)
 
  * Add fromISOTime, toISOTime and toMillis to Duration (#803)
@@ -11,7 +17,7 @@
 ## 1.25.0 (2020-08-23)
 
  * fix fromFormat with Intl formats containing non-breaking spaces
- * Support higher precisision in ISO milliseconds
+ * Support higher precision in ISO milliseconds
  * Some fixes for 00:30 timezones
  * Fix some throwOnInvalid for invalid Intervals
  * Various doc fixes
