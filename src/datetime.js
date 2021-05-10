@@ -1759,7 +1759,21 @@ export default class DateTime {
    * @return {Date}
    */
   toJSDate() {
-    return new Date(this.isValid ? this.ts : NaN);
+    if (! this.isValid) {
+        return new Date(NaN);
+    }
+
+    const dateObject = this.toObject();
+
+    return new Date(
+        dateObject.year, 
+        dateObject.month, 
+        dateObject.day, 
+        dateObject.hour, 
+        dateObject.minute, 
+        dateObject.second,
+        dateObject.millisecond
+    );
   }
 
   // COMPARE
