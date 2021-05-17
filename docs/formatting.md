@@ -141,6 +141,8 @@ DateTime.fromISO('2014-08-06T13:07:04.054')
   .toFormat('yyyy LLL dd'); //=> '2014 août 06'
 ```
 
+Note `toFormat` defaults to `en-US`. If you need the string to be internationalized, you need to set the locale explicitly like in the example above (or more preferably, use `toLocaleString`).
+
 ### Escaping
 
 You may escape strings using single quotes:
