@@ -9,25 +9,22 @@ Luxon officially supports the last two versions of the major browsers, with some
 | Browser                          | Versions | Zones | Intl basics | Intl tokens | Intl relative time formatting |
 | -------------------------------- | -------- | ----- | ----------- | ----------- | ----------------------------- |
 | Chrome                           | >= 71    | ✓     | ✓           | ✓           | ✓                             |
-|                                  | >= 54    | ✓     | ✓           | ✓           | ✗                             |
+|                                  | 54-70    | ✓     | ✓           | ✓           | ✗                             |
 | Firefox                          | >= 65    | ✓     | ✓           | ✓           | ✓                             |
-| Edge                             | 18       | ✓     | ✓           | ✓           | ✗                             |
-|                                  | 16       | ✓     | ✓           | ✗           | ✗                             |
+| Edge                             | >= 79    | ✓     | ✓           | ✓           | ✗                             |
+|                                  | 18-78    | ✓     | ✓           | ✓           | ✗                             |
 | IE                               | 11       | ✗     | ✓           | ✗           | ✗                             |
 |                                  | 10       | ✗     | ✗           | ✗           | ✗                             |
-| Safari                           | 11       | ✓     | ✓           | ✓           | ✗                             |
-|                                  | 10       | ✓     | ✗           | ✗           | ✗                             |
-| iOS Safari (iOS version numbers) | >= 11    | ✓     | ✓           | ✓           | ✗                             |
-|                                  | 10       | ✓     | ✗           | ✗           | ✗                             |
-|                                  | 9        | ✗     | ✓           | ✗           | ✗                             |
+| Safari                           | >= 14    | ✓     | ✓           | ✓           | ✓                             |
+|                                  | 11-13    | ✓     | ✓           | ✓           | ✗                             |
+| iOS Safari (iOS version numbers) | >= 14.4  | ✓     | ✓           | ✓           | ✗                             |
+|                                  | 11-14.3  | ✓     | ✓           | ✓           | ✗                             |
 | Node w/ICU                       | >= 12    | ✓     | ✓           | ✓           | ✓                             |
-|                                  | >= 8     | ✓     | ✓           | ✓           | ✗                             |
-|                                  | 6        | ✗     | ✓           | ✗           | ✗                             |
 | Node w/o ICU                     | >= 8     | ✓     | ✗           | ✗           | ✗                             |
-|                                  | 6        | ✗     | ✗           | ✗           | ✗                             |
 
 - Those capabilities are explained in the next sections, along with possible polyfill options
 - "w/ICU" refers to providing Node with ICU data. See the [install](install.html#node) for instructions
+- See https://caniuse.com/?search=intl for other browser versions
 
 ## Internet Explorer and platform polyfills
 
