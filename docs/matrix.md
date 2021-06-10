@@ -11,13 +11,13 @@ Luxon officially supports the last two versions of the major browsers, with some
 | Chrome                           | >= 71    | ✓     | ✓           | ✓           | ✓                             |
 |                                  | 54-70    | ✓     | ✓           | ✓           | ✗                             |
 | Firefox                          | >= 65    | ✓     | ✓           | ✓           | ✓                             |
-| Edge                             | >= 79    | ✓     | ✓           | ✓           | ✗                             |
+| Edge                             | >= 79    | ✓     | ✓           | ✓           | ✓                             |
 |                                  | 18-78    | ✓     | ✓           | ✓           | ✗                             |
 | IE                               | 11       | ✗     | ✓           | ✗           | ✗                             |
 |                                  | 10       | ✗     | ✗           | ✗           | ✗                             |
 | Safari                           | >= 14    | ✓     | ✓           | ✓           | ✓                             |
 |                                  | 11-13    | ✓     | ✓           | ✓           | ✗                             |
-| iOS Safari (iOS version numbers) | >= 14.4  | ✓     | ✓           | ✓           | ✗                             |
+| iOS Safari (iOS version numbers) | >= 14.4  | ✓     | ✓           | ✓           | ✓                             |
 |                                  | 11-14.3  | ✓     | ✓           | ✓           | ✗                             |
 | Node w/ICU                       | >= 12    | ✓     | ✓           | ✓           | ✓                             |
 | Node w/o ICU                     | >= 8     | ✓     | ✗           | ✗           | ✗                             |
