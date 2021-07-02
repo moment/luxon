@@ -435,6 +435,20 @@ test("DateTime.fromISO() accepts year-ordinalTtime", () => {
   });
 });
 
+test("DateTime.fromISO() accepts year-ordinalTtime+offset", () => {
+  const dt = DateTime.fromISO("2016-200T09:24:15.123+0600", { setZone: true });
+  expect(dt.zone.name).toBe("UTC+6");
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 7,
+    day: 18,
+    hour: 9,
+    minute: 24,
+    second: 15,
+    millisecond: 123
+  });
+});
+
 test("DateTime.fromISO() accepts hour:minute:second.millisecond", () => {
   const { year, month, day } = DateTime.now();
   isSame("09:24:15.123", {
