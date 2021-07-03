@@ -89,6 +89,8 @@
     "build/global/luxon.js.map",
     "build/global/luxon.min.js",
     "build/global/luxon.min.js.map",
+    "build/es6/luxon.js",
+    "build/es6/luxon.js.map",
     "src"
   ],
   "license": "MIT",
