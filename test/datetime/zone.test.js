@@ -75,14 +75,19 @@ test("DateTime#setZone setZone sets the TZ to the specified zone", () => {
   expect(zoned.isInDST).toBe(true);
 });
 
+test('DateTime#setZone accepts "system"', () => {
+  const zoned = DateTime.utc().setZone("system");
+  expect(zoned.offset).toBe(DateTime.local().offset);
+});
+
 test('DateTime#setZone accepts "local"', () => {
   const zoned = DateTime.utc().setZone("local");
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 
-test('DateTime#setZone accepts "local" and uses the default zone', () => {
+test('DateTime#setZone accepts "system" and uses the default zone', () => {
   Helpers.withDefaultZone("Europe/Paris", () => {
-    expect(DateTime.utc().setZone("local").zoneName).toBe("Europe/Paris");
+    expect(DateTime.utc().setZone("system").zoneName).toBe("Europe/Paris");
   });
 });
 
@@ -125,10 +130,10 @@ test('DateTime#setZone accepts "utc-3:30"', () => {
 });
 
 test("DateTime#setZone does not accept dumb things", () => {
-  Helpers.withDefaultZone("local", () => {
+  Helpers.withDefaultZone("system", () => {
     const zoned = DateTime.local().setZone("utc-yo");
     // this is questionable; should this be invalid instead?
-    expect(zoned.zone.type).toBe("local");
+    expect(zoned.zone.type).toBe("system");
   });
 });
 
@@ -264,11 +269,11 @@ test("Setting the default zone results in a different creation zone", () => {
   });
 });
 
-test("Setting the default zone to 'local' gives you back a local zone", () => {
-  const localZone = Settings.defaultZoneName;
+test("Setting the default zone to 'system' gives you back the system zone", () => {
+  const systemZone = Settings.defaultZone.name;
   Helpers.withDefaultZone("Asia/Tokyo", () => {
-    Settings.defaultZoneName = "local";
-    expect(DateTime.local().zoneName).toBe(localZone);
+    Settings.defaultZone = "system";
+    expect(DateTime.local().zoneName).toBe(systemZone);
   });
 });
 

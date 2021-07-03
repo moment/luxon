@@ -1,15 +1,14 @@
-import LocalZone from "./zones/localZone.js";
+import SystemZone from "./zones/systemZone.js";
 import IANAZone from "./zones/IANAZone.js";
 import Locale from "./impl/locale.js";
 
 import { normalizeZone } from "./impl/zoneUtil.js";
 
 let now = () => Date.now(),
-  defaultZone = null, // not setting this directly to LocalZone.instance bc loading order issues
+  defaultZone = "system",
   defaultLocale = null,
   defaultNumberingSystem = null,
-  defaultOutputCalendar = null,
-  throwOnInvalid = false;
+  defaultOutputCalendar = null;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -35,31 +34,21 @@ export default class Settings {
   }
 
   /**
-   * Get the default time zone to create DateTimes in.
-   * @type {string}
-   */
-  static get defaultZoneName() {
-    return Settings.defaultZone.name;
-  }
-
-  /**
    * Set the default time zone to create DateTimes in. Does not affect existing instances.
+   * Use the value "system" to reset this value to the system's time zone.
    * @type {string}
    */
-  static set defaultZoneName(z) {
-    if (!z) {
-      defaultZone = null;
-    } else {
-      defaultZone = normalizeZone(z);
-    }
+  static set defaultZone(zone) {
+    defaultZone = zone;
   }
 
   /**
-   * Get the default time zone object to create DateTimes in. Does not affect existing instances.
+   * Get the default time zone object currently used to create DateTimes. Does not affect existing instances.
+   * The default value is the system's time zone (the one set on the machine that runs this code).
    * @type {Zone}
    */
   static get defaultZone() {
-    return defaultZone || LocalZone.instance;
+    return normalizeZone(defaultZone, SystemZone.instance);
   }
 
   /**
@@ -108,22 +97,6 @@ export default class Settings {
    */
   static set defaultOutputCalendar(outputCalendar) {
     defaultOutputCalendar = outputCalendar;
-  }
-
-  /**
-   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {boolean}
-   */
-  static get throwOnInvalid() {
-    return throwOnInvalid;
-  }
-
-  /**
-   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
-   * @type {boolean}
-   */
-  static set throwOnInvalid(t) {
-    throwOnInvalid = t;
   }
 
   /**

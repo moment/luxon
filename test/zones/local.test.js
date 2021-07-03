@@ -1,20 +1,19 @@
 /* global test expect */
-import { LocalZone } from "../../src/luxon";
-import { withoutIntl } from "../helpers";
+import { SystemZone } from "../../src/luxon";
 
-test("LocalZone.instance returns a singleton", () => {
-  expect(LocalZone.instance).toBe(LocalZone.instance);
+test("SystemZone.instance returns a singleton", () => {
+  expect(SystemZone.instance).toBe(SystemZone.instance);
 });
 
-test("LocalZone.instance provides valid ...", () => {
-  expect(LocalZone.instance.type).toBe("local");
-  expect(LocalZone.instance.universal).toBe(false);
-  expect(LocalZone.instance.isValid).toBe(true);
-  expect(LocalZone.instance.equals(LocalZone.instance)).toBe(true);
+test("SystemZone.instance provides valid ...", () => {
+  expect(SystemZone.instance.type).toBe("system");
+  expect(SystemZone.instance.universal).toBe(false);
+  expect(SystemZone.instance.isValid).toBe(true);
+  expect(SystemZone.instance).toBe(SystemZone.instance);
 
   // todo: figure out how to test these without inadvertently testing IANAZone
-  expect(LocalZone.instance.name).toBe("America/New_York"); // this is true for the provided Docker container, what's the right way to test it?
-  // expect(LocalZone.instance.offsetName()).toBe("UTC");
-  // expect(LocalZone.instance.formatOffset(0, "short")).toBe("+00:00");
-  // expect(LocalZone.instance.offset()).toBe(0);
+  expect(SystemZone.instance.name).toBe("America/New_York"); // this is true for the provided Docker container, what's the right way to test it?
+  // expect(SystemZone.instance.offsetName()).toBe("UTC");
+  // expect(SystemZone.instance.formatOffset(0, "short")).toBe("+00:00");
+  // expect(SystemZone.instance.offset()).toBe(0);
 });

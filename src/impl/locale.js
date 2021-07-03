@@ -201,7 +201,7 @@ class PolyDateFormatter {
           this.dt = dt.offset === 0 ? dt : DateTime.fromMillis(dt.ts + dt.offset * 60 * 1000);
         }
       }
-    } else if (dt.zone.type === "local") {
+    } else if (dt.zone.type === "system") {
       this.dt = dt;
     } else {
       this.dt = dt;

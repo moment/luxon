@@ -32,10 +32,10 @@ exports.withNow = function(name, dt, f) {
 // not a tester!
 exports.withDefaultZone = function(zone, f) {
   try {
-    Settings.defaultZoneName = zone;
+    Settings.defaultZone = zone;
     f();
   } finally {
-    Settings.defaultZoneName = null;
+    Settings.defaultZone = null;
   }
 };
 

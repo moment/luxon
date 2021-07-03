@@ -17,7 +17,7 @@ export function normalizeZone(input, defaultZone) {
     return input;
   } else if (isString(input)) {
     const lowered = input.toLowerCase();
-    if (lowered === "local") return defaultZone;
+    if (lowered === "local" || lowered === "system") return defaultZone;
     else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
     else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
       // handle Etc/GMT-4, which V8 chokes on

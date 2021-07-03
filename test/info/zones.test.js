@@ -1,6 +1,13 @@
 /* global test expect */
 
-import { Info, FixedOffsetZone, IANAZone, InvalidZone, LocalZone, Settings } from "../../src/luxon";
+import {
+  Info,
+  FixedOffsetZone,
+  IANAZone,
+  InvalidZone,
+  SystemZone,
+  Settings
+} from "../../src/luxon";
 
 const Helpers = require("../helpers");
 
@@ -72,12 +79,13 @@ test("Info.normalizeZone returns Zone objects unchanged", () => {
   const invalidZone = new InvalidZone("bumblebee");
   expect(Info.normalizeZone(invalidZone)).toBe(invalidZone);
 
-  const localZone = LocalZone.instance;
-  expect(Info.normalizeZone(localZone)).toBe(localZone);
+  const systemZone = SystemZone.instance;
+  expect(Info.normalizeZone(systemZone)).toBe(systemZone);
 });
 
 test.each([
-  ["Local", LocalZone.instance],
+  ["Local", SystemZone.instance],
+  ["System", SystemZone.instance],
   ["UTC", FixedOffsetZone.utcInstance],
   ["GMT", FixedOffsetZone.utcInstance],
   ["Etc/GMT+5", FixedOffsetZone.instance(-5 * 60)],
