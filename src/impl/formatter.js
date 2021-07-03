@@ -1,6 +1,6 @@
 import * as English from "./english.js";
 import * as Formats from "./formats.js";
-import { hasFormatToParts, padStart } from "./util.js";
+import { padStart } from "./util.js";
 
 function stringifyTokens(splits, tokenToString) {
   let s = "";
@@ -130,8 +130,7 @@ export default class Formatter {
 
   formatDateTimeFromString(dt, fmt) {
     const knownEnglish = this.loc.listingMode() === "en",
-      useDateTimeFormatter =
-        this.loc.outputCalendar && this.loc.outputCalendar !== "gregory" && hasFormatToParts(),
+      useDateTimeFormatter = this.loc.outputCalendar && this.loc.outputCalendar !== "gregory",
       string = (opts, extract) => this.loc.extract(dt, opts, extract),
       formatOffset = opts => {
         if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {

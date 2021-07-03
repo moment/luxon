@@ -18,7 +18,3 @@ test("LocalZone.instance provides valid ...", () => {
   // expect(LocalZone.instance.formatOffset(0, "short")).toBe("+00:00");
   // expect(LocalZone.instance.offset()).toBe(0);
 });
-
-withoutIntl("LocalZone.name simply returns 'local'", () => {
-  expect(LocalZone.instance.name).toBe("local");
-});

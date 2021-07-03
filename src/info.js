@@ -4,7 +4,7 @@ import Locale from "./impl/locale.js";
 import IANAZone from "./zones/IANAZone.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 
-import { hasFormatToParts, hasIntl, hasRelative } from "./impl/util.js";
+import { hasRelative } from "./impl/util.js";
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
@@ -169,25 +169,6 @@ export default class Info {
    * @return {Object}
    */
   static features() {
-    let intl = false,
-      intlTokens = false,
-      zones = false,
-      relative = false;
-
-    if (hasIntl()) {
-      intl = true;
-      intlTokens = hasFormatToParts();
-      relative = hasRelative();
-
-      try {
-        zones =
-          new Intl.DateTimeFormat("en", { timeZone: "America/New_York" }).resolvedOptions()
-            .timeZone === "America/New_York";
-      } catch (e) {
-        zones = false;
-      }
-    }
-
-    return { intl, intlTokens, zones, relative };
+    return { relative: hasRelative() };
   }
 }

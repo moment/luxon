@@ -34,18 +34,6 @@ export function isDate(o) {
 
 // CAPABILITIES
 
-export function hasIntl() {
-  try {
-    return typeof Intl !== "undefined" && Intl.DateTimeFormat;
-  } catch (e) {
-    return false;
-  }
-}
-
-export function hasFormatToParts() {
-  return !isUndefined(Intl.DateTimeFormat.prototype.formatToParts);
-}
-
 export function hasRelative() {
   try {
     return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
@@ -212,24 +200,12 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     intlOpts.timeZone = timeZone;
   }
 
-  const modified = Object.assign({ timeZoneName: offsetFormat }, intlOpts),
-    intl = hasIntl();
+  const modified = Object.assign({ timeZoneName: offsetFormat }, intlOpts);
 
-  if (intl && hasFormatToParts()) {
-    const parsed = new Intl.DateTimeFormat(locale, modified)
-      .formatToParts(date)
-      .find(m => m.type.toLowerCase() === "timezonename");
-    return parsed ? parsed.value : null;
-  } else if (intl) {
-    // this probably doesn't work for all locales
-    const without = new Intl.DateTimeFormat(locale, intlOpts).format(date),
-      included = new Intl.DateTimeFormat(locale, modified).format(date),
-      diffed = included.substring(without.length),
-      trimmed = diffed.replace(/^[, \u200e]+/, "");
-    return trimmed;
-  } else {
-    return null;
-  }
+  const parsed = new Intl.DateTimeFormat(locale, modified)
+    .formatToParts(date)
+    .find(m => m.type.toLowerCase() === "timezonename");
+  return parsed ? parsed.value : null;
 }
 
 // signedOffset('-5', '30') -> -330

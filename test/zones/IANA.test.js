@@ -73,12 +73,6 @@ test("IANAZone.offsetName with a short format", () => {
   expect(offsetName).toBe("GMT-3");
 });
 
-withoutIntl("IANAZone.offsetName returns null", () => {
-  const zone = new IANAZone("America/Santiago");
-  const offsetName = zone.offsetName(1552089600, { format: "short", locale: "en-US" });
-  expect(offsetName).toBe(null);
-});
-
 test("IANAZone.formatOffset with a short format", () => {
   const zone = new IANAZone("America/Santiago");
   const offsetName = zone.formatOffset(1552089600, "short");
