@@ -2,11 +2,14 @@
 
 import { DateTime } from "../../src/luxon";
 
-const dt = DateTime.fromObject({
-  locale: "fr",
-  numberingSystem: "beng",
-  outputCalendar: "coptic"
-});
+const dt = DateTime.fromObject(
+  {},
+  {
+    locale: "fr",
+    numberingSystem: "beng",
+    outputCalendar: "coptic"
+  }
+);
 
 //------
 // #reconfigure()

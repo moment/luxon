@@ -424,8 +424,8 @@ test("Interval#divideEqually returns [] for invalid intervals", () => {
 test("Interval#mapEndpoints returns a new Interval with the mapped endpoints", () => {
   const zone = "America/Los_Angeles";
   const original = Interval.fromDateTimes(
-    DateTime.fromObject({ zone }),
-    DateTime.fromObject({ zone }).plus({ hours: 1 })
+    DateTime.fromObject({}, { zone }),
+    DateTime.fromObject({}, { zone }).plus({ hours: 1 })
   );
 
   const mapped = original.mapEndpoints(d => d.toUTC());

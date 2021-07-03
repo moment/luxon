@@ -9,7 +9,7 @@ import InvalidZone from "./zones/invalidZone.js";
 import SystemZone from "./zones/systemZone.js";
 import Settings from "./settings.js";
 
-const VERSION = "1.28.0";
+const VERSION = "2.0.0";
 
 export {
   VERSION,

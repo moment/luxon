@@ -33,7 +33,7 @@ Calling [DateTime.now](../class/src/datetime.js~DateTime.html#static-method-now)
 The most powerful way to create a DateTime instance is to provide an object containing all the information:
 
 ```js
-dt = DateTime.fromObject({day: 22, hour: 12, zone: 'America/Los_Angeles', numberingSystem: 'beng'})
+dt = DateTime.fromObject({day: 22, hour: 12 }, { zone: 'America/Los_Angeles', numberingSystem: 'beng'})
 ```
 
 Don't worry too much about the properties you don't understand yet; the point is that you can set every attribute of a DateTime when you create it. One thing to notice from the example is that we just set the day and hour; the year and month get defaulted to the current one and the minutes, seconds, and milliseconds get defaulted to 0. So [DateTime.fromObject](../class/src/datetime.js~DateTime.html#static-method-fromObject) is sort of the power user interface.
@@ -154,7 +154,7 @@ Info.months('long', {locale: 'fr'}) //=> [ 'janvier', 'février', 'mars', 'avril
 Luxon supports time zones. There's a whole [big section](zones) about it. But briefly, you can create DateTimes in specific zones and change their zones:
 
 ```js
-DateTime.fromObject({zone: 'America/Los_Angeles'}) // now, but expressed in LA's local time
+DateTime.fromObject({}, {zone: 'America/Los_Angeles'}); // now, but expressed in LA's local time
 DateTime.now().setZone("America/Los_Angeles"); // same
 ```
 

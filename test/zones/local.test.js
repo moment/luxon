@@ -7,7 +7,7 @@ test("SystemZone.instance returns a singleton", () => {
 
 test("SystemZone.instance provides valid ...", () => {
   expect(SystemZone.instance.type).toBe("system");
-  expect(SystemZone.instance.universal).toBe(false);
+  expect(SystemZone.instance.isUniversal).toBe(false);
   expect(SystemZone.instance.isValid).toBe(true);
   expect(SystemZone.instance).toBe(SystemZone.instance);
 

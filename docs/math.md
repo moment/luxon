@@ -235,7 +235,7 @@ You can see why these are irritating to work with, which is why they're not the 
 Luxon methods that create Durations de novo accept an option called `conversionAccuracy`. You can set it to "casual" or "longterm". It's a property of the Duration itself, so any conversions you do use the rule you've picked, and any new Durations you derive from it will retain that property.
 
 ```js
-Duration.fromObject({ years: 23, conversionAccuracy: 'longterm' });
+Duration.fromObject({ years: 23 }, { conversionAccuracy: 'longterm' });
 Duration.fromISO('PY23', { conversionAccuracy: 'longterm' });
 
 end.diff(start, 'days', { conversionAccuracy: 'longterm' })

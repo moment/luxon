@@ -2,7 +2,6 @@ import { padStart, roundTo, hasRelative } from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
-import Formatter from "./formatter.js";
 import IANAZone from "../zones/IANAZone.js";
 
 let intlDTCache = {};
@@ -173,7 +172,7 @@ class PolyDateFormatter {
     this.opts = opts;
 
     let z;
-    if (dt.zone.universal) {
+    if (dt.zone.isUniversal) {
       // UTC-8 or Etc/UTC-8 are not part of tzdata, only Etc/GMT+8 and the like.
       // That is why fixed-offset TZ is set to that unless it is:
       // 1. Representing offset 0 when UTC is used to maintain previous behavior and does not become GMT.

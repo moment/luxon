@@ -231,11 +231,10 @@ export function asNumber(value) {
   return numericValue;
 }
 
-export function normalizeObject(obj, normalizer, nonUnitKeys) {
+export function normalizeObject(obj, normalizer) {
   const normalized = {};
   for (const u in obj) {
     if (hasOwnProperty(obj, u)) {
-      if (nonUnitKeys.indexOf(u) >= 0) continue;
       const v = obj[u];
       if (v === undefined || v === null) continue;
       normalized[normalizer(u)] = asNumber(v);

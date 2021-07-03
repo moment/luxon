@@ -3,7 +3,7 @@
 import { Duration } from "../../src/luxon";
 
 const convert = (amt, from, to, accuracy) =>
-  Duration.fromObject({ [from]: amt, conversionAccuracy: accuracy }).as(to);
+  Duration.fromObject({ [from]: amt }, { conversionAccuracy: accuracy }).as(to);
 
 test("There are slightly more than 365 days in a year", () => {
   expect(convert(1, "years", "days", "casual")).toBeCloseTo(365, 4);

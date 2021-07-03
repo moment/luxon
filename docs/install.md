@@ -21,16 +21,6 @@ You may wish to alias the classes you use:
 var DateTime = luxon.DateTime;
 ```
 
-### Internet Explorer
-
-If you're supporting IE 10 or 11, you need some polyfills to get Luxon to work. Use polyfill.io:
-
-```html
-<script src="https://cdn.polyfill.io/v3/polyfill.js?features=default,String.prototype.repeat,Array.prototype.find,Array.prototype.findIndex,Math.trunc,Math.sign,Object.is"></script>
-```
-
-See the [support matrix](matrix.html) for more information on what works and what doesn't in IE.
-
 ## Node
 
 Supports Node 6+. Install via NPM:
@@ -46,7 +36,7 @@ const { DateTime } = require("luxon");
 If you want to work with locales, you need ICU support:
 
  1. **For Node 13+, it comes built-in, no action necessary**
- 2. For older Nodes, you need to install it yourself:
+ 2. For older Nodes (only 12 is supported), you need to install it yourself:
     1. Install a build of Node with full ICU baked in, such as via nvm: nvm install <version> -s --with-intl=full-icu --download=all or brew: brew install node --with-full-icu
     2. Install the ICU data externally and point Node to it. The instructions on how to do that are below.
 

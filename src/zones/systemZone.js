@@ -30,7 +30,7 @@ export default class SystemZone extends Zone {
   }
 
   /** @override **/
-  get universal() {
+  get isUniversal() {
     return false;
   }
 

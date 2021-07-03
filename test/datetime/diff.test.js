@@ -246,20 +246,28 @@ test("DateTime#diff returns invalid Durations if the DateTimes are invalid", () 
 });
 
 test("DateTime#diff results in a duration with the same locale", () => {
-  const dt1 = DateTime.fromObject({
-      year: 2016,
-      month: 5,
-      day: 5,
-      locale: "fr",
-      numberingSystem: "mong"
-    }),
-    dt2 = DateTime.fromObject({
-      year: 2016,
-      month: 1,
-      day: 1,
-      locale: "es",
-      numberingSystem: "beng"
-    }),
+  const dt1 = DateTime.fromObject(
+      {
+        year: 2016,
+        month: 5,
+        day: 5
+      },
+      {
+        locale: "fr",
+        numberingSystem: "mong"
+      }
+    ),
+    dt2 = DateTime.fromObject(
+      {
+        year: 2016,
+        month: 1,
+        day: 1
+      },
+      {
+        locale: "es",
+        numberingSystem: "beng"
+      }
+    ),
     dur = dt1.diff(dt2);
 
   expect(dur.locale).toBe("fr");

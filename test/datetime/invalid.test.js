@@ -4,7 +4,7 @@ import { DateTime, Settings } from "../../src/luxon";
 
 const organic1 = DateTime.utc(2014, 13, 33),
   // not an actual Wednesday
-  organic2 = DateTime.fromObject({ weekday: 3, year: 1982, month: 5, day: 25, zone: "UTC" }),
+  organic2 = DateTime.fromObject({ weekday: 3, year: 1982, month: 5, day: 25 }, { zone: "UTC" }),
   organic3 = DateTime.fromObject({ year: 1982, month: 5, day: 25, hour: 27 });
 
 test("Explicitly invalid dates are invalid", () => {
@@ -22,7 +22,7 @@ test("Invalid creations are invalid", () => {
 
 test("invalid zones result in invalid dates", () => {
   expect(DateTime.now().setZone("America/Lasers").isValid).toBe(false);
-  expect(DateTime.fromObject({ zone: "America/Lasers" }).isValid).toBe(false);
+  expect(DateTime.local({ zone: "America/Lasers" }).isValid).toBe(false);
   expect(DateTime.fromJSDate(new Date(), { zone: "America/Lasers" }).isValid).toBe(false);
 });
 

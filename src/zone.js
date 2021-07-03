@@ -28,7 +28,7 @@ export default class Zone {
    * @abstract
    * @type {boolean}
    */
-  get universal() {
+  get isUniversal() {
     throw new ZoneIsAbstractError();
   }
 

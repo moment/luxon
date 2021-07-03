@@ -3,16 +3,20 @@
 import { DateTime } from "../../src/luxon";
 
 const dtMaker = () =>
-    DateTime.fromObject({
-      year: 1982,
-      month: 5,
-      day: 25,
-      hour: 9,
-      minute: 23,
-      second: 54,
-      millisecond: 123,
-      zone: "utc"
-    }),
+    DateTime.fromObject(
+      {
+        year: 1982,
+        month: 5,
+        day: 25,
+        hour: 9,
+        minute: 23,
+        second: 54,
+        millisecond: 123
+      },
+      {
+        zone: "utc"
+      }
+    ),
   dt = dtMaker(),
   invalid = DateTime.invalid("because");
 
@@ -83,19 +87,19 @@ test("DateTime#toISODate() returns null for invalid DateTimes", () => {
 });
 
 test("DateTime#toISODate() returns ISO 8601 date in format [±YYYYY]", () => {
-  expect(DateTime.fromObject({ year: 118040, month: 5, day: 25, zone: "utc" }).toISODate()).toBe(
-    "+118040-05-25"
-  );
-  expect(DateTime.fromObject({ year: -118040, month: 5, day: 25, zone: "utc" }).toISODate()).toBe(
-    "-118040-05-25"
-  );
+  expect(
+    DateTime.fromObject({ year: 118040, month: 5, day: 25 }, { zone: "utc" }).toISODate()
+  ).toBe("+118040-05-25");
+  expect(
+    DateTime.fromObject({ year: -118040, month: 5, day: 25 }, { zone: "utc" }).toISODate()
+  ).toBe("-118040-05-25");
 });
 
 test("DateTime#toISODate() correctly pads negative years", () => {
-  expect(DateTime.fromObject({ year: -1, month: 1, day: 1, zone: "utc" }).toISODate()).toBe(
+  expect(DateTime.fromObject({ year: -1, month: 1, day: 1 }, { zone: "utc" }).toISODate()).toBe(
     "-0001-01-01"
   );
-  expect(DateTime.fromObject({ year: -10, month: 1, day: 1, zone: "utc" }).toISODate()).toBe(
+  expect(DateTime.fromObject({ year: -10, month: 1, day: 1 }, { zone: "utc" }).toISODate()).toBe(
     "-0010-01-01"
   );
 });
@@ -298,7 +302,7 @@ test("DateTime#toLocaleString accepts options to the formatter", () => {
 });
 
 test("DateTime#toLocaleString can override the dateTime's locale", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleString({ locale: "fr" })).toBe("25/05/1982");
+  expect(dt.reconfigure({ locale: "be" }).toLocaleString({}, { locale: "fr" })).toBe("25/05/1982");
 });
 
 test("DateTime#toLocaleString can override the dateTime's numbering system", () => {
@@ -309,7 +313,7 @@ test("DateTime#toLocaleString can override the dateTime's numbering system", () 
 
 test("DateTime#toLocaleString can override the dateTime's output calendar", () => {
   expect(
-    dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString({ outputCalendar: "coptic" })
+    dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString({}, { outputCalendar: "coptic" })
   ).toBe("9/17/1698 ERA1");
 });
 
@@ -363,7 +367,7 @@ test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
 //------
 
 test("DateTime#resolvedLocaleOpts returns a thing", () => {
-  const res = DateTime.now().resolvedLocaleOpts();
+  const res = DateTime.now().resolvedLocalOptions();
 
   expect(res.outputCalendar).toBeDefined();
   expect(res.locale).toBeDefined();
@@ -377,7 +381,7 @@ test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
       numberingSystem: "mong",
       outputCalendar: "coptic"
     })
-    .resolvedLocaleOpts();
+    .resolvedLocalOptions();
 
   expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
@@ -385,7 +389,7 @@ test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
 });
 
 test("DateTime#resolvedLocaleOpts can override with options", () => {
-  const res = DateTime.now().resolvedLocaleOpts({
+  const res = DateTime.now().resolvedLocalOptions({
     locale: "be",
     numberingSystem: "mong",
     outputCalendar: "coptic"

@@ -1,5 +1,13 @@
 # Changelog
 
+# 2.0.0 (2021-07-3)
+
+See upgrading.md
+
+# 1.28.0 (2021-07-03)
+
+ * Fix ISO parsing for offset specifiers in Year-Ordinal formats
+
 # 1.27.0 (2021-05-08)
 
  * Fix GMT zone parsing for older versions of Node

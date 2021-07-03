@@ -10,7 +10,7 @@ test("FixedOffsetZone.utcInstance provides valid UTC data", () => {
   expect(FixedOffsetZone.utcInstance.name).toBe("UTC");
   expect(FixedOffsetZone.utcInstance.offsetName()).toBe("UTC");
   expect(FixedOffsetZone.utcInstance.formatOffset(0, "short")).toBe("+00:00");
-  expect(FixedOffsetZone.utcInstance.universal).toBe(true);
+  expect(FixedOffsetZone.utcInstance.isUniversal).toBe(true);
   expect(FixedOffsetZone.utcInstance.offset()).toBe(0);
   expect(FixedOffsetZone.utcInstance.isValid).toBe(true);
 });

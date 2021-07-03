@@ -44,10 +44,10 @@ function demo(luxon) {
   example("DateTime.now().toObject()");
   example("DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36})");
   example(
-    "DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36, zone: 'America/New_York' })"
+    "DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'America/New_York' })"
   );
   example(
-    "DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36, zone: 'Asia/Singapore' })"
+    "DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'Asia/Singapore' })"
   );
   example("DateTime.now().plus({minutes: 15, seconds: 8})");
   example("DateTime.now().plus({days: 6})");

@@ -134,32 +134,11 @@ async function global() {
   });
 }
 
-async function globalFilled() {
-  await buildLibrary("global-filled", {
-    format: "iife",
-    global: true,
-    name: "luxon",
-    target: browsersOld,
-    src: "./src/luxonFilled.js",
-    minify: true
-  });
-}
-
 async function amd() {
   await buildLibrary("amd", {
     format: "amd",
     name: "luxon",
     target: browsersOld,
-    minify: true
-  });
-}
-
-async function amdFilled() {
-  await buildLibrary("amd-filled", {
-    format: "amd",
-    name: "luxon",
-    target: browsersOld,
-    src: "./src/luxonFilled.js",
     minify: true
   });
 }
@@ -190,16 +169,7 @@ async function globalEs6() {
 }
 
 async function buildAll() {
-  await Promise.all([
-    node(),
-    cjsBrowser(),
-    es6(),
-    amd(),
-    amdFilled(),
-    global(),
-    globalEs6(),
-    globalFilled()
-  ]);
+  await Promise.all([node(), cjsBrowser(), es6(), amd(), global(), globalEs6()]);
 }
 
 module.exports = {

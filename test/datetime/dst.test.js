@@ -3,7 +3,7 @@
 import { DateTime, Settings } from "../../src/luxon";
 
 const local = (year, month, day, hour) =>
-  DateTime.fromObject({ year, month, day, hour, zone: "America/New_York" });
+  DateTime.fromObject({ year, month, day, hour }, { zone: "America/New_York" });
 
 test("Hole dates are bumped forward", () => {
   const d = local(2017, 3, 12, 2);
@@ -78,12 +78,16 @@ test("Changing a calendar date to land on an ambiguous time chooses the closest 
 });
 
 test("Start of a 0:00->1:00 DST day is 1:00", () => {
-  const d = DateTime.fromObject({
-    zone: "America/Sao_Paulo",
-    year: 2017,
-    month: 10,
-    day: 15
-  }).startOf("day");
+  const d = DateTime.fromObject(
+    {
+      year: 2017,
+      month: 10,
+      day: 15
+    },
+    {
+      zone: "America/Sao_Paulo"
+    }
+  ).startOf("day");
   expect(d.day).toBe(15);
   expect(d.hour).toBe(1);
   expect(d.minute).toBe(0);
@@ -91,12 +95,16 @@ test("Start of a 0:00->1:00 DST day is 1:00", () => {
 });
 
 test("End of a 0:00->1:00 DST day is 23:59", () => {
-  const d = DateTime.fromObject({
-    zone: "America/Sao_Paulo",
-    year: 2017,
-    month: 10,
-    day: 15
-  }).endOf("day");
+  const d = DateTime.fromObject(
+    {
+      year: 2017,
+      month: 10,
+      day: 15
+    },
+    {
+      zone: "America/Sao_Paulo"
+    }
+  ).endOf("day");
   expect(d.day).toBe(15);
   expect(d.hour).toBe(23);
   expect(d.minute).toBe(59);

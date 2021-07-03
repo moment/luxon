@@ -2,14 +2,18 @@
 
 import { Duration } from "../../src/luxon";
 
-const dur = Duration.fromObject({
-  years: 1,
-  months: 2,
-  days: 3,
-  locale: "fr",
-  numberingSystem: "beng",
-  conversionAccuracy: "longterm"
-});
+const dur = Duration.fromObject(
+  {
+    years: 1,
+    months: 2,
+    days: 3
+  },
+  {
+    locale: "fr",
+    numberingSystem: "beng",
+    conversionAccuracy: "longterm"
+  }
+);
 
 //------
 // #reconfigure()

@@ -18,7 +18,7 @@ test("Duration#plus add straightforward durations", () => {
 
 test("Duration#plus noops empty druations", () => {
   const first = Duration.fromObject({ hours: 4, minutes: 12, seconds: 2 }),
-    second = Duration.fromObject({}),
+    second = Duration.now(),
     result = first.plus(second);
 
   expect(result.hours).toBe(4);
@@ -128,12 +128,16 @@ test("Duration#negate doesn't mutate", () => {
 });
 
 test("Duration#negate preserves conversionAccuracy", () => {
-  const dur = Duration.fromObject({
-      hours: 4,
-      minutes: -12,
-      seconds: 2,
-      conversionAccuracy: "longterm"
-    }),
+  const dur = Duration.fromObject(
+      {
+        hours: 4,
+        minutes: -12,
+        seconds: 2
+      },
+      {
+        conversionAccuracy: "longterm"
+      }
+    ),
     result = dur.negate();
   expect(result.conversionAccuracy).toBe("longterm");
 });

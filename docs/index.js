@@ -18,7 +18,7 @@ const manualFiles = [
   "why"
 ].map(d => `./docs/${d}.md`);
 
-const excludeIrrelevant = ["luxon\\.js", "luxonFilled\\.js", "impl/.*\\.js"];
+const excludeIrrelevant = ["luxon\\.js", "impl/.*\\.js"];
 
 module.exports = {
   source: "./src",

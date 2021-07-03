@@ -136,7 +136,7 @@ export default class IANAZone extends Zone {
   }
 
   /** @override **/
-  get universal() {
+  get isUniversal() {
     return false;
   }
 
