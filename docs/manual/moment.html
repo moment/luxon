@@ -808,7 +808,7 @@ d1.valueOf() === d2.valueOf(); //=&gt; false</code>
 <td>custom format</td>
 <td><code>format(...)</code></td>
 <td><code>toFormat(...)</code></td>
-<td>The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two.</td>
+<td>The format tokens differ between Moment and Luxon, such that the same format string cannot be used between the two. Note <code>toFormat</code> is meant to be used for machine-readable formats. For anything human-readable, you really want to use <code>toLocaleString()</code> instead.</td>
 </tr>
 <tr>
 <td>RFC 2822</td>

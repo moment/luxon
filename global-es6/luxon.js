@@ -2551,7 +2551,11 @@ var luxon = (function (exports) {
     extractISOTime,
     extractISOOffset
   );
-  const extractISOOrdinalDataAndTime = combineExtractors(extractISOOrdinalData, extractISOTime);
+  const extractISOOrdinalDateAndTime = combineExtractors(
+    extractISOOrdinalData,
+    extractISOTime,
+    extractISOOffset
+  );
   const extractISOTimeAndOffset = combineExtractors(extractISOTime, extractISOOffset);
 
   /**
@@ -2563,7 +2567,7 @@ var luxon = (function (exports) {
       s,
       [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
       [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
-      [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDataAndTime],
+      [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],
       [isoTimeCombinedRegex, extractISOTimeAndOffset]
     );
   }
@@ -2817,7 +2821,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Create a Duration from a JavaScript object with keys like 'years' and 'hours.
+     * Create a Duration from a JavaScript object with keys like 'years' and 'hours'.
      * If this object is empty then a zero milliseconds duration is returned.
      * @param {Object} obj - the object to create the DateTime from
      * @param {number} obj.years
@@ -7107,7 +7111,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "1.27.0";
+  const VERSION = "1.28.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

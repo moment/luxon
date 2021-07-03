@@ -389,7 +389,7 @@ dt.toHTTP(); //=&gt; &apos;Thu, 20 Apr 2017 03:32:00 GMT&apos;</code>
 </code></pre>
 <h3 id="unix-timestamps">Unix timestamps</h3><p>DateTime objects can also be converted to numerical <a href="https://en.wikipedia.org/wiki/Unix_time">Unix timestamps</a>:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">dt.toMillis(); //=&gt; 1492702320000
-dt.toSeconds(); //=&gt; 1492702320
+dt.toSeconds(); //=&gt; 1492702320.000
 dt.valueOf(); //=&gt; 1492702320000, same as .toMillis()</code>
 </code></pre>
 <h2 id="tolocalestring--strings-for-humans-">toLocaleString (strings for humans)</h2><h3 id="the-basics">The basics</h3><p>Modern browsers (and other JS environments) provide support for human-readable, internationalized strings. Luxon provides convenient support for them, and you should use them anytime you want to display a time to a user. Use <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-toLocaleString">toLocaleString</a> to do it:</p>
@@ -565,6 +565,7 @@ dt.toLocaleString(newFormat); //=&gt;  &apos;Thursday, 4/20/2017&apos;</code>
   .setLocale(&apos;fr&apos;)
   .toFormat(&apos;yyyy LLL dd&apos;); //=&gt; &apos;2014 ao&#xFB;t 06&apos;</code>
 </code></pre>
+<p>Note <code>toFormat</code> defaults to <code>en-US</code>. If you need the string to be internationalized, you need to set the locale explicitly like in the example above (or more preferably, use <code>toLocaleString</code>).</p>
 <h3 id="escaping">Escaping</h3><p>You may escape strings using single quotes:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">DateTime.now().toFormat(&quot;HH &apos;hours and&apos; mm &apos;minutes&apos;&quot;); //=&gt; &apos;20 hours and 55 minutes&apos;</code>
 </code></pre>

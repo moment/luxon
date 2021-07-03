@@ -3153,14 +3153,14 @@ define(['exports'], function (exports) { 'use strict';
   var isoTimeCombinedRegex = combineRegexes(isoTimeRegex);
   var extractISOYmdTimeAndOffset = combineExtractors(extractISOYmd, extractISOTime, extractISOOffset);
   var extractISOWeekTimeAndOffset = combineExtractors(extractISOWeekData, extractISOTime, extractISOOffset);
-  var extractISOOrdinalDataAndTime = combineExtractors(extractISOOrdinalData, extractISOTime);
+  var extractISOOrdinalDateAndTime = combineExtractors(extractISOOrdinalData, extractISOTime, extractISOOffset);
   var extractISOTimeAndOffset = combineExtractors(extractISOTime, extractISOOffset);
   /**
    * @private
    */
 
   function parseISODate(s) {
-    return parse(s, [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset], [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset], [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDataAndTime], [isoTimeCombinedRegex, extractISOTimeAndOffset]);
+    return parse(s, [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset], [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset], [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime], [isoTimeCombinedRegex, extractISOTimeAndOffset]);
   }
   function parseRFC2822Date(s) {
     return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
@@ -3388,7 +3388,7 @@ define(['exports'], function (exports) { 'use strict';
       }, opts));
     }
     /**
-     * Create a Duration from a JavaScript object with keys like 'years' and 'hours.
+     * Create a Duration from a JavaScript object with keys like 'years' and 'hours'.
      * If this object is empty then a zero milliseconds duration is returned.
      * @param {Object} obj - the object to create the DateTime from
      * @param {number} obj.years
@@ -8469,7 +8469,7 @@ define(['exports'], function (exports) { 'use strict';
     }
   }
 
-  var VERSION = "1.27.0";
+  var VERSION = "1.28.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

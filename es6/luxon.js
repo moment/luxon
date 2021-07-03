@@ -2548,7 +2548,11 @@ const extractISOWeekTimeAndOffset = combineExtractors(
   extractISOTime,
   extractISOOffset
 );
-const extractISOOrdinalDataAndTime = combineExtractors(extractISOOrdinalData, extractISOTime);
+const extractISOOrdinalDateAndTime = combineExtractors(
+  extractISOOrdinalData,
+  extractISOTime,
+  extractISOOffset
+);
 const extractISOTimeAndOffset = combineExtractors(extractISOTime, extractISOOffset);
 
 /**
@@ -2560,7 +2564,7 @@ function parseISODate(s) {
     s,
     [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
     [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
-    [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDataAndTime],
+    [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],
     [isoTimeCombinedRegex, extractISOTimeAndOffset]
   );
 }
@@ -2814,7 +2818,7 @@ class Duration {
   }
 
   /**
-   * Create a Duration from a JavaScript object with keys like 'years' and 'hours.
+   * Create a Duration from a JavaScript object with keys like 'years' and 'hours'.
    * If this object is empty then a zero milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
    * @param {number} obj.years
@@ -7104,7 +7108,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "1.27.0";
+const VERSION = "1.28.0";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, LocalZone, Settings, VERSION, Zone };
 //# sourceMappingURL=luxon.js.map
