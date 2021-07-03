@@ -69,9 +69,6 @@ export const TIME_24_SIMPLE = {
   hourCycle: "h23"
 };
 
-/**
- * {@link toLocaleString}; format like '09:30:23', always 24-hour.
- */
 export const TIME_24_WITH_SECONDS = {
   hour: n,
   minute: n,
@@ -79,9 +76,6 @@ export const TIME_24_WITH_SECONDS = {
   hourCycle: "h23"
 };
 
-/**
- * {@link toLocaleString}; format like '09:30:23 EDT', always 24-hour.
- */
 export const TIME_24_WITH_SHORT_OFFSET = {
   hour: n,
   minute: n,
@@ -90,9 +84,6 @@ export const TIME_24_WITH_SHORT_OFFSET = {
   timeZoneName: s
 };
 
-/**
- * {@link toLocaleString}; format like '09:30:23 Eastern Daylight Time', always 24-hour.
- */
 export const TIME_24_WITH_LONG_OFFSET = {
   hour: n,
   minute: n,
@@ -101,9 +92,6 @@ export const TIME_24_WITH_LONG_OFFSET = {
   timeZoneName: l
 };
 
-/**
- * {@link toLocaleString}; format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
- */
 export const DATETIME_SHORT = {
   year: n,
   month: n,
@@ -112,9 +100,6 @@ export const DATETIME_SHORT = {
   minute: n
 };
 
-/**
- * {@link toLocaleString}; format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
- */
 export const DATETIME_SHORT_WITH_SECONDS = {
   year: n,
   month: n,

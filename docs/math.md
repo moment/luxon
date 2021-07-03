@@ -51,7 +51,7 @@ And under the covers, that's more or less what Luxon does too. It doesn't boil t
 
 ### DSTs
 
-There's a whole section about this in the [time zones documentation](zones.html#math-across-dsts). But here's a quick example (Spring Forward is early on March 12 in my time zone):
+There's a whole section about this in the [time zones documentation](zones.md?id=math-across-dsts). But here's a quick example (Spring Forward is early on March 12 in my time zone):
 
 ```
 var start = DateTime.local(2017, 3, 11, 10);
@@ -130,7 +130,7 @@ d2.startOf('day') < d1.startOf('day')     //=> true
 
 ### Basics
 
-[Durations](../class/src/duration.js~Duration.html) are quantities of time, like "3 days and 6 hours". Luxon has no idea *which* 3 days and 6 hours they represent; it's just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I'm not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.
+`Durations` are quantities of time, like "3 days and 6 hours". Luxon has no idea *which* 3 days and 6 hours they represent; it's just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I'm not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.
 
 Here's some very basic stuff to get us going:
 
@@ -152,7 +152,7 @@ DateTime.fromISO("2017-05-15").plus(dur).toISO() //=> '2017-05-18T06:00:00.000-0
 
 ### Diffs
 
-You can subtract one time from another to find out how much time there is between them. Luxon's [diff](../class/src/datetime.js~DateTime.html#instance-method-diff) method does this and it returns a Duration. For example:
+You can subtract one time from another to find out how much time there is between them. Luxon's `DateTime.diff` method does this and it returns a Duration. For example:
 
 ```js
 var end = DateTime.fromISO('2017-03-13');
@@ -290,7 +290,7 @@ var monthsDiff = end.diff(start, "months");
 var daysDiff = end.diff(start, "days");
 ```
 
-But sometimes you really do want an object that represents the subtraction itself, not the result. [Intervals](../class/src/interval.js~Interval.html) can help. Intervals are mostly used to keep track of ranges of time, but they make for "anchored" diffs too. For example:
+But sometimes you really do want an object that represents the subtraction itself, not the result. `Intervals` can help. Intervals are mostly used to keep track of ranges of time, but they make for "anchored" diffs too. For example:
 
 ```js
 var end = DateTime.fromISO('2017-03-13');

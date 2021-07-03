@@ -806,3 +806,8 @@ test("DateTime.fromHTTP is invalid when weekday is not consistent", () => {
   expect(DateTime.fromRFC2822("Saturday, 06-Nov-94 08:49:37 GMT").isValid).toBe(false);
   expect(DateTime.fromRFC2822("Sat Nov  6 08:49:37 1994").isValid).toBe(false);
 });
+
+test("DateTime.fromObject takes a undefined to mean {}", () => {
+  const res = DateTime.fromObject();
+  expect(res.year).toBe(new Date().getFullYear());
+});

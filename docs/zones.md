@@ -65,7 +65,7 @@ IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tok
 Info.features().zones; //=> true
 ```
 
-If you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](matrix.html). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](matrix.html#zones) your environment.
+If you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](matrix.md). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](matrix.md?id=zones) your environment.
 
 If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](validity.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason it doesn't support that _particular_ zone, or because the zone is just bogus. Like this:
 

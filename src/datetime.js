@@ -640,6 +640,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromObject(obj, opts = {}) {
+    obj = obj || {};
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
     if (!zoneToUse.isValid) {
       return DateTime.invalid(unsupportedZone(zoneToUse));
@@ -1239,7 +1240,7 @@ export default class DateTime {
    * @param {Object} opts - the same options as toLocaleString
    * @return {Object}
    */
-  resolvedLocalOptions(opts = {}) {
+  resolvedLocaleOptions(opts = {}) {
     const { locale, numberingSystem, calendar } = Formatter.create(
       this.loc.clone(opts),
       opts

@@ -1,3 +1,20 @@
-This directory contains markdown files that get compiled into the documentation [here](https://moment.github.io/luxon/docs). You can read them here if that's your thing, but note that the links are relative to their destination in the compiled site and won't work from here.
+Luxon is a library for dealing with dates and times in JavaScript.
 
-If you add a file to this, you'll need to add to index.js too, else it won't get compiled to the site.
+# Features
+
+ * A nice API for working with datetimes
+ * Interval support (from time x to time y)
+ * Duration support (14 days, 5 minutes, 33 seconds)
+ * [Parsing](parsing.md) and [Formatting](formatting.md) datetimes, intervals, and durations
+ * [Internationalization](intl.md) of strings using the Intl API
+ * Detailed and unambiguous [math](math.md) operations
+ * Built-in handling of [time zones](zones.md)
+ * Partial support for multiple [calendar systems](calendars.md)
+ 
+ For more, see the docs on the left, including the [api docs](api/index.html).
+ 
+# Getting started
+ 
+  * Read the [quick tour](tour.md)
+  * Browse the topic docs on the left
+  * Read the [api docs](api/index.html)

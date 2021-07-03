@@ -131,7 +131,7 @@ For programmatic getting and setting, Luxon and Moment are very similar here:
 
 #### Basics
 
-See the [formatting guide](formatting.html) for more about the string-outputting methods.
+See the [formatting guide](formatting.md) for more about the string-outputting methods.
 
 | Output           | Moment         | Luxon                       | Notes                                                                                                                                             |
 | ---------------- | -------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -163,12 +163,12 @@ Luxon has `toRelative` and `toRelativeCalendar`. For internationalization, they 
 
 Moment Durations and Luxon Durations are broadly similar in purpose and capabilities. The main differences are:
 
-1.  Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using `shiftTo`. They can also be configured to use different unit conversions. See [Duration Math](math.html#duration-math) for more.
-1.  Luxon does not (yet) have an equivalent of Moment's Duration `humanize` method. Luxon will add that when [Unified Intl.NumberFormat](https://github.com/tc39/proposal-unified-intl-numberformat) is supported by browsers.
+1.  Luxon durations have more sophisticated conversion capabilities. They can convert from one set of units to another using `shiftTo`. They can also be configured to use different unit conversions. See [Duration Math](math.md?id=duration-math) for more.
+1.  Luxon does not (yet) have an equivalent of Moment's Duration `humanize` method. Luxon will add that when [Intl.UnitFormat](https://github.com/tc39/proposal-intl-unit-format) is supported by browsers.
 1.  Like DateTimes, Luxon Durations have separate methods for creating objects from different sources.
 
-See the [Duration API docs](../class/src/duration.js~Duration.html) for more.
+See the `Duration` API docs for more.
 
 ## Intervals
 
-Moment doesn't have direct support intervals, which must be provided by plugins like Twix or moment-range. Luxon's Intervals have similar capabilities to theirs, with the exception of the humanization features. See the [Interval API docs](../class/src/interval.js~Interval.html) for more.
+Moment doesn't have direct support intervals, which must be provided by plugins like Twix or moment-range. Luxon's Intervals have similar capabilities to theirs, with the exception of the humanization features. See the `Interval` API docs for more.

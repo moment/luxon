@@ -6,10 +6,10 @@ This is going to be a bit brisk, but keep in mind that the API docs are comprehe
 
 ## Your first DateTime
 
-The most important class in Luxon is [DateTime](../class/src/datetime.js~DateTime.html). A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here's one that represents May 15, 2017 at 8:30 in the morning in the local time zone:
+The most important class in Luxon is `DateTime`. A DateTime represents a specific millisecond in time, along with a time zone and a locale. Here's one that represents May 15, 2017 at 8:30 in the morning:
 
 ```js
-var dt = DateTime.local(2017, 5, 15, 8, 30);
+const dt = DateTime.local(2017, 5, 15, 8, 30);
 ```
 
 [DateTime.local](../class/src/datetime.js~DateTime.html#static-method-local) takes any number of arguments, all the way out to milliseconds. Underneath, this is similar to a JavaScript Date object. But we've decorated it with lots of useful methods.
@@ -23,10 +23,10 @@ There are lots of ways to create a DateTime by parsing strings or constructing t
 To get the current time, just do this:
 
 ```js
-var now = DateTime.now();
+const now = DateTime.now();
 ```
 
-Calling [DateTime.now](../class/src/datetime.js~DateTime.html#static-method-now) is equivalent to calling `local()` with no parameter.
+This is really the equivalent to calling `DateTime.local()` with no arguments, but it's a little clearer.
 
 ### Create from an object
 
@@ -36,11 +36,11 @@ The most powerful way to create a DateTime instance is to provide an object cont
 dt = DateTime.fromObject({day: 22, hour: 12 }, { zone: 'America/Los_Angeles', numberingSystem: 'beng'})
 ```
 
-Don't worry too much about the properties you don't understand yet; the point is that you can set every attribute of a DateTime when you create it. One thing to notice from the example is that we just set the day and hour; the year and month get defaulted to the current one and the minutes, seconds, and milliseconds get defaulted to 0. So [DateTime.fromObject](../class/src/datetime.js~DateTime.html#static-method-fromObject) is sort of the power user interface.
+Don't worry too much about the properties you don't understand yet; the point is that you can set every attribute of a DateTime when you create it. One thing to notice from the example is that we just set the day and hour; the year and month get defaulted to the current one and the minutes, seconds, and milliseconds get defaulted to 0. So `DateTime.fromObject` is sort of the power user interface.
 
 ### Parse from ISO 8601
 
-Luxon has lots of parsing capabilities, but the most important one is parsing [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) strings, because they're more-or-less the standard wire format for dates and times. Use [DateTime.fromISO](../class/src/datetime.js~DateTime.html#static-method-fromISO).
+Luxon has lots of parsing capabilities, but the most important one is parsing [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) strings, because they're more-or-less the standard wire format for dates and times. Use `DateTime.fromISO`.
 
 
 ```js
@@ -48,7 +48,7 @@ DateTime.fromISO("2017-05-15")          //=> May 15, 2017 at midnight
 DateTime.fromISO("2017-05-15T08:30:00") //=> May 15, 2017 at 8:30
 ```
 
-You can parse a bunch of other formats, including [your own custom ones](parsing.html).
+You can parse a bunch of other formats, including [your own custom ones](parsing.md).
 
 ## Getting to know your DateTime instance
 
@@ -197,7 +197,7 @@ dur.toObject()    //=> { hours: 2, minutes: 7 }
 dur.toISO()       //=> 'PT2H7M'
 ```
 
-You can also format, negate, and normalize them. See it all in the [Duration API docs](../class/src/duration.js~Duration.html).
+You can also format, negate, and normalize them. See it all in the `Duration` API docs.
 
 ## Intervals
 
@@ -216,4 +216,4 @@ i.toISO()       //=> '2017-09-14T04:07:11.532-04:00/2020-10-12T00:00:00.000-04:0
 i.toString()    //=> '[2017-09-14T04:07:11.532-04:00 – 2020-10-12T00:00:00.000-04:00)
 ```
 
-Intervals can be split up into smaller intervals, perform set-like operations with other intervals, and few other handy features. See the [Interval API docs](../class/src/interval.js~Interval.html).
+Intervals can be split up into smaller intervals, perform set-like operations with other intervals, and few other handy features. See the `Interval` API docs.

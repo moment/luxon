@@ -65,7 +65,7 @@ export default class Info {
    * @example Info.months('short', { locale: 'fr-CA' } )[0] //=> 'janv.'
    * @example Info.months('numeric', { locale: 'ar' })[0] //=> '١'
    * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'
-   * @return {[string]}
+   * @return {Array}
    */
   static months(
     length = "long",
@@ -78,14 +78,14 @@ export default class Info {
    * Return an array of format month names.
    * Format months differ from standalone months in that they're meant to appear next to the day of the month. In some languages, that
    * changes the string.
-   * See {@link months}
+   * See {@link Info#months}
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
    * @param {Object} opts - options
    * @param {string} [opts.locale] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.locObj=null] - an existing locale object to use
    * @param {string} [opts.outputCalendar='gregory'] - the calendar
-   * @return {[string]}
+   * @return {Array}
    */
   static monthsFormat(
     length = "long",
@@ -106,7 +106,7 @@ export default class Info {
    * @example Info.weekdays('short')[0] //=> 'Mon'
    * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
    * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
-   * @return {[string]}
+   * @return {Array}
    */
   static weekdays(length = "long", { locale = null, numberingSystem = null, locObj = null } = {}) {
     return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length);
@@ -116,13 +116,13 @@ export default class Info {
    * Return an array of format week names.
    * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that
    * changes the string.
-   * See {@link weekdays}
-   * @param {string} [length='long'] - the length of the weekday representation, such as "narrow", "short", "long".
+   * See {@link Info#weekdays}
+   * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
    * @param {Object} opts - options
    * @param {string} [opts.locale=null] - the locale code
    * @param {string} [opts.numberingSystem=null] - the numbering system
    * @param {string} [opts.locObj=null] - an existing locale object to use
-   * @return {[string]}
+   * @return {Array}
    */
   static weekdaysFormat(
     length = "long",
@@ -137,7 +137,7 @@ export default class Info {
    * @param {string} [opts.locale] - the locale code
    * @example Info.meridiems() //=> [ 'AM', 'PM' ]
    * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]
-   * @return {[string]}
+   * @return {Array}
    */
   static meridiems({ locale = null } = {}) {
     return Locale.create(locale).meridiems();
@@ -151,7 +151,7 @@ export default class Info {
    * @example Info.eras() //=> [ 'BC', 'AD' ]
    * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
    * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
-   * @return {[string]}
+   * @return {Array}
    */
   static eras(length = "short", { locale = null } = {}) {
     return Locale.create(locale, null, "gregory").eras(length);

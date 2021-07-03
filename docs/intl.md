@@ -10,7 +10,7 @@ DateTime.now()
 
 ## Making sure you have access to other locales
 
-Please see the [install guide](install.html) for instructions on making sure your platform has access to the Intl APIs and the ICU data to power it. This especially important for Node, which doesn't ship with ICU data by default.
+Please see the [install guide](install.md) for instructions on making sure your platform has access to the Intl APIs and the ICU data to power it. This especially important for Node, which doesn't ship with ICU data by default.
 
 ## How locales work
 
@@ -47,7 +47,7 @@ DateTime.now().reconfigure({ locale: "fr" }).locale; //=> 'fr'
 
 ### Out-of-the-box behavior
 
-By default the `locale` property of a new DateTime or Duration is the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.
+By default, the `locale` property of a new DateTime or Duration is the system locale. On a browser, that means whatever the user has their browser or OS language set to. On Node, that usually means en-US.
 
 As a result, `DateTime#toLocaleString`, `DateTime#toLocaleParts`, and other human-readable-string methods like `Info.months` will by default generate strings in the user's locale.
 
@@ -106,7 +106,7 @@ dt.setLocale("fr").toFormat("MMMM dd, yyyy GG"); //=> 'septembre 25, 2017 après
 
 ### Parsing
 
-You can [parse](parsing.html) localized strings:
+You can [parse](parsing.md) localized strings:
 
 ```js
 DateTime.fromFormat("septembre 25, 2017 après Jésus-Christ", "MMMM dd, yyyy GG", { locale: "fr" });
@@ -114,7 +114,7 @@ DateTime.fromFormat("septembre 25, 2017 après Jésus-Christ", "MMMM dd, yyyy GG
 
 ### Listing
 
-Some of the methods in the [Info](../class/src/info.js~Info.html) class let you list strings like months, weekdays, and eras, and they can be localized:
+Some of the methods in the `Info` class let you list strings like months, weekdays, and eras, and they can be localized:
 
 ```js
 Info.months("long", { locale: "fr" }); //=> [ 'janvier', 'février', ...
@@ -129,7 +129,7 @@ DateTimes also have a `numberingSystem` setting that lets you control what syste
 ```js
 var dt = DateTime.now().setLocale("ar");
 
-dt.resolvedLocalOptions(); //=> { locale: 'ar',
+dt.resolvedLocaleOptions(); //=> { locale: 'ar',
 //     numberingSystem: 'arab',
 //     outputCalendar: 'gregory' }
 
@@ -139,7 +139,7 @@ dt.toLocaleString(); //=> '٢٤‏/٩‏/٢٠١٧'
 For this reason, Luxon defaults its own `numberingSystem` property to null, by which it means "let the Intl API decide". However, you can override it if you want. This example is admittedly ridiculous:
 
 ```js
-var dt = DateTime.now().reconfigure({ locale: "it", numberingSystem: "beng" });
+const dt = DateTime.local().reconfigure({ locale: "it", numberingSystem: "beng" });
 dt.toLocaleString(DateTime.DATE_FULL); //=> '২৪ settembre ২০১৭'
 ```
 

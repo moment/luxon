@@ -18,7 +18,7 @@ Luxon officially supports the last two versions of the major browsers, with some
 | Node                             | >= 12    | ✓                             |
 
 - Those capabilities are explained in the next sections, along with possible polyfill options
-- "w/ICU" refers to providing Node with ICU data. See the [install](install.html#node) for instructions
+- "w/ICU" refers to providing Node with ICU data. See the [install](install.md?id=node) for instructions
 
 ## Effects of missing features
 
