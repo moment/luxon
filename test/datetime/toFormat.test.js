@@ -451,51 +451,51 @@ test("DateTime#toFormat('TTT') returns a medium time representation", () => {
 test("DateTime#toFormat('f') returns a short date/time representation without seconds", () => {
   expect(dt.toFormat("f")).toBe("5/25/1982, 9:23 AM");
   expect(dt.set({ hour: 13 }).toFormat("f")).toBe("5/25/1982, 1:23 PM");
-  expect(dt.reconfigure({ locale: "fr" }).toFormat("f")).toBe("25/05/1982 à 09:23");
+  expect(dt.reconfigure({ locale: "fr" }).toFormat("f")).toBe("25/05/1982, 09:23");
   expect(
     dt
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("f")
-  ).toBe("25/05/1982 à 13:23");
+  ).toBe("25/05/1982, 13:23");
 });
 
 test("DateTime#toFormat('ff') returns a medium date/time representation without seconds", () => {
   expect(dt.toFormat("ff")).toBe("May 25, 1982, 9:23 AM");
   expect(dt.set({ hour: 13 }).toFormat("ff")).toBe("May 25, 1982, 1:23 PM");
   expect(dt.set({ month: 8 }).toFormat("ff")).toBe("Aug 25, 1982, 9:23 AM");
-  expect(dt.reconfigure({ locale: "fr" }).toFormat("ff")).toBe("25 mai 1982 à 09:23");
+  expect(dt.reconfigure({ locale: "fr" }).toFormat("ff")).toBe("25 mai 1982, 09:23");
   expect(
     dt
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("ff")
-  ).toBe("25 févr. 1982 à 09:23");
+  ).toBe("25 févr. 1982, 09:23");
   expect(
     dt
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("ff")
-  ).toBe("25 mai 1982 à 13:23");
+  ).toBe("25 mai 1982, 13:23");
 });
 
 test("DateTime#toFormat('fff') returns a medium date/time representation without seconds", () => {
   expect(ny.toFormat("fff")).toBe("May 25, 1982, 9:23 AM EDT");
   expect(ny.set({ hour: 13 }).toFormat("fff")).toBe("May 25, 1982, 1:23 PM EDT");
   expect(ny.set({ month: 8 }).toFormat("fff")).toBe("August 25, 1982, 9:23 AM EDT");
-  expect(ny.reconfigure({ locale: "fr" }).toFormat("fff")).toBe("25 mai 1982 à 09:23 UTC−4");
+  expect(ny.reconfigure({ locale: "fr" }).toFormat("fff")).toBe("25 mai 1982, 09:23 UTC−4");
   expect(
     ny
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("fff")
-  ).toBe("25 février 1982 à 09:23 UTC−5");
+  ).toBe("25 février 1982, 09:23 UTC−5");
   expect(
     ny
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("fff")
-  ).toBe("25 mai 1982 à 13:23 UTC−4");
+  ).toBe("25 mai 1982, 13:23 UTC−4");
 });
 
 test("DateTime#toFormat('ffff') returns a long date/time representation without seconds", () => {
@@ -507,70 +507,70 @@ test("DateTime#toFormat('ffff') returns a long date/time representation without 
     "Thursday, February 25, 1982, 9:23 AM Eastern Standard Time"
   );
   expect(ny.reconfigure({ locale: "fr" }).toFormat("ffff")).toBe(
-    "mardi 25 mai 1982 à 09:23 heure d’été de l’Est"
+    "mardi 25 mai 1982, 09:23 heure d’été de l’Est"
   );
   expect(
     ny
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("ffff")
-  ).toBe("jeudi 25 février 1982 à 09:23 heure normale de l’Est nord-américain");
+  ).toBe("jeudi 25 février 1982, 09:23 heure normale de l’Est nord-américain");
   expect(
     ny
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("ffff")
-  ).toBe("mardi 25 mai 1982 à 13:23 heure d’été de l’Est");
+  ).toBe("mardi 25 mai 1982, 13:23 heure d’été de l’Est");
 });
 
 test("DateTime#toFormat('F') returns a short date/time representation with seconds", () => {
   expect(dt.toFormat("F")).toBe("5/25/1982, 9:23:54 AM");
   expect(dt.set({ hour: 13 }).toFormat("F")).toBe("5/25/1982, 1:23:54 PM");
-  expect(dt.reconfigure({ locale: "fr" }).toFormat("F")).toBe("25/05/1982 à 09:23:54");
+  expect(dt.reconfigure({ locale: "fr" }).toFormat("F")).toBe("25/05/1982, 09:23:54");
   expect(
     dt
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("F")
-  ).toBe("25/05/1982 à 13:23:54");
+  ).toBe("25/05/1982, 13:23:54");
 });
 
 test("DateTime#toFormat('FF') returns a medium date/time representation with seconds", () => {
   expect(dt.toFormat("FF")).toBe("May 25, 1982, 9:23:54 AM");
   expect(dt.set({ hour: 13 }).toFormat("FF")).toBe("May 25, 1982, 1:23:54 PM");
   expect(dt.set({ month: 8 }).toFormat("FF")).toBe("Aug 25, 1982, 9:23:54 AM");
-  expect(dt.reconfigure({ locale: "fr" }).toFormat("FF")).toBe("25 mai 1982 à 09:23:54");
+  expect(dt.reconfigure({ locale: "fr" }).toFormat("FF")).toBe("25 mai 1982, 09:23:54");
   expect(
     dt
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("FF")
-  ).toBe("25 févr. 1982 à 09:23:54");
+  ).toBe("25 févr. 1982, 09:23:54");
   expect(
     dt
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("FF")
-  ).toBe("25 mai 1982 à 13:23:54");
+  ).toBe("25 mai 1982, 13:23:54");
 });
 
 test("DateTime#toFormat('FFF') returns a medium date/time representation without seconds", () => {
   expect(ny.toFormat("FFF")).toBe("May 25, 1982, 9:23:54 AM EDT");
   expect(ny.set({ hour: 13 }).toFormat("FFF")).toBe("May 25, 1982, 1:23:54 PM EDT");
   expect(ny.set({ month: 8 }).toFormat("FFF")).toBe("August 25, 1982, 9:23:54 AM EDT");
-  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFF")).toBe("25 mai 1982 à 9:23:54 UTC−4");
+  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFF")).toBe("25 mai 1982, 9:23:54 UTC−4");
   expect(
     ny
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("FFF")
-  ).toBe("25 février 1982 à 9:23:54 UTC−5");
+  ).toBe("25 février 1982, 9:23:54 UTC−5");
   expect(
     ny
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("FFF")
-  ).toBe("25 mai 1982 à 13:23:54 UTC−4");
+  ).toBe("25 mai 1982, 13:23:54 UTC−4");
 });
 
 test("DateTime#toFormat('FFFF') returns a long date/time representation without seconds", () => {
@@ -582,20 +582,20 @@ test("DateTime#toFormat('FFFF') returns a long date/time representation without 
     "Thursday, February 25, 1982, 9:23:54 AM Eastern Standard Time"
   );
   expect(ny.reconfigure({ locale: "fr" }).toFormat("FFFF")).toBe(
-    "mardi 25 mai 1982 à 9:23:54 heure d’été de l’Est"
+    "mardi 25 mai 1982, 9:23:54 heure d’été de l’Est"
   );
   expect(
     ny
       .set({ month: 2 })
       .reconfigure({ locale: "fr" })
       .toFormat("FFFF")
-  ).toBe("jeudi 25 février 1982 à 9:23:54 heure normale de l’Est nord-américain");
+  ).toBe("jeudi 25 février 1982, 9:23:54 heure normale de l’Est nord-américain");
   expect(
     ny
       .set({ hour: 13 })
       .reconfigure({ locale: "fr" })
       .toFormat("FFFF")
-  ).toBe("mardi 25 mai 1982 à 13:23:54 heure d’été de l’Est");
+  ).toBe("mardi 25 mai 1982, 13:23:54 heure d’été de l’Est");
 });
 
 test("DateTime#toFormat returns a full formatted string", () => {

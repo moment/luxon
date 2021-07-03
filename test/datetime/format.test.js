@@ -290,7 +290,7 @@ test("DateTime#toLocaleString accepts numbering system settings from the dateTim
 });
 
 test("DateTime#toLocaleString accepts output calendar settings from the dateTime", () => {
-  expect(dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString()).toBe("8/2/1402");
+  expect(dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString()).toBe("8/2/1402 AH");
 });
 
 test("DateTime#toLocaleString accepts options to the formatter", () => {
@@ -310,7 +310,7 @@ test("DateTime#toLocaleString can override the dateTime's numbering system", () 
 test("DateTime#toLocaleString can override the dateTime's output calendar", () => {
   expect(
     dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString({ outputCalendar: "coptic" })
-  ).toBe("9/17/1698");
+  ).toBe("9/17/1698 ERA1");
 });
 
 test("DateTime#toLocaleString() returns something different for invalid DateTimes", () => {

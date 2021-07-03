@@ -178,7 +178,7 @@ export function formatString(knownFormat) {
       "minute",
       "second",
       "timeZoneName",
-      "hour12"
+      "hourCycle"
     ]),
     key = stringify(filtered),
     dateTimeHuge = "EEEE, LLLL d, yyyy, h:mm a";

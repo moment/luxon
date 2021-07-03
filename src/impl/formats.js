@@ -66,7 +66,7 @@ export const TIME_WITH_LONG_OFFSET = {
 export const TIME_24_SIMPLE = {
   hour: n,
   minute: n,
-  hour12: false
+  hourCycle: "h23"
 };
 
 /**
@@ -76,7 +76,7 @@ export const TIME_24_WITH_SECONDS = {
   hour: n,
   minute: n,
   second: n,
-  hour12: false
+  hourCycle: "h23"
 };
 
 /**
@@ -86,7 +86,7 @@ export const TIME_24_WITH_SHORT_OFFSET = {
   hour: n,
   minute: n,
   second: n,
-  hour12: false,
+  hourCycle: "h23",
   timeZoneName: s
 };
 
@@ -97,7 +97,7 @@ export const TIME_24_WITH_LONG_OFFSET = {
   hour: n,
   minute: n,
   second: n,
-  hour12: false,
+  hourCycle: "h23",
   timeZoneName: l
 };
 

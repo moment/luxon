@@ -165,7 +165,7 @@ async function amdFilled() {
 }
 
 async function node() {
-  await buildLibrary("node", { format: "cjs", target: "node 6" });
+  await buildLibrary("node", { format: "cjs", target: "node 12" });
 }
 
 async function cjsBrowser() {

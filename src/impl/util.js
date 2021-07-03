@@ -200,7 +200,7 @@ export function untruncateYear(year) {
 export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
   const date = new Date(ts),
     intlOpts = {
-      hour12: false,
+      hourCycle: "h23",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",

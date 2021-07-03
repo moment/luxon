@@ -416,7 +416,7 @@ export default class Locale {
         // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
         // for AM and PM. This is probably wrong, but it's makes parsing way easier.
         if (!this.meridiemCache) {
-          const intl = { hour: "numeric", hour12: true };
+          const intl = { hour: "numeric", hourCycle: "h12" };
           this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
             dt => this.extract(dt, intl, "dayperiod")
           );

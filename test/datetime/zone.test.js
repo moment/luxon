@@ -133,7 +133,6 @@ test("DateTime#setZone does not accept dumb things", () => {
 });
 
 test("DateTime#setZone accepts IANA zone names", () => {
-  // this will only work in Chrome/V8 for now
   const zoned = dt().setZone("Europe/Paris");
   expect(zoned.zoneName).toBe("Europe/Paris");
   // not convinced this is universal. Could also be 'CEDT'

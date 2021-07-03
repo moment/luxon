@@ -7,7 +7,7 @@ let dtfCache = {};
 function makeDTF(zone) {
   if (!dtfCache[zone]) {
     dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
-      hour12: false,
+      hourCycle: "h23",
       timeZone: zone,
       year: "numeric",
       month: "2-digit",
@@ -159,15 +159,13 @@ export default class IANAZone extends Zone {
     const dtf = makeDTF(this.name),
       [year, month, day, hour, minute, second] = dtf.formatToParts
         ? partsOffset(dtf, date)
-        : hackyOffset(dtf, date),
-      // work around https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
-      adjustedHour = hour === 24 ? 0 : hour;
+        : hackyOffset(dtf, date);
 
     const asUTC = objToLocalTS({
       year,
       month,
       day,
-      hour: adjustedHour,
+      hour,
       minute,
       second,
       millisecond: 0

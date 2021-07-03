@@ -1,4 +1,4 @@
-FROM library/node:12-slim
+FROM library/node:15-slim
 
 ENV HUSKY_SKIP_INSTALL=1
 
