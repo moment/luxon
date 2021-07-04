@@ -26,7 +26,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 13,
       minute: 0,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     },
     {
       year: 2008,
@@ -35,7 +35,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 15,
       minute: 30,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     }
   );
 
@@ -48,7 +48,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 13,
       minute: 0,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     },
     {
       year: 2016,
@@ -57,7 +57,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 0,
       minute: 0,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     }
   );
 
@@ -70,7 +70,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 13,
       minute: 0,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     },
     {
       year: 2008,
@@ -79,7 +79,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 15,
       minute: 30,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     }
   );
 
@@ -92,7 +92,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 13,
       minute: 0,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     },
     {
       year: 2008,
@@ -101,7 +101,7 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
       hour: 15,
       minute: 30,
       second: 0,
-      millisecond: 0
+      millisecond: 0,
     }
   );
 });
@@ -136,10 +136,10 @@ const badInputs = [
   "",
   "hello",
   "foo/bar",
-  "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M" // valid ISO 8601 interval with a repeat, but not supported here
+  "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M", // valid ISO 8601 interval with a repeat, but not supported here
 ];
 
-test.each(badInputs)("Interval.fromISO will return invalid for [%s]", s => {
+test.each(badInputs)("Interval.fromISO will return invalid for [%s]", (s) => {
   const i = Interval.fromISO(s);
   expect(i.isValid).toBe(false);
   expect(i.invalidReason).toBe("unparsable");

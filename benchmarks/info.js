@@ -1,5 +1,3 @@
-/* eslint import/no-extraneous-dependencies: off */
-/* eslint no-console: off */
 import Benchmark from "benchmark";
 import Info from "../src/info";
 import Locale from "../src/impl/locale.js";
@@ -15,15 +13,14 @@ function runWeekdaysSuite() {
       .add("Info.weekdays", () => {
         Info.weekdays("long");
       })
-      .on("cycle", event => {
+      .on("cycle", (event) => {
         console.log(String(event.target));
       })
-      // eslint-disable-next-line func-names
-      .on("complete", function() {
+      .on("complete", function () {
         console.log("Fastest is " + this.filter("fastest").map("name"));
         resolve();
       })
-      .on("error", function() {
+      .on("error", function () {
         reject(this.error);
       })
       .run();
@@ -41,15 +38,14 @@ function runWeekdaysFormatSuite() {
       .add("Info.weekdaysFormat", () => {
         Info.weekdaysFormat("long");
       })
-      .on("cycle", event => {
+      .on("cycle", (event) => {
         console.log(String(event.target));
       })
-      // eslint-disable-next-line func-names
-      .on("complete", function() {
+      .on("complete", function () {
         console.log("Fastest is " + this.filter("fastest").map("name"));
         resolve();
       })
-      .on("error", function() {
+      .on("error", function () {
         reject(this.error);
       })
       .run();
@@ -66,15 +62,14 @@ function runMonthsSuite() {
       .add("Info.months", () => {
         Info.months("long");
       })
-      .on("cycle", event => {
+      .on("cycle", (event) => {
         console.log(String(event.target));
       })
-      // eslint-disable-next-line func-names
-      .on("complete", function() {
+      .on("complete", function () {
         console.log("Fastest is " + this.filter("fastest").map("name"));
         resolve();
       })
-      .on("error", function() {
+      .on("error", function () {
         reject(this.error);
       })
       .run();
@@ -92,15 +87,14 @@ function runMonthsFormatSuite() {
       .add("Info.monthsFormat", () => {
         Info.monthsFormat("long");
       })
-      .on("cycle", event => {
+      .on("cycle", (event) => {
         console.log(String(event.target));
       })
-      // eslint-disable-next-line func-names
-      .on("complete", function() {
+      .on("complete", function () {
         console.log("Fastest is " + this.filter("fastest").map("name"));
         resolve();
       })
-      .on("error", function() {
+      .on("error", function () {
         reject(this.error);
       })
       .run();

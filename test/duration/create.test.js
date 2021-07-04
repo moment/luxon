@@ -13,7 +13,7 @@ test("Duration.fromObject sets all the values", () => {
     hours: 4,
     minutes: 5,
     seconds: 6,
-    milliseconds: 7
+    milliseconds: 7,
   });
   expect(dur.years).toBe(1);
   expect(dur.months).toBe(2);
@@ -32,7 +32,7 @@ test("Duration.fromObject sets all the values from the object having string type
     hours: "4",
     minutes: "5",
     seconds: "6",
-    milliseconds: "7"
+    milliseconds: "7",
   });
   expect(dur.years).toBe(1);
   expect(dur.months).toBe(2);

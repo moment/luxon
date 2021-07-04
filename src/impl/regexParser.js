@@ -4,7 +4,7 @@ import {
   parseInteger,
   parseMillis,
   ianaRegex,
-  isUndefined
+  isUndefined,
 } from "./util.js";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
@@ -26,7 +26,7 @@ function combineRegexes(...regexes) {
 }
 
 function combineExtractors(...extractors) {
-  return m =>
+  return (m) =>
     extractors
       .reduce(
         ([mergedVals, mergedZone, cursor], ex) => {
@@ -89,7 +89,7 @@ function extractISOYmd(match, cursor) {
   const item = {
     year: int(match, cursor),
     month: int(match, cursor + 1, 1),
-    day: int(match, cursor + 2, 1)
+    day: int(match, cursor + 2, 1),
   };
 
   return [item, null, cursor + 3];
@@ -100,7 +100,7 @@ function extractISOTime(match, cursor) {
     hours: int(match, cursor, 0),
     minutes: int(match, cursor + 1, 0),
     seconds: int(match, cursor + 2, 0),
-    milliseconds: parseMillis(match[cursor + 3])
+    milliseconds: parseMillis(match[cursor + 3]),
   };
 
   return [item, null, cursor + 4];
@@ -124,20 +124,12 @@ const isoTimeOnly = RegExp(`^T?${isoTimeBaseRegex.source}$`);
 
 // ISO duration parsing
 
-const isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
+const isoDuration =
+  /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 
 function extractISODuration(match) {
-  const [
-    s,
-    yearStr,
-    monthStr,
-    weekStr,
-    dayStr,
-    hourStr,
-    minuteStr,
-    secondStr,
-    millisecondsStr
-  ] = match;
+  const [s, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] =
+    match;
 
   const hasNegativePrefix = s[0] === "-";
   const negativeSeconds = secondStr && secondStr[0] === "-";
@@ -154,8 +146,8 @@ function extractISODuration(match) {
       hours: maybeNegate(parseInteger(hourStr)),
       minutes: maybeNegate(parseInteger(minuteStr)),
       seconds: maybeNegate(parseInteger(secondStr), secondStr === "-0"),
-      milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds)
-    }
+      milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds),
+    },
   ];
 }
 
@@ -171,7 +163,7 @@ const obsOffsets = {
   MDT: -6 * 60,
   MST: -7 * 60,
   PDT: -7 * 60,
-  PST: -8 * 60
+  PST: -8 * 60,
 };
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
@@ -180,7 +172,7 @@ function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, 
     month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInteger(dayStr),
     hour: parseInteger(hourStr),
-    minute: parseInteger(minuteStr)
+    minute: parseInteger(minuteStr),
   };
 
   if (secondStr) result.second = parseInteger(secondStr);
@@ -195,7 +187,8 @@ function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, 
 }
 
 // RFC 2822/5322
-const rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/;
+const rfc2822 =
+  /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/;
 
 function extractRFC2822(match) {
   const [
@@ -210,7 +203,7 @@ function extractRFC2822(match) {
       obsOffset,
       milOffset,
       offHourStr,
-      offMinuteStr
+      offMinuteStr,
     ] = match,
     result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
 
@@ -236,9 +229,12 @@ function preprocessRFC2822(s) {
 
 // http date
 
-const rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/,
-  rfc850 = /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/,
-  ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
+const rfc1123 =
+    /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/,
+  rfc850 =
+    /^(Monday|Tuesday|Wedsday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/,
+  ascii =
+    /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
 
 function extractRFC1123Or850(match) {
   const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,

@@ -343,7 +343,7 @@ export default class Locale {
       const intl = format ? { month: length, day: "numeric" } : { month: length },
         formatStr = format ? "format" : "standalone";
       if (!this.monthsCache[formatStr][length]) {
-        this.monthsCache[formatStr][length] = mapMonths(dt => this.extract(dt, intl, "month"));
+        this.monthsCache[formatStr][length] = mapMonths((dt) => this.extract(dt, intl, "month"));
       }
       return this.monthsCache[formatStr][length];
     });
@@ -356,7 +356,7 @@ export default class Locale {
           : { weekday: length },
         formatStr = format ? "format" : "standalone";
       if (!this.weekdaysCache[formatStr][length]) {
-        this.weekdaysCache[formatStr][length] = mapWeekdays(dt =>
+        this.weekdaysCache[formatStr][length] = mapWeekdays((dt) =>
           this.extract(dt, intl, "weekday")
         );
       }
@@ -376,7 +376,7 @@ export default class Locale {
         if (!this.meridiemCache) {
           const intl = { hour: "numeric", hourCycle: "h12" };
           this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
-            dt => this.extract(dt, intl, "dayperiod")
+            (dt) => this.extract(dt, intl, "dayperiod")
           );
         }
 
@@ -392,7 +392,7 @@ export default class Locale {
       // This is problematic. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
       // to definitely enumerate them.
       if (!this.eraCache[length]) {
-        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(dt =>
+        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map((dt) =>
           this.extract(dt, intl, "era")
         );
       }
@@ -404,7 +404,7 @@ export default class Locale {
   extract(dt, intlOpts, field) {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
-      matching = results.find(m => m.type.toLowerCase() === field);
+      matching = results.find((m) => m.type.toLowerCase() === field);
     return matching ? matching.value : null;
   }
 

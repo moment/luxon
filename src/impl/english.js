@@ -21,7 +21,7 @@ export const monthsLong = [
   "September",
   "October",
   "November",
-  "December"
+  "December",
 ];
 
 export const monthsShort = [
@@ -36,7 +36,7 @@ export const monthsShort = [
   "Sep",
   "Oct",
   "Nov",
-  "Dec"
+  "Dec",
 ];
 
 export const monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
@@ -65,7 +65,7 @@ export const weekdaysLong = [
   "Thursday",
   "Friday",
   "Saturday",
-  "Sunday"
+  "Sunday",
 ];
 
 export const weekdaysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -133,7 +133,7 @@ export function formatRelativeTime(unit, count, numeric = "always", narrow = fal
     days: ["day", "day", "days"],
     hours: ["hour", "hr."],
     minutes: ["minute", "min."],
-    seconds: ["second", "sec."]
+    seconds: ["second", "sec."],
   };
 
   const lastable = ["hours", "minutes", "seconds"].indexOf(unit) === -1;
@@ -160,8 +160,8 @@ export function formatRelativeTime(unit, count, numeric = "always", narrow = fal
         ? lilUnits[1]
         : lilUnits[2] || lilUnits[1]
       : singular
-        ? units[unit][0]
-        : unit;
+      ? units[unit][0]
+      : unit;
   return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
 }
 
@@ -178,7 +178,7 @@ export function formatString(knownFormat) {
       "minute",
       "second",
       "timeZoneName",
-      "hourCycle"
+      "hourCycle",
     ]),
     key = stringify(filtered),
     dateTimeHuge = "EEEE, LLLL d, yyyy, h:mm a";

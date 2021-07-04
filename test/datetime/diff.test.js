@@ -13,7 +13,7 @@ const diffObjs = (o1, o2, units) => diffFromObjs(o1, o2, units).toObject();
 
 test("DateTime#diff defaults to milliseconds", () => {
   expect(diffObjs({ year: 2017, millisecond: 12 }, { year: 2017 })).toEqual({
-    milliseconds: 12
+    milliseconds: 12,
   });
   expect(diffFromObjs({ year: 2017 }, { year: 2017 }).milliseconds).toBe(0);
 });
@@ -22,15 +22,15 @@ test("DateTime#diff makes simple diffs", () => {
   expect(diffObjs({ year: 2017 }, { year: 2017 }, "years")).toEqual({ years: 0 });
 
   expect(diffObjs({ year: 2017 }, { year: 2016 }, "years")).toEqual({
-    years: 1
+    years: 1,
   });
 
   expect(diffObjs({ year: 2016, month: 4 }, { year: 2016, month: 1 }, "quarters")).toEqual({
-    quarters: 1
+    quarters: 1,
   });
 
   expect(diffObjs({ year: 2017, month: 10 }, { year: 2017, month: 4 }, "quarters")).toEqual({
-    quarters: 2
+    quarters: 2,
   });
 
   expect(
@@ -94,21 +94,21 @@ test("DateTime#diff accepts multiple units", () => {
   expect(
     diffObjs({ year: 2016, month: 3, day: 28 }, { year: 2010, month: 3, day: 16 }, [
       "years",
-      "days"
+      "days",
     ])
   ).toEqual({ years: 6, days: 12 });
 
   expect(
     diffObjs({ year: 2016, month: 3, day: 14 }, { year: 2010, month: 3, day: 16 }, [
       "years",
-      "days"
+      "days",
     ])
   ).toEqual({ years: 5, days: 364 });
 
   expect(
     diffObjs({ year: 2015, month: 3, day: 14 }, { year: 2009, month: 3, day: 16 }, [
       "years",
-      "days"
+      "days",
     ])
   ).toEqual({ years: 5, days: 363 });
 });
@@ -150,7 +150,7 @@ test("DateTime#diff puts fractional parts in the lowest order unit", () => {
   expect(
     diffObjs({ year: 2017, month: 7, day: 14 }, { year: 2016, month: 6, day: 16 }, [
       "years",
-      "months"
+      "months",
     ])
   ).toEqual({ years: 1, months: 1 - 2 / 30 });
 });
@@ -170,14 +170,14 @@ test("DateTime#diff is calendary for years, months, day", () => {
   expect(
     diffObjs({ year: 2016, month: 6, day: 14 }, { year: 2010, month: 6, day: 14 }, [
       "years",
-      "days"
+      "days",
     ])
   ).toEqual({ years: 6, days: 0 });
 
   expect(
     diffObjs({ year: 2016, month: 3, day: 14 }, { year: 2010, month: 3, day: 16 }, [
       "years",
-      "days"
+      "days",
     ])
   ).toEqual({ years: 5, days: 364 });
 
@@ -250,22 +250,22 @@ test("DateTime#diff results in a duration with the same locale", () => {
       {
         year: 2016,
         month: 5,
-        day: 5
+        day: 5,
       },
       {
         locale: "fr",
-        numberingSystem: "mong"
+        numberingSystem: "mong",
       }
     ),
     dt2 = DateTime.fromObject(
       {
         year: 2016,
         month: 1,
-        day: 1
+        day: 1,
       },
       {
         locale: "es",
-        numberingSystem: "beng"
+        numberingSystem: "beng",
       }
     ),
     dur = dt1.diff(dt2);

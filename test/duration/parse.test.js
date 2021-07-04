@@ -41,31 +41,31 @@ test("Duration.fromISO can parse fractions of seconds", () => {
   expect(Duration.fromISO("PT54M32.5S").toObject()).toEqual({
     minutes: 54,
     seconds: 32,
-    milliseconds: 500
+    milliseconds: 500,
   });
   expect(Duration.fromISO("PT54M32.53S").toObject()).toEqual({
     minutes: 54,
     seconds: 32,
-    milliseconds: 530
+    milliseconds: 530,
   });
   expect(Duration.fromISO("PT54M32.534S").toObject()).toEqual({
     minutes: 54,
     seconds: 32,
-    milliseconds: 534
+    milliseconds: 534,
   });
   expect(Duration.fromISO("PT54M32.5348S").toObject()).toEqual({
     minutes: 54,
     seconds: 32,
-    milliseconds: 534
+    milliseconds: 534,
   });
   expect(Duration.fromISO("PT54M32.034S").toObject()).toEqual({
     minutes: 54,
     seconds: 32,
-    milliseconds: 34
+    milliseconds: 34,
   });
 });
 
-const rejects = s => {
+const rejects = (s) => {
   expect(Duration.fromISO(s).isValid).toBe(false);
 };
 
@@ -102,7 +102,7 @@ test("Duration.fromISOTime can parse a variety of basic ISO time formats", () =>
   checkTime("T1122", { hours: 11, minutes: 22, seconds: 0 });
 });
 
-const rejectsTime = s => {
+const rejectsTime = (s) => {
   expect(Duration.fromISOTime(s).isValid).toBe(false);
 };
 

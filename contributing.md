@@ -62,12 +62,12 @@ In case messing with your Node environment just to run Luxon's tests is too much
 Once you're sure your bugfix or feature makes sense for Luxon, make sure you take these steps:
 
 1.  Be sure to add tests and run them with `scripts/test`
-1.  Be sure you run `npm run lint!` before you commit. Note this will modify your source files to line up with the style guidelines.
+1.  Be sure you run `npm run format` before you commit. Note this will modify your source files to line up with the style guidelines.
 1.  Make sure you add or ESDoc annotations appropriately. You can run `npm run docs` to generate the HTML for them. They land in the `build/docs` directory. This also builds the markdown files in `/docs` into the guide on the Luxon website.
 1.  To test Luxon in your browser, run `npm run site` and then open `build/demo/global.html`. You can access Luxon classes in the console like `window.luxon.DateTime`.
 1.  To test in Node, run `npm run build` and then run something like `var DateTime = require('./build/cjs/luxon').DateTime`.
 
-Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on your code as a pre-commit hook. You should still run `npm run lint!` yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.
+Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on your code as a pre-commit hook. You should still run `npm run format` yourself to catch other issues, but this hook will help prevent you from failing the build with a trivial formatting error.
 
 ## npm script reference
 
@@ -77,7 +77,6 @@ Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on yo
 | `npm run build-node`         | Build just for Node                     |
 | `npm run test`               | Run the test suite, but see notes above |
 | `npm run format`             | Run the Prettier formatter              |
-| `npm run lint!`              | Run the formatter and the linter        |
-| `npm run docs`               | Build the doc pages                     |
-| `npm run site`               | Build the Luxon website                 |
+| `npm run site`               | Build the Luxon website, including docs                 |
 | `npm run check-doc-coverage` | Check whether there's full doc coverage |
+| `npm run benchmark`          | Run performance benchmarks |

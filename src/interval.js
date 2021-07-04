@@ -92,7 +92,7 @@ export default class Interval {
     if (validateError == null) {
       return new Interval({
         start: builtStart,
-        end: builtEnd
+        end: builtEnd,
       });
     } else {
       return validateError;
@@ -309,7 +309,7 @@ export default class Interval {
     if (!this.isValid) return [];
     const sorted = dateTimes
         .map(friendlyDateTime)
-        .filter(d => this.contains(d))
+        .filter((d) => this.contains(d))
         .sort(),
       results = [];
     let { s } = this,
@@ -345,7 +345,7 @@ export default class Interval {
 
     const results = [];
     while (s < this.e) {
-      const added = this.start.plus(dur.mapUnits(x => x * idx));
+      const added = this.start.plus(dur.mapUnits((x) => x * idx));
       next = +added > +this.e ? this.e : added;
       results.push(Interval.fromDateTimes(s, next));
       s = next;
@@ -456,18 +456,20 @@ export default class Interval {
    * @return {Array}
    */
   static merge(intervals) {
-    const [found, final] = intervals.sort((a, b) => a.s - b.s).reduce(
-      ([sofar, current], item) => {
-        if (!current) {
-          return [sofar, item];
-        } else if (current.overlaps(item) || current.abutsStart(item)) {
-          return [sofar, current.union(item)];
-        } else {
-          return [sofar.concat([current]), item];
-        }
-      },
-      [[], null]
-    );
+    const [found, final] = intervals
+      .sort((a, b) => a.s - b.s)
+      .reduce(
+        ([sofar, current], item) => {
+          if (!current) {
+            return [sofar, item];
+          } else if (current.overlaps(item) || current.abutsStart(item)) {
+            return [sofar, current.union(item)];
+          } else {
+            return [sofar.concat([current]), item];
+          }
+        },
+        [[], null]
+      );
     if (final) {
       found.push(final);
     }
@@ -483,7 +485,10 @@ export default class Interval {
     let start = null,
       currentCount = 0;
     const results = [],
-      ends = intervals.map(i => [{ time: i.s, type: "s" }, { time: i.e, type: "e" }]),
+      ends = intervals.map((i) => [
+        { time: i.s, type: "s" },
+        { time: i.e, type: "e" },
+      ]),
       flattened = Array.prototype.concat(...ends),
       arr = flattened.sort((a, b) => a.time - b.time);
 
@@ -511,8 +516,8 @@ export default class Interval {
    */
   difference(...intervals) {
     return Interval.xor([this].concat(intervals))
-      .map(i => this.intersection(i))
-      .filter(i => i && !i.isEmpty());
+      .map((i) => this.intersection(i))
+      .filter((i) => i && !i.isEmpty());
   }
 
   /**

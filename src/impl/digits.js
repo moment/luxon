@@ -19,7 +19,7 @@ const numberingSystems = {
   telu: "[\u0C66-\u0C6F]",
   thai: "[\u0E50-\u0E59]",
   tibt: "[\u0F20-\u0F29]",
-  latn: "\\d"
+  latn: "\\d",
 };
 
 const numberingSystemsUTF16 = {
@@ -41,10 +41,9 @@ const numberingSystemsUTF16 = {
   tamldec: [3046, 3055],
   telu: [3174, 3183],
   thai: [3664, 3673],
-  tibt: [3872, 3881]
+  tibt: [3872, 3881],
 };
 
-// eslint-disable-next-line
 const hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
 
 export function parseDigits(str) {

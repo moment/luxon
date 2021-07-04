@@ -17,7 +17,7 @@ import {
   weeksInWeekYear,
   normalizeObject,
   roundTo,
-  objToLocalTS
+  objToLocalTS,
 } from "./impl/util.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
@@ -31,14 +31,14 @@ import {
   hasInvalidGregorianData,
   hasInvalidWeekData,
   hasInvalidOrdinalData,
-  hasInvalidTimeData
+  hasInvalidTimeData,
 } from "./impl/conversions.js";
 import * as Formats from "./impl/formats.js";
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
   InvalidUnitError,
-  InvalidDateTimeError
+  InvalidDateTimeError,
 } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 
@@ -66,7 +66,7 @@ function clone(inst, alts) {
     c: inst.c,
     o: inst.o,
     loc: inst.loc,
-    invalid: inst.invalid
+    invalid: inst.invalid,
   };
   return new DateTime({ ...current, ...alts, old: current });
 }
@@ -111,7 +111,7 @@ function tsToObj(ts, offset) {
     hour: d.getUTCHours(),
     minute: d.getUTCMinutes(),
     second: d.getUTCSeconds(),
-    millisecond: d.getUTCMilliseconds()
+    millisecond: d.getUTCMilliseconds(),
   };
 }
 
@@ -132,7 +132,7 @@ function adjustTime(inst, dur) {
       day:
         Math.min(inst.c.day, daysInMonth(year, month)) +
         Math.trunc(dur.days) +
-        Math.trunc(dur.weeks) * 7
+        Math.trunc(dur.weeks) * 7,
     },
     millisToAdd = Duration.fromObject({
       years: dur.years - Math.trunc(dur.years),
@@ -143,7 +143,7 @@ function adjustTime(inst, dur) {
       hours: dur.hours,
       minutes: dur.minutes,
       seconds: dur.seconds,
-      milliseconds: dur.milliseconds
+      milliseconds: dur.milliseconds,
     }).as("milliseconds"),
     localTS = objToLocalTS(c);
 
@@ -168,7 +168,7 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
         ...opts,
         zone: interpretationZone,
         // setZone is a valid option in the calling methods, but not in fromObject
-        setZone: undefined
+        setZone: undefined,
       });
     return setZone ? inst : inst.setZone(zone);
   } else {
@@ -184,7 +184,7 @@ function toTechFormat(dt, format, allowZ = true) {
   return dt.isValid
     ? Formatter.create(Locale.create("en-US"), {
         allowZ,
-        forceSimple: true
+        forceSimple: true,
       }).formatDateTimeFromString(dt, format)
     : null;
 }
@@ -200,7 +200,7 @@ function toTechTimeFormat(
     includePrefix = false,
     includeZone = false,
     spaceZone = false,
-    format = "extended"
+    format = "extended",
   }
 ) {
   let fmt = format === "basic" ? "HHmm" : "HH:mm";
@@ -238,7 +238,7 @@ const defaultUnitValues = {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   },
   defaultWeekUnitValues = {
     weekNumber: 1,
@@ -246,14 +246,14 @@ const defaultUnitValues = {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   },
   defaultOrdinalUnitValues = {
     ordinal: 1,
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   };
 
 // Units in the supported calendars, sorted by bigness
@@ -265,7 +265,7 @@ const orderedUnits = ["year", "month", "day", "hour", "minute", "second", "milli
     "hour",
     "minute",
     "second",
-    "millisecond"
+    "millisecond",
   ],
   orderedOrdinalUnits = ["year", "ordinal", "hour", "minute", "second", "millisecond"];
 
@@ -295,7 +295,7 @@ function normalizeUnit(unit) {
     weeknumbers: "weekNumber",
     weekyear: "weekYear",
     weekyears: "weekYear",
-    ordinal: "ordinal"
+    ordinal: "ordinal",
   }[unit.toLowerCase()];
 
   if (!normalized) throw new InvalidUnitError(unit);
@@ -346,13 +346,10 @@ function diffRelative(start, end, opts) {
       const formatter = end.loc.clone(opts).relFormatter(opts);
       return formatter.format(c, unit);
     },
-    differ = unit => {
+    differ = (unit) => {
       if (opts.calendary) {
         if (!end.hasSame(start, unit)) {
-          return end
-            .startOf(unit)
-            .diff(start.startOf(unit), unit)
-            .get(unit);
+          return end.startOf(unit).diff(start.startOf(unit), unit).get(unit);
         } else return 0;
       } else {
         return end.diff(start, unit).get(unit);
@@ -559,7 +556,7 @@ export default class DateTime {
     return new DateTime({
       ts: ts,
       zone: zoneToUse,
-      loc: Locale.fromObject(options)
+      loc: Locale.fromObject(options),
     });
   }
 
@@ -585,7 +582,7 @@ export default class DateTime {
       return new DateTime({
         ts: milliseconds,
         zone: normalizeZone(options.zone, Settings.defaultZone),
-        loc: Locale.fromObject(options)
+        loc: Locale.fromObject(options),
       });
     }
   }
@@ -607,7 +604,7 @@ export default class DateTime {
       return new DateTime({
         ts: seconds * 1000,
         zone: normalizeZone(options.zone, Settings.defaultZone),
-        loc: Locale.fromObject(options)
+        loc: Locale.fromObject(options),
       });
     }
   }
@@ -709,8 +706,8 @@ export default class DateTime {
     const higherOrderInvalid = useWeekData
         ? hasInvalidWeekData(normalized)
         : containsOrdinal
-          ? hasInvalidOrdinalData(normalized)
-          : hasInvalidGregorianData(normalized),
+        ? hasInvalidOrdinalData(normalized)
+        : hasInvalidGregorianData(normalized),
       invalid = higherOrderInvalid || hasInvalidTimeData(normalized);
 
     if (invalid) {
@@ -721,14 +718,14 @@ export default class DateTime {
     const gregorian = useWeekData
         ? weekToGregorian(normalized)
         : containsOrdinal
-          ? ordinalToGregorian(normalized)
-          : normalized,
+        ? ordinalToGregorian(normalized)
+        : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
       inst = new DateTime({
         ts: tsFinal,
         zone: zoneToUse,
         o: offsetFinal,
-        loc
+        loc,
       });
 
     // gregorian data + weekday serves only to validate
@@ -804,8 +801,7 @@ export default class DateTime {
 
   /**
    * Create a DateTime from an input string and format string.
-   * Defaults to en-US if no locale has been specified, regardless of the system's locale.
-   * @see https://moment.github.io/luxon/docs/manual/parsing.html#table-of-tokens
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale. For a table of tokens and their interpretations, see [here](/#/parsing?id=table-of-tokens).
    * @param {string} text - the string to parse
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
    * @param {Object} opts - options to affect the creation
@@ -825,7 +821,7 @@ export default class DateTime {
       localeToUse = Locale.fromOpts({
         locale,
         numberingSystem,
-        defaultToEN: true
+        defaultToEN: true,
       }),
       [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
     if (invalid) {
@@ -1149,7 +1145,7 @@ export default class DateTime {
     if (this.isValid) {
       return this.zone.offsetName(this.ts, {
         format: "short",
-        locale: this.locale
+        locale: this.locale,
       });
     } else {
       return null;
@@ -1165,7 +1161,7 @@ export default class DateTime {
     if (this.isValid) {
       return this.zone.offsetName(this.ts, {
         format: "long",
-        locale: this.locale
+        locale: this.locale,
       });
     } else {
       return null;
@@ -1478,9 +1474,8 @@ export default class DateTime {
 
   /**
    * Returns a string representation of this DateTime formatted according to the specified format string.
-   * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool. For a table of tokens and their interpretations, see [here](https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens).
+   * **You may not want this.** See {@link toLocaleString} for a more flexible formatting tool. For a table of tokens and their interpretations, see [here](/#/formatting?id=table-of-tokens).
    * Defaults to en-US if no locale has been specified, regardless of the system's locale.
-   * @see https://moment.github.io/luxon/docs/manual/formatting.html#table-of-tokens
    * @param {string} fmt - the format string
    * @param {Object} opts - opts to override the configuration options on this DateTime
    * @example DateTime.now().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
@@ -1605,14 +1600,14 @@ export default class DateTime {
     suppressSeconds = false,
     includeOffset = true,
     includePrefix = false,
-    format = "extended"
+    format = "extended",
   } = {}) {
     return toTechTimeFormat(this, {
       suppressSeconds,
       suppressMilliseconds,
       includeOffset,
       includePrefix,
-      format
+      format,
     });
   }
 
@@ -1662,7 +1657,7 @@ export default class DateTime {
     return toTechTimeFormat(this, {
       includeOffset,
       includeZone,
-      spaceZone: true
+      spaceZone: true,
     });
   }
 
@@ -1881,7 +1876,7 @@ export default class DateTime {
       ...options,
       numeric: "always",
       units,
-      unit
+      unit,
     });
   }
 
@@ -1905,7 +1900,7 @@ export default class DateTime {
       ...options,
       numeric: "auto",
       units: ["years", "months", "days"],
-      calendary: true
+      calendary: true,
     });
   }
 
@@ -1918,7 +1913,7 @@ export default class DateTime {
     if (!dateTimes.every(DateTime.isDateTime)) {
       throw new InvalidArgumentError("min requires all arguments be DateTimes");
     }
-    return bestBy(dateTimes, i => i.valueOf(), Math.min);
+    return bestBy(dateTimes, (i) => i.valueOf(), Math.min);
   }
 
   /**
@@ -1930,7 +1925,7 @@ export default class DateTime {
     if (!dateTimes.every(DateTime.isDateTime)) {
       throw new InvalidArgumentError("max requires all arguments be DateTimes");
     }
-    return bestBy(dateTimes, i => i.valueOf(), Math.max);
+    return bestBy(dateTimes, (i) => i.valueOf(), Math.max);
   }
 
   // MISC
@@ -1947,7 +1942,7 @@ export default class DateTime {
       localeToUse = Locale.fromOpts({
         locale,
         numberingSystem,
-        defaultToEN: true
+        defaultToEN: true,
       });
     return explainFromTokens(localeToUse, text, fmt);
   }

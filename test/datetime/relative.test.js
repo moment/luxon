@@ -61,13 +61,13 @@ test("DateTime#toRelative takes a unit argument", () => {
   expect(
     base.plus({ seconds: 30 }).toRelative({
       base,
-      unit: ["days", "hours", "minutes"]
+      unit: ["days", "hours", "minutes"],
     })
   ).toBe("in 0 minutes");
   expect(
     base.plus({ years: 2 }).toRelative({
       base,
-      unit: ["days", "hours", "minutes"]
+      unit: ["days", "hours", "minutes"],
     })
   ).toBe("in 731 days");
 });
@@ -101,12 +101,7 @@ Helpers.withoutRTF("DateTime#toRelative works without RTF", () => {
 
 Helpers.withoutRTF("DateTime#toRelative falls back to English", () => {
   const base = DateTime.fromObject({ year: 2019, month: 12, day: 25 });
-  expect(
-    base
-      .setLocale("fr")
-      .plus({ months: 1 })
-      .toRelative({ base })
-  ).toBe("in 1 month");
+  expect(base.setLocale("fr").plus({ months: 1 }).toRelative({ base })).toBe("in 1 month");
 });
 
 test("DateTime#toRelative returns null when used on an invalid date", () => {
@@ -169,12 +164,7 @@ Helpers.withoutRTF("DateTime#toRelativeCalendar works without RTF", () => {
 
 Helpers.withoutRTF("DateTime#toRelativeCalendar falls back to English", () => {
   const base = DateTime.fromObject({ year: 2019, month: 12, day: 25 });
-  expect(
-    base
-      .setLocale("fr")
-      .plus({ months: 1 })
-      .toRelativeCalendar({ base })
-  ).toBe("next year");
+  expect(base.setLocale("fr").plus({ months: 1 }).toRelativeCalendar({ base })).toBe("next year");
 });
 
 test("DateTime#toRelativeCalendar works down through the units for different zone than local", () => {

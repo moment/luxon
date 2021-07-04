@@ -193,7 +193,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     };
 
   if (timeZone) {
@@ -204,7 +204,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
 
   const parsed = new Intl.DateTimeFormat(locale, modified)
     .formatToParts(date)
-    .find(m => m.type.toLowerCase() === "timezonename");
+    .find((m) => m.type.toLowerCase() === "timezonename");
   return parsed ? parsed.value : null;
 }
 

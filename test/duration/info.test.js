@@ -6,12 +6,12 @@ const dur = Duration.fromObject(
   {
     years: 1,
     months: 2,
-    days: 3
+    days: 3,
   },
   {
     locale: "fr",
     numberingSystem: "beng",
-    conversionAccuracy: "longterm"
+    conversionAccuracy: "longterm",
   }
 );
 
@@ -22,7 +22,7 @@ test("Duration#toObject returns the object", () => {
   expect(dur.toObject()).toEqual({
     years: 1,
     months: 2,
-    days: 3
+    days: 3,
   });
 });
 
@@ -31,12 +31,12 @@ test("Duration#toObject accepts a flag to return config", () => {
     {
       years: 1,
       months: 2,
-      days: 3
+      days: 3,
     },
     {
       locale: "fr",
       numberingSystem: "beng",
-      conversionAccuracy: "longterm"
+      conversionAccuracy: "longterm",
     }
   );
 });

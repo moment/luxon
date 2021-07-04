@@ -11,10 +11,10 @@ const dtMaker = () =>
         hour: 9,
         minute: 23,
         second: 54,
-        millisecond: 123
+        millisecond: 123,
       },
       {
-        zone: "utc"
+        zone: "utc",
       }
     ),
   dt = dtMaker(),
@@ -60,11 +60,9 @@ test("DateTime#toISO() returns null for invalid DateTimes", () => {
 
 // #724, Firefox specific issue, offset prints as '-05:50.60000000000002'
 test("DateTime#toISO() rounds fractional timezone minute offsets", () => {
-  expect(
-    DateTime.fromMillis(-62090696591000)
-      .setZone("America/Chicago")
-      .toISO()
-  ).toBe("0002-06-04T10:26:13.000-05:50");
+  expect(DateTime.fromMillis(-62090696591000).setZone("America/Chicago").toISO()).toBe(
+    "0002-06-04T10:26:13.000-05:50"
+  );
 });
 
 //------
@@ -379,7 +377,7 @@ test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
     .reconfigure({
       locale: "be",
       numberingSystem: "mong",
-      outputCalendar: "coptic"
+      outputCalendar: "coptic",
     })
     .resolvedLocaleOptions();
 
@@ -392,7 +390,7 @@ test("DateTime#resolvedLocaleOpts can override with options", () => {
   const res = DateTime.now().resolvedLocaleOptions({
     locale: "be",
     numberingSystem: "mong",
-    outputCalendar: "coptic"
+    outputCalendar: "coptic",
   });
 
   expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
@@ -410,7 +408,7 @@ test("DateTime#toLocaleParts returns a en-US by default", () => {
     { type: "literal", value: "/" },
     { type: "day", value: "25" },
     { type: "literal", value: "/" },
-    { type: "year", value: "1982" }
+    { type: "year", value: "1982" },
   ]);
 });
 
@@ -420,7 +418,7 @@ test("DateTime#toLocaleParts accepts locale settings from the dateTime", () => {
     { type: "literal", value: "." },
     { type: "month", value: "5" },
     { type: "literal", value: "." },
-    { type: "year", value: "1982" }
+    { type: "year", value: "1982" },
   ]);
 });
 
@@ -430,7 +428,7 @@ test("DateTime#toLocaleParts can override the dateTime's locale", () => {
     { type: "literal", value: "/" },
     { type: "month", value: "05" },
     { type: "literal", value: "/" },
-    { type: "year", value: "1982" }
+    { type: "year", value: "1982" },
   ]);
 });
 
@@ -438,7 +436,7 @@ test("DateTime#toLocaleParts accepts date formatting options", () => {
   expect(dt.toLocaleParts(DateTime.TIME_24_SIMPLE)).toEqual([
     { type: "hour", value: "09" },
     { type: "literal", value: ":" },
-    { type: "minute", value: "23" }
+    { type: "minute", value: "23" },
   ]);
 });
 

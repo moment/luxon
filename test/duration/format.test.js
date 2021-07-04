@@ -10,7 +10,7 @@ const dur = () =>
     hours: 4,
     minutes: 5,
     seconds: 6,
-    milliseconds: 7
+    milliseconds: 7,
   });
 
 //------
@@ -241,11 +241,9 @@ test("Duration#toFormat rounds down", () => {
 });
 
 test("Duration#toFormat localizes the numbers", () => {
-  expect(
-    dur()
-      .reconfigure({ locale: "bn" })
-      .toFormat("yy:MM:dd:h:mm:ss.SSS")
-  ).toBe("০১:০২:১০:৪:০৫:০৬.০০৭");
+  expect(dur().reconfigure({ locale: "bn" }).toFormat("yy:MM:dd:h:mm:ss.SSS")).toBe(
+    "০১:০২:১০:৪:০৫:০৬.০০৭"
+  );
 });
 
 test("Duration#toFormat returns a lame string for invalid durations", () => {

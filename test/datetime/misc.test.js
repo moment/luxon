@@ -33,10 +33,10 @@ test("DateTime#hasSame() checks high-order units", () => {
 // #584
 test("DateTime#hasSame() ignores time offsets and is symmetric", () => {
   const d1 = DateTime.fromISO("2019-10-02T01:02:03.045+03:00", {
-    zone: "Europe/Helsinki"
+    zone: "Europe/Helsinki",
   });
   const d2 = DateTime.fromISO("2019-10-02T01:02:03.045-05:00", {
-    zone: "America/Chicago"
+    zone: "America/Chicago",
   });
 
   expect(d1.hasSame(d2, "day")).toBe(true);

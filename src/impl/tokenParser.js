@@ -8,7 +8,7 @@ import { ConflictingSpecificationError } from "../errors.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
-function intUnit(regex, post = i => i) {
+function intUnit(regex, post = (i) => i) {
   return { regex, deser: ([s]) => post(parseDigits(s)) };
 }
 
@@ -36,7 +36,7 @@ function oneOf(strings, startIndex) {
     return {
       regex: RegExp(strings.map(fixListRegex).join("|")),
       deser: ([s]) =>
-        strings.findIndex(i => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex
+        strings.findIndex((i) => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex,
     };
   }
 }
@@ -50,7 +50,6 @@ function simple(regex) {
 }
 
 function escapeToken(value) {
-  // eslint-disable-next-line no-useless-escape
   return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 }
 
@@ -66,8 +65,8 @@ function unitForToken(token, loc) {
     oneToNine = digitRegex(loc, "{1,9}"),
     twoToFour = digitRegex(loc, "{2,4}"),
     fourToSix = digitRegex(loc, "{4,6}"),
-    literal = t => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
-    unitate = t => {
+    literal = (t) => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
+    unitate = (t) => {
       if (token.literal) {
         return literal(t);
       }
@@ -183,7 +182,7 @@ function unitForToken(token, loc) {
     };
 
   const unit = unitate(token) || {
-    invalidReason: MISSING_FTP
+    invalidReason: MISSING_FTP,
   };
 
   unit.token = token;
@@ -194,36 +193,36 @@ function unitForToken(token, loc) {
 const partTypeStyleToTokenVal = {
   year: {
     "2-digit": "yy",
-    numeric: "yyyyy"
+    numeric: "yyyyy",
   },
   month: {
     numeric: "M",
     "2-digit": "MM",
     short: "MMM",
-    long: "MMMM"
+    long: "MMMM",
   },
   day: {
     numeric: "d",
-    "2-digit": "dd"
+    "2-digit": "dd",
   },
   weekday: {
     short: "EEE",
-    long: "EEEE"
+    long: "EEEE",
   },
   dayperiod: "a",
   dayPeriod: "a",
   hour: {
     numeric: "h",
-    "2-digit": "hh"
+    "2-digit": "hh",
   },
   minute: {
     numeric: "m",
-    "2-digit": "mm"
+    "2-digit": "mm",
   },
   second: {
     numeric: "s",
-    "2-digit": "ss"
-  }
+    "2-digit": "ss",
+  },
 };
 
 function tokenForPart(part, locale, formatOpts) {
@@ -232,7 +231,7 @@ function tokenForPart(part, locale, formatOpts) {
   if (type === "literal") {
     return {
       literal: true,
-      val: value
+      val: value,
     };
   }
 
@@ -246,7 +245,7 @@ function tokenForPart(part, locale, formatOpts) {
   if (val) {
     return {
       literal: false,
-      val
+      val,
     };
   }
 
@@ -254,7 +253,7 @@ function tokenForPart(part, locale, formatOpts) {
 }
 
 function buildRegex(units) {
-  const re = units.map(u => u.regex).reduce((f, r) => `${f}(${r.source})`, "");
+  const re = units.map((u) => u.regex).reduce((f, r) => `${f}(${r.source})`, "");
   return [`^${re}$`, units];
 }
 
@@ -281,7 +280,7 @@ function match(input, regex, handlers) {
 }
 
 function dateTimeFromMatches(matches) {
-  const toField = token => {
+  const toField = (token) => {
     switch (token) {
       case "S":
         return "millisecond";
@@ -380,7 +379,7 @@ function maybeExpandMacroToken(token, locale) {
   const formatter = Formatter.create(locale, formatOpts);
   const parts = formatter.formatDateTimeParts(getDummyDateTime());
 
-  const tokens = parts.map(p => tokenForPart(p, locale, formatOpts));
+  const tokens = parts.map((p) => tokenForPart(p, locale, formatOpts));
 
   if (tokens.includes(undefined)) {
     return token;
@@ -390,7 +389,7 @@ function maybeExpandMacroToken(token, locale) {
 }
 
 function expandMacroTokens(tokens, locale) {
-  return Array.prototype.concat(...tokens.map(t => maybeExpandMacroToken(t, locale)));
+  return Array.prototype.concat(...tokens.map((t) => maybeExpandMacroToken(t, locale)));
 }
 
 /**
@@ -399,8 +398,8 @@ function expandMacroTokens(tokens, locale) {
 
 export function explainFromTokens(locale, input, format) {
   const tokens = expandMacroTokens(Formatter.parseFormat(format), locale),
-    units = tokens.map(t => unitForToken(t, locale)),
-    disqualifyingUnit = units.find(t => t.invalidReason);
+    units = tokens.map((t) => unitForToken(t, locale)),
+    disqualifyingUnit = units.find((t) => t.invalidReason);
 
   if (disqualifyingUnit) {
     return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };

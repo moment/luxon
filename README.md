@@ -1,6 +1,6 @@
 # Luxon
 
-[![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![Doc coverage][doc-coverage-image]][doc-url] [![PRs welcome][contributing-image]][contributing-url]
+[![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![PRs welcome][contributing-image]][contributing-url]
 
 Luxon is a library for working with dates and times in JavaScript.
 
@@ -10,7 +10,7 @@ DateTime.now().setZone("America/New_York").minus({ weeks: 1 }).endOf("day").toIS
 
 ## Upgrading to 2.0
 
-[Guide](https://moment.github.io/luxon/docs/manual/upgrading.html)
+[Guide](https://moment.github.io/luxon/docs/manual/upgrading.tml)
 
 ## Features
  * DateTime, Duration, and Interval types.
@@ -45,9 +45,6 @@ See [contributing](contributing.md).
 
 [npm-url]: https://npmjs.org/package/luxon
 [npm-version-image]: https://badge.fury.io/js/luxon.svg
-
-[doc-url]: https://moment.github.io/luxon/docs/
-[doc-coverage-image]: https://moment.github.io/luxon/docs/badge.svg
 
 [test-coverage-url]: https://codecov.io/gh/moment/luxon
 [test-coverage-image]: https://codecov.io/gh/moment/luxon/branch/master/graph/badge.svg

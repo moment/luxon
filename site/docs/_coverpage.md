@@ -1,6 +1,6 @@
 ![logo](_media/Luxon_icon_64x64.png)
 
-# Luxon
+# Luxon <small>2.x</small>
 
 > A powerful, modern, and friendly wrapper for Javascript dates and times.
 
@@ -11,7 +11,6 @@
 ```js
 DateTime.now().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
 ```
-
 
 [GitHub](https://github.com/moment/luxon/)
 [Get started](#Luxon)

@@ -44,9 +44,7 @@ test("DateTime#utc maintains invalidity", () => {
 // #toLocal()
 //------
 test("DateTime#toLocal() sets the calendar back to local", () => {
-  const relocaled = dt()
-      .toUTC()
-      .toLocal(),
+  const relocaled = dt().toUTC().toLocal(),
     expected = new Date(millis).getHours();
   expect(relocaled.isOffsetFixed).toBe(false);
   expect(relocaled.valueOf()).toBe(millis);
@@ -148,9 +146,7 @@ test("DateTime#setZone accepts IANA zone names", () => {
 });
 
 test("DateTime#setZone accepts a keepLocalTime option", () => {
-  const zoned = dt()
-    .toUTC()
-    .setZone("America/Los_Angeles", { keepLocalTime: true });
+  const zoned = dt().toUTC().setZone("America/Los_Angeles", { keepLocalTime: true });
   expect(zoned.zoneName).toBe("America/Los_Angeles");
   expect(zoned.year).toBe(1982);
   expect(zoned.month).toBe(5);
@@ -159,7 +155,7 @@ test("DateTime#setZone accepts a keepLocalTime option", () => {
   expect(zoned.isOffsetFixed).toBe(false);
 
   const zonedMore = zoned.setZone("America/New_York", {
-    keepLocalTime: true
+    keepLocalTime: true,
   });
   expect(zonedMore.zoneName).toBe("America/New_York");
   expect(zonedMore.year).toBe(1982);

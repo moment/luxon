@@ -12,7 +12,7 @@ const dur = () =>
     hours: 1,
     minutes: 1,
     seconds: 1,
-    milliseconds: 1
+    milliseconds: 1,
   });
 
 test("Duration#set() sets the values", () => {

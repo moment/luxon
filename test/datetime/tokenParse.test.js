@@ -276,7 +276,7 @@ test("DateTime.fromFormat() parses quarters", () => {
 
 test("DateTime.fromFormat() makes trailing periods in month names optional", () => {
   const i = DateTime.fromFormat("janv 25 1982", "LLL dd yyyy", {
-    locale: "fr"
+    locale: "fr",
   });
   expect(i.year).toBe(1982);
   expect(i.month).toBe(1);
@@ -285,14 +285,14 @@ test("DateTime.fromFormat() makes trailing periods in month names optional", () 
 
 test("DateTime.fromFormat() does not match arbitrary stuff with those periods", () => {
   const i = DateTime.fromFormat("janvQ 25 1982", "LLL dd yyyy", {
-    locale: "fr"
+    locale: "fr",
   });
   expect(i.isValid).toBe(false);
 });
 
 test("DateTime.fromFormat() uses case-insensitive matching", () => {
   const i = DateTime.fromFormat("Janv. 25 1982", "LLL dd yyyy", {
-    locale: "fr"
+    locale: "fr",
   });
   expect(i.year).toBe(1982);
   expect(i.month).toBe(1);
@@ -322,7 +322,7 @@ test("DateTime.fromFormat() validates weekday names", () => {
   expect(d.isValid).toBeFalsy();
 
   d = DateTime.fromFormat("mardi, 05/25/1982", "EEEE, LL/dd/yyyy", {
-    locale: "fr"
+    locale: "fr",
   });
   expect(d.isValid).toBe(true);
   expect(d.year).toBe(1982);
@@ -453,7 +453,7 @@ test("DateTime.fromFormat() returns invalid for out-of-range values", () => {
 
 test("DateTime.fromFormat() accepts a zone argument", () => {
   const d = DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
-    zone: "Asia/Tokyo"
+    zone: "Asia/Tokyo",
   });
   expect(d.zoneName).toBe("Asia/Tokyo");
   expect(d.offset).toBe(9 * 60);
@@ -485,7 +485,7 @@ test("DateTime.fromFormat() parses IANA zones", () => {
 
 test("DateTime.fromFormat() with setZone parses IANA zones and sets it", () => {
   const d = DateTime.fromFormat("1982/05/25 09:10:11.445 Asia/Tokyo", "yyyy/MM/dd HH:mm:ss.SSS z", {
-    setZone: true
+    setZone: true,
   });
   expect(d.zoneName).toBe("Asia/Tokyo");
   expect(d.offset).toBe(9 * 60);
@@ -494,7 +494,11 @@ test("DateTime.fromFormat() with setZone parses IANA zones and sets it", () => {
 });
 
 test("DateTime.fromFormat() parses fixed offsets", () => {
-  const formats = [["Z", "-4"], ["ZZ", "-4:00"], ["ZZZ", "-0400"]];
+  const formats = [
+    ["Z", "-4"],
+    ["ZZ", "-4:00"],
+    ["ZZZ", "-0400"],
+  ];
 
   for (const i in formats) {
     if (Object.prototype.hasOwnProperty.call(formats, i)) {
@@ -510,7 +514,11 @@ test("DateTime.fromFormat() parses fixed offsets", () => {
 });
 
 test("DateTime.fromFormat() with setZone parses fixed offsets and sets it", () => {
-  const formats = [["Z", "-4"], ["ZZ", "-4:00"], ["ZZZ", "-0400"]];
+  const formats = [
+    ["Z", "-4"],
+    ["ZZ", "-4:00"],
+    ["ZZZ", "-0400"],
+  ];
 
   for (const i in formats) {
     if (Object.prototype.hasOwnProperty.call(formats, i)) {
@@ -534,24 +542,24 @@ test("DateTime.fromFormat() parses localized macro tokens", () => {
       expectEqual: {
         year: true,
         month: true,
-        day: true
-      }
+        day: true,
+      },
     },
 
     {
       formats: ["t", "T"],
       expectEqual: {
         hour: true,
-        minute: true
-      }
+        minute: true,
+      },
     },
     {
       formats: ["tt", "TT"],
       expectEqual: {
         hour: true,
         minute: true,
-        second: true
-      }
+        second: true,
+      },
     },
 
     {
@@ -562,15 +570,15 @@ test("DateTime.fromFormat() parses localized macro tokens", () => {
         day: true,
         hour: true,
         minute: true,
-        second: true
-      }
+        second: true,
+      },
     },
 
     // Parsing time zone names like `EDT` or `Eastern Daylight Time` is not supported
     {
       formats: ["ttt", "tttt", "TTT", "TTTT", "FFF", "FFFF"],
-      expectInvalid: true
-    }
+      expectInvalid: true,
+    },
   ];
 
   const sampleDateTime = DateTime.fromMillis(1555555555555);
@@ -610,13 +618,13 @@ test("DateTime.fromFormat validates weekdays", () => {
   expect(dt.isValid).toBe(true);
 
   dt = DateTime.fromFormat("Wed 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ", {
-    setZone: true
+    setZone: true,
   });
 
   expect(dt.isValid).toBe(true);
 
   dt = DateTime.fromFormat("Tue 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ", {
-    setZone: true
+    setZone: true,
   });
   expect(dt.isValid).toBe(false);
 });
@@ -624,7 +632,7 @@ test("DateTime.fromFormat validates weekdays", () => {
 test("DateTime.fromFormat containg special regex token", () => {
   const ianaFormat = "yyyy-MM-dd'T'HH-mm[z]";
   const dt = DateTime.fromFormat("2019-01-14T11-30[Indian/Maldives]", ianaFormat, {
-    setZone: true
+    setZone: true,
   });
   expect(dt.isValid).toBe(true);
   expect(dt.zoneName).toBe("Indian/Maldives");
@@ -687,7 +695,7 @@ test("DateTime.fromFormatExplain() parses zone correctly", () => {
     m: 10,
     s: 48,
     y: 2019,
-    z: "America/New_York"
+    z: "America/New_York",
   });
 });
 
@@ -710,7 +718,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     m: 26,
     s: 7,
     y: 2019,
-    z: "Asia/Calcutta"
+    z: "Asia/Calcutta",
   });
 
   const ex2 = DateTime.fromFormatExplain(
@@ -731,12 +739,12 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     m: 34,
     s: 49,
     y: 2019,
-    z: "Asia/Shanghai"
+    z: "Asia/Shanghai",
   });
 
   const ex3 = DateTime.fromFormatExplain("٠٣-أبريل-٢٠١٩ ٠٣:٤٦:٠١ م", "dd-MMMM-yyyy hh:mm:ss a", {
     locale: "ar",
-    numberingSystem: "arab"
+    numberingSystem: "arab",
   });
   expect(ex3.rawMatches).toBeInstanceOf(Array);
   expect(ex3.matches).toBeInstanceOf(Object);
@@ -750,12 +758,12 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     h: 15,
     m: 46,
     s: 1,
-    y: 2019
+    y: 2019,
   });
 
   const ex4 = DateTime.fromFormatExplain("۰۳-أبريل-۲۰۱۹ ۰۳:۴۷:۲۱ م", "dd-MMMM-yyyy hh:mm:ss a", {
     locale: "ar",
-    numberingSystem: "arabext"
+    numberingSystem: "arabext",
   });
   expect(ex4.rawMatches).toBeInstanceOf(Array);
   expect(ex4.matches).toBeInstanceOf(Object);
@@ -765,7 +773,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
 
   const ex5 = DateTime.fromFormatExplain("᭐᭓-April-᭒᭐᭑᭙ ᭐᭒:᭔᭔:᭐᭗ PM", "dd-MMMM-yyyy hh:mm:ss a", {
     locale: "id",
-    numberingSystem: "bali"
+    numberingSystem: "bali",
   });
   expect(ex5.rawMatches).toBeInstanceOf(Array);
   expect(ex5.matches).toBeInstanceOf(Object);
@@ -775,7 +783,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
 
   const ex6 = DateTime.fromFormatExplain("০৩ এপ্রিল ২০১৯ ১২.৫৭", "dd MMMM yyyy hh.mm", {
     locale: "bn",
-    numberingSystem: "beng"
+    numberingSystem: "beng",
   });
   expect(ex6.rawMatches).toBeInstanceOf(Array);
   expect(ex6.matches).toBeInstanceOf(Object);
@@ -787,7 +795,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     d: 3,
     h: 12,
     m: 57,
-    y: 2019
+    y: 2019,
   });
 
   const ex7 = DateTime.fromFormatExplain(
@@ -795,7 +803,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     "dd-MMMM-yyyy hh:mm:ss a",
     {
       locale: "en-US",
-      numberingSystem: "fullwide"
+      numberingSystem: "fullwide",
     }
   );
   expect(ex7.rawMatches).toBeInstanceOf(Array);
@@ -805,7 +813,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex7.result)).toBe(6);
 
   const ex8 = DateTime.fromFormatExplain("०३-April-२०१९ ०२:५३:१९ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "deva"
+    numberingSystem: "deva",
   });
   expect(ex8.rawMatches).toBeInstanceOf(Array);
   expect(ex8.matches).toBeInstanceOf(Object);
@@ -815,7 +823,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
 
   const ex9 = DateTime.fromFormatExplain("૦૩-એપ્રિલ-૨૦૧૯ ૦૨:૫૫:૨૧ PM", "dd-MMMM-yyyy hh:mm:ss a", {
     locale: "gu",
-    numberingSystem: "gujr"
+    numberingSystem: "gujr",
   });
   expect(ex9.rawMatches).toBeInstanceOf(Array);
   expect(ex9.matches).toBeInstanceOf(Object);
@@ -824,7 +832,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex9.result)).toBe(6);
 
   const ex10 = DateTime.fromFormatExplain("០៣-April-២០១៩ ០៣:៤៩:២០ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "khmr"
+    numberingSystem: "khmr",
   });
   expect(ex10.rawMatches).toBeInstanceOf(Array);
   expect(ex10.matches).toBeInstanceOf(Object);
@@ -833,7 +841,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex10.result)).toBe(6);
 
   const ex11 = DateTime.fromFormatExplain("໐໓-April-໒໐໑໙ ໐໓:໕໒:໑໑ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "laoo"
+    numberingSystem: "laoo",
   });
   expect(ex11.rawMatches).toBeInstanceOf(Array);
   expect(ex11.matches).toBeInstanceOf(Object);
@@ -842,7 +850,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex11.result)).toBe(6);
 
   const ex12 = DateTime.fromFormatExplain("᥆᥉-April-᥈᥆᥇᥏ ᥆᥉:᥋᥉:᥇᥎ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "limb"
+    numberingSystem: "limb",
   });
   expect(ex12.rawMatches).toBeInstanceOf(Array);
   expect(ex12.matches).toBeInstanceOf(Object);
@@ -852,7 +860,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
 
   const ex13 = DateTime.fromFormatExplain("൦൩-ഏപ്രിൽ-൨൦൧൯ ൦൩:൫൪:൦൮ PM", "dd-MMMM-yyyy hh:mm:ss a", {
     locale: "ml",
-    numberingSystem: "mlym"
+    numberingSystem: "mlym",
   });
   expect(ex13.rawMatches).toBeInstanceOf(Array);
   expect(ex13.matches).toBeInstanceOf(Object);
@@ -861,7 +869,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex13.result)).toBe(6);
 
   const ex14 = DateTime.fromFormatExplain("᠐᠓-April-᠒᠐᠑᠙ ᠐᠓:᠕᠖:᠑᠙ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "mong"
+    numberingSystem: "mong",
   });
   expect(ex14.rawMatches).toBeInstanceOf(Array);
   expect(ex14.matches).toBeInstanceOf(Object);
@@ -870,7 +878,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex14.result)).toBe(6);
 
   const ex15 = DateTime.fromFormatExplain("୦୩-April-୨୦୧୯ ୦୩:୫୮:୪୩ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "orya"
+    numberingSystem: "orya",
   });
   expect(ex15.rawMatches).toBeInstanceOf(Array);
   expect(ex15.matches).toBeInstanceOf(Object);
@@ -883,7 +891,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     "dd-MMMM-yyyy hh:mm:ss a",
     {
       locale: "ta",
-      numberingSystem: "tamldec"
+      numberingSystem: "tamldec",
     }
   );
   expect(ex16.rawMatches).toBeInstanceOf(Array);
@@ -897,7 +905,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     "dd-MMMM-yyyy hh:mm:ss a",
     {
       locale: "te",
-      numberingSystem: "telu"
+      numberingSystem: "telu",
     }
   );
   expect(ex17.rawMatches).toBeInstanceOf(Array);
@@ -911,7 +919,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
     "dd-MMMM-yyyy hh:mm:ss a",
     {
       locale: "th",
-      numberingSystem: "thai"
+      numberingSystem: "thai",
     }
   );
   expect(ex18.rawMatches).toBeInstanceOf(Array);
@@ -921,7 +929,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex18.result)).toBe(6);
 
   const ex19 = DateTime.fromFormatExplain("༠༣-April-༢༠༡༩ ༠༤:༠༣:༢༥ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "tibt"
+    numberingSystem: "tibt",
   });
   expect(ex19.rawMatches).toBeInstanceOf(Array);
   expect(ex19.matches).toBeInstanceOf(Object);
@@ -930,7 +938,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex19.result)).toBe(6);
 
   const ex20 = DateTime.fromFormatExplain("၀၃-April-၂၀၁၉ ၀၄:၁၀:၀၁ PM", "dd-MMMM-yyyy hh:mm:ss a", {
-    numberingSystem: "mymr"
+    numberingSystem: "mymr",
   });
   expect(ex20.rawMatches).toBeInstanceOf(Array);
   expect(ex20.matches).toBeInstanceOf(Object);

@@ -1,9 +1,7 @@
-/* eslint import/no-extraneous-dependencies: off */
-/* eslint no-console: off */
 const rollup = require("rollup"),
   rollupBabel = require("rollup-plugin-babel"),
   rollupMinify = require("rollup-plugin-babel-minify"),
-  rollupNode = require("@rollup/plugin-node-resolve"),
+  { nodeResolve } = require("@rollup/plugin-node-resolve"),
   rollupCommonJS = require("@rollup/plugin-commonjs"),
   UglifyES = require("uglify-es"),
   fs = require("fs");
@@ -15,7 +13,7 @@ const TRUST_MINIFY = false;
 function rollupInputOpts(opts) {
   const presetOpts = {
     modules: false,
-    loose: true
+    loose: true,
   };
 
   if (opts.target) {
@@ -24,7 +22,7 @@ function rollupInputOpts(opts) {
 
   const inputOpts = {
     input: opts.src || "./src/luxon.js",
-    onwarn: warning => {
+    onwarn: (warning) => {
       // I don't care about these for now
       if (warning.code !== "CIRCULAR_DEPENDENCY") {
         console.warn(`(!) ${warning.message}`);
@@ -32,18 +30,18 @@ function rollupInputOpts(opts) {
     },
 
     plugins: [
-      rollupNode(),
+      nodeResolve(),
       rollupCommonJS({
-        include: "node_modules/**"
-      })
-    ]
+        include: "node_modules/**",
+      }),
+    ],
   };
 
   if (opts.compile || typeof opts.compile === "undefined") {
     inputOpts.plugins.push(
       rollupBabel({
         babelrc: false,
-        presets: [["@babel/preset-env", presetOpts]]
+        presets: [["@babel/preset-env", presetOpts]],
       })
     );
   }
@@ -53,8 +51,8 @@ function rollupInputOpts(opts) {
       rollupMinify({
         comments: false,
         mangle: {
-          topLevel: !opts.global
-        }
+          topLevel: !opts.global,
+        },
       })
     );
   }
@@ -66,7 +64,7 @@ function rollupOutputOpts(dest, opts) {
   const outputOpts = {
     file: `build/${dest}/${opts.filename || "luxon.js"}`,
     format: opts.format,
-    sourcemap: true
+    sourcemap: true,
   };
 
   if (opts.name) {
@@ -92,7 +90,7 @@ async function buildLibrary(dest, opts) {
       babelAndRollup(dest, {
         ...opts,
         minify: true,
-        filename: "luxon.min.js"
+        filename: "luxon.min.js",
       })
     );
   }
@@ -104,11 +102,11 @@ async function buildLibrary(dest, opts) {
       ugly = UglifyES.minify(code, {
         toplevel: !opts.global,
         output: {
-          comments: false
+          comments: false,
         },
         sourceMap: {
-          filename: `build/${dest}/luxon.js`
-        }
+          filename: `build/${dest}/luxon.js`,
+        },
       });
     if (ugly.error) {
       console.error("Error uglifying", ugly.error);
@@ -128,7 +126,7 @@ async function global() {
     global: true,
     name: "luxon",
     target: browsersOld,
-    minify: true
+    minify: true,
   });
 }
 
@@ -137,7 +135,7 @@ async function amd() {
     format: "amd",
     name: "luxon",
     target: browsersOld,
-    minify: true
+    minify: true,
   });
 }
 
@@ -153,7 +151,7 @@ async function es6() {
   await buildLibrary("es6", {
     format: "es",
     compile: false,
-    minify: true
+    minify: true,
   });
 }
 
@@ -162,7 +160,7 @@ async function globalEs6() {
     format: "iife",
     name: "luxon",
     compile: false,
-    global: true
+    global: true,
   });
 }
 
@@ -173,5 +171,5 @@ async function buildAll() {
 module.exports = {
   buildAll,
   buildNode: node,
-  buildGlobal: global
+  buildGlobal: global,
 };

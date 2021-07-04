@@ -15,7 +15,7 @@ test("DateTime.fromISO() parses as local by default", () => {
     hour: 9,
     minute: 8,
     second: 34,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -28,7 +28,7 @@ test("DateTime.fromISO() uses the offset provided, but keeps the dateTime as loc
     hour: 3,
     minute: 8,
     second: 34,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -41,7 +41,7 @@ test("DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local
     hour: 9,
     minute: 8,
     second: 34,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -55,7 +55,7 @@ test("DateTime.fromISO() optionally adopts the UTC offset provided", () => {
     hour: 9,
     minute: 8,
     second: 34,
-    millisecond: 123
+    millisecond: 123,
   });
 
   dt = DateTime.fromISO("1983-10-14T13:30Z", { setZone: true });
@@ -68,7 +68,7 @@ test("DateTime.fromISO() optionally adopts the UTC offset provided", () => {
     hour: 13,
     minute: 30,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 
   // #580
@@ -81,7 +81,7 @@ test("DateTime.fromISO() optionally adopts the UTC offset provided", () => {
     hour: 9,
     minute: 8,
     second: 34,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -95,7 +95,7 @@ test("DateTime.fromISO() can optionally specify a zone", () => {
     hour: 9,
     minute: 8,
     second: 34,
-    millisecond: 123
+    millisecond: 123,
   });
 
   dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00", { zone: "utc" });
@@ -107,7 +107,7 @@ test("DateTime.fromISO() can optionally specify a zone", () => {
     hour: 3,
     minute: 8,
     second: 34,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -121,7 +121,7 @@ test("DateTime.fromISO() accepts just the year", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -133,7 +133,7 @@ test("DateTime.fromISO() accepts year-month", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -145,7 +145,7 @@ test("DateTime.fromISO() accepts yearmonth", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -157,7 +157,7 @@ test("DateTime.fromISO() accepts year-month-day", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -169,7 +169,7 @@ test("DateTime.fromISO() accepts yearmonthday", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -181,7 +181,7 @@ test("DateTime.fromISO() accepts extend years", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 
   isSame("-002016-05-25", {
@@ -191,7 +191,7 @@ test("DateTime.fromISO() accepts extend years", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -203,7 +203,7 @@ test("DateTime.fromISO() accepts year-month-dayThour", () => {
     hour: 9,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -215,7 +215,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute", () => {
     hour: 9,
     minute: 24,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 
   isSame("2016-05-25T0924", {
@@ -225,7 +225,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute", () => {
     hour: 9,
     minute: 24,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -237,7 +237,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 0
+    millisecond: 0,
   });
 
   isSame("2016-05-25T092415", {
@@ -247,7 +247,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -259,7 +259,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016-05-25T092415.123", {
@@ -269,7 +269,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016-05-25T09:24:15,123", {
@@ -279,7 +279,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016-05-25T09:24:15.1239999", {
@@ -289,7 +289,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016-05-25T09:24:15.023", {
@@ -299,7 +299,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 23
+    millisecond: 23,
   });
 
   // we round down always
@@ -310,7 +310,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 345
+    millisecond: 345,
   });
 
   isSame("2016-05-25T09:24:15.999999", {
@@ -320,7 +320,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 999
+    millisecond: 999,
   });
 
   // Support up to 20 digits
@@ -331,7 +331,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016-05-25T09:24:15.1", {
@@ -341,7 +341,7 @@ test("DateTime.fromISO() accepts year-month-dayThour:minute:second.millisecond",
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 100
+    millisecond: 100,
   });
 });
 
@@ -353,7 +353,7 @@ test("DateTime.fromISO() accepts year-week", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -365,7 +365,7 @@ test("DateTime.fromISO() accepts year-week-day", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 
   isSame("2016W213", {
@@ -375,7 +375,7 @@ test("DateTime.fromISO() accepts year-week-day", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -387,7 +387,7 @@ test("DateTime.fromISO() accepts year-week-dayTtime", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016W213T09:24:15.123", {
@@ -397,7 +397,7 @@ test("DateTime.fromISO() accepts year-week-dayTtime", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -409,7 +409,7 @@ test("DateTime.fromISO() accepts year-ordinal", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 
   isSame("2016200", {
@@ -419,7 +419,7 @@ test("DateTime.fromISO() accepts year-ordinal", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -431,7 +431,7 @@ test("DateTime.fromISO() accepts year-ordinalTtime", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -445,7 +445,7 @@ test("DateTime.fromISO() accepts year-ordinalTtime+offset", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -458,7 +458,7 @@ test("DateTime.fromISO() accepts hour:minute:second.millisecond", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -471,7 +471,7 @@ test("DateTime.fromISO() accepts hour:minute:second,millisecond", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -484,7 +484,7 @@ test("DateTime.fromISO() accepts hour:minute:second", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -497,7 +497,7 @@ test("DateTime.fromISO() accepts hour:minute", () => {
     hour: 9,
     minute: 24,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -510,7 +510,7 @@ test("DateTime.fromISO() accepts hour:minute", () => {
     hour: 9,
     minute: 24,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -522,7 +522,7 @@ test("DateTime.fromISO() accepts 24:00", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -540,7 +540,7 @@ test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016-05-25T09:2415.123", {
@@ -550,7 +550,7 @@ test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
     hour: 9,
     minute: 24,
     second: 15,
-    millisecond: 123
+    millisecond: 123,
   });
 
   isSame("2016-W213", {
@@ -560,12 +560,12 @@ test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
 test("DateTime.fromISO() rejects poop", () => {
-  const rejects = s => expect(DateTime.fromISO(s).isValid).toBeFalsy();
+  const rejects = (s) => expect(DateTime.fromISO(s).isValid).toBeFalsy();
 
   rejects(null);
   rejects("");
@@ -599,7 +599,7 @@ test("DateTime.fromRFC2822() accepts full format", () => {
     hour: 6,
     minute: 53,
     second: 12,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -614,7 +614,7 @@ test("DateTime.fromRFC2822 parses a range of dates", () => {
     "Mon, 02 Jan 2017 06:00:00 +0330": [2017, 1, 2, 2, 30, 0],
     "Mon, 02 Jan 2017 06:00:00 -0330": [2017, 1, 2, 9, 30, 0],
     "Mon, 02 Jan 2017 06:00:00 PST": [2017, 1, 2, 6 + 8, 0, 0],
-    "Mon, 02 Jan 2017 06:00:00 PDT": [2017, 1, 2, 6 + 7, 0, 0]
+    "Mon, 02 Jan 2017 06:00:00 PDT": [2017, 1, 2, 6 + 7, 0, 0],
   };
 
   for (const testString in testCases) {
@@ -642,7 +642,7 @@ test("DateTime.fromRFC2822() can elide the day of the week", () => {
     hour: 7,
     minute: 23,
     second: 12,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -656,7 +656,7 @@ test("DateTime.fromRFC2822() can elide seconds", () => {
     hour: 7,
     minute: 23,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -670,7 +670,7 @@ test("DateTime.fromRFC2822() can use Z", () => {
     hour: 13,
     minute: 23,
     second: 12,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -684,7 +684,7 @@ test("DateTime.fromRFC2822() can use a weird subset of offset abbreviations", ()
     hour: 18,
     minute: 23,
     second: 12,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -702,7 +702,7 @@ test("DateTime.fromHTTP() can parse RFC 1123", () => {
     hour: 8,
     minute: 49,
     second: 37,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -716,7 +716,7 @@ test("DateTime.fromHTTP() can parse RFC 850", () => {
     hour: 8,
     minute: 49,
     second: 37,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -730,7 +730,7 @@ test("DateTime.fromHTTP() can parse ASCII dates with one date digit", () => {
     hour: 8,
     minute: 49,
     second: 37,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -744,7 +744,7 @@ test("DateTime.fromHTTP() can parse ASCII dates with two date digits", () => {
     hour: 8,
     minute: 49,
     second: 37,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -762,7 +762,7 @@ test("DateTime.fromSQL() can parse SQL dates", () => {
     hour: 0,
     minute: 0,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -777,7 +777,7 @@ test("DateTime.fromSQL() can parse SQL times", () => {
     hour: 4,
     minute: 12,
     second: 0,
-    millisecond: 123
+    millisecond: 123,
   });
 });
 
@@ -792,7 +792,7 @@ test("DateTime.fromSQL() handles times without fractional seconds", () => {
     hour: 4,
     minute: 12,
     second: 0,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -806,7 +806,7 @@ test("DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision"
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 234
+    millisecond: 234,
   });
 
   dt = DateTime.fromSQL("2016-05-14 10:23:54.2341");
@@ -818,7 +818,7 @@ test("DateTime.fromSQL() can parse SQL datetimes with sub-millisecond precision"
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 234
+    millisecond: 234,
   });
 });
 
@@ -832,7 +832,7 @@ test("DateTime.fromSQL() handles deciseconds in SQL datetimes", () => {
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 100
+    millisecond: 100,
   });
 });
 
@@ -846,7 +846,7 @@ test("DateTime.fromSQL() handles datetimes without fractional seconds", () => {
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
@@ -861,7 +861,7 @@ test("DateTime.fromSQL() accepts a zone to default to", () => {
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 23
+    millisecond: 23,
   });
 });
 
@@ -875,7 +875,7 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
     hour: 4,
     minute: 23,
     second: 54,
-    millisecond: 23
+    millisecond: 23,
   });
 
   // no space before the zone
@@ -888,7 +888,7 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
     hour: 4,
     minute: 23,
     second: 54,
-    millisecond: 23
+    millisecond: 23,
   });
 
   // no milliseconds
@@ -901,13 +901,13 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
     hour: 4,
     minute: 23,
     second: 54,
-    millisecond: 0
+    millisecond: 0,
   });
 });
 
 test("DateTime.fromSQL() can parse an optional zone", () => {
   let dt = DateTime.fromSQL("2016-05-14 10:23:54 Europe/Paris", {
-    setZone: true
+    setZone: true,
   });
   expect(dt.isValid).toBe(true);
   expect(dt.zoneName).toBe("Europe/Paris");
@@ -918,7 +918,7 @@ test("DateTime.fromSQL() can parse an optional zone", () => {
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 0
+    millisecond: 0,
   });
 
   dt = DateTime.fromSQL("2016-05-14 10:23:54 UTC", { setZone: true });
@@ -932,6 +932,6 @@ test("DateTime.fromSQL() can parse an optional zone", () => {
     hour: 10,
     minute: 23,
     second: 54,
-    millisecond: 0
+    millisecond: 0,
   });
 });

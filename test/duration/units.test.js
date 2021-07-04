@@ -68,9 +68,7 @@ test("Duration#shiftTo accumulates when rolling up", () => {
 
 test("Duration#shiftTo keeps unnecessary higher-order negative units 0", () => {
   expect(
-    Duration.fromObject({ milliseconds: -100 })
-      .shiftTo("hours", "minutes", "seconds")
-      .toObject()
+    Duration.fromObject({ milliseconds: -100 }).shiftTo("hours", "minutes", "seconds").toObject()
   ).toEqual({ hours: 0, minutes: 0, seconds: -0.1 });
 });
 
@@ -78,9 +76,7 @@ test("Duration#shiftTo does not normalize values", () => {
   // Normalizing would convert to { quarters: 4, months: 1, days: 10 }
   // which would be converted back to 404 days instead
   expect(
-    Duration.fromObject({ quarters: 0, months: 0, days: 400 })
-      .shiftTo("days")
-      .toObject()
+    Duration.fromObject({ quarters: 0, months: 0, days: 400 }).shiftTo("days").toObject()
   ).toEqual({ days: 400 });
 });
 
@@ -106,26 +102,58 @@ test("Duration#normalize handles fully negative durations", () => {
 
 test("Duration#normalize handles the full grid partially negative durations", () => {
   const sets = [
-    [{ months: 1, days: 32 }, { months: 2, days: 2 }],
-    [{ months: 1, days: 28 }, { months: 1, days: 28 }],
-    [{ months: 1, days: -32 }, { months: 0, days: -2 }],
-    [{ months: 1, days: -28 }, { months: 0, days: 2 }],
-    [{ months: -1, days: 32 }, { months: 0, days: 2 }],
-    [{ months: -1, days: 28 }, { months: 0, days: -2 }],
-    [{ months: -1, days: -32 }, { months: -2, days: -2 }],
-    [{ months: -1, days: -28 }, { months: -1, days: -28 }],
-    [{ months: 0, days: 32 }, { months: 1, days: 2 }],
-    [{ months: 0, days: 28 }, { months: 0, days: 28 }],
-    [{ months: 0, days: -32 }, { months: -1, days: -2 }],
-    [{ months: 0, days: -28 }, { months: 0, days: -28 }]
+    [
+      { months: 1, days: 32 },
+      { months: 2, days: 2 },
+    ],
+    [
+      { months: 1, days: 28 },
+      { months: 1, days: 28 },
+    ],
+    [
+      { months: 1, days: -32 },
+      { months: 0, days: -2 },
+    ],
+    [
+      { months: 1, days: -28 },
+      { months: 0, days: 2 },
+    ],
+    [
+      { months: -1, days: 32 },
+      { months: 0, days: 2 },
+    ],
+    [
+      { months: -1, days: 28 },
+      { months: 0, days: -2 },
+    ],
+    [
+      { months: -1, days: -32 },
+      { months: -2, days: -2 },
+    ],
+    [
+      { months: -1, days: -28 },
+      { months: -1, days: -28 },
+    ],
+    [
+      { months: 0, days: 32 },
+      { months: 1, days: 2 },
+    ],
+    [
+      { months: 0, days: 28 },
+      { months: 0, days: 28 },
+    ],
+    [
+      { months: 0, days: -32 },
+      { months: -1, days: -2 },
+    ],
+    [
+      { months: 0, days: -28 },
+      { months: 0, days: -28 },
+    ],
   ];
 
   sets.forEach(([from, to]) => {
-    expect(
-      Duration.fromObject(from)
-        .normalize()
-        .toObject()
-    ).toEqual(to);
+    expect(Duration.fromObject(from).normalize().toObject()).toEqual(to);
   });
 });
 
@@ -145,7 +173,7 @@ test("Duration#normalize can convert all unit pairs", () => {
     "hours",
     "minutes",
     "seconds",
-    "milliseconds"
+    "milliseconds",
   ];
 
   for (let i = 0; i < units.length; i++) {

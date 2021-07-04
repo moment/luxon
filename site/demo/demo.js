@@ -1,39 +1,39 @@
-/* eslint-disable no-undef */
 function demo(luxon) {
-  var DateTime = luxon.DateTime,
-    Duration = luxon.Duration,
-    Info = luxon.Info,
-    examples = [],
-    run = function(code) {
-      var result;
-      try {
-        // eslint-disable-next-line no-eval
-        result = eval(code);
-      } catch (e) {
-        console.error(e);
-        return "[error]";
-      }
+  const DateTime = luxon.DateTime;
+  const Duration = luxon.Duration;
+  const Info = luxon.Info;
 
-      switch (true) {
-        case result.isValid === false:
-          return "Invalid";
-        case result instanceof DateTime:
-          return "[ DateTime " + result.toISO() + " ]";
-        case result instanceof Duration:
-          return "[ Duration " + JSON.stringify(result.toObject()) + " ]";
-        default:
-          return JSON.stringify(result);
-      }
-    },
-    example = function(code) {
-      examples.push(
-        "<tr class='example'><td class='code'>" +
-          code +
-          "</td><td class='divider'>//=> </td><td class='result'>" +
-          run(code) +
-          "</td></tr>"
-      );
-    };
+  const run = function (code) {
+    let result;
+    try {
+      result = eval(code);
+    } catch (e) {
+      console.error(e);
+      return "[error]";
+    }
+
+    switch (true) {
+      case result.isValid === false:
+        return "Invalid";
+      case result instanceof DateTime:
+        return "[ DateTime " + result.toISO() + " ]";
+      case result instanceof Duration:
+        return "[ Duration " + JSON.stringify(result.toObject()) + " ]";
+      default:
+        return JSON.stringify(result);
+    }
+  };
+
+  const examples = [];
+  const example = function (code) {
+    examples.push(
+      "<tr class='example'><td class='code'>" +
+        code +
+        "</td><td class='divider'>//=> </td><td class='result'>" +
+        run(code) +
+        "</td></tr>"
+    );
+  };
 
   example("Info.features()");
   example("DateTime.now()");
@@ -77,7 +77,7 @@ function demo(luxon) {
   example("DateTime.now().setLocale('fr').plus({ days: -1 }).toRelativeCalendar()");
   example("DateTime.now().setLocale('fr').plus({ months: 1 }).toRelativeCalendar()");
 
-  var all = "<h1>Some Luxon examples</h1>";
+  let all = "<h1>Some Luxon examples</h1>";
   all +=
     "<p>This is not meant to be a comprehensive showcase of Luxon's capabilities, just a quick flavoring.</p>";
   all += "<table>";
@@ -88,8 +88,8 @@ function demo(luxon) {
 }
 
 if (typeof define !== "undefined") {
-  define(["luxon"], function(luxon) {
-    return function() {
+  define(["luxon"], function (luxon) {
+    return function () {
       demo(luxon);
     };
   });

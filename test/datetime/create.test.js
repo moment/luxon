@@ -150,7 +150,7 @@ test("DateTime.local accepts an options hash in any position", () => {
     zone: "Europe/Paris",
     numberingSystem: "beng",
     outputCalendar: "islamic",
-    locale: "fr"
+    locale: "fr",
   };
   const args = [
     DateTime.local(options),
@@ -161,7 +161,7 @@ test("DateTime.local accepts an options hash in any position", () => {
     DateTime.local(2017, 6, 12, 5, options),
     DateTime.local(2017, 6, 12, 5, 25, options),
     DateTime.local(2017, 6, 12, 5, 25, 16, options),
-    DateTime.local(2017, 6, 12, 5, 25, 16, 255, options)
+    DateTime.local(2017, 6, 12, 5, 25, 16, 255, options),
   ];
 
   for (const i in args) {
@@ -266,7 +266,7 @@ test("DateTime.utc accepts an options hash in any position", () => {
   const options = {
     numberingSystem: "beng",
     outputCalendar: "islamic",
-    locale: "fr"
+    locale: "fr",
   };
   const args = [
     DateTime.utc(options),
@@ -277,7 +277,7 @@ test("DateTime.utc accepts an options hash in any position", () => {
     DateTime.utc(2017, 6, 12, 5, options),
     DateTime.utc(2017, 6, 12, 5, 25, options),
     DateTime.utc(2017, 6, 12, 5, 25, 16, options),
-    DateTime.utc(2017, 6, 12, 5, 25, 16, 255, options)
+    DateTime.utc(2017, 6, 12, 5, 25, 16, 255, options),
   ];
 
   for (const i in args) {
@@ -396,7 +396,7 @@ const baseObject = {
   hour: 9,
   minute: 23,
   second: 54,
-  millisecond: 123
+  millisecond: 123,
 };
 
 test("DateTime.fromObject() sets all the fields", () => {
@@ -546,7 +546,7 @@ test("DateTime.fromObject() w/weeks handles fully specified dates", () => {
     hour: 9,
     minute: 23,
     second: 54,
-    millisecond: 123
+    millisecond: 123,
   });
   expect(dt.weekYear).toBe(2016);
   expect(dt.weekNumber).toBe(2);
@@ -602,7 +602,7 @@ test("DateTime.fromObject() w/ordinals handles fully specified dates", () => {
     hour: 9,
     minute: 23,
     second: 54,
-    millisecond: 123
+    millisecond: 123,
   });
   expect(dt.year).toBe(2016);
   expect(dt.ordinal).toBe(200);
@@ -673,7 +673,7 @@ test("DateTime.fromObject accepts a locale string with weird junk in it", () => 
     const res = DateTime.fromObject(
       {},
       {
-        locale: "be-u-ca-coptic-ca-islamic"
+        locale: "be-u-ca-coptic-ca-islamic",
       }
     );
 
@@ -691,7 +691,7 @@ test("DateTime.fromObject overrides the locale string with explicit settings", (
     {
       locale: "be-u-ca-coptic-nu-mong",
       numberingSystem: "thai",
-      outputCalendar: "islamic"
+      outputCalendar: "islamic",
     }
   );
 
@@ -707,7 +707,7 @@ test("DateTime.fromObject handles null as a language tag", () => {
       {
         locale: null,
         numberingSystem: "thai",
-        outputCalendar: "islamic"
+        outputCalendar: "islamic",
       }
     );
 
@@ -743,7 +743,7 @@ test("DateTime.fromRFC2822 parses Zulu correctly", () => {
 
 test("DateTime.fromRFC2822 parses offset correctly", () => {
   const dt = DateTime.fromRFC2822("Fri, 25 Nov 2016 13:23:12 +0600", {
-    zone: "UTC"
+    zone: "UTC",
   });
   expect(dt.year).toBe(2016);
   expect(dt.month).toBe(11);
@@ -762,7 +762,7 @@ test("DateTime.fromRFC2822 is invalid when weekday is not consistent", () => {
 
 test("DateTime.fromHTTP parses rfc1123", () => {
   const dt = DateTime.fromHTTP("Sun, 06 Nov 1994 08:49:37 GMT", {
-    zone: "UTC"
+    zone: "UTC",
   });
   expect(dt.year).toBe(1994);
   expect(dt.month).toBe(11);
@@ -776,7 +776,7 @@ test("DateTime.fromHTTP parses rfc1123", () => {
 
 test("DateTime.fromHTTP parses rfc850", () => {
   const dt = DateTime.fromHTTP("Sunday, 06-Nov-94 08:49:37 GMT", {
-    zone: "UTC"
+    zone: "UTC",
   });
   expect(dt.year).toBe(1994);
   expect(dt.month).toBe(11);

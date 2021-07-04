@@ -67,7 +67,7 @@ Info.features().zones; //=> true
 
 If you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](matrix.md). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](matrix.md?id=zones) your environment.
 
-If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](validity.html) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason it doesn't support that _particular_ zone, or because the zone is just bogus. Like this:
+If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](validity.md) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason it doesn't support that _particular_ zone, or because the zone is just bogus. Like this:
 
 ```js
 bogus = DateTime.local().setZone("America/Bogus");
@@ -265,7 +265,7 @@ If you're curious, this lack of definition is because Luxon doesn't actually kno
 
 ### Math across DSTs
 
-There's a whole [section](math.html) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher-order, variable-length units like days, weeks, months, and years. When working with lower-order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
+There's a whole [section](math.md) about date and time math, but it's worth highlighting one thing here: when Luxon does math across DSTs, it adjusts for them when working with higher-order, variable-length units like days, weeks, months, and years. When working with lower-order, exact units like hours, minutes, and seconds, it does not. For example, DSTs mean that days are not always the same length: one day a year is (usually) 23 hours long and another is 25 hours long. Luxon makes sure that adding days takes that into account. On the other hand, an hour is always 3,600,000 milliseconds.
 
 An easy way to think of it is that if you add a day to a DateTime, you should always get the same time the next day, regardless of any intervening DSTs. On the other hand, adding 24 hours will result in DateTime that is 24 hours later, which may or may not be the same time the next day. In this example, my zone is `America/New_York`, which had a Spring Forward DST in the early hours of March 12.
 

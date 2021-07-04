@@ -1,5 +1,3 @@
-/* eslint import/no-extraneous-dependencies: off */
-/* eslint no-console: off */
 import Benchmark from "benchmark";
 import DateTime from "../src/datetime";
 import Settings from "../src/settings";
@@ -31,7 +29,7 @@ function runDateTimeSuite() {
       })
       .add("DateTime.fromString with zone", () => {
         DateTime.fromString("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
-          zone: "America/Los_Angeles"
+          zone: "America/Los_Angeles",
         });
       })
       .add("DateTime#setZone", () => {
@@ -59,15 +57,14 @@ function runDateTimeSuite() {
       .add("DateTime#toRelativeCalendar", () => {
         dt.toRelativeCalendar({ base: DateTime.now(), locale: "fi" });
       })
-      .on("cycle", event => {
+      .on("cycle", (event) => {
         console.log(String(event.target));
       })
-      // eslint-disable-next-line func-names
-      .on("complete", function() {
+      .on("complete", function () {
         console.log("Fastest is " + this.filter("fastest").map("name"));
         resolve();
       })
-      .on("error", function() {
+      .on("error", function () {
         reject(this.error);
       })
       .run();

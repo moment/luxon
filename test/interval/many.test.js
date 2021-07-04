@@ -36,59 +36,31 @@ test("Interval#equals returns false for invalid intervals", () => {
 // #union()
 //-------
 test("Interval#union returns an interval spanning a later interval", () => {
-  expect(
-    todayFrom(5, 8)
-      .union(todayFrom(9, 11))
-      .equals(todayFrom(5, 11))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).union(todayFrom(9, 11)).equals(todayFrom(5, 11))).toBeTruthy();
 });
 
 test("Interval#union returns an interval spanning a earlier interval", () => {
-  expect(
-    todayFrom(5, 8)
-      .union(todayFrom(3, 4))
-      .equals(todayFrom(3, 8))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).union(todayFrom(3, 4)).equals(todayFrom(3, 8))).toBeTruthy();
 });
 
 test("Interval#union returns an interval spanning a partially later interval", () => {
-  expect(
-    todayFrom(5, 8)
-      .union(todayFrom(7, 10))
-      .equals(todayFrom(5, 10))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).union(todayFrom(7, 10)).equals(todayFrom(5, 10))).toBeTruthy();
 });
 
 test("Interval#union returns an interval spanning a partially earlier interval", () => {
-  expect(
-    todayFrom(5, 8)
-      .union(todayFrom(4, 6))
-      .equals(todayFrom(4, 8))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).union(todayFrom(4, 6)).equals(todayFrom(4, 8))).toBeTruthy();
 });
 
 test("Interval#union returns an interval no-ops when applied to an engulfed interval", () => {
-  expect(
-    todayFrom(5, 8)
-      .union(todayFrom(6, 7))
-      .equals(todayFrom(5, 8))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).union(todayFrom(6, 7)).equals(todayFrom(5, 8))).toBeTruthy();
 });
 
 test("Interval#union expands to an engulfing interval", () => {
-  expect(
-    todayFrom(5, 8)
-      .union(todayFrom(4, 10))
-      .equals(todayFrom(4, 10))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).union(todayFrom(4, 10)).equals(todayFrom(4, 10))).toBeTruthy();
 });
 
 test("Interval#union spans adjacent intervals", () => {
-  expect(
-    todayFrom(5, 8)
-      .union(todayFrom(8, 10))
-      .equals(todayFrom(5, 10))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).union(todayFrom(8, 10)).equals(todayFrom(5, 10))).toBeTruthy();
 });
 
 test("Interval#union returns invalid for invalid intervals", () => {
@@ -104,11 +76,7 @@ test("Interval#intersection returns null if there's no intersection", () => {
 });
 
 test("Interval#intersection returns the intersection for overlapping intervals", () => {
-  expect(
-    todayFrom(5, 8)
-      .intersection(todayFrom(3, 7))
-      .equals(todayFrom(5, 7))
-  ).toBeTruthy();
+  expect(todayFrom(5, 8).intersection(todayFrom(3, 7)).equals(todayFrom(5, 7))).toBeTruthy();
 });
 
 test("Interval#intersection returns null for adjacent intervals", () => {
@@ -128,7 +96,7 @@ test("Interval.merge returns the minimal set of intervals", () => {
       todayFrom(4, 7),
       todayFrom(10, 11),
       todayFrom(11, 12),
-      todayFrom(13, 15)
+      todayFrom(13, 15),
     ],
     results = Interval.merge(list);
 
@@ -428,7 +396,7 @@ test("Interval#mapEndpoints returns a new Interval with the mapped endpoints", (
     DateTime.fromObject({}, { zone }).plus({ hours: 1 })
   );
 
-  const mapped = original.mapEndpoints(d => d.toUTC());
+  const mapped = original.mapEndpoints((d) => d.toUTC());
 
   expect(mapped.s.zoneName).toEqual("UTC");
   expect(mapped.e.zoneName).toEqual("UTC");

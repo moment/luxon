@@ -9,7 +9,7 @@ import {
   isNumber,
   isUndefined,
   normalizeObject,
-  roundTo
+  roundTo,
 } from "./impl/util.js";
 import Settings from "./settings.js";
 
@@ -22,17 +22,17 @@ const lowOrderMatrix = {
       hours: 7 * 24,
       minutes: 7 * 24 * 60,
       seconds: 7 * 24 * 60 * 60,
-      milliseconds: 7 * 24 * 60 * 60 * 1000
+      milliseconds: 7 * 24 * 60 * 60 * 1000,
     },
     days: {
       hours: 24,
       minutes: 24 * 60,
       seconds: 24 * 60 * 60,
-      milliseconds: 24 * 60 * 60 * 1000
+      milliseconds: 24 * 60 * 60 * 1000,
     },
     hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1000 },
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
-    seconds: { milliseconds: 1000 }
+    seconds: { milliseconds: 1000 },
   },
   casualMatrix = {
     years: {
@@ -43,7 +43,7 @@ const lowOrderMatrix = {
       hours: 365 * 24,
       minutes: 365 * 24 * 60,
       seconds: 365 * 24 * 60 * 60,
-      milliseconds: 365 * 24 * 60 * 60 * 1000
+      milliseconds: 365 * 24 * 60 * 60 * 1000,
     },
     quarters: {
       months: 3,
@@ -52,7 +52,7 @@ const lowOrderMatrix = {
       hours: 91 * 24,
       minutes: 91 * 24 * 60,
       seconds: 91 * 24 * 60 * 60,
-      milliseconds: 91 * 24 * 60 * 60 * 1000
+      milliseconds: 91 * 24 * 60 * 60 * 1000,
     },
     months: {
       weeks: 4,
@@ -60,10 +60,10 @@ const lowOrderMatrix = {
       hours: 30 * 24,
       minutes: 30 * 24 * 60,
       seconds: 30 * 24 * 60 * 60,
-      milliseconds: 30 * 24 * 60 * 60 * 1000
+      milliseconds: 30 * 24 * 60 * 60 * 1000,
     },
 
-    ...lowOrderMatrix
+    ...lowOrderMatrix,
   },
   daysInYearAccurate = 146097.0 / 400,
   daysInMonthAccurate = 146097.0 / 4800,
@@ -76,7 +76,7 @@ const lowOrderMatrix = {
       hours: daysInYearAccurate * 24,
       minutes: daysInYearAccurate * 24 * 60,
       seconds: daysInYearAccurate * 24 * 60 * 60,
-      milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
+      milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000,
     },
     quarters: {
       months: 3,
@@ -85,7 +85,7 @@ const lowOrderMatrix = {
       hours: (daysInYearAccurate * 24) / 4,
       minutes: (daysInYearAccurate * 24 * 60) / 4,
       seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
-      milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
+      milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4,
     },
     months: {
       weeks: daysInMonthAccurate / 7,
@@ -93,9 +93,9 @@ const lowOrderMatrix = {
       hours: daysInMonthAccurate * 24,
       minutes: daysInMonthAccurate * 24 * 60,
       seconds: daysInMonthAccurate * 24 * 60 * 60,
-      milliseconds: daysInMonthAccurate * 24 * 60 * 60 * 1000
+      milliseconds: daysInMonthAccurate * 24 * 60 * 60 * 1000,
     },
-    ...lowOrderMatrix
+    ...lowOrderMatrix,
   };
 
 // units ordered by size
@@ -108,7 +108,7 @@ const orderedUnits = [
   "hours",
   "minutes",
   "seconds",
-  "milliseconds"
+  "milliseconds",
 ];
 
 const reverseUnits = orderedUnits.slice(0).reverse();
@@ -119,7 +119,7 @@ function clone(dur, alts, clear = false) {
   const conf = {
     values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
     loc: dur.loc.clone(alts.loc),
-    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
+    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
   };
   return new Duration(conf);
 }
@@ -242,7 +242,7 @@ export default class Duration {
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit),
       loc: Locale.fromObject(opts),
-      conversionAccuracy: opts.conversionAccuracy
+      conversionAccuracy: opts.conversionAccuracy,
     });
   }
 
@@ -334,7 +334,7 @@ export default class Duration {
       second: "seconds",
       seconds: "seconds",
       millisecond: "milliseconds",
-      milliseconds: "milliseconds"
+      milliseconds: "milliseconds",
     }[unit ? unit.toLowerCase() : unit];
 
     if (!normalized) throw new InvalidUnitError(unit);
@@ -392,7 +392,7 @@ export default class Duration {
     // reverse-compat since 1.2; we always round down now, never up, and we do it by default
     const fmtOpts = {
       ...opts,
-      floor: opts.round !== false && opts.floor !== false
+      floor: opts.round !== false && opts.floor !== false,
     };
     return this.isValid
       ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
@@ -467,7 +467,7 @@ export default class Duration {
       suppressSeconds: false,
       includePrefix: false,
       format: "extended",
-      ...opts
+      ...opts,
     };
 
     const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
@@ -649,7 +649,7 @@ export default class Duration {
       return this;
     }
 
-    units = units.map(u => Duration.normalizeUnit(u));
+    units = units.map((u) => Duration.normalizeUnit(u));
 
     const built = {},
       accumulated = {},

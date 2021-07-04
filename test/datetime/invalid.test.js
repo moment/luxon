@@ -61,7 +61,7 @@ test("throwOnInvalid throws", () => {
         weekday: 3,
         year: 1982,
         month: 5,
-        day: 25
+        day: 25,
       })
     ).toThrow();
   } finally {

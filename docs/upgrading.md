@@ -8,7 +8,7 @@ Version 2.0 of Luxon has a number of breaking changes.
 
 Luxon 2.0 does not support Node < 12, or any version of IE. It also only supports newer versions of major browsers. This change
 allows Luxon to make more assumptions about what's supported in the environment and will allow Luxon's code to simplify. See
-the [Support Matrix](matrix.html) for more.
+the [Support Matrix](matrix.md) for more.
 
 For this same reason, a polyfilled build is no longer provided; everything Luxon needs comes standard on browsers.
 

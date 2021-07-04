@@ -82,10 +82,10 @@ test("Start of a 0:00->1:00 DST day is 1:00", () => {
     {
       year: 2017,
       month: 10,
-      day: 15
+      day: 15,
     },
     {
-      zone: "America/Sao_Paulo"
+      zone: "America/Sao_Paulo",
     }
   ).startOf("day");
   expect(d.day).toBe(15);
@@ -99,10 +99,10 @@ test("End of a 0:00->1:00 DST day is 23:59", () => {
     {
       year: 2017,
       month: 10,
-      day: 15
+      day: 15,
     },
     {
-      zone: "America/Sao_Paulo"
+      zone: "America/Sao_Paulo",
     }
   ).endOf("day");
   expect(d.day).toBe(15);

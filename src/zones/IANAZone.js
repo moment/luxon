@@ -14,7 +14,7 @@ function makeDTF(zone) {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit"
+      second: "2-digit",
     });
   }
   return dtfCache[zone];
@@ -26,7 +26,7 @@ const typeToPos = {
   day: 2,
   hour: 3,
   minute: 4,
-  second: 5
+  second: 5,
 };
 
 function hackyOffset(dtf, date) {
@@ -168,7 +168,7 @@ export default class IANAZone extends Zone {
       hour,
       minute,
       second,
-      millisecond: 0
+      millisecond: 0,
     });
 
     let asTS = +date;

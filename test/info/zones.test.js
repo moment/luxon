@@ -6,7 +6,7 @@ import {
   IANAZone,
   InvalidZone,
   SystemZone,
-  Settings
+  Settings,
 } from "../../src/luxon";
 
 const Helpers = require("../helpers");
@@ -93,7 +93,7 @@ test.each([
   ["Europe/Paris", new IANAZone("Europe/Paris")],
   [0, FixedOffsetZone.utcInstance],
   [3, FixedOffsetZone.instance(3)],
-  [-11, FixedOffsetZone.instance(-11)]
+  [-11, FixedOffsetZone.instance(-11)],
 ])("Info.normalizeZone converts valid input %p into valid Zone instance", (input, expected) => {
   expect(Info.normalizeZone(input)).toEqual(expected);
 });

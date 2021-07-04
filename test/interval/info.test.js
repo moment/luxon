@@ -15,12 +15,7 @@ test("Interval#length defaults to milliseconds", () => {
 });
 
 test("Interval#length('days') returns 1 for yesterday", () => {
-  expect(
-    Helpers.atHour(13)
-      .minus({ days: 1 })
-      .until(Helpers.atHour(13))
-      .length("days")
-  ).toBe(1);
+  expect(Helpers.atHour(13).minus({ days: 1 }).until(Helpers.atHour(13)).length("days")).toBe(1);
 });
 
 test("Interval#length('months') returns the right number of months", () => {
@@ -254,8 +249,8 @@ test.each([
   ["1982-05-25T00:00:02"],
   ["1982-05-25T12:00:00"],
   ["1982-05-25T23:59:58"],
-  ["1982-05-25T23:59:59"]
-])("Interval#hasSame returns true for empty intervals", dt => {
+  ["1982-05-25T23:59:59"],
+])("Interval#hasSame returns true for empty intervals", (dt) => {
   const n = DateTime.fromISO(dt),
     i = Interval.fromDateTimes(n, n);
   expect(i.hasSame("day")).toBe(true);

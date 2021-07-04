@@ -29,7 +29,7 @@ test("Interval.fromDateTimes creates an interval from Dates", () => {
   const start = DateTime.fromObject({
       year: 2016,
       month: 5,
-      day: 25
+      day: 25,
     }).toJSDate(),
     end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }).toJSDate(),
     int = Interval.fromDateTimes(start, end);
@@ -62,7 +62,7 @@ test("Interval.fromDateTimes throws with start date coming after end date", () =
   const start = DateTime.fromObject({
       year: 2016,
       month: 5,
-      day: 25
+      day: 25,
     }).toJSDate(),
     end = DateTime.fromObject({ year: 2016, month: 5, day: 27 }).toJSDate();
 

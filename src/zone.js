@@ -1,4 +1,3 @@
-/* eslint no-unused-vars: "off" */
 import { ZoneIsAbstractError } from "./errors.js";
 
 /**

@@ -22,5 +22,5 @@ export {
   IANAZone,
   InvalidZone,
   SystemZone,
-  Settings
+  Settings,
 };

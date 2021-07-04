@@ -11,7 +11,7 @@ function createDateTime() {
     hour: 4,
     minute: 5,
     second: 6,
-    millisecond: 7
+    millisecond: 7,
   });
 }
 
@@ -53,7 +53,7 @@ test("DateTime#plus({ months: 13 }) at the end of the month", () => {
 
 test("DateTime#plus({ days: 1 }) keeps the same time across a DST", () => {
   const i = DateTime.fromISO("2016-03-12T10:00", {
-      zone: "America/Los_Angeles"
+      zone: "America/Los_Angeles",
     }),
     later = i.plus({ days: 1 });
   expect(later.day).toBe(13);
@@ -62,7 +62,7 @@ test("DateTime#plus({ days: 1 }) keeps the same time across a DST", () => {
 
 test("DateTime#plus({ hours: 24 }) gains an hour to spring forward", () => {
   const i = DateTime.fromISO("2016-03-12T10:00", {
-      zone: "America/Los_Angeles"
+      zone: "America/Los_Angeles",
     }),
     later = i.plus({ hours: 24 });
   expect(later.day).toBe(13);
@@ -72,7 +72,7 @@ test("DateTime#plus({ hours: 24 }) gains an hour to spring forward", () => {
 // #669
 test("DateTime#plus({ days:0, hours: 24 }) gains an hour to spring forward", () => {
   const i = DateTime.fromISO("2016-03-12T10:00", {
-      zone: "America/Los_Angeles"
+      zone: "America/Los_Angeles",
     }),
     later = i.plus({ days: 0, hours: 24 });
   expect(later.day).toBe(13);
@@ -140,7 +140,7 @@ test("DateTime#plus handles fractional large units", () => {
     expect(d.plus({ [unit]: 8.7 })).toEqual(
       d.plus({
         [unit]: 8,
-        milliseconds: Duration.fromObject({ [unit]: 0.7 }).as("milliseconds")
+        milliseconds: Duration.fromObject({ [unit]: 0.7 }).as("milliseconds"),
       })
     );
   }
@@ -236,7 +236,7 @@ test("DateTime#minus handles fractional large units", () => {
     expect(d.minus({ [unit]: 8.7 })).toEqual(
       d.minus({
         [unit]: 8,
-        milliseconds: Duration.fromObject({ [unit]: 0.7 }).as("milliseconds")
+        milliseconds: Duration.fromObject({ [unit]: 0.7 }).as("milliseconds"),
       })
     );
   }
@@ -276,7 +276,7 @@ test("DateTime#startOf('quarter') goes to the start of the quarter", () => {
       hour: 4,
       minute: 5,
       second: 6,
-      millisecond: 7
+      millisecond: 7,
     }).startOf("quarter");
 
     expect(dt.year).toBe(2017);
@@ -420,7 +420,7 @@ test("DateTime#endOf('quarter') goes to the end of the quarter in December", () 
       hour: 4,
       minute: 5,
       second: 6,
-      millisecond: 7
+      millisecond: 7,
     }).endOf("quarter");
 
     expect(dt.year).toBe(2017);

@@ -34,7 +34,7 @@ const macroTokenToFormatOpts = {
   F: Formats.DATETIME_SHORT_WITH_SECONDS,
   FF: Formats.DATETIME_MED_WITH_SECONDS,
   FFF: Formats.DATETIME_FULL_WITH_SECONDS,
-  FFFF: Formats.DATETIME_HUGE_WITH_SECONDS
+  FFFF: Formats.DATETIME_HUGE_WITH_SECONDS,
 };
 
 /**
@@ -132,7 +132,7 @@ export default class Formatter {
     const knownEnglish = this.loc.listingMode() === "en",
       useDateTimeFormatter = this.loc.outputCalendar && this.loc.outputCalendar !== "gregory",
       string = (opts, extract) => this.loc.extract(dt, opts, extract),
-      formatOffset = opts => {
+      formatOffset = (opts) => {
         if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
           return "Z";
         }
@@ -154,7 +154,7 @@ export default class Formatter {
               standalone ? { weekday: length } : { weekday: length, month: "long", day: "numeric" },
               "weekday"
             ),
-      maybeMacro = token => {
+      maybeMacro = (token) => {
         const formatOpts = Formatter.macroTokenToFormatOpts(token);
         if (formatOpts) {
           return this.formatWithSystemDefault(dt, formatOpts);
@@ -162,9 +162,9 @@ export default class Formatter {
           return token;
         }
       },
-      era = length =>
+      era = (length) =>
         knownEnglish ? English.eraForDateTime(dt, length) : string({ era: length }, "era"),
-      tokenToString = token => {
+      tokenToString = (token) => {
         // Where possible: http://cldr.unicode.org/translation/date-time-1/date-time#TOC-Standalone-vs.-Format-Styles
         switch (token) {
           // ms
@@ -346,7 +346,7 @@ export default class Formatter {
   }
 
   formatDurationFromString(dur, fmt) {
-    const tokenToField = token => {
+    const tokenToField = (token) => {
         switch (token[0]) {
           case "S":
             return "millisecond";
@@ -366,7 +366,7 @@ export default class Formatter {
             return null;
         }
       },
-      tokenToString = lildur => token => {
+      tokenToString = (lildur) => (token) => {
         const mapped = tokenToField(token);
         if (mapped) {
           return this.num(lildur.get(mapped), token.length);
@@ -379,7 +379,7 @@ export default class Formatter {
         (found, { literal, val }) => (literal ? found : found.concat(val)),
         []
       ),
-      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter(t => t));
+      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t));
     return stringifyTokens(tokens, tokenToString(collapsed));
   }
 }

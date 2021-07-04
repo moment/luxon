@@ -132,10 +132,10 @@ test("Duration#negate preserves conversionAccuracy", () => {
       {
         hours: 4,
         minutes: -12,
-        seconds: 2
+        seconds: 2,
       },
       {
-        conversionAccuracy: "longterm"
+        conversionAccuracy: "longterm",
       }
     ),
     result = dur.negate();
@@ -148,7 +148,7 @@ test("Duration#negate preserves conversionAccuracy", () => {
 
 test("Duration#units can multiply durations", () => {
   const dur = Duration.fromObject({ hours: 1, minutes: 2, seconds: -3, milliseconds: -4 }),
-    result = dur.mapUnits(x => x * 5);
+    result = dur.mapUnits((x) => x * 5);
 
   expect(result.hours).toBe(5);
   expect(result.minutes).toBe(10);
@@ -167,7 +167,7 @@ test("Duration#units can take the unit into account", () => {
 });
 
 test("Duration#mapUnits maintains invalidity", () => {
-  const dur = Duration.invalid("because").mapUnits(x => x * 5);
+  const dur = Duration.invalid("because").mapUnits((x) => x * 5);
   expect(dur.isValid).toBe(false);
   expect(dur.invalidReason).toBe("because");
 });

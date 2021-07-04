@@ -22,7 +22,7 @@ test("Info.months lists all the months", () => {
     "September",
     "October",
     "November",
-    "December"
+    "December",
   ]);
 
   expect(Info.months("short", { locale: "en" })).toEqual([
@@ -37,7 +37,7 @@ test("Info.months lists all the months", () => {
     "Sep",
     "Oct",
     "Nov",
-    "Dec"
+    "Dec",
   ]);
 
   expect(Info.months("narrow", { locale: "en" })).toEqual([
@@ -52,7 +52,7 @@ test("Info.months lists all the months", () => {
     "S",
     "O",
     "N",
-    "D"
+    "D",
   ]);
 
   expect(Info.months("numeric", { locale: "en" })).toEqual([
@@ -67,7 +67,7 @@ test("Info.months lists all the months", () => {
     "9",
     "10",
     "11",
-    "12"
+    "12",
   ]);
 
   expect(Info.months("2-digit", { locale: "en" })).toEqual([
@@ -82,7 +82,7 @@ test("Info.months lists all the months", () => {
     "09",
     "10",
     "11",
-    "12"
+    "12",
   ]);
 });
 
@@ -99,7 +99,7 @@ test("Info.months respects the numbering system", () => {
     "৯",
     "১০",
     "১১",
-    "১২"
+    "১২",
   ]);
 });
 
@@ -116,7 +116,7 @@ test("Info.months respects the calendar", () => {
     "Dhuʻl-Qiʻdah",
     "Dhuʻl-Hijjah",
     "Safar",
-    "Rabiʻ I"
+    "Rabiʻ I",
   ]);
 });
 
@@ -133,7 +133,7 @@ test("Info.months respects the locale", () => {
     "৯",
     "১০",
     "১১",
-    "১২"
+    "১২",
   ]);
 
   // these should arguably be 1月, 2月, etc, but this at least documents how it works
@@ -149,7 +149,7 @@ test("Info.months respects the locale", () => {
     "9",
     "10",
     "11",
-    "12"
+    "12",
   ]);
 
   expect(Info.monthsFormat("long", { locale: "ru" })).toEqual([
@@ -164,7 +164,7 @@ test("Info.months respects the locale", () => {
     "сентября",
     "октября",
     "ноября",
-    "декабря"
+    "декабря",
   ]);
 });
 
@@ -181,7 +181,7 @@ test("Info.months defaults to long names", () => {
     "September",
     "October",
     "November",
-    "December"
+    "December",
   ]);
 });
 
@@ -201,7 +201,7 @@ test("Info.monthsFormat lists all the months", () => {
     "September",
     "October",
     "November",
-    "December"
+    "December",
   ]);
 
   // this passes, but is wrong. These are the same as the standalone values
@@ -217,7 +217,7 @@ test("Info.monthsFormat lists all the months", () => {
     "сентября",
     "октября",
     "ноября",
-    "декабря"
+    "декабря",
   ]);
 
   expect(Info.monthsFormat("short", { locale: "en" })).toEqual([
@@ -232,7 +232,7 @@ test("Info.monthsFormat lists all the months", () => {
     "Sep",
     "Oct",
     "Nov",
-    "Dec"
+    "Dec",
   ]);
 
   expect(Info.monthsFormat("numeric", { locale: "en" })).toEqual([
@@ -247,7 +247,7 @@ test("Info.monthsFormat lists all the months", () => {
     "9",
     "10",
     "11",
-    "12"
+    "12",
   ]);
 });
 
@@ -264,7 +264,7 @@ test("Info.monthsFormat defaults to long names", () => {
     "September",
     "October",
     "November",
-    "December"
+    "December",
   ]);
 });
 
@@ -279,7 +279,7 @@ test("Info.weekdays lists all the weekdays", () => {
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday"
+    "Sunday",
   ]);
 
   expect(Info.weekdays("short", { locale: "en" })).toEqual([
@@ -289,7 +289,7 @@ test("Info.weekdays lists all the weekdays", () => {
     "Thu",
     "Fri",
     "Sat",
-    "Sun"
+    "Sun",
   ]);
 
   expect(Info.weekdays("narrow", { locale: "en" })).toEqual(["M", "T", "W", "T", "F", "S", "S"]);
@@ -301,7 +301,7 @@ test("Info.weekdays lists all the weekdays", () => {
     "четверг",
     "пятница",
     "суббота",
-    "воскресенье"
+    "воскресенье",
   ]);
 });
 
@@ -313,7 +313,7 @@ test("Info.weekdays defaults to long names", () => {
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday"
+    "Sunday",
   ]);
 });
 
@@ -328,7 +328,7 @@ test("Info.weekdaysFormat lists all the weekdays", () => {
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday"
+    "Sunday",
   ]);
 
   expect(Info.weekdaysFormat("short", { locale: "en" })).toEqual([
@@ -338,7 +338,7 @@ test("Info.weekdaysFormat lists all the weekdays", () => {
     "Thu",
     "Fri",
     "Sat",
-    "Sun"
+    "Sun",
   ]);
 });
 
@@ -350,7 +350,7 @@ test("Info.weekdaysFormat defaults to long names", () => {
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday"
+    "Sunday",
   ]);
 });
 
@@ -395,7 +395,7 @@ test("Info English lists are not mutable", () => {
       ["months", "2-digit"],
       ["eras", "narrow"],
       ["eras", "short"],
-      ["eras", "long"]
+      ["eras", "long"],
     ];
 
     for (const [method, arg] of cachingMethods) {

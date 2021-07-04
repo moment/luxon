@@ -11,7 +11,7 @@ const dur = Duration.fromObject({
     minutes: 5,
     seconds: 6,
     milliseconds: 7,
-    weeks: 8
+    weeks: 8,
   }),
   inv = Duration.invalid("because i say so");
 

@@ -155,7 +155,7 @@ d.isValid; //=> false
 d.invalidReason; //=> 'day out of range'
 ```
 
-For more on validity and how to debug it, see [validity](validity.html). You may find more comprehensive tips there. But as it applies specifically to `fromFormat`, again try `fromFormatExplain`:
+For more on validity and how to debug it, see [validity](validity.md). You may find more comprehensive tips there. But as it applies specifically to `fromFormat`, again try `fromFormatExplain`:
 
 ```js
 > DateTime.fromFormatExplain("August 32 1982", "MMMM d yyyy")

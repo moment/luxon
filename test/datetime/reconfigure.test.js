@@ -7,7 +7,7 @@ const dt = DateTime.fromObject(
   {
     locale: "fr",
     numberingSystem: "beng",
-    outputCalendar: "coptic"
+    outputCalendar: "coptic",
   }
 );
 

@@ -6,9 +6,8 @@ before_install:
   - ./docker/npm install
 script:
   - ./docker/npm run build
-  - ./docker/npm run lint
+  - ./docker/npm run format-check
   - ./docker/npm run test
-  - ./docker/npm run docs
-  - ./docker/npm run check-doc-coverage
+  - ./docker/npm run site
   - bash <(curl -s https://codecov.io/bash)
 
