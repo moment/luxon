@@ -2,6 +2,10 @@
 
 Luxon is a library for dealing with dates and times in JavaScript.
 
+```js
+DateTime.now().setZone('America/New_York').minus({weeks:1}).endOf('day').toISO();
+```
+
 ### Features
 
  * A nice API for working with datetimes
