@@ -5,3 +5,4 @@ npm run build
 npm run site
 npm publish
 ./scripts/tag
+./scripts/deploy-site
