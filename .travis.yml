@@ -10,4 +10,3 @@ script:
   - ./docker/npm run test
   - ./docker/npm run site
   - bash <(curl -s https://codecov.io/bash)
-
