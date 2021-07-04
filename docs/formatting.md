@@ -83,7 +83,7 @@ dt.toLocaleString(newFormat); //=>  'Thursday, 4/20/2017'
 
 ### Presets
 
-Here's the full set of provided presets using the October 14, 1983 at 13:30:23 as an example.
+Here's the full set of provided presets using the October 14, 1983 at `13:30:23` as an example.
 
 | Name                        | Description                                                        | Example in en_US                                           | Example in fr                                            |
 | --------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- | -------------------------------------------------------- |

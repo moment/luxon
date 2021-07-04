@@ -228,7 +228,7 @@ Most of the time, DST shifts will happen without you having to do anything about
 
 ### Invalid times
 
-Some local times simply don't exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, `America/New_York`, on March 12, 2017 the millisecond after 1:59:59.999 is 3:00:00.000. Thus the times between 2:00:00.000 and 2:59:59.999, inclusive, don't exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.
+Some local times simply don't exist. The Spring Forward DST shift involves shifting the local time forward by (usually) one hour. In my zone, `America/New_York`, on March 12, 2017 the millisecond after `1:59:59.999` is `3:00:00.000`. Thus the times between `2:00:00.000` and `2:59:59.999`, inclusive, don't exist in that zone. But of course, nothing stops a user from constructing a DateTime out of that local time.
 
 If you create such a DateTime from scratch, the missing time will be advanced by an hour:
 
