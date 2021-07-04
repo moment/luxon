@@ -24,11 +24,11 @@ DateTime.now().setZone("America/New_York").minus({ weeks: 1 }).endOf("day").toIS
 
 ## Documentation
 
-* [General documentation][doc-url]
+* [General documentation](https://moment.github.io/luxon/#/?id=luxon)
 * [API docs](https://moment.github.io/luxon/api-docs/index.html)
-* [Quick tour](https://moment.github.io/luxon/docs/tour.html)
-* [For Moment users](https://moment.github.io/luxon/docs/moment.html)
-* [Why does Luxon exist?](https://moment.github.io/luxon/docs/why.html)
+* [Quick tour](https://moment.github.io/luxon/#/tour)
+* [For Moment users](https://moment.github.io/luxon/#/moment)
+* [Why does Luxon exist?](https://moment.github.io/luxon/#/why)
 * [A quick demo](https://moment.github.io/luxon/demo/global.html)
 
 ## Development
