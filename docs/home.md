@@ -20,4 +20,4 @@ Luxon is a library for dealing with dates and times in JavaScript.
   * [Demo](../demo/global.html ':ignore')
   * Read the [quick tour](tour.md)
   * Browse the topic docs on the left
-  * Read the [api docs](../api-docs/index.html ':ignore')
+  * Read the [api docs](api-docs/index.html ':ignore')
