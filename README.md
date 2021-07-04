@@ -49,7 +49,7 @@ See [contributing](contributing.md).
 [test-coverage-url]: https://codecov.io/gh/moment/luxon
 [test-coverage-image]: https://codecov.io/gh/moment/luxon/branch/master/graph/badge.svg
 
-[contributing-url]: https://moment.github.io/luxon/docs/manual/contributing.html
+[contributing-url]: https://github.com/moment/luxon/blob/master/contributing.md
 [contributing-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 
 [phasers-image]: https://img.shields.io/badge/phasers-stun-brightgreen.svg
