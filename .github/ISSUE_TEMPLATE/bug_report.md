@@ -19,6 +19,7 @@ A clear and concise description of what you expected to happen.
 - OS: [e.g. iOS]
 - Browser [e.g. Chrome 84, safari 14.0]
 - Luxon version [e.g. 1.25.0]
+- Your timezone [e.g. "America/New_York"]
 
 **Additional context**
 Add any other context about the problem here.
