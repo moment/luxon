@@ -20,12 +20,8 @@
     "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "format-check": "prettier --check 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/index.js",
-    "codecov": "codecov"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "codecov": "codecov",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{js,json}": [
