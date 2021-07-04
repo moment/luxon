@@ -6,8 +6,6 @@ env:
   - ENV LIMIT_JEST=yes
   - ENV CI=yes
   - ENV TZ=America/New_York
-install:
-  - npm install --ignore-scripts
 script:
   - npm run build
   - npm run format-check
