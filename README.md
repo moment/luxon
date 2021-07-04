@@ -10,7 +10,7 @@ DateTime.now().setZone("America/New_York").minus({ weeks: 1 }).endOf("day").toIS
 
 ## Upgrading to 2.0
 
-[Guide](https://moment.github.io/luxon/docs/manual/upgrading.tml)
+[Guide](https://moment.github.io/luxon/#upgrading)
 
 ## Features
  * DateTime, Duration, and Interval types.
