@@ -9,7 +9,12 @@
  * Native time zone and Intl support (no locale or tz files)
  
 ```js
-DateTime.now().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
+DateTime
+  .now()
+  .setZone('America/New_York')
+  .minus({ weeks: 1 })
+  .endOf('day')
+  .toISO();
 ```
 
 [GitHub](https://github.com/moment/luxon/)
