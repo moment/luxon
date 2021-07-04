@@ -949,7 +949,7 @@ test("DateTime.fromFormatExplain() takes the same options as fromFormat", () => 
 //-------
 test("DateTime.fromStringExplain is an alias for DateTime.fromFormatExplain", () => {
   const ff = DateTime.fromFormatExplain("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS"),
-    fs = DateTime.fromStringExplain("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
+    fs = DateTime.fromFormatExplain("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
 
   expect(ff).toEqual(fs);
 });
@@ -960,7 +960,16 @@ test("DateTime.fromStringExplain is an alias for DateTime.fromFormatExplain", ()
 
 test("DateTime.fromString is an alias for DateTime.fromFormat", () => {
   const ff = DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS"),
-    fs = DateTime.fromString("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
+    fs = DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
 
   expect(ff).toEqual(fs);
+});
+
+//------
+// .parseFormatForOpts
+//-------
+
+test("DateTime.parseFormatFromOpts returns a parsing format", () => {
+  const format = DateTime.parseFormatForOpts(DateTime.DATETIME_FULL);
+  expect(format).toEqual("MMMM d, yyyyy, h:m a");
 });
