@@ -95,7 +95,7 @@ dt.setLocale("fr").toLocaleString(DateTime.DATE_FULL); //=> '25 septembre 2017'
 That's the normal way to do it: set the locale as property of the DateTime itself and let the `toLocaleString` inherit it. But you can specify the locale directly to `toLocaleString` too:
 
 ```js
-dt.toLocaleString(Object.assign({ locale: "es" }, DateTime.DATE_FULL)); //=> '25 de septiembre de 2017'
+dt.toLocaleString({ locale: "es" , ...DateTime.DATE_FULL }); //=> '25 de septiembre de 2017'
 ```
 
 Ad-hoc formatting also respects the locale:

@@ -89,13 +89,11 @@ async function buildLibrary(dest, opts) {
 
   if (opts.minify && TRUST_MINIFY) {
     promises.push(
-      babelAndRollup(
-        dest,
-        Object.assign({}, opts, {
-          minify: true,
-          filename: "luxon.min.js"
-        })
-      )
+      babelAndRollup(dest, {
+        ...opts,
+        minify: true,
+        filename: "luxon.min.js"
+      })
     );
   }
 

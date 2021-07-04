@@ -68,7 +68,7 @@ function clone(inst, alts) {
     loc: inst.loc,
     invalid: inst.invalid
   };
-  return new DateTime(Object.assign({}, current, alts, { old: current }));
+  return new DateTime({ ...current, ...alts, old: current });
 }
 
 // find the right offset a given local time. The o input is our guess, which determines which
@@ -125,14 +125,15 @@ function adjustTime(inst, dur) {
   const oPre = inst.o,
     year = inst.c.year + Math.trunc(dur.years),
     month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
-    c = Object.assign({}, inst.c, {
+    c = {
+      ...inst.c,
       year,
       month,
       day:
         Math.min(inst.c.day, daysInMonth(year, month)) +
         Math.trunc(dur.days) +
         Math.trunc(dur.weeks) * 7
-    }),
+    },
     millisToAdd = Duration.fromObject({
       years: dur.years - Math.trunc(dur.years),
       quarters: dur.quarters - Math.trunc(dur.quarters),
@@ -1355,11 +1356,11 @@ export default class DateTime {
 
     let mixed;
     if (settingWeekStuff) {
-      mixed = weekToGregorian(Object.assign(gregorianToWeek(this.c), normalized));
+      mixed = weekToGregorian({ ...gregorianToWeek(this.c), ...normalized });
     } else if (!isUndefined(normalized.ordinal)) {
-      mixed = ordinalToGregorian(Object.assign(gregorianToOrdinal(this.c), normalized));
+      mixed = ordinalToGregorian({ ...gregorianToOrdinal(this.c), ...normalized });
     } else {
-      mixed = Object.assign(this.toObject(), normalized);
+      mixed = { ...this.toObject(), ...normalized };
 
       // if we didn't set the day but we ended up on an overflow date,
       // use the last day of the right month
@@ -1742,7 +1743,7 @@ export default class DateTime {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = Object.assign({}, this.c);
+    const base = { ...this.c };
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
@@ -1782,10 +1783,7 @@ export default class DateTime {
       return Duration.invalid("created by diffing an invalid DateTime");
     }
 
-    const durOpts = Object.assign(
-      { locale: this.locale, numberingSystem: this.numberingSystem },
-      opts
-    );
+    const durOpts = { locale: this.locale, numberingSystem: this.numberingSystem, ...opts };
 
     const units = maybeArray(unit).map(Duration.normalizeUnit),
       otherIsLater = otherDateTime.valueOf() > this.valueOf(),
@@ -1879,15 +1877,12 @@ export default class DateTime {
       units = options.unit;
       unit = undefined;
     }
-    return diffRelative(
-      base,
-      this.plus(padding),
-      Object.assign(options, {
-        numeric: "always",
-        units,
-        unit
-      })
-    );
+    return diffRelative(base, this.plus(padding), {
+      ...options,
+      numeric: "always",
+      units,
+      unit
+    });
   }
 
   /**
@@ -1906,15 +1901,12 @@ export default class DateTime {
   toRelativeCalendar(options = {}) {
     if (!this.isValid) return null;
 
-    return diffRelative(
-      options.base || DateTime.fromObject({}, { zone: this.zone }),
-      this,
-      Object.assign(options, {
-        numeric: "auto",
-        units: ["years", "months", "days"],
-        calendary: true
-      })
-    );
+    return diffRelative(options.base || DateTime.fromObject({}, { zone: this.zone }), this, {
+      ...options,
+      numeric: "auto",
+      units: ["years", "months", "days"],
+      calendary: true
+    });
   }
 
   /**

@@ -94,22 +94,22 @@ export default class Formatter {
     if (this.systemLoc === null) {
       this.systemLoc = this.loc.redefaultToSystem();
     }
-    const df = this.systemLoc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const df = this.systemLoc.dtFormatter(dt, { ...this.opts, ...opts });
     return df.format();
   }
 
   formatDateTime(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const df = this.loc.dtFormatter(dt, { ...this.opts, ...opts });
     return df.format();
   }
 
   formatDateTimeParts(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const df = this.loc.dtFormatter(dt, { ...this.opts, ...opts });
     return df.formatToParts();
   }
 
   resolvedOptions(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, Object.assign({}, this.opts, opts));
+    const df = this.loc.dtFormatter(dt, { ...this.opts, ...opts });
     return df.resolvedOptions();
   }
 
@@ -119,7 +119,7 @@ export default class Formatter {
       return padStart(n, p);
     }
 
-    const opts = Object.assign({}, this.opts);
+    const opts = { ...this.opts };
 
     if (p > 0) {
       opts.padTo = p;

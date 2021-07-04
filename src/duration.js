@@ -34,72 +34,69 @@ const lowOrderMatrix = {
     minutes: { seconds: 60, milliseconds: 60 * 1000 },
     seconds: { milliseconds: 1000 }
   },
-  casualMatrix = Object.assign(
-    {
-      years: {
-        quarters: 4,
-        months: 12,
-        weeks: 52,
-        days: 365,
-        hours: 365 * 24,
-        minutes: 365 * 24 * 60,
-        seconds: 365 * 24 * 60 * 60,
-        milliseconds: 365 * 24 * 60 * 60 * 1000
-      },
-      quarters: {
-        months: 3,
-        weeks: 13,
-        days: 91,
-        hours: 91 * 24,
-        minutes: 91 * 24 * 60,
-        seconds: 91 * 24 * 60 * 60,
-        milliseconds: 91 * 24 * 60 * 60 * 1000
-      },
-      months: {
-        weeks: 4,
-        days: 30,
-        hours: 30 * 24,
-        minutes: 30 * 24 * 60,
-        seconds: 30 * 24 * 60 * 60,
-        milliseconds: 30 * 24 * 60 * 60 * 1000
-      }
+  casualMatrix = {
+    years: {
+      quarters: 4,
+      months: 12,
+      weeks: 52,
+      days: 365,
+      hours: 365 * 24,
+      minutes: 365 * 24 * 60,
+      seconds: 365 * 24 * 60 * 60,
+      milliseconds: 365 * 24 * 60 * 60 * 1000
     },
-    lowOrderMatrix
-  ),
+    quarters: {
+      months: 3,
+      weeks: 13,
+      days: 91,
+      hours: 91 * 24,
+      minutes: 91 * 24 * 60,
+      seconds: 91 * 24 * 60 * 60,
+      milliseconds: 91 * 24 * 60 * 60 * 1000
+    },
+    months: {
+      weeks: 4,
+      days: 30,
+      hours: 30 * 24,
+      minutes: 30 * 24 * 60,
+      seconds: 30 * 24 * 60 * 60,
+      milliseconds: 30 * 24 * 60 * 60 * 1000
+    },
+
+    ...lowOrderMatrix
+  },
   daysInYearAccurate = 146097.0 / 400,
   daysInMonthAccurate = 146097.0 / 4800,
-  accurateMatrix = Object.assign(
-    {
-      years: {
-        quarters: 4,
-        months: 12,
-        weeks: daysInYearAccurate / 7,
-        days: daysInYearAccurate,
-        hours: daysInYearAccurate * 24,
-        minutes: daysInYearAccurate * 24 * 60,
-        seconds: daysInYearAccurate * 24 * 60 * 60,
-        milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
-      },
-      quarters: {
-        months: 3,
-        weeks: daysInYearAccurate / 28,
-        days: daysInYearAccurate / 4,
-        hours: (daysInYearAccurate * 24) / 4,
-        minutes: (daysInYearAccurate * 24 * 60) / 4,
-        seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
-        milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
-      },
-      months: {
-        weeks: daysInMonthAccurate / 7,
-        days: daysInMonthAccurate,
-        hours: daysInMonthAccurate * 24,
-        minutes: daysInMonthAccurate * 24 * 60,
-        seconds: daysInMonthAccurate * 24 * 60 * 60,
-        milliseconds: daysInMonthAccurate * 24 * 60 * 60 * 1000
-      }
+  accurateMatrix = {
+    years: {
+      quarters: 4,
+      months: 12,
+      weeks: daysInYearAccurate / 7,
+      days: daysInYearAccurate,
+      hours: daysInYearAccurate * 24,
+      minutes: daysInYearAccurate * 24 * 60,
+      seconds: daysInYearAccurate * 24 * 60 * 60,
+      milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1000
     },
-    lowOrderMatrix
-  );
+    quarters: {
+      months: 3,
+      weeks: daysInYearAccurate / 28,
+      days: daysInYearAccurate / 4,
+      hours: (daysInYearAccurate * 24) / 4,
+      minutes: (daysInYearAccurate * 24 * 60) / 4,
+      seconds: (daysInYearAccurate * 24 * 60 * 60) / 4,
+      milliseconds: (daysInYearAccurate * 24 * 60 * 60 * 1000) / 4
+    },
+    months: {
+      weeks: daysInMonthAccurate / 7,
+      days: daysInMonthAccurate,
+      hours: daysInMonthAccurate * 24,
+      minutes: daysInMonthAccurate * 24 * 60,
+      seconds: daysInMonthAccurate * 24 * 60 * 60,
+      milliseconds: daysInMonthAccurate * 24 * 60 * 60 * 1000
+    },
+    ...lowOrderMatrix
+  };
 
 // units ordered by size
 const orderedUnits = [
@@ -120,7 +117,7 @@ const reverseUnits = orderedUnits.slice(0).reverse();
 function clone(dur, alts, clear = false) {
   // deep merge for vals
   const conf = {
-    values: clear ? alts.values : Object.assign({}, dur.values, alts.values || {}),
+    values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
   };
@@ -393,9 +390,10 @@ export default class Duration {
    */
   toFormat(fmt, opts = {}) {
     // reverse-compat since 1.2; we always round down now, never up, and we do it by default
-    const fmtOpts = Object.assign({}, opts, {
+    const fmtOpts = {
+      ...opts,
       floor: opts.round !== false && opts.floor !== false
-    });
+    };
     return this.isValid
       ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
       : INVALID;
@@ -464,15 +462,13 @@ export default class Duration {
     const millis = this.toMillis();
     if (millis < 0 || millis >= 86400000) return null;
 
-    opts = Object.assign(
-      {
-        suppressMilliseconds: false,
-        suppressSeconds: false,
-        includePrefix: false,
-        format: "extended"
-      },
-      opts
-    );
+    opts = {
+      suppressMilliseconds: false,
+      suppressSeconds: false,
+      includePrefix: false,
+      format: "extended",
+      ...opts
+    };
 
     const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
 
@@ -596,7 +592,7 @@ export default class Duration {
   set(values) {
     if (!this.isValid) return this;
 
-    const mixed = Object.assign(this.values, normalizeObject(values, Duration.normalizeUnit));
+    const mixed = { ...this.values, ...normalizeObject(values, Duration.normalizeUnit) };
     return clone(this, { values: mixed });
   }
 

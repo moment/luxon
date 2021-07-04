@@ -31,7 +31,7 @@ function combineExtractors(...extractors) {
       .reduce(
         ([mergedVals, mergedZone, cursor], ex) => {
           const [val, zone, next] = ex(m, cursor);
-          return [Object.assign(mergedVals, val), mergedZone || zone, next];
+          return [{ ...mergedVals, ...val }, mergedZone || zone, next];
         },
         [{}, null, 1]
       )

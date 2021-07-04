@@ -200,7 +200,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
     intlOpts.timeZone = timeZone;
   }
 
-  const modified = Object.assign({ timeZoneName: offsetFormat }, intlOpts);
+  const modified = { timeZoneName: offsetFormat, ...intlOpts };
 
   const parsed = new Intl.DateTimeFormat(locale, modified)
     .formatToParts(date)

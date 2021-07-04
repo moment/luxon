@@ -2,9 +2,10 @@
 // options to set when processing the docstrings and computing documentation coverage.
 
 // This is the table of contents, which exists just to create an ordering.
-// If you"re adding a doc, all you have to do is add it here.
+// If you're adding a doc, all you have to do is add it here.
 const manualFiles = [
   "install",
+  "upgrading",
   "tour",
   "intl",
   "zones",

@@ -18,7 +18,7 @@ test("Duration#plus add straightforward durations", () => {
 
 test("Duration#plus noops empty druations", () => {
   const first = Duration.fromObject({ hours: 4, minutes: 12, seconds: 2 }),
-    second = Duration.now(),
+    second = Duration.fromObject({}),
     result = first.plus(second);
 
   expect(result.hours).toBe(4);

@@ -207,7 +207,7 @@ class PolyDateFormatter {
       z = dt.zone.name;
     }
 
-    const intlOpts = Object.assign({}, this.opts);
+    const intlOpts = { ...this.opts };
     if (z) {
       intlOpts.timeZone = z;
     }
@@ -232,7 +232,7 @@ class PolyDateFormatter {
  */
 class PolyRelFormatter {
   constructor(intl, isEnglish, opts) {
-    this.opts = Object.assign({ style: "long" }, opts);
+    this.opts = { style: "long", ...opts };
     if (!isEnglish && hasRelative()) {
       this.rtf = getCachedRTF(intl, opts);
     }
@@ -331,11 +331,11 @@ export default class Locale {
   }
 
   redefaultToEN(alts = {}) {
-    return this.clone(Object.assign({}, alts, { defaultToEN: true }));
+    return this.clone({ ...alts, defaultToEN: true });
   }
 
   redefaultToSystem(alts = {}) {
-    return this.clone(Object.assign({}, alts, { defaultToEN: false }));
+    return this.clone({ ...alts, defaultToEN: false });
   }
 
   months(length, format = false, defaultOK = true) {

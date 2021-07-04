@@ -1,6 +1,6 @@
 Luxon is a library for dealing with dates and times in JavaScript.
 
-# Features
+## Features
 
  * A nice API for working with datetimes
  * Interval support (from time x to time y)
@@ -13,7 +13,7 @@ Luxon is a library for dealing with dates and times in JavaScript.
  
  For more, see the docs on the left, including the [api docs](api/index.html).
  
-# Getting started
+## Getting started
  
   * Read the [quick tour](tour.md)
   * Browse the topic docs on the left

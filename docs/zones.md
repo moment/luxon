@@ -7,7 +7,7 @@ Luxon has support for time zones. This page explains how to use them.
 You _usually_ don't need to worry about time zones. Your code runs on a computer with a particular time zone and everything will work consistently in that zone without you doing anything. It's when you want to do complicated stuff _across_ zones that you have to think about it. Even then, here are some pointers to help you avoid situations where you have to think carefully about time zones:
 
 1.  Don't make servers think about _local_ times. Configure them to use UTC and write your server's code to work in UTC. Times can often be thought of as a simple count of epoch milliseconds; what you would call that time (e.g. 9:30) in what zone doesn't (again, often) matter.
-2.  Communicate times between systems in ISO 8601, like "2017-05-15T13:30:34Z" where possible (it doesn't matter if you use Z or some local offset; the point is that it precisely identifies the millisecond on the global timeline).
+2.  Communicate times between systems in ISO 8601, like `2017-05-15T13:30:34Z` where possible (it doesn't matter if you use Z or some local offset; the point is that it precisely identifies the millisecond on the global timeline).
 3.  Where possible, only think of time zones as a formatting concern; your application ideally never knows that the time it's working with is called "9:00" until it's being rendered to the user.
 4.  Barring 3, do as much manipulation of the time (say, adding an hour to the current time) in the client code that's already running in the time zone where the results will matter.
 

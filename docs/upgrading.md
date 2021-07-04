@@ -1,8 +1,10 @@
-# Upgrading to 2.0
+# Upgrading Luxon
+
+## 1.x to 2.0
 
 Version 2.0 of Luxon has a number of breaking changes.
 
-## Environment support
+### Environment support
 
 Luxon 2.0 does not support Node < 12, or any version of IE. It also only supports newer versions of major browsers. This change
 allows Luxon to make more assumptions about what's supported in the environment and will allow Luxon's code to simplify. See
@@ -10,11 +12,11 @@ the [Support Matrix](matrix.html) for more.
 
 For this same reason, a polyfilled build is no longer provided; everything Luxon needs comes standard on browsers.
 
-## Breaking signature changes
+### Breaking signature changes
 
 There are many more specific breaking changes. Most are aimed and making Luxon's handling of option parameters more consistent.
 
-### fromObject
+#### fromObject
 `DateTime.fromObject()` and `Duration.fromObject()` now accept two parameters: one for the object and one for the options.
 
 For example:
@@ -29,7 +31,7 @@ DateTime.fromObject({ hour: 3, minute: 2 }, { zone: "America/New_York", locale: 
 Duration.fromObject({ hours: 3, minutes: 2 }, { conversionAccuracy: "casual", locale: "ru" });
 ```
 
-### toLocaleString
+#### toLocaleString
 
 In Luxon 1.x, you can mix Intl options with overrides of the DateTime configuration into the same options parameter. These are now
 two separate parameters:
@@ -44,7 +46,7 @@ DateTime.now().toLocaleString({ hour: "2-digit", locale: "ru" })
 DateTime.now().toLocaleString({ hour: "2-digit" }, { locale: "ru" })
 ```
 
-### System zone
+#### System zone
 
 The zone of the executing environment (e.g. the time set on the computer running the browser running Luxon), is now called
 "system" instead of "local" to reduce confusion.
@@ -57,7 +59,7 @@ DateTime.fromObject({}, { zone: "system" }).zone // => type is SystemZone
 DateTime.fromObject({}, { zone: "system" }).zone.type // => "system"
 ```
 
-### Default zone
+#### Default zone
 
 Luxon 2.x cleans up the handling of `Settings.defaultZone`:
 
@@ -71,17 +73,17 @@ Settings.defaultZone = IANAZone.create("America/New_York"); // or a Zone instanc
 Settings.defaultZone //=> a Zone instance
 ```
 
-### Other breaking changes
+#### Other breaking changes
 
  * `DateTime#toObject` no longer accepts an `includeConfig` option
  * `resolvedLocalOpts` is now `resolvedLocaleOptions`
  * `Zone#universal` is now `Zone#isUniversal`
 
-## Non-breaking changes
+### Non-breaking changes
 
  * `DateTime.local()` and `DateTime.utc()` now take an options parameter for setting zone and locale, same as `fromObject()`.
 
-## A note
+### A note
 
 We originally had more ambitious plans for Luxon 2.0: a port to Typescript, an overhaul of error handling, and lots of other changes.
 The problem is that we're very busy, and in the meantime browsers have evolved quickly, the mistakes in our API bothered a lot
