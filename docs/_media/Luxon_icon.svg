@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180px" height="180px" viewBox="0 0 180 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>Luxon_icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Luxon_icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Luxon-icon---large">
+            <circle id="Outer-Oval" fill="#B792FF" cx="90" cy="90" r="90"></circle>
+            <circle id="Inner-Oval" fill="#000000" cx="90" cy="90" r="82"></circle>
+            <circle id="Inner-Oval" fill="#8065B4" cx="90" cy="90" r="74"></circle>
+            <ellipse id="Inner-Oval" fill="#B792FF" cx="90" cy="105" rx="64" ry="39"></ellipse>
+            <g id="Dial-etching" stroke-width="1" transform="translate(26.000000, 66.000000)">
+                <ellipse id="Inner-Oval" fill="#B792FF" cx="64.5" cy="39" rx="37.5" ry="23"></ellipse>
+                <ellipse id="Inner-Oval" stroke="#000000" stroke-width="2" cx="64" cy="39" rx="64" ry="39"></ellipse>
+                <polygon id="Triangle" fill="#000000" transform="translate(109.500000, 39.500000) rotate(-90.000000) translate(-109.500000, -39.500000) " points="109.5 21 111 58 108 58"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(18.500000, 39.500000) rotate(90.000000) translate(-18.500000, -39.500000) " points="18.5 21 20 58 17 58"></polygon>
+                <polygon id="Triangle" fill="#000000" points="71.4014633 22.5770143 83.4014633 2.32166552 81.3985103 1.57701425"></polygon>
+                <polygon id="Triangle" fill="#000000" points="56.5985367 22.5770143 44.5985367 2.32166552 46.6014897 1.57701425"></polygon>
+                <polygon id="Triangle" fill="#000000" points="75.939076 24.0649647 97.939076 6.4032234 96.0433387 5.06496474"></polygon>
+                <polygon id="Triangle" fill="#000000" points="50.060924 24.0649647 30.060924 6.4032234 31.7843215 5.06496474"></polygon>
+                <polygon id="Triangle" fill="#000000" points="82.0699571 27.6869051 111.069957 12.7583777 109.636971 10.6869051"></polygon>
+                <polygon id="Triangle" fill="#000000" points="45.9300429 27.6869051 17.9300429 12.7583777 19.3136158 10.6869051"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(107.939819, 32.382232) rotate(-99.000000) translate(-107.939819, -32.382232) " points="107.939819 13.8822318 109.439819 50.8822318 106.439819 50.8822318"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(20.060181, 46.617768) rotate(81.000000) translate(-20.060181, -46.617768) " points="20.0601805 28.1177682 21.5601805 65.1177682 18.5601805 65.1177682"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(103.021095, 26.686649) rotate(-109.000000) translate(-103.021095, -26.686649) " points="103.021095 8.18664897 104.521095 45.186649 101.521095 45.186649"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(25.978905, 52.313351) rotate(71.000000) translate(-25.978905, -52.313351) " points="25.9789048 33.813351 27.4789048 70.813351 24.4789048 70.813351"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(107.808753, 46.400992) rotate(-80.000000) translate(-107.808753, -46.400992) " points="107.808753 27.9009921 109.308753 64.9009921 106.308753 64.9009921"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(20.479416, 31.689703) rotate(100.000000) translate(-20.479416, -31.689703) " points="20.4794157 13.1897029 21.9794157 50.1897029 18.9794157 50.1897029"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(102.021095, 52.313351) rotate(-71.000000) translate(-102.021095, -52.313351) " points="102.021095 33.813351 103.521095 70.813351 100.521095 70.813351"></polygon>
+                <polygon id="Triangle" fill="#000000" transform="translate(24.980446, 26.441289) rotate(109.000000) translate(-24.980446, -26.441289) " points="24.9804459 7.94128872 26.4804459 44.9412887 23.4804459 44.9412887"></polygon>
+                <ellipse id="Inner-Oval" stroke="#000000" cx="63.5" cy="37.5" rx="51.5" ry="31.5"></ellipse>
+                <ellipse id="Inner-Oval" stroke="#000000" cx="63.5" cy="36" rx="40.8730159" ry="25"></ellipse>
+            </g>
+            <path d="M69.0033451,64.7933842 L72.0033451,64.7933842 L75.0277592,114.413135 C73.0903677,115.333301 71.5698599,115.793384 70.4662357,115.793384 C69.3626116,115.793384 67.8421038,115.333301 65.9047123,114.413135 L69.0033451,64.7933842 Z" id="Gnomon" fill-opacity="0.49532889" fill="#000000" transform="translate(70.466236, 90.293384) rotate(-51.000000) translate(-70.466236, -90.293384) "></path>
+            <g id="Gnomon" stroke-width="1" transform="translate(83.000000, 47.000000)">
+                <ellipse id="Oval" fill="#000000" cx="6.5" cy="59.5" rx="6.5" ry="3.5"></ellipse>
+                <path d="M5.94995031,1 L2.93188376,59.7536415 C4.4718839,60.5912375 5.66361222,61 6.46289062,61 C7.26229731,61 8.45427988,60.5911063 9.99463899,59.7532382 L7.04888168,1 L5.94995031,1 Z" stroke="#000000" stroke-width="2" fill="#B792FF"></path>
+            </g>
+        </g>
+    </g>
+</svg>
