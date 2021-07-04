@@ -40,8 +40,8 @@ See [contributing](contributing.md).
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg
 [license]: license.md
 
-[travis-url]: http://travis-ci.org/moment/luxon
-[travis-image]: https://api.travis-ci.org/moment/luxon.svg?branch=master
+[travis-url]: http://travis-ci.com/moment/luxon
+[travis-image]: https://api.travis-ci.com/moment/luxon.svg?branch=master
 
 [npm-url]: https://npmjs.org/package/luxon
 [npm-version-image]: https://badge.fury.io/js/luxon.svg
