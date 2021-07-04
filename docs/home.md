@@ -13,7 +13,7 @@ Luxon is a library for dealing with dates and times in JavaScript.
  * Built-in handling of [time zones](zones.md)
  * Partial support for multiple [calendar systems](calendars.md)
  
- For more, see the docs on the left, including the  [api docs](../api-docs/index.html ':ignore')
+ For more, see the docs on the left, including the  [api docs](api-docs/index.html ':ignore')
  
 ### Getting started
  
