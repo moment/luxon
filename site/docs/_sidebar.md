@@ -9,7 +9,7 @@
 * [Parsing](parsing.md)
 * [Math](math.md)
 * [Validity](validity.md)
-* [API docs](../api-docs/index.html ':ignore')
+* [API docs](api-docs/index.html ':ignore')
 * [Support matrix](matrix.md)
 * [For Moment users](moment.md)
 * [Why does Luxon exist?](why.md)
