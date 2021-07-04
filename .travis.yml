@@ -1,12 +1,16 @@
-sudo: true
-services:
- - docker
-before_install:
-  - docker pull icambron/luxon
-  - ./docker/npm install --ignore-scripts
+language: node_js
+node_js:
+  - 15
+env:
+  - ENV LANG=en_US.utf8
+  - ENV LIMIT_JEST=yes
+  - ENV CI=yes
+  - ENV TZ=America/New_York
+install:
+  - npm install --ignore-scripts
 script:
-  - ./docker/npm run build
-  - ./docker/npm run format-check
-  - ./docker/npm run test
-  - ./docker/npm run site
+  - npm run build
+  - npm run format-check
+  - npm run test
+  - npm run site
   - bash <(curl -s https://codecov.io/bash)
