@@ -7,9 +7,14 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
+
+    env:
+      - LANG: en_US.utf8
+      - LIMIT_JEST: yes
+      - TZ: America/New_York
 
     strategy:
       matrix:
