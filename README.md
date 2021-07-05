@@ -1,7 +1,6 @@
 # Luxon
 
 [![MIT License][license-image]][license] [![Build Status][github-action-image]][github-action-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![PRs welcome][contributing-image]][contributing-url]
-![example workflow](https://github.com/moment/luxon/actions/workflows/test.yml/badge.svg)
 
 Luxon is a library for working with dates and times in JavaScript.
 
