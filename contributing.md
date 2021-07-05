@@ -53,8 +53,8 @@ I would love to add instructions for a non-WSL install of the dev env!
 In case messing with your Node environment just to run Luxon's tests is too much to ask, we've provided a Docker container. You'll need a functioning Docker environment, but the rest is easy:
 
 ```
-./docker/npm install
-./docker/npm run test
+./docker/npm install --ignore-scripts
+./docker/npm test
 ```
 
 ## Patch basics
