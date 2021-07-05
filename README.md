@@ -33,12 +33,12 @@ DateTime.now().setZone("America/New_York").minus({ weeks: 1 }).endOf("day").toIS
 
 ## Development
 
-See [contributing](contributing.md).
+See [contributing](CONTRIBUTING.md).
 
 ![Phasers to stun][phasers-image]
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg
-[license]: license.md
+[license]: LICENSE.md
 
 [github-action-image]: https://github.com/moment/luxon/actions/workflows/test.yml/badge.svg
 [github-action-url]: https://github.com/moment/luxon/actions/workflows/test.yml
