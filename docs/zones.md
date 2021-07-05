@@ -52,7 +52,7 @@ Luxon's API methods that take a zone as an argument all let you specify the zone
 | Type         | Example            | Description                                                       |
 | ------------ | ------------------ | ----------------------------------------------------------------- |
 | IANA         | 'America/New_York' | that zone                                                         |
-| local        | 'local'            | the system's local zone                                           |
+| system       | 'system'           | the system's local zone                                           |
 | UTC          | 'utc'              | Universal Coordinated Time                                        |
 | fixed offset | 'UTC+7'            | a fixed offset zone                                               |
 | Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only) |
