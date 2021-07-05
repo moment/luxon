@@ -1,3 +1,4 @@
 scripts/* linguist-vendored
 docker/* linguist-vendored
-site/* linguist-vendored
+site/** linguist-vendored
+.husky/* linguist-vendored
