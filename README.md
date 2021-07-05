@@ -20,7 +20,7 @@ DateTime.now().setZone("America/New_York").minus({ weeks: 1 }).endOf("day").toIS
 
 ## Download/install
 
-[Download/install instructions](https://moment.github.io/luxon/docs/manual/install.html)
+[Download/install instructions](https://moment.github.io/luxon/#/install)
 
 ## Documentation
 
