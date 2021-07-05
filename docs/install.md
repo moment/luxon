@@ -4,8 +4,8 @@ Luxon provides different builds for different JS environments. See below for a l
 
 ## Basic browser setup
 
-- [Download full](../../global/luxon.js)
-- [Download minified](../../global/luxon.min.js)
+- [Download full](https://moment.github.io/luxon/global/luxon.js)
+- [Download minified](https://moment.github.io/luxon/global/luxon.min.js)
 
 You can also load the files from a [CDN](https://www.jsdelivr.com/package/npm/luxon).
 
@@ -55,8 +55,8 @@ NODE_ICU_DATA="$(pwd)/node_modules/full-icu" node
 
 ## AMD (System.js, RequireJS, etc)
 
-- [Download full](../../amd/luxon.js)
-- [Download minified](../../amd/luxon.min.js)
+- [Download full](https://moment.github.io/luxon/amd/luxon.js)
+- [Download minified](https://moment.github.io/luxon/amd/luxon.min.js)
 
 ```js
 requirejs(["luxon"], function(luxon) {
@@ -66,8 +66,8 @@ requirejs(["luxon"], function(luxon) {
 
 ## ES6
 
-- [Download full](../../es6/luxon.js)
-- [Download minified](../../es6/luxon.min.js)
+- [Download full](https://moment.github.io/luxon/es6/luxon.js)
+- [Download minified](https://moment.github.io/luxon/es6/luxon.min.js)
 
 ```js
 import { DateTime } from "luxon";
