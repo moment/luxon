@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      - LANG: en_US.utf8
-      - LIMIT_JEST: yes
-      - TZ: America/New_York
+      LANG: en_US.utf8
+      LIMIT_JEST: yes
+      TZ: America/New_York
 
     strategy:
       matrix:
