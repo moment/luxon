@@ -20,7 +20,7 @@ Bear with me here. Time zones are pain in the ass. Luxon has lots of tools to de
 1.  An **offset** is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we'll use hours.
 1.  A **time zone** is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as "America/New_York". That zone says something to the effect of "The offset is -5, except between March and November, when it's -4".
 1.  A **fixed-offset time zone** is any time zone that never changes offsets, such as UTC. Luxon supports fixed-offset zones directly; they're specified like UTC+7, which you can interpret as "always with an offset of +7".
-1.  A **named offset** is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America's EST roughly implies America/New_York) and the current offset (EST means -4). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it's always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US's EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.
+1.  A **named offset** is a time zone-specific name for an offset, such as Eastern Daylight Time. It expresses both the zone (America's EST roughly implies America/New_York) and the current offset (EST means -5). They are also confusing in that they overspecify the offset (e.g. for any given time it is unnecessary to specify EST vs EDT; it's always whichever one is right). They are also ambiguous (BST is both British Summer Time and Bangladesh Standard Time), unstandardized, and internationalized (what would a Frenchman call the US's EST?). For all these reasons, you should avoid them when specifying times programmatically. Luxon only supports their use in formatting.
 
 Some subtleties:
 
@@ -59,15 +59,9 @@ Luxon's API methods that take a zone as an argument all let you specify the zone
 
 ### IANA support
 
-IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs. However, your environment may not support them, in which case, you can't fiddle with the zones directly. You can always use the local zone your system is in, UTC, and any fixed-offset zone like UTC+7. You can check if your runtime environment supports IANA zones with our handy utility:
+IANA-specified zones are string identifiers like "America/New_York" or "Asia/Tokyo". Luxon gains direct support for them by abusing built-in Intl APIs.
 
-```js
-Info.features().zones; //=> true
-```
-
-If you're unsure if all your target environments (browser versions and Node versions) support this, check out the [Support Matrix](matrix.md). You can generally count on modern browsers to have this feature, except IE (it is supported in Edge). You may also [polyfill](matrix.md?id=zones) your environment.
-
-If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](validity.md) DateTime. That could be because the environment doesn't support zones at all, because for whatever reason it doesn't support that _particular_ zone, or because the zone is just bogus. Like this:
+If you specify a zone and your environment doesn't support that zone, you'll get an [invalid](validity.md) DateTime. That could be because the environment doesn't support zones at all (generally browsers older than Luxon supports), because for whatever reason it doesn't support that _particular_ zone, or because the zone is just bogus. Like this:
 
 ```js
 bogus = DateTime.local().setZone("America/Bogus");
@@ -78,12 +72,12 @@ bogus.invalidReason; //=> 'unsupported zone'
 
 ## Creating DateTimes
 
-### Local by default
+### System zone by default
 
-By default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's local zone. For example, my computer is configured to use `America/New_York`, which has an offset of -4 in May:
+By default, DateTime instances are created in the system's local zone and parsed strings are interpreted as specifying times in the system's zone. For example, my computer is configured to use `America/New_York`, which has an offset of -4 in May:
 
 ```js
-var local = DateTime.local(2017, 05, 15, 09, 10, 23);
+var local = DateTime.local(2017, 05, 15, 9, 10, 23);
 
 local.zoneName; //=> 'America/New_York'
 local.toString(); //=> '2017-05-15T09:10:23.000-04:00'
@@ -110,12 +104,12 @@ Note two things:
 1.  The date and time specified in the string was interpreted as a Parisian local time (i.e. it's the time that corresponds to what would be called 9:10 _there_).
 2.  The resulting DateTime object is in Europe/Paris.
 
-Those are conceptually independent (i.e. Luxon could have converted the time to the local zone), but it practice it's more convenient for the same option to govern both.
+Those are conceptually independent (i.e. Luxon could have converted the time to the system zone), but it practice it's more convenient for the same option to govern both.
 
 In addition, one static method, `utc()`, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:
 
 ```js
-var utc = DateTime.utc(2017, 05, 15, 09, 10, 23);
+var utc = DateTime.utc(2017, 05, 15, 9, 10, 23);
 
 utc.zoneName; //=> 'UTC'
 utc.toString(); //=> '2017-05-15T09:10:23.000Z'
@@ -218,11 +212,11 @@ dt.isOffsetFixed; //=> false
 dt.isInDST; //=> true
 ```
 
-Those are all documented in the [DateTime API docs](../class/src/datetime.js~DateTime.html).
+Those are all documented in the [DateTime API docs](https://moment.github.io/luxon/api-docs/index.html#datetime).
 
 ## DST weirdness
 
-Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This is all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and a time library has to deal with it.
+Because our ancestors were morons, they opted for a system wherein many governments shift around the local time twice a year for no good reason. And it's not like they do it in a neat, coordinated fashion. No, they do it whimsically, varying the shifts' timing from country to country (or region to region!) and from year to year. And of course, they do it the opposite way south of the Equator. This is all a tremendous waste of everyone's energy and, er, time, but it is how the world works and a date and time library has to deal with it.
 
 Most of the time, DST shifts will happen without you having to do anything about it and everything will just work. Luxon goes to some pains to make DSTs as unweird as possible. But there are exceptions. This section covers them.
 
@@ -278,7 +272,7 @@ start.plus({ hours: 24 }).hour; //=> 11, DST pushed forward an hour
 
 ## Changing the default zone
 
-By default, Luxon creates DateTimes in the system's local zone. However, you can override this behavior globally:
+By default, Luxon creates DateTimes in the system's zone. However, you can override this behavior globally:
 
 ```js
 Settings.defaultZone = "Asia/Tokyo";
