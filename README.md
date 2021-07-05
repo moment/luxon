@@ -1,6 +1,7 @@
 # Luxon
 
-[![MIT License][license-image]][license] [![Build Status][travis-image]][travis-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![PRs welcome][contributing-image]][contributing-url]
+[![MIT License][license-image]][license] [![Build Status][github-action-image]][github-action-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] [![PRs welcome][contributing-image]][contributing-url]
+![example workflow](https://github.com/moment/luxon/actions/workflows/test.yml/badge.svg)
 
 Luxon is a library for working with dates and times in JavaScript.
 
@@ -40,8 +41,8 @@ See [contributing](contributing.md).
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg
 [license]: license.md
 
-[travis-url]: http://travis-ci.com/moment/luxon
-[travis-image]: https://api.travis-ci.com/moment/luxon.svg?branch=master
+[github-action-image]: https://github.com/moment/luxon/actions/workflows/test.yml/badge.svg
+[github-action-url]: https://github.com/moment/luxon/actions/workflows/test.yml
 
 [npm-url]: https://npmjs.org/package/luxon
 [npm-version-image]: https://badge.fury.io/js/luxon.svg
