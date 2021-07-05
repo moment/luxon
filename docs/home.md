@@ -25,3 +25,5 @@ DateTime.now().setZone('America/New_York').minus({weeks:1}).endOf('day').toISO()
   * Read the [quick tour](tour.md)
   * Browse the topic docs on the left
   * Read the [api docs](api-docs/index.html ':ignore')
+
+Logo by [John Dalziel](https://github.com/crashposition)
