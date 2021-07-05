@@ -2,10 +2,7 @@ language: node_js
 node_js:
   - 15
 env:
-  - ENV LANG=en_US.utf8
-  - ENV LIMIT_JEST=yes
-  - ENV CI=yes
-  - ENV TZ=America/New_York
+  - LANG=en_US.utf8 LIMIT_JEST=yes CI=yes TZ=America/New_York
 script:
   - npm run build
   - npm run format-check

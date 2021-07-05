@@ -1,9 +1,9 @@
 const rollup = require("rollup"),
-  rollupBabel = require("rollup-plugin-babel"),
-  rollupMinify = require("rollup-plugin-babel-minify"),
+  { babel } = require("@rollup/plugin-babel"),
+  { terser } = require("rollup-plugin-terser"),
   { nodeResolve } = require("@rollup/plugin-node-resolve"),
   rollupCommonJS = require("@rollup/plugin-commonjs"),
-  UglifyES = require("uglify-es"),
+  UglifyJS = require("uglify-js"),
   fs = require("fs");
 
 // For some reason, the minifier is currently producing total giberrish, at least for the global build.
@@ -39,16 +39,17 @@ function rollupInputOpts(opts) {
 
   if (opts.compile || typeof opts.compile === "undefined") {
     inputOpts.plugins.push(
-      rollupBabel({
+      babel({
         babelrc: false,
         presets: [["@babel/preset-env", presetOpts]],
+        babelHelpers: "bundled",
       })
     );
   }
 
   if (opts.minify && TRUST_MINIFY) {
     inputOpts.plugins.push(
-      rollupMinify({
+      terser({
         comments: false,
         mangle: {
           topLevel: !opts.global,
@@ -99,7 +100,7 @@ async function buildLibrary(dest, opts) {
 
   if (opts.minify && !TRUST_MINIFY) {
     const code = fs.readFileSync(`build/${dest}/luxon.js`, "utf8"),
-      ugly = UglifyES.minify(code, {
+      ugly = UglifyJS.minify(code, {
         toplevel: !opts.global,
         output: {
           comments: false,
