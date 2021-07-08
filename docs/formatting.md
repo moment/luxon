@@ -179,6 +179,8 @@ The macro options available correspond one-to-one with the preset formats define
 | S                |              | millisecond, no padding                                        | `54`                                                          |
 | SSS              |              | millisecond, padded to 3                                       | `054`                                                         |
 | u                |              | fractional seconds, functionally identical to SSS              | `054`                                                         |
+| uu               |              | fractional seconds, between 0 and 99, padded to 2              | `05`                                                          |
+| uuu              |              | fractional seconds, between 0 and 9                            | `0`                                                           |
 | s                |              | second, no padding                                             | `4`                                                           |
 | ss               |              | second, padded to 2 padding                                    | `04`                                                          |
 | m                |              | minute, no padding                                             | `7`                                                           |
