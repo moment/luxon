@@ -2,7 +2,7 @@
 
 ## 2.0.0 (2021-07-3)
 
-See upgrading.md
+See [Upgrading section](https://github.com/moment/luxon#upgrading-to-20) in README.md
 
 ## 1.28.0 (2021-07-03)
 
