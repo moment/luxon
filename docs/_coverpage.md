@@ -2,7 +2,7 @@
 
 # Luxon <small>2.x</small>
 
-> A powerful, modern, and friendly wrapper for Javascript dates and times.
+> A powerful, modern, and friendly wrapper for JavaScript dates and times.
 
  * DateTimes, Durations, and Intervals
  * Immutable, chainable, unambiguous API.
