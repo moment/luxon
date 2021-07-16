@@ -141,6 +141,10 @@ function unitForToken(token, loc) {
           return intUnit(three);
         case "u":
           return simple(oneToNine);
+        case "uu":
+          return simple(oneOrTwo);
+        case "uuu":
+          return intUnit(one);
         // meridiem
         case "a":
           return oneOf(loc.meridiems(), 0);
