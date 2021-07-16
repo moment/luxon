@@ -29,7 +29,7 @@ Luxon, there's only one partially-supported feature, so this is currently pretty
 older browsers, so there were nuanced feature caveats. Newer versions will add more caveats as new browser capabilities
 become available and Luxon takes advantage of them if they're present.)
 
-1.  **Relative time formatting**. Luxon's support for relative time formatting (e.g. `DateTime#toRelative` and `DateTime#toRelativeCalendar`) depends on Intl.RelativeTimeFormat, which is currently only available in Chrome and Firefox. Luxon will fall back to using English if that capability is missing.
+1.  **Relative time formatting**. Luxon's support for relative time formatting (e.g. `DateTime#toRelative` and `DateTime#toRelativeCalendar`) depends on Intl.RelativeTimeFormat. Luxon will fall back to using English if that capability is missing.
 
 If the browser lacks these capabilities, Luxon tries its best:
 
