@@ -177,7 +177,7 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 
 ### Table of tokens
 
-(Examples below given for `2014-08-06T13:07:04.054` considered as a local time in America/New_York). Note that many tokens supported by the [formatter](formatting.md) are **not** supported by the parser. That includes all the "macro" formats like "D" for "localized numeric date".
+(Examples below given for `2014-08-06T13:07:04.054` considered as a local time in America/New_York). Note that many tokens supported by the [formatter](formatting.md) are **not** supported by the parser.
 
 | Standalone token | Format token | Description                                                    | Example                     |
 | ---------------- | ------------ | -------------------------------------------------------------- | --------------------------- |
