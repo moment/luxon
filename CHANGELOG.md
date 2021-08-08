@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2 (2021-08-08)
+
+Fix locale defaulting
+
 ## 2.0.0 (2021-07-3)
 
 See [Upgrading section](https://github.com/moment/luxon#upgrading-to-20) in README.md
