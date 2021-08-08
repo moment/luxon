@@ -2130,7 +2130,7 @@
       <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>)                           <span class="hljs-comment">//~&gt; 2017-03-01T00:00:00</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span>)       <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00, with a French locale</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> })     <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00, with a French locale</span></pre>
     
       
       <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>)                    <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00</span></pre>
@@ -2335,31 +2335,31 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc()                                            <span class="hljs-comment">//~&gt; now</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc()                                              <span class="hljs-comment">//~&gt; now</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>)                                        <span class="hljs-comment">//~&gt; 2017-01-01T00:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>)                                          <span class="hljs-comment">//~&gt; 2017-01-01T00:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>)                                     <span class="hljs-comment">//~&gt; 2017-03-01T00:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>)                                       <span class="hljs-comment">//~&gt; 2017-03-01T00:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>)                                 <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>)                                   <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>)                              <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>)                                <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>)                          <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>)                            <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> } )       <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z with a French locale</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> })          <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z with a French locale</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>)                      <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>)                        <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>, <span class="hljs-number">765</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span>) <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10.765Z with a French locale</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>, <span class="hljs-number">765</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10.765Z with a French locale</span></pre>
     
   
 
@@ -3006,7 +3006,7 @@
       <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;local&#x27;</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { }zone: <span class="hljs-string">&#x27;America/New_York&#x27;</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;America/New_York&#x27;</span> })</pre>
     
       
       <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">weekYear</span>: <span class="hljs-number">2016</span>, <span class="hljs-attr">weekNumber</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">weekday</span>: <span class="hljs-number">3</span> }).toISODate() <span class="hljs-comment">//=&gt; &#x27;2016-01-13&#x27;</span></pre>
@@ -12920,10 +12920,10 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnit(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 60 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnits(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 60 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnit(<span class="hljs-function">(<span class="hljs-params">x, u</span>) =&gt;</span> u === <span class="hljs-string">&quot;hour&quot;</span> ? x * <span class="hljs-number">2</span> : x) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 30 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnits(<span class="hljs-function">(<span class="hljs-params">x, u</span>) =&gt;</span> u === <span class="hljs-string">&quot;hour&quot;</span> ? x * <span class="hljs-number">2</span> : x) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 30 }</span></pre>
     
   
 
