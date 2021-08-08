@@ -167,8 +167,6 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
       inst = DateTime.fromObject(parsed, {
         ...opts,
         zone: interpretationZone,
-        // setZone is a valid option in the calling methods, but not in fromObject
-        setZone: undefined,
       });
     return setZone ? inst : inst.setZone(zone);
   } else {
