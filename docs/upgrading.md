@@ -73,6 +73,8 @@ Settings.defaultZone = IANAZone.create("America/New_York"); // or a Zone instanc
 Settings.defaultZone //=> a Zone instance
 ```
 
+The most significant breaking change here is that `Settings.defaultZoneName` no longer exists.
+
 #### Other breaking changes
 
  * `DateTime#toObject` no longer accepts an `includeConfig` option
