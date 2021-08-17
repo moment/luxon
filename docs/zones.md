@@ -15,7 +15,7 @@ All those things will make it less likely you ever need to work explicitly with 
 
 ## Terminology
 
-Bear with me here. Time zones are pain in the ass. Luxon has lots of tools to deal with them, but there's no getting around the fact that they're complicated. The terminology for time zones and offsets isn't well-established. But let's try to impose some order:
+Bear with me here. Time zones are a pain in the ass. Luxon has lots of tools to deal with them, but there's no getting around the fact that they're complicated. The terminology for time zones and offsets isn't well-established. But let's try to impose some order:
 
 1.  An **offset** is a difference between the local time and the UTC time, such as +5 (hours) or -12:30. They may be expressed directly in minutes, or in hours, or in a combination of minutes and hours. Here we'll use hours.
 1.  A **time zone** is a set of rules, associated with a geographical location, that determines the local offset from UTC at any given time. The best way to identify a zone is by its IANA string, such as "America/New_York". That zone says something to the effect of "The offset is -5, except between March and November, when it's -4".
@@ -36,7 +36,7 @@ If all this seems too terse, check out these articles. The terminology in them i
 
 Luxon's DateTime class supports zones directly. By default, a date created in Luxon is "in" the local time zone of the machine it's running on. By "in" we mean that the DateTime has, as one of its properties, an associated zone.
 
-It's important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you're in; the zone is really piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon's behavior too. It just doesn't change _what time it is_.
+It's important to remember that a DateTime represents a specific instant in time and that instant has an unambiguous meaning independent of what time zone you're in; the zone is really a piece of social metadata that affects how humans interact with the time, rather than a fact about the passing of time itself. Of course, Luxon is a library for humans, so that social metadata affects Luxon's behavior too. It just doesn't change _what time it is_.
 
 Specifically, a DateTime's zone affects its behavior in these ways:
 
@@ -104,7 +104,7 @@ Note two things:
 1.  The date and time specified in the string was interpreted as a Parisian local time (i.e. it's the time that corresponds to what would be called 9:10 _there_).
 2.  The resulting DateTime object is in Europe/Paris.
 
-Those are conceptually independent (i.e. Luxon could have converted the time to the system zone), but it practice it's more convenient for the same option to govern both.
+Those are conceptually independent (i.e. Luxon could have converted the time to the system zone), but in practice it's more convenient for the same option to govern both.
 
 In addition, one static method, `utc()`, specifically interprets the input as being specified in UTC. It also returns a DateTime in UTC:
 
