@@ -21,9 +21,9 @@ You may wish to alias the classes you use:
 var DateTime = luxon.DateTime;
 ```
 
-## Node
+## Node.js
 
-Supports Node 6+. Install via NPM:
+Supports Node.js 6+. Install via NPM:
 
 ```
 npm install --save luxon
@@ -35,12 +35,12 @@ const { DateTime } = require("luxon");
 
 If you want to work with locales, you need ICU support:
 
- 1. **For Node 13+, it comes built-in, no action necessary**
- 2. For older Nodes (only 12 is supported), you need to install it yourself:
-    1. Install a build of Node with full ICU baked in, such as via nvm: nvm install <version> -s --with-intl=full-icu --download=all or brew: brew install node --with-full-icu
-    2. Install the ICU data externally and point Node to it. The instructions on how to do that are below.
+ 1. **For Node.js 13+, it comes built-in, no action necessary**
+ 2. For older versions of Node.js (only 12 is supported), you need to install it yourself:
+    1. Install a build of Node.js with full ICU baked in, such as via nvm: nvm install <version> -s --with-intl=full-icu --download=all or brew: brew install node --with-full-icu
+    2. Install the ICU data externally and point Node.js to it. The instructions on how to do that are below.
 
-The instructions for using full-icu as a package are a little confusing. Node can't automatically discover that you've installed it, so you need to tell it where to find the data, like this:
+The instructions for using full-icu as a package are a little confusing. Node.js can't automatically discover that you've installed it, so you need to tell it where to find the data, like this:
 
 ```
 npm install full-icu
