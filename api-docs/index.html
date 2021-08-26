@@ -18248,7 +18248,7 @@ See <a href="Info#weekdays">Info#weekdays</a></p>
   
 
   <p>Return the set of available features in this environment.
-Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.
+Some features of Luxon are not available in all environments. For example, on older browsers, relative time formatting support is not available. Use this function to figure out if that's the case.
 Keys:</p>
 <ul>
 <li><code>relative</code>: whether this environment supports relative time formatting</li>
@@ -18286,7 +18286,7 @@ Keys:</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'>Info.features() <span class="hljs-comment">//=&gt; { intl: true, intlTokens: false, zones: true, relative: false }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.features() <span class="hljs-comment">//=&gt; { relative: false }</span></pre>
     
   
 

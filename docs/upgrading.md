@@ -78,7 +78,7 @@ The most significant breaking change here is that `Settings.defaultZoneName` no 
 #### Other breaking changes
 
  * `DateTime#toObject` no longer accepts an `includeConfig` option
- * `resolvedLocalOpts` is now `resolvedLocaleOptions`
+ * `resolvedLocaleOpts` is now `resolvedLocaleOptions`
  * `Zone#universal` is now `Zone#isUniversal`
 
 ### Non-breaking changes
