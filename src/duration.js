@@ -213,6 +213,97 @@ export default class Duration {
   }
 
   /**
+   * Create Duration from a number of seconds.
+   * @param {number} count of seconds
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromSeconds(count, opts) {
+    return Duration.fromObject({ seconds: count }, opts);
+  }
+
+  /**
+   * Create Duration from a number of minutes.
+   * @param {number} count of minutes
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromMinutes(count, opts) {
+    return Duration.fromObject({ minutes: count }, opts);
+  }
+
+  /**
+   * Create Duration from a number of hours.
+   * @param {number} count of hours
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromHours(count, opts) {
+    return Duration.fromObject({ hours: count }, opts);
+  }
+
+  /**
+   * Create Duration from a number of days.
+   * @param {number} count of days
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromDays(count, opts) {
+    return Duration.fromObject({ days: count }, opts);
+  }
+
+  /**
+   * Create Duration from a number of weeks.
+   * @param {number} count of milliseconds
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromWeeks(count, opts) {
+    return Duration.fromObject({ weeks: count }, opts);
+  }
+
+  /**
+   * Create Duration from a number of months.
+   * @param {number} count of months
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromMonths(count, opts) {
+    return Duration.fromObject({ months: count }, opts);
+  }
+
+  /**
+   * Create Duration from a number of years.
+   * @param {number} count of years
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromYears(count, opts) {
+    return Duration.fromObject({ years: count }, opts);
+  }
+
+  /**
    * Create a Duration from a JavaScript object with keys like 'years' and 'hours'.
    * If this object is empty then a zero milliseconds duration is returned.
    * @param {Object} obj - the object to create the DateTime from
