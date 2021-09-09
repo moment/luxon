@@ -97,7 +97,7 @@ export default class IANAZone extends Zone {
    * @return {boolean}
    */
   static isValidZone(zone) {
-    if (typeof zone !== "string") {
+    if (!zone) {
       return false;
     }
     try {
