@@ -85,28 +85,28 @@ dt.toLocaleString(newFormat); //=>  'Thursday, 4/20/2017'
 
 Here's the full set of provided presets using the October 14, 1983 at `13:30:23` as an example.
 
-| Name                        | Description                                                        | Example in en_US                                           | Example in fr                                            |
-| --------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- | -------------------------------------------------------- |
-| DATE_SHORT                  | short date                                                         | 10/14/1983                                                 | 14/10/1983                                               |
-| DATE_MED                    | abbreviated date                                                   | Oct 14, 1983                                               | 14 oct. 1983                                             |
-| DATE_FULL                   | full date                                                          | October 14, 1983                                           | 14 octobre 1983                                          |
-| DATE_HUGE                   | full date with weekday                                             | Tuesday, October 14, 1983                                  | vendredi 14 octobre 1983                                 |
-| TIME_SIMPLE                 | time                                                               | 1:30 PM                                                    | 13:30                                                    |
-| TIME_WITH_SECONDS           | time with seconds                                                  | 1:30:23 PM                                                 | 13:30:23                                                 |
-| TIME_WITH_SHORT_OFFSET      | time with seconds and abbreviated named offset                     | 1:30:23 PM EDT                                             | 13:30:23 UTC−4                                           |
-| TIME_WITH_LONG_OFFSET       | time with seconds and full named offset                            | 1:30:23 PM Eastern Daylight Time                           | 13:30:23 heure d’été de l’Est                            |
-| TIME_24_SIMPLE              | 24-hour time                                                       | 13:30                                                      | 13:30                                                    |
-| TIME_24_WITH_SECONDS        | 24-hour time with seconds                                          | 13:30:23                                                   | 13:30:23                                                 |
-| TIME_24_WITH_SHORT_OFFSET   | 24-hour time with seconds and abbreviated named offset             | 13:30:23 EDT                                               | 13:30:23 UTC−4                                           |
-| TIME_24_WITH_LONG_OFFSET    | 24-hour time with seconds and full named offset                    | 13:30:23 Eastern Daylight Time                             | 13:30:23 heure d’été de l’Est                            |
-| DATETIME_SHORT              | short date & time                                                  | 10/14/1983, 1:30 PM                                        | 14/10/1983 à 13:30                                       |
-| DATETIME_MED                | abbreviated date & time                                            | Oct 14, 1983, 1:30 PM                                      | 14 oct. 1983 à 13:30                                     |
-| DATETIME_FULL               | full date and time with abbreviated named offset                   | October 14, 1983, 1:30 PM EDT                              | 14 octobre 1983 à 13:30 UTC−4                            |
-| DATETIME_HUGE               | full date and time with weekday and full named offset              | Friday, October 14, 1983, 1:30 PM Eastern Daylight Time    | vendredi 14 octobre 1983 à 13:30 heure d’été de l’Est    |
-| DATETIME_SHORT_WITH_SECONDS | short date & time with seconds                                     | 10/14/1983, 1:30:23 PM                                     | 14/10/1983 à 13:30:23                                    |
-| DATETIME_MED_WITH_SECONDS   | abbreviated date & time with seconds                               | Oct 14, 1983, 1:30:23 PM                                   | 14 oct. 1983 à 13:30:23                                  |
-| DATETIME_FULL_WITH_SECONDS  | full date and time with abbreviated named offset with seconds      | October 14, 1983, 1:30:23 PM EDT                           | 14 octobre 1983 à 13:30:23 UTC−4                         |
-| DATETIME_HUGE_WITH_SECONDS  | full date and time with weekday and full named offset with seconds | Friday, October 14, 1983, 1:30:23 PM Eastern Daylight Time | vendredi 14 octobre 1983 à 13:30:23 heure d’été de l’Est |
+| Name                         | Description                                                        | Example in en_US                                             | Example in fr                                              |
+| ---------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| `DATE_SHORT`                 | short date                                                         | `10/14/1983`                                                 | `14/10/1983`                                               |
+| `DATE_MED`                   | abbreviated date                                                   | `Oct 14, 1983`                                               | `14 oct. 1983`                                             |
+| `DATE_FULL`                  | full date                                                          | `October 14, 1983`                                           | `14 octobre 1983`                                          |
+| `DATE_HUGE`                  | full date with weekday                                             | `Tuesday, October 14, 1983`                                  | `vendredi 14 octobre 1983`                                 |
+| `TIME_SIMPLE`                | time                                                               | `1:30 PM`                                                    | `13:30`                                                    |
+| `TIME_WITH_SECONDS`          | time with seconds                                                  | `1:30:23 PM`                                                 | `13:30:23`                                                 |
+| `TIME_WITH_SHORT_OFFSET`     | time with seconds and abbreviated named offset                     | `1:30:23 PM EDT`                                             | `13:30:23 UTC−4`                                           |
+| `TIME_WITH_LONG_OFFSET`      | time with seconds and full named offset                            | `1:30:23 PM Eastern Daylight Time`                           | `13:30:23 heure d’été de l’Est`                            |
+| `TIME_24_SIMPLE`             | 24-hour time                                                       | `13:30`                                                      | `13:30`                                                    |
+| `TIME_24_WITH_SECONDS`       | 24-hour time with seconds                                          | `13:30:23`                                                   | `13:30:23`                                                 |
+| `TIME_24_WITH_SHORT_OFFSET`  | 24-hour time with seconds and abbreviated named offset             | `13:30:23 EDT`                                               | `13:30:23 UTC−4`                                           |
+| `TIME_24_WITH_LONG_OFFSET`   | 24-hour time with seconds and full named offset                    | `13:30:23 Eastern Daylight Time`                             | `13:30:23 heure d’été de l’Est`                            |
+| `DATETIME_SHORT`             | short date & time                                                  | `10/14/1983, 1:30 PM`                                        | `14/10/1983 à 13:30`                                       |
+| `DATETIME_MED`               | abbreviated date & time                                            | `Oct 14, 1983, 1:30 PM`                                      | `14 oct. 1983 à 13:30`                                     |
+| `DATETIME_FULL`              | full date and time with abbreviated named offset                   | `October 14, 1983, 1:30 PM EDT`                              | `14 octobre 1983 à 13:30 UTC−4`                            |
+| `DATETIME_HUGE`              | full date and time with weekday and full named offset              | `Friday, October 14, 1983, 1:30 PM Eastern Daylight Time`    | `vendredi 14 octobre 1983 à 13:30 heure d’été de l’Est`    |
+| `DATETIME_SHORT_WITH_SECONDS`| short date & time with seconds                                     | `10/14/1983, 1:30:23 PM`                                     | `14/10/1983 à 13:30:23`                                    |
+| `DATETIME_MED_WITH_SECONDS`  | abbreviated date & time with seconds                               | `Oct 14, 1983, 1:30:23 PM`                                   | `14 oct. 1983 à 13:30:23`                                  |
+| `DATETIME_FULL_WITH_SECONDS` | full date and time with abbreviated named offset with seconds      | `October 14, 1983, 1:30:23 PM EDT`                           | `14 octobre 1983 à 13:30:23 UTC−4`                         |
+| `DATETIME_HUGE_WITH_SECONDS` | full date and time with weekday and full named offset with seconds | `Friday, October 14, 1983, 1:30:23 PM Eastern Daylight Time` | `vendredi 14 octobre 1983 à 13:30:23 heure d’été de l’Est` |
 
 ### Intl
 
