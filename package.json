@@ -19,6 +19,7 @@
     "benchmark": "node benchmarks/index.js",
     "codecov": "codecov",
     "prepare": "husky install",
+    "clean": "rm -Rf build/* ; rm -Rf dist/*",
     "build": "yarn run tsc; yarn run dist",
     "dist": "esbuild build/src/luxon.js --bundle --format=esm --sourcemap --outfile=dist/luxon.js",
     "tsc": "tsc",
