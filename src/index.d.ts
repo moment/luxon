@@ -12,6 +12,6 @@
 //                 Carson Full <https://github.com/carsonf>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-export * from "./src/luxon";
+export * from "./luxon";
 
 export as namespace luxon;
