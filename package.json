@@ -53,6 +53,7 @@
   "module": "src/luxon.js",
   "exports": "./src/luxon.js",
   "types": "./src/index.d.ts",
+  "type": "module",
   "browser": "build/cjs-browser/luxon.js",
   "jsdelivr": "build/global/luxon.min.js",
   "unpkg": "build/global/luxon.min.js",
