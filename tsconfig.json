@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "importsNotUsedAsValues": "remove",
+    "incremental": true,
+    "isolatedModules": true,
+    "lib": ["ESNext", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "noEmit": false,
+
+    "outDir": "build",
+    "plugins": [],
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "target": "ESNext",
+    "typeRoots": ["node_modules/@types"],
+    "watch": false
+  },
+  "exclude": ["**/node_modules", "**/.*/"],
+  "include": ["src", "test"]
+}
