@@ -1,5 +1,5 @@
 /* global test expect */
-import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { FixedOffsetZone, IANAZone } from "../../mod/Module";
 import { withoutIntl } from "../helpers";
 
 test("IANAZone.create returns a singleton per zone name", () => {

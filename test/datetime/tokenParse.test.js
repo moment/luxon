@@ -1,8 +1,8 @@
 /* global test expect */
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../mod/Module";
 import Helpers from "../helpers";
 
-import { ConflictingSpecificationError } from "../../src/errors";
+import { ConflictingSpecificationError } from "../../mod/errors";
 
 //------
 // .fromFormat

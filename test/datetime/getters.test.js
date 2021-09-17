@@ -1,7 +1,7 @@
 /* global test expect */
 
-import { DateTime } from "../../src/luxon";
-import Settings from "../../src/settings";
+import { DateTime } from "../../mod/Module";
+import Settings from "../../mod/settings";
 
 const dateTime = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123)),
   utc = DateTime.fromMillis(Date.UTC(1982, 4, 25, 9, 23, 54, 123)).toUTC(),

@@ -1,4 +1,4 @@
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../mod/Module";
 
 test("Duration prototype properties should not throw when addressed", () => {
   const d = Duration.fromObject({ hours: 1 });

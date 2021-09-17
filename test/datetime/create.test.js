@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../mod/Module";
 import Helpers from "../helpers";
 
 const withDefaultLocale = Helpers.withDefaultLocale,

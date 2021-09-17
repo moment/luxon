@@ -10,7 +10,6 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "noEmit": false,
-
     "outDir": "build",
     "plugins": [],
     "skipDefaultLibCheck": true,
@@ -21,5 +20,5 @@
     "watch": false
   },
   "exclude": ["**/node_modules", "**/.*/"],
-  "include": ["src", "test"]
+  "include": ["mod", "test"]
 }

@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../mod/Module";
 
 test("Interval prototype properties should not throw when addressed", () => {
   const i = DateTime.fromISO("2018-01-01").until(DateTime.fromISO("2018-01-02"));

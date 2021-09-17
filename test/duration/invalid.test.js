@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Duration, DateTime, Settings } from "../../src/luxon";
+import { Duration, DateTime, Settings } from "../../mod/Module";
 
 test("Explicitly invalid durations are invalid", () => {
   const dur = Duration.invalid("just because", "seriously, just because");

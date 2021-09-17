@@ -1,5 +1,5 @@
 /* global test expect */
-import { InvalidZone } from "../../src/luxon";
+import { InvalidZone } from "../../mod/Module";
 
 test("InvalidZone", () => {
   const zone = new InvalidZone("foo");

@@ -1,5 +1,5 @@
 /* global test expect */
-import { Interval, DateTime } from "../../src/luxon";
+import { Interval, DateTime } from "../../mod/Module";
 
 const fromISOs = (s, e) =>
     DateTime.fromISO(s, { setZone: true }).until(DateTime.fromISO(e, { setZone: true })),

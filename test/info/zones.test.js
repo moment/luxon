@@ -7,7 +7,7 @@ import {
   InvalidZone,
   SystemZone,
   Settings,
-} from "../../src/luxon";
+} from "../../mod/Module";
 
 const Helpers = require("../helpers");
 

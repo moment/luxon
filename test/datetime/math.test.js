@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Duration } from "../../src/luxon";
+import { DateTime, Duration } from "../../mod/Module";
 
 function createDateTime() {
   return DateTime.fromObject({

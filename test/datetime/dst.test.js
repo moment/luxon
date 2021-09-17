@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime, Settings } from "../../mod/Module";
 
 const local = (year, month, day, hour) =>
   DateTime.fromObject({ year, month, day, hour }, { zone: "America/New_York" });

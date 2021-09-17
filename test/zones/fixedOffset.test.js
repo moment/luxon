@@ -1,5 +1,5 @@
 /* global test expect */
-import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { FixedOffsetZone, IANAZone } from "../../mod/Module";
 
 test("FixedOffsetZone.utcInstance returns a singleton", () => {
   expect(FixedOffsetZone.utcInstance).toBe(FixedOffsetZone.utcInstance);

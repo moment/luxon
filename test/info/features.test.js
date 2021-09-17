@@ -1,5 +1,5 @@
 /* global test expect */
-import { Info } from "../../src/luxon";
+import { Info } from "../../mod/Module";
 
 const Helpers = require("../helpers");
 

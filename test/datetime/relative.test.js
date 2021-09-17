@@ -1,4 +1,4 @@
-import DateTime from "../../src/datetime";
+import DateTime from "../../mod/datetime";
 
 const Helpers = require("../helpers");
 

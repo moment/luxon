@@ -1,5 +1,5 @@
 /* global test */
-import { DateTime, Settings } from "../src/luxon";
+import { DateTime, Settings } from "../mod/Module";
 
 exports.withoutRTF = function (name, f) {
   const fullName = `With no RelativeTimeFormat support, ${name}`;

@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { formatRelativeTime } from "../../src/impl/english";
+import { formatRelativeTime } from "../../mod/impl/english";
 
 test("today", () => {
   expect(formatRelativeTime("days", 0, "auto")).toBe("today");

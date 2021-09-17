@@ -1,5 +1,5 @@
 /* global test expect */
-import { SystemZone } from "../../src/luxon";
+import { SystemZone } from "../../mod/Module";
 
 test("SystemZone.instance returns a singleton", () => {
   expect(SystemZone.instance).toBe(SystemZone.instance);

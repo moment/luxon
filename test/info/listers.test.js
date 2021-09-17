@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Info } from "../../src/luxon";
+import { Info } from "../../mod/Module";
 
 import Helpers from "../helpers";
 const withDefaultLocale = Helpers.withDefaultLocale;

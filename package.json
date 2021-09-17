@@ -11,19 +11,19 @@
   "scripts": {
     "jest": "jest",
     "test": "jest --coverage",
-    "api-docs": "mkdir -p build && documentation build src/luxon.js -f html -o build/api-docs",
+    "api-docs": "mkdir -p build && documentation build mod/Main.js -f html -o build/api-docs",
     "copy-site": "mkdir -p build && rsync -a docs/ build/docs && rsync -a site/ build",
     "site": "npm run api-docs && npm run copy-site",
-    "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
-    "format-check": "prettier --check 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
+    "format": "prettier --write 'mod/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
+    "format-check": "prettier --check 'mod/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "node benchmarks/index.js",
     "codecov": "codecov",
     "prepare": "husky install",
     "clean": "rm -Rf build/* ; rm -Rf dist/*",
-    "build": "yarn run tsc; yarn run dist",
-    "dist": "esbuild build/src/luxon.js --bundle --format=esm --sourcemap --outfile=dist/luxon.js",
-    "tsc": "tsc",
-    "watch": "watch 'yarn run build' ./src"
+    "build": "yarn run compile; yarn run dist",
+    "compile": "tsc ; copyfiles -u 1 \"mod/**/*.d.ts\" build/mod",
+    "dist": "esbuild build/mod/Main.js --bundle --format=esm --sourcemap --outfile=dist/Main.js ; copyfiles -u 2 \"build/mod/**/*.d.ts\" dist",
+    "watch": "watch 'yarn run build' ./mod"
   },
   "lint-staged": {
     "*.{js,json}": [
@@ -33,6 +33,7 @@
   "devDependencies": {
     "benchmark": "latest",
     "codecov": "latest",
+    "copyfiles": "^2.4.1",
     "documentation": "latest",
     "fs-extra": "^6.0.1",
     "husky": "^7.0.0",
@@ -42,13 +43,12 @@
     "typescript": "^4.4.3",
     "uglify-js": "^3.13.10"
   },
-  "exports": "./dist/luxon.js",
-  "types": "./src/index.d.ts",
+  "exports": "./dist/Main.js",
+  "types": "./dist/Main.d.ts",
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
   "files": [
-    "dist",
-    "src"
+    "dist"
   ]
 }

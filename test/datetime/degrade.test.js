@@ -1,5 +1,5 @@
 /* global expect */
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../mod/Module";
 
 const Helpers = require("../helpers");
 

@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../mod/Module";
 
 const dtMaker = () =>
     DateTime.fromObject(

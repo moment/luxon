@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime, Settings } from "../../mod/Module";
 
 const organic1 = DateTime.utc(2014, 13, 33),
   // not an actual Wednesday

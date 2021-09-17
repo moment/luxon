@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../mod/Module";
 
 test("DateTime prototype properties should not throw when accessed", () => {
   const d = DateTime.now();

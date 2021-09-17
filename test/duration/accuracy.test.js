@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../mod/Module";
 
 const convert = (amt, from, to, accuracy) =>
   Duration.fromObject({ [from]: amt }, { conversionAccuracy: accuracy }).as(to);

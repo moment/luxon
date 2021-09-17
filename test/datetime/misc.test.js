@@ -1,5 +1,5 @@
 /* global test expect */
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../mod/Module";
 
 // you hate to see a class like this, but here we are
 

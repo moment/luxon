@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime, Settings } from "../../mod/Module";
 
 var Helpers = require("../helpers");
 
