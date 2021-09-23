@@ -211,7 +211,7 @@ These are always true and you can roll them up and down with consistency (e.g. `
 These should match your intuition and for most purposes they work well. But they're not just wrong; they're not even self-consistent:
 
 ```js
-dur.shiftTo('months').shiftTo('days').as('years') //=> 0.9863013698630136
+Duration.fromObject({ years:1 }).shiftTo('months').shiftTo('days').as('years') //=> 0.9863013698630136
 ```
 
 This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:
