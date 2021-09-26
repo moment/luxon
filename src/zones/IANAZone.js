@@ -97,6 +97,9 @@ export default class IANAZone extends Zone {
    * @return {boolean}
    */
   static isValidZone(zone) {
+    if (!zone) {
+      return false;
+    }
     try {
       new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
       return true;

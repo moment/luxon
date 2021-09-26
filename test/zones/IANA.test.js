@@ -29,6 +29,9 @@ test("IANAZone.isValidZone", () => {
   expect(IANAZone.isValidZone("Fantasia/Castle")).toBe(false);
   expect(IANAZone.isValidZone("Sport~~blorp")).toBe(false);
   expect(IANAZone.isValidZone("")).toBe(false);
+  expect(IANAZone.isValidZone(undefined)).toBe(false);
+  expect(IANAZone.isValidZone(null)).toBe(false);
+  expect(IANAZone.isValidZone(4)).toBe(false);
 });
 
 test("IANAZone.parseGMTOffset returns a number for a valid input", () => {
