@@ -175,8 +175,10 @@ test("DateTime.fromFormat() parses fractional seconds", () => {
   expect(DateTime.fromFormat("1", "uu").millisecond).toBe(100);
   expect(DateTime.fromFormat("12", "uu").millisecond).toBe(120);
   expect(DateTime.fromFormat("02", "uu").millisecond).toBe(20);
+  expect(DateTime.fromFormat("-33", "uu").isValid).toBe(false);
 
   expect(DateTime.fromFormat("1", "uuu").millisecond).toBe(100);
+  expect(DateTime.fromFormat("-2", "uuu").isValid).toBe(false);
 });
 
 test("DateTime.fromFormat() parses weekdays", () => {
