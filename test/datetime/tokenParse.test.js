@@ -18,6 +18,12 @@ test("DateTime.fromFormat() parses basic times", () => {
   expect(i.millisecond).toBe(445);
 });
 
+test("DateTime.fromFormat() yields Invalid reason 'unparseable' for incompatible formats", () => {
+  const i = DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy");
+  expect(i.invalid).not.toBeNull;
+  expect(i.invalid.reason).toEqual("unparsable");
+});
+
 test("DateTime.fromFormat() parses with variable-length input", () => {
   let i = DateTime.fromFormat("1982/05/03 09:07:05.004", "y/M/d H:m:s.S");
   expect(i.year).toBe(1982);
@@ -201,6 +207,22 @@ test("DateTime.fromFormat() parses eras", () => {
 
   dt = DateTime.fromFormat("0206 Before Christ", "yyyy GG");
   expect(dt.year).toEqual(-206);
+});
+
+test("DateTime.fromFormat() parses variable-length days", () => {
+  let i = DateTime.fromFormat("Mar 3, 2020", "MMM d, yyyy");
+  expect(i.day).toBe(3);
+
+  i = DateTime.fromFormat("Mar 13, 2020", "MMM d, yyyy");
+  expect(i.day).toBe(13);
+});
+
+test("DateTime.fromFormat() parses fixed-length days", () => {
+  let i = DateTime.fromFormat("Mar 03, 2020", "MMM dd, yyyy");
+  expect(i.day).toBe(3);
+
+  i = DateTime.fromFormat("Mar 13, 2020", "MMM dd, yyyy");
+  expect(i.day).toBe(13);
 });
 
 test("DateTime.fromFormat() parses standalone month names", () => {
