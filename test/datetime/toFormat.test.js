@@ -35,6 +35,18 @@ test("DateTime#toFormat('u') returns fractional seconds", () => {
   expect(dt.set({ millisecond: 80 }).toFormat("u")).toBe("080"); // I think this is OK
 });
 
+test("DateTime#toFormat('uu') returns fractional seconds as two digits", () => {
+  expect(dt.toFormat("uu")).toBe("12");
+  expect(dt.set({ millisecond: 82 }).toFormat("uu")).toBe("08");
+  expect(dt.set({ millisecond: 789 }).toFormat("uu")).toBe("78");
+});
+
+test("DateTime#toFormat('uuu') returns fractional seconds as one digit", () => {
+  expect(dt.toFormat("uuu")).toBe("1");
+  expect(dt.set({ millisecond: 82 }).toFormat("uuu")).toBe("0");
+  expect(dt.set({ millisecond: 789 }).toFormat("uuu")).toBe("7");
+});
+
 test("DateTime#toFormat('S') returns the millisecond", () => {
   expect(dt.toFormat("S")).toBe("123");
   expect(dt.reconfigure({ locale: "bn" }).toFormat("S")).toBe("১২৩");
