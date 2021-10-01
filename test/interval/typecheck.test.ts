@@ -1,0 +1,26 @@
+/* global test expect */
+
+import { Interval, DateTime } from "../../src/luxon";
+
+//------
+// #isInterval
+//-------
+test("Interval.isInterval return true for valid duration", () => {
+  const int = Interval.fromDateTimes(DateTime.now(), DateTime.now());
+  expect(Interval.isInterval(int)).toBe(true);
+});
+
+test("Interval.isInterval return true for invalid duration", () => {
+  const int = Interval.invalid("because");
+  expect(Interval.isInterval(int)).toBe(true);
+});
+
+test("Interval.isInterval return false for primitives", () => {
+  expect(Interval.isInterval({})).toBe(false);
+  // @ts-expect-error test
+  expect(Interval.isInterval(1)).toBe(false);
+  // @ts-expect-error test
+  expect(Interval.isInterval("")).toBe(false);
+  // @ts-expect-error test
+  expect(Interval.isInterval()).toBe(false);
+});
