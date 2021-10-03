@@ -2,7 +2,7 @@
 
 Luxon is a library that makes it easier to work with dates and times in JavaScript. If you want, add and subtract them, format and parse them, ask them hard questions, and so on, Luxon provides a much easier and comprehensive interface than the native types it wraps. We're going to talk about the most immediately useful subset of that interface.
 
-This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to [dive into them](../identifiers.html).
+This is going to be a bit brisk, but keep in mind that the API docs are comprehensive, so if you want to know more, feel free to [dive into them](https://moment.github.io/luxon/api-docs/index.html).
 
 ## Your first DateTime
 
