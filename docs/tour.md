@@ -175,7 +175,7 @@ The Duration class represents a quantity of time such as "2 hours and 7 minutes"
 var dur = Duration.fromObject({ hours: 2, minutes: 7 });
 ```
 
-They can be add or subtracted from DateTimes like this:
+They can be added or subtracted from DateTimes like this:
 
 ```js
 dt.plus(dur);
