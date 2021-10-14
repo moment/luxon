@@ -53,7 +53,7 @@ And under the covers, that's more or less what Luxon does too. It doesn't boil t
 
 There's a whole section about this in the [time zones documentation](zones.md?id=math-across-dsts). But here's a quick example (Spring Forward is early on March 12 in my time zone):
 
-```
+```js
 var start = DateTime.local(2017, 3, 11, 10);
 start.hour                          //=> 10, just for comparison
 start.plus({days: 1}).hour          //=> 10, stayed the same
