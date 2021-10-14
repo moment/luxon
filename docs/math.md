@@ -80,7 +80,7 @@ This isn't as simple as it looks. For example, what should you expect this to do
 DateTime.fromISO('2017-04-30').plus({months: 1, days: 1}).toISODate();
 ```
 
-If the day is added first, we'll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we'll an intermediate value of May 30 and day after that is May 31. (See "Calendar math vs time math above if this is confusing.) So the order matters.
+If the day is added first, we'll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we'll an intermediate value of May 30 and day after that is May 31. (See "Calendar math vs time math" above if this is confusing.) So the order matters.
 
 Luxon has a simple rule for this: **math is done from highest order to lowest order**. So the result of the example above is May 31. This rule isn't logically necessary, but it does seem to reflect what people mean. Of course, Luxon can't enforce this rule if you do the math in separate operations:
 
