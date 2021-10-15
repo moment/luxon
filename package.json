@@ -55,7 +55,7 @@
   "jsdelivr": "build/global/luxon.min.js",
   "unpkg": "build/global/luxon.min.js",
   "engines": {
-    "node": "*"
+    "node": ">=12"
   },
   "files": [
     "build/node/luxon.js",
