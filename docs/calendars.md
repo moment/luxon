@@ -47,6 +47,7 @@ DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);
 | indian   | Asvina 2, 1939 Saka      |
 | islamic  | Muharram 4, 1439 AH      |
 | islamicc | Muharram 3, 1439 AH      |
+| iso8601  | September 24, 2017       |
 | japanese | September 24, 29 Heisei  |
 | persian  | Mehr 2, 1396 AP          |
 | roc      | September 24, 106 Minguo |
