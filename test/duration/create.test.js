@@ -90,3 +90,41 @@ test("Duration.fromObject is valid if providing options only", () => {
   expect(dur.milliseconds).toBe(0);
   expect(dur.isValid).toBe(true);
 });
+
+//------
+// .fromDurationLike()
+//-------
+
+it("Duration.fromDurationLike returns a Duration from millis", () => {
+  expect.assertions(2);
+
+  const result = Duration.fromDurationLike(1000);
+
+  expect(result).toBeInstanceOf(Duration);
+  expect(result).toMatchInlineSnapshot(`"PT1S"`);
+});
+
+it("Duration.fromDurationLike returns a Duration from object", () => {
+  expect.assertions(2);
+
+  const result = Duration.fromDurationLike({ hours: 1 });
+
+  expect(result).toBeInstanceOf(Duration);
+  expect(result.toObject()).toStrictEqual({ hours: 1 });
+});
+
+it("Duration.fromDurationLike returns passed Duration", () => {
+  expect.assertions(1);
+
+  const duration = Duration.fromObject({ hours: 1 });
+  const result = Duration.fromDurationLike(duration);
+
+  expect(result).toStrictEqual(duration);
+});
+
+it("Duration.fromDurationLike returns passed Duration", () => {
+  expect.assertions(1);
+
+  expect(() => Duration.fromDurationLike("foo")).toThrow();
+  expect(() => Duration.fromDurationLike(null)).toThrow();
+});

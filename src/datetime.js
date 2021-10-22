@@ -1,4 +1,4 @@
-import Duration, { friendlyDuration } from "./duration.js";
+import Duration from "./duration.js";
 import Interval from "./interval.js";
 import Settings from "./settings.js";
 import Info from "./info.js";
@@ -1382,7 +1382,7 @@ export default class DateTime {
    */
   plus(duration) {
     if (!this.isValid) return this;
-    const dur = friendlyDuration(duration);
+    const dur = Duration.fromDurationLike(duration);
     return clone(this, adjustTime(this, dur));
   }
 
@@ -1394,7 +1394,7 @@ export default class DateTime {
   */
   minus(duration) {
     if (!this.isValid) return this;
-    const dur = friendlyDuration(duration).negate();
+    const dur = Duration.fromDurationLike(duration).negate();
     return clone(this, adjustTime(this, dur));
   }
 
