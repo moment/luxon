@@ -173,8 +173,8 @@ Finally, you can diff using multiple units:
 
 ```js
 var end = DateTime.fromISO('2017-03-13');
-var start = DateTime.fromISO('2017-02-15');
-end.diff(start, ['months', 'days']) //=> { months: 1, days: 2 }
+var start = DateTime.fromISO('2017-02-11');
+end.diff(start, ['months', 'days']).toObject() //=> { months: 1, days: 2 }
 ```
 
 ### Casual vs longterm conversion accuracy
