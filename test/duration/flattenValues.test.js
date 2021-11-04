@@ -1,4 +1,4 @@
-import { flattenValues, casualMatrix } from "../../src/duration";
+import { flattenValues, casualMatrix, accurateMatrix } from "../../src/duration";
 
 test("flattenValues converts decimal days to hours", () => {
   const dur = flattenValues(casualMatrix, {
@@ -17,6 +17,23 @@ test("flattenValues converts in cascade", () => {
   expect(dur.days).toBe(1);
   expect(dur.hours).toBe(16);
   expect(dur.minutes).toBe(30);
+
+  const dur2 = flattenValues(casualMatrix, {
+    months: 1.5,
+  });
+  expect(dur2.months).toBe(1);
+  expect(dur2.weeks).toBe(2);
+
+  const dur3 = flattenValues(accurateMatrix, {
+    months: 1.5,
+  });
+  expect(dur3.months).toBe(1);
+  expect(dur3.weeks).toBe(2);
+  expect(dur3.days).toBe(1);
+  expect(dur3.hours).toBe(5);
+  expect(dur3.minutes).toBe(14);
+  expect(dur3.seconds).toBe(33);
+  expect(dur3.milliseconds).toBe(1);
 });
 
 test("flattenValues rounds milliseconds", () => {
