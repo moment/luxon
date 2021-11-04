@@ -17,7 +17,7 @@ import Settings from "./settings.js";
 const INVALID = "Invalid Duration";
 
 // unit conversion constants
-const lowOrderMatrix = {
+export const lowOrderMatrix = {
     weeks: {
       days: 7,
       hours: 7 * 24,
@@ -271,9 +271,14 @@ export default class Duration {
           obj === null ? "null" : typeof obj
         }`
       );
+      const normalizedObject = normalizeObject(obj, Duration.normalizeUnit);
+      const flattenedValues = flattenValues(
+        opts.conversionAccuracy === "casual" ? casualMatrix : accurateMatrix,
+        normalizedObject
+      );
     }
     return new Duration({
-      values: normalizeObject(obj, Duration.normalizeUnit),
+      values: flattenedValues,
       loc: Locale.fromObject(opts),
       conversionAccuracy: opts.conversionAccuracy,
     });
