@@ -6,6 +6,7 @@ import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
 import {
   asNumber,
   hasOwnProperty,
+  isInteger,
   isNumber,
   isUndefined,
   normalizeObject,
@@ -152,6 +153,38 @@ function normalizeValues(matrix, vals) {
       return previous;
     }
   }, null);
+}
+
+export function flattenValues(matrix, obj) {
+  const flattened = {};
+  for (let i = 0; i < orderedUnits.length; i++) {
+    const prop = orderedUnits[i];
+    const currentValue = flattened[prop] || 0;
+
+    if (!hasOwnProperty(obj, prop)) {
+      flattened[prop] = currentValue;
+      continue;
+    }
+
+    if (!isInteger(obj[prop])) {
+      const integerPart = ~~obj[prop];
+      const decimalPart = obj[prop] - integerPart;
+      flattened[prop] = currentValue + integerPart;
+
+      if (i + 1 < orderedUnits.length) {
+        flattened[orderedUnits[i + 1]] = matrix[prop][orderedUnits[i + 1]] * decimalPart;
+        continue;
+      }
+
+      // truncate milliseconds
+      flattened[prop] = currentValue + antiTrunc(obj[prop]);
+      continue;
+    }
+
+    flattened[prop] = currentValue + obj[prop];
+  }
+
+  return flattened;
 }
 
 /**
