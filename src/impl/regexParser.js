@@ -5,6 +5,7 @@ import {
   parseMillis,
   ianaRegex,
   isUndefined,
+  parseFloating,
 } from "./util.js";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
@@ -125,7 +126,7 @@ const isoTimeOnly = RegExp(`^T?${isoTimeBaseRegex.source}$`);
 // ISO duration parsing
 
 const isoDuration =
-  /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
+  /^-?P(?:(?:(-?\d{1,9}(?:\.\d{1,9})?)Y)?(?:(-?\d{1,9}(?:\.\d{1,9})?)M)?(?:(-?\d{1,9}(?:\.\d{1,9})?)W)?(?:(-?\d{1,9}(?:\.\d{1,9})?)D)?(?:T(?:(-?\d{1,9}(?:\.\d{1,9})?)H)?(?:(-?\d{1,9}(?:\.\d{1,9})?)M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 
 function extractISODuration(match) {
   const [s, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] =
@@ -139,13 +140,13 @@ function extractISODuration(match) {
 
   return [
     {
-      years: maybeNegate(parseInteger(yearStr)),
-      months: maybeNegate(parseInteger(monthStr)),
-      weeks: maybeNegate(parseInteger(weekStr)),
-      days: maybeNegate(parseInteger(dayStr)),
-      hours: maybeNegate(parseInteger(hourStr)),
-      minutes: maybeNegate(parseInteger(minuteStr)),
-      seconds: maybeNegate(parseInteger(secondStr), secondStr === "-0"),
+      years: maybeNegate(parseFloating(yearStr)),
+      months: maybeNegate(parseFloating(monthStr)),
+      weeks: maybeNegate(parseFloating(weekStr)),
+      days: maybeNegate(parseFloating(dayStr)),
+      hours: maybeNegate(parseFloating(hourStr)),
+      minutes: maybeNegate(parseFloating(minuteStr)),
+      seconds: maybeNegate(parseFloating(secondStr), secondStr === "-0"),
       milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds),
     },
   ];

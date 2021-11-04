@@ -108,6 +108,14 @@ export function parseInteger(string) {
   }
 }
 
+export function parseFloating(string) {
+  if (isUndefined(string) || string === null || string === "") {
+    return undefined;
+  } else {
+    return parseFloat(string);
+  }
+}
+
 export function parseMillis(fraction) {
   // Return undefined (instead of 0) in these cases, where fraction is not set
   if (isUndefined(fraction) || fraction === null || fraction === "") {
