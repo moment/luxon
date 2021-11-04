@@ -271,12 +271,14 @@ export default class Duration {
           obj === null ? "null" : typeof obj
         }`
       );
-      const normalizedObject = normalizeObject(obj, Duration.normalizeUnit);
-      const flattenedValues = flattenValues(
-        opts.conversionAccuracy === "casual" ? casualMatrix : accurateMatrix,
-        normalizedObject
-      );
     }
+
+    const normalizedObject = normalizeObject(obj, Duration.normalizeUnit);
+    const flattenedValues = flattenValues(
+      opts.conversionAccuracy === "casual" ? casualMatrix : accurateMatrix,
+      normalizedObject
+    );
+
     return new Duration({
       values: flattenedValues,
       loc: Locale.fromObject(opts),
