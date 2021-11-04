@@ -159,29 +159,28 @@ export function flattenValues(matrix, obj) {
   const flattened = {};
   for (let i = 0; i < orderedUnits.length; i++) {
     const prop = orderedUnits[i];
+    const inputValue = obj[prop];
     const currentValue = flattened[prop] || 0;
+    const sum = (inputValue || 0) + currentValue;
 
-    if (!hasOwnProperty(obj, prop)) {
-      if (currentValue !== 0) flattened[prop] = currentValue;
+    if (isInteger(sum)) {
+      if (sum === 0) continue;
+      flattened[prop] = sum;
       continue;
     }
 
-    if (!isInteger(obj[prop])) {
-      const integerPart = ~~obj[prop];
-      const decimalPart = obj[prop] - integerPart;
-      flattened[prop] = currentValue + integerPart;
+    const integerPart = ~~sum;
+    const decimalPart = sum - integerPart;
+    flattened[prop] = integerPart;
 
-      if (i + 1 < orderedUnits.length) {
-        flattened[orderedUnits[i + 1]] = matrix[prop][orderedUnits[i + 1]] * decimalPart;
-        continue;
-      }
-
-      // truncate milliseconds
-      flattened[prop] = currentValue + antiTrunc(obj[prop]);
+    if (i + 1 < orderedUnits.length) {
+      flattened[orderedUnits[i + 1]] = matrix[prop][orderedUnits[i + 1]] * decimalPart;
       continue;
     }
 
-    flattened[prop] = currentValue + obj[prop];
+    // truncate milliseconds
+    flattened[prop] = antiTrunc(sum);
+    continue;
   }
 
   return flattened;
