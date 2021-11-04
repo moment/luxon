@@ -162,7 +162,7 @@ export function flattenValues(matrix, obj) {
     const currentValue = flattened[prop] || 0;
 
     if (!hasOwnProperty(obj, prop)) {
-      flattened[prop] = currentValue;
+      if (currentValue !== 0) flattened[prop] = currentValue;
       continue;
     }
 
