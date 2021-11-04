@@ -65,6 +65,35 @@ test("Duration.fromISO can parse fractions of seconds", () => {
   });
 });
 
+test("Duration.fromISO can parse fractions", () => {
+  expect(Duration.fromISO("P1.5Y").toObject()).toEqual({
+    years: 1,
+    quarters: 2,
+  });
+  expect(Duration.fromISO("P1.5M").toObject()).toEqual({
+    months: 1,
+    weeks: 2,
+    days: 1,
+    hours: 5,
+    minutes: 14,
+    seconds: 33,
+    milliseconds: 1,
+  });
+  expect(Duration.fromISO("P1.5W").toObject()).toEqual({
+    weeks: 1,
+    days: 3,
+    hours: 12,
+  });
+  expect(Duration.fromISO("P1.5D").toObject()).toEqual({
+    days: 1,
+    hours: 12,
+  });
+  expect(Duration.fromISO("PT9.5H").toObject()).toEqual({
+    hours: 9,
+    minutes: 30,
+  });
+});
+
 const rejects = (s) => {
   expect(Duration.fromISO(s).isValid).toBe(false);
 };
