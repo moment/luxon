@@ -12,7 +12,7 @@ The most important class in Luxon is `DateTime`. A DateTime represents a specifi
 const dt = DateTime.local(2017, 5, 15, 8, 30);
 ```
 
-[DateTime.local](../class/src/datetime.js~DateTime.html#static-method-local) takes any number of arguments, all the way out to milliseconds. Underneath, this is similar to a JavaScript Date object. But we've decorated it with lots of useful methods.
+[DateTime.local](../class/src/datetime.js~DateTime.html#static-method-local) takes any number of arguments, all the way out to milliseconds (months are 1-indexed). Underneath, this is similar to a JavaScript Date object. But we've decorated it with lots of useful methods.
 
 ## Creating a DateTime
 
