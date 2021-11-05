@@ -155,37 +155,6 @@ function normalizeValues(matrix, vals) {
   }, null);
 }
 
-export function flattenValues(matrix, obj) {
-  const flattened = {};
-  for (let i = 0; i < orderedUnits.length; i++) {
-    const prop = orderedUnits[i];
-    const inputValue = obj[prop];
-    const currentValue = flattened[prop] || 0;
-    const sum = (inputValue || 0) + currentValue;
-
-    if (isInteger(sum)) {
-      if (sum === 0) continue;
-      flattened[prop] = sum;
-      continue;
-    }
-
-    const integerPart = ~~sum;
-    const decimalPart = sum - integerPart;
-    flattened[prop] = integerPart;
-
-    if (i + 1 < orderedUnits.length) {
-      flattened[orderedUnits[i + 1]] = matrix[prop][orderedUnits[i + 1]] * decimalPart;
-      continue;
-    }
-
-    // truncate milliseconds
-    flattened[prop] = antiTrunc(sum);
-    continue;
-  }
-
-  return flattened;
-}
-
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
  *
@@ -272,14 +241,8 @@ export default class Duration {
       );
     }
 
-    const normalizedObject = normalizeObject(obj, Duration.normalizeUnit);
-    const flattenedValues = flattenValues(
-      opts.conversionAccuracy === "casual" ? casualMatrix : accurateMatrix,
-      normalizedObject
-    );
-
     return new Duration({
-      values: flattenedValues,
+      values: normalizeObject(obj, Duration.normalizeUnit),
       loc: Locale.fromObject(opts),
       conversionAccuracy: opts.conversionAccuracy,
     });
