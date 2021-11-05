@@ -249,6 +249,30 @@ export default class Duration {
   }
 
   /**
+   * Create a Duration from DurationLike.
+   *
+   * @param {Object | number | Duration} durationLike
+   * One of:
+   * - object with keys like 'years' and 'hours'.
+   * - number representing milliseconds
+   * - Duration instance
+   * @return {Duration}
+   */
+  static fromDurationLike(durationLike) {
+    if (isNumber(durationLike)) {
+      return Duration.fromMillis(durationLike);
+    } else if (Duration.isDuration(durationLike)) {
+      return durationLike;
+    } else if (typeof durationLike === "object") {
+      return Duration.fromObject(durationLike);
+    } else {
+      throw new InvalidArgumentError(
+        `Unknown duration argument ${durationLike} of type ${typeof durationLike}`
+      );
+    }
+  }
+
+  /**
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
    * @param {Object} opts - options for parsing
@@ -532,7 +556,7 @@ export default class Duration {
   plus(duration) {
     if (!this.isValid) return this;
 
-    const dur = friendlyDuration(duration),
+    const dur = Duration.fromDurationLike(duration),
       result = {};
 
     for (const k of orderedUnits) {
@@ -552,7 +576,7 @@ export default class Duration {
   minus(duration) {
     if (!this.isValid) return this;
 
-    const dur = friendlyDuration(duration);
+    const dur = Duration.fromDurationLike(duration);
     return this.plus(dur.negate());
   }
 
@@ -841,22 +865,5 @@ export default class Duration {
       }
     }
     return true;
-  }
-}
-
-/**
- * @private
- */
-export function friendlyDuration(durationish) {
-  if (isNumber(durationish)) {
-    return Duration.fromMillis(durationish);
-  } else if (Duration.isDuration(durationish)) {
-    return durationish;
-  } else if (typeof durationish === "object") {
-    return Duration.fromObject(durationish);
-  } else {
-    throw new InvalidArgumentError(
-      `Unknown duration argument ${durationish} of type ${typeof durationish}`
-    );
   }
 }

@@ -1,5 +1,5 @@
 import DateTime, { friendlyDateTime } from "./datetime.js";
-import Duration, { friendlyDuration } from "./duration.js";
+import Duration from "./duration.js";
 import Settings from "./settings.js";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
 import Invalid from "./impl/invalid.js";
@@ -106,7 +106,7 @@ export default class Interval {
    * @return {Interval}
    */
   static after(start, duration) {
-    const dur = friendlyDuration(duration),
+    const dur = Duration.fromDurationLike(duration),
       dt = friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
   }
@@ -118,7 +118,7 @@ export default class Interval {
    * @return {Interval}
    */
   static before(end, duration) {
-    const dur = friendlyDuration(duration),
+    const dur = Duration.fromDurationLike(duration),
       dt = friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
   }
@@ -333,7 +333,7 @@ export default class Interval {
    * @return {Array}
    */
   splitBy(duration) {
-    const dur = friendlyDuration(duration);
+    const dur = Duration.fromDurationLike(duration);
 
     if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
       return [];
