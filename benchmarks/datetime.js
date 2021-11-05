@@ -54,6 +54,9 @@ function runDateTimeSuite() {
       .add("DateTime#toLocaleString", () => {
         dt.toLocaleString();
       })
+      .add("DateTime#toLocaleString in utc", () => {
+        dt.toUTC().toLocaleString();
+      })
       .add("DateTime#toRelativeCalendar", () => {
         dt.toRelativeCalendar({ base: DateTime.now(), locale: "fi" });
       })
