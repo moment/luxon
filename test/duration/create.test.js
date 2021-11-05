@@ -34,8 +34,8 @@ test("Duration.fromObject sets all the fractional values", () => {
   expect(dur.years).toBe(1);
   expect(dur.months).toBe(2);
   expect(dur.days).toBe(3);
-  expect(dur.hours).toBe(4);
-  expect(dur.minutes).toBe(30);
+  expect(dur.hours).toBe(4.5);
+  expect(dur.minutes).toBe(0);
   expect(dur.seconds).toBe(0);
   expect(dur.milliseconds).toBe(0);
 });

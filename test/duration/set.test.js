@@ -20,6 +20,7 @@ test("Duration#set() sets the values", () => {
   expect(dur().set({ months: 2 }).months).toBe(2);
   expect(dur().set({ days: 2 }).days).toBe(2);
   expect(dur().set({ hours: 4 }).hours).toBe(4);
+  expect(dur().set({ hours: 4.5 }).hours).toBe(4.5);
   expect(dur().set({ minutes: 16 }).minutes).toBe(16);
   expect(dur().set({ seconds: 45 }).seconds).toBe(45);
   expect(dur().set({ milliseconds: 86 }).milliseconds).toBe(86);
