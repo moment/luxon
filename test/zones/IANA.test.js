@@ -21,6 +21,10 @@ test("IANAZone.isValidSpecifier", () => {
   expect(IANAZone.isValidSpecifier("America/New_York")).toBe(true);
   expect(IANAZone.isValidSpecifier("Fantasia/Castle")).toBe(true);
   expect(IANAZone.isValidSpecifier("Sport~~blorp")).toBe(false);
+  expect(IANAZone.isValidSpecifier("Etc/GMT+8")).toBe(true);
+  expect(IANAZone.isValidSpecifier("Etc/GMT-8")).toBe(true);
+  expect(IANAZone.isValidSpecifier("Etc/GMT-0")).toBe(true);
+  expect(IANAZone.isValidSpecifier("Etc/GMT-1")).toBe(true);
   expect(IANAZone.isValidSpecifier(null)).toBe(false);
 });
 
@@ -32,21 +36,6 @@ test("IANAZone.isValidZone", () => {
   expect(IANAZone.isValidZone(undefined)).toBe(false);
   expect(IANAZone.isValidZone(null)).toBe(false);
   expect(IANAZone.isValidZone(4)).toBe(false);
-});
-
-test("IANAZone.parseGMTOffset returns a number for a valid input", () => {
-  expect(IANAZone.parseGMTOffset("Etc/GMT+8")).toBe(-480);
-  expect(IANAZone.parseGMTOffset("Etc/GMT+0")).toBe(-0);
-  expect(IANAZone.parseGMTOffset("Etc/GMT-0")).toBe(+0);
-  expect(IANAZone.parseGMTOffset("Etc/GMT0")).toBe(-0);
-});
-
-test("IANAZone.parseGMTOffset returns null for invalid input", () => {
-  expect(IANAZone.parseGMTOffset()).toBe(null);
-  expect(IANAZone.parseGMTOffset(null)).toBe(null);
-  expect(IANAZone.parseGMTOffset("")).toBe(null);
-  expect(IANAZone.parseGMTOffset("foo")).toBe(null);
-  expect(IANAZone.parseGMTOffset("Etc/GMT+blorp")).toBe(null);
 });
 
 test("IANAZone.type returns a static string", () => {

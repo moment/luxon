@@ -272,4 +272,4 @@ export function timeObject(obj) {
   return pick(obj, ["hour", "minute", "second", "millisecond"]);
 }
 
-export const ianaRegex = /[A-Za-z_+-]{1,256}(:?\/[A-Za-z_+-]{1,256}(\/[A-Za-z_+-]{1,256})?)?/;
+export const ianaRegex = /[A-Za-z_+-]{1,256}(:?\/[A-Za-z0-9_+-]{1,256}(\/[A-Za-z0-9_+-]{1,256})?)?/;

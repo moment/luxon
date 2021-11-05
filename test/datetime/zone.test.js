@@ -236,13 +236,16 @@ test("DateTime#offsetNameShort returns null for invalid times", () => {
 //------
 // Etc/GMT zones
 //------
-test("Etc/GMT zones work even though V8 does not support them", () => {
-  let zoned = DateTime.local().setZone("Etc/GMT+8");
-  expect(zoned.zoneName).toBe("UTC-8");
-  zoned = DateTime.local().setZone("Etc/GMT-5");
-  expect(zoned.zoneName).toBe("UTC+5");
-  zoned = DateTime.local().setZone("Etc/GMT-0");
-  expect(zoned.zoneName).toBe("UTC");
+test.each([
+  ["Etc/GMT+8", -8],
+  ["Etc/GMT-5", 5],
+  ["Etc/GMT", 0],
+  ["Etc/GMT-0", 0],
+  ["Etc/GMT", 0],
+])("Etc/GMTx zones now work natively", (zone, expectedOffset) => {
+  let zoned = dt().setZone(zone);
+  expect(zoned.isValid).toBe(true);
+  expect(zoned.offset).toEqual(expectedOffset * 60);
 });
 
 //------
