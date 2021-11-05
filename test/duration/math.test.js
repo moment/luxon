@@ -16,6 +16,17 @@ test("Duration#plus add straightforward durations", () => {
   expect(result.milliseconds).toBe(14);
 });
 
+test("Duration#plus add fractional durations", () => {
+  const first = Duration.fromObject({ hours: 4.2, minutes: 12, seconds: 2 }),
+    second = Duration.fromObject({ hours: 1, seconds: 6.8, milliseconds: 14 }),
+    result = first.plus(second);
+
+  expect(result.hours).toBeCloseTo(5.2, 8);
+  expect(result.minutes).toBe(12);
+  expect(result.seconds).toBeCloseTo(8.8, 8);
+  expect(result.milliseconds).toBe(14);
+});
+
 test("Duration#plus noops empty druations", () => {
   const first = Duration.fromObject({ hours: 4, minutes: 12, seconds: 2 }),
     second = Duration.fromObject({}),
@@ -82,6 +93,17 @@ test("Duration#minus subtracts durations", () => {
     result = first.minus(second);
 
   expect(result.hours).toBe(3);
+  expect(result.minutes).toBe(12);
+  expect(result.seconds).toBe(-4);
+  expect(result.milliseconds).toBe(-14);
+});
+
+test("Duration#minus subtracts fractional durations", () => {
+  const first = Duration.fromObject({ hours: 4.2, minutes: 12, seconds: 2 }),
+    second = Duration.fromObject({ hours: 1, seconds: 6, milliseconds: 14 }),
+    result = first.minus(second);
+
+  expect(result.hours).toBeCloseTo(3.2, 8);
   expect(result.minutes).toBe(12);
   expect(result.seconds).toBe(-4);
   expect(result.milliseconds).toBe(-14);

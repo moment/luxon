@@ -12,9 +12,21 @@ test("equals identically constructed", () => {
   expect(l1.equals(l2)).toBe(true);
 });
 
-test("equals identically constructed but one has sting type values", () => {
+test("equals identically constructed with fractional values", () => {
+  const l1 = Duration.fromObject({ years: 5.5, days: 6 }),
+    l2 = Duration.fromObject({ years: 5.5, days: 6 });
+  expect(l1.equals(l2)).toBe(true);
+});
+
+test("equals identically constructed but one has string type values", () => {
   const l1 = Duration.fromObject({ years: 5, days: 6 }),
     l2 = Duration.fromObject({ years: "5", days: "6" });
+  expect(l1.equals(l2)).toBe(true);
+});
+
+test("equals identically constructed but one has fractional string type values", () => {
+  const l1 = Duration.fromObject({ years: 5.5, days: 6 }),
+    l2 = Duration.fromObject({ years: "5.5", days: "6" });
   expect(l1.equals(l2)).toBe(true);
 });
 

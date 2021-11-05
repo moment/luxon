@@ -46,6 +46,14 @@ test("Duration#shiftTo deconstructs decimal inputs", () => {
   expect(dur.minutes).toBeCloseTo(18, 8);
 });
 
+test("Duration#shiftTo deconstructs in cascade and tacks decimal onto the end", () => {
+  const dur = Duration.fromObject({ hours: 1.17 }).shiftTo("hours", "minutes", "seconds");
+  expect(dur.isValid).toBe(true);
+  expect(dur.hours).toBe(1);
+  expect(dur.minutes).toBe(10);
+  expect(dur.seconds).toBeCloseTo(12, 8);
+});
+
 test("Duration#shiftTo maintains invalidity", () => {
   const dur = Duration.invalid("because").shiftTo("years");
   expect(dur.isValid).toBe(false);

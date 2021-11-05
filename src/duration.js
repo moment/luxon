@@ -6,6 +6,7 @@ import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
 import {
   asNumber,
   hasOwnProperty,
+  isInteger,
   isNumber,
   isUndefined,
   normalizeObject,
@@ -16,7 +17,7 @@ import Settings from "./settings.js";
 const INVALID = "Invalid Duration";
 
 // unit conversion constants
-const lowOrderMatrix = {
+export const lowOrderMatrix = {
     weeks: {
       days: 7,
       hours: 7 * 24,
@@ -239,6 +240,7 @@ export default class Duration {
         }`
       );
     }
+
     return new Duration({
       values: normalizeObject(obj, Duration.normalizeUnit),
       loc: Locale.fromObject(opts),
