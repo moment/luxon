@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.0 (2021-11-07)
+
+ * Stop special casing of `Etc/GMT*` zones
+ * export fromDurationLike
+ * memoize zone validation
+ * Support for fractional elements in duration ISO parsing
+ * Added `uu` and `uuu` tokens for fractional millisecond parsing
+
 ## 2.0.2 (2021-08-08)
 
 Fix locale defaulting
