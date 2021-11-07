@@ -53,7 +53,7 @@ And under the covers, that's more or less what Luxon does too. It doesn't boil t
 
 There's a whole section about this in the [time zones documentation](zones.md?id=math-across-dsts). But here's a quick example (Spring Forward is early on March 12 in my time zone):
 
-```
+```js
 var start = DateTime.local(2017, 3, 11, 10);
 start.hour                          //=> 10, just for comparison
 start.plus({days: 1}).hour          //=> 10, stayed the same
@@ -80,7 +80,7 @@ This isn't as simple as it looks. For example, what should you expect this to do
 DateTime.fromISO('2017-04-30').plus({months: 1, days: 1}).toISODate();
 ```
 
-If the day is added first, we'll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we'll an intermediate value of May 30 and day after that is May 31. (See "Calendar math vs time math above if this is confusing.) So the order matters.
+If the day is added first, we'll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we'll an intermediate value of May 30 and day after that is May 31. (See "Calendar math vs time math" above if this is confusing.) So the order matters.
 
 Luxon has a simple rule for this: **math is done from highest order to lowest order**. So the result of the example above is May 31. This rule isn't logically necessary, but it does seem to reflect what people mean. Of course, Luxon can't enforce this rule if you do the math in separate operations:
 
@@ -173,8 +173,8 @@ Finally, you can diff using multiple units:
 
 ```js
 var end = DateTime.fromISO('2017-03-13');
-var start = DateTime.fromISO('2017-02-15');
-end.diff(start, ['months', 'days']) //=> { months: 1, days: 2 }
+var start = DateTime.fromISO('2017-02-11');
+end.diff(start, ['months', 'days']).toObject() //=> { months: 1, days: 2 }
 ```
 
 ### Casual vs longterm conversion accuracy
@@ -211,7 +211,7 @@ These are always true and you can roll them up and down with consistency (e.g. `
 These should match your intuition and for most purposes they work well. But they're not just wrong; they're not even self-consistent:
 
 ```js
-dur.shiftTo('months').shiftTo('days').as('years') //=> 0.9863013698630136
+Duration.fromObject({ years:1 }).shiftTo('months').shiftTo('days').as('years') //=> 0.9863013698630136
 ```
 
 This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:

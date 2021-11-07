@@ -315,6 +315,13 @@ function parseInteger(string) {
     return parseInt(string, 10);
   }
 }
+function parseFloating(string) {
+  if (isUndefined(string) || string === null || string === "") {
+    return undefined;
+  } else {
+    return parseFloat(string);
+  }
+}
 function parseMillis(fraction) {
   // Return undefined (instead of 0) in these cases, where fraction is not set
   if (isUndefined(fraction) || fraction === null || fraction === "") {
@@ -444,7 +451,7 @@ function formatOffset(offset, format) {
 function timeObject(obj) {
   return pick(obj, ["hour", "minute", "second", "millisecond"]);
 }
-const ianaRegex = /[A-Za-z_+-]{1,256}(:?\/[A-Za-z_+-]{1,256}(\/[A-Za-z_+-]{1,256})?)?/;
+const ianaRegex = /[A-Za-z_+-]{1,256}(:?\/[A-Za-z0-9_+-]{1,256}(\/[A-Za-z0-9_+-]{1,256})?)?/;
 
 /**
  * @private
@@ -772,6 +779,13 @@ class Formatter {
 
         case "ss":
           return this.num(dt.second, 2);
+        // fractional seconds
+
+        case "uu":
+          return this.num(Math.floor(dt.millisecond / 10), 2);
+
+        case "uuu":
+          return this.num(Math.floor(dt.millisecond / 100));
         // minutes
 
         case "m":
@@ -1351,6 +1365,10 @@ class IANAZone extends Zone {
 
 
   static isValidZone(zone) {
+    if (!zone) {
+      return false;
+    }
+
     try {
       new Intl.DateTimeFormat("en-US", {
         timeZone: zone
@@ -1359,21 +1377,6 @@ class IANAZone extends Zone {
     } catch (e) {
       return false;
     }
-  } // Etc/GMT+8 -> -480
-
-  /** @ignore */
-
-
-  static parseGMTOffset(specifier) {
-    if (specifier) {
-      const match = specifier.match(/^Etc\/GMT(0|[+-]\d{1,2})$/i);
-
-      if (match) {
-        return -60 * parseInt(match[1]);
-      }
-    }
-
-    return null;
   }
 
   constructor(name) {
@@ -1629,7 +1632,6 @@ class InvalidZone extends Zone {
  * @private
  */
 function normalizeZone(input, defaultZone) {
-  let offset;
 
   if (isUndefined(input) || input === null) {
     return defaultZone;
@@ -1637,10 +1639,7 @@ function normalizeZone(input, defaultZone) {
     return input;
   } else if (isString(input)) {
     const lowered = input.toLowerCase();
-    if (lowered === "local" || lowered === "system") return defaultZone;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else if ((offset = IANAZone.parseGMTOffset(input)) != null) {
-      // handle Etc/GMT-4, which V8 chokes on
-      return FixedOffsetZone.instance(offset);
-    } else if (IANAZone.isValidSpecifier(lowered)) return IANAZone.create(input);else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
+    if (lowered === "local" || lowered === "system") return defaultZone;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else if (IANAZone.isValidSpecifier(lowered)) return IANAZone.create(input);else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);
   } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {
@@ -1985,9 +1984,8 @@ class PolyDateFormatter {
       //    - < Etc/GMT-14, > Etc/GMT+12, and 30-minute or 45-minute offsets are not part of tzdata
       const gmtOffset = -1 * (dt.offset / 60);
       const offsetZ = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
-      const isOffsetZoneSupported = IANAZone.isValidZone(offsetZ);
 
-      if (dt.offset !== 0 && isOffsetZoneSupported) {
+      if (dt.offset !== 0 && IANAZone.create(offsetZ).valid) {
         z = offsetZ;
         this.dt = dt;
       } else {
@@ -2365,7 +2363,7 @@ function extractIANAZone(match, cursor) {
 
 const isoTimeOnly = RegExp(`^T?${isoTimeBaseRegex.source}$`); // ISO duration parsing
 
-const isoDuration = /^-?P(?:(?:(-?\d{1,9})Y)?(?:(-?\d{1,9})M)?(?:(-?\d{1,9})W)?(?:(-?\d{1,9})D)?(?:T(?:(-?\d{1,9})H)?(?:(-?\d{1,9})M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
+const isoDuration = /^-?P(?:(?:(-?\d{1,9}(?:\.\d{1,9})?)Y)?(?:(-?\d{1,9}(?:\.\d{1,9})?)M)?(?:(-?\d{1,9}(?:\.\d{1,9})?)W)?(?:(-?\d{1,9}(?:\.\d{1,9})?)D)?(?:T(?:(-?\d{1,9}(?:\.\d{1,9})?)H)?(?:(-?\d{1,9}(?:\.\d{1,9})?)M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,9}))?S)?)?)$/;
 
 function extractISODuration(match) {
   const [s, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] = match;
@@ -2375,13 +2373,13 @@ function extractISODuration(match) {
   const maybeNegate = (num, force = false) => num !== undefined && (force || num && hasNegativePrefix) ? -num : num;
 
   return [{
-    years: maybeNegate(parseInteger(yearStr)),
-    months: maybeNegate(parseInteger(monthStr)),
-    weeks: maybeNegate(parseInteger(weekStr)),
-    days: maybeNegate(parseInteger(dayStr)),
-    hours: maybeNegate(parseInteger(hourStr)),
-    minutes: maybeNegate(parseInteger(minuteStr)),
-    seconds: maybeNegate(parseInteger(secondStr), secondStr === "-0"),
+    years: maybeNegate(parseFloating(yearStr)),
+    months: maybeNegate(parseFloating(monthStr)),
+    weeks: maybeNegate(parseFloating(weekStr)),
+    days: maybeNegate(parseFloating(dayStr)),
+    hours: maybeNegate(parseFloating(hourStr)),
+    minutes: maybeNegate(parseFloating(minuteStr)),
+    seconds: maybeNegate(parseFloating(secondStr), secondStr === "-0"),
     milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds)
   }];
 } // These are a little braindead. EDT *should* tell us that we're in, say, America/New_York
@@ -2632,11 +2630,11 @@ function normalizeValues(matrix, vals) {
   }, null);
 }
 /**
- * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime.plus} to add a Duration object to a DateTime, producing another DateTime.
+ * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
  *
- * * **Creation** To create a Duration, use {@link Duration.fromMillis}, {@link Duration.fromObject}, or {@link Duration.fromISO}.
+ * * **Creation** To create a Duration, use {@link Duration#fromMillis}, {@link Duration#fromObject}, or {@link Duration#fromISO}.
  * * **Unit values** See the {@link Duration#years}, {@link Duration.months}, {@link Duration#weeks}, {@link Duration#days}, {@link Duration#hours}, {@link Duration#minutes}, {@link Duration#seconds}, {@link Duration#milliseconds} accessors.
  * * **Configuration** See  {@link Duration#locale} and {@link Duration#numberingSystem} accessors.
  * * **Transformation** To create new Durations out of old ones use {@link Duration#plus}, {@link Duration#minus}, {@link Duration#normalize}, {@link Duration#set}, {@link Duration#reconfigure}, {@link Duration#shiftTo}, and {@link Duration#negate}.
@@ -2730,6 +2728,29 @@ class Duration {
       loc: Locale.fromObject(opts),
       conversionAccuracy: opts.conversionAccuracy
     });
+  }
+  /**
+   * Create a Duration from DurationLike.
+   *
+   * @param {Object | number | Duration} durationLike
+   * One of:
+   * - object with keys like 'years' and 'hours'.
+   * - number representing milliseconds
+   * - Duration instance
+   * @return {Duration}
+   */
+
+
+  static fromDurationLike(durationLike) {
+    if (isNumber(durationLike)) {
+      return Duration.fromMillis(durationLike);
+    } else if (Duration.isDuration(durationLike)) {
+      return durationLike;
+    } else if (typeof durationLike === "object") {
+      return Duration.fromObject(durationLike);
+    } else {
+      throw new InvalidArgumentError(`Unknown duration argument ${durationLike} of type ${typeof durationLike}`);
+    }
   }
   /**
    * Create a Duration from an ISO 8601 duration string.
@@ -2873,7 +2894,7 @@ class Duration {
    * * `y` for years
    * Notes:
    * * Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits
-   * * The duration will be converted to the set of units in the format string using {@link Duration.shiftTo} and the Durations's conversion accuracy setting.
+   * * The duration will be converted to the set of units in the format string using {@link Duration#shiftTo} and the Durations's conversion accuracy setting.
    * @param {string} fmt - the format string
    * @param {Object} opts - options
    * @param {boolean} [opts.floor=true] - floor numerical values
@@ -3025,7 +3046,7 @@ class Duration {
 
   plus(duration) {
     if (!this.isValid) return this;
-    const dur = friendlyDuration(duration),
+    const dur = Duration.fromDurationLike(duration),
           result = {};
 
     for (const k of orderedUnits$1) {
@@ -3047,7 +3068,7 @@ class Duration {
 
   minus(duration) {
     if (!this.isValid) return this;
-    const dur = friendlyDuration(duration);
+    const dur = Duration.fromDurationLike(duration);
     return this.plus(dur.negate());
   }
   /**
@@ -3381,21 +3402,6 @@ class Duration {
   }
 
 }
-/**
- * @private
- */
-
-function friendlyDuration(durationish) {
-  if (isNumber(durationish)) {
-    return Duration.fromMillis(durationish);
-  } else if (Duration.isDuration(durationish)) {
-    return durationish;
-  } else if (typeof durationish === "object") {
-    return Duration.fromObject(durationish);
-  } else {
-    throw new InvalidArgumentError(`Unknown duration argument ${durationish} of type ${typeof durationish}`);
-  }
-}
 
 const INVALID$1 = "Invalid Interval"; // checks if the start is equal to or before the end
 
@@ -3415,7 +3421,7 @@ function validateStartEnd(start, end) {
  *
  * Here is a brief overview of the most commonly used methods and getters in Interval:
  *
- * * **Creation** To create an Interval, use {@link Interval.fromDateTimes}, {@link Interval.after}, {@link Interval.before}, or {@link Interval.fromISO}.
+ * * **Creation** To create an Interval, use {@link Interval#fromDateTimes}, {@link Interval#after}, {@link Interval#before}, or {@link Interval#fromISO}.
  * * **Accessors** Use {@link Interval#start} and {@link Interval#end} to get the start and end.
  * * **Interrogation** To analyze the Interval, use {@link Interval#count}, {@link Interval#length}, {@link Interval#hasSame}, {@link Interval#contains}, {@link Interval#isAfter}, or {@link Interval#isBefore}.
  * * **Transformation** To create other Intervals out of this one, use {@link Interval#set}, {@link Interval#splitAt}, {@link Interval#splitBy}, {@link Interval#divideEqually}, {@link Interval#merge}, {@link Interval#xor}, {@link Interval#union}, {@link Interval#intersection}, or {@link Interval#difference}.
@@ -3503,7 +3509,7 @@ class Interval {
 
 
   static after(start, duration) {
-    const dur = friendlyDuration(duration),
+    const dur = Duration.fromDurationLike(duration),
           dt = friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
   }
@@ -3516,7 +3522,7 @@ class Interval {
 
 
   static before(end, duration) {
-    const dur = friendlyDuration(duration),
+    const dur = Duration.fromDurationLike(duration),
           dt = friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
   }
@@ -3524,7 +3530,7 @@ class Interval {
    * Create an Interval from an ISO 8601 string.
    * Accepts `<start>/<end>`, `<start>/<duration>`, and `<duration>/<end>` formats.
    * @param {string} text - the ISO string to parse
-   * @param {Object} [opts] - options to pass {@link DateTime.fromISO} and optionally {@link Duration.fromISO}
+   * @param {Object} [opts] - options to pass {@link DateTime#fromISO} and optionally {@link Duration#fromISO}
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @return {Interval}
    */
@@ -3756,7 +3762,7 @@ class Interval {
 
 
   splitBy(duration) {
-    const dur = friendlyDuration(duration);
+    const dur = Duration.fromDurationLike(duration);
 
     if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
       return [];
@@ -3991,7 +3997,7 @@ class Interval {
    * Returns an ISO 8601-compliant string representation of time of this Interval.
    * The date components are ignored.
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
-   * @param {Object} opts - The same options as {@link DateTime.toISO}
+   * @param {Object} opts - The same options as {@link DateTime#toISO}
    * @return {string}
    */
 
@@ -4002,7 +4008,7 @@ class Interval {
   }
   /**
    * Returns a string representation of this Interval formatted according to the specified format string.
-   * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime.toFormat} for details.
+   * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime#toFormat} for details.
    * @param {Object} opts - options
    * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations
    * @return {string}
@@ -4086,7 +4092,7 @@ class Info {
    * * If `input` is a string containing a valid time zone name, a Zone instance
    *   with that name is returned.
    * * If `input` is a string that doesn't refer to a known time zone, a Zone
-   *   instance with {@link Zone.isValid} == false is returned.
+   *   instance with {@link Zone#isValid} == false is returned.
    * * If `input is a number, a Zone instance with the specified fixed offset
    *   in minutes is returned.
    * * If `input` is `null` or `undefined`, the default zone is returned.
@@ -4226,10 +4232,10 @@ class Info {
   }
   /**
    * Return the set of available features in this environment.
-   * Some features of Luxon are not available in all environments. For example, on older browsers, timezone support is not available. Use this function to figure out if that's the case.
+   * Some features of Luxon are not available in all environments. For example, on older browsers, relative time formatting support is not available. Use this function to figure out if that's the case.
    * Keys:
    * * `relative`: whether this environment supports relative time formatting
-   * @example Info.features() //=> { intl: true, intlTokens: false, zones: true, relative: false }
+   * @example Info.features() //=> { relative: false }
    * @return {Object}
    */
 
@@ -4566,6 +4572,12 @@ function unitForToken(token, loc) {
 
       case "u":
         return simple(oneToNine);
+
+      case "uu":
+        return simple(oneOrTwo);
+
+      case "uuu":
+        return intUnit(one);
       // meridiem
 
       case "a":
@@ -5407,7 +5419,7 @@ function lastOpts(argList) {
  *
  * Here is a brief overview of the most commonly used functionality it provides:
  *
- * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link DateTime.local}, {@link DateTime.utc}, and (most flexibly) {@link DateTime.fromObject}. To create one from a standard string format, use {@link DateTime.fromISO}, {@link DateTime.fromHTTP}, and {@link DateTime.fromRFC2822}. To create one from a custom string format, use {@link DateTime.fromFormat}. To create one from a native JS date, use {@link DateTime.fromJSDate}.
+ * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link DateTime#local}, {@link DateTime#utc}, and (most flexibly) {@link DateTime#fromObject}. To create one from a standard string format, use {@link DateTime#fromISO}, {@link DateTime#fromHTTP}, and {@link DateTime#fromRFC2822}. To create one from a custom string format, use {@link DateTime#fromFormat}. To create one from a native JS date, use {@link DateTime#fromJSDate}.
  * * **Gregorian calendar and time**: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through {@link DateTime#toObject}), use the {@link DateTime#year}, {@link DateTime#month},
  * {@link DateTime#day}, {@link DateTime#hour}, {@link DateTime#minute}, {@link DateTime#second}, {@link DateTime#millisecond} accessors.
  * * **Week calendar**: For ISO week calendar attributes, see the {@link DateTime#weekYear}, {@link DateTime#weekNumber}, and {@link DateTime#weekday} accessors.
@@ -6341,7 +6353,7 @@ class DateTime {
   /**
    * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
    *
-   * Equivalent to {@link DateTime.setZone}('utc')
+   * Equivalent to {@link DateTime#setZone}('utc')
    * @param {number} [offset=0] - optionally, an offset from UTC in minutes
    * @param {Object} [opts={}] - options to pass to `setZone()`
    * @return {DateTime}
@@ -6365,8 +6377,8 @@ class DateTime {
   /**
    * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
    *
-   * By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link DateTime.plus}. You may wish to use {@link DateTime.toLocal} and {@link DateTime.toUTC} which provide simple convenience wrappers for commonly used zones.
-   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link DateTime.Zone} class.
+   * By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link DateTime#plus}. You may wish to use {@link DateTime#toLocal} and {@link DateTime#toUTC} which provide simple convenience wrappers for commonly used zones.
+   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link DateTime#Zone} class.
    * @param {Object} opts - options
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
@@ -6435,7 +6447,7 @@ class DateTime {
   }
   /**
    * "Set" the values of specified units. Returns a newly-constructed DateTime.
-   * You can only set units with this method; for "setting" metadata, see {@link DateTime.reconfigure} and {@link DateTime.setZone}.
+   * You can only set units with this method; for "setting" metadata, see {@link DateTime#reconfigure} and {@link DateTime#setZone}.
    * @param {Object} values - a mapping of units to numbers
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
@@ -6507,12 +6519,12 @@ class DateTime {
 
   plus(duration) {
     if (!this.isValid) return this;
-    const dur = friendlyDuration(duration);
+    const dur = Duration.fromDurationLike(duration);
     return clone(this, adjustTime(this, dur));
   }
   /**
    * Subtract a period of time to this DateTime and return the resulting DateTime
-   * See {@link DateTime.plus}
+   * See {@link DateTime#plus}
    * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    @return {DateTime}
   */
@@ -6520,7 +6532,7 @@ class DateTime {
 
   minus(duration) {
     if (!this.isValid) return this;
-    const dur = friendlyDuration(duration).negate();
+    const dur = Duration.fromDurationLike(duration).negate();
     return clone(this, adjustTime(this, dur));
   }
   /**
@@ -6600,7 +6612,7 @@ class DateTime {
 
   /**
    * Returns a string representation of this DateTime formatted according to the specified format string.
-   * **You may not want this.** See {@link DateTime.toLocaleString} for a more flexible formatting tool. For a table of tokens and their interpretations, see [here](https://moment.github.io/luxon/#/formatting?id=table-of-tokens).
+   * **You may not want this.** See {@link DateTime#toLocaleString} for a more flexible formatting tool. For a table of tokens and their interpretations, see [here](https://moment.github.io/luxon/#/formatting?id=table-of-tokens).
    * Defaults to en-US if no locale has been specified, regardless of the system's locale.
    * @param {string} fmt - the format string
    * @param {Object} opts - opts to override the configuration options on this DateTime
@@ -6828,7 +6840,7 @@ class DateTime {
     return this.isValid ? this.toISO() : INVALID;
   }
   /**
-   * Returns the epoch milliseconds of this DateTime. Alias of {@link DateTime.toMillis}
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link DateTime#toMillis}
    * @return {number}
    */
 
@@ -6940,7 +6952,7 @@ class DateTime {
   }
   /**
    * Return the difference between this DateTime and right now.
-   * See {@link DateTime.diff}
+   * See {@link DateTime#diff}
    * @param {string|string[]} [unit=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
    * @param {Object} opts - options that affect the creation of the Duration
    * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
@@ -6964,7 +6976,7 @@ class DateTime {
   /**
    * Return whether this DateTime is in the same unit of time as another DateTime.
    * Higher-order units must also be identical for this function to return `true`.
-   * Note that time zones are **ignored** in this comparison, which compares the **local** calendar time. Use {@link DateTime.setZone} to convert one of the dates if needed.
+   * Note that time zones are **ignored** in this comparison, which compares the **local** calendar time. Use {@link DateTime#setZone} to convert one of the dates if needed.
    * @param {DateTime} otherDateTime - the other DateTime
    * @param {string} unit - the unit of time to check sameness on
    * @example DateTime.now().hasSame(otherDT, 'day'); //~> true if otherDT is in the same current calendar day
@@ -7117,7 +7129,7 @@ class DateTime {
   } // FORMAT PRESETS
 
   /**
-   * {@link DateTime.toLocaleString} format like 10/14/1983
+   * {@link DateTime#toLocaleString} format like 10/14/1983
    * @type {Object}
    */
 
@@ -7126,7 +7138,7 @@ class DateTime {
     return DATE_SHORT;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Oct 14, 1983'
+   * {@link DateTime#toLocaleString} format like 'Oct 14, 1983'
    * @type {Object}
    */
 
@@ -7135,7 +7147,7 @@ class DateTime {
     return DATE_MED;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Fri, Oct 14, 1983'
+   * {@link DateTime#toLocaleString} format like 'Fri, Oct 14, 1983'
    * @type {Object}
    */
 
@@ -7144,7 +7156,7 @@ class DateTime {
     return DATE_MED_WITH_WEEKDAY;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'October 14, 1983'
+   * {@link DateTime#toLocaleString} format like 'October 14, 1983'
    * @type {Object}
    */
 
@@ -7153,7 +7165,7 @@ class DateTime {
     return DATE_FULL;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Tuesday, October 14, 1983'
+   * {@link DateTime#toLocaleString} format like 'Tuesday, October 14, 1983'
    * @type {Object}
    */
 
@@ -7162,7 +7174,7 @@ class DateTime {
     return DATE_HUGE;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7171,7 +7183,7 @@ class DateTime {
     return TIME_SIMPLE;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7180,7 +7192,7 @@ class DateTime {
     return TIME_WITH_SECONDS;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7189,7 +7201,7 @@ class DateTime {
     return TIME_WITH_SHORT_OFFSET;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7198,7 +7210,7 @@ class DateTime {
     return TIME_WITH_LONG_OFFSET;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30', always 24-hour.
+   * {@link DateTime#toLocaleString} format like '09:30', always 24-hour.
    * @type {Object}
    */
 
@@ -7207,7 +7219,7 @@ class DateTime {
     return TIME_24_SIMPLE;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30:23', always 24-hour.
+   * {@link DateTime#toLocaleString} format like '09:30:23', always 24-hour.
    * @type {Object}
    */
 
@@ -7216,7 +7228,7 @@ class DateTime {
     return TIME_24_WITH_SECONDS;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30:23 EDT', always 24-hour.
+   * {@link DateTime#toLocaleString} format like '09:30:23 EDT', always 24-hour.
    * @type {Object}
    */
 
@@ -7225,7 +7237,7 @@ class DateTime {
     return TIME_24_WITH_SHORT_OFFSET;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
+   * {@link DateTime#toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
    * @type {Object}
    */
 
@@ -7234,7 +7246,7 @@ class DateTime {
     return TIME_24_WITH_LONG_OFFSET;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7243,7 +7255,7 @@ class DateTime {
     return DATETIME_SHORT;
   }
   /**
-   * {@link DateTime.toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7252,7 +7264,7 @@ class DateTime {
     return DATETIME_SHORT_WITH_SECONDS;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7261,7 +7273,7 @@ class DateTime {
     return DATETIME_MED;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7270,7 +7282,7 @@ class DateTime {
     return DATETIME_MED_WITH_SECONDS;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7279,7 +7291,7 @@ class DateTime {
     return DATETIME_MED_WITH_WEEKDAY;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7288,7 +7300,7 @@ class DateTime {
     return DATETIME_FULL;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'October 14, 1983, 9:30:33 AM EDT'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like 'October 14, 1983, 9:30:33 AM EDT'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7297,7 +7309,7 @@ class DateTime {
     return DATETIME_FULL_WITH_SECONDS;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7306,7 +7318,7 @@ class DateTime {
     return DATETIME_HUGE;
   }
   /**
-   * {@link DateTime.toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   * {@link DateTime#toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    * @type {Object}
    */
 
@@ -7332,7 +7344,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "2.0.2";
+const VERSION = "2.1.0";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

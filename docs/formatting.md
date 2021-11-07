@@ -89,8 +89,9 @@ Here's the full set of provided presets using the October 14, 1983 at `13:30:23`
 | ---------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- |
 | `DATE_SHORT`                 | short date                                                         | `10/14/1983`                                                 | `14/10/1983`                                               |
 | `DATE_MED`                   | abbreviated date                                                   | `Oct 14, 1983`                                               | `14 oct. 1983`                                             |
+| `DATE_MED_WITH_WEEKDAY`      | abbreviated date with abbreviated weekday                          | `Fri, Oct 14, 1983`                                          | `ven. 14 oct. 1983`                                             |
 | `DATE_FULL`                  | full date                                                          | `October 14, 1983`                                           | `14 octobre 1983`                                          |
-| `DATE_HUGE`                  | full date with weekday                                             | `Tuesday, October 14, 1983`                                  | `vendredi 14 octobre 1983`                                 |
+| `DATE_HUGE`                  | full date with weekday                                             | `Friday, October 14, 1983`                                   | `vendredi 14 octobre 1983`                                 |
 | `TIME_SIMPLE`                | time                                                               | `1:30 PM`                                                    | `13:30`                                                    |
 | `TIME_WITH_SECONDS`          | time with seconds                                                  | `1:30:23 PM`                                                 | `13:30:23`                                                 |
 | `TIME_WITH_SHORT_OFFSET`     | time with seconds and abbreviated named offset                     | `1:30:23 PM EDT`                                             | `13:30:23 UTC−4`                                           |
@@ -179,6 +180,8 @@ The macro options available correspond one-to-one with the preset formats define
 | S                |              | millisecond, no padding                                        | `54`                                                          |
 | SSS              |              | millisecond, padded to 3                                       | `054`                                                         |
 | u                |              | fractional seconds, functionally identical to SSS              | `054`                                                         |
+| uu               |              | fractional seconds, between 0 and 99, padded to 2              | `05`                                                          |
+| uuu              |              | fractional seconds, between 0 and 9                            | `0`                                                           |
 | s                |              | second, no padding                                             | `4`                                                           |
 | ss               |              | second, padded to 2 padding                                    | `04`                                                          |
 | m                |              | minute, no padding                                             | `7`                                                           |

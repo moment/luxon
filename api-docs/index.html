@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 2.0.2 | Documentation</title>
+  <title>luxon 2.1.0 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>2.0.2</code></div>
+          <div class='mb1'><code>2.1.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -755,6 +755,12 @@
                         href='#durationfromobject'
                         class='regular pre-open'>
                         .fromObject
+                      </a></li>
+                    
+                      <li><a
+                        href='#durationfromdurationlike'
+                        class='regular pre-open'>
+                        .fromDurationLike
                       </a></li>
                     
                       <li><a
@@ -1881,7 +1887,7 @@
 </ul>
 <p>Here is a brief overview of the most commonly used functionality it provides:</p>
 <ul>
-<li><strong>Creation</strong>: To create a DateTime from its components, use one of its factory class methods: <a href="#datetimelocal">DateTime.local</a>, <a href="#datetimeutc">DateTime.utc</a>, and (most flexibly) <a href="#datetimefromobject">DateTime.fromObject</a>. To create one from a standard string format, use <a href="#datetimefromiso">DateTime.fromISO</a>, <a href="#datetimefromhttp">DateTime.fromHTTP</a>, and <a href="#datetimefromrfc2822">DateTime.fromRFC2822</a>. To create one from a custom string format, use <a href="#datetimefromformat">DateTime.fromFormat</a>. To create one from a native JS date, use <a href="#datetimefromjsdate">DateTime.fromJSDate</a>.</li>
+<li><strong>Creation</strong>: To create a DateTime from its components, use one of its factory class methods: <a href="DateTime#local">DateTime#local</a>, <a href="DateTime#utc">DateTime#utc</a>, and (most flexibly) <a href="DateTime#fromObject">DateTime#fromObject</a>. To create one from a standard string format, use <a href="DateTime#fromISO">DateTime#fromISO</a>, <a href="DateTime#fromHTTP">DateTime#fromHTTP</a>, and <a href="DateTime#fromRFC2822">DateTime#fromRFC2822</a>. To create one from a custom string format, use <a href="DateTime#fromFormat">DateTime#fromFormat</a>. To create one from a native JS date, use <a href="DateTime#fromJSDate">DateTime#fromJSDate</a>.</li>
 <li><strong>Gregorian calendar and time</strong>: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through <a href="#datetimetoobject">DateTime#toObject</a>), use the <a href="#datetimeyear">DateTime#year</a>, <a href="#datetimemonth">DateTime#month</a>,</li>
 </ul>
 <p><a href="#datetimeday">DateTime#day</a>, <a href="#datetimehour">DateTime#hour</a>, <a href="#datetimeminute">DateTime#minute</a>, <a href="#datetimesecond">DateTime#second</a>, <a href="#datetimemillisecond">DateTime#millisecond</a> accessors.</p>
@@ -4400,7 +4406,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 10/14/1983</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 10/14/1983</p>
 
     <div class='pre p1 fill-light mt0'>DATE_SHORT</div>
   
@@ -4454,7 +4460,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Oct 14, 1983'</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Oct 14, 1983'</p>
 
     <div class='pre p1 fill-light mt0'>DATE_MED</div>
   
@@ -4508,7 +4514,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Fri, Oct 14, 1983'</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Fri, Oct 14, 1983'</p>
 
     <div class='pre p1 fill-light mt0'>DATE_MED_WITH_WEEKDAY</div>
   
@@ -4562,7 +4568,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'October 14, 1983'</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'October 14, 1983'</p>
 
     <div class='pre p1 fill-light mt0'>DATE_FULL</div>
   
@@ -4616,7 +4622,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Tuesday, October 14, 1983'</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Tuesday, October 14, 1983'</p>
 
     <div class='pre p1 fill-light mt0'>DATE_HUGE</div>
   
@@ -4670,7 +4676,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30 AM'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30 AM'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_SIMPLE</div>
   
@@ -4724,7 +4730,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30:23 AM'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30:23 AM'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_WITH_SECONDS</div>
   
@@ -4778,7 +4784,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30:23 AM EDT'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30:23 AM EDT'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_WITH_SHORT_OFFSET</div>
   
@@ -4832,7 +4838,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_WITH_LONG_OFFSET</div>
   
@@ -4886,7 +4892,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30', always 24-hour.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30', always 24-hour.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_24_SIMPLE</div>
   
@@ -4940,7 +4946,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30:23', always 24-hour.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30:23', always 24-hour.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_24_WITH_SECONDS</div>
   
@@ -4994,7 +5000,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30:23 EDT', always 24-hour.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30:23 EDT', always 24-hour.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_24_WITH_SHORT_OFFSET</div>
   
@@ -5048,7 +5054,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '09:30:23 Eastern Daylight Time', always 24-hour.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '09:30:23 Eastern Daylight Time', always 24-hour.</p>
 
     <div class='pre p1 fill-light mt0'>TIME_24_WITH_LONG_OFFSET</div>
   
@@ -5102,7 +5108,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_SHORT</div>
   
@@ -5156,7 +5162,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_SHORT_WITH_SECONDS</div>
   
@@ -5210,7 +5216,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_MED</div>
   
@@ -5264,7 +5270,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_MED_WITH_SECONDS</div>
   
@@ -5318,7 +5324,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_MED_WITH_WEEKDAY</div>
   
@@ -5372,7 +5378,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_FULL</div>
   
@@ -5426,7 +5432,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'October 14, 1983, 9:30:33 AM EDT'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'October 14, 1983, 9:30:33 AM EDT'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_FULL_WITH_SECONDS</div>
   
@@ -5480,7 +5486,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_HUGE</div>
   
@@ -5534,7 +5540,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p><a href="DateTime.toLocaleString">DateTime.toLocaleString</a> format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.</p>
+  <p><a href="#datetimetolocalestring">DateTime#toLocaleString</a> format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.</p>
 
     <div class='pre p1 fill-light mt0'>DATETIME_HUGE_WITH_SECONDS</div>
   
@@ -7714,7 +7720,7 @@ This is useful in understanding the behavior of formatting methods</p>
   
 
   <p>"Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.</p>
-<p>Equivalent to <a href="DateTime.setZone">DateTime.setZone</a>('utc')</p>
+<p>Equivalent to <a href="#datetimesetzone">DateTime#setZone</a>('utc')</p>
 
     <div class='pre p1 fill-light mt0'>toUTC(offset: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#datetime">DateTime</a></div>
   
@@ -7854,7 +7860,7 @@ This is useful in understanding the behavior of formatting methods</p>
   
 
   <p>"Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.</p>
-<p>By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with <a href="DateTime.plus">DateTime.plus</a>. You may wish to use <a href="DateTime.toLocal">DateTime.toLocal</a> and <a href="DateTime.toUTC">DateTime.toUTC</a> which provide simple convenience wrappers for commonly used zones.</p>
+<p>By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with <a href="#datetimeplus">DateTime#plus</a>. You may wish to use <a href="#datetimetolocal">DateTime#toLocal</a> and <a href="#datetimetoutc">DateTime#toUTC</a> which provide simple convenience wrappers for commonly used zones.</p>
 
     <div class='pre p1 fill-light mt0'>setZone(zone: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="#zone">Zone</a>), opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#datetime">DateTime</a></div>
   
@@ -7876,7 +7882,7 @@ This is useful in understanding the behavior of formatting methods</p>
             <span class='code bold'>zone</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="#zone">Zone</a>)
             = <code>&#39;local&#39;</code>)</code>
 	    a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'local' or 'utc'. You may also supply an instance of a 
-<a href="DateTime.Zone">DateTime.Zone</a>
+<a href="DateTime#Zone">DateTime#Zone</a>
  class.
 
           </div>
@@ -8168,7 +8174,7 @@ Just a convenient alias for reconfigure({ locale })</p>
   
 
   <p>"Set" the values of specified units. Returns a newly-constructed DateTime.
-You can only set units with this method; for "setting" metadata, see <a href="DateTime.reconfigure">DateTime.reconfigure</a> and <a href="DateTime.setZone">DateTime.setZone</a>.</p>
+You can only set units with this method; for "setting" metadata, see <a href="#datetimereconfigure">DateTime#reconfigure</a> and <a href="#datetimesetzone">DateTime#setZone</a>.</p>
 
     <div class='pre p1 fill-light mt0'>set(values: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#datetime">DateTime</a></div>
   
@@ -8346,7 +8352,7 @@ You can only set units with this method; for "setting" metadata, see <a href="Da
   
 
   <p>Subtract a period of time to this DateTime and return the resulting DateTime
-See <a href="DateTime.plus">DateTime.plus</a></p>
+See <a href="#datetimeplus">DateTime#plus</a></p>
 
     <div class='pre p1 fill-light mt0'>minus(duration: (<a href="#duration">Duration</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)): <a href="#datetime">DateTime</a></div>
   
@@ -8593,7 +8599,7 @@ See <a href="DateTime.plus">DateTime.plus</a></p>
   
 
   <p>Returns a string representation of this DateTime formatted according to the specified format string.
-<strong>You may not want this.</strong> See <a href="DateTime.toLocaleString">DateTime.toLocaleString</a> for a more flexible formatting tool. For a table of tokens and their interpretations, see <a href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">here</a>.
+<strong>You may not want this.</strong> See <a href="#datetimetolocalestring">DateTime#toLocaleString</a> for a more flexible formatting tool. For a table of tokens and their interpretations, see <a href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">here</a>.
 Defaults to en-US if no locale has been specified, regardless of the system's locale.</p>
 
     <div class='pre p1 fill-light mt0'>toFormat(fmt: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
@@ -9877,7 +9883,7 @@ Specifically, the string conforms to RFC 1123.</p>
 
   
 
-  <p>Returns the epoch milliseconds of this DateTime. Alias of <a href="DateTime.toMillis">DateTime.toMillis</a></p>
+  <p>Returns the epoch milliseconds of this DateTime. Alias of <a href="#datetimetomillis">DateTime#toMillis</a></p>
 
     <div class='pre p1 fill-light mt0'>valueOf(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
   
@@ -10446,7 +10452,7 @@ i2.diff(i1, [<span class="hljs-string">&#x27;months&#x27;</span>, <span class="h
   
 
   <p>Return the difference between this DateTime and right now.
-See <a href="DateTime.diff">DateTime.diff</a></p>
+See <a href="#datetimediff">DateTime#diff</a></p>
 
     <div class='pre p1 fill-light mt0'>diffNow(unit: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>), opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#duration">Duration</a></div>
   
@@ -10626,7 +10632,7 @@ See <a href="DateTime.diff">DateTime.diff</a></p>
 
   <p>Return whether this DateTime is in the same unit of time as another DateTime.
 Higher-order units must also be identical for this function to return <code>true</code>.
-Note that time zones are <strong>ignored</strong> in this comparison, which compares the <strong>local</strong> calendar time. Use <a href="DateTime.setZone">DateTime.setZone</a> to convert one of the dates if needed.</p>
+Note that time zones are <strong>ignored</strong> in this comparison, which compares the <strong>local</strong> calendar time. Use <a href="#datetimesetzone">DateTime#setZone</a> to convert one of the dates if needed.</p>
 
     <div class='pre p1 fill-light mt0'>hasSame(otherDateTime: <a href="#datetime">DateTime</a>, unit: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
   
@@ -11103,10 +11109,10 @@ Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
   </div>
   
 
-  <p>A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use <a href="DateTime.plus">DateTime.plus</a> to add a Duration object to a DateTime, producing another DateTime.</p>
+  <p>A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use <a href="#datetimeplus">DateTime#plus</a> to add a Duration object to a DateTime, producing another DateTime.</p>
 <p>Here is a brief overview of commonly used methods and getters in Duration:</p>
 <ul>
-<li><strong>Creation</strong> To create a Duration, use <a href="#durationfrommillis">Duration.fromMillis</a>, <a href="#durationfromobject">Duration.fromObject</a>, or <a href="#durationfromiso">Duration.fromISO</a>.</li>
+<li><strong>Creation</strong> To create a Duration, use <a href="Duration#fromMillis">Duration#fromMillis</a>, <a href="Duration#fromObject">Duration#fromObject</a>, or <a href="Duration#fromISO">Duration#fromISO</a>.</li>
 <li><strong>Unit values</strong> See the <a href="#durationyears">Duration#years</a>, <a href="Duration.months">Duration.months</a>, <a href="#durationweeks">Duration#weeks</a>, <a href="#durationdays">Duration#days</a>, <a href="#durationhours">Duration#hours</a>, <a href="#durationminutes">Duration#minutes</a>, <a href="#durationseconds">Duration#seconds</a>, <a href="#durationmilliseconds">Duration#milliseconds</a> accessors.</li>
 <li><strong>Configuration</strong> See  <a href="#durationlocale">Duration#locale</a> and <a href="#durationnumberingsystem">Duration#numberingSystem</a> accessors.</li>
 <li><strong>Transformation</strong> To create new Durations out of old ones use <a href="#durationplus">Duration#plus</a>, <a href="#durationminus">Duration#minus</a>, <a href="#durationnormalize">Duration#normalize</a>, <a href="#durationset">Duration#set</a>, <a href="#durationreconfigure">Duration#reconfigure</a>, <a href="#durationshiftto">Duration#shiftTo</a>, and <a href="#durationnegate">Duration#negate</a>.</li>
@@ -11461,6 +11467,81 @@ If this object is empty then a zero milliseconds duration is returned.</p>
               
             </tbody>
           </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#duration">Duration</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='durationfromdurationlike'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>fromDurationLike(durationLike)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Create a Duration from DurationLike.</p>
+
+    <div class='pre p1 fill-light mt0'>fromDurationLike(durationLike: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a> | <a href="#duration">Duration</a>)): <a href="#duration">Duration</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>durationLike</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a> | <a href="#duration">Duration</a>))</code>
+	    One of:
+<ul>
+<li>object with keys like 'years' and 'hours'.</li>
+<li>number representing milliseconds</li>
+<li>Duration instance</li>
+</ul>
+
+          </div>
           
         </div>
       
@@ -12084,7 +12165,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
 <p>Notes:</p>
 <ul>
 <li>Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits</li>
-<li>The duration will be converted to the set of units in the format string using <a href="Duration.shiftTo">Duration.shiftTo</a> and the Durations's conversion accuracy setting.</li>
+<li>The duration will be converted to the set of units in the format string using <a href="#durationshiftto">Duration#shiftTo</a> and the Durations's conversion accuracy setting.</li>
 </ul>
 
     <div class='pre p1 fill-light mt0'>toFormat(fmt: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
@@ -14255,7 +14336,7 @@ Two Durations are equal iff they have the same units and the same values for eac
   <p>An Interval object represents a half-open interval of time, where each endpoint is a <a href="#datetime">DateTime</a>. Conceptually, it's a container for those two endpoints, accompanied by methods for creating, parsing, interrogating, comparing, transforming, and formatting them.</p>
 <p>Here is a brief overview of the most commonly used methods and getters in Interval:</p>
 <ul>
-<li><strong>Creation</strong> To create an Interval, use <a href="#intervalfromdatetimes">Interval.fromDateTimes</a>, <a href="#intervalafter">Interval.after</a>, <a href="#intervalbefore">Interval.before</a>, or <a href="#intervalfromiso">Interval.fromISO</a>.</li>
+<li><strong>Creation</strong> To create an Interval, use <a href="Interval#fromDateTimes">Interval#fromDateTimes</a>, <a href="Interval#after">Interval#after</a>, <a href="Interval#before">Interval#before</a>, or <a href="Interval#fromISO">Interval#fromISO</a>.</li>
 <li><strong>Accessors</strong> Use <a href="#intervalstart">Interval#start</a> and <a href="#intervalend">Interval#end</a> to get the start and end.</li>
 <li><strong>Interrogation</strong> To analyze the Interval, use <a href="#intervalcount">Interval#count</a>, <a href="#intervallength">Interval#length</a>, <a href="#intervalhassame">Interval#hasSame</a>, <a href="#intervalcontains">Interval#contains</a>, <a href="#intervalisafter">Interval#isAfter</a>, or <a href="#intervalisbefore">Interval#isBefore</a>.</li>
 <li><strong>Transformation</strong> To create other Intervals out of this one, use <a href="#intervalset">Interval#set</a>, <a href="#intervalsplitat">Interval#splitAt</a>, <a href="#intervalsplitby">Interval#splitBy</a>, <a href="#intervaldivideequally">Interval#divideEqually</a>, <a href="Interval#merge">Interval#merge</a>, <a href="Interval#xor">Interval#xor</a>, <a href="#intervalunion">Interval#union</a>, <a href="#intervalintersection">Interval#intersection</a>, or <a href="#intervaldifference">Interval#difference</a>.</li>
@@ -14659,9 +14740,9 @@ Accepts <code>&#x3C;start>/&#x3C;end></code>, <code>&#x3C;start>/&#x3C;duration>
           <div>
             <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
 	    options to pass 
-<a href="#datetimefromiso">DateTime.fromISO</a>
+<a href="DateTime#fromISO">DateTime#fromISO</a>
  and optionally 
-<a href="#durationfromiso">Duration.fromISO</a>
+<a href="Duration#fromISO">Duration#fromISO</a>
 
           </div>
           
@@ -16775,7 +16856,7 @@ The date components are ignored.</p>
           <div>
             <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
 	    The same options as 
-<a href="DateTime.toISO">DateTime.toISO</a>
+<a href="#datetimetoiso">DateTime#toISO</a>
 
           </div>
           
@@ -16854,7 +16935,7 @@ The date components are ignored.</p>
           <div>
             <span class='code bold'>dateFormat</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
 	    the format string. This string formats the start and end time. See 
-<a href="DateTime.toFormat">DateTime.toFormat</a>
+<a href="#datetimetoformat">DateTime#toFormat</a>
  for details.
 
           </div>
@@ -17346,7 +17427,7 @@ The date components are ignored.</p>
 <li>If <code>input</code> is a string containing a valid time zone name, a Zone instance
 with that name is returned.</li>
 <li>If <code>input</code> is a string that doesn't refer to a known time zone, a Zone
-instance with <a href="Zone.isValid">Zone.isValid</a> == false is returned.</li>
+instance with <a href="#zoneisvalid">Zone#isValid</a> == false is returned.</li>
 <li>If `input is a number, a Zone instance with the specified fixed offset
 in minutes is returned.</li>
 <li>If <code>input</code> is <code>null</code> or <code>undefined</code>, the default zone is returned.</li>
