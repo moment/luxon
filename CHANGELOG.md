@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1 (2021-11-08)
+
+ * Fix issue in quirky environments that lack `hourCycle` support and sometimes computed offsets 12 hours off
+
 ## 2.1.0 (2021-11-07)
 
  * Stop special casing of `Etc/GMT*` zones
