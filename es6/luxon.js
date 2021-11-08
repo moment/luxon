@@ -1223,7 +1223,7 @@ let dtfCache = {};
 function makeDTF(zone) {
   if (!dtfCache[zone]) {
     dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
-      hourCycle: "h23",
+      hour12: false,
       timeZone: zone,
       year: "numeric",
       month: "2-digit",
@@ -1368,11 +1368,14 @@ class IANAZone extends Zone {
         ? partsOffset(dtf, date)
         : hackyOffset(dtf, date);
 
+    // because we're using hour12 and https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
+    const adjustedHour = hour === 24 ? 0 : hour;
+
     const asUTC = objToLocalTS({
       year,
       month,
       day,
-      hour,
+      hour: adjustedHour,
       minute,
       second,
       millisecond: 0,
@@ -6878,7 +6881,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "2.1.0";
+const VERSION = "2.1.1";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, Settings, SystemZone, VERSION, Zone };
 //# sourceMappingURL=luxon.js.map

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1636314225706" clover="3.2.0">
-  <project timestamp="1636314225706" name="All files">
-    <metrics statements="1831" coveredstatements="1752" conditionals="1572" coveredconditionals="1479" methods="509" coveredmethods="485" elements="3912" coveredelements="3716" complexity="0" loc="1831" ncloc="1831" packages="3" files="23" classes="23"/>
+<coverage generated="1636407805001" clover="3.2.0">
+  <project timestamp="1636407805001" name="All files">
+    <metrics statements="1832" coveredstatements="1753" conditionals="1574" coveredconditionals="1481" methods="509" coveredmethods="485" elements="3915" coveredelements="3719" complexity="0" loc="1832" ncloc="1832" packages="3" files="23" classes="23"/>
     <package name="src">
       <metrics statements="797" coveredstatements="778" conditionals="825" coveredconditionals="817" methods="260" coveredmethods="242"/>
       <file name="datetime.js" path="/home/icambron/code/luxon/src/datetime.js">
@@ -17,11 +17,11 @@
         <line num="78" count="3858" type="stmt"/>
         <line num="81" count="3858" type="stmt"/>
         <line num="84" count="3858" type="cond" truecount="2" falsecount="0"/>
-        <line num="85" count="3001" type="stmt"/>
-        <line num="89" count="857" type="stmt"/>
-        <line num="92" count="857" type="stmt"/>
-        <line num="93" count="857" type="cond" truecount="2" falsecount="0"/>
-        <line num="94" count="851" type="stmt"/>
+        <line num="85" count="3018" type="stmt"/>
+        <line num="89" count="840" type="stmt"/>
+        <line num="92" count="840" type="stmt"/>
+        <line num="93" count="840" type="cond" truecount="2" falsecount="0"/>
+        <line num="94" count="834" type="stmt"/>
         <line num="98" count="6" type="stmt"/>
         <line num="103" count="4520" type="stmt"/>
         <line num="105" count="4520" type="stmt"/>
@@ -928,9 +928,9 @@
         <line num="31" count="168" type="stmt"/>
         <line num="32" count="168" type="stmt"/>
         <line num="34" count="168" type="cond" truecount="2" falsecount="0"/>
-        <line num="35" count="31" type="stmt"/>
-        <line num="36" count="31" type="stmt"/>
-        <line num="38" count="137" type="stmt"/>
+        <line num="35" count="33" type="stmt"/>
+        <line num="36" count="33" type="stmt"/>
+        <line num="38" count="135" type="stmt"/>
         <line num="41" count="168" type="stmt"/>
         <line num="45" count="209" type="stmt"/>
         <line num="49" count="209" type="stmt"/>
@@ -939,7 +939,7 @@
         <line num="54" count="226" type="stmt"/>
         <line num="57" count="209" type="cond" truecount="2" falsecount="0"/>
         <line num="58" count="154" type="cond" truecount="2" falsecount="0"/>
-        <line num="59" count="72" type="stmt"/>
+        <line num="59" count="70" type="stmt"/>
         <line num="62" count="154" type="cond" truecount="2" falsecount="0"/>
         <line num="63" count="97" type="cond" truecount="2" falsecount="0"/>
         <line num="67" count="209" type="stmt"/>
@@ -1805,9 +1805,9 @@
       </file>
     </package>
     <package name="src.zones">
-      <metrics statements="92" coveredstatements="88" conditionals="32" coveredconditionals="31" methods="46" coveredmethods="45"/>
+      <metrics statements="93" coveredstatements="89" conditionals="34" coveredconditionals="33" methods="46" coveredmethods="45"/>
       <file name="IANAZone.js" path="/home/icambron/code/luxon/src/zones/IANAZone.js">
-        <metrics statements="50" coveredstatements="46" conditionals="18" coveredconditionals="17" methods="16" coveredmethods="15"/>
+        <metrics statements="51" coveredstatements="47" conditionals="20" coveredconditionals="19" methods="16" coveredmethods="15"/>
         <line num="4" count="53" type="stmt"/>
         <line num="6" count="53" type="stmt"/>
         <line num="8" count="487" type="cond" truecount="2" falsecount="0"/>
@@ -1851,13 +1851,14 @@
         <line num="148" count="491" type="cond" truecount="2" falsecount="0"/>
         <line num="150" count="487" type="stmt"/>
         <line num="151" count="487" type="cond" truecount="1" falsecount="1"/>
-        <line num="155" count="487" type="stmt"/>
-        <line num="165" count="487" type="stmt"/>
-        <line num="166" count="487" type="stmt"/>
-        <line num="167" count="487" type="cond" truecount="2" falsecount="0"/>
+        <line num="156" count="487" type="cond" truecount="2" falsecount="0"/>
+        <line num="158" count="487" type="stmt"/>
         <line num="168" count="487" type="stmt"/>
-        <line num="173" count="95" type="cond" truecount="2" falsecount="0"/>
-        <line num="178" count="323" type="stmt"/>
+        <line num="169" count="487" type="stmt"/>
+        <line num="170" count="487" type="cond" truecount="2" falsecount="0"/>
+        <line num="171" count="487" type="stmt"/>
+        <line num="176" count="95" type="cond" truecount="2" falsecount="0"/>
+        <line num="181" count="323" type="stmt"/>
       </file>
       <file name="fixedOffsetZone.js" path="/home/icambron/code/luxon/src/zones/fixedOffsetZone.js">
         <metrics statements="20" coveredstatements="20" conditionals="12" coveredconditionals="12" methods="12" coveredmethods="12"/>
@@ -1906,7 +1907,7 @@
         <line num="34" count="119" type="stmt"/>
         <line num="39" count="2" type="stmt"/>
         <line num="44" count="16" type="stmt"/>
-        <line num="49" count="6581" type="stmt"/>
+        <line num="49" count="6564" type="stmt"/>
         <line num="54" count="1109" type="stmt"/>
         <line num="59" count="3622" type="stmt"/>
       </file>

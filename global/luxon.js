@@ -1561,7 +1561,7 @@ var luxon = (function (exports) {
   function makeDTF(zone) {
     if (!dtfCache[zone]) {
       dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
-        hourCycle: "h23",
+        hour12: false,
         timeZone: zone,
         year: "numeric",
         month: "2-digit",
@@ -1725,13 +1725,15 @@ var luxon = (function (exports) {
           day = _ref2[2],
           hour = _ref2[3],
           minute = _ref2[4],
-          second = _ref2[5];
+          second = _ref2[5]; // because we're using hour12 and https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
 
+
+      var adjustedHour = hour === 24 ? 0 : hour;
       var asUTC = objToLocalTS({
         year: year,
         month: month,
         day: day,
-        hour: hour,
+        hour: adjustedHour,
         minute: minute,
         second: second,
         millisecond: 0
@@ -8335,7 +8337,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "2.1.0";
+  var VERSION = "2.1.1";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
