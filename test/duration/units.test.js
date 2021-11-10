@@ -4,6 +4,11 @@ import { Duration } from "../../src/luxon";
 //------
 // #shiftTo()
 //-------
+test("Duration#shiftTo boils hours down to hours and minutes", () => {
+  const dur = Duration.fromObject({ hour: 2.4 });
+  expect(dur.shiftTo("hour").toFormat("hh:mm")).toBe("02:24");
+});
+
 test("Duration#shiftTo rolls milliseconds up hours and minutes", () => {
   const dur = Duration.fromMillis(5760000);
   expect(dur.shiftTo("hours").hours).toBe(1.6);

@@ -701,7 +701,7 @@ export default class Duration {
 
         const i = Math.trunc(own);
         built[k] = i;
-        accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
+        accumulated[k] = (own * 100 - i * 100) / 100; // we'd like to absorb these fractions in another unit
 
         // plus anything further down the chain that should be rolled up in to this
         for (const down in vals) {
