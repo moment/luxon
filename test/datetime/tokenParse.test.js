@@ -24,6 +24,7 @@ test("DateTime.fromFormat() prefers IANA zone id", () => {
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
+  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(12);
@@ -42,6 +43,7 @@ test("DateTime.fromFormat() converts offset not belonging to time zone", () => {
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
+  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(12);
@@ -60,6 +62,7 @@ test("DateTime.fromFormat() converts offset that belongs to time zone when it is
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
+  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(10);
   expect(i.day).toBe(3);
@@ -78,6 +81,7 @@ test("DateTime.fromFormat() maintains offset that belongs to time zone during ov
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
+  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(4);
   expect(i.day).toBe(4);
@@ -93,6 +97,7 @@ test("DateTime.fromFormat() maintains offset that belongs to time zone during ov
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
+  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(4);
   expect(i.day).toBe(4);
@@ -108,6 +113,7 @@ test("DateTime.format() uses local zone when setZone is false and offset in inpu
   const i = DateTime.fromFormat("2021-11-12T09:07:13.000+08:00", "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", {
     setZone: false,
   });
+  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(11);
@@ -125,6 +131,7 @@ test("DateTime.format() uses local zone when setZone is false and zone id in inp
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: false }
   );
+  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(11);
@@ -134,6 +141,15 @@ test("DateTime.format() uses local zone when setZone is false and zone id in inp
   expect(i.millisecond).toBe(0);
   expect(i.offset).toBe(-300);
   expect(i.zoneName).toBe("America/New_York");
+});
+
+test("DateTime.format() creates invalid timestamp on nonexistant dates", () => {
+  const i = DateTime.fromFormat(
+    "2021-02-30T09:07:13.000+08:00[Australia/Perth]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.isValid).toBe(false);
 });
 
 test("DateTime.fromFormat() yields Invalid reason 'unparseable' for incompatible formats", () => {
