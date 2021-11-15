@@ -159,9 +159,12 @@ function adjustTime(inst, dur) {
 }
 
 // helper useful in turning the results of parsing into real dates
-// by handling the zone options
+// by handling the zone options.
+// parsedZone is intended to be the IANAZone, and parsedOffsetZone should be the FixedOffsetZone,
+// if they were present in the input string.
+// If opts.setZone is true, then we prefer to set the parsedZone, but in its absence,
+// the parsedOffsetZone is used.
 function parseDataToDateTime(parsed, parsedZone, parsedOffsetZone, opts, format, text) {
-  // console.log("parseDateToDateTime", parsed, parsedZone, opts, format, text);
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedOffsetZone || parsedZone || zone,
