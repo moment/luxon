@@ -73,8 +73,5 @@
     "src"
   ],
   "license": "MIT",
-  "sideEffects": false,
-  "dependencies": {
-    "full-icu": "^1.4.0"
-  }
+  "sideEffects": false
 }
