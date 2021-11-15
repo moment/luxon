@@ -160,15 +160,23 @@ function adjustTime(inst, dur) {
 
 // helper useful in turning the results of parsing into real dates
 // by handling the zone options
-function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
+function parseDataToDateTime(parsed, parsedZone, parsedOffsetZone, opts, format, text) {
+  // console.log("parseDateToDateTime", parsed, parsedZone, opts, format, text);
   const { setZone, zone } = opts;
   if (parsed && Object.keys(parsed).length !== 0) {
-    const interpretationZone = parsedZone || zone,
+    const interpretationZone = parsedOffsetZone || parsedZone || zone,
       inst = DateTime.fromObject(parsed, {
         ...opts,
         zone: interpretationZone,
       });
-    return setZone ? inst : inst.setZone(zone);
+
+    let result = inst;
+    if (setZone) {
+      result = parsedZone ? inst.setZone(parsedZone) : inst;
+    } else {
+      result = inst.setZone(zone);
+    }
+    return result;
   } else {
     return DateTime.invalid(
       new Invalid("unparsable", `the input "${text}" can't be parsed as ${format}`)
@@ -754,8 +762,8 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromISO(text, opts = {}) {
-    const [vals, parsedZone] = parseISODate(text);
-    return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text);
+    const [vals, parsedOffsetZone] = parseISODate(text);
+    return parseDataToDateTime(vals, null, parsedOffsetZone, opts, "ISO 8601", text);
   }
 
   /**
@@ -773,8 +781,8 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromRFC2822(text, opts = {}) {
-    const [vals, parsedZone] = parseRFC2822Date(text);
-    return parseDataToDateTime(vals, parsedZone, opts, "RFC 2822", text);
+    const [vals, parsedOffsetZone] = parseRFC2822Date(text);
+    return parseDataToDateTime(vals, null, parsedOffsetZone, opts, "RFC 2822", text);
   }
 
   /**
@@ -793,8 +801,8 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromHTTP(text, opts = {}) {
-    const [vals, parsedZone] = parseHTTPDate(text);
-    return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
+    const [vals, parsedOffsetZone] = parseHTTPDate(text);
+    return parseDataToDateTime(vals, null, parsedOffsetZone, opts, "HTTP", opts);
   }
 
   /**
@@ -821,11 +829,12 @@ export default class DateTime {
         numberingSystem,
         defaultToEN: true,
       }),
-      [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
+      [vals, parsedZone, parsedOffsetZone, invalid] = parseFromTokens(localeToUse, text, fmt);
+
     if (invalid) {
       return DateTime.invalid(invalid);
     } else {
-      return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text);
+      return parseDataToDateTime(vals, parsedZone, parsedOffsetZone, opts, `format ${fmt}`, text);
     }
   }
 
@@ -858,7 +867,7 @@ export default class DateTime {
    */
   static fromSQL(text, opts = {}) {
     const [vals, parsedZone] = parseSQL(text);
-    return parseDataToDateTime(vals, parsedZone, opts, "SQL", text);
+    return parseDataToDateTime(vals, null, parsedZone, opts, "SQL", text);
   }
 
   /**

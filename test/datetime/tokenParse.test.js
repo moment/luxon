@@ -18,6 +18,124 @@ test("DateTime.fromFormat() parses basic times", () => {
   expect(i.millisecond).toBe(445);
 });
 
+test("DateTime.fromFormat() prefers IANA zone id", () => {
+  const i = DateTime.fromFormat(
+    "2021-11-12T09:07:13.000+08:00[Australia/Perth]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(12);
+  expect(i.hour).toBe(9);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(480); //+08:00
+  expect(i.zoneName).toBe("Australia/Perth");
+});
+
+test("DateTime.fromFormat() converts offset not belonging to time zone", () => {
+  // +11:00 is not a valid offset for the Australia/Perth time zone
+  const i = DateTime.fromFormat(
+    "2021-11-12T09:07:13.000+11:00[Australia/Perth]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(12);
+  expect(i.hour).toBe(6);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(480); //+08:00
+  expect(i.zoneName).toBe("Australia/Perth");
+});
+
+test("DateTime.fromFormat() converts offset that belongs to time zone when it is incorrect", () => {
+  // DST is not in effect at this timestamp, so +10:00 is the correct offset
+  const i = DateTime.fromFormat(
+    "2021-10-03T01:30:00.000+11:00[Australia/Sydney]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(10);
+  expect(i.day).toBe(3);
+  expect(i.hour).toBe(0);
+  expect(i.minute).toBe(30);
+  expect(i.second).toBe(0);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(600); //+10:00
+  expect(i.zoneName).toBe("Australia/Sydney");
+});
+
+test("DateTime.fromFormat() maintains offset that belongs to time zone during overlap", () => {
+  // On this day, 02:30 exists for both offsets, due to DST ending.
+  let i = DateTime.fromFormat(
+    "2021-04-04T02:30:00.000+11:00[Australia/Sydney]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(4);
+  expect(i.day).toBe(4);
+  expect(i.hour).toBe(2);
+  expect(i.minute).toBe(30);
+  expect(i.second).toBe(0);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(660); //+11:00
+  expect(i.zoneName).toBe("Australia/Sydney");
+
+  i = DateTime.fromFormat(
+    "2021-04-04T02:30:00.000+10:00[Australia/Sydney]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(4);
+  expect(i.day).toBe(4);
+  expect(i.hour).toBe(2);
+  expect(i.minute).toBe(30);
+  expect(i.second).toBe(0);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(600); //+10:00
+  expect(i.zoneName).toBe("Australia/Sydney");
+});
+
+test("DateTime.format() uses local zone when setZone is false and offset in input", () => {
+  const i = DateTime.fromFormat("2021-11-12T09:07:13.000+08:00", "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", {
+    setZone: false,
+  });
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(11);
+  expect(i.hour).toBe(20);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(-300);
+  expect(i.zoneName).toBe("America/New_York");
+});
+
+test("DateTime.format() uses local zone when setZone is false and zone id in input", () => {
+  const i = DateTime.fromFormat(
+    "2021-11-12T09:07:13.000+08:00[Australia/Perth]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: false }
+  );
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(11);
+  expect(i.hour).toBe(20);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(-300);
+  expect(i.zoneName).toBe("America/New_York");
+});
+
 test("DateTime.fromFormat() yields Invalid reason 'unparseable' for incompatible formats", () => {
   const i = DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy");
   expect(i.invalid).not.toBeNull;
