@@ -815,7 +815,7 @@ export default class DateTime {
    * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
    * @param {Object} opts - options to affect the creation
    * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
-   * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+   * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one. If both a zone and an offset are specified, the timestamp will first be interpreted for the specified offset, and then the zone will be set.
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
