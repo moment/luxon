@@ -4,7 +4,7 @@ import Helpers from "../helpers";
 
 import { ConflictingSpecificationError } from "../../src/errors";
 
-//------
+// //------
 // .fromFormat
 //-------
 test("DateTime.fromFormat() parses basic times", () => {
@@ -565,6 +565,93 @@ test("DateTime.fromFormat() with setZone parses fixed offsets and sets it", () =
   }
 });
 
+test("DateTime.fromFormat() prefers IANA zone id", () => {
+  const i = DateTime.fromFormat(
+    "2021-11-12T09:07:13.000+08:00[Australia/Perth]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.isValid).toBe(true);
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(12);
+  expect(i.hour).toBe(9);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(480); //+08:00
+  expect(i.zoneName).toBe("Australia/Perth");
+});
+
+test("DateTime.fromFormat() maintains offset that belongs to time zone during overlap", () => {
+  // On this day, 02:30 exists for both offsets, due to DST ending.
+  let i = DateTime.fromFormat(
+    "2021-04-04T02:30:00.000+11:00[Australia/Sydney]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.isValid).toBe(true);
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(4);
+  expect(i.day).toBe(4);
+  expect(i.hour).toBe(2);
+  expect(i.minute).toBe(30);
+  expect(i.second).toBe(0);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(660); //+11:00
+  expect(i.zoneName).toBe("Australia/Sydney");
+
+  i = DateTime.fromFormat(
+    "2021-04-04T02:30:00.000+10:00[Australia/Sydney]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.isValid).toBe(true);
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(4);
+  expect(i.day).toBe(4);
+  expect(i.hour).toBe(2);
+  expect(i.minute).toBe(30);
+  expect(i.second).toBe(0);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(600); //+10:00
+  expect(i.zoneName).toBe("Australia/Sydney");
+});
+
+test("DateTime.format() uses local zone when setZone is false and offset in input", () => {
+  const i = DateTime.fromFormat("2021-11-12T09:07:13.000+08:00", "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", {
+    setZone: false,
+  });
+  expect(i.isValid).toBe(true);
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(11);
+  expect(i.hour).toBe(20);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(-300);
+  expect(i.zoneName).toBe("America/New_York");
+});
+
+test("DateTime.format() uses local zone when setZone is false and zone id in input", () => {
+  const i = DateTime.fromFormat(
+    "2021-11-12T09:07:13.000+08:00[Australia/Perth]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: false }
+  );
+  expect(i.isValid).toBe(true);
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(11);
+  expect(i.hour).toBe(20);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(-300);
+  expect(i.zoneName).toBe("America/New_York");
+});
+
 test("DateTime.fromFormat() parses localized macro tokens", () => {
   const formatGroups = [
     {
@@ -678,6 +765,24 @@ test("DateTime.fromFormat containg special regex token", () => {
   expect(
     DateTime.fromFormat("2019-01-14T11-30\tIndian/Maldives\t", "yyyy-MM-dd'T'HH-mm't'z't'").isValid
   ).toBe(false);
+});
+
+test("DateTime.fromFormat() prefers IANA zone id", () => {
+  const i = DateTime.fromFormat(
+    "2021-11-12T09:07:13.000+08:00[Australia/Perth]",
+    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
+    { setZone: true }
+  );
+  expect(i.isValid).toBe(true);
+  expect(i.year).toBe(2021);
+  expect(i.month).toBe(11);
+  expect(i.day).toBe(12);
+  expect(i.hour).toBe(9);
+  expect(i.minute).toBe(7);
+  expect(i.second).toBe(13);
+  expect(i.millisecond).toBe(0);
+  expect(i.offset).toBe(480); //+08:00
+  expect(i.zoneName).toBe("Australia/Perth");
 });
 
 //------

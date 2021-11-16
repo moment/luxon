@@ -318,13 +318,17 @@ function dateTimeFromMatches(matches) {
     }
   };
 
-  let zone;
-  if (!isUndefined(matches.Z)) {
-    zone = new FixedOffsetZone(matches.Z);
-  } else if (!isUndefined(matches.z)) {
+  let zone = null;
+  let specificOffset;
+  if (!isUndefined(matches.z)) {
     zone = IANAZone.create(matches.z);
-  } else {
-    zone = null;
+  }
+
+  if (!isUndefined(matches.Z)) {
+    if (!zone) {
+      zone = new FixedOffsetZone(matches.Z);
+    }
+    specificOffset = matches.Z;
   }
 
   if (!isUndefined(matches.q)) {
@@ -356,7 +360,7 @@ function dateTimeFromMatches(matches) {
     return r;
   }, {});
 
-  return [vals, zone];
+  return [vals, zone, specificOffset];
 }
 
 let dummyDateTimeCache = null;
@@ -411,17 +415,19 @@ export function explainFromTokens(locale, input, format) {
     const [regexString, handlers] = buildRegex(units),
       regex = RegExp(regexString, "i"),
       [rawMatches, matches] = match(input, regex, handlers),
-      [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+      [result, zone, specificOffset] = matches
+        ? dateTimeFromMatches(matches)
+        : [null, null, undefined];
     if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
       throw new ConflictingSpecificationError(
         "Can't include meridiem when specifying 24-hour format"
       );
     }
-    return { input, tokens, regex, rawMatches, matches, result, zone };
+    return { input, tokens, regex, rawMatches, matches, result, zone, specificOffset };
   }
 }
 
 export function parseFromTokens(locale, input, format) {
-  const { result, zone, invalidReason } = explainFromTokens(locale, input, format);
-  return [result, zone, invalidReason];
+  const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
+  return [result, zone, specificOffset, invalidReason];
 }
