@@ -644,7 +644,9 @@ export default class DateTime {
     }
 
     const tsNow = Settings.now(),
-      offsetProvis = opts.specificOffset || zoneToUse.offset(tsNow),
+      offsetProvis = !isUndefined(opts.specificOffset)
+        ? opts.specificOffset
+        : zoneToUse.offset(tsNow),
       normalized = normalizeObject(obj, normalizeUnit),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
