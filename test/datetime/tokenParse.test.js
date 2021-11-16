@@ -4,7 +4,7 @@ import Helpers from "../helpers";
 
 import { ConflictingSpecificationError } from "../../src/errors";
 
-// //------
+//------
 // .fromFormat
 //-------
 test("DateTime.fromFormat() parses basic times", () => {
@@ -803,24 +803,6 @@ test("DateTime.fromFormat containg special regex token", () => {
   expect(
     DateTime.fromFormat("2019-01-14T11-30\tIndian/Maldives\t", "yyyy-MM-dd'T'HH-mm't'z't'").isValid
   ).toBe(false);
-});
-
-test("DateTime.fromFormat() prefers IANA zone id", () => {
-  const i = DateTime.fromFormat(
-    "2021-11-12T09:07:13.000+08:00[Australia/Perth]",
-    "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
-    { setZone: true }
-  );
-  expect(i.isValid).toBe(true);
-  expect(i.year).toBe(2021);
-  expect(i.month).toBe(11);
-  expect(i.day).toBe(12);
-  expect(i.hour).toBe(9);
-  expect(i.minute).toBe(7);
-  expect(i.second).toBe(13);
-  expect(i.millisecond).toBe(0);
-  expect(i.offset).toBe(480); //+08:00
-  expect(i.zoneName).toBe("Australia/Perth");
 });
 
 //------
