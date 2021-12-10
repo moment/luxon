@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.0 (2021-12-10)
+
+ * Allow offsets to pick among ambiguous times when both an offset and zone are provided to `fromFormat`
+ * Fix a floating point bug in `Duration.shiftTo()`
+
 ## 2.1.1 (2021-11-08)
 
  * Fix issue in quirky environments that lack `hourCycle` support and sometimes computed offsets 12 hours off
