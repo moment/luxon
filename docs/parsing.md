@@ -192,7 +192,7 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | mm               |              | minute, padded to 2                                            | `07`                        |
 | h                |              | hour in 12-hour time, no padding                               | `1`                         |
 | hh               |              | hour in 12-hour time, padded to 2                              | `01`                        |
-| H                |              | hour in 24-hour time, no padding                               | `9`                         |
+| H                |              | hour in 24-hour time, no padding                               | `13`                        |
 | HH               |              | hour in 24-hour time, padded to 2                              | `13`                        |
 | Z                |              | narrow offset                                                  | `+5`                        |
 | ZZ               |              | short offset                                                   | `+05:00`                    |
@@ -223,11 +223,11 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | o                |              | ordinal (day of year), unpadded                                | `218`                       |
 | ooo              |              | ordinal (day of year), padded to 3                             | `218`                       |
 | q                |              | quarter, no padding                                            | `3`                         |
-| D                |              | localized numeric date                                         | `9/4/2017`                  |
+| D                |              | localized numeric date                                         | `9/6/2014`                  |
 | DD               |              | localized date with abbreviated month                          | `Aug 6, 2014`               |
 | DDD              |              | localized date with full month                                 | `August 6, 2014`            |
 | DDDD             |              | localized date with full month and weekday                     | `Wednesday, August 6, 2014` |
-| t                |              | localized time                                                 | `9:07 AM`                   |
+| t                |              | localized time                                                 | `1:07 AM`                   |
 | tt               |              | localized time with seconds                                    | `1:07:04 PM`                |
 | T                |              | localized 24-hour time                                         | `13:07`                     |
 | TT               |              | localized 24-hour time with seconds                            | `13:07:04`                  |
