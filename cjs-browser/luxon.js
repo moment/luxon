@@ -3753,8 +3753,7 @@ var Duration = /*#__PURE__*/function () {
 
         var i = Math.trunc(own);
         built[k] = i;
-        accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
-        // plus anything further down the chain that should be rolled up in to this
+        accumulated[k] = (own * 1000 - i * 1000) / 1000; // plus anything further down the chain that should be rolled up in to this
 
         for (var down in vals) {
           if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
@@ -5515,14 +5514,19 @@ function dateTimeFromMatches(matches) {
     }
   };
 
-  var zone;
+  var zone = null;
+  var specificOffset;
+
+  if (!isUndefined(matches.z)) {
+    zone = IANAZone.create(matches.z);
+  }
 
   if (!isUndefined(matches.Z)) {
-    zone = new FixedOffsetZone(matches.Z);
-  } else if (!isUndefined(matches.z)) {
-    zone = IANAZone.create(matches.z);
-  } else {
-    zone = null;
+    if (!zone) {
+      zone = new FixedOffsetZone(matches.Z);
+    }
+
+    specificOffset = matches.Z;
   }
 
   if (!isUndefined(matches.q)) {
@@ -5554,7 +5558,7 @@ function dateTimeFromMatches(matches) {
 
     return r;
   }, {});
-  return [vals, zone];
+  return [vals, zone, specificOffset];
 }
 
 var dummyDateTimeCache = null;
@@ -5626,9 +5630,10 @@ function explainFromTokens(locale, input, format) {
         _match = match(input, regex, handlers),
         rawMatches = _match[0],
         matches = _match[1],
-        _ref6 = matches ? dateTimeFromMatches(matches) : [null, null],
+        _ref6 = matches ? dateTimeFromMatches(matches) : [null, null, undefined],
         result = _ref6[0],
-        zone = _ref6[1];
+        zone = _ref6[1],
+        specificOffset = _ref6[2];
 
     if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
       throw new ConflictingSpecificationError("Can't include meridiem when specifying 24-hour format");
@@ -5641,7 +5646,8 @@ function explainFromTokens(locale, input, format) {
       rawMatches: rawMatches,
       matches: matches,
       result: result,
-      zone: zone
+      zone: zone,
+      specificOffset: specificOffset
     };
   }
 }
@@ -5649,9 +5655,10 @@ function parseFromTokens(locale, input, format) {
   var _explainFromTokens = explainFromTokens(locale, input, format),
       result = _explainFromTokens.result,
       zone = _explainFromTokens.zone,
+      specificOffset = _explainFromTokens.specificOffset,
       invalidReason = _explainFromTokens.invalidReason;
 
-  return [result, zone, invalidReason];
+  return [result, zone, specificOffset, invalidReason];
 }
 
 var nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
@@ -5939,14 +5946,15 @@ function adjustTime(inst, dur) {
 // by handling the zone options
 
 
-function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
+function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
   var setZone = opts.setZone,
       zone = opts.zone;
 
   if (parsed && Object.keys(parsed).length !== 0) {
     var interpretationZone = parsedZone || zone,
         inst = DateTime.fromObject(parsed, _extends({}, opts, {
-      zone: interpretationZone
+      zone: interpretationZone,
+      specificOffset: specificOffset
     }));
     return setZone ? inst : inst.setZone(zone);
   } else {
@@ -6491,7 +6499,7 @@ var DateTime = /*#__PURE__*/function () {
     }
 
     var tsNow = Settings.now(),
-        offsetProvis = zoneToUse.offset(tsNow),
+        offsetProvis = !isUndefined(opts.specificOffset) ? opts.specificOffset : zoneToUse.offset(tsNow),
         normalized = normalizeObject(obj, normalizeUnit),
         containsOrdinal = !isUndefined(normalized.ordinal),
         containsGregorYear = !isUndefined(normalized.year),
@@ -6695,12 +6703,13 @@ var DateTime = /*#__PURE__*/function () {
         _parseFromTokens = parseFromTokens(localeToUse, text, fmt),
         vals = _parseFromTokens[0],
         parsedZone = _parseFromTokens[1],
-        invalid = _parseFromTokens[2];
+        specificOffset = _parseFromTokens[2],
+        invalid = _parseFromTokens[3];
 
     if (invalid) {
       return DateTime.invalid(invalid);
     } else {
-      return parseDataToDateTime(vals, parsedZone, opts, "format " + fmt, text);
+      return parseDataToDateTime(vals, parsedZone, opts, "format " + fmt, text, specificOffset);
     }
   }
   /**
@@ -8338,7 +8347,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-var VERSION = "2.1.1";
+var VERSION = "2.2.0";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

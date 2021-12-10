@@ -24,6 +24,31 @@ var addSorting = (function() {
         return getTableHeader().querySelectorAll('th')[n];
     }
 
+    function onFilterInput() {
+        const searchValue = document.getElementById('fileSearch').value;
+        const rows = document.getElementsByTagName('tbody')[0].children;
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            if (
+                row.textContent
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase())
+            ) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    // loads the search box
+    function addSearchBox() {
+        var template = document.getElementById('filterTemplate');
+        var templateClone = template.content.cloneNode(true);
+        templateClone.getElementById('fileSearch').oninput = onFilterInput;
+        template.parentElement.appendChild(templateClone);
+    }
+
     // loads all columns
     function loadColumns() {
         var colNodes = getTableHeader().querySelectorAll('th'),
@@ -162,6 +187,7 @@ var addSorting = (function() {
         }
         cols = loadColumns();
         loadData();
+        addSearchBox();
         addSortIndicators();
         enableUI();
     };

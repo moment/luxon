@@ -1,4 +1,4 @@
-define(['exports'], function (exports) { 'use strict';
+define(['exports'], (function (exports) { 'use strict';
 
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
@@ -3751,8 +3751,7 @@ define(['exports'], function (exports) { 'use strict';
 
           var i = Math.trunc(own);
           built[k] = i;
-          accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
-          // plus anything further down the chain that should be rolled up in to this
+          accumulated[k] = (own * 1000 - i * 1000) / 1000; // plus anything further down the chain that should be rolled up in to this
 
           for (var down in vals) {
             if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
@@ -5513,14 +5512,19 @@ define(['exports'], function (exports) { 'use strict';
       }
     };
 
-    var zone;
+    var zone = null;
+    var specificOffset;
+
+    if (!isUndefined(matches.z)) {
+      zone = IANAZone.create(matches.z);
+    }
 
     if (!isUndefined(matches.Z)) {
-      zone = new FixedOffsetZone(matches.Z);
-    } else if (!isUndefined(matches.z)) {
-      zone = IANAZone.create(matches.z);
-    } else {
-      zone = null;
+      if (!zone) {
+        zone = new FixedOffsetZone(matches.Z);
+      }
+
+      specificOffset = matches.Z;
     }
 
     if (!isUndefined(matches.q)) {
@@ -5552,7 +5556,7 @@ define(['exports'], function (exports) { 'use strict';
 
       return r;
     }, {});
-    return [vals, zone];
+    return [vals, zone, specificOffset];
   }
 
   var dummyDateTimeCache = null;
@@ -5624,9 +5628,10 @@ define(['exports'], function (exports) { 'use strict';
           _match = match(input, regex, handlers),
           rawMatches = _match[0],
           matches = _match[1],
-          _ref6 = matches ? dateTimeFromMatches(matches) : [null, null],
+          _ref6 = matches ? dateTimeFromMatches(matches) : [null, null, undefined],
           result = _ref6[0],
-          zone = _ref6[1];
+          zone = _ref6[1],
+          specificOffset = _ref6[2];
 
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError("Can't include meridiem when specifying 24-hour format");
@@ -5639,7 +5644,8 @@ define(['exports'], function (exports) { 'use strict';
         rawMatches: rawMatches,
         matches: matches,
         result: result,
-        zone: zone
+        zone: zone,
+        specificOffset: specificOffset
       };
     }
   }
@@ -5647,9 +5653,10 @@ define(['exports'], function (exports) { 'use strict';
     var _explainFromTokens = explainFromTokens(locale, input, format),
         result = _explainFromTokens.result,
         zone = _explainFromTokens.zone,
+        specificOffset = _explainFromTokens.specificOffset,
         invalidReason = _explainFromTokens.invalidReason;
 
-    return [result, zone, invalidReason];
+    return [result, zone, specificOffset, invalidReason];
   }
 
   var nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
@@ -5937,14 +5944,15 @@ define(['exports'], function (exports) { 'use strict';
   // by handling the zone options
 
 
-  function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
+  function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
     var setZone = opts.setZone,
         zone = opts.zone;
 
     if (parsed && Object.keys(parsed).length !== 0) {
       var interpretationZone = parsedZone || zone,
           inst = DateTime.fromObject(parsed, _extends({}, opts, {
-        zone: interpretationZone
+        zone: interpretationZone,
+        specificOffset: specificOffset
       }));
       return setZone ? inst : inst.setZone(zone);
     } else {
@@ -6489,7 +6497,7 @@ define(['exports'], function (exports) { 'use strict';
       }
 
       var tsNow = Settings.now(),
-          offsetProvis = zoneToUse.offset(tsNow),
+          offsetProvis = !isUndefined(opts.specificOffset) ? opts.specificOffset : zoneToUse.offset(tsNow),
           normalized = normalizeObject(obj, normalizeUnit),
           containsOrdinal = !isUndefined(normalized.ordinal),
           containsGregorYear = !isUndefined(normalized.year),
@@ -6693,12 +6701,13 @@ define(['exports'], function (exports) { 'use strict';
           _parseFromTokens = parseFromTokens(localeToUse, text, fmt),
           vals = _parseFromTokens[0],
           parsedZone = _parseFromTokens[1],
-          invalid = _parseFromTokens[2];
+          specificOffset = _parseFromTokens[2],
+          invalid = _parseFromTokens[3];
 
       if (invalid) {
         return DateTime.invalid(invalid);
       } else {
-        return parseDataToDateTime(vals, parsedZone, opts, "format " + fmt, text);
+        return parseDataToDateTime(vals, parsedZone, opts, "format " + fmt, text, specificOffset);
       }
     }
     /**
@@ -8336,7 +8345,7 @@ define(['exports'], function (exports) { 'use strict';
     }
   }
 
-  var VERSION = "2.1.1";
+  var VERSION = "2.2.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
@@ -8352,5 +8361,5 @@ define(['exports'], function (exports) { 'use strict';
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-});
+}));
 //# sourceMappingURL=luxon.js.map

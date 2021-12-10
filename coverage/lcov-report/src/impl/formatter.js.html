@@ -30,7 +30,7 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.44% </span>
+                <span class="strong">89.43% </span>
                 <span class="quiet">Branches</span>
                 <span class='fraction'>127/142</span>
             </div>
@@ -44,7 +44,7 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">99.34% </span>
+                <span class="strong">99.33% </span>
                 <span class="quiet">Lines</span>
                 <span class='fraction'>150/151</span>
             </div>
@@ -54,6 +54,12 @@
         <p class="quiet">
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input oninput="onInput()" type="search" id="fileSearch">
+            </div>
+        </template>
     </div>
     <div class='status-line high'></div>
     <pre><table class="coverage">
@@ -463,7 +469,7 @@
 <span class="cline-any cline-yes">489x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">53x</span>
+<span class="cline-any cline-yes">54x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -496,41 +502,41 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">731x</span>
-<span class="cline-any cline-yes">731x</span>
-<span class="cline-any cline-yes">731x</span>
-<span class="cline-any cline-yes">731x</span>
-<span class="cline-any cline-yes">731x</span>
-<span class="cline-any cline-yes">4915x</span>
-<span class="cline-any cline-yes">4915x</span>
-<span class="cline-any cline-yes">58x</span>
-<span class="cline-any cline-yes">58x</span>
+<span class="cline-any cline-yes">738x</span>
+<span class="cline-any cline-yes">738x</span>
+<span class="cline-any cline-yes">738x</span>
+<span class="cline-any cline-yes">738x</span>
+<span class="cline-any cline-yes">738x</span>
+<span class="cline-any cline-yes">5122x</span>
+<span class="cline-any cline-yes">5122x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">58x</span>
-<span class="cline-any cline-yes">58x</span>
-<span class="cline-any cline-yes">58x</span>
-<span class="cline-any cline-yes">4857x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">4817x</span>
-<span class="cline-any cline-yes">2261x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">5050x</span>
+<span class="cline-any cline-yes">47x</span>
+<span class="cline-any cline-yes">5003x</span>
+<span class="cline-any cline-yes">2338x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2556x</span>
-<span class="cline-any cline-yes">1801x</span>
+<span class="cline-any cline-yes">2665x</span>
+<span class="cline-any cline-yes">1896x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2556x</span>
-<span class="cline-any cline-yes">2556x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">731x</span>
-<span class="cline-any cline-yes">726x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">731x</span>
+<span class="cline-any cline-yes">2665x</span>
+<span class="cline-any cline-yes">2665x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1635x</span>
+<span class="cline-any cline-yes">738x</span>
+<span class="cline-any cline-yes">733x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">738x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1744x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -893,7 +899,7 @@ export default class Formatter {
     for (let i = 0; i &lt; fmt.length; i++) {
       const c = fmt.charAt(i);
       if (c === "'") {
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (currentFull.length &gt; 0) {
+        if (currentFull.length &gt; 0) {
           splits.push({ literal: bracketed, val: currentFull });
         }
         current = null;
@@ -930,7 +936,7 @@ export default class Formatter {
   }
 &nbsp;
   formatWithSystemDefault(dt, opts) {
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.systemLoc === null) {
+    if (this.systemLoc === null) {
       this.systemLoc = this.loc.redefaultToSystem();
     }
     const df = this.systemLoc.dtFormatter(dt, { ...this.opts, ...opts });
@@ -1233,8 +1239,8 @@ export default class Formatter {
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
-                <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Mon Nov 08 2021 16:43:24 GMT-0500 (Eastern Standard Time)
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener">istanbul</a>
+                at Fri Dec 10 2021 15:12:59 GMT-0500 (Eastern Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

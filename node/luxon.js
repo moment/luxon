@@ -3217,8 +3217,7 @@ class Duration {
 
         const i = Math.trunc(own);
         built[k] = i;
-        accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
-        // plus anything further down the chain that should be rolled up in to this
+        accumulated[k] = (own * 1000 - i * 1000) / 1000; // plus anything further down the chain that should be rolled up in to this
 
         for (const down in vals) {
           if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
@@ -4784,14 +4783,19 @@ function dateTimeFromMatches(matches) {
     }
   };
 
-  let zone;
+  let zone = null;
+  let specificOffset;
+
+  if (!isUndefined(matches.z)) {
+    zone = IANAZone.create(matches.z);
+  }
 
   if (!isUndefined(matches.Z)) {
-    zone = new FixedOffsetZone(matches.Z);
-  } else if (!isUndefined(matches.z)) {
-    zone = IANAZone.create(matches.z);
-  } else {
-    zone = null;
+    if (!zone) {
+      zone = new FixedOffsetZone(matches.Z);
+    }
+
+    specificOffset = matches.Z;
   }
 
   if (!isUndefined(matches.q)) {
@@ -4823,7 +4827,7 @@ function dateTimeFromMatches(matches) {
 
     return r;
   }, {});
-  return [vals, zone];
+  return [vals, zone, specificOffset];
 }
 
 let dummyDateTimeCache = null;
@@ -4881,7 +4885,7 @@ function explainFromTokens(locale, input, format) {
     const [regexString, handlers] = buildRegex(units),
           regex = RegExp(regexString, "i"),
           [rawMatches, matches] = match(input, regex, handlers),
-          [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+          [result, zone, specificOffset] = matches ? dateTimeFromMatches(matches) : [null, null, undefined];
 
     if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
       throw new ConflictingSpecificationError("Can't include meridiem when specifying 24-hour format");
@@ -4894,7 +4898,8 @@ function explainFromTokens(locale, input, format) {
       rawMatches,
       matches,
       result,
-      zone
+      zone,
+      specificOffset
     };
   }
 }
@@ -4902,9 +4907,10 @@ function parseFromTokens(locale, input, format) {
   const {
     result,
     zone,
+    specificOffset,
     invalidReason
   } = explainFromTokens(locale, input, format);
-  return [result, zone, invalidReason];
+  return [result, zone, specificOffset, invalidReason];
 }
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
@@ -5201,7 +5207,7 @@ function adjustTime(inst, dur) {
 // by handling the zone options
 
 
-function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
+function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
   const {
     setZone,
     zone
@@ -5210,7 +5216,8 @@ function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
   if (parsed && Object.keys(parsed).length !== 0) {
     const interpretationZone = parsedZone || zone,
           inst = DateTime.fromObject(parsed, { ...opts,
-      zone: interpretationZone
+      zone: interpretationZone,
+      specificOffset
     });
     return setZone ? inst : inst.setZone(zone);
   } else {
@@ -5703,7 +5710,7 @@ class DateTime {
     }
 
     const tsNow = Settings.now(),
-          offsetProvis = zoneToUse.offset(tsNow),
+          offsetProvis = !isUndefined(opts.specificOffset) ? opts.specificOffset : zoneToUse.offset(tsNow),
           normalized = normalizeObject(obj, normalizeUnit),
           containsOrdinal = !isUndefined(normalized.ordinal),
           containsGregorYear = !isUndefined(normalized.year),
@@ -5874,12 +5881,12 @@ class DateTime {
       numberingSystem,
       defaultToEN: true
     }),
-          [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
+          [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);
 
     if (invalid) {
       return DateTime.invalid(invalid);
     } else {
-      return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text);
+      return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text, specificOffset);
     }
   }
   /**
@@ -7346,7 +7353,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "2.1.1";
+const VERSION = "2.2.0";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

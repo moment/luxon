@@ -3134,7 +3134,7 @@ var luxon = (function (exports) {
 
           const i = Math.trunc(own);
           built[k] = i;
-          accumulated[k] = own - i; // we'd like to absorb these fractions in another unit
+          accumulated[k] = (own * 1000 - i * 1000) / 1000;
 
           // plus anything further down the chain that should be rolled up in to this
           for (const down in vals) {
@@ -4528,13 +4528,17 @@ var luxon = (function (exports) {
       }
     };
 
-    let zone;
-    if (!isUndefined(matches.Z)) {
-      zone = new FixedOffsetZone(matches.Z);
-    } else if (!isUndefined(matches.z)) {
+    let zone = null;
+    let specificOffset;
+    if (!isUndefined(matches.z)) {
       zone = IANAZone.create(matches.z);
-    } else {
-      zone = null;
+    }
+
+    if (!isUndefined(matches.Z)) {
+      if (!zone) {
+        zone = new FixedOffsetZone(matches.Z);
+      }
+      specificOffset = matches.Z;
     }
 
     if (!isUndefined(matches.q)) {
@@ -4566,7 +4570,7 @@ var luxon = (function (exports) {
       return r;
     }, {});
 
-    return [vals, zone];
+    return [vals, zone, specificOffset];
   }
 
   let dummyDateTimeCache = null;
@@ -4621,19 +4625,21 @@ var luxon = (function (exports) {
       const [regexString, handlers] = buildRegex(units),
         regex = RegExp(regexString, "i"),
         [rawMatches, matches] = match(input, regex, handlers),
-        [result, zone] = matches ? dateTimeFromMatches(matches) : [null, null];
+        [result, zone, specificOffset] = matches
+          ? dateTimeFromMatches(matches)
+          : [null, null, undefined];
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
           "Can't include meridiem when specifying 24-hour format"
         );
       }
-      return { input, tokens, regex, rawMatches, matches, result, zone };
+      return { input, tokens, regex, rawMatches, matches, result, zone, specificOffset };
     }
   }
 
   function parseFromTokens(locale, input, format) {
-    const { result, zone, invalidReason } = explainFromTokens(locale, input, format);
-    return [result, zone, invalidReason];
+    const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
+    return [result, zone, specificOffset, invalidReason];
   }
 
   const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
@@ -4898,13 +4904,14 @@ var luxon = (function (exports) {
 
   // helper useful in turning the results of parsing into real dates
   // by handling the zone options
-  function parseDataToDateTime(parsed, parsedZone, opts, format, text) {
+  function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
     const { setZone, zone } = opts;
     if (parsed && Object.keys(parsed).length !== 0) {
       const interpretationZone = parsedZone || zone,
         inst = DateTime.fromObject(parsed, {
           ...opts,
           zone: interpretationZone,
+          specificOffset,
         });
       return setZone ? inst : inst.setZone(zone);
     } else {
@@ -5381,7 +5388,9 @@ var luxon = (function (exports) {
       }
 
       const tsNow = Settings.now(),
-        offsetProvis = zoneToUse.offset(tsNow),
+        offsetProvis = !isUndefined(opts.specificOffset)
+          ? opts.specificOffset
+          : zoneToUse.offset(tsNow),
         normalized = normalizeObject(obj, normalizeUnit),
         containsOrdinal = !isUndefined(normalized.ordinal),
         containsGregorYear = !isUndefined(normalized.year),
@@ -5559,11 +5568,11 @@ var luxon = (function (exports) {
           numberingSystem,
           defaultToEN: true,
         }),
-        [vals, parsedZone, invalid] = parseFromTokens(localeToUse, text, fmt);
+        [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);
       if (invalid) {
         return DateTime.invalid(invalid);
       } else {
-        return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text);
+        return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text, specificOffset);
       }
     }
 
@@ -6884,7 +6893,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "2.1.1";
+  const VERSION = "2.2.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
@@ -6902,5 +6911,5 @@ var luxon = (function (exports) {
 
   return exports;
 
-}({}));
+})({});
 //# sourceMappingURL=luxon.js.map
