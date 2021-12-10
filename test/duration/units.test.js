@@ -88,6 +88,14 @@ test("Duration#shiftTo does not normalize values", () => {
   ).toEqual({ days: 400 });
 });
 
+test("Duration#shiftTo boils hours down to hours and minutes", () => {
+  const dur = Duration.fromObject({ hour: 2.4 });
+  expect(dur.shiftTo("hours", "minutes").toObject()).toEqual({
+    hours: 2,
+    minutes: 24,
+  });
+});
+
 //------
 // #normalize()
 //-------
