@@ -18,7 +18,7 @@ Fix locale defaulting
 
 ## 2.0.0 (2021-07-3)
 
-See [Upgrading section](https://github.com/moment/luxon#upgrading-to-20) in README.md
+See [Upgrading section](https://moment.github.io/luxon/#/upgrading?id=_1x-to-20)
 
 ## 1.28.0 (2021-07-03)
 
