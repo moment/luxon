@@ -18,6 +18,7 @@ import {
   normalizeObject,
   roundTo,
   objToLocalTS,
+  padStart,
 } from "./impl/util.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
@@ -1394,7 +1395,7 @@ export default class DateTime {
    * See {@link DateTime#plus}
    * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    @return {DateTime}
-  */
+   */
   minus(duration) {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration).negate();
@@ -1548,12 +1549,87 @@ export default class DateTime {
    * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
    * @return {string}
    */
-  toISO(opts = {}) {
+  toISO({
+    format = "extended",
+    suppressSeconds = false,
+    suppressMilliseconds = false,
+    includeOffset = true,
+    allowZ = true,
+  } = {}) {
     if (!this.isValid) {
       return null;
     }
 
-    return `${this.toISODate(opts)}T${this.toISOTime(opts)}`;
+    const o = this;
+    const longFormat = Math.abs(o.c.year) > 9999;
+    if (format === "extended") {
+      let c = "";
+      if (longFormat && o.c.year >= 0) c += "+";
+      c += padStart(o.c.year, longFormat ? 6 : 4);
+      c += "-";
+      c += padStart(o.c.month);
+      c += "-";
+      c += padStart(o.c.day);
+      c += "T";
+      c += padStart(o.c.hour);
+      c += ":";
+      c += padStart(o.c.minute);
+      if (o.c.second !== 0 || !suppressSeconds) {
+        c += ":";
+        c += padStart(o.c.second);
+        if (o.c.millisecond !== 0 || !suppressMilliseconds) {
+          c += ".";
+          c += padStart(o.c.millisecond, 3);
+        }
+      }
+
+      if (includeOffset) {
+        if (o.isOffsetFixed && o.offset === 0 && allowZ) {
+          c += "Z";
+        } else if (o.o < 0) {
+          c += "-";
+          c += padStart(Math.trunc(-o.o / 60));
+          c += ":";
+          c += padStart(Math.trunc(-o.o % 60));
+        } else {
+          c += "+";
+          c += padStart(Math.trunc(o.o / 60));
+          c += ":";
+          c += padStart(Math.trunc(o.o % 60));
+        }
+      }
+      return c;
+    } else {
+      let c = "";
+      if (longFormat && o.c.year >= 0) c += "+";
+      c += padStart(o.c.year, longFormat ? 6 : 4);
+      c += padStart(o.c.month);
+      c += padStart(o.c.day);
+      c += "T";
+      c += padStart(o.c.hour);
+      c += padStart(o.c.minute);
+      if (o.c.second !== 0 || !suppressSeconds) {
+        c += padStart(o.c.second);
+        if (o.c.millisecond !== 0 || !suppressMilliseconds) {
+          c += ".";
+          c += padStart(o.c.millisecond, 3);
+        }
+      }
+      if (includeOffset) {
+        if (o.isOffsetFixed && o.offset === 0 && allowZ) {
+          c += "Z";
+        } else if (o.o < 0) {
+          c += "-";
+          c += padStart(Math.trunc(-o.o / 60));
+          c += padStart(Math.trunc(-o.o % 60));
+        } else {
+          c += "+";
+          c += padStart(Math.trunc(o.o / 60));
+          c += padStart(Math.trunc(o.o % 60));
+        }
+      }
+      return c;
+    }
   }
 
   /**
