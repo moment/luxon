@@ -263,3 +263,35 @@ test("Duration#toFormat localizes the numbers", () => {
 test("Duration#toFormat returns a lame string for invalid durations", () => {
   expect(Duration.invalid("because").toFormat("yy")).toBe("Invalid Duration");
 });
+
+//------
+// #humanize()
+//------
+
+test("Duration#toHuman formats out a list", () => {
+  expect(dur().toHuman()).toEqual(
+    "1 year, 2 months, 1 week, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds"
+  );
+});
+
+test("Duration#toHuman only shows the units you have", () => {
+  expect(Duration.fromObject({ years: 3, hours: 4 }).toHuman()).toEqual("3 years, 4 hours");
+});
+
+test("Duration#toHuman accepts a listStyle", () => {
+  expect(dur().toHuman({ listStyle: "long" })).toEqual(
+    "1 year, 2 months, 1 week, 3 days, 4 hours, 5 minutes, 6 seconds, and 7 milliseconds"
+  );
+});
+
+test("Duration#toHuman accepts number format opts", () => {
+  expect(dur().toHuman({ unitDisplay: "short" })).toEqual(
+    "1 yr, 2 mths, 1 wk, 3 days, 4 hr, 5 min, 6 sec, 7 ms"
+  );
+});
+
+test("Duration#toHuman works in differt languages", () => {
+  expect(dur().reconfigure({ locale: "fr" }).toHuman()).toEqual(
+    "1 an, 2 mois, 1 semaine, 3 jours, 4 heures, 5 minutes, 6 secondes, 7 millisecondes"
+  );
+});

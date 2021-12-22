@@ -4,6 +4,19 @@ import Settings from "../settings.js";
 import DateTime from "../datetime.js";
 import IANAZone from "../zones/IANAZone.js";
 
+// todo - remap caching
+
+let intlLFCache = {};
+function getCachedLF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let dtf = intlLFCache[key];
+  if (!dtf) {
+    dtf = new Intl.ListFormat(locString, opts);
+    intlLFCache[key] = dtf;
+  }
+  return dtf;
+}
+
 let intlDTCache = {};
 function getCachedDTF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
@@ -144,8 +157,10 @@ class PolyNumberFormatter {
     this.padTo = opts.padTo || 0;
     this.floor = opts.floor || false;
 
-    if (!forceSimple) {
-      const intlOpts = { useGrouping: false };
+    const { padTo, floor, ...otherOpts } = opts;
+
+    if (!forceSimple || Object.keys(otherOpts).length > 0) {
+      const intlOpts = { useGrouping: false, ...opts };
       if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
       this.inf = getCachedINF(intl, intlOpts);
     }
@@ -308,7 +323,7 @@ export default class Locale {
     return this.fastNumbersCached;
   }
 
-  listingMode(defaultOK = true) {
+  listingMode() {
     const isActuallyEn = this.isEnglish();
     const hasNoWeirdness =
       (this.numberingSystem === null || this.numberingSystem === "latn") &&
@@ -419,6 +434,10 @@ export default class Locale {
 
   relFormatter(opts = {}) {
     return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
+  }
+
+  listFormatter(opts = {}) {
+    return getCachedLF(this.intl, opts);
   }
 
   isEnglish() {
