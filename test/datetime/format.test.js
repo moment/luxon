@@ -65,6 +65,15 @@ test("DateTime#toISO() rounds fractional timezone minute offsets", () => {
   );
 });
 
+test("DateTime#toISO() displays 6 digits year for a negative year", () => {
+  expect(
+    DateTime.fromObject(
+      { year: -1, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 53 },
+      { zone: "utc" }
+    ).toISO()
+  ).toBe("-000001-01-01T00:00:00.053Z");
+});
+
 //------
 // #toISODate()
 //------
@@ -93,12 +102,12 @@ test("DateTime#toISODate() returns ISO 8601 date in format [±YYYYY]", () => {
   ).toBe("-118040-05-25");
 });
 
-test("DateTime#toISODate() correctly pads negative years", () => {
+test("DateTime#toISODate() correctly pads negative years to 6 characters", () => {
   expect(DateTime.fromObject({ year: -1, month: 1, day: 1 }, { zone: "utc" }).toISODate()).toBe(
-    "-0001-01-01"
+    "-000001-01-01"
   );
   expect(DateTime.fromObject({ year: -10, month: 1, day: 1 }, { zone: "utc" }).toISODate()).toBe(
-    "-0010-01-01"
+    "-000010-01-01"
   );
 });
 
