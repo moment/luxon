@@ -1568,6 +1568,8 @@ export default class DateTime {
     let fmt = format === "basic" ? "yyyyMMdd" : "yyyy-MM-dd";
     if (this.year > 9999) {
       fmt = "+" + fmt;
+    } else if (this.year < 0) {
+      fmt = "yy" + fmt;
     }
 
     return toTechFormat(this, fmt);
