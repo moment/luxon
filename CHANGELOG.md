@@ -4,6 +4,7 @@
 
  * Major perf improvements to `toISO()`, `toISODate()`, `toISOTime()`, and `toSQLDate()`
  * Fixed date padding for negative years in `toISO()`
+ * Added Duration#toHuman()
 
 ## 2.2.0 (2021-12-10)
 
