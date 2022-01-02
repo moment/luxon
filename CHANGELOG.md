@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.3.0 (2021-01-02)
+## 2.3.0 (2022-01-02)
 
  * Major perf improvements to `toISO()`, `toISODate()`, `toISOTime()`, and `toSQLDate()`
  * Fixed date padding for negative years in `toISO()`
