@@ -204,7 +204,7 @@ The macro options available correspond one-to-one with the preset formats define
 | cccc             | EEEE         | day of the week, as an unabbreviated localized string          | `Wednesday`                                                   |
 | ccccc            | EEEEE        | day of the week, as a single localized letter                  | `W`                                                           |
 | L                | M            | month as an unpadded number                                    | `8`                                                           |
-| LL               | MM           | month as an padded number                                      | `08`                                                          |
+| LL               | MM           | month as a padded number                                       | `08`                                                          |
 | LLL              | MMM          | month as an abbreviated localized string                       | `Aug`                                                         |
 | LLLL             | MMMM         | month as an unabbreviated localized string                     | `August`                                                      |
 | LLLLL            | MMMMM        | month as a single localized letter                             | `A`                                                           |
