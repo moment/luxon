@@ -145,6 +145,18 @@ test("DateTime#setZone accepts IANA zone names", () => {
   expect(zoned.hour).toBe(6); // cedt is +2
 });
 
+test.each([
+  ["PST8PDT", -7], // my date is in daylight time
+  ["EST5EDT", -4],
+  ["GMT+0", 0],
+  ["GMT0", 0],
+])("DateTime#setZone accepts whacky zone %p", (iana, offset) => {
+  const zoned = dt().setZone(iana);
+  expect(zoned.isValid).toBe(true);
+  expect(zoned.zoneName).toBe(iana);
+  expect(zoned.offset).toBe(offset * 60);
+});
+
 test("DateTime#setZone accepts a keepLocalTime option", () => {
   const zoned = dt().toUTC().setZone("America/Los_Angeles", { keepLocalTime: true });
   expect(zoned.zoneName).toBe("America/Los_Angeles");

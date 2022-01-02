@@ -80,12 +80,12 @@ export default class IANAZone extends Zone {
    * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
    * @param {string} s - The string to check validity on
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
-   * @example IANAZone.isValidSpecifier("Fantasia/Castle") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
+   * @deprecated This method returns false some valid IANA names. Use isValidZone instead
    * @return {boolean}
    */
   static isValidSpecifier(s) {
-    return !!(s && s.match(matchingRegex));
+    return this.isValidZone(s);
   }
 
   /**

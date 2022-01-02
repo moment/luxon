@@ -27,7 +27,7 @@ export default class Info {
    * @return {boolean}
    */
   static isValidIANAZone(zone) {
-    return IANAZone.isValidSpecifier(zone) && IANAZone.isValidZone(zone);
+    return IANAZone.isValidZone(zone);
   }
 
   /**

@@ -19,8 +19,7 @@ export function normalizeZone(input, defaultZone) {
     const lowered = input.toLowerCase();
     if (lowered === "local" || lowered === "system") return defaultZone;
     else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
-    else if (IANAZone.isValidSpecifier(lowered)) return IANAZone.create(input);
-    else return FixedOffsetZone.parseSpecifier(lowered) || new InvalidZone(input);
+    else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);
   } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {

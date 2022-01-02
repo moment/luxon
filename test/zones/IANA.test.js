@@ -1,6 +1,5 @@
 /* global test expect */
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
-import { withoutIntl } from "../helpers";
 
 test("IANAZone.create returns a singleton per zone name", () => {
   expect(IANAZone.create("UTC")).toBe(IANAZone.create("UTC"));
@@ -19,7 +18,8 @@ test("IANAZone.create should return IANAZone instance", () => {
 
 test("IANAZone.isValidSpecifier", () => {
   expect(IANAZone.isValidSpecifier("America/New_York")).toBe(true);
-  expect(IANAZone.isValidSpecifier("Fantasia/Castle")).toBe(true);
+  // this used to return true but now returns false, because we just defer to isValidZone
+  expect(IANAZone.isValidSpecifier("Fantasia/Castle")).toBe(false);
   expect(IANAZone.isValidSpecifier("Sport~~blorp")).toBe(false);
   expect(IANAZone.isValidSpecifier("Etc/GMT+8")).toBe(true);
   expect(IANAZone.isValidSpecifier("Etc/GMT-8")).toBe(true);
