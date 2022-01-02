@@ -65,6 +65,26 @@ test("DateTime#toISO() rounds fractional timezone minute offsets", () => {
   );
 });
 
+test("DateTime#toISO() handles long gregorian format", () => {
+  const negativeYear = dt.set({ year: 12345 });
+  expect(negativeYear.toISO()).toBe("+012345-05-25T09:23:54.123Z");
+});
+
+test("DateTime#toISO() handles negative years", () => {
+  const negativeYear = dt.set({ year: -12345 });
+  expect(negativeYear.toISO()).toBe("-012345-05-25T09:23:54.123Z");
+});
+
+test("DateTime#toISO() default to Z when timezone is 00:00", () => {
+  const negativeYear = dt.setZone("utc");
+  expect(negativeYear.toISO()).toBe("1982-05-25T09:23:54.123Z");
+});
+
+test("DateTime#toISO() renders 00:00 for non-offset but non utc datetimes", () => {
+  const negativeYear = dt.setZone("Africa/Abidjan");
+  expect(negativeYear.toISO()).toBe("1982-05-25T09:23:54.123+00:00");
+});
+
 //------
 // #toISODate()
 //------
@@ -95,10 +115,10 @@ test("DateTime#toISODate() returns ISO 8601 date in format [±YYYYY]", () => {
 
 test("DateTime#toISODate() correctly pads negative years", () => {
   expect(DateTime.fromObject({ year: -1, month: 1, day: 1 }, { zone: "utc" }).toISODate()).toBe(
-    "-0001-01-01"
+    "-000001-01-01"
   );
   expect(DateTime.fromObject({ year: -10, month: 1, day: 1 }, { zone: "utc" }).toISODate()).toBe(
-    "-0010-01-01"
+    "-000010-01-01"
   );
 });
 

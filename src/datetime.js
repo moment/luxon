@@ -18,6 +18,7 @@ import {
   normalizeObject,
   roundTo,
   objToLocalTS,
+  padStart,
 } from "./impl/util.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
@@ -188,46 +189,61 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
-// technical time formats (e.g. the time part of ISO 8601), take some options
-// and this commonizes their handling
-function toTechTimeFormat(
-  dt,
-  {
-    suppressSeconds = false,
-    suppressMilliseconds = false,
-    includeOffset,
-    includePrefix = false,
-    includeZone = false,
-    spaceZone = false,
-    format = "extended",
-  }
-) {
-  let fmt = format === "basic" ? "HHmm" : "HH:mm";
+function toISODate(o, extended) {
+  const longFormat = o.c.year > 9999 || o.c.year < 0;
+  let c = "";
+  if (longFormat && o.c.year >= 0) c += "+";
+  c += padStart(o.c.year, longFormat ? 6 : 4);
 
-  if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-    fmt += format === "basic" ? "ss" : ":ss";
-    if (!suppressMilliseconds || dt.millisecond !== 0) {
-      fmt += ".SSS";
+  if (extended) {
+    c += "-";
+    c += padStart(o.c.month);
+    c += "-";
+    c += padStart(o.c.day);
+  } else {
+    c += padStart(o.c.month);
+    c += padStart(o.c.day);
+  }
+  return c;
+}
+
+function toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOffset) {
+  let c = padStart(o.c.hour);
+  if (extended) {
+    c += ":";
+    c += padStart(o.c.minute);
+    if (o.c.second !== 0 || !suppressSeconds) {
+      c += ":";
+    }
+  } else {
+    c += padStart(o.c.minute);
+  }
+
+  if (o.c.second !== 0 || !suppressSeconds) {
+    c += padStart(o.c.second);
+
+    if (o.c.millisecond !== 0 || !suppressMilliseconds) {
+      c += ".";
+      c += padStart(o.c.millisecond, 3);
     }
   }
 
-  if ((includeZone || includeOffset) && spaceZone) {
-    fmt += " ";
+  if (includeOffset) {
+    if (o.isOffsetFixed && o.offset === 0) {
+      c += "Z";
+    } else if (o.o < 0) {
+      c += "-";
+      c += padStart(Math.trunc(-o.o / 60));
+      c += ":";
+      c += padStart(Math.trunc(-o.o % 60));
+    } else {
+      c += "+";
+      c += padStart(Math.trunc(o.o / 60));
+      c += ":";
+      c += padStart(Math.trunc(o.o % 60));
+    }
   }
-
-  if (includeZone) {
-    fmt += "z";
-  } else if (includeOffset) {
-    fmt += format === "basic" ? "ZZZ" : "ZZ";
-  }
-
-  let str = toTechFormat(dt, fmt);
-
-  if (includePrefix) {
-    str = "T" + str;
-  }
-
-  return str;
+  return c;
 }
 
 // defaults for unspecified units in the supported calendars
@@ -1394,7 +1410,7 @@ export default class DateTime {
    * See {@link DateTime#plus}
    * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    @return {DateTime}
-  */
+   */
   minus(duration) {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration).negate();
@@ -1548,12 +1564,22 @@ export default class DateTime {
    * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
    * @return {string}
    */
-  toISO(opts = {}) {
+  toISO({
+    format = "extended",
+    suppressSeconds = false,
+    suppressMilliseconds = false,
+    includeOffset = true,
+  } = {}) {
     if (!this.isValid) {
       return null;
     }
 
-    return `${this.toISODate(opts)}T${this.toISOTime(opts)}`;
+    const ext = format === "extended";
+
+    let c = toISODate(this, ext);
+    c += "T";
+    c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset);
+    return c;
   }
 
   /**
@@ -1565,12 +1591,11 @@ export default class DateTime {
    * @return {string}
    */
   toISODate({ format = "extended" } = {}) {
-    let fmt = format === "basic" ? "yyyyMMdd" : "yyyy-MM-dd";
-    if (this.year > 9999) {
-      fmt = "+" + fmt;
+    if (!this.isValid) {
+      return null;
     }
 
-    return toTechFormat(this, fmt);
+    return toISODate(this, format === "extended");
   }
 
   /**
@@ -1603,13 +1628,15 @@ export default class DateTime {
     includePrefix = false,
     format = "extended",
   } = {}) {
-    return toTechTimeFormat(this, {
-      suppressSeconds,
-      suppressMilliseconds,
-      includeOffset,
-      includePrefix,
-      format,
-    });
+    if (!this.isValid) {
+      return null;
+    }
+
+    let c = includePrefix ? "T" : "";
+    return (
+      c +
+      toISOTime(this, format === "extended", suppressSeconds, suppressMilliseconds, includeOffset)
+    );
   }
 
   /**
@@ -1640,7 +1667,10 @@ export default class DateTime {
    * @return {string}
    */
   toSQLDate() {
-    return toTechFormat(this, "yyyy-MM-dd");
+    if (!this.isValid) {
+      return null;
+    }
+    return toISODate(this, true);
   }
 
   /**
@@ -1655,11 +1685,18 @@ export default class DateTime {
    * @return {string}
    */
   toSQLTime({ includeOffset = true, includeZone = false } = {}) {
-    return toTechTimeFormat(this, {
-      includeOffset,
-      includeZone,
-      spaceZone: true,
-    });
+    let fmt = "HH:mm:ss.SSS";
+
+    if (includeZone || includeOffset) {
+      fmt += " ";
+      if (includeZone) {
+        fmt += "z";
+      } else if (includeOffset) {
+        fmt += "ZZ";
+      }
+    }
+
+    return toTechFormat(this, fmt, true);
   }
 
   /**

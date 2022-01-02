@@ -87,17 +87,14 @@ export function floorMod(x, n) {
 }
 
 export function padStart(input, n = 2) {
-  const minus = input < 0 ? "-" : "";
-  const target = minus ? input * -1 : input;
-  let result;
-
-  if (target.toString().length < n) {
-    result = ("0".repeat(n) + target).slice(-n);
+  const isNeg = input < 0;
+  let padded;
+  if (isNeg) {
+    padded = "-" + ("" + -input).padStart(n, "0");
   } else {
-    result = target.toString();
+    padded = ("" + input).padStart(n, "0");
   }
-
-  return `${minus}${result}`;
+  return padded;
 }
 
 export function parseInteger(string) {
