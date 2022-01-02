@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0 (2021-01-02)
+
+ * Major perf improvements to `toISO()`, `toISODate()`, `toISOTime()`, and `toSQLDate()`
+ * Fixed date padding for negative years in `toISO()`
+
 ## 2.2.0 (2021-12-10)
 
  * Allow offsets to pick among ambiguous times when both an offset and zone are provided to `fromFormat`
