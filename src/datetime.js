@@ -189,48 +189,6 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
-// technical time formats (e.g. the time part of ISO 8601), take some options
-// and this commonizes their handling
-function toTechTimeFormat(
-  dt,
-  {
-    suppressSeconds = false,
-    suppressMilliseconds = false,
-    includeOffset,
-    includePrefix = false,
-    includeZone = false,
-    spaceZone = false,
-    format = "extended",
-  }
-) {
-  let fmt = format === "basic" ? "HHmm" : "HH:mm";
-
-  if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-    fmt += format === "basic" ? "ss" : ":ss";
-    if (!suppressMilliseconds || dt.millisecond !== 0) {
-      fmt += ".SSS";
-    }
-  }
-
-  if ((includeZone || includeOffset) && spaceZone) {
-    fmt += " ";
-  }
-
-  if (includeZone) {
-    fmt += "z";
-  } else if (includeOffset) {
-    fmt += format === "basic" ? "ZZZ" : "ZZ";
-  }
-
-  let str = toTechFormat(dt, fmt);
-
-  if (includePrefix) {
-    str = "T" + str;
-  }
-
-  return str;
-}
-
 function toISODate(o, extended) {
   const longFormat = o.c.year > 9999 || o.c.year < 0;
   let c = "";
@@ -1709,7 +1667,10 @@ export default class DateTime {
    * @return {string}
    */
   toSQLDate() {
-    return toTechFormat(this, "yyyy-MM-dd");
+    if (!this.isValid) {
+      return null;
+    }
+    return toISODate(this, true);
   }
 
   /**
@@ -1724,11 +1685,18 @@ export default class DateTime {
    * @return {string}
    */
   toSQLTime({ includeOffset = true, includeZone = false } = {}) {
-    return toTechTimeFormat(this, {
-      includeOffset,
-      includeZone,
-      spaceZone: true,
-    });
+    let fmt = "HH:mm:ss.SSS";
+
+    if (includeZone || includeOffset) {
+      fmt += " ";
+      if (includeZone) {
+        fmt += "z";
+      } else if (includeOffset) {
+        fmt += "ZZ";
+      }
+    }
+
+    return toTechFormat(this, fmt, true);
   }
 
   /**
