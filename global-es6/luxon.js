@@ -327,17 +327,14 @@ var luxon = (function (exports) {
   }
 
   function padStart(input, n = 2) {
-    const minus = input < 0 ? "-" : "";
-    const target = minus ? input * -1 : input;
-    let result;
-
-    if (target.toString().length < n) {
-      result = ("0".repeat(n) + target).slice(-n);
+    const isNeg = input < 0;
+    let padded;
+    if (isNeg) {
+      padded = "-" + ("" + -input).padStart(n, "0");
     } else {
-      result = target.toString();
+      padded = ("" + input).padStart(n, "0");
     }
-
-    return `${minus}${result}`;
+    return padded;
   }
 
   function parseInteger(string) {
@@ -1693,6 +1690,19 @@ var luxon = (function (exports) {
     }
   }
 
+  // todo - remap caching
+
+  let intlLFCache = {};
+  function getCachedLF(locString, opts = {}) {
+    const key = JSON.stringify([locString, opts]);
+    let dtf = intlLFCache[key];
+    if (!dtf) {
+      dtf = new Intl.ListFormat(locString, opts);
+      intlLFCache[key] = dtf;
+    }
+    return dtf;
+  }
+
   let intlDTCache = {};
   function getCachedDTF(locString, opts = {}) {
     const key = JSON.stringify([locString, opts]);
@@ -1833,8 +1843,10 @@ var luxon = (function (exports) {
       this.padTo = opts.padTo || 0;
       this.floor = opts.floor || false;
 
-      if (!forceSimple) {
-        const intlOpts = { useGrouping: false };
+      const { padTo, floor, ...otherOpts } = opts;
+
+      if (!forceSimple || Object.keys(otherOpts).length > 0) {
+        const intlOpts = { useGrouping: false, ...opts };
         if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
         this.inf = getCachedINF(intl, intlOpts);
       }
@@ -1997,7 +2009,7 @@ var luxon = (function (exports) {
       return this.fastNumbersCached;
     }
 
-    listingMode(defaultOK = true) {
+    listingMode() {
       const isActuallyEn = this.isEnglish();
       const hasNoWeirdness =
         (this.numberingSystem === null || this.numberingSystem === "latn") &&
@@ -2108,6 +2120,10 @@ var luxon = (function (exports) {
 
     relFormatter(opts = {}) {
       return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
+    }
+
+    listFormatter(opts = {}) {
+      return getCachedLF(this.intl, opts);
     }
 
     isEnglish() {
@@ -2856,6 +2872,36 @@ var luxon = (function (exports) {
       return this.isValid
         ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
         : INVALID$2;
+    }
+
+    /**
+     * Returns a string representation of a Duration with all units included
+     * To modify its behavior use the `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant. See {@link Intl.NumberFormat}.
+     * @param opts - On option object to override the formatting. Accepts the same keys as the options parameter of the native `Int.NumberFormat` constructor, as well as `listStyle`.
+     * @example
+     * ```js
+     * var dur = Duration.fromObject({ days: 1, hours: 5, minutes: 6 })
+     * dur.toHuman() //=> '1 day, 5 hours, 6 minutes'
+     * dur.toHuman({ listStyle: "long" }) //=> '1 day, 5 hours, and 6 minutes'
+     * dur.toHuman({ unitDisplay: "short" }) //=> '1 day, 5 hr, 6 min'
+     * ```
+     */
+    toHuman(opts = {}) {
+      const l = orderedUnits$1
+        .map((unit) => {
+          const val = this.values[unit];
+          if (isUndefined(val)) {
+            return null;
+          }
+          return this.loc
+            .numberFormatter({ style: "unit", unitDisplay: "long", ...opts, unit: unit.slice(0, -1) })
+            .format(val);
+        })
+        .filter((n) => n);
+
+      return this.loc
+        .listFormatter({ type: "conjunction", style: opts.listStyle || "narrow", ...opts })
+        .format(l);
     }
 
     /**
@@ -4932,46 +4978,61 @@ var luxon = (function (exports) {
       : null;
   }
 
-  // technical time formats (e.g. the time part of ISO 8601), take some options
-  // and this commonizes their handling
-  function toTechTimeFormat(
-    dt,
-    {
-      suppressSeconds = false,
-      suppressMilliseconds = false,
-      includeOffset,
-      includePrefix = false,
-      includeZone = false,
-      spaceZone = false,
-      format = "extended",
-    }
-  ) {
-    let fmt = format === "basic" ? "HHmm" : "HH:mm";
+  function toISODate(o, extended) {
+    const longFormat = o.c.year > 9999 || o.c.year < 0;
+    let c = "";
+    if (longFormat && o.c.year >= 0) c += "+";
+    c += padStart(o.c.year, longFormat ? 6 : 4);
 
-    if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-      fmt += format === "basic" ? "ss" : ":ss";
-      if (!suppressMilliseconds || dt.millisecond !== 0) {
-        fmt += ".SSS";
+    if (extended) {
+      c += "-";
+      c += padStart(o.c.month);
+      c += "-";
+      c += padStart(o.c.day);
+    } else {
+      c += padStart(o.c.month);
+      c += padStart(o.c.day);
+    }
+    return c;
+  }
+
+  function toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOffset) {
+    let c = padStart(o.c.hour);
+    if (extended) {
+      c += ":";
+      c += padStart(o.c.minute);
+      if (o.c.second !== 0 || !suppressSeconds) {
+        c += ":";
+      }
+    } else {
+      c += padStart(o.c.minute);
+    }
+
+    if (o.c.second !== 0 || !suppressSeconds) {
+      c += padStart(o.c.second);
+
+      if (o.c.millisecond !== 0 || !suppressMilliseconds) {
+        c += ".";
+        c += padStart(o.c.millisecond, 3);
       }
     }
 
-    if ((includeZone || includeOffset) && spaceZone) {
-      fmt += " ";
+    if (includeOffset) {
+      if (o.isOffsetFixed && o.offset === 0) {
+        c += "Z";
+      } else if (o.o < 0) {
+        c += "-";
+        c += padStart(Math.trunc(-o.o / 60));
+        c += ":";
+        c += padStart(Math.trunc(-o.o % 60));
+      } else {
+        c += "+";
+        c += padStart(Math.trunc(o.o / 60));
+        c += ":";
+        c += padStart(Math.trunc(o.o % 60));
+      }
     }
-
-    if (includeZone) {
-      fmt += "z";
-    } else if (includeOffset) {
-      fmt += format === "basic" ? "ZZZ" : "ZZ";
-    }
-
-    let str = toTechFormat(dt, fmt);
-
-    if (includePrefix) {
-      str = "T" + str;
-    }
-
-    return str;
+    return c;
   }
 
   // defaults for unspecified units in the supported calendars
@@ -6138,7 +6199,7 @@ var luxon = (function (exports) {
      * See {@link DateTime#plus}
      * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
      @return {DateTime}
-    */
+     */
     minus(duration) {
       if (!this.isValid) return this;
       const dur = Duration.fromDurationLike(duration).negate();
@@ -6284,18 +6345,28 @@ var luxon = (function (exports) {
      * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
      * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
      * @param {string} [opts.format='extended'] - choose between the basic and extended format
-     * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
+     * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
      * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
      * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
      * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
      * @return {string}
      */
-    toISO(opts = {}) {
+    toISO({
+      format = "extended",
+      suppressSeconds = false,
+      suppressMilliseconds = false,
+      includeOffset = true,
+    } = {}) {
       if (!this.isValid) {
         return null;
       }
 
-      return `${this.toISODate(opts)}T${this.toISOTime(opts)}`;
+      const ext = format === "extended";
+
+      let c = toISODate(this, ext);
+      c += "T";
+      c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset);
+      return c;
     }
 
     /**
@@ -6307,12 +6378,11 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toISODate({ format = "extended" } = {}) {
-      let fmt = format === "basic" ? "yyyyMMdd" : "yyyy-MM-dd";
-      if (this.year > 9999) {
-        fmt = "+" + fmt;
+      if (!this.isValid) {
+        return null;
       }
 
-      return toTechFormat(this, fmt);
+      return toISODate(this, format === "extended");
     }
 
     /**
@@ -6345,17 +6415,19 @@ var luxon = (function (exports) {
       includePrefix = false,
       format = "extended",
     } = {}) {
-      return toTechTimeFormat(this, {
-        suppressSeconds,
-        suppressMilliseconds,
-        includeOffset,
-        includePrefix,
-        format,
-      });
+      if (!this.isValid) {
+        return null;
+      }
+
+      let c = includePrefix ? "T" : "";
+      return (
+        c +
+        toISOTime(this, format === "extended", suppressSeconds, suppressMilliseconds, includeOffset)
+      );
     }
 
     /**
-     * Returns an RFC 2822-compatible string representation of this DateTime, always in UTC
+     * Returns an RFC 2822-compatible string representation of this DateTime
      * @example DateTime.utc(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 +0000'
      * @example DateTime.local(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 -0400'
      * @return {string}
@@ -6365,7 +6437,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Returns a string representation of this DateTime appropriate for use in HTTP headers.
+     * Returns a string representation of this DateTime appropriate for use in HTTP headers. The output is always expressed in GMT.
      * Specifically, the string conforms to RFC 1123.
      * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
      * @example DateTime.utc(2014, 7, 13).toHTTP() //=> 'Sun, 13 Jul 2014 00:00:00 GMT'
@@ -6382,7 +6454,10 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toSQLDate() {
-      return toTechFormat(this, "yyyy-MM-dd");
+      if (!this.isValid) {
+        return null;
+      }
+      return toISODate(this, true);
     }
 
     /**
@@ -6397,11 +6472,18 @@ var luxon = (function (exports) {
      * @return {string}
      */
     toSQLTime({ includeOffset = true, includeZone = false } = {}) {
-      return toTechTimeFormat(this, {
-        includeOffset,
-        includeZone,
-        spaceZone: true,
-      });
+      let fmt = "HH:mm:ss.SSS";
+
+      if (includeZone || includeOffset) {
+        fmt += " ";
+        if (includeZone) {
+          fmt += "z";
+        } else if (includeOffset) {
+          fmt += "ZZ";
+        }
+      }
+
+      return toTechFormat(this, fmt, true);
     }
 
     /**
@@ -6566,8 +6648,8 @@ var luxon = (function (exports) {
       if (!this.isValid) return false;
 
       const inputMs = otherDateTime.valueOf();
-      const otherZoneDateTime = this.setZone(otherDateTime.zone, { keepLocalTime: true });
-      return otherZoneDateTime.startOf(unit) <= inputMs && inputMs <= otherZoneDateTime.endOf(unit);
+      const adjustedToZone = this.setZone(otherDateTime.zone, { keepLocalTime: true });
+      return adjustedToZone.startOf(unit) <= inputMs && inputMs <= adjustedToZone.endOf(unit);
     }
 
     /**
@@ -6893,7 +6975,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "2.2.0";
+  const VERSION = "2.3.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

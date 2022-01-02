@@ -511,17 +511,16 @@ var luxon = (function (exports) {
       n = 2;
     }
 
-    var minus = input < 0 ? "-" : "";
-    var target = minus ? input * -1 : input;
-    var result;
+    var isNeg = input < 0;
+    var padded;
 
-    if (target.toString().length < n) {
-      result = ("0".repeat(n) + target).slice(-n);
+    if (isNeg) {
+      padded = "-" + ("" + -input).padStart(n, "0");
     } else {
-      result = target.toString();
+      padded = ("" + input).padStart(n, "0");
     }
 
-    return "" + minus + result;
+    return padded;
   }
   function parseInteger(string) {
     if (isUndefined(string) || string === null || string === "") {
@@ -2143,7 +2142,27 @@ var luxon = (function (exports) {
     return Settings;
   }();
 
-  var _excluded = ["base"];
+  var _excluded = ["base"],
+      _excluded2 = ["padTo", "floor"];
+
+  var intlLFCache = {};
+
+  function getCachedLF(locString, opts) {
+    if (opts === void 0) {
+      opts = {};
+    }
+
+    var key = JSON.stringify([locString, opts]);
+    var dtf = intlLFCache[key];
+
+    if (!dtf) {
+      dtf = new Intl.ListFormat(locString, opts);
+      intlLFCache[key] = dtf;
+    }
+
+    return dtf;
+  }
+
   var intlDTCache = {};
 
   function getCachedDTF(locString, opts) {
@@ -2312,10 +2331,15 @@ var luxon = (function (exports) {
       this.padTo = opts.padTo || 0;
       this.floor = opts.floor || false;
 
-      if (!forceSimple) {
-        var intlOpts = {
+      opts.padTo;
+          opts.floor;
+          var otherOpts = _objectWithoutPropertiesLoose(opts, _excluded2);
+
+      if (!forceSimple || Object.keys(otherOpts).length > 0) {
+        var intlOpts = _extends({
           useGrouping: false
-        };
+        }, opts);
+
         if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
         this.inf = getCachedINF(intl, intlOpts);
       }
@@ -2509,8 +2533,7 @@ var luxon = (function (exports) {
 
     var _proto4 = Locale.prototype;
 
-    _proto4.listingMode = function listingMode(defaultOK) {
-
+    _proto4.listingMode = function listingMode() {
       var isActuallyEn = this.isEnglish();
       var hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === "latn") && (this.outputCalendar === null || this.outputCalendar === "gregory");
       return isActuallyEn && hasNoWeirdness ? "en" : "intl";
@@ -2688,6 +2711,14 @@ var luxon = (function (exports) {
       }
 
       return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
+    };
+
+    _proto4.listFormatter = function listFormatter(opts) {
+      if (opts === void 0) {
+        opts = {};
+      }
+
+      return getCachedLF(this.intl, opts);
     };
 
     _proto4.isEnglish = function isEnglish() {
@@ -3434,6 +3465,48 @@ var luxon = (function (exports) {
       });
 
       return this.isValid ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt) : INVALID$2;
+    }
+    /**
+     * Returns a string representation of a Duration with all units included
+     * To modify its behavior use the `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant. See {@link Intl.NumberFormat}.
+     * @param opts - On option object to override the formatting. Accepts the same keys as the options parameter of the native `Int.NumberFormat` constructor, as well as `listStyle`.
+     * @example
+     * ```js
+     * var dur = Duration.fromObject({ days: 1, hours: 5, minutes: 6 })
+     * dur.toHuman() //=> '1 day, 5 hours, 6 minutes'
+     * dur.toHuman({ listStyle: "long" }) //=> '1 day, 5 hours, and 6 minutes'
+     * dur.toHuman({ unitDisplay: "short" }) //=> '1 day, 5 hr, 6 min'
+     * ```
+     */
+    ;
+
+    _proto.toHuman = function toHuman(opts) {
+      var _this = this;
+
+      if (opts === void 0) {
+        opts = {};
+      }
+
+      var l = orderedUnits$1.map(function (unit) {
+        var val = _this.values[unit];
+
+        if (isUndefined(val)) {
+          return null;
+        }
+
+        return _this.loc.numberFormatter(_extends({
+          style: "unit",
+          unitDisplay: "long"
+        }, opts, {
+          unit: unit.slice(0, -1)
+        })).format(val);
+      }).filter(function (n) {
+        return n;
+      });
+      return this.loc.listFormatter(_extends({
+        type: "conjunction",
+        style: opts.listStyle || "narrow"
+      }, opts)).format(l);
     }
     /**
      * Returns a JavaScript object with this Duration's values.
@@ -5972,51 +6045,67 @@ var luxon = (function (exports) {
       allowZ: allowZ,
       forceSimple: true
     }).formatDateTimeFromString(dt, format) : null;
-  } // technical time formats (e.g. the time part of ISO 8601), take some options
-  // and this commonizes their handling
+  }
 
+  function _toISODate(o, extended) {
+    var longFormat = o.c.year > 9999 || o.c.year < 0;
+    var c = "";
+    if (longFormat && o.c.year >= 0) c += "+";
+    c += padStart(o.c.year, longFormat ? 6 : 4);
 
-  function toTechTimeFormat(dt, _ref) {
-    var _ref$suppressSeconds = _ref.suppressSeconds,
-        suppressSeconds = _ref$suppressSeconds === void 0 ? false : _ref$suppressSeconds,
-        _ref$suppressMillisec = _ref.suppressMilliseconds,
-        suppressMilliseconds = _ref$suppressMillisec === void 0 ? false : _ref$suppressMillisec,
-        includeOffset = _ref.includeOffset,
-        _ref$includePrefix = _ref.includePrefix,
-        includePrefix = _ref$includePrefix === void 0 ? false : _ref$includePrefix,
-        _ref$includeZone = _ref.includeZone,
-        includeZone = _ref$includeZone === void 0 ? false : _ref$includeZone,
-        _ref$spaceZone = _ref.spaceZone,
-        spaceZone = _ref$spaceZone === void 0 ? false : _ref$spaceZone,
-        _ref$format = _ref.format,
-        format = _ref$format === void 0 ? "extended" : _ref$format;
-    var fmt = format === "basic" ? "HHmm" : "HH:mm";
+    if (extended) {
+      c += "-";
+      c += padStart(o.c.month);
+      c += "-";
+      c += padStart(o.c.day);
+    } else {
+      c += padStart(o.c.month);
+      c += padStart(o.c.day);
+    }
 
-    if (!suppressSeconds || dt.second !== 0 || dt.millisecond !== 0) {
-      fmt += format === "basic" ? "ss" : ":ss";
+    return c;
+  }
 
-      if (!suppressMilliseconds || dt.millisecond !== 0) {
-        fmt += ".SSS";
+  function _toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOffset) {
+    var c = padStart(o.c.hour);
+
+    if (extended) {
+      c += ":";
+      c += padStart(o.c.minute);
+
+      if (o.c.second !== 0 || !suppressSeconds) {
+        c += ":";
+      }
+    } else {
+      c += padStart(o.c.minute);
+    }
+
+    if (o.c.second !== 0 || !suppressSeconds) {
+      c += padStart(o.c.second);
+
+      if (o.c.millisecond !== 0 || !suppressMilliseconds) {
+        c += ".";
+        c += padStart(o.c.millisecond, 3);
       }
     }
 
-    if ((includeZone || includeOffset) && spaceZone) {
-      fmt += " ";
+    if (includeOffset) {
+      if (o.isOffsetFixed && o.offset === 0) {
+        c += "Z";
+      } else if (o.o < 0) {
+        c += "-";
+        c += padStart(Math.trunc(-o.o / 60));
+        c += ":";
+        c += padStart(Math.trunc(-o.o % 60));
+      } else {
+        c += "+";
+        c += padStart(Math.trunc(o.o / 60));
+        c += ":";
+        c += padStart(Math.trunc(o.o % 60));
+      }
     }
 
-    if (includeZone) {
-      fmt += "z";
-    } else if (includeOffset) {
-      fmt += format === "basic" ? "ZZZ" : "ZZ";
-    }
-
-    var str = toTechFormat(dt, fmt);
-
-    if (includePrefix) {
-      str = "T" + str;
-    }
-
-    return str;
+    return c;
   } // defaults for unspecified units in the supported calendars
 
 
@@ -6211,9 +6300,9 @@ var luxon = (function (exports) {
         var unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
 
         if (unchanged) {
-          var _ref2 = [config.old.c, config.old.o];
-          c = _ref2[0];
-          o = _ref2[1];
+          var _ref = [config.old.c, config.old.o];
+          c = _ref[0];
+          o = _ref[1];
         } else {
           var ot = zone.offset(this.ts);
           c = tsToObj(this.ts, ot);
@@ -6883,11 +6972,11 @@ var luxon = (function (exports) {
     ;
 
     _proto.setZone = function setZone(zone, _temp) {
-      var _ref3 = _temp === void 0 ? {} : _temp,
-          _ref3$keepLocalTime = _ref3.keepLocalTime,
-          keepLocalTime = _ref3$keepLocalTime === void 0 ? false : _ref3$keepLocalTime,
-          _ref3$keepCalendarTim = _ref3.keepCalendarTime,
-          keepCalendarTime = _ref3$keepCalendarTim === void 0 ? false : _ref3$keepCalendarTim;
+      var _ref2 = _temp === void 0 ? {} : _temp,
+          _ref2$keepLocalTime = _ref2.keepLocalTime,
+          keepLocalTime = _ref2$keepLocalTime === void 0 ? false : _ref2$keepLocalTime,
+          _ref2$keepCalendarTim = _ref2.keepCalendarTime,
+          keepCalendarTime = _ref2$keepCalendarTim === void 0 ? false : _ref2$keepCalendarTim;
 
       zone = normalizeZone(zone, Settings.defaultZone);
 
@@ -6922,10 +7011,10 @@ var luxon = (function (exports) {
     ;
 
     _proto.reconfigure = function reconfigure(_temp2) {
-      var _ref4 = _temp2 === void 0 ? {} : _temp2,
-          locale = _ref4.locale,
-          numberingSystem = _ref4.numberingSystem,
-          outputCalendar = _ref4.outputCalendar;
+      var _ref3 = _temp2 === void 0 ? {} : _temp2,
+          locale = _ref3.locale,
+          numberingSystem = _ref3.numberingSystem,
+          outputCalendar = _ref3.outputCalendar;
 
       var loc = this.loc.clone({
         locale: locale,
@@ -7028,7 +7117,7 @@ var luxon = (function (exports) {
      * See {@link DateTime#plus}
      * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
      @return {DateTime}
-    */
+     */
     ;
 
     _proto.minus = function minus(duration) {
@@ -7193,7 +7282,7 @@ var luxon = (function (exports) {
      * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
      * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
      * @param {string} [opts.format='extended'] - choose between the basic and extended format
-     * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
+     * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
      * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
      * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
      * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
@@ -7201,16 +7290,28 @@ var luxon = (function (exports) {
      */
     ;
 
-    _proto.toISO = function toISO(opts) {
-      if (opts === void 0) {
-        opts = {};
-      }
+    _proto.toISO = function toISO(_temp3) {
+      var _ref4 = _temp3 === void 0 ? {} : _temp3,
+          _ref4$format = _ref4.format,
+          format = _ref4$format === void 0 ? "extended" : _ref4$format,
+          _ref4$suppressSeconds = _ref4.suppressSeconds,
+          suppressSeconds = _ref4$suppressSeconds === void 0 ? false : _ref4$suppressSeconds,
+          _ref4$suppressMillise = _ref4.suppressMilliseconds,
+          suppressMilliseconds = _ref4$suppressMillise === void 0 ? false : _ref4$suppressMillise,
+          _ref4$includeOffset = _ref4.includeOffset,
+          includeOffset = _ref4$includeOffset === void 0 ? true : _ref4$includeOffset;
 
       if (!this.isValid) {
         return null;
       }
 
-      return this.toISODate(opts) + "T" + this.toISOTime(opts);
+      var ext = format === "extended";
+
+      var c = _toISODate(this, ext);
+
+      c += "T";
+      c += _toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset);
+      return c;
     }
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's date component
@@ -7222,18 +7323,16 @@ var luxon = (function (exports) {
      */
     ;
 
-    _proto.toISODate = function toISODate(_temp3) {
-      var _ref5 = _temp3 === void 0 ? {} : _temp3,
+    _proto.toISODate = function toISODate(_temp4) {
+      var _ref5 = _temp4 === void 0 ? {} : _temp4,
           _ref5$format = _ref5.format,
           format = _ref5$format === void 0 ? "extended" : _ref5$format;
 
-      var fmt = format === "basic" ? "yyyyMMdd" : "yyyy-MM-dd";
-
-      if (this.year > 9999) {
-        fmt = "+" + fmt;
+      if (!this.isValid) {
+        return null;
       }
 
-      return toTechFormat(this, fmt);
+      return _toISODate(this, format === "extended");
     }
     /**
      * Returns an ISO 8601-compliant string representation of this DateTime's week date
@@ -7261,8 +7360,8 @@ var luxon = (function (exports) {
      */
     ;
 
-    _proto.toISOTime = function toISOTime(_temp4) {
-      var _ref6 = _temp4 === void 0 ? {} : _temp4,
+    _proto.toISOTime = function toISOTime(_temp5) {
+      var _ref6 = _temp5 === void 0 ? {} : _temp5,
           _ref6$suppressMillise = _ref6.suppressMilliseconds,
           suppressMilliseconds = _ref6$suppressMillise === void 0 ? false : _ref6$suppressMillise,
           _ref6$suppressSeconds = _ref6.suppressSeconds,
@@ -7274,16 +7373,15 @@ var luxon = (function (exports) {
           _ref6$format = _ref6.format,
           format = _ref6$format === void 0 ? "extended" : _ref6$format;
 
-      return toTechTimeFormat(this, {
-        suppressSeconds: suppressSeconds,
-        suppressMilliseconds: suppressMilliseconds,
-        includeOffset: includeOffset,
-        includePrefix: includePrefix,
-        format: format
-      });
+      if (!this.isValid) {
+        return null;
+      }
+
+      var c = includePrefix ? "T" : "";
+      return c + _toISOTime(this, format === "extended", suppressSeconds, suppressMilliseconds, includeOffset);
     }
     /**
-     * Returns an RFC 2822-compatible string representation of this DateTime, always in UTC
+     * Returns an RFC 2822-compatible string representation of this DateTime
      * @example DateTime.utc(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 +0000'
      * @example DateTime.local(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 -0400'
      * @return {string}
@@ -7294,7 +7392,7 @@ var luxon = (function (exports) {
       return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ", false);
     }
     /**
-     * Returns a string representation of this DateTime appropriate for use in HTTP headers.
+     * Returns a string representation of this DateTime appropriate for use in HTTP headers. The output is always expressed in GMT.
      * Specifically, the string conforms to RFC 1123.
      * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
      * @example DateTime.utc(2014, 7, 13).toHTTP() //=> 'Sun, 13 Jul 2014 00:00:00 GMT'
@@ -7314,7 +7412,11 @@ var luxon = (function (exports) {
     ;
 
     _proto.toSQLDate = function toSQLDate() {
-      return toTechFormat(this, "yyyy-MM-dd");
+      if (!this.isValid) {
+        return null;
+      }
+
+      return _toISODate(this, true);
     }
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL Time
@@ -7329,18 +7431,26 @@ var luxon = (function (exports) {
      */
     ;
 
-    _proto.toSQLTime = function toSQLTime(_temp5) {
-      var _ref7 = _temp5 === void 0 ? {} : _temp5,
+    _proto.toSQLTime = function toSQLTime(_temp6) {
+      var _ref7 = _temp6 === void 0 ? {} : _temp6,
           _ref7$includeOffset = _ref7.includeOffset,
           includeOffset = _ref7$includeOffset === void 0 ? true : _ref7$includeOffset,
           _ref7$includeZone = _ref7.includeZone,
           includeZone = _ref7$includeZone === void 0 ? false : _ref7$includeZone;
 
-      return toTechTimeFormat(this, {
-        includeOffset: includeOffset,
-        includeZone: includeZone,
-        spaceZone: true
-      });
+      var fmt = "HH:mm:ss.SSS";
+
+      if (includeZone || includeOffset) {
+        fmt += " ";
+
+        if (includeZone) {
+          fmt += "z";
+        } else if (includeOffset) {
+          fmt += "ZZ";
+        }
+      }
+
+      return toTechFormat(this, fmt, true);
     }
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL DateTime
@@ -7544,10 +7654,10 @@ var luxon = (function (exports) {
     _proto.hasSame = function hasSame(otherDateTime, unit) {
       if (!this.isValid) return false;
       var inputMs = otherDateTime.valueOf();
-      var otherZoneDateTime = this.setZone(otherDateTime.zone, {
+      var adjustedToZone = this.setZone(otherDateTime.zone, {
         keepLocalTime: true
       });
-      return otherZoneDateTime.startOf(unit) <= inputMs && inputMs <= otherZoneDateTime.endOf(unit);
+      return adjustedToZone.startOf(unit) <= inputMs && inputMs <= adjustedToZone.endOf(unit);
     }
     /**
      * Equality check
@@ -8346,7 +8456,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "2.2.0";
+  var VERSION = "2.3.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
