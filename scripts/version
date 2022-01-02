@@ -5,12 +5,7 @@ abort() {
   exit 1
 }
 
-if [[ -x $(which ggrep) ]]
-then
-  grepper='ggrep'
-else
-  grepper='grep'
-fi
+grepper='grep'
 
 PACKAGE_VERSION=$(node -p "require('./package.json').version")
 PACKAGE_LOCK_VERSION=$(node -p "require('./package-lock.json').version")
