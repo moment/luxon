@@ -231,6 +231,63 @@ function toTechTimeFormat(
   return str;
 }
 
+function toISODate(o, extended) {
+  const longFormat = o.c.year > 9999 || o.c.year < 0;
+  let c = "";
+  if (longFormat && o.c.year >= 0) c += "+";
+  c += padStart(o.c.year, longFormat ? 6 : 4);
+
+  if (extended) {
+    c += "-";
+    c += padStart(o.c.month);
+    c += "-";
+    c += padStart(o.c.day);
+  } else {
+    c += padStart(o.c.month);
+    c += padStart(o.c.day);
+  }
+  return c;
+}
+
+function toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOffset) {
+  let c = padStart(o.c.hour);
+  if (extended) {
+    c += ":";
+    c += padStart(o.c.minute);
+    if (o.c.second !== 0 || !suppressSeconds) {
+      c += ":";
+    }
+  } else {
+    c += padStart(o.c.minute);
+  }
+
+  if (o.c.second !== 0 || !suppressSeconds) {
+    c += padStart(o.c.second);
+
+    if (o.c.millisecond !== 0 || !suppressMilliseconds) {
+      c += ".";
+      c += padStart(o.c.millisecond, 3);
+    }
+  }
+
+  if (includeOffset) {
+    if (o.isOffsetFixed && o.offset === 0) {
+      c += "Z";
+    } else if (o.o < 0) {
+      c += "-";
+      c += padStart(Math.trunc(-o.o / 60));
+      c += ":";
+      c += padStart(Math.trunc(-o.o % 60));
+    } else {
+      c += "+";
+      c += padStart(Math.trunc(o.o / 60));
+      c += ":";
+      c += padStart(Math.trunc(o.o % 60));
+    }
+  }
+  return c;
+}
+
 // defaults for unspecified units in the supported calendars
 const defaultUnitValues = {
     month: 1,
@@ -1554,82 +1611,17 @@ export default class DateTime {
     suppressSeconds = false,
     suppressMilliseconds = false,
     includeOffset = true,
-    allowZ = true,
   } = {}) {
     if (!this.isValid) {
       return null;
     }
 
-    const o = this;
-    const longFormat = Math.abs(o.c.year) > 9999;
-    if (format === "extended") {
-      let c = "";
-      if (longFormat && o.c.year >= 0) c += "+";
-      c += padStart(o.c.year, longFormat ? 6 : 4);
-      c += "-";
-      c += padStart(o.c.month);
-      c += "-";
-      c += padStart(o.c.day);
-      c += "T";
-      c += padStart(o.c.hour);
-      c += ":";
-      c += padStart(o.c.minute);
-      if (o.c.second !== 0 || !suppressSeconds) {
-        c += ":";
-        c += padStart(o.c.second);
-        if (o.c.millisecond !== 0 || !suppressMilliseconds) {
-          c += ".";
-          c += padStart(o.c.millisecond, 3);
-        }
-      }
+    const ext = format === "extended";
 
-      if (includeOffset) {
-        if (o.isOffsetFixed && o.offset === 0 && allowZ) {
-          c += "Z";
-        } else if (o.o < 0) {
-          c += "-";
-          c += padStart(Math.trunc(-o.o / 60));
-          c += ":";
-          c += padStart(Math.trunc(-o.o % 60));
-        } else {
-          c += "+";
-          c += padStart(Math.trunc(o.o / 60));
-          c += ":";
-          c += padStart(Math.trunc(o.o % 60));
-        }
-      }
-      return c;
-    } else {
-      let c = "";
-      if (longFormat && o.c.year >= 0) c += "+";
-      c += padStart(o.c.year, longFormat ? 6 : 4);
-      c += padStart(o.c.month);
-      c += padStart(o.c.day);
-      c += "T";
-      c += padStart(o.c.hour);
-      c += padStart(o.c.minute);
-      if (o.c.second !== 0 || !suppressSeconds) {
-        c += padStart(o.c.second);
-        if (o.c.millisecond !== 0 || !suppressMilliseconds) {
-          c += ".";
-          c += padStart(o.c.millisecond, 3);
-        }
-      }
-      if (includeOffset) {
-        if (o.isOffsetFixed && o.offset === 0 && allowZ) {
-          c += "Z";
-        } else if (o.o < 0) {
-          c += "-";
-          c += padStart(Math.trunc(-o.o / 60));
-          c += padStart(Math.trunc(-o.o % 60));
-        } else {
-          c += "+";
-          c += padStart(Math.trunc(o.o / 60));
-          c += padStart(Math.trunc(o.o % 60));
-        }
-      }
-      return c;
-    }
+    let c = toISODate(this, ext);
+    c += "T";
+    c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset);
+    return c;
   }
 
   /**
@@ -1641,12 +1633,11 @@ export default class DateTime {
    * @return {string}
    */
   toISODate({ format = "extended" } = {}) {
-    let fmt = format === "basic" ? "yyyyMMdd" : "yyyy-MM-dd";
-    if (this.year > 9999) {
-      fmt = "+" + fmt;
+    if (!this.isValid) {
+      return null;
     }
 
-    return toTechFormat(this, fmt);
+    return toISODate(this, format === "extended");
   }
 
   /**
@@ -1679,13 +1670,15 @@ export default class DateTime {
     includePrefix = false,
     format = "extended",
   } = {}) {
-    return toTechTimeFormat(this, {
-      suppressSeconds,
-      suppressMilliseconds,
-      includeOffset,
-      includePrefix,
-      format,
-    });
+    if (!this.isValid) {
+      return null;
+    }
+
+    let c = includePrefix ? "T" : "";
+    return (
+      c +
+      toISOTime(this, format === "extended", suppressSeconds, suppressMilliseconds, includeOffset)
+    );
   }
 
   /**

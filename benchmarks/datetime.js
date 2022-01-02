@@ -24,11 +24,11 @@ function runDateTimeSuite() {
       .add("DateTime.fromSQL", () => {
         DateTime.fromSQL("2016-05-14 10:23:54.2346");
       })
-      .add("DateTime.fromString", () => {
-        DateTime.fromString("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
+      .add("DateTime.fromFormat", () => {
+        DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
       })
-      .add("DateTime.fromString with zone", () => {
-        DateTime.fromString("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
+      .add("DateTime.fromFormat with zone", () => {
+        DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
           zone: "America/Los_Angeles",
         });
       })
