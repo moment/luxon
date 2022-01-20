@@ -766,7 +766,7 @@ export default class Duration {
     if (!this.isValid) return this;
     const negated = {};
     for (const k of Object.keys(this.values)) {
-      negated[k] = -this.values[k];
+      negated[k] = this.values[k] === 0 ? 0 : -this.values[k];
     }
     return clone(this, { values: negated }, true);
   }
