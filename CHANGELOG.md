@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.1 (2022-02-23)
+
+ * Added an `includeOffsetSpace` option to `toSQL` and `toSQLTime`
+ * Added `toUnixInteger`
+ * Don't use `-0` when negating durations with zeros in them
+
 ## 2.3.0 (2022-01-02)
 
  * Major perf improvements to `toISO()`, `toISODate()`, `toISOTime()`, and `toSQLDate()`
