@@ -243,6 +243,12 @@ test("DateTime#toSQLTime() accepts an includeOffset option", () => {
   expect(dt.setZone("America/New_York").toSQLTime({ includeOffset: false })).toBe("05:23:54.123");
 });
 
+test("DateTime#toSQLTime() accepts an includeOffsetSpace option", () => {
+  expect(dt.setZone("America/New_York").toSQLTime({ includeOffsetSpace: false })).toBe(
+    "05:23:54.123-04:00"
+  );
+});
+
 test("DateTime#toSQLTime() accepts an includeZone option", () => {
   expect(dt.toUTC().toSQLTime({ includeZone: true })).toBe("09:23:54.123 UTC");
   expect(dt.setZone("America/New_York").toSQLTime({ includeZone: true })).toBe(
@@ -261,6 +267,12 @@ test("DateTime#toSQLTime() returns null for invalid DateTimes", () => {
 test("DateTime#toSQL() returns SQL date time", () => {
   expect(dt.toUTC().toSQL()).toBe("1982-05-25 09:23:54.123 Z");
   expect(dt.setZone("America/New_York").toSQL()).toBe("1982-05-25 05:23:54.123 -04:00");
+});
+
+test("DateTime#toSQL() accepts space option", () => {
+  expect(dt.setZone("America/New_York").toSQL({ includeOffsetSpace: false })).toBe(
+    "1982-05-25 05:23:54.123-04:00"
+  );
 });
 
 test("DateTime#toSQL() accepts an includeOffset option", () => {
