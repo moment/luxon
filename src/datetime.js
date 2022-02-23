@@ -1753,7 +1753,7 @@ export default class DateTime {
   toSeconds() {
     return this.isValid ? this.ts / 1000 : NaN;
   }
-  
+
   /**
    * Returns the epoch seconds (as a whole number) of this DateTime.
    * @return {number}
