@@ -146,6 +146,25 @@ test("DateTime#diff sets all its units to 0 if the duration is empty", () => {
   expect(t.diff(t, "days").toObject()).toEqual({ days: 0 });
 });
 
+test("DateTime#diff sets units to 0 if second object is slightly larger", () => {
+  expect(
+    diffObjs(
+      { year: 2017, month: 6, day: 26, hour: 21, minute: 1, second: 2, millisecond: 1 },
+      { year: 2017, month: 6, day: 26, hour: 21, minute: 1, second: 2, millisecond: 2 },
+      ["years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds"]
+    )
+  ).toEqual({
+    years: 0,
+    months: 0,
+    weeks: 0,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: -1,
+  });
+});
+
 test("DateTime#diff puts fractional parts in the lowest order unit", () => {
   expect(
     diffObjs({ year: 2017, month: 7, day: 14 }, { year: 2016, month: 6, day: 16 }, [
