@@ -1749,6 +1749,14 @@ export default class DateTime {
   toSeconds() {
     return this.isValid ? this.ts / 1000 : NaN;
   }
+  
+  /**
+   * Returns the epoch seconds (as a whole number) of this DateTime.
+   * @return {number}
+   */
+  toUnixInteger() {
+    return this.isValid ? Math.floor(this.ts / 1000) : NaN;
+  }
 
   /**
    * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON.
