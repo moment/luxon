@@ -14,7 +14,7 @@
     "build-global": "babel-node tasks/buildGlobal.js",
     "jest": "jest",
     "test": "jest --coverage",
-    "api-docs": "mkdir -p build && documentation build src/luxon.js -f html -o build/api-docs",
+    "api-docs": "mkdir -p build && documentation build src/luxon.js -f html -o build/api-docs && sed -i.bak 's/<\\/body>/<script src=\"\\/global\\/luxon.js\"><\\/script><script>console.log(\"You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`\");<\\/script><\\/body>/g' build/api-docs/index.html && rm build/api-docs/index.html.bak",
     "copy-site": "mkdir -p build && rsync -a docs/ build/docs && rsync -a site/ build",
     "site": "npm run api-docs && npm run copy-site",
     "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
