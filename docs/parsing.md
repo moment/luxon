@@ -123,7 +123,7 @@ Not every token supported by `DateTime#toFormat` is supported in the parser. For
 
 - Luxon relies on natively-available functionality that only provides the mapping in one direction. We can ask what the named offset is and get "Eastern Standard Time" but not ask what "Eastern Standard Time" is most likely to mean.
 - Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can't be parsed because of their ambiguity.
-- Because of the limitations above, Luxon also doesn't support the "macro" tokens that include offset names, such ass "ttt" and "FFFF".
+- Because of the limitations above, Luxon also doesn't support the "macro" tokens that include offset names, such as "ttt" and "FFFF".
 
 ### Debugging
 
