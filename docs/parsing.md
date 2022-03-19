@@ -180,7 +180,7 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 (Examples below given for `2014-08-06T13:07:04.054` considered as a local time in America/New_York). Note that many tokens supported by the [formatter](formatting.md) are **not** supported by the parser.
 
 | Standalone token | Format token | Description                                                    | Example                     |
-| ---------------- | ------------ | -------------------------------------------------------------- | --------------------------- |
+|------------------| ------------ |----------------------------------------------------------------| --------------------------- |
 | S                |              | millisecond, no padding                                        | `54`                        |
 | SSS              |              | millisecond, padded to 3                                       | `054`                       |
 | u                |              | fractional seconds, (5 is a half second, 54 is slightly more)  | `54`                        |
@@ -209,7 +209,8 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | MMM              | LLL          | month as an abbreviated localized string                       | `Aug`                       |
 | MMMM             | LLLL         | month as an unabbreviated localized string                     | `August`                    |
 | y                |              | year, 1-6 digits, very literally                               | `2014`                      |
-| yy               |              | two-digit year, interpreted as > 1960 (also accepts 4)         | `14`                        |
+| yy               |              | two or four digit year, interpreted as > 1960                  | `14`                        |
+| YY               |              | strictly two-digit year, interpreted as > 1960                 | `14`                        |
 | yyyy             |              | four-digit year                                                | `2014`                      |
 | yyyyy            |              | four- to six-digit years                                       | `10340`                     |
 | yyyyyy           |              | six-digit years                                                | `010340`                    |
