@@ -321,10 +321,6 @@ function normalizeUnit(unit) {
 // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
 // are present, and so on.
-
-// this is a dumbed down version of fromObject() that runs about 60% faster
-// but doesn't do any validation, makes a bunch of assumptions about what units
-// are present, and so on.
 function quickDT(obj, opts) {
   const zone = normalizeZone(opts.zone, Settings.defaultZone),
     loc = Locale.fromObject(opts),
