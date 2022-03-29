@@ -73,6 +73,20 @@ test("DateTime#weekday returns the weekday", () => {
   expect(dateTime.weekday).toBe(2);
 });
 
+test("DateTime#weekday returns the weekday for first-century years", () => {
+  const dt = DateTime.fromObject({ year: 43, month: 4, day: 4 });
+  expect(dt.weekday).toBe(6);
+  // test again bc caching
+  expect(dt.weekday).toBe(6);
+});
+
+test("DateTime#weekday returns the weekday for BCE years", () => {
+  const dt = DateTime.fromObject({ year: -584, month: 2, day: 14 });
+  expect(dt.weekday).toBe(3);
+  // test again bc caching
+  expect(dt.weekday).toBe(3);
+});
+
 //------
 // weekdayShort/weekdayLong
 //------

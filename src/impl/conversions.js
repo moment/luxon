@@ -20,7 +20,7 @@ function unitOutOfRange(unit, value) {
 }
 
 function dayOfWeek(year, month, day) {
-  const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  const js = new Date(Date.UTC((year % 400) + 800, month - 1, day)).getUTCDay();
   return js === 0 ? 7 : js;
 }
 
