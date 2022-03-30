@@ -243,7 +243,7 @@ DateTime.local(2017, 3, 13, 2, 30)
 
 ### Ambiguous times
 
-Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after `1:59:59.000` became `1:00:00.000`. But of course there was already a 1:00 that day, one hour before before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because they correspond to different moments in time.
+Harder to handle are ambiguous times. During Fall Back, some local times happen twice. In my zone, `America/New_York`, on November 5, 2017 the millisecond after `1:59:59.999` became `1:00:00.000`. But of course there was already a 1:00 that day, one hour before this one. So if you create a DateTime with a local time of 1:30, which time do you mean? It's an important question, because they correspond to different moments in time.
 
 However, Luxon's behavior here is undefined. It makes no promises about which of the two possible timestamps the instance will represent. Currently, its specific behavior is like this:
 
