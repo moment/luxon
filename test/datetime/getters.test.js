@@ -73,6 +73,11 @@ test("DateTime#weekday returns the weekday", () => {
   expect(dateTime.weekday).toBe(2);
 });
 
+test("DateTime#weekday returns the weekday for older dates", () => {
+  const dt = DateTime.fromObject({ year: 43, month: 4, day: 4 });
+  expect(dt.weekday).toBe(6);
+});
+
 //------
 // weekdayShort/weekdayLong
 //------
