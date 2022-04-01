@@ -206,6 +206,19 @@ test("Duration#toFormat('d') returns days", () => {
   expect(lil.toFormat("dddd")).toBe("0006");
 });
 
+test("Duration#toFormat('w') returns weeks", () => {
+  expect(dur().toFormat("w")).toBe("61");
+  expect(dur().toFormat("w", { floor: false })).toBe("61.453");
+  expect(dur().toFormat("w:s")).toBe("61:273906");
+  expect(dur().toFormat("w:dd:h:mm:ss.SSS")).toBe("61:03:4:05:06.007");
+
+  const lil = Duration.fromObject({ weeks: 6 });
+  expect(lil.toFormat("w")).toBe("6");
+  expect(lil.toFormat("ww")).toBe("06");
+  expect(lil.toFormat("www")).toBe("006");
+  expect(lil.toFormat("wwww")).toBe("0006");
+});
+
 test("Duration#toFormat('M') returns months", () => {
   expect(dur().toFormat("M")).toBe("14");
   expect(dur().toFormat("M", { floor: false })).toBe("14.356");
