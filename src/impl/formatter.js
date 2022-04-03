@@ -363,6 +363,8 @@ export default class Formatter {
             return "hour";
           case "d":
             return "day";
+          case "w":
+            return "week";
           case "M":
             return "month";
           case "y":
