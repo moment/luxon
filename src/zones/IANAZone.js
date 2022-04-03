@@ -81,7 +81,7 @@ export default class IANAZone extends Zone {
    * @param {string} s - The string to check validity on
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @deprecated This method returns false some valid IANA names. Use isValidZone instead
+   * @deprecated This method returns false for some valid IANA names. Use isValidZone instead.
    * @return {boolean}
    */
   static isValidSpecifier(s) {
