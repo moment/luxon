@@ -35,7 +35,14 @@ These units use time math:
  * **Minutes** are always 60 seconds
  * **Seconds** are always 1000 milliseconds
 
-Don't worry about leap seconds. JavaScript and most other programming environments don't account for them; they just happen as abrupt, invisible changes to the underlying system's time.
+### Leap seconds
+
+Luxon ([as JavaScript in general](https://262.ecma-international.org/5.1/#sec-15.9.1.1)) doesn't account for [leap seconds](https://en.wikipedia.org/wiki/Leap_second); as in most programming environments, leap seconds happen as most often invisible changes to the underlying system's time. Although, very rarely, double-seconds can occur (just as when changing system time), in practice, this has no effect on the vast majority of applications, so these can ignore leap seconds altogether.
+
+The practical effect of leaps seconds, as far as this library is concerned, is:
+
+1. You can't represent the leap second itself (i.e., `DateTime.utc(2016, 12, 31, 23, 59, 60).isValid` returns `false`).
+2. A Luxon `diff()` calculation that crosses a leap second will not exactly match the number of seconds that passed in the outside world. This can come up in rare situations where it matters to your application exactly what happened in the last *n* seconds. Even this is increasingly mitigated by [leap smear](https://developers.google.com/time/smear).
 
 ### How to think about calendar math
 
