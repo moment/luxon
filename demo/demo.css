@@ -11,3 +11,7 @@
   color: darkgreen;
   font-style: italic;
 }
+
+.example:hover {
+  background-color: #eee;
+}
