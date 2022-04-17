@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.2 (2022-04-17)
+
+* Fix timezone calculations for negative years
+* add week formatting token "w" for durations
+* fix weekday computation for years 0-100
+
+
 ## 2.3.1 (2022-02-23)
 
  * Added an `includeOffsetSpace` option to `toSQL` and `toSQLTime`
