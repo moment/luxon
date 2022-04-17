@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 2.3.1 | Documentation</title>
+  <title>luxon 2.3.2 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>2.3.1</code></div>
+          <div class='mb1'><code>2.3.2</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -4039,7 +4039,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   
 
-  <p>Check if an object is a DateTime. Works across context boundaries</p>
+  <p>Check if an object is an instance of DateTime. Works across context boundaries</p>
 
     <div class='pre p1 fill-light mt0'>isDateTime(o: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
   
@@ -12249,6 +12249,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
 <li><code>m</code> for minutes</li>
 <li><code>h</code> for hours</li>
 <li><code>d</code> for days</li>
+<li><code>w</code> for weeks</li>
 <li><code>M</code> for months</li>
 <li><code>y</code> for years</li>
 </ul>
@@ -12375,8 +12376,8 @@ If this object is empty then a zero milliseconds duration is returned.</p>
 
   
 
-  <p>Returns a string representation of a Duration with all units included
-To modify its behavior use the <code>listStyle</code> and any Intl.NumberFormat option, though <code>unitDisplay</code> is especially relevant. See <a href="Intl.NumberFormat">Intl.NumberFormat</a>.</p>
+  <p>Returns a string representation of a Duration with all units included.
+To modify its behavior use the <code>listStyle</code> and any Intl.NumberFormat option, though <code>unitDisplay</code> is especially relevant.</p>
 
     <div class='pre p1 fill-light mt0'>toHuman(opts: any)</div>
   
@@ -12414,6 +12415,14 @@ To modify its behavior use the <code>listStyle</code> and any Intl.NumberFormat 
 
   
 
+  
+    <div class='py1 quiet mt1 prose-big'>Related</div>
+    
+      
+        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat</a>
+
+      
+    
   
 
   
@@ -20084,7 +20093,7 @@ Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' res
   
   
 
-  <div>Deprecated: This method returns false some valid IANA names. Use isValidZone instead
+  <div>Deprecated: This method returns false for some valid IANA names. Use isValidZone instead.
 </div>
   
   

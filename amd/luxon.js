@@ -1304,6 +1304,9 @@ define(['exports'], (function (exports) { 'use strict';
           case "d":
             return "day";
 
+          case "w":
+            return "week";
+
           case "M":
             return "month";
 
@@ -1553,7 +1556,6 @@ define(['exports'], (function (exports) { 'use strict';
     return SystemZone;
   }(Zone);
 
-  RegExp("^" + ianaRegex.source + "$");
   var dtfCache = {};
 
   function makeDTF(zone) {
@@ -1566,7 +1568,8 @@ define(['exports'], (function (exports) { 'use strict';
         day: "2-digit",
         hour: "2-digit",
         minute: "2-digit",
-        second: "2-digit"
+        second: "2-digit",
+        era: "short"
       });
     }
 
@@ -1577,34 +1580,38 @@ define(['exports'], (function (exports) { 'use strict';
     year: 0,
     month: 1,
     day: 2,
-    hour: 3,
-    minute: 4,
-    second: 5
+    era: 3,
+    hour: 4,
+    minute: 5,
+    second: 6
   };
 
   function hackyOffset(dtf, date) {
     var formatted = dtf.format(date).replace(/\u200E/g, ""),
-        parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
+        parsed = /(\d+)\/(\d+)\/(\d+) (AD|BC),? (\d+):(\d+):(\d+)/.exec(formatted),
         fMonth = parsed[1],
         fDay = parsed[2],
         fYear = parsed[3],
-        fHour = parsed[4],
-        fMinute = parsed[5],
-        fSecond = parsed[6];
-    return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
+        fadOrBc = parsed[4],
+        fHour = parsed[5],
+        fMinute = parsed[6],
+        fSecond = parsed[7];
+    return [fYear, fMonth, fDay, fadOrBc, fHour, fMinute, fSecond];
   }
 
   function partsOffset(dtf, date) {
-    var formatted = dtf.formatToParts(date),
-        filled = [];
+    var formatted = dtf.formatToParts(date);
+    var filled = [];
 
     for (var i = 0; i < formatted.length; i++) {
       var _formatted$i = formatted[i],
           type = _formatted$i.type,
-          value = _formatted$i.value,
-          pos = typeToPos[type];
+          value = _formatted$i.value;
+      var pos = typeToPos[type];
 
-      if (!isUndefined(pos)) {
+      if (type === "era") {
+        filled[pos] = value;
+      } else if (!isUndefined(pos)) {
         filled[pos] = parseInt(value, 10);
       }
     }
@@ -1647,7 +1654,7 @@ define(['exports'], (function (exports) { 'use strict';
      * @param {string} s - The string to check validity on
      * @example IANAZone.isValidSpecifier("America/New_York") //=> true
      * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-     * @deprecated This method returns false some valid IANA names. Use isValidZone instead
+     * @deprecated This method returns false for some valid IANA names. Use isValidZone instead.
      * @return {boolean}
      */
     ;
@@ -1715,15 +1722,20 @@ define(['exports'], (function (exports) { 'use strict';
     _proto.offset = function offset(ts) {
       var date = new Date(ts);
       if (isNaN(date)) return NaN;
+      var dtf = makeDTF(this.name);
 
-      var dtf = makeDTF(this.name),
-          _ref2 = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
+      var _ref2 = dtf.formatToParts ? partsOffset(dtf, date) : hackyOffset(dtf, date),
           year = _ref2[0],
           month = _ref2[1],
           day = _ref2[2],
-          hour = _ref2[3],
-          minute = _ref2[4],
-          second = _ref2[5]; // because we're using hour12 and https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
+          adOrBc = _ref2[3],
+          hour = _ref2[4],
+          minute = _ref2[5],
+          second = _ref2[6];
+
+      if (adOrBc === "BC") {
+        year = -Math.abs(year) + 1;
+      } // because we're using hour12 and https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
 
 
       var adjustedHour = hour === 24 ? 0 : hour;
@@ -3440,6 +3452,7 @@ define(['exports'], (function (exports) { 'use strict';
      * * `m` for minutes
      * * `h` for hours
      * * `d` for days
+     * * `w` for weeks
      * * `M` for months
      * * `y` for years
      * Notes:
@@ -3466,8 +3479,9 @@ define(['exports'], (function (exports) { 'use strict';
       return this.isValid ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt) : INVALID$2;
     }
     /**
-     * Returns a string representation of a Duration with all units included
-     * To modify its behavior use the `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant. See {@link Intl.NumberFormat}.
+     * Returns a string representation of a Duration with all units included.
+     * To modify its behavior use the `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant.
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
      * @param opts - On option object to override the formatting. Accepts the same keys as the options parameter of the native `Int.NumberFormat` constructor, as well as `listStyle`.
      * @example
      * ```js
@@ -5740,7 +5754,13 @@ define(['exports'], (function (exports) { 'use strict';
   }
 
   function dayOfWeek(year, month, day) {
-    var js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+    var d = new Date(Date.UTC(year, month - 1, day));
+
+    if (year < 100 && year >= 0) {
+      d.setUTCFullYear(d.getUTCFullYear() - 1900);
+    }
+
+    var js = d.getUTCDay();
     return js === 0 ? 7 : js;
   }
 
@@ -6166,9 +6186,6 @@ define(['exports'], (function (exports) { 'use strict';
     if (!normalized) throw new InvalidUnitError(unit);
     return normalized;
   } // this is a dumbed down version of fromObject() that runs about 60% faster
-  // but doesn't do any validation, makes a bunch of assumptions about what units
-  // are present, and so on.
-  // this is a dumbed down version of fromObject() that runs about 60% faster
   // but doesn't do any validation, makes a bunch of assumptions about what units
   // are present, and so on.
 
@@ -6872,7 +6889,7 @@ define(['exports'], (function (exports) { 'use strict';
       }
     }
     /**
-     * Check if an object is a DateTime. Works across context boundaries
+     * Check if an object is an instance of DateTime. Works across context boundaries
      * @param {object} o
      * @return {boolean}
      */
@@ -8470,7 +8487,7 @@ define(['exports'], (function (exports) { 'use strict';
     }
   }
 
-  var VERSION = "2.3.1";
+  var VERSION = "2.3.2";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

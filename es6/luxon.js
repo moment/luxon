@@ -1028,6 +1028,8 @@ class Formatter {
             return "hour";
           case "d":
             return "day";
+          case "w":
+            return "week";
           case "M":
             return "month";
           case "y":
@@ -1226,6 +1228,7 @@ function makeDTF(zone) {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
+      era: "short",
     });
   }
   return dtfCache[zone];
@@ -1235,26 +1238,29 @@ const typeToPos = {
   year: 0,
   month: 1,
   day: 2,
-  hour: 3,
-  minute: 4,
-  second: 5,
+  era: 3,
+  hour: 4,
+  minute: 5,
+  second: 6,
 };
 
 function hackyOffset(dtf, date) {
   const formatted = dtf.format(date).replace(/\u200E/g, ""),
-    parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
-    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
-  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
+    parsed = /(\d+)\/(\d+)\/(\d+) (AD|BC),? (\d+):(\d+):(\d+)/.exec(formatted),
+    [, fMonth, fDay, fYear, fadOrBc, fHour, fMinute, fSecond] = parsed;
+  return [fYear, fMonth, fDay, fadOrBc, fHour, fMinute, fSecond];
 }
 
 function partsOffset(dtf, date) {
-  const formatted = dtf.formatToParts(date),
-    filled = [];
+  const formatted = dtf.formatToParts(date);
+  const filled = [];
   for (let i = 0; i < formatted.length; i++) {
-    const { type, value } = formatted[i],
-      pos = typeToPos[type];
+    const { type, value } = formatted[i];
+    const pos = typeToPos[type];
 
-    if (!isUndefined(pos)) {
+    if (type === "era") {
+      filled[pos] = value;
+    } else if (!isUndefined(pos)) {
       filled[pos] = parseInt(value, 10);
     }
   }
@@ -1292,7 +1298,7 @@ class IANAZone extends Zone {
    * @param {string} s - The string to check validity on
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @deprecated This method returns false some valid IANA names. Use isValidZone instead
+   * @deprecated This method returns false for some valid IANA names. Use isValidZone instead.
    * @return {boolean}
    */
   static isValidSpecifier(s) {
@@ -1358,10 +1364,14 @@ class IANAZone extends Zone {
 
     if (isNaN(date)) return NaN;
 
-    const dtf = makeDTF(this.name),
-      [year, month, day, hour, minute, second] = dtf.formatToParts
-        ? partsOffset(dtf, date)
-        : hackyOffset(dtf, date);
+    const dtf = makeDTF(this.name);
+    let [year, month, day, adOrBc, hour, minute, second] = dtf.formatToParts
+      ? partsOffset(dtf, date)
+      : hackyOffset(dtf, date);
+
+    if (adOrBc === "BC") {
+      year = -Math.abs(year) + 1;
+    }
 
     // because we're using hour12 and https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
     const adjustedHour = hour === 24 ? 0 : hour;
@@ -2844,6 +2854,7 @@ class Duration {
    * * `m` for minutes
    * * `h` for hours
    * * `d` for days
+   * * `w` for weeks
    * * `M` for months
    * * `y` for years
    * Notes:
@@ -2869,8 +2880,9 @@ class Duration {
   }
 
   /**
-   * Returns a string representation of a Duration with all units included
-   * To modify its behavior use the `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant. See {@link Intl.NumberFormat}.
+   * Returns a string representation of a Duration with all units included.
+   * To modify its behavior use the `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
    * @param opts - On option object to override the formatting. Accepts the same keys as the options parameter of the native `Int.NumberFormat` constructor, as well as `listStyle`.
    * @example
    * ```js
@@ -4693,7 +4705,14 @@ function unitOutOfRange(unit, value) {
 }
 
 function dayOfWeek(year, month, day) {
-  const js = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  const d = new Date(Date.UTC(year, month - 1, day));
+
+  if (year < 100 && year >= 0) {
+    d.setUTCFullYear(d.getUTCFullYear() - 1900);
+  }
+
+  const js = d.getUTCDay();
+
   return js === 0 ? 7 : js;
 }
 
@@ -5100,10 +5119,6 @@ function normalizeUnit(unit) {
 
   return normalized;
 }
-
-// this is a dumbed down version of fromObject() that runs about 60% faster
-// but doesn't do any validation, makes a bunch of assumptions about what units
-// are present, and so on.
 
 // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
@@ -5684,7 +5699,7 @@ class DateTime {
   }
 
   /**
-   * Check if an object is a DateTime. Works across context boundaries
+   * Check if an object is an instance of DateTime. Works across context boundaries
    * @param {object} o
    * @return {boolean}
    */
@@ -6981,7 +6996,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "2.3.1";
+const VERSION = "2.3.2";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, Settings, SystemZone, VERSION, Zone };
 //# sourceMappingURL=luxon.js.map
