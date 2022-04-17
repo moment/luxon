@@ -206,6 +206,13 @@ test("DateTime#setZone works for dates before 1970 with milliseconds", () => {
   expect(offset).toBe(-300);
 });
 
+// # 1179
+test("DateTime#setZone handles negative years", () => {
+  const dt = DateTime.fromMillis(-84753824400000).setZone("Europe/Rome");
+  expect(dt.year).toBe(-716);
+  expect(dt.offset < 60).toBe(true);
+});
+
 //------
 // #isInDST()
 //------

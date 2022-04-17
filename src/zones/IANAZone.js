@@ -1,7 +1,5 @@
-import { formatOffset, parseZoneInfo, isUndefined, ianaRegex, objToLocalTS } from "../impl/util.js";
+import { formatOffset, parseZoneInfo, isUndefined, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.js";
-
-const matchingRegex = RegExp(`^${ianaRegex.source}$`);
 
 let dtfCache = {};
 function makeDTF(zone) {
@@ -15,6 +13,7 @@ function makeDTF(zone) {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
+      era: "short",
     });
   }
   return dtfCache[zone];
@@ -24,26 +23,29 @@ const typeToPos = {
   year: 0,
   month: 1,
   day: 2,
-  hour: 3,
-  minute: 4,
-  second: 5,
+  era: 3,
+  hour: 4,
+  minute: 5,
+  second: 6,
 };
 
 function hackyOffset(dtf, date) {
   const formatted = dtf.format(date).replace(/\u200E/g, ""),
-    parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted),
-    [, fMonth, fDay, fYear, fHour, fMinute, fSecond] = parsed;
-  return [fYear, fMonth, fDay, fHour, fMinute, fSecond];
+    parsed = /(\d+)\/(\d+)\/(\d+) (AD|BC),? (\d+):(\d+):(\d+)/.exec(formatted),
+    [, fMonth, fDay, fYear, fadOrBc, fHour, fMinute, fSecond] = parsed;
+  return [fYear, fMonth, fDay, fadOrBc, fHour, fMinute, fSecond];
 }
 
 function partsOffset(dtf, date) {
-  const formatted = dtf.formatToParts(date),
-    filled = [];
+  const formatted = dtf.formatToParts(date);
+  const filled = [];
   for (let i = 0; i < formatted.length; i++) {
-    const { type, value } = formatted[i],
-      pos = typeToPos[type];
+    const { type, value } = formatted[i];
+    const pos = typeToPos[type];
 
-    if (!isUndefined(pos)) {
+    if (type === "era") {
+      filled[pos] = value;
+    } else if (!isUndefined(pos)) {
       filled[pos] = parseInt(value, 10);
     }
   }
@@ -147,10 +149,14 @@ export default class IANAZone extends Zone {
 
     if (isNaN(date)) return NaN;
 
-    const dtf = makeDTF(this.name),
-      [year, month, day, hour, minute, second] = dtf.formatToParts
-        ? partsOffset(dtf, date)
-        : hackyOffset(dtf, date);
+    const dtf = makeDTF(this.name);
+    let [year, month, day, adOrBc, hour, minute, second] = dtf.formatToParts
+      ? partsOffset(dtf, date)
+      : hackyOffset(dtf, date);
+
+    if (adOrBc === "BC") {
+      year = -Math.abs(year) + 1;
+    }
 
     // because we're using hour12 and https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
     const adjustedHour = hour === 24 ? 0 : hour;
