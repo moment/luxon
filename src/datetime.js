@@ -42,6 +42,7 @@ import {
   InvalidDateTimeError,
 } from "./errors.js";
 import Invalid from "./impl/invalid.js";
+import IANAZone from "./zones/IANAZone.js";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
@@ -1196,11 +1197,22 @@ export default class DateTime {
   get isInDST() {
     if (this.isOffsetFixed) {
       return false;
-    } else {
-      return (
-        this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
-      );
     }
+
+    if (IANAZone.isInUSA(this.zoneName)) {
+      // in 1974, in USA, almost the whole year was in DST
+      // https://www.timeanddate.com/time/change/usa?year=1974
+      const start1974DST = new DateTime.fromISO("1974-01-06");
+      const end1974DST = new DateTime.fromISO("1974-10-27");
+
+      if (start1974DST <= this && this <= end1974DST) {
+        return true;
+      }
+    }
+
+    return (
+      this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
+    );
   }
 
   /**
