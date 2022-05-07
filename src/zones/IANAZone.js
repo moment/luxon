@@ -118,7 +118,7 @@ export default class IANAZone extends Zone {
   static isInUSA(zoneName) {
     const usaZones = [
       "America/Adak",
-      "America/Ancorage",
+      "America/Anchorage",
       "America/Atka",
       "America/Boise",
       "America/Chicago",
