@@ -31,7 +31,7 @@ test("IANAZone.isValidSpecifier", () => {
 test("IANAZone.isInUSA", () => {
   expect(IANAZone.isInUSA("America/New_York")).toBe(true);
   expect(IANAZone.isInUSA("America/Toronto")).toBe(false);
-  expect(IANAZone.isInUSA()).toBe(false);
+  expect(IANAZone.isInUSA(undefined)).toBe(false);
 });
 
 test("IANAZone.isValidZone", () => {

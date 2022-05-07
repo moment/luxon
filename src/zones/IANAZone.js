@@ -135,11 +135,8 @@ export default class IANAZone extends Zone {
       "America/Nome",
       "America/Phoenix",
     ];
-    try {
-      return usaZones.includes(zoneName);
-    } catch (e) {
-      return false;
-    }
+
+    return usaZones.includes(zoneName);
   }
 
   constructor(name) {
