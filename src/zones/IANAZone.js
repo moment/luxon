@@ -110,35 +110,6 @@ export default class IANAZone extends Zone {
     }
   }
 
-  /**
-   * Returns wheter the provided zoneName is located in the United States of America
-   * @param {string} zoneName
-   * @return {boolean}
-   */
-  static isInUSA(zoneName) {
-    const usaZones = [
-      "America/Adak",
-      "America/Anchorage",
-      "America/Atka",
-      "America/Boise",
-      "America/Chicago",
-      "America/Denver",
-      "America/Detroit",
-      "America/Indianapolis",
-      "America/Juneau",
-      "America/Knox_IN",
-      "America/Los_Angeles",
-      "America/Louisville",
-      "America/Menominee",
-      "America/Metlakatla",
-      "America/New_York",
-      "America/Nome",
-      "America/Phoenix",
-    ];
-
-    return usaZones.includes(zoneName);
-  }
-
   constructor(name) {
     super();
     /** @private **/

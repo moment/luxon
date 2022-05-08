@@ -28,12 +28,6 @@ test("IANAZone.isValidSpecifier", () => {
   expect(IANAZone.isValidSpecifier(null)).toBe(false);
 });
 
-test("IANAZone.isInUSA", () => {
-  expect(IANAZone.isInUSA("America/New_York")).toBe(true);
-  expect(IANAZone.isInUSA("America/Toronto")).toBe(false);
-  expect(IANAZone.isInUSA(undefined)).toBe(false);
-});
-
 test("IANAZone.isValidZone", () => {
   expect(IANAZone.isValidZone("America/New_York")).toBe(true);
   expect(IANAZone.isValidZone("Fantasia/Castle")).toBe(false);
