@@ -1198,7 +1198,8 @@ export default class DateTime {
       return false;
     } else {
       return (
-        this.offset > this.set({ month: 1 }).offset || this.offset > this.set({ month: 5 }).offset
+        this.offset > this.set({ month: 1, day: 1 }).offset ||
+        this.offset > this.set({ month: 5 }).offset
       );
     }
   }

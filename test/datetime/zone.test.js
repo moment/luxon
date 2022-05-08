@@ -231,6 +231,12 @@ test("DateTime#isInDST() returns false for post-DST times", () => {
   expect(zoned.set({ month: 12 }).isInDST).toBe(false);
 });
 
+test("DateTime#isInDST() returns true for 1974 whole year in USA- from January 6th to October 27th", () => {
+  const zoned = dt().setZone("America/Los_Angeles");
+  expect(zoned.set({ year: 1974, month: 1, day: 6 }).isInDST).toBe(true);
+  expect(zoned.set({ year: 1974, month: 10, day: 27 }).isInDST).toBe(false);
+});
+
 //------
 // #invalid
 //------
