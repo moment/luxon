@@ -23,7 +23,7 @@ More generally we can differentiate two modes of math:
 
 These units use calendar math:
 
- * **Years** vary because of leap years.
+ * **Years** vary because of years.
  * **Months** vary because they're just different lengths.
  * **Days** vary because DST transitions mean some days are 23 or 25 hours long.
  * **Quarters** are always three months, but months vary in length so quarters do too.
@@ -37,9 +37,9 @@ These units use time math:
 
 ### Leap seconds
 
-Luxon ([as JavaScript in general](https://262.ecma-international.org/5.1/#sec-15.9.1.1)) doesn't account for [leap seconds](https://en.wikipedia.org/wiki/Leap_second); as in most programming environments, leap seconds happen as most often invisible changes to the underlying system's time. Although, very rarely, double-seconds can occur (just as when changing system time), in practice, this has no effect on the vast majority of applications, so these can ignore leap seconds altogether.
+Luxon ([as JavaScript in general](https://262.ecma-international.org/5.1/#sec-15.9.1.1)) doesn't account for [leap seconds](https://en.wikipedia.org/wiki/Leap_second); as in most programming environments, leap seconds happen as invisible changes to the underlying system's time. This can, in rare cases, cause the same second to "occur" twice from Luxon's perspective.
 
-The practical effect of leaps seconds, as far as this library is concerned, is:
+The practical effect of leaps seconds are quite limited:
 
 1. You can't represent the leap second itself (i.e., `DateTime.utc(2016, 12, 31, 23, 59, 60).isValid` returns `false`).
 2. A Luxon `diff()` calculation that crosses a leap second will not exactly match the number of seconds that passed in the outside world. This can come up in rare situations where it matters to your application exactly what happened in the last *n* seconds. Even this is increasingly mitigated by [leap smear](https://developers.google.com/time/smear).
