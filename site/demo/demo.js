@@ -19,6 +19,8 @@ function demo(luxon) {
         return "[ DateTime " + result.toISO() + " ]";
       case result instanceof Duration:
         return "[ Duration " + JSON.stringify(result.toObject()) + " ]";
+      case result instanceof Date:
+        return "[ Date " + result.toString() + " ]";
       default:
         return JSON.stringify(result);
     }
@@ -37,18 +39,23 @@ function demo(luxon) {
 
   example("Info.features()");
   example("DateTime.now()");
-  example("DateTime.local(2017, 5, 15, 17, 36)");
+  example("DateTime.now().toUnixInteger()");
+  example("DateTime.now().toJSDate()");
+  example("DateTime.utc().toISO()");
   example("DateTime.utc(2017, 5, 15, 17, 36)");
-  example("DateTime.now().toUTC()");
   example("DateTime.utc(2017, 5, 15, 17, 36).toLocal()");
+  example("DateTime.local(2017, 5, 15, 17, 36)");
+  example("DateTime.local(2017, 5, 15, 17, 36).toUTC()");
   example("DateTime.now().toObject()");
-  example("DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36})");
+  example("DateTime.fromObject({ year: 2017, month: 5, day: 15, hour: 17, minute: 36 })");
   example(
-    "DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'America/New_York' })"
+    "DateTime.fromObject({ year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'America/New_York' })"
   );
   example(
-    "DateTime.fromObject({year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'Asia/Singapore' })"
+    "DateTime.fromObject({ year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'Asia/Singapore' })"
   );
+  example("DateTime.now().setZone('America/New_York')");
+  example("DateTime.now().setZone('America/New_York').startOf('day')");
   example("DateTime.now().plus({minutes: 15, seconds: 8})");
   example("DateTime.now().plus({days: 6})");
   example("DateTime.now().minus({days: 6})");
