@@ -207,7 +207,14 @@ function toISODate(o, extended) {
   return c;
 }
 
-function toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOffset) {
+function toISOTime(
+  o,
+  extended,
+  suppressSeconds,
+  suppressMilliseconds,
+  includeOffset,
+  extendedZone
+) {
   let c = padStart(o.c.hour);
   if (extended) {
     c += ":";
@@ -229,7 +236,7 @@ function toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOf
   }
 
   if (includeOffset) {
-    if (o.isOffsetFixed && o.offset === 0) {
+    if (o.isOffsetFixed && o.offset === 0 && !extendedZone) {
       c += "Z";
     } else if (o.o < 0) {
       c += "-";
@@ -242,6 +249,10 @@ function toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOf
       c += ":";
       c += padStart(Math.trunc(o.o % 60));
     }
+  }
+
+  if (extendedZone) {
+    c += "[" + o.zone.ianaName + "]";
   }
   return c;
 }
@@ -1554,6 +1565,7 @@ export default class DateTime {
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+   * @param {boolean} [opts.extendedZone=true] - add the time zone format extension
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
@@ -1566,6 +1578,7 @@ export default class DateTime {
     suppressSeconds = false,
     suppressMilliseconds = false,
     includeOffset = true,
+    extendedZone = false,
   } = {}) {
     if (!this.isValid) {
       return null;
@@ -1575,7 +1588,7 @@ export default class DateTime {
 
     let c = toISODate(this, ext);
     c += "T";
-    c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset);
+    c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone);
     return c;
   }
 
@@ -1610,6 +1623,7 @@ export default class DateTime {
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+   * @param {boolean} [opts.extendedZone=true] - add the time zone format extension
    * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
@@ -1623,6 +1637,7 @@ export default class DateTime {
     suppressSeconds = false,
     includeOffset = true,
     includePrefix = false,
+    extendedZone = false,
     format = "extended",
   } = {}) {
     if (!this.isValid) {
@@ -1632,7 +1647,14 @@ export default class DateTime {
     let c = includePrefix ? "T" : "";
     return (
       c +
-      toISOTime(this, format === "extended", suppressSeconds, suppressMilliseconds, includeOffset)
+      toISOTime(
+        this,
+        format === "extended",
+        suppressSeconds,
+        suppressMilliseconds,
+        includeOffset,
+        extendedZone
+      )
     );
   }
 

@@ -32,7 +32,7 @@ function combineExtractors(...extractors) {
       .reduce(
         ([mergedVals, mergedZone, cursor], ex) => {
           const [val, zone, next] = ex(m, cursor);
-          return [{ ...mergedVals, ...val }, mergedZone || zone, next];
+          return [{ ...mergedVals, ...val }, zone || mergedZone, next];
         },
         [{}, null, 1]
       )
@@ -67,7 +67,7 @@ function simpleParse(...keys) {
 
 // ISO and SQL parsing
 const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/;
-const isoExtendedZone = `(?:${offsetRegex.source}|\\[(${ianaRegex.source})\\])?`;
+const isoExtendedZone = `(?:${offsetRegex.source}?(?:\\[(${ianaRegex.source})\\])?)?`;
 const isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?/;
 const isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${isoExtendedZone}`);
 const isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`);

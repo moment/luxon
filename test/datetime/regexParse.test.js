@@ -575,6 +575,37 @@ test("DateTime.fromISO() accepts extended zones", () => {
   });
 });
 
+test("DateTime.fromISO() accepts extended zones and offsets", () => {
+  let dt = DateTime.fromISO("2016-05-14T10:23:54+01:00[Europe/Paris]", {
+    setZone: true,
+  });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("Europe/Paris");
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0,
+  });
+
+  dt = DateTime.fromISO("2016-05-14T10:23:54+00:00[Etc/UTC]", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("Etc/UTC");
+  expect(dt.offset).toBe(0);
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0,
+  });
+});
+
 test("DateTime.fromISO() accepts extended zones on bare times", () => {
   const { year, month, day } = DateTime.now().setZone("Europe/Paris");
   let dt = DateTime.fromISO("10:23:54[Europe/Paris]", {

@@ -22,6 +22,10 @@ export default class Zone {
     throw new ZoneIsAbstractError();
   }
 
+  get ianaName() {
+    return this.name;
+  }
+
   /**
    * Returns whether the offset is known to be fixed for the whole year.
    * @abstract

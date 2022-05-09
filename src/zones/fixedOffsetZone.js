@@ -62,6 +62,14 @@ export default class FixedOffsetZone extends Zone {
     return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
   }
 
+  get ianaName() {
+    if (this.fixed === 0) {
+      return "Etc/UTC";
+    } else {
+      return `Etc/GMT${formatOffset(-this.fixed, "narrow")}`;
+    }
+  }
+
   /** @override **/
   offsetName() {
     return this.name;

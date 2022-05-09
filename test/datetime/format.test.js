@@ -85,6 +85,29 @@ test("DateTime#toISO() renders 00:00 for non-offset but non utc datetimes", () =
   expect(negativeYear.toISO()).toBe("1982-05-25T09:23:54.123+00:00");
 });
 
+test("DateTime#toISO() supports the extendedZone option", () => {
+  let zoned = dt.setZone("America/Chicago");
+  expect(zoned.toISO({ extendedZone: true })).toBe(
+    "1982-05-25T04:23:54.123-05:00[America/Chicago]"
+  );
+  expect(zoned.toISO({ includeOffset: false, extendedZone: true })).toBe(
+    "1982-05-25T04:23:54.123[America/Chicago]"
+  );
+
+  zoned = dt.setZone("UTC+6");
+  expect(zoned.toISO({ extendedZone: true })).toBe("1982-05-25T15:23:54.123+06:00[Etc/GMT-6]");
+  expect(zoned.toISO({ includeOffset: false, extendedZone: true })).toBe(
+    "1982-05-25T15:23:54.123[Etc/GMT-6]"
+  );
+
+  zoned = dt.setZone("UTC");
+  // note no Z
+  expect(zoned.toISO({ extendedZone: true })).toBe("1982-05-25T09:23:54.123+00:00[Etc/UTC]");
+  expect(zoned.toISO({ includeOffset: false, extendedZone: true })).toBe(
+    "1982-05-25T09:23:54.123[Etc/UTC]"
+  );
+});
+
 //------
 // #toISODate()
 //------
