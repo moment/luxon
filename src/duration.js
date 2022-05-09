@@ -6,7 +6,6 @@ import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
 import {
   asNumber,
   hasOwnProperty,
-  isInteger,
   isNumber,
   isUndefined,
   normalizeObject,

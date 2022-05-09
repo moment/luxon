@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.4.0 (2022-05-08)
+
+ * Add support for parsing the ISO zone extension, like `2022-05-08T20:42:00.000+04:00[America/New_York"]`
+ * Add an `extendedZone` option to `toISO()` and `toISOTime`
+ * Improvements to `DateTime.isInDST()`
+ * Fix for parsing in Vietnames (and probably other languages)
+
 ## 2.3.2 (2022-04-17)
 
 * Fix timezone calculations for negative years
