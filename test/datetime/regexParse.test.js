@@ -530,6 +530,69 @@ test("DateTime.fromISO() doesn't accept 24:23", () => {
   expect(DateTime.fromISO("2018-05-25T24:23").isValid).toBe(false);
 });
 
+test("DateTime.fromISO() accepts extended zones", () => {
+  let dt = DateTime.fromISO("2016-05-14T10:23:54[Europe/Paris]", {
+    setZone: true,
+  });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("Europe/Paris");
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0,
+  });
+
+  dt = DateTime.fromISO("2016-05-14T10:23:54[UTC]", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("UTC");
+  expect(dt.offset).toBe(0);
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0,
+  });
+
+  dt = DateTime.fromISO("2016-05-14T10:23:54[Etc/UTC]", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("Etc/UTC");
+  expect(dt.offset).toBe(0);
+  expect(dt.toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 14,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0,
+  });
+});
+
+test("DateTime.fromISO() accepts extended zones on bare times", () => {
+  const { year, month, day } = DateTime.now().setZone("Europe/Paris");
+  let dt = DateTime.fromISO("10:23:54[Europe/Paris]", {
+    setZone: true,
+  });
+  expect(dt.isValid).toBe(true);
+  expect(dt.zoneName).toBe("Europe/Paris");
+  expect(dt.toObject()).toEqual({
+    year,
+    month,
+    day,
+    hour: 10,
+    minute: 23,
+    second: 54,
+    millisecond: 0,
+  });
+});
+
 test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
   // these are formats that aren't technically valid but we parse anyway.
   // Testing them more to document them than anything else
