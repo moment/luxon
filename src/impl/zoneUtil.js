@@ -18,8 +18,8 @@ export function normalizeZone(input, defaultZone) {
     return input;
   } else if (isString(input)) {
     const lowered = input.toLowerCase();
-    if (lowered === "local" || lowered === "default") return defaultZone;
-    else if (lowered === "system") return SystemZone.instance;
+    if (lowered === "default") return defaultZone;
+    else if (lowered === "local" || lowered === "system") return SystemZone.instance;
     else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
     else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
   } else if (isNumber(input)) {
