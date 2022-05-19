@@ -48,7 +48,7 @@ They also have some disadvantages:
 
 Luxon lives in the Moment project because, basically, we all really like it, and it represents a huge improvement.
 
-But Luxon doesn't quite fulfill Moment's mandate. Since it sometimes relies on browsers' implementations of the `Intl` specifications, it doesn't provide some of Moment's most commonly-used features on all browsers. Relative date formatting is for instance not supported in IE11 and Safari (as of August 2020). Luxon's Intl features do not work as expected on sufficiently outdated browsers, whereas Moment's all work everywhere. That represents a good tradeoff, IMO, but it's clearly a different one than Moment makes.
+But Luxon doesn't quite fulfill Moment's mandate. Since it sometimes relies on browsers' implementations of the `Intl` specifications, it doesn't provide some of Moment's most commonly-used features on all browsers. Relative date formatting is for instance not supported in IE11 and [other older browsers](https://caniuse.com/?search=Intl%20RelativeTimeFormat). Luxon's Intl features do not work as expected on sufficiently outdated browsers, whereas Moment's all work everywhere. That represents a good tradeoff, IMO, but it's clearly a different one than Moment makes.
 
 Luxon makes a major break in API conventions. Part of Moment's charm is that you just call `moment()` on basically anything and you get date, whereas Luxon forces you to decide that you want to call `fromISO` or whatever. The upshot of all that is that Luxon feels like a different library; that's why it's not Moment 3.0.
 
