@@ -8,6 +8,12 @@
     "immutable"
   ],
   "repository": "https://github.com/moment/luxon",
+  "exports": {
+    ".": {
+      "import": "./src/luxon.js",
+      "require": "./build/node/luxon.js"
+    }
+  },
   "scripts": {
     "build": "babel-node tasks/buildAll.js",
     "build-node": "babel-node tasks/buildNode.js",
@@ -21,6 +27,7 @@
     "format-check": "prettier --check 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "babel-node benchmarks/index.js",
     "codecov": "codecov",
+    "prepack": "babel-node tasks/buildAll.js",
     "prepare": "husky install"
   },
   "lint-staged": {
