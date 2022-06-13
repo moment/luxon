@@ -200,7 +200,7 @@ The macro options available correspond one-to-one with the preset formats define
 | d                |              | day of the month, no padding                                   | `6`                                                           |
 | dd               |              | day of the month, padded to 2                                  | `06`                                                          |
 | c                | E            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | `3`                                                           |
-| ccc              | EEE          | day of the week, as an abbreviate localized string             | `Wed`                                                         |
+| ccc              | EEE          | day of the week, as an abbreviated localized string            | `Wed`                                                         |
 | cccc             | EEEE         | day of the week, as an unabbreviated localized string          | `Wednesday`                                                   |
 | ccccc            | EEEEE        | day of the week, as a single localized letter                  | `W`                                                           |
 | L                | M            | month as an unpadded number                                    | `8`                                                           |
