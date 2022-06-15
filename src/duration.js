@@ -120,6 +120,7 @@ function clone(dur, alts, clear = false) {
     values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
+    matrix: alts.matrix || dur.matrix,
   };
   return new Duration(conf);
 }
@@ -173,6 +174,12 @@ export default class Duration {
    */
   constructor(config) {
     const accurate = config.conversionAccuracy === "longterm" || false;
+    let matrix = accurate ? accurateMatrix : casualMatrix;
+
+    if (config.matrix) {
+      matrix = config.matrix;
+    }
+
     /**
      * @access private
      */
@@ -192,7 +199,7 @@ export default class Duration {
     /**
      * @access private
      */
-    this.matrix = accurate ? accurateMatrix : casualMatrix;
+    this.matrix = matrix;
     /**
      * @access private
      */
@@ -228,7 +235,8 @@ export default class Duration {
    * @param {Object} [opts=[]] - options for creating this Duration
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.matrix=Object] - the custom conversion system to use
    * @return {Duration}
    */
   static fromObject(obj, opts = {}) {
@@ -244,6 +252,7 @@ export default class Duration {
       values: normalizeObject(obj, Duration.normalizeUnit),
       loc: Locale.fromObject(opts),
       conversionAccuracy: opts.conversionAccuracy,
+      matrix: opts.matrix,
     });
   }
 
@@ -277,7 +286,8 @@ export default class Duration {
    * @param {Object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.matrix=Object] - the preset conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
    * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
@@ -299,7 +309,8 @@ export default class Duration {
    * @param {Object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.matrix=Object] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Times
    * @example Duration.fromISOTime('11:22:33.444').toObject() //=> { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }
    * @example Duration.fromISOTime('11:00').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
@@ -658,12 +669,16 @@ export default class Duration {
    * @example dur.reconfigure({ locale: 'en-GB' })
    * @return {Duration}
    */
-  reconfigure({ locale, numberingSystem, conversionAccuracy } = {}) {
+  reconfigure({ locale, numberingSystem, conversionAccuracy, matrix } = {}) {
     const loc = this.loc.clone({ locale, numberingSystem }),
       opts = { loc };
 
     if (conversionAccuracy) {
       opts.conversionAccuracy = conversionAccuracy;
+    }
+
+    if (matrix) {
+      opts.matrix = matrix;
     }
 
     return clone(this, opts);

@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime, Duration } from "../../src/luxon";
+import { casualMatrix } from "../../src/duration";
 
 function createDateTime() {
   return DateTime.fromObject({
@@ -152,6 +153,36 @@ test("DateTime#plus supports positive and negative duration units", () => {
   expect(d.plus({ months: 1, days: -1 })).toEqual(d.plus({ months: 1 }).plus({ days: -1 }));
   expect(d.plus({ years: 4, days: -1 })).toEqual(d.plus({ years: 4 }).plus({ days: -1 }));
   expect(d.plus({ years: 0.5, days: -1.5 })).toEqual(d.plus({ years: 0.5 }).plus({ days: -1.5 }));
+});
+
+test("DateTime#plus behave correctly when using Duration with custom matrix", () => {
+  const businessMatrix = {
+    ...casualMatrix,
+    months: {
+      weeks: 4,
+      days: 22,
+      hours: 22 * 7,
+      minutes: 22 * 7 * 60,
+      seconds: 22 * 7 * 60 * 60,
+      milliseconds: 22 * 7 * 60 * 60 * 1000,
+    },
+    weeks: {
+      days: 5,
+      hours: 5 * 7,
+      minutes: 5 * 7 * 60,
+      seconds: 5 * 7 * 60 * 60,
+      milliseconds: 5 * 7 * 60 * 60 * 1000,
+    },
+    days: {
+      hours: 7,
+      minutes: 7 * 60,
+      seconds: 7 * 60 * 60,
+      milliseconds: 7 * 60 * 60 * 1000,
+    },
+  };
+
+  const d = DateTime.fromISO("2020-01-08T12:34");
+  const dur = Duration.fromObject({ days: 2 }, { matrix: businessMatrix });
 });
 
 //------
