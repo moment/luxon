@@ -173,6 +173,11 @@ export default class Duration {
    * @private
    */
   constructor(config) {
+    if (config.conversionAccuracy && config.matrix)
+      throw new Error(
+        "You cannot use a custom matrix along with the `conversionAccuracy` config property"
+      );
+
     const accurate = config.conversionAccuracy === "longterm" || false;
     let matrix = accurate ? accurateMatrix : casualMatrix;
 
