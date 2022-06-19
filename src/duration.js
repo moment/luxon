@@ -405,6 +405,7 @@ export default class Duration {
    * * `y` for years
    * Notes:
    * * Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits
+   * * Tokens can be escaped by wrapping with single quotes.
    * * The duration will be converted to the set of units in the format string using {@link Duration#shiftTo} and the Durations's conversion accuracy setting.
    * @param {string} fmt - the format string
    * @param {Object} opts - options
