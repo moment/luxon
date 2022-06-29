@@ -814,6 +814,20 @@ test("DateTime.fromHTTP() can parse RFC 850", () => {
   });
 });
 
+test("DateTime.fromHTTP() can parse RFC 850 on Wednesday", () => {
+  const dt = DateTime.fromHTTP("Wednesday, 29-Jun-22 08:49:37 GMT");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2022,
+    month: 6,
+    day: 29,
+    hour: 8,
+    minute: 49,
+    second: 37,
+    millisecond: 0,
+  });
+});
+
 test("DateTime.fromHTTP() can parse ASCII dates with one date digit", () => {
   const dt = DateTime.fromHTTP("Sun Nov  6 08:49:37 1994");
   expect(dt.isValid).toBe(true);
