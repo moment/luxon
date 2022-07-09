@@ -1,5 +1,11 @@
 # Changelog
 
+# 2.5.0 (2022-07-09)
+
+ * Support for ESM-style node imports
+ * Fix Wednesday parsing for RFC 850 strings
+ * Increase number of digits allowed in ISO durations
+
 ## 2.4.0 (2022-05-08)
 
  * Add support for parsing the ISO zone extension, like `2022-05-08T20:42:00.000-04:00[America/New_York]`
