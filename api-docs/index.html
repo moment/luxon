@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 2.4.0 | Documentation</title>
+  <title>luxon 2.5.0 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>2.4.0</code></div>
+          <div class='mb1'><code>2.5.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -11225,7 +11225,7 @@ Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
 <p>Here is a brief overview of commonly used methods and getters in Duration:</p>
 <ul>
 <li><strong>Creation</strong> To create a Duration, use <a href="Duration#fromMillis">Duration#fromMillis</a>, <a href="Duration#fromObject">Duration#fromObject</a>, or <a href="Duration#fromISO">Duration#fromISO</a>.</li>
-<li><strong>Unit values</strong> See the <a href="#durationyears">Duration#years</a>, <a href="Duration.months">Duration.months</a>, <a href="#durationweeks">Duration#weeks</a>, <a href="#durationdays">Duration#days</a>, <a href="#durationhours">Duration#hours</a>, <a href="#durationminutes">Duration#minutes</a>, <a href="#durationseconds">Duration#seconds</a>, <a href="#durationmilliseconds">Duration#milliseconds</a> accessors.</li>
+<li><strong>Unit values</strong> See the <a href="#durationyears">Duration#years</a>, <a href="#durationmonths">Duration#months</a>, <a href="#durationweeks">Duration#weeks</a>, <a href="#durationdays">Duration#days</a>, <a href="#durationhours">Duration#hours</a>, <a href="#durationminutes">Duration#minutes</a>, <a href="#durationseconds">Duration#seconds</a>, <a href="#durationmilliseconds">Duration#milliseconds</a> accessors.</li>
 <li><strong>Configuration</strong> See  <a href="#durationlocale">Duration#locale</a> and <a href="#durationnumberingsystem">Duration#numberingSystem</a> accessors.</li>
 <li><strong>Transformation</strong> To create new Durations out of old ones use <a href="#durationplus">Duration#plus</a>, <a href="#durationminus">Duration#minus</a>, <a href="#durationnormalize">Duration#normalize</a>, <a href="#durationset">Duration#set</a>, <a href="#durationreconfigure">Duration#reconfigure</a>, <a href="#durationshiftto">Duration#shiftTo</a>, and <a href="#durationnegate">Duration#negate</a>.</li>
 <li><strong>Output</strong> To convert the Duration into other representations, see <a href="#durationas">Duration#as</a>, <a href="#durationtoiso">Duration#toISO</a>, <a href="#durationtoformat">Duration#toFormat</a>, and <a href="#durationtojson">Duration#toJSON</a></li>
@@ -12278,6 +12278,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
 <p>Notes:</p>
 <ul>
 <li>Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits</li>
+<li>Tokens can be escaped by wrapping with single quotes.</li>
 <li>The duration will be converted to the set of units in the format string using <a href="#durationshiftto">Duration#shiftTo</a> and the Durations's conversion accuracy setting.</li>
 </ul>
 
@@ -22686,5 +22687,5 @@ The default value is the system's time zone (the one set on the machine that run
   <script src='assets/anchor.js'></script>
   <script src='assets/split.js'></script>
   <script src='assets/site.js'></script>
-<script src="/global/luxon.js"></script><script>console.log("You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`");</script></body>
+<script src="../global/luxon.js"></script><script>console.log("You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`");</script></body>
 </html>
