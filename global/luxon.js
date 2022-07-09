@@ -5503,6 +5503,10 @@ var luxon = (function (exports) {
     second: {
       numeric: "s",
       "2-digit": "ss"
+    },
+    timeZoneName: {
+      long: "ZZZZZ",
+      short: "ZZZ"
     }
   };
 
@@ -5679,18 +5683,9 @@ var luxon = (function (exports) {
     }
 
     var formatOpts = Formatter.macroTokenToFormatOpts(token.val);
+    var tokens = formatOptsToTokens(formatOpts, locale);
 
-    if (!formatOpts) {
-      return token;
-    }
-
-    var formatter = Formatter.create(locale, formatOpts);
-    var parts = formatter.formatDateTimeParts(getDummyDateTime());
-    var tokens = parts.map(function (p) {
-      return tokenForPart(p, locale, formatOpts);
-    });
-
-    if (tokens.includes(undefined)) {
+    if (tokens == null || tokens.includes(undefined)) {
       return token;
     }
 
@@ -5761,6 +5756,17 @@ var luxon = (function (exports) {
         invalidReason = _explainFromTokens.invalidReason;
 
     return [result, zone, specificOffset, invalidReason];
+  }
+  function formatOptsToTokens(formatOpts, locale) {
+    if (!formatOpts) {
+      return null;
+    }
+
+    var formatter = Formatter.create(locale, formatOpts);
+    var parts = formatter.formatDateTimeParts(getDummyDateTime());
+    return parts.map(function (p) {
+      return tokenForPart(p, locale, formatOpts);
+    });
   }
 
   var nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
@@ -6884,7 +6890,7 @@ var luxon = (function (exports) {
     }
     /**
      * Create an invalid DateTime.
-     * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
+     * @param {DateTime} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
      * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
      * @return {DateTime}
      */
@@ -6918,6 +6924,24 @@ var luxon = (function (exports) {
 
     DateTime.isDateTime = function isDateTime(o) {
       return o && o.isLuxonDateTime || false;
+    }
+    /**
+     * Produce the format string for a set of options
+     * @param formatOpts
+     * @param localeOpts
+     * @returns {string}
+     */
+    ;
+
+    DateTime.parseFormatForOpts = function parseFormatForOpts(formatOpts, localeOpts) {
+      if (localeOpts === void 0) {
+        localeOpts = {};
+      }
+
+      var tokenList = formatOptsToTokens(formatOpts, Locale.fromObject(localeOpts));
+      return !tokenList ? null : tokenList.map(function (t) {
+        return t ? t.val : null;
+      }).join("");
     } // INFO
 
     /**
@@ -8515,7 +8539,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "3.0.0";
+  var VERSION = "3.0.1";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

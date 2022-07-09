@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 3.0.0 | Documentation</title>
+  <title>luxon 3.0.1 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>3.0.0</code></div>
+          <div class='mb1'><code>3.0.1</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -128,6 +128,12 @@
                         href='#datetimeisdatetime'
                         class='regular pre-open'>
                         .isDateTime
+                      </a></li>
+                    
+                      <li><a
+                        href='#datetimeparseformatforopts'
+                        class='regular pre-open'>
+                        .parseFormatForOpts
                       </a></li>
                     
                       <li><a
@@ -3961,7 +3967,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   <p>Create an invalid DateTime.</p>
 
-    <div class='pre p1 fill-light mt0'>invalid(reason: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, explanation: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="#datetime">DateTime</a></div>
+    <div class='pre p1 fill-light mt0'>invalid(reason: <a href="#datetime">DateTime</a>, explanation: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="#datetime">DateTime</a></div>
   
   
 
@@ -3978,7 +3984,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>reason</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+            <span class='code bold'>reason</span> <code class='quiet'>(<a href="#datetime">DateTime</a>)</code>
 	    simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
 
           </div>
@@ -4073,6 +4079,84 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='datetimeparseformatforopts'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>parseFormatForOpts(formatOpts, localeOpts)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Produce the format string for a set of options</p>
+
+    <div class='pre p1 fill-light mt0'>parseFormatForOpts(formatOpts: any, localeOpts: any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>formatOpts</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>localeOpts</span> <code class='quiet'>(any
+            = <code>{}</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
         
       
     
