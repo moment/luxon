@@ -303,6 +303,16 @@ test("DateTime#diff results works when needing to backtrack months", () => {
   expect(diff.days).toBe(1);
 });
 
+test("DateTime#diff works when date has a zone object", () => {
+  const start = DateTime.fromISO("2022-05-05T23:00", { zone: "UTC" });
+  const end = DateTime.fromISO("2022-05-10T00:00", { zone: "Europe/Madrid" });
+
+  const diff = end.diff(start, ["days", "hours", "minutes"]).toObject();
+  expect(diff.days).toBe(3);
+  expect(diff.hours).toBe(23);
+  expect(diff.minutes).toBe(0);
+});
+
 //------
 // diffNow
 //-------

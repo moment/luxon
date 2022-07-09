@@ -1,7 +1,7 @@
 import Duration from "../duration.js";
 
 function dayDiff(earlier, later) {
-  const utcDayStart = (dt) => dt.toUTC(0, { keepLocalTime: true }).startOf("day").valueOf(),
+  const utcDayStart = (dt) => dt.toUTC(0).startOf("day").valueOf(),
     ms = utcDayStart(later) - utcDayStart(earlier);
   return Math.floor(Duration.fromMillis(ms).as("days"));
 }
