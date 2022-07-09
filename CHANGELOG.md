@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.0.0 (2022-07-09)
+
+* Add "default" as an option for specifying a zone, and change "system" to really mean the system zone (breaking change)
+
 # 2.5.0 (2022-07-09)
 
  * Support for ESM-style node imports
