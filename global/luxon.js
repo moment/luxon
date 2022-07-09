@@ -2014,7 +2014,7 @@ var luxon = (function (exports) {
       return input;
     } else if (isString(input)) {
       var lowered = input.toLowerCase();
-      if (lowered === "local" || lowered === "system") return defaultZone;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
+      if (lowered === "default") return defaultZone;else if (lowered === "local" || lowered === "system") return SystemZone.instance;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
     } else if (isNumber(input)) {
       return FixedOffsetZone.instance(input);
     } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {
@@ -8515,7 +8515,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "2.5.0";
+  var VERSION = "3.0.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

@@ -1574,7 +1574,8 @@ var luxon = (function (exports) {
       return input;
     } else if (isString(input)) {
       const lowered = input.toLowerCase();
-      if (lowered === "local" || lowered === "system") return defaultZone;
+      if (lowered === "default") return defaultZone;
+      else if (lowered === "local" || lowered === "system") return SystemZone.instance;
       else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
       else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
     } else if (isNumber(input)) {
@@ -7038,7 +7039,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "2.5.0";
+  const VERSION = "3.0.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
