@@ -83,9 +83,14 @@ test('DateTime#setZone accepts "local"', () => {
   expect(zoned.offset).toBe(DateTime.local().offset);
 });
 
-test('DateTime#setZone accepts "system" and uses the default zone', () => {
+test('DateTime#setZone accepts "system" and uses the system zone', () => {
+  const systemZone = Settings.defaultZone.name;
+  expect(DateTime.utc().setZone("system").zoneName).toBe(systemZone);
+});
+
+test('DateTime#setZone accepts "default" and uses the default zone', () => {
   Helpers.withDefaultZone("Europe/Paris", () => {
-    expect(DateTime.utc().setZone("system").zoneName).toBe("Europe/Paris");
+    expect(DateTime.utc().setZone("default").zoneName).toBe("Europe/Paris");
   });
 });
 
