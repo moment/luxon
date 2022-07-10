@@ -1,5 +1,18 @@
 # Upgrading Luxon
 
+## 2.x to 3.0
+
+Version 3.0 has one breaking change: specifying "system" as the zone always results in the system zone, regardless of what you have the default set to. To get the default zone (whatever it is set to), use "default":
+
+```js
+Settings.defaultZone = "America/Chicago";
+
+DateTime.now().setZone("default") // results in Chicago time
+DateTime.now().setZone("system") // uses the user's system time
+```
+
+If this seems obvious, just be aware that it didn't work like that before!
+
 ## 1.x to 2.0
 
 Version 2.0 of Luxon has a number of breaking changes.
