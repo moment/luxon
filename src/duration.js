@@ -1,4 +1,9 @@
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
+import {
+  ConflictingSpecificationError,
+  InvalidArgumentError,
+  InvalidDurationError,
+  InvalidUnitError,
+} from "./errors.js";
 import Formatter from "./impl/formatter.js";
 import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.js";
@@ -174,7 +179,7 @@ export default class Duration {
    */
   constructor(config) {
     if (config.conversionAccuracy && config.matrix)
-      throw new Error(
+      throw new ConflictingSpecificationError(
         "You cannot use a custom matrix along with the `conversionAccuracy` config property"
       );
 
