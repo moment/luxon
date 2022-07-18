@@ -13290,7 +13290,7 @@ Note that this will return null if the duration is invalid, negative, or equal t
       <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnits(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 60 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnits(<span class="hljs-function">(<span class="hljs-params">x, u</span>) =&gt;</span> u === <span class="hljs-string">&quot;hour&quot;</span> ? x * <span class="hljs-number">2</span> : x) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 30 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnits(<span class="hljs-function">(<span class="hljs-params">x, u</span>) =&gt;</span> u === <span class="hljs-string">&quot;hours&quot;</span> ? x * <span class="hljs-number">2</span> : x) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 30 }</span></pre>
     
   
 
