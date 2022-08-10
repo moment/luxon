@@ -276,14 +276,14 @@ start.plus({ hours: 24 }).hour; //=> 11, DST pushed forward an hour
 By default, Luxon creates DateTimes in the system's zone. However, you can override this behavior globally:
 
 ```js
-Settings.defaultZone = "Asia/Tokyo";
+Settings.defaultZoneName = "Asia/Tokyo";
 DateTime.local().zoneName; //=> 'Asia/Tokyo'
 
-Settings.defaultZone = "utc";
+Settings.defaultZoneName = "utc";
 DateTime.local().zoneName; //=> 'UTC'
 
 // you can reset by setting to 'system'
 
-Settings.defaultZone = "system";
+Settings.defaultZoneName = "system";
 DateTime.local().zoneName; //=> 'America/New_York'
 ```
