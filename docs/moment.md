@@ -82,7 +82,7 @@ Here's a rough mapping of DateTime methods in Moment to ones in Luxon. I haven't
 | Second of minute       | `second()`                           | `second`      |                                        |
 | Millisecond of seconds | `millisecond()`                      | `millisecond` |                                        |
 | Week of ISO week year  | `weekYear`, `isoWeekYear`            | `weekYear`    |                                        |
-| Quarter                | `quarter`                            | None          | Just divide the months by 4            |
+| Quarter                | `quarter`                            | None          | Just divide the months by 3            |
 
 #### Programmatic get and set
 
