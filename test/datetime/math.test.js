@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime, Duration } from "../../src/luxon";
+import { casualMatrix } from "../../src/duration";
 
 function createDateTime() {
   return DateTime.fromObject({
