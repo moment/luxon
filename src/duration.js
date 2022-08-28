@@ -1,9 +1,4 @@
-import {
-  ConflictingSpecificationError,
-  InvalidArgumentError,
-  InvalidDurationError,
-  InvalidUnitError,
-} from "./errors.js";
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
 import Formatter from "./impl/formatter.js";
 import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.js";
@@ -178,11 +173,6 @@ export default class Duration {
    * @private
    */
   constructor(config) {
-    if (config.conversionAccuracy && config.matrix)
-      throw new ConflictingSpecificationError(
-        "You cannot use a custom matrix along with the `conversionAccuracy` config property"
-      );
-
     const accurate = config.conversionAccuracy === "longterm" || false;
     let matrix = accurate ? accurateMatrix : casualMatrix;
 
@@ -681,17 +671,8 @@ export default class Duration {
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy, matrix } = {}) {
-    const loc = this.loc.clone({ locale, numberingSystem }),
-      opts = { loc };
-
-    if (conversionAccuracy) {
-      opts.conversionAccuracy = conversionAccuracy;
-    }
-
-    if (matrix) {
-      opts.matrix = matrix;
-    }
-
+    const loc = this.loc.clone({ locale, numberingSystem });
+    const opts = { loc, matrix, conversionAccuracy };
     return clone(this, opts);
   }
 
