@@ -415,6 +415,10 @@ test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
   expect(dt.reconfigure({ locale: "es" }).toLocaleString(DateTime.TIME_24_SIMPLE)).toBe("9:23");
 });
 
+test("DateTime#toLocaleString() accecpts options in the first position", () => {
+  expect(dt.toLocaleString("fr")).toBe("May 25, 1982, 9:23 AM UTC");
+});
+
 //------
 // #resolvedLocaleOpts()
 //------
