@@ -392,7 +392,7 @@ function maybeExpandMacroToken(token, locale) {
   return tokens;
 }
 
-function expandMacroTokens(tokens, locale) {
+export function expandMacroTokens(tokens, locale) {
   return Array.prototype.concat(...tokens.map((t) => maybeExpandMacroToken(t, locale)));
 }
 

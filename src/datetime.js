@@ -23,7 +23,12 @@ import {
 import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
 import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
-import { parseFromTokens, explainFromTokens, formatOptsToTokens } from "./impl/tokenParser.js";
+import {
+  parseFromTokens,
+  explainFromTokens,
+  formatOptsToTokens,
+  expandMacroTokens,
+} from "./impl/tokenParser.js";
 import {
   gregorianToWeek,
   weekToGregorian,
@@ -925,6 +930,18 @@ export default class DateTime {
   static parseFormatForOpts(formatOpts, localeOpts = {}) {
     const tokenList = formatOptsToTokens(formatOpts, Locale.fromObject(localeOpts));
     return !tokenList ? null : tokenList.map((t) => (t ? t.val : null)).join("");
+  }
+
+  /**
+   * Produce the the fully expanded format token for the locale
+   * Does NOT quote characters, so quoted tokens will not round trip correctly
+   * @param fmt
+   * @param localeOpts
+   * @returns {string}
+   */
+  static expandFormat(fmt, localeOpts = {}) {
+    const expanded = expandMacroTokens(Formatter.parseFormat(fmt), Locale.fromObject(localeOpts));
+    return expanded.map((t) => t.val).join("");
   }
 
   // INFO

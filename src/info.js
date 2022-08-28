@@ -3,6 +3,7 @@ import Settings from "./settings.js";
 import Locale from "./impl/locale.js";
 import IANAZone from "./zones/IANAZone.js";
 import { normalizeZone } from "./impl/zoneUtil.js";
+import Formatter from "./impl/formatter";
 
 import { hasRelative } from "./impl/util.js";
 
