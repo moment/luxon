@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.0.2 (2022-08-28)
+
+* Lots of doc changes
+* Added DateTime.expandFormat
+* Added support for custom conversion matrices in Durations
+
 # 3.0.1 (2022-07-09)
 
 * Add DateTime.parseFormatForOpts
