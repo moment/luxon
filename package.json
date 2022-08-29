@@ -12,7 +12,8 @@
     ".": {
       "import": "./src/luxon.js",
       "require": "./build/node/luxon.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "babel-node tasks/buildAll.js",
