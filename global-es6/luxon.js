@@ -7074,7 +7074,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "3.0.2";
+  const VERSION = "3.0.3";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

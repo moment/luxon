@@ -8566,7 +8566,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "3.0.2";
+  var VERSION = "3.0.3";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
