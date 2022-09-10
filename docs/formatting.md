@@ -48,7 +48,7 @@ Modern browsers (and other JS environments) provide support for human-readable, 
 
 ```js
 dt.toLocaleString(); //=> '4/20/2017'
-dt.toLocaleString(DateTime.DATETIME_FULL); //=> 'April 20, 2017, 11:32 AM EDT'
+dt.toLocaleString(DateTime.DATETIME_FULL); //=> 'April 20, 2017 at 11:32 AM EDT'
 dt.setLocale('fr').toLocaleString(DateTime.DATETIME_FULL); //=> '20 avril 2017 à 11:32 UTC−4'
 ```
 
