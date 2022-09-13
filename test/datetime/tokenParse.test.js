@@ -1134,7 +1134,7 @@ test("DateTime.fromString is an alias for DateTime.fromFormat", () => {
 
 test("DateTime.parseFormatForOpts returns a parsing format", () => {
   const format = DateTime.parseFormatForOpts(DateTime.DATETIME_FULL);
-  expect(format).toEqual("MMMM d, yyyyy, h:m a ZZZ");
+  expect(format).toEqual("MMMM d, yyyyy at h:m a ZZZ");
 });
 
 test("DateTime.parseFormatForOpts returns a parsing format", () => {
