@@ -4352,7 +4352,7 @@ function dayDiff(earlier, later) {
 }
 
 function highOrderDiffs(cursor, later, units) {
-  const differs = [["years", (a, b) => b.year - a.year], ["quarters", (a, b) => b.quarter - a.quarter], ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12], ["weeks", (a, b) => {
+  const differs = [["years", (a, b) => b.year - a.year], ["quarters", (a, b) => b.quarter - a.quarter + (b.year - a.year) * 4], ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12], ["weeks", (a, b) => {
     const days = dayDiff(a, b);
     return (days - days % 7) / 7;
   }], ["days", dayDiff]];
@@ -7541,7 +7541,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "3.0.3";
+const VERSION = "3.0.4";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

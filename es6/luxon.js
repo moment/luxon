@@ -4149,7 +4149,7 @@ function dayDiff(earlier, later) {
 function highOrderDiffs(cursor, later, units) {
   const differs = [
     ["years", (a, b) => b.year - a.year],
-    ["quarters", (a, b) => b.quarter - a.quarter],
+    ["quarters", (a, b) => b.quarter - a.quarter + (b.year - a.year) * 4],
     ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
     [
       "weeks",
@@ -7071,7 +7071,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "3.0.3";
+const VERSION = "3.0.4";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, Settings, SystemZone, VERSION, Zone };
 //# sourceMappingURL=luxon.js.map

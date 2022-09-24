@@ -5050,7 +5050,7 @@ define(['exports'], (function (exports) { 'use strict';
     var differs = [["years", function (a, b) {
       return b.year - a.year;
     }], ["quarters", function (a, b) {
-      return b.quarter - a.quarter;
+      return b.quarter - a.quarter + (b.year - a.year) * 4;
     }], ["months", function (a, b) {
       return b.month - a.month + (b.year - a.year) * 12;
     }], ["weeks", function (a, b) {
@@ -8565,7 +8565,7 @@ define(['exports'], (function (exports) { 'use strict';
     }
   }
 
-  var VERSION = "3.0.3";
+  var VERSION = "3.0.4";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

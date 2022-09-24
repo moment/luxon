@@ -4152,7 +4152,7 @@ var luxon = (function (exports) {
   function highOrderDiffs(cursor, later, units) {
     const differs = [
       ["years", (a, b) => b.year - a.year],
-      ["quarters", (a, b) => b.quarter - a.quarter],
+      ["quarters", (a, b) => b.quarter - a.quarter + (b.year - a.year) * 4],
       ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
       [
         "weeks",
@@ -7074,7 +7074,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "3.0.3";
+  const VERSION = "3.0.4";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
