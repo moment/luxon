@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.0.4 (2022-09-24)
+
+* Fix quarters in diffs (#1279)
+* Export package.json in package (#1239)
+
 # 3.0.2 (2022-08-28)
 
 * Lots of doc changes
