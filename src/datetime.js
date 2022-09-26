@@ -1423,7 +1423,7 @@ export default class DateTime {
   }
 
   /**
-   * Add a period of time to this DateTime and return the resulting DateTime
+   * Add a period of time to this DateTime and return the resulting DateTime (without mutating this DateTime)
    *
    * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
    * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
@@ -1442,7 +1442,7 @@ export default class DateTime {
   }
 
   /**
-   * Subtract a period of time to this DateTime and return the resulting DateTime
+   * Subtract a period of time to this DateTime and return the resulting DateTime (without mutating this DateTime)
    * See {@link DateTime#plus}
    * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    @return {DateTime}
