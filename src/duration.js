@@ -155,6 +155,17 @@ function normalizeValues(matrix, vals) {
   }, null);
 }
 
+// Remove all properties with a value of 0 from an object
+function removeZeroes(vals) {
+  const newVals = {};
+  for (const [key, value] of Object.entries(vals)) {
+    if (value !== 0) {
+      newVals[key] = value;
+    }
+  }
+  return newVals;
+}
+
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
  *
@@ -690,34 +701,25 @@ export default class Duration {
 
   /**
    * Reduce this Duration to its canonical representation in its current units.
-   * @param {Object} opts - options
-   * @param {boolean} [opts.rescale=false] - Rescale units to its largest representation
    * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=> { years: 15, days: 255 }
    * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=> { hours: 11, minutes: 15 }
-   * @example Duration.fromObject({ milliseconds: 90000 }).normalize({ rescale: true }).toObject() //=> { minutes: 1, seconds: 30 }
    * @return {Duration}
    */
-  normalize(opts = {}) {
+  normalize() {
     if (!this.isValid) return this;
-    let vals = this.toObject();
+    const vals = this.toObject();
     normalizeValues(this.matrix, vals);
+    return clone(this, { values: vals }, true);
+  }
 
-    if (opts.rescale) {
-      const dur = clone(this, { values: vals }, true)
-        .shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
-        .toObject();
-      vals = {
-        ...(dur.years !== 0 && { years: dur.years }),
-        ...(dur.months !== 0 && { months: dur.months }),
-        ...(dur.weeks !== 0 && { weeks: dur.weeks }),
-        ...(dur.days !== 0 && { days: dur.days }),
-        ...(dur.hours !== 0 && { hours: dur.hours }),
-        ...(dur.minutes !== 0 && { minutes: dur.minutes }),
-        ...(dur.seconds !== 0 && { seconds: dur.seconds }),
-        ...(dur.milliseconds !== 0 && { milliseconds: dur.milliseconds }),
-      };
-    }
-
+  /**
+   * Rescale units to its largest representation
+   * @example Duration.fromObject({ milliseconds: 90000 }).rescale().toObject() //=> { minutes: 1, seconds: 30 }
+   * @return {Duration}
+   */
+  rescale() {
+    if (!this.isValid) return this;
+    const vals = removeZeroes(this.normalize().shiftToAll().toObject());
     return clone(this, { values: vals }, true);
   }
 
@@ -783,6 +785,25 @@ export default class Duration {
     }
 
     return clone(this, { values: built }, true).normalize();
+  }
+
+  /**
+   * Shift this Duration to all available units.
+   * Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
+   * @return {Duration}
+   */
+  shiftToAll() {
+    if (!this.isValid) return this;
+    return this.shiftTo(
+      "years",
+      "months",
+      "weeks",
+      "days",
+      "hours",
+      "minutes",
+      "seconds",
+      "milliseconds"
+    );
   }
 
   /**
