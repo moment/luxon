@@ -207,6 +207,21 @@ test("Duration#normalize can convert all unit pairs", () => {
   }
 });
 
+test("Duration#normalize can rescale units", () => {
+  const sets = [
+    [{ milliseconds: 90000 }, { minutes: 1, seconds: 30 }],
+    [
+      { minutes: 70, milliseconds: 121 },
+      { hours: 1, minutes: 10, seconds: 12, milliseconds: 100 },
+    ],
+    [{ months: 2, days: -30 }, { months: 1 }],
+  ];
+
+  sets.forEach(([from, to]) => {
+    expect(Duration.fromObject(from).normalize({ rescale: true }).toObject()).toEqual(to);
+  });
+});
+
 //------
 // #as()
 //-------

@@ -694,25 +694,30 @@ export default class Duration {
    * @param {boolean} [opts.rescale=false] - Rescale units to its largest representation
    * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=> { years: 15, days: 255 }
    * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=> { hours: 11, minutes: 15 }
+   * @example Duration.fromObject({ milliseconds: 90000 }).normalize({ rescale: true }).toObject() //=> { minutes: 1, seconds: 30 }
    * @return {Duration}
    */
   normalize(opts = {}) {
     if (!this.isValid) return this;
     let vals = this.toObject();
     normalizeValues(this.matrix, vals);
+
     if (opts.rescale) {
-      const dur = Duration.fromObject(vals).shiftTo('years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds').toObject();
+      const dur = clone(this, { values: vals }, true)
+        .shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
+        .toObject();
       vals = {
-        ...dur.years > 0 && { years: dur.years },
-        ...dur.months > 0 && { months: dur.months },
-        ...dur.weeks > 0 && { weeks: dur.weeks },
-        ...dur.days > 0 && { days: dur.days },
-        ...dur.hours > 0 && { hours: dur.hours },
-        ...dur.minutes > 0 && { minutes: dur.minutes },
-        ...dur.seconds > 0 && { seconds: dur.seconds },
-        ...dur.milliseconds > 0 && { milliseconds: dur.milliseconds }
+        ...(dur.years !== 0 && { years: dur.years }),
+        ...(dur.months !== 0 && { months: dur.months }),
+        ...(dur.weeks !== 0 && { weeks: dur.weeks }),
+        ...(dur.days !== 0 && { days: dur.days }),
+        ...(dur.hours !== 0 && { hours: dur.hours }),
+        ...(dur.minutes !== 0 && { minutes: dur.minutes }),
+        ...(dur.seconds !== 0 && { seconds: dur.seconds }),
+        ...(dur.milliseconds !== 0 && { milliseconds: dur.milliseconds }),
       };
     }
+
     return clone(this, { values: vals }, true);
   }
 
