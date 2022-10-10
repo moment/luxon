@@ -211,7 +211,7 @@ test("Duration#normalize can rescale units", () => {
   const sets = [
     [{ milliseconds: 90000 }, { minutes: 1, seconds: 30 }],
     [
-      { minutes: 70, milliseconds: 121 },
+      { minutes: 70, milliseconds: 12100 },
       { hours: 1, minutes: 10, seconds: 12, milliseconds: 100 },
     ],
     [{ months: 2, days: -30 }, { months: 1 }],
