@@ -97,6 +97,29 @@ test("Duration#shiftTo boils hours down to hours and minutes", () => {
 });
 
 //------
+// #shiftToAll()
+//-------
+test("Duration#shiftToAll shifts to all available units", () => {
+  const dur = Duration.fromMillis(5760000).shiftToAll();
+  expect(dur.toObject()).toEqual({
+    years: 0,
+    months: 0,
+    weeks: 0,
+    days: 0,
+    hours: 1,
+    minutes: 36,
+    seconds: 0,
+    milliseconds: 0,
+  });
+});
+
+test("Duration#shiftToAll maintains invalidity", () => {
+  const dur = Duration.invalid("because").shiftToAll();
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe("because");
+});
+
+//------
 // #normalize()
 //-------
 test("Duration#normalize rebalances negative units", () => {
@@ -205,6 +228,30 @@ test("Duration#normalize can convert all unit pairs", () => {
       expect(normalizedAccurateDuration[units[j]]).not.toBe(NaN);
     }
   }
+});
+
+//------
+// #rescale()
+//-------
+test("Duration#rescale normalizes, shifts to all units and remove units with a value of 0", () => {
+  const sets = [
+    [{ milliseconds: 90000 }, { minutes: 1, seconds: 30 }],
+    [
+      { minutes: 70, milliseconds: 12100 },
+      { hours: 1, minutes: 10, seconds: 12, milliseconds: 100 },
+    ],
+    [{ months: 2, days: -30 }, { months: 1 }],
+  ];
+
+  sets.forEach(([from, to]) => {
+    expect(Duration.fromObject(from).rescale().toObject()).toEqual(to);
+  });
+});
+
+test("Duration#rescale maintains invalidity", () => {
+  const dur = Duration.invalid("because").rescale();
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe("because");
 });
 
 //------
