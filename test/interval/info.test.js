@@ -57,7 +57,7 @@ test("Interval#count('years') returns 2 if the interval crosses the new year", (
 test("Interval#count() does not count the endpoint of the interval", () => {
   const i = DateTime.fromISO("2022-10-01").until(DateTime.fromISO("2022-10-03"));
   expect(i.count("days")).toBe(2);
-})
+});
 
 test("Interval#count() uses milliseconds by default", () => {
   const i = DateTime.fromISO("2016-05-25T03:00").until(DateTime.fromISO("2016-05-25T14:00"));
