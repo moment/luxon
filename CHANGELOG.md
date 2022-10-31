@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.0 (2022-10-31)
+
+* Add Duration.rescale
+
 # 3.0.4 (2022-09-24)
 
 * Fix quarters in diffs (#1279)
