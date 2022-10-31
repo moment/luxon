@@ -2628,6 +2628,17 @@ var luxon = (function (exports) {
     }, null);
   }
 
+  // Remove all properties with a value of 0 from an object
+  function removeZeroes(vals) {
+    const newVals = {};
+    for (const [key, value] of Object.entries(vals)) {
+      if (value !== 0) {
+        newVals[key] = value;
+      }
+    }
+    return newVals;
+  }
+
   /**
    * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
    *
@@ -3175,6 +3186,17 @@ var luxon = (function (exports) {
     }
 
     /**
+     * Rescale units to its largest representation
+     * @example Duration.fromObject({ milliseconds: 90000 }).rescale().toObject() //=> { minutes: 1, seconds: 30 }
+     * @return {Duration}
+     */
+    rescale() {
+      if (!this.isValid) return this;
+      const vals = removeZeroes(this.normalize().shiftToAll().toObject());
+      return clone$1(this, { values: vals }, true);
+    }
+
+    /**
      * Convert this Duration into its representation in a different set of units.
      * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
      * @return {Duration}
@@ -3236,6 +3258,25 @@ var luxon = (function (exports) {
       }
 
       return clone$1(this, { values: built }, true).normalize();
+    }
+
+    /**
+     * Shift this Duration to all available units.
+     * Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
+     * @return {Duration}
+     */
+    shiftToAll() {
+      if (!this.isValid) return this;
+      return this.shiftTo(
+        "years",
+        "months",
+        "weeks",
+        "days",
+        "hours",
+        "minutes",
+        "seconds",
+        "milliseconds"
+      );
     }
 
     /**
@@ -7074,7 +7115,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "3.0.4";
+  const VERSION = "3.1.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

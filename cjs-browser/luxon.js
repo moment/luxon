@@ -3209,6 +3209,23 @@ function normalizeValues(matrix, vals) {
       return previous;
     }
   }, null);
+} // Remove all properties with a value of 0 from an object
+
+
+function removeZeroes(vals) {
+  var newVals = {};
+
+  for (var _i = 0, _Object$entries = Object.entries(vals); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _Object$entries[_i],
+        key = _Object$entries$_i[0],
+        value = _Object$entries$_i[1];
+
+    if (value !== 0) {
+      newVals[key] = value;
+    }
+  }
+
+  return newVals;
 }
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
@@ -3726,8 +3743,8 @@ var Duration = /*#__PURE__*/function () {
     if (!this.isValid) return this;
     var result = {};
 
-    for (var _i = 0, _Object$keys = Object.keys(this.values); _i < _Object$keys.length; _i++) {
-      var k = _Object$keys[_i];
+    for (var _i2 = 0, _Object$keys = Object.keys(this.values); _i2 < _Object$keys.length; _i2++) {
+      var k = _Object$keys[_i2];
       result[k] = asNumber(fn(this.values[k], k));
     }
 
@@ -3821,6 +3838,20 @@ var Duration = /*#__PURE__*/function () {
     }, true);
   }
   /**
+   * Rescale units to its largest representation
+   * @example Duration.fromObject({ milliseconds: 90000 }).rescale().toObject() //=> { minutes: 1, seconds: 30 }
+   * @return {Duration}
+   */
+  ;
+
+  _proto.rescale = function rescale() {
+    if (!this.isValid) return this;
+    var vals = removeZeroes(this.normalize().shiftToAll().toObject());
+    return clone$1(this, {
+      values: vals
+    }, true);
+  }
+  /**
    * Convert this Duration into its representation in a different set of units.
    * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
    * @return {Duration}
@@ -3891,6 +3922,17 @@ var Duration = /*#__PURE__*/function () {
     }, true).normalize();
   }
   /**
+   * Shift this Duration to all available units.
+   * Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
+   * @return {Duration}
+   */
+  ;
+
+  _proto.shiftToAll = function shiftToAll() {
+    if (!this.isValid) return this;
+    return this.shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds");
+  }
+  /**
    * Return the negative of this Duration.
    * @example Duration.fromObject({ hours: 1, seconds: 30 }).negate().toObject() //=> { hours: -1, seconds: -30 }
    * @return {Duration}
@@ -3901,8 +3943,8 @@ var Duration = /*#__PURE__*/function () {
     if (!this.isValid) return this;
     var negated = {};
 
-    for (var _i2 = 0, _Object$keys2 = Object.keys(this.values); _i2 < _Object$keys2.length; _i2++) {
-      var k = _Object$keys2[_i2];
+    for (var _i3 = 0, _Object$keys2 = Object.keys(this.values); _i3 < _Object$keys2.length; _i3++) {
+      var k = _Object$keys2[_i3];
       negated[k] = this.values[k] === 0 ? 0 : -this.values[k];
     }
 
@@ -8567,7 +8609,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-var VERSION = "3.0.4";
+var VERSION = "3.1.0";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

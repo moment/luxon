@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 3.0.4 | Documentation</title>
+  <title>luxon 3.1.0 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>3.0.4</code></div>
+          <div class='mb1'><code>3.1.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -926,9 +926,21 @@
                       </a></li>
                       
                       <li><a
+                        href='#durationrescale'
+                        class='regular pre-open'>
+                        #rescale
+                      </a></li>
+                      
+                      <li><a
                         href='#durationshiftto'
                         class='regular pre-open'>
                         #shiftTo
+                      </a></li>
+                      
+                      <li><a
+                        href='#durationshifttoall'
+                        class='regular pre-open'>
+                        #shiftToAll
                       </a></li>
                       
                       <li><a
@@ -13856,6 +13868,68 @@ Note that this will return null if the duration is invalid, negative, or equal t
       </div>
     </div>
   
+    <div class='border-bottom' id='durationrescale'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>rescale()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Rescale units to its largest representation</p>
+
+    <div class='pre p1 fill-light mt0'>rescale(): <a href="#duration">Duration</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#duration">Duration</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">milliseconds</span>: <span class="hljs-number">90000</span> }).rescale().toObject() <span class="hljs-comment">//=&gt; { minutes: 1, seconds: 30 }</span></pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='durationshiftto'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -13917,6 +13991,63 @@ Note that this will return null if the duration is invalid, negative, or equal t
       
       <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">30</span> }).shiftTo(<span class="hljs-string">&#x27;minutes&#x27;</span>, <span class="hljs-string">&#x27;milliseconds&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { minutes: 60, milliseconds: 30000 }</span></pre>
     
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='durationshifttoall'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>shiftToAll()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Shift this Duration to all available units.
+Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")</p>
+
+    <div class='pre p1 fill-light mt0'>shiftToAll(): <a href="#duration">Duration</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#duration">Duration</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
   
 
   
