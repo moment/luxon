@@ -304,6 +304,25 @@ test("DateTime.fromFormat() parses quarters", () => {
   expect(DateTime.fromFormat("2019Q04", "yyyy'Q'qq").month).toBe(10);
 });
 
+test("DateTime.fromFormat() parses basic two-digit year without separators", () => {
+  const i = DateTime.fromFormat("220316", "YYMMdd");
+  expect(i.year).toBe(2022);
+  expect(i.month).toBe(3);
+  expect(i.day).toBe(16);
+});
+
+test("DateTime.fromFormat() parses full two-digit year without separators", () => {
+  const i = DateTime.fromFormat("22031609025910", "YYMMddHHmmssu");
+  expect(i.year).toBe(2022);
+  expect(i.month).toBe(3);
+  expect(i.day).toBe(16);
+
+  expect(i.hour).toBe(9);
+  expect(i.minute).toBe(2);
+  expect(i.second).toBe(59);
+  expect(i.millisecond).toBe(100);
+});
+
 test("DateTime.fromFormat() makes trailing periods in month names optional", () => {
   const i = DateTime.fromFormat("janv 25 1982", "LLL dd yyyy", {
     locale: "fr",

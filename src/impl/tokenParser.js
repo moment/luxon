@@ -81,6 +81,8 @@ function unitForToken(token, loc) {
           return intUnit(oneToSix);
         case "yy":
           return intUnit(twoToFour, untruncateYear);
+        case "YY":
+          return intUnit(two, untruncateYear);
         case "yyyy":
           return intUnit(four);
         case "yyyyy":
@@ -307,6 +309,7 @@ function dateTimeFromMatches(matches) {
       case "M":
         return "month";
       case "y":
+      case "Y":
         return "year";
       case "E":
       case "c":
