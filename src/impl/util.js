@@ -5,6 +5,7 @@
 */
 
 import { InvalidArgumentError } from "../errors.js";
+import Settings from "../settings.js";
 
 /**
  * @private
@@ -185,7 +186,7 @@ export function weeksInWeekYear(weekYear) {
 export function untruncateYear(year) {
   if (year > 99) {
     return year;
-  } else return year > 60 ? 1900 + year : 2000 + year;
+  } else return year > Settings.twoDigitCutoffYear ? 1900 + year : 2000 + year;
 }
 
 // PARSING

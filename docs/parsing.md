@@ -125,6 +125,10 @@ Not every token supported by `DateTime#toFormat` is supported in the parser. For
 - Some things are ambiguous. There are several Eastern Standard Times in different countries and Luxon has no way to know which one you mean without additional information (such as that the zone is America/New_York) that would make EST superfluous anyway. Similarly, the single-letter month and weekday formats (EEEEE) that are useful in displaying calendars graphically can't be parsed because of their ambiguity.
 - Because of the limitations above, Luxon also doesn't support the "macro" tokens that include offset names, such as "ttt" and "FFFF".
 
+### Parsing Two Digit Years
+
+In order to parse a year (or ISO week year) using the `yy` (or `kk`) tokens from a two digit string, a cutoff year after which a the year is interpreted as the current century must be used. By default, the cutoff date is 60, ie: the string "60" is parsed as the year 2060, and the string "61" is parsed as the year 1961. The cutoff year can be configured using `Settings.twoDigitCutoffYear`.
+
 ### Debugging
 
 There are two kinds of things that can go wrong when parsing a string: a) you make a mistake with the tokens or b) the information parsed from the string does not correspond to a valid date. To help you sort that out, Luxon provides a method called `fromFormatExplain`. It takes the same arguments as `fromFormat` but returns a map of information about the parse that can be useful in debugging.
@@ -180,60 +184,60 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 (Examples below given for `2014-08-06T13:07:04.054` considered as a local time in America/New_York). Note that many tokens supported by the [formatter](formatting.md) are **not** supported by the parser.
 
 | Standalone token | Format token | Description                                                    | Example                     |
-| ---------------- | ------------ | -------------------------------------------------------------- | --------------------------- |
-| S                |              | millisecond, no padding                                        | `54`                        |
-| SSS              |              | millisecond, padded to 3                                       | `054`                       |
-| u                |              | fractional seconds, (5 is a half second, 54 is slightly more)  | `54`                        |
-| uu               |              | fractional seconds, (one or two digits)                        | `05`                        |
-| uuu              |              | fractional seconds, (only one digit)                           | `5`                         |
-| s                |              | second, no padding                                             | `4`                         |
-| ss               |              | second, padded to 2 padding                                    | `04`                        |
-| m                |              | minute, no padding                                             | `7`                         |
-| mm               |              | minute, padded to 2                                            | `07`                        |
-| h                |              | hour in 12-hour time, no padding                               | `1`                         |
-| hh               |              | hour in 12-hour time, padded to 2                              | `01`                        |
-| H                |              | hour in 24-hour time, no padding                               | `13`                        |
-| HH               |              | hour in 24-hour time, padded to 2                              | `13`                        |
-| Z                |              | narrow offset                                                  | `+5`                        |
-| ZZ               |              | short offset                                                   | `+05:00`                    |
-| ZZZ              |              | techie offset                                                  | `+0500`                     |
-| z                |              | IANA zone                                                      | `America/New_York`          |
-| a                |              | meridiem                                                       | `AM`                        |
-| d                |              | day of the month, no padding                                   | `6`                         |
-| dd               |              | day of the month, padded to 2                                  | `06`                        |
-| E                | c            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | `3`                         |
-| EEE              | ccc          | day of the week, as an abbreviate localized string             | `Wed`                       |
-| EEEE             | cccc         | day of the week, as an unabbreviated localized string          | `Wednesday`                 |
-| M                | L            | month as an unpadded number                                    | `8`                         |
-| MM               | LL           | month as an padded number                                      | `08`                        |
-| MMM              | LLL          | month as an abbreviated localized string                       | `Aug`                       |
-| MMMM             | LLLL         | month as an unabbreviated localized string                     | `August`                    |
-| y                |              | year, 1-6 digits, very literally                               | `2014`                      |
-| yy               |              | two-digit year, interpreted as > 1960 (also accepts 4)         | `14`                        |
-| yyyy             |              | four-digit year                                                | `2014`                      |
-| yyyyy            |              | four- to six-digit years                                       | `10340`                     |
-| yyyyyy           |              | six-digit years                                                | `010340`                    |
-| G                |              | abbreviated localized era                                      | `AD`                        |
-| GG               |              | unabbreviated localized era                                    | `Anno Domini`               |
-| GGGGG            |              | one-letter localized era                                       | `A`                         |
-| kk               |              | ISO week year, unpadded                                        | `17`                        |
-| kkkk             |              | ISO week year, padded to 4                                     | `2014`                      |
-| W                |              | ISO week number, unpadded                                      | `32`                        |
-| WW               |              | ISO week number, padded to 2                                   | `32`                        |
-| o                |              | ordinal (day of year), unpadded                                | `218`                       |
-| ooo              |              | ordinal (day of year), padded to 3                             | `218`                       |
-| q                |              | quarter, no padding                                            | `3`                         |
-| D                |              | localized numeric date                                         | `9/6/2014`                  |
-| DD               |              | localized date with abbreviated month                          | `Aug 6, 2014`               |
-| DDD              |              | localized date with full month                                 | `August 6, 2014`            |
-| DDDD             |              | localized date with full month and weekday                     | `Wednesday, August 6, 2014` |
-| t                |              | localized time                                                 | `1:07 AM`                   |
-| tt               |              | localized time with seconds                                    | `1:07:04 PM`                |
-| T                |              | localized 24-hour time                                         | `13:07`                     |
-| TT               |              | localized 24-hour time with seconds                            | `13:07:04`                  |
-| TTT              |              | localized 24-hour time with seconds and abbreviated offset     | `13:07:04 EDT`              |
-| f                |              | short localized date and time                                  | `8/6/2014, 1:07 PM`         |
-| ff               |              | less short localized date and time                             | `Aug 6, 2014, 1:07 PM`      |
-| F                |              | short localized date and time with seconds                     | `8/6/2014, 1:07:04 PM`      |
-| FF               |              | less short localized date and time with seconds                | `Aug 6, 2014, 1:07:04 PM`   |
-| '                |              | literal start/end, characters between are not tokenized        | `'T'`                       |
+| ---------------- | ------------ | ----------------------------------------------------------------- | --------------------------- |
+| S                |              | millisecond, no padding                                           | `54`                        |
+| SSS              |              | millisecond, padded to 3                                          | `054`                       |
+| u                |              | fractional seconds, (5 is a half second, 54 is slightly more)     | `54`                        |
+| uu               |              | fractional seconds, (one or two digits)                           | `05`                        |
+| uuu              |              | fractional seconds, (only one digit)                              | `5`                         |
+| s                |              | second, no padding                                                | `4`                         |
+| ss               |              | second, padded to 2 padding                                       | `04`                        |
+| m                |              | minute, no padding                                                | `7`                         |
+| mm               |              | minute, padded to 2                                               | `07`                        |
+| h                |              | hour in 12-hour time, no padding                                  | `1`                         |
+| hh               |              | hour in 12-hour time, padded to 2                                 | `01`                        |
+| H                |              | hour in 24-hour time, no padding                                  | `13`                        |
+| HH               |              | hour in 24-hour time, padded to 2                                 | `13`                        |
+| Z                |              | narrow offset                                                     | `+5`                        |
+| ZZ               |              | short offset                                                      | `+05:00`                    |
+| ZZZ              |              | techie offset                                                     | `+0500`                     |
+| z                |              | IANA zone                                                         | `America/New_York`          |
+| a                |              | meridiem                                                          | `AM`                        |
+| d                |              | day of the month, no padding                                      | `6`                         |
+| dd               |              | day of the month, padded to 2                                     | `06`                        |
+| E                | c            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7)    | `3`                         |
+| EEE              | ccc          | day of the week, as an abbreviate localized string                | `Wed`                       |
+| EEEE             | cccc         | day of the week, as an unabbreviated localized string             | `Wednesday`                 |
+| M                | L            | month as an unpadded number                                       | `8`                         |
+| MM               | LL           | month as an padded number                                         | `08`                        |
+| MMM              | LLL          | month as an abbreviated localized string                          | `Aug`                       |
+| MMMM             | LLLL         | month as an unabbreviated localized string                        | `August`                    |
+| y                |              | year, 1-6 digits, very literally                                  | `2014`                      |
+| yy               |              | two-digit year, interpreted as > 1960 by default (also accepts 4) | `14`                        |
+| yyyy             |              | four-digit year                                                   | `2014`                      |
+| yyyyy            |              | four- to six-digit years                                          | `10340`                     |
+| yyyyyy           |              | six-digit years                                                   | `010340`                    |
+| G                |              | abbreviated localized era                                         | `AD`                        |
+| GG               |              | unabbreviated localized era                                       | `Anno Domini`               |
+| GGGGG            |              | one-letter localized era                                          | `A`                         |
+| kk               |              | ISO week year, unpadded                                           | `17`                        |
+| kkkk             |              | ISO week year, padded to 4                                        | `2014`                      |
+| W                |              | ISO week number, unpadded                                         | `32`                        |
+| WW               |              | ISO week number, padded to 2                                      | `32`                        |
+| o                |              | ordinal (day of year), unpadded                                   | `218`                       |
+| ooo              |              | ordinal (day of year), padded to 3                                | `218`                       |
+| q                |              | quarter, no padding                                               | `3`                         |
+| D                |              | localized numeric date                                            | `9/6/2014`                  |
+| DD               |              | localized date with abbreviated month                             | `Aug 6, 2014`               |
+| DDD              |              | localized date with full month                                    | `August 6, 2014`            |
+| DDDD             |              | localized date with full month and weekday                        | `Wednesday, August 6, 2014` |
+| t                |              | localized time                                                    | `1:07 AM`                   |
+| tt               |              | localized time with seconds                                       | `1:07:04 PM`                |
+| T                |              | localized 24-hour time                                            | `13:07`                     |
+| TT               |              | localized 24-hour time with seconds                               | `13:07:04`                  |
+| TTT              |              | localized 24-hour time with seconds and abbreviated offset        | `13:07:04 EDT`              |
+| f                |              | short localized date and time                                     | `8/6/2014, 1:07 PM`         |
+| ff               |              | less short localized date and time                                | `Aug 6, 2014, 1:07 PM`      |
+| F                |              | short localized date and time with seconds                        | `8/6/2014, 1:07:04 PM`      |
+| FF               |              | less short localized date and time with seconds                   | `Aug 6, 2014, 1:07:04 PM`   |
+| '                |              | literal start/end, characters between are not tokenized           | `'T'`                       |

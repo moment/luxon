@@ -9,6 +9,7 @@ let now = () => Date.now(),
   defaultLocale = null,
   defaultNumberingSystem = null,
   defaultOutputCalendar = null,
+  twoDigitCutoffYear = 60,
   throwOnInvalid;
 
 /**
@@ -98,6 +99,26 @@ export default class Settings {
    */
   static set defaultOutputCalendar(outputCalendar) {
     defaultOutputCalendar = outputCalendar;
+  }
+
+  /**
+   * Get the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+   * @type {number}
+   */
+  static get twoDigitCutoffYear() {
+    return twoDigitCutoffYear;
+  }
+
+  /**
+   * Set the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+   * @type {number}
+   * @example Settings.twoDigitCutoffYear = 0 // cut-off year is 0, so all 'yy' are interpretted as current century
+   * @example Settings.twoDigitCutoffYear = 50 // '49' -> 1949; '50' -> 2050
+   * @example Settings.twoDigitCutoffYear = 1950 // interpretted as 50
+   * @example Settings.twoDigitCutoffYear = 2050 // ALSO interpretted as 50
+   */
+  static set twoDigitCutoffYear(cutoffYear) {
+    twoDigitCutoffYear = cutoffYear % 100;
   }
 
   /**
