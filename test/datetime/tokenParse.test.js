@@ -1,7 +1,7 @@
 /* global test expect */
 import { DateTime } from "../../src/luxon";
 import Helpers from "../helpers";
-
+import Settings from "../../src/settings";
 import { ConflictingSpecificationError } from "../../src/errors";
 
 //------
