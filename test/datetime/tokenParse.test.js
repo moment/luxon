@@ -136,9 +136,22 @@ test("DateTime.fromFormat() with yyyyyy strictly parses extended years", () => {
 });
 
 test("DateTime.fromFormat() defaults yy to the right century", () => {
-  expect(DateTime.fromFormat("55", "yy").year).toBe(2055);
-  expect(DateTime.fromFormat("70", "yy").year).toBe(1970);
-  expect(DateTime.fromFormat("1970", "yy").year).toBe(1970);
+  expect(DateTime.fromFormat("60", "yy").year).toBe(2060);
+  expect(DateTime.fromFormat("61", "yy").year).toBe(1961);
+  expect(DateTime.fromFormat("1960", "yy").year).toBe(1960);
+});
+
+test("DateTime.fromFormat() respects Settings.twoDigitCutoffYear when parsing yy to the right century", () => {
+  const oldTwoDigitCutoffYear = Settings.twoDigitCutoffYear;
+
+  try {
+    Settings.twoDigitCutoffYear = 50;
+    expect(DateTime.fromFormat("50", "yy").year).toBe(2050);
+    expect(DateTime.fromFormat("51", "yy").year).toBe(1951);
+    expect(DateTime.fromFormat("1950", "yy").year).toBe(1950);
+  } finally {
+    Settings.twoDigitCutoffYear = oldTwoDigitCutoffYear;
+  }
 });
 
 test("DateTime.fromFormat() parses hours", () => {
@@ -415,6 +428,25 @@ test("DateTime.fromFormat() accepts weekYear by itself", () => {
   expect(d.weekYear).toBe(2004);
   expect(d.weekNumber).toBe(1);
   expect(d.weekday).toBe(1);
+});
+
+test("DateTime.fromFormat() defaults kk to the right century", () => {
+  expect(DateTime.fromFormat("60", "kk").weekYear).toBe(2060);
+  expect(DateTime.fromFormat("61", "kk").weekYear).toBe(1961);
+  expect(DateTime.fromFormat("1960", "kk").weekYear).toBe(1960);
+});
+
+test("DateTime.fromFormat() respects Settings.twoDigitCutoffYear when parsing two digit weekYear to the right century", () => {
+  const oldTwoDigitCutoffYear = Settings.twoDigitCutoffYear;
+
+  try {
+    Settings.twoDigitCutoffYear = 50;
+    expect(DateTime.fromFormat("50", "kk").weekYear).toBe(2050);
+    expect(DateTime.fromFormat("51", "kk").weekYear).toBe(1951);
+    expect(DateTime.fromFormat("1950", "kk").weekYear).toBe(1950);
+  } finally {
+    Settings.twoDigitCutoffYear = oldTwoDigitCutoffYear;
+  }
 });
 
 test("DateTime.fromFormat() accepts weekNumber by itself", () => {
