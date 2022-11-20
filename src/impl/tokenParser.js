@@ -2,6 +2,7 @@ import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty 
 import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
+import Settings from "../settings.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";
 import { ConflictingSpecificationError } from "../errors.js";
@@ -65,6 +66,7 @@ function unitForToken(token, loc) {
     oneToNine = digitRegex(loc, "{1,9}"),
     twoToFour = digitRegex(loc, "{2,4}"),
     fourToSix = digitRegex(loc, "{4,6}"),
+    deserUntruncateYear = (s) => untruncateYear(s, Settings.twoDigitCutoffYear),
     literal = (t) => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
     unitate = (t) => {
       if (token.literal) {
@@ -80,7 +82,7 @@ function unitForToken(token, loc) {
         case "y":
           return intUnit(oneToSix);
         case "yy":
-          return intUnit(twoToFour, untruncateYear);
+          return intUnit(twoToFour, deserUntruncateYear);
         case "yyyy":
           return intUnit(four);
         case "yyyyy":
@@ -152,7 +154,7 @@ function unitForToken(token, loc) {
         case "kkkk":
           return intUnit(four);
         case "kk":
-          return intUnit(twoToFour, untruncateYear);
+          return intUnit(twoToFour, deserUntruncateYear);
         // weekNumber (W)
         case "W":
           return intUnit(oneOrTwo);

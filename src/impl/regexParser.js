@@ -10,6 +10,7 @@ import {
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
+import Settings from "../settings.js";
 
 /*
  * This file handles parsing for well-specified formats. Here's how it works:
@@ -170,7 +171,10 @@ const obsOffsets = {
 
 function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
   const result = {
-    year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
+    year:
+      yearStr.length === 2
+        ? untruncateYear(parseInteger(yearStr), Settings.twoDigitCutoffYear)
+        : parseInteger(yearStr),
     month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInteger(dayStr),
     hour: parseInteger(hourStr),
