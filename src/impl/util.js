@@ -271,5 +271,3 @@ export function timeObject(obj) {
 
 export const ianaRegex =
   /[A-Za-z_+-]{1,256}(?::?\/[A-Za-z0-9_+-]{1,256}(?:\/[A-Za-z0-9_+-]{1,256})?)?/;
-
-export default {};
