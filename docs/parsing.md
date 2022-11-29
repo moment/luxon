@@ -127,7 +127,7 @@ Not every token supported by `DateTime#toFormat` is supported in the parser. For
 
 ### Parsing Two Digit Years
 
-In order to parse a year (or ISO week year) using the `yy` (or `kk`) tokens from a two digit string, a cutoff year after which a the year is interpreted as the current century must be used. By default, the cutoff date is 60, ie: the string "60" is parsed as the year 2060, and the string "61" is parsed as the year 1961. The cutoff year can be configured using `Settings.twoDigitCutoffYear`.
+In order to parse a two digit string as a year (or ISO week year), the `yy` (and `kk`) token must use a cutoff year after which the year being parsed is interpreted as referring to the current century. By default, the cutoff year is set to 60, meaning that the string "60" is parsed as the year 2060, and the string "61" is parsed as the year 1961. The cutoff year can be configured using `Settings.twoDigitCutoffYear`.
 
 ### Debugging
 
