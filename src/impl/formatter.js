@@ -108,6 +108,11 @@ export default class Formatter {
     return df.formatToParts();
   }
 
+  formatInterval(interval, opts = {}) {
+    const df = this.loc.dtFormatter(interval.start, { ...this.opts, ...opts });
+    return df.dtf.formatRange(interval.start.toJSDate(), interval.end.toJSDate());
+  }
+
   resolvedOptions(dt, opts = {}) {
     const df = this.loc.dtFormatter(dt, { ...this.opts, ...opts });
     return df.resolvedOptions();
