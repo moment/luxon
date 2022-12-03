@@ -50,14 +50,8 @@ export default function (earlier, later, units, opts) {
     (u) => ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0
   );
 
-  if (lowerOrderUnits.length === 0) {
-    if (highWater < later) {
-      highWater = cursor.plus({ [lowestOrder]: 1 });
-    }
-
-    if (highWater !== cursor) {
-      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
-    }
+  if (lowerOrderUnits.length === 0 && highWater !== cursor) {
+    results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
   }
 
   const duration = Duration.fromObject(results, opts);
