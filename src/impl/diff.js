@@ -6,8 +6,8 @@ function dayDiff(earlier, later) {
   return Math.floor(Duration.fromMillis(ms).as("days"));
 }
 
-function highOrderDiffs(cursor, later, units) {
-  const differs = [
+function highOrderDiffs(earlier, later, units) {
+  const diffHeuristics = [
     ["years", (a, b) => b.year - a.year],
     ["quarters", (a, b) => b.quarter - a.quarter + (b.year - a.year) * 4],
     ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
@@ -24,25 +24,21 @@ function highOrderDiffs(cursor, later, units) {
   const results = {};
   let lowestOrder, highWater;
 
-  for (const [unit, differ] of differs) {
+  for (const [unit, diffHeuristic] of diffHeuristics) {
     if (units.indexOf(unit) >= 0) {
       lowestOrder = unit;
 
-      let delta = differ(cursor, later);
-      highWater = cursor.plus({ [unit]: delta });
-
-      if (highWater > later) {
-        cursor = cursor.plus({ [unit]: delta - 1 });
-        delta -= 1;
-      } else {
-        cursor = highWater;
-      }
-
-      results[unit] = delta;
+      results[unit] = diffHeuristic(earlier.plus(results), later);
+      // If the heuristic is an over-estimate, decrement it until the sum is less than the target date. The heurisitics rarely if ever create over-estimates, so this code is not typically exectued at all.
+      while (earlier.plus(results) > later) results[unit]--;
+      // Now that the result is definitely an underestimate, increment it until the sum exceeds the target date. Typically this loop runs exactly once, and may run twice in edge cases.
+      while ((highWater = earlier.plus(results)) <= later) results[unit]++;
+      // Finally decrement the result once to ensure a tight underestimate, and proceed to the next lower order unit.
+      results[unit]--;
     }
   }
 
-  return [cursor, results, highWater, lowestOrder];
+  return [earlier.plus(results), results, highWater, lowestOrder];
 }
 
 export default function (earlier, later, units, opts) {
