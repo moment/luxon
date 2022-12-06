@@ -6,8 +6,8 @@ function dayDiff(earlier, later) {
   return Math.floor(Duration.fromMillis(ms).as("days"));
 }
 
-function highOrderDiffs(earlier, later, units) {
-  const diffHeuristics = [
+function highOrderDiffs(cursor, later, units) {
+  const differs = [
     ["years", (a, b) => b.year - a.year],
     ["quarters", (a, b) => b.quarter - a.quarter + (b.year - a.year) * 4],
     ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
@@ -22,23 +22,26 @@ function highOrderDiffs(earlier, later, units) {
   ];
 
   const results = {};
+  const earlier = cursor;
   let lowestOrder, highWater;
 
-  for (const [unit, diffHeuristic] of diffHeuristics) {
+  for (const [unit, differ] of differs) {
     if (units.indexOf(unit) >= 0) {
       lowestOrder = unit;
 
-      results[unit] = diffHeuristic(earlier.plus(results), later);
-      // If the heuristic is an over-estimate, decrement it until the sum is less than the target date. The heurisitics rarely if ever create over-estimates, so this code is not typically exectued at all.
-      while (earlier.plus(results) > later) results[unit]--;
-      // Now that the result is definitely an underestimate, increment it until the sum exceeds the target date. Typically this loop runs exactly once, and may run twice in edge cases.
-      while ((highWater = earlier.plus(results)) <= later) results[unit]++;
-      // Finally decrement the result once to ensure a tight underestimate, and proceed to the next lower order unit.
-      results[unit]--;
+      results[unit] = differ(cursor, later);
+      highWater = earlier.plus(results);
+
+      if (highWater > later) {
+        results[unit]--;
+        cursor = earlier.plus(results);
+      } else {
+        cursor = highWater;
+      }
     }
   }
 
-  return [earlier.plus(results), results, highWater, lowestOrder];
+  return [cursor, results, highWater, lowestOrder];
 }
 
 export default function (earlier, later, units, opts) {
@@ -50,8 +53,14 @@ export default function (earlier, later, units, opts) {
     (u) => ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0
   );
 
-  if (lowerOrderUnits.length === 0 && highWater !== cursor) {
-    results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
+  if (lowerOrderUnits.length === 0) {
+    if (highWater < later) {
+      highWater = cursor.plus({ [lowestOrder]: 1 });
+    }
+
+    if (highWater !== cursor) {
+      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
+    }
   }
 
   const duration = Duration.fromObject(results, opts);
