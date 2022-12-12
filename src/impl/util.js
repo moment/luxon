@@ -5,6 +5,7 @@
 */
 
 import { InvalidArgumentError } from "../errors.js";
+import Settings from "../settings.js";
 
 /**
  * @private
@@ -186,7 +187,7 @@ export function weeksInWeekYear(weekYear) {
 export function untruncateYear(year) {
   if (year > 99) {
     return year;
-  } else return year > 60 ? 1900 + year : 2000 + year;
+  } else return year > Settings.twoDigitCutoffYear ? 1900 + year : 2000 + year;
 }
 
 // PARSING
@@ -269,6 +270,3 @@ export function formatOffset(offset, format) {
 export function timeObject(obj) {
   return pick(obj, ["hour", "minute", "second", "millisecond"]);
 }
-
-export const ianaRegex =
-  /[A-Za-z_+-]{1,256}(?::?\/[A-Za-z0-9_+-]{1,256}(?:\/[A-Za-z0-9_+-]{1,256})?)?/;

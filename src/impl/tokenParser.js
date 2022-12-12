@@ -233,7 +233,7 @@ const partTypeStyleToTokenVal = {
   },
 };
 
-function tokenForPart(part, locale, formatOpts) {
+function tokenForPart(part, formatOpts) {
   const { type, value } = part;
 
   if (type === "literal") {
@@ -435,5 +435,5 @@ export function formatOptsToTokens(formatOpts, locale) {
 
   const formatter = Formatter.create(locale, formatOpts);
   const parts = formatter.formatDateTimeParts(getDummyDateTime());
-  return parts.map((p) => tokenForPart(p, locale, formatOpts));
+  return parts.map((p) => tokenForPart(p, formatOpts));
 }

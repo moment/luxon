@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.1 (2022-11-28)
+
+* Add Settings.twoDigitCutoffYear
+
 # 3.1.0 (2022-10-31)
 
 * Add Duration.rescale
