@@ -415,10 +415,20 @@ test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
   expect(dt.reconfigure({ locale: "es" }).toLocaleString(DateTime.TIME_24_SIMPLE)).toBe("9:23");
 });
 
+test("DateTime#toLocaleString() accepts a zone even when the zone is set", () => {
+  expect(
+    dt.toLocaleString({
+      hour: "numeric",
+      minute: "numeric",
+      timeZoneName: "short",
+      timeZone: "America/Los_Angeles",
+    })
+  ).toBe("2:23 AM PDT");
+});
+
 //------
 // #resolvedLocaleOpts()
 //------
-
 test("DateTime#resolvedLocaleOpts returns a thing", () => {
   const res = DateTime.now().resolvedLocaleOptions();
 

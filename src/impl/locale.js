@@ -186,7 +186,7 @@ class PolyDateFormatter {
   constructor(dt, intl, opts) {
     this.opts = opts;
 
-    let z;
+    let z = undefined;
     if (dt.zone.isUniversal) {
       // UTC-8 or Etc/UTC-8 are not part of tzdata, only Etc/GMT+8 and the like.
       // That is why fixed-offset TZ is set to that unless it is:
@@ -222,9 +222,7 @@ class PolyDateFormatter {
     }
 
     const intlOpts = { ...this.opts };
-    if (z) {
-      intlOpts.timeZone = z;
-    }
+    intlOpts.timeZone = intlOpts.timeZone || z;
     this.dtf = getCachedDTF(intl, intlOpts);
   }
 
