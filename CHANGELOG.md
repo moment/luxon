@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.2.0 (2022-12-29)
+
+* Allow timeZone to be specified as an intl option
+* Fix for diff's handling of end-of-month when crossing leap years (#1340)
+* Add Interval.toLocaleString() (#1320)
+
 # 3.1.1 (2022-11-28)
 
 * Add Settings.twoDigitCutoffYear
