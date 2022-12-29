@@ -1100,7 +1100,7 @@ define(['exports'], (function (exports) { 'use strict';
   var PolyDateFormatter = /*#__PURE__*/function () {
     function PolyDateFormatter(dt, intl, opts) {
       this.opts = opts;
-      var z;
+      var z = undefined;
 
       if (dt.zone.isUniversal) {
         // UTC-8 or Etc/UTC-8 are not part of tzdata, only Etc/GMT+8 and the like.
@@ -1140,10 +1140,7 @@ define(['exports'], (function (exports) { 'use strict';
 
       var intlOpts = _extends({}, this.opts);
 
-      if (z) {
-        intlOpts.timeZone = z;
-      }
-
+      intlOpts.timeZone = intlOpts.timeZone || z;
       this.dtf = getCachedDTF(intl, intlOpts);
     }
 
@@ -2365,6 +2362,15 @@ define(['exports'], (function (exports) { 'use strict';
 
       var df = this.loc.dtFormatter(dt, _extends({}, this.opts, opts));
       return df.formatToParts();
+    };
+
+    _proto.formatInterval = function formatInterval(interval, opts) {
+      if (opts === void 0) {
+        opts = {};
+      }
+
+      var df = this.loc.dtFormatter(interval.start, _extends({}, this.opts, opts));
+      return df.dtf.formatRange(interval.start.toJSDate(), interval.end.toJSDate());
     };
 
     _proto.resolvedOptions = function resolvedOptions(dt, opts) {
@@ -4172,7 +4178,7 @@ define(['exports'], (function (exports) { 'use strict';
    * * **Interrogation** To analyze the Interval, use {@link Interval#count}, {@link Interval#length}, {@link Interval#hasSame}, {@link Interval#contains}, {@link Interval#isAfter}, or {@link Interval#isBefore}.
    * * **Transformation** To create other Intervals out of this one, use {@link Interval#set}, {@link Interval#splitAt}, {@link Interval#splitBy}, {@link Interval#divideEqually}, {@link Interval.merge}, {@link Interval.xor}, {@link Interval#union}, {@link Interval#intersection}, or {@link Interval#difference}.
    * * **Comparison** To compare this Interval to another one, use {@link Interval#equals}, {@link Interval#overlaps}, {@link Interval#abutsStart}, {@link Interval#abutsEnd}, {@link Interval#engulfs}
-   * * **Output** To convert the Interval into other representations, see {@link Interval#toString}, {@link Interval#toISO}, {@link Interval#toISODate}, {@link Interval#toISOTime}, {@link Interval#toFormat}, and {@link Interval#toDuration}.
+   * * **Output** To convert the Interval into other representations, see {@link Interval#toString}, {@link Interval#toLocaleString}, {@link Interval#toISO}, {@link Interval#toISODate}, {@link Interval#toISOTime}, {@link Interval#toFormat}, and {@link Interval#toDuration}.
    */
 
 
@@ -4724,6 +4730,37 @@ define(['exports'], (function (exports) { 'use strict';
       return "[" + this.s.toISO() + " \u2013 " + this.e.toISO() + ")";
     }
     /**
+     * Returns a localized string representing this Interval. Accepts the same options as the
+     * Intl.DateTimeFormat constructor and any presets defined by Luxon, such as
+     * {@link DateTime.DATE_FULL} or {@link DateTime.TIME_SIMPLE}. The exact behavior of this method
+     * is browser-specific, but in general it will return an appropriate representation of the
+     * Interval in the assigned locale. Defaults to the system's locale if no locale has been
+     * specified.
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+     * @param {Object} [formatOpts=DateTime.DATE_SHORT] - Either a DateTime preset or
+     * Intl.DateTimeFormat constructor options.
+     * @param {Object} opts - Options to override the configuration of the start DateTime.
+     * @example Interval.fromISO('2022-11-07T09:00Z/2022-11-08T09:00Z').toLocaleString(); //=> 11/7/2022 – 11/8/2022
+     * @example Interval.fromISO('2022-11-07T09:00Z/2022-11-08T09:00Z').toLocaleString(DateTime.DATE_FULL); //=> November 7 – 8, 2022
+     * @example Interval.fromISO('2022-11-07T09:00Z/2022-11-08T09:00Z').toLocaleString(DateTime.DATE_FULL, { locale: 'fr-FR' }); //=> 7–8 novembre 2022
+     * @example Interval.fromISO('2022-11-07T17:00Z/2022-11-07T19:00Z').toLocaleString(DateTime.TIME_SIMPLE); //=> 6:00 – 8:00 PM
+     * @example Interval.fromISO('2022-11-07T17:00Z/2022-11-07T19:00Z').toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }); //=> Mon, Nov 07, 6:00 – 8:00 p
+     * @return {string}
+     */
+    ;
+
+    _proto.toLocaleString = function toLocaleString(formatOpts, opts) {
+      if (formatOpts === void 0) {
+        formatOpts = DATE_SHORT;
+      }
+
+      if (opts === void 0) {
+        opts = {};
+      }
+
+      return this.isValid ? Formatter.create(this.s.loc.clone(opts), formatOpts).formatInterval(this) : INVALID$1;
+    }
+    /**
      * Returns an ISO 8601-compliant string representation of this Interval.
      * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
      * @param {Object} opts - The same options as {@link DateTime#toISO}
@@ -4761,10 +4798,14 @@ define(['exports'], (function (exports) { 'use strict';
       return this.s.toISOTime(opts) + "/" + this.e.toISOTime(opts);
     }
     /**
-     * Returns a string representation of this Interval formatted according to the specified format string.
-     * @param {string} dateFormat - the format string. This string formats the start and end time. See {@link DateTime#toFormat} for details.
-     * @param {Object} opts - options
-     * @param {string} [opts.separator =  ' – '] - a separator to place between the start and end representations
+     * Returns a string representation of this Interval formatted according to the specified format
+     * string. **You may not want this.** See {@link Interval#toLocaleString} for a more flexible
+     * formatting tool.
+     * @param {string} dateFormat - The format string. This string formats the start and end time.
+     * See {@link DateTime#toFormat} for details.
+     * @param {Object} opts - Options.
+     * @param {string} [opts.separator =  ' – '] - A separator to place between the start and end
+     * representations.
      * @return {string}
      */
     ;
@@ -5124,6 +5165,7 @@ define(['exports'], (function (exports) { 'use strict';
       return (days - days % 7) / 7;
     }], ["days", dayDiff]];
     var results = {};
+    var earlier = cursor;
     var lowestOrder, highWater;
 
     for (var _i = 0, _differs = differs; _i < _differs.length; _i++) {
@@ -5132,22 +5174,16 @@ define(['exports'], (function (exports) { 'use strict';
           differ = _differs$_i[1];
 
       if (units.indexOf(unit) >= 0) {
-        var _cursor$plus;
-
         lowestOrder = unit;
-        var delta = differ(cursor, later);
-        highWater = cursor.plus((_cursor$plus = {}, _cursor$plus[unit] = delta, _cursor$plus));
+        results[unit] = differ(cursor, later);
+        highWater = earlier.plus(results);
 
         if (highWater > later) {
-          var _cursor$plus2;
-
-          cursor = cursor.plus((_cursor$plus2 = {}, _cursor$plus2[unit] = delta - 1, _cursor$plus2));
-          delta -= 1;
+          results[unit]--;
+          cursor = earlier.plus(results);
         } else {
           cursor = highWater;
         }
-
-        results[unit] = delta;
       }
     }
 
@@ -5168,9 +5204,9 @@ define(['exports'], (function (exports) { 'use strict';
 
     if (lowerOrderUnits.length === 0) {
       if (highWater < later) {
-        var _cursor$plus3;
+        var _cursor$plus;
 
-        highWater = cursor.plus((_cursor$plus3 = {}, _cursor$plus3[lowestOrder] = 1, _cursor$plus3));
+        highWater = cursor.plus((_cursor$plus = {}, _cursor$plus[lowestOrder] = 1, _cursor$plus));
       }
 
       if (highWater !== cursor) {
@@ -5584,7 +5620,7 @@ define(['exports'], (function (exports) { 'use strict';
     }
   };
 
-  function tokenForPart(part, locale, formatOpts) {
+  function tokenForPart(part, formatOpts) {
     var type = part.type,
         value = part.value;
 
@@ -5838,7 +5874,7 @@ define(['exports'], (function (exports) { 'use strict';
     var formatter = Formatter.create(locale, formatOpts);
     var parts = formatter.formatDateTimeParts(getDummyDateTime());
     return parts.map(function (p) {
-      return tokenForPart(p, locale, formatOpts);
+      return tokenForPart(p, formatOpts);
     });
   }
 
@@ -7835,7 +7871,7 @@ define(['exports'], (function (exports) { 'use strict';
     }
     /**
      * Equality check
-     * Two DateTimes are equal iff they represent the same millisecond, have the same zone and location, and are both valid.
+     * Two DateTimes are equal if and only if they represent the same millisecond, have the same zone and location, and are both valid.
      * To compare just the millisecond values, use `+dt1 === +dt2`.
      * @param {DateTime} other - the other DateTime
      * @return {boolean}
@@ -8631,7 +8667,7 @@ define(['exports'], (function (exports) { 'use strict';
     }
   }
 
-  var VERSION = "3.1.1";
+  var VERSION = "3.2.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
