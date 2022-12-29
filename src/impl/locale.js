@@ -75,22 +75,26 @@ function parseLocaleString(localeStr) {
     return [localeStr];
   } else {
     let options;
+    let selectedStr;
     const smaller = localeStr.substring(0, uIndex);
     try {
       options = getCachedDTF(localeStr).resolvedOptions();
+      selectedStr = localeStr;
     } catch (e) {
       options = getCachedDTF(smaller).resolvedOptions();
+      selectedStr = smaller;
     }
 
     const { numberingSystem, calendar } = options;
-    // return the smaller one so that we can append the calendar and numbering overrides to it
-    return [smaller, numberingSystem, calendar];
+    return [selectedStr, numberingSystem, calendar];
   }
 }
 
 function intlConfigString(localeStr, numberingSystem, outputCalendar) {
   if (outputCalendar || numberingSystem) {
-    localeStr += "-u";
+    if (!localeStr.includes("-u-")) {
+      localeStr += "-u";
+    }
 
     if (outputCalendar) {
       localeStr += `-ca-${outputCalendar}`;
