@@ -811,3 +811,18 @@ test("DateTime.fromObject takes a undefined to mean {}", () => {
   const res = DateTime.fromObject();
   expect(res.year).toBe(new Date().getFullYear());
 });
+
+test("private language subtags don't break unicode subtags", () => {
+  const res = DateTime.fromObject(
+    {},
+    {
+      locale: "be-u-ca-coptic-nu-mong-x-twain",
+      numberingSystem: "thai",
+      outputCalendar: "islamic",
+    }
+  );
+
+  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+  expect(res.outputCalendar).toBe("islamic");
+  expect(res.numberingSystem).toBe("thai");
+});
