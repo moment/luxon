@@ -415,6 +415,12 @@ test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
   expect(dt.reconfigure({ locale: "es" }).toLocaleString(DateTime.TIME_24_SIMPLE)).toBe("9:23");
 });
 
+test("DateTime#toLocaleString() respects language tags", () => {
+  expect(dt.reconfigure({ locale: "en-US-u-hc-h23" }).toLocaleString(DateTime.TIME_SIMPLE)).toBe(
+    "09:23"
+  );
+});
+
 test("DateTime#toLocaleString() accepts a zone even when the zone is set", () => {
   expect(
     dt.toLocaleString({

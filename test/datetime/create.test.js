@@ -663,7 +663,7 @@ test("DateTime.fromObject accepts a locale", () => {
 
 test("DateTime.fromObject accepts a locale with calendar and numbering identifiers", () => {
   const res = DateTime.fromObject({}, { locale: "be-u-ca-coptic-nu-mong" });
-  expect(res.locale).toBe("be");
+  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
   expect(res.numberingSystem).toBe("mong");
 });
@@ -677,7 +677,7 @@ test("DateTime.fromObject accepts a locale string with weird junk in it", () => 
       }
     );
 
-    expect(res.locale).toBe("be");
+    expect(res.locale).toBe("be-u-ca-coptic-ca-islamic");
 
     // "coptic" is right, but some versions of Node 10 give "gregory"
     expect(res.outputCalendar === "gregory" || res.outputCalendar === "coptic").toBe(true);
@@ -695,7 +695,7 @@ test("DateTime.fromObject overrides the locale string with explicit settings", (
     }
   );
 
-  expect(res.locale).toBe("be");
+  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("islamic");
   expect(res.numberingSystem).toBe("thai");
 });
@@ -810,4 +810,19 @@ test("DateTime.fromHTTP is invalid when weekday is not consistent", () => {
 test("DateTime.fromObject takes a undefined to mean {}", () => {
   const res = DateTime.fromObject();
   expect(res.year).toBe(new Date().getFullYear());
+});
+
+test("private language subtags don't break unicode subtags", () => {
+  const res = DateTime.fromObject(
+    {},
+    {
+      locale: "be-u-ca-coptic-nu-mong-x-twain",
+      numberingSystem: "thai",
+      outputCalendar: "islamic",
+    }
+  );
+
+  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+  expect(res.outputCalendar).toBe("islamic");
+  expect(res.numberingSystem).toBe("thai");
 });

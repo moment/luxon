@@ -15,7 +15,7 @@ Here are some vague notes on Luxon's design philosophy:
 
 ## Building and testing
 
-Building and testing is done through npm scripts. The tests run in Node and require Node 10+ with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 10 installed with full-icu, you're good to go; just run npm scripts like `npm run test`. But you probably don't have that, so read on.
+Building and testing is done through npm scripts. The tests run in Node and require Node 18 with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 18 installed with full-icu, you're good to go; just run `scripts/test`. But you probably don't have that, so read on.
 
 ### OSX
 
