@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 3.2.1 | Documentation</title>
+  <title>luxon 2.5.1 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>3.2.1</code></div>
+          <div class='mb1'><code>2.5.1</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -128,18 +128,6 @@
                         href='#datetimeisdatetime'
                         class='regular pre-open'>
                         .isDateTime
-                      </a></li>
-                    
-                      <li><a
-                        href='#datetimeparseformatforopts'
-                        class='regular pre-open'>
-                        .parseFormatForOpts
-                      </a></li>
-                    
-                      <li><a
-                        href='#datetimeexpandformat'
-                        class='regular pre-open'>
-                        .expandFormat
                       </a></li>
                     
                       <li><a
@@ -926,21 +914,9 @@
                       </a></li>
                       
                       <li><a
-                        href='#durationrescale'
-                        class='regular pre-open'>
-                        #rescale
-                      </a></li>
-                      
-                      <li><a
                         href='#durationshiftto'
                         class='regular pre-open'>
                         #shiftTo
-                      </a></li>
-                      
-                      <li><a
-                        href='#durationshifttoall'
-                        class='regular pre-open'>
-                        #shiftToAll
                       </a></li>
                       
                       <li><a
@@ -1250,12 +1226,6 @@
                         href='#intervaltostring'
                         class='regular pre-open'>
                         #toString
-                      </a></li>
-                      
-                      <li><a
-                        href='#intervaltolocalestring'
-                        class='regular pre-open'>
-                        #toLocaleString
                       </a></li>
                       
                       <li><a
@@ -1871,18 +1841,6 @@
                       </a></li>
                     
                       <li><a
-                        href='#settingstwodigitcutoffyear'
-                        class='regular pre-open'>
-                        .twoDigitCutoffYear
-                      </a></li>
-                    
-                      <li><a
-                        href='#settingstwodigitcutoffyear'
-                        class='regular pre-open'>
-                        .twoDigitCutoffYear
-                      </a></li>
-                    
-                      <li><a
                         href='#settingsthrowoninvalid'
                         class='regular pre-open'>
                         .throwOnInvalid
@@ -1941,9 +1899,11 @@
 </ul>
 <p>Here is a brief overview of the most commonly used functionality it provides:</p>
 <ul>
-<li><strong>Creation</strong>: To create a DateTime from its components, use one of its factory class methods: <a href="#datetimelocal">DateTime.local</a>, <a href="#datetimeutc">DateTime.utc</a>, and (most flexibly) <a href="#datetimefromobject">DateTime.fromObject</a>. To create one from a standard string format, use <a href="#datetimefromiso">DateTime.fromISO</a>, <a href="#datetimefromhttp">DateTime.fromHTTP</a>, and <a href="#datetimefromrfc2822">DateTime.fromRFC2822</a>. To create one from a custom string format, use <a href="#datetimefromformat">DateTime.fromFormat</a>. To create one from a native JS date, use <a href="#datetimefromjsdate">DateTime.fromJSDate</a>.</li>
-<li><strong>Gregorian calendar and time</strong>: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through <a href="#datetimetoobject">DateTime#toObject</a>), use the <a href="#datetimeyear">DateTime#year</a>, <a href="#datetimemonth">DateTime#month</a>,
-<a href="#datetimeday">DateTime#day</a>, <a href="#datetimehour">DateTime#hour</a>, <a href="#datetimeminute">DateTime#minute</a>, <a href="#datetimesecond">DateTime#second</a>, <a href="#datetimemillisecond">DateTime#millisecond</a> accessors.</li>
+<li><strong>Creation</strong>: To create a DateTime from its components, use one of its factory class methods: <a href="DateTime#local">DateTime#local</a>, <a href="DateTime#utc">DateTime#utc</a>, and (most flexibly) <a href="DateTime#fromObject">DateTime#fromObject</a>. To create one from a standard string format, use <a href="DateTime#fromISO">DateTime#fromISO</a>, <a href="DateTime#fromHTTP">DateTime#fromHTTP</a>, and <a href="DateTime#fromRFC2822">DateTime#fromRFC2822</a>. To create one from a custom string format, use <a href="DateTime#fromFormat">DateTime#fromFormat</a>. To create one from a native JS date, use <a href="DateTime#fromJSDate">DateTime#fromJSDate</a>.</li>
+<li><strong>Gregorian calendar and time</strong>: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through <a href="#datetimetoobject">DateTime#toObject</a>), use the <a href="#datetimeyear">DateTime#year</a>, <a href="#datetimemonth">DateTime#month</a>,</li>
+</ul>
+<p><a href="#datetimeday">DateTime#day</a>, <a href="#datetimehour">DateTime#hour</a>, <a href="#datetimeminute">DateTime#minute</a>, <a href="#datetimesecond">DateTime#second</a>, <a href="#datetimemillisecond">DateTime#millisecond</a> accessors.</p>
+<ul>
 <li><strong>Week calendar</strong>: For ISO week calendar attributes, see the <a href="#datetimeweekyear">DateTime#weekYear</a>, <a href="#datetimeweeknumber">DateTime#weekNumber</a>, and <a href="#datetimeweekday">DateTime#weekday</a> accessors.</li>
 <li><strong>Configuration</strong> See the <a href="#datetimelocale">DateTime#locale</a> and <a href="#datetimenumberingsystem">DateTime#numberingSystem</a> accessors.</li>
 <li><strong>Transformation</strong>: To transform the DateTime into other DateTimes, use <a href="#datetimeset">DateTime#set</a>, <a href="#datetimereconfigure">DateTime#reconfigure</a>, <a href="#datetimesetzone">DateTime#setZone</a>, <a href="#datetimesetlocale">DateTime#setLocale</a>, <a href="DateTime.plus">DateTime.plus</a>, <a href="#datetimeminus">DateTime#minus</a>, <a href="#datetimeendof">DateTime#endOf</a>, <a href="#datetimestartof">DateTime#startOf</a>, <a href="#datetimetoutc">DateTime#toUTC</a>, and <a href="#datetimetolocal">DateTime#toLocal</a>.</li>
@@ -2038,7 +1998,7 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//~&gt; now in the ISO format</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toISO() <span class="hljs-comment">//~&gt; now in the ISO format</span></pre>
     
   
 
@@ -2176,34 +2136,34 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>()                                  <span class="hljs-comment">//~&gt; now</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local()                                  <span class="hljs-comment">//~&gt; now</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>({ <span class="hljs-attr">zone</span>: <span class="hljs-string">&quot;America/New_York&quot;</span> })      <span class="hljs-comment">//~&gt; now, in US east coast time</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local({ <span class="hljs-attr">zone</span>: <span class="hljs-string">&quot;America/New_York&quot;</span> })      <span class="hljs-comment">//~&gt; now, in US east coast time</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>)                              <span class="hljs-comment">//~&gt; 2017-01-01T00:00:00</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>)                              <span class="hljs-comment">//~&gt; 2017-01-01T00:00:00</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>)                           <span class="hljs-comment">//~&gt; 2017-03-01T00:00:00</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>)                           <span class="hljs-comment">//~&gt; 2017-03-01T00:00:00</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> })     <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00, with a French locale</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> })     <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00, with a French locale</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>)                    <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>)                    <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&quot;utc&quot;</span> })   <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00, in UTC</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&quot;utc&quot;</span> })   <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00, in UTC</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>)                <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>)                <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>)            <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>)            <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>, <span class="hljs-number">765</span>)       <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10.765</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>, <span class="hljs-number">765</span>)       <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10.765</span></pre>
     
   
 
@@ -2393,31 +2353,31 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>()                                              <span class="hljs-comment">//~&gt; now</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc()                                              <span class="hljs-comment">//~&gt; now</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>)                                          <span class="hljs-comment">//~&gt; 2017-01-01T00:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>)                                          <span class="hljs-comment">//~&gt; 2017-01-01T00:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>)                                       <span class="hljs-comment">//~&gt; 2017-03-01T00:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>)                                       <span class="hljs-comment">//~&gt; 2017-03-01T00:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>)                                   <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>)                                   <span class="hljs-comment">//~&gt; 2017-03-12T00:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>)                                <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>)                                <span class="hljs-comment">//~&gt; 2017-03-12T05:00:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>)                            <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>)                            <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> })          <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z with a French locale</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> })          <span class="hljs-comment">//~&gt; 2017-03-12T05:45:00Z with a French locale</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>)                        <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10Z</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>)                        <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10Z</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>, <span class="hljs-number">765</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10.765Z with a French locale</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2017</span>, <span class="hljs-number">3</span>, <span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>, <span class="hljs-number">765</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//~&gt; 2017-03-12T05:45:10.765Z with a French locale</span></pre>
     
   
 
@@ -3049,25 +3009,25 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">year</span>: <span class="hljs-number">1982</span>, <span class="hljs-attr">month</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">day</span>: <span class="hljs-number">25</span>}).<span class="hljs-title function_">toISODate</span>() <span class="hljs-comment">//=&gt; &#x27;1982-05-25&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">year</span>: <span class="hljs-number">1982</span>, <span class="hljs-attr">month</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">day</span>: <span class="hljs-number">25</span>}).toISODate() <span class="hljs-comment">//=&gt; &#x27;1982-05-25&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">year</span>: <span class="hljs-number">1982</span> }).<span class="hljs-title function_">toISODate</span>() <span class="hljs-comment">//=&gt; &#x27;1982-01-01&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">year</span>: <span class="hljs-number">1982</span> }).toISODate() <span class="hljs-comment">//=&gt; &#x27;1982-01-01&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }) <span class="hljs-comment">//~&gt; today at 10:26:06</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }) <span class="hljs-comment">//~&gt; today at 10:26:06</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;utc&#x27;</span> }),</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;utc&#x27;</span> }),</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;local&#x27;</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;local&#x27;</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;America/New_York&#x27;</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">hour</span>: <span class="hljs-number">10</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">26</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">6</span> }, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;America/New_York&#x27;</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">weekYear</span>: <span class="hljs-number">2016</span>, <span class="hljs-attr">weekNumber</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">weekday</span>: <span class="hljs-number">3</span> }).<span class="hljs-title function_">toISODate</span>() <span class="hljs-comment">//=&gt; &#x27;2016-01-13&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromObject({ <span class="hljs-attr">weekYear</span>: <span class="hljs-number">2016</span>, <span class="hljs-attr">weekNumber</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">weekday</span>: <span class="hljs-number">3</span> }).toISODate() <span class="hljs-comment">//=&gt; &#x27;2016-01-13&#x27;</span></pre>
     
   
 
@@ -3220,19 +3180,19 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromISO(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123+06:00&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromISO(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123+06:00&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123+06:00&#x27;</span>, {<span class="hljs-attr">setZone</span>: <span class="hljs-literal">true</span>})</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromISO(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123+06:00&#x27;</span>, {<span class="hljs-attr">setZone</span>: <span class="hljs-literal">true</span>})</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123&#x27;</span>, {<span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;utc&#x27;</span>})</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromISO(<span class="hljs-string">&#x27;2016-05-25T09:08:34.123&#x27;</span>, {<span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;utc&#x27;</span>})</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2016-W05-4&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromISO(<span class="hljs-string">&#x27;2016-W05-4&#x27;</span>)</pre>
     
   
 
@@ -3385,13 +3345,13 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromRFC2822</span>(<span class="hljs-string">&#x27;25 Nov 2016 13:23:12 GMT&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromRFC2822(<span class="hljs-string">&#x27;25 Nov 2016 13:23:12 GMT&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromRFC2822</span>(<span class="hljs-string">&#x27;Fri, 25 Nov 2016 13:23:12 +0600&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromRFC2822(<span class="hljs-string">&#x27;Fri, 25 Nov 2016 13:23:12 +0600&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromRFC2822</span>(<span class="hljs-string">&#x27;25 Nov 2016 13:23 Z&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromRFC2822(<span class="hljs-string">&#x27;25 Nov 2016 13:23 Z&#x27;</span>)</pre>
     
   
 
@@ -3554,13 +3514,13 @@
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromHTTP</span>(<span class="hljs-string">&#x27;Sun, 06 Nov 1994 08:49:37 GMT&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromHTTP(<span class="hljs-string">&#x27;Sun, 06 Nov 1994 08:49:37 GMT&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromHTTP</span>(<span class="hljs-string">&#x27;Sunday, 06-Nov-94 08:49:37 GMT&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromHTTP(<span class="hljs-string">&#x27;Sunday, 06-Nov-94 08:49:37 GMT&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromHTTP</span>(<span class="hljs-string">&#x27;Sun Nov  6 08:49:37 1994&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromHTTP(<span class="hljs-string">&#x27;Sun Nov  6 08:49:37 1994&#x27;</span>)</pre>
     
   
 
@@ -3950,28 +3910,28 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;2017-05-15&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;2017-05-15&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;2017-05-15 09:12:34&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;2017-05-15 09:12:34&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342+06:00&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342+06:00&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342 America/Los_Angeles&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342 America/Los_Angeles&#x27;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342 America/Los_Angeles&#x27;</span>, { <span class="hljs-attr">setZone</span>: <span class="hljs-literal">true</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342 America/Los_Angeles&#x27;</span>, { <span class="hljs-attr">setZone</span>: <span class="hljs-literal">true</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342&#x27;</span>, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;America/Los_Angeles&#x27;</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;2017-05-15 09:12:34.342&#x27;</span>, { <span class="hljs-attr">zone</span>: <span class="hljs-string">&#x27;America/Los_Angeles&#x27;</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromSQL</span>(<span class="hljs-string">&#x27;09:12:34.342&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.fromSQL(<span class="hljs-string">&#x27;09:12:34.342&#x27;</span>)</pre>
     
   
 
@@ -4001,7 +3961,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
 
   <p>Create an invalid DateTime.</p>
 
-    <div class='pre p1 fill-light mt0'>invalid(reason: <a href="#datetime">DateTime</a>, explanation: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="#datetime">DateTime</a></div>
+    <div class='pre p1 fill-light mt0'>invalid(reason: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, explanation: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="#datetime">DateTime</a></div>
   
   
 
@@ -4018,7 +3978,7 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>reason</span> <code class='quiet'>(<a href="#datetime">DateTime</a>)</code>
+            <span class='code bold'>reason</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
 	    simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
 
           </div>
@@ -4113,163 +4073,6 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='datetimeparseformatforopts'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>parseFormatForOpts(formatOpts, localeOpts)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Produce the format string for a set of options</p>
-
-    <div class='pre p1 fill-light mt0'>parseFormatForOpts(formatOpts: any, localeOpts: any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>formatOpts</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>localeOpts</span> <code class='quiet'>(any
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='datetimeexpandformat'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>expandFormat(fmt, localeOpts)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Produce the the fully expanded format token for the locale
-Does NOT quote characters, so quoted tokens will not round trip correctly</p>
-
-    <div class='pre p1 fill-light mt0'>expandFormat(fmt: any, localeOpts: any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>fmt</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>localeOpts</span> <code class='quiet'>(any
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
         
       
     
@@ -5859,10 +5662,10 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>).<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;month&#x27;</span>); <span class="hljs-comment">//=&gt; 7</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>).get(<span class="hljs-string">&#x27;month&#x27;</span>); <span class="hljs-comment">//=&gt; 7</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>).<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;day&#x27;</span>); <span class="hljs-comment">//=&gt; 4</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>).get(<span class="hljs-string">&#x27;day&#x27;</span>); <span class="hljs-comment">//=&gt; 4</span></pre>
     
   
 
@@ -6358,7 +6161,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-property">year</span> <span class="hljs-comment">//=&gt; 2017</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).year <span class="hljs-comment">//=&gt; 2017</span></pre>
     
   
 
@@ -6418,7 +6221,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-property">quarter</span> <span class="hljs-comment">//=&gt; 2</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).quarter <span class="hljs-comment">//=&gt; 2</span></pre>
     
   
 
@@ -6478,7 +6281,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-property">month</span> <span class="hljs-comment">//=&gt; 5</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).month <span class="hljs-comment">//=&gt; 5</span></pre>
     
   
 
@@ -6538,7 +6341,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-property">day</span> <span class="hljs-comment">//=&gt; 25</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).day <span class="hljs-comment">//=&gt; 25</span></pre>
     
   
 
@@ -6598,7 +6401,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>).<span class="hljs-property">hour</span> <span class="hljs-comment">//=&gt; 9</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>).hour <span class="hljs-comment">//=&gt; 9</span></pre>
     
   
 
@@ -6658,7 +6461,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>, <span class="hljs-number">30</span>).<span class="hljs-property">minute</span> <span class="hljs-comment">//=&gt; 30</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>, <span class="hljs-number">30</span>).minute <span class="hljs-comment">//=&gt; 30</span></pre>
     
   
 
@@ -6718,7 +6521,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>, <span class="hljs-number">30</span>, <span class="hljs-number">52</span>).<span class="hljs-property">second</span> <span class="hljs-comment">//=&gt; 52</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>, <span class="hljs-number">30</span>, <span class="hljs-number">52</span>).second <span class="hljs-comment">//=&gt; 52</span></pre>
     
   
 
@@ -6778,7 +6581,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>, <span class="hljs-number">30</span>, <span class="hljs-number">52</span>, <span class="hljs-number">654</span>).<span class="hljs-property">millisecond</span> <span class="hljs-comment">//=&gt; 654</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">9</span>, <span class="hljs-number">30</span>, <span class="hljs-number">52</span>, <span class="hljs-number">654</span>).millisecond <span class="hljs-comment">//=&gt; 654</span></pre>
     
   
 
@@ -6846,7 +6649,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">12</span>, <span class="hljs-number">31</span>).<span class="hljs-property">weekYear</span> <span class="hljs-comment">//=&gt; 2015</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">12</span>, <span class="hljs-number">31</span>).weekYear <span class="hljs-comment">//=&gt; 2015</span></pre>
     
   
 
@@ -6914,7 +6717,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-property">weekNumber</span> <span class="hljs-comment">//=&gt; 21</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).weekNumber <span class="hljs-comment">//=&gt; 21</span></pre>
     
   
 
@@ -6983,7 +6786,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">11</span>, <span class="hljs-number">31</span>).<span class="hljs-property">weekday</span> <span class="hljs-comment">//=&gt; 4</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">11</span>, <span class="hljs-number">31</span>).weekday <span class="hljs-comment">//=&gt; 4</span></pre>
     
   
 
@@ -7043,7 +6846,7 @@ Does NOT quote characters, so quoted tokens will not round trip correctly</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-property">ordinal</span> <span class="hljs-comment">//=&gt; 145</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).ordinal <span class="hljs-comment">//=&gt; 145</span></pre>
     
   
 
@@ -7104,7 +6907,7 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).<span class="hljs-property">monthShort</span> <span class="hljs-comment">//=&gt; Oct</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).monthShort <span class="hljs-comment">//=&gt; Oct</span></pre>
     
   
 
@@ -7165,7 +6968,7 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).<span class="hljs-property">monthLong</span> <span class="hljs-comment">//=&gt; October</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).monthLong <span class="hljs-comment">//=&gt; October</span></pre>
     
   
 
@@ -7226,7 +7029,7 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).<span class="hljs-property">weekdayShort</span> <span class="hljs-comment">//=&gt; Mon</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).weekdayShort <span class="hljs-comment">//=&gt; Mon</span></pre>
     
   
 
@@ -7287,7 +7090,7 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).<span class="hljs-property">weekdayLong</span> <span class="hljs-comment">//=&gt; Monday</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">10</span>, <span class="hljs-number">30</span>).weekdayLong <span class="hljs-comment">//=&gt; Monday</span></pre>
     
   
 
@@ -7347,10 +7150,10 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-property">offset</span> <span class="hljs-comment">//=&gt; -240</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().offset <span class="hljs-comment">//=&gt; -240</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-property">offset</span> <span class="hljs-comment">//=&gt; 0</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc().offset <span class="hljs-comment">//=&gt; 0</span></pre>
     
   
 
@@ -7628,10 +7431,10 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2016</span>).<span class="hljs-property">isInLeapYear</span> <span class="hljs-comment">//=&gt; true</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2016</span>).isInLeapYear <span class="hljs-comment">//=&gt; true</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2013</span>).<span class="hljs-property">isInLeapYear</span> <span class="hljs-comment">//=&gt; false</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2013</span>).isInLeapYear <span class="hljs-comment">//=&gt; false</span></pre>
     
   
 
@@ -7691,10 +7494,10 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2016</span>, <span class="hljs-number">2</span>).<span class="hljs-property">daysInMonth</span> <span class="hljs-comment">//=&gt; 29</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2016</span>, <span class="hljs-number">2</span>).daysInMonth <span class="hljs-comment">//=&gt; 29</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2016</span>, <span class="hljs-number">3</span>).<span class="hljs-property">daysInMonth</span> <span class="hljs-comment">//=&gt; 31</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2016</span>, <span class="hljs-number">3</span>).daysInMonth <span class="hljs-comment">//=&gt; 31</span></pre>
     
   
 
@@ -7754,10 +7557,10 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2016</span>).<span class="hljs-property">daysInYear</span> <span class="hljs-comment">//=&gt; 366</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2016</span>).daysInYear <span class="hljs-comment">//=&gt; 366</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2013</span>).<span class="hljs-property">daysInYear</span> <span class="hljs-comment">//=&gt; 365</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2013</span>).daysInYear <span class="hljs-comment">//=&gt; 365</span></pre>
     
   
 
@@ -7825,10 +7628,10 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2004</span>).<span class="hljs-property">weeksInWeekYear</span> <span class="hljs-comment">//=&gt; 53</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2004</span>).weeksInWeekYear <span class="hljs-comment">//=&gt; 53</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2013</span>).<span class="hljs-property">weeksInWeekYear</span> <span class="hljs-comment">//=&gt; 52</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2013</span>).weeksInWeekYear <span class="hljs-comment">//=&gt; 52</span></pre>
     
   
 
@@ -8278,7 +8081,7 @@ This is useful in understanding the behavior of formatting methods</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">reconfigure</span>({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-GB&#x27;</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).reconfigure({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-GB&#x27;</span> })</pre>
     
   
 
@@ -8354,7 +8157,7 @@ Just a convenient alias for reconfigure({ locale })</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">setLocale</span>(<span class="hljs-string">&#x27;en-GB&#x27;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2017</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).setLocale(<span class="hljs-string">&#x27;en-GB&#x27;</span>)</pre>
     
   
 
@@ -8431,16 +8234,16 @@ You can only set units with this method; for "setting" metadata, see <a href="#d
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'>dt.<span class="hljs-title function_">set</span>({ <span class="hljs-attr">year</span>: <span class="hljs-number">2017</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>dt.set({ <span class="hljs-attr">year</span>: <span class="hljs-number">2017</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>dt.<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">8</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">30</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>dt.set({ <span class="hljs-attr">hour</span>: <span class="hljs-number">8</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">30</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>dt.<span class="hljs-title function_">set</span>({ <span class="hljs-attr">weekday</span>: <span class="hljs-number">5</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>dt.set({ <span class="hljs-attr">weekday</span>: <span class="hljs-number">5</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>dt.<span class="hljs-title function_">set</span>({ <span class="hljs-attr">year</span>: <span class="hljs-number">2005</span>, <span class="hljs-attr">ordinal</span>: <span class="hljs-number">234</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>dt.set({ <span class="hljs-attr">year</span>: <span class="hljs-number">2005</span>, <span class="hljs-attr">ordinal</span>: <span class="hljs-number">234</span> })</pre>
     
   
 
@@ -8517,22 +8320,22 @@ You can only set units with this method; for "setting" metadata, see <a href="#d
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>(<span class="hljs-number">123</span>) <span class="hljs-comment">//~&gt; in 123 milliseconds</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus(<span class="hljs-number">123</span>) <span class="hljs-comment">//~&gt; in 123 milliseconds</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">minutes</span>: <span class="hljs-number">15</span> }) <span class="hljs-comment">//~&gt; in 15 minutes</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">minutes</span>: <span class="hljs-number">15</span> }) <span class="hljs-comment">//~&gt; in 15 minutes</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }) <span class="hljs-comment">//~&gt; this time tomorrow</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }) <span class="hljs-comment">//~&gt; this time tomorrow</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">days</span>: -<span class="hljs-number">1</span> }) <span class="hljs-comment">//~&gt; this time yesterday</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">days</span>: -<span class="hljs-number">1</span> }) <span class="hljs-comment">//~&gt; this time yesterday</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">13</span> }) <span class="hljs-comment">//~&gt; in 3 hr, 13 min</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">hours</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">13</span> }) <span class="hljs-comment">//~&gt; in 3 hr, 13 min</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>(<span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">13</span> })) <span class="hljs-comment">//~&gt; in 3 hr, 13 min</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus(Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">13</span> })) <span class="hljs-comment">//~&gt; in 3 hr, 13 min</span></pre>
     
   
 
@@ -8679,19 +8482,19 @@ See <a href="#datetimeplus">DateTime#plus</a></p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).<span class="hljs-title function_">startOf</span>(<span class="hljs-string">&#x27;month&#x27;</span>).<span class="hljs-title function_">toISODate</span>(); <span class="hljs-comment">//=&gt; &#x27;2014-03-01&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).startOf(<span class="hljs-string">&#x27;month&#x27;</span>).toISODate(); <span class="hljs-comment">//=&gt; &#x27;2014-03-01&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).<span class="hljs-title function_">startOf</span>(<span class="hljs-string">&#x27;year&#x27;</span>).<span class="hljs-title function_">toISODate</span>(); <span class="hljs-comment">//=&gt; &#x27;2014-01-01&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).startOf(<span class="hljs-string">&#x27;year&#x27;</span>).toISODate(); <span class="hljs-comment">//=&gt; &#x27;2014-01-01&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).<span class="hljs-title function_">startOf</span>(<span class="hljs-string">&#x27;week&#x27;</span>).<span class="hljs-title function_">toISODate</span>(); <span class="hljs-comment">//=&gt; &#x27;2014-03-03&#x27;, weeks always start on Mondays</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).startOf(<span class="hljs-string">&#x27;week&#x27;</span>).toISODate(); <span class="hljs-comment">//=&gt; &#x27;2014-03-03&#x27;, weeks always start on Mondays</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).<span class="hljs-title function_">startOf</span>(<span class="hljs-string">&#x27;day&#x27;</span>).<span class="hljs-title function_">toISOTime</span>(); <span class="hljs-comment">//=&gt; &#x27;00:00.000-05:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).startOf(<span class="hljs-string">&#x27;day&#x27;</span>).toISOTime(); <span class="hljs-comment">//=&gt; &#x27;00:00.000-05:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).<span class="hljs-title function_">startOf</span>(<span class="hljs-string">&#x27;hour&#x27;</span>).<span class="hljs-title function_">toISOTime</span>(); <span class="hljs-comment">//=&gt; &#x27;05:00:00.000-05:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).startOf(<span class="hljs-string">&#x27;hour&#x27;</span>).toISOTime(); <span class="hljs-comment">//=&gt; &#x27;05:00:00.000-05:00&#x27;</span></pre>
     
   
 
@@ -8767,19 +8570,19 @@ See <a href="#datetimeplus">DateTime#plus</a></p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).<span class="hljs-title function_">endOf</span>(<span class="hljs-string">&#x27;month&#x27;</span>).<span class="hljs-title function_">toISO</span>(); <span class="hljs-comment">//=&gt; &#x27;2014-03-31T23:59:59.999-05:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).endOf(<span class="hljs-string">&#x27;month&#x27;</span>).toISO(); <span class="hljs-comment">//=&gt; &#x27;2014-03-31T23:59:59.999-05:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).<span class="hljs-title function_">endOf</span>(<span class="hljs-string">&#x27;year&#x27;</span>).<span class="hljs-title function_">toISO</span>(); <span class="hljs-comment">//=&gt; &#x27;2014-12-31T23:59:59.999-05:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).endOf(<span class="hljs-string">&#x27;year&#x27;</span>).toISO(); <span class="hljs-comment">//=&gt; &#x27;2014-12-31T23:59:59.999-05:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).<span class="hljs-title function_">endOf</span>(<span class="hljs-string">&#x27;week&#x27;</span>).<span class="hljs-title function_">toISO</span>(); <span class="hljs-comment">// =&gt; &#x27;2014-03-09T23:59:59.999-05:00&#x27;, weeks start on Mondays</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>).endOf(<span class="hljs-string">&#x27;week&#x27;</span>).toISO(); <span class="hljs-comment">// =&gt; &#x27;2014-03-09T23:59:59.999-05:00&#x27;, weeks start on Mondays</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).<span class="hljs-title function_">endOf</span>(<span class="hljs-string">&#x27;day&#x27;</span>).<span class="hljs-title function_">toISO</span>(); <span class="hljs-comment">//=&gt; &#x27;2014-03-03T23:59:59.999-05:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).endOf(<span class="hljs-string">&#x27;day&#x27;</span>).toISO(); <span class="hljs-comment">//=&gt; &#x27;2014-03-03T23:59:59.999-05:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).<span class="hljs-title function_">endOf</span>(<span class="hljs-string">&#x27;hour&#x27;</span>).<span class="hljs-title function_">toISO</span>(); <span class="hljs-comment">//=&gt; &#x27;2014-03-03T05:59:59.999-05:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">30</span>).endOf(<span class="hljs-string">&#x27;hour&#x27;</span>).toISO(); <span class="hljs-comment">//=&gt; &#x27;2014-03-03T05:59:59.999-05:00&#x27;</span></pre>
     
   
 
@@ -8867,16 +8670,16 @@ Defaults to en-US if no locale has been specified, regardless of the system's lo
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&#x27;yyyy LLL dd&#x27;</span>) <span class="hljs-comment">//=&gt; &#x27;2017 Apr 22&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toFormat(<span class="hljs-string">&#x27;yyyy LLL dd&#x27;</span>) <span class="hljs-comment">//=&gt; &#x27;2017 Apr 22&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">setLocale</span>(<span class="hljs-string">&#x27;fr&#x27;</span>).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&#x27;yyyy LLL dd&#x27;</span>) <span class="hljs-comment">//=&gt; &#x27;2017 avr. 22&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().setLocale(<span class="hljs-string">&#x27;fr&#x27;</span>).toFormat(<span class="hljs-string">&#x27;yyyy LLL dd&#x27;</span>) <span class="hljs-comment">//=&gt; &#x27;2017 avr. 22&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&#x27;yyyy LLL dd&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//=&gt; &#x27;2017 avr. 22&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toFormat(<span class="hljs-string">&#x27;yyyy LLL dd&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//=&gt; &#x27;2017 avr. 22&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;HH &#x27;hours and&#x27; mm &#x27;minutes&#x27;&quot;</span>) <span class="hljs-comment">//=&gt; &#x27;20 hours and 55 minutes&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toFormat(<span class="hljs-string">&quot;HH &#x27;hours and&#x27; mm &#x27;minutes&#x27;&quot;</span>) <span class="hljs-comment">//=&gt; &#x27;20 hours and 55 minutes&#x27;</span></pre>
     
   
 
@@ -8974,31 +8777,31 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>(); <span class="hljs-comment">//=&gt; 4/20/2017</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString(); <span class="hljs-comment">//=&gt; 4/20/2017</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">setLocale</span>(<span class="hljs-string">&#x27;en-gb&#x27;</span>).<span class="hljs-title function_">toLocaleString</span>(); <span class="hljs-comment">//=&gt; &#x27;20/04/2017&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().setLocale(<span class="hljs-string">&#x27;en-gb&#x27;</span>).toLocaleString(); <span class="hljs-comment">//=&gt; &#x27;20/04/2017&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-title class_">DateTime</span>.<span class="hljs-property">DATE_FULL</span>); <span class="hljs-comment">//=&gt; &#x27;April 20, 2017&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-gb&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;20/04/2017&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-title class_">DateTime</span>.<span class="hljs-property">DATE_FULL</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;28 août 2022&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString(DateTime.DATE_FULL); <span class="hljs-comment">//=&gt; &#x27;April 20, 2017&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-title class_">DateTime</span>.<span class="hljs-property">TIME_SIMPLE</span>); <span class="hljs-comment">//=&gt; &#x27;11:32 AM&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString(DateTime.TIME_SIMPLE); <span class="hljs-comment">//=&gt; &#x27;11:32 AM&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-title class_">DateTime</span>.<span class="hljs-property">DATETIME_SHORT</span>); <span class="hljs-comment">//=&gt; &#x27;4/20/2017, 11:32 AM&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString(DateTime.DATETIME_SHORT); <span class="hljs-comment">//=&gt; &#x27;4/20/2017, 11:32 AM&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>({ <span class="hljs-attr">weekday</span>: <span class="hljs-string">&#x27;long&#x27;</span>, <span class="hljs-attr">month</span>: <span class="hljs-string">&#x27;long&#x27;</span>, <span class="hljs-attr">day</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;Thursday, April 20&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString({ <span class="hljs-attr">weekday</span>: <span class="hljs-string">&#x27;long&#x27;</span>, <span class="hljs-attr">month</span>: <span class="hljs-string">&#x27;long&#x27;</span>, <span class="hljs-attr">day</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;Thursday, April 20&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>({ <span class="hljs-attr">weekday</span>: <span class="hljs-string">&#x27;short&#x27;</span>, <span class="hljs-attr">month</span>: <span class="hljs-string">&#x27;short&#x27;</span>, <span class="hljs-attr">day</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">hour</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">minute</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;Thu, Apr 20, 11:27 AM&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString({ <span class="hljs-attr">weekday</span>: <span class="hljs-string">&#x27;short&#x27;</span>, <span class="hljs-attr">month</span>: <span class="hljs-string">&#x27;short&#x27;</span>, <span class="hljs-attr">day</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">hour</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">minute</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;Thu, Apr 20, 11:27 AM&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleString</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">minute</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">hourCycle</span>: <span class="hljs-string">&#x27;h23&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;11:32&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleString({ <span class="hljs-attr">hour</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">minute</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">hourCycle</span>: <span class="hljs-string">&#x27;h23&#x27;</span> }); <span class="hljs-comment">//=&gt; &#x27;11:32&#x27;</span></pre>
     
   
 
@@ -9079,7 +8882,7 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toLocaleParts</span>(); <span class="hljs-comment">//=&gt; [</span>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toLocaleParts(); <span class="hljs-comment">//=&gt; [</span>
                                   <span class="hljs-comment">//=&gt;   { type: &#x27;day&#x27;, value: &#x27;25&#x27; },</span>
                                   <span class="hljs-comment">//=&gt;   { type: &#x27;literal&#x27;, value: &#x27;/&#x27; },</span>
                                   <span class="hljs-comment">//=&gt;   { type: &#x27;month&#x27;, value: &#x27;05&#x27; },</span>
@@ -9198,7 +9001,7 @@ Defaults to the system's locale if no locale has been specified</p>
                 <tr>
   <td class='break-word'><span class='code bold'>opts.extendedZone</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
   
-    (default <code>false</code>)
+    (default <code>true</code>)
   </td>
   <td class='break-word'><span>add the time zone format extension
 </span></td>
@@ -9233,16 +9036,16 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">1983</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//=&gt; &#x27;1982-05-25T00:00:00.000Z&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">1983</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).toISO() <span class="hljs-comment">//=&gt; &#x27;1982-05-25T00:00:00.000Z&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//=&gt; &#x27;2017-04-22T20:47:05.335-04:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toISO() <span class="hljs-comment">//=&gt; &#x27;2017-04-22T20:47:05.335-04:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toISO</span>({ <span class="hljs-attr">includeOffset</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;2017-04-22T20:47:05.335&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toISO({ <span class="hljs-attr">includeOffset</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;2017-04-22T20:47:05.335&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toISO</span>({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;20170422T204705.335-0400&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toISO({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;20170422T204705.335-0400&#x27;</span></pre>
     
   
 
@@ -9346,10 +9149,10 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">toISODate</span>() <span class="hljs-comment">//=&gt; &#x27;1982-05-25&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).toISODate() <span class="hljs-comment">//=&gt; &#x27;1982-05-25&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">toISODate</span>({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;19820525&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).toISODate({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;19820525&#x27;</span></pre>
     
   
 
@@ -9411,7 +9214,7 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">toISOWeekDate</span>() <span class="hljs-comment">//=&gt; &#x27;1982-W21-2&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).toISOWeekDate() <span class="hljs-comment">//=&gt; &#x27;1982-W21-2&#x27;</span></pre>
     
   
 
@@ -9572,16 +9375,16 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span> }).<span class="hljs-title function_">toISOTime</span>() <span class="hljs-comment">//=&gt; &#x27;07:34:19.361Z&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc().set({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span> }).toISOTime() <span class="hljs-comment">//=&gt; &#x27;07:34:19.361Z&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">milliseconds</span>: <span class="hljs-number">0</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">suppressSeconds</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;07:34Z&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc().set({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">milliseconds</span>: <span class="hljs-number">0</span> }).toISOTime({ <span class="hljs-attr">suppressSeconds</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;07:34Z&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;073419.361Z&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc().set({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span> }).toISOTime({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;073419.361Z&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">includePrefix</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;T07:34:19.361Z&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc().set({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span> }).toISOTime({ <span class="hljs-attr">includePrefix</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;T07:34:19.361Z&#x27;</span></pre>
     
   
 
@@ -9643,10 +9446,10 @@ Defaults to the system's locale if no locale has been specified</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toRFC2822</span>() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 00:00:00 +0000&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toRFC2822() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 00:00:00 +0000&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toRFC2822</span>() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 00:00:00 -0400&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toRFC2822() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 00:00:00 -0400&#x27;</span></pre>
     
   
 
@@ -9717,10 +9520,10 @@ Specifically, the string conforms to RFC 1123.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toHTTP</span>() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 00:00:00 GMT&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toHTTP() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 00:00:00 GMT&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>, <span class="hljs-number">19</span>).<span class="hljs-title function_">toHTTP</span>() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 19:00:00 GMT&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>, <span class="hljs-number">19</span>).toHTTP() <span class="hljs-comment">//=&gt; &#x27;Sun, 13 Jul 2014 19:00:00 GMT&#x27;</span></pre>
     
   
 
@@ -9782,7 +9585,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toSQLDate</span>() <span class="hljs-comment">//=&gt; &#x27;2014-07-13&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toSQLDate() <span class="hljs-comment">//=&gt; &#x27;2014-07-13&#x27;</span></pre>
     
   
 
@@ -9908,16 +9711,16 @@ Specifically, the string conforms to RFC 1123.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-title function_">toSQL</span>() <span class="hljs-comment">//=&gt; &#x27;05:15:16.345&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc().toSQL() <span class="hljs-comment">//=&gt; &#x27;05:15:16.345&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toSQL</span>() <span class="hljs-comment">//=&gt; &#x27;05:15:16.345 -04:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toSQL() <span class="hljs-comment">//=&gt; &#x27;05:15:16.345 -04:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toSQL</span>({ <span class="hljs-attr">includeOffset</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;05:15:16.345&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toSQL({ <span class="hljs-attr">includeOffset</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;05:15:16.345&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toSQL</span>({ <span class="hljs-attr">includeZone</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;05:15:16.345 America/New_York&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toSQL({ <span class="hljs-attr">includeZone</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;05:15:16.345 America/New_York&#x27;</span></pre>
     
   
 
@@ -10043,16 +9846,16 @@ Specifically, the string conforms to RFC 1123.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toSQL</span>() <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000 Z&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.utc(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toSQL() <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000 Z&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toSQL</span>() <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000 -04:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toSQL() <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000 -04:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toSQL</span>({ <span class="hljs-attr">includeOffset</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toSQL({ <span class="hljs-attr">includeOffset</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">local</span>(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).<span class="hljs-title function_">toSQL</span>({ <span class="hljs-attr">includeZone</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000 America/New_York&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.local(<span class="hljs-number">2014</span>, <span class="hljs-number">7</span>, <span class="hljs-number">13</span>).toSQL({ <span class="hljs-attr">includeZone</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;2014-07-13 00:00:00.000 America/New_York&#x27;</span></pre>
     
   
 
@@ -10548,7 +10351,7 @@ Specifically, the string conforms to RFC 1123.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().toObject() <span class="hljs-comment">//=&gt; { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }</span></pre>
     
   
 
@@ -10727,12 +10530,12 @@ Specifically, the string conforms to RFC 1123.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">var</span> i1 = <span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;1982-05-25T09:45&#x27;</span>),
-    i2 = <span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;1983-10-14T10:30&#x27;</span>);
-i2.<span class="hljs-title function_">diff</span>(i1).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { milliseconds: 43807500000 }</span>
-i2.<span class="hljs-title function_">diff</span>(i1, <span class="hljs-string">&#x27;hours&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 12168.75 }</span>
-i2.<span class="hljs-title function_">diff</span>(i1, [<span class="hljs-string">&#x27;months&#x27;</span>, <span class="hljs-string">&#x27;days&#x27;</span>]).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { months: 16, days: 19.03125 }</span>
-i2.<span class="hljs-title function_">diff</span>(i1, [<span class="hljs-string">&#x27;months&#x27;</span>, <span class="hljs-string">&#x27;days&#x27;</span>, <span class="hljs-string">&#x27;hours&#x27;</span>]).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { months: 16, days: 19, hours: 0.75 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">var</span> i1 = DateTime.fromISO(<span class="hljs-string">&#x27;1982-05-25T09:45&#x27;</span>),
+    i2 = DateTime.fromISO(<span class="hljs-string">&#x27;1983-10-14T10:30&#x27;</span>);
+i2.diff(i1).toObject() <span class="hljs-comment">//=&gt; { milliseconds: 43807500000 }</span>
+i2.diff(i1, <span class="hljs-string">&#x27;hours&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { hours: 12168.75 }</span>
+i2.diff(i1, [<span class="hljs-string">&#x27;months&#x27;</span>, <span class="hljs-string">&#x27;days&#x27;</span>]).toObject() <span class="hljs-comment">//=&gt; { months: 16, days: 19.03125 }</span>
+i2.diff(i1, [<span class="hljs-string">&#x27;months&#x27;</span>, <span class="hljs-string">&#x27;days&#x27;</span>, <span class="hljs-string">&#x27;hours&#x27;</span>]).toObject() <span class="hljs-comment">//=&gt; { months: 16, days: 19, hours: 0.75 }</span></pre>
     
   
 
@@ -10998,7 +10801,7 @@ Note that time zones are <strong>ignored</strong> in this comparison, which comp
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">hasSame</span>(otherDT, <span class="hljs-string">&#x27;day&#x27;</span>); <span class="hljs-comment">//~&gt; true if otherDT is in the same current calendar day</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().hasSame(otherDT, <span class="hljs-string">&#x27;day&#x27;</span>); <span class="hljs-comment">//~&gt; true if otherDT is in the same current calendar day</span></pre>
     
   
 
@@ -11027,7 +10830,7 @@ Note that time zones are <strong>ignored</strong> in this comparison, which comp
   
 
   <p>Equality check
-Two DateTimes are equal if and only if they represent the same millisecond, have the same zone and location, and are both valid.
+Two DateTimes are equal iff they represent the same millisecond, have the same zone and location, and are both valid.
 To compare just the millisecond values, use <code>+dt1 === +dt2</code>.</p>
 
     <div class='pre p1 fill-light mt0'>equals(other: <a href="#datetime">DateTime</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
@@ -11228,22 +11031,22 @@ platform supports Intl.RelativeTimeFormat. Rounds down by default.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).<span class="hljs-title function_">toRelative</span>() <span class="hljs-comment">//=&gt; &quot;in 1 day&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).toRelative() <span class="hljs-comment">//=&gt; &quot;in 1 day&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">setLocale</span>(<span class="hljs-string">&quot;es&quot;</span>).<span class="hljs-title function_">toRelative</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }) <span class="hljs-comment">//=&gt; &quot;dentro de 1 día&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().setLocale(<span class="hljs-string">&quot;es&quot;</span>).toRelative({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }) <span class="hljs-comment">//=&gt; &quot;dentro de 1 día&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).<span class="hljs-title function_">toRelative</span>({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;dans 23 heures&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).toRelative({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;dans 23 heures&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">minus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toRelative</span>() <span class="hljs-comment">//=&gt; &quot;2 days ago&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().minus({ <span class="hljs-attr">days</span>: <span class="hljs-number">2</span> }).toRelative() <span class="hljs-comment">//=&gt; &quot;2 days ago&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">minus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toRelative</span>({ <span class="hljs-attr">unit</span>: <span class="hljs-string">&quot;hours&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;48 hours ago&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().minus({ <span class="hljs-attr">days</span>: <span class="hljs-number">2</span> }).toRelative({ <span class="hljs-attr">unit</span>: <span class="hljs-string">&quot;hours&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;48 hours ago&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">minus</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">36</span> }).<span class="hljs-title function_">toRelative</span>({ <span class="hljs-attr">round</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &quot;1.5 days ago&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().minus({ <span class="hljs-attr">hours</span>: <span class="hljs-number">36</span> }).toRelative({ <span class="hljs-attr">round</span>: <span class="hljs-literal">false</span> }) <span class="hljs-comment">//=&gt; &quot;1.5 days ago&quot;</span></pre>
     
   
 
@@ -11368,16 +11171,16 @@ Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).<span class="hljs-title function_">toRelativeCalendar</span>() <span class="hljs-comment">//=&gt; &quot;tomorrow&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).toRelativeCalendar() <span class="hljs-comment">//=&gt; &quot;tomorrow&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">setLocale</span>(<span class="hljs-string">&quot;es&quot;</span>).<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).<span class="hljs-title function_">toRelative</span>() <span class="hljs-comment">//=&gt; &quot;&quot;mañana&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().setLocale(<span class="hljs-string">&quot;es&quot;</span>).plus({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).toRelative() <span class="hljs-comment">//=&gt; &quot;&quot;mañana&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).<span class="hljs-title function_">toRelativeCalendar</span>({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;demain&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().plus({ <span class="hljs-attr">days</span>: <span class="hljs-number">1</span> }).toRelativeCalendar({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&quot;fr&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;demain&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">minus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toRelativeCalendar</span>() <span class="hljs-comment">//=&gt; &quot;2 days ago&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>DateTime.now().minus({ <span class="hljs-attr">days</span>: <span class="hljs-number">2</span> }).toRelativeCalendar() <span class="hljs-comment">//=&gt; &quot;2 days ago&quot;</span></pre>
     
   
 
@@ -11421,7 +11224,7 @@ Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
   <p>A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use <a href="#datetimeplus">DateTime#plus</a> to add a Duration object to a DateTime, producing another DateTime.</p>
 <p>Here is a brief overview of commonly used methods and getters in Duration:</p>
 <ul>
-<li><strong>Creation</strong> To create a Duration, use <a href="#durationfrommillis">Duration.fromMillis</a>, <a href="#durationfromobject">Duration.fromObject</a>, or <a href="#durationfromiso">Duration.fromISO</a>.</li>
+<li><strong>Creation</strong> To create a Duration, use <a href="Duration#fromMillis">Duration#fromMillis</a>, <a href="Duration#fromObject">Duration#fromObject</a>, or <a href="Duration#fromISO">Duration#fromISO</a>.</li>
 <li><strong>Unit values</strong> See the <a href="#durationyears">Duration#years</a>, <a href="#durationmonths">Duration#months</a>, <a href="#durationweeks">Duration#weeks</a>, <a href="#durationdays">Duration#days</a>, <a href="#durationhours">Duration#hours</a>, <a href="#durationminutes">Duration#minutes</a>, <a href="#durationseconds">Duration#seconds</a>, <a href="#durationmilliseconds">Duration#milliseconds</a> accessors.</li>
 <li><strong>Configuration</strong> See  <a href="#durationlocale">Duration#locale</a> and <a href="#durationnumberingsystem">Duration#numberingSystem</a> accessors.</li>
 <li><strong>Transformation</strong> To create new Durations out of old ones use <a href="#durationplus">Duration#plus</a>, <a href="#durationminus">Duration#minus</a>, <a href="#durationnormalize">Duration#normalize</a>, <a href="#durationset">Duration#set</a>, <a href="#durationreconfigure">Duration#reconfigure</a>, <a href="#durationshiftto">Duration#shiftTo</a>, and <a href="#durationnegate">Duration#negate</a>.</li>
@@ -11768,18 +11571,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
   
     (default <code>&#39;casual&#39;</code>)
   </td>
-  <td class='break-word'><span>the preset conversion system to use
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.matrix</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  
-    (default <code>Object</code>)
-  </td>
-  <td class='break-word'><span>the custom conversion system to use
+  <td class='break-word'><span>the conversion system to use
 </span></td>
 </tr>
 
@@ -11980,18 +11772,7 @@ If this object is empty then a zero milliseconds duration is returned.</p>
   
     (default <code>&#39;casual&#39;</code>)
   </td>
-  <td class='break-word'><span>the preset conversion system to use
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.matrix</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  
-    (default <code>Object</code>)
-  </td>
-  <td class='break-word'><span>the preset conversion system to use
+  <td class='break-word'><span>the conversion system to use
 </span></td>
 </tr>
 
@@ -12032,13 +11813,13 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;P3Y6M1W4DT12H30M5S&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISO(<span class="hljs-string">&#x27;P3Y6M1W4DT12H30M5S&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;PT23H&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 23 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISO(<span class="hljs-string">&#x27;PT23H&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { hours: 23 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;P5Y3M&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { years: 5, months: 3 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISO(<span class="hljs-string">&#x27;P5Y3M&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { years: 5, months: 3 }</span></pre>
     
   
 
@@ -12137,17 +11918,6 @@ If this object is empty then a zero milliseconds duration is returned.</p>
   
     (default <code>&#39;casual&#39;</code>)
   </td>
-  <td class='break-word'><span>the preset conversion system to use
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.matrix</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  
-    (default <code>Object</code>)
-  </td>
   <td class='break-word'><span>the conversion system to use
 </span></td>
 </tr>
@@ -12189,19 +11959,19 @@ If this object is empty then a zero milliseconds duration is returned.</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISOTime</span>(<span class="hljs-string">&#x27;11:22:33.444&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISOTime(<span class="hljs-string">&#x27;11:22:33.444&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISOTime</span>(<span class="hljs-string">&#x27;11:00&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISOTime(<span class="hljs-string">&#x27;11:00&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISOTime</span>(<span class="hljs-string">&#x27;T11:00&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISOTime(<span class="hljs-string">&#x27;T11:00&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISOTime</span>(<span class="hljs-string">&#x27;1100&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISOTime(<span class="hljs-string">&#x27;1100&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromISOTime</span>(<span class="hljs-string">&#x27;T1100&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromISOTime(<span class="hljs-string">&#x27;T1100&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 0, seconds: 0 }</span></pre>
     
   
 
@@ -12503,8 +12273,10 @@ If this object is empty then a zero milliseconds duration is returned.</p>
 <li><code>d</code> for days</li>
 <li><code>w</code> for weeks</li>
 <li><code>M</code> for months</li>
-<li><code>y</code> for years
-Notes:</li>
+<li><code>y</code> for years</li>
+</ul>
+<p>Notes:</p>
+<ul>
 <li>Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits</li>
 <li>Tokens can be escaped by wrapping with single quotes.</li>
 <li>The duration will be converted to the set of units in the format string using <a href="#durationshiftto">Duration#shiftTo</a> and the Durations's conversion accuracy setting.</li>
@@ -12593,13 +12365,13 @@ Notes:</li>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;y d s&quot;</span>) <span class="hljs-comment">//=&gt; &quot;1 6 2&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).toFormat(<span class="hljs-string">&quot;y d s&quot;</span>) <span class="hljs-comment">//=&gt; &quot;1 6 2&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;yy dd sss&quot;</span>) <span class="hljs-comment">//=&gt; &quot;01 06 002&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).toFormat(<span class="hljs-string">&quot;yy dd sss&quot;</span>) <span class="hljs-comment">//=&gt; &quot;01 06 002&quot;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;M S&quot;</span>) <span class="hljs-comment">//=&gt; &quot;12 518402000&quot;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).toFormat(<span class="hljs-string">&quot;M S&quot;</span>) <span class="hljs-comment">//=&gt; &quot;12 518402000&quot;</span></pre>
     
   
 
@@ -12749,7 +12521,7 @@ dur.toHuman({ unitDisplay: &quot;short&quot; }) //=&gt; &#x27;1 day, 5 hr, 6 min
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { years: 1, days: 6, seconds: 2 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).toObject() <span class="hljs-comment">//=&gt; { years: 1, days: 6, seconds: 2 }</span></pre>
     
   
 
@@ -12819,19 +12591,19 @@ dur.toHuman({ unitDisplay: &quot;short&quot; }) //=&gt; &#x27;1 day, 5 hr, 6 min
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">45</span> }).<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//=&gt; &#x27;P3YT45S&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">years</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">45</span> }).toISO() <span class="hljs-comment">//=&gt; &#x27;P3YT45S&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">months</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">45</span> }).<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//=&gt; &#x27;P4MT45S&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">months</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">45</span> }).toISO() <span class="hljs-comment">//=&gt; &#x27;P4MT45S&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">months</span>: <span class="hljs-number">5</span> }).<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//=&gt; &#x27;P5M&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">months</span>: <span class="hljs-number">5</span> }).toISO() <span class="hljs-comment">//=&gt; &#x27;P5M&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">minutes</span>: <span class="hljs-number">5</span> }).<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//=&gt; &#x27;PT5M&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">minutes</span>: <span class="hljs-number">5</span> }).toISO() <span class="hljs-comment">//=&gt; &#x27;PT5M&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">milliseconds</span>: <span class="hljs-number">6</span> }).<span class="hljs-title function_">toISO</span>() <span class="hljs-comment">//=&gt; &#x27;PT0.006S&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">milliseconds</span>: <span class="hljs-number">6</span> }).toISO() <span class="hljs-comment">//=&gt; &#x27;PT0.006S&#x27;</span></pre>
     
   
 
@@ -12979,19 +12751,19 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).<span class="hljs-title function_">toISOTime</span>() <span class="hljs-comment">//=&gt; &#x27;11:00:00.000&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).toISOTime() <span class="hljs-comment">//=&gt; &#x27;11:00:00.000&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">suppressMilliseconds</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;11:00:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).toISOTime({ <span class="hljs-attr">suppressMilliseconds</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;11:00:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">suppressSeconds</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;11:00&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).toISOTime({ <span class="hljs-attr">suppressSeconds</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;11:00&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">includePrefix</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;T11:00:00.000&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).toISOTime({ <span class="hljs-attr">includePrefix</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;T11:00:00.000&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;110000.000&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">11</span> }).toISOTime({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;110000.000&#x27;</span></pre>
     
   
 
@@ -13431,10 +13203,10 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).<span class="hljs-title function_">mapUnits</span>(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 60 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnits(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 60 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).<span class="hljs-title function_">mapUnits</span>(<span class="hljs-function">(<span class="hljs-params">x, u</span>) =&gt;</span> u === <span class="hljs-string">&quot;hours&quot;</span> ? x * <span class="hljs-number">2</span> : x) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 30 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> }).mapUnits(<span class="hljs-function">(<span class="hljs-params">x, u</span>) =&gt;</span> u === <span class="hljs-string">&quot;hour&quot;</span> ? x * <span class="hljs-number">2</span> : x) <span class="hljs-comment">//=&gt; { hours: 2, minutes: 30 }</span></pre>
     
   
 
@@ -13510,13 +13282,13 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({<span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">3</span>}).<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;years&#x27;</span>) <span class="hljs-comment">//=&gt; 2</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({<span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">3</span>}).get(<span class="hljs-string">&#x27;years&#x27;</span>) <span class="hljs-comment">//=&gt; 2</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({<span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">3</span>}).<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;months&#x27;</span>) <span class="hljs-comment">//=&gt; 0</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({<span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">3</span>}).get(<span class="hljs-string">&#x27;months&#x27;</span>) <span class="hljs-comment">//=&gt; 0</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({<span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">3</span>}).<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;days&#x27;</span>) <span class="hljs-comment">//=&gt; 3</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({<span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">3</span>}).get(<span class="hljs-string">&#x27;days&#x27;</span>) <span class="hljs-comment">//=&gt; 3</span></pre>
     
   
 
@@ -13592,10 +13364,10 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'>dur.<span class="hljs-title function_">set</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">2017</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>dur.set({ <span class="hljs-attr">years</span>: <span class="hljs-number">2017</span> })</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'>dur.<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">8</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>dur.set({ <span class="hljs-attr">hours</span>: <span class="hljs-number">8</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">30</span> })</pre>
     
   
 
@@ -13684,14 +13456,6 @@ Note that this will return null if the duration is invalid, negative, or equal t
 
 
               
-                <tr>
-  <td class='break-word'><span class='code bold'>$0.matrix</span> <code class='quiet'>any</code>
-  </td>
-  <td class='break-word'><span></span></td>
-</tr>
-
-
-              
             </tbody>
           </table>
           
@@ -13719,7 +13483,7 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'>dur.<span class="hljs-title function_">reconfigure</span>({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-GB&#x27;</span> })</pre>
+      <pre class='p1 overflow-auto round fill-light'>dur.reconfigure({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-GB&#x27;</span> })</pre>
     
   
 
@@ -13795,13 +13559,13 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({<span class="hljs-attr">years</span>: <span class="hljs-number">1</span>}).<span class="hljs-title function_">as</span>(<span class="hljs-string">&#x27;days&#x27;</span>) <span class="hljs-comment">//=&gt; 365</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({<span class="hljs-attr">years</span>: <span class="hljs-number">1</span>}).as(<span class="hljs-string">&#x27;days&#x27;</span>) <span class="hljs-comment">//=&gt; 365</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({<span class="hljs-attr">years</span>: <span class="hljs-number">1</span>}).<span class="hljs-title function_">as</span>(<span class="hljs-string">&#x27;months&#x27;</span>) <span class="hljs-comment">//=&gt; 12</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({<span class="hljs-attr">years</span>: <span class="hljs-number">1</span>}).as(<span class="hljs-string">&#x27;months&#x27;</span>) <span class="hljs-comment">//=&gt; 12</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({<span class="hljs-attr">hours</span>: <span class="hljs-number">60</span>}).<span class="hljs-title function_">as</span>(<span class="hljs-string">&#x27;days&#x27;</span>) <span class="hljs-comment">//=&gt; 2.5</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({<span class="hljs-attr">hours</span>: <span class="hljs-number">60</span>}).as(<span class="hljs-string">&#x27;days&#x27;</span>) <span class="hljs-comment">//=&gt; 2.5</span></pre>
     
   
 
@@ -13863,72 +13627,10 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">5000</span> }).<span class="hljs-title function_">normalize</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { years: 15, days: 255 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">5000</span> }).normalize().toObject() <span class="hljs-comment">//=&gt; { years: 15, days: 255 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">12</span>, <span class="hljs-attr">minutes</span>: -<span class="hljs-number">45</span> }).<span class="hljs-title function_">normalize</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 15 }</span></pre>
-    
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='durationrescale'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>rescale()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Rescale units to its largest representation</p>
-
-    <div class='pre p1 fill-light mt0'>rescale(): <a href="#duration">Duration</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="#duration">Duration</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Example</div>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">milliseconds</span>: <span class="hljs-number">90000</span> }).<span class="hljs-title function_">rescale</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { minutes: 1, seconds: 30 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">12</span>, <span class="hljs-attr">minutes</span>: -<span class="hljs-number">45</span> }).normalize().toObject() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 15 }</span></pre>
     
   
 
@@ -14003,65 +13705,8 @@ Note that this will return null if the duration is invalid, negative, or equal t
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">30</span> }).<span class="hljs-title function_">shiftTo</span>(<span class="hljs-string">&#x27;minutes&#x27;</span>, <span class="hljs-string">&#x27;milliseconds&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { minutes: 60, milliseconds: 30000 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">30</span> }).shiftTo(<span class="hljs-string">&#x27;minutes&#x27;</span>, <span class="hljs-string">&#x27;milliseconds&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { minutes: 60, milliseconds: 30000 }</span></pre>
     
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='durationshifttoall'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>shiftToAll()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Shift this Duration to all available units.
-Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")</p>
-
-    <div class='pre p1 fill-light mt0'>shiftToAll(): <a href="#duration">Duration</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="#duration">Duration</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
   
 
   
@@ -14122,7 +13767,7 @@ Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">30</span> }).<span class="hljs-title function_">negate</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: -1, seconds: -30 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Duration.fromObject({ <span class="hljs-attr">hours</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">30</span> }).negate().toObject() <span class="hljs-comment">//=&gt; { hours: -1, seconds: -30 }</span></pre>
     
   
 
@@ -14893,12 +14538,12 @@ Two Durations are equal iff they have the same units and the same values for eac
   <p>An Interval object represents a half-open interval of time, where each endpoint is a <a href="#datetime">DateTime</a>. Conceptually, it's a container for those two endpoints, accompanied by methods for creating, parsing, interrogating, comparing, transforming, and formatting them.</p>
 <p>Here is a brief overview of the most commonly used methods and getters in Interval:</p>
 <ul>
-<li><strong>Creation</strong> To create an Interval, use <a href="#intervalfromdatetimes">Interval.fromDateTimes</a>, <a href="#intervalafter">Interval.after</a>, <a href="#intervalbefore">Interval.before</a>, or <a href="#intervalfromiso">Interval.fromISO</a>.</li>
+<li><strong>Creation</strong> To create an Interval, use <a href="Interval#fromDateTimes">Interval#fromDateTimes</a>, <a href="Interval#after">Interval#after</a>, <a href="Interval#before">Interval#before</a>, or <a href="Interval#fromISO">Interval#fromISO</a>.</li>
 <li><strong>Accessors</strong> Use <a href="#intervalstart">Interval#start</a> and <a href="#intervalend">Interval#end</a> to get the start and end.</li>
 <li><strong>Interrogation</strong> To analyze the Interval, use <a href="#intervalcount">Interval#count</a>, <a href="#intervallength">Interval#length</a>, <a href="#intervalhassame">Interval#hasSame</a>, <a href="#intervalcontains">Interval#contains</a>, <a href="#intervalisafter">Interval#isAfter</a>, or <a href="#intervalisbefore">Interval#isBefore</a>.</li>
-<li><strong>Transformation</strong> To create other Intervals out of this one, use <a href="#intervalset">Interval#set</a>, <a href="#intervalsplitat">Interval#splitAt</a>, <a href="#intervalsplitby">Interval#splitBy</a>, <a href="#intervaldivideequally">Interval#divideEqually</a>, <a href="#intervalmerge">Interval.merge</a>, <a href="#intervalxor">Interval.xor</a>, <a href="#intervalunion">Interval#union</a>, <a href="#intervalintersection">Interval#intersection</a>, or <a href="#intervaldifference">Interval#difference</a>.</li>
+<li><strong>Transformation</strong> To create other Intervals out of this one, use <a href="#intervalset">Interval#set</a>, <a href="#intervalsplitat">Interval#splitAt</a>, <a href="#intervalsplitby">Interval#splitBy</a>, <a href="#intervaldivideequally">Interval#divideEqually</a>, <a href="Interval#merge">Interval#merge</a>, <a href="Interval#xor">Interval#xor</a>, <a href="#intervalunion">Interval#union</a>, <a href="#intervalintersection">Interval#intersection</a>, or <a href="#intervaldifference">Interval#difference</a>.</li>
 <li><strong>Comparison</strong> To compare this Interval to another one, use <a href="#intervalequals">Interval#equals</a>, <a href="#intervaloverlaps">Interval#overlaps</a>, <a href="#intervalabutsstart">Interval#abutsStart</a>, <a href="#intervalabutsend">Interval#abutsEnd</a>, <a href="#intervalengulfs">Interval#engulfs</a></li>
-<li><strong>Output</strong> To convert the Interval into other representations, see <a href="#intervaltostring">Interval#toString</a>, <a href="#intervaltolocalestring">Interval#toLocaleString</a>, <a href="#intervaltoiso">Interval#toISO</a>, <a href="#intervaltoisodate">Interval#toISODate</a>, <a href="#intervaltoisotime">Interval#toISOTime</a>, <a href="#intervaltoformat">Interval#toFormat</a>, and <a href="#intervaltoduration">Interval#toDuration</a>.</li>
+<li><strong>Output</strong> To convert the Interval into other representations, see <a href="#intervaltostring">Interval#toString</a>, <a href="#intervaltoiso">Interval#toISO</a>, <a href="#intervaltoisodate">Interval#toISODate</a>, <a href="#intervaltoisotime">Interval#toISOTime</a>, <a href="#intervaltoformat">Interval#toFormat</a>, and <a href="#intervaltoduration">Interval#toDuration</a>.</li>
 </ul>
 
     <div class='pre p1 fill-light mt0'>new Interval(config: any)</div>
@@ -17235,119 +16880,6 @@ Specifically, the resulting Interval has the minimum start time and the maximum 
       </div>
     </div>
   
-    <div class='border-bottom' id='intervaltolocalestring'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>toLocaleString(formatOpts, opts)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Returns a localized string representing this Interval. Accepts the same options as the
-Intl.DateTimeFormat constructor and any presets defined by Luxon, such as
-<a href="#datetimedate_full">DateTime.DATE_FULL</a> or <a href="#datetimetime_simple">DateTime.TIME_SIMPLE</a>. The exact behavior of this method
-is browser-specific, but in general it will return an appropriate representation of the
-Interval in the assigned locale. Defaults to the system's locale if no locale has been
-specified.</p>
-
-    <div class='pre p1 fill-light mt0'>toLocaleString(formatOpts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>formatOpts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            = <code>DateTime.DATE_SHORT</code>)</code>
-	    Either a DateTime preset or
-Intl.DateTimeFormat constructor options.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            = <code>{}</code>)</code>
-	    Options to override the configuration of the start DateTime.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        
-      
-    
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Related</div>
-    
-      
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat</a>
-
-      
-    
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Example</div>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2022-11-07T09:00Z/2022-11-08T09:00Z&#x27;</span>).<span class="hljs-title function_">toLocaleString</span>(); <span class="hljs-comment">//=&gt; 11/7/2022 – 11/8/2022</span></pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2022-11-07T09:00Z/2022-11-08T09:00Z&#x27;</span>).<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-title class_">DateTime</span>.<span class="hljs-property">DATE_FULL</span>); <span class="hljs-comment">//=&gt; November 7 – 8, 2022</span></pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2022-11-07T09:00Z/2022-11-08T09:00Z&#x27;</span>).<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-title class_">DateTime</span>.<span class="hljs-property">DATE_FULL</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr-FR&#x27;</span> }); <span class="hljs-comment">//=&gt; 7–8 novembre 2022</span></pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2022-11-07T17:00Z/2022-11-07T19:00Z&#x27;</span>).<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-title class_">DateTime</span>.<span class="hljs-property">TIME_SIMPLE</span>); <span class="hljs-comment">//=&gt; 6:00 – 8:00 PM</span></pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromISO</span>(<span class="hljs-string">&#x27;2022-11-07T17:00Z/2022-11-07T19:00Z&#x27;</span>).<span class="hljs-title function_">toLocaleString</span>({ <span class="hljs-attr">weekday</span>: <span class="hljs-string">&#x27;short&#x27;</span>, <span class="hljs-attr">month</span>: <span class="hljs-string">&#x27;short&#x27;</span>, <span class="hljs-attr">day</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">hour</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span>, <span class="hljs-attr">minute</span>: <span class="hljs-string">&#x27;2-digit&#x27;</span> }); <span class="hljs-comment">//=&gt; Mon, Nov 07, 6:00 – 8:00 p</span></pre>
-    
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
     <div class='border-bottom' id='intervaltoiso'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -17584,9 +17116,7 @@ The date components are ignored.</p>
 
   
 
-  <p>Returns a string representation of this Interval formatted according to the specified format
-string. <strong>You may not want this.</strong> See <a href="#intervaltolocalestring">Interval#toLocaleString</a> for a more flexible
-formatting tool.</p>
+  <p>Returns a string representation of this Interval formatted according to the specified format string.</p>
 
     <div class='pre p1 fill-light mt0'>toFormat(dateFormat: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
   
@@ -17606,8 +17136,7 @@ formatting tool.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>dateFormat</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The format string. This string formats the start and end time.
-See 
+	    the format string. This string formats the start and end time. See 
 <a href="#datetimetoformat">DateTime#toFormat</a>
  for details.
 
@@ -17619,7 +17148,7 @@ See
           <div>
             <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
             = <code>{}</code>)</code>
-	    Options.
+	    options
 
           </div>
           
@@ -17641,8 +17170,7 @@ See
   
     (default <code>&#39; – &#39;</code>)
   </td>
-  <td class='break-word'><span>A separator to place between the start and end
-representations.
+  <td class='break-word'><span>a separator to place between the start and end representations
 </span></td>
 </tr>
 
@@ -17782,19 +17310,19 @@ representations.
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromDateTimes</span>(dt1, dt2).<span class="hljs-title function_">toDuration</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { milliseconds: 88489257 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Interval.fromDateTimes(dt1, dt2).toDuration().toObject() <span class="hljs-comment">//=&gt; { milliseconds: 88489257 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromDateTimes</span>(dt1, dt2).<span class="hljs-title function_">toDuration</span>(<span class="hljs-string">&#x27;days&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { days: 1.0241812152777778 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Interval.fromDateTimes(dt1, dt2).toDuration(<span class="hljs-string">&#x27;days&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { days: 1.0241812152777778 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromDateTimes</span>(dt1, dt2).<span class="hljs-title function_">toDuration</span>([<span class="hljs-string">&#x27;hours&#x27;</span>, <span class="hljs-string">&#x27;minutes&#x27;</span>]).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 24, minutes: 34.82095 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Interval.fromDateTimes(dt1, dt2).toDuration([<span class="hljs-string">&#x27;hours&#x27;</span>, <span class="hljs-string">&#x27;minutes&#x27;</span>]).toObject() <span class="hljs-comment">//=&gt; { hours: 24, minutes: 34.82095 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromDateTimes</span>(dt1, dt2).<span class="hljs-title function_">toDuration</span>([<span class="hljs-string">&#x27;hours&#x27;</span>, <span class="hljs-string">&#x27;minutes&#x27;</span>, <span class="hljs-string">&#x27;seconds&#x27;</span>]).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 24, minutes: 34, seconds: 49.257 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Interval.fromDateTimes(dt1, dt2).toDuration([<span class="hljs-string">&#x27;hours&#x27;</span>, <span class="hljs-string">&#x27;minutes&#x27;</span>, <span class="hljs-string">&#x27;seconds&#x27;</span>]).toObject() <span class="hljs-comment">//=&gt; { hours: 24, minutes: 34, seconds: 49.257 }</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromDateTimes</span>(dt1, dt2).<span class="hljs-title function_">toDuration</span>(<span class="hljs-string">&#x27;seconds&#x27;</span>).<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { seconds: 88489.257 }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Interval.fromDateTimes(dt1, dt2).toDuration(<span class="hljs-string">&#x27;seconds&#x27;</span>).toObject() <span class="hljs-comment">//=&gt; { seconds: 88489.257 }</span></pre>
     
   
 
@@ -17869,10 +17397,10 @@ representations.
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromDateTimes</span>(dt1, dt2).<span class="hljs-title function_">mapEndpoints</span>(<span class="hljs-function"><span class="hljs-params">endpoint</span> =&gt;</span> endpoint.<span class="hljs-title function_">toUTC</span>())</pre>
+      <pre class='p1 overflow-auto round fill-light'>Interval.fromDateTimes(dt1, dt2).mapEndpoints(<span class="hljs-function"><span class="hljs-params">endpoint</span> =&gt;</span> endpoint.toUTC())</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Interval</span>.<span class="hljs-title function_">fromDateTimes</span>(dt1, dt2).<span class="hljs-title function_">mapEndpoints</span>(<span class="hljs-function"><span class="hljs-params">endpoint</span> =&gt;</span> endpoint.<span class="hljs-title function_">plus</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">2</span> }))</pre>
+      <pre class='p1 overflow-auto round fill-light'>Interval.fromDateTimes(dt1, dt2).mapEndpoints(<span class="hljs-function"><span class="hljs-params">endpoint</span> =&gt;</span> endpoint.plus({ <span class="hljs-attr">hours</span>: <span class="hljs-number">2</span> }))</pre>
     
   
 
@@ -18302,22 +17830,22 @@ in minutes is returned.</li>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">months</span>()[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;January&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.months()[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;January&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">months</span>(<span class="hljs-string">&#x27;short&#x27;</span>)[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Jan&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.months(<span class="hljs-string">&#x27;short&#x27;</span>)[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Jan&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">months</span>(<span class="hljs-string">&#x27;numeric&#x27;</span>)[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;1&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.months(<span class="hljs-string">&#x27;numeric&#x27;</span>)[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;1&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">months</span>(<span class="hljs-string">&#x27;short&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr-CA&#x27;</span> } )[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;janv.&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.months(<span class="hljs-string">&#x27;short&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr-CA&#x27;</span> } )[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;janv.&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">months</span>(<span class="hljs-string">&#x27;numeric&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;ar&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;١&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.months(<span class="hljs-string">&#x27;numeric&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;ar&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;١&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">months</span>(<span class="hljs-string">&#x27;long&#x27;</span>, { <span class="hljs-attr">outputCalendar</span>: <span class="hljs-string">&#x27;islamic&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Rabiʻ I&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.months(<span class="hljs-string">&#x27;long&#x27;</span>, { <span class="hljs-attr">outputCalendar</span>: <span class="hljs-string">&#x27;islamic&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Rabiʻ I&#x27;</span></pre>
     
   
 
@@ -18605,16 +18133,16 @@ See <a href="Info#months">Info#months</a></p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">weekdays</span>()[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Monday&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.weekdays()[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Monday&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">weekdays</span>(<span class="hljs-string">&#x27;short&#x27;</span>)[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Mon&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.weekdays(<span class="hljs-string">&#x27;short&#x27;</span>)[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;Mon&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">weekdays</span>(<span class="hljs-string">&#x27;short&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr-CA&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;lun.&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.weekdays(<span class="hljs-string">&#x27;short&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr-CA&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;lun.&#x27;</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">weekdays</span>(<span class="hljs-string">&#x27;short&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;ar&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;الاثنين&#x27;</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.weekdays(<span class="hljs-string">&#x27;short&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;ar&#x27;</span> })[<span class="hljs-number">0</span>] <span class="hljs-comment">//=&gt; &#x27;الاثنين&#x27;</span></pre>
     
   
 
@@ -18851,10 +18379,10 @@ See <a href="Info#weekdays">Info#weekdays</a></p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">meridiems</span>() <span class="hljs-comment">//=&gt; [ &#x27;AM&#x27;, &#x27;PM&#x27; ]</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.meridiems() <span class="hljs-comment">//=&gt; [ &#x27;AM&#x27;, &#x27;PM&#x27; ]</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">meridiems</span>({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;my&#x27;</span> }) <span class="hljs-comment">//=&gt; [ &#x27;နံနက်&#x27;, &#x27;ညနေ&#x27; ]</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.meridiems({ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;my&#x27;</span> }) <span class="hljs-comment">//=&gt; [ &#x27;နံနက်&#x27;, &#x27;ညနေ&#x27; ]</span></pre>
     
   
 
@@ -18968,13 +18496,13 @@ See <a href="Info#weekdays">Info#weekdays</a></p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">eras</span>() <span class="hljs-comment">//=&gt; [ &#x27;BC&#x27;, &#x27;AD&#x27; ]</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.eras() <span class="hljs-comment">//=&gt; [ &#x27;BC&#x27;, &#x27;AD&#x27; ]</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">eras</span>(<span class="hljs-string">&#x27;long&#x27;</span>) <span class="hljs-comment">//=&gt; [ &#x27;Before Christ&#x27;, &#x27;Anno Domini&#x27; ]</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.eras(<span class="hljs-string">&#x27;long&#x27;</span>) <span class="hljs-comment">//=&gt; [ &#x27;Before Christ&#x27;, &#x27;Anno Domini&#x27; ]</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">eras</span>(<span class="hljs-string">&#x27;long&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr&#x27;</span> }) <span class="hljs-comment">//=&gt; [ &#x27;avant Jésus-Christ&#x27;, &#x27;après Jésus-Christ&#x27; ]</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.eras(<span class="hljs-string">&#x27;long&#x27;</span>, { <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;fr&#x27;</span> }) <span class="hljs-comment">//=&gt; [ &#x27;avant Jésus-Christ&#x27;, &#x27;après Jésus-Christ&#x27; ]</span></pre>
     
   
 
@@ -19041,7 +18569,7 @@ Keys:</p>
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Info</span>.<span class="hljs-title function_">features</span>() <span class="hljs-comment">//=&gt; { relative: false }</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Info.features() <span class="hljs-comment">//=&gt; { relative: false }</span></pre>
     
   
 
@@ -19923,13 +19451,13 @@ Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' res
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">FixedOffsetZone</span>.<span class="hljs-title function_">parseSpecifier</span>(<span class="hljs-string">&quot;UTC+6&quot;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>FixedOffsetZone.parseSpecifier(<span class="hljs-string">&quot;UTC+6&quot;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">FixedOffsetZone</span>.<span class="hljs-title function_">parseSpecifier</span>(<span class="hljs-string">&quot;UTC+06&quot;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>FixedOffsetZone.parseSpecifier(<span class="hljs-string">&quot;UTC+06&quot;</span>)</pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">FixedOffsetZone</span>.<span class="hljs-title function_">parseSpecifier</span>(<span class="hljs-string">&quot;UTC-6:00&quot;</span>)</pre>
+      <pre class='p1 overflow-auto round fill-light'>FixedOffsetZone.parseSpecifier(<span class="hljs-string">&quot;UTC-6:00&quot;</span>)</pre>
     
   
 
@@ -20631,10 +20159,10 @@ Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' res
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">IANAZone</span>.<span class="hljs-title function_">isValidSpecifier</span>(<span class="hljs-string">&quot;America/New_York&quot;</span>) <span class="hljs-comment">//=&gt; true</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>IANAZone.isValidSpecifier(<span class="hljs-string">&quot;America/New_York&quot;</span>) <span class="hljs-comment">//=&gt; true</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">IANAZone</span>.<span class="hljs-title function_">isValidSpecifier</span>(<span class="hljs-string">&quot;Sport~~blorp&quot;</span>) <span class="hljs-comment">//=&gt; false</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>IANAZone.isValidSpecifier(<span class="hljs-string">&quot;Sport~~blorp&quot;</span>) <span class="hljs-comment">//=&gt; false</span></pre>
     
   
 
@@ -20710,13 +20238,13 @@ Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' res
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">IANAZone</span>.<span class="hljs-title function_">isValidZone</span>(<span class="hljs-string">&quot;America/New_York&quot;</span>) <span class="hljs-comment">//=&gt; true</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>IANAZone.isValidZone(<span class="hljs-string">&quot;America/New_York&quot;</span>) <span class="hljs-comment">//=&gt; true</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">IANAZone</span>.<span class="hljs-title function_">isValidZone</span>(<span class="hljs-string">&quot;Fantasia/Castle&quot;</span>) <span class="hljs-comment">//=&gt; false</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>IANAZone.isValidZone(<span class="hljs-string">&quot;Fantasia/Castle&quot;</span>) <span class="hljs-comment">//=&gt; false</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">IANAZone</span>.<span class="hljs-title function_">isValidZone</span>(<span class="hljs-string">&quot;Sport~~blorp&quot;</span>) <span class="hljs-comment">//=&gt; false</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>IANAZone.isValidZone(<span class="hljs-string">&quot;Sport~~blorp&quot;</span>) <span class="hljs-comment">//=&gt; false</span></pre>
     
   
 
@@ -22459,10 +21987,10 @@ The function should return a number, which will be interpreted as an Epoch milli
     <div class='py1 quiet mt1 prose-big'>Example</div>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Settings</span>.<span class="hljs-property">now</span> = <span class="hljs-function">() =&gt;</span> <span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>() + <span class="hljs-number">3000</span> <span class="hljs-comment">// pretend it is 3 seconds in the future</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Settings.now = <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">Date</span>.now() + <span class="hljs-number">3000</span> <span class="hljs-comment">// pretend it is 3 seconds in the future</span></pre>
     
       
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Settings</span>.<span class="hljs-property">now</span> = <span class="hljs-function">() =&gt;</span> <span class="hljs-number">0</span> <span class="hljs-comment">// always pretend it&#x27;s Jan 1, 1970 at midnight in UTC time</span></pre>
+      <pre class='p1 overflow-auto round fill-light'>Settings.now = <span class="hljs-function">() =&gt;</span> <span class="hljs-number">0</span> <span class="hljs-comment">// always pretend it&#x27;s Jan 1, 1970 at midnight in UTC time</span></pre>
     
   
 
@@ -22950,142 +22478,6 @@ The default value is the system's time zone (the one set on the machine that run
 
   
 
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='settingstwodigitcutoffyear'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>twoDigitCutoffYear</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Get the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.</p>
-
-    <div class='pre p1 fill-light mt0'>twoDigitCutoffYear</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='settingstwodigitcutoffyear'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>twoDigitCutoffYear</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Set the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.</p>
-
-    <div class='pre p1 fill-light mt0'>twoDigitCutoffYear</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cutoffYear</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Example</div>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Settings</span>.<span class="hljs-property">twoDigitCutoffYear</span> = <span class="hljs-number">0</span> <span class="hljs-comment">// cut-off year is 0, so all &#x27;yy&#x27; are interpretted as current century</span></pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Settings</span>.<span class="hljs-property">twoDigitCutoffYear</span> = <span class="hljs-number">50</span> <span class="hljs-comment">// &#x27;49&#x27; -&gt; 1949; &#x27;50&#x27; -&gt; 2050</span></pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Settings</span>.<span class="hljs-property">twoDigitCutoffYear</span> = <span class="hljs-number">1950</span> <span class="hljs-comment">// interpretted as 50</span></pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Settings</span>.<span class="hljs-property">twoDigitCutoffYear</span> = <span class="hljs-number">2050</span> <span class="hljs-comment">// ALSO interpretted as 50</span></pre>
-    
   
 
   

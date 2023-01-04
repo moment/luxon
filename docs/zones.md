@@ -53,7 +53,6 @@ Luxon's API methods that take a zone as an argument all let you specify the zone
 | ------------ | ------------------ | ----------------------------------------------------------------- |
 | IANA         | 'America/New_York' | that zone                                                         |
 | system       | 'system'           | the system's local zone                                           |
-| default      | 'default'          | the default zone set by Settings.defaultZone                      |
 | UTC          | 'utc'              | Universal Coordinated Time                                        |
 | fixed offset | 'UTC+7'            | a fixed offset zone                                               |
 | Zone         | new YourZone()     | A custom implementation of Luxon's Zone interface (advanced only) |
