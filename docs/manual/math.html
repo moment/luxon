@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../">
+  <title data-ice="title">Manual | Luxon</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<style>.luxon-title {font-size: 22px; color: black;}</style><meta name="description" content="Immutable date wrapper"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="Luxon"><meta property="twitter:description" content="Immutable date wrapper"></head>
+<body class="layout-container manual-root" data-ice="rootContainer">
+
+<header><a href="../index.html" class="luxon-title">Luxon</a>
+  <a href="./">Manual</a>
+  
+  <a href="identifiers.html">Reference</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/moment/luxon"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/install.html"><a href="manual/install.html" data-ice="link">Install guide</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#basic-browser-setup" data-ice="link">Basic browser setup</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/install.html"><a href="manual/install.html#internet-explorer" data-ice="link">Internet Explorer</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#node" data-ice="link">Node</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#amd--system-js--requirejs--etc-" data-ice="link">AMD (System.js, RequireJS, etc)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#es6" data-ice="link">ES6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#webpack" data-ice="link">Webpack</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#types" data-ice="link">Types</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/install.html"><a href="manual/install.html#react-native" data-ice="link">React Native</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/tour.html"><a href="manual/tour.html" data-ice="link">A quick tour</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#your-first-datetime" data-ice="link">Your first DateTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#creating-a-datetime" data-ice="link">Creating a DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#get-the-current-date-and-time" data-ice="link">Get the current date and time</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#create-from-an-object" data-ice="link">Create from an object</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#parse-from-iso-8601" data-ice="link">Parse from ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#getting-to-know-your-datetime-instance" data-ice="link">Getting to know your DateTime instance</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#tostring" data-ice="link">toString</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#getting-at-components" data-ice="link">Getting at components</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#other-fun-accessors" data-ice="link">Other fun accessors</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#formatting-your-datetime" data-ice="link">Formatting your DateTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#transforming-your-datetime" data-ice="link">Transforming your DateTime</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#immutability" data-ice="link">Immutability</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#math" data-ice="link">Math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/tour.html"><a href="manual/tour.html#set" data-ice="link">Set</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#time-zones" data-ice="link">Time zones</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#durations" data-ice="link">Durations</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/tour.html"><a href="manual/tour.html#intervals" data-ice="link">Intervals</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/intl.html"><a href="manual/intl.html" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#making-sure-you-have-access-to-other-locales" data-ice="link">Making sure you have access to other locales</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#how-locales-work" data-ice="link">How locales work</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#setting-the-locale" data-ice="link">Setting the locale</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#default-locale" data-ice="link">Default locale</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/intl.html"><a href="manual/intl.html#out-of-the-box-behavior" data-ice="link">Out-of-the-box behavior</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/intl.html"><a href="manual/intl.html#setting-the-default" data-ice="link">Setting the default</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/intl.html"><a href="manual/intl.html#using-the-system-locale-in-string-parsing" data-ice="link">Using the system locale in string parsing</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#checking-what-you-got" data-ice="link">Checking what you got</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#methods-affected-by-the-locale" data-ice="link">Methods affected by the locale</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/intl.html"><a href="manual/intl.html#formatting" data-ice="link">Formatting</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/intl.html"><a href="manual/intl.html#parsing" data-ice="link">Parsing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/intl.html"><a href="manual/intl.html#listing" data-ice="link">Listing</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/intl.html"><a href="manual/intl.html#numberingsystem" data-ice="link">numberingSystem</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/zones.html"><a href="manual/zones.html" data-ice="link">Time zones and offsets</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#don--39-t-worry-" data-ice="link">Don&apos;t worry!</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#terminology" data-ice="link">Terminology</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#luxon-works-with-time-zones" data-ice="link">Luxon works with time zones</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#specifying-a-zone" data-ice="link">Specifying a zone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#iana-support" data-ice="link">IANA support</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#creating-datetimes" data-ice="link">Creating DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#local-by-default" data-ice="link">Local by default</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#creating-datetimes-in-a-zone" data-ice="link">Creating DateTimes in a zone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#strings-that-specify-an-offset" data-ice="link">Strings that specify an offset</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#setzone" data-ice="link">setZone</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#changing-zones" data-ice="link">Changing zones</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#setzone" data-ice="link">setZone</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#keeplocaltime" data-ice="link">keepLocalTime</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#accessors" data-ice="link">Accessors</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#dst-weirdness" data-ice="link">DST weirdness</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#invalid-times" data-ice="link">Invalid times</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#ambiguous-times" data-ice="link">Ambiguous times</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/zones.html"><a href="manual/zones.html#math-across-dsts" data-ice="link">Math across DSTs</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/zones.html"><a href="manual/zones.html#changing-the-default-zone" data-ice="link">Changing the default zone</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/calendars.html"><a href="manual/calendars.html" data-ice="link">Calendars</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/calendars.html"><a href="manual/calendars.html#fully-supported-calendars" data-ice="link">Fully supported calendars</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/calendars.html"><a href="manual/calendars.html#output-calendars" data-ice="link">Output calendars</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/calendars.html"><a href="manual/calendars.html#generally-supported-calendars" data-ice="link">Generally supported calendars</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/calendars.html"><a href="manual/calendars.html#default-output-calendar" data-ice="link">Default output calendar</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/formatting.html"><a href="manual/formatting.html" data-ice="link">Formatting</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/formatting.html"><a href="manual/formatting.html#technical-formats--strings-for-computers-" data-ice="link">Technical formats (strings for computers)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#iso-8601" data-ice="link">ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#http-and-rfc-2822" data-ice="link">HTTP and RFC 2822</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/formatting.html"><a href="manual/formatting.html#tolocalestring--strings-for-humans-" data-ice="link">toLocaleString (strings for humans)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#the-basics" data-ice="link">The basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#intl-datetimeformat" data-ice="link">Intl.DateTimeFormat</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#presets" data-ice="link">Presets</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/formatting.html"><a href="manual/formatting.html#formatting-with-tokens--strings-for-cthulhu-" data-ice="link">Formatting with tokens (strings for Cthulhu)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#toformat" data-ice="link">toFormat</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#escaping" data-ice="link">Escaping</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#standalone-vs-format-tokens" data-ice="link">Standalone vs format tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#macro-tokens" data-ice="link">Macro tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/formatting.html"><a href="manual/formatting.html#table-of-tokens" data-ice="link">Table of tokens</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/parsing.html"><a href="manual/parsing.html" data-ice="link">Parsing</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#parsing-technical-formats" data-ice="link">Parsing technical formats</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#iso-8601" data-ice="link">ISO 8601</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#http-and-rfc2822" data-ice="link">HTTP and RFC2822</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#sql" data-ice="link">SQL</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#unix-timestamps" data-ice="link">Unix timestamps</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#js-date-object" data-ice="link">JS Date Object</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/parsing.html"><a href="manual/parsing.html#ad-hoc-parsing" data-ice="link">Ad-hoc parsing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#consider-alternatives" data-ice="link">Consider alternatives</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#fromformat" data-ice="link">fromFormat</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#limitations" data-ice="link">Limitations</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#debugging" data-ice="link">Debugging</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/parsing.html"><a href="manual/parsing.html#table-of-tokens" data-ice="link">Table of tokens</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/math.html"><a href="manual/math.html" data-ice="link">Math</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/math.html"><a href="manual/math.html#calendar-math-vs-time-math" data-ice="link">Calendar math vs time math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#the-basics" data-ice="link">The basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#which-units-use-which-math-" data-ice="link">Which units use which math?</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#how-to-think-about-calendar-math" data-ice="link">How to think about calendar math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#dsts" data-ice="link">DSTs</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#time-math" data-ice="link">Time math</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/math.html"><a href="manual/math.html#math-with-multiple-units" data-ice="link">Math with multiple units</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/math.html"><a href="manual/math.html#comparing-datetimes" data-ice="link">Comparing DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/math.html"><a href="manual/math.html#duration-math" data-ice="link">Duration math</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#basics" data-ice="link">Basics</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#diffs" data-ice="link">Diffs</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#casual-vs-longterm-conversion-accuracy" data-ice="link">Casual vs longterm conversion accuracy</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/math.html"><a href="manual/math.html#losing-information" data-ice="link">Losing information</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/validity.html"><a href="manual/validity.html" data-ice="link">Validity</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-datetimes" data-ice="link">Invalid DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#reasons-a-datetimes-can-be-invalid" data-ice="link">Reasons a DateTimes can be invalid</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#debugging-invalid-datetimes" data-ice="link">Debugging invalid DateTimes</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#invalidreason-and-invalidexplanation" data-ice="link">invalidReason and invalidExplanation</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/validity.html"><a href="manual/validity.html#throwoninvalid" data-ice="link">throwOnInvalid</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-durations" data-ice="link">Invalid Durations</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/validity.html"><a href="manual/validity.html#invalid-intervals" data-ice="link">Invalid Intervals</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/matrix.html"><a href="manual/matrix.html" data-ice="link">Support matrix</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#official-support" data-ice="link">Official support</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#internet-explorer-and-platform-polyfills" data-ice="link">Internet Explorer and platform polyfills</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#effects-of-missing-features" data-ice="link">Effects of missing features</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#polyfills" data-ice="link">Polyfills</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl" data-ice="link">Intl</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#intl-tokens" data-ice="link">Intl tokens</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/matrix.html"><a href="manual/matrix.html#zones" data-ice="link">Zones</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#older-platforms" data-ice="link">Older platforms</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/matrix.html"><a href="manual/matrix.html#other-platforms" data-ice="link">Other platforms</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/moment.html"><a href="manual/moment.html" data-ice="link">For Moment users</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/moment.html"><a href="manual/moment.html#immutability" data-ice="link">Immutability</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/moment.html"><a href="manual/moment.html#major-functional-differences" data-ice="link">Major functional differences</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/moment.html"><a href="manual/moment.html#other-api-style-differences" data-ice="link">Other API style differences</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/moment.html"><a href="manual/moment.html#datetime-method-equivalence" data-ice="link">DateTime method equivalence</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/moment.html"><a href="manual/moment.html#creation" data-ice="link">Creation</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/moment.html"><a href="manual/moment.html#getters-and-setters" data-ice="link">Getters and setters</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/moment.html"><a href="manual/moment.html#basic-information-getters" data-ice="link">Basic information getters</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/moment.html"><a href="manual/moment.html#unit-getters" data-ice="link">Unit getters</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/moment.html"><a href="manual/moment.html#programmatic-get-and-set" data-ice="link">Programmatic get and set</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/moment.html"><a href="manual/moment.html#transformation" data-ice="link">Transformation</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/moment.html"><a href="manual/moment.html#query" data-ice="link">Query</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/moment.html"><a href="manual/moment.html#output" data-ice="link">Output</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/moment.html"><a href="manual/moment.html#basics" data-ice="link">Basics</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/moment.html"><a href="manual/moment.html#humanization" data-ice="link">Humanization</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/moment.html"><a href="manual/moment.html#durations" data-ice="link">Durations</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/moment.html"><a href="manual/moment.html#intervals" data-ice="link">Intervals</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/why.html"><a href="manual/why.html" data-ice="link">Why does Luxon exist?</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/why.html"><a href="manual/why.html#a-disclaimer" data-ice="link">A disclaimer</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/why.html"><a href="manual/why.html#origin" data-ice="link">Origin</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/why.html"><a href="manual/why.html#ideas-in-luxon" data-ice="link">Ideas in Luxon</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/why.html"><a href="manual/why.html#place-in-the-moment-project" data-ice="link">Place in the Moment project</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/why.html"><a href="manual/why.html#future-plans" data-ice="link">Future plans</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-27-0--2021-05-08-" data-ice="link">1.27.0 (2021-05-08)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-26-0--2021-02-13-" data-ice="link">1.26.0 (2021-02-13)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-25-0--2020-08-23-" data-ice="link">1.25.0 (2020-08-23)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-1--2020-05-04-" data-ice="link">1.24.1 (2020-05-04)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-24-0--2020-05-03-" data-ice="link">1.24.0 (2020-05-03)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-23-0--2020-04-02-" data-ice="link">1.23.0 (2020-04-02)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-22-2--2020-03-25-" data-ice="link">1.22.2 (2020-03-25)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-22-1--2020-03-19-" data-ice="link">1.22.1 (2020-03-19)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-22-0--2020-01-26-" data-ice="link">1.22.0 (2020-01-26)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-21-3--2019-11-28-" data-ice="link">1.21.3 (2019-11-28)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-21-2--2019-11-18-" data-ice="link">1.21.2 (2019-11-18)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-21-1--2019-11-03-" data-ice="link">1.21.1 (2019-11-03)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-21-0--2019-10-30-" data-ice="link">1.21.0 (2019-10-30)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-20-0--2019-10-29-" data-ice="link">1.20.0 (2019-10-29)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-19-3" data-ice="link">1.19.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-19-2" data-ice="link">1.19.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-19-1" data-ice="link">1.19.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-19-0" data-ice="link">1.19.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-18-2" data-ice="link">1.18.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-18-1" data-ice="link">1.18.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-18-0" data-ice="link">1.18.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-17-2" data-ice="link">1.17.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-17-1" data-ice="link">1.17.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-17-0" data-ice="link">1.17.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-16-1" data-ice="link">1.16.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-16-0" data-ice="link">1.16.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-15-0" data-ice="link">1.15.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-14-0" data-ice="link">1.14.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-13-3" data-ice="link">1.13.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-13-2" data-ice="link">1.13.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-13-1" data-ice="link">1.13.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-13-0" data-ice="link">1.13.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-12-1" data-ice="link">1.12.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-12-0" data-ice="link">1.12.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-11-4" data-ice="link">1.11.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-11-3" data-ice="link">1.11.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-11-2" data-ice="link">1.11.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-11-1" data-ice="link">1.11.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-11-0" data-ice="link">1.11.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-10-0" data-ice="link">1.10.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-9-0" data-ice="link">1.9.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-8-3" data-ice="link">1.8.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-8-2" data-ice="link">1.8.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-8-1" data-ice="link">1.8.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-7-1" data-ice="link">1.7.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-6-2" data-ice="link">1.6.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-6-0" data-ice="link">1.6.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-5-0" data-ice="link">1.5.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-4-6" data-ice="link">1.4.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-4-5" data-ice="link">1.4.5</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-4-4" data-ice="link">1.4.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-4-3" data-ice="link">1.4.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-4-2" data-ice="link">1.4.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-4-1" data-ice="link">1.4.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-4-0" data-ice="link">1.4.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-3-3" data-ice="link">1.3.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-3-2" data-ice="link">1.3.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-3-1" data-ice="link">1.3.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-3-0" data-ice="link">1.3.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-2-1" data-ice="link">1.2.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-2-0" data-ice="link">1.2.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-1-0" data-ice="link">1.1.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#1-0-0" data-ice="link">1.0.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-8" data-ice="link">0.5.8</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-7" data-ice="link">0.5.7</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-6" data-ice="link">0.5.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-5" data-ice="link">0.5.5</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-4" data-ice="link">0.5.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-3" data-ice="link">0.5.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-2" data-ice="link">0.5.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-1" data-ice="link">0.5.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-5-0" data-ice="link">0.5.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-4-0" data-ice="link">0.4.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-3-1" data-ice="link">0.3.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-3-0" data-ice="link">0.3.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-12" data-ice="link">0.2.12</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-11" data-ice="link">0.2.11</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-10" data-ice="link">0.2.10</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-9" data-ice="link">0.2.9</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-8" data-ice="link">0.2.8</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-7" data-ice="link">0.2.7</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-6" data-ice="link">0.2.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-5" data-ice="link">0.2.5</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-4" data-ice="link">0.2.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-3" data-ice="link">0.2.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-2" data-ice="link">0.2.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-1" data-ice="link">0.2.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-2-0" data-ice="link">0.2.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-1-0" data-ice="link">0.1.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-22" data-ice="link">0.0.22</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-21" data-ice="link">0.0.21</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-20" data-ice="link">0.0.20</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-19" data-ice="link">0.0.19</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-18" data-ice="link">0.0.18</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-17" data-ice="link">0.0.17</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-16" data-ice="link">0.0.16</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-15" data-ice="link">0.0.15</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-13" data-ice="link">0.0.13</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-12" data-ice="link">0.0.12</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-10" data-ice="link">0.0.10</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-9" data-ice="link">0.0.9</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-8" data-ice="link">0.0.8</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-7" data-ice="link">0.0.7</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-6" data-ice="link">0.0.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#0-0-5" data-ice="link">0.0.5</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/contributing.html"><a href="manual/contributing.html" data-ice="link">Contributing to Luxon</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#general-guidelines" data-ice="link">General guidelines</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#building-and-testing" data-ice="link">Building and testing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#osx" data-ice="link">OSX</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#linux" data-ice="link">Linux</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#windows" data-ice="link">Windows</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/contributing.html"><a href="manual/contributing.html#docker" data-ice="link">Docker</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#patch-basics" data-ice="link">Patch basics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/contributing.html"><a href="manual/contributing.html#npm-script-reference" data-ice="link">npm script reference</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="math">Math</h1><p>This page covers some oddball topics related to date and time math, which has some quirky corner cases.</p>
+<h2 id="calendar-math-vs-time-math">Calendar math vs time math</h2><h3 id="the-basics">The basics</h3><p>Math with dates and times can be unintuitive to programmers. If it&apos;s Feb 13, 2017 and I say &quot;in exactly one month&quot;, you know I mean March 13. Exactly one month after that is April 13. But because February is a shorter month than March, that means we added a different amount of time in each case. On the other hand, if I said &quot;30 days from February 13&quot;, you&apos;d try to figure out what day that landed on in March. Here it is in Luxon:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.local(2017, 2, 13).plus({ months: 1 }).toISODate() //=&gt; &apos;2017-03-13&apos;
+
+DateTime.local(2017, 2, 13).plus({ days: 30 }).toISODate() //=&gt; &apos;2017-03-15&apos;</code>
+</code></pre>
+<p>More generally we can differentiate two modes of math:</p>
+<ul>
+<li>Calendar math works with higher-order, variable-length units like years and months</li>
+<li>Time math works with lower-order, constant-length units such as hours, minutes, and seconds.</li>
+</ul>
+<h3 id="which-units-use-which-math-">Which units use which math?</h3><p>These units use calendar math:</p>
+<ul>
+<li><strong>Years</strong> vary because of leap years.</li>
+<li><strong>Months</strong> vary because they&apos;re just different lengths.</li>
+<li><strong>Days</strong> vary because DST transitions mean some days are 23 or 25 hours long.</li>
+<li><strong>Quarters</strong> are always three months, but months vary in length so quarters do too.</li>
+<li><strong>Weeks</strong> are always the same number of days, but days vary so weeks do too.</li>
+</ul>
+<p>These units use time math:</p>
+<ul>
+<li><strong>Hours</strong> are always 60 minutes</li>
+<li><strong>Minutes</strong> are always 60 seconds</li>
+<li><strong>Seconds</strong> are always 1000 milliseconds</li>
+</ul>
+<p>Don&apos;t worry about leap seconds. JavaScript and most other programming environments don&apos;t account for them; they just happen as abrupt, invisible changes to the underlying system&apos;s time.</p>
+<h3 id="how-to-think-about-calendar-math">How to think about calendar math</h3><p>It&apos;s best not to think of calendar math as requiring arcane checks on the lengths of intervening periods. Instead, think of them as <strong>adjusting that unit directly and keeping lower order date components constant</strong>. Let&apos;s go back to the Feb 13 + 1 month example. If you didn&apos;t have Luxon, you would do something like this to accomplish that:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var d = new Date(&apos;2017-02-13&apos;)
+d.setMonth(d.getMonth() + 1)
+d.toLocaleString() //=&gt; &apos;3/13/2017, 12:00:00 AM&apos;</code>
+</code></pre>
+<p>And under the covers, that&apos;s more or less what Luxon does too. It doesn&apos;t boil the operation down to a milliseconds delta because that&apos;s not what&apos;s being asked. Instead, it fiddles with what it thinks the date should be and then uses the built-in Gregorian calendar to compute the new timestamp.</p>
+<h3 id="dsts">DSTs</h3><p>There&apos;s a whole section about this in the <a href="./manual/zones.html#math-across-dsts">time zones documentation</a>. But here&apos;s a quick example (Spring Forward is early on March 12 in my time zone):</p>
+<pre><code><code class="source-code prettyprint">var start = DateTime.local(2017, 3, 11, 10);
+start.hour                          //=&gt; 10, just for comparison
+start.plus({days: 1}).hour          //=&gt; 10, stayed the same
+start.plus({hours: 24}).hour        //=&gt; 11, DST pushed forward an hour</code>
+</code></pre><p>So in adding a day, we kept the hour at 10, even though that&apos;s only 23 hours later.</p>
+<h3 id="time-math">Time math</h3><p>Time math is different. In time math, we&apos;re just adjusting the clock, adding or subtracting from the epoch timestamp. Adding 63 hours is really the same as adding 63 hours&apos; worth of milliseconds. Under the covers, Luxon does this exactly the opposite of how it does calendar math; it boils the operation down to milliseconds, computes the new timestamp, and then computes the date out of that.</p>
+<h2 id="math-with-multiple-units">Math with multiple units</h2><p>It&apos;s possible to do math with multiple units:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-05-15&apos;).plus({months: 2, days: 6}).toISODate(); //=&gt; &apos;2017-07-21&apos;</code>
+</code></pre>
+<p>This isn&apos;t as simple as it looks. For example, what should you expect this to do?</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({months: 1, days: 1}).toISODate();</code>
+</code></pre>
+<p>If the day is added first, we&apos;ll get an intermediate value of May 1. Adding a month to that gives us June 1. But if the month is added first, we&apos;ll an intermediate value of May 30 and day after that is May 31. (See &quot;Calendar math vs time math above if this is confusing.) So the order matters.</p>
+<p>Luxon has a simple rule for this: <strong>math is done from highest order to lowest order</strong>. So the result of the example above is May 31. This rule isn&apos;t logically necessary, but it does seem to reflect what people mean. Of course, Luxon can&apos;t enforce this rule if you do the math in separate operations:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DateTime.fromISO(&apos;2017-04-30&apos;).plus({days: 1}).plus({months: 1}).toISODate() //=&gt; &apos;2017-06-01&apos;</code>
+</code></pre>
+<p>It&apos;s not a coincidence that Luxon&apos;s interface makes it awkward to do this wrong.</p>
+<h2 id="comparing-datetimes">Comparing DateTimes</h2><p>DateTime implements <code>#valueOf</code> to return the epoch timestamp, so you can compare DateTimes with <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code>. That lets you find out if one DateTime is after or before another DateTime.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">d1 &lt; d2 // is d1 before d2?</code>
+</code></pre>
+<p>However, be aware that <code>===</code> compares object identity, which is not a useful concept in a library with immutable types. Use <code>#equals</code> to compare both the time and additional metadata, such as the locale and time zone. If you&apos;re only interested in checking the equality of the timestamps, you can use:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">d1.toMillis() === d2.toMillis() // are d1 and d2 the same instant in time?
++d1 === +d2 // same test, using object coercion</code>
+</code></pre>
+<p>You may also use <code>#hasSame</code> to make more subtle comparisons:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">d1.hasSame(d2, &apos;year&apos;);   // both DateTimes have the same calendar year
+d1.hasSame(d2, &apos;day&apos;);    // both DateTimes have the same calendar day (which implies they also have the same calendar year and month)</code>
+</code></pre>
+<p>Note that these are checking against the calendar. For example, if <code>d1</code> is in 2017, calling <code>hasSame</code> with &quot;year&quot; asks if d2 is also in 2017, not whether the DateTimes within a year of each other. For that, you&apos;d need <code>diff</code> (see below).</p>
+<p>If you&apos;d like to compare using a specific unit, you can achieve this by combining <code>#startOf</code> and the <code>#valueOf</code> comparisons above.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var d1 = DateTime.fromISO(&apos;2017-04-30&apos;);
+var d2 = DateTime.fromISO(&apos;2017-04-01&apos;);
+
+d2 &lt; d1                                   //=&gt; true
+d2.startOf(&apos;year&apos;) &lt; d1.startOf(&apos;year&apos;)   //=&gt; false
+d2.startOf(&apos;month&apos;) &lt; d1.startOf(&apos;month&apos;) //=&gt; false
+d2.startOf(&apos;day&apos;) &lt; d1.startOf(&apos;day&apos;)     //=&gt; true</code>
+</code></pre>
+<h2 id="duration-math">Duration math</h2><h3 id="basics">Basics</h3><p><a href="./manual/../class/src/duration.js~Duration.html">Durations</a> are quantities of time, like &quot;3 days and 6 hours&quot;. Luxon has no idea <em>which</em> 3 days and 6 hours they represent; it&apos;s just how Luxon represents those quantities in abstract, unmoored from the timeline. This is both tremendously useful and occasionally confusing. I&apos;m not going to give a detailed tour of their capabilities here (see the API docs for that), but I do want to clear up some of those confusions.</p>
+<p>Here&apos;s some very basic stuff to get us going:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ days: 3, hours: 6})
+
+// examine it
+dur.toObject()          //=&gt; { days: 3, hours: 6 }
+
+// express in minutes
+dur.as(&apos;minutes&apos;)       //=&gt; 4680
+
+// convert to minutes
+dur.shiftTo(&apos;minutes&apos;).toObject() //=&gt; { minutes: 4680 }
+
+// add to a DateTime
+DateTime.fromISO(&quot;2017-05-15&quot;).plus(dur).toISO() //=&gt; &apos;2017-05-18T06:00:00.000-04:00&apos;</code>
+</code></pre>
+<h3 id="diffs">Diffs</h3><p>You can subtract one time from another to find out how much time there is between them. Luxon&apos;s <a href="./manual/../class/src/datetime.js~DateTime.html#instance-method-diff">diff</a> method does this and it returns a Duration. For example:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-13&apos;);
+
+var diffInMonths = end.diff(start, &apos;months&apos;);
+diffInMonths.toObject(); //=&gt; { months: 1 }</code>
+</code></pre>
+<p>Notice we had to pick the unit to keep track of the diff in. The default is milliseconds:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start);
+diff.toObject() //=&gt; { milliseconds: 2415600000 }</code>
+</code></pre>
+<p>Finally, you can diff using multiple units:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-15&apos;);
+end.diff(start, [&apos;months&apos;, &apos;days&apos;]) //=&gt; { months: 1, days: 2 }</code>
+</code></pre>
+<h3 id="casual-vs-longterm-conversion-accuracy">Casual vs longterm conversion accuracy</h3><p>Durations represent bundles of time with specific units, but Luxon allows you to convert between them:</p>
+<ul>
+<li><code>shiftTo</code> returns a new Duration denominated in the specified units.</li>
+<li><code>as</code> converts the duration to just that unit and returns its value</li>
+</ul>
+<pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ months: 4, weeks: 2, days: 6 })
+
+dur.as(&apos;days&apos;)                            //=&gt; 140
+dur.shiftTo(&apos;days&apos;).toObject()            //=&gt; { days: 140 }
+dur.shiftTo(&apos;weeks&apos;, &apos;hours&apos;).toObject()  //=&gt; { weeks: 18, hours: 144 }</code>
+</code></pre>
+<p>But how do those conversions actually work? First, uncontroversially:</p>
+<ul>
+<li>1 week = 7 days</li>
+<li>1 day = 24 hours</li>
+<li>1 hour = 60 minutes</li>
+<li>1 minute = 60 seconds</li>
+<li>1 second = 1000 milliseconds</li>
+</ul>
+<p>These are always true and you can roll them up and down with consistency (e.g. <code>1 hour = 60 * 60 * 1000 milliseconds</code>). However, this isn&apos;t really true for the higher order units, which vary in length, even putting DSTs aside. A year is sometimes 365 days long and sometimes 366. Months are 28, 29, 30, or 31 days. By default Luxon converts between these units using what you might call &quot;casual&quot; conversions:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Month</th>
+<th>Week</th>
+<th>Day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Year</td>
+<td>12</td>
+<td>52</td>
+<td>365</td>
+</tr>
+<tr>
+<td>Quarter</td>
+<td>3</td>
+<td>13</td>
+<td>91</td>
+</tr>
+<tr>
+<td>Month</td>
+<td></td>
+<td>4</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p>These should match your intuition and for most purposes they work well. But they&apos;re not just wrong; they&apos;re not even self-consistent:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">dur.shiftTo(&apos;months&apos;).shiftTo(&apos;days&apos;).as(&apos;years&apos;) //=&gt; 0.9863013698630136</code>
+</code></pre>
+<p>This is because 12 * 30 != 365. These errors can be annoying, but they can also cause significant issues if the errors accumulate:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var dur = Duration.fromObject({ years: 50000 });
+DateTime.now().plus(dur.shiftTo(&apos;milliseconds&apos;)).year //=&gt; 51984
+DateTime.now().plus(dur).year                         //=&gt; 52017</code>
+</code></pre>
+<p>Those are 33 years apart! So Luxon offers an alternative conversion scheme called &quot;longterm&quot;, based on the 400-year calendar cycle:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Month</th>
+<th>Week</th>
+<th>Day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Year</td>
+<td>12</td>
+<td>52.1775</td>
+<td>365.2425</td>
+</tr>
+<tr>
+<td>Quarter</td>
+<td>3</td>
+<td>13.04435</td>
+<td>91.310625</td>
+</tr>
+<tr>
+<td>Month</td>
+<td></td>
+<td>4.348125</td>
+<td>30.436875</td>
+</tr>
+</tbody>
+</table>
+<p>You can see why these are irritating to work with, which is why they&apos;re not the default.</p>
+<p>Luxon methods that create Durations de novo accept an option called <code>conversionAccuracy</code>. You can set it to &quot;casual&quot; or &quot;longterm&quot;. It&apos;s a property of the Duration itself, so any conversions you do use the rule you&apos;ve picked, and any new Durations you derive from it will retain that property.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">Duration.fromObject({ years: 23, conversionAccuracy: &apos;longterm&apos; });
+Duration.fromISO(&apos;PY23&apos;, { conversionAccuracy: &apos;longterm&apos; });
+
+end.diff(start, &apos;days&apos;, { conversionAccuracy: &apos;longterm&apos; })</code>
+</code></pre>
+<p>You can also create an accurate Duration out of an existing one:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var pedanticDuration = casualDuration.reconfigure({ conversionAccuracy: &apos;longterm&apos; });</code>
+</code></pre>
+<p>These Durations will do their conversions differently.</p>
+<h3 id="losing-information">Losing information</h3><p>Be careful of converting between units. It&apos;s easy to lose information. Let&apos;s say we converted a diff into days:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-13&apos;);
+
+var diffInMonths = end.diff(start, &apos;months&apos;);
+diffInMonths.as(&apos;days&apos;); //=&gt; 30</code>
+</code></pre>
+<p>That&apos;s our conversion between months and days (you could also do a longterm-accurate conversion; it wouldn&apos;t fix the issue ahead). But this isn&apos;t the number of days between February 13 and March 13!</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var diffInDays = end.diff(start, &apos;days&apos;);
+diffInDays.toObject(); //=&gt; { days: 28 }</code>
+</code></pre>
+<p>It&apos;s important to remember that diffs are Duration objects, and a Duration is just a dumb pile of time units our computation spat out. Unlike an Interval, a Duration doesn&apos;t &quot;remember&quot; what the inputs to the diff were. So we lost some information converting between units. This mistake is really common when rolling up:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var diff = end.diff(start); // default unit is milliseconds
+
+// wtf, that&apos;s not a month!
+diff.as(&apos;months&apos;); //=&gt; 0.9319444 
+
+// it&apos;s not even the right number of days! (hint: my time zone has a DST)
+diff.shiftTo(&apos;hours&apos;).as(&apos;days&apos;); //=&gt; 27.958333333333332</code>
+</code></pre>
+<p>Normally you won&apos;t run into this problem if you think clearly about what you want to do with a diff. Specifically, make sure you diff in the units you actually want to use. Then Luxon knows to answer the question you really want to ask.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var monthsDiff = end.diff(start, &quot;months&quot;);
+var daysDiff = end.diff(start, &quot;days&quot;);</code>
+</code></pre>
+<p>But sometimes you really do want an object that represents the subtraction itself, not the result. <a href="./manual/../class/src/interval.js~Interval.html">Intervals</a> can help. Intervals are mostly used to keep track of ranges of time, but they make for &quot;anchored&quot; diffs too. For example:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var end = DateTime.fromISO(&apos;2017-03-13&apos;);
+var start = DateTime.fromISO(&apos;2017-02-13&apos;);
+var i = Interval.fromDateTimes(start, end);
+
+i.length(&apos;days&apos;);       //=&gt; 28
+i.length(&apos;months&apos;)      //=&gt; 1</code>
+</code></pre>
+<p>Because the Interval stores its endpoints and computes <code>length</code> on the fly, it retakes the diff each time you query it. Of course, precisely because an Interval <em>isn&apos;t</em> an abstract bundle of time, it can&apos;t be used in places where Durations can. For example, you can&apos;t add them to DateTime via <code>plus()</code> because Luxon wouldn&apos;t know what units to do the math in (see &quot;Calendar vs time math&quot; above). But you can convert the interval into a Duration by picking the units:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">i.toDuration(&apos;months&apos;).toObject(); //=&gt; { months: 1 }
+i.toDuration(&apos;days&apos;).toObject(); //=&gt; { days: 28 }</code>
+</code></pre>
+<p>You can even pick multiple units:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">end = DateTime.fromISO(&apos;2018-05-25&apos;);
+i = start.until(end);
+i.toDuration([&apos;years&apos;, &apos;months&apos;, &apos;days&apos;]).toObject(); //=&gt; { years: 1, months: 3, days: 12 }</code>
+</code></pre>
+<p>Of course, once you&apos;ve converted to a Duration, you&apos;re back in the same spot you were with the diff case; <em>further</em> conversions will be lossy. So the point is to think carefully about what information you have when.</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+<script src="https://moment.github.io/luxon/global/luxon.js"></script><script>console.log('You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`.')</script></body>
+</html>

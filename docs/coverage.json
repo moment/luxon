@@ -1,0 +1,62 @@
+{
+  "coverage": "100%",
+  "expectCount": 305,
+  "actualCount": 305,
+  "files": {
+    "src/datetime.js": {
+      "expectCount": 122,
+      "actualCount": 122,
+      "undocumentLines": []
+    },
+    "src/duration.js": {
+      "expectCount": 47,
+      "actualCount": 47,
+      "undocumentLines": []
+    },
+    "src/errors.js": {
+      "expectCount": 8,
+      "actualCount": 8,
+      "undocumentLines": []
+    },
+    "src/info.js": {
+      "expectCount": 11,
+      "actualCount": 11,
+      "undocumentLines": []
+    },
+    "src/interval.js": {
+      "expectCount": 44,
+      "actualCount": 44,
+      "undocumentLines": []
+    },
+    "src/settings.js": {
+      "expectCount": 15,
+      "actualCount": 15,
+      "undocumentLines": []
+    },
+    "src/zone.js": {
+      "expectCount": 9,
+      "actualCount": 9,
+      "undocumentLines": []
+    },
+    "src/zones/IANAZone.js": {
+      "expectCount": 16,
+      "actualCount": 16,
+      "undocumentLines": []
+    },
+    "src/zones/fixedOffsetZone.js": {
+      "expectCount": 13,
+      "actualCount": 13,
+      "undocumentLines": []
+    },
+    "src/zones/invalidZone.js": {
+      "expectCount": 10,
+      "actualCount": 10,
+      "undocumentLines": []
+    },
+    "src/zones/localZone.js": {
+      "expectCount": 10,
+      "actualCount": 10,
+      "undocumentLines": []
+    }
+  }
+}
