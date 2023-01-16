@@ -837,6 +837,13 @@ test("DateTime.fromFormat containg special regex token", () => {
   ).toBe(false);
 });
 
+// #1362
+test("DateTime.fromFormat only an offset", () => {
+  const dt = DateTime.fromFormat("+0100", "ZZZ", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.offset).toBe(60);
+});
+
 //------
 // .fromFormatExplain
 //-------

@@ -168,7 +168,7 @@ function adjustTime(inst, dur) {
 // by handling the zone options
 function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
   const { setZone, zone } = opts;
-  if (parsed && Object.keys(parsed).length !== 0) {
+  if ((parsed && Object.keys(parsed).length !== 0) || parsedZone) {
     const interpretationZone = parsedZone || zone,
       inst = DateTime.fromObject(parsed, {
         ...opts,
