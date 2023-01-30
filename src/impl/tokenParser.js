@@ -180,6 +180,8 @@ function unitForToken(token, loc) {
         // because we don't have any way to figure out what they are
         case "z":
           return simple(/[a-z_+-/]{1,256}?/i);
+        case " ":
+          return simple(/\s/);
         default:
           return literal(t);
       }
@@ -237,9 +239,10 @@ function tokenForPart(part, formatOpts) {
   const { type, value } = part;
 
   if (type === "literal") {
+    const isSpace = /^\s+$/.test(value);
     return {
-      literal: true,
-      val: value,
+      literal: !isSpace,
+      val: isSpace ? " " : value,
     };
   }
 
