@@ -1,4 +1,4 @@
-import { padStart, roundTo, hasRelative } from "./util.js";
+import { padStart, roundTo, hasRelative, formatOffset } from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
@@ -203,7 +203,7 @@ class PolyDateFormatter {
     if (this.opts.timeZone) {
       // Don't apply any workarounds if a timeZone is explicitly provided in opts
       this.dt = dt;
-    } else if (dt.zone.isUniversal) {
+    } else if (dt.zone.type === "fixed") {
       // UTC-8 or Etc/UTC-8 are not part of tzdata, only Etc/GMT+8 and the like.
       // That is why fixed-offset TZ is set to that unless it is:
       // 1. Representing offset 0 when UTC is used to maintain previous behavior and does not become GMT.
@@ -229,9 +229,9 @@ class PolyDateFormatter {
       z = dt.zone.name;
     } else {
       // Custom zones can have any offset / offsetName so we just manually
-      // apply the offset and substitute the offsetName as needed.
+      // apply the offset and substitute the zone as needed.
       z = "UTC";
-      this.dt = dt.offset === 0 ? dt : dt.setZone("UTC").plus({ minutes: dt.offset });
+      this.dt = dt.setZone("UTC").plus({ minutes: dt.offset });
       this.originalZone = dt.zone;
     }
 
