@@ -398,7 +398,13 @@ test("DateTime#toLocaleString() shows things with UTC if fixed-offset zone with 
 
 test("DateTime#toLocaleString() does the best it can with unsupported fixed-offset zone when showing the zone", () => {
   expect(dt.setZone("UTC+4:30").toLocaleString(DateTime.DATETIME_FULL)).toBe(
-    "May 25, 1982 at 9:23 AM UTC"
+    "May 25, 1982 at 1:53 PM UTC+4:30"
+  );
+});
+
+test("DateTime#toLocaleString() does the best it can with unsupported fixed-offset zone with timeStyle full", () => {
+  expect(dt.setZone("UTC+4:30").toLocaleString({ timeStyle: "full" })).toBe(
+    "1:53:54 PM UTC+4:30"
   );
 });
 
