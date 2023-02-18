@@ -293,7 +293,7 @@ test("Duration#toHuman only shows the units you have", () => {
 
 test("Duration#toHuman accepts a listStyle", () => {
   expect(dur().toHuman({ listStyle: "long" })).toEqual(
-    "1 year, 2 months, 1 week, 3 days, 4 hours, 5 minutes, 6 seconds, and 7 milliseconds"
+    "1 year, 2 months, 1 week, 3 days, 4 hours, 5 minutes, 6 seconds and 7 milliseconds"
   );
 });
 
