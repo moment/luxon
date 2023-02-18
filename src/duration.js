@@ -457,7 +457,7 @@ export default class Duration {
    * ```js
    * var dur = Duration.fromObject({ days: 1, hours: 5, minutes: 6 })
    * dur.toHuman() //=> '1 day, 5 hours, 6 minutes'
-   * dur.toHuman({ listStyle: "long" }) //=> '1 day, 5 hours, and 6 minutes'
+   * dur.toHuman({ listStyle: "long" }) //=> '1 day, 5 hours and 6 minutes'
    * dur.toHuman({ unitDisplay: "short" }) //=> '1 day, 5 hr, 6 min'
    * ```
    */
