@@ -47,6 +47,9 @@ export default class Formatter {
   }
 
   static parseFormat(fmt) {
+    // white-space is always considered a literal in user-provided formats
+    // the " " token has a special meaning (see unitForToken)
+
     let current = null,
       currentFull = "",
       bracketed = false;

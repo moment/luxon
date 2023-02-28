@@ -180,8 +180,10 @@ function unitForToken(token, loc) {
         // because we don't have any way to figure out what they are
         case "z":
           return simple(/[a-z_+-/]{1,256}?/i);
+        // this special-case "token" represents a place where a macro-token expanded into a white-space literal
+        // in this case we accept any non-newline white-space
         case " ":
-          return simple(/\s/);
+          return simple(/[^\S\n\r]/);
         default:
           return literal(t);
       }
