@@ -47,6 +47,9 @@ export default class Formatter {
   }
 
   static parseFormat(fmt) {
+    // white-space is always considered a literal in user-provided formats
+    // the " " token has a special meaning (see unitForToken)
+
     let current = null,
       currentFull = "",
       bracketed = false;
@@ -55,7 +58,7 @@ export default class Formatter {
       const c = fmt.charAt(i);
       if (c === "'") {
         if (currentFull.length > 0) {
-          splits.push({ literal: bracketed, val: currentFull });
+          splits.push({ literal: bracketed || /^\s+$/.test(currentFull), val: currentFull });
         }
         current = null;
         currentFull = "";
@@ -66,7 +69,7 @@ export default class Formatter {
         currentFull += c;
       } else {
         if (currentFull.length > 0) {
-          splits.push({ literal: false, val: currentFull });
+          splits.push({ literal: /^\s+$/.test(currentFull), val: currentFull });
         }
         currentFull = c;
         current = c;
@@ -74,7 +77,7 @@ export default class Formatter {
     }
 
     if (currentFull.length > 0) {
-      splits.push({ literal: bracketed, val: currentFull });
+      splits.push({ literal: bracketed || /^\s+$/.test(currentFull), val: currentFull });
     }
 
     return splits;
