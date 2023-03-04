@@ -107,6 +107,13 @@ test("DateTime#plus works across the 100 barrier", () => {
   expect(d.day).toBe(2);
 });
 
+test("DateTime#plus works across the 100 barrier when passing through February", () => {
+  const d = DateTime.fromISO("0099-12-31").plus({ day: 61 });
+  expect(d.year).toBe(100);
+  expect(d.month).toBe(3);
+  expect(d.day).toBe(2);
+});
+
 test("DateTime#plus renders invalid when out of max. datetime range using days", () => {
   const d = DateTime.utc(1970, 1, 1, 0, 0, 0, 0).plus({ day: 1e8 + 1 });
   expect(d.isValid).toBe(false);

@@ -790,6 +790,12 @@ test("DateTime.fromFormat() parses localized macro tokens", () => {
   }
 });
 
+test("DateTime.fromFormat() allows non-breaking white-space to be substituted inside macro-tokens", () => {
+  expect(DateTime.fromFormat("5:54 PM", "t", { locale: "en-US" }).isValid).toBe(true);
+  expect(DateTime.fromFormat("5:54 PM", "t", { locale: "en-US" }).isValid).toBe(true);
+  expect(DateTime.fromFormat("5:54\nPM", "t", { locale: "en-US" }).isValid).toBe(false);
+});
+
 test("DateTime.fromFormat() throws if you don't provide a format", () => {
   expect(() => DateTime.fromFormat("yo")).toThrowError();
 });
