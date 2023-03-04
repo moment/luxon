@@ -442,29 +442,31 @@ test("DateTime#toLocaleString() shows things with UTC if fixed-offset zone with 
 
 test("DateTime#toLocaleString() does the best it can with unsupported fixed-offset zone when showing the zone", () => {
   expect(dt.setZone("UTC+4:30").toLocaleString(DateTime.DATETIME_FULL)).toBe(
-    "May 25, 1982 at 1:53 PM UTC+4:30"
+    "May 25, 1982 at 1:53\u202FPM UTC+4:30"
   );
 });
 
 test("DateTime#toLocaleString() does the best it can with unsupported fixed-offset zone with timeStyle full", () => {
-  expect(dt.setZone("UTC+4:30").toLocaleString({ timeStyle: "full" })).toBe("1:53:54 PM UTC+4:30");
+  expect(dt.setZone("UTC+4:30").toLocaleString({ timeStyle: "full" })).toBe(
+    "1:53:54\u202FPM UTC+4:30"
+  );
 });
 
 test("DateTime#toLocaleString() shows things in the right custom zone", () => {
   expect(dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString(DateTime.DATETIME_SHORT)).toBe(
-    "5/25/1982, 9:53 AM"
+    "5/25/1982, 9:53\u202FAM"
   );
 });
 
 test("DateTime#toLocaleString() shows things in the right custom zone when showing the zone", () => {
   expect(dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString(DateTime.DATETIME_FULL)).toBe(
-    "May 25, 1982 at 9:53 AM CUST"
+    "May 25, 1982 at 9:53\u202FAM CUST"
   );
 });
 
 test("DateTime#toLocaleString() shows things in the right custom zone with timeStyle full", () => {
   expect(dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString({ timeStyle: "full" })).toBe(
-    "9:53:54 AM CUSTOM"
+    "9:53:54\u202FAM CUSTOM"
   );
 });
 
