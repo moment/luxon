@@ -56,4 +56,11 @@ Info.features(); //=> { relative: false }
 
 Specific notes on other platforms:
 
-- **React Native on (specifically) Android** doesn't come with Intl support, so all the possible-to-be-missing capabilities above are unavailable. Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
+- **React Native <0.70 on (specifically) Android** doesn't include Intl support by default, so all the possible-to-be-missing capabilities above are unavailable. To fix this on React Native >=0.60, you should configure the build flavor of jsc in `android/app/build.gradle`:
+
+```diff
+-def jscFlavor = 'org.webkit:android-jsc:+'
++def jscFlavor = 'org.webkit:android-jsc-intl:+'
+```
+
+For even older versions of React Native you can use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
