@@ -240,7 +240,7 @@ export default class Interval {
     if (!this.isValid) return NaN;
     const start = this.start.startOf(unit),
       end = this.end.startOf(unit);
-    return Math.floor(end.diff(start, unit).get(unit)) + 1;
+    return Math.floor(end.diff(start, unit).get(unit)) + (end.valueOf() !== this.end.valueOf());
   }
 
   /**
