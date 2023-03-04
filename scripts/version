@@ -14,12 +14,15 @@ fi
 
 PACKAGE_VERSION=$(node -p "require('./package.json').version")
 PACKAGE_LOCK_VERSION=$(node -p "require('./package-lock.json').version")
+MODULE_VERSION=$(node -p "require('./src/package.json').version")
 EXPORTED_VERSION=$($grepper -oP "(?<=const VERSION = \").*(?=\";)" ./src/luxon.js)
 
 if [ $PACKAGE_VERSION != $PACKAGE_LOCK_VERSION ]; then
   abort "package-lock.json's version differs from package.json's"
 elif [ $PACKAGE_VERSION != $EXPORTED_VERSION ]; then
   abort "exported version differs from package.json's"
+elif [ $PACKAGE_VERSION != $MODULE_VERSION ]; then
+  abort "src/package.json differs from package.json's"
 elif [ $(git tag -l "$PACKAGE_VERSION") ]; then
   abort "tag already exists"
 fi

@@ -1,5 +1,18 @@
 # Changelog
 
+# 3.3.0 (2023-03-03)
+
+* Fix off-by-one in Interval#count (#1308)
+* Support formatting for custom zones (#1377)
+* Fix parsing for narrow spaces (#1369)
+* Handle leap year issue with AD 100 (#1390)
+* Allow parsing of just an offset
+
+# 3.2.1 (2023-01-04)
+
+* Fix for RFC-2822 regex vulnerability
+* Better handling of BCP tags with -x- extensions
+
 # 3.2.0 (2022-12-29)
 
 * Allow timeZone to be specified as an intl option
