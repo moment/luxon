@@ -101,4 +101,13 @@ npm install --save-dev @types/luxon
 
 ## React Native
 
-React Native works just fine, but React Native for Android doesn't ship with Intl support, which you need for [a lot of Luxon's functionality](matrix.md). Use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
+React Native >=0.70 works just fine out of the box. Older versions of React Native for Android (or if you disable Hermes) doesn't include Intl support by default, which you need for [a lot of Luxon's functionality](matrix.md).
+
+For React Native >=0.60, you should configure the build flavor of jsc in `android/app/build.gradle`:
+
+```diff
+-def jscFlavor = 'org.webkit:android-jsc:+'
++def jscFlavor = 'org.webkit:android-jsc-intl:+'
+```
+
+For even older versions of React Native you can use [jsc-android-buildscripts](https://github.com/SoftwareMansion/jsc-android-buildscripts) to fix it.
