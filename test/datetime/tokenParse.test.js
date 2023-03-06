@@ -1186,6 +1186,17 @@ test("DateTime.parseFormatForOpts returns a parsing format", () => {
   const format = DateTime.parseFormatForOpts("");
   expect(format).toBeNull();
 });
+test("DateTime.parseFormatForOpts respects the hour cycle", () => {
+  const enFormat = DateTime.parseFormatForOpts(DateTime.TIME_SIMPLE, { locale: "en-US" });
+  expect(enFormat).toEqual("h:m a");
+
+  const deFormat = DateTime.parseFormatForOpts(DateTime.TIME_SIMPLE, { locale: "de-DE" });
+  expect(deFormat).toEqual("H:m");
+});
+test("DateTime.parseFormatForOpts respects the hour cycle when forced by the options", () => {
+  const format = DateTime.parseFormatForOpts(DateTime.TIME_24_SIMPLE, { locale: "en-US" });
+  expect(format).toEqual("H:m");
+});
 
 //------
 // .expandFormat
@@ -1199,4 +1210,17 @@ test("DateTime.expandFormat works with the default locale", () => {
 test("DateTime.expandFormat works with other locales", () => {
   const format = DateTime.expandFormat("D", { locale: "en-gb" });
   expect(format).toBe("d/M/yyyyy");
+});
+
+test("DateTime.expandFormat respects the hour cycle", () => {
+  const enFormat = DateTime.expandFormat("t", { locale: "en-US" });
+  expect(enFormat).toBe("h:m a");
+
+  const deFormat = DateTime.expandFormat("t", { locale: "de-DE" });
+  expect(deFormat).toBe("H:m");
+});
+
+test("DateTime.expandFormat respects the hour cycle when forced by the macro token", () => {
+  const format = DateTime.expandFormat("T", { locale: "en-US" });
+  expect(format).toBe("H:m");
 });
