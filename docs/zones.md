@@ -139,7 +139,7 @@ specifyZone.toString(); //=> '2017-05-15T03:10:23.000-04:00'
 
 ```js
 var specifyOffsetAndOverrideZone = DateTime.fromISO("2017-05-15T09:10:23-09:00", {
-  zone: "Europe/Paris",
+  zone: "Europe/Paris"
 });
 
 specifyOffsetAndOverrideZone.zoneName; //=> 'Europe/Paris'
@@ -157,7 +157,7 @@ keepOffset.zoneName; //=> 'UTC-9'
 keepOffset.toString(); //=> '2017-05-15T09:10:23.000-09:00'
 
 var keepZone = DateTime.fromFormat("2017-05-15T09:10:23 Europe/Paris", "yyyy-MM-dd'T'HH:mm:ss z", {
-  setZone: true,
+  setZone: true
 });
 
 keepZone.zoneName; //=> 'Europe/Paris'
@@ -234,8 +234,12 @@ DateTime.local(2017, 3, 12, 2, 30).toString(); //=> '2017-03-12T03:30:00.000-04:
 You can also do date math that lands you in the middle of the shift. These also push forward:
 
 ```js
-DateTime.local(2017, 3, 11, 2, 30).plus({ days: 1 }).toString(); //=> '2017-03-12T03:30:00.000-04:00'
-DateTime.local(2017, 3, 13, 2, 30).minus({ days: 1 }).toString(); //=> '2017-03-12T03:30:00.000-04:00'
+DateTime.local(2017, 3, 11, 2, 30)
+  .plus({ days: 1 })
+  .toString(); //=> '2017-03-12T03:30:00.000-04:00'
+DateTime.local(2017, 3, 13, 2, 30)
+  .minus({ days: 1 })
+  .toString(); //=> '2017-03-12T03:30:00.000-04:00'
 ```
 
 ### Ambiguous times
