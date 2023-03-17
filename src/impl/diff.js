@@ -34,6 +34,13 @@ function highOrderDiffs(cursor, later, units) {
 
       if (highWater > later) {
         results[unit]--;
+
+        const highWater2 = earlier.plus(results);
+        if (highWater2 > later) {
+          results[unit]--;
+          highWater = highWater2;
+        }
+
         cursor = earlier.plus(results);
       } else {
         cursor = highWater;
