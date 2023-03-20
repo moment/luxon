@@ -313,6 +313,21 @@ test("DateTime#diff handles Feb-29 edge case logic for higher order units in a m
   expect(left.plus(diff).equals(right)).toBe(true);
 });
 
+// see https://github.com/moment/luxon/issues/1165
+test("DateTime#diff handles datetimes whose dayDiff is off by 2 days instead of the usual 1 due to zone differences", () => {
+  // Notice how `end` is 5 days away when only looking at calendar days ignoring time zones,
+  // but actually the diff is 3 days and 23 hours (days are off by 2)
+  // because Europe/Madrid here has an offset of +02:00.
+  const start = DateTime.fromISO("2022-05-05T23:00", { zone: "UTC" });
+  const end = DateTime.fromISO("2022-05-10T00:00", { zone: "Europe/Madrid" });
+
+  const diff1 = end.diff(start, ["days", "hours", "minutes"]).toObject();
+  expect(diff1).toEqual({ days: 3, hours: 23, minutes: 0 });
+
+  const diff2 = end.diff(start, ["days"]);
+  expect(diff2.days).toBeCloseTo(3.958333, 6);
+});
+
 //------
 // diffNow
 //-------

@@ -25,6 +25,14 @@ function highOrderDiffs(cursor, later, units) {
   const earlier = cursor;
   let lowestOrder, highWater;
 
+  /* This loop tries to diff using larger units first.
+     If we overshoot, we backtrack and try the next smaller unit.
+     "cursor" starts out at the earlier timestamp and moves closer and closer to "later"
+     as we use smaller and smaller units.
+     highWater keeps track of where we would be if we added one more of the smallest unit,
+     this is used later to potentially convert any difference smaller than the smallest higher order unit
+     into a fraction of that smallest higher order unit
+  */
   for (const [unit, differ] of differs) {
     if (units.indexOf(unit) >= 0) {
       lowestOrder = unit;
@@ -33,8 +41,20 @@ function highOrderDiffs(cursor, later, units) {
       highWater = earlier.plus(results);
 
       if (highWater > later) {
+        // we overshot the end point, backtrack cursor by 1
         results[unit]--;
         cursor = earlier.plus(results);
+
+        // if we are still overshooting now, we need to backtrack again
+        // this happens in certain situations when diffing times in different zones,
+        // because this calculation ignores time zones
+        if (cursor > later) {
+          // keep the "overshot by 1" around as highWater
+          highWater = cursor;
+          // backtrack cursor by 1
+          results[unit]--;
+          cursor = earlier.plus(results);
+        }
       } else {
         cursor = highWater;
       }
