@@ -1275,7 +1275,7 @@ export default class DateTime {
       c1.second === c2.second &&
       c1.millisecond === c2.millisecond
     ) {
-      return [clone(this, { ts: ts1, o: oEarlier }), clone(this, { ts: ts2, o: oLater })];
+      return [clone(this, { ts: ts1 }), clone(this, { ts: ts2 })];
     }
     return [this];
   }
