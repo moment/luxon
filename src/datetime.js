@@ -224,14 +224,14 @@ function toISOTime(
   if (extended) {
     c += ":";
     c += padStart(o.c.minute);
-    if (o.c.second !== 0 || !suppressSeconds) {
+    if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
       c += ":";
     }
   } else {
     c += padStart(o.c.minute);
   }
 
-  if (o.c.second !== 0 || !suppressSeconds) {
+  if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
     c += padStart(o.c.second);
 
     if (o.c.millisecond !== 0 || !suppressMilliseconds) {
