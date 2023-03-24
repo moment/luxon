@@ -1255,18 +1255,18 @@ export default class DateTime {
       return [this];
     }
     const dayMs = 86400000;
-    const hourMs = 60000;
+    const minuteMs = 60000;
     const localTS = objToLocalTS(this.c);
     const oEarlier = this.zone.offset(localTS - dayMs);
     const oLater = this.zone.offset(localTS + dayMs);
 
-    const o1 = this.zone.offset(localTS - oEarlier * hourMs);
-    const o2 = this.zone.offset(localTS - oLater * hourMs);
+    const o1 = this.zone.offset(localTS - oEarlier * minuteMs);
+    const o2 = this.zone.offset(localTS - oLater * minuteMs);
     if (o1 === o2) {
       return [this];
     }
-    const ts1 = localTS - o1 * hourMs;
-    const ts2 = localTS - o2 * hourMs;
+    const ts1 = localTS - o1 * minuteMs;
+    const ts2 = localTS - o2 * minuteMs;
     const c1 = tsToObj(ts1, o1);
     const c2 = tsToObj(ts2, o2);
     if (
