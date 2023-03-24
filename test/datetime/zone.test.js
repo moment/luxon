@@ -243,6 +243,31 @@ test("DateTime#isInDST() returns true for 1974 whole year in USA- from January 6
 });
 
 //------
+// #getPossibleOffsets()
+//------
+test("DateTime#getPossibleOffsets() returns the same DateTime for fixed zones", () => {
+  const fixedZoned = dt().setZone("+02:00");
+  const possibleOffsets = fixedZoned.getPossibleOffsets();
+  expect(possibleOffsets).toHaveLength(1);
+  expect(possibleOffsets[0]).toBe(fixedZoned);
+});
+
+test("DateTime#getPossibleOffsets() returns the same DateTime when not at an ambiguous local time", () => {
+  const zoned = DateTime.fromISO("2023-01-01T15:00", { zone: "Europe/Berlin" });
+  const possibleOffsets = zoned.getPossibleOffsets();
+  expect(possibleOffsets).toHaveLength(1);
+  expect(possibleOffsets[0]).toBe(zoned);
+});
+
+test("DateTime#getPossibleOffsets() returns the possible DateTimes when at an ambiguous local time", () => {
+  const zoned = DateTime.fromISO("2023-10-29T02:30:00+01:00", { zone: "Europe/Berlin" });
+  const possibleOffsets = zoned.getPossibleOffsets();
+  expect(possibleOffsets).toHaveLength(2);
+  expect(possibleOffsets[0].toISO()).toBe("2023-10-29T02:30:00.000+02:00");
+  expect(possibleOffsets[1].toISO()).toBe("2023-10-29T02:30:00.000+01:00");
+});
+
+//------
 // #invalid
 //------
 
