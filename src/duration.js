@@ -12,6 +12,7 @@ import {
   roundTo,
 } from "./impl/util.js";
 import Settings from "./settings.js";
+import DateTime from "./datetime.js";
 
 const INVALID = "Invalid Duration";
 
@@ -548,26 +549,11 @@ export default class Duration {
       includePrefix: false,
       format: "extended",
       ...opts,
+      includeOffset: false,
     };
 
-    const value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
-
-    let fmt = opts.format === "basic" ? "hhmm" : "hh:mm";
-
-    if (!opts.suppressSeconds || value.seconds !== 0 || value.milliseconds !== 0) {
-      fmt += opts.format === "basic" ? "ss" : ":ss";
-      if (!opts.suppressMilliseconds || value.milliseconds !== 0) {
-        fmt += ".SSS";
-      }
-    }
-
-    let str = value.toFormat(fmt);
-
-    if (opts.includePrefix) {
-      str = "T" + str;
-    }
-
-    return str;
+    const dateTime = DateTime.fromMillis(millis, { zone: "UTC" });
+    return dateTime.toISOTime(opts);
   }
 
   /**

@@ -96,6 +96,12 @@ test("DateTime#toISO() suppresses [milli]seconds", () => {
   const noZeroSeconds = { suppressSeconds: true, suppressMilliseconds: true };
   expect(dt.set({ millisecond: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23:54Z");
   expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23Z");
+
+  const suppressOnlySeconds = { suppressSeconds: true };
+  expect(dt.set({ seconds: 0 }).toISO(suppressOnlySeconds)).toBe("1982-05-25T09:23:00.123Z");
+  expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(suppressOnlySeconds)).toBe(
+    "1982-05-25T09:23Z"
+  );
 });
 
 test("DateTime#toISO() returns null for invalid DateTimes", () => {
