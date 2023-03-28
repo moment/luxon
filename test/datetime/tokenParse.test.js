@@ -822,7 +822,7 @@ test("DateTime.fromFormat validates weekdays", () => {
   expect(dt.isValid).toBe(false);
 });
 
-test("DateTime.fromFormat containg special regex token", () => {
+test("DateTime.fromFormat containing special regex token", () => {
   const ianaFormat = "yyyy-MM-dd'T'HH-mm[z]";
   const dt = DateTime.fromFormat("2019-01-14T11-30[Indian/Maldives]", ianaFormat, {
     setZone: true,

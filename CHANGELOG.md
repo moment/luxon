@@ -154,7 +154,7 @@ See [Upgrading section](https://moment.github.io/luxon/#/upgrading?id=_1x-to-20)
 
 ## 1.22.0 (2020-01-26)
 
- * Fix setZone's handling of pre-1970 dates with milisecond components
+ * Fix setZone's handling of pre-1970 dates with millisecond components
  * Fix keepLocalTime for large jumps near the target zone's DST
  * Fix cache perf for toRelative()
 
@@ -286,7 +286,7 @@ See [Upgrading section](https://moment.github.io/luxon/#/upgrading?id=_1x-to-20)
 ## 1.11.2
 
  * Fixed handling of some characters in fromFormat literal sections
- * Hanlde string values in object arguments to DateTime methods
+ * Handle string values in object arguments to DateTime methods
  * Fixed toRelativeCalendar's handling of zones in the base date
 
 ## 1.11.1
@@ -369,7 +369,7 @@ Removal accidentally-introduced runtime dependency
 ## 1.4.1
 
 - Empty diffs now have all the asked-for units in them, set at 0
-- Duration operations perserve the superset of units
+- Duration operations preserve the superset of units
 
 ## 1.4.0
 
@@ -464,7 +464,7 @@ Documentation fixes
 ## 0.5.0
 
 - `isBefore()` returns true for the end of the interval, consistent with being half-open
-- `zoneName` now rturns `null` for invalid DateTimes
+- `zoneName` now returns `null` for invalid DateTimes
 - Added quarter support
 - Adding a month to Jan 31 gives Feb 28/29
 

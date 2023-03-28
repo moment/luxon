@@ -1,6 +1,6 @@
 # For Moment users
 
-Luxon borrows lots of ideas from [Moment.js](http://momentjs.com), but there are a lot of differences too. This document clarifies what they are.
+Luxon borrows lots of ideas from [Moment.js](https://momentjs.com), but there are a lot of differences too. This document clarifies what they are.
 
 ## Immutability
 
