@@ -1763,14 +1763,25 @@ export default class DateTime {
    * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.includeOffsetSpace=true] - include the space between the time and the offset, such as '05:15:16.345 -04:00'
+   * @param {boolean} [opts.includeMilliseconds=true] - include the milliseconds
    * @example DateTime.utc().toSQL() //=> '05:15:16.345'
    * @example DateTime.now().toSQL() //=> '05:15:16.345 -04:00'
    * @example DateTime.now().toSQL({ includeOffset: false }) //=> '05:15:16.345'
    * @example DateTime.now().toSQL({ includeZone: false }) //=> '05:15:16.345 America/New_York'
+   * @example DateTime.now().toSQL({ includeMilliseconds: false}) //=> '05:15:16'
    * @return {string}
    */
-  toSQLTime({ includeOffset = true, includeZone = false, includeOffsetSpace = true } = {}) {
-    let fmt = "HH:mm:ss.SSS";
+  toSQLTime({
+    includeOffset = true,
+    includeZone = false,
+    includeOffsetSpace = true,
+    includeMilliseconds = true,
+  } = {}) {
+    let fmt = "HH:mm:ss";
+
+    if (includeMilliseconds) {
+      fmt += ".SSS";
+    }
 
     if (includeZone || includeOffset) {
       if (includeOffsetSpace) {
@@ -1792,10 +1803,12 @@ export default class DateTime {
    * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.includeOffsetSpace=true] - include the space between the time and the offset, such as '05:15:16.345 -04:00'
+   * @param {boolean} [opts.includeMilliseconds=true] - include the milliseconds
    * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 Z'
    * @example DateTime.local(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 -04:00'
    * @example DateTime.local(2014, 7, 13).toSQL({ includeOffset: false }) //=> '2014-07-13 00:00:00.000'
    * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: true }) //=> '2014-07-13 00:00:00.000 America/New_York'
+   * @example DateTime.utc(2014, 7, 13).toSQL({ includeMilliseconds: false}) //=> '2014-07-13 00:00:00 Z'
    * @return {string}
    */
   toSQL(opts = {}) {
