@@ -101,24 +101,25 @@ export default class Formatter {
     return df.format();
   }
 
-  formatDateTime(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, { ...this.opts, ...opts });
-    return df.format();
+  dtFormatter(dt, opts = {}) {
+    return this.loc.dtFormatter(dt, { ...this.opts, ...opts });
   }
 
-  formatDateTimeParts(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, { ...this.opts, ...opts });
-    return df.formatToParts();
+  formatDateTime(dt, opts) {
+    return this.dtFormatter(dt, opts).format();
   }
 
-  formatInterval(interval, opts = {}) {
-    const df = this.loc.dtFormatter(interval.start, { ...this.opts, ...opts });
+  formatDateTimeParts(dt, opts) {
+    return this.dtFormatter(dt, opts).formatToParts();
+  }
+
+  formatInterval(interval, opts) {
+    const df = this.dtFormatter(interval.start, opts);
     return df.dtf.formatRange(interval.start.toJSDate(), interval.end.toJSDate());
   }
 
-  resolvedOptions(dt, opts = {}) {
-    const df = this.loc.dtFormatter(dt, { ...this.opts, ...opts });
-    return df.resolvedOptions();
+  resolvedOptions(dt, opts) {
+    return this.dtFormatter(dt, opts).resolvedOptions();
   }
 
   num(n, p = 0) {

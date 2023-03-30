@@ -219,9 +219,13 @@ const partTypeStyleToTokenVal = {
   },
   dayperiod: "a",
   dayPeriod: "a",
-  hour: {
+  hour12: {
     numeric: "h",
     "2-digit": "hh",
+  },
+  hour24: {
+    numeric: "H",
+    "2-digit": "HH",
   },
   minute: {
     numeric: "m",
@@ -237,7 +241,7 @@ const partTypeStyleToTokenVal = {
   },
 };
 
-function tokenForPart(part, formatOpts) {
+function tokenForPart(part, formatOpts, resolvedOpts) {
   const { type, value } = part;
 
   if (type === "literal") {
@@ -250,7 +254,26 @@ function tokenForPart(part, formatOpts) {
 
   const style = formatOpts[type];
 
-  let val = partTypeStyleToTokenVal[type];
+  // The user might have explicitly specified hour12 or hourCycle
+  // if so, respect their decision
+  // if not, refer back to the resolvedOpts, which are based on the locale
+  let actualType = type;
+  if (type === "hour") {
+    if (formatOpts.hour12 != null) {
+      actualType = formatOpts.hour12 ? "hour12" : "hour24";
+    } else if (formatOpts.hourCycle != null) {
+      if (formatOpts.hourCycle === "h11" || formatOpts.hourCycle === "h12") {
+        actualType = "hour12";
+      } else {
+        actualType = "hour24";
+      }
+    } else {
+      // tokens only differentiate between 24 hours or not,
+      // so we do not need to check hourCycle here, which is less supported anyways
+      actualType = resolvedOpts.hour12 ? "hour12" : "hour24";
+    }
+  }
+  let val = partTypeStyleToTokenVal[actualType];
   if (typeof val === "object") {
     val = val[style];
   }
@@ -439,6 +462,8 @@ export function formatOptsToTokens(formatOpts, locale) {
   }
 
   const formatter = Formatter.create(locale, formatOpts);
-  const parts = formatter.formatDateTimeParts(getDummyDateTime());
-  return parts.map((p) => tokenForPart(p, formatOpts));
+  const df = formatter.dtFormatter(getDummyDateTime());
+  const parts = df.formatToParts();
+  const resolvedOpts = df.resolvedOptions();
+  return parts.map((p) => tokenForPart(p, formatOpts, resolvedOpts));
 }
