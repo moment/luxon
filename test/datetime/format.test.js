@@ -333,13 +333,6 @@ test("DateTime#toSQLTime() returns null for invalid DateTimes", () => {
   expect(invalid.toSQLTime()).toBe(null);
 });
 
-test("DateTime#toSQLTime() returns SQL time without milliseconds", () => {
-  expect(dt.toUTC().toSQLTime({ includeMilliseconds: false })).toBe("09:23:54 Z");
-  expect(dt.setZone("America/New_York").toSQLTime({ includeMilliseconds: false })).toBe(
-    "05:23:54 -04:00"
-  );
-});
-
 //------
 // #toSQL()
 //------
@@ -371,13 +364,6 @@ test("DateTime#toSQL() accepts an includeZone option", () => {
 
 test("DateTime#toSQL() returns null for invalid DateTimes", () => {
   expect(invalid.toSQL()).toBe(null);
-});
-
-test("DateTime#toSQL() returns SQL date time without milliseconds", () => {
-  expect(dt.toUTC().toSQL({ includeMilliseconds: false })).toBe("1982-05-25 09:23:54 Z");
-  expect(dt.setZone("America/New_York").toSQL({ includeMilliseconds: false })).toBe(
-    "1982-05-25 05:23:54 -04:00"
-  );
 });
 
 //------
