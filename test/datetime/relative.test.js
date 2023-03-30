@@ -180,7 +180,7 @@ test("DateTime#toRelativeCalendar works down through the units for different zon
   expect(target3.toRelativeCalendar(options)).toBe("in 3 days");
 });
 
-test("DateTime#toRelative works down through the units for diffrent zone than local", () => {
+test("DateTime#toRelative works down through the units for different zone than local", () => {
   const base = DateTime.now().setZone(`UTC+3`);
 
   expect(base.plus({ minutes: 65 }).toRelative()).toBe("in 1 hour");

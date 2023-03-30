@@ -32,7 +32,7 @@ test("Invalid DateTimes tell you why", () => {
   expect(organic3.invalidReason).toBe("unit out of range");
 });
 
-test("Invalid DateTimes can provide an extented explanation", () => {
+test("Invalid DateTimes can provide an extended explanation", () => {
   expect(organic1.invalidExplanation).toBe(
     "you specified 13 (of type number) as a month, which is invalid"
   );
