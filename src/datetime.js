@@ -217,24 +217,33 @@ function toISOTime(
   extended,
   suppressSeconds,
   suppressMilliseconds,
+  truncateMilliseconds,
   includeOffset,
   extendedZone
 ) {
   let c = padStart(o.c.hour);
+
+  const includeMilliseconds =
+    (o.c.millisecond !== 0 && !truncateMilliseconds) ||
+    ((o.c.second !== 0 || !suppressSeconds) && !suppressMilliseconds && !truncateMilliseconds);
+
+  const includeSeconds = includeMilliseconds || o.c.second !== 0 || !suppressSeconds;
+
   if (extended) {
     c += ":";
     c += padStart(o.c.minute);
-    if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
+
+    if (includeSeconds) {
       c += ":";
     }
   } else {
     c += padStart(o.c.minute);
   }
 
-  if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
+  if (includeSeconds) {
     c += padStart(o.c.second);
 
-    if (o.c.millisecond !== 0 || !suppressMilliseconds) {
+    if (includeMilliseconds) {
       c += ".";
       c += padStart(o.c.millisecond, 3);
     }
@@ -1630,6 +1639,7 @@ export default class DateTime {
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
    * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+   * @param {boolean} [opts.truncateMilliseconds=false] - truncate the milliseconds from the format, irrespective of their value
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
    * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
@@ -1642,6 +1652,7 @@ export default class DateTime {
     format = "extended",
     suppressSeconds = false,
     suppressMilliseconds = false,
+    truncateMilliseconds = false,
     includeOffset = true,
     extendedZone = false,
   } = {}) {
@@ -1653,7 +1664,15 @@ export default class DateTime {
 
     let c = toISODate(this, ext);
     c += "T";
-    c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone);
+    c += toISOTime(
+      this,
+      ext,
+      suppressSeconds,
+      suppressMilliseconds,
+      truncateMilliseconds,
+      includeOffset,
+      extendedZone
+    );
     return c;
   }
 
@@ -1699,6 +1718,7 @@ export default class DateTime {
    */
   toISOTime({
     suppressMilliseconds = false,
+    truncateMilliseconds = false,
     suppressSeconds = false,
     includeOffset = true,
     includePrefix = false,
@@ -1717,6 +1737,7 @@ export default class DateTime {
         format === "extended",
         suppressSeconds,
         suppressMilliseconds,
+        truncateMilliseconds,
         includeOffset,
         extendedZone
       )
