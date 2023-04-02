@@ -1627,11 +1627,11 @@ export default class DateTime {
   /**
    * Returns an ISO 8601-compliant string representation of this DateTime
    * @param {Object} opts - options
-   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+   * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
-   * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
