@@ -217,9 +217,9 @@ function toISOTime(
   extended,
   suppressSeconds,
   suppressMilliseconds,
-  truncateMilliseconds,
   includeOffset,
-  extendedZone
+  extendedZone,
+  truncateMilliseconds,
 ) {
   let c = padStart(o.c.hour);
 
@@ -1652,9 +1652,9 @@ export default class DateTime {
     format = "extended",
     suppressSeconds = false,
     suppressMilliseconds = false,
-    truncateMilliseconds = false,
     includeOffset = true,
     extendedZone = false,
+    truncateMilliseconds = false,
   } = {}) {
     if (!this.isValid) {
       return null;
@@ -1669,9 +1669,9 @@ export default class DateTime {
       ext,
       suppressSeconds,
       suppressMilliseconds,
-      truncateMilliseconds,
       includeOffset,
-      extendedZone
+      extendedZone,
+      truncateMilliseconds,
     );
     return c;
   }
@@ -1718,12 +1718,12 @@ export default class DateTime {
    */
   toISOTime({
     suppressMilliseconds = false,
-    truncateMilliseconds = false,
     suppressSeconds = false,
     includeOffset = true,
     includePrefix = false,
     extendedZone = false,
     format = "extended",
+    truncateMilliseconds = false,
   } = {}) {
     if (!this.isValid) {
       return null;
@@ -1737,9 +1737,9 @@ export default class DateTime {
         format === "extended",
         suppressSeconds,
         suppressMilliseconds,
-        truncateMilliseconds,
         includeOffset,
-        extendedZone
+        extendedZone,
+        truncateMilliseconds,
       )
     );
   }
