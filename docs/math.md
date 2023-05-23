@@ -23,7 +23,7 @@ More generally we can differentiate two modes of math:
 
 These units use calendar math:
 
- * **Years** vary because of years.
+ * **Years** vary because of leap years.
  * **Months** vary because they're just different lengths.
  * **Days** vary because DST transitions mean some days are 23 or 25 hours long.
  * **Quarters** are always three months, but months vary in length so quarters do too.
