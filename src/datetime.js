@@ -1502,6 +1502,32 @@ export default class DateTime {
    */
   startOf(unit) {
     if (!this.isValid) return this;
+
+    // handle locale-dependent week
+    if (unit === "localeWeek" || unit === "localeWeeks") {
+      const startOfWeek = this.loc.getStartOfWeek();
+      if (isUndefined(startOfWeek)) {
+        return DateTime.invalid("Missing Intl.Locale.getWeekData API");
+      }
+      let { weekday, weekNumber, weekYear } = this;
+      if (weekday < startOfWeek) {
+        weekNumber--;
+      }
+      if (weekNumber === 0) {
+        weekNumber = 0;
+        weekYear--;
+      }
+      return this.set({
+        weekday: startOfWeek,
+        weekNumber,
+        weekYear,
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      });
+    }
+
     const o = {},
       normalizedUnit = Duration.normalizeUnit(unit);
     switch (normalizedUnit) {

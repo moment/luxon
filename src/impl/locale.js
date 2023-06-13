@@ -61,6 +61,18 @@ function systemLocale() {
   }
 }
 
+let weekInfoCache = {};
+function getCachedWeekInfo(locString) {
+  let data = weekInfoCache[locString];
+  if (!data && Intl.Locale) {
+    const locale = new Intl.Locale(locString);
+    // browsers currently implement this as a property, but spec says it should be a getter function
+    data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
+    weekInfoCache[locString] = data;
+  }
+  return data;
+}
+
 function parseLocaleString(localeStr) {
   // I really want to avoid writing a BCP 47 parser
   // see, e.g. https://github.com/wooorm/bcp-47
@@ -482,6 +494,15 @@ export default class Locale {
       this.locale.toLowerCase() === "en-us" ||
       new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us")
     );
+  }
+
+  getStartOfWeek() {
+    if (this.isEnglish()) {
+      return 7;
+    } else {
+      const data = getCachedWeekInfo(this.locale);
+      return data?.firstDay;
+    }
   }
 
   equals(other) {
