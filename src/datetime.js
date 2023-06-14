@@ -1540,9 +1540,6 @@ export default class DateTime {
     if (normalizedUnit === "weeks") {
       if (useLocaleWeeks) {
         const startOfWeek = this.loc.getStartOfWeek();
-        if (isUndefined(startOfWeek)) {
-          return DateTime.invalid("Missing Intl.Locale.getWeekData API");
-        }
         let { weekday, weekNumber } = this;
         if (weekday < startOfWeek) {
           weekNumber--;

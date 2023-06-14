@@ -43,6 +43,18 @@ export function hasRelative() {
   }
 }
 
+export function hasLocaleWeekInfo() {
+  try {
+    return (
+      typeof Intl !== "undefined" &&
+      !!Intl.Locale &&
+      ("weekInfo" in Intl.Locale.prototype || "getWeekInfo" in Intl.Locale.prototype)
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
 // OBJECTS AND ARRAYS
 
 export function maybeArray(thing) {

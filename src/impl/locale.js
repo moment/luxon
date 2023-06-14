@@ -1,4 +1,4 @@
-import { padStart, roundTo, hasRelative, formatOffset } from "./util.js";
+import { padStart, roundTo, hasRelative, hasLocaleWeekInfo } from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
@@ -64,7 +64,7 @@ function systemLocale() {
 let weekInfoCache = {};
 function getCachedWeekInfo(locString) {
   let data = weekInfoCache[locString];
-  if (!data && Intl.Locale) {
+  if (!data) {
     const locale = new Intl.Locale(locString);
     // browsers currently implement this as a property, but spec says it should be a getter function
     data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
@@ -497,11 +497,11 @@ export default class Locale {
   }
 
   getStartOfWeek() {
-    if (this.isEnglish()) {
-      return 7;
+    if (!hasLocaleWeekInfo()) {
+      return 1;
     } else {
       const data = getCachedWeekInfo(this.locale);
-      return data?.firstDay;
+      return data.firstDay;
     }
   }
 
