@@ -30,7 +30,8 @@ export function isString(o) {
 }
 
 export function isDate(o) {
-  return Object.prototype.toString.call(o) === "[object Date]";
+  return o instanceof Date;
+  // return Object.prototype.toString.call(o) === "[object Date]";
 }
 
 // CAPABILITIES
@@ -160,7 +161,7 @@ export function objToLocalTS(obj) {
     obj.hour,
     obj.minute,
     obj.second,
-    obj.millisecond
+    obj.millisecond,
   );
 
   // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that

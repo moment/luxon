@@ -99,7 +99,7 @@ export const lowOrderMatrix = {
     ...lowOrderMatrix,
   };
 
-// units ordered by size
+/** units ordered by size */
 const orderedUnits = [
   "years",
   "quarters",
@@ -112,11 +112,25 @@ const orderedUnits = [
   "milliseconds",
 ];
 
+/**
+ * list of all units to be used by normalizeUnits
+ * i.e. `orderedUnits` without quarters and weeks
+ */
+const orderedNormalizeUnits = [
+  "years",
+  "months",
+  "days",
+  "hours",
+  "minutes",
+  "seconds",
+  "milliseconds",
+];
+
 const reverseUnits = orderedUnits.slice(0).reverse();
 
 // clone really means "create another instance just like this one, but with these changes"
 function clone(dur, alts, clear = false) {
-  // deep merge for vals
+  // deep merge for values
   const conf = {
     values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
     loc: dur.loc.clone(alts.loc),
@@ -142,18 +156,123 @@ function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   fromMap[fromUnit] -= added * conv;
 }
 
-// NB: mutates parameters
-function normalizeValues(matrix, vals) {
+/**
+ * Normalize all values to the normal range of each unit (e.g. seconds from 0 to 59)
+ *
+ * NOTE: normalizeValue() will only use units that are present in `values`
+ *       no additional units will be added
+ *
+ * WARNING: mutates the `values` argument
+ *
+ * @param matrix - the conversion matrix to use, i.e. accurateMatrix or casualMatrix
+ * @param values - will be mutated
+ */
+function normalizeValues(matrix, values) {
   reverseUnits.reduce((previous, current) => {
-    if (!isUndefined(vals[current])) {
+    if (!isUndefined(values[current])) {
       if (previous) {
-        convert(matrix, vals, previous, vals, current);
+        convert(matrix, values, previous, values, current);
       }
       return current;
     } else {
       return previous;
     }
   }, null);
+}
+
+/**
+ * Normalize the use of units to be more what human expectations might be
+ *
+ * @param duration {Duration}
+ * @param opts - Options to use, see `Duration.normalize()`
+ * @return {Duration}
+ */
+function normalizeUnits(duration, opts) {
+  // process precision
+
+  if (opts.smallestUnit && !opts.precision) {
+    // set default for precision the smallest unit (if passed)
+    opts.precision = { [opts.smallestUnit]: 1 };
+  }
+  if (opts.precision && typeof opts.precision === "object") {
+    opts.precision = Duration.fromObject(opts.precision);
+  }
+  if (opts.precision instanceof Duration && opts.precision.isValid) {
+    // round to precision given via milliseconds
+    const precision = opts.precision.toMillis();
+    duration = Duration.fromMillis(Math.round(duration.toMillis() / precision) * precision);
+  }
+
+  // find smallest and biggest unit
+
+  let smallestUnitIndex;
+  let biggestUnitIndex;
+  // check if user has specified the smallest unit that should be displayed
+  if (opts.smallestUnit) {
+    smallestUnitIndex = orderedNormalizeUnits.indexOf(opts.smallestUnit);
+  }
+  // check if user has specified a biggest unit
+  if (opts.biggestUnit) {
+    biggestUnitIndex = orderedNormalizeUnits.indexOf(opts.biggestUnit);
+  }
+  // use seconds and years as default for smallest and biggest unit
+  if (
+    !smallestUnitIndex ||
+    !(smallestUnitIndex >= 0 && smallestUnitIndex < orderedNormalizeUnits.length)
+  ) {
+    smallestUnitIndex = orderedNormalizeUnits.indexOf("seconds");
+  }
+  if (
+    !biggestUnitIndex ||
+    !(biggestUnitIndex <= smallestUnitIndex && biggestUnitIndex < orderedNormalizeUnits.length)
+  ) {
+    biggestUnitIndex = orderedNormalizeUnits.indexOf("years");
+  }
+
+  let remainingDuration = duration;
+  let durationUnits = [];
+  for (let unit of orderedNormalizeUnits.slice(biggestUnitIndex, smallestUnitIndex + 1)) {
+    // convert the duration to `unit`
+    const durationInUnit = remainingDuration.as(unit);
+
+    // check, if the remaining duration should contain a part of the current unit, i.e. >= 1
+    // there might be negative durations -> use abs
+    if (Math.abs(durationInUnit) >= 1) {
+      durationUnits.push(unit);
+      let tmp = {};
+      // strip decimal places from the duration
+      // for negative durations, use ceil instead of floor
+      tmp[unit] = durationInUnit >= 0 ? Math.floor(durationInUnit) : Math.ceil(durationInUnit);
+      remainingDuration = remainingDuration.minus(Duration.fromObject(tmp));
+    }
+
+    // check if we have already the maximum count of units allowed
+    if (opts.maxUnits && durationUnits.length >= opts.maxUnits) {
+      break;
+    }
+  }
+
+  // finally shift to the units we like to use
+  duration = duration.shiftTo(...durationUnits);
+  if (opts.stripZeroUnits === "all") {
+    durationUnits = durationUnits.filter((unit) => duration.get(unit) !== 0);
+  } else if (opts.stripZeroUnits === "end") {
+    let mayStrip = true;
+    durationUnits = durationUnits.reverse().filter((unit /*, index*/) => {
+      if (!mayStrip) return true;
+      if (duration.get(unit) === 0) {
+        return false;
+      }
+      mayStrip = false;
+      return true;
+    });
+  }
+
+  // if `durationUnits` is empty (i.e. duration is zero), then just shift to the smallest unit
+  if (!durationUnits.length) {
+    durationUnits.push(orderedNormalizeUnits[smallestUnitIndex]);
+  }
+  return duration.shiftTo(...durationUnits);
 }
 
 // Remove all properties with a value of 0 from an object
@@ -256,7 +375,7 @@ export default class Duration {
       throw new InvalidArgumentError(
         `Duration.fromObject: argument expected to be an object, got ${
           obj === null ? "null" : typeof obj
-        }`
+        }`,
       );
     }
 
@@ -287,7 +406,7 @@ export default class Duration {
       return Duration.fromObject(durationLike);
     } else {
       throw new InvalidArgumentError(
-        `Unknown duration argument ${durationLike} of type ${typeof durationLike}`
+        `Unknown duration argument ${durationLike} of type ${typeof durationLike}`,
       );
     }
   }
@@ -686,16 +805,48 @@ export default class Duration {
   }
 
   /**
-   * Reduce this Duration to its canonical representation in its current units.
+   * Reduce this Duration to its canonical representation
+   *
+   * If _no_ options are passed, the canonical representation uses **only its current units**.
+   * No additional units will be added. So if you wand to convert 60 minutes to 1 hour, be sure to include `hours: 0`.
+   *
+   * If options are passed, the normalization can be fine-tuned:
+   *   - stripZeroUnits - 'all' -> strip all values that are zero
+   *   - stripZeroUnits - 'end' -> strip just values of the smallest units that are zero
+   *   - stripZeroUnits - 'none' or `undefined` -> strip no zero values
+   *   - precision - the resulting Duration is rounded to precision, defaults to `1` of `smallestUnit` if given
+   *   - maxUnits - use at max this number of units to calc the result
+   *   - smallestUnit - the smallest unit that should be used in normalization  (default: 'seconds')
+   *   - biggestUnit - the biggest unit that should be used in normalization (default: 'years')
+   *
+   * @param opts {{
+   *     stripZeroUnits?: 'all' | 'end' | 'none';
+   *     precision?: Duration | DurationLikeObject;
+   *     maxUnits?: number;
+   *     smallestUnit?: DurationUnit;
+   *     biggestUnit?: DurationUnit;
+   *   }}
    * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=> { years: 15, days: 255 }
    * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=> { hours: 11, minutes: 15 }
+   * @example Duration.fromObject({ hours: 0, minutes: 60 }).normalize().toObject() //=> { hours: 1, minutes: 0 }
+   * @example But NOTE: Duration.fromObject({ minutes: 60 }).normalize().toObject() //=> { minutes: 60 } as no other unit was already defined!
+   * @example Duration.fromObject({ #### }).normalize({ stripZeroUnits: 'all' }).toObject() //=> { ##### }
+   * @example Duration.fromObject({ #### }).normalize({ stripZeroUnits: 'end' }).toObject() //=> { ##### }
+   * @example Duration.fromObject({ #### }).normalize({ precision: { seconds: 30 } }).toObject() //=> { ##### }
+   * @example Duration.fromObject({ #### }).normalize({ smallestUnit: 'days', precision: { hours: 1} }).toObject() //=> { ##### }
+   * @example Duration.fromObject({ #### }).normalize({ biggestUnit: 'days', precision: { hours: 1} }).toObject() //=> { ##### }
    * @return {Duration}
    */
-  normalize() {
+  normalize(opts) {
     if (!this.isValid) return this;
-    const vals = this.toObject();
-    normalizeValues(this.matrix, vals);
-    return clone(this, { values: vals }, true);
+    if (opts) {
+      // if options are passed, fine tune the units to be used in the resulting duration
+      return normalizeUnits(this, opts);
+    }
+    let values = this.toObject();
+    normalizeValues(this.matrix, values);
+    // create a clone with the new values
+    return clone(this, { values }, true);
   }
 
   /**
@@ -705,8 +856,8 @@ export default class Duration {
    */
   rescale() {
     if (!this.isValid) return this;
-    const vals = removeZeroes(this.normalize().shiftToAll().toObject());
-    return clone(this, { values: vals }, true);
+    const values = removeZeroes(this.normalize().shiftToAll().toObject());
+    return clone(this, { values }, true);
   }
 
   /**
@@ -788,7 +939,7 @@ export default class Duration {
       "hours",
       "minutes",
       "seconds",
-      "milliseconds"
+      "milliseconds",
     );
   }
 
