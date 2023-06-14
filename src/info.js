@@ -49,6 +49,17 @@ export default class Info {
   }
 
   /**
+   * Get the weekday on which the week starts according to the given locale.
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @returns {number} the start of the week, 1 for Monday through 7 for Sunday
+   */
+  static getStartOfWeek({ locale = null, locObj = null } = {}) {
+    return (locObj || Locale.create(locale)).getStartOfWeek();
+  }
+
+  /**
    * Return an array of standalone month names.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
