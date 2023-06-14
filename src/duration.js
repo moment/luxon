@@ -373,8 +373,6 @@ export default class Duration {
       months: "months",
       week: "weeks",
       weeks: "weeks",
-      localeweek: "weeks",
-      localeweeks: "weeks",
       day: "days",
       days: "days",
       hour: "hours",

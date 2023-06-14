@@ -1493,6 +1493,8 @@ export default class DateTime {
   /**
    * "Set" this DateTime to the beginning of a unit of time.
    * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {Object} opts - options
+   * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week
    * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
    * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
    * @example DateTime.local(2014, 3, 3).startOf('week').toISODate(); //=> '2014-03-03', weeks always start on Mondays
@@ -1500,32 +1502,11 @@ export default class DateTime {
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
    * @return {DateTime}
    */
-  startOf(unit) {
+  startOf(unit, { useLocaleWeeks = false } = {}) {
     if (!this.isValid) return this;
 
     // handle locale-dependent week
     if (unit === "localeWeek" || unit === "localeWeeks") {
-      const startOfWeek = this.loc.getStartOfWeek();
-      if (isUndefined(startOfWeek)) {
-        return DateTime.invalid("Missing Intl.Locale.getWeekData API");
-      }
-      let { weekday, weekNumber, weekYear } = this;
-      if (weekday < startOfWeek) {
-        weekNumber--;
-      }
-      if (weekNumber === 0) {
-        weekNumber = 0;
-        weekYear--;
-      }
-      return this.set({
-        weekday: startOfWeek,
-        weekNumber,
-        weekYear,
-        hour: 0,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-      });
     }
 
     const o = {},
@@ -1557,7 +1538,20 @@ export default class DateTime {
     }
 
     if (normalizedUnit === "weeks") {
-      o.weekday = 1;
+      if (useLocaleWeeks) {
+        const startOfWeek = this.loc.getStartOfWeek();
+        if (isUndefined(startOfWeek)) {
+          return DateTime.invalid("Missing Intl.Locale.getWeekData API");
+        }
+        let { weekday, weekNumber } = this;
+        if (weekday < startOfWeek) {
+          weekNumber--;
+        }
+        o.weekday = startOfWeek;
+        o.weekNumber = weekNumber;
+      } else {
+        o.weekday = 1;
+      }
     }
 
     if (normalizedUnit === "quarters") {
@@ -1571,6 +1565,8 @@ export default class DateTime {
   /**
    * "Set" this DateTime to the end (meaning the last millisecond) of a unit of time
    * @param {string} unit - The unit to go to the end of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {Object} opts - options
+   * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week
    * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-31T23:59:59.999-05:00'
    * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
    * @example DateTime.local(2014, 3, 3).endOf('week').toISO(); // => '2014-03-09T23:59:59.999-05:00', weeks start on Mondays
@@ -1578,10 +1574,10 @@ export default class DateTime {
    * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
    * @return {DateTime}
    */
-  endOf(unit) {
+  endOf(unit, opts) {
     return this.isValid
       ? this.plus({ [unit]: 1 })
-          .startOf(unit)
+          .startOf(unit, opts)
           .minus(1)
       : this;
   }
@@ -1976,10 +1972,12 @@ export default class DateTime {
    * Note that time zones are **ignored** in this comparison, which compares the **local** calendar time. Use {@link DateTime#setZone} to convert one of the dates if needed.
    * @param {DateTime} otherDateTime - the other DateTime
    * @param {string} unit - the unit of time to check sameness on
+   * @param {Object} opts - options
+   * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week
    * @example DateTime.now().hasSame(otherDT, 'day'); //~> true if otherDT is in the same current calendar day
    * @return {boolean}
    */
-  hasSame(otherDateTime, unit) {
+  hasSame(otherDateTime, unit, opts) {
     if (!this.isValid) return false;
 
     const inputMs = otherDateTime.valueOf();
