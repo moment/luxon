@@ -140,6 +140,15 @@ async function amd() {
   });
 }
 
+async function umd() {
+  await buildLibrary("umd", {
+    format: "umd",
+    name: "luxon",
+    target: browsersOld,
+    minify: true,
+  });
+}
+
 async function node() {
   await buildLibrary("node", { format: "cjs", target: "node 12" });
 }
@@ -166,7 +175,7 @@ async function globalEs6() {
 }
 
 async function buildAll() {
-  await Promise.all([node(), cjsBrowser(), es6(), amd(), global(), globalEs6()]);
+  await Promise.all([node(), cjsBrowser(), es6(), amd(), umd(), global(), globalEs6()]);
 }
 
 module.exports = {
