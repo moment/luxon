@@ -1,0 +1,46 @@
+Some Luxon examples
+
+This is not meant to be a comprehensive showcase of Luxon's capabilities, just a quick flavoring.
+
+Info.features()	//=>	{"relative":true}
+DateTime.now()	//=>	[ DateTime 2023-06-20T15:55:24.671+01:00 ]
+DateTime.now().toUnixInteger()	//=>	1687272924
+DateTime.now().toJSDate()	//=>	[ Date Tue Jun 20 2023 15:55:24 GMT+0100 (British Summer Time) ]
+DateTime.utc().toISO()	//=>	"2023-06-20T14:55:24.684Z"
+DateTime.utc(2017, 5, 15, 17, 36)	//=>	[ DateTime 2017-05-15T17:36:00.000Z ]
+DateTime.utc(2017, 5, 15, 17, 36).toLocal()	//=>	[ DateTime 2017-05-15T18:36:00.000+01:00 ]
+DateTime.local(2017, 5, 15, 17, 36)	//=>	[ DateTime 2017-05-15T17:36:00.000+01:00 ]
+DateTime.local(2017, 5, 15, 17, 36).toUTC()	//=>	[ DateTime 2017-05-15T16:36:00.000Z ]
+DateTime.now().toObject()	//=>	{"year":2023,"month":6,"day":20,"hour":15,"minute":55,"second":24,"millisecond":685}
+DateTime.fromObject({ year: 2017, month: 5, day: 15, hour: 17, minute: 36 })	//=>	[ DateTime 2017-05-15T17:36:00.000+01:00 ]
+DateTime.fromObject({ year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'America/New_York' })	//=>	[ DateTime 2017-05-15T17:36:00.000-04:00 ]
+DateTime.fromObject({ year: 2017, month: 5, day: 15, hour: 17, minute: 36 }, { zone: 'Asia/Singapore' })	//=>	[ DateTime 2017-05-15T17:36:00.000+08:00 ]
+DateTime.now().setZone('America/New_York')	//=>	[ DateTime 2023-06-20T10:55:24.687-04:00 ]
+DateTime.now().setZone('America/New_York').startOf('day')	//=>	[ DateTime 2023-06-20T00:00:00.000-04:00 ]
+DateTime.now().plus({minutes: 15, seconds: 8})	//=>	[ DateTime 2023-06-20T16:10:32.687+01:00 ]
+DateTime.now().plus({days: 6})	//=>	[ DateTime 2023-06-26T15:55:24.688+01:00 ]
+DateTime.now().minus({days: 6})	//=>	[ DateTime 2023-06-14T15:55:24.688+01:00 ]
+DateTime.now().diff(DateTime.local(1982, 5, 25)).milliseconds	//=>	1296143724688
+DateTime.now().diff(DateTime.local(1982, 5, 25), 'days').days	//=>	15001.663480185185
+DateTime.now().diff(DateTime.local(1982, 5, 25), ['days', 'hours'])	//=>	[ Duration {"days":15001,"hours":15.923524722222222} ]
+DateTime.now().toLocaleString()	//=>	"20/06/2023"
+DateTime.now().setLocale('zh').toLocaleString()	//=>	"2023/6/20"
+DateTime.now().toLocaleString(DateTime.DATE_MED)	//=>	"20 Jun 2023"
+DateTime.now().setLocale('zh').toLocaleString(DateTime.DATE_MED)	//=>	"2023年6月20日"
+DateTime.now().setLocale('fr').toLocaleString(DateTime.DATE_FULL)	//=>	"20 juin 2023"
+DateTime.fromISO('2017-05-15')	//=>	[ DateTime 2017-05-15T00:00:00.000+01:00 ]
+DateTime.fromISO('2017-05-15T17:36')	//=>	[ DateTime 2017-05-15T17:36:00.000+01:00 ]
+DateTime.fromISO('2017-W33-4')	//=>	[ DateTime 2017-08-17T00:00:00.000+01:00 ]
+DateTime.fromISO('2017-W33-4T04:45:32.343')	//=>	[ DateTime 2017-08-17T04:45:32.343+01:00 ]
+DateTime.fromFormat('12-16-2017', 'MM-dd-yyyy')	//=>	[ DateTime 2017-12-16T00:00:00.000+00:00 ]
+DateTime.now().toFormat('MM-dd-yyyy')	//=>	"06-20-2023"
+DateTime.now().toFormat('MMMM dd, yyyy')	//=>	"June 20, 2023"
+DateTime.now().setLocale('fr').toFormat('MMMM dd, yyyy')	//=>	"juin 20, 2023"
+DateTime.fromFormat('May 25, 1982', 'MMMM dd, yyyy')	//=>	[ DateTime 1982-05-25T00:00:00.000+01:00 ]
+DateTime.fromFormat('mai 25, 1982', 'MMMM dd, yyyy', { locale: 'fr' })	//=>	[ DateTime 1982-05-25T00:00:00.000+01:00 ]
+DateTime.now().plus({ days: 1 }).toRelativeCalendar()	//=>	"tomorrow"
+DateTime.now().plus({ days: -1 }).toRelativeCalendar()	//=>	"yesterday"
+DateTime.now().plus({ months: 1 }).toRelativeCalendar()	//=>	"next month"
+DateTime.now().setLocale('fr').plus({ days: 1 }).toRelativeCalendar()	//=>	"demain"
+DateTime.now().setLocale('fr').plus({ days: -1 }).toRelativeCalendar()	//=>	"hier"
+DateTime.now().setLocale('fr').plus({ months: 1 }).toRelativeCalendar()	//=>	"le mois prochain"
