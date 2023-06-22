@@ -42,16 +42,20 @@ function uncomputeOrdinal(year, ordinal) {
   return { month: month0 + 1, day };
 }
 
+export function isoWeekdayToLocal(isoWeekday, startOfWeek) {
+  return (isoWeekday - startOfWeek + 7) % 7;
+}
+
 /**
  * @private
  */
 
-export function gregorianToWeek(gregObj) {
+export function gregorianToWeek(gregObj, minDaysInFirstWeek = 4) {
   const { year, month, day } = gregObj,
     ordinal = computeOrdinal(year, month, day),
     weekday = dayOfWeek(year, month, day);
 
-  let weekNumber = Math.floor((ordinal - weekday + 10) / 7),
+  let weekNumber = Math.floor((ordinal - weekday + 14 - minDaysInFirstWeek) / 7),
     weekYear;
 
   if (weekNumber < 1) {

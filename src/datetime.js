@@ -38,6 +38,7 @@ import {
   hasInvalidWeekData,
   hasInvalidOrdinalData,
   hasInvalidTimeData,
+  isoWeekdayToLocal,
 } from "./impl/conversions.js";
 import * as Formats from "./impl/formats.js";
 import {
@@ -1127,6 +1128,30 @@ export default class DateTime {
    */
   get weekday() {
     return this.isValid ? possiblyCachedWeekData(this).weekday : NaN;
+  }
+
+  /**
+   * Returns true if this date is on a weekend according to the locale, false otherwise
+   * @returns {boolean}
+   */
+  get isWeekend() {
+    return this.isValid && this.loc.getWeekendDays().includes(this.weekday);
+  }
+
+  /**
+   * Get the of the week according to the locale.
+   * 0 is the first day of the week and 6 is the last day of the week.
+   * If the locale assigns Monday as the first day of the week, then a date which is a Monday will return 0,
+   * @returns {number}
+   */
+  get localDayOfWeek() {
+    return this.isValid ? isoWeekdayToLocal(this.weekday, this.loc.getStartOfWeek()) : NaN;
+  }
+
+  get localeWeekNumber() {
+    if (!this.isValid) {
+      return NaN;
+    }
   }
 
   /**

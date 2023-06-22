@@ -1,4 +1,4 @@
-import { padStart, roundTo, hasRelative, hasLocaleWeekInfo } from "./util.js";
+import { hasLocaleWeekInfo, hasRelative, padStart, roundTo } from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
@@ -500,8 +500,23 @@ export default class Locale {
     if (!hasLocaleWeekInfo()) {
       return 1;
     } else {
-      const data = getCachedWeekInfo(this.locale);
-      return data.firstDay;
+      return getCachedWeekInfo(this.locale).firstDay;
+    }
+  }
+
+  getMinDaysInFirstWeek() {
+    if (!hasLocaleWeekInfo()) {
+      return 4;
+    } else {
+      return getCachedWeekInfo(this.locale).minimalDays;
+    }
+  }
+
+  getWeekendDays() {
+    if (!hasLocaleWeekInfo()) {
+      return [6, 7];
+    } else {
+      return getCachedWeekInfo(this.locale).weekend;
     }
   }
 
