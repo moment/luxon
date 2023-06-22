@@ -1530,10 +1530,6 @@ export default class DateTime {
   startOf(unit, { useLocaleWeeks = false } = {}) {
     if (!this.isValid) return this;
 
-    // handle locale-dependent week
-    if (unit === "localeWeek" || unit === "localeWeeks") {
-    }
-
     const o = {},
       normalizedUnit = Duration.normalizeUnit(unit);
     switch (normalizedUnit) {
@@ -1565,12 +1561,11 @@ export default class DateTime {
     if (normalizedUnit === "weeks") {
       if (useLocaleWeeks) {
         const startOfWeek = this.loc.getStartOfWeek();
-        let { weekday, weekNumber } = this;
+        const { weekday } = this;
         if (weekday < startOfWeek) {
-          weekNumber--;
+          o.weekNumber = this.weekNumber - 1;
         }
         o.weekday = startOfWeek;
-        o.weekNumber = weekNumber;
       } else {
         o.weekday = 1;
       }
