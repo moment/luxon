@@ -1160,19 +1160,30 @@ export default class DateTime {
   }
 
   /**
-   * Get the of the week according to the locale.
+   * Get the day of the week according to the locale.
    * 1 is the first day of the week and 7 is the last day of the week.
-   * If the locale assigns Monday as the first day of the week, then a date which is a Monday will return 1,
+   * If the locale assigns Sunday as the first day of the week, then a date which is a Sunday will return 1,
    * @returns {number}
    */
   get localWeekday() {
     return this.isValid ? possiblyCachedLocalWeekData(this).weekday : NaN;
   }
 
+  /**
+   * Get the week number of the week year according to the locale. Different locales assign week numbers differently,
+   * because the week can start on different days of the week (see localWeekday) and because a different number of days
+   * is required for a week to count as the first week of a year.
+   * @returns {number}
+   */
   get localWeekNumber() {
     return this.isValid ? possiblyCachedLocalWeekData(this).weekNumber : NaN;
   }
 
+  /**
+   * Get the week year according to the locale. Different locales assign week numbers (and therefor week years)
+   * differently, see localWeekNumber.
+   * @returns {number}
+   */
   get localWeekYear() {
     return this.isValid ? possiblyCachedLocalWeekData(this).weekYear : NaN;
   }
