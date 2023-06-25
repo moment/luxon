@@ -57,11 +57,28 @@ function unsupportedZone(zone) {
 }
 
 // we cache week data on the DT object and this intermediates the cache
+/**
+ * @param {DateTime} dt
+ */
 function possiblyCachedWeekData(dt) {
   if (dt.weekData === null) {
     dt.weekData = gregorianToWeek(dt.c);
   }
   return dt.weekData;
+}
+
+/**
+ * @param {DateTime} dt
+ */
+function possiblyCachedLocalWeekData(dt) {
+  if (dt.localWeekData === null) {
+    dt.localWeekData = gregorianToWeek(
+      dt.c,
+      dt.loc.getMinDaysInFirstWeek(),
+      dt.loc.getStartOfWeek()
+    );
+  }
+  return dt.localWeekData;
 }
 
 // clone really means, "make a new object with these modifications". all "setters" really use this
@@ -477,6 +494,10 @@ export default class DateTime {
      * @access private
      */
     this.weekData = null;
+    /**
+     * @access private
+     */
+    this.localWeekData = null;
     /**
      * @access private
      */
@@ -1140,18 +1161,20 @@ export default class DateTime {
 
   /**
    * Get the of the week according to the locale.
-   * 0 is the first day of the week and 6 is the last day of the week.
-   * If the locale assigns Monday as the first day of the week, then a date which is a Monday will return 0,
+   * 1 is the first day of the week and 7 is the last day of the week.
+   * If the locale assigns Monday as the first day of the week, then a date which is a Monday will return 1,
    * @returns {number}
    */
-  get localDayOfWeek() {
-    return this.isValid ? isoWeekdayToLocal(this.weekday, this.loc.getStartOfWeek()) : NaN;
+  get localWeekday() {
+    return this.isValid ? possiblyCachedLocalWeekData(this).weekday : NaN;
   }
 
-  get localeWeekNumber() {
-    if (!this.isValid) {
-      return NaN;
-    }
+  get localWeekNumber() {
+    return this.isValid ? possiblyCachedLocalWeekData(this).weekNumber : NaN;
+  }
+
+  get localWeekYear() {
+    return this.isValid ? possiblyCachedLocalWeekData(this).weekYear : NaN;
   }
 
   /**
