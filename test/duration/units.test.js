@@ -189,6 +189,10 @@ test("Duration#normalize handles the full grid partially negative durations", ()
       { months: 0, days: -28 },
       { months: 0, days: -28 },
     ],
+    [
+      { hours: 96, minutes: 0, seconds: -10 },
+      { hours: 95, minutes: 59, seconds: 50 },
+    ],
   ];
 
   sets.forEach(([from, to]) => {
