@@ -24,7 +24,7 @@ export function normalizeZone(input, defaultZone) {
     else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);
-  } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {
+  } else if (typeof input === "object" && "offset" in input && typeof input.offset === "function") {
     // This is dumb, but the instanceof check above doesn't seem to really work
     // so we're duck checking it
     return input;
