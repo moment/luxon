@@ -917,7 +917,7 @@ function intlConfigString(localeStr, numberingSystem, outputCalendar) {
 function mapMonths(f) {
   var ms = [];
   for (var i = 1; i <= 12; i++) {
-    var dt = DateTime.utc(2016, i, 1);
+    var dt = DateTime.utc(2009, i, 1);
     ms.push(f(dt));
   }
   return ms;
@@ -930,8 +930,8 @@ function mapWeekdays(f) {
   }
   return ms;
 }
-function listStuff(loc, length, defaultOK, englishFn, intlFn) {
-  var mode = loc.listingMode(defaultOK);
+function listStuff(loc, length, englishFn, intlFn) {
+  var mode = loc.listingMode();
   if (mode === "error") {
     return null;
   } else if (mode === "en") {
@@ -1177,15 +1177,12 @@ var Locale = /*#__PURE__*/function () {
       defaultToEN: false
     }));
   };
-  _proto4.months = function months$1(length, format, defaultOK) {
+  _proto4.months = function months$1(length, format) {
     var _this2 = this;
     if (format === void 0) {
       format = false;
     }
-    if (defaultOK === void 0) {
-      defaultOK = true;
-    }
-    return listStuff(this, length, defaultOK, months, function () {
+    return listStuff(this, length, months, function () {
       var intl = format ? {
           month: length,
           day: "numeric"
@@ -1201,15 +1198,12 @@ var Locale = /*#__PURE__*/function () {
       return _this2.monthsCache[formatStr][length];
     });
   };
-  _proto4.weekdays = function weekdays$1(length, format, defaultOK) {
+  _proto4.weekdays = function weekdays$1(length, format) {
     var _this3 = this;
     if (format === void 0) {
       format = false;
     }
-    if (defaultOK === void 0) {
-      defaultOK = true;
-    }
-    return listStuff(this, length, defaultOK, weekdays, function () {
+    return listStuff(this, length, weekdays, function () {
       var intl = format ? {
           weekday: length,
           year: "numeric",
@@ -1227,12 +1221,9 @@ var Locale = /*#__PURE__*/function () {
       return _this3.weekdaysCache[formatStr][length];
     });
   };
-  _proto4.meridiems = function meridiems$1(defaultOK) {
+  _proto4.meridiems = function meridiems$1() {
     var _this4 = this;
-    if (defaultOK === void 0) {
-      defaultOK = true;
-    }
-    return listStuff(this, undefined, defaultOK, function () {
+    return listStuff(this, undefined, function () {
       return meridiems;
     }, function () {
       // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
@@ -1249,12 +1240,9 @@ var Locale = /*#__PURE__*/function () {
       return _this4.meridiemCache;
     });
   };
-  _proto4.eras = function eras$1(length, defaultOK) {
+  _proto4.eras = function eras$1(length) {
     var _this5 = this;
-    if (defaultOK === void 0) {
-      defaultOK = true;
-    }
-    return listStuff(this, length, defaultOK, eras, function () {
+    return listStuff(this, length, eras, function () {
       var intl = {
         era: length
       };
@@ -1513,7 +1501,7 @@ function normalizeZone(input, defaultZone) {
     if (lowered === "default") return defaultZone;else if (lowered === "local" || lowered === "system") return SystemZone.instance;else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);
-  } else if (typeof input === "object" && input.offset && typeof input.offset === "number") {
+  } else if (typeof input === "object" && "offset" in input && typeof input.offset === "function") {
     // This is dumb, but the instanceof check above doesn't seem to really work
     // so we're duck checking it
     return input;
@@ -1654,10 +1642,10 @@ var Settings = /*#__PURE__*/function () {
     /**
      * Set the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
      * @type {number}
-     * @example Settings.twoDigitCutoffYear = 0 // cut-off year is 0, so all 'yy' are interpretted as current century
+     * @example Settings.twoDigitCutoffYear = 0 // cut-off year is 0, so all 'yy' are interpreted as current century
      * @example Settings.twoDigitCutoffYear = 50 // '49' -> 1949; '50' -> 2050
-     * @example Settings.twoDigitCutoffYear = 1950 // interpretted as 50
-     * @example Settings.twoDigitCutoffYear = 2050 // ALSO interpretted as 50
+     * @example Settings.twoDigitCutoffYear = 1950 // interpreted as 50
+     * @example Settings.twoDigitCutoffYear = 2050 // ALSO interpreted as 50
      */,
     set: function set(cutoffYear) {
       twoDigitCutoffYear = cutoffYear % 100;
@@ -1819,7 +1807,7 @@ function daysInMonth(year, month) {
   }
 }
 
-// covert a calendar object to a local timestamp (epoch, but with the offset baked in)
+// convert a calendar object to a local timestamp (epoch, but with the offset baked in)
 function objToLocalTS(obj) {
   var d = Date.UTC(obj.year, obj.month - 1, obj.day, obj.hour, obj.minute, obj.second, obj.millisecond);
 
@@ -2132,33 +2120,24 @@ var Formatter = /*#__PURE__*/function () {
     var df = this.systemLoc.dtFormatter(dt, _extends({}, this.opts, opts));
     return df.format();
   };
-  _proto.formatDateTime = function formatDateTime(dt, opts) {
+  _proto.dtFormatter = function dtFormatter(dt, opts) {
     if (opts === void 0) {
       opts = {};
     }
-    var df = this.loc.dtFormatter(dt, _extends({}, this.opts, opts));
-    return df.format();
+    return this.loc.dtFormatter(dt, _extends({}, this.opts, opts));
+  };
+  _proto.formatDateTime = function formatDateTime(dt, opts) {
+    return this.dtFormatter(dt, opts).format();
   };
   _proto.formatDateTimeParts = function formatDateTimeParts(dt, opts) {
-    if (opts === void 0) {
-      opts = {};
-    }
-    var df = this.loc.dtFormatter(dt, _extends({}, this.opts, opts));
-    return df.formatToParts();
+    return this.dtFormatter(dt, opts).formatToParts();
   };
   _proto.formatInterval = function formatInterval(interval, opts) {
-    if (opts === void 0) {
-      opts = {};
-    }
-    var df = this.loc.dtFormatter(interval.start, _extends({}, this.opts, opts));
+    var df = this.dtFormatter(interval.start, opts);
     return df.dtf.formatRange(interval.start.toJSDate(), interval.end.toJSDate());
   };
   _proto.resolvedOptions = function resolvedOptions(dt, opts) {
-    if (opts === void 0) {
-      opts = {};
-    }
-    var df = this.loc.dtFormatter(dt, _extends({}, this.opts, opts));
-    return df.resolvedOptions();
+    return this.dtFormatter(dt, opts).resolvedOptions();
   };
   _proto.num = function num(n, p) {
     if (p === void 0) {
@@ -2224,7 +2203,7 @@ var Formatter = /*#__PURE__*/function () {
         }, "era");
       },
       tokenToString = function tokenToString(token) {
-        // Where possible: http://cldr.unicode.org/translation/date-time-1/date-time#TOC-Standalone-vs.-Format-Styles
+        // Where possible: https://cldr.unicode.org/translation/date-time/date-time-symbols
         switch (token) {
           // ms
           case "S":
@@ -2877,19 +2856,19 @@ function clone$1(dur, alts, clear) {
   };
   return new Duration(conf);
 }
-function antiTrunc(n) {
-  return n < 0 ? Math.floor(n) : Math.ceil(n);
+
+// this is needed since in some test cases it would return 0.9999999999999999 instead of 1
+function removePrecisionIssue(a) {
+  return Math.trunc(a * 1e3) / 1e3;
 }
 
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   var conv = matrix[toUnit][fromUnit],
     raw = fromMap[fromUnit] / conv,
-    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
-    // ok, so this is wild, but see the matrix in the tests
-    added = !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
-  toMap[toUnit] += added;
-  fromMap[fromUnit] -= added * conv;
+    added = Math.floor(raw);
+  toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
+  fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);
 }
 
 // NB: mutates parameters
@@ -3295,20 +3274,13 @@ var Duration = /*#__PURE__*/function () {
       suppressSeconds: false,
       includePrefix: false,
       format: "extended"
-    }, opts);
-    var value = this.shiftTo("hours", "minutes", "seconds", "milliseconds");
-    var fmt = opts.format === "basic" ? "hhmm" : "hh:mm";
-    if (!opts.suppressSeconds || value.seconds !== 0 || value.milliseconds !== 0) {
-      fmt += opts.format === "basic" ? "ss" : ":ss";
-      if (!opts.suppressMilliseconds || value.milliseconds !== 0) {
-        fmt += ".SSS";
-      }
-    }
-    var str = value.toFormat(fmt);
-    if (opts.includePrefix) {
-      str = "T" + str;
-    }
-    return str;
+    }, opts, {
+      includeOffset: false
+    });
+    var dateTime = DateTime.fromMillis(millis, {
+      zone: "UTC"
+    });
+    return dateTime.toISOTime(opts);
   }
 
   /**
@@ -3332,7 +3304,16 @@ var Duration = /*#__PURE__*/function () {
    * @return {number}
    */;
   _proto.toMillis = function toMillis() {
-    return this.as("milliseconds");
+    var _this$values$millisec;
+    var sum = (_this$values$millisec = this.values.milliseconds) != null ? _this$values$millisec : 0;
+    for (var _iterator = _createForOfIteratorHelperLoose(reverseUnits.slice(1)), _step; !(_step = _iterator()).done;) {
+      var _this$values;
+      var unit = _step.value;
+      if ((_this$values = this.values) != null && _this$values[unit]) {
+        sum += this.values[unit] * this.matrix[unit]["milliseconds"];
+      }
+    }
+    return sum;
   }
 
   /**
@@ -3464,10 +3445,13 @@ var Duration = /*#__PURE__*/function () {
   _proto.normalize = function normalize() {
     if (!this.isValid) return this;
     var vals = this.toObject();
-    normalizeValues(this.matrix, vals);
-    return clone$1(this, {
-      values: vals
-    }, true);
+    if (this.valueOf() >= 0) {
+      normalizeValues(this.matrix, vals);
+      return clone$1(this, {
+        values: vals
+      }, true);
+    }
+    return this.negate().normalize().negate();
   }
 
   /**
@@ -4643,6 +4627,15 @@ function highOrderDiffs(cursor, later, units) {
   var results = {};
   var earlier = cursor;
   var lowestOrder, highWater;
+
+  /* This loop tries to diff using larger units first.
+     If we overshoot, we backtrack and try the next smaller unit.
+     "cursor" starts out at the earlier timestamp and moves closer and closer to "later"
+     as we use smaller and smaller units.
+     highWater keeps track of where we would be if we added one more of the smallest unit,
+     this is used later to potentially convert any difference smaller than the smallest higher order unit
+     into a fraction of that smallest higher order unit
+  */
   for (var _i = 0, _differs = differs; _i < _differs.length; _i++) {
     var _differs$_i = _differs[_i],
       unit = _differs$_i[0],
@@ -4652,8 +4645,20 @@ function highOrderDiffs(cursor, later, units) {
       results[unit] = differ(cursor, later);
       highWater = earlier.plus(results);
       if (highWater > later) {
+        // we overshot the end point, backtrack cursor by 1
         results[unit]--;
         cursor = earlier.plus(results);
+
+        // if we are still overshooting now, we need to backtrack again
+        // this happens in certain situations when diffing times in different zones,
+        // because this calculation ignores time zones
+        if (cursor > later) {
+          // keep the "overshot by 1" around as highWater
+          highWater = cursor;
+          // backtrack cursor by 1
+          results[unit]--;
+          cursor = earlier.plus(results);
+        }
       } else {
         cursor = highWater;
       }
@@ -4832,6 +4837,11 @@ function simple(regex) {
 function escapeToken(value) {
   return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 }
+
+/**
+ * @param token
+ * @param {Locale} loc
+ */
 function unitForToken(token, loc) {
   var one = digitRegex(loc),
     two = digitRegex(loc, "{2}"),
@@ -4861,9 +4871,9 @@ function unitForToken(token, loc) {
       switch (t.val) {
         // era
         case "G":
-          return oneOf(loc.eras("short", false), 0);
+          return oneOf(loc.eras("short"), 0);
         case "GG":
-          return oneOf(loc.eras("long", false), 0);
+          return oneOf(loc.eras("long"), 0);
         // years
         case "y":
           return intUnit(oneToSix);
@@ -4881,17 +4891,17 @@ function unitForToken(token, loc) {
         case "MM":
           return intUnit(two);
         case "MMM":
-          return oneOf(loc.months("short", true, false), 1);
+          return oneOf(loc.months("short", true), 1);
         case "MMMM":
-          return oneOf(loc.months("long", true, false), 1);
+          return oneOf(loc.months("long", true), 1);
         case "L":
           return intUnit(oneOrTwo);
         case "LL":
           return intUnit(two);
         case "LLL":
-          return oneOf(loc.months("short", false, false), 1);
+          return oneOf(loc.months("short", false), 1);
         case "LLLL":
-          return oneOf(loc.months("long", false, false), 1);
+          return oneOf(loc.months("long", false), 1);
         // dates
         case "d":
           return intUnit(oneOrTwo);
@@ -4951,13 +4961,13 @@ function unitForToken(token, loc) {
         case "c":
           return intUnit(one);
         case "EEE":
-          return oneOf(loc.weekdays("short", false, false), 1);
+          return oneOf(loc.weekdays("short", false), 1);
         case "EEEE":
-          return oneOf(loc.weekdays("long", false, false), 1);
+          return oneOf(loc.weekdays("long", false), 1);
         case "ccc":
-          return oneOf(loc.weekdays("short", true, false), 1);
+          return oneOf(loc.weekdays("short", true), 1);
         case "cccc":
-          return oneOf(loc.weekdays("long", true, false), 1);
+          return oneOf(loc.weekdays("long", true), 1);
         // offset/zone
         case "Z":
         case "ZZ":
@@ -5003,9 +5013,13 @@ var partTypeStyleToTokenVal = {
   },
   dayperiod: "a",
   dayPeriod: "a",
-  hour: {
+  hour12: {
     numeric: "h",
     "2-digit": "hh"
+  },
+  hour24: {
+    numeric: "H",
+    "2-digit": "HH"
   },
   minute: {
     numeric: "m",
@@ -5020,7 +5034,7 @@ var partTypeStyleToTokenVal = {
     short: "ZZZ"
   }
 };
-function tokenForPart(part, formatOpts) {
+function tokenForPart(part, formatOpts, resolvedOpts) {
   var type = part.type,
     value = part.value;
   if (type === "literal") {
@@ -5031,7 +5045,27 @@ function tokenForPart(part, formatOpts) {
     };
   }
   var style = formatOpts[type];
-  var val = partTypeStyleToTokenVal[type];
+
+  // The user might have explicitly specified hour12 or hourCycle
+  // if so, respect their decision
+  // if not, refer back to the resolvedOpts, which are based on the locale
+  var actualType = type;
+  if (type === "hour") {
+    if (formatOpts.hour12 != null) {
+      actualType = formatOpts.hour12 ? "hour12" : "hour24";
+    } else if (formatOpts.hourCycle != null) {
+      if (formatOpts.hourCycle === "h11" || formatOpts.hourCycle === "h12") {
+        actualType = "hour12";
+      } else {
+        actualType = "hour24";
+      }
+    } else {
+      // tokens only differentiate between 24 hours or not,
+      // so we do not need to check hourCycle here, which is less supported anyways
+      actualType = resolvedOpts.hour12 ? "hour12" : "hour24";
+    }
+  }
+  var val = partTypeStyleToTokenVal[actualType];
   if (typeof val === "object") {
     val = val[style];
   }
@@ -5224,9 +5258,11 @@ function formatOptsToTokens(formatOpts, locale) {
     return null;
   }
   var formatter = Formatter.create(locale, formatOpts);
-  var parts = formatter.formatDateTimeParts(getDummyDateTime());
+  var df = formatter.dtFormatter(getDummyDateTime());
+  var parts = df.formatToParts();
+  var resolvedOpts = df.resolvedOptions();
   return parts.map(function (p) {
-    return tokenForPart(p, formatOpts);
+    return tokenForPart(p, formatOpts, resolvedOpts);
   });
 }
 
@@ -5548,13 +5584,13 @@ function _toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeO
   if (extended) {
     c += ":";
     c += padStart(o.c.minute);
-    if (o.c.second !== 0 || !suppressSeconds) {
+    if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
       c += ":";
     }
   } else {
     c += padStart(o.c.minute);
   }
-  if (o.c.second !== 0 || !suppressSeconds) {
+  if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
     c += padStart(o.c.second);
     if (o.c.millisecond !== 0 || !suppressMilliseconds) {
       c += ".";
@@ -6256,7 +6292,7 @@ var DateTime = /*#__PURE__*/function () {
 
   /**
    * Create an invalid DateTime.
-   * @param {DateTime} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent
+   * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent.
    * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
    * @return {DateTime}
    */;
@@ -6337,6 +6373,47 @@ var DateTime = /*#__PURE__*/function () {
    * Returns whether the DateTime is valid. Invalid DateTimes occur when:
    * * The DateTime was created from invalid calendar information, such as the 13th month or February 30
    * * The DateTime was created by an operation on another invalid date
+   * @type {boolean}
+   */;
+  /**
+   * Get those DateTimes which have the same local time as this DateTime, but a different offset from UTC
+   * in this DateTime's zone. During DST changes local time can be ambiguous, for example
+   * `2023-10-29T02:30:00` in `Europe/Berlin` can have offset `+01:00` or `+02:00`.
+   * This method will return both possible DateTimes if this DateTime's local time is ambiguous.
+   * @returns {DateTime[]}
+   */
+  _proto.getPossibleOffsets = function getPossibleOffsets() {
+    if (!this.isValid || this.isOffsetFixed) {
+      return [this];
+    }
+    var dayMs = 86400000;
+    var minuteMs = 60000;
+    var localTS = objToLocalTS(this.c);
+    var oEarlier = this.zone.offset(localTS - dayMs);
+    var oLater = this.zone.offset(localTS + dayMs);
+    var o1 = this.zone.offset(localTS - oEarlier * minuteMs);
+    var o2 = this.zone.offset(localTS - oLater * minuteMs);
+    if (o1 === o2) {
+      return [this];
+    }
+    var ts1 = localTS - o1 * minuteMs;
+    var ts2 = localTS - o2 * minuteMs;
+    var c1 = tsToObj(ts1, o1);
+    var c2 = tsToObj(ts2, o2);
+    if (c1.hour === c2.hour && c1.minute === c2.minute && c1.second === c2.second && c1.millisecond === c2.millisecond) {
+      return [clone(this, {
+        ts: ts1
+      }), clone(this, {
+        ts: ts2
+      })];
+    }
+    return [this];
+  }
+
+  /**
+   * Returns true if this DateTime is in a leap year, false otherwise
+   * @example DateTime.local(2016).isInLeapYear //=> true
+   * @example DateTime.local(2013).isInLeapYear //=> false
    * @type {boolean}
    */;
   /**
@@ -7529,13 +7606,6 @@ var DateTime = /*#__PURE__*/function () {
         }).offset;
       }
     }
-
-    /**
-     * Returns true if this DateTime is in a leap year, false otherwise
-     * @example DateTime.local(2016).isInLeapYear //=> true
-     * @example DateTime.local(2013).isInLeapYear //=> false
-     * @type {boolean}
-     */
   }, {
     key: "isInLeapYear",
     get: function get() {
@@ -7808,7 +7878,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-var VERSION = "3.3.0";
+var VERSION = "3.4.0";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

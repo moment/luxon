@@ -235,7 +235,6 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | tt               |              | localized time with seconds                                       | `1:07:04 PM`                |
 | T                |              | localized 24-hour time                                            | `13:07`                     |
 | TT               |              | localized 24-hour time with seconds                               | `13:07:04`                  |
-| TTT              |              | localized 24-hour time with seconds and abbreviated offset        | `13:07:04 EDT`              |
 | f                |              | short localized date and time                                     | `8/6/2014, 1:07 PM`         |
 | ff               |              | less short localized date and time                                | `Aug 6, 2014, 1:07 PM`      |
 | F                |              | short localized date and time with seconds                        | `8/6/2014, 1:07:04 PM`      |
