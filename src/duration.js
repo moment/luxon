@@ -126,20 +126,19 @@ function clone(dur, alts, clear = false) {
   return new Duration(conf);
 }
 
-function antiTrunc(n) {
-  return n < 0 ? Math.floor(n) : Math.ceil(n);
+// this is needed since in some test cases it would return 0.9999999999999999 instead of 1
+function removePrecisionIssue(a) {
+  return Math.trunc(a * 1e3) / 1e3;
 }
 
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   const conv = matrix[toUnit][fromUnit],
     raw = fromMap[fromUnit] / conv,
-    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
-    // ok, so this is wild, but see the matrix in the tests
-    added =
-      !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
-  toMap[toUnit] += added;
-  fromMap[fromUnit] -= added * conv;
+    added = Math.floor(raw);
+
+  toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
+  fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);
 }
 
 // NB: mutates parameters
@@ -577,7 +576,13 @@ export default class Duration {
    * @return {number}
    */
   toMillis() {
-    return this.as("milliseconds");
+    let sum = this.values.milliseconds ?? 0;
+    for (let unit of reverseUnits.slice(1)) {
+      if (this.values?.[unit]) {
+        sum += this.values[unit] * this.matrix[unit]["milliseconds"];
+      }
+    }
+    return sum;
   }
 
   /**
@@ -694,8 +699,11 @@ export default class Duration {
   normalize() {
     if (!this.isValid) return this;
     const vals = this.toObject();
-    normalizeValues(this.matrix, vals);
-    return clone(this, { values: vals }, true);
+    if (this.valueOf() >= 0) {
+      normalizeValues(this.matrix, vals);
+      return clone(this, { values: vals }, true);
+    }
+    return this.negate().normalize().negate();
   }
 
   /**
