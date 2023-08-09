@@ -120,7 +120,7 @@ function intlConfigString(localeStr, numberingSystem, outputCalendar) {
 function mapMonths(f) {
   const ms = [];
   for (let i = 1; i <= 12; i++) {
-    const dt = DateTime.utc(2016, i, 1);
+    const dt = DateTime.utc(2009, i, 1);
     ms.push(f(dt));
   }
   return ms;
