@@ -135,8 +135,8 @@ function mapWeekdays(f) {
   return ms;
 }
 
-function listStuff(loc, length, defaultOK, englishFn, intlFn) {
-  const mode = loc.listingMode(defaultOK);
+function listStuff(loc, length, englishFn, intlFn) {
+  const mode = loc.listingMode();
 
   if (mode === "error") {
     return null;
@@ -388,8 +388,8 @@ export default class Locale {
     return this.clone({ ...alts, defaultToEN: false });
   }
 
-  months(length, format = false, defaultOK = true) {
-    return listStuff(this, length, defaultOK, English.months, () => {
+  months(length, format = false) {
+    return listStuff(this, length, English.months, () => {
       const intl = format ? { month: length, day: "numeric" } : { month: length },
         formatStr = format ? "format" : "standalone";
       if (!this.monthsCache[formatStr][length]) {
@@ -399,8 +399,8 @@ export default class Locale {
     });
   }
 
-  weekdays(length, format = false, defaultOK = true) {
-    return listStuff(this, length, defaultOK, English.weekdays, () => {
+  weekdays(length, format = false) {
+    return listStuff(this, length, English.weekdays, () => {
       const intl = format
           ? { weekday: length, year: "numeric", month: "long", day: "numeric" }
           : { weekday: length },
@@ -414,11 +414,10 @@ export default class Locale {
     });
   }
 
-  meridiems(defaultOK = true) {
+  meridiems() {
     return listStuff(
       this,
       undefined,
-      defaultOK,
       () => English.meridiems,
       () => {
         // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
@@ -435,8 +434,8 @@ export default class Locale {
     );
   }
 
-  eras(length, defaultOK = true) {
-    return listStuff(this, length, defaultOK, English.eras, () => {
+  eras(length) {
+    return listStuff(this, length, English.eras, () => {
       const intl = { era: length };
 
       // This is problematic. Different calendars are going to define eras totally differently. What I need is the minimum set of dates
