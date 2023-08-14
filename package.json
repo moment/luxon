@@ -29,7 +29,8 @@
     "benchmark": "babel-node benchmarks/index.js",
     "codecov": "codecov",
     "prepack": "babel-node tasks/buildAll.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "show-site": "http-server build"
   },
   "lint-staged": {
     "*.{js,json}": [
@@ -49,6 +50,7 @@
     "codecov": "latest",
     "documentation": "latest",
     "fs-extra": "^6.0.1",
+    "http-server": "^14.1.1",
     "husky": "^7.0.0",
     "jest": "^29.4.3",
     "lint-staged": "^13.2.1",
