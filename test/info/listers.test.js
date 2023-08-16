@@ -105,6 +105,8 @@ test("Info.months respects the numbering system", () => {
 
 test("Info.months respects the calendar", () => {
   expect(Info.months("long", { locale: "en", outputCalendar: "islamic" })).toEqual([
+    "Muharram",
+    "Safar",
     "Rabiʻ I",
     "Rabiʻ II",
     "Jumada I",
@@ -115,8 +117,6 @@ test("Info.months respects the calendar", () => {
     "Shawwal",
     "Dhuʻl-Qiʻdah",
     "Dhuʻl-Hijjah",
-    "Safar",
-    "Rabiʻ I",
   ]);
 });
 

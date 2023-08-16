@@ -1,99 +1,104 @@
 # Changelog
 
+# 3.4.0 (2023-08-08)
+
+- Fix type checking on input zones
+- Fix Islamic months listing
+- Fix normalize() for negative inputs
+
 # 3.3.0 (2023-03-03)
 
-* Fix off-by-one in Interval#count (#1308)
-* Support formatting for custom zones (#1377)
-* Fix parsing for narrow spaces (#1369)
-* Handle leap year issue with AD 100 (#1390)
-* Allow parsing of just an offset
+- Fix off-by-one in Interval#count (#1308)
+- Support formatting for custom zones (#1377)
+- Fix parsing for narrow spaces (#1369)
+- Handle leap year issue with AD 100 (#1390)
+- Allow parsing of just an offset
 
 # 3.2.1 (2023-01-04)
 
-* Fix for RFC-2822 regex vulnerability
-* Better handling of BCP tags with -x- extensions
+- Fix for RFC-2822 regex vulnerability
+- Better handling of BCP tags with -x- extensions
 
 # 3.2.0 (2022-12-29)
 
-* Allow timeZone to be specified as an intl option
-* Fix for diff's handling of end-of-month when crossing leap years (#1340)
-* Add Interval.toLocaleString() (#1320)
+- Allow timeZone to be specified as an intl option
+- Fix for diff's handling of end-of-month when crossing leap years (#1340)
+- Add Interval.toLocaleString() (#1320)
 
 # 3.1.1 (2022-11-28)
 
-* Add Settings.twoDigitCutoffYear
+- Add Settings.twoDigitCutoffYear
 
 # 3.1.0 (2022-10-31)
 
-* Add Duration.rescale
+- Add Duration.rescale
 
 # 3.0.4 (2022-09-24)
 
-* Fix quarters in diffs (#1279)
-* Export package.json in package (#1239)
+- Fix quarters in diffs (#1279)
+- Export package.json in package (#1239)
 
 # 3.0.2 (2022-08-28)
 
-* Lots of doc changes
-* Added DateTime.expandFormat
-* Added support for custom conversion matrices in Durations
+- Lots of doc changes
+- Added DateTime.expandFormat
+- Added support for custom conversion matrices in Durations
 
 # 3.0.1 (2022-07-09)
 
-* Add DateTime.parseFormatForOpts
+- Add DateTime.parseFormatForOpts
 
 # 3.0.0 (2022-07-09)
 
-* Add "default" as an option for specifying a zone, and change "system" to really mean the system zone (breaking change)
+- Add "default" as an option for specifying a zone, and change "system" to really mean the system zone (breaking change)
 
 # 2.5.0 (2022-07-09)
 
- * Support for ESM-style node imports
- * Fix Wednesday parsing for RFC 850 strings
- * Increase number of digits allowed in ISO durations
+- Support for ESM-style node imports
+- Fix Wednesday parsing for RFC 850 strings
+- Increase number of digits allowed in ISO durations
 
 ## 2.4.0 (2022-05-08)
 
- * Add support for parsing the ISO zone extension, like `2022-05-08T20:42:00.000-04:00[America/New_York]`
- * Add an `extendedZone` option to `toISO()` and `toISOTime`
- * Improvements to `DateTime.isInDST()`
- * Fix for parsing in Vietnames (and probably other languages)
+- Add support for parsing the ISO zone extension, like `2022-05-08T20:42:00.000-04:00[America/New_York]`
+- Add an `extendedZone` option to `toISO()` and `toISOTime`
+- Improvements to `DateTime.isInDST()`
+- Fix for parsing in Vietnames (and probably other languages)
 
 ## 2.3.2 (2022-04-17)
 
-* Fix timezone calculations for negative years
-* add week formatting token "w" for durations
-* fix weekday computation for years 0-100
-
+- Fix timezone calculations for negative years
+- add week formatting token "w" for durations
+- fix weekday computation for years 0-100
 
 ## 2.3.1 (2022-02-23)
 
- * Added an `includeOffsetSpace` option to `toSQL` and `toSQLTime`
- * Added `toUnixInteger`
- * Don't use `-0` when negating durations with zeros in them
+- Added an `includeOffsetSpace` option to `toSQL` and `toSQLTime`
+- Added `toUnixInteger`
+- Don't use `-0` when negating durations with zeros in them
 
 ## 2.3.0 (2022-01-02)
 
- * Major perf improvements to `toISO()`, `toISODate()`, `toISOTime()`, and `toSQLDate()`
- * Fixed date padding for negative years in `toISO()`
- * Added Duration#toHuman()
+- Major perf improvements to `toISO()`, `toISODate()`, `toISOTime()`, and `toSQLDate()`
+- Fixed date padding for negative years in `toISO()`
+- Added Duration#toHuman()
 
 ## 2.2.0 (2021-12-10)
 
- * Allow offsets to pick among ambiguous times when both an offset and zone are provided to `fromFormat`
- * Fix a floating point bug in `Duration.shiftTo()`
+- Allow offsets to pick among ambiguous times when both an offset and zone are provided to `fromFormat`
+- Fix a floating point bug in `Duration.shiftTo()`
 
 ## 2.1.1 (2021-11-08)
 
- * Fix issue in quirky environments that lack `hourCycle` support and sometimes computed offsets 12 hours off
+- Fix issue in quirky environments that lack `hourCycle` support and sometimes computed offsets 12 hours off
 
 ## 2.1.0 (2021-11-07)
 
- * Stop special casing of `Etc/GMT*` zones
- * export fromDurationLike
- * memoize zone validation
- * Support for fractional elements in duration ISO parsing
- * Added `uu` and `uuu` tokens for fractional millisecond parsing
+- Stop special casing of `Etc/GMT*` zones
+- export fromDurationLike
+- memoize zone validation
+- Support for fractional elements in duration ISO parsing
+- Added `uu` and `uuu` tokens for fractional millisecond parsing
 
 ## 2.0.2 (2021-08-08)
 
@@ -105,200 +110,200 @@ See [Upgrading section](https://moment.github.io/luxon/#/upgrading?id=_1x-to-20)
 
 ## 1.28.0 (2021-07-03)
 
- * Fix ISO parsing for offset specifiers in Year-Ordinal formats
+- Fix ISO parsing for offset specifiers in Year-Ordinal formats
 
 ## 1.27.0 (2021-05-08)
 
- * Fix GMT zone parsing for older versions of Node
- * Support multiple units in `toRelative`  
- * Various documentation updates
+- Fix GMT zone parsing for older versions of Node
+- Support multiple units in `toRelative`
+- Various documentation updates
 
 ## 1.26.0 (2021-02-13)
 
- * Add fromISOTime, toISOTime and toMillis to Duration (#803)
- * Fix padding of negative years in IsoDate (#871)
- * Fix hasSame unit comparison (#798)
- * Export VERSION information (#794)
- * Durations are considered equal with extra zero units. Fixes #809 (#811)
+- Add fromISOTime, toISOTime and toMillis to Duration (#803)
+- Fix padding of negative years in IsoDate (#871)
+- Fix hasSame unit comparison (#798)
+- Export VERSION information (#794)
+- Durations are considered equal with extra zero units. Fixes #809 (#811)
 
 ## 1.25.0 (2020-08-23)
 
- * fix fromFormat with Intl formats containing non-breaking spaces
- * Support higher precision in ISO milliseconds
- * Some fixes for 00:30 timezones
- * Fix some throwOnInvalid for invalid Intervals
- * Various doc fixes
- * Fix Interval#isSame for empty intervals
- * Mark package as side effect-free
- * Add support for intervals with a large number of seconds
+- fix fromFormat with Intl formats containing non-breaking spaces
+- Support higher precision in ISO milliseconds
+- Some fixes for 00:30 timezones
+- Fix some throwOnInvalid for invalid Intervals
+- Various doc fixes
+- Fix Interval#isSame for empty intervals
+- Mark package as side effect-free
+- Add support for intervals with a large number of seconds
 
 ## 1.24.1 (2020-05-04)
 
- * Remove erroneous `console.log` call
+- Remove erroneous `console.log` call
 
 ## 1.24.0 (2020-05-03)
 
- * Update polyfills for pollyfilled build
+- Update polyfills for pollyfilled build
 
 ## 1.23.0 (2020-04-02)
 
- * Allow minus sign prefix when creating Duration from ISO
+- Allow minus sign prefix when creating Duration from ISO
 
 ## 1.22.2 (2020-03-25)
 
- * Added more details to error messages for type errors
+- Added more details to error messages for type errors
 
 ## 1.22.1 (2020-03-19)
 
- *  Added support for ISO basic format to DateTime#toISO
+- Added support for ISO basic format to DateTime#toISO
 
 ## 1.22.0 (2020-01-26)
 
- * Fix setZone's handling of pre-1970 dates with millisecond components
- * Fix keepLocalTime for large jumps near the target zone's DST
- * Fix cache perf for toRelative()
+- Fix setZone's handling of pre-1970 dates with millisecond components
+- Fix keepLocalTime for large jumps near the target zone's DST
+- Fix cache perf for toRelative()
 
 ## 1.21.3 (2019-11-28)
 
- * Fix parsing of meridiems in macro tokens in newer versions of v8
+- Fix parsing of meridiems in macro tokens in newer versions of v8
 
 ## 1.21.2 (2019-11-18)
 
- * Fix bug in Chrome Canary that threw off time zone calculations
+- Fix bug in Chrome Canary that threw off time zone calculations
 
 ## 1.21.1 (2019-11-03)
 
- * Fix for quarter parsing
- * Some documentation updates
+- Fix for quarter parsing
+- Some documentation updates
 
 ## 1.21.0 (2019-10-30)
 
- * Added quarter support to the parser
- * Fix some rounding issues in ISO formatting
+- Added quarter support to the parser
+- Fix some rounding issues in ISO formatting
 
 ## 1.20.0 (2019-10-29)
 
- * Added Duration#mapUnits
- * added Interval#toISODate and Interval#toISOTime
- * Some documentation fixes
+- Added Duration#mapUnits
+- added Interval#toISODate and Interval#toISOTime
+- Some documentation fixes
 
 ## 1.19.3
 
- * Cache offset values
- * Fix handling of negative sub 1-hour offsets
+- Cache offset values
+- Fix handling of negative sub 1-hour offsets
 
 ## 1.19.2
 
- * Speculative fix for Node 6
+- Speculative fix for Node 6
 
 ## 1.19.1
 
- * Fix Intl.DateTimeFormat usage for polyfills
+- Fix Intl.DateTimeFormat usage for polyfills
 
 ## 1.19.0
 
- * Interval#splitAt now ignores input dates outside the interval
- * Don't allow decimals in DateTime creation
+- Interval#splitAt now ignores input dates outside the interval
+- Don't allow decimals in DateTime creation
 
 ## 1.18.2
 
- * Fix handling of decimals in DateTime#plus and #minus
+- Fix handling of decimals in DateTime#plus and #minus
 
 ## 1.18.1
 
- * Fix validity when adding or subtracting time that exceeds Date max/min boundaries
+- Fix validity when adding or subtracting time that exceeds Date max/min boundaries
 
 ## 1.18.0
 
- * Add support for macro tokens in the parser
+- Add support for macro tokens in the parser
 
 ## 1.17.2
 
- * Fix issue with `toRelative` using `style: short` with plural days
+- Fix issue with `toRelative` using `style: short` with plural days
 
 ## 1.17.1
 
- * Reject out-of-range numbers in DateTime.fromMillis
- * Reject 0s in ISO date inputs
+- Reject out-of-range numbers in DateTime.fromMillis
+- Reject 0s in ISO date inputs
 
 ## 1.17.0
 
- * DateTime.min and DateTime.max throw if they get the wrong kind of arguments
- * Fixed throwOnInvalid logic for Interval
- * Added `DATETIME_MED_WITH_WEEKDAY` preset
+- DateTime.min and DateTime.max throw if they get the wrong kind of arguments
+- Fixed throwOnInvalid logic for Interval
+- Added `DATETIME_MED_WITH_WEEKDAY` preset
 
 ## 1.16.1
 
- * Catch errors trying to use Intl in weird versions of IE 11
+- Catch errors trying to use Intl in weird versions of IE 11
 
 ## 1.16.0
 
- * Fixed locale default logic for `DateTime#toFormat("ZZZZ")
+- Fixed locale default logic for `DateTime#toFormat("ZZZZ")
 
 ## 1.15.0
 
- * Added `formatOffset` to Zones
+- Added `formatOffset` to Zones
 
 ## 1.14.0
 
- * Allow the zone argument to Interval.fromISO with duration components
- * Ignore the zone argument to Duration factory methods
+- Allow the zone argument to Interval.fromISO with duration components
+- Ignore the zone argument to Duration factory methods
 
 ## 1.13.3
 
- * Fix keepLocalTime calculations that span offset changes
+- Fix keepLocalTime calculations that span offset changes
 
 ## 1.13.2
 
- * Fixed ISO formatting for dates > 999
+- Fixed ISO formatting for dates > 999
 
 ## 1.13.1
 
- * Performance improvements for regex parsing
+- Performance improvements for regex parsing
 
 ## 1.13.0
 
- * Support numberSystem in fromFormat
- * Fix validity for bad initial zone specifiers
+- Support numberSystem in fromFormat
+- Fix validity for bad initial zone specifiers
 
 ## 1.12.1
 
- * Fix cross-month diffs in some scenarios
- * Fix time zone parsing when the time zone isn't at the end
- * Memoize IANA zone creation
+- Fix cross-month diffs in some scenarios
+- Fix time zone parsing when the time zone isn't at the end
+- Memoize IANA zone creation
 
 ## 1.12.0
 
- * Add some explicit CDN support to the NPM package
- * Add week token to duration ISO support
- * Lots of cleanup and test coverage changes
+- Add some explicit CDN support to the NPM package
+- Add week token to duration ISO support
+- Lots of cleanup and test coverage changes
 
 ## 1.11.4
 
- * `setZone("local")` now returns the defaultZone if it is set
- * Fixes for the polyfilled build
+- `setZone("local")` now returns the defaultZone if it is set
+- Fixes for the polyfilled build
 
 ## 1.11.3
 
- * Allow 24:00 in ISO (and other) strings
- * Fix some bugs with the typecheck functions like `DateTime.isDateTime()`
+- Allow 24:00 in ISO (and other) strings
+- Fix some bugs with the typecheck functions like `DateTime.isDateTime()`
 
 ## 1.11.2
 
- * Fixed handling of some characters in fromFormat literal sections
- * Handle string values in object arguments to DateTime methods
- * Fixed toRelativeCalendar's handling of zones in the base date
+- Fixed handling of some characters in fromFormat literal sections
+- Handle string values in object arguments to DateTime methods
+- Fixed toRelativeCalendar's handling of zones in the base date
 
 ## 1.11.1
 
- * Fix DateTime#plus() when spanning across AD 100
+- Fix DateTime#plus() when spanning across AD 100
 
 ## 1.11.0
 
- * Fix low-year handling for IANA zones
- * `DateTime#toLocal()` now uses the default locale
- * Fix zero duration formatting
- * Many documentation fixes
+- Fix low-year handling for IANA zones
+- `DateTime#toLocal()` now uses the default locale
+- Fix zero duration formatting
+- Many documentation fixes
 
 ## 1.10.0
 
@@ -335,300 +340,4 @@ See [Upgrading section](https://moment.github.io/luxon/#/upgrading?id=_1x-to-20)
 ## 1.6.0
 
 - **midly breaking** Rework negative durations
-- Fix handling weekdays at the end of leap week years
-- Add isDuration, isDateTime, and isInterval
-- Fix handling of Luxon object arguments passed from other execution contexts
-
-## 1.5.0
-
-- Improved error message
-- Added DateTime#invalidExplanation, Duration#invalidExplanation, Interval#invalidExplanation to provide more details on invalid objects
-
-## 1.4.6
-
-- Cache Intl objects for an 85x speed up on basic operations using non-en locales
-
-## 1.4.5
-
-- Fix minified builds
-
-## 1.4.4
-
-- Fix hour formatting in RFC822 strings
-- Interval.fromISO accepts formats with durations
-
-## 1.4.3
-
-Removal accidentally-introduced runtime dependency
-
-## 1.4.2
-
-- Handle locale strings with BCP 47 extensions. Especially helpful for environments with funky default locales
-- Support for [weekYear]-W[weekNumber] ISO 8601 strings
-
-## 1.4.1
-
-- Empty diffs now have all the asked-for units in them, set at 0
-- Duration operations preserve the superset of units
-
-## 1.4.0
-
-- Add x and X to toFormat for formatting Epoch seconds and Epoch milliseconds
-- Parser allows a wider range of IANA zone specifiers
-- BREAKING: Etc/GMT+10 is now interpreted as UTC-10, per spec
-
-## 1.3.3
-
-Documentation fixes
-
-## 1.3.2
-
-- DateTime.fromMillis will throw if passed a non-number
-- Fixes for type checking across JS contexts
-
-## 1.3.1
-
-- Include milliseconds in Duration#toISO
-- Avoid deprecation warning from DateTime#inspect in Node 10
-
-## 1.3.0
-
-- **mildly breaking change** Duration.toFormat now floors its outputs instead of rounding them (see #224)
-- Added 'floor' option to Duration.toFormat and deprecated the 'round' option
-- Added `Dateime.toBSON`
-- Fixed infinite loop when passing invalid or zero-length durations to Interval#splitBy
-- Added better error handling to Duration.fromObject()
-
-## 1.2.1
-
-- 222x speed-up in DateTime creation for non-en locales
-- Added `DateTime#toMillis` alias for `DateTime#valueOf`
-- Fixed types on zone exports
-
-## 1.2.0
-
-- Export Zone classes
-- Fix `endOf` and `startOf` for quarters
-- Change `toFormat("Z")` to return a number for UTC
-- Allow "GTM" as an argument to `setZone`
-
-## 1.1.0
-
-- Support for zone names with more than two components
-- Fixed long-term-accurate conversions for months
-- Added `weeksInWeekYear`
-
-## 1.0.0
-
-- The big one-oh. No changes from 0.5.8.
-
-## 0.5.8
-
-- Large perf improvements for `DateTime#toFormat()`, when using non-intl numbers
-
-## 0.5.7
-
-- Added AMD build to the NPM package
-- Large performance improvements to technical formatting (e.g. `DateTime#toISO`)
-
-## 0.5.6
-
-- Refactor internals
-- Added support for fractional seconds in `Duration.fromISO`
-- Added browser global to the NPM package
-
-## 0.5.5
-
-- Best-we-can-do fix for `DateTime#toLocaleString()` for fixed-offset zones when showing the zone name in the output
-- Fixed `Duration#shiftTo` for unormalized Durations that need a rollup cascade
-
-## 0.5.4
-
-- Fix default locales in Node
-- Fix prototype to help with React inspection
-- Improve REPL output for Durations in Node
-
-## 0.5.3
-
-- Remove errant ICU runtime dep (again)
-
-## 0.5.2
-
-- Remove comments from minified builds (introduced by 0.5.1)
-
-## 0.5.1
-
-- Fixed minified builds (oops)
-- Fix computation of fractional parts of diffs
-
-## 0.5.0
-
-- `isBefore()` returns true for the end of the interval, consistent with being half-open
-- `zoneName` now returns `null` for invalid DateTimes
-- Added quarter support
-- Adding a month to Jan 31 gives Feb 28/29
-
-## 0.4.0
-
-- Always round down to the nearest millisecond when parsing
-
-## 0.3.1
-
-- Fixed `toLocaleString` for fixed-offset zones in the absence of Intl
-- Added `Info.isValidIANAZone`
-- Made malformed zone specifiers result in invalid DateTime instances
-
-## 0.3.0
-
-- Rename DateTime.fromString to DateTime.fromFormat (leaving deprecated DateTime.fromString)
-- Rename DateTime.fromStringExplain to DateTime.fromFormatExplain (leaving deprecated DateTime.fromStringExplain)
-- Support Etc/GMT IANA zones
-- Perf fixes for zones
-- Rework build infrastructure
-
-## 0.2.12
-
-- Fix DateTime.fromObject's handling of default zones
-- Change `keepCalendarTime` to `keepLocalTime`
-
-## 0.2.11
-
-- Handle no arguments in `DateTime.min` and `DateTime.max`
-- Documentation fixes
-
-## 0.2.10
-
-- Fix bug where Durations could sometimes mutate
-
-## 0.2.9
-
-- Fix `DateTime.fromMillis(0)` more thoroughly
-
-## 0.2.8
-
-- Fix sourcemaps
-
-## 0.2.7
-
-- Fix `DateTime.fromMillis(0)`
-
-## 0.2.6
-
-- Fix 'h' and 'hh' `toFormat` tokens for midnight
-
-## 0.2.5
-
-- Better `shiftTo` behavior for durations with floating point components
-
-## 0.2.4
-
-- Fix `toHTTP` to use 24-hour hours
-- Tighten up regular expressions
-- Various documentation fixes
-
-## 0.2.3
-
-- Fixes for `diff` with multiple units
-
-## 0.2.2
-
-- Fixes for `fromSQL`, `toSQL`, `toSQLTime`, and `toSQLDate`
-- Add `includeOffset` option to `toISO` and `toISOTime`
-
-## 0.2.1
-
-- Add `module` field to package.json
-
-## 0.2.0
-
-- Remove polyfills from main builds
-- Update compilation toolchain to target builds more exactly
-- Fix IE in polyfill build
-
-## 0.1.0
-
-- Add `.fromSQL`, `#toSQL`, `#toSQLTime`, `#toSQLDate`
-- Fix AM/PM parsing
-- Major perf improvements
-- Default to system locale when using macro formats in `#toFormat`
-- `.fromISO` accepts standalone times
-- See https://github.com/moment/luxon/issues/93 for important news concerning field accessibility
-
-## 0.0.22
-
-- Add 'u' formatting and parsing
-- Add 'y', 'yyyyy', and 'yyyyyy' parsing tokens
-- Add 'yyyyyy' formatting token
-- Better error messages for missing arguments to `DateTime.fromString`
-
-## 0.0.21
-
-- Fix zones for Edge
-
-## 0.0.20
-
-- Fix `fromISO` to accept various levels of subsecond precision
-
-## 0.0.19
-
-- Fixed parsing for ordinals
-- Made parsing stricter
-
-## 0.0.18
-
-- Fixed formatting for non-hour aligned fixed-offset zones
-- Fixed longterm conversion accuracy option in diffs
-- Fixed invalid handling in `Interval#set`
-
-## 0.0.17
-
-- Fixing formatting for fixed-offset zones
-
-## 0.0.16
-
-- Fixes for IE 9 & 10
-
-## 0.0.15
-
-- Fixing busted release 0.0.14
-
-## 0.0.13
-
-- toLocaleString() and others default to the system's locale
-- support for ISO week durations in `Duration.fromISO`
-
-## 0.0.12
-
-- Improve non-Intl fallbacks for toLocaleString
-- Fix `offsetNameShort` and `offsetNameLong` for non-Intl environments
-- Added `weekdayShort`, `weekdayLong`, `monthShort`, `monthLong` DateTime getters
-
-## 0.0.10
-
-- Only include build dir in NPM module
-
-## 0.0.9
-
-- Move to Moment Github org
-
-## 0.0.8
-
-- The local zone can now report its IANA name
-- Fixed parsing bug for `yy` and `kk`
-- Improved test coverage
-
-## 0.0.7
-
-- Added `toLocaleParts`
-- Slightly more friendly month/weekday parsing
-- Default locale setting
-
-## 0.0.6
-
-- Stricter `toJSDate`
-- `fromISO` now supports `year` and `year-month` formats
-- More graceful degradation in the absence of platform features
-
-## 0.0.5
-
-Experimental, but now broadly useful.
+- Fix handling
