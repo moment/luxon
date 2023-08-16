@@ -553,3 +553,23 @@ test("DateTime#toFormat('X') rounds down", () => {
 test("DateTime#toFormat('x') returns a Unix timestamp in milliseconds", () => {
   expect(dt.toFormat("x")).toBe("391166634123");
 });
+
+test("DateTime#toFormat('n')", () => {
+  expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("n")).toBe("52");
+  expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("n")).toBe("1");
+});
+
+test("DateTime#toFormat('nn')", () => {
+  expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("nn")).toBe("52");
+  expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("nn")).toBe("01");
+});
+
+test("DateTime#toFormat('ii')", () => {
+  expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("ii")).toBe("11");
+  expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("ii")).toBe("12");
+});
+
+test("DateTime#toFormat('iiii')", () => {
+  expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("iiii")).toBe("2011");
+  expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("iiii")).toBe("2012");
+});
