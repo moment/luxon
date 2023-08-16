@@ -31,3 +31,23 @@ test("Diffing invalid DateTimes creates invalid Durations", () => {
 test("Duration.invalid produces invalid Intervals", () => {
   expect(Duration.invalid("because").isValid).toBe(false);
 });
+
+test("Duration.toMillis produces NaN on invalid Durations", () => {
+  expect(Duration.invalid("because").toMillis()).toBe(NaN);
+});
+
+test("Duration.as produces NaN on invalid Durations", () => {
+  expect(Duration.invalid("because").as("seconds")).toBe(NaN);
+});
+
+test("Duration.toHuman produces null on invalid Durations", () => {
+  expect(Duration.invalid("because").toHuman()).toBe("Invalid Duration");
+});
+
+test("Duration.toISO produces null on invalid Durations", () => {
+  expect(Duration.invalid("because").toISO()).toBeNull();
+});
+
+test("Duration.toFormat produces Invalid Duration on invalid Durations", () => {
+  expect(Duration.invalid("because").toFormat("s")).toBe("Invalid Duration");
+});
