@@ -86,3 +86,62 @@ test("isWeekend in locale he reports Friday and Saturday as weekend", () => {
   const dates = week.map((iso) => DateTime.fromISO(iso, { setZone: true, locale: "he" }).isWeekend);
   expect(dates).toStrictEqual([false, false, false, false, true, true, false]);
 });
+
+//------
+// .localWeekNumber / .localWeekYear
+//------
+describe("localWeekNumber in locale de-DE", () => {
+  test("Jan  1 2012 should be week 52, year 2011", () => {
+    const dt = DateTime.fromISO("2012-01-01", { locale: "de-DE" });
+    expect(dt.localWeekNumber).toBe(52);
+    expect(dt.localWeekYear).toBe(2011);
+  });
+  test("Jan  2 2012 should be week 1, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-02", { locale: "de-DE" });
+    expect(dt.localWeekNumber).toBe(1);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+  test("Jan  8 2012 should be week 1, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-08", { locale: "de-DE" });
+    expect(dt.localWeekNumber).toBe(1);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+  test("Jan  9 2012 should be week 2, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-09", { locale: "de-DE" });
+    expect(dt.localWeekNumber).toBe(2);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+  test("Jan  15 2012 should be week 2, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-15", { locale: "de-DE" });
+    expect(dt.localWeekNumber).toBe(2);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+});
+
+describe("localWeekNumber in locale en-US", () => {
+  test("Jan  1 2012 should be week 1, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-01", { locale: "en-US" });
+    expect(dt.localWeekNumber).toBe(1);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+  test("Jan  7 2012 should be week 1, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-07", { locale: "en-US" });
+    expect(dt.localWeekNumber).toBe(1);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+  test("Jan  8 2012 should be week 2, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-08", { locale: "en-US" });
+    expect(dt.localWeekNumber).toBe(2);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+  test("Jan  14 2012 should be week 2, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-14", { locale: "en-US" });
+    expect(dt.localWeekNumber).toBe(2);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+  test("Jan  15 2012 should be week 3, year 2012", () => {
+    const dt = DateTime.fromISO("2012-01-15", { locale: "en-US" });
+    expect(dt.localWeekNumber).toBe(3);
+    expect(dt.localWeekYear).toBe(2012);
+  });
+});
