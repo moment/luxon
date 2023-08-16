@@ -145,3 +145,68 @@ describe("localWeekNumber in locale en-US", () => {
     expect(dt.localWeekYear).toBe(2012);
   });
 });
+
+//------
+// .localWeekday
+//------
+describe("localWeekday in locale en-US", () => {
+  test("Sunday should be reported as the 1st day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-06", { locale: "en-US" });
+    expect(dt.localWeekday).toBe(1);
+  });
+  test("Monday should be reported as the 2nd day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-07", { locale: "en-US" });
+    expect(dt.localWeekday).toBe(2);
+  });
+  test("Tuesday should be reported as the 3rd day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-08", { locale: "en-US" });
+    expect(dt.localWeekday).toBe(3);
+  });
+  test("Wednesday should be reported as the 4th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-09", { locale: "en-US" });
+    expect(dt.localWeekday).toBe(4);
+  });
+  test("Thursday should be reported as the 5th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-10", { locale: "en-US" });
+    expect(dt.localWeekday).toBe(5);
+  });
+  test("Friday should be reported as the 6th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-11", { locale: "en-US" });
+    expect(dt.localWeekday).toBe(6);
+  });
+  test("Saturday should be reported as the 7th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-12", { locale: "en-US" });
+    expect(dt.localWeekday).toBe(7);
+  });
+});
+
+describe("localWeekday in locale de-DE", () => {
+  test("Monday should be reported as the 1st day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-07", { locale: "de-DE" });
+    expect(dt.localWeekday).toBe(1);
+  });
+  test("Tuesday should be reported as the 2nd day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-08", { locale: "de-DE" });
+    expect(dt.localWeekday).toBe(2);
+  });
+  test("Wednesday should be reported as the 3rd day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-09", { locale: "de-DE" });
+    expect(dt.localWeekday).toBe(3);
+  });
+  test("Thursday should be reported as the 4th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-10", { locale: "de-DE" });
+    expect(dt.localWeekday).toBe(4);
+  });
+  test("Friday should be reported as the 5th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-11", { locale: "de-DE" });
+    expect(dt.localWeekday).toBe(5);
+  });
+  test("Saturday should be reported as the 6th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-12", { locale: "de-DE" });
+    expect(dt.localWeekday).toBe(6);
+  });
+  test("Sunday should be reported as the 7th day of the week", () => {
+    const dt = DateTime.fromISO("2023-08-13", { locale: "de-DE" });
+    expect(dt.localWeekday).toBe(7);
+  });
+});
