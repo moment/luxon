@@ -61,3 +61,28 @@ test("hasSame(week) with useLocaleWeeks ignores the locale of otherDateTime", ()
   expect(dt1.hasSame(dt2, "week", { useLocaleWeeks: true })).toBe(true);
   expect(dt2.hasSame(dt1, "week", { useLocaleWeeks: true })).toBe(false);
 });
+
+//------
+// .isWeekend
+//------
+
+const week = [
+  "2023-07-31T00:00:00Z", // Monday
+  "2023-08-01T00:00:00Z",
+  "2023-08-02T00:00:00Z",
+  "2023-08-03T00:00:00Z",
+  "2023-08-04T00:00:00Z",
+  "2023-08-05T00:00:00Z",
+  "2023-08-06T00:00:00Z", // Sunday
+];
+test("isWeekend in locale en-US reports Saturday and Sunday as weekend", () => {
+  const dates = week.map(
+    (iso) => DateTime.fromISO(iso, { setZone: true, locale: "en-US" }).isWeekend
+  );
+  expect(dates).toStrictEqual([false, false, false, false, false, true, true]);
+});
+
+test("isWeekend in locale he reports Friday and Saturday as weekend", () => {
+  const dates = week.map((iso) => DateTime.fromISO(iso, { setZone: true, locale: "he" }).isWeekend);
+  expect(dates).toStrictEqual([false, false, false, false, true, true, false]);
+});
