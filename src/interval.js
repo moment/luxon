@@ -195,10 +195,10 @@ export default class Interval {
   }
   
   /**
-   * Returns the last moment included in the interval (since end is not part of the interval)
+   * Returns the last DateTime included in the interval (since end is not part of the interval)
    * @type {DateTime}
    */
-  get lastMoment() {
+  get lastDateTime() {
     return this.isValid ? this.e.minus(1) : null;
   }
 
