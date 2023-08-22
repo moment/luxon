@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.4.1 (2023-08-23)
+
+- Fixes for regressions from 3.4.0 (#1482 and #1488)
+
 # 3.4.0 (2023-08-08)
 
 - Fix type checking on input zones
