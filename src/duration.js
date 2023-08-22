@@ -462,6 +462,8 @@ export default class Duration {
    * ```
    */
   toHuman(opts = {}) {
+    if (!this.isValid) return INVALID;
+
     const l = orderedUnits
       .map((unit) => {
         const val = this.values[unit];
@@ -576,9 +578,11 @@ export default class Duration {
    * @return {number}
    */
   toMillis() {
+    if (!this.isValid) return NaN;
+
     let sum = this.values.milliseconds ?? 0;
     for (let unit of reverseUnits.slice(1)) {
-      if (this.values?.[unit]) {
+      if (this.values[unit]) {
         sum += this.values[unit] * this.matrix[unit]["milliseconds"];
       }
     }
