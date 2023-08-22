@@ -10,6 +10,7 @@ import {
   isUndefined,
   normalizeObject,
   roundTo,
+  signedFloor,
 } from "./impl/util.js";
 import Settings from "./settings.js";
 import DateTime from "./datetime.js";
@@ -133,9 +134,9 @@ function removePrecisionIssue(a) {
 
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-  const conv = matrix[toUnit][fromUnit],
-    raw = fromMap[fromUnit] / conv,
-    added = Math.floor(raw);
+  const conv = matrix[toUnit][fromUnit];
+  const raw = fromMap[fromUnit] / conv;
+  const added = signedFloor(raw);
 
   toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
   fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);

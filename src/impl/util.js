@@ -124,6 +124,10 @@ export function parseMillis(fraction) {
   }
 }
 
+export function signedFloor(number) {
+  return number > 0 ? Math.floor(number) : Math.ceil(number);
+}
+
 export function roundTo(number, digits, towardZero = false) {
   const factor = 10 ** digits,
     rounder = towardZero ? Math.trunc : Math.round;

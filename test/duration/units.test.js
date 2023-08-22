@@ -96,6 +96,15 @@ test("Duration#shiftTo boils hours down to hours and minutes", () => {
   });
 });
 
+test("Duration#shiftTo handles mixed units", () => {
+  const dur = Duration.fromObject({ weeks: -1, days: 14 });
+  expect(dur.shiftTo("years", "months", "weeks").toObject()).toEqual({
+    years: 0,
+    months: 0,
+    weeks: 1,
+  });
+});
+
 //------
 // #shiftToAll()
 //-------
