@@ -1437,6 +1437,9 @@ function parseMillis(fraction) {
     return Math.floor(f);
   }
 }
+function signedFloor(number) {
+  return number > 0 ? Math.floor(number) : Math.ceil(number);
+}
 function roundTo(number, digits, towardZero = false) {
   const factor = 10 ** digits,
     rounder = towardZero ? Math.trunc : Math.round;
@@ -2431,9 +2434,9 @@ function removePrecisionIssue(a) {
 
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-  const conv = matrix[toUnit][fromUnit],
-    raw = fromMap[fromUnit] / conv,
-    added = Math.floor(raw);
+  const conv = matrix[toUnit][fromUnit];
+  const raw = fromMap[fromUnit] / conv;
+  const added = signedFloor(raw);
   toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
   fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);
 }
@@ -2749,6 +2752,7 @@ class Duration {
    * ```
    */
   toHuman(opts = {}) {
+    if (!this.isValid) return INVALID$2;
     const l = orderedUnits$1.map(unit => {
       const val = this.values[unit];
       if (isUndefined(val)) {
@@ -2865,10 +2869,10 @@ class Duration {
    */
   toMillis() {
     var _this$values$millisec;
+    if (!this.isValid) return NaN;
     let sum = (_this$values$millisec = this.values.milliseconds) != null ? _this$values$millisec : 0;
     for (let unit of reverseUnits.slice(1)) {
-      var _this$values;
-      if ((_this$values = this.values) != null && _this$values[unit]) {
+      if (this.values[unit]) {
         sum += this.values[unit] * this.matrix[unit]["milliseconds"];
       }
     }
@@ -6997,7 +7001,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "3.4.0";
+const VERSION = "3.4.1";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

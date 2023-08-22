@@ -1505,6 +1505,10 @@ function parseMillis(fraction) {
   }
 }
 
+function signedFloor(number) {
+  return number > 0 ? Math.floor(number) : Math.ceil(number);
+}
+
 function roundTo(number, digits, towardZero = false) {
   const factor = 10 ** digits,
     rounder = towardZero ? Math.trunc : Math.round;
@@ -2669,9 +2673,9 @@ function removePrecisionIssue(a) {
 
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-  const conv = matrix[toUnit][fromUnit],
-    raw = fromMap[fromUnit] / conv,
-    added = Math.floor(raw);
+  const conv = matrix[toUnit][fromUnit];
+  const raw = fromMap[fromUnit] / conv;
+  const added = signedFloor(raw);
 
   toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
   fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);
@@ -2998,6 +3002,8 @@ class Duration {
    * ```
    */
   toHuman(opts = {}) {
+    if (!this.isValid) return INVALID$2;
+
     const l = orderedUnits$1
       .map((unit) => {
         const val = this.values[unit];
@@ -3112,9 +3118,11 @@ class Duration {
    * @return {number}
    */
   toMillis() {
+    if (!this.isValid) return NaN;
+
     let sum = this.values.milliseconds ?? 0;
     for (let unit of reverseUnits.slice(1)) {
-      if (this.values?.[unit]) {
+      if (this.values[unit]) {
         sum += this.values[unit] * this.matrix[unit]["milliseconds"];
       }
     }
@@ -7290,7 +7298,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "3.4.0";
+const VERSION = "3.4.1";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, Settings, SystemZone, VERSION, Zone };
 //# sourceMappingURL=luxon.js.map

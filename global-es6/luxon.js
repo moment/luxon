@@ -1508,6 +1508,10 @@ var luxon = (function (exports) {
     }
   }
 
+  function signedFloor(number) {
+    return number > 0 ? Math.floor(number) : Math.ceil(number);
+  }
+
   function roundTo(number, digits, towardZero = false) {
     const factor = 10 ** digits,
       rounder = towardZero ? Math.trunc : Math.round;
@@ -2672,9 +2676,9 @@ var luxon = (function (exports) {
 
   // NB: mutates parameters
   function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-    const conv = matrix[toUnit][fromUnit],
-      raw = fromMap[fromUnit] / conv,
-      added = Math.floor(raw);
+    const conv = matrix[toUnit][fromUnit];
+    const raw = fromMap[fromUnit] / conv;
+    const added = signedFloor(raw);
 
     toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
     fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);
@@ -3001,6 +3005,8 @@ var luxon = (function (exports) {
      * ```
      */
     toHuman(opts = {}) {
+      if (!this.isValid) return INVALID$2;
+
       const l = orderedUnits$1
         .map((unit) => {
           const val = this.values[unit];
@@ -3115,9 +3121,11 @@ var luxon = (function (exports) {
      * @return {number}
      */
     toMillis() {
+      if (!this.isValid) return NaN;
+
       let sum = this.values.milliseconds ?? 0;
       for (let unit of reverseUnits.slice(1)) {
-        if (this.values?.[unit]) {
+        if (this.values[unit]) {
           sum += this.values[unit] * this.matrix[unit]["milliseconds"];
         }
       }
@@ -7293,7 +7301,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "3.4.0";
+  const VERSION = "3.4.1";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;
