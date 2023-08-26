@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 3.4.1 | Documentation</title>
+  <title>luxon 3.4.2 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>3.4.1</code></div>
+          <div class='mb1'><code>3.4.2</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -13974,7 +13974,14 @@ Note that this will return null if the duration is invalid, negative, or equal t
 
   
 
-  <p>Reduce this Duration to its canonical representation in its current units.</p>
+  <p>Reduce this Duration to its canonical representation in its current units.
+Assuming the overall value of the Duration is positive, this means:</p>
+<ul>
+<li>excessive values for lower-order units are converted to higher order units (if possible, see first and second example)</li>
+<li>negative lower-order units are converted to higher order units (there must be such a higher order unit, otherwise
+the overall value would be negative, see second example)</li>
+</ul>
+<p>If the overall value is negative, the result of this method is equivalent to <code>this.negate().normalize().negate()</code>.</p>
 
     <div class='pre p1 fill-light mt0'>normalize(): <a href="#duration">Duration</a></div>
   
@@ -14009,6 +14016,9 @@ Note that this will return null if the duration is invalid, negative, or equal t
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">5000</span> }).<span class="hljs-title function_">normalize</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { years: 15, days: 255 }</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">5000</span> }).<span class="hljs-title function_">normalize</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { days: 5000 }</span></pre>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">hours</span>: <span class="hljs-number">12</span>, <span class="hljs-attr">minutes</span>: -<span class="hljs-number">45</span> }).<span class="hljs-title function_">normalize</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { hours: 11, minutes: 15 }</span></pre>

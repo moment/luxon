@@ -1780,9 +1780,6 @@ function parseMillis(fraction) {
     return Math.floor(f);
   }
 }
-function signedFloor(number) {
-  return number > 0 ? Math.floor(number) : Math.ceil(number);
-}
 function roundTo(number, digits, towardZero) {
   if (towardZero === void 0) {
     towardZero = false;
@@ -2859,27 +2856,47 @@ function clone$1(dur, alts, clear) {
   };
   return new Duration(conf);
 }
-
-// this is needed since in some test cases it would return 0.9999999999999999 instead of 1
-function removePrecisionIssue(a) {
-  return Math.trunc(a * 1e3) / 1e3;
-}
-
-// NB: mutates parameters
-function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-  var conv = matrix[toUnit][fromUnit];
-  var raw = fromMap[fromUnit] / conv;
-  var added = signedFloor(raw);
-  toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
-  fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);
+function durationToMillis(matrix, vals) {
+  var _vals$milliseconds;
+  var sum = (_vals$milliseconds = vals.milliseconds) != null ? _vals$milliseconds : 0;
+  for (var _iterator = _createForOfIteratorHelperLoose(reverseUnits.slice(1)), _step; !(_step = _iterator()).done;) {
+    var unit = _step.value;
+    if (vals[unit]) {
+      sum += vals[unit] * matrix[unit]["milliseconds"];
+    }
+  }
+  return sum;
 }
 
 // NB: mutates parameters
 function normalizeValues(matrix, vals) {
+  // the logic below assumes the overall value of the duration is positive
+  // if this is not the case, factor is used to make it so
+  var factor = durationToMillis(matrix, vals) < 0 ? -1 : 1;
   reverseUnits.reduce(function (previous, current) {
     if (!isUndefined(vals[current])) {
       if (previous) {
-        convert(matrix, vals, previous, vals, current);
+        var previousVal = vals[previous] * factor;
+        var conv = matrix[current][previous];
+
+        // if (previousVal < 0):
+        // lower order unit is negative (e.g. { years: 2, days: -2 })
+        // normalize this by reducing the higher order unit by the appropriate amount
+        // and increasing the lower order unit
+        // this can never make the higher order unit negative, because this function only operates
+        // on positive durations, so the amount of time represented by the lower order unit cannot
+        // be larger than the higher order unit
+        // else:
+        // lower order unit is positive (e.g. { years: 2, days: 450 } or { years: -2, days: 450 })
+        // in this case we attempt to convert as much as possible from the lower order unit into
+        // the higher order one
+        //
+        // Math.floor takes care of both of these cases, rounding away from 0
+        // if previousVal < 0 it makes the absolute value larger
+        // if previousVal >= it makes the absolute value smaller
+        var rollUp = Math.floor(previousVal / conv);
+        vals[current] += rollUp * factor;
+        vals[previous] -= rollUp * conv * factor;
       }
       return current;
     } else {
@@ -3308,16 +3325,8 @@ var Duration = /*#__PURE__*/function () {
    * @return {number}
    */;
   _proto.toMillis = function toMillis() {
-    var _this$values$millisec;
     if (!this.isValid) return NaN;
-    var sum = (_this$values$millisec = this.values.milliseconds) != null ? _this$values$millisec : 0;
-    for (var _iterator = _createForOfIteratorHelperLoose(reverseUnits.slice(1)), _step; !(_step = _iterator()).done;) {
-      var unit = _step.value;
-      if (this.values[unit]) {
-        sum += this.values[unit] * this.matrix[unit]["milliseconds"];
-      }
-    }
-    return sum;
+    return durationToMillis(this.matrix, this.values);
   }
 
   /**
@@ -3442,20 +3451,24 @@ var Duration = /*#__PURE__*/function () {
 
   /**
    * Reduce this Duration to its canonical representation in its current units.
+   * Assuming the overall value of the Duration is positive, this means:
+   * - excessive values for lower-order units are converted to higher order units (if possible, see first and second example)
+   * - negative lower-order units are converted to higher order units (there must be such a higher order unit, otherwise
+   *   the overall value would be negative, see second example)
+   *
+   * If the overall value is negative, the result of this method is equivalent to `this.negate().normalize().negate()`.
    * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=> { years: 15, days: 255 }
+   * @example Duration.fromObject({ days: 5000 }).normalize().toObject() //=> { days: 5000 }
    * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=> { hours: 11, minutes: 15 }
    * @return {Duration}
    */;
   _proto.normalize = function normalize() {
     if (!this.isValid) return this;
     var vals = this.toObject();
-    if (this.valueOf() >= 0) {
-      normalizeValues(this.matrix, vals);
-      return clone$1(this, {
-        values: vals
-      }, true);
-    }
-    return this.negate().normalize().negate();
+    normalizeValues(this.matrix, vals);
+    return clone$1(this, {
+      values: vals
+    }, true);
   }
 
   /**
@@ -3507,16 +3520,13 @@ var Duration = /*#__PURE__*/function () {
         if (isNumber(vals[k])) {
           own += vals[k];
         }
+
+        // only keep the integer part for now in the hopes of putting any decimal part
+        // into a smaller unit later
         var i = Math.trunc(own);
         built[k] = i;
         accumulated[k] = (own * 1000 - i * 1000) / 1000;
 
-        // plus anything further down the chain that should be rolled up in to this
-        for (var down in vals) {
-          if (orderedUnits$1.indexOf(down) > orderedUnits$1.indexOf(k)) {
-            convert(this.matrix, vals, down, built, k);
-          }
-        }
         // otherwise, keep it in the wings to boil it later
       } else if (isNumber(vals[k])) {
         accumulated[k] = vals[k];
@@ -3530,9 +3540,10 @@ var Duration = /*#__PURE__*/function () {
         built[lastUnit] += key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
       }
     }
+    normalizeValues(this.matrix, built);
     return clone$1(this, {
       values: built
-    }, true).normalize();
+    }, true);
   }
 
   /**
@@ -7882,7 +7893,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-var VERSION = "3.4.1";
+var VERSION = "3.4.2";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;
