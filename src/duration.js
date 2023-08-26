@@ -10,7 +10,6 @@ import {
   isUndefined,
   normalizeObject,
   roundTo,
-  signedFloor,
 } from "./impl/util.js";
 import Settings from "./settings.js";
 import DateTime from "./datetime.js";
@@ -127,27 +126,21 @@ function clone(dur, alts, clear = false) {
   return new Duration(conf);
 }
 
-function antiTrunc(n) {
-  return n < 0 ? Math.floor(n) : Math.ceil(n);
+function durationToMillis(matrix, vals) {
+  let sum = vals.milliseconds ?? 0;
+  for (let unit of reverseUnits.slice(1)) {
+    if (vals[unit]) {
+      sum += vals[unit] * matrix[unit]["milliseconds"];
+    }
+  }
+  return sum;
 }
 
 // NB: mutates parameters
-function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-  const conv = matrix[toUnit][fromUnit],
-    raw = fromMap[fromUnit] / conv,
-    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
-    // ok, so this is wild, but see the matrix in the tests
-    added =
-      !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
-  toMap[toUnit] += added;
-  fromMap[fromUnit] -= added * conv;
-}
-
-// NB: mutates parameters
-function normalizeValues(matrix, vals, negative) {
+function normalizeValues(matrix, vals) {
   // the logic below assumes the overall value of the duration is positive
   // if this is not the case, factor is used to make it so
-  const factor = negative ? -1 : 1;
+  const factor = durationToMillis(matrix, vals) < 0 ? -1 : 1;
 
   reverseUnits.reduce((previous, current) => {
     if (!isUndefined(vals[current])) {
@@ -605,13 +598,7 @@ export default class Duration {
   toMillis() {
     if (!this.isValid) return NaN;
 
-    let sum = this.values.milliseconds ?? 0;
-    for (let unit of reverseUnits.slice(1)) {
-      if (this.values[unit]) {
-        sum += this.values[unit] * this.matrix[unit]["milliseconds"];
-      }
-    }
-    return sum;
+    return durationToMillis(this.matrix, this.values);
   }
 
   /**
@@ -735,7 +722,7 @@ export default class Duration {
   normalize() {
     if (!this.isValid) return this;
     const vals = this.toObject();
-    normalizeValues(this.matrix, vals, this.toMillis() < 0);
+    normalizeValues(this.matrix, vals);
     return clone(this, { values: vals }, true);
   }
 
@@ -786,16 +773,12 @@ export default class Duration {
           own += vals[k];
         }
 
+        // only keep the integer part for now in the hopes of putting any decimal part
+        // into a smaller unit later
         const i = Math.trunc(own);
         built[k] = i;
         accumulated[k] = (own * 1000 - i * 1000) / 1000;
 
-        // plus anything further down the chain that should be rolled up in to this
-        for (const down in vals) {
-          if (orderedUnits.indexOf(down) > orderedUnits.indexOf(k)) {
-            convert(this.matrix, vals, down, built, k);
-          }
-        }
         // otherwise, keep it in the wings to boil it later
       } else if (isNumber(vals[k])) {
         accumulated[k] = vals[k];
@@ -811,7 +794,8 @@ export default class Duration {
       }
     }
 
-    return clone(this, { values: built }, true).normalize();
+    normalizeValues(this.matrix, built);
+    return clone(this, { values: built }, true);
   }
 
   /**
