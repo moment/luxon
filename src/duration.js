@@ -127,14 +127,20 @@ function clone(dur, alts, clear = false) {
   return new Duration(conf);
 }
 
+function antiTrunc(n) {
+  return n < 0 ? Math.floor(n) : Math.ceil(n);
+}
+
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
-  const conv = matrix[toUnit][fromUnit];
-  const raw = fromMap[fromUnit] / conv;
-  const added = signedFloor(raw);
-
-  toMap[toUnit] = toMap[toUnit] + added;
-  fromMap[fromUnit] = fromMap[fromUnit] - added * conv;
+  const conv = matrix[toUnit][fromUnit],
+    raw = fromMap[fromUnit] / conv,
+    sameSign = Math.sign(raw) === Math.sign(toMap[toUnit]),
+    // ok, so this is wild, but see the matrix in the tests
+    added =
+      !sameSign && toMap[toUnit] !== 0 && Math.abs(raw) <= 1 ? antiTrunc(raw) : Math.trunc(raw);
+  toMap[toUnit] += added;
+  fromMap[fromUnit] -= added * conv;
 }
 
 // NB: mutates parameters
