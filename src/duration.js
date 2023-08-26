@@ -149,19 +149,21 @@ function normalizeValues(matrix, vals, negative) {
         const previousVal = vals[previous] * factor;
         const conv = matrix[current][previous];
 
-        // if previousVal < 0:
-        // lower order unit is negative (e.g. { years: 2, days: -2 })
-        // normalize this by reducing the higher order unit by the appropriate amount
-        // and increasing the lower order unit
-        // this can never make the higher order unit negative, because this function only operates
-        // on positive durations, so the amount of time represented by the lower order unit cannot
-        // be larger than the higher order unit
-        // else:
-        // lower order unit is positive (e.g. { years: 2, days: 450 } or { years: -2, days: 450 })
-        // in this case we attempt to convert as much as possible from the lower order unit into
-        // the higher order one
-        const rollUp =
-          previousVal < 0 ? -Math.ceil(-previousVal / conv) : Math.floor(previousVal / conv);
+        let rollUp;
+        if (previousVal < 0) {
+          // lower order unit is negative (e.g. { years: 2, days: -2 })
+          // normalize this by reducing the higher order unit by the appropriate amount
+          // and increasing the lower order unit
+          // this can never make the higher order unit negative, because this function only operates
+          // on positive durations, so the amount of time represented by the lower order unit cannot
+          // be larger than the higher order unit
+          rollUp = -Math.ceil(-previousVal / conv);
+        } else {
+          // lower order unit is positive (e.g. { years: 2, days: 450 } or { years: -2, days: 450 })
+          // in this case we attempt to convert as much as possible from the lower order unit into
+          // the higher order one
+          rollUp = Math.floor(previousVal / conv);
+        }
         vals[current] += rollUp * factor;
         vals[previous] -= rollUp * conv * factor;
       }
