@@ -127,19 +127,14 @@ function clone(dur, alts, clear = false) {
   return new Duration(conf);
 }
 
-// this is needed since in some test cases it would return 0.9999999999999999 instead of 1
-function removePrecisionIssue(a) {
-  return Math.trunc(a * 1e3) / 1e3;
-}
-
 // NB: mutates parameters
 function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
   const conv = matrix[toUnit][fromUnit];
   const raw = fromMap[fromUnit] / conv;
   const added = signedFloor(raw);
 
-  toMap[toUnit] = removePrecisionIssue(toMap[toUnit] + added);
-  fromMap[fromUnit] = removePrecisionIssue(fromMap[fromUnit] - added * conv);
+  toMap[toUnit] = toMap[toUnit] + added;
+  fromMap[fromUnit] = fromMap[fromUnit] - added * conv;
 }
 
 // NB: mutates parameters
