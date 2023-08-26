@@ -143,11 +143,35 @@ function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
 }
 
 // NB: mutates parameters
-function normalizeValues(matrix, vals) {
+function normalizeValues(matrix, vals, negative) {
+  const factor = negative ? -1 : 1;
+  // the logic below assumes the overall value of the duration is positive
+  // if this is not the case, factor is used to make it so
+
   reverseUnits.reduce((previous, current) => {
     if (!isUndefined(vals[current])) {
       if (previous) {
-        convert(matrix, vals, previous, vals, current);
+        const previousVal = vals[previous] * factor;
+        if (previousVal < 0) {
+          // lower order unit is negative (e.g. { years: 2, days: -2 })
+          // normalize this by reducing the higher order unit by the appropriate amount
+          // and increasing the lower order unit
+          // this can never make the higher order unit negative, because this function only operates
+          // on positive durations, so the amount of time represented by the lower order unit cannot
+          // be larger than the higher order unit
+          const conv = matrix[current][previous];
+          const rollUp = Math.ceil(-previousVal / conv);
+          vals[current] -= rollUp * factor;
+          vals[previous] += rollUp * conv * factor;
+        } else {
+          // lower order unit is positive (e.g. { years: 2, days: 450 } or { years: -2, days: 450 })
+          // in this case we attempt to convert as much as possible from the lower order unit into
+          // the higher order one
+          const conv = matrix[current][previous];
+          const rollUp = Math.floor(previousVal / conv);
+          vals[current] += rollUp * factor;
+          vals[previous] -= rollUp * conv * factor;
+        }
       }
       return current;
     } else {
@@ -704,11 +728,8 @@ export default class Duration {
   normalize() {
     if (!this.isValid) return this;
     const vals = this.toObject();
-    if (this.valueOf() >= 0) {
-      normalizeValues(this.matrix, vals);
-      return clone(this, { values: vals }, true);
-    }
-    return this.negate().normalize().negate();
+    normalizeValues(this.matrix, vals, this.toMillis() < 0);
+    return clone(this, { values: vals }, true);
   }
 
   /**
