@@ -139,9 +139,9 @@ function convert(matrix, fromMap, fromUnit, toMap, toUnit) {
 
 // NB: mutates parameters
 function normalizeValues(matrix, vals, negative) {
-  const factor = negative ? -1 : 1;
   // the logic below assumes the overall value of the duration is positive
   // if this is not the case, factor is used to make it so
+  const factor = negative ? -1 : 1;
 
   reverseUnits.reduce((previous, current) => {
     if (!isUndefined(vals[current])) {
