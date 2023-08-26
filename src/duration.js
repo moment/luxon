@@ -128,7 +128,7 @@ function clone(dur, alts, clear = false) {
 
 function durationToMillis(matrix, vals) {
   let sum = vals.milliseconds ?? 0;
-  for (let unit of reverseUnits.slice(1)) {
+  for (const unit of reverseUnits.slice(1)) {
     if (vals[unit]) {
       sum += vals[unit] * matrix[unit]["milliseconds"];
     }
