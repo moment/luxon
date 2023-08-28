@@ -476,10 +476,16 @@ export default class Locale {
   }
 
   isEnglish() {
+    if (!this.locale || typeof this.locale !== "string") {
+      return false; // return false is locale is undefined
+    }
+    const lowerCaseLocale = this.locale.toLowerCase();
+    const dateTimeFormatLocale = new Intl.DateTimeFormat(this.intl)
+      .resolvedOptions()
+      .locale.toLowerCase();
+
     return (
-      this.locale === "en" ||
-      this.locale.toLowerCase() === "en-us" ||
-      new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us")
+      lowerCaseLocale === "en" || lowerCaseLocale === "en-us" || dateTimeFormatLocale === "en-us"
     );
   }
 
