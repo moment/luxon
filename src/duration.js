@@ -141,49 +141,51 @@ function normalizeValues(matrix, vals) {
   // the logic below assumes the overall value of the duration is positive
   // if this is not the case, factor is used to make it so
   const factor = durationToMillis(matrix, vals) < 0 ? -1 : 1;
-  const presentUnits = reverseUnits.filter((u) => !isUndefined(vals[u]));
 
-  presentUnits.reduce((previous, current, currentIndex) => {
-    if (previous) {
-      const previousVal = vals[previous] * factor;
-      const conv = matrix[current][previous];
+  orderedUnits.reduceRight((previous, current) => {
+    if (!isUndefined(vals[current])) {
+      if (previous) {
+        const previousVal = vals[previous] * factor;
+        const conv = matrix[current][previous];
 
-      // if (previousVal < 0):
-      // lower order unit is negative (e.g. { years: 2, days: -2 })
-      // normalize this by reducing the higher order unit by the appropriate amount
-      // and increasing the lower order unit
-      // this can never make the higher order unit negative, because this function only operates
-      // on positive durations, so the amount of time represented by the lower order unit cannot
-      // be larger than the higher order unit
-      // else:
-      // lower order unit is positive (e.g. { years: 2, days: 450 } or { years: -2, days: 450 })
-      // in this case we attempt to convert as much as possible from the lower order unit into
-      // the higher order one
-      //
-      // Math.floor takes care of both of these cases, rounding away from 0
-      // if previousVal < 0 it makes the absolute value larger
-      // if previousVal >= it makes the absolute value smaller
-      const rollUp = Math.floor(previousVal / conv);
-      vals[current] += rollUp * factor;
-      vals[previous] -= rollUp * conv * factor;
-      // try to convert any decimals into units smaller than "previous"
-      // this happens especially with conversionAccuracy: longterm
-      // for example for { years: 2, days: 450, seconds: 0 } we get { years: 3, days: 84.7575, seconds: 0 } at first
-      // we want to convert the fractional days into the lower order unit seconds
-      for (let i = currentIndex - 2; i >= 0; i--) {
-        let fraction = vals[previous] % 1;
-        if (fraction === 0) break;
-        const lowerOrderUnit = presentUnits[i];
-        const lowerOrderConv = matrix[previous][lowerOrderUnit];
-        let rollDown = fraction * lowerOrderConv;
-        if (i !== 0) {
-          rollDown = Math.floor(rollDown);
-        }
-        vals[lowerOrderUnit] += rollDown;
-        vals[previous] -= rollDown / lowerOrderConv;
+        // if (previousVal < 0):
+        // lower order unit is negative (e.g. { years: 2, days: -2 })
+        // normalize this by reducing the higher order unit by the appropriate amount
+        // and increasing the lower order unit
+        // this can never make the higher order unit negative, because this function only operates
+        // on positive durations, so the amount of time represented by the lower order unit cannot
+        // be larger than the higher order unit
+        // else:
+        // lower order unit is positive (e.g. { years: 2, days: 450 } or { years: -2, days: 450 })
+        // in this case we attempt to convert as much as possible from the lower order unit into
+        // the higher order one
+        //
+        // Math.floor takes care of both of these cases, rounding away from 0
+        // if previousVal < 0 it makes the absolute value larger
+        // if previousVal >= it makes the absolute value smaller
+        const rollUp = Math.floor(previousVal / conv);
+        vals[current] += rollUp * factor;
+        vals[previous] -= rollUp * conv * factor;
       }
+      return current;
+    } else {
+      return previous;
     }
-    return current;
+  }, null);
+
+  // try to convert any decimals into smaller units if possible
+  // for example for { years: 2.5, days: 0, seconds: 0 } we want to get { years: 2, days: 182, hours: 12 }
+  orderedUnits.reduce((previous, current) => {
+    if (!isUndefined(vals[current])) {
+      if (previous) {
+        const fraction = vals[previous] % 1;
+        vals[previous] -= fraction;
+        vals[current] += fraction * matrix[previous][current];
+      }
+      return current;
+    } else {
+      return previous;
+    }
   }, null);
 }
 
@@ -723,14 +725,16 @@ export default class Duration {
   /**
    * Reduce this Duration to its canonical representation in its current units.
    * Assuming the overall value of the Duration is positive, this means:
-   * - excessive values for lower-order units are converted to higher order units (if possible, see first and second example)
+   * - excessive values for lower-order units are converted to higher-order units (if possible, see first and second example)
    * - negative lower-order units are converted to higher order units (there must be such a higher order unit, otherwise
    *   the overall value would be negative, see second example)
+   * - fractional values for higher-order units are converted to lower-order units (if possible, see fourth example)
    *
    * If the overall value is negative, the result of this method is equivalent to `this.negate().normalize().negate()`.
    * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=> { years: 15, days: 255 }
    * @example Duration.fromObject({ days: 5000 }).normalize().toObject() //=> { days: 5000 }
    * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=> { hours: 11, minutes: 15 }
+   * @example Duration.fromObject({ years: 2.5, days: 0 })
    * @return {Duration}
    */
   normalize() {
