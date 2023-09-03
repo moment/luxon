@@ -105,6 +105,17 @@ test("Duration#shiftTo handles mixed units", () => {
   });
 });
 
+test("Duration#shiftTo does not produce unnecessary fractions in higher order units", () => {
+  const duration = Duration.fromObject(
+    { years: 2.5, weeks: -1 },
+    { conversionAccuracy: "longterm" }
+  );
+  const shifted = duration.shiftTo("years", "weeks", "minutes").toObject();
+  expect(shifted.years).toBe(2);
+  expect(shifted.weeks).toBe(25);
+  expect(shifted.minutes).toBeCloseTo(894.6, 5);
+});
+
 //------
 // #shiftToAll()
 //-------
@@ -120,6 +131,22 @@ test("Duration#shiftToAll shifts to all available units", () => {
     seconds: 0,
     milliseconds: 0,
   });
+});
+
+test("Duration#shiftToAll does not produce unnecessary fractions in higher order units", () => {
+  const duration = Duration.fromObject(
+    { years: 2.5, weeks: -1, seconds: 0 },
+    { conversionAccuracy: "longterm" }
+  );
+  const toAll = duration.shiftToAll().toObject();
+  expect(toAll.years).toBe(2);
+  expect(toAll.months).toBe(5);
+  expect(toAll.weeks).toBe(3);
+  expect(toAll.days).toBe(2);
+  expect(toAll.hours).toBe(10);
+  expect(toAll.minutes).toBe(29);
+  expect(toAll.seconds).toBe(6);
+  expect(toAll.milliseconds).toBeCloseTo(0, 5);
 });
 
 test("Duration#shiftToAll maintains invalidity", () => {
