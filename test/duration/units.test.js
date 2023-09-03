@@ -243,6 +243,40 @@ test("Duration#normalize can convert all unit pairs", () => {
   }
 });
 
+test("Duration#normalize moves fractions to lower-order units", () => {
+  expect(Duration.fromObject({ years: 2.5, days: 0, hours: 0 }).normalize().toObject()).toEqual({
+    years: 2,
+    days: 182,
+    hours: 12,
+  });
+  expect(Duration.fromObject({ years: -2.5, days: 0, hours: 0 }).normalize().toObject()).toEqual({
+    years: -2,
+    days: -182,
+    hours: -12,
+  });
+  expect(Duration.fromObject({ years: 2.5, days: 12, hours: 0 }).normalize().toObject()).toEqual({
+    years: 2,
+    days: 194,
+    hours: 12,
+  });
+  expect(Duration.fromObject({ years: 2.5, days: 12.25, hours: 0 }).normalize().toObject()).toEqual(
+    { years: 2, days: 194, hours: 18 }
+  );
+});
+
+test("Duration#normalize does not produce fractions in higher order units when rolling up negative lower order unit values", () => {
+  const normalized = Duration.fromObject(
+    { years: 100, months: 0, weeks: -1, days: 0 },
+    { conversionAccuracy: "longterm" }
+  )
+    .normalize()
+    .toObject();
+  expect(normalized.years).toBe(99);
+  expect(normalized.months).toBe(11);
+  expect(normalized.weeks).toBe(3);
+  expect(normalized.days).toBeCloseTo(2.436875, 7);
+});
+
 //------
 // #rescale()
 //-------
