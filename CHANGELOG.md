@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.4.3 (2023-09-05)
+
+- Fixes another regression from 3.4.0 (#1496)
+
 # 3.4.2 (2023-08-26)
 
 - Fixes regression from 3.4.1 (#1493)
