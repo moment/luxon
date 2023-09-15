@@ -727,7 +727,7 @@ export default class Duration {
    * Assuming the overall value of the Duration is positive, this means:
    * - excessive values for lower-order units are converted to higher-order units (if possible, see first and second example)
    * - negative lower-order units are converted to higher order units (there must be such a higher order unit, otherwise
-   *   the overall value would be negative, see second example)
+   *   the overall value would be negative, see third example)
    * - fractional values for higher-order units are converted to lower-order units (if possible, see fourth example)
    *
    * If the overall value is negative, the result of this method is equivalent to `this.negate().normalize().negate()`.
