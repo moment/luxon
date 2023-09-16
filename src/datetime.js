@@ -47,6 +47,7 @@ import {
   InvalidDateTimeError,
 } from "./errors.js";
 import Invalid from "./impl/invalid.js";
+import SystemZone from "./zones/systemZone.js";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
@@ -1887,7 +1888,13 @@ export default class DateTime {
    * @return {Date}
    */
   toJSDate() {
-    return new Date(this.isValid ? this.ts : NaN);
+    if (!this.isValid) {
+      return new Date(NaN);
+    } else if (this.zone == SystemZone.instance) {
+      return new Date(this.toISO({ includeOffset: false }));
+    } else {
+      return new Date(this.ts);
+    }
   }
 
   // COMPARE

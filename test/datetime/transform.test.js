@@ -63,6 +63,12 @@ test("DateTime#toJSDate() returns a native Date equivalent", () => {
   expect(js.getTime()).toBe(dt.toMillis());
 });
 
+test("DateTime#toJSDate() works for historic dates with weird offsets", () => {
+  const js = DateTime.fromISO("1800-01-01").toJSDate();
+  expect(js).toBeInstanceOf(Date);
+  expect(js.getFullYear()).toBe(1800);
+});
+
 //------
 // #toBSON()
 //------
