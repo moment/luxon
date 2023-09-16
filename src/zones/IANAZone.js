@@ -38,7 +38,7 @@ function hackyOffset(dtf, date) {
 
 function partsOffset(dtf, date) {
   const formatted = dtf.formatToParts(date);
-  const filled = [];
+  const filled = new Array(formatted.length);
   for (let i = 0; i < formatted.length; i++) {
     const { type, value } = formatted[i];
     const pos = typeToPos[type];
