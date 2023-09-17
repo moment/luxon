@@ -79,7 +79,8 @@ export default class Info {
    * @returns {number[]} an array of weekdays, 1 for Monday through 7 for Sunday
    */
   static getWeekendWeekdays({ locale = null, locObj = null } = {}) {
-    return (locObj || Locale.create(locale)).getWeekendDays();
+    // copy the array, because we cache it internally
+    return (locObj || Locale.create(locale)).getWeekendDays().slice();
   }
 
   /**

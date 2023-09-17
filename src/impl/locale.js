@@ -1,4 +1,4 @@
-import { hasLocaleWeekInfo, hasRelative, padStart, roundTo } from "./util.js";
+import { hasLocaleWeekInfo, hasRelative, padStart, roundTo, validateWeekSettings } from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
@@ -317,22 +317,35 @@ class PolyRelFormatter {
   }
 }
 
+const fallbackWeekSettings = {
+  firstDay: 1,
+  minimalDays: 4,
+  weekend: [6, 7],
+};
+
 /**
  * @private
  */
 
 export default class Locale {
   static fromOpts(opts) {
-    return Locale.create(opts.locale, opts.numberingSystem, opts.outputCalendar, opts.defaultToEN);
+    return Locale.create(
+      opts.locale,
+      opts.numberingSystem,
+      opts.outputCalendar,
+      opts.weekSettings,
+      opts.defaultToEN
+    );
   }
 
-  static create(locale, numberingSystem, outputCalendar, defaultToEN = false) {
+  static create(locale, numberingSystem, outputCalendar, weekSettings, defaultToEN = false) {
     const specifiedLocale = locale || Settings.defaultLocale;
     // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
     const localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale());
     const numberingSystemR = numberingSystem || Settings.defaultNumberingSystem;
     const outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
-    return new Locale(localeR, numberingSystemR, outputCalendarR, specifiedLocale);
+    const weekSettingsR = validateWeekSettings(weekSettings) || Settings.defaultWeekSettings;
+    return new Locale(localeR, numberingSystemR, outputCalendarR, weekSettingsR, specifiedLocale);
   }
 
   static resetCache() {
@@ -342,16 +355,17 @@ export default class Locale {
     intlRelCache = {};
   }
 
-  static fromObject({ locale, numberingSystem, outputCalendar } = {}) {
-    return Locale.create(locale, numberingSystem, outputCalendar);
+  static fromObject({ locale, numberingSystem, outputCalendar, weekSettings } = {}) {
+    return Locale.create(locale, numberingSystem, outputCalendar, weekSettings);
   }
 
-  constructor(locale, numbering, outputCalendar, specifiedLocale) {
+  constructor(locale, numbering, outputCalendar, weekSettings, specifiedLocale) {
     const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
 
     this.locale = parsedLocale;
     this.numberingSystem = numbering || parsedNumberingSystem || null;
     this.outputCalendar = outputCalendar || parsedOutputCalendar || null;
+    this.weekSettings = weekSettings;
     this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 
     this.weekdaysCache = { format: {}, standalone: {} };
@@ -387,6 +401,7 @@ export default class Locale {
         alts.locale || this.specifiedLocale,
         alts.numberingSystem || this.numberingSystem,
         alts.outputCalendar || this.outputCalendar,
+        validateWeekSettings(alts.weekSettings) || this.weekSettings,
         alts.defaultToEN || false
       );
     }
@@ -495,28 +510,26 @@ export default class Locale {
     );
   }
 
-  getStartOfWeek() {
-    if (!hasLocaleWeekInfo()) {
-      return 1;
+  getWeekSettings() {
+    if (this.weekSettings) {
+      return this.weekSettings;
+    } else if (!hasLocaleWeekInfo()) {
+      return fallbackWeekSettings;
     } else {
-      return getCachedWeekInfo(this.locale).firstDay;
+      return getCachedWeekInfo(this.locale);
     }
+  }
+
+  getStartOfWeek() {
+    return this.getWeekSettings().firstDay;
   }
 
   getMinDaysInFirstWeek() {
-    if (!hasLocaleWeekInfo()) {
-      return 4;
-    } else {
-      return getCachedWeekInfo(this.locale).minimalDays;
-    }
+    return this.getWeekSettings().minimalDays;
   }
 
   getWeekendDays() {
-    if (!hasLocaleWeekInfo()) {
-      return [6, 7];
-    } else {
-      return getCachedWeekInfo(this.locale).weekend;
-    }
+    return this.getWeekSettings().weekend;
   }
 
   equals(other) {

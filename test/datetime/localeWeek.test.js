@@ -1,6 +1,9 @@
 /* global test expect */
 
-import { DateTime } from "../../src/luxon";
+import { DateTime, Info } from "../../src/luxon";
+import Helpers from "../helpers";
+
+const withDefaultWeekSettings = Helpers.setUnset("defaultWeekSettings");
 
 //------
 // .startOf() with useLocaleWeeks
@@ -223,5 +226,44 @@ describe("weeksInLocalWeekYear", () => {
   });
   test("2020 should have 53 weeks in de-DE", () => {
     expect(DateTime.local(2020, 6, 1, { locale: "de-DE" }).weeksInLocalWeekYear).toBe(53);
+  });
+});
+
+describe("Week settings can be overridden", () => {
+  test("Overridden week info should be reported by Info", () => {
+    withDefaultWeekSettings({ firstDay: 3, minimalDays: 5, weekend: [4, 6] }, () => {
+      expect(Info.getStartOfWeek()).toBe(3);
+      expect(Info.getMinimumDaysInFirstWeek()).toBe(5);
+      expect(Info.getWeekendWeekdays()).toEqual([4, 6]);
+    });
+  });
+
+  test("Overridden week info should be reported by DateTime#isWeekend", () => {
+    withDefaultWeekSettings({ firstDay: 7, minimalDays: 1, weekend: [1, 3] }, () => {
+      expect(DateTime.local(2022, 1, 31).isWeekend).toBe(true);
+      expect(DateTime.local(2022, 2, 1).isWeekend).toBe(false);
+      expect(DateTime.local(2022, 2, 2).isWeekend).toBe(true);
+      expect(DateTime.local(2022, 2, 3).isWeekend).toBe(false);
+      expect(DateTime.local(2022, 2, 4).isWeekend).toBe(false);
+      expect(DateTime.local(2022, 2, 5).isWeekend).toBe(false);
+      expect(DateTime.local(2022, 2, 6).isWeekend).toBe(false);
+    });
+  });
+  test("Overridden week info should be respected by DateTime accessors", () => {
+    withDefaultWeekSettings({ firstDay: 7, minimalDays: 1, weekend: [6, 7] }, () => {
+      const dt = DateTime.local(2022, 1, 1, { locale: "de-DE" });
+      expect(dt.localWeekday).toBe(7);
+      expect(dt.localWeekNumber).toBe(1);
+      expect(dt.localWeekYear).toBe(2022);
+    });
+  });
+  test("Overridden week info should be respected by DateTime#set", () => {
+    withDefaultWeekSettings({ firstDay: 7, minimalDays: 1, weekend: [6, 7] }, () => {
+      const dt = DateTime.local(2022, 1, 1, { locale: "de-DE" });
+      const modified = dt.set({ localWeekday: 1 });
+      expect(modified.year).toBe(2021);
+      expect(modified.month).toBe(12);
+      expect(modified.day).toBe(26);
+    });
   });
 });

@@ -7,6 +7,7 @@
 import { InvalidArgumentError } from "../errors.js";
 import Settings from "../settings.js";
 import { dayOfWeek, isoWeekdayToLocal } from "./conversions.js";
+import { set } from "husky";
 
 /**
  * @private
@@ -87,6 +88,28 @@ export function pick(obj, keys) {
 
 export function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+export function validateWeekSettings(settings) {
+  if (settings == null) {
+    return null;
+  } else if (typeof settings !== "object") {
+    throw new InvalidArgumentError("Week settings must be an object");
+  } else {
+    if (
+      !integerBetween(settings.firstDay, 1, 7) ||
+      !integerBetween(settings.minimalDays, 1, 7) ||
+      !Array.isArray(settings.weekend) ||
+      settings.weekend.some((v) => !integerBetween(v, 1, 7))
+    ) {
+      throw new InvalidArgumentError("Invalid week settings");
+    }
+    return {
+      firstDay: settings.firstDay,
+      minimalDays: settings.minimalDays,
+      weekend: Array.from(settings.weekend),
+    };
+  }
 }
 
 // NUMBERS AND STRINGS
