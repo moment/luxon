@@ -135,7 +135,7 @@ export function usesLocalWeekValues(obj, loc) {
     delete obj.localWeekYear;
     return {
       minDaysInFirstWeek: loc.getMinDaysInFirstWeek(),
-      startOfWeek: loc.getMinDaysInFirstWeek(),
+      startOfWeek: loc.getStartOfWeek(),
     };
   } else {
     return { minDaysInFirstWeek: 4, startOfWeek: 1 };
