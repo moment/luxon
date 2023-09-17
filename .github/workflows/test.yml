@@ -2,13 +2,12 @@ name: Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build-and-test:
-
     runs-on: ubuntu-latest
 
     env:
@@ -18,18 +17,18 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [19.7.0]
+        node-version: [20.5.1]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build
-    - run: npm run format-check
-    - run: npm run test
-    - run: npm run site
-    - run: bash <(curl -s https://codecov.io/bash)
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run format-check
+      - run: npm run test
+      - run: npm run site
+      - run: bash <(curl -s https://codecov.io/bash)
