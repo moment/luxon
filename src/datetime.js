@@ -1636,7 +1636,7 @@ export default class DateTime {
 
     if (normalizedUnit === "weeks") {
       if (useLocaleWeeks) {
-        const startOfWeek = this.loc.startOfWeek;
+        const startOfWeek = this.loc.getStartOfWeek();
         const { weekday } = this;
         if (weekday < startOfWeek) {
           o.weekNumber = this.weekNumber - 1;
