@@ -38,7 +38,7 @@ import {
   hasInvalidWeekData,
   hasInvalidOrdinalData,
   hasInvalidTimeData,
-  isoWeekdayToLocal,
+  convertWeekValuesToISO,
 } from "./impl/conversions.js";
 import * as Formats from "./impl/formats.js";
 import {
@@ -345,6 +345,9 @@ function normalizeUnit(unit) {
     weekyear: "weekYear",
     weekyears: "weekYear",
     ordinal: "ordinal",
+    localweekday: "localWeekday",
+    localweeknumber: "localWeekNumber",
+    localweekyear: "localWeekYear",
   }[unit.toLowerCase()];
 
   if (!normalized) throw new InvalidUnitError(unit);
@@ -693,17 +696,18 @@ export default class DateTime {
       return DateTime.invalid(unsupportedZone(zoneToUse));
     }
 
+    const loc = Locale.fromObject(opts);
+    const normalized = normalizeObject(obj, normalizeUnit);
+    convertWeekValuesToISO(normalized, loc);
     const tsNow = Settings.now(),
       offsetProvis = !isUndefined(opts.specificOffset)
         ? opts.specificOffset
         : zoneToUse.offset(tsNow),
-      normalized = normalizeObject(obj, normalizeUnit),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
       containsGregor = containsGregorYear || containsGregorMD,
-      definiteWeekDef = normalized.weekYear || normalized.weekNumber,
-      loc = Locale.fromObject(opts);
+      definiteWeekDef = normalized.weekYear || normalized.weekNumber;
 
     // cases:
     // just a weekday -> this week's instance of that weekday, no worries
@@ -1378,6 +1382,22 @@ export default class DateTime {
    */
   get weeksInWeekYear() {
     return this.isValid ? weeksInWeekYear(this.weekYear) : NaN;
+  }
+
+  /**
+   * Returns the number of weeks in this DateTime's local week year
+   * @example DateTime.local(2020, 6, {locale: 'en-US'}).weeksInLocalWeekYear //=> 52
+   * @example DateTime.local(2020, 6, {locale: 'de-DE'}).weeksInLocalWeekYear //=> 53
+   * @type {number}
+   */
+  get weeksInLocalWeekYear() {
+    return this.isValid
+      ? weeksInWeekYear(
+          this.localWeekYear,
+          this.loc.getMinDaysInFirstWeek(),
+          this.loc.getStartOfWeek()
+        )
+      : NaN;
   }
 
   /**

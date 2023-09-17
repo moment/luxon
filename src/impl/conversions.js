@@ -6,8 +6,10 @@ import {
   daysInMonth,
   weeksInWeekYear,
   isInteger,
+  isUndefined,
 } from "./util.js";
 import Invalid from "./invalid.js";
+import { ConflictingSpecificationError } from "../errors.js";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
@@ -19,7 +21,7 @@ function unitOutOfRange(unit, value) {
   );
 }
 
-function dayOfWeek(year, month, day) {
+export function dayOfWeek(year, month, day) {
   const d = new Date(Date.UTC(year, month - 1, day));
 
   if (year < 100 && year >= 0) {
@@ -60,8 +62,8 @@ export function gregorianToWeek(gregObj, minDaysInFirstWeek = 4, startOfWeek = 1
 
   if (weekNumber < 1) {
     weekYear = year - 1;
-    weekNumber = weeksInWeekYear(weekYear);
-  } else if (weekNumber > weeksInWeekYear(year)) {
+    weekNumber = weeksInWeekYear(weekYear, minDaysInFirstWeek, startOfWeek);
+  } else if (weekNumber > weeksInWeekYear(year, minDaysInFirstWeek, startOfWeek)) {
     weekYear = year + 1;
     weekNumber = 1;
   } else {
@@ -103,6 +105,29 @@ export function ordinalToGregorian(ordinalData) {
   const { year, ordinal } = ordinalData;
   const { month, day } = uncomputeOrdinal(year, ordinal);
   return { year, month, day, ...timeObject(ordinalData) };
+}
+
+/**
+ * Convert any locale-based week values (localWeekDay, etc.) into ISO-based week values
+ * Modifies obj in-place!
+ * @param obj the object values
+ * @param loc the locale
+ */
+export function convertWeekValuesToISO(obj, loc) {
+  const hasLocaleWeekData =
+    !isUndefined(obj.localWeekday) ||
+    !isUndefined(obj.localWeekNumber) ||
+    !isUndefined(obj.localWeekYear);
+  if (hasLocaleWeekData) {
+    const hasIsoWeekData =
+      !isUndefined(obj.weekday) || !isUndefined(obj.weekNumber) || !isUndefined(obj.weekYear);
+    if (hasIsoWeekData) {
+      throw new ConflictingSpecificationError(
+        "Cannot mix locale-based week fields with ISO-based week fields"
+      );
+    }
+    // TODO
+  }
 }
 
 export function hasInvalidWeekData(obj) {
