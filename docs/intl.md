@@ -152,8 +152,7 @@ Settings.defaultNumberingSystem = "beng";
 ## Locale-based weeks
 
 Most of Luxon uses the [ISO week date](https://en.wikipedia.org/wiki/ISO_week_date) system when working with week-related data.
-This means that the week starts on Monday, the weekend is Saturday and Sunday and the first week of the year is that week, which
-has 4 or more of its days in January.
+This means that the week starts on Monday and the first week of the year is that week, which has 4 or more of its days in January.
 
 This definition works for most use-cases, however locales can define different rules. For example, in many English-speaking countries
 the week is said to start on Sunday and the 1 January always defines the first week of the year. This information is
