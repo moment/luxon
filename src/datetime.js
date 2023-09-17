@@ -38,7 +38,8 @@ import {
   hasInvalidWeekData,
   hasInvalidOrdinalData,
   hasInvalidTimeData,
-  convertWeekValuesToISO,
+  usesLocalWeekValues,
+  isoWeekdayToLocal,
 } from "./impl/conversions.js";
 import * as Formats from "./impl/formats.js";
 import {
@@ -345,14 +346,27 @@ function normalizeUnit(unit) {
     weekyear: "weekYear",
     weekyears: "weekYear",
     ordinal: "ordinal",
-    localweekday: "localWeekday",
-    localweeknumber: "localWeekNumber",
-    localweekyear: "localWeekYear",
   }[unit.toLowerCase()];
 
   if (!normalized) throw new InvalidUnitError(unit);
 
   return normalized;
+}
+
+function normalizeUnitsWithLocalWeeks(unit) {
+  switch (unit.toLowerCase()) {
+    case "localweekday":
+    case "localweekdays":
+      return "localWeekday";
+    case "localweeknumber":
+    case "localweeknumbers":
+      return "localWeekNumber";
+    case "localweekyear":
+    case "localweekyears":
+      return "localWeekYear";
+    default:
+      return normalizeUnit(unit);
+  }
 }
 
 // this is a dumbed down version of fromObject() that runs about 60% faster
@@ -696,18 +710,17 @@ export default class DateTime {
       return DateTime.invalid(unsupportedZone(zoneToUse));
     }
 
-    const loc = Locale.fromObject(opts);
-    const normalized = normalizeObject(obj, normalizeUnit);
-    convertWeekValuesToISO(normalized, loc);
     const tsNow = Settings.now(),
       offsetProvis = !isUndefined(opts.specificOffset)
         ? opts.specificOffset
         : zoneToUse.offset(tsNow),
+      normalized = normalizeObject(obj, normalizeUnit),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
       containsGregor = containsGregorYear || containsGregorMD,
-      definiteWeekDef = normalized.weekYear || normalized.weekNumber;
+      definiteWeekDef = normalized.weekYear || normalized.weekNumber,
+      loc = Locale.fromObject(opts);
 
     // cases:
     // just a weekday -> this week's instance of that weekday, no worries
@@ -1488,6 +1501,9 @@ export default class DateTime {
   /**
    * "Set" the values of specified units. Returns a newly-constructed DateTime.
    * You can only set units with this method; for "setting" metadata, see {@link DateTime#reconfigure} and {@link DateTime#setZone}.
+   *
+   * This method also supports setting locale-based week units, i.e. `localWeekday`, `localWeekNumber` and `localWeekYear`.
+   * They cannot be mixed with ISO-week units like `weekday`.
    * @param {Object} values - a mapping of units to numbers
    * @example dt.set({ year: 2017 })
    * @example dt.set({ hour: 8, minute: 30 })
@@ -1498,8 +1514,10 @@ export default class DateTime {
   set(values) {
     if (!this.isValid) return this;
 
-    const normalized = normalizeObject(values, normalizeUnit),
-      settingWeekStuff =
+    const normalized = normalizeObject(values, normalizeUnitsWithLocalWeeks);
+    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, this.loc);
+
+    const settingWeekStuff =
         !isUndefined(normalized.weekYear) ||
         !isUndefined(normalized.weekNumber) ||
         !isUndefined(normalized.weekday),
@@ -1521,7 +1539,11 @@ export default class DateTime {
 
     let mixed;
     if (settingWeekStuff) {
-      mixed = weekToGregorian({ ...gregorianToWeek(this.c), ...normalized });
+      mixed = weekToGregorian(
+        { ...gregorianToWeek(this.c, minDaysInFirstWeek, startOfWeek), ...normalized },
+        minDaysInFirstWeek,
+        startOfWeek
+      );
     } else if (!isUndefined(normalized.ordinal)) {
       mixed = ordinalToGregorian({ ...gregorianToOrdinal(this.c), ...normalized });
     } else {
@@ -1614,7 +1636,7 @@ export default class DateTime {
 
     if (normalizedUnit === "weeks") {
       if (useLocaleWeeks) {
-        const startOfWeek = this.loc.getStartOfWeek();
+        const startOfWeek = this.loc.startOfWeek;
         const { weekday } = this;
         if (weekday < startOfWeek) {
           o.weekNumber = this.weekNumber - 1;

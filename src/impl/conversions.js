@@ -73,12 +73,12 @@ export function gregorianToWeek(gregObj, minDaysInFirstWeek = 4, startOfWeek = 1
   return { weekYear, weekNumber, weekday, ...timeObject(gregObj) };
 }
 
-export function weekToGregorian(weekData) {
+export function weekToGregorian(weekData, minDaysInFirstWeek = 4, startOfWeek = 1) {
   const { weekYear, weekNumber, weekday } = weekData,
-    weekdayOfJan4 = dayOfWeek(weekYear, 1, 4),
+    weekdayOfJan4 = isoWeekdayToLocal(dayOfWeek(weekYear, 1, minDaysInFirstWeek), startOfWeek),
     yearInDays = daysInYear(weekYear);
 
-  let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 3,
+  let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 7 + minDaysInFirstWeek,
     year;
 
   if (ordinal < 1) {
@@ -108,12 +108,12 @@ export function ordinalToGregorian(ordinalData) {
 }
 
 /**
- * Convert any locale-based week values (localWeekDay, etc.) into ISO-based week values
+ * Check if local week units like localWeekday are used in obj.
+ * If so, validates that they are not mixed with ISO week units and then copies them to the normal week unit properties.
  * Modifies obj in-place!
  * @param obj the object values
- * @param loc the locale
  */
-export function convertWeekValuesToISO(obj, loc) {
+export function usesLocalWeekValues(obj, loc) {
   const hasLocaleWeekData =
     !isUndefined(obj.localWeekday) ||
     !isUndefined(obj.localWeekNumber) ||
@@ -121,24 +121,40 @@ export function convertWeekValuesToISO(obj, loc) {
   if (hasLocaleWeekData) {
     const hasIsoWeekData =
       !isUndefined(obj.weekday) || !isUndefined(obj.weekNumber) || !isUndefined(obj.weekYear);
+
     if (hasIsoWeekData) {
       throw new ConflictingSpecificationError(
         "Cannot mix locale-based week fields with ISO-based week fields"
       );
     }
-    // TODO
+    if (!isUndefined(obj.localWeekday)) obj.weekday = obj.localWeekday;
+    if (!isUndefined(obj.localWeekNumber)) obj.weekNumber = obj.localWeekNumber;
+    if (!isUndefined(obj.localWeekYear)) obj.weekYear = obj.localWeekYear;
+    delete obj.localWeekday;
+    delete obj.localWeekNumber;
+    delete obj.localWeekYear;
+    return {
+      minDaysInFirstWeek: loc.getMinDaysInFirstWeek(),
+      startOfWeek: loc.getMinDaysInFirstWeek(),
+    };
+  } else {
+    return { minDaysInFirstWeek: 4, startOfWeek: 1 };
   }
 }
 
-export function hasInvalidWeekData(obj) {
+export function hasInvalidWeekData(obj, minDaysInFirstWeek = 4, startOfWeek = 1) {
   const validYear = isInteger(obj.weekYear),
-    validWeek = integerBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
+    validWeek = integerBetween(
+      obj.weekNumber,
+      1,
+      weeksInWeekYear(obj.weekYear, minDaysInFirstWeek, startOfWeek)
+    ),
     validWeekday = integerBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
     return unitOutOfRange("weekYear", obj.weekYear);
   } else if (!validWeek) {
-    return unitOutOfRange("week", obj.week);
+    return unitOutOfRange("week", obj.weekNumber);
   } else if (!validWeekday) {
     return unitOutOfRange("weekday", obj.weekday);
   } else return false;
