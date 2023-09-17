@@ -716,11 +716,7 @@ export default class DateTime {
 
     const loc = Locale.fromObject(opts);
     const normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);
-    const {
-      minDaysInFirstWeek,
-      startOfWeek,
-      local: localWeeks,
-    } = usesLocalWeekValues(normalized, loc);
+    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, loc);
 
     const tsNow = Settings.now(),
       offsetProvis = !isUndefined(opts.specificOffset)
