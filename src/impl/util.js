@@ -7,7 +7,6 @@
 import { InvalidArgumentError } from "../errors.js";
 import Settings from "../settings.js";
 import { dayOfWeek, isoWeekdayToLocal } from "./conversions.js";
-import { set } from "husky";
 
 /**
  * @private
