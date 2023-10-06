@@ -2039,6 +2039,34 @@ export default class DateTime {
   }
 
   /**
+   *
+   * @param {number} weekday - The number of the required weekday (1 is Monday and 7 is Sunday)
+   * @returns {DateTime}
+   * @example DateTime.fromISO('2023-10-06T09:08:34.123').nextWeekday(weekday = 1) //=> Next Monday
+   * @example DateTime.fromISO('2023-10-06T09:08:34.123').nextWeekday(weekday = 5) //=> Next Friday
+   */
+  nextWeekday(weekday) {
+    if (!this.isValid) return this;
+
+    let daysToAdd = (7 - this.weekday + weekday) % 7;
+    return this.plus({ day: daysToAdd === 0 ? 7 : daysToAdd });
+  }
+
+  /**
+   *
+   * @param {number} weekday - The number of the required weekday (1 is Monday and 7 is Sunday)
+   * @returns {DateTime}
+   * @example DateTime.fromISO('2023-10-06T09:08:34.123').nextWeekday(weekday = 2) //=> Previous Tuesday
+   */
+  prevWeekday(weekday) {
+    if (!this.isValid) return this;
+
+    let daysToSubtract =
+      this.weekday > weekday ? this.weekday - weekday : 7 - weekday + this.weekday;
+    return this.minus({ day: daysToSubtract });
+  }
+
+  /**
    * Return the min of several date times
    * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
    * @return {DateTime} the min DateTime, or undefined if called with no argument
