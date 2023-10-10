@@ -312,7 +312,7 @@ export default class Interval {
     const sorted = dateTimes
         .map(friendlyDateTime)
         .filter((d) => this.contains(d))
-        .sort(),
+        .sort((a, b) => a.toMillis() - b.toMillis()),
       results = [];
     let { s } = this,
       i = 0;
