@@ -608,6 +608,18 @@ export default class Duration {
   }
 
   /**
+   * Returns a string representation of this Duration appropriate for the REPL.
+   * @return {string}
+   */
+  [Symbol.for("nodejs.util.inspect.custom")]() {
+    if (this.isValid) {
+      return `Duration { values: ${JSON.stringify(this.values)} }`;
+    } else {
+      return `Duration { Invalid, reason: ${this.invalidReason} }`;
+    }
+  }
+
+  /**
    * Returns an milliseconds value of this Duration.
    * @return {number}
    */
