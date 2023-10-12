@@ -6,6 +6,7 @@
 
 import { InvalidArgumentError } from "../errors.js";
 import Settings from "../settings.js";
+import { dayOfWeek, isoWeekdayToLocal } from "./conversions.js";
 
 /**
  * @private
@@ -43,6 +44,18 @@ export function hasRelative() {
   }
 }
 
+export function hasLocaleWeekInfo() {
+  try {
+    return (
+      typeof Intl !== "undefined" &&
+      !!Intl.Locale &&
+      ("weekInfo" in Intl.Locale.prototype || "getWeekInfo" in Intl.Locale.prototype)
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
 // OBJECTS AND ARRAYS
 
 export function maybeArray(thing) {
@@ -74,6 +87,28 @@ export function pick(obj, keys) {
 
 export function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+export function validateWeekSettings(settings) {
+  if (settings == null) {
+    return null;
+  } else if (typeof settings !== "object") {
+    throw new InvalidArgumentError("Week settings must be an object");
+  } else {
+    if (
+      !integerBetween(settings.firstDay, 1, 7) ||
+      !integerBetween(settings.minimalDays, 1, 7) ||
+      !Array.isArray(settings.weekend) ||
+      settings.weekend.some((v) => !integerBetween(v, 1, 7))
+    ) {
+      throw new InvalidArgumentError("Invalid week settings");
+    }
+    return {
+      firstDay: settings.firstDay,
+      minimalDays: settings.minimalDays,
+      weekend: Array.from(settings.weekend),
+    };
+  }
 }
 
 // NUMBERS AND STRINGS
@@ -174,16 +209,16 @@ export function objToLocalTS(obj) {
   return +d;
 }
 
-export function weeksInWeekYear(weekYear) {
-  const p1 =
-      (weekYear +
-        Math.floor(weekYear / 4) -
-        Math.floor(weekYear / 100) +
-        Math.floor(weekYear / 400)) %
-      7,
-    last = weekYear - 1,
-    p2 = (last + Math.floor(last / 4) - Math.floor(last / 100) + Math.floor(last / 400)) % 7;
-  return p1 === 4 || p2 === 3 ? 53 : 52;
+// adapted from moment.js: https://github.com/moment/moment/blob/000ac1800e620f770f4eb31b5ae908f6167b0ab2/src/lib/units/week-calendar-utils.js
+function firstWeekOffset(year, minDaysInFirstWeek, startOfWeek) {
+  const fwdlw = isoWeekdayToLocal(dayOfWeek(year, 1, minDaysInFirstWeek), startOfWeek);
+  return -fwdlw + minDaysInFirstWeek - 1;
+}
+
+export function weeksInWeekYear(weekYear, minDaysInFirstWeek = 4, startOfWeek = 1) {
+  const weekOffset = firstWeekOffset(weekYear, minDaysInFirstWeek, startOfWeek);
+  const weekOffsetNext = firstWeekOffset(weekYear + 1, minDaysInFirstWeek, startOfWeek);
+  return (daysInYear(weekYear) - weekOffset + weekOffsetNext) / 7;
 }
 
 export function untruncateYear(year) {
