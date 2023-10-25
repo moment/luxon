@@ -53,6 +53,14 @@ function escapeToken(value) {
   return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 }
 
+/**
+ * Reset local caches. Should only be necessary in testing scenarios.
+ * @return {void}
+ */
+export function resetTokenParserCache() {
+  unitateCache = {};
+}
+
 const unitateCache = {};
 
 function getUnitate(loc) {

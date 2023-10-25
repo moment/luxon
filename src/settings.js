@@ -1,6 +1,7 @@
 import SystemZone from "./zones/systemZone.js";
 import IANAZone from "./zones/IANAZone.js";
 import Locale from "./impl/locale.js";
+import { resetTokenParserCache } from "./impl/tokenParser.js";
 
 import { normalizeZone } from "./impl/zoneUtil.js";
 import { validateWeekSettings } from "./impl/util.js";
@@ -171,5 +172,6 @@ export default class Settings {
   static resetCaches() {
     Locale.resetCache();
     IANAZone.resetCache();
+    resetTokenParserCache();
   }
 }
