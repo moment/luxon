@@ -53,12 +53,12 @@ function escapeToken(value) {
   return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 }
 
-/**
- * @param token
- * @param {Locale} loc
- */
-function unitForToken(token, loc) {
-  const one = digitRegex(loc),
+const unitateCache = {};
+
+function getUnitate(loc) {
+  const localeKey = loc.locale;
+  if(!unitateCache[localeKey]) {
+    const one = digitRegex(loc),
     two = digitRegex(loc, "{2}"),
     three = digitRegex(loc, "{3}"),
     four = digitRegex(loc, "{4}"),
@@ -71,7 +71,7 @@ function unitForToken(token, loc) {
     fourToSix = digitRegex(loc, "{4,6}"),
     literal = (t) => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
     unitate = (t) => {
-      if (token.literal) {
+      if (t.literal) {
         return literal(t);
       }
       switch (t.val) {
@@ -192,6 +192,17 @@ function unitForToken(token, loc) {
           return literal(t);
       }
     };
+    return unitateCache[localeKey] = unitate;
+  }
+  return unitateCache[localeKey];
+}
+
+/**
+ * @param token
+ * @param {Locale} loc
+ */
+function unitForToken(token, loc) {
+  const unitate = getUnitate(loc);
 
   const unit = unitate(token) || {
     invalidReason: MISSING_FTP,
