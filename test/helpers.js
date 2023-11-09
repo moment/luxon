@@ -15,6 +15,20 @@ exports.withoutRTF = function (name, f) {
   });
 };
 
+exports.withoutLocaleWeekInfo = function (name, f) {
+  const fullName = `With no Intl.Locale.weekInfo support, ${name}`;
+  test(fullName, () => {
+    const l = Intl.Locale;
+    try {
+      Intl.Locale = undefined;
+      Settings.resetCaches();
+      f();
+    } finally {
+      Intl.Locale = l;
+    }
+  });
+};
+
 exports.withNow = function (name, dt, f) {
   test(name, () => {
     const oldNow = Settings.now;

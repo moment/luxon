@@ -177,7 +177,7 @@ The macro options available correspond one-to-one with the preset formats define
 (Examples below given for `2014-08-06T13:07:04.054` considered as a local time in America/New_York).
 
 | Standalone token | Format token | Description                                                    | Example                                                       |
-| ---------------- | ------------ | -------------------------------------------------------------- | ------------------------------------------------------------- |
+|------------------| ------------ |----------------------------------------------------------------| ------------------------------------------------------------- |
 | S                |              | millisecond, no padding                                        | `54`                                                          |
 | SSS              |              | millisecond, padded to 3                                       | `054`                                                         |
 | u                |              | fractional seconds, functionally identical to SSS              | `054`                                                         |
@@ -219,6 +219,10 @@ The macro options available correspond one-to-one with the preset formats define
 | kkkk             |              | ISO week year, padded to 4                                     | `2014`                                                        |
 | W                |              | ISO week number, unpadded                                      | `32`                                                          |
 | WW               |              | ISO week number, padded to 2                                   | `32`                                                          |
+| ii               |              | Local week year, unpadded                                      | `14`                                                          |
+| iiii             |              | Local week year, padded to 4                                   | `2014`                                                        |
+| n                |              | Local week number, unpadded                                    | `32`                                                          |
+| nn               |              | Local week number, padded to 2                                 | `32`                                                          |
 | o                |              | ordinal (day of year), unpadded                                | `218`                                                         |
 | ooo              |              | ordinal (day of year), padded to 3                             | `218`                                                         |
 | q                |              | quarter, no padding                                            | `3`                                                           |
