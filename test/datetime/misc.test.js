@@ -129,3 +129,29 @@ test("DateTime#weeksInWeekYear returns the number of days in the DateTime's year
 test("DateTime#weeksInWeekYear returns NaN for invalid DateTimes", () => {
   expect(DateTime.invalid("because").weeksInWeekYear).toBeFalsy();
 });
+
+//------
+// #nextWeekday
+//------
+test("DateTime#nextWeekday returns next weekday for current date", () => {
+  expect(DateTime.fromISO("2023-10-06T09:08:34.123").nextWeekday(1)).toStrictEqual(
+    DateTime.fromISO("2023-10-09T09:08:34.123")
+  );
+  expect(DateTime.fromISO("2023-10-06T09:08:34.123").nextWeekday(5)).toStrictEqual(
+    DateTime.fromISO("2023-10-13T09:08:34.123")
+  );
+  expect(DateTime.fromISO("invald").prevWeekday(1).isValid).toBeFalsy();
+});
+
+//------
+// #prevWeekday
+//------
+test("DateTime#prevWeekday returns previous weekday for current date", () => {
+  expect(DateTime.fromISO("2023-10-06T09:08:34.123").prevWeekday(1)).toStrictEqual(
+    DateTime.fromISO("2023-10-02T09:08:34.123")
+  );
+  expect(DateTime.fromISO("2023-10-06T09:08:34.123").prevWeekday(5)).toStrictEqual(
+    DateTime.fromISO("2023-09-29T09:08:34.123")
+  );
+  expect(DateTime.fromISO("invald").prevWeekday(1).isValid).toBeFalsy();
+});
