@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.4.4 (2023-11-12)
+
+- Localized week support (#1454)
+- Added custom inspect for Node (#1526)
+- Fix sorting in `Interval.splitAt` (#1524)
+
 # 3.4.3 (2023-09-05)
 
 - Fixes another regression from 3.4.0 (#1496)
