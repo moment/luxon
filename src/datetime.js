@@ -810,6 +810,10 @@ export default class DateTime {
       );
     }
 
+    if (!inst.isValid) {
+      return DateTime.invalid(inst.invalid);
+    }
+
     return inst;
   }
 
