@@ -1,5 +1,5 @@
-import dateTimeSuites from "./datetime";
-import infoSuites from "./info";
+import dateTimeSuites from "./datetime.js";
+import infoSuites from "./info.js";
 
 const allSuites = [...dateTimeSuites, ...infoSuites];
 

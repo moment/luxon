@@ -1,6 +1,6 @@
 import Benchmark from "benchmark";
-import DateTime from "../src/datetime";
-import Settings from "../src/settings";
+import DateTime from "../src/datetime.js";
+import Settings from "../src/settings.js";
 
 function runDateTimeSuite() {
   return new Promise((resolve, reject) => {
