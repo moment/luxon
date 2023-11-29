@@ -540,6 +540,18 @@ export default class Interval {
   }
 
   /**
+   * Returns a string representation of this Interval appropriate for the REPL.
+   * @return {string}
+   */
+  [Symbol.for("nodejs.util.inspect.custom")]() {
+    if (this.isValid) {
+      return `Interval { start: ${this.s.toISO()}, end: ${this.e.toISO()} }`;
+    } else {
+      return `Interval { Invalid, reason: ${this.invalidReason} }`;
+    }
+  }
+
+  /**
    * Returns a localized string representing this Interval. Accepts the same options as the
    * Intl.DateTimeFormat constructor and any presets defined by Luxon, such as
    * {@link DateTime.DATE_FULL} or {@link DateTime.TIME_SIMPLE}. The exact behavior of this method

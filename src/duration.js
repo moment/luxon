@@ -484,9 +484,10 @@ export default class Duration {
 
   /**
    * Returns a string representation of a Duration with all units included.
-   * To modify its behavior use the `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant.
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
-   * @param opts - On option object to override the formatting. Accepts the same keys as the options parameter of the native `Int.NumberFormat` constructor, as well as `listStyle`.
+   * To modify its behavior, use `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
+   * @param {Object} opts - Formatting options. Accepts the same keys as the options parameter of the native `Intl.NumberFormat` constructor, as well as `listStyle`.
+   * @param {string} [opts.listStyle='narrow'] - How to format the merged list. Corresponds to the `style` property of the options parameter of the native `Intl.ListFormat` constructor.
    * @example
    * ```js
    * var dur = Duration.fromObject({ days: 1, hours: 5, minutes: 6 })
@@ -605,6 +606,18 @@ export default class Duration {
    */
   toString() {
     return this.toISO();
+  }
+
+  /**
+   * Returns a string representation of this Duration appropriate for the REPL.
+   * @return {string}
+   */
+  [Symbol.for("nodejs.util.inspect.custom")]() {
+    if (this.isValid) {
+      return `Duration { values: ${JSON.stringify(this.values)} }`;
+    } else {
+      return `Duration { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**

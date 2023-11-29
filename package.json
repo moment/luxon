@@ -1,6 +1,6 @@
 {
   "name": "luxon",
-  "version": "3.4.3",
+  "version": "3.4.4",
   "description": "Immutable date wrapper",
   "author": "Isaac Cambron",
   "keywords": [
@@ -26,7 +26,7 @@
     "site": "npm run api-docs && npm run copy-site",
     "format": "prettier --write 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "format-check": "prettier --check 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
-    "benchmark": "babel-node benchmarks/index.js",
+    "benchmark": "node benchmarks/index.js",
     "codecov": "codecov",
     "prepack": "babel-node tasks/buildAll.js",
     "prepare": "husky install",

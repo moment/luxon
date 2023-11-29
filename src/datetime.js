@@ -810,6 +810,10 @@ export default class DateTime {
       );
     }
 
+    if (!inst.isValid) {
+      return DateTime.invalid(inst.invalid);
+    }
+
     return inst;
   }
 
@@ -1933,6 +1937,18 @@ export default class DateTime {
    */
   toString() {
     return this.isValid ? this.toISO() : INVALID;
+  }
+
+  /**
+   * Returns a string representation of this DateTime appropriate for the REPL.
+   * @return {string}
+   */
+  [Symbol.for("nodejs.util.inspect.custom")]() {
+    if (this.isValid) {
+      return `DateTime { ts: ${this.toISO()}, zone: ${this.zone.name}, locale: ${this.locale} }`;
+    } else {
+      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
+    }
   }
 
   /**
