@@ -61,146 +61,146 @@ export function resetTokenParserCache() {
   unitateCache = {};
 }
 
-const unitateCache = {};
+let unitateCache = {};
 
 function getUnitate(loc) {
-  const localeKey = loc.locale;
-  if(!unitateCache[localeKey]) {
+  const localeKey = loc.intl;
+  if (!unitateCache[localeKey]) {
     const one = digitRegex(loc),
-    two = digitRegex(loc, "{2}"),
-    three = digitRegex(loc, "{3}"),
-    four = digitRegex(loc, "{4}"),
-    six = digitRegex(loc, "{6}"),
-    oneOrTwo = digitRegex(loc, "{1,2}"),
-    oneToThree = digitRegex(loc, "{1,3}"),
-    oneToSix = digitRegex(loc, "{1,6}"),
-    oneToNine = digitRegex(loc, "{1,9}"),
-    twoToFour = digitRegex(loc, "{2,4}"),
-    fourToSix = digitRegex(loc, "{4,6}"),
-    literal = (t) => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
-    unitate = (t) => {
-      if (t.literal) {
-        return literal(t);
-      }
-      switch (t.val) {
-        // era
-        case "G":
-          return oneOf(loc.eras("short"), 0);
-        case "GG":
-          return oneOf(loc.eras("long"), 0);
-        // years
-        case "y":
-          return intUnit(oneToSix);
-        case "yy":
-          return intUnit(twoToFour, untruncateYear);
-        case "yyyy":
-          return intUnit(four);
-        case "yyyyy":
-          return intUnit(fourToSix);
-        case "yyyyyy":
-          return intUnit(six);
-        // months
-        case "M":
-          return intUnit(oneOrTwo);
-        case "MM":
-          return intUnit(two);
-        case "MMM":
-          return oneOf(loc.months("short", true), 1);
-        case "MMMM":
-          return oneOf(loc.months("long", true), 1);
-        case "L":
-          return intUnit(oneOrTwo);
-        case "LL":
-          return intUnit(two);
-        case "LLL":
-          return oneOf(loc.months("short", false), 1);
-        case "LLLL":
-          return oneOf(loc.months("long", false), 1);
-        // dates
-        case "d":
-          return intUnit(oneOrTwo);
-        case "dd":
-          return intUnit(two);
-        // ordinals
-        case "o":
-          return intUnit(oneToThree);
-        case "ooo":
-          return intUnit(three);
-        // time
-        case "HH":
-          return intUnit(two);
-        case "H":
-          return intUnit(oneOrTwo);
-        case "hh":
-          return intUnit(two);
-        case "h":
-          return intUnit(oneOrTwo);
-        case "mm":
-          return intUnit(two);
-        case "m":
-          return intUnit(oneOrTwo);
-        case "q":
-          return intUnit(oneOrTwo);
-        case "qq":
-          return intUnit(two);
-        case "s":
-          return intUnit(oneOrTwo);
-        case "ss":
-          return intUnit(two);
-        case "S":
-          return intUnit(oneToThree);
-        case "SSS":
-          return intUnit(three);
-        case "u":
-          return simple(oneToNine);
-        case "uu":
-          return simple(oneOrTwo);
-        case "uuu":
-          return intUnit(one);
-        // meridiem
-        case "a":
-          return oneOf(loc.meridiems(), 0);
-        // weekYear (k)
-        case "kkkk":
-          return intUnit(four);
-        case "kk":
-          return intUnit(twoToFour, untruncateYear);
-        // weekNumber (W)
-        case "W":
-          return intUnit(oneOrTwo);
-        case "WW":
-          return intUnit(two);
-        // weekdays
-        case "E":
-        case "c":
-          return intUnit(one);
-        case "EEE":
-          return oneOf(loc.weekdays("short", false), 1);
-        case "EEEE":
-          return oneOf(loc.weekdays("long", false), 1);
-        case "ccc":
-          return oneOf(loc.weekdays("short", true), 1);
-        case "cccc":
-          return oneOf(loc.weekdays("long", true), 1);
-        // offset/zone
-        case "Z":
-        case "ZZ":
-          return offset(new RegExp(`([+-]${oneOrTwo.source})(?::(${two.source}))?`), 2);
-        case "ZZZ":
-          return offset(new RegExp(`([+-]${oneOrTwo.source})(${two.source})?`), 2);
-        // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
-        // because we don't have any way to figure out what they are
-        case "z":
-          return simple(/[a-z_+-/]{1,256}?/i);
-        // this special-case "token" represents a place where a macro-token expanded into a white-space literal
-        // in this case we accept any non-newline white-space
-        case " ":
-          return simple(/[^\S\n\r]/);
-        default:
+      two = digitRegex(loc, "{2}"),
+      three = digitRegex(loc, "{3}"),
+      four = digitRegex(loc, "{4}"),
+      six = digitRegex(loc, "{6}"),
+      oneOrTwo = digitRegex(loc, "{1,2}"),
+      oneToThree = digitRegex(loc, "{1,3}"),
+      oneToSix = digitRegex(loc, "{1,6}"),
+      oneToNine = digitRegex(loc, "{1,9}"),
+      twoToFour = digitRegex(loc, "{2,4}"),
+      fourToSix = digitRegex(loc, "{4,6}"),
+      literal = (t) => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
+      unitate = (t) => {
+        if (t.literal) {
           return literal(t);
-      }
-    };
-    return unitateCache[localeKey] = unitate;
+        }
+        switch (t.val) {
+          // era
+          case "G":
+            return oneOf(loc.eras("short"), 0);
+          case "GG":
+            return oneOf(loc.eras("long"), 0);
+          // years
+          case "y":
+            return intUnit(oneToSix);
+          case "yy":
+            return intUnit(twoToFour, untruncateYear);
+          case "yyyy":
+            return intUnit(four);
+          case "yyyyy":
+            return intUnit(fourToSix);
+          case "yyyyyy":
+            return intUnit(six);
+          // months
+          case "M":
+            return intUnit(oneOrTwo);
+          case "MM":
+            return intUnit(two);
+          case "MMM":
+            return oneOf(loc.months("short", true), 1);
+          case "MMMM":
+            return oneOf(loc.months("long", true), 1);
+          case "L":
+            return intUnit(oneOrTwo);
+          case "LL":
+            return intUnit(two);
+          case "LLL":
+            return oneOf(loc.months("short", false), 1);
+          case "LLLL":
+            return oneOf(loc.months("long", false), 1);
+          // dates
+          case "d":
+            return intUnit(oneOrTwo);
+          case "dd":
+            return intUnit(two);
+          // ordinals
+          case "o":
+            return intUnit(oneToThree);
+          case "ooo":
+            return intUnit(three);
+          // time
+          case "HH":
+            return intUnit(two);
+          case "H":
+            return intUnit(oneOrTwo);
+          case "hh":
+            return intUnit(two);
+          case "h":
+            return intUnit(oneOrTwo);
+          case "mm":
+            return intUnit(two);
+          case "m":
+            return intUnit(oneOrTwo);
+          case "q":
+            return intUnit(oneOrTwo);
+          case "qq":
+            return intUnit(two);
+          case "s":
+            return intUnit(oneOrTwo);
+          case "ss":
+            return intUnit(two);
+          case "S":
+            return intUnit(oneToThree);
+          case "SSS":
+            return intUnit(three);
+          case "u":
+            return simple(oneToNine);
+          case "uu":
+            return simple(oneOrTwo);
+          case "uuu":
+            return intUnit(one);
+          // meridiem
+          case "a":
+            return oneOf(loc.meridiems(), 0);
+          // weekYear (k)
+          case "kkkk":
+            return intUnit(four);
+          case "kk":
+            return intUnit(twoToFour, untruncateYear);
+          // weekNumber (W)
+          case "W":
+            return intUnit(oneOrTwo);
+          case "WW":
+            return intUnit(two);
+          // weekdays
+          case "E":
+          case "c":
+            return intUnit(one);
+          case "EEE":
+            return oneOf(loc.weekdays("short", false), 1);
+          case "EEEE":
+            return oneOf(loc.weekdays("long", false), 1);
+          case "ccc":
+            return oneOf(loc.weekdays("short", true), 1);
+          case "cccc":
+            return oneOf(loc.weekdays("long", true), 1);
+          // offset/zone
+          case "Z":
+          case "ZZ":
+            return offset(new RegExp(`([+-]${oneOrTwo.source})(?::(${two.source}))?`), 2);
+          case "ZZZ":
+            return offset(new RegExp(`([+-]${oneOrTwo.source})(${two.source})?`), 2);
+          // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
+          // because we don't have any way to figure out what they are
+          case "z":
+            return simple(/[a-z_+-/]{1,256}?/i);
+          // this special-case "token" represents a place where a macro-token expanded into a white-space literal
+          // in this case we accept any non-newline white-space
+          case " ":
+            return simple(/[^\S\n\r]/);
+          default:
+            return literal(t);
+        }
+      };
+    return (unitateCache[localeKey] = unitate);
   }
   return unitateCache[localeKey];
 }
