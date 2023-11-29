@@ -323,6 +323,8 @@ const fallbackWeekSettings = {
   weekend: [6, 7],
 };
 
+let isEnglishIntlCache = {};
+
 /**
  * @private
  */
@@ -336,6 +338,14 @@ export default class Locale {
       opts.weekSettings,
       opts.defaultToEN
     );
+  }
+
+  /**
+   * Reset local caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCache() {
+    isEnglishIntlCache = {};
   }
 
   static create(locale, numberingSystem, outputCalendar, weekSettings, defaultToEN = false) {
@@ -503,11 +513,14 @@ export default class Locale {
   }
 
   isEnglish() {
-    return (
-      this.locale === "en" ||
-      this.locale.toLowerCase() === "en-us" ||
-      new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us")
-    );
+    if (this.locale === "en" || this.locale.toLowerCase === "en-us") return true;
+
+    if (isEnglishIntlCache[this.intl] === undefined) {
+      return (isEnglishIntlCache[this.intl] = new Intl.DateTimeFormat(this.intl)
+        .resolvedOptions()
+        .locale.startsWith("en-us"));
+    }
+    return isEnglishIntlCache[this.intl];
   }
 
   getWeekSettings() {
