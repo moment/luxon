@@ -1,6 +1,7 @@
 import Benchmark from "benchmark";
 import DateTime from "../src/datetime.js";
 import Settings from "../src/settings.js";
+import { resetTokenParserCache } from "../src/impl/tokenParser.js";
 
 function runDateTimeSuite() {
   return new Promise((resolve, reject) => {
@@ -27,10 +28,25 @@ function runDateTimeSuite() {
       .add("DateTime.fromFormat", () => {
         DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
       })
+      .add("DateTime.fromFormat no cache", () => {
+        DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS");
+        Settings.resetCaches();
+      })
       .add("DateTime.fromFormat with zone", () => {
         DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
           zone: "America/Los_Angeles",
         });
+      })
+      .add("DateTime.fromFormat with non-English locale", () => {
+        DateTime.fromFormat("25-maj-1982 09:10:11", "dd-MMMM-yyyy hh:mm:ss", {
+          locale: "da-dk",
+        });
+      })
+      .add("DateTime.fromFormat with non-English locale no cache", () => {
+        DateTime.fromFormat("25-maj-1982 09:10:11", "dd-MMMM-yyyy hh:mm:ss", {
+          locale: "da-dk",
+        });
+        Settings.resetCaches();
       })
       .add("DateTime#setZone", () => {
         dt.setZone("America/Los_Angeles");
