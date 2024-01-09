@@ -257,7 +257,8 @@ export default class Duration {
    * @param {Object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use,
+   *                 see https://moment.github.io/luxon/#/math
    * @return {Duration}
    */
   static fromMillis(count, opts) {
@@ -280,7 +281,8 @@ export default class Duration {
    * @param {Object} [opts=[]] - options for creating this Duration
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use,
+   *                 see https://moment.github.io/luxon/#/math
    * @param {string} [opts.matrix=Object] - the custom conversion system to use
    * @return {Duration}
    */
@@ -331,7 +333,8 @@ export default class Duration {
    * @param {Object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use,
+   *                 see https://moment.github.io/luxon/#/math
    * @param {string} [opts.matrix=Object] - the preset conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
    * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
@@ -354,7 +357,8 @@ export default class Duration {
    * @param {Object} opts - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
-   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use,
+   *                 see https://moment.github.io/luxon/#/math
    * @param {string} [opts.matrix=Object] - the conversion system to use
    * @see https://en.wikipedia.org/wiki/ISO_8601#Times
    * @example Duration.fromISOTime('11:22:33.444').toObject() //=> { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }
@@ -725,6 +729,9 @@ export default class Duration {
 
   /**
    * Return the length of the duration in the specified unit.
+   *
+   * Note as this uses {@link Duration#shiftTo} internally, it can cause the unexpected effects as described there.
+   *
    * @param {string} unit - a unit such as 'minutes' or 'days'
    * @example Duration.fromObject({years: 1}).as('days') //=> 365
    * @example Duration.fromObject({years: 1}).as('months') //=> 12
@@ -759,6 +766,9 @@ export default class Duration {
 
   /**
    * Rescale units to its largest representation
+   *
+   * Note as this uses {@link Duration#shiftTo} internally, it can cause the unexpected effects as described there.
+   *
    * @example Duration.fromObject({ milliseconds: 90000 }).rescale().toObject() //=> { minutes: 1, seconds: 30 }
    * @return {Duration}
    */
@@ -770,7 +780,25 @@ export default class Duration {
 
   /**
    * Convert this Duration into its representation in a different set of units.
-   * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
+   *
+   * Note that using shiftTo() can sometimes have unexpected results when using units that don't refer to a
+   * constant duration, such as months or years (see example below). In these cases shiftTo() uses a constant factor
+   * to calculate with these units as described at https://moment.github.io/luxon/#/math?id=casual-vs-longterm-conversion-accuracy
+   *
+   * If you can't avoid using shiftTo() in these cases, you can choose which conversion scheme is appropriate in
+   * your case which you can pass when constructing a Duration with the `conversionAccuracy` option,
+   * see e.g. {@link Duration.fromObject}.
+   * If you construct a Duration using {@link Duration#diff}, you can pass the desired target units directly.
+   *
+   * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() // => { minutes: 60, milliseconds: 30000 }
+   *
+   * @example
+   * var d1 = DateTime.fromISO('2001-01-01T00:00:00').diff(DateTime.fromISO('2000-01-01T00:00:00'))
+   * // => { milliseconds: 31622400000 }
+   * var d2 = d1.shiftTo('years', 'months', 'days', 'hours', 'minutes', 'seconds')
+   * // => { years: 1, months: 0, days: 6, hours: 0, minutes: 0, seconds: 0 }
+   * // Oops, we got 6 days more than we had before!
+   *
    * @return {Duration}
    */
   shiftTo(...units) {
@@ -832,6 +860,10 @@ export default class Duration {
   /**
    * Shift this Duration to all available units.
    * Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
+   *
+   * Note as this uses {@link Duration#shiftTo} internally, it can cause the unexpected effects as described there.
+   *
+   * @see Duration#shiftTo
    * @return {Duration}
    */
   shiftToAll() {
