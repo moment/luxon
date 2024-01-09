@@ -2038,6 +2038,8 @@ export default class DateTime {
    * When you first calculate the duration as milliseconds and then in a second step shift the units, it's quite likely
    * that there are cases where you get undesired results, e.g. 1 year -> 31622400000 ms -> 1 year and 6 days (see below)
    *
+   * For details about calculation with duration units, see https://moment.github.io/luxon/#/math
+   *
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
    * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
    * @param {Object} opts - options that affect the creation of the Duration
@@ -2057,6 +2059,7 @@ export default class DateTime {
    * var d3 = DateTime.fromISO('2001-01-01T00:00:00').diff(DateTime.fromISO('2000-01-01T00:00:00'),
    *                   ['years', 'months', 'days', 'hours', 'minutes', 'seconds'])
    * // => { years: 1, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 }
+   * @see Duration#shiftTo
    * @return {Duration}
    */
   diff(otherDateTime, unit = "milliseconds", opts = {}) {
