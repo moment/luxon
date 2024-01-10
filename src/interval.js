@@ -405,7 +405,7 @@ export default class Interval {
   }
 
   /**
-   * Return whether this Interval engulfs the start and end of the specified Interval.
+   * Returns true if this Interval fully contains the specified Interval, specifically if the intersect (of this Interval and the other Interval) is equal to the other Interval; false otherwise.
    * @param {Interval} other
    * @return {boolean}
    */
