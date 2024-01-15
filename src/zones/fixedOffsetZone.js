@@ -52,16 +52,31 @@ export default class FixedOffsetZone extends Zone {
     this.fixed = offset;
   }
 
-  /** @override **/
+  /**
+   * The type of zone. `fixed` for all instances of `FixedOffsetZone`.
+   * @override
+   * @type {string}
+   */
   get type() {
     return "fixed";
   }
 
-  /** @override **/
+  /**
+   * The name of this zone.
+   * All fixed zones' names always start with "UTC" (plus optional offset)
+   * @override
+   * @type {string}
+   */
   get name() {
     return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
   }
 
+  /**
+   * The IANA name of this zone, i.e. `Etc/UTC` or `Etc/GMT+/-nn`
+   *
+   * @override
+   * @type {string}
+   */
   get ianaName() {
     if (this.fixed === 0) {
       return "Etc/UTC";
@@ -70,32 +85,65 @@ export default class FixedOffsetZone extends Zone {
     }
   }
 
-  /** @override **/
+  /**
+   * Returns the offset's common name at the specified timestamp.
+   *
+   * For fixed offset zones this equals to the zone name.
+   * @override
+   */
   offsetName() {
     return this.name;
   }
 
-  /** @override **/
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */
   formatOffset(ts, format) {
     return formatOffset(this.fixed, format);
   }
 
-  /** @override **/
+  /**
+   * Returns whether the offset is known to be fixed for the whole year:
+   * Always returns true for all fixed offset zones.
+   * @override
+   * @type {boolean}
+   */
   get isUniversal() {
     return true;
   }
 
-  /** @override **/
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   *
+   * For fixed offset zones, this is constant and does not depend on a timestamp.
+   * @override
+   * @return {number}
+   */
   offset() {
     return this.fixed;
   }
 
-  /** @override **/
+  /**
+   * Return whether this Zone is equal to another zone (i.e. also fixed and same offset)
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */
   equals(otherZone) {
     return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
   }
 
-  /** @override **/
+  /**
+   * Return whether this Zone is valid:
+   * All fixed offset zones are valid.
+   * @override
+   * @type {boolean}
+   */
   get isValid() {
     return true;
   }
