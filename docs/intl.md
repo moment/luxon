@@ -148,3 +148,71 @@ Similar to `locale`, you can set the default numbering system for new instances:
 ```js
 Settings.defaultNumberingSystem = "beng";
 ```
+
+## Locale-based weeks
+
+Most of Luxon uses the [ISO week date](https://en.wikipedia.org/wiki/ISO_week_date) system when working with week-related data.
+This means that the week starts on Monday and the first week of the year is that week, which has 4 or more of its days in January.
+
+This definition works for most use-cases, however locales can define different rules. For example, in many English-speaking countries
+the week is said to start on Sunday and the 1 January always defines the first week of the year. This information is
+available through the Luxon as well.
+
+Note that your runtime needs to support [`Intl.Locale#getWeekInfo`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/getWeekInfo) for this to have an effect. If unsupported, Luxon will fall back
+to using the ISO week dates.
+
+### Accessing locale-based week info
+
+The `Info` class exposes methods `getStartOfWeek`, `getMinimumDaysInFirstWeek` and `getWeekendWeekdays` for informational
+purposes.
+
+### Accessing locale-based week data
+
+```js
+const dt = DateTime.local(2022, 1, 1, { locale: "en-US" });
+dt.localWeekday // 7, because Saturday is the 7th day of the week in en-US
+dt.localWeekNumber // 1, because 1 January is always in the first week in en-US
+dt.localWeekYear // 2022, because 1 January is always in the first week in en-US
+dt.weeksInLocalWeekYear // 53, because 2022 has 53 weeks in en-US
+```
+
+### Using locale-based week data when creating DateTimes
+
+When creating a DateTime instance using `fromObject`, you can use the `localWeekday`, `localWeekNumber` and `localWeekYear`
+properties. They will use the same locale that the newly created DateTime will use, either explicitly provided or falling back
+to the system default.
+
+```js
+const dt = DateTime.fromObject({localWeekYear: 2022, localWeekNumber: 53, localWeekday: 7});
+dt.toISODate(); // 2022-12-31
+```
+
+### Setting locale-based week data
+
+When modifying an existing DateTime instance using `set`, you can use the `localWeekday`, `localWeekNumber` and `localWeekYear`
+properties. They will use the locale of the existing DateTime as reference.
+
+```js
+const dt = DateTime.local(2022, 1, 2, { locale: "en-US" });
+const modified = dt.set({localWeekNumber: 2});
+modified.toISODate(); // 2022-01-08
+```
+
+### Locale-based weeks with math
+
+The methods `startOf`, `endOf`, `hasSame` of `DateTime` as well as `count` of `Interval` accept an option `useLocaleWeeks`. 
+If enabled, the methods will treat the `week` unit according to the locale, respecting the correct start of the week.
+
+```js
+const dt = DateTime.local(2022, 1, 6, { locale: "en-US" });
+const startOfWeek = dt.startOf('week', {useLocaleWeeks: true});
+startOfWeek.toISODate(); // 2022-01-02, a Sunday
+```
+
+### Overriding defaults
+
+You can override the runtime-provided defaults for the week settings using `Settings.defaultWeekSettings`:
+
+```js
+Settings.defaultWeekSettings = { firstDay: 7, minimalDays: 1, weekend: [6, 7] }
+```

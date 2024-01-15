@@ -301,6 +301,24 @@ test("Interval#splitAt ignores times outside the interval", () => {
   expect(oneAfterOneDuring[1]).toEqual(todayFrom(11, 13));
 });
 
+test("Interval#splitAt handles DST shifts", () => {
+  const zone = "Europe/Berlin";
+  const dayStart = DateTime.fromISO("2023-10-29T00:00:00+02:00", { zone });
+  const dayEnd = DateTime.fromISO("2023-10-30T00:00:00+01:00", { zone });
+  const dstShiftStart = DateTime.fromISO("2023-10-29T02:00:00+02:00", { zone });
+  const dstShiftEnd = DateTime.fromISO("2023-10-29T02:00:00+01:00", { zone });
+
+  const splitByDSTStartAndEnd = Interval.fromDateTimes(dayStart, dayEnd)
+    .splitAt(dstShiftStart, dstShiftEnd)
+    .map((i) => i.toISO());
+
+  expect(splitByDSTStartAndEnd).toEqual([
+    "2023-10-29T00:00:00.000+02:00/2023-10-29T02:00:00.000+02:00",
+    "2023-10-29T02:00:00.000+02:00/2023-10-29T02:00:00.000+01:00",
+    "2023-10-29T02:00:00.000+01:00/2023-10-30T00:00:00.000+01:00",
+  ]);
+});
+
 //-------
 // #splitBy()
 //-------

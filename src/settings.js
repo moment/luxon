@@ -3,6 +3,7 @@ import IANAZone from "./zones/IANAZone.js";
 import Locale from "./impl/locale.js";
 
 import { normalizeZone } from "./impl/zoneUtil.js";
+import { validateWeekSettings } from "./impl/util.js";
 
 let now = () => Date.now(),
   defaultZone = "system",
@@ -10,7 +11,8 @@ let now = () => Date.now(),
   defaultNumberingSystem = null,
   defaultOutputCalendar = null,
   twoDigitCutoffYear = 60,
-  throwOnInvalid;
+  throwOnInvalid,
+  defaultWeekSettings = null;
 
 /**
  * Settings contains static getters and setters that control Luxon's overall behavior. Luxon is a simple library with few options, but the ones it does have live here.
@@ -99,6 +101,31 @@ export default class Settings {
    */
   static set defaultOutputCalendar(outputCalendar) {
     defaultOutputCalendar = outputCalendar;
+  }
+
+  /**
+   * @typedef {Object} WeekSettings
+   * @property {number} firstDay
+   * @property {number} minimalDays
+   * @property {number[]} weekend
+   */
+
+  /**
+   * @return {WeekSettings|null}
+   */
+  static get defaultWeekSettings() {
+    return defaultWeekSettings;
+  }
+
+  /**
+   * Allows overriding the default locale week settings, i.e. the start of the week, the weekend and
+   * how many days are required in the first week of a year.
+   * Does not affect existing instances.
+   *
+   * @param {WeekSettings|null} weekSettings
+   */
+  static set defaultWeekSettings(weekSettings) {
+    defaultWeekSettings = validateWeekSettings(weekSettings);
   }
 
   /**

@@ -6,8 +6,10 @@ import {
   daysInMonth,
   weeksInWeekYear,
   isInteger,
+  isUndefined,
 } from "./util.js";
 import Invalid from "./invalid.js";
+import { ConflictingSpecificationError } from "../errors.js";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
@@ -19,7 +21,7 @@ function unitOutOfRange(unit, value) {
   );
 }
 
-function dayOfWeek(year, month, day) {
+export function dayOfWeek(year, month, day) {
   const d = new Date(Date.UTC(year, month - 1, day));
 
   if (year < 100 && year >= 0) {
@@ -42,22 +44,26 @@ function uncomputeOrdinal(year, ordinal) {
   return { month: month0 + 1, day };
 }
 
+export function isoWeekdayToLocal(isoWeekday, startOfWeek) {
+  return ((isoWeekday - startOfWeek + 7) % 7) + 1;
+}
+
 /**
  * @private
  */
 
-export function gregorianToWeek(gregObj) {
+export function gregorianToWeek(gregObj, minDaysInFirstWeek = 4, startOfWeek = 1) {
   const { year, month, day } = gregObj,
     ordinal = computeOrdinal(year, month, day),
-    weekday = dayOfWeek(year, month, day);
+    weekday = isoWeekdayToLocal(dayOfWeek(year, month, day), startOfWeek);
 
-  let weekNumber = Math.floor((ordinal - weekday + 10) / 7),
+  let weekNumber = Math.floor((ordinal - weekday + 14 - minDaysInFirstWeek) / 7),
     weekYear;
 
   if (weekNumber < 1) {
     weekYear = year - 1;
-    weekNumber = weeksInWeekYear(weekYear);
-  } else if (weekNumber > weeksInWeekYear(year)) {
+    weekNumber = weeksInWeekYear(weekYear, minDaysInFirstWeek, startOfWeek);
+  } else if (weekNumber > weeksInWeekYear(year, minDaysInFirstWeek, startOfWeek)) {
     weekYear = year + 1;
     weekNumber = 1;
   } else {
@@ -67,12 +73,12 @@ export function gregorianToWeek(gregObj) {
   return { weekYear, weekNumber, weekday, ...timeObject(gregObj) };
 }
 
-export function weekToGregorian(weekData) {
+export function weekToGregorian(weekData, minDaysInFirstWeek = 4, startOfWeek = 1) {
   const { weekYear, weekNumber, weekday } = weekData,
-    weekdayOfJan4 = dayOfWeek(weekYear, 1, 4),
+    weekdayOfJan4 = isoWeekdayToLocal(dayOfWeek(weekYear, 1, minDaysInFirstWeek), startOfWeek),
     yearInDays = daysInYear(weekYear);
 
-  let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 3,
+  let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 7 + minDaysInFirstWeek,
     year;
 
   if (ordinal < 1) {
@@ -101,15 +107,54 @@ export function ordinalToGregorian(ordinalData) {
   return { year, month, day, ...timeObject(ordinalData) };
 }
 
-export function hasInvalidWeekData(obj) {
+/**
+ * Check if local week units like localWeekday are used in obj.
+ * If so, validates that they are not mixed with ISO week units and then copies them to the normal week unit properties.
+ * Modifies obj in-place!
+ * @param obj the object values
+ */
+export function usesLocalWeekValues(obj, loc) {
+  const hasLocaleWeekData =
+    !isUndefined(obj.localWeekday) ||
+    !isUndefined(obj.localWeekNumber) ||
+    !isUndefined(obj.localWeekYear);
+  if (hasLocaleWeekData) {
+    const hasIsoWeekData =
+      !isUndefined(obj.weekday) || !isUndefined(obj.weekNumber) || !isUndefined(obj.weekYear);
+
+    if (hasIsoWeekData) {
+      throw new ConflictingSpecificationError(
+        "Cannot mix locale-based week fields with ISO-based week fields"
+      );
+    }
+    if (!isUndefined(obj.localWeekday)) obj.weekday = obj.localWeekday;
+    if (!isUndefined(obj.localWeekNumber)) obj.weekNumber = obj.localWeekNumber;
+    if (!isUndefined(obj.localWeekYear)) obj.weekYear = obj.localWeekYear;
+    delete obj.localWeekday;
+    delete obj.localWeekNumber;
+    delete obj.localWeekYear;
+    return {
+      minDaysInFirstWeek: loc.getMinDaysInFirstWeek(),
+      startOfWeek: loc.getStartOfWeek(),
+    };
+  } else {
+    return { minDaysInFirstWeek: 4, startOfWeek: 1 };
+  }
+}
+
+export function hasInvalidWeekData(obj, minDaysInFirstWeek = 4, startOfWeek = 1) {
   const validYear = isInteger(obj.weekYear),
-    validWeek = integerBetween(obj.weekNumber, 1, weeksInWeekYear(obj.weekYear)),
+    validWeek = integerBetween(
+      obj.weekNumber,
+      1,
+      weeksInWeekYear(obj.weekYear, minDaysInFirstWeek, startOfWeek)
+    ),
     validWeekday = integerBetween(obj.weekday, 1, 7);
 
   if (!validYear) {
     return unitOutOfRange("weekYear", obj.weekYear);
   } else if (!validWeek) {
-    return unitOutOfRange("week", obj.week);
+    return unitOutOfRange("week", obj.weekNumber);
   } else if (!validWeekday) {
     return unitOutOfRange("weekday", obj.weekday);
   } else return false;

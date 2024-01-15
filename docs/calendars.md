@@ -36,21 +36,26 @@ Here's a table of the different calendars with examples generated formatting the
 DateTime.fromObject({ outputCalendar: c }).toLocaleString(DateTime.DATE_FULL);
 ```
 
-| Calendar | Example                  |
-| ---      | ---                      |
-| buddhist | September 24, 2560 BE    |
-| chinese  | Eighth Month 5, 2017     |
-| coptic   | Tout 14, 1734 ERA1       |
-| ethioaa  | Meskerem 14, 7510 ERA0   |
-| ethiopic | Meskerem 14, 2010 ERA1   |
-| hebrew   | 4 Tishri 5778            |
-| indian   | Asvina 2, 1939 Saka      |
-| islamic  | Muharram 4, 1439 AH      |
-| islamicc | Muharram 3, 1439 AH      |
-| iso8601  | September 24, 2017       |
-| japanese | September 24, 29 Heisei  |
-| persian  | Mehr 2, 1396 AP          |
-| roc      | September 24, 106 Minguo |
+Since Luxon uses the browser's **Intl API**, you can use all the supported calendars.
+(See [Intl.Locale.prototype.getCalendars()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/getCalendars) for a full list)
+
+| Calendar           | Example                  |
+| ------------------ | ------------------------ |
+| buddhist           | September 24, 2560 BE    |
+| chinese            | Eighth Month 5, 2017     |
+| coptic             | Tout 14, 1734 ERA1       |
+| ethioaa            | Meskerem 14, 7510 ERA0   |
+| ethiopic           | Meskerem 14, 2010 ERA1   |
+| hebrew             | 4 Tishri 5778            |
+| indian             | Asvina 2, 1939 Saka      |
+| islamic            | Muharram 4, 1439 AH      |
+| islamic-civil      | Muharram 3, 1439 AH      |
+| islamic-umalqura   | Muharram 3, 1439 AH      |
+| iso8601            | September 24, 2017       |
+| japanese           | September 24, 29 Heisei  |
+| persian            | Mehr 2, 1396 AP          |
+| roc                | September 24, 106 Minguo |
+
 
 
 ### Default output calendar

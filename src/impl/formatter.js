@@ -337,6 +337,14 @@ export default class Formatter {
             return this.num(dt.weekNumber);
           case "WW":
             return this.num(dt.weekNumber, 2);
+          case "n":
+            return this.num(dt.localWeekNumber);
+          case "nn":
+            return this.num(dt.localWeekNumber, 2);
+          case "ii":
+            return this.num(dt.localWeekYear.toString().slice(-2), 2);
+          case "iiii":
+            return this.num(dt.localWeekYear, 4);
           case "o":
             return this.num(dt.ordinal);
           case "ooo":
