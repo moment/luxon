@@ -28,6 +28,7 @@ import {
   explainFromTokens,
   formatOptsToTokens,
   expandMacroTokens,
+  TokenParser,
 } from "./impl/tokenParser.js";
 import {
   gregorianToWeek,
@@ -2278,6 +2279,74 @@ export default class DateTime {
    */
   static fromStringExplain(text, fmt, options = {}) {
     return DateTime.fromFormatExplain(text, fmt, options);
+  }
+
+  /**
+   * Build a parser for `fmt` using the given locale. This parser can be passed
+   * to {@link DateTime.fromFormatParser} to a parse a date in this format. This
+   * can be used to optimize cases where many dates need to be parsed in a
+   * specific format.
+   *
+   * @param {String} fmt - the format the string is expected to be in (see
+   * description)
+   * @param {Object} options - options used to set locale and numberingSystem
+   * for parser
+   * @returns {TokenParser} - opaque object to be used
+   */
+  static buildFormatParser(fmt, options = {}) {
+    const { locale = null, numberingSystem = null } = options,
+      localeToUse = Locale.fromOpts({
+        locale,
+        numberingSystem,
+        defaultToEN: true,
+      });
+    return new TokenParser(localeToUse, fmt);
+  }
+
+  /**
+   * Create a DateTime from an input string and format parser.
+   *
+   * The format parser must have been created with the same locale as this call.
+   *
+   * @param {String} text - the string to parse
+   * @param {TokenParser} formatParser - parser from {@link DateTime.buildFormatParser}
+   * @param {Object} opts - options taken by fromFormat()
+   * @returns {DateTime}
+   */
+  static fromFormatParser(text, formatParser, opts = {}) {
+    if (isUndefined(text) || isUndefined(formatParser)) {
+      throw new InvalidArgumentError(
+        "fromFormatParser requires an input string and a format parser"
+      );
+    }
+    const { locale = null, numberingSystem = null } = opts,
+      localeToUse = Locale.fromOpts({
+        locale,
+        numberingSystem,
+        defaultToEN: true,
+      });
+
+    if (!localeToUse.equals(formatParser.locale)) {
+      throw new InvalidArgumentError(
+        `fromFormatParser called with a locale of ${localeToUse}, ` +
+          `but the format parser was created for ${formatParser.locale}`
+      );
+    }
+
+    const { result, zone, specificOffset, invalidReason } = formatParser.explainFromTokens(text);
+
+    if (invalidReason) {
+      return DateTime.invalid(invalidReason);
+    } else {
+      return parseDataToDateTime(
+        result,
+        zone,
+        opts,
+        `format ${formatParser.format}`,
+        text,
+        specificOffset
+      );
+    }
   }
 
   // FORMAT PRESETS
