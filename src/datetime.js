@@ -369,6 +369,36 @@ function normalizeUnitWithLocalWeeks(unit) {
   }
 }
 
+// cache offsets for zones based on the current timestamp when this function is
+// first called. When we are handling a datetime from components like (year,
+// month, day, hour) in a time zone, we need a guess about what the timezone
+// offset is so that we can convert into a UTC timestamp. One way is to find the
+// offset of now in the zone. The actual date may have a different offset (for
+// example, if we handle a date in June while we're in December in a zone that
+// observes DST), but we can check and adjust that.
+//
+// When handling many dates, calculating the offset for now every time is
+// expensive. It's just a guess, so we can cache the offset to use even if we
+// are right on a time change boundary (we'll just correct in the other
+// direction). Using a timestamp from first read is a slight optimization for
+// handling dates close to the current date, since those dates will usually be
+// in the same offset (we could set the timestamp statically, instead). We use a
+// single timestamp for all zones to make things a bit more predictable.
+//
+// This is safe for quickDT (used by local() and utc()) because we don't fill in
+// higher-order units from tsNow (as we do in fromObject, this requires that
+// offset is calculated from tsNow).
+function guessOffsetForZone(zone) {
+  if (!DateTime._zoneOffsetGuessCache[zone]) {
+    if (DateTime._zoneOffsetTs === undefined) {
+      DateTime._zoneOffsetTs = Settings.now();
+    }
+
+    DateTime._zoneOffsetGuessCache[zone] = zone.offset(DateTime._zoneOffsetTs);
+  }
+  return DateTime._zoneOffsetGuessCache[zone];
+}
+
 // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
 // are present, and so on.
@@ -378,8 +408,7 @@ function quickDT(obj, opts) {
     return DateTime.invalid(unsupportedZone(zone));
   }
 
-  const loc = Locale.fromObject(opts),
-    tsNow = Settings.now();
+  const loc = Locale.fromObject(opts);
 
   let ts, o;
 
@@ -396,10 +425,10 @@ function quickDT(obj, opts) {
       return DateTime.invalid(invalid);
     }
 
-    const offsetProvis = zone.offset(tsNow);
+    const offsetProvis = guessOffsetForZone(zone);
     [ts, o] = objToTS(obj, offsetProvis, zone);
   } else {
-    ts = tsNow;
+    ts = Settings.now();
   }
 
   return new DateTime({ ts, zone, loc, o });
@@ -534,6 +563,22 @@ export default class DateTime {
      */
     this.isLuxonDateTime = true;
   }
+
+  /**
+   * Timestamp to use for cached zone offset guesses (exposed for test)
+   *
+   * @access private
+   */
+  static _zoneOffsetTs;
+  /**
+   * Cache for zone offset guesses (exposed for test).
+   *
+   * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
+   * zone.offset().
+   *
+   * @access private
+   */
+  static _zoneOffsetGuessCache = {};
 
   // CONSTRUCT
 
