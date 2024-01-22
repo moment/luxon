@@ -39,8 +39,7 @@ for (const [name, local] of Object.entries(dateTimeConstructors)) {
       test("Ambiguous dates pick the one with the cached offset", () => {
         const oldSettings = Settings.now;
         try {
-          DateTime._zoneOffsetGuessCache = {};
-          DateTime._zoneOffsetTs = undefined;
+          Settings.resetCaches();
           Settings.now = () => 1495653314595; // May 24, 2017
           let d = local(2017, 11, 5, 1);
           expect(d.hour).toBe(1);
@@ -51,8 +50,7 @@ for (const [name, local] of Object.entries(dateTimeConstructors)) {
           expect(d.hour).toBe(1);
           expect(d.offset).toBe(-4 * 60);
 
-          DateTime._zoneOffsetGuessCache = {};
-          DateTime._zoneOffsetTs = undefined;
+          Settings.resetCaches();
 
           Settings.now = () => 1484456400000; // Jan 15, 2017
           d = local(2017, 11, 5, 1);
@@ -171,8 +169,7 @@ describe("DateTime.local() with offset caching", () => {
           const oldSettings = Settings.now;
           try {
             Settings.now = () => cacheTs;
-            DateTime._zoneOffsetGuessCache = {};
-            DateTime._zoneOffsetTs = undefined;
+            Settings.resetCaches();
             // load cache
             DateTime.local(2020, 1, 1, 0, zoneObj);
 

@@ -390,14 +390,14 @@ function normalizeUnitWithLocalWeeks(unit) {
 // higher-order units from tsNow (as we do in fromObject, this requires that
 // offset is calculated from tsNow).
 function guessOffsetForZone(zone) {
-  if (!DateTime._zoneOffsetGuessCache[zone]) {
-    if (DateTime._zoneOffsetTs === undefined) {
-      DateTime._zoneOffsetTs = Settings.now();
+  if (!zoneOffsetGuessCache[zone]) {
+    if (zoneOffsetTs === undefined) {
+      zoneOffsetTs = Settings.now();
     }
 
-    DateTime._zoneOffsetGuessCache[zone] = zone.offset(DateTime._zoneOffsetTs);
+    zoneOffsetGuessCache[zone] = zone.offset(zoneOffsetTs);
   }
-  return DateTime._zoneOffsetGuessCache[zone];
+  return zoneOffsetGuessCache[zone];
 }
 
 // this is a dumbed down version of fromObject() that runs about 60% faster
@@ -476,6 +476,18 @@ function lastOpts(argList) {
   }
   return [opts, args];
 }
+
+/**
+ * Timestamp to use for cached zone offset guesses (exposed for test)
+ */
+let zoneOffsetTs;
+/**
+ * Cache for zone offset guesses (exposed for test).
+ *
+ * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
+ * zone.offset().
+ */
+let zoneOffsetGuessCache = {};
 
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
@@ -564,22 +576,6 @@ export default class DateTime {
      */
     this.isLuxonDateTime = true;
   }
-
-  /**
-   * Timestamp to use for cached zone offset guesses (exposed for test)
-   *
-   * @access private
-   */
-  static _zoneOffsetTs;
-  /**
-   * Cache for zone offset guesses (exposed for test).
-   *
-   * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
-   * zone.offset().
-   *
-   * @access private
-   */
-  static _zoneOffsetGuessCache = {};
 
   // CONSTRUCT
 
@@ -1043,6 +1039,11 @@ export default class DateTime {
   static expandFormat(fmt, localeOpts = {}) {
     const expanded = expandMacroTokens(Formatter.parseFormat(fmt), Locale.fromObject(localeOpts));
     return expanded.map((t) => t.val).join("");
+  }
+
+  static resetCache() {
+    zoneOffsetTs = undefined;
+    zoneOffsetGuessCache = {};
   }
 
   // INFO
