@@ -71,7 +71,10 @@ export function parseDigits(str) {
 }
 
 // cache of {numberingSystem: {append: regex}}
-const digitRegexCache = {};
+let digitRegexCache = {};
+export function resetDigitRegexCache() {
+  digitRegexCache = {};
+}
 
 export function digitRegex({ numberingSystem }, append = "") {
   const ns = numberingSystem || "latn";
