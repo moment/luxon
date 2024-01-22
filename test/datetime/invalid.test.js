@@ -5,7 +5,11 @@ import { DateTime, Settings } from "../../src/luxon";
 const organic1 = DateTime.utc(2014, 13, 33),
   // not an actual Wednesday
   organic2 = DateTime.fromObject({ weekday: 3, year: 1982, month: 5, day: 25 }, { zone: "UTC" }),
-  organic3 = DateTime.fromObject({ year: 1982, month: 5, day: 25, hour: 27 });
+  organic3 = DateTime.fromObject({ year: 1982, month: 5, day: 25, hour: 27 }),
+  organic4 = DateTime.fromObject(
+    { year: 1982, month: 5, day: 25, hour: 2 },
+    { zone: "America/Lasers" }
+  );
 
 test("Explicitly invalid dates are invalid", () => {
   const dt = DateTime.invalid("just because", "seriously, just because");
@@ -22,14 +26,28 @@ test("Invalid creations are invalid", () => {
 
 test("invalid zones result in invalid dates", () => {
   expect(DateTime.now().setZone("America/Lasers").isValid).toBe(false);
+  expect(DateTime.now().setZone("America/Lasers").invalidReason).toBe("unsupported zone");
+
   expect(DateTime.local({ zone: "America/Lasers" }).isValid).toBe(false);
+  expect(DateTime.local({ zone: "America/Lasers" }).invalidReason).toBe("unsupported zone");
+
+  expect(DateTime.local(1982, { zone: "America/Lasers" }).isValid).toBe(false);
+  expect(DateTime.local(1982, { zone: "America/Lasers" }).invalidReason).toBe("unsupported zone");
+
   expect(DateTime.fromJSDate(new Date(), { zone: "America/Lasers" }).isValid).toBe(false);
+  expect(DateTime.fromJSDate(new Date(), { zone: "America/Lasers" }).invalidReason).toBe(
+    "unsupported zone"
+  );
+
+  expect(DateTime.fromMillis(0, { zone: "America/Lasers" }).isValid).toBe(false);
+  expect(DateTime.fromMillis(0, { zone: "America/Lasers" }).invalidReason).toBe("unsupported zone");
 });
 
 test("Invalid DateTimes tell you why", () => {
   expect(organic1.invalidReason).toBe("unit out of range");
   expect(organic2.invalidReason).toBe("mismatched weekday");
   expect(organic3.invalidReason).toBe("unit out of range");
+  expect(organic4.invalidReason).toBe("unsupported zone");
 });
 
 test("Invalid DateTimes can provide an extended explanation", () => {
