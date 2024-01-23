@@ -450,14 +450,30 @@ export function explainFromTokens(locale, input, format) {
       throw new ConflictingSpecificationError(
         "Can't include meridiem when specifying 24-hour format"
       );
+    } else if (
+      hasOwnProperty(matches, "h") &&
+      matches["h"] > 12 &&
+      tokens.find((t) => t.val === "h" || t.val === "hh")
+    ) {
+      const hourValue = matches["h"];
+      return {
+        input,
+        tokens,
+        invalidReason: "unit out of range",
+        invalidExplanation: `you specified ${hourValue} (of type ${typeof hourValue}) as an hour along with a meridiem, which is invalid`,
+      };
     }
     return { input, tokens, regex, rawMatches, matches, result, zone, specificOffset };
   }
 }
 
 export function parseFromTokens(locale, input, format) {
-  const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
-  return [result, zone, specificOffset, invalidReason];
+  const { result, zone, specificOffset, invalidReason, invalidExplanation } = explainFromTokens(
+    locale,
+    input,
+    format
+  );
+  return [result, zone, specificOffset, invalidReason, invalidExplanation];
 }
 
 export function formatOptsToTokens(formatOpts, locale) {

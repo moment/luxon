@@ -905,9 +905,13 @@ export default class DateTime {
         numberingSystem,
         defaultToEN: true,
       }),
-      [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);
+      [vals, parsedZone, specificOffset, invalid, explanation] = parseFromTokens(
+        localeToUse,
+        text,
+        fmt
+      );
     if (invalid) {
-      return DateTime.invalid(invalid);
+      return DateTime.invalid(invalid, explanation);
     } else {
       return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text, specificOffset);
     }

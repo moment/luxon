@@ -18,10 +18,40 @@ test("DateTime.fromFormat() parses basic times", () => {
   expect(i.millisecond).toBe(445);
 });
 
+test("DateTime.fromFormat() yields Invalid reason for invalid 12-hour time", () => {
+  const i = DateTime.fromFormat("11-08-2023 15:00 AM", "MM-dd-yyyy h:mm a");
+  expect(i.invalid).not.toBeNull();
+  expect(i.invalid.reason).toEqual("unit out of range");
+  expect(i.invalid.explanation).toEqual(
+    "you specified 15 (of type number) as an hour along with a meridiem, which is invalid"
+  );
+});
+
+test("DateTime.fromFormat() yields Invalid reason for invalid 12-hour time with padding", () => {
+  const i = DateTime.fromFormat("11-08-2023 15:00 AM", "MM-dd-yyyy hh:mm a");
+  expect(i.invalid).not.toBeNull();
+  expect(i.invalid.reason).toEqual("unit out of range");
+  expect(i.invalid.explanation).toEqual(
+    "you specified 15 (of type number) as an hour along with a meridiem, which is invalid"
+  );
+});
+
+test("DateTime.fromFormat() throws ConflictingSpecificationError for invalid format", () => {
+  expect(() => {
+    DateTime.fromFormat("11-08-2023 12:00 AM", "MM-dd-yyyy H:mm a");
+  }).toThrowError(
+    ConflictingSpecificationError,
+    "Can't include meridiem when specifying 24-hour format"
+  );
+});
+
 test("DateTime.fromFormat() yields Invalid reason 'unparseable' for incompatible formats", () => {
   const i = DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy");
-  expect(i.invalid).not.toBeNull;
+  expect(i.invalid).not.toBeNull();
   expect(i.invalid.reason).toEqual("unparsable");
+  expect(i.invalid.explanation).toEqual(
+    'the input "Mar 3, 2020" can\'t be parsed as format MMM dd, yyyy'
+  );
 });
 
 test("DateTime.fromFormat() parses with variable-length input", () => {
