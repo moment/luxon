@@ -1,6 +1,8 @@
 /* global test expect */
 import { Duration } from "../../src/luxon";
 
+const Helpers = require("../helpers");
+
 const dur = () =>
   Duration.fromObject({
     years: 1,
@@ -312,5 +314,17 @@ test("Duration#toHuman accepts number format opts", () => {
 test("Duration#toHuman works in differt languages", () => {
   expect(dur().reconfigure({ locale: "fr" }).toHuman()).toEqual(
     "1 an, 2 mois, 1 semaine, 3 jours, 4 heures, 5 minutes, 6 secondes, 7 millisecondes"
+  );
+});
+
+Helpers.withoutLF("Duration#toHuman works without LF", () => {
+  expect(dur().toHuman()).toEqual(
+    "1 year, 2 months, 1 week, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds"
+  );
+});
+
+Helpers.withoutLF("Duration#toHuman falls back to commas", () => {
+  expect(dur().reconfigure({ locale: "ja" }).toHuman()).toEqual(
+    "1 年, 2 か月, 1 週間, 3 日, 4 時間, 5 分, 6 秒, 7 ミリ秒"
   );
 });

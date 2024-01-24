@@ -44,6 +44,14 @@ export function hasRelative() {
   }
 }
 
+export function hasList() {
+  try {
+    return typeof Intl !== "undefined" && !!Intl.ListFormat;
+  } catch (e) {
+    return false;
+  }
+}
+
 export function hasLocaleWeekInfo() {
   try {
     return (
