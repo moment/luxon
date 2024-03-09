@@ -432,27 +432,59 @@ export function expandMacroTokens(tokens, locale) {
  * @private
  */
 
-export function explainFromTokens(locale, input, format) {
-  const tokens = expandMacroTokens(Formatter.parseFormat(format), locale),
-    units = tokens.map((t) => unitForToken(t, locale)),
-    disqualifyingUnit = units.find((t) => t.invalidReason);
+export class TokenParser {
+  constructor(locale, format) {
+    this.locale = locale;
+    this.format = format;
+    this.tokens = expandMacroTokens(Formatter.parseFormat(format), locale);
+    this.units = this.tokens.map((t) => unitForToken(t, locale));
+    this.disqualifyingUnit = this.units.find((t) => t.invalidReason);
 
-  if (disqualifyingUnit) {
-    return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
-  } else {
-    const [regexString, handlers] = buildRegex(units),
-      regex = RegExp(regexString, "i"),
-      [rawMatches, matches] = match(input, regex, handlers),
-      [result, zone, specificOffset] = matches
-        ? dateTimeFromMatches(matches)
-        : [null, null, undefined];
-    if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
-      throw new ConflictingSpecificationError(
-        "Can't include meridiem when specifying 24-hour format"
-      );
+    if (!this.disqualifyingUnit) {
+      const [regexString, handlers] = buildRegex(this.units);
+      this.regex = RegExp(regexString, "i");
+      this.handlers = handlers;
     }
-    return { input, tokens, regex, rawMatches, matches, result, zone, specificOffset };
   }
+
+  explainFromTokens(input) {
+    if (!this.isValid) {
+      return { input, tokens: this.tokens, invalidReason: this.invalidReason };
+    } else {
+      const [rawMatches, matches] = match(input, this.regex, this.handlers),
+        [result, zone, specificOffset] = matches
+          ? dateTimeFromMatches(matches)
+          : [null, null, undefined];
+      if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
+        throw new ConflictingSpecificationError(
+          "Can't include meridiem when specifying 24-hour format"
+        );
+      }
+      return {
+        input,
+        tokens: this.tokens,
+        regex: this.regex,
+        rawMatches,
+        matches,
+        result,
+        zone,
+        specificOffset,
+      };
+    }
+  }
+
+  get isValid() {
+    return !this.disqualifyingUnit;
+  }
+
+  get invalidReason() {
+    return this.disqualifyingUnit ? this.disqualifyingUnit.invalidReason : null;
+  }
+}
+
+export function explainFromTokens(locale, input, format) {
+  const parser = new TokenParser(locale, format);
+  return parser.explainFromTokens(input);
 }
 
 export function parseFromTokens(locale, input, format) {

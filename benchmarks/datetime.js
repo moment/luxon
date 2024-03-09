@@ -8,6 +8,8 @@ function runDateTimeSuite() {
 
     const dt = DateTime.now();
 
+    const formatParser = DateTime.buildFormatParser("yyyy/MM/dd HH:mm:ss.SSS");
+
     suite
       .add("DateTime.local", () => {
         DateTime.now();
@@ -29,6 +31,14 @@ function runDateTimeSuite() {
       })
       .add("DateTime.fromFormat with zone", () => {
         DateTime.fromFormat("1982/05/25 09:10:11.445", "yyyy/MM/dd HH:mm:ss.SSS", {
+          zone: "America/Los_Angeles",
+        });
+      })
+      .add("DateTime.fromFormatParser", () => {
+        DateTime.fromFormatParser("1982/05/25 09:10:11.445", formatParser);
+      })
+      .add("DateTime.fromFormatParser with zone", () => {
+        DateTime.fromFormatParser("1982/05/25 09:10:11.445", formatParser, {
           zone: "America/Los_Angeles",
         });
       })
