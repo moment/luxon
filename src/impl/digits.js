@@ -70,6 +70,21 @@ export function parseDigits(str) {
   }
 }
 
+// cache of {numberingSystem: {append: regex}}
+let digitRegexCache = {};
+export function resetDigitRegexCache() {
+  digitRegexCache = {};
+}
+
 export function digitRegex({ numberingSystem }, append = "") {
-  return new RegExp(`${numberingSystems[numberingSystem || "latn"]}${append}`);
+  const ns = numberingSystem || "latn";
+
+  if (!digitRegexCache[ns]) {
+    digitRegexCache[ns] = {};
+  }
+  if (!digitRegexCache[ns][append]) {
+    digitRegexCache[ns][append] = new RegExp(`${numberingSystems[ns]}${append}`);
+  }
+
+  return digitRegexCache[ns][append];
 }
