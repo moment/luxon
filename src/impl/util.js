@@ -287,6 +287,13 @@ export function normalizeObject(obj, normalizer) {
   return normalized;
 }
 
+/**
+ * Returns the offset's value as a string
+ * @param {number} ts - Epoch milliseconds for which to get the offset
+ * @param {string} format - What style of offset to return.
+ *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+ * @return {string}
+ */
 export function formatOffset(offset, format) {
   const hours = Math.trunc(Math.abs(offset / 60)),
     minutes = Math.trunc(Math.abs(offset % 60)),

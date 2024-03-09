@@ -83,7 +83,7 @@ export default class IANAZone extends Zone {
    * @param {string} s - The string to check validity on
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @deprecated This method returns false for some valid IANA names. Use isValidZone instead.
+   * @deprecated For backward compatibility, this forwards to isValidZone, better use `isValidZone()` directly instead.
    * @return {boolean}
    */
   static isValidSpecifier(s) {
@@ -118,32 +118,65 @@ export default class IANAZone extends Zone {
     this.valid = IANAZone.isValidZone(name);
   }
 
-  /** @override **/
+  /**
+   * The type of zone. `iana` for all instances of `IANAZone`.
+   * @override
+   * @type {string}
+   */
   get type() {
     return "iana";
   }
 
-  /** @override **/
+  /**
+   * The name of this zone (i.e. the IANA zone name).
+   * @override
+   * @type {string}
+   */
   get name() {
     return this.zoneName;
   }
 
-  /** @override **/
+  /**
+   * Returns whether the offset is known to be fixed for the whole year:
+   * Always returns false for all IANA zones.
+   * @override
+   * @type {boolean}
+   */
   get isUniversal() {
     return false;
   }
 
-  /** @override **/
+  /**
+   * Returns the offset's common name (such as EST) at the specified timestamp
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the name
+   * @param {Object} opts - Options to affect the format
+   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
+   * @param {string} opts.locale - What locale to return the offset name in.
+   * @return {string}
+   */
   offsetName(ts, { format, locale }) {
     return parseZoneInfo(ts, format, locale, this.name);
   }
 
-  /** @override **/
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */
   formatOffset(ts, format) {
     return formatOffset(this.offset(ts), format);
   }
 
-  /** @override **/
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to compute the offset
+   * @return {number}
+   */
   offset(ts) {
     const date = new Date(ts);
 
@@ -177,12 +210,21 @@ export default class IANAZone extends Zone {
     return (asUTC - asTS) / (60 * 1000);
   }
 
-  /** @override **/
+  /**
+   * Return whether this Zone is equal to another zone
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */
   equals(otherZone) {
     return otherZone.type === "iana" && otherZone.name === this.name;
   }
 
-  /** @override **/
+  /**
+   * Return whether this Zone is valid.
+   * @override
+   * @type {boolean}
+   */
   get isValid() {
     return this.valid;
   }

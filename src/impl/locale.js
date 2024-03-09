@@ -340,7 +340,7 @@ export default class Locale {
 
   static create(locale, numberingSystem, outputCalendar, weekSettings, defaultToEN = false) {
     const specifiedLocale = locale || Settings.defaultLocale;
-    // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
+    // the system locale is useful for human-readable strings but annoying for parsing/formatting known formats
     const localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale());
     const numberingSystemR = numberingSystem || Settings.defaultNumberingSystem;
     const outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
