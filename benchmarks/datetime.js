@@ -11,7 +11,7 @@ function runDateTimeSuite() {
     const formatParser = DateTime.buildFormatParser("yyyy/MM/dd HH:mm:ss.SSS");
 
     suite
-      .add("DateTime.local", () => {
+      .add("DateTime.now", () => {
         DateTime.now();
       })
       .add("DateTime.fromObject with locale", () => {
@@ -19,6 +19,9 @@ function runDateTimeSuite() {
       })
       .add("DateTime.local with numbers", () => {
         DateTime.local(2017, 5, 15);
+      })
+      .add("DateTime.local with numbers and zone", () => {
+        DateTime.local(2017, 5, 15, 11, 7, 35, { zone: "America/New_York" });
       })
       .add("DateTime.fromISO", () => {
         DateTime.fromISO("1982-05-25T09:10:11.445Z");

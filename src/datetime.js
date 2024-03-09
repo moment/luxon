@@ -492,7 +492,9 @@ export default class DateTime {
       if (unchanged) {
         [c, o] = [config.old.c, config.old.o];
       } else {
-        const ot = zone.offset(this.ts);
+        // If an offset has been passed and we have not been called from
+        // clone(), we can trust it and avoid the offset calculation.
+        const ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.ts);
         c = tsToObj(this.ts, ot);
         invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
