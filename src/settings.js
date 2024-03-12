@@ -130,7 +130,7 @@ export default class Settings {
   }
 
   /**
-   * Get the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+   * Get the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
    * @type {number}
    */
   static get twoDigitCutoffYear() {
@@ -138,10 +138,11 @@ export default class Settings {
   }
 
   /**
-   * Set the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+   * Set the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
    * @type {number}
-   * @example Settings.twoDigitCutoffYear = 0 // cut-off year is 0, so all 'yy' are interpreted as current century
-   * @example Settings.twoDigitCutoffYear = 50 // '49' -> 1949; '50' -> 2050
+   * @example Settings.twoDigitCutoffYear = 0 // all 'yy' are interpreted as 20th century
+   * @example Settings.twoDigitCutoffYear = 99 // all 'yy' are interpreted as 21st century
+   * @example Settings.twoDigitCutoffYear = 50 // '49' -> 2049; '50' -> 1950
    * @example Settings.twoDigitCutoffYear = 1950 // interpreted as 50
    * @example Settings.twoDigitCutoffYear = 2050 // ALSO interpreted as 50
    */
