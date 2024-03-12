@@ -1,6 +1,7 @@
 import SystemZone from "./zones/systemZone.js";
 import IANAZone from "./zones/IANAZone.js";
 import Locale from "./impl/locale.js";
+import DateTime from "./datetime.js";
 
 import { normalizeZone } from "./impl/zoneUtil.js";
 import { validateWeekSettings } from "./impl/util.js";
@@ -173,6 +174,7 @@ export default class Settings {
   static resetCaches() {
     Locale.resetCache();
     IANAZone.resetCache();
+    DateTime.resetCache();
     resetDigitRegexCache();
   }
 }
