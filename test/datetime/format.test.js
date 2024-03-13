@@ -104,6 +104,33 @@ test("DateTime#toISO() suppresses [milli]seconds", () => {
   );
 });
 
+test("DateTime#toISO() truncates [milli]seconds", () => {
+  const truncateMilliseconds = { truncateMilliseconds: true };
+  expect(dt.toISO(truncateMilliseconds)).toBe("1982-05-25T09:23:54Z");
+  expect(dt.set({ millisecond: 0 }).toISO(truncateMilliseconds)).toBe("1982-05-25T09:23:54Z");
+
+  const noZeroSeconds = {
+    suppressSeconds: true,
+    suppressMilliseconds: true,
+    truncateMilliseconds: true,
+  };
+  expect(dt.set({ seconds: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23Z");
+  expect(dt.set({ millisecond: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23:54Z");
+  expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(noZeroSeconds)).toBe("1982-05-25T09:23Z");
+
+  const suppressOnlySeconds = { suppressSeconds: true };
+  expect(dt.set({ seconds: 0 }).toISO(suppressOnlySeconds)).toBe("1982-05-25T09:23:00.123Z");
+  expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(suppressOnlySeconds)).toBe(
+    "1982-05-25T09:23Z"
+  );
+
+  const suppressMillisecondsOnly = { suppressMilliseconds: true };
+  expect(dt.toISO(suppressMillisecondsOnly)).toBe("1982-05-25T09:23:54.123Z");
+  expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(suppressMillisecondsOnly)).toBe(
+    "1982-05-25T09:23:00Z"
+  );
+});
+
 test("DateTime#toISO() returns null for invalid DateTimes", () => {
   expect(invalid.toISO()).toBe(null);
 });
@@ -221,12 +248,24 @@ test("DateTime#toISOTime() won't suppress milliseconds by default", () => {
   expect(dt.startOf("second").toISOTime()).toBe("09:23:54.000Z");
 });
 
+test("DateTime#toISOTime() won't truncate milliseconds by default", () => {
+  expect(dt.toISOTime()).toBe("09:23:54.123Z");
+});
+
 test("DateTime#toISOTime({suppressMilliseconds: true}) won't suppress milliseconds if they're nonzero", () => {
   expect(dt.toISOTime({ suppressMilliseconds: true })).toBe("09:23:54.123Z");
 });
 
 test("DateTime#toISOTime({suppressMilliseconds: true}) will suppress milliseconds if they're zero", () => {
   expect(dt.set({ millisecond: 0 }).toISOTime({ suppressMilliseconds: true })).toBe("09:23:54Z");
+});
+
+test("DateTime#toISOTime({truncateMilliseconds: true}) will truncate milliseconds if value is not zero", () => {
+  expect(dt.toISOTime({ truncateMilliseconds: true })).toBe("09:23:54Z");
+});
+
+test("DateTime#toISOTime({truncateMilliseconds: true}) will truncate milliseconds if value is zero", () => {
+  expect(dt.set({ millisecond: 0 }).toISOTime({ truncateMilliseconds: true })).toBe("09:23:54Z");
 });
 
 test("DateTime#toISOTime({suppressSeconds: true}) won't suppress milliseconds if they're nonzero", () => {
