@@ -745,7 +745,7 @@ export default class DateTime {
    * @param {string} [opts.locale='system\'s locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
-   * @param {DateTime|Date|Object} opts.refrenceDate - the reference date to taken for missing parts
+   * @param {DateTime|Date|Object} opts.refrenceDate - the reference date to take for missing parts
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
    * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
    * @example DateTime.fromObject({ year: 1982 }, { refrenceDate: { day: 10 } }).toISODate() //=> '1982-01-10'
