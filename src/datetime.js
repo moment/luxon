@@ -387,8 +387,8 @@ function normalizeUnitWithLocalWeeks(unit) {
 // single timestamp for all zones to make things a bit more predictable.
 //
 // This is safe for quickDT (used by local() and utc()) because we don't fill in
-// higher-order units from tsNow (as we do in fromObject, this requires that
-// offset is calculated from tsNow).
+// higher-order units from tsRef (as we do in fromObject, this requires that
+// offset is calculated from tsRef).
 function guessOffsetForZone(zone) {
   if (!zoneOffsetGuessCache[zone]) {
     if (zoneOffsetTs === undefined) {
@@ -768,12 +768,12 @@ export default class DateTime {
     const normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);
     const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, loc);
 
-    const tsNow = isUndefined(opts.referenceDate)
-      ? friendlyDateTime(opts.referenceDate).toUnixInteger()
-      : opts.referenceDate,
+    const tsRef = isUndefined(opts.referenceDate)
+      ? Settings.now()
+      : friendlyDateTime(opts.referenceDate).toUnixInteger(),
       offsetProvis = !isUndefined(opts.specificOffset)
         ? opts.specificOffset
-        : zoneToUse.offset(tsNow),
+        : zoneToUse.offset(tsRef),
       containsOrdinal = !isUndefined(normalized.ordinal),
       containsGregorYear = !isUndefined(normalized.year),
       containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day),
@@ -801,7 +801,7 @@ export default class DateTime {
     // configure ourselves to deal with gregorian dates or week stuff
     let units,
       defaultValues,
-      objNow = tsToObj(tsNow, offsetProvis);
+      objNow = tsToObj(tsRef, offsetProvis);
     if (useWeekData) {
       units = orderedWeekUnits;
       defaultValues = defaultWeekUnitValues;
