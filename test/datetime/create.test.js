@@ -883,8 +883,8 @@ test("DateTime.fromObject takes a undefined to mean {}", () => {
   expect(res.year).toBe(new Date().getFullYear());
 });
 
-test("DateTime.fromObject respects `refrenceDate`", () => {
-  const res = DateTime.fromObject(undefined, { refrenceDate: { day: 10 } });
+test("DateTime.fromObject respects `referenceDate`", () => {
+  const res = DateTime.fromObject(undefined, { referenceDate: { day: 10 } });
   expect(res.year).toBe(new Date().getFullYear());
   expect(res.day).toBe(10);
 });
