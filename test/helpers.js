@@ -15,6 +15,20 @@ exports.withoutRTF = function (name, f) {
   });
 };
 
+exports.withoutLF = function (name, f) {
+  const fullName = `With no ListFormat support, ${name}`;
+  test(fullName, () => {
+    const lf = Intl.ListFormat;
+    try {
+      Intl.ListFormat = undefined;
+      Settings.resetCaches();
+      f();
+    } finally {
+      Intl.ListFormat = lf;
+    }
+  });
+};
+
 exports.withoutLocaleWeekInfo = function (name, f) {
   const fullName = `With no Intl.Locale.weekInfo support, ${name}`;
   test(fullName, () => {
