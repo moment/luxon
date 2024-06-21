@@ -28,8 +28,8 @@
     "format-check": "prettier --check 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "node benchmarks/index.js",
     "codecov": "codecov",
-    "prepack": "babel-node tasks/buildAll.js",
-    "prepare": "husky install",
+    "postinstall": "husky install || exit 0",
+    "prepare": "babel-node tasks/buildAll.js",
     "show-site": "http-server build"
   },
   "lint-staged": {
