@@ -10,6 +10,13 @@ const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultZone = Helpers.withDefaultZone;
 
 //------
+// new
+//------
+test("Default constructor works", () => {
+  expect(() => new DateTime()).not.toThrow();
+});
+
+//------
 // .now()
 //------
 test("DateTime.now has today's date", () => {
