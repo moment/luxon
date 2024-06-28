@@ -514,6 +514,10 @@ export default class DateTime {
    * @access private
    */
   constructor(config) {
+    if (!config) {
+      return DateTime.invalid("no config supplied");
+    }
+
     const zone = config.zone || Settings.defaultZone;
 
     let invalid =

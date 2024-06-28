@@ -3,6 +3,15 @@
 import { Duration } from "../../src/luxon";
 
 //------
+// new
+//------
+test("Default constructor works and returns an invalid instance", () => {
+  const duration = new Duration();
+  expect(duration.isValid).toBe(false);
+  expect(duration.invalidReason).toBe("no config supplied");
+});
+
+//------
 // .fromObject()
 //-------
 test("Duration.fromObject sets all the values", () => {

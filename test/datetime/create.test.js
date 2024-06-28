@@ -10,6 +10,15 @@ const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultZone = Helpers.withDefaultZone;
 
 //------
+// new
+//------
+test("Default constructor works and returns an invalid instance", () => {
+  const datetime = new DateTime();
+  expect(datetime.isValid).toBe(false);
+  expect(datetime.invalidReason).toBe("no config supplied");
+});
+
+//------
 // .now()
 //------
 test("DateTime.now has today's date", () => {
