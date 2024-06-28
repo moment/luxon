@@ -3,6 +3,13 @@
 import { Duration } from "../../src/luxon";
 
 //------
+// new
+//------
+test("Default constructor works", () => {
+  expect(() => new Duration()).not.toThrow();
+});
+
+//------
 // .fromObject()
 //-------
 test("Duration.fromObject sets all the values", () => {
