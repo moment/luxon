@@ -485,6 +485,13 @@ var Zone = /*#__PURE__*/function () {
     get: function get() {
       throw new ZoneIsAbstractError();
     }
+
+    /**
+     * The IANA name of this zone.
+     * Defaults to `name` if not overwritten by a subclass.
+     * @abstract
+     * @type {string}
+     */
   }, {
     key: "ianaName",
     get: function get() {
@@ -673,7 +680,7 @@ var IANAZone = /*#__PURE__*/function (_Zone) {
    * @param {string} s - The string to check validity on
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @deprecated This method returns false for some valid IANA names. Use isValidZone instead.
+   * @deprecated For backward compatibility, this forwards to isValidZone, better use `isValidZone()` directly instead.
    * @return {boolean}
    */;
   IANAZone.isValidSpecifier = function isValidSpecifier(s) {
@@ -711,21 +718,45 @@ var IANAZone = /*#__PURE__*/function (_Zone) {
     return _this;
   }
 
-  /** @override **/
+  /**
+   * The type of zone. `iana` for all instances of `IANAZone`.
+   * @override
+   * @type {string}
+   */
   var _proto = IANAZone.prototype;
-  /** @override **/
+  /**
+   * Returns the offset's common name (such as EST) at the specified timestamp
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the name
+   * @param {Object} opts - Options to affect the format
+   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
+   * @param {string} opts.locale - What locale to return the offset name in.
+   * @return {string}
+   */
   _proto.offsetName = function offsetName(ts, _ref) {
     var format = _ref.format,
       locale = _ref.locale;
     return parseZoneInfo(ts, format, locale, this.name);
   }
 
-  /** @override **/;
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */;
   _proto.formatOffset = function formatOffset$1(ts, format) {
     return formatOffset(this.offset(ts), format);
   }
 
-  /** @override **/;
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to compute the offset
+   * @return {number}
+   */;
   _proto.offset = function offset(ts) {
     var date = new Date(ts);
     if (isNaN(date)) return NaN;
@@ -759,26 +790,44 @@ var IANAZone = /*#__PURE__*/function (_Zone) {
     return (asUTC - asTS) / (60 * 1000);
   }
 
-  /** @override **/;
+  /**
+   * Return whether this Zone is equal to another zone
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */;
   _proto.equals = function equals(otherZone) {
     return otherZone.type === "iana" && otherZone.name === this.name;
   }
 
-  /** @override **/;
+  /**
+   * Return whether this Zone is valid.
+   * @override
+   * @type {boolean}
+   */;
   _createClass(IANAZone, [{
     key: "type",
     get: function get() {
       return "iana";
     }
 
-    /** @override **/
+    /**
+     * The name of this zone (i.e. the IANA zone name).
+     * @override
+     * @type {string}
+     */
   }, {
     key: "name",
     get: function get() {
       return this.zoneName;
     }
 
-    /** @override **/
+    /**
+     * Returns whether the offset is known to be fixed for the whole year:
+     * Always returns false for all IANA zones.
+     * @override
+     * @type {boolean}
+     */
   }, {
     key: "isUniversal",
     get: function get() {
@@ -1124,7 +1173,7 @@ var Locale = /*#__PURE__*/function () {
       defaultToEN = false;
     }
     var specifiedLocale = locale || Settings.defaultLocale;
-    // the system locale is useful for human readable strings but annoying for parsing/formatting known formats
+    // the system locale is useful for human-readable strings but annoying for parsing/formatting known formats
     var localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale());
     var numberingSystemR = numberingSystem || Settings.defaultNumberingSystem;
     var outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
@@ -1335,6 +1384,9 @@ var Locale = /*#__PURE__*/function () {
   _proto4.equals = function equals(other) {
     return this.locale === other.locale && this.numberingSystem === other.numberingSystem && this.outputCalendar === other.outputCalendar;
   };
+  _proto4.toString = function toString() {
+    return "Locale(" + this.locale + ", " + this.numberingSystem + ", " + this.outputCalendar + ")";
+  };
   _createClass(Locale, [{
     key: "fastNumbers",
     get: function get() {
@@ -1389,42 +1441,91 @@ var FixedOffsetZone = /*#__PURE__*/function (_Zone) {
     return _this;
   }
 
-  /** @override **/
+  /**
+   * The type of zone. `fixed` for all instances of `FixedOffsetZone`.
+   * @override
+   * @type {string}
+   */
   var _proto = FixedOffsetZone.prototype;
-  /** @override **/
+  /**
+   * Returns the offset's common name at the specified timestamp.
+   *
+   * For fixed offset zones this equals to the zone name.
+   * @override
+   */
   _proto.offsetName = function offsetName() {
     return this.name;
   }
 
-  /** @override **/;
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */;
   _proto.formatOffset = function formatOffset$1(ts, format) {
     return formatOffset(this.fixed, format);
   }
 
-  /** @override **/;
-  /** @override **/
+  /**
+   * Returns whether the offset is known to be fixed for the whole year:
+   * Always returns true for all fixed offset zones.
+   * @override
+   * @type {boolean}
+   */;
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   *
+   * For fixed offset zones, this is constant and does not depend on a timestamp.
+   * @override
+   * @return {number}
+   */
   _proto.offset = function offset() {
     return this.fixed;
   }
 
-  /** @override **/;
+  /**
+   * Return whether this Zone is equal to another zone (i.e. also fixed and same offset)
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */;
   _proto.equals = function equals(otherZone) {
     return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
   }
 
-  /** @override **/;
+  /**
+   * Return whether this Zone is valid:
+   * All fixed offset zones are valid.
+   * @override
+   * @type {boolean}
+   */;
   _createClass(FixedOffsetZone, [{
     key: "type",
     get: function get() {
       return "fixed";
     }
 
-    /** @override **/
+    /**
+     * The name of this zone.
+     * All fixed zones' names always start with "UTC" (plus optional offset)
+     * @override
+     * @type {string}
+     */
   }, {
     key: "name",
     get: function get() {
       return this.fixed === 0 ? "UTC" : "UTC" + formatOffset(this.fixed, "narrow");
     }
+
+    /**
+     * The IANA name of this zone, i.e. `Etc/UTC` or `Etc/GMT+/-nn`
+     *
+     * @override
+     * @type {string}
+     */
   }, {
     key: "ianaName",
     get: function get() {
@@ -1548,6 +1649,96 @@ function normalizeZone(input, defaultZone) {
   }
 }
 
+var numberingSystems = {
+  arab: "[\u0660-\u0669]",
+  arabext: "[\u06F0-\u06F9]",
+  bali: "[\u1B50-\u1B59]",
+  beng: "[\u09E6-\u09EF]",
+  deva: "[\u0966-\u096F]",
+  fullwide: "[\uFF10-\uFF19]",
+  gujr: "[\u0AE6-\u0AEF]",
+  hanidec: "[〇|一|二|三|四|五|六|七|八|九]",
+  khmr: "[\u17E0-\u17E9]",
+  knda: "[\u0CE6-\u0CEF]",
+  laoo: "[\u0ED0-\u0ED9]",
+  limb: "[\u1946-\u194F]",
+  mlym: "[\u0D66-\u0D6F]",
+  mong: "[\u1810-\u1819]",
+  mymr: "[\u1040-\u1049]",
+  orya: "[\u0B66-\u0B6F]",
+  tamldec: "[\u0BE6-\u0BEF]",
+  telu: "[\u0C66-\u0C6F]",
+  thai: "[\u0E50-\u0E59]",
+  tibt: "[\u0F20-\u0F29]",
+  latn: "\\d"
+};
+var numberingSystemsUTF16 = {
+  arab: [1632, 1641],
+  arabext: [1776, 1785],
+  bali: [6992, 7001],
+  beng: [2534, 2543],
+  deva: [2406, 2415],
+  fullwide: [65296, 65303],
+  gujr: [2790, 2799],
+  khmr: [6112, 6121],
+  knda: [3302, 3311],
+  laoo: [3792, 3801],
+  limb: [6470, 6479],
+  mlym: [3430, 3439],
+  mong: [6160, 6169],
+  mymr: [4160, 4169],
+  orya: [2918, 2927],
+  tamldec: [3046, 3055],
+  telu: [3174, 3183],
+  thai: [3664, 3673],
+  tibt: [3872, 3881]
+};
+var hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
+function parseDigits(str) {
+  var value = parseInt(str, 10);
+  if (isNaN(value)) {
+    value = "";
+    for (var i = 0; i < str.length; i++) {
+      var code = str.charCodeAt(i);
+      if (str[i].search(numberingSystems.hanidec) !== -1) {
+        value += hanidecChars.indexOf(str[i]);
+      } else {
+        for (var key in numberingSystemsUTF16) {
+          var _numberingSystemsUTF = numberingSystemsUTF16[key],
+            min = _numberingSystemsUTF[0],
+            max = _numberingSystemsUTF[1];
+          if (code >= min && code <= max) {
+            value += code - min;
+          }
+        }
+      }
+    }
+    return parseInt(value, 10);
+  } else {
+    return value;
+  }
+}
+
+// cache of {numberingSystem: {append: regex}}
+var digitRegexCache = {};
+function resetDigitRegexCache() {
+  digitRegexCache = {};
+}
+function digitRegex(_ref, append) {
+  var numberingSystem = _ref.numberingSystem;
+  if (append === void 0) {
+    append = "";
+  }
+  var ns = numberingSystem || "latn";
+  if (!digitRegexCache[ns]) {
+    digitRegexCache[ns] = {};
+  }
+  if (!digitRegexCache[ns][append]) {
+    digitRegexCache[ns][append] = new RegExp("" + numberingSystems[ns] + append);
+  }
+  return digitRegexCache[ns][append];
+}
+
 var now = function now() {
     return Date.now();
   },
@@ -1571,6 +1762,8 @@ var Settings = /*#__PURE__*/function () {
   Settings.resetCaches = function resetCaches() {
     Locale.resetCache();
     IANAZone.resetCache();
+    DateTime.resetCache();
+    resetDigitRegexCache();
   };
   _createClass(Settings, null, [{
     key: "now",
@@ -1696,7 +1889,7 @@ var Settings = /*#__PURE__*/function () {
     }
 
     /**
-     * Get the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+     * Get the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
      * @type {number}
      */
   }, {
@@ -1706,10 +1899,11 @@ var Settings = /*#__PURE__*/function () {
     }
 
     /**
-     * Set the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+     * Set the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
      * @type {number}
-     * @example Settings.twoDigitCutoffYear = 0 // cut-off year is 0, so all 'yy' are interpreted as current century
-     * @example Settings.twoDigitCutoffYear = 50 // '49' -> 1949; '50' -> 2050
+     * @example Settings.twoDigitCutoffYear = 0 // all 'yy' are interpreted as 20th century
+     * @example Settings.twoDigitCutoffYear = 99 // all 'yy' are interpreted as 21st century
+     * @example Settings.twoDigitCutoffYear = 50 // '49' -> 2049; '50' -> 1950
      * @example Settings.twoDigitCutoffYear = 1950 // interpreted as 50
      * @example Settings.twoDigitCutoffYear = 2050 // ALSO interpreted as 50
      */,
@@ -2217,6 +2411,14 @@ function normalizeObject(obj, normalizer) {
   }
   return normalized;
 }
+
+/**
+ * Returns the offset's value as a string
+ * @param {number} ts - Epoch milliseconds for which to get the offset
+ * @param {string} format - What style of offset to return.
+ *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+ * @return {string}
+ */
 function formatOffset(offset, format) {
   var hours = Math.trunc(Math.abs(offset / 60)),
     minutes = Math.trunc(Math.abs(offset % 60)),
@@ -4460,7 +4662,7 @@ var Interval = /*#__PURE__*/function (_Symbol$for) {
   }
 
   /**
-   * Return whether this Interval engulfs the start and end of the specified Interval.
+   * Returns true if this Interval fully contains the specified Interval, specifically if the intersect (of this Interval and the other Interval) is equal to the other Interval; false otherwise.
    * @param {Interval} other
    * @return {boolean}
    */;
@@ -5133,83 +5335,6 @@ function _diff (earlier, later, units, opts) {
   }
 }
 
-var numberingSystems = {
-  arab: "[\u0660-\u0669]",
-  arabext: "[\u06F0-\u06F9]",
-  bali: "[\u1B50-\u1B59]",
-  beng: "[\u09E6-\u09EF]",
-  deva: "[\u0966-\u096F]",
-  fullwide: "[\uFF10-\uFF19]",
-  gujr: "[\u0AE6-\u0AEF]",
-  hanidec: "[〇|一|二|三|四|五|六|七|八|九]",
-  khmr: "[\u17E0-\u17E9]",
-  knda: "[\u0CE6-\u0CEF]",
-  laoo: "[\u0ED0-\u0ED9]",
-  limb: "[\u1946-\u194F]",
-  mlym: "[\u0D66-\u0D6F]",
-  mong: "[\u1810-\u1819]",
-  mymr: "[\u1040-\u1049]",
-  orya: "[\u0B66-\u0B6F]",
-  tamldec: "[\u0BE6-\u0BEF]",
-  telu: "[\u0C66-\u0C6F]",
-  thai: "[\u0E50-\u0E59]",
-  tibt: "[\u0F20-\u0F29]",
-  latn: "\\d"
-};
-var numberingSystemsUTF16 = {
-  arab: [1632, 1641],
-  arabext: [1776, 1785],
-  bali: [6992, 7001],
-  beng: [2534, 2543],
-  deva: [2406, 2415],
-  fullwide: [65296, 65303],
-  gujr: [2790, 2799],
-  khmr: [6112, 6121],
-  knda: [3302, 3311],
-  laoo: [3792, 3801],
-  limb: [6470, 6479],
-  mlym: [3430, 3439],
-  mong: [6160, 6169],
-  mymr: [4160, 4169],
-  orya: [2918, 2927],
-  tamldec: [3046, 3055],
-  telu: [3174, 3183],
-  thai: [3664, 3673],
-  tibt: [3872, 3881]
-};
-var hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
-function parseDigits(str) {
-  var value = parseInt(str, 10);
-  if (isNaN(value)) {
-    value = "";
-    for (var i = 0; i < str.length; i++) {
-      var code = str.charCodeAt(i);
-      if (str[i].search(numberingSystems.hanidec) !== -1) {
-        value += hanidecChars.indexOf(str[i]);
-      } else {
-        for (var key in numberingSystemsUTF16) {
-          var _numberingSystemsUTF = numberingSystemsUTF16[key],
-            min = _numberingSystemsUTF[0],
-            max = _numberingSystemsUTF[1];
-          if (code >= min && code <= max) {
-            value += code - min;
-          }
-        }
-      }
-    }
-    return parseInt(value, 10);
-  } else {
-    return value;
-  }
-}
-function digitRegex(_ref, append) {
-  var numberingSystem = _ref.numberingSystem;
-  if (append === void 0) {
-    append = "";
-  }
-  return new RegExp("" + numberingSystems[numberingSystem || "latn"] + append);
-}
-
 var MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 function intUnit(regex, post) {
   if (post === void 0) {
@@ -5643,46 +5768,72 @@ function expandMacroTokens(tokens, locale) {
  * @private
  */
 
-function explainFromTokens(locale, input, format) {
-  var tokens = expandMacroTokens(Formatter.parseFormat(format), locale),
-    units = tokens.map(function (t) {
+var TokenParser = /*#__PURE__*/function () {
+  function TokenParser(locale, format) {
+    this.locale = locale;
+    this.format = format;
+    this.tokens = expandMacroTokens(Formatter.parseFormat(format), locale);
+    this.units = this.tokens.map(function (t) {
       return unitForToken(t, locale);
-    }),
-    disqualifyingUnit = units.find(function (t) {
+    });
+    this.disqualifyingUnit = this.units.find(function (t) {
       return t.invalidReason;
     });
-  if (disqualifyingUnit) {
-    return {
-      input: input,
-      tokens: tokens,
-      invalidReason: disqualifyingUnit.invalidReason
-    };
-  } else {
-    var _buildRegex = buildRegex(units),
-      regexString = _buildRegex[0],
-      handlers = _buildRegex[1],
-      regex = RegExp(regexString, "i"),
-      _match = match(input, regex, handlers),
-      rawMatches = _match[0],
-      matches = _match[1],
-      _ref6 = matches ? dateTimeFromMatches(matches) : [null, null, undefined],
-      result = _ref6[0],
-      zone = _ref6[1],
-      specificOffset = _ref6[2];
-    if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
-      throw new ConflictingSpecificationError("Can't include meridiem when specifying 24-hour format");
+    if (!this.disqualifyingUnit) {
+      var _buildRegex = buildRegex(this.units),
+        regexString = _buildRegex[0],
+        handlers = _buildRegex[1];
+      this.regex = RegExp(regexString, "i");
+      this.handlers = handlers;
     }
-    return {
-      input: input,
-      tokens: tokens,
-      regex: regex,
-      rawMatches: rawMatches,
-      matches: matches,
-      result: result,
-      zone: zone,
-      specificOffset: specificOffset
-    };
   }
+  var _proto = TokenParser.prototype;
+  _proto.explainFromTokens = function explainFromTokens(input) {
+    if (!this.isValid) {
+      return {
+        input: input,
+        tokens: this.tokens,
+        invalidReason: this.invalidReason
+      };
+    } else {
+      var _match = match(input, this.regex, this.handlers),
+        rawMatches = _match[0],
+        matches = _match[1],
+        _ref6 = matches ? dateTimeFromMatches(matches) : [null, null, undefined],
+        result = _ref6[0],
+        zone = _ref6[1],
+        specificOffset = _ref6[2];
+      if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
+        throw new ConflictingSpecificationError("Can't include meridiem when specifying 24-hour format");
+      }
+      return {
+        input: input,
+        tokens: this.tokens,
+        regex: this.regex,
+        rawMatches: rawMatches,
+        matches: matches,
+        result: result,
+        zone: zone,
+        specificOffset: specificOffset
+      };
+    }
+  };
+  _createClass(TokenParser, [{
+    key: "isValid",
+    get: function get() {
+      return !this.disqualifyingUnit;
+    }
+  }, {
+    key: "invalidReason",
+    get: function get() {
+      return this.disqualifyingUnit ? this.disqualifyingUnit.invalidReason : null;
+    }
+  }]);
+  return TokenParser;
+}();
+function explainFromTokens(locale, input, format) {
+  var parser = new TokenParser(locale, format);
+  return parser.explainFromTokens(input);
 }
 function parseFromTokens(locale, input, format) {
   var _explainFromTokens = explainFromTokens(locale, input, format),
@@ -5991,13 +6142,44 @@ function normalizeUnitWithLocalWeeks(unit) {
   }
 }
 
+// cache offsets for zones based on the current timestamp when this function is
+// first called. When we are handling a datetime from components like (year,
+// month, day, hour) in a time zone, we need a guess about what the timezone
+// offset is so that we can convert into a UTC timestamp. One way is to find the
+// offset of now in the zone. The actual date may have a different offset (for
+// example, if we handle a date in June while we're in December in a zone that
+// observes DST), but we can check and adjust that.
+//
+// When handling many dates, calculating the offset for now every time is
+// expensive. It's just a guess, so we can cache the offset to use even if we
+// are right on a time change boundary (we'll just correct in the other
+// direction). Using a timestamp from first read is a slight optimization for
+// handling dates close to the current date, since those dates will usually be
+// in the same offset (we could set the timestamp statically, instead). We use a
+// single timestamp for all zones to make things a bit more predictable.
+//
+// This is safe for quickDT (used by local() and utc()) because we don't fill in
+// higher-order units from tsNow (as we do in fromObject, this requires that
+// offset is calculated from tsNow).
+function guessOffsetForZone(zone) {
+  if (!zoneOffsetGuessCache[zone]) {
+    if (zoneOffsetTs === undefined) {
+      zoneOffsetTs = Settings.now();
+    }
+    zoneOffsetGuessCache[zone] = zone.offset(zoneOffsetTs);
+  }
+  return zoneOffsetGuessCache[zone];
+}
+
 // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
 // are present, and so on.
 function quickDT(obj, opts) {
-  var zone = normalizeZone(opts.zone, Settings.defaultZone),
-    loc = Locale.fromObject(opts),
-    tsNow = Settings.now();
+  var zone = normalizeZone(opts.zone, Settings.defaultZone);
+  if (!zone.isValid) {
+    return DateTime.invalid(unsupportedZone(zone));
+  }
+  var loc = Locale.fromObject(opts);
   var ts, o;
 
   // assume we have the higher-order units
@@ -6012,12 +6194,12 @@ function quickDT(obj, opts) {
     if (invalid) {
       return DateTime.invalid(invalid);
     }
-    var offsetProvis = zone.offset(tsNow);
+    var offsetProvis = guessOffsetForZone(zone);
     var _objToTS = objToTS(obj, offsetProvis, zone);
     ts = _objToTS[0];
     o = _objToTS[1];
   } else {
-    ts = tsNow;
+    ts = Settings.now();
   }
   return new DateTime({
     ts: ts,
@@ -6067,6 +6249,18 @@ function lastOpts(argList) {
 }
 
 /**
+ * Timestamp to use for cached zone offset guesses (exposed for test)
+ */
+var zoneOffsetTs;
+/**
+ * Cache for zone offset guesses (exposed for test).
+ *
+ * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
+ * zone.offset().
+ */
+var zoneOffsetGuessCache = {};
+
+/**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
  * A DateTime comprises of:
@@ -6106,7 +6300,9 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
         c = _ref[0];
         o = _ref[1];
       } else {
-        var ot = zone.offset(this.ts);
+        // If an offset has been passed and we have not been called from
+        // clone(), we can trust it and avoid the offset calculation.
+        var ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.ts);
         c = tsToObj(this.ts, ot);
         invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
@@ -6217,6 +6413,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} [options.outputCalendar] - the output calendar to set on the resulting DateTime instance
    * @param {string} [options.numberingSystem] - the numbering system to set on the resulting DateTime instance
+   * @param {string} [options.weekSettings] - the week settings to set on the resulting DateTime instance
    * @example DateTime.utc()                                              //~> now
    * @example DateTime.utc(2017)                                          //~> 2017-01-01T00:00:00Z
    * @example DateTime.utc(2017, 3)                                       //~> 2017-03-01T00:00:00Z
@@ -6285,6 +6482,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
    * @return {DateTime}
    */;
   DateTime.fromMillis = function fromMillis(milliseconds, options) {
@@ -6294,7 +6492,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
     if (!isNumber(milliseconds)) {
       throw new InvalidArgumentError("fromMillis requires a numerical input, but received a " + typeof milliseconds + " with value " + milliseconds);
     } else if (milliseconds < -MAX_DATE || milliseconds > MAX_DATE) {
-      // this isn't perfect because because we can still end up out of range because of additional shifting, but it's a start
+      // this isn't perfect because we can still end up out of range because of additional shifting, but it's a start
       return DateTime.invalid("Timestamp out of range");
     } else {
       return new DateTime({
@@ -6313,6 +6511,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
    * @return {DateTime}
    */;
   DateTime.fromSeconds = function fromSeconds(seconds, options) {
@@ -6352,6 +6551,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {string} [opts.locale='system\'s locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
    * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
@@ -6452,6 +6652,9 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
     if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
       return DateTime.invalid("mismatched weekday", "you can't specify both a weekday of " + normalized.weekday + " and a date of " + inst.toISO());
     }
+    if (!inst.isValid) {
+      return DateTime.invalid(inst.invalid);
+    }
     return inst;
   }
 
@@ -6464,6 +6667,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} [opts.outputCalendar] - the output calendar to set on the resulting DateTime instance
    * @param {string} [opts.numberingSystem] - the numbering system to set on the resulting DateTime instance
+   * @param {string} [opts.weekSettings] - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
@@ -6490,6 +6694,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
    * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
@@ -6515,6 +6720,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
@@ -6540,6 +6746,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */;
@@ -6591,6 +6798,7 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @example DateTime.fromSQL('2017-05-15')
    * @example DateTime.fromSQL('2017-05-15 09:12:34')
@@ -6675,6 +6883,10 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
     return expanded.map(function (t) {
       return t.val;
     }).join("");
+  };
+  DateTime.resetCache = function resetCache() {
+    zoneOffsetTs = undefined;
+    zoneOffsetGuessCache = {};
   }
 
   // INFO
@@ -7611,6 +7823,77 @@ var DateTime = /*#__PURE__*/function (_Symbol$for) {
     return DateTime.fromFormatExplain(text, fmt, options);
   }
 
+  /**
+   * Build a parser for `fmt` using the given locale. This parser can be passed
+   * to {@link DateTime.fromFormatParser} to a parse a date in this format. This
+   * can be used to optimize cases where many dates need to be parsed in a
+   * specific format.
+   *
+   * @param {String} fmt - the format the string is expected to be in (see
+   * description)
+   * @param {Object} options - options used to set locale and numberingSystem
+   * for parser
+   * @returns {TokenParser} - opaque object to be used
+   */;
+  DateTime.buildFormatParser = function buildFormatParser(fmt, options) {
+    if (options === void 0) {
+      options = {};
+    }
+    var _options2 = options,
+      _options2$locale = _options2.locale,
+      locale = _options2$locale === void 0 ? null : _options2$locale,
+      _options2$numberingSy = _options2.numberingSystem,
+      numberingSystem = _options2$numberingSy === void 0 ? null : _options2$numberingSy,
+      localeToUse = Locale.fromOpts({
+        locale: locale,
+        numberingSystem: numberingSystem,
+        defaultToEN: true
+      });
+    return new TokenParser(localeToUse, fmt);
+  }
+
+  /**
+   * Create a DateTime from an input string and format parser.
+   *
+   * The format parser must have been created with the same locale as this call.
+   *
+   * @param {String} text - the string to parse
+   * @param {TokenParser} formatParser - parser from {@link DateTime.buildFormatParser}
+   * @param {Object} opts - options taken by fromFormat()
+   * @returns {DateTime}
+   */;
+  DateTime.fromFormatParser = function fromFormatParser(text, formatParser, opts) {
+    if (opts === void 0) {
+      opts = {};
+    }
+    if (isUndefined(text) || isUndefined(formatParser)) {
+      throw new InvalidArgumentError("fromFormatParser requires an input string and a format parser");
+    }
+    var _opts2 = opts,
+      _opts2$locale = _opts2.locale,
+      locale = _opts2$locale === void 0 ? null : _opts2$locale,
+      _opts2$numberingSyste = _opts2.numberingSystem,
+      numberingSystem = _opts2$numberingSyste === void 0 ? null : _opts2$numberingSyste,
+      localeToUse = Locale.fromOpts({
+        locale: locale,
+        numberingSystem: numberingSystem,
+        defaultToEN: true
+      });
+    if (!localeToUse.equals(formatParser.locale)) {
+      throw new InvalidArgumentError("fromFormatParser called with a locale of " + localeToUse + ", " + ("but the format parser was created for " + formatParser.locale));
+    }
+    var _formatParser$explain = formatParser.explainFromTokens(text),
+      result = _formatParser$explain.result,
+      zone = _formatParser$explain.zone,
+      specificOffset = _formatParser$explain.specificOffset,
+      invalidReason = _formatParser$explain.invalidReason;
+    if (invalidReason) {
+      return DateTime.invalid(invalidReason);
+    } else {
+      return parseDataToDateTime(result, zone, opts, "format " + formatParser.format, text, specificOffset);
+    }
+  }
+
   // FORMAT PRESETS
 
   /**
@@ -8293,7 +8576,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-var VERSION = "3.4.4";
+var VERSION = "3.5.0";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;

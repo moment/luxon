@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">98.41% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>186/186</span>
+                <span class='fraction'>186/189</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.83% </span>
+                <span class="strong">95.62% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>153/158</span>
+                <span class='fraction'>153/160</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">98.07% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>51/51</span>
+                <span class='fraction'>51/52</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">98.22% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>166/166</span>
+                <span class='fraction'>166/169</span>
             </div>
         
             
@@ -708,7 +708,19 @@
 <a name='L643'></a><a href='#L643'>643</a>
 <a name='L644'></a><a href='#L644'>644</a>
 <a name='L645'></a><a href='#L645'>645</a>
-<a name='L646'></a><a href='#L646'>646</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L646'></a><a href='#L646'>646</a>
+<a name='L647'></a><a href='#L647'>647</a>
+<a name='L648'></a><a href='#L648'>648</a>
+<a name='L649'></a><a href='#L649'>649</a>
+<a name='L650'></a><a href='#L650'>650</a>
+<a name='L651'></a><a href='#L651'>651</a>
+<a name='L652'></a><a href='#L652'>652</a>
+<a name='L653'></a><a href='#L653'>653</a>
+<a name='L654'></a><a href='#L654'>654</a>
+<a name='L655'></a><a href='#L655'>655</a>
+<a name='L656'></a><a href='#L656'>656</a>
+<a name='L657'></a><a href='#L657'>657</a>
+<a name='L658'></a><a href='#L658'>658</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1254,6 +1266,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1760,7 +1784,7 @@ export default class Interval {
   }
 &nbsp;
   /**
-   * Return whether this Interval engulfs the start and end of the specified Interval.
+   * Returns true if this Interval fully contains the specified Interval, specifically if the intersect (of this Interval and the other Interval) is equal to the other Interval; false otherwise.
    * @param {Interval} other
    * @return {boolean}
    */
@@ -1895,6 +1919,18 @@ export default class Interval {
   }
 &nbsp;
   /**
+   * Returns a string representation of this Interval appropriate for the REPL.
+   * @return {string}
+   */
+<span class="fstat-no" title="function not covered" >  [S</span>ymbol.for("nodejs.util.inspect.custom")]() {
+<span class="cstat-no" title="statement not covered" >    if (this.isValid) {</span>
+<span class="cstat-no" title="statement not covered" >      return `Interval { start: ${this.s.toISO()}, end: ${this.e.toISO()} }`;</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      return `Interval { Invalid, reason: ${this.invalidReason} }`;</span>
+    }
+  }
+&nbsp;
+  /**
    * Returns a localized string representing this Interval. Accepts the same options as the
    * Intl.DateTimeFormat constructor and any presets defined by Luxon, such as
    * {@link DateTime.DATE_FULL} or {@link DateTime.TIME_SIMPLE}. The exact behavior of this method
@@ -2005,7 +2041,7 @@ export default class Interval {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-12T21:50:05.927Z
+                at 2024-08-03T20:41:37.421Z
             </div>
         <script src="../prettify.js"></script>
         <script>
