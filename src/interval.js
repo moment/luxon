@@ -195,7 +195,7 @@ export default class Interval {
   get end() {
     return this.isValid ? this.e : null;
   }
-  
+
   /**
    * Returns the last DateTime included in the interval (since end is not part of the interval)
    * @type {DateTime}
