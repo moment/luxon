@@ -197,6 +197,14 @@ export default class Interval {
   }
 
   /**
+   * Returns the last DateTime included in the interval (since end is not part of the interval)
+   * @type {DateTime}
+   */
+  get lastDateTime() {
+    return this.isValid ? (this.e ? this.e.minus(1) : null) : null;
+  }
+
+  /**
    * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
    * @type {boolean}
    */

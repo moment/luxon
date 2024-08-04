@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.5.0 (2024-08-03)
+
+- Various performance improvements
+- throwOnInvalid causes the constructor to throw if the year is invalid
+
 # 3.4.4 (2023-11-12)
 
 - Localized week support (#1454)
