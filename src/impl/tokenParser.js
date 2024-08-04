@@ -451,10 +451,13 @@ export class TokenParser {
     if (!this.isValid) {
       return { input, tokens: this.tokens, invalidReason: this.invalidReason };
     } else {
-      const [rawMatches, matches] = match(input, this.regex, this.handlers),
-        [result, zone, specificOffset] = matches
-          ? dateTimeFromMatches(matches)
-          : [null, null, undefined];
+      const [rawMatches, matches] = match(input, this.regex, this.handlers);
+      if (hasOwnProperty(matches, "h") && matches.h > 12) {
+        throw new ConflictingSpecificationError("Can't go over 12 when specifying 12-hour format");
+      }
+      const [result, zone, specificOffset] = matches
+        ? dateTimeFromMatches(matches)
+        : [null, null, undefined];
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
           "Can't include meridiem when specifying 24-hour format"
