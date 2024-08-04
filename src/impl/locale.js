@@ -61,12 +61,12 @@ function systemLocale() {
   }
 }
 
-let resolvedOptionsCache = {};
+let intlResolvedOptionsCache = {};
 function getCachedIntResolvedOptions(locString) {
-  if (!resolvedOptionsCache[locString]) {
-    resolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+  if (!intlResolvedOptionsCache[locString]) {
+    intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
   }
-  return resolvedOptionsCache[locString];
+  return intlResolvedOptionsCache[locString];
 }
 
 let weekInfoCache = {};
@@ -360,6 +360,7 @@ export default class Locale {
     intlDTCache = {};
     intlNumCache = {};
     intlRelCache = {};
+    intlResolvedOptionsCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar, weekSettings } = {}) {
