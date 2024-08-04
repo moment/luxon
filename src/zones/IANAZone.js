@@ -29,11 +29,21 @@ const typeToPos = {
   second: 6,
 };
 
+function offsetComponentsFromDtf(dtf, date) {
+  if (IANAZone.hackyOffsetParsesCorrectly()) {
+    return hackyOffset(dtf, date);
+  } else if (dtf.formatToParts) {
+    return partsOffset(dtf, date);
+  } else {
+    throw new Error("Unable to compute time zone offset using Intl.DateTimeFormat");
+  }
+}
+
 function hackyOffset(dtf, date) {
   const formatted = dtf.format(date).replace(/\u200E/g, ""),
     parsed = /(\d+)\/(\d+)\/(\d+) (AD|BC),? (\d+):(\d+):(\d+)/.exec(formatted),
     [, fMonth, fDay, fYear, fadOrBc, fHour, fMinute, fSecond] = parsed;
-  return [fYear, fMonth, fDay, fadOrBc, fHour, fMinute, fSecond];
+  return [+fYear, +fMonth, +fDay, fadOrBc, +fHour, +fMinute, +fSecond];
 }
 
 function partsOffset(dtf, date) {
@@ -51,6 +61,8 @@ function partsOffset(dtf, date) {
   }
   return filled;
 }
+
+let hackyOffsetParsesCorrectly = undefined;
 
 let ianaZoneCache = {};
 /**
@@ -76,6 +88,45 @@ export default class IANAZone extends Zone {
   static resetCache() {
     ianaZoneCache = {};
     dtfCache = {};
+    hackyOffsetParsesCorrectly = undefined;
+  }
+
+  /**
+   * Get a DTF instance from the cache. Should only be used for testing.
+   *
+   * @access private
+   */
+  static getDtf(zone) {
+    return makeDTF(zone);
+  }
+
+  /**
+   * Returns whether hackyOffset works correctly for a known date. If it does,
+   * we can use hackyOffset which is faster.
+   * @returns {boolean}
+   */
+  static hackyOffsetParsesCorrectly() {
+    if (hackyOffsetParsesCorrectly === undefined) {
+      const dtf = makeDTF("UTC");
+      try {
+        const [year, month, day, adOrBc, hour, minute, second] = hackyOffset(
+          dtf,
+          // arbitrary date
+          new Date(Date.UTC(1969, 11, 31, 15, 45, 55))
+        );
+        hackyOffsetParsesCorrectly =
+          year === 1969 &&
+          month === 12 &&
+          day === 31 &&
+          adOrBc === "AD" &&
+          hour === 15 &&
+          minute === 45 &&
+          second === 55;
+      } catch {
+        hackyOffsetParsesCorrectly = false;
+      }
+    }
+    return hackyOffsetParsesCorrectly;
   }
 
   /**
@@ -183,9 +234,7 @@ export default class IANAZone extends Zone {
     if (isNaN(date)) return NaN;
 
     const dtf = makeDTF(this.name);
-    let [year, month, day, adOrBc, hour, minute, second] = dtf.formatToParts
-      ? partsOffset(dtf, date)
-      : hackyOffset(dtf, date);
+    let [year, month, day, adOrBc, hour, minute, second] = offsetComponentsFromDtf(dtf, date);
 
     if (adOrBc === "BC") {
       year = -Math.abs(year) + 1;
