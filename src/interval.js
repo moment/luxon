@@ -40,7 +40,7 @@ export default class Interval {
   /**
    * @private
    */
-  constructor(config) {
+  constructor(config = {}) {
     /**
      * @access private
      */

@@ -5,6 +5,13 @@ import Helpers from "../helpers";
 const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
 //------
+// new
+//------
+test("Default constructor works", () => {
+  expect(() => new Interval()).not.toThrow();
+});
+
+//------
 // .fromObject()
 //-------
 test("Interval.fromDateTimes creates an interval from datetimes", () => {

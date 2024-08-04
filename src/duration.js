@@ -217,7 +217,7 @@ export default class Duration {
   /**
    * @private
    */
-  constructor(config) {
+  constructor(config = {}) {
     const accurate = config.conversionAccuracy === "longterm" || false;
     let matrix = accurate ? accurateMatrix : casualMatrix;
 
