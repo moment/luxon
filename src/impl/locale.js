@@ -61,6 +61,14 @@ function systemLocale() {
   }
 }
 
+let intlResolvedOptionsCache = {};
+function getCachedIntResolvedOptions(locString) {
+  if (!intlResolvedOptionsCache[locString]) {
+    intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+  }
+  return intlResolvedOptionsCache[locString];
+}
+
 let weekInfoCache = {};
 function getCachedWeekInfo(locString) {
   let data = weekInfoCache[locString];
@@ -167,7 +175,7 @@ function supportsFastNumbers(loc) {
       loc.numberingSystem === "latn" ||
       !loc.locale ||
       loc.locale.startsWith("en") ||
-      new Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn"
+      getCachedIntResolvedOptions(loc.locale).numberingSystem === "latn"
     );
   }
 }
@@ -326,7 +334,6 @@ const fallbackWeekSettings = {
 /**
  * @private
  */
-
 export default class Locale {
   static fromOpts(opts) {
     return Locale.create(
@@ -353,6 +360,7 @@ export default class Locale {
     intlDTCache = {};
     intlNumCache = {};
     intlRelCache = {};
+    intlResolvedOptionsCache = {};
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar, weekSettings } = {}) {
@@ -506,7 +514,7 @@ export default class Locale {
     return (
       this.locale === "en" ||
       this.locale.toLowerCase() === "en-us" ||
-      new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us")
+      getCachedIntResolvedOptions(this.intl).locale.startsWith("en-us")
     );
   }
 
