@@ -62,7 +62,7 @@ function systemLocale() {
 }
 
 let resolvedOptionsCache = {};
-function resolvedOptions(locString) {
+function getCachedIntResolvedOptions(locString) {
   if (!resolvedOptionsCache[locString]) {
     resolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
   }
@@ -81,18 +81,7 @@ function getCachedWeekInfo(locString) {
   return data;
 }
 
-const localeStringCache = {};
-function getParsedCachedLocaleString(localeStr) {
-  if (localeStringCache[localeStr]) {
-    return localeStringCache[localeStr];
-  }
-
-  const result = _parseLocaleString(localeStr);
-  localeStringCache[localeStr] = result;
-  return result;
-}
-
-function _parseLocaleString(localeStr) {
+function parseLocaleString(localeStr) {
   // I really want to avoid writing a BCP 47 parser
   // see, e.g. https://github.com/wooorm/bcp-47
   // Instead, we'll do this:
@@ -129,13 +118,7 @@ function _parseLocaleString(localeStr) {
   }
 }
 
-const intlConfigCache = {};
 function intlConfigString(localeStr, numberingSystem, outputCalendar) {
-  const key = `${localeStr}${numberingSystem}${outputCalendar}`;
-  if (intlConfigCache[key]) {
-    return intlConfigCache[key];
-  }
-
   if (outputCalendar || numberingSystem) {
     if (!localeStr.includes("-u-")) {
       localeStr += "-u";
@@ -148,9 +131,10 @@ function intlConfigString(localeStr, numberingSystem, outputCalendar) {
     if (numberingSystem) {
       localeStr += `-nu-${numberingSystem}`;
     }
+    return localeStr;
+  } else {
+    return localeStr;
   }
-  intlConfigCache[key] = localeStr;
-  return localeStr;
 }
 
 function mapMonths(f) {
@@ -184,12 +168,16 @@ function listStuff(loc, length, englishFn, intlFn) {
 }
 
 function supportsFastNumbers(loc) {
-  return loc.numberingSystem && loc.numberingSystem !== "latn"
-    ? false
-    : loc.numberingSystem === "latn" ||
-        !loc.locale ||
-        loc.locale.startsWith("en") ||
-        resolvedOptions(loc.locale).numberingSystem === "latn";
+  if (loc.numberingSystem && loc.numberingSystem !== "latn") {
+    return false;
+  } else {
+    return (
+      loc.numberingSystem === "latn" ||
+      !loc.locale ||
+      loc.locale.startsWith("en") ||
+      getCachedIntResolvedOptions(loc.locale).numberingSystem === "latn"
+    );
+  }
 }
 
 /**
@@ -379,8 +367,7 @@ export default class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, weekSettings, specifiedLocale) {
-    const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] =
-      getParsedCachedLocaleString(locale);
+    const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
 
     this.locale = parsedLocale;
     this.numberingSystem = numbering || parsedNumberingSystem || null;
@@ -394,14 +381,14 @@ export default class Locale {
     this.eraCache = {};
 
     this.specifiedLocale = specifiedLocale;
-    this.fastNumbersCached = supportsFastNumbers(this);
-    this.isEnglishCached =
-      this.locale === "en" ||
-      this.locale.toLowerCase() === "en-us" ||
-      resolvedOptions(this.locale).locale.startsWith("en-us");
+    this.fastNumbersCached = null;
   }
 
   get fastNumbers() {
+    if (this.fastNumbersCached == null) {
+      this.fastNumbersCached = supportsFastNumbers(this);
+    }
+
     return this.fastNumbersCached;
   }
 
@@ -523,7 +510,11 @@ export default class Locale {
   }
 
   isEnglish() {
-    return this.isEnglishCached;
+    return (
+      this.locale === "en" ||
+      this.locale.toLowerCase() === "en-us" ||
+      getCachedIntResolvedOptions(this.intl).locale.startsWith("en-us")
+    );
   }
 
   getWeekSettings() {
