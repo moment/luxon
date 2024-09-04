@@ -58,6 +58,13 @@ function runDateTimeSuite() {
         dt.toFormat("T");
         Settings.resetCaches();
       })
+      .add("DateTime#format in german", () => {
+        dt.setLocale("de-De").toFormat("d. LLL. HH:mm");
+      })
+      .add("DateTime#format in german and no-cache", () => {
+        dt.setLocale("de-De").toFormat("d. LLL. HH:mm");
+        Settings.resetCaches();
+      })
       .add("DateTime#add", () => {
         dt.plus({ milliseconds: 3434 });
       })
