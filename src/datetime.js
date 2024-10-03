@@ -266,12 +266,16 @@ function toISOTime(
     } else if (o.o < 0) {
       c += "-";
       c += padStart(Math.trunc(-o.o / 60));
-      c += ":";
+      if (extended) {
+        c += ":";
+      }
       c += padStart(Math.trunc(-o.o % 60));
     } else {
       c += "+";
       c += padStart(Math.trunc(o.o / 60));
-      c += ":";
+      if (extended) {
+        c += ":";
+      }
       c += padStart(Math.trunc(o.o % 60));
     }
   }

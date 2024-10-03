@@ -247,6 +247,7 @@ test("DateTime#toISOTime() can omit the offset", () => {
 
 test("DateTime#toISOTime() can output the basic format", () => {
   expect(dt.toISOTime({ format: "basic" })).toBe("092354.123Z");
+  expect(dt.setZone("America/New_York").toISOTime({ format: "basic" })).toBe("052354.123-0400");
   const dt2 = dt.set({ second: 0, millisecond: 0 });
   expect(dt2.toISOTime({ format: "basic", suppressMilliseconds: true })).toBe("092300Z");
   expect(dt2.toISOTime({ format: "basic", suppressSeconds: true })).toBe("0923Z");
