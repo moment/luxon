@@ -114,6 +114,18 @@ test("DateTime.fromISO() can optionally specify a zone", () => {
 
 const isSame = (s, expected) => expect(DateTime.fromISO(s).toObject()).toEqual(expected);
 
+test("DateTime.fromISO() accepts both capital T and lowercase t", () => {
+  // #1610
+  let dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00");
+  isSame("2016-05-25t09:08:34.123+06:00", dt.toObject());
+});
+
+test("DateTime.fromISO() accepts both capital Z and lowercase z", () => {
+  // #1610
+  let dt = DateTime.fromISO("2016-05-25T09:08:34.123Z");
+  isSame("2016-05-25T09:08:34.123z", dt.toObject());
+});
+
 test("DateTime.fromISO() accepts just the year", () => {
   isSame("2016", {
     year: 2016,
