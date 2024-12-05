@@ -214,21 +214,14 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
-function toISODate(o, extended) {
-  const longFormat = o.c.year > 9999 || o.c.year < 0;
-  let c = "";
-  if (longFormat && o.c.year >= 0) c += "+";
-  c += padStart(o.c.year, longFormat ? 6 : 4);
+function toISODate(o, extended, precisionUnitIndex = 2) {
+  const extendedGlyph = extended ? "-" : "",
+    yearExceedsFourDigits = o.c.year > 9999,
+    yearPadding = o.c.year < 0 || yearExceedsFourDigits ? 6 : 4;
 
-  if (extended) {
-    c += "-";
-    c += padStart(o.c.month);
-    c += "-";
-    c += padStart(o.c.day);
-  } else {
-    c += padStart(o.c.month);
-    c += padStart(o.c.day);
-  }
+  let c = (yearExceedsFourDigits ? "+" : "") + padStart(o.c.year, yearPadding);
+  if (precisionUnitIndex >= 1) c += extendedGlyph + padStart(o.c.month);
+  if (precisionUnitIndex >= 2) c += extendedGlyph + padStart(o.c.day);
   return c;
 }
 
@@ -238,27 +231,18 @@ function toISOTime(
   suppressSeconds,
   suppressMilliseconds,
   includeOffset,
-  extendedZone
+  extendedZone,
+  precisionUnitIndex
 ) {
-  let c = padStart(o.c.hour);
-  if (extended) {
-    c += ":";
-    c += padStart(o.c.minute);
-    if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
-      c += ":";
-    }
-  } else {
-    c += padStart(o.c.minute);
-  }
+  const extendedGlyph = extended ? ":" : "",
+    showSeconds = !suppressSeconds || o.c.millisecond != 0 || o.c.second != 0,
+    showMilliseconds = showSeconds && (!suppressMilliseconds || o.c.millisecond != 0);
 
-  if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
-    c += padStart(o.c.second);
-
-    if (o.c.millisecond !== 0 || !suppressMilliseconds) {
-      c += ".";
-      c += padStart(o.c.millisecond, 3);
-    }
-  }
+  let c = "";
+  if (precisionUnitIndex >= 3) c += padStart(o.c.hour);
+  if (precisionUnitIndex >= 4) c += extendedGlyph + padStart(o.c.minute);
+  if (precisionUnitIndex >= 5 && showSeconds) c += extendedGlyph + padStart(o.c.second);
+  if (precisionUnitIndex >= 6 && showMilliseconds) c += "." + padStart(o.c.millisecond, 3);
 
   if (includeOffset) {
     if (o.isOffsetFixed && o.offset === 0 && !extendedZone) {
@@ -1832,10 +1816,13 @@ export default class DateTime {
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'years', 'months', 'days', 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
    * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
    * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
+   * @example DateTime.now().toISO({ precision: 'day' }) //=> '2017-04-22Z'
+   * @example DateTime.now().toISO({ precision: 'minute' }) //=> '2017-04-22T20:47Z'
    * @return {string|null}
    */
   toISO({
@@ -1844,16 +1831,25 @@ export default class DateTime {
     suppressMilliseconds = false,
     includeOffset = true,
     extendedZone = false,
+    precision = "milliseconds",
   } = {}) {
-    if (!this.isValid) {
-      return null;
-    }
+    if (!this.isValid) return null;
 
-    const ext = format === "extended";
+    const isExtendedFormat = format === "extended",
+      precisionUnitIndex = orderedUnits.indexOf(normalizeUnit(precision));
+    if (precisionUnitIndex < 0) throw new InvalidUnitError(precision);
 
-    let c = toISODate(this, ext);
-    c += "T";
-    c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone);
+    let c = toISODate(this, isExtendedFormat, precisionUnitIndex);
+    c += precisionUnitIndex >= 3 ? "T" : ""; //only show T if time is visible
+    c += toISOTime(
+      this,
+      isExtendedFormat,
+      suppressSeconds,
+      suppressMilliseconds,
+      includeOffset,
+      extendedZone,
+      precisionUnitIndex
+    );
     return c;
   }
 
@@ -1861,16 +1857,16 @@ export default class DateTime {
    * Returns an ISO 8601-compliant string representation of this DateTime's date component
    * @param {Object} opts - options
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='day'] - truncate output to desired precision: 'years', 'months', or 'days'.
    * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
    * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
+   * @example DateTime.utc(1982, 5, 25).toISODate({ precision: 'month' }) //=> '1982-05'
    * @return {string|null}
    */
-  toISODate({ format = "extended" } = {}) {
-    if (!this.isValid) {
-      return null;
-    }
-
-    return toISODate(this, format === "extended");
+  toISODate({ format = "extended", precision = "day" } = {}) {
+    if (!this.isValid) return null;
+    const precisionUnitIndex = orderedUnits.indexOf(normalizeUnit(precision));
+    return toISODate(this, format === "extended", precisionUnitIndex);
   }
 
   /**
@@ -1891,10 +1887,12 @@ export default class DateTime {
    * @param {boolean} [opts.extendedZone=true] - add the time zone format extension
    * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: 'basic' }) //=> '073419.361Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ includePrefix: true }) //=> 'T07:34:19.361Z'
+   * @example DateTime.utc().set({ hour: 7, minute: 34, second: 56 }).toISOTime({ precision: 'minute' }) //=> '07:34Z'
    * @return {string}
    */
   toISOTime({
@@ -1904,21 +1902,24 @@ export default class DateTime {
     includePrefix = false,
     extendedZone = false,
     format = "extended",
+    precision = "milliseconds",
   } = {}) {
-    if (!this.isValid) {
-      return null;
-    }
+    if (!this.isValid) return null;
 
-    let c = includePrefix ? "T" : "";
+    const isExtendedFormat = format === "extended",
+      precisionUnitIndex = orderedUnits.indexOf(normalizeUnit(precision));
+    if (precisionUnitIndex < 0) throw new InvalidUnitError(precision);
+
     return (
-      c +
+      (includePrefix && precisionUnitIndex >= 3 ? "T" : "") +
       toISOTime(
         this,
-        format === "extended",
+        isExtendedFormat,
         suppressSeconds,
         suppressMilliseconds,
         includeOffset,
-        extendedZone
+        extendedZone,
+        precisionUnitIndex
       )
     );
   }
