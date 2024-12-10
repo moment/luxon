@@ -103,7 +103,7 @@ test("formatString", () => {
   expect(formatString(Formats.DATETIME_MED_WITH_WEEKDAY)).toBe("EEE, d LLL yyyy, h:mm a");
   expect(formatString(Formats.DATETIME_FULL_WITH_SECONDS)).toBe("LLLL d, yyyy, h:mm:ss a");
   expect(formatString(Formats.DATETIME_HUGE_WITH_SECONDS)).toBe("EEEE, LLLL d, yyyy, h:mm:ss a");
-  expect(formatString("Give Me Default?")).toBe("EEEE, LLLL d, yyyy, h:mm a");
+  expect(formatString("Default")).toBe("EEEE, LLLL d, yyyy, h:mm a");
 });
 
 test("weekdays", () => {
