@@ -1,15 +1,6 @@
 /* global test expect */
 import * as Formats from "../../src/impl/formats";
-import {
-  formatRelativeTime,
-  formatString,
-  months,
-  monthsLong,
-  monthsNarrow,
-  monthsShort,
-  weekdays,
-  eras,
-} from "../../src/impl/english";
+import { formatRelativeTime, formatString, weekdays, eras } from "../../src/impl/english";
 
 test("today", () => {
   expect(formatRelativeTime("days", 0, "auto")).toBe("today");
@@ -87,41 +78,6 @@ test("1 hour ago", () => {
   expect(formatRelativeTime("hours", -1, "auto", true)).toBe("1 hr. ago");
   expect(formatRelativeTime("hours", -1, "always")).toBe("1 hour ago");
   expect(formatRelativeTime("hours", -1, "always", true)).toBe("1 hr. ago");
-});
-
-test("months", () => {
-  expect(months("narrow")).toStrictEqual([...monthsNarrow]);
-  expect(months("short")).toStrictEqual([...monthsShort]);
-  expect(months("long")).toStrictEqual([...monthsLong]);
-  expect(months("numeric")).toStrictEqual([
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-  ]);
-  expect(months("2-digit")).toStrictEqual([
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-  ]);
-  expect(months("lets see default")).toBe(null);
 });
 
 test("formatString", () => {

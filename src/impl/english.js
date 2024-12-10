@@ -182,7 +182,6 @@ export function formatString(knownFormat) {
     ]),
     key = stringify(filtered),
     dateTimeHuge = "EEEE, LLLL d, yyyy, h:mm a";
-  console.log(key);
   switch (key) {
     case stringify(Formats.DATE_SHORT):
       return "M/d/yyyy";
