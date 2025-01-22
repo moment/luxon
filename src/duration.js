@@ -863,6 +863,16 @@ export default class Duration {
   }
 
   /**
+   * Removes all units with values equal to 0 from this Duration.
+   * @example Duration.fromObject({ years: 2, days: 0, hours: 0, minutes: 0 }).removeZeroes().toObject() //=> { years: 2 }
+   * @return {Duration}
+   */
+  removeZeroes() {
+    const vals = removeZeroes(this.toObject());
+    return clone(this, { values: vals }, true);
+  }
+
+  /**
    * Get the years.
    * @type {number}
    */
