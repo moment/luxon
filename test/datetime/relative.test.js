@@ -118,13 +118,32 @@ test("DateTime#toRelativeCalendar uses the calendar", () => {
   expect(end.toRelativeCalendar({ base })).toBe("tomorrow");
 });
 
-test("DateTime#toRelativeCalendar picks the correct unit with no options", () => {
-  const now = DateTime.now();
-  const isLastDayOfMonth = now.endOf("month").day === now.day;
-  expect(now.plus({ days: 1 }).toRelativeCalendar()).toBe(
-    isLastDayOfMonth ? "next month" : "tomorrow"
-  );
-});
+Helpers.withNow(
+  "DateTime#toRelativeCalendar picks the correct unit with no options",
+  DateTime.fromObject({ year: 1983, month: 10, day: 14 }),
+  () => {
+    const now = DateTime.now();
+    expect(now.plus({ days: 1 }).toRelativeCalendar()).toBe("tomorrow");
+  }
+);
+
+Helpers.withNow(
+  "DateTime#toRelativeCalendar picks the correct unit with no options at last day of month",
+  DateTime.fromObject({ year: 1983, month: 10, day: 31 }),
+  () => {
+    const now = DateTime.now();
+    expect(now.plus({ days: 1 }).toRelativeCalendar()).toBe("next month");
+  }
+);
+
+Helpers.withNow(
+  "DateTime#toRelativeCalendar picks the correct unit with no options at least day of year",
+  DateTime.fromObject({ year: 1983, month: 12, day: 31 }),
+  () => {
+    const now = DateTime.now();
+    expect(now.plus({ days: 1 }).toRelativeCalendar()).toBe("next year");
+  }
+);
 
 test("DateTime#toRelativeCalendar returns null when used on an invalid date", () => {
   expect(DateTime.invalid("not valid").toRelativeCalendar()).toBe(null);
