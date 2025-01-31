@@ -2030,7 +2030,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns the epoch seconds of this DateTime.
+   * Returns the epoch seconds (as a floating point number) of this DateTime.
    * @return {number}
    */
   toSeconds() {
