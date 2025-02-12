@@ -2030,7 +2030,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns the epoch seconds of this DateTime.
+   * Returns the epoch seconds (including milliseconds in the fractional part) of this DateTime.
    * @return {number}
    */
   toSeconds() {
