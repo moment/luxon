@@ -1086,14 +1086,10 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(ex15.result).toBeInstanceOf(Object);
   expect(keyCount(ex15.result)).toBe(6);
 
-  const ex16 = DateTime.fromFormatExplain(
-    "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ PM",
-    "dd-MMMM-yyyy hh:mm:ss a",
-    {
-      locale: "ta",
-      numberingSystem: "tamldec",
-    }
-  );
+  const ex16 = DateTime.fromFormatExplain("௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ PM", "dd-MMMM-yyyy hh:mm:ss a", {
+    locale: "ta",
+    numberingSystem: "tamldec",
+  });
   expect(ex16.rawMatches).toBeInstanceOf(Array);
   expect(ex16.matches).toBeInstanceOf(Object);
   expect(keyCount(ex16.matches)).toBe(7);
