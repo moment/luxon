@@ -1,6 +1,6 @@
 /* global test expect */
 import { DateTime } from "../../src/luxon";
-import Helpers from "../helpers";
+import Helpers, { cldrMajorVersion } from "../helpers";
 import Settings from "../../src/settings";
 import { ConflictingSpecificationError } from "../../src/errors";
 
@@ -900,8 +900,11 @@ test("DateTime.fromFormatExplain() parses zone correctly", () => {
 });
 
 test("DateTime.fromFormatExplain() parses localized string with numberingSystem correctly", () => {
+  const cldr = cldrMajorVersion();
   const ex1 = DateTime.fromFormatExplain(
-    "೦೩-ಏಪ್ರಿಲ್-೨೦೧೯ ೧೨:೨೬:೦೭ ಅಪರಾಹ್ನ Asia/Calcutta",
+    cldr && cldr < 46
+      ? "೦೩-ಏಪ್ರಿಲ್-೨೦೧೯ ೧೨:೨೬:೦೭ ಅಪರಾಹ್ನ Asia/Calcutta"
+      : "೦೩-ಏಪ್ರಿಲ್-೨೦೧೯ ೧೨:೨೬:೦೭ PM Asia/Calcutta",
     "dd-MMMM-yyyy hh:mm:ss a z",
     { locale: "kn", numberingSystem: "knda" }
   );
@@ -1087,7 +1090,7 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex15.result)).toBe(6);
 
   const ex16 = DateTime.fromFormatExplain(
-    "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ பிற்பகல்",
+    cldr && cldr < 45 ? "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ பிற்பகல்" : "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ PM",
     "dd-MMMM-yyyy hh:mm:ss a",
     {
       locale: "ta",
