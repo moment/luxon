@@ -1,4 +1,4 @@
-/* global test expect */
+/* global test expect jest */
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
 
 test("IANAZone.create returns a singleton per zone name", () => {
@@ -14,6 +14,41 @@ test("IANAZone.create returns a singleton per zone name", () => {
 test("IANAZone.create should return IANAZone instance", () => {
   const result = IANAZone.create("America/Cancun");
   expect(result).toBeInstanceOf(IANAZone);
+});
+
+describe("IANAZone.hackyOffsetParsesCorrectly", () => {
+  beforeEach(() => {
+    IANAZone.resetCache();
+  });
+
+  test("is true", () => {
+    expect(IANAZone.hackyOffsetParsesCorrectly()).toBe(true);
+  });
+
+  test("is true when the date format is as expected", () => {
+    jest
+      .spyOn(IANAZone.getDtf("UTC"), "format")
+      .mockImplementation(() => "12/31/1969 AD, 15:45:55");
+    expect(IANAZone.hackyOffsetParsesCorrectly()).toBe(true);
+  });
+
+  test("is false when the date format swaps the month and day", () => {
+    jest
+      .spyOn(IANAZone.getDtf("UTC"), "format")
+      .mockImplementation(() => "31/12/1969 AD, 15:45:55");
+    expect(IANAZone.hackyOffsetParsesCorrectly()).toBe(false);
+  });
+
+  test("is false when the date format uses different delimiters", () => {
+    jest
+      .spyOn(IANAZone.getDtf("UTC"), "format")
+      .mockImplementation(() => "12-31-1969 AD, 15:45:55");
+    expect(IANAZone.hackyOffsetParsesCorrectly()).toBe(false);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 });
 
 test("IANAZone.isValidSpecifier", () => {
