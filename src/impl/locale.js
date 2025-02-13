@@ -158,9 +158,7 @@ function mapWeekdays(f) {
 function listStuff(loc, length, englishFn, intlFn) {
   const mode = loc.listingMode();
 
-  if (mode === "error") {
-    return null;
-  } else if (mode === "en") {
+  if (mode === "en") {
     return englishFn(length);
   } else {
     return intlFn(length);
