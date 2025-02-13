@@ -2093,6 +2093,15 @@ export default class DateTime {
 
   /**
    * Return the difference between two DateTimes as a Duration.
+   *
+   * Note that depending on the context you use the duration for, it might be necessary to pass the target units you need,
+   * as this defaults to milliseconds (see examples below).
+   *
+   * When you first calculate the duration as milliseconds and then in a second step shift the units, it's quite likely
+   * that there are cases where you get undesired results, e.g. 1 year -> 31622400000 ms -> 1 year and 6 days (see below)
+   *
+   * For details about calculation with duration units, see https://moment.github.io/luxon/#/math
+   *
    * @param {DateTime} otherDateTime - the DateTime to compare this one to
    * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
    * @param {Object} opts - options that affect the creation of the Duration
@@ -2100,10 +2109,19 @@ export default class DateTime {
    * @example
    * var i1 = DateTime.fromISO('1982-05-25T09:45'),
    *     i2 = DateTime.fromISO('1983-10-14T10:30');
-   * i2.diff(i1).toObject() //=> { milliseconds: 43807500000 }
-   * i2.diff(i1, 'hours').toObject() //=> { hours: 12168.75 }
-   * i2.diff(i1, ['months', 'days']).toObject() //=> { months: 16, days: 19.03125 }
-   * i2.diff(i1, ['months', 'days', 'hours']).toObject() //=> { months: 16, days: 19, hours: 0.75 }
+   * i2.diff(i1).toObject() // => { milliseconds: 43807500000 }
+   * i2.diff(i1, 'hours').toObject() // => { hours: 12168.75 }
+   * i2.diff(i1, ['months', 'days']).toObject() // => { months: 16, days: 19.03125 }
+   * i2.diff(i1, ['months', 'days', 'hours']).toObject() // => { months: 16, days: 19, hours: 0.75 }
+   *
+   * var d1 = DateTime.fromISO('2001-01-01T00:00:00').diff(DateTime.fromISO('2000-01-01T00:00:00'))
+   * // => { milliseconds: 31622400000 }
+   * var d2 = d1.shiftTo('years', 'months', 'days', 'hours', 'minutes', 'seconds')
+   * // => { years: 1, months: 0, days: 6, hours: 0, minutes: 0, seconds: 0 }
+   * var d3 = DateTime.fromISO('2001-01-01T00:00:00').diff(DateTime.fromISO('2000-01-01T00:00:00'),
+   *                   ['years', 'months', 'days', 'hours', 'minutes', 'seconds'])
+   * // => { years: 1, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 }
+   * @see Duration#shiftTo
    * @return {Duration}
    */
   diff(otherDateTime, unit = "milliseconds", opts = {}) {
