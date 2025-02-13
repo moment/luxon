@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from "../../src/luxon";
+import { DateTime, Settings } from "../../src/luxon";
 import Helpers from "../helpers";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
@@ -896,4 +896,26 @@ test("private language subtags don't break unicode subtags", () => {
   expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("islamic");
   expect(res.numberingSystem).toBe("thai");
+});
+
+test("DateTime.local works even after time zone change", () => {
+  // This test catches errors produced when guessOffsetForZone produces wildy wrong guesses
+  // This guards against a regression by broken caching in that method
+  Settings.resetCaches();
+  withDefaultZone("America/Los_Angeles", () => {
+    expect(DateTime.local(2024).year).toBe(2024);
+  });
+  withDefaultZone("America/Chicago", () => {
+    const dateTime = DateTime.local(2024, 11, 3, 0, 5, 0);
+    expect(dateTime.zoneName).toBe("America/Chicago");
+    expect(dateTime.toObject()).toEqual({
+      year: 2024,
+      month: 11,
+      day: 3,
+      hour: 0,
+      minute: 5,
+      second: 0,
+      millisecond: 0,
+    });
+  });
 });
