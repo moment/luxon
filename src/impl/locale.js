@@ -175,7 +175,7 @@ function supportsFastNumbers(loc) {
       loc.numberingSystem === "latn" ||
       !loc.locale ||
       loc.locale.startsWith("en") ||
-      getCachedIntResolvedOptions(loc.locale).numberingSystem === "latn"
+      getCachedIntResolvedOptions(loc.intl).numberingSystem === "latn"
     );
   }
 }
