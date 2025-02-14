@@ -78,6 +78,34 @@ test("DateTime#toRelative always rounds toward 0", () => {
   expect(base.minus({ days: 1, milliseconds: -1 }).toRelative({ base })).toBe("23 hours ago");
 });
 
+test("DateTime#toRelative rounds toward nearest integer", () => {
+  const base = DateTime.fromObject({ year: 1983, month: 10, day: 14 });
+  expect(base.plus({ minutes: 4.9 }).toRelative({ base, round: "nearest" })).toBe("in 5 minutes");
+  expect(base.plus({ minutes: 5.1 }).toRelative({ base, round: "nearest" })).toBe("in 5 minutes");
+
+  expect(base.plus({ minutes: 119 }).toRelative({ base, round: "nearest" })).toBe("in 2 hours");
+  expect(base.plus({ minutes: 121 }).toRelative({ base, round: "nearest" })).toBe("in 2 hours");
+
+  expect(base.plus({ days: 2.6 }).toRelative({ base, round: "nearest" })).toBe("in 3 days");
+  expect(base.plus({ days: 3.499 }).toRelative({ base, round: "nearest" })).toBe("in 3 days");
+
+  expect(base.plus({ months: 4.5 }).toRelative({ base, round: "nearest" })).toBe("in 5 months");
+  expect(base.plus({ months: 5.49 }).toRelative({ base, round: "nearest" })).toBe("in 5 months");
+
+  expect(base.plus({ months: 23 }).toRelative({ base, round: "nearest" })).toBe("in 2 years");
+  expect(base.plus({ months: 25 }).toRelative({ base, round: "nearest" })).toBe("in 2 years");
+});
+
+test("DateTime#toRelative rounds toward 0", () => {
+  const base = DateTime.fromObject({ year: 1983, month: 10, day: 14 });
+  expect(base.plus({ minutes: 4.9 }).toRelative({ base, round: "down" })).toBe("in 4 minutes");
+  expect(base.plus({ minutes: 4.9 }).toRelative({ base, round: true })).toBe("in 4 minutes");
+  expect(base.plus({ minutes: 119 }).toRelative({ base, round: "down" })).toBe("in 1 hour");
+  expect(base.plus({ days: 3.499 }).toRelative({ base, round: "down" })).toBe("in 3 days");
+  expect(base.plus({ months: 5.49 }).toRelative({ base, round: "down" })).toBe("in 5 months");
+  expect(base.plus({ months: 25 }).toRelative({ base, round: "down" })).toBe("in 2 years");
+});
+
 test("DateTime#toRelative uses the absolute time", () => {
   const base = DateTime.fromObject({ year: 1983, month: 10, day: 14, hour: 23, minute: 59 });
   const end = DateTime.fromObject({ year: 1983, month: 10, day: 15, hour: 0, minute: 3 });
