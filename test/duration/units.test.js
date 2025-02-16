@@ -364,13 +364,11 @@ test("Duration#valueOf value of the duration with lower and higher order units",
 // #removeZeroes()
 //-------
 
-test("Duration#removeZeroes leaves empty object if everything was zero", () => {
-  expect(Duration.fromObject({ years: 0, days: 0, hours: 0 }).removeZeroes().toObject()).toEqual(
-    {}
-  );
+test("Duration#removeZeros leaves empty object if everything was zero", () => {
+  expect(Duration.fromObject({ years: 0, days: 0, hours: 0 }).removeZeros().toObject()).toEqual({});
 });
 
-test("Duration#removeZeroes removes units with zero value", () => {
+test("Duration#removeZeros removes units with zero value", () => {
   expect(
     Duration.fromObject({
       years: 1,
@@ -382,7 +380,7 @@ test("Duration#removeZeroes removes units with zero value", () => {
       seconds: 6,
       milliseconds: 0,
     })
-      .removeZeroes()
+      .removeZeros()
       .toObject()
   ).toEqual({
     years: 1,
@@ -392,7 +390,7 @@ test("Duration#removeZeroes removes units with zero value", () => {
   });
 });
 
-test("Duration#removeZeroes removes nothing if no value is zero", () => {
+test("Duration#removeZeros removes nothing if no value is zero", () => {
   const dur = {
     years: 1,
     months: 2,
@@ -403,5 +401,11 @@ test("Duration#removeZeroes removes nothing if no value is zero", () => {
     seconds: 6,
     milliseconds: 7,
   };
-  expect(Duration.fromObject(dur).removeZeroes().toObject()).toEqual(dur);
+  expect(Duration.fromObject(dur).removeZeros().toObject()).toEqual(dur);
+});
+
+test("Duration#removeZeros maintains invalidity", () => {
+  const dur = Duration.invalid("because").removeZeros();
+  expect(dur.isValid).toBe(false);
+  expect(dur.invalidReason).toBe("because");
 });

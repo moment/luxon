@@ -495,21 +495,18 @@ export default class Duration {
    * dur.toHuman() //=> '1 month, 0 weeks, 5 hours, 6 minutes'
    * dur.toHuman({ listStyle: "long" }) //=> '1 month, 0 weeks, 5 hours, and 6 minutes'
    * dur.toHuman({ unitDisplay: "short" }) //=> '1 mth, 0 wks, 5 hr, 6 min'
-   * dur.toHuman({ showZeroes: false }) //=> '1 month, 5 hours, 6 minutes'
+   * dur.toHuman({ showZeros: false }) //=> '1 month, 5 hours, 6 minutes'
    * ```
    */
   toHuman(opts = {}) {
     if (!this.isValid) return INVALID;
 
-    opts = {
-      showZeros: true,
-      ...opts,
-    };
+    const showZeros = opts.showZeros !== false;
 
     const l = orderedUnits
       .map((unit) => {
         const val = this.values[unit];
-        if (isUndefined(val) || (val == 0 && !opts.showZeros)) {
+        if (isUndefined(val) || (val === 0 && !showZeros)) {
           return null;
         }
         return this.loc
@@ -871,11 +868,12 @@ export default class Duration {
 
   /**
    * Removes all units with values equal to 0 from this Duration.
-   * @example Duration.fromObject({ years: 2, days: 0, hours: 0, minutes: 0 }).removeZeroes().toObject() //=> { years: 2 }
+   * @example Duration.fromObject({ years: 2, days: 0, hours: 0, minutes: 0 }).removeZeros().toObject() //=> { years: 2 }
    * @return {Duration}
    */
-  removeZeroes() {
-    const vals = removeZeroes(this.toObject());
+  removeZeros() {
+    if (!this.isValid) return this;
+    const vals = removeZeroes(this.values);
     return clone(this, { values: vals }, true);
   }
 
