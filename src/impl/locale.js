@@ -1,4 +1,11 @@
-import { hasLocaleWeekInfo, hasRelative, padStart, roundTo, validateWeekSettings } from "./util.js";
+import {
+  hasList,
+  hasLocaleWeekInfo,
+  hasRelative,
+  padStart,
+  roundTo,
+  validateWeekSettings,
+} from "./util.js";
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
@@ -325,6 +332,26 @@ class PolyRelFormatter {
   }
 }
 
+/**
+ * @private
+ */
+class PolyListFormatter {
+  constructor(intl, opts) {
+    this.opts = opts;
+    if (hasList()) {
+      this.lf = getCachedLF(intl, opts);
+    }
+  }
+
+  format(list) {
+    if (this.lf) {
+      return this.lf.format(list);
+    } else {
+      return list.join(", ");
+    }
+  }
+}
+
 const fallbackWeekSettings = {
   firstDay: 1,
   minimalDays: 4,
@@ -507,7 +534,7 @@ export default class Locale {
   }
 
   listFormatter(opts = {}) {
-    return getCachedLF(this.intl, opts);
+    return new PolyListFormatter(this.intl, opts);
   }
 
   isEnglish() {
