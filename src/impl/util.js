@@ -167,7 +167,6 @@ export function roundTo(number, digits, rounding = "round") {
         ? Math.ceil(number * factor) / factor
         : Math.floor(number * factor) / factor;
     case "towardsZero":
-    case true: // For backwards compatibility
       return Math.trunc(number * factor) / factor;
     case "round":
       return Math.round(number * factor) / factor;
