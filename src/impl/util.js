@@ -175,7 +175,7 @@ export function roundTo(number, digits, rounding = "round") {
     case "ceil":
       return Math.ceil(number * factor) / factor;
     default:
-      throw new RangeError(`Value rounding ${rounding} is out of range for property format`);
+      throw new RangeError(`Value rounding ${rounding} is out of range`);
   }
 }
 
