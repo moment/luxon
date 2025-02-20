@@ -447,8 +447,9 @@ function quickDT(obj, opts) {
 
 function diffRelative(start, end, opts) {
   const round = isUndefined(opts.round) ? true : opts.round,
+    rounding = isUndefined(opts.rounding) ? "towardsZero" : opts.rounding,
     format = (c, unit) => {
-      c = roundTo(c, round || opts.calendary ? 0 : 2, true);
+      c = roundTo(c, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
       const formatter = end.loc.clone(opts).relFormatter(opts);
       return formatter.format(c, unit);
     },
@@ -2193,12 +2194,13 @@ export default class DateTime {
 
   /**
    * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-   * platform supports Intl.RelativeTimeFormat. Rounds down by default.
+   * platform supports Intl.RelativeTimeFormat. Rounds towards zero by default.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
    * @param {string|string[]} options.unit - use a specific unit or array of units; if omitted, or an array, the method will pick the best unit. Use an array or one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
    * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+   * @param {string} [options.rounding="towardsZero"] - rounding method to use when rounding the numbers in the output. Can be "towardsZero", "awayFromZero", "round", "floor", or "ceil".
    * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
