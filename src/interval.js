@@ -41,6 +41,10 @@ export default class Interval {
    * @private
    */
   constructor(config) {
+    if (!config) {
+      return Interval.invalid("no config supplied");
+    }
+
     /**
      * @access private
      */

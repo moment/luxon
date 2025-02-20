@@ -368,7 +368,9 @@ export default class Locale {
   }
 
   constructor(locale, numbering, outputCalendar, weekSettings, specifiedLocale) {
-    const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
+    const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(
+      locale || systemLocale()
+    );
 
     this.locale = parsedLocale;
     this.numberingSystem = numbering || parsedNumberingSystem || null;
