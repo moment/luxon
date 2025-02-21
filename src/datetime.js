@@ -523,7 +523,7 @@ export default class DateTime {
   /**
    * @access private
    */
-  constructor(config) {
+  constructor(config = {}) {
     const zone = config.zone || Settings.defaultZone;
 
     let invalid =
