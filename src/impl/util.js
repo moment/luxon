@@ -162,11 +162,11 @@ export function parseMillis(fraction) {
 export function roundTo(number, digits, rounding = "round") {
   const factor = 10 ** digits;
   switch (rounding) {
-    case "awayFromZero":
+    case "expand":
       return number > 0
         ? Math.ceil(number * factor) / factor
         : Math.floor(number * factor) / factor;
-    case "towardsZero":
+    case "trunc":
       return Math.trunc(number * factor) / factor;
     case "round":
       return Math.round(number * factor) / factor;

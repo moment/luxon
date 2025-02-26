@@ -45,31 +45,31 @@ test("DateTime#toRelative takes a round argument", () => {
 
 test("DateTime#toRelative takes a rounding argument", () => {
   const base = DateTime.fromObject({ year: 1983, month: 10, day: 14 });
-  expect(
-    base.plus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "awayFromZero" })
-  ).toBe("in 2 hours");
-  expect(
-    base.plus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "awayFromZero" })
-  ).toBe("in 3 hours");
-  expect(
-    base.minus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "awayFromZero" })
-  ).toBe("2 hours ago");
-  expect(
-    base.minus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "awayFromZero" })
-  ).toBe("3 hours ago");
+  expect(base.plus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "expand" })).toBe(
+    "in 2 hours"
+  );
+  expect(base.plus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "expand" })).toBe(
+    "in 3 hours"
+  );
+  expect(base.minus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "expand" })).toBe(
+    "2 hours ago"
+  );
+  expect(base.minus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "expand" })).toBe(
+    "3 hours ago"
+  );
 
-  expect(
-    base.plus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "towardsZero" })
-  ).toBe("in 1 hour");
-  expect(
-    base.plus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "towardsZero" })
-  ).toBe("in 2 hours");
-  expect(
-    base.minus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "towardsZero" })
-  ).toBe("1 hour ago");
-  expect(
-    base.minus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "towardsZero" })
-  ).toBe("2 hours ago");
+  expect(base.plus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "trunc" })).toBe(
+    "in 1 hour"
+  );
+  expect(base.plus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "trunc" })).toBe(
+    "in 2 hours"
+  );
+  expect(base.minus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "trunc" })).toBe(
+    "1 hour ago"
+  );
+  expect(base.minus({ hours: 2, milliseconds: 1 }).toRelative({ base, rounding: "trunc" })).toBe(
+    "2 hours ago"
+  );
 
   expect(base.plus({ hours: 2, milliseconds: -1 }).toRelative({ base, rounding: "round" })).toBe(
     "in 2 hours"
@@ -114,45 +114,31 @@ test("DateTime#toRelative takes a rounding argument", () => {
 test("DateTime#toRelative takes a round and a rounding argument", () => {
   const base = DateTime.fromObject({ year: 1983, month: 10, day: 14 });
   expect(
-    base
-      .plus({ hours: 2, milliseconds: -1 })
-      .toRelative({ base, round: false, rounding: "awayFromZero" })
+    base.plus({ hours: 2, milliseconds: -1 }).toRelative({ base, round: false, rounding: "expand" })
   ).toBe("in 2 hours");
   expect(
-    base
-      .plus({ hours: 2, milliseconds: 1 })
-      .toRelative({ base, round: false, rounding: "awayFromZero" })
+    base.plus({ hours: 2, milliseconds: 1 }).toRelative({ base, round: false, rounding: "expand" })
   ).toBe("in 2.01 hours");
   expect(
     base
       .minus({ hours: 2, milliseconds: -1 })
-      .toRelative({ base, round: false, rounding: "awayFromZero" })
+      .toRelative({ base, round: false, rounding: "expand" })
   ).toBe("2 hours ago");
   expect(
-    base
-      .minus({ hours: 2, milliseconds: 1 })
-      .toRelative({ base, round: false, rounding: "awayFromZero" })
+    base.minus({ hours: 2, milliseconds: 1 }).toRelative({ base, round: false, rounding: "expand" })
   ).toBe("2.01 hours ago");
 
   expect(
-    base
-      .plus({ hours: 2, milliseconds: -1 })
-      .toRelative({ base, round: false, rounding: "towardsZero" })
+    base.plus({ hours: 2, milliseconds: -1 }).toRelative({ base, round: false, rounding: "trunc" })
   ).toBe("in 1.99 hours");
   expect(
-    base
-      .plus({ hours: 2, milliseconds: 1 })
-      .toRelative({ base, round: false, rounding: "towardsZero" })
+    base.plus({ hours: 2, milliseconds: 1 }).toRelative({ base, round: false, rounding: "trunc" })
   ).toBe("in 2 hours");
   expect(
-    base
-      .minus({ hours: 2, milliseconds: -1 })
-      .toRelative({ base, round: false, rounding: "towardsZero" })
+    base.minus({ hours: 2, milliseconds: -1 }).toRelative({ base, round: false, rounding: "trunc" })
   ).toBe("1.99 hours ago");
   expect(
-    base
-      .minus({ hours: 2, milliseconds: 1 })
-      .toRelative({ base, round: false, rounding: "towardsZero" })
+    base.minus({ hours: 2, milliseconds: 1 }).toRelative({ base, round: false, rounding: "trunc" })
   ).toBe("2 hours ago");
 
   expect(
