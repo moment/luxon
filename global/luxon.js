@@ -910,6 +910,13 @@ var luxon = (function (exports) {
       return sysLocaleCache;
     }
   }
+  var intlResolvedOptionsCache = {};
+  function getCachedIntResolvedOptions(locString) {
+    if (!intlResolvedOptionsCache[locString]) {
+      intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+    }
+    return intlResolvedOptionsCache[locString];
+  }
   var weekInfoCache = {};
   function getCachedWeekInfo(locString) {
     var data = weekInfoCache[locString];
@@ -1003,7 +1010,7 @@ var luxon = (function (exports) {
     if (loc.numberingSystem && loc.numberingSystem !== "latn") {
       return false;
     } else {
-      return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || new Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn";
+      return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || getCachedIntResolvedOptions(loc.locale).numberingSystem === "latn";
     }
   }
 
@@ -1184,6 +1191,7 @@ var luxon = (function (exports) {
       intlDTCache = {};
       intlNumCache = {};
       intlRelCache = {};
+      intlResolvedOptionsCache = {};
     };
     Locale.fromObject = function fromObject(_temp) {
       var _ref2 = _temp === void 0 ? {} : _temp,
@@ -1360,7 +1368,7 @@ var luxon = (function (exports) {
       return getCachedLF(this.intl, opts);
     };
     _proto4.isEnglish = function isEnglish() {
-      return this.locale === "en" || this.locale.toLowerCase() === "en-us" || new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us");
+      return this.locale === "en" || this.locale.toLowerCase() === "en-us" || getCachedIntResolvedOptions(this.intl).locale.startsWith("en-us");
     };
     _proto4.getWeekSettings = function getWeekSettings() {
       if (this.weekSettings) {
@@ -4944,6 +4952,16 @@ var luxon = (function (exports) {
       }
 
       /**
+       * Returns the last DateTime included in the interval (since end is not part of the interval)
+       * @type {DateTime}
+       */
+    }, {
+      key: "lastDateTime",
+      get: function get() {
+        return this.isValid ? this.e ? this.e.minus(1) : null : null;
+      }
+
+      /**
        * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
        * @type {boolean}
        */
@@ -6160,14 +6178,25 @@ var luxon = (function (exports) {
   // This is safe for quickDT (used by local() and utc()) because we don't fill in
   // higher-order units from tsNow (as we do in fromObject, this requires that
   // offset is calculated from tsNow).
+  /**
+   * @param {Zone} zone
+   * @return {number}
+   */
   function guessOffsetForZone(zone) {
-    if (!zoneOffsetGuessCache[zone]) {
-      if (zoneOffsetTs === undefined) {
-        zoneOffsetTs = Settings.now();
-      }
-      zoneOffsetGuessCache[zone] = zone.offset(zoneOffsetTs);
+    if (zoneOffsetTs === undefined) {
+      zoneOffsetTs = Settings.now();
     }
-    return zoneOffsetGuessCache[zone];
+
+    // Do not cache anything but IANA zones, because it is not safe to do so.
+    // Guessing an offset which is not present in the zone can cause wrong results from fixOffset
+    if (zone.type !== "iana") {
+      return zone.offset(zoneOffsetTs);
+    }
+    var zoneName = zone.name;
+    if (!zoneOffsetGuessCache[zoneName]) {
+      zoneOffsetGuessCache[zoneName] = zone.offset(zoneOffsetTs);
+    }
+    return zoneOffsetGuessCache[zoneName];
   }
 
   // this is a dumbed down version of fromObject() that runs about 60% faster
@@ -7314,7 +7343,7 @@ var luxon = (function (exports) {
      * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
      * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
      * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
-     * @return {string}
+     * @return {string|null}
      */;
     _proto.toISO = function toISO(_temp4) {
       var _ref5 = _temp4 === void 0 ? {} : _temp4,
@@ -7344,7 +7373,7 @@ var luxon = (function (exports) {
      * @param {string} [opts.format='extended'] - choose between the basic and extended format
      * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
      * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
-     * @return {string}
+     * @return {string|null}
      */;
     _proto.toISODate = function toISODate(_temp5) {
       var _ref6 = _temp5 === void 0 ? {} : _temp5,
@@ -7426,7 +7455,7 @@ var luxon = (function (exports) {
     /**
      * Returns a string representation of this DateTime appropriate for use in SQL Date
      * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
-     * @return {string}
+     * @return {string|null}
      */;
     _proto.toSQLDate = function toSQLDate() {
       if (!this.isValid) {
@@ -7528,7 +7557,7 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Returns the epoch seconds of this DateTime.
+     * Returns the epoch seconds (including milliseconds in the fractional part) of this DateTime.
      * @return {number}
      */;
     _proto.toSeconds = function toSeconds() {
@@ -7648,7 +7677,7 @@ var luxon = (function (exports) {
     /**
      * Return an Interval spanning between this DateTime and another DateTime
      * @param {DateTime} otherDateTime - the other end point of the Interval
-     * @return {Interval}
+     * @return {Interval|DateTime}
      */;
     _proto.until = function until(otherDateTime) {
       return this.isValid ? Interval.fromDateTimes(this, otherDateTime) : this;
@@ -8575,7 +8604,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "3.5.0";
+  var VERSION = "3.6.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

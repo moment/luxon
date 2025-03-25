@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 3.5.0 | Documentation</title>
+  <title>luxon 3.6.0 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>3.5.0</code></div>
+          <div class='mb1'><code>3.6.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -42,6 +42,16 @@
                   href='#possiblycachedlocalweekdata'
                   class="">
                   possiblyCachedLocalWeekData
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#guessoffsetforzone'
+                  class="">
+                  guessOffsetForZone
                   
                 </a>
                 
@@ -846,16 +856,6 @@
               
                 
                 <li><a
-                  href='#formatoffset'
-                  class="">
-                  formatOffset
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
                   href='#zone'
                   class=" toggle-sibling">
                   Zone
@@ -1243,6 +1243,16 @@
               
                 
                 <li><a
+                  href='#formatoffset'
+                  class="">
+                  formatOffset
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#interval'
                   class=" toggle-sibling">
                   Interval
@@ -1318,6 +1328,12 @@
                         href='#intervalend'
                         class='regular pre-open'>
                         #end
+                      </a></li>
+                      
+                      <li><a
+                        href='#intervallastdatetime'
+                        class='regular pre-open'>
+                        #lastDateTime
                       </a></li>
                       
                       <li><a
@@ -2211,6 +2227,75 @@
 
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='guessoffsetforzone'>
+      guessOffsetForZone
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>guessOffsetForZone(zone: <a href="#zone">Zone</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>zone</span> <code class='quiet'>(<a href="#zone">Zone</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>:
+        
+      
+    
   
 
   
@@ -10243,7 +10328,7 @@ Defaults to the system's locale if no locale has been specified</p>
 
   <p>Returns an ISO 8601-compliant string representation of this DateTime</p>
 
-    <div class='pre p1 fill-light mt0'>toISO(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+    <div class='pre p1 fill-light mt0'>toISO(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | null)</div>
   
   
 
@@ -10347,7 +10432,7 @@ Defaults to the system's locale if no locale has been specified</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | null)</code>:
         
       
     
@@ -10400,7 +10485,7 @@ Defaults to the system's locale if no locale has been specified</p>
 
   <p>Returns an ISO 8601-compliant string representation of this DateTime's date component</p>
 
-    <div class='pre p1 fill-light mt0'>toISODate(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+    <div class='pre p1 fill-light mt0'>toISODate(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | null)</div>
   
   
 
@@ -10460,7 +10545,7 @@ Defaults to the system's locale if no locale has been specified</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | null)</code>:
         
       
     
@@ -10878,7 +10963,7 @@ Specifically, the string conforms to RFC 1123.</p>
 
   <p>Returns a string representation of this DateTime appropriate for use in SQL Date</p>
 
-    <div class='pre p1 fill-light mt0'>toSQLDate(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+    <div class='pre p1 fill-light mt0'>toSQLDate(): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | null)</div>
   
   
 
@@ -10896,7 +10981,7 @@ Specifically, the string conforms to RFC 1123.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | null)</code>:
         
       
     
@@ -11432,7 +11517,7 @@ Specifically, the string conforms to RFC 1123.</p>
 
   
 
-  <p>Returns the epoch seconds of this DateTime.</p>
+  <p>Returns the epoch seconds (including milliseconds in the fractional part) of this DateTime.</p>
 
     <div class='pre p1 fill-light mt0'>toSeconds(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
   
@@ -12055,7 +12140,7 @@ See <a href="#datetimediff">DateTime#diff</a></p>
 
   <p>Return an Interval spanning between this DateTime and another DateTime</p>
 
-    <div class='pre p1 fill-light mt0'>until(otherDateTime: <a href="#datetime">DateTime</a>): <a href="#interval">Interval</a></div>
+    <div class='pre p1 fill-light mt0'>until(otherDateTime: <a href="#datetime">DateTime</a>): (<a href="#interval">Interval</a> | <a href="#datetime">DateTime</a>)</div>
   
   
 
@@ -12087,7 +12172,7 @@ See <a href="#datetimediff">DateTime#diff</a></p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="#interval">Interval</a></code>:
+      <code>(<a href="#interval">Interval</a> | <a href="#datetime">DateTime</a>)</code>:
         
       
     
@@ -12614,95 +12699,6 @@ Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
     </div>
   
 </div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='formatoffset'>
-      formatOffset
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Returns the offset's value as a string</p>
-
-    <div class='pre p1 fill-light mt0'>formatOffset(offset: any, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>offset</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    What style of offset to return.
-Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    Epoch milliseconds for which to get the offset
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
 
   
 
@@ -17095,6 +17091,95 @@ Two Durations are equal iff they have the same units and the same values for eac
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='formatoffset'>
+      formatOffset
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Returns the offset's value as a string</p>
+
+    <div class='pre p1 fill-light mt0'>formatOffset(offset: any, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>offset</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    What style of offset to return.
+Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    Epoch milliseconds for which to get the offset
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='interval'>
       Interval
     </h3>
@@ -17843,6 +17928,60 @@ Combines overlapping and adjacent Intervals.</p>
   <p>Returns the end of the Interval</p>
 
     <div class='pre p1 fill-light mt0'>end</div>
+  
+    <p>
+      Type:
+      <a href="#datetime">DateTime</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='intervallastdatetime'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>lastDateTime</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Returns the last DateTime included in the interval (since end is not part of the interval)</p>
+
+    <div class='pre p1 fill-light mt0'>lastDateTime</div>
   
     <p>
       Type:
