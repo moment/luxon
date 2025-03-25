@@ -17,36 +17,36 @@ function getCachedLF(locString, opts = {}) {
   return dtf;
 }
 
-let intlDTCache = {};
+const intlDTCache = new Map();
 function getCachedDTF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
-  let dtf = intlDTCache[key];
-  if (!dtf) {
+  let dtf = intlDTCache.get(key);
+  if (dtf === undefined) {
     dtf = new Intl.DateTimeFormat(locString, opts);
-    intlDTCache[key] = dtf;
+    intlDTCache.set(key, dtf);
   }
   return dtf;
 }
 
-let intlNumCache = {};
+const intlNumCache = new Map();
 function getCachedINF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
-  let inf = intlNumCache[key];
-  if (!inf) {
+  let inf = intlNumCache.get(key);
+  if (inf === undefined) {
     inf = new Intl.NumberFormat(locString, opts);
-    intlNumCache[key] = inf;
+    intlNumCache.set(key, inf);
   }
   return inf;
 }
 
-let intlRelCache = {};
+const intlRelCache = new Map();
 function getCachedRTF(locString, opts = {}) {
   const { base, ...cacheKeyOpts } = opts; // exclude `base` from the options
   const key = JSON.stringify([locString, cacheKeyOpts]);
-  let inf = intlRelCache[key];
-  if (!inf) {
+  let inf = intlRelCache.get(key);
+  if (inf === undefined) {
     inf = new Intl.RelativeTimeFormat(locString, opts);
-    intlRelCache[key] = inf;
+    intlRelCache.set(key, inf);
   }
   return inf;
 }
@@ -61,22 +61,24 @@ function systemLocale() {
   }
 }
 
-let intlResolvedOptionsCache = {};
+const intlResolvedOptionsCache = new Map();
 function getCachedIntResolvedOptions(locString) {
-  if (!intlResolvedOptionsCache[locString]) {
-    intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+  let opts = intlResolvedOptionsCache.get(locString);
+  if (opts === undefined) {
+    opts = new Intl.DateTimeFormat(locString).resolvedOptions();
+    intlResolvedOptionsCache.set(locString, opts);
   }
-  return intlResolvedOptionsCache[locString];
+  return opts;
 }
 
-let weekInfoCache = {};
+const weekInfoCache = new Map();
 function getCachedWeekInfo(locString) {
-  let data = weekInfoCache[locString];
+  let data = weekInfoCache.get(locString);
   if (!data) {
     const locale = new Intl.Locale(locString);
     // browsers currently implement this as a property, but spec says it should be a getter function
     data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
-    weekInfoCache[locString] = data;
+    weekInfoCache.set(locString, data);
   }
   return data;
 }
@@ -357,10 +359,11 @@ export default class Locale {
 
   static resetCache() {
     sysLocaleCache = null;
-    intlDTCache = {};
-    intlNumCache = {};
-    intlRelCache = {};
-    intlResolvedOptionsCache = {};
+    intlDTCache.clear();
+    intlNumCache.clear();
+    intlRelCache.clear();
+    intlResolvedOptionsCache.clear();
+    weekInfoCache.clear();
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar, weekSettings } = {}) {

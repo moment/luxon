@@ -404,10 +404,12 @@ function guessOffsetForZone(zone) {
     return zone.offset(zoneOffsetTs);
   }
   const zoneName = zone.name;
-  if (!zoneOffsetGuessCache[zoneName]) {
-    zoneOffsetGuessCache[zoneName] = zone.offset(zoneOffsetTs);
+  let offsetGuess = zoneOffsetGuessCache.get(zoneName);
+  if (offsetGuess === undefined) {
+    offsetGuess = zone.offset(zoneOffsetTs);
+    zoneOffsetGuessCache.set(zoneName, offsetGuess);
   }
-  return zoneOffsetGuessCache[zoneName];
+  return offsetGuess;
 }
 
 // this is a dumbed down version of fromObject() that runs about 60% faster
@@ -497,7 +499,7 @@ let zoneOffsetTs;
  * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
  * zone.offset().
  */
-let zoneOffsetGuessCache = {};
+const zoneOffsetGuessCache = new Map();
 
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
@@ -1062,7 +1064,7 @@ export default class DateTime {
 
   static resetCache() {
     zoneOffsetTs = undefined;
-    zoneOffsetGuessCache = {};
+    zoneOffsetGuessCache.clear();
   }
 
   // INFO
