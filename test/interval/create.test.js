@@ -5,6 +5,15 @@ import Helpers from "../helpers";
 const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
 //------
+// new
+//------
+test("Default constructor works and returns an invalid instance", () => {
+  const interval = new Interval();
+  expect(interval.isValid).toBe(false);
+  expect(interval.invalidReason).toBe("no config supplied");
+});
+
+//------
 // .fromObject()
 //-------
 test("Interval.fromDateTimes creates an interval from datetimes", () => {
