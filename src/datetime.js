@@ -389,15 +389,27 @@ function normalizeUnitWithLocalWeeks(unit) {
 // This is safe for quickDT (used by local() and utc()) because we don't fill in
 // higher-order units from tsNow (as we do in fromObject, this requires that
 // offset is calculated from tsNow).
+/**
+ * @param {Zone} zone
+ * @return {number}
+ */
 function guessOffsetForZone(zone) {
-  if (!zoneOffsetGuessCache[zone]) {
-    if (zoneOffsetTs === undefined) {
-      zoneOffsetTs = Settings.now();
-    }
-
-    zoneOffsetGuessCache[zone] = zone.offset(zoneOffsetTs);
+  if (zoneOffsetTs === undefined) {
+    zoneOffsetTs = Settings.now();
   }
-  return zoneOffsetGuessCache[zone];
+
+  // Do not cache anything but IANA zones, because it is not safe to do so.
+  // Guessing an offset which is not present in the zone can cause wrong results from fixOffset
+  if (zone.type !== "iana") {
+    return zone.offset(zoneOffsetTs);
+  }
+  const zoneName = zone.name;
+  let offsetGuess = zoneOffsetGuessCache.get(zoneName);
+  if (offsetGuess === undefined) {
+    offsetGuess = zone.offset(zoneOffsetTs);
+    zoneOffsetGuessCache.set(zoneName, offsetGuess);
+  }
+  return offsetGuess;
 }
 
 // this is a dumbed down version of fromObject() that runs about 60% faster
@@ -487,7 +499,7 @@ let zoneOffsetTs;
  * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
  * zone.offset().
  */
-let zoneOffsetGuessCache = {};
+const zoneOffsetGuessCache = new Map();
 
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
@@ -1052,7 +1064,7 @@ export default class DateTime {
 
   static resetCache() {
     zoneOffsetTs = undefined;
-    zoneOffsetGuessCache = {};
+    zoneOffsetGuessCache.clear();
   }
 
   // INFO
@@ -2030,7 +2042,7 @@ export default class DateTime {
   }
 
   /**
-   * Returns the epoch seconds of this DateTime.
+   * Returns the epoch seconds (including milliseconds in the fractional part) of this DateTime.
    * @return {number}
    */
   toSeconds() {

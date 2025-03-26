@@ -1,6 +1,6 @@
 /* global test expect */
-
-import { formatRelativeTime } from "../../src/impl/english";
+import * as Formats from "../../src/impl/formats";
+import { formatRelativeTime, formatString, weekdays, eras } from "../../src/impl/english";
 
 test("today", () => {
   expect(formatRelativeTime("days", 0, "auto")).toBe("today");
@@ -78,4 +78,53 @@ test("1 hour ago", () => {
   expect(formatRelativeTime("hours", -1, "auto", true)).toBe("1 hr. ago");
   expect(formatRelativeTime("hours", -1, "always")).toBe("1 hour ago");
   expect(formatRelativeTime("hours", -1, "always", true)).toBe("1 hr. ago");
+});
+
+test("formatString", () => {
+  expect(formatString(Formats.DATE_SHORT)).toBe("M/d/yyyy");
+  expect(formatString(Formats.DATE_MED)).toBe("LLL d, yyyy");
+  expect(formatString(Formats.DATE_MED_WITH_WEEKDAY)).toBe("EEE, LLL d, yyyy");
+  expect(formatString(Formats.DATE_FULL)).toBe("LLLL d, yyyy");
+  expect(formatString(Formats.DATE_HUGE)).toBe("EEEE, LLLL d, yyyy");
+  expect(formatString(Formats.TIME_SIMPLE)).toBe("h:mm a");
+  expect(formatString(Formats.TIME_WITH_SECONDS)).toBe("h:mm:ss a");
+  expect(formatString(Formats.TIME_WITH_SHORT_OFFSET)).toBe("h:mm a");
+  expect(formatString(Formats.TIME_WITH_LONG_OFFSET)).toBe("h:mm a");
+  expect(formatString(Formats.TIME_24_SIMPLE)).toBe("HH:mm");
+  expect(formatString(Formats.TIME_24_WITH_SECONDS)).toBe("HH:mm:ss");
+  expect(formatString(Formats.TIME_24_WITH_SHORT_OFFSET)).toBe("HH:mm");
+  expect(formatString(Formats.TIME_24_WITH_LONG_OFFSET)).toBe("HH:mm");
+  expect(formatString(Formats.DATETIME_SHORT)).toBe("M/d/yyyy, h:mm a");
+  expect(formatString(Formats.DATETIME_MED)).toBe("LLL d, yyyy, h:mm a");
+  expect(formatString(Formats.DATETIME_FULL)).toBe("LLLL d, yyyy, h:mm a");
+  expect(formatString(Formats.DATETIME_HUGE)).toBe("EEEE, LLLL d, yyyy, h:mm a");
+  expect(formatString(Formats.DATETIME_SHORT_WITH_SECONDS)).toBe("M/d/yyyy, h:mm:ss a");
+  expect(formatString(Formats.DATETIME_MED_WITH_SECONDS)).toBe("LLL d, yyyy, h:mm:ss a");
+  expect(formatString(Formats.DATETIME_MED_WITH_WEEKDAY)).toBe("EEE, d LLL yyyy, h:mm a");
+  expect(formatString(Formats.DATETIME_FULL_WITH_SECONDS)).toBe("LLLL d, yyyy, h:mm:ss a");
+  expect(formatString(Formats.DATETIME_HUGE_WITH_SECONDS)).toBe("EEEE, LLLL d, yyyy, h:mm:ss a");
+  expect(formatString("Default")).toBe("EEEE, LLLL d, yyyy, h:mm a");
+});
+
+test("weekdays", () => {
+  expect(weekdays("narrow")).toStrictEqual(["M", "T", "W", "T", "F", "S", "S"]);
+  expect(weekdays("short")).toStrictEqual(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+  expect(weekdays("long")).toStrictEqual([
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ]);
+  expect(weekdays("numeric")).toStrictEqual(["1", "2", "3", "4", "5", "6", "7"]);
+  expect(weekdays(null)).toStrictEqual(null);
+});
+
+test("eras", () => {
+  expect(eras("narrow")).toStrictEqual(["B", "A"]);
+  expect(eras("short")).toStrictEqual(["BC", "AD"]);
+  expect(eras("long")).toStrictEqual(["Before Christ", "Anno Domini"]);
+  expect(eras("default")).toStrictEqual(null);
 });

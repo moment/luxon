@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.6.0 (2025-03-25)
+- Add `Interval.lastDateTime`
+- Fix a bug that could cause wrong timezone calculations when multiple timezones are in use 
+
 # 3.5.0 (2024-08-03)
 
 - Various performance improvements
