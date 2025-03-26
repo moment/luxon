@@ -72,6 +72,20 @@ test("DateTime.fromISO() optionally adopts the UTC offset provided", () => {
     millisecond: 0,
   });
 
+  // #1610 - lowercase z
+  dt = DateTime.fromISO("1983-10-14T13:30z", { setZone: true });
+  expect(dt.zone.name).toBe("UTC");
+  expect(dt.offset).toBe(0);
+  expect(dt.toObject()).toEqual({
+    year: 1983,
+    month: 10,
+    day: 14,
+    hour: 13,
+    minute: 30,
+    second: 0,
+    millisecond: 0,
+  });
+
   // #580
   dt = DateTime.fromISO("2016-05-25T09:08:34.123-00:30", { setZone: true });
   expect(dt.zone.name).toBe("UTC-0:30");
@@ -116,13 +130,13 @@ const isSame = (s, expected) => expect(DateTime.fromISO(s).toObject()).toEqual(e
 
 test("DateTime.fromISO() accepts both capital T and lowercase t", () => {
   // #1610
-  let dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00");
+  const dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00");
   isSame("2016-05-25t09:08:34.123+06:00", dt.toObject());
 });
 
 test("DateTime.fromISO() accepts both capital Z and lowercase z", () => {
   // #1610
-  let dt = DateTime.fromISO("2016-05-25T09:08:34.123Z");
+  const dt = DateTime.fromISO("2016-05-25T09:08:34.123Z");
   isSame("2016-05-25T09:08:34.123z", dt.toObject());
 });
 
