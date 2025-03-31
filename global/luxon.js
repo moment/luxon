@@ -593,12 +593,13 @@ var luxon = (function (exports) {
     return SystemZone;
   }(Zone);
 
-  var dtfCache = {};
-  function makeDTF(zone) {
-    if (!dtfCache[zone]) {
-      dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
+  var dtfCache = new Map();
+  function makeDTF(zoneName) {
+    var dtf = dtfCache.get(zoneName);
+    if (dtf === undefined) {
+      dtf = new Intl.DateTimeFormat("en-US", {
         hour12: false,
-        timeZone: zone,
+        timeZone: zoneName,
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -607,8 +608,9 @@ var luxon = (function (exports) {
         second: "2-digit",
         era: "short"
       });
+      dtfCache.set(zoneName, dtf);
     }
-    return dtfCache[zone];
+    return dtf;
   }
   var typeToPos = {
     year: 0,
@@ -647,7 +649,7 @@ var luxon = (function (exports) {
     }
     return filled;
   }
-  var ianaZoneCache = {};
+  var ianaZoneCache = new Map();
   /**
    * A zone identified by an IANA identifier, like America/New_York
    * @implements {Zone}
@@ -659,10 +661,11 @@ var luxon = (function (exports) {
      * @return {IANAZone}
      */
     IANAZone.create = function create(name) {
-      if (!ianaZoneCache[name]) {
-        ianaZoneCache[name] = new IANAZone(name);
+      var zone = ianaZoneCache.get(name);
+      if (zone === undefined) {
+        ianaZoneCache.set(name, zone = new IANAZone(name));
       }
-      return ianaZoneCache[name];
+      return zone;
     }
 
     /**
@@ -670,8 +673,8 @@ var luxon = (function (exports) {
      * @return {void}
      */;
     IANAZone.resetCache = function resetCache() {
-      ianaZoneCache = {};
-      dtfCache = {};
+      ianaZoneCache.clear();
+      dtfCache.clear();
     }
 
     /**
@@ -757,6 +760,7 @@ var luxon = (function (exports) {
      * @return {number}
      */;
     _proto.offset = function offset(ts) {
+      if (!this.valid) return NaN;
       var date = new Date(ts);
       if (isNaN(date)) return NaN;
       var dtf = makeDTF(this.name);
@@ -859,33 +863,33 @@ var luxon = (function (exports) {
     }
     return dtf;
   }
-  var intlDTCache = {};
+  var intlDTCache = new Map();
   function getCachedDTF(locString, opts) {
     if (opts === void 0) {
       opts = {};
     }
     var key = JSON.stringify([locString, opts]);
-    var dtf = intlDTCache[key];
-    if (!dtf) {
+    var dtf = intlDTCache.get(key);
+    if (dtf === undefined) {
       dtf = new Intl.DateTimeFormat(locString, opts);
-      intlDTCache[key] = dtf;
+      intlDTCache.set(key, dtf);
     }
     return dtf;
   }
-  var intlNumCache = {};
+  var intlNumCache = new Map();
   function getCachedINF(locString, opts) {
     if (opts === void 0) {
       opts = {};
     }
     var key = JSON.stringify([locString, opts]);
-    var inf = intlNumCache[key];
-    if (!inf) {
+    var inf = intlNumCache.get(key);
+    if (inf === undefined) {
       inf = new Intl.NumberFormat(locString, opts);
-      intlNumCache[key] = inf;
+      intlNumCache.set(key, inf);
     }
     return inf;
   }
-  var intlRelCache = {};
+  var intlRelCache = new Map();
   function getCachedRTF(locString, opts) {
     if (opts === void 0) {
       opts = {};
@@ -894,10 +898,10 @@ var luxon = (function (exports) {
       _opts.base;
       var cacheKeyOpts = _objectWithoutPropertiesLoose(_opts, _excluded); // exclude `base` from the options
     var key = JSON.stringify([locString, cacheKeyOpts]);
-    var inf = intlRelCache[key];
-    if (!inf) {
+    var inf = intlRelCache.get(key);
+    if (inf === undefined) {
       inf = new Intl.RelativeTimeFormat(locString, opts);
-      intlRelCache[key] = inf;
+      intlRelCache.set(key, inf);
     }
     return inf;
   }
@@ -910,21 +914,27 @@ var luxon = (function (exports) {
       return sysLocaleCache;
     }
   }
-  var intlResolvedOptionsCache = {};
+  var intlResolvedOptionsCache = new Map();
   function getCachedIntResolvedOptions(locString) {
-    if (!intlResolvedOptionsCache[locString]) {
-      intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+    var opts = intlResolvedOptionsCache.get(locString);
+    if (opts === undefined) {
+      opts = new Intl.DateTimeFormat(locString).resolvedOptions();
+      intlResolvedOptionsCache.set(locString, opts);
     }
-    return intlResolvedOptionsCache[locString];
+    return opts;
   }
-  var weekInfoCache = {};
+  var weekInfoCache = new Map();
   function getCachedWeekInfo(locString) {
-    var data = weekInfoCache[locString];
+    var data = weekInfoCache.get(locString);
     if (!data) {
       var locale = new Intl.Locale(locString);
       // browsers currently implement this as a property, but spec says it should be a getter function
       data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
-      weekInfoCache[locString] = data;
+      // minimalDays was removed from WeekInfo: https://github.com/tc39/proposal-intl-locale-info/issues/86
+      if (!("minimalDays" in data)) {
+        data = _extends({}, fallbackWeekSettings, data);
+      }
+      weekInfoCache.set(locString, data);
     }
     return data;
   }
@@ -1188,10 +1198,11 @@ var luxon = (function (exports) {
     };
     Locale.resetCache = function resetCache() {
       sysLocaleCache = null;
-      intlDTCache = {};
-      intlNumCache = {};
-      intlRelCache = {};
-      intlResolvedOptionsCache = {};
+      intlDTCache.clear();
+      intlNumCache.clear();
+      intlRelCache.clear();
+      intlResolvedOptionsCache.clear();
+      weekInfoCache.clear();
     };
     Locale.fromObject = function fromObject(_temp) {
       var _ref2 = _temp === void 0 ? {} : _temp,
@@ -1727,9 +1738,9 @@ var luxon = (function (exports) {
   }
 
   // cache of {numberingSystem: {append: regex}}
-  var digitRegexCache = {};
+  var digitRegexCache = new Map();
   function resetDigitRegexCache() {
-    digitRegexCache = {};
+    digitRegexCache.clear();
   }
   function digitRegex(_ref, append) {
     var numberingSystem = _ref.numberingSystem;
@@ -1737,13 +1748,17 @@ var luxon = (function (exports) {
       append = "";
     }
     var ns = numberingSystem || "latn";
-    if (!digitRegexCache[ns]) {
-      digitRegexCache[ns] = {};
+    var appendCache = digitRegexCache.get(ns);
+    if (appendCache === undefined) {
+      appendCache = new Map();
+      digitRegexCache.set(ns, appendCache);
     }
-    if (!digitRegexCache[ns][append]) {
-      digitRegexCache[ns][append] = new RegExp("" + numberingSystems[ns] + append);
+    var regex = appendCache.get(append);
+    if (regex === undefined) {
+      regex = new RegExp("" + numberingSystems[ns] + append);
+      appendCache.set(append, regex);
     }
-    return digitRegexCache[ns][append];
+    return regex;
   }
 
   var now = function now() {
@@ -4722,8 +4737,11 @@ var luxon = (function (exports) {
     }
 
     /**
-     * Merge an array of Intervals into a equivalent minimal set of Intervals.
+     * Merge an array of Intervals into an equivalent minimal set of Intervals.
      * Combines overlapping and adjacent Intervals.
+     * The resulting array will contain the Intervals in ascending order, that is, starting with the earliest Interval
+     * and ending with the latest.
+     *
      * @param {Array} intervals
      * @return {Array}
      */;
@@ -6193,10 +6211,12 @@ var luxon = (function (exports) {
       return zone.offset(zoneOffsetTs);
     }
     var zoneName = zone.name;
-    if (!zoneOffsetGuessCache[zoneName]) {
-      zoneOffsetGuessCache[zoneName] = zone.offset(zoneOffsetTs);
+    var offsetGuess = zoneOffsetGuessCache.get(zoneName);
+    if (offsetGuess === undefined) {
+      offsetGuess = zone.offset(zoneOffsetTs);
+      zoneOffsetGuessCache.set(zoneName, offsetGuess);
     }
-    return zoneOffsetGuessCache[zoneName];
+    return offsetGuess;
   }
 
   // this is a dumbed down version of fromObject() that runs about 60% faster
@@ -6286,7 +6306,7 @@ var luxon = (function (exports) {
    * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
    * zone.offset().
    */
-  var zoneOffsetGuessCache = {};
+  var zoneOffsetGuessCache = new Map();
 
   /**
    * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
@@ -6914,7 +6934,7 @@ var luxon = (function (exports) {
     };
     DateTime.resetCache = function resetCache() {
       zoneOffsetTs = undefined;
-      zoneOffsetGuessCache = {};
+      zoneOffsetGuessCache.clear();
     }
 
     // INFO
@@ -8604,7 +8624,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "3.6.0";
+  var VERSION = "3.6.1";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

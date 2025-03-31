@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 3.6.0 | Documentation</title>
+  <title>luxon 3.6.1 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>3.6.0</code></div>
+          <div class='mb1'><code>3.6.1</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -856,6 +856,16 @@
               
                 
                 <li><a
+                  href='#formatoffset'
+                  class="">
+                  formatOffset
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#zone'
                   class=" toggle-sibling">
                   Zone
@@ -1238,16 +1248,6 @@
                   
                   
                 </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#formatoffset'
-                  class="">
-                  formatOffset
-                  
-                </a>
                 
                 </li>
               
@@ -12715,6 +12715,95 @@ Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='formatoffset'>
+      formatOffset
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Returns the offset's value as a string</p>
+
+    <div class='pre p1 fill-light mt0'>formatOffset(offset: any, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>offset</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    What style of offset to return.
+Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    Epoch milliseconds for which to get the offset
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='zone'>
       Zone
     </h3>
@@ -17091,95 +17180,6 @@ Two Durations are equal iff they have the same units and the same values for eac
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='formatoffset'>
-      formatOffset
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Returns the offset's value as a string</p>
-
-    <div class='pre p1 fill-light mt0'>formatOffset(offset: any, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>offset</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    What style of offset to return.
-Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    Epoch milliseconds for which to get the offset
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='interval'>
       Interval
     </h3>
@@ -17724,8 +17724,10 @@ Accepts <code>&#x3C;start>/&#x3C;end></code>, <code>&#x3C;start>/&#x3C;duration>
 
   
 
-  <p>Merge an array of Intervals into a equivalent minimal set of Intervals.
-Combines overlapping and adjacent Intervals.</p>
+  <p>Merge an array of Intervals into an equivalent minimal set of Intervals.
+Combines overlapping and adjacent Intervals.
+The resulting array will contain the Intervals in ascending order, that is, starting with the earliest Interval
+and ending with the latest.</p>
 
     <div class='pre p1 fill-light mt0'>merge(intervals: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
   

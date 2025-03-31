@@ -392,12 +392,13 @@ class SystemZone extends Zone {
   }
 }
 
-let dtfCache = {};
-function makeDTF(zone) {
-  if (!dtfCache[zone]) {
-    dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
+const dtfCache = new Map();
+function makeDTF(zoneName) {
+  let dtf = dtfCache.get(zoneName);
+  if (dtf === undefined) {
+    dtf = new Intl.DateTimeFormat("en-US", {
       hour12: false,
-      timeZone: zone,
+      timeZone: zoneName,
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -406,8 +407,9 @@ function makeDTF(zone) {
       second: "2-digit",
       era: "short",
     });
+    dtfCache.set(zoneName, dtf);
   }
-  return dtfCache[zone];
+  return dtf;
 }
 
 const typeToPos = {
@@ -443,7 +445,7 @@ function partsOffset(dtf, date) {
   return filled;
 }
 
-let ianaZoneCache = {};
+const ianaZoneCache = new Map();
 /**
  * A zone identified by an IANA identifier, like America/New_York
  * @implements {Zone}
@@ -454,10 +456,11 @@ class IANAZone extends Zone {
    * @return {IANAZone}
    */
   static create(name) {
-    if (!ianaZoneCache[name]) {
-      ianaZoneCache[name] = new IANAZone(name);
+    let zone = ianaZoneCache.get(name);
+    if (zone === undefined) {
+      ianaZoneCache.set(name, (zone = new IANAZone(name)));
     }
-    return ianaZoneCache[name];
+    return zone;
   }
 
   /**
@@ -465,8 +468,8 @@ class IANAZone extends Zone {
    * @return {void}
    */
   static resetCache() {
-    ianaZoneCache = {};
-    dtfCache = {};
+    ianaZoneCache.clear();
+    dtfCache.clear();
   }
 
   /**
@@ -569,6 +572,7 @@ class IANAZone extends Zone {
    * @return {number}
    */
   offset(ts) {
+    if (!this.valid) return NaN;
     const date = new Date(ts);
 
     if (isNaN(date)) return NaN;
@@ -634,36 +638,36 @@ function getCachedLF(locString, opts = {}) {
   return dtf;
 }
 
-let intlDTCache = {};
+const intlDTCache = new Map();
 function getCachedDTF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
-  let dtf = intlDTCache[key];
-  if (!dtf) {
+  let dtf = intlDTCache.get(key);
+  if (dtf === undefined) {
     dtf = new Intl.DateTimeFormat(locString, opts);
-    intlDTCache[key] = dtf;
+    intlDTCache.set(key, dtf);
   }
   return dtf;
 }
 
-let intlNumCache = {};
+const intlNumCache = new Map();
 function getCachedINF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
-  let inf = intlNumCache[key];
-  if (!inf) {
+  let inf = intlNumCache.get(key);
+  if (inf === undefined) {
     inf = new Intl.NumberFormat(locString, opts);
-    intlNumCache[key] = inf;
+    intlNumCache.set(key, inf);
   }
   return inf;
 }
 
-let intlRelCache = {};
+const intlRelCache = new Map();
 function getCachedRTF(locString, opts = {}) {
   const { base, ...cacheKeyOpts } = opts; // exclude `base` from the options
   const key = JSON.stringify([locString, cacheKeyOpts]);
-  let inf = intlRelCache[key];
-  if (!inf) {
+  let inf = intlRelCache.get(key);
+  if (inf === undefined) {
     inf = new Intl.RelativeTimeFormat(locString, opts);
-    intlRelCache[key] = inf;
+    intlRelCache.set(key, inf);
   }
   return inf;
 }
@@ -678,22 +682,28 @@ function systemLocale() {
   }
 }
 
-let intlResolvedOptionsCache = {};
+const intlResolvedOptionsCache = new Map();
 function getCachedIntResolvedOptions(locString) {
-  if (!intlResolvedOptionsCache[locString]) {
-    intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+  let opts = intlResolvedOptionsCache.get(locString);
+  if (opts === undefined) {
+    opts = new Intl.DateTimeFormat(locString).resolvedOptions();
+    intlResolvedOptionsCache.set(locString, opts);
   }
-  return intlResolvedOptionsCache[locString];
+  return opts;
 }
 
-let weekInfoCache = {};
+const weekInfoCache = new Map();
 function getCachedWeekInfo(locString) {
-  let data = weekInfoCache[locString];
+  let data = weekInfoCache.get(locString);
   if (!data) {
     const locale = new Intl.Locale(locString);
     // browsers currently implement this as a property, but spec says it should be a getter function
     data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
-    weekInfoCache[locString] = data;
+    // minimalDays was removed from WeekInfo: https://github.com/tc39/proposal-intl-locale-info/issues/86
+    if (!("minimalDays" in data)) {
+      data = { ...fallbackWeekSettings, ...data };
+    }
+    weekInfoCache.set(locString, data);
   }
   return data;
 }
@@ -974,10 +984,11 @@ class Locale {
 
   static resetCache() {
     sysLocaleCache = null;
-    intlDTCache = {};
-    intlNumCache = {};
-    intlRelCache = {};
-    intlResolvedOptionsCache = {};
+    intlDTCache.clear();
+    intlNumCache.clear();
+    intlRelCache.clear();
+    intlResolvedOptionsCache.clear();
+    weekInfoCache.clear();
   }
 
   static fromObject({ locale, numberingSystem, outputCalendar, weekSettings } = {}) {
@@ -1469,22 +1480,26 @@ function parseDigits(str) {
 }
 
 // cache of {numberingSystem: {append: regex}}
-let digitRegexCache = {};
+const digitRegexCache = new Map();
 function resetDigitRegexCache() {
-  digitRegexCache = {};
+  digitRegexCache.clear();
 }
 
 function digitRegex({ numberingSystem }, append = "") {
   const ns = numberingSystem || "latn";
 
-  if (!digitRegexCache[ns]) {
-    digitRegexCache[ns] = {};
+  let appendCache = digitRegexCache.get(ns);
+  if (appendCache === undefined) {
+    appendCache = new Map();
+    digitRegexCache.set(ns, appendCache);
   }
-  if (!digitRegexCache[ns][append]) {
-    digitRegexCache[ns][append] = new RegExp(`${numberingSystems[ns]}${append}`);
+  let regex = appendCache.get(append);
+  if (regex === undefined) {
+    regex = new RegExp(`${numberingSystems[ns]}${append}`);
+    appendCache.set(append, regex);
   }
 
-  return digitRegexCache[ns][append];
+  return regex;
 }
 
 let now = () => Date.now(),
@@ -4507,8 +4522,11 @@ class Interval {
   }
 
   /**
-   * Merge an array of Intervals into a equivalent minimal set of Intervals.
+   * Merge an array of Intervals into an equivalent minimal set of Intervals.
    * Combines overlapping and adjacent Intervals.
+   * The resulting array will contain the Intervals in ascending order, that is, starting with the earliest Interval
+   * and ending with the latest.
+   *
    * @param {Array} intervals
    * @return {Array}
    */
@@ -5846,10 +5864,12 @@ function guessOffsetForZone(zone) {
     return zone.offset(zoneOffsetTs);
   }
   const zoneName = zone.name;
-  if (!zoneOffsetGuessCache[zoneName]) {
-    zoneOffsetGuessCache[zoneName] = zone.offset(zoneOffsetTs);
+  let offsetGuess = zoneOffsetGuessCache.get(zoneName);
+  if (offsetGuess === undefined) {
+    offsetGuess = zone.offset(zoneOffsetTs);
+    zoneOffsetGuessCache.set(zoneName, offsetGuess);
   }
-  return zoneOffsetGuessCache[zoneName];
+  return offsetGuess;
 }
 
 // this is a dumbed down version of fromObject() that runs about 60% faster
@@ -5939,7 +5959,7 @@ let zoneOffsetTs;
  * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
  * zone.offset().
  */
-let zoneOffsetGuessCache = {};
+const zoneOffsetGuessCache = new Map();
 
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
@@ -6504,7 +6524,7 @@ class DateTime {
 
   static resetCache() {
     zoneOffsetTs = undefined;
-    zoneOffsetGuessCache = {};
+    zoneOffsetGuessCache.clear();
   }
 
   // INFO
@@ -8005,7 +8025,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "3.6.0";
+const VERSION = "3.6.1";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, Settings, SystemZone, VERSION, Zone };
 //# sourceMappingURL=luxon.js.map
