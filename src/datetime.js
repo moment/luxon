@@ -2185,6 +2185,7 @@ export default class DateTime {
    */
   equals(other) {
     return (
+      other instanceof DateTime &&
       this.isValid &&
       other.isValid &&
       this.valueOf() === other.valueOf() &&
