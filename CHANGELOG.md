@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.6.1 (2025-03-31)
+- Add Fallback for `minimalDays` being removed from Intl.WeekInfo
+- Fix various caches when JS keywords like "constructor" are used for names
+
 # 3.6.0 (2025-03-25)
 - Add `Interval.lastDateTime`
 - Fix a bug that could cause wrong timezone calculations when multiple timezones are in use 
