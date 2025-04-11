@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime, Settings, IANAZone } from "../../src/luxon";
 
 var Helpers = require("../helpers");
 
@@ -337,4 +337,30 @@ test("Setting the default zone to 'system' gives you back the system zone", () =
 
 test("invalid DateTimes have no zone", () => {
   expect(DateTime.invalid("because").zoneName).toBe(null);
+});
+
+test("can parse zones with special JS keywords as invalid", () => {
+  for (const kw of ["constructor", "__proto__"]) {
+    const dt = DateTime.fromISO(`2020-01-01T11:22:33+01:00[${kw}]`);
+    expect(dt.invalidReason).toBe("unsupported zone");
+    expect(dt.invalidExplanation).toBe(`the zone "${kw}" is not supported`);
+  }
+});
+
+test("Special JS keywords produce invalid Zone", () => {
+  for (const kw of ["constructor", "__proto__"]) {
+    const zone = IANAZone.create(kw);
+    expect(zone.isValid).toBe(false);
+  }
+});
+
+test("Invalid Zones named after special JS keywords produce NaN offset", () => {
+  for (const kw of ["constructor", "__proto__"]) {
+    const zone = IANAZone.create(kw);
+    expect(zone.offset(1742926058000)).toBe(NaN);
+  }
+});
+
+test("Invalid zones produce NaN offset", () => {
+  expect(IANAZone.create("INVALID").offset(1742926058000)).toBe(NaN);
 });

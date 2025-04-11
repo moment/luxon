@@ -309,6 +309,36 @@ test("Duration#toHuman accepts number format opts", () => {
   );
 });
 
+test("Duration#toHuman accepts hiding of zero values", () => {
+  expect(
+    Duration.fromObject({
+      years: 1,
+      months: 0,
+      weeks: 1,
+      days: 0,
+      hours: 4,
+      minutes: 0,
+      seconds: 6,
+      milliseconds: 0,
+    }).toHuman({ showZeros: false })
+  ).toEqual("1 year, 1 week, 4 hours, 6 seconds");
+});
+
+test("Duration#toHuman handles undefined showZeros", () => {
+  expect(
+    Duration.fromObject({
+      years: 1,
+      months: 0,
+      weeks: 1,
+      days: 0,
+      hours: 4,
+      minutes: 0,
+      seconds: 6,
+      milliseconds: 0,
+    }).toHuman({ showZeros: undefined })
+  ).toEqual("1 year, 0 months, 1 week, 0 days, 4 hours, 0 minutes, 6 seconds, 0 milliseconds");
+});
+
 test("Duration#toHuman works in differt languages", () => {
   expect(dur().reconfigure({ locale: "fr" }).toHuman()).toEqual(
     "1 an, 2 mois, 1 semaine, 3 jours, 4 heures, 5 minutes, 6 secondes, 7 millisecondes"

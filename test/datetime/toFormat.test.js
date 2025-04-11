@@ -528,6 +528,10 @@ test("DateTime#toFormat() accepts literals in single quotes", () => {
   expect(dt.toFormat("MMdd'T'hh")).toBe("0525T09");
 });
 
+test("DateTime#toFormat allows escaping of single quotes", () => {
+  expect(dt.toFormat("dd/MM/yyyy 'at' ''hh:mm''")).toBe("25/05/1982 at '09:23'");
+});
+
 test("DateTime#toFormat() uses the numbering system", () => {
   expect(dt.reconfigure({ numberingSystem: "beng" }).toFormat("S")).toBe("১২৩");
   expect(dt.toFormat("S", { numberingSystem: "beng" })).toBe("১২৩");

@@ -71,20 +71,24 @@ export function parseDigits(str) {
 }
 
 // cache of {numberingSystem: {append: regex}}
-let digitRegexCache = {};
+const digitRegexCache = new Map();
 export function resetDigitRegexCache() {
-  digitRegexCache = {};
+  digitRegexCache.clear();
 }
 
 export function digitRegex({ numberingSystem }, append = "") {
   const ns = numberingSystem || "latn";
 
-  if (!digitRegexCache[ns]) {
-    digitRegexCache[ns] = {};
+  let appendCache = digitRegexCache.get(ns);
+  if (appendCache === undefined) {
+    appendCache = new Map();
+    digitRegexCache.set(ns, appendCache);
   }
-  if (!digitRegexCache[ns][append]) {
-    digitRegexCache[ns][append] = new RegExp(`${numberingSystems[ns]}${append}`);
+  let regex = appendCache.get(append);
+  if (regex === undefined) {
+    regex = new RegExp(`${numberingSystems[ns]}${append}`);
+    appendCache.set(append, regex);
   }
 
-  return digitRegexCache[ns][append];
+  return regex;
 }
