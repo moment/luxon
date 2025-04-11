@@ -54,10 +54,13 @@ import Invalid from "./impl/invalid.js";
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
 const Precision = {
-  hour: 1,
-  minute: 2,
-  second: 3,
-  millisecond: 4,
+  year: 0,
+  month: 1,
+  day: 2,
+  hour: 3,
+  minute: 4,
+  second: 5,
+  millisecond: 6,
 };
 
 function unsupportedZone(zone) {
@@ -220,20 +223,18 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
-function toISODate(o, extended) {
+function toISODate(o, extended, precision) {
+  const desiredPrecision = Precision[normalizeUnit(precision)];
+  if (desiredPrecision === undefined) throw new InvalidUnitError(precision);
+  const extendedGlyph = extended ? "-" : "";
   const longFormat = o.c.year > 9999 || o.c.year < 0;
-  let c = "";
-  if (longFormat && o.c.year >= 0) c += "+";
+  let c = longFormat && o.c.year >= 0 ? "+" : "";
   c += padStart(o.c.year, longFormat ? 6 : 4);
-
-  if (extended) {
-    c += "-";
-    c += padStart(o.c.month);
-    c += "-";
-    c += padStart(o.c.day);
-  } else {
-    c += padStart(o.c.month);
-    c += padStart(o.c.day);
+  if (desiredPrecision >= Precision.month) {
+    c += extendedGlyph + padStart(o.c.month);
+  }
+  if (desiredPrecision >= Precision.day) {
+    c += extendedGlyph + padStart(o.c.day);
   }
   return c;
 }
@@ -253,7 +254,10 @@ function toISOTime(
   const showSeconds = !(suppressSeconds && o.c.millisecond == 0 && o.c.second == 0);
   const showMilliseconds = showSeconds && !(suppressMilliseconds && o.c.millisecond == 0);
 
-  let c = padStart(o.c.hour);
+  let c = "";
+  if (desiredPrecision >= Precision.hour) {
+    c += padStart(o.c.hour);
+  }
   if (desiredPrecision >= Precision.minute) {
     c += extendedGlyph + padStart(o.c.minute);
   }
@@ -1836,11 +1840,12 @@ export default class DateTime {
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
-   * @param {string} [opts.precision='milliseconds'] - specify desired time precision: 'hours', 'minutes', 'seconds' or 'milliseconds'
+   * @param {string} [opts.precision='milliseconds'] - specify desired DateTime precision: 'years', 'months', 'days', 'hours', 'minutes', 'seconds' or 'milliseconds'
    * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
    * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
+   * @example DateTime.now().toISO({ precision: 'day' }) //=> '2017-04-22Z'
    * @example DateTime.now().toISO({ precision: 'minute' }) //=> '2017-04-22T20:47Z'
    * @return {string|null}
    */
@@ -1855,11 +1860,13 @@ export default class DateTime {
     if (!this.isValid) {
       return null;
     }
+    const desiredPrecision = Precision[normalizeUnit(precision)];
+    if (desiredPrecision === undefined) throw new InvalidUnitError(precision);
 
     const ext = format === "extended";
 
-    let c = toISODate(this, ext);
-    c += "T";
+    let c = toISODate(this, ext, precision);
+    c += desiredPrecision >= Precision.hour ? "T" : "";
     c += toISOTime(
       this,
       ext,
@@ -1876,16 +1883,18 @@ export default class DateTime {
    * Returns an ISO 8601-compliant string representation of this DateTime's date component
    * @param {Object} opts - options
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - specify desired date precision: 'years', 'months', or 'days'
    * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
    * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
+   * @example DateTime.utc(1982, 5, 25).toISODate({ precision: 'month' }) //=> '1982-05'
    * @return {string|null}
    */
-  toISODate({ format = "extended" } = {}) {
+  toISODate({ format = "extended", precision = "day" } = {}) {
     if (!this.isValid) {
       return null;
     }
 
-    return toISODate(this, format === "extended");
+    return toISODate(this, format === "extended", precision);
   }
 
   /**
@@ -1926,8 +1935,10 @@ export default class DateTime {
     if (!this.isValid) {
       return null;
     }
+    const desiredPrecision = Precision[normalizeUnit(precision)];
+    if (desiredPrecision === undefined) throw new InvalidUnitError(precision);
 
-    let c = includePrefix ? "T" : "";
+    const c = includePrefix && desiredPrecision >= Precision.hour ? "T" : "";
     return (
       c +
       toISOTime(
@@ -1973,7 +1984,7 @@ export default class DateTime {
     if (!this.isValid) {
       return null;
     }
-    return toISODate(this, true);
+    return toISODate(this, true, "day");
   }
 
   /**
