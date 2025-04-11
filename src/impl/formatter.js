@@ -375,21 +375,21 @@ export default class Formatter {
     const tokenToField = (token) => {
         switch (token[0]) {
           case "S":
-            return "millisecond";
+            return "milliseconds";
           case "s":
-            return "second";
+            return "seconds";
           case "m":
-            return "minute";
+            return "minutes";
           case "h":
-            return "hour";
+            return "hours";
           case "d":
-            return "day";
+            return "days";
           case "w":
-            return "week";
+            return "weeks";
           case "M":
-            return "month";
+            return "months";
           case "y":
-            return "year";
+            return "years";
           default:
             return null;
         }
@@ -397,7 +397,8 @@ export default class Formatter {
       tokenToString = (lildur) => (token) => {
         const mapped = tokenToField(token);
         if (mapped) {
-          return this.num(lildur.get(mapped), token.length);
+          const inversionFactor = lildur < 0 && mapped !== Object.keys(lildur.values)[0] ? -1 : 1;
+          return this.num(lildur.get(mapped) * inversionFactor, token.length);
         } else {
           return token;
         }
