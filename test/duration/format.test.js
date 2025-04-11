@@ -283,6 +283,14 @@ test("Duration#toFormat returns a lame string for invalid durations", () => {
   expect(Duration.invalid("because").toFormat("yy")).toBe("Invalid Duration");
 });
 
+test("Duration#toFormat shows negative sign on the largest unit", () => {
+  expect(Duration.fromObject({ years: -3, seconds: -45 }).toFormat("yyss")).toBe("-0345");
+  expect(
+    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("'before'yy'between'ss'after'")
+  ).toBe("before-03between45after");
+  expect(Duration.fromObject({ years: -3, seconds: -45 }).toFormat("ssyy")).toBe("45-03");
+});
+
 //------
 // #humanize()
 //------
