@@ -219,19 +219,24 @@ function toISODate(o, extended, precisionUnitIndex = 2) {
   let c = "";
   if (longFormat && o.c.year >= 0) c += "+";
   c += padStart(o.c.year, longFormat ? 6 : 4);
-
-  if (extended) {
-    if (precisionUnitIndex >= 1) {
-      c += "-";
-      c += padStart(o.c.month);
-    }
-    if (precisionUnitIndex >= 2) {
-      c += "-";
+  switch (precisionUnitIndex) {
+    case 6: // millisecond precision
+    case 5: // second precision
+    case 4: // minute precision
+    case 3: // hour precision
+    case 2: // day precision
+      if (extended) {
+        c += "-";
+        c += padStart(o.c.month);
+        c += "-";
+      } else {
+        c += padStart(o.c.month);
+      }
       c += padStart(o.c.day);
-    }
-  } else {
-    if (precisionUnitIndex >= 1) c += padStart(o.c.month);
-    if (precisionUnitIndex >= 2) c += padStart(o.c.day);
+      break;
+    case 1: // month precision
+      if (extended) c += "-";
+      c += padStart(o.c.month);
   }
   return c;
 }
@@ -245,26 +250,54 @@ function toISOTime(
   extendedZone,
   precisionUnitIndex
 ) {
-  const showSeconds =
-    precisionUnitIndex >= 5 && (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds);
-  let c = precisionUnitIndex >= 3 ? padStart(o.c.hour) : "";
-  if (precisionUnitIndex >= 4) {
-    if (extended) {
-      c += ":";
+  let showSeconds,
+    c = "";
+  switch (precisionUnitIndex) {
+    case 6: // millisecond precision
+      showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0;
+      c += padStart(o.c.hour);
+      if (extended) {
+        c += ":";
+        c += padStart(o.c.minute);
+        if (showSeconds) {
+          c += ":";
+          c += padStart(o.c.second);
+        }
+      } else {
+        c += padStart(o.c.minute);
+        if (showSeconds) {
+          c += padStart(o.c.second);
+        }
+      }
+      if (showSeconds && (!suppressMilliseconds || o.c.millisecond !== 0)) {
+        c += ".";
+        c += padStart(o.c.millisecond, 3);
+      }
+      break;
+    case 5: // second precision
+      showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0;
+      c += padStart(o.c.hour);
+      if (extended) {
+        c += ":";
+        c += padStart(o.c.minute);
+        if (showSeconds) {
+          c += ":";
+          c += padStart(o.c.second);
+        }
+      } else {
+        c += padStart(o.c.minute);
+        if (showSeconds) {
+          c += padStart(o.c.second);
+        }
+      }
+      break;
+    case 4: // minute precision
+      c += padStart(o.c.hour);
+      if (extended) c += ":";
       c += padStart(o.c.minute);
-      if (showSeconds) c += ":";
-    } else {
-      c += padStart(o.c.minute);
-    }
-  }
-
-  if (showSeconds) {
-    c += padStart(o.c.second);
-
-    if (precisionUnitIndex >= 6 && (o.c.millisecond !== 0 || !suppressMilliseconds)) {
-      c += ".";
-      c += padStart(o.c.millisecond, 3);
-    }
+      break;
+    case 3: // hour precision
+      c += padStart(o.c.hour);
   }
 
   if (includeOffset) {
