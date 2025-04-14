@@ -1862,7 +1862,6 @@ export default class DateTime {
 
     const ext = format === "extended",
       precisionUnitIndex = orderedUnits.indexOf(normalizeUnit(precision));
-    // if (precisionUnitIndex < 0) throw new InvalidUnitError(precision);
 
     let c = toISODate(this, ext, precisionUnitIndex);
     if (precisionUnitIndex >= 3) c += "T";
