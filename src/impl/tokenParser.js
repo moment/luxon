@@ -447,7 +447,7 @@ export class TokenParser {
     }
   }
 
-  explainFromTokens(input) {
+  explainFromTokens(input, strictHours = false) {
     if (!this.isValid) {
       return { input, tokens: this.tokens, invalidReason: this.invalidReason };
     } else {
@@ -455,11 +455,7 @@ export class TokenParser {
         [result, zone, specificOffset] = matches
           ? dateTimeFromMatches(matches)
           : [null, null, undefined];
-      if (
-        this.locale.strictHours &&
-        hasOwnProperty(matches, "h") &&
-        (matches.h > 12 || matches.h < 1)
-      ) {
+      if (strictHours && hasOwnProperty(matches, "h") && (matches.h > 12 || matches.h < 1)) {
         throw new ConflictingSpecificationError(
           "Can't go over 12 or under 1 hours when specifying 12-hour format and strict hour parsing enabled"
         );
@@ -491,13 +487,18 @@ export class TokenParser {
   }
 }
 
-export function explainFromTokens(locale, input, format) {
+export function explainFromTokens(locale, input, format, strictHours = false) {
   const parser = new TokenParser(locale, format);
-  return parser.explainFromTokens(input);
+  return parser.explainFromTokens(input, strictHours);
 }
 
-export function parseFromTokens(locale, input, format) {
-  const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
+export function parseFromTokens(locale, input, format, strictHours = false) {
+  const { result, zone, specificOffset, invalidReason } = explainFromTokens(
+    locale,
+    input,
+    format,
+    strictHours
+  );
   return [result, zone, specificOffset, invalidReason];
 }
 

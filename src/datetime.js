@@ -969,10 +969,14 @@ export default class DateTime {
       localeToUse = Locale.fromOpts({
         locale,
         numberingSystem,
-        strictHours,
         defaultToEN: true,
       }),
-      [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);
+      [vals, parsedZone, specificOffset, invalid] = parseFromTokens(
+        localeToUse,
+        text,
+        fmt,
+        strictHours
+      );
     if (invalid) {
       return DateTime.invalid(invalid);
     } else {
@@ -2291,13 +2295,13 @@ export default class DateTime {
    * @return {Object}
    */
   static fromFormatExplain(text, fmt, options = {}) {
-    const { locale = null, numberingSystem = null } = options,
+    const { locale = null, numberingSystem = null, strictHours = false } = options,
       localeToUse = Locale.fromOpts({
         locale,
         numberingSystem,
         defaultToEN: true,
       });
-    return explainFromTokens(localeToUse, text, fmt);
+    return explainFromTokens(localeToUse, text, fmt, strictHours);
   }
 
   /**
@@ -2345,7 +2349,7 @@ export default class DateTime {
         "fromFormatParser requires an input string and a format parser"
       );
     }
-    const { locale = null, numberingSystem = null } = opts,
+    const { locale = null, numberingSystem = null, strictHours = false } = opts,
       localeToUse = Locale.fromOpts({
         locale,
         numberingSystem,
@@ -2359,7 +2363,10 @@ export default class DateTime {
       );
     }
 
-    const { result, zone, specificOffset, invalidReason } = formatParser.explainFromTokens(text);
+    const { result, zone, specificOffset, invalidReason } = formatParser.explainFromTokens(
+      text,
+      strictHours
+    );
 
     if (invalidReason) {
       return DateTime.invalid(invalidReason);
