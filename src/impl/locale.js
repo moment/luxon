@@ -347,18 +347,33 @@ export default class Locale {
       opts.numberingSystem,
       opts.outputCalendar,
       opts.weekSettings,
+      opts.strictHours,
       opts.defaultToEN
     );
   }
 
-  static create(locale, numberingSystem, outputCalendar, weekSettings, defaultToEN = false) {
+  static create(
+    locale,
+    numberingSystem,
+    outputCalendar,
+    weekSettings,
+    strictHours = false,
+    defaultToEN = false
+  ) {
     const specifiedLocale = locale || Settings.defaultLocale;
     // the system locale is useful for human-readable strings but annoying for parsing/formatting known formats
     const localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale());
     const numberingSystemR = numberingSystem || Settings.defaultNumberingSystem;
     const outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
     const weekSettingsR = validateWeekSettings(weekSettings) || Settings.defaultWeekSettings;
-    return new Locale(localeR, numberingSystemR, outputCalendarR, weekSettingsR, specifiedLocale);
+    return new Locale(
+      localeR,
+      numberingSystemR,
+      outputCalendarR,
+      weekSettingsR,
+      strictHours,
+      specifiedLocale
+    );
   }
 
   static resetCache() {
@@ -374,13 +389,14 @@ export default class Locale {
     return Locale.create(locale, numberingSystem, outputCalendar, weekSettings);
   }
 
-  constructor(locale, numbering, outputCalendar, weekSettings, specifiedLocale) {
+  constructor(locale, numbering, outputCalendar, weekSettings, strictHours, specifiedLocale) {
     const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
 
     this.locale = parsedLocale;
     this.numberingSystem = numbering || parsedNumberingSystem || null;
     this.outputCalendar = outputCalendar || parsedOutputCalendar || null;
     this.weekSettings = weekSettings;
+    this.strictHours = strictHours;
     this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
 
     this.weekdaysCache = { format: {}, standalone: {} };

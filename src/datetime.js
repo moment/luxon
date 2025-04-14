@@ -957,6 +957,7 @@ export default class DateTime {
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
    * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {boolean} [opts.strictHours=false] - when parsing 12-hour time formats, throw an error if the parsed hour is outside the range of 1-12.
    * @return {DateTime}
    */
   static fromFormat(text, fmt, opts = {}) {
@@ -964,10 +965,11 @@ export default class DateTime {
       throw new InvalidArgumentError("fromFormat requires an input string and a format");
     }
 
-    const { locale = null, numberingSystem = null } = opts,
+    const { locale = null, numberingSystem = null, strictHours = false } = opts,
       localeToUse = Locale.fromOpts({
         locale,
         numberingSystem,
+        strictHours,
         defaultToEN: true,
       }),
       [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);

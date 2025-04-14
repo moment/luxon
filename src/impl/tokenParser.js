@@ -455,6 +455,15 @@ export class TokenParser {
         [result, zone, specificOffset] = matches
           ? dateTimeFromMatches(matches)
           : [null, null, undefined];
+      if (
+        this.locale.strictHours &&
+        hasOwnProperty(matches, "h") &&
+        (matches.h > 12 || matches.h < 1)
+      ) {
+        throw new ConflictingSpecificationError(
+          "Can't go over 12 or under 1 hours when specifying 12-hour format and strict hour parsing enabled"
+        );
+      }
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
           "Can't include meridiem when specifying 24-hour format"
