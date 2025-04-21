@@ -214,28 +214,22 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
-function toISODate(o, extended, precisionUnitIndex = 2) {
+function toISODate(o, extended, precision) {
   const longFormat = o.c.year > 9999 || o.c.year < 0;
   let c = "";
   if (longFormat && o.c.year >= 0) c += "+";
   c += padStart(o.c.year, longFormat ? 6 : 4);
-  switch (precisionUnitIndex) {
-    case 0: // year precision
-      break;
-    case 1: // month precision
-      if (extended) c += "-";
-      c += padStart(o.c.month);
-      break;
-    default: // day precision or greater
-      if (extended) {
-        c += "-";
-        c += padStart(o.c.month);
-        c += "-";
-      } else {
-        c += padStart(o.c.month);
-      }
-      c += padStart(o.c.day);
+  if (precision === "year") return c;
+  if (extended) {
+    c += "-";
+    c += padStart(o.c.month);
+    if (precision === "month") return c;
+    c += "-";
+  } else {
+    c += padStart(o.c.month);
+    if (precision === "month") return c;
   }
+  c += padStart(o.c.day);
   return c;
 }
 
@@ -246,52 +240,34 @@ function toISOTime(
   suppressMilliseconds,
   includeOffset,
   extendedZone,
-  precisionUnitIndex
+  precision
 ) {
-  let showSeconds,
+  let showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0,
     c = "";
-  switch (precisionUnitIndex) {
-    case 3: // hour precision
-      c += padStart(o.c.hour);
+  switch (precision) {
+    case "day":
+    case "month":
+    case "year":
       break;
-    case 4: // minute precision
+    default:
       c += padStart(o.c.hour);
-      if (extended) c += ":";
-      c += padStart(o.c.minute);
-      break;
-    case 5: // second precision
-      showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0;
-      c += padStart(o.c.hour);
+      if (precision === "hour") break;
       if (extended) {
         c += ":";
         c += padStart(o.c.minute);
+        if (precision === "minute") break;
         if (showSeconds) {
           c += ":";
           c += padStart(o.c.second);
         }
       } else {
         c += padStart(o.c.minute);
+        if (precision === "minute") break;
         if (showSeconds) {
           c += padStart(o.c.second);
         }
       }
-      break;
-    case 6: // millisecond precision
-      showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0;
-      c += padStart(o.c.hour);
-      if (extended) {
-        c += ":";
-        c += padStart(o.c.minute);
-        if (showSeconds) {
-          c += ":";
-          c += padStart(o.c.second);
-        }
-      } else {
-        c += padStart(o.c.minute);
-        if (showSeconds) {
-          c += padStart(o.c.second);
-        }
-      }
+      if (precision === "second") break;
       if (showSeconds && (!suppressMilliseconds || o.c.millisecond !== 0)) {
         c += ".";
         c += padStart(o.c.millisecond, 3);
@@ -1891,11 +1867,11 @@ export default class DateTime {
       return null;
     }
 
-    const ext = format === "extended",
-      precisionUnitIndex = orderedUnits.indexOf(normalizeUnit(precision));
+    precision = normalizeUnit(precision);
+    const ext = format === "extended";
 
-    let c = toISODate(this, ext, precisionUnitIndex);
-    if (precisionUnitIndex >= 3) c += "T";
+    let c = toISODate(this, ext, precision);
+    if (orderedUnits.indexOf(precision) >= 3) c += "T";
     c += toISOTime(
       this,
       ext,
@@ -1903,7 +1879,7 @@ export default class DateTime {
       suppressMilliseconds,
       includeOffset,
       extendedZone,
-      precisionUnitIndex
+      precision
     );
     return c;
   }
@@ -1922,8 +1898,7 @@ export default class DateTime {
     if (!this.isValid) {
       return null;
     }
-    const precisionUnitIndex = orderedUnits.indexOf(normalizeUnit(precision));
-    return toISODate(this, format === "extended", precisionUnitIndex);
+    return toISODate(this, format === "extended", normalizeUnit(precision));
   }
 
   /**
@@ -1965,8 +1940,8 @@ export default class DateTime {
       return null;
     }
 
-    const precisionUnitIndex = orderedUnits.indexOf(normalizeUnit(precision));
-    let c = includePrefix && precisionUnitIndex >= 3 ? "T" : "";
+    precision = normalizeUnit(precision);
+    let c = includePrefix && orderedUnits.indexOf(precision) >= 3 ? "T" : "";
     return (
       c +
       toISOTime(
@@ -1976,7 +1951,7 @@ export default class DateTime {
         suppressMilliseconds,
         includeOffset,
         extendedZone,
-        precisionUnitIndex
+        precision
       )
     );
   }
