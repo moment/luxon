@@ -394,10 +394,10 @@ export default class Formatter {
             return null;
         }
       },
-      tokenToString = (lildur) => (token) => {
+      tokenToString = (lildur, $) => (token) => {
         const mapped = tokenToField(token);
         if (mapped) {
-          const inversionFactor = lildur < 0 && mapped !== Object.keys(lildur.values)[0] ? -1 : 1;
+          const inversionFactor = $.isNegativeDuration && mapped !== $.largestUnit ? -1 : 1;
           return this.num(lildur.get(mapped) * inversionFactor, token.length);
         } else {
           return token;
@@ -408,7 +408,11 @@ export default class Formatter {
         (found, { literal, val }) => (literal ? found : found.concat(val)),
         []
       ),
-      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t));
-    return stringifyTokens(tokens, tokenToString(collapsed));
+      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t)),
+      tokenToStringCache = {
+        isNegativeDuration: collapsed < 0,
+        largestUnit: Object.keys(collapsed.values)[0],
+      };
+    return stringifyTokens(tokens, tokenToString(collapsed, tokenToStringCache));
   }
 }
