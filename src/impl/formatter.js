@@ -394,10 +394,10 @@ export default class Formatter {
             return null;
         }
       },
-      tokenToString = (lildur, $) => (token) => {
+      tokenToString = (lildur, info) => (token) => {
         const mapped = tokenToField(token);
         if (mapped) {
-          const inversionFactor = $.isNegativeDuration && mapped !== $.largestUnit ? -1 : 1;
+          const inversionFactor = info.isNegativeDuration && mapped !== info.largestUnit ? -1 : 1;
           return this.num(lildur.get(mapped) * inversionFactor, token.length);
         } else {
           return token;
@@ -409,10 +409,12 @@ export default class Formatter {
         []
       ),
       collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t)),
-      tokenToStringCache = {
+      durationInfo = {
         isNegativeDuration: collapsed < 0,
+        // this relies on "collapsed" being based on "shiftTo", which builds up the object
+        // in order
         largestUnit: Object.keys(collapsed.values)[0],
       };
-    return stringifyTokens(tokens, tokenToString(collapsed, tokenToStringCache));
+    return stringifyTokens(tokens, tokenToString(collapsed, durationInfo));
   }
 }
