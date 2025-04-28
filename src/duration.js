@@ -218,6 +218,10 @@ export default class Duration {
    * @private
    */
   constructor(config) {
+    if (!config) {
+      return Duration.invalid("no config supplied");
+    }
+
     const accurate = config.conversionAccuracy === "longterm" || false;
     let matrix = accurate ? accurateMatrix : casualMatrix;
 
