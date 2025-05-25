@@ -375,29 +375,30 @@ export default class Formatter {
     const tokenToField = (token) => {
         switch (token[0]) {
           case "S":
-            return "millisecond";
+            return "milliseconds";
           case "s":
-            return "second";
+            return "seconds";
           case "m":
-            return "minute";
+            return "minutes";
           case "h":
-            return "hour";
+            return "hours";
           case "d":
-            return "day";
+            return "days";
           case "w":
-            return "week";
+            return "weeks";
           case "M":
-            return "month";
+            return "months";
           case "y":
-            return "year";
+            return "years";
           default:
             return null;
         }
       },
-      tokenToString = (lildur) => (token) => {
+      tokenToString = (lildur, info) => (token) => {
         const mapped = tokenToField(token);
         if (mapped) {
-          return this.num(lildur.get(mapped), token.length);
+          const inversionFactor = info.isNegativeDuration && mapped !== info.largestUnit ? -1 : 1;
+          return this.num(lildur.get(mapped) * inversionFactor, token.length);
         } else {
           return token;
         }
@@ -407,7 +408,13 @@ export default class Formatter {
         (found, { literal, val }) => (literal ? found : found.concat(val)),
         []
       ),
-      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t));
-    return stringifyTokens(tokens, tokenToString(collapsed));
+      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t)),
+      durationInfo = {
+        isNegativeDuration: collapsed < 0,
+        // this relies on "collapsed" being based on "shiftTo", which builds up the object
+        // in order
+        largestUnit: Object.keys(collapsed.values)[0],
+      };
+    return stringifyTokens(tokens, tokenToString(collapsed, durationInfo));
   }
 }
