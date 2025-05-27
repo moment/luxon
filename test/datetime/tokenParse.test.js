@@ -74,17 +74,6 @@ test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", (
   expect(() => DateTime.fromFormat("930PM", "Hmma")).toThrow(ConflictingSpecificationError);
 });
 
-test("DateTime.fromFormat() throws if h is used with 24-hour time and strictHours option is enabled", () => {
-  expect(() => DateTime.fromFormat("18:30", "h:mm")).not.toThrow(ConflictingSpecificationError);
-  expect(() => DateTime.fromFormat("18:30", "h:mm", { strictHours: true })).toThrow(
-    ConflictingSpecificationError
-  );
-  expect(() => DateTime.fromFormat("00:30", "h:mm")).not.toThrow(ConflictingSpecificationError);
-  expect(() => DateTime.fromFormat("00:30", "h:mm", { strictHours: true })).toThrow(
-    ConflictingSpecificationError
-  );
-});
-
 // #714
 test("DateTime.fromFormat() makes dots optional and handles non breakable spaces", () => {
   function parseMeridiem(input, isAM) {
@@ -174,6 +163,35 @@ test("DateTime.fromFormat() parses hours", () => {
   expect(DateTime.fromFormat("13", "H").hour).toBe(13);
   expect(DateTime.fromFormat("05", "HH").hour).toBe(5);
   expect(DateTime.fromFormat("13", "HH").hour).toBe(13);
+});
+
+test("DateTime.fromFormat() yields Invalid reason 'unit out of range' for incompatible formats", () => {
+  const rejects = (s, fmt, opts = {}) => {
+    const i = DateTime.fromFormat(s, fmt, opts);
+    expect(i.isValid).toBeFalsy();
+    expect(i.invalid).not.toBeNull;
+    expect(i.invalid.reason).toEqual("unit out of range");
+  };
+  const accepts = (s, fmt, opts = {}) =>
+    expect(DateTime.fromFormat(s, fmt, opts).isValid).toBeTruthy();
+
+  accepts("24", "h");
+  accepts("24", "H");
+  accepts("24-0", "h-S");
+  accepts("24-0", "H-S");
+  rejects("24-1", "h-S");
+  rejects("24-1", "H-S");
+  rejects("25", "h");
+  rejects("25", "H");
+
+  accepts("59", "m");
+  rejects("60", "m");
+
+  accepts("59", "s");
+  rejects("60", "s");
+
+  rejects("13", "h", { strictHours: true });
+  accepts("13", "h", { strictHours: false });
 });
 
 test("DateTime.fromFormat() parses milliseconds", () => {

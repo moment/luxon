@@ -5,6 +5,7 @@ import IANAZone from "../zones/IANAZone.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";
 import { ConflictingSpecificationError } from "../errors.js";
+import { unitOutOfRange } from "../impl/conversions.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
@@ -455,10 +456,13 @@ export class TokenParser {
         [result, zone, specificOffset] = matches
           ? dateTimeFromMatches(matches)
           : [null, null, undefined];
+      // Note: This is naive logic, I haven't yet looked into h11 or whatever else
       if (strictHours && hasOwnProperty(matches, "h") && (matches.h > 12 || matches.h < 1)) {
-        throw new ConflictingSpecificationError(
-          "Can't go over 12 or under 1 hours when specifying 12-hour format and strict hour parsing enabled"
-        );
+        const hoursUnit = this.units.find((t) => t.token.val === "h");
+        hoursUnit.invalidReason = unitOutOfRange("hour", matches.h);
+        hoursUnit.invalidReason.explanation += " due to 'strictHours' parsing option being enabled";
+        this.disqualifyingUnit = hoursUnit;
+        return { input, tokens: this.tokens, invalidReason: this.invalidReason };
       }
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
