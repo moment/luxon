@@ -456,13 +456,16 @@ export class TokenParser {
         [result, zone, specificOffset] = matches
           ? dateTimeFromMatches(matches)
           : [null, null, undefined];
-      // Note: This is naive logic, I haven't yet looked into h11 or whatever else
-      if (strictHours && hasOwnProperty(matches, "h") && (matches.h > 12 || matches.h < 1)) {
-        const hoursUnit = this.units.find((t) => t.token.val === "h");
-        hoursUnit.invalidReason = unitOutOfRange("hour", matches.h);
-        hoursUnit.invalidReason.explanation += " due to 'strictHours' parsing option being enabled";
-        this.disqualifyingUnit = hoursUnit;
-        return { input, tokens: this.tokens, invalidReason: this.invalidReason };
+      if (strictHours && hasOwnProperty(matches, "h")) {
+        const isH11 = this.locale.getIntlLocaleHourCycles()[0] == "h11";
+        if (matches.h > (isH11 ? 11 : 12) || matches.h < (isH11 ? 0 : 1)) {
+          const hoursUnit = this.units.find((t) => t.token.val === "h");
+          hoursUnit.invalidReason = unitOutOfRange("hour", matches.h);
+          hoursUnit.invalidReason.explanation +=
+            " due to 'strictHours' parsing option being enabled";
+          this.disqualifyingUnit = hoursUnit;
+          return { input, tokens: this.tokens, invalidReason: this.invalidReason };
+        }
       }
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(

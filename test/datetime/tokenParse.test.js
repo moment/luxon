@@ -190,8 +190,11 @@ test("DateTime.fromFormat() yields Invalid reason 'unit out of range' for incomp
   accepts("59", "s");
   rejects("60", "s");
 
+  accepts("0", "h", { strictHours: true, locale: "en-US-u-hc-h11" });
+  rejects("0", "h", { strictHours: true });
+  rejects("12", "h", { strictHours: true, locale: "en-US-u-hc-h11" });
+  accepts("12", "h", { strictHours: true });
   rejects("13", "h", { strictHours: true });
-  accepts("13", "h", { strictHours: false });
 });
 
 test("DateTime.fromFormat() parses milliseconds", () => {
