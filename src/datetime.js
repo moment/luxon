@@ -971,7 +971,7 @@ export default class DateTime {
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
    * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
-   * @param {boolean} [opts.strictHours=false] - when parsing 12-hour time formats, throw an error if the parsed hour is outside the range of 1-12.
+   * @param {boolean} [opts.strictHours=false] - when parsing 12-hour time formats, returns an Invalid DateTime if the parsed hour is outside the h11 or h12 hourCycle of the locale.
    * @return {DateTime}
    */
   static fromFormat(text, fmt, opts = {}) {
