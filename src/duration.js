@@ -312,7 +312,7 @@ export default class Duration {
    * @return {Duration}
    */
   static fromDurationLike(durationLike) {
-    if (isNumber(durationLike)) {
+    if (isNumber(durationLike) && isFinite(durationLike)) {
       return Duration.fromMillis(durationLike);
     } else if (Duration.isDuration(durationLike)) {
       return durationLike;

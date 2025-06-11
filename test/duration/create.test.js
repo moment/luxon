@@ -132,4 +132,6 @@ it("Duration.fromDurationLike returns passed Duration", () => {
 it("Duration.fromDurationLike returns passed Duration", () => {
   expect(() => Duration.fromDurationLike("foo")).toThrow();
   expect(() => Duration.fromDurationLike(null)).toThrow();
+  expect(() => Duration.fromDurationLike(Infinity)).toThrow();
+  expect(() => Duration.fromDurationLike(NaN)).toThrow();
 });
