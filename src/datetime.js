@@ -139,88 +139,6 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
-function toISODate(o, extended, precision) {
-  const longFormat = o.c.year > 9999 || o.c.year < 0;
-  let c = "";
-  if (longFormat && o.c.year >= 0) c += "+";
-  c += padStart(o.c.year, longFormat ? 6 : 4);
-  if (precision === "year") return c;
-  if (extended) {
-    c += "-";
-    c += padStart(o.c.month);
-    if (precision === "month") return c;
-    c += "-";
-  } else {
-    c += padStart(o.c.month);
-    if (precision === "month") return c;
-  }
-  c += padStart(o.c.day);
-  return c;
-}
-
-function toISOTime(
-  o,
-  extended,
-  suppressSeconds,
-  suppressMilliseconds,
-  includeOffset,
-  extendedZone,
-  precision
-) {
-  let showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0,
-    c = "";
-  switch (precision) {
-    case "day":
-    case "month":
-    case "year":
-      break;
-    default:
-      c += padStart(o.c.hour);
-      if (precision === "hour") break;
-      if (extended) {
-        c += ":";
-        c += padStart(o.c.minute);
-        if (precision === "minute") break;
-        if (showSeconds) {
-          c += ":";
-          c += padStart(o.c.second);
-        }
-      } else {
-        c += padStart(o.c.minute);
-        if (precision === "minute") break;
-        if (showSeconds) {
-          c += padStart(o.c.second);
-        }
-      }
-      if (precision === "second") break;
-      if (showSeconds && (!suppressMilliseconds || o.c.millisecond !== 0)) {
-        c += ".";
-        c += padStart(o.c.millisecond, 3);
-      }
-  }
-
-  if (includeOffset) {
-    if (o.isOffsetFixed && o.offset === 0 && !extendedZone) {
-      c += "Z";
-    } else if (o.o < 0) {
-      c += "-";
-      c += padStart(Math.trunc(-o.o / 60));
-      c += ":";
-      c += padStart(Math.trunc(-o.o % 60));
-    } else {
-      c += "+";
-      c += padStart(Math.trunc(o.o / 60));
-      c += ":";
-      c += padStart(Math.trunc(o.o % 60));
-    }
-  }
-
-  if (extendedZone) {
-    c += "[" + o.zone.ianaName + "]";
-  }
-  return c;
-}
-
 // defaults for unspecified units in the supported calendars
 const defaultUnitValues = {
     month: 1,
@@ -434,6 +352,7 @@ export let getDateTimeLocale;
  */
 export default class DateTime {
   #ts;
+  #c;
   #zone;
   #loc;
   #localWeekData;
@@ -483,10 +402,7 @@ export default class DateTime {
     this.#invalid = invalid;
     this.#weekData = null;
     this.#localWeekData = null;
-    /**
-     * @access private
-     */
-    this.c = c;
+    this.#c = c;
     /**
      * @access private
      */
@@ -1065,7 +981,7 @@ export default class DateTime {
    * @type {number}
    */
   get year() {
-    return this.isValid ? this.c.year : NaN;
+    return this.isValid ? this.#c.year : NaN;
   }
 
   /**
@@ -1074,7 +990,7 @@ export default class DateTime {
    * @type {number}
    */
   get quarter() {
-    return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
+    return this.isValid ? Math.ceil(this.#c.month / 3) : NaN;
   }
 
   /**
@@ -1083,7 +999,7 @@ export default class DateTime {
    * @type {number}
    */
   get month() {
-    return this.isValid ? this.c.month : NaN;
+    return this.isValid ? this.#c.month : NaN;
   }
 
   /**
@@ -1092,7 +1008,7 @@ export default class DateTime {
    * @type {number}
    */
   get day() {
-    return this.isValid ? this.c.day : NaN;
+    return this.isValid ? this.#c.day : NaN;
   }
 
   /**
@@ -1101,7 +1017,7 @@ export default class DateTime {
    * @type {number}
    */
   get hour() {
-    return this.isValid ? this.c.hour : NaN;
+    return this.isValid ? this.#c.hour : NaN;
   }
 
   /**
@@ -1110,7 +1026,7 @@ export default class DateTime {
    * @type {number}
    */
   get minute() {
-    return this.isValid ? this.c.minute : NaN;
+    return this.isValid ? this.#c.minute : NaN;
   }
 
   /**
@@ -1119,7 +1035,7 @@ export default class DateTime {
    * @type {number}
    */
   get second() {
-    return this.isValid ? this.c.second : NaN;
+    return this.isValid ? this.#c.second : NaN;
   }
 
   /**
@@ -1128,7 +1044,7 @@ export default class DateTime {
    * @type {number}
    */
   get millisecond() {
-    return this.isValid ? this.c.millisecond : NaN;
+    return this.isValid ? this.#c.millisecond : NaN;
   }
 
   /**
@@ -1205,7 +1121,7 @@ export default class DateTime {
    * @type {number|DateTime}
    */
   get ordinal() {
-    return this.isValid ? gregorianToOrdinal(this.c).ordinal : NaN;
+    return this.isValid ? gregorianToOrdinal(this.#c).ordinal : NaN;
   }
 
   /**
@@ -1326,7 +1242,7 @@ export default class DateTime {
     }
     const dayMs = 86400000;
     const minuteMs = 60000;
-    const localTS = objToLocalTS(this.c);
+    const localTS = objToLocalTS(this.#c);
     const oEarlier = this.zone.offset(localTS - dayMs);
     const oLater = this.zone.offset(localTS + dayMs);
 
@@ -1534,12 +1450,12 @@ export default class DateTime {
     let mixed;
     if (settingWeekStuff) {
       mixed = weekToGregorian(
-        { ...gregorianToWeek(this.c, minDaysInFirstWeek, startOfWeek), ...normalized },
+        { ...gregorianToWeek(this.#c, minDaysInFirstWeek, startOfWeek), ...normalized },
         minDaysInFirstWeek,
         startOfWeek
       );
     } else if (!isUndefined(normalized.ordinal)) {
-      mixed = ordinalToGregorian({ ...gregorianToOrdinal(this.c), ...normalized });
+      mixed = ordinalToGregorian({ ...gregorianToOrdinal(this.#c), ...normalized });
     } else {
       mixed = { ...this.toObject(), ...normalized };
 
@@ -1765,10 +1681,9 @@ export default class DateTime {
     precision = normalizeUnit(precision);
     const ext = format === "extended";
 
-    let c = toISODate(this, ext, precision);
+    let c = this.#toISODate(ext, precision);
     if (orderedUnits.indexOf(precision) >= 3) c += "T";
-    c += toISOTime(
-      this,
+    c += this.#toISOTime(
       ext,
       suppressSeconds,
       suppressMilliseconds,
@@ -1793,7 +1708,7 @@ export default class DateTime {
     if (!this.isValid) {
       return null;
     }
-    return toISODate(this, format === "extended", normalizeUnit(precision));
+    return this.#toISODate(format === "extended", normalizeUnit(precision));
   }
 
   /**
@@ -1839,8 +1754,7 @@ export default class DateTime {
     let c = includePrefix && orderedUnits.indexOf(precision) >= 3 ? "T" : "";
     return (
       c +
-      toISOTime(
-        this,
+      this.#toISOTime(
         format === "extended",
         suppressSeconds,
         suppressMilliseconds,
@@ -1849,6 +1763,87 @@ export default class DateTime {
         precision
       )
     );
+  }
+
+  #toISODate(extended, precision) {
+    const longFormat = this.#c.year > 9999 || this.#c.year < 0;
+    let c = "";
+    if (longFormat && this.#c.year >= 0) c += "+";
+    c += padStart(this.#c.year, longFormat ? 6 : 4);
+    if (precision === "year") return c;
+    if (extended) {
+      c += "-";
+      c += padStart(this.#c.month);
+      if (precision === "month") return c;
+      c += "-";
+    } else {
+      c += padStart(this.#c.month);
+      if (precision === "month") return c;
+    }
+    c += padStart(this.#c.day);
+    return c;
+  }
+
+  #toISOTime(
+    extended,
+    suppressSeconds,
+    suppressMilliseconds,
+    includeOffset,
+    extendedZone,
+    precision
+  ) {
+    let showSeconds = !suppressSeconds || this.#c.millisecond !== 0 || this.#c.second !== 0,
+      c = "";
+    switch (precision) {
+      case "day":
+      case "month":
+      case "year":
+        break;
+      default:
+        c += padStart(this.#c.hour);
+        if (precision === "hour") break;
+        if (extended) {
+          c += ":";
+          c += padStart(this.#c.minute);
+          if (precision === "minute") break;
+          if (showSeconds) {
+            c += ":";
+            c += padStart(this.#c.second);
+          }
+        } else {
+          c += padStart(this.#c.minute);
+          if (precision === "minute") break;
+          if (showSeconds) {
+            c += padStart(this.#c.second);
+          }
+        }
+        if (precision === "second") break;
+        if (showSeconds && (!suppressMilliseconds || this.#c.millisecond !== 0)) {
+          c += ".";
+          c += padStart(this.#c.millisecond, 3);
+        }
+    }
+
+    if (includeOffset) {
+      if (this.isOffsetFixed && this.offset === 0 && !extendedZone) {
+        c += "Z";
+      } else if (this.o < 0) {
+        c += "-";
+        c += padStart(Math.trunc(-this.o / 60));
+        c += ":";
+        c += padStart(Math.trunc(-this.o % 60));
+      } else {
+        c += "+";
+        c += padStart(Math.trunc(this.o / 60));
+        c += ":";
+        c += padStart(Math.trunc(this.o % 60));
+      }
+    }
+
+    if (extendedZone) {
+      c += "[" + this.#zone.ianaName + "]";
+    }
+    return c;
   }
 
   /**
@@ -1882,7 +1877,7 @@ export default class DateTime {
     if (!this.isValid) {
       return null;
     }
-    return toISODate(this, true);
+    return this.#toISODate(true);
   }
 
   /**
@@ -2012,7 +2007,7 @@ export default class DateTime {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = { ...this.c };
+    const base = { ...this.#c };
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
@@ -2520,7 +2515,7 @@ export default class DateTime {
     const current = {
       ts: this.#ts,
       zone: this.zone,
-      c: this.c,
+      c: this.#c,
       o: this.o,
       loc: this.#loc,
       invalid: this.#invalid,
@@ -2531,14 +2526,14 @@ export default class DateTime {
   // create a new DT instance by adding a duration, adjusting for DSTs
   #adjustTime(dur) {
     const oPre = this.o,
-      year = this.c.year + Math.trunc(dur.years),
-      month = this.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
+      year = this.#c.year + Math.trunc(dur.years),
+      month = this.#c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
       c = {
-        ...this.c,
+        ...this.#c,
         year,
         month,
         day:
-          Math.min(this.c.day, daysInMonth(year, month)) +
+          Math.min(this.#c.day, daysInMonth(year, month)) +
           Math.trunc(dur.days) +
           Math.trunc(dur.weeks) * 7,
       },
@@ -2569,7 +2564,7 @@ export default class DateTime {
   #possiblyCachedLocalWeekData() {
     if (this.#localWeekData === null) {
       this.#localWeekData = gregorianToWeek(
-        this.c,
+        this.#c,
         this.#loc.getMinDaysInFirstWeek(),
         this.#loc.getStartOfWeek()
       );
@@ -2579,7 +2574,7 @@ export default class DateTime {
 
   #possiblyCachedWeekData() {
     if (this.#weekData === null) {
-      this.#weekData = gregorianToWeek(this.c);
+      this.#weekData = gregorianToWeek(this.#c);
     }
     return this.#weekData;
   }
