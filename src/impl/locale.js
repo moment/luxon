@@ -435,7 +435,12 @@ export default class Locale {
       const intl = format ? { month: length, day: "numeric" } : { month: length },
         formatStr = format ? "format" : "standalone";
       if (!this.monthsCache[formatStr][length]) {
-        this.monthsCache[formatStr][length] = mapMonths((dt) => this.extract(dt, intl, "month"));
+        // for non-format, take the whole string to work around the fact that some locales
+        // (specifically just ja-JP) do not label all parts of the month as "month"
+        const mapper = format
+          ? (dt) => this.extract(dt, intl, "month")
+          : (dt) => this.dtFormatter(dt, intl).format();
+        this.monthsCache[formatStr][length] = mapMonths(mapper);
       }
       return this.monthsCache[formatStr][length];
     });
@@ -495,8 +500,16 @@ export default class Locale {
   extract(dt, intlOpts, field) {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
-      matching = results.find((m) => m.type.toLowerCase() === field);
-    return matching ? matching.value : null;
+      matching = results.findIndex((m) => m.type.toLowerCase() === field);
+    if (matching === -1) return null;
+    const value = results[matching].value;
+    // if (field === "month" && this.intl.startsWith("ja-JP")) {
+    //   const next = results[matching + 1];
+    //   if (next?.type === "literal") {
+    //     return value + next.value;
+    //   }
+    // }
+    return value;
   }
 
   numberFormatter(opts = {}) {
