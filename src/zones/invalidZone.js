@@ -5,10 +5,11 @@ import Zone from "../zone.js";
  * @implements {Zone}
  */
 export default class InvalidZone extends Zone {
+  #zoneName;
+
   constructor(zoneName) {
     super();
-    /**  @private */
-    this.zoneName = zoneName;
+    this.#zoneName = zoneName;
   }
 
   /** @override **/
@@ -18,7 +19,7 @@ export default class InvalidZone extends Zone {
 
   /** @override **/
   get name() {
-    return this.zoneName;
+    return this.#zoneName;
   }
 
   /** @override **/

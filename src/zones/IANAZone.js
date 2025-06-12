@@ -113,12 +113,13 @@ export default class IANAZone extends Zone {
     }
   }
 
+  #zoneName;
+  #valid;
+
   constructor(name) {
     super();
-    /** @private **/
-    this.zoneName = name;
-    /** @private **/
-    this.valid = IANAZone.isValidZone(name);
+    this.#zoneName = name;
+    this.#valid = IANAZone.isValidZone(name);
   }
 
   /**
@@ -136,7 +137,7 @@ export default class IANAZone extends Zone {
    * @type {string}
    */
   get name() {
-    return this.zoneName;
+    return this.#zoneName;
   }
 
   /**
@@ -181,7 +182,7 @@ export default class IANAZone extends Zone {
    * @return {number}
    */
   offset(ts) {
-    if (!this.valid) return NaN;
+    if (!this.#valid) return NaN;
     const date = new Date(ts);
 
     if (isNaN(date)) return NaN;
@@ -230,6 +231,6 @@ export default class IANAZone extends Zone {
    * @type {boolean}
    */
   get isValid() {
-    return this.valid;
+    return this.#valid;
   }
 }
