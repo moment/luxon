@@ -83,20 +83,6 @@ function possiblyCachedLocalWeekData(dt) {
   return dt.localWeekData;
 }
 
-// clone really means, "make a new object with these modifications". all "setters" really use this
-// to create a new object while only changing some of the properties
-function clone(inst, alts) {
-  const current = {
-    ts: inst.ts,
-    zone: inst.zone,
-    c: inst.c,
-    o: inst.o,
-    loc: inst.loc,
-    invalid: inst.invalid,
-  };
-  return new DateTime({ ...current, ...alts, old: current });
-}
-
 // find the right offset a given local time. The o input is our guess, which determines which
 // offset we'll pick in ambiguous cases (e.g. there are two 3 AMs b/c Fallback DST)
 function fixOffset(localTS, o, tz) {
@@ -144,44 +130,6 @@ function tsToObj(ts, offset) {
 // convert a calendar object to a epoch timestamp
 function objToTS(obj, offset, zone) {
   return fixOffset(objToLocalTS(obj), offset, zone);
-}
-
-// create a new DT instance by adding a duration, adjusting for DSTs
-function adjustTime(inst, dur) {
-  const oPre = inst.o,
-    year = inst.c.year + Math.trunc(dur.years),
-    month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
-    c = {
-      ...inst.c,
-      year,
-      month,
-      day:
-        Math.min(inst.c.day, daysInMonth(year, month)) +
-        Math.trunc(dur.days) +
-        Math.trunc(dur.weeks) * 7,
-    },
-    millisToAdd = Duration.fromObject({
-      years: dur.years - Math.trunc(dur.years),
-      quarters: dur.quarters - Math.trunc(dur.quarters),
-      months: dur.months - Math.trunc(dur.months),
-      weeks: dur.weeks - Math.trunc(dur.weeks),
-      days: dur.days - Math.trunc(dur.days),
-      hours: dur.hours,
-      minutes: dur.minutes,
-      seconds: dur.seconds,
-      milliseconds: dur.milliseconds,
-    }).as("milliseconds"),
-    localTS = objToLocalTS(c);
-
-  let [ts, o] = fixOffset(localTS, oPre, inst.zone);
-
-  if (millisToAdd !== 0) {
-    ts += millisToAdd;
-    // that could have changed the offset by going over a DST, but we want to keep the ts the same
-    o = inst.zone.offset(ts);
-  }
-
-  return { ts, o };
 }
 
 // helper useful in turning the results of parsing into real dates
@@ -537,6 +485,8 @@ const zoneOffsetGuessCache = new Map();
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
 export default class DateTime {
+  #ts;
+
   /**
    * @access private
    */
@@ -550,20 +500,20 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.ts = isUndefined(config.ts) ? Settings.now() : config.ts;
+    this.#ts = isUndefined(config.ts) ? Settings.now() : config.ts;
 
     let c = null,
       o = null;
     if (!invalid) {
-      const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
+      const unchanged = config.old && config.old.ts === this.#ts && config.old.zone.equals(zone);
 
       if (unchanged) {
         [c, o] = [config.old.c, config.old.o];
       } else {
         // If an offset has been passed and we have not been called from
         // clone(), we can trust it and avoid the offset calculation.
-        const ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.ts);
-        c = tsToObj(this.ts, ot);
+        const ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.#ts);
+        c = tsToObj(this.#ts, ot);
         invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
         o = invalid ? null : ot;
@@ -1370,7 +1320,7 @@ export default class DateTime {
    */
   get offsetNameShort() {
     if (this.isValid) {
-      return this.zone.offsetName(this.ts, {
+      return this.zone.offsetName(this.#ts, {
         format: "short",
         locale: this.locale,
       });
@@ -1386,7 +1336,7 @@ export default class DateTime {
    */
   get offsetNameLong() {
     if (this.isValid) {
-      return this.zone.offsetName(this.ts, {
+      return this.zone.offsetName(this.#ts, {
         format: "long",
         locale: this.locale,
       });
@@ -1450,7 +1400,7 @@ export default class DateTime {
       c1.second === c2.second &&
       c1.millisecond === c2.millisecond
     ) {
-      return [clone(this, { ts: ts1 }), clone(this, { ts: ts2 })];
+      return [this.#clone({ ts: ts1 }), this.#clone({ ts: ts2 })];
     }
     return [this];
   }
@@ -1566,13 +1516,13 @@ export default class DateTime {
     } else if (!zone.isValid) {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
-      let newTS = this.ts;
+      let newTS = this.#ts;
       if (keepLocalTime || keepCalendarTime) {
-        const offsetGuess = zone.offset(this.ts);
+        const offsetGuess = zone.offset(this.#ts);
         const asObj = this.toObject();
         [newTS] = objToTS(asObj, offsetGuess, zone);
       }
-      return clone(this, { ts: newTS, zone });
+      return this.#clone({ ts: newTS, zone });
     }
   }
 
@@ -1584,7 +1534,7 @@ export default class DateTime {
    */
   reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
     const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
-    return clone(this, { loc });
+    return this.#clone({ loc });
   }
 
   /**
@@ -1656,7 +1606,7 @@ export default class DateTime {
     }
 
     const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o });
+    return this.#clone({ ts, o });
   }
 
   /**
@@ -1675,7 +1625,7 @@ export default class DateTime {
   plus(duration) {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration);
-    return clone(this, adjustTime(this, dur));
+    return this.#clone(this.#adjustTime(dur));
   }
 
   /**
@@ -1687,7 +1637,7 @@ export default class DateTime {
   minus(duration) {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration).negate();
-    return clone(this, adjustTime(this, dur));
+    return this.#clone(this.#adjustTime(dur));
   }
 
   /**
@@ -2072,7 +2022,7 @@ export default class DateTime {
    * @return {number}
    */
   toMillis() {
-    return this.isValid ? this.ts : NaN;
+    return this.isValid ? this.#ts : NaN;
   }
 
   /**
@@ -2080,7 +2030,7 @@ export default class DateTime {
    * @return {number}
    */
   toSeconds() {
-    return this.isValid ? this.ts / 1000 : NaN;
+    return this.isValid ? this.#ts / 1000 : NaN;
   }
 
   /**
@@ -2088,7 +2038,7 @@ export default class DateTime {
    * @return {number}
    */
   toUnixInteger() {
-    return this.isValid ? Math.floor(this.ts / 1000) : NaN;
+    return this.isValid ? Math.floor(this.#ts / 1000) : NaN;
   }
 
   /**
@@ -2132,7 +2082,7 @@ export default class DateTime {
    * @return {Date}
    */
   toJSDate() {
-    return new Date(this.isValid ? this.ts : NaN);
+    return new Date(this.isValid ? this.#ts : NaN);
   }
 
   // COMPARE
@@ -2582,6 +2532,58 @@ export default class DateTime {
    */
   static get DATETIME_HUGE_WITH_SECONDS() {
     return Formats.DATETIME_HUGE_WITH_SECONDS;
+  }
+
+  // clone really means, "make a new object with these modifications". all "setters" really use this
+  // to create a new object while only changing some of the properties
+  #clone(alts) {
+    const current = {
+      ts: this.#ts,
+      zone: this.zone,
+      c: this.c,
+      o: this.o,
+      loc: this.loc,
+      invalid: this.invalid,
+    };
+    return new DateTime({ ...current, ...alts, old: current });
+  }
+
+  // create a new DT instance by adding a duration, adjusting for DSTs
+  #adjustTime(dur) {
+    const oPre = this.o,
+      year = this.c.year + Math.trunc(dur.years),
+      month = this.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
+      c = {
+        ...this.c,
+        year,
+        month,
+        day:
+          Math.min(this.c.day, daysInMonth(year, month)) +
+          Math.trunc(dur.days) +
+          Math.trunc(dur.weeks) * 7,
+      },
+      millisToAdd = Duration.fromObject({
+        years: dur.years - Math.trunc(dur.years),
+        quarters: dur.quarters - Math.trunc(dur.quarters),
+        months: dur.months - Math.trunc(dur.months),
+        weeks: dur.weeks - Math.trunc(dur.weeks),
+        days: dur.days - Math.trunc(dur.days),
+        hours: dur.hours,
+        minutes: dur.minutes,
+        seconds: dur.seconds,
+        milliseconds: dur.milliseconds,
+      }).as("milliseconds"),
+      localTS = objToLocalTS(c);
+
+    let [ts, o] = fixOffset(localTS, oPre, this.zone);
+
+    if (millisToAdd !== 0) {
+      ts += millisToAdd;
+      // that could have changed the offset by going over a DST, but we want to keep the ts the same
+      o = this.zone.offset(ts);
+    }
+
+    return { ts, o };
   }
 }
 

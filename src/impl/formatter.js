@@ -150,7 +150,7 @@ export default class Formatter {
           return "Z";
         }
 
-        return dt.isValid ? dt.zone.formatOffset(dt.ts, opts.format) : "";
+        return dt.isValid ? dt.zone.formatOffset(+dt, opts.format) : "";
       },
       meridiem = () =>
         knownEnglish
@@ -223,10 +223,10 @@ export default class Formatter {
             return formatOffset({ format: "techie", allowZ: this.opts.allowZ });
           case "ZZZZ":
             // like EST
-            return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
+            return dt.zone.offsetName(+dt, { format: "short", locale: this.loc.locale });
           case "ZZZZZ":
             // like Eastern Standard Time
-            return dt.zone.offsetName(dt.ts, { format: "long", locale: this.loc.locale });
+            return dt.zone.offsetName(+dt, { format: "long", locale: this.loc.locale });
           // zone
           case "z":
             // like America/New_York
@@ -360,9 +360,9 @@ export default class Formatter {
             // like 01
             return this.num(dt.quarter, 2);
           case "X":
-            return this.num(Math.floor(dt.ts / 1000));
+            return this.num(Math.floor(+dt / 1000));
           case "x":
-            return this.num(dt.ts);
+            return this.num(+dt);
           default:
             return maybeMacro(token);
         }
