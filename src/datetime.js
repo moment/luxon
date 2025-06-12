@@ -353,6 +353,7 @@ export let getDateTimeLocale;
 export default class DateTime {
   #ts;
   #c;
+  #o;
   #zone;
   #loc;
   #localWeekData;
@@ -403,10 +404,7 @@ export default class DateTime {
     this.#weekData = null;
     this.#localWeekData = null;
     this.#c = c;
-    /**
-     * @access private
-     */
-    this.o = o;
+    this.#o = o;
     /**
      * @access private
      */
@@ -1171,7 +1169,7 @@ export default class DateTime {
    * @type {number}
    */
   get offset() {
-    return this.isValid ? +this.o : NaN;
+    return this.isValid ? +this.#o : NaN;
   }
 
   /**
@@ -1466,7 +1464,7 @@ export default class DateTime {
       }
     }
 
-    const [ts, o] = objToTS(mixed, this.o, this.zone);
+    const [ts, o] = objToTS(mixed, this.#o, this.zone);
     return this.#clone({ ts, o });
   }
 
@@ -1827,16 +1825,16 @@ export default class DateTime {
     if (includeOffset) {
       if (this.isOffsetFixed && this.offset === 0 && !extendedZone) {
         c += "Z";
-      } else if (this.o < 0) {
+      } else if (this.#o < 0) {
         c += "-";
-        c += padStart(Math.trunc(-this.o / 60));
+        c += padStart(Math.trunc(-this.#o / 60));
         c += ":";
-        c += padStart(Math.trunc(-this.o % 60));
+        c += padStart(Math.trunc(-this.#o % 60));
       } else {
         c += "+";
-        c += padStart(Math.trunc(this.o / 60));
+        c += padStart(Math.trunc(this.#o / 60));
         c += ":";
-        c += padStart(Math.trunc(this.o % 60));
+        c += padStart(Math.trunc(this.#o % 60));
       }
     }
 
@@ -2516,7 +2514,7 @@ export default class DateTime {
       ts: this.#ts,
       zone: this.zone,
       c: this.#c,
-      o: this.o,
+      o: this.#o,
       loc: this.#loc,
       invalid: this.#invalid,
     };
@@ -2525,7 +2523,7 @@ export default class DateTime {
 
   // create a new DT instance by adding a duration, adjusting for DSTs
   #adjustTime(dur) {
-    const oPre = this.o,
+    const oPre = this.#o,
       year = this.#c.year + Math.trunc(dur.years),
       month = this.#c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
       c = {
