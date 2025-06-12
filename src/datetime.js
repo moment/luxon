@@ -59,29 +59,6 @@ function unsupportedZone(zone) {
 }
 
 // we cache week data on the DT object and this intermediates the cache
-/**
- * @param {DateTime} dt
- */
-function possiblyCachedWeekData(dt) {
-  if (dt.weekData === null) {
-    dt.weekData = gregorianToWeek(dt.c);
-  }
-  return dt.weekData;
-}
-
-/**
- * @param {DateTime} dt
- */
-function possiblyCachedLocalWeekData(dt) {
-  if (dt.localWeekData === null) {
-    dt.localWeekData = gregorianToWeek(
-      dt.c,
-      dt.loc.getMinDaysInFirstWeek(),
-      dt.loc.getStartOfWeek()
-    );
-  }
-  return dt.localWeekData;
-}
 
 // find the right offset a given local time. The o input is our guess, which determines which
 // offset we'll pick in ambiguous cases (e.g. there are two 3 AMs b/c Fallback DST)
@@ -409,37 +386,6 @@ function quickDT(obj, opts) {
   return new DateTime({ ts, zone, loc, o });
 }
 
-function diffRelative(start, end, opts) {
-  const round = isUndefined(opts.round) ? true : opts.round,
-    rounding = isUndefined(opts.rounding) ? "trunc" : opts.rounding,
-    format = (c, unit) => {
-      c = roundTo(c, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
-      const formatter = end.loc.clone(opts).relFormatter(opts);
-      return formatter.format(c, unit);
-    },
-    differ = (unit) => {
-      if (opts.calendary) {
-        if (!end.hasSame(start, unit)) {
-          return end.startOf(unit).diff(start.startOf(unit), unit).get(unit);
-        } else return 0;
-      } else {
-        return end.diff(start, unit).get(unit);
-      }
-    };
-
-  if (opts.unit) {
-    return format(differ(opts.unit), opts.unit);
-  }
-
-  for (const unit of opts.units) {
-    const count = differ(unit);
-    if (Math.abs(count) >= 1) {
-      return format(count, unit);
-    }
-  }
-  return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
-}
-
 function lastOpts(argList) {
   let opts = {},
     args;
@@ -464,6 +410,8 @@ let zoneOffsetTs;
  */
 const zoneOffsetGuessCache = new Map();
 
+export let getDateTimeLocale;
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -486,6 +434,15 @@ const zoneOffsetGuessCache = new Map();
  */
 export default class DateTime {
   #ts;
+  #zone;
+  #loc;
+  #localWeekData;
+  #weekData;
+
+  static {
+    // TODO: Find a better solution for the one place where this is needed
+    getDateTimeLocale = (dt) => dt.#loc;
+  }
 
   /**
    * @access private
@@ -520,26 +477,14 @@ export default class DateTime {
       }
     }
 
-    /**
-     * @access private
-     */
-    this._zone = zone;
-    /**
-     * @access private
-     */
-    this.loc = config.loc || Locale.create();
+    this.#zone = zone;
+    this.#loc = config.loc || Locale.create();
     /**
      * @access private
      */
     this.invalid = invalid;
-    /**
-     * @access private
-     */
-    this.weekData = null;
-    /**
-     * @access private
-     */
-    this.localWeekData = null;
+    this.#weekData = null;
+    this.#localWeekData = null;
     /**
      * @access private
      */
@@ -1077,7 +1022,7 @@ export default class DateTime {
    * @type {string}
    */
   get locale() {
-    return this.isValid ? this.loc.locale : null;
+    return this.isValid ? this.#loc.locale : null;
   }
 
   /**
@@ -1086,7 +1031,7 @@ export default class DateTime {
    * @type {string}
    */
   get numberingSystem() {
-    return this.isValid ? this.loc.numberingSystem : null;
+    return this.isValid ? this.#loc.numberingSystem : null;
   }
 
   /**
@@ -1095,7 +1040,7 @@ export default class DateTime {
    * @type {string}
    */
   get outputCalendar() {
-    return this.isValid ? this.loc.outputCalendar : null;
+    return this.isValid ? this.#loc.outputCalendar : null;
   }
 
   /**
@@ -1103,7 +1048,9 @@ export default class DateTime {
    * @type {Zone}
    */
   get zone() {
-    return this._zone;
+    // TODO: "in" check only exists for proto.test.js, which was added for an ancient
+    // version of React Devtools, verify if this is still necessary
+    return #zone in this ? this.#zone : null;
   }
 
   /**
@@ -1193,7 +1140,7 @@ export default class DateTime {
    * @type {number}
    */
   get weekYear() {
-    return this.isValid ? possiblyCachedWeekData(this).weekYear : NaN;
+    return this.isValid ? this.#possiblyCachedWeekData().weekYear : NaN;
   }
 
   /**
@@ -1203,7 +1150,7 @@ export default class DateTime {
    * @type {number}
    */
   get weekNumber() {
-    return this.isValid ? possiblyCachedWeekData(this).weekNumber : NaN;
+    return this.isValid ? this.#possiblyCachedWeekData().weekNumber : NaN;
   }
 
   /**
@@ -1214,7 +1161,7 @@ export default class DateTime {
    * @type {number}
    */
   get weekday() {
-    return this.isValid ? possiblyCachedWeekData(this).weekday : NaN;
+    return this.isValid ? this.#possiblyCachedWeekData().weekday : NaN;
   }
 
   /**
@@ -1222,7 +1169,7 @@ export default class DateTime {
    * @returns {boolean}
    */
   get isWeekend() {
-    return this.isValid && this.loc.getWeekendDays().includes(this.weekday);
+    return this.isValid && this.#loc.getWeekendDays().includes(this.weekday);
   }
 
   /**
@@ -1232,7 +1179,7 @@ export default class DateTime {
    * @returns {number}
    */
   get localWeekday() {
-    return this.isValid ? possiblyCachedLocalWeekData(this).weekday : NaN;
+    return this.isValid ? this.#possiblyCachedLocalWeekData().weekday : NaN;
   }
 
   /**
@@ -1242,7 +1189,7 @@ export default class DateTime {
    * @returns {number}
    */
   get localWeekNumber() {
-    return this.isValid ? possiblyCachedLocalWeekData(this).weekNumber : NaN;
+    return this.isValid ? this.#possiblyCachedLocalWeekData().weekNumber : NaN;
   }
 
   /**
@@ -1251,7 +1198,7 @@ export default class DateTime {
    * @returns {number}
    */
   get localWeekYear() {
-    return this.isValid ? possiblyCachedLocalWeekData(this).weekYear : NaN;
+    return this.isValid ? this.#possiblyCachedLocalWeekData().weekYear : NaN;
   }
 
   /**
@@ -1270,7 +1217,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthShort() {
-    return this.isValid ? Info.months("short", { locObj: this.loc })[this.month - 1] : null;
+    return this.isValid ? Info.months("short", { locObj: this.#loc })[this.month - 1] : null;
   }
 
   /**
@@ -1280,7 +1227,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthLong() {
-    return this.isValid ? Info.months("long", { locObj: this.loc })[this.month - 1] : null;
+    return this.isValid ? Info.months("long", { locObj: this.#loc })[this.month - 1] : null;
   }
 
   /**
@@ -1290,7 +1237,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayShort() {
-    return this.isValid ? Info.weekdays("short", { locObj: this.loc })[this.weekday - 1] : null;
+    return this.isValid ? Info.weekdays("short", { locObj: this.#loc })[this.weekday - 1] : null;
   }
 
   /**
@@ -1300,7 +1247,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayLong() {
-    return this.isValid ? Info.weekdays("long", { locObj: this.loc })[this.weekday - 1] : null;
+    return this.isValid ? Info.weekdays("long", { locObj: this.#loc })[this.weekday - 1] : null;
   }
 
   /**
@@ -1456,8 +1403,8 @@ export default class DateTime {
     return this.isValid
       ? weeksInWeekYear(
           this.localWeekYear,
-          this.loc.getMinDaysInFirstWeek(),
-          this.loc.getStartOfWeek()
+          this.#loc.getMinDaysInFirstWeek(),
+          this.#loc.getStartOfWeek()
         )
       : NaN;
   }
@@ -1470,7 +1417,7 @@ export default class DateTime {
    */
   resolvedLocaleOptions(opts = {}) {
     const { locale, numberingSystem, calendar } = Formatter.create(
-      this.loc.clone(opts),
+      this.#loc.clone(opts),
       opts
     ).resolvedOptions(this);
     return { locale, numberingSystem, outputCalendar: calendar };
@@ -1533,7 +1480,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
-    const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
+    const loc = this.#loc.clone({ locale, numberingSystem, outputCalendar });
     return this.#clone({ loc });
   }
 
@@ -1564,7 +1511,7 @@ export default class DateTime {
     if (!this.isValid) return this;
 
     const normalized = normalizeObject(values, normalizeUnitWithLocalWeeks);
-    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, this.loc);
+    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, this.#loc);
 
     const settingWeekStuff =
         !isUndefined(normalized.weekYear) ||
@@ -1685,7 +1632,7 @@ export default class DateTime {
 
     if (normalizedUnit === "weeks") {
       if (useLocaleWeeks) {
-        const startOfWeek = this.loc.getStartOfWeek();
+        const startOfWeek = this.#loc.getStartOfWeek();
         const { weekday } = this;
         if (weekday < startOfWeek) {
           o.weekNumber = this.weekNumber - 1;
@@ -1740,7 +1687,7 @@ export default class DateTime {
    */
   toFormat(fmt, opts = {}) {
     return this.isValid
-      ? Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
+      ? Formatter.create(this.#loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 
@@ -1765,7 +1712,7 @@ export default class DateTime {
    */
   toLocaleString(formatOpts = Formats.DATE_SHORT, opts = {}) {
     return this.isValid
-      ? Formatter.create(this.loc.clone(opts), formatOpts).formatDateTime(this)
+      ? Formatter.create(this.#loc.clone(opts), formatOpts).formatDateTime(this)
       : INVALID;
   }
 
@@ -1784,7 +1731,7 @@ export default class DateTime {
    */
   toLocaleParts(opts = {}) {
     return this.isValid
-      ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this)
+      ? Formatter.create(this.#loc.clone(opts), opts).formatDateTimeParts(this)
       : [];
   }
 
@@ -2071,8 +2018,8 @@ export default class DateTime {
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
-      base.numberingSystem = this.loc.numberingSystem;
-      base.locale = this.loc.locale;
+      base.numberingSystem = this.#loc.numberingSystem;
+      base.locale = this.#loc.locale;
     }
     return base;
   }
@@ -2173,7 +2120,7 @@ export default class DateTime {
       other.isValid &&
       this.valueOf() === other.valueOf() &&
       this.zone.equals(other.zone) &&
-      this.loc.equals(other.loc)
+      this.#loc.equals(other.#loc)
     );
   }
 
@@ -2206,7 +2153,7 @@ export default class DateTime {
       units = options.unit;
       unit = undefined;
     }
-    return diffRelative(base, this.plus(padding), {
+    return DateTime.#diffRelative(base, this.plus(padding), {
       ...options,
       numeric: "always",
       units,
@@ -2230,12 +2177,47 @@ export default class DateTime {
   toRelativeCalendar(options = {}) {
     if (!this.isValid) return null;
 
-    return diffRelative(options.base || DateTime.fromObject({}, { zone: this.zone }), this, {
-      ...options,
-      numeric: "auto",
-      units: ["years", "months", "days"],
-      calendary: true,
-    });
+    return DateTime.#diffRelative(
+      options.base || DateTime.fromObject({}, { zone: this.zone }),
+      this,
+      {
+        ...options,
+        numeric: "auto",
+        units: ["years", "months", "days"],
+        calendary: true,
+      }
+    );
+  }
+
+  static #diffRelative(start, end, opts) {
+    const round = isUndefined(opts.round) ? true : opts.round,
+      rounding = isUndefined(opts.rounding) ? "trunc" : opts.rounding,
+      format = (c, unit) => {
+        c = roundTo(c, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
+        const formatter = end.#loc.clone(opts).relFormatter(opts);
+        return formatter.format(c, unit);
+      },
+      differ = (unit) => {
+        if (opts.calendary) {
+          if (!end.hasSame(start, unit)) {
+            return end.startOf(unit).diff(start.startOf(unit), unit).get(unit);
+          } else return 0;
+        } else {
+          return end.diff(start, unit).get(unit);
+        }
+      };
+
+    if (opts.unit) {
+      return format(differ(opts.unit), opts.unit);
+    }
+
+    for (const unit of opts.units) {
+      const count = differ(unit);
+      if (Math.abs(count) >= 1) {
+        return format(count, unit);
+      }
+    }
+    return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
   }
 
   /**
@@ -2542,7 +2524,7 @@ export default class DateTime {
       zone: this.zone,
       c: this.c,
       o: this.o,
-      loc: this.loc,
+      loc: this.#loc,
       invalid: this.invalid,
     };
     return new DateTime({ ...current, ...alts, old: current });
@@ -2584,6 +2566,24 @@ export default class DateTime {
     }
 
     return { ts, o };
+  }
+
+  #possiblyCachedLocalWeekData() {
+    if (this.#localWeekData === null) {
+      this.#localWeekData = gregorianToWeek(
+        this.c,
+        this.#loc.getMinDaysInFirstWeek(),
+        this.#loc.getStartOfWeek()
+      );
+    }
+    return this.#localWeekData;
+  }
+
+  #possiblyCachedWeekData() {
+    if (this.#weekData === null) {
+      this.#weekData = gregorianToWeek(this.c);
+    }
+    return this.#weekData;
   }
 }
 

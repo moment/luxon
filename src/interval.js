@@ -1,4 +1,4 @@
-import DateTime, { friendlyDateTime } from "./datetime.js";
+import DateTime, { friendlyDateTime, getDateTimeLocale } from "./datetime.js";
 import Duration from "./duration.js";
 import Settings from "./settings.js";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
@@ -582,7 +582,7 @@ export default class Interval {
    */
   toLocaleString(formatOpts = Formats.DATE_SHORT, opts = {}) {
     return this.isValid
-      ? Formatter.create(this.s.loc.clone(opts), formatOpts).formatInterval(this)
+      ? Formatter.create(getDateTimeLocale(this.s).clone(opts), formatOpts).formatInterval(this)
       : INVALID;
   }
 
