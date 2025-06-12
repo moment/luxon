@@ -284,7 +284,7 @@ export function signedOffset(offHourStr, offMinuteStr) {
 
 export function asNumber(value) {
   const numericValue = Number(value);
-  if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue))
+  if (typeof value === "boolean" || value === "" || !Number.isFinite(numericValue))
     throw new InvalidArgumentError(`Invalid unit value ${value}`);
   return numericValue;
 }

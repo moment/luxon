@@ -129,7 +129,9 @@ it("Duration.fromDurationLike returns passed Duration", () => {
   expect(dur).toStrictEqual(durFromObject);
 });
 
-it("Duration.fromDurationLike returns passed Duration", () => {
+it("Duration.fromDurationLike throws for invalid inputs", () => {
   expect(() => Duration.fromDurationLike("foo")).toThrow();
   expect(() => Duration.fromDurationLike(null)).toThrow();
+  expect(() => Duration.fromDurationLike(Infinity)).toThrow();
+  expect(() => Duration.fromDurationLike(NaN)).toThrow();
 });

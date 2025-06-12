@@ -360,6 +360,12 @@ test("DateTime.fromMillis(ms) does not accept out-of-bounds numbers", () => {
   expect(DateTime.fromMillis(8.64e15 + 1).isValid).toBe(false);
 });
 
+test("DateTime.fromMillis(ms) does not accept non-finite numbers", () => {
+  expect(DateTime.fromMillis(Infinity).isValid).toBe(false);
+  expect(DateTime.fromMillis(-Infinity).isValid).toBe(false);
+  expect(DateTime.fromMillis(NaN).isValid).toBe(false);
+});
+
 //------
 // .fromSeconds()
 //-------
@@ -384,6 +390,17 @@ test("DateTime.fromSeconds accepts the default locale", () => {
 
 test("DateTime.fromSeconds(seconds) throws InvalidArgumentError for non-numeric input", () => {
   expect(() => DateTime.fromSeconds("slurp")).toThrow();
+});
+
+test("DateTime.fromSeconds(seconds) does not accept out-of-bounds numbers", () => {
+  expect(DateTime.fromSeconds(-8.64e12 - 1).isValid).toBe(false);
+  expect(DateTime.fromSeconds(8.64e12 + 1).isValid).toBe(false);
+});
+
+test("DateTime.fromSeconds(seconds) does not accept non-finite numbers", () => {
+  expect(DateTime.fromSeconds(Infinity).isValid).toBe(false);
+  expect(DateTime.fromSeconds(-Infinity).isValid).toBe(false);
+  expect(DateTime.fromSeconds(NaN).isValid).toBe(false);
 });
 
 //------
@@ -506,6 +523,8 @@ test("DateTime.fromObject() throws with invalid value types", () => {
   expect(() => DateTime.fromObject({ year: "blorp" })).toThrow();
   expect(() => DateTime.fromObject({ year: "" })).toThrow();
   expect(() => DateTime.fromObject({ month: NaN })).toThrow();
+  expect(() => DateTime.fromObject({ month: Infinity })).toThrow();
+  expect(() => DateTime.fromObject({ month: -Infinity })).toThrow();
   expect(() => DateTime.fromObject({ day: true })).toThrow();
   expect(() => DateTime.fromObject({ day: false })).toThrow();
   expect(() => DateTime.fromObject({ hour: {} })).toThrow();
