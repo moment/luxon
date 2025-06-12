@@ -205,6 +205,7 @@ export default class Duration {
   #values;
   #loc;
   #conversionAccuracy;
+  #invalid;
 
   /**
    * @private
@@ -220,10 +221,7 @@ export default class Duration {
     this.#values = config.values;
     this.#loc = config.loc || Locale.create();
     this.#conversionAccuracy = accurate ? "longterm" : "casual";
-    /**
-     * @access private
-     */
-    this.invalid = config.invalid || null;
+    this.#invalid = config.invalid || null;
     /**
      * @access private
      */
@@ -947,7 +945,7 @@ export default class Duration {
    * @return {boolean}
    */
   get isValid() {
-    return this.invalid === null;
+    return #invalid in this && this.#invalid === null;
   }
 
   /**
@@ -955,7 +953,7 @@ export default class Duration {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalid ? this.invalid.reason : null;
+    return #invalid in this && this.#invalid ? this.#invalid.reason : null;
   }
 
   /**
@@ -963,7 +961,7 @@ export default class Duration {
    * @type {string}
    */
   get invalidExplanation() {
-    return this.invalid ? this.invalid.explanation : null;
+    return #invalid in this && this.#invalid ? this.#invalid.explanation : null;
   }
 
   /**
