@@ -206,6 +206,7 @@ export default class Duration {
   #loc;
   #conversionAccuracy;
   #invalid;
+  #matrix;
 
   /**
    * @private
@@ -222,10 +223,7 @@ export default class Duration {
     this.#loc = config.loc || Locale.create();
     this.#conversionAccuracy = accurate ? "longterm" : "casual";
     this.#invalid = config.invalid || null;
-    /**
-     * @access private
-     */
-    this.matrix = matrix;
+    this.#matrix = matrix;
     /**
      * @access private
      */
@@ -621,7 +619,7 @@ export default class Duration {
   toMillis() {
     if (!this.isValid) return NaN;
 
-    return durationToMillis(this.matrix, this.#values);
+    return durationToMillis(this.#matrix, this.#values);
   }
 
   /**
@@ -747,7 +745,7 @@ export default class Duration {
   normalize() {
     if (!this.isValid) return this;
     const vals = this.toObject();
-    normalizeValues(this.matrix, vals);
+    normalizeValues(this.#matrix, vals);
     return this.#clone({ values: vals }, true);
   }
 
@@ -789,7 +787,7 @@ export default class Duration {
 
         // anything we haven't boiled down yet should get boiled to this unit
         for (const ak in accumulated) {
-          own += this.matrix[ak][k] * accumulated[ak];
+          own += this.#matrix[ak][k] * accumulated[ak];
           accumulated[ak] = 0;
         }
 
@@ -815,11 +813,11 @@ export default class Duration {
     for (const key in accumulated) {
       if (accumulated[key] !== 0) {
         built[lastUnit] +=
-          key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
+          key === lastUnit ? accumulated[key] : accumulated[key] / this.#matrix[lastUnit][key];
       }
     }
 
-    normalizeValues(this.matrix, built);
+    normalizeValues(this.#matrix, built);
     return this.#clone({ values: built }, true);
   }
 
@@ -1000,7 +998,7 @@ export default class Duration {
       values: clear ? alts.values : { ...this.#values, ...(alts.values || {}) },
       loc: this.#loc.clone(alts.loc),
       conversionAccuracy: alts.conversionAccuracy || this.#conversionAccuracy,
-      matrix: alts.matrix || this.matrix,
+      matrix: alts.matrix || this.#matrix,
     };
     return new Duration(conf);
   }
