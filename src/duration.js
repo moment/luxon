@@ -114,18 +114,6 @@ const orderedUnits = [
 
 const reverseUnits = orderedUnits.slice(0).reverse();
 
-// clone really means "create another instance just like this one, but with these changes"
-function clone(dur, alts, clear = false) {
-  // deep merge for vals
-  const conf = {
-    values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
-    loc: dur.loc.clone(alts.loc),
-    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
-    matrix: alts.matrix || dur.matrix,
-  };
-  return new Duration(conf);
-}
-
 function durationToMillis(matrix, vals) {
   let sum = vals.milliseconds ?? 0;
   for (const unit of reverseUnits.slice(1)) {
@@ -215,6 +203,7 @@ function removeZeroes(vals) {
  */
 export default class Duration {
   #values;
+  #loc;
 
   /**
    * @private
@@ -227,14 +216,8 @@ export default class Duration {
       matrix = config.matrix;
     }
 
-    /**
-     * @access private
-     */
     this.#values = config.values;
-    /**
-     * @access private
-     */
-    this.loc = config.loc || Locale.create();
+    this.#loc = config.loc || Locale.create();
     /**
      * @access private
      */
@@ -439,7 +422,7 @@ export default class Duration {
    * @type {string}
    */
   get locale() {
-    return this.isValid ? this.loc.locale : null;
+    return this.isValid ? this.#loc.locale : null;
   }
 
   /**
@@ -448,7 +431,7 @@ export default class Duration {
    * @type {string}
    */
   get numberingSystem() {
-    return this.isValid ? this.loc.numberingSystem : null;
+    return this.isValid ? this.#loc.numberingSystem : null;
   }
 
   /**
@@ -480,7 +463,7 @@ export default class Duration {
       floor: opts.round !== false && opts.floor !== false,
     };
     return this.isValid
-      ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
+      ? Formatter.create(this.#loc, fmtOpts).formatDurationFromString(this, fmt)
       : INVALID;
   }
 
@@ -511,13 +494,13 @@ export default class Duration {
         if (isUndefined(val) || (val === 0 && !showZeros)) {
           return null;
         }
-        return this.loc
+        return this.#loc
           .numberFormatter({ style: "unit", unitDisplay: "long", ...opts, unit: unit.slice(0, -1) })
           .format(val);
       })
       .filter((n) => n);
 
-    return this.loc
+    return this.#loc
       .listFormatter({ type: "conjunction", style: opts.listStyle || "narrow", ...opts })
       .format(l);
   }
@@ -724,7 +707,7 @@ export default class Duration {
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy, matrix } = {}) {
-    const loc = this.loc.clone({ locale, numberingSystem });
+    const loc = this.#loc.clone({ locale, numberingSystem });
     const opts = { loc, matrix, conversionAccuracy };
     return this.#clone(opts);
   }
@@ -987,7 +970,7 @@ export default class Duration {
       return false;
     }
 
-    if (!this.loc.equals(other.loc)) {
+    if (!this.#loc.equals(other.#loc)) {
       return false;
     }
 
@@ -1010,7 +993,7 @@ export default class Duration {
     // deep merge for vals
     const conf = {
       values: clear ? alts.values : { ...this.#values, ...(alts.values || {}) },
-      loc: this.loc.clone(alts.loc),
+      loc: this.#loc.clone(alts.loc),
       conversionAccuracy: alts.conversionAccuracy || this.conversionAccuracy,
       matrix: alts.matrix || this.matrix,
     };
