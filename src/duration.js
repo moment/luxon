@@ -204,6 +204,7 @@ function removeZeroes(vals) {
 export default class Duration {
   #values;
   #loc;
+  #conversionAccuracy;
 
   /**
    * @private
@@ -218,10 +219,7 @@ export default class Duration {
 
     this.#values = config.values;
     this.#loc = config.loc || Locale.create();
-    /**
-     * @access private
-     */
-    this.conversionAccuracy = accurate ? "longterm" : "casual";
+    this.#conversionAccuracy = accurate ? "longterm" : "casual";
     /**
      * @access private
      */
@@ -432,6 +430,15 @@ export default class Duration {
    */
   get numberingSystem() {
     return this.isValid ? this.#loc.numberingSystem : null;
+  }
+
+  /**
+   * Get the conversion accuracy, either "longterm" or "casual".
+   *
+   * @return {"longterm"|"casual"}
+   */
+  get conversionAccuracy() {
+    return this.isValid ? this.#conversionAccuracy : null;
   }
 
   /**
@@ -994,7 +1001,7 @@ export default class Duration {
     const conf = {
       values: clear ? alts.values : { ...this.#values, ...(alts.values || {}) },
       loc: this.#loc.clone(alts.loc),
-      conversionAccuracy: alts.conversionAccuracy || this.conversionAccuracy,
+      conversionAccuracy: alts.conversionAccuracy || this.#conversionAccuracy,
       matrix: alts.matrix || this.matrix,
     };
     return new Duration(conf);
