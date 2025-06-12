@@ -214,6 +214,8 @@ function removeZeroes(vals) {
  * There's are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
  */
 export default class Duration {
+  #values;
+
   /**
    * @private
    */
@@ -228,7 +230,7 @@ export default class Duration {
     /**
      * @access private
      */
-    this.values = config.values;
+    this.#values = config.values;
     /**
      * @access private
      */
@@ -505,7 +507,7 @@ export default class Duration {
 
     const l = orderedUnits
       .map((unit) => {
-        const val = this.values[unit];
+        const val = this.#values[unit];
         if (isUndefined(val) || (val === 0 && !showZeros)) {
           return null;
         }
@@ -527,7 +529,7 @@ export default class Duration {
    */
   toObject() {
     if (!this.isValid) return {};
-    return { ...this.values };
+    return { ...this.#values };
   }
 
   /**
@@ -618,7 +620,7 @@ export default class Duration {
    */
   [Symbol.for("nodejs.util.inspect.custom")]() {
     if (this.isValid) {
-      return `Duration { values: ${JSON.stringify(this.values)} }`;
+      return `Duration { values: ${JSON.stringify(this.#values)} }`;
     } else {
       return `Duration { Invalid, reason: ${this.invalidReason} }`;
     }
@@ -631,7 +633,7 @@ export default class Duration {
   toMillis() {
     if (!this.isValid) return NaN;
 
-    return durationToMillis(this.matrix, this.values);
+    return durationToMillis(this.matrix, this.#values);
   }
 
   /**
@@ -654,12 +656,12 @@ export default class Duration {
       result = {};
 
     for (const k of orderedUnits) {
-      if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
+      if (hasOwnProperty(dur.#values, k) || hasOwnProperty(this.#values, k)) {
         result[k] = dur.get(k) + this.get(k);
       }
     }
 
-    return clone(this, { values: result }, true);
+    return this.#clone({ values: result }, true);
   }
 
   /**
@@ -684,10 +686,10 @@ export default class Duration {
   mapUnits(fn) {
     if (!this.isValid) return this;
     const result = {};
-    for (const k of Object.keys(this.values)) {
-      result[k] = asNumber(fn(this.values[k], k));
+    for (const k of Object.keys(this.#values)) {
+      result[k] = asNumber(fn(this.#values[k], k));
     }
-    return clone(this, { values: result }, true);
+    return this.#clone({ values: result }, true);
   }
 
   /**
@@ -712,8 +714,8 @@ export default class Duration {
   set(values) {
     if (!this.isValid) return this;
 
-    const mixed = { ...this.values, ...normalizeObject(values, Duration.normalizeUnit) };
-    return clone(this, { values: mixed });
+    const mixed = { ...this.#values, ...normalizeObject(values, Duration.normalizeUnit) };
+    return this.#clone({ values: mixed });
   }
 
   /**
@@ -724,7 +726,7 @@ export default class Duration {
   reconfigure({ locale, numberingSystem, conversionAccuracy, matrix } = {}) {
     const loc = this.loc.clone({ locale, numberingSystem });
     const opts = { loc, matrix, conversionAccuracy };
-    return clone(this, opts);
+    return this.#clone(opts);
   }
 
   /**
@@ -758,7 +760,7 @@ export default class Duration {
     if (!this.isValid) return this;
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    return clone(this, { values: vals }, true);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -769,7 +771,7 @@ export default class Duration {
   rescale() {
     if (!this.isValid) return this;
     const vals = removeZeroes(this.normalize().shiftToAll().toObject());
-    return clone(this, { values: vals }, true);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -830,7 +832,7 @@ export default class Duration {
     }
 
     normalizeValues(this.matrix, built);
-    return clone(this, { values: built }, true);
+    return this.#clone({ values: built }, true);
   }
 
   /**
@@ -860,10 +862,10 @@ export default class Duration {
   negate() {
     if (!this.isValid) return this;
     const negated = {};
-    for (const k of Object.keys(this.values)) {
-      negated[k] = this.values[k] === 0 ? 0 : -this.values[k];
+    for (const k of Object.keys(this.#values)) {
+      negated[k] = this.#values[k] === 0 ? 0 : -this.#values[k];
     }
-    return clone(this, { values: negated }, true);
+    return this.#clone({ values: negated }, true);
   }
 
   /**
@@ -873,8 +875,8 @@ export default class Duration {
    */
   removeZeros() {
     if (!this.isValid) return this;
-    const vals = removeZeroes(this.values);
-    return clone(this, { values: vals }, true);
+    const vals = removeZeroes(this.#values);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -882,7 +884,7 @@ export default class Duration {
    * @type {number}
    */
   get years() {
-    return this.isValid ? this.values.years || 0 : NaN;
+    return this.isValid ? this.#values.years || 0 : NaN;
   }
 
   /**
@@ -890,7 +892,7 @@ export default class Duration {
    * @type {number}
    */
   get quarters() {
-    return this.isValid ? this.values.quarters || 0 : NaN;
+    return this.isValid ? this.#values.quarters || 0 : NaN;
   }
 
   /**
@@ -898,7 +900,7 @@ export default class Duration {
    * @type {number}
    */
   get months() {
-    return this.isValid ? this.values.months || 0 : NaN;
+    return this.isValid ? this.#values.months || 0 : NaN;
   }
 
   /**
@@ -906,7 +908,7 @@ export default class Duration {
    * @type {number}
    */
   get weeks() {
-    return this.isValid ? this.values.weeks || 0 : NaN;
+    return this.isValid ? this.#values.weeks || 0 : NaN;
   }
 
   /**
@@ -914,7 +916,7 @@ export default class Duration {
    * @type {number}
    */
   get days() {
-    return this.isValid ? this.values.days || 0 : NaN;
+    return this.isValid ? this.#values.days || 0 : NaN;
   }
 
   /**
@@ -922,7 +924,7 @@ export default class Duration {
    * @type {number}
    */
   get hours() {
-    return this.isValid ? this.values.hours || 0 : NaN;
+    return this.isValid ? this.#values.hours || 0 : NaN;
   }
 
   /**
@@ -930,7 +932,7 @@ export default class Duration {
    * @type {number}
    */
   get minutes() {
-    return this.isValid ? this.values.minutes || 0 : NaN;
+    return this.isValid ? this.#values.minutes || 0 : NaN;
   }
 
   /**
@@ -938,7 +940,7 @@ export default class Duration {
    * @return {number}
    */
   get seconds() {
-    return this.isValid ? this.values.seconds || 0 : NaN;
+    return this.isValid ? this.#values.seconds || 0 : NaN;
   }
 
   /**
@@ -946,7 +948,7 @@ export default class Duration {
    * @return {number}
    */
   get milliseconds() {
-    return this.isValid ? this.values.milliseconds || 0 : NaN;
+    return this.isValid ? this.#values.milliseconds || 0 : NaN;
   }
 
   /**
@@ -996,10 +998,22 @@ export default class Duration {
     }
 
     for (const u of orderedUnits) {
-      if (!eq(this.values[u], other.values[u])) {
+      if (!eq(this.#values[u], other.#values[u])) {
         return false;
       }
     }
     return true;
+  }
+
+  // clone really means "create another instance just like this one, but with these changes"
+  #clone(alts, clear = false) {
+    // deep merge for vals
+    const conf = {
+      values: clear ? alts.values : { ...this.#values, ...(alts.values || {}) },
+      loc: this.loc.clone(alts.loc),
+      conversionAccuracy: alts.conversionAccuracy || this.conversionAccuracy,
+      matrix: alts.matrix || this.matrix,
+    };
+    return new Duration(conf);
   }
 }

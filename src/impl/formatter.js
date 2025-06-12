@@ -413,7 +413,7 @@ export default class Formatter {
         isNegativeDuration: collapsed < 0,
         // this relies on "collapsed" being based on "shiftTo", which builds up the object
         // in order
-        largestUnit: Object.keys(collapsed.values)[0],
+        largestUnit: Object.keys(collapsed.toObject())[0],
       };
     return stringifyTokens(tokens, tokenToString(collapsed, durationInfo));
   }
