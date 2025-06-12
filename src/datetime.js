@@ -438,6 +438,7 @@ export default class DateTime {
   #loc;
   #localWeekData;
   #weekData;
+  #invalid;
 
   static {
     // TODO: Find a better solution for the one place where this is needed
@@ -479,10 +480,7 @@ export default class DateTime {
 
     this.#zone = zone;
     this.#loc = config.loc || Locale.create();
-    /**
-     * @access private
-     */
-    this.invalid = invalid;
+    this.#invalid = invalid;
     this.#weekData = null;
     this.#localWeekData = null;
     /**
@@ -785,7 +783,7 @@ export default class DateTime {
     }
 
     if (!inst.isValid) {
-      return DateTime.invalid(inst.invalid);
+      return DateTime.invalid(inst.#invalid);
     }
 
     return inst;
@@ -997,7 +995,7 @@ export default class DateTime {
    * @type {boolean}
    */
   get isValid() {
-    return this.invalid === null;
+    return #invalid in this && this.#invalid === null;
   }
 
   /**
@@ -1005,7 +1003,7 @@ export default class DateTime {
    * @type {string}
    */
   get invalidReason() {
-    return this.invalid ? this.invalid.reason : null;
+    return #invalid in this && this.#invalid ? this.#invalid.reason : null;
   }
 
   /**
@@ -1013,7 +1011,7 @@ export default class DateTime {
    * @type {string}
    */
   get invalidExplanation() {
-    return this.invalid ? this.invalid.explanation : null;
+    return #invalid in this && this.#invalid ? this.#invalid.explanation : null;
   }
 
   /**
@@ -2525,7 +2523,7 @@ export default class DateTime {
       c: this.c,
       o: this.o,
       loc: this.#loc,
-      invalid: this.invalid,
+      invalid: this.#invalid,
     };
     return new DateTime({ ...current, ...alts, old: current });
   }
