@@ -432,12 +432,15 @@ export default class Locale {
 
   months(length, format = false) {
     return listStuff(this, length, English.months, () => {
+      // Workaround for "ja" locale: formatToParts does not label all parts of the month
+      // as "month" and for this locale there is no difference between "format" and "non-format".
+      // As such, just use format() instead of formatToParts() and take the whole string
+      const monthSpecialCase = this.intl === "ja" || this.intl.startsWith("ja-");
+      format &= !monthSpecialCase;
       const intl = format ? { month: length, day: "numeric" } : { month: length },
         formatStr = format ? "format" : "standalone";
       if (!this.monthsCache[formatStr][length]) {
-        // for non-format, take the whole string to work around the fact that some locales
-        // (specifically just ja-JP) do not label all parts of the month as "month"
-        const mapper = format
+        const mapper = !monthSpecialCase
           ? (dt) => this.extract(dt, intl, "month")
           : (dt) => this.dtFormatter(dt, intl).format();
         this.monthsCache[formatStr][length] = mapMonths(mapper);
@@ -500,16 +503,8 @@ export default class Locale {
   extract(dt, intlOpts, field) {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
-      matching = results.findIndex((m) => m.type.toLowerCase() === field);
-    if (matching === -1) return null;
-    const value = results[matching].value;
-    // if (field === "month" && this.intl.startsWith("ja-JP")) {
-    //   const next = results[matching + 1];
-    //   if (next?.type === "literal") {
-    //     return value + next.value;
-    //   }
-    // }
-    return value;
+      matching = results.find((m) => m.type.toLowerCase() === field);
+    return matching ? matching.value : null;
   }
 
   numberFormatter(opts = {}) {
