@@ -5,6 +5,7 @@ import IANAZone from "../zones/IANAZone.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";
 import { ConflictingSpecificationError } from "../errors.js";
+import { unitOutOfRange } from "../impl/conversions.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
@@ -447,7 +448,7 @@ export class TokenParser {
     }
   }
 
-  explainFromTokens(input) {
+  explainFromTokens(input, strictHours = false) {
     if (!this.isValid) {
       return { input, tokens: this.tokens, invalidReason: this.invalidReason };
     } else {
@@ -455,6 +456,17 @@ export class TokenParser {
         [result, zone, specificOffset] = matches
           ? dateTimeFromMatches(matches)
           : [null, null, undefined];
+      if (strictHours && hasOwnProperty(matches, "h")) {
+        const isH11 = this.locale.getIntlLocaleHourCycles()[0] == "h11";
+        if (matches.h > (isH11 ? 11 : 12) || matches.h < (isH11 ? 0 : 1)) {
+          const hoursUnit = this.units.find((t) => t.token.val === "h");
+          hoursUnit.invalidReason = unitOutOfRange("hour", matches.h);
+          hoursUnit.invalidReason.explanation +=
+            " due to 'strictHours' parsing option being enabled";
+          this.disqualifyingUnit = hoursUnit;
+          return { input, tokens: this.tokens, invalidReason: this.invalidReason };
+        }
+      }
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
           "Can't include meridiem when specifying 24-hour format"
@@ -482,13 +494,18 @@ export class TokenParser {
   }
 }
 
-export function explainFromTokens(locale, input, format) {
+export function explainFromTokens(locale, input, format, strictHours = false) {
   const parser = new TokenParser(locale, format);
-  return parser.explainFromTokens(input);
+  return parser.explainFromTokens(input, strictHours);
 }
 
-export function parseFromTokens(locale, input, format) {
-  const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
+export function parseFromTokens(locale, input, format, strictHours = false) {
+  const { result, zone, specificOffset, invalidReason } = explainFromTokens(
+    locale,
+    input,
+    format,
+    strictHours
+  );
   return [result, zone, specificOffset, invalidReason];
 }
 
