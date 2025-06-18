@@ -7,7 +7,7 @@
     const dom = Docsify.dom;
     const darkThemeStyleSheet = dom.find('link[href$="dark.css"]');
     const toggleDarkMode = (isDark) => (darkThemeStyleSheet.disabled = !isDark);
-    const pluginStyleEl = document.createElement("style");
+    const pluginStyleEl = dom.create("style");
     pluginStyleEl.textContent = `#${CHECKBOX_ID} {
 			display: none;
 		}
@@ -78,7 +78,7 @@
 		section.cover.show {
 			z-index: -1;
 		}`;
-    document.head.appendChild(pluginStyleEl);
+    dom.head.appendChild(pluginStyleEl);
     hook.init(() => toggleDarkMode(initialValue));
     hook.ready(() => {
       const body = dom.body;
