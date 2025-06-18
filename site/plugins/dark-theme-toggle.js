@@ -18,26 +18,25 @@
 			height: 28px;
 			margin-left: 2rem;
 			margin-top: 2rem;
-			z-index: 1;
+			z-index: 0;
 			cursor: pointer;
 		}
 		.dark-theme-label::before, .dark-theme-label::after {
 			position: absolute;
+			top: 0.1em;
 			font-size: 16px;
-			z-index: 1;
 			transition: opacity 0.3s;
 		}
 		.dark-theme-label::after {
 			content: "🌞";
 			right: 0.1em;
-			top: 0.1em;
 			opacity: 1;
 		}
 		.dark-theme-label::before {
 			content: "🌙";
-			top: 0.1em;
 			left: 0.1em;
 			opacity: 0;
+			z-index: 1;
 		}
 		.slider {
 			position: absolute;
@@ -56,7 +55,7 @@
 			width: 22px;
 			left: 3px;
 			top: 3px;
-      z-index: 2;
+			z-index: 1;
 			background-color: white;
 			border-radius: 50%;
 			transition: transform 0.3s;
@@ -75,6 +74,9 @@
 		}
 		#${CHECKBOX_ID}:checked ~ section.cover.show {
 			background-color: rgb(79 58 120) !important;
+		}
+		section.cover.show {
+			z-index: -1;
 		}`;
     document.head.appendChild(pluginStyleEl);
     hook.init(() => toggleDarkMode(initialValue));
