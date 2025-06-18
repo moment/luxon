@@ -56,6 +56,7 @@
 			width: 22px;
 			left: 3px;
 			top: 3px;
+      z-index: 2;
 			background-color: white;
 			border-radius: 50%;
 			transition: transform 0.3s;
