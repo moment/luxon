@@ -53,9 +53,4 @@ export default class SystemZone extends Zone {
   equals(otherZone) {
     return otherZone.type === "system";
   }
-
-  /** @override **/
-  get isValid() {
-    return true;
-  }
 }

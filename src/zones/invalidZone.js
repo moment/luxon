@@ -3,6 +3,7 @@ import Zone from "../zone.js";
 /**
  * A zone that failed to parse. You should never need to instantiate this.
  * @implements {Zone}
+ * @deprecated
  */
 export default class InvalidZone extends Zone {
   #zoneName;

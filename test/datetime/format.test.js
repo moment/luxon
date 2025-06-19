@@ -32,10 +32,6 @@ class CustomZone extends Zone {
     return true;
   }
 
-  get isValid() {
-    return true;
-  }
-
   get name() {
     return this._name;
   }

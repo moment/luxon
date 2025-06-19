@@ -1,6 +1,8 @@
 /* global test expect */
 
 import { DateTime, Settings, IANAZone } from "../../src/luxon";
+import { InvalidZoneError } from "../../src/errors";
+import { normalizeZone } from "../../src/impl/zoneUtil";
 
 var Helpers = require("../helpers");
 
@@ -246,7 +248,7 @@ test("DateTime#isInDST() returns true for 1974 whole year in USA- from January 6
 // #getPossibleOffsets()
 //------
 test("DateTime#getPossibleOffsets() returns the same DateTime for fixed zones", () => {
-  const fixedZoned = dt().setZone("+02:00");
+  const fixedZoned = dt().setZone("UTC+02:00");
   const possibleOffsets = fixedZoned.getPossibleOffsets();
   expect(possibleOffsets).toHaveLength(1);
   expect(possibleOffsets[0]).toBe(fixedZoned);
@@ -341,26 +343,18 @@ test("invalid DateTimes have no zone", () => {
 
 test("can parse zones with special JS keywords as invalid", () => {
   for (const kw of ["constructor", "__proto__"]) {
-    const dt = DateTime.fromISO(`2020-01-01T11:22:33+01:00[${kw}]`);
-    expect(dt.invalidReason).toBe("unsupported zone");
-    expect(dt.invalidExplanation).toBe(`the zone "${kw}" is not supported`);
+    expect(() => DateTime.fromISO(`2020-01-01T11:22:33+01:00[${kw}]`)).toThrow(InvalidZoneError);
   }
 });
 
-test("Special JS keywords produce invalid Zone", () => {
+test("Special JS keywords make Zone throw", () => {
   for (const kw of ["constructor", "__proto__"]) {
-    const zone = IANAZone.create(kw);
-    expect(zone.isValid).toBe(false);
+    expect(() => IANAZone.create(kw)).toThrow(InvalidZoneError);
   }
 });
 
-test("Invalid Zones named after special JS keywords produce NaN offset", () => {
+test("Special JS keywords make normalizeZone", () => {
   for (const kw of ["constructor", "__proto__"]) {
-    const zone = IANAZone.create(kw);
-    expect(zone.offset(1742926058000)).toBe(NaN);
+    expect(() => normalizeZone(kw)).toThrow(InvalidZoneError);
   }
-});
-
-test("Invalid zones produce NaN offset", () => {
-  expect(IANAZone.create("INVALID").offset(1742926058000)).toBe(NaN);
 });

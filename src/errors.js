@@ -1,55 +1,54 @@
-// these aren't really private, but nor are they really useful to document
+export const INVALID_IANA_ZONE = "invalid_iana";
 
-/**
- * @private
- */
+let errorFormatter = (code, args) => `${code}(${JSON.stringify(args)})`;
+
+export function setErrorFormatter(formatter) {
+  errorFormatter = formatter;
+}
+
 class LuxonError extends Error {}
 
-/**
- * @private
- */
+class LuxonValidationError extends LuxonError {
+  /**
+   * @param {number} code
+   * @param args
+   */
+  constructor(code, args = {}) {
+    super(errorFormatter(code, args));
+    this.code = code;
+    this.args = args;
+  }
+}
+
 export class InvalidDateTimeError extends LuxonError {
   constructor(reason) {
     super(`Invalid DateTime: ${reason.toMessage()}`);
   }
 }
 
-/**
- * @private
- */
 export class InvalidIntervalError extends LuxonError {
   constructor(reason) {
     super(`Invalid Interval: ${reason.toMessage()}`);
   }
 }
 
-/**
- * @private
- */
 export class InvalidDurationError extends LuxonError {
   constructor(reason) {
     super(`Invalid Duration: ${reason.toMessage()}`);
   }
 }
 
-/**
- * @private
- */
 export class ConflictingSpecificationError extends LuxonError {}
 
-/**
- * @private
- */
 export class InvalidUnitError extends LuxonError {
   constructor(unit) {
     super(`Invalid unit ${unit}`);
   }
 }
 
-/**
- * @private
- */
 export class InvalidArgumentError extends LuxonError {}
+
+export class InvalidZoneError extends LuxonValidationError {}
 
 /**
  * @private

@@ -5,10 +5,10 @@
 import Zone from "../zone.js";
 import IANAZone from "../zones/IANAZone.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
-import InvalidZone from "../zones/invalidZone.js";
 
-import { isUndefined, isString, isNumber } from "./util.js";
+import { isNumber, isString, isUndefined } from "./util.js";
 import SystemZone from "../zones/systemZone.js";
+import { InvalidArgumentError } from "../errors.js";
 
 export function normalizeZone(input, defaultZone) {
   let offset;
@@ -29,6 +29,6 @@ export function normalizeZone(input, defaultZone) {
     // so we're duck checking it
     return input;
   } else {
-    return new InvalidZone(input);
+    throw new InvalidArgumentError("Invalid zone input.");
   }
 }

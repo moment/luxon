@@ -1,5 +1,6 @@
 import { formatOffset, parseZoneInfo, isUndefined, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.js";
+import { INVALID_IANA_ZONE, InvalidZoneError } from "../errors.js";
 
 const dtfCache = new Map();
 function makeDTF(zoneName) {
@@ -114,12 +115,13 @@ export default class IANAZone extends Zone {
   }
 
   #zoneName;
-  #valid;
 
   constructor(name) {
     super();
+    if (!IANAZone.isValidZone(name)) {
+      throw new InvalidZoneError(INVALID_IANA_ZONE, { name });
+    }
     this.#zoneName = name;
-    this.#valid = IANAZone.isValidZone(name);
   }
 
   /**
@@ -182,7 +184,6 @@ export default class IANAZone extends Zone {
    * @return {number}
    */
   offset(ts) {
-    if (!this.#valid) return NaN;
     const date = new Date(ts);
 
     if (isNaN(date)) return NaN;
@@ -223,14 +224,5 @@ export default class IANAZone extends Zone {
    */
   equals(otherZone) {
     return otherZone.type === "iana" && otherZone.name === this.name;
-  }
-
-  /**
-   * Return whether this Zone is valid.
-   * @override
-   * @type {boolean}
-   */
-  get isValid() {
-    return this.#valid;
   }
 }

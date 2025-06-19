@@ -138,14 +138,4 @@ export default class FixedOffsetZone extends Zone {
   equals(otherZone) {
     return otherZone.type === "fixed" && otherZone.offset() === this.#fixed;
   }
-
-  /**
-   * Return whether this Zone is valid:
-   * All fixed offset zones are valid.
-   * @override
-   * @type {boolean}
-   */
-  get isValid() {
-    return true;
-  }
 }

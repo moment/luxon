@@ -25,7 +25,6 @@ export default class Zone {
   /**
    * The IANA name of this zone.
    * Defaults to `name` if not overwritten by a subclass.
-   * @abstract
    * @type {string}
    */
   get ianaName() {
@@ -88,10 +87,11 @@ export default class Zone {
 
   /**
    * Return whether this Zone is valid.
-   * @abstract
+   * Always true.
+   * @deprecated
    * @type {boolean}
    */
   get isValid() {
-    throw new ZoneIsAbstractError();
+    return true;
   }
 }
