@@ -3,23 +3,20 @@
     const TOGGLE_ID = `${vm.config.name}-docsify-dark-theme-toggle`,
       dom = Docsify.dom,
       darkThemeStyleSheet = dom.find('link[href$="dark.css"]'),
-      toggleDarkTheme = () => {
-        const isDark = localStorage[TOGGLE_ID] = checkbox.checked;
+      toggleEl = dom.create("div", "<span />"),
+      isDarkThemeEnabled = () => localStorage[TOGGLE_ID] === "true",
+      applyTheme = (swap = false) => {
+      const isDark = localStorage[TOGGLE_ID] = swap ? !isDarkThemeEnabled() : isDarkThemeEnabled();
         darkThemeStyleSheet.disabled = !isDark;
         dom.toggleClass(dom.body, isDark ? "add" : "remove", "dark");
-      };
+      },
+      findTargetEl = () => dom.find(".cover.show") || dom.find(".sidebar > .app-name");
     localStorage[TOGGLE_ID] ??= matchMedia("(prefers-color-scheme: dark)").matches;
-    const toggle = dom.create("label", `<input type="checkbox" ${(localStorage[TOGGLE_ID] === "true") ? 'checked' : ''} /><span />`),
-      checkbox = dom.find(toggle, "input");
-    toggle.id = TOGGLE_ID;
-    dom.on(checkbox, "change", toggleDarkTheme);
-    hook.init(toggleDarkTheme);
-    hook.doneEach(() => dom.before(dom.find('section.cover.show') || dom.find('.sidebar > .app-name'), toggle));
-    dom.style(
-`#${TOGGLE_ID} > input {
-  display: none;
-}
-#${TOGGLE_ID} {
+    toggleEl.id = TOGGLE_ID;
+    dom.on(toggleEl, "click", applyTheme.bind(this, true));
+    hook.init(applyTheme);
+    hook.doneEach(() => dom.before(findTargetEl(), toggleEl));
+    dom.style(`#${TOGGLE_ID} {
   position: absolute;
   display: inline-block;
   width: 52px;
@@ -94,11 +91,9 @@
 .dark .sidebar li {
   margin-right: 0;
 }
-.dark section.cover.show {
+.dark .cover.show {
   background-color: rgb(79 58 120) !important;
-}`);
-  };
-
+}`);};
   $docsify = $docsify || {};
   $docsify.plugins = [].concat($docsify.plugins || [], darkThemeTogglePlugin);
 })();
