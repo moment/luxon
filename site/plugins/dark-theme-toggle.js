@@ -6,7 +6,7 @@
       toggleEl = dom.create("div", "<span />"),
       isDarkThemeEnabled = () => localStorage[TOGGLE_ID] === "true",
       applyTheme = (swap = false) => {
-      const isDark = localStorage[TOGGLE_ID] = swap ? !isDarkThemeEnabled() : isDarkThemeEnabled();
+        const isDark = localStorage[TOGGLE_ID] = swap ? !isDarkThemeEnabled() : isDarkThemeEnabled();
         darkThemeStyleSheet.disabled = !isDark;
         dom.toggleClass(dom.body, isDark ? "add" : "remove", "dark");
       },
