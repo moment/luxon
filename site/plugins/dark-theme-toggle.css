@@ -1,0 +1,72 @@
+#docsify-dark-theme-toggle {
+  position: absolute;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  margin-left: 2rem;
+  margin-top: 1.5rem;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  cursor: pointer;
+}
+.sidebar > .app-name {
+  position: relative;
+}
+.app-name > #docsify-dark-theme-toggle {
+  margin-right: 1rem;
+  margin-top: 0;
+  right: 0;
+  left: unset;
+}
+#docsify-dark-theme-toggle::before, #docsify-dark-theme-toggle::after {
+  position: absolute;
+  top: 0.1em;
+  font-size: 16px;
+  transition: opacity 0.3s;
+}
+#docsify-dark-theme-toggle::before {
+  content: "🌙";
+  left: 0.1em;
+  opacity: 0;
+  z-index: 1;
+}
+#docsify-dark-theme-toggle::after {
+  content: "🌞";
+  right: 0.1em;
+  opacity: 1;
+}
+#docsify-dark-theme-toggle > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--theme-color, #42b983);
+  border-radius: 28px;
+  transition: background-color 0.3s;
+}
+#docsify-dark-theme-toggle > span::before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  top: 3px;
+  z-index: 1;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+.dark #docsify-dark-theme-toggle::after {
+  opacity: 0;
+}
+.dark #docsify-dark-theme-toggle::before {
+  opacity: 1;
+}
+.dark #docsify-dark-theme-toggle > span {
+  background-color: var(--theme-color, #ea6f5a);
+}
+.dark #docsify-dark-theme-toggle > span::before {
+  transform: translateX(24px);
+}
