@@ -4,19 +4,14 @@
       dom = Docsify.dom,
       darkThemeStyleSheet = dom.find('link[href$="dark.css"]'),
       toggleEl = dom.create("div", "<span />"),
-      isDarkThemeEnabled = () => localStorage[TOGGLE_ID] === "true",
       applyTheme = (swap = false) => {
-        const isDark = localStorage[TOGGLE_ID] = swap ? !isDarkThemeEnabled() : isDarkThemeEnabled();
+        const isDark = (localStorage[TOGGLE_ID] = Boolean(
+          swap ^ (localStorage[TOGGLE_ID] == "true")
+        ));
         darkThemeStyleSheet.disabled = !isDark;
         dom.toggleClass(dom.body, isDark ? "add" : "remove", "dark");
       },
-      findTargetEl = () => dom.find(".cover.show") || dom.find(".sidebar > .app-name");
-    localStorage[TOGGLE_ID] ??= matchMedia("(prefers-color-scheme: dark)").matches;
-    toggleEl.id = TOGGLE_ID;
-    dom.on(toggleEl, "click", applyTheme.bind(this, true));
-    hook.init(applyTheme);
-    hook.doneEach(() => dom.before(findTargetEl(), toggleEl));
-    dom.style(`#${TOGGLE_ID} {
+      toggleStyle = `#${TOGGLE_ID} {
   position: absolute;
   display: inline-block;
   width: 52px;
@@ -87,13 +82,17 @@
 }
 .dark #${TOGGLE_ID} > span::before {
   transform: translateX(24px);
-}
-.dark .sidebar li {
-  margin-right: 0;
-}
-.dark .cover.show {
-  background-color: rgb(79 58 120) !important;
-}`);};
+}`;
+    localStorage[TOGGLE_ID] ??= matchMedia("(prefers-color-scheme: dark)").matches;
+    toggleEl.id = TOGGLE_ID;
+    dom.on(toggleEl, "click", applyTheme.bind(this, true));
+    hook.init(applyTheme);
+    hook.doneEach(() => {
+      const targetEl = dom.find(".cover.show") || dom.find(".sidebar > .app-name");
+      dom.before(targetEl, toggleEl);
+    });
+    dom.style(toggleStyle);
+  };
   $docsify = $docsify || {};
   $docsify.plugins = [].concat($docsify.plugins || [], darkThemeTogglePlugin);
 })();
