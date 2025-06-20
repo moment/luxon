@@ -1,3 +1,5 @@
+import { equals } from "@jest/expect-utils";
+
 expect.extend({
   toThrowLuxonError(func, constructor, code, args) {
     try {
@@ -10,13 +12,25 @@ expect.extend({
             `expected function to throw ${constructor.name}, but it threw ${e.constructor.name} instead.`,
         };
       }
-      if (!(e instanceof constructor) || e.code !== code) {
+      if (e.code !== code) {
         return {
           pass: false,
           message: () =>
             `expected function to throw ${constructor.name} with code ${code}, but it had code ${e.code} instead.`,
         };
       }
+      if (args != null && !equals(args, e.args)) {
+        return {
+          pass: false,
+          message: () =>
+            `expected function to throw ${
+              constructor.name
+            } with code ${code} and args ${JSON.stringify(args)}, but it had args ${JSON.stringify(
+              e.args
+            )} instead.`,
+        };
+      }
+
       return {
         pass: true,
         message: () => `expected function not to throw ${constructor.name} with code ${code}.`,

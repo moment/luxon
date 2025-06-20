@@ -136,9 +136,10 @@ test('DateTime#setZone accepts "utc-3:30"', () => {
 
 test("DateTime#setZone does not accept dumb things", () => {
   Helpers.withDefaultZone("system", () => {
-    const zoned = DateTime.local().setZone("utc-yo");
-    // this is questionable; should this be invalid instead?
-    expect(zoned.zone.type).toBe("system");
+    expect(() => DateTime.local().setZone("utc-yo")).toThrowLuxonError(
+      InvalidZoneError,
+      INVALID_ZONE_NAME
+    );
   });
 });
 

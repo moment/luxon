@@ -5,7 +5,6 @@ import Info from "./info.js";
 import Zone from "./zone.js";
 import FixedOffsetZone from "./zones/fixedOffsetZone.js";
 import IANAZone from "./zones/IANAZone.js";
-import InvalidZone from "./zones/invalidZone.js";
 import SystemZone from "./zones/systemZone.js";
 import Settings from "./settings.js";
 
@@ -20,7 +19,6 @@ export {
   Zone,
   FixedOffsetZone,
   IANAZone,
-  InvalidZone,
   SystemZone,
   Settings,
 };

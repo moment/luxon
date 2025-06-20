@@ -1,13 +1,6 @@
 /* global test expect */
 
-import {
-  Info,
-  FixedOffsetZone,
-  IANAZone,
-  InvalidZone,
-  SystemZone,
-  Settings,
-} from "../../src/luxon";
+import { Info, FixedOffsetZone, IANAZone, SystemZone, Settings } from "../../src/luxon";
 import { INVALID_ZONE_NAME, InvalidZoneError } from "../../src/errors";
 
 const Helpers = require("../helpers");
@@ -28,8 +21,8 @@ test("Info.hasDST returns false for America/Cancun", () => {
   expect(Info.hasDST("America/Cancun")).toBe(false);
 });
 
-test("Info.hasDST returns true for Europe/Andora", () => {
-  expect(Info.hasDST("Europe/Andora")).toBe(true);
+test("Info.hasDST returns true for Europe/Andorra", () => {
+  expect(Info.hasDST("Europe/Andorra")).toBe(true);
 });
 
 test("Info.hasDST defaults to the global zone", () => {
@@ -76,9 +69,6 @@ test("Info.normalizeZone returns Zone objects unchanged", () => {
 
   const ianaZone = new IANAZone("Europe/Paris");
   expect(Info.normalizeZone(ianaZone)).toBe(ianaZone);
-
-  const invalidZone = new InvalidZone("bumblebee");
-  expect(Info.normalizeZone(invalidZone)).toBe(invalidZone);
 
   const systemZone = SystemZone.instance;
   expect(Info.normalizeZone(systemZone)).toBe(systemZone);

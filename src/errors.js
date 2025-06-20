@@ -49,12 +49,3 @@ export class InvalidUnitError extends LuxonError {
 export class InvalidArgumentError extends LuxonError {}
 
 export class InvalidZoneError extends LuxonValidationError {}
-
-/**
- * @private
- */
-export class ZoneIsAbstractError extends LuxonError {
-  constructor() {
-    super("Zone is an abstract class");
-  }
-}

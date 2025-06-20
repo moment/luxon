@@ -1,31 +1,17 @@
 /* global test expect */
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { INVALID_ZONE_NAME, InvalidArgumentError, InvalidZoneError } from "../../src/errors";
 
 test("IANAZone.create returns a singleton per zone name", () => {
   expect(IANAZone.create("UTC")).toBe(IANAZone.create("UTC"));
   expect(IANAZone.create("America/New_York")).toBe(IANAZone.create("America/New_York"));
 
   expect(IANAZone.create("UTC")).not.toBe(IANAZone.create("America/New_York"));
-
-  // hold true even for invalid zone names
-  expect(IANAZone.create("blorp")).toBe(IANAZone.create("blorp"));
 });
 
 test("IANAZone.create should return IANAZone instance", () => {
   const result = IANAZone.create("America/Cancun");
   expect(result).toBeInstanceOf(IANAZone);
-});
-
-test("IANAZone.isValidSpecifier", () => {
-  expect(IANAZone.isValidSpecifier("America/New_York")).toBe(true);
-  // this used to return true but now returns false, because we just defer to isValidZone
-  expect(IANAZone.isValidSpecifier("Fantasia/Castle")).toBe(false);
-  expect(IANAZone.isValidSpecifier("Sport~~blorp")).toBe(false);
-  expect(IANAZone.isValidSpecifier("Etc/GMT+8")).toBe(true);
-  expect(IANAZone.isValidSpecifier("Etc/GMT-8")).toBe(true);
-  expect(IANAZone.isValidSpecifier("Etc/GMT-0")).toBe(true);
-  expect(IANAZone.isValidSpecifier("Etc/GMT-1")).toBe(true);
-  expect(IANAZone.isValidSpecifier(null)).toBe(false);
 });
 
 test("IANAZone.isValidZone", () => {
@@ -40,13 +26,12 @@ test("IANAZone.isValidZone", () => {
 
 test("IANAZone.type returns a static string", () => {
   expect(new IANAZone("America/Santiago").type).toBe("iana");
-  expect(new IANAZone("America/Blorp").type).toBe("iana");
+  expect(new IANAZone("Europe/Berlin").type).toBe("iana");
 });
 
 test("IANAZone.name returns the zone name passed to the constructor", () => {
   expect(new IANAZone("America/Santiago").name).toBe("America/Santiago");
-  expect(new IANAZone("America/Blorp").name).toBe("America/Blorp");
-  expect(new IANAZone("foo").name).toBe("foo");
+  expect(new IANAZone("Europe/Berlin").name).toBe("Europe/Berlin");
 });
 
 test("IANAZone is not universal", () => {
@@ -104,11 +89,14 @@ test("IANAZone.isValid returns true for valid zone names", () => {
   expect(new IANAZone("Europe/Paris").isValid).toBe(true);
 });
 
-test("IANAZone.isValid returns false for invalid zone names", () => {
-  expect(new IANAZone("").isValid).toBe(false);
-  expect(new IANAZone("foo").isValid).toBe(false);
-  expect(new IANAZone("CEDT").isValid).toBe(false);
-  expect(new IANAZone("GMT+2").isValid).toBe(false);
-  expect(new IANAZone("America/Blorp").isValid).toBe(false);
-  expect(new IANAZone(null).isValid).toBe(false);
+test("IANAZone.create throws InvalidZoneError for invalid zone names", () => {
+  for (const input of ["", "foo", "CEDT", "GMT+2", "America/Blorb"]) {
+    expect(() => IANAZone.create(input)).toThrowLuxonError(InvalidZoneError, INVALID_ZONE_NAME);
+  }
+});
+
+test("IANAZone.create throws InvalidArgumentError for invalid inputs", () => {
+  for (const input of [null, 5, {}, [], undefined, Symbol()]) {
+    expect(() => IANAZone.create(input)).toThrow(InvalidArgumentError);
+  }
 });

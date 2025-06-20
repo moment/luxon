@@ -1,16 +1,24 @@
-import { ZoneIsAbstractError } from "./errors.js";
+function zoneIsAbstract() {
+  throw new TypeError("Zone is abstract.");
+}
 
 /**
  * @interface
  */
 export default class Zone {
+  constructor() {
+    if (new.target === Zone) {
+      zoneIsAbstract();
+    }
+  }
+
   /**
    * The type of zone
    * @abstract
    * @type {string}
    */
   get type() {
-    throw new ZoneIsAbstractError();
+    zoneIsAbstract();
   }
 
   /**
@@ -19,7 +27,7 @@ export default class Zone {
    * @type {string}
    */
   get name() {
-    throw new ZoneIsAbstractError();
+    zoneIsAbstract();
   }
 
   /**
@@ -37,7 +45,7 @@ export default class Zone {
    * @type {boolean}
    */
   get isUniversal() {
-    throw new ZoneIsAbstractError();
+    zoneIsAbstract();
   }
 
   /**
@@ -50,7 +58,7 @@ export default class Zone {
    * @return {string}
    */
   offsetName(ts, opts) {
-    throw new ZoneIsAbstractError();
+    zoneIsAbstract();
   }
 
   /**
@@ -62,7 +70,7 @@ export default class Zone {
    * @return {string}
    */
   formatOffset(ts, format) {
-    throw new ZoneIsAbstractError();
+    zoneIsAbstract();
   }
 
   /**
@@ -72,7 +80,7 @@ export default class Zone {
    * @return {number}
    */
   offset(ts) {
-    throw new ZoneIsAbstractError();
+    zoneIsAbstract();
   }
 
   /**
@@ -82,7 +90,7 @@ export default class Zone {
    * @return {boolean}
    */
   equals(otherZone) {
-    throw new ZoneIsAbstractError();
+    zoneIsAbstract();
   }
 
   /**

@@ -1,6 +1,6 @@
 import { formatOffset, parseZoneInfo, isUndefined, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.js";
-import { INVALID_ZONE_NAME, InvalidZoneError } from "../errors.js";
+import { INVALID_ZONE_NAME, InvalidArgumentError, InvalidZoneError } from "../errors.js";
 
 const dtfCache = new Map();
 function makeDTF(zoneName) {
@@ -83,18 +83,6 @@ export default class IANAZone extends Zone {
   }
 
   /**
-   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
-   * @param {string} s - The string to check validity on
-   * @example IANAZone.isValidSpecifier("America/New_York") //=> true
-   * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @deprecated For backward compatibility, this forwards to isValidZone, better use `isValidZone()` directly instead.
-   * @return {boolean}
-   */
-  static isValidSpecifier(s) {
-    return this.isValidZone(s);
-  }
-
-  /**
    * Returns whether the provided string identifies a real zone
    * @param {string} zone - The string to check
    * @example IANAZone.isValidZone("America/New_York") //=> true
@@ -103,7 +91,7 @@ export default class IANAZone extends Zone {
    * @return {boolean}
    */
   static isValidZone(zone) {
-    if (!zone) {
+    if (typeof zone !== "string" || !zone) {
       return false;
     }
     try {
@@ -116,8 +104,13 @@ export default class IANAZone extends Zone {
 
   #zoneName;
 
+  /**
+   * @private
+   * @param name
+   */
   constructor(name) {
     super();
+    if (typeof name !== "string") throw new InvalidArgumentError();
     if (!IANAZone.isValidZone(name)) {
       throw new InvalidZoneError(INVALID_ZONE_NAME, { name });
     }
