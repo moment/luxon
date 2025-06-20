@@ -1,4 +1,9 @@
 import { equals } from "@jest/expect-utils";
+import Settings from "../src/settings";
+
+beforeEach(() => {
+  Settings.resetCaches();
+});
 
 expect.extend({
   toThrowLuxonError(func, constructor, code, args) {
