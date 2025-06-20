@@ -1,7 +1,7 @@
 /* global test expect */
 
 import { DateTime, Settings, IANAZone } from "../../src/luxon";
-import { InvalidZoneError } from "../../src/errors";
+import { INVALID_ZONE_NAME, InvalidDurationError, InvalidZoneError } from "../../src/errors";
 import { normalizeZone } from "../../src/impl/zoneUtil";
 
 var Helpers = require("../helpers");
@@ -200,9 +200,8 @@ test("DateTime#setZone with keepLocalTime handles zones with very different offs
 });
 
 test("DateTime#setZone rejects jibberish", () => {
-  const zoned = dt().setZone("blorp");
-  expect(zoned.isValid).toBe(false);
-  expect(zoned.invalidReason).toBe("unsupported zone");
+  const d = dt();
+  expect(() => d.setZone("blorp")).toThrowLuxonError(InvalidZoneError, INVALID_ZONE_NAME);
 });
 
 // #650
@@ -343,18 +342,21 @@ test("invalid DateTimes have no zone", () => {
 
 test("can parse zones with special JS keywords as invalid", () => {
   for (const kw of ["constructor", "__proto__"]) {
-    expect(() => DateTime.fromISO(`2020-01-01T11:22:33+01:00[${kw}]`)).toThrow(InvalidZoneError);
+    expect(() => DateTime.fromISO(`2020-01-01T11:22:33+01:00[${kw}]`)).toThrowLuxonError(
+      InvalidZoneError,
+      INVALID_ZONE_NAME
+    );
   }
 });
 
 test("Special JS keywords make Zone throw", () => {
   for (const kw of ["constructor", "__proto__"]) {
-    expect(() => IANAZone.create(kw)).toThrow(InvalidZoneError);
+    expect(() => IANAZone.create(kw)).toThrowLuxonError(InvalidZoneError, INVALID_ZONE_NAME);
   }
 });
 
 test("Special JS keywords make normalizeZone", () => {
   for (const kw of ["constructor", "__proto__"]) {
-    expect(() => normalizeZone(kw)).toThrow(InvalidZoneError);
+    expect(() => normalizeZone(kw)).toThrowLuxonError(InvalidZoneError, INVALID_ZONE_NAME);
   }
 });

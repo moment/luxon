@@ -1,7 +1,7 @@
-import { INVALID_IANA_ZONE, setErrorFormatter } from "../errors.js";
+import { INVALID_ZONE_NAME, setErrorFormatter } from "../errors.js";
 
 const errors = {
-  [INVALID_IANA_ZONE]: ({ name }) => `${name} is not a valid IANA zone name.`,
+  [INVALID_ZONE_NAME]: ({ name }) => `${name} is not a valid IANA zone name.`,
 };
 
 export function fancyErrorFormatter(code, args) {

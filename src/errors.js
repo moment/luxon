@@ -1,4 +1,4 @@
-export const INVALID_IANA_ZONE = "invalid_iana";
+export const INVALID_ZONE_NAME = "invalid_zone";
 
 let errorFormatter = (code, args) => `${code}(${JSON.stringify(args)})`;
 

@@ -8,6 +8,7 @@ import {
   SystemZone,
   Settings,
 } from "../../src/luxon";
+import { INVALID_ZONE_NAME, InvalidZoneError } from "../../src/errors";
 
 const Helpers = require("../helpers");
 
@@ -99,7 +100,10 @@ test.each([
 });
 
 test("Info.normalizeZone converts unknown name to invalid Zone", () => {
-  expect(Info.normalizeZone("bumblebee").isValid).toBe(false);
+  expect(() => Info.normalizeZone("bumblebee")).toThrowLuxonError(
+    InvalidZoneError,
+    INVALID_ZONE_NAME
+  );
 });
 
 test("Info.normalizeZone converts null and undefined to default Zone", () => {

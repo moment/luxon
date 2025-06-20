@@ -2,6 +2,7 @@
 
 import { DateTime, Settings } from "../../src/luxon";
 import Helpers from "../helpers";
+import { INVALID_ZONE_NAME, InvalidZoneError } from "../../src/errors";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -502,9 +503,10 @@ test("DateTime.fromObject() accepts a Zone as the zone option", () => {
 });
 
 test("DateTime.fromObject() rejects invalid zones", () => {
-  const dt = DateTime.fromObject({}, { zone: "blorp" });
-  expect(dt.isValid).toBe(false);
-  expect(dt.invalidReason).toBe("unsupported zone");
+  expect(() => DateTime.fromObject({}, { zone: "blorp" })).toThrowLuxonError(
+    InvalidZoneError,
+    INVALID_ZONE_NAME
+  );
 });
 
 test("DateTime.fromObject() ignores the case of object keys", () => {

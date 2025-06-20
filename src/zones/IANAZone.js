@@ -1,6 +1,6 @@
 import { formatOffset, parseZoneInfo, isUndefined, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.js";
-import { INVALID_IANA_ZONE, InvalidZoneError } from "../errors.js";
+import { INVALID_ZONE_NAME, InvalidZoneError } from "../errors.js";
 
 const dtfCache = new Map();
 function makeDTF(zoneName) {
@@ -119,7 +119,7 @@ export default class IANAZone extends Zone {
   constructor(name) {
     super();
     if (!IANAZone.isValidZone(name)) {
-      throw new InvalidZoneError(INVALID_IANA_ZONE, { name });
+      throw new InvalidZoneError(INVALID_ZONE_NAME, { name });
     }
     this.#zoneName = name;
   }
