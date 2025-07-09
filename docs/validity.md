@@ -75,6 +75,16 @@ DateTime.now().setZone("America/Blorp"); //=> Error: Invalid DateTime: unsupport
 
 You can of course leave this on in production too, but be sure to try/catch it appropriately.
 
+For TypeScript users, this runtime setting narrows the return types. You need manually inform TypeScript of this setting with this snippet.
+```ts
+declare module 'luxon' {
+  interface TSSettings {
+    throwOnInvalid: true;
+  }
+}
+```
+This will remove the null, etc. return types from getters/methods that would only do so for invalid objects.
+
 ## Invalid Durations
 
 Durations can be invalid too. The easiest way to get one is to diff an invalid DateTime.
