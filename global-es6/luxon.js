@@ -8130,7 +8130,7 @@ var luxon = (function (exports) {
     }
   }
 
-  const VERSION = "3.7.0";
+  const VERSION = "3.7.1";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

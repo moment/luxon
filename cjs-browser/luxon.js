@@ -8723,7 +8723,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-var VERSION = "3.7.0";
+var VERSION = "3.7.1";
 
 exports.DateTime = DateTime;
 exports.Duration = Duration;
