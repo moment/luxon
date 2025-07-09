@@ -409,7 +409,8 @@ export default class Formatter {
           } else if (this.opts.signMode === "all") {
             signDisplay = "always";
           } else {
-            signDisplay = "negative";
+            // "auto" and "negative" are the same, but "auto" has better support
+            signDisplay = "auto";
           }
           return this.num(lildur.get(mapped) * inversionFactor, token.length, signDisplay);
         } else {
