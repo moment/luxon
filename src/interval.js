@@ -189,7 +189,8 @@ export default class Interval {
   }
 
   /**
-   * Returns the end of the Interval
+   * Returns the end of the Interval. This is the first instant which is not part of the interval
+   * (Interval is half-open).
    * @type {DateTime}
    */
   get end() {
