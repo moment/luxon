@@ -1,5 +1,19 @@
 # Changelog
 
+# 3.7.0 (2025-07-09)
+- Added `showZeros` option to `Duration#toHuman`
+- Added `Duration#removeZeros` method.
+- Added `rounding` option to `DateTime#toRelative`
+- Added `precision` option to ISO formatting methods
+- Added `signMode` option to `Duration#toFormat`
+- Allow escaping single quotes in format strings
+- Improve output of `Info.months` and `Info.monthsFormat` for `ja` locale
+- Accept lowercase `t` as a separator in ISO strings
+- Accept lowercase `z` as an offset in ISO strings
+- Reject non-finite numbers where previously only `NaN` was rejected
+- Improve the documentation for Interval
+- Added a dark theme for the documentation site
+
 # 3.6.1 (2025-03-31)
 - Add Fallback for `minimalDays` being removed from Intl.WeekInfo
 - Fix various caches when JS keywords like "constructor" are used for names
