@@ -1,5 +1,8 @@
 # Changelog
 
+# 3.7.1 (2025-07-09)
+- Revert change in ES6 packaging
+
 # 3.7.0 (2025-07-09)
 - Added `showZeros` option to `Duration#toHuman`
 - Added `Duration#removeZeros` method.
