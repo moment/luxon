@@ -283,13 +283,84 @@ test("Duration#toFormat returns a lame string for invalid durations", () => {
   expect(Duration.invalid("because").toFormat("yy")).toBe("Invalid Duration");
 });
 
-test("Duration#toFormat shows negative sign on the largest unit", () => {
-  expect(Duration.fromObject({ years: -3, seconds: -45 }).toFormat("yyss")).toBe("-0345");
+// - signMode negativeLargestOnly
+
+test("Duration#toFormat shows negative sign on the largest unit when using signMode negativeLargestOnly", () => {
   expect(
-    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("'before'yy'between'ss'after'")
+    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("yyss", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("-0345");
+  expect(
+    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("'before'yy'between'ss'after'", {
+      signMode: "negativeLargestOnly",
+    })
   ).toBe("before-03between45after");
   // Intentionally have the seconds not first to make sure years is still picked as the largest unit
-  expect(Duration.fromObject({ seconds: -45, years: -3 }).toFormat("ssyy")).toBe("45-03");
+  expect(
+    Duration.fromObject({ seconds: -45, years: -3 }).toFormat("ssyy", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("45-03");
+});
+
+test("Duration#toFormat shows no negative sign on the largest unit when using signMode negativeLargestOnly with positive Duration", () => {
+  expect(
+    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("yyss", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("0345");
+  expect(
+    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("'before'yy'between'ss'after'", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("before03between45after");
+  // Intentionally have the seconds not first to make sure years is still picked as the largest unit
+  expect(
+    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("ssyy", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("4503");
+});
+
+// - signMode all
+
+test("Duration#toFormat with signMode all shows positive sign on positive durations", () => {
+  expect(
+    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("yyss", {
+      signMode: "all",
+    })
+  ).toBe("+03+45");
+  expect(
+    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("'before'yy'between'ss'after'", {
+      signMode: "all",
+    })
+  ).toBe("before+03between+45after");
+  // Intentionally have the seconds not first to make sure years is still picked as the largest unit
+  expect(
+    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("ssyy", {
+      signMode: "all",
+    })
+  ).toBe("+45+03");
+});
+
+test("Duration#toFormat with signMode all shows positive sign on negative durations", () => {
+  expect(
+    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("yyss", {
+      signMode: "all",
+    })
+  ).toBe("-03-45");
+  expect(
+    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("'before'yy'between'ss'after'", {
+      signMode: "all",
+    })
+  ).toBe("before-03between-45after");
+  // Intentionally have the seconds not first to make sure years is still picked as the largest unit
+  expect(
+    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("ssyy", {
+      signMode: "all",
+    })
+  ).toBe("-45-03");
 });
 
 //------

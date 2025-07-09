@@ -126,7 +126,7 @@ export default class Formatter {
     return this.dtFormatter(dt, opts).resolvedOptions();
   }
 
-  num(n, p = 0) {
+  num(n, p = 0, signDisplay = undefined) {
     // we get some perf out of doing this here, annoyingly
     if (this.opts.forceSimple) {
       return padStart(n, p);
@@ -136,6 +136,9 @@ export default class Formatter {
 
     if (p > 0) {
       opts.padTo = p;
+    }
+    if (signDisplay) {
+      opts.signDisplay = signDisplay;
     }
 
     return this.loc.numberFormatter(opts).format(n);
@@ -372,6 +375,7 @@ export default class Formatter {
   }
 
   formatDurationFromString(dur, fmt) {
+    const invertLargest = this.opts.signMode === "negativeLargestOnly" ? -1 : 1;
     const tokenToField = (token) => {
         switch (token[0]) {
           case "S":
@@ -397,8 +401,17 @@ export default class Formatter {
       tokenToString = (lildur, info) => (token) => {
         const mapped = tokenToField(token);
         if (mapped) {
-          const inversionFactor = info.isNegativeDuration && mapped !== info.largestUnit ? -1 : 1;
-          return this.num(lildur.get(mapped) * inversionFactor, token.length);
+          const inversionFactor =
+            info.isNegativeDuration && mapped !== info.largestUnit ? invertLargest : 1;
+          let signDisplay;
+          if (this.opts.signMode === "negativeLargestOnly" && mapped !== info.largestUnit) {
+            signDisplay = "never";
+          } else if (this.opts.signMode === "all") {
+            signDisplay = "always";
+          } else {
+            signDisplay = "negative";
+          }
+          return this.num(lildur.get(mapped) * inversionFactor, token.length, signDisplay);
         } else {
           return token;
         }
