@@ -10,7 +10,7 @@
   "repository": "https://github.com/moment/luxon",
   "exports": {
     ".": {
-      "import": "./build/es6/luxon.js",
+      "import": "./src/luxon.js",
       "require": "./build/node/luxon.js"
     },
     "./package.json": "./package.json"
