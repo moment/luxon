@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>luxon 3.6.1 | Documentation</title>
+  <title>luxon 3.7.0 | Documentation</title>
   <meta name='description' content='Immutable date wrapper'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>luxon</h3>
-          <div class='mb1'><code>3.6.1</code></div>
+          <div class='mb1'><code>3.7.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -856,92 +856,6 @@
               
                 
                 <li><a
-                  href='#formatoffset'
-                  class="">
-                  formatOffset
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#zone'
-                  class=" toggle-sibling">
-                  Zone
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#zonetype'
-                        class='regular pre-open'>
-                        #type
-                      </a></li>
-                      
-                      <li><a
-                        href='#zonename'
-                        class='regular pre-open'>
-                        #name
-                      </a></li>
-                      
-                      <li><a
-                        href='#zoneiananame'
-                        class='regular pre-open'>
-                        #ianaName
-                      </a></li>
-                      
-                      <li><a
-                        href='#zoneisuniversal'
-                        class='regular pre-open'>
-                        #isUniversal
-                      </a></li>
-                      
-                      <li><a
-                        href='#zoneoffsetname'
-                        class='regular pre-open'>
-                        #offsetName
-                      </a></li>
-                      
-                      <li><a
-                        href='#zoneformatoffset'
-                        class='regular pre-open'>
-                        #formatOffset
-                      </a></li>
-                      
-                      <li><a
-                        href='#zoneoffset'
-                        class='regular pre-open'>
-                        #offset
-                      </a></li>
-                      
-                      <li><a
-                        href='#zoneequals'
-                        class='regular pre-open'>
-                        #equals
-                      </a></li>
-                      
-                      <li><a
-                        href='#zoneisvalid'
-                        class='regular pre-open'>
-                        #isValid
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
                   href='#unitfortoken'
                   class="">
                   unitForToken
@@ -1166,6 +1080,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#durationremovezeros'
+                        class='regular pre-open'>
+                        #removeZeros
+                      </a></li>
+                      
+                      <li><a
                         href='#durationyears'
                         class='regular pre-open'>
                         #years
@@ -1248,6 +1168,16 @@
                   
                   
                 </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#formatoffset'
+                  class="">
+                  formatOffset
+                  
+                </a>
                 
                 </li>
               
@@ -1623,6 +1553,82 @@
                     
                     </ul>
                   
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#zone'
+                  class=" toggle-sibling">
+                  Zone
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#zonetype'
+                        class='regular pre-open'>
+                        #type
+                      </a></li>
+                      
+                      <li><a
+                        href='#zonename'
+                        class='regular pre-open'>
+                        #name
+                      </a></li>
+                      
+                      <li><a
+                        href='#zoneiananame'
+                        class='regular pre-open'>
+                        #ianaName
+                      </a></li>
+                      
+                      <li><a
+                        href='#zoneisuniversal'
+                        class='regular pre-open'>
+                        #isUniversal
+                      </a></li>
+                      
+                      <li><a
+                        href='#zoneoffsetname'
+                        class='regular pre-open'>
+                        #offsetName
+                      </a></li>
+                      
+                      <li><a
+                        href='#zoneformatoffset'
+                        class='regular pre-open'>
+                        #formatOffset
+                      </a></li>
+                      
+                      <li><a
+                        href='#zoneoffset'
+                        class='regular pre-open'>
+                        #offset
+                      </a></li>
+                      
+                      <li><a
+                        href='#zoneequals'
+                        class='regular pre-open'>
+                        #equals
+                      </a></li>
+                      
+                      <li><a
+                        href='#zoneisvalid'
+                        class='regular pre-open'>
+                        #isValid
+                      </a></li>
+                      
+                    </ul>
                   
                   
                   
@@ -10419,6 +10425,17 @@ Defaults to the system's locale if no locale has been specified</p>
 
 
               
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.precision</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  
+    (default <code>&#39;milliseconds&#39;</code>)
+  </td>
+  <td class='break-word'><span>truncate output to desired presicion: 'years', 'months', 'days', 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
+</span></td>
+</tr>
+
+
+              
             </tbody>
           </table>
           
@@ -10456,6 +10473,12 @@ Defaults to the system's locale if no locale has been specified</p>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toISO</span>({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;20170422T204705.335-0400&#x27;</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toISO</span>({ <span class="hljs-attr">precision</span>: <span class="hljs-string">&#x27;day&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;2017-04-22Z&#x27;</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">toISO</span>({ <span class="hljs-attr">precision</span>: <span class="hljs-string">&#x27;minute&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;2017-04-22T20:47Z&#x27;</span></pre>
     
   
 
@@ -10532,6 +10555,17 @@ Defaults to the system's locale if no locale has been specified</p>
 
 
               
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.precision</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  
+    (default <code>&#39;day&#39;</code>)
+  </td>
+  <td class='break-word'><span>truncate output to desired precision: 'years', 'months', or 'days'.
+</span></td>
+</tr>
+
+
+              
             </tbody>
           </table>
           
@@ -10563,6 +10597,9 @@ Defaults to the system's locale if no locale has been specified</p>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">toISODate</span>({ <span class="hljs-attr">format</span>: <span class="hljs-string">&#x27;basic&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;19820525&#x27;</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>(<span class="hljs-number">1982</span>, <span class="hljs-number">5</span>, <span class="hljs-number">25</span>).<span class="hljs-title function_">toISODate</span>({ <span class="hljs-attr">precision</span>: <span class="hljs-string">&#x27;month&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;1982-05&#x27;</span></pre>
     
   
 
@@ -10758,6 +10795,17 @@ Defaults to the system's locale if no locale has been specified</p>
 
 
               
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.precision</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  
+    (default <code>&#39;milliseconds&#39;</code>)
+  </td>
+  <td class='break-word'><span>truncate output to desired presicion: 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
+</span></td>
+</tr>
+
+
+              
             </tbody>
           </table>
           
@@ -10795,6 +10843,9 @@ Defaults to the system's locale if no locale has been specified</p>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">includePrefix</span>: <span class="hljs-literal">true</span> }) <span class="hljs-comment">//=&gt; &#x27;T07:34:19.361Z&#x27;</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">utc</span>().<span class="hljs-title function_">set</span>({ <span class="hljs-attr">hour</span>: <span class="hljs-number">7</span>, <span class="hljs-attr">minute</span>: <span class="hljs-number">34</span>, <span class="hljs-attr">second</span>: <span class="hljs-number">56</span> }).<span class="hljs-title function_">toISOTime</span>({ <span class="hljs-attr">precision</span>: <span class="hljs-string">&#x27;minute&#x27;</span> }) <span class="hljs-comment">//=&gt; &#x27;07:34Z&#x27;</span></pre>
     
   
 
@@ -12404,7 +12455,7 @@ To compare just the millisecond values, use <code>+dt1 === +dt2</code>.</p>
   
 
   <p>Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-platform supports Intl.RelativeTimeFormat. Rounds down by default.</p>
+platform supports Intl.RelativeTimeFormat. Rounds towards zero by default.</p>
 
     <div class='pre p1 fill-light mt0'>toRelative(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
   
@@ -12479,6 +12530,17 @@ platform supports Intl.RelativeTimeFormat. Rounds down by default.</p>
     (default <code>true</code>)
   </td>
   <td class='break-word'><span>whether to round the numbers in the output.
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>options.rounding</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  
+    (default <code>&quot;trunc&quot;</code>)
+  </td>
+  <td class='break-word'><span>rounding method to use when rounding the numbers in the output. Can be "trunc" (toward zero), "expand" (away from zero), "round", "floor", or "ceil".
 </span></td>
 </tr>
 
@@ -12684,754 +12746,6 @@ Only internationalizes on platforms that supports Intl.RelativeTimeFormat.</p>
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">DateTime</span>.<span class="hljs-title function_">now</span>().<span class="hljs-title function_">minus</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toRelativeCalendar</span>() <span class="hljs-comment">//=&gt; &quot;2 days ago&quot;</span></pre>
     
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='formatoffset'>
-      formatOffset
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Returns the offset's value as a string</p>
-
-    <div class='pre p1 fill-light mt0'>formatOffset(offset: any, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>offset</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    What style of offset to return.
-Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    Epoch milliseconds for which to get the offset
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='zone'>
-      Zone
-    </h3>
-    
-    
-  </div>
-  
-
-  
-    <div class='pre p1 fill-light mt0'>Zone</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='zonetype'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>type</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>The type of zone</p>
-
-    <div class='pre p1 fill-light mt0'>type</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zonename'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>name</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>The name of this zone.</p>
-
-    <div class='pre p1 fill-light mt0'>name</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zoneiananame'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>ianaName</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>The IANA name of this zone.
-Defaults to <code>name</code> if not overwritten by a subclass.</p>
-
-    <div class='pre p1 fill-light mt0'>ianaName</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zoneisuniversal'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>isUniversal</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Returns whether the offset is known to be fixed for the whole year.</p>
-
-    <div class='pre p1 fill-light mt0'>isUniversal</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zoneoffsetname'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>offsetName(ts, opts)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Returns the offset's common name (such as EST) at the specified timestamp</p>
-
-    <div class='pre p1 fill-light mt0'>offsetName(ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    Epoch milliseconds for which to get the name
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    Options to affect the format
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.format</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  </td>
-  <td class='break-word'><span>What style of offset to return. Accepts 'long' or 'short'.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.locale</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  </td>
-  <td class='break-word'><span>What locale to return the offset name in.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zoneformatoffset'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>formatOffset(ts, format)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Returns the offset's value as a string</p>
-
-    <div class='pre p1 fill-light mt0'>formatOffset(ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    Epoch milliseconds for which to get the offset
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    What style of offset to return.
-Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zoneoffset'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>offset(ts)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Return the offset in minutes for this zone at the specified timestamp.</p>
-
-    <div class='pre p1 fill-light mt0'>offset(ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    Epoch milliseconds for which to compute the offset
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zoneequals'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>equals(otherZone)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Return whether this Zone is equal to another zone</p>
-
-    <div class='pre p1 fill-light mt0'>equals(otherZone: <a href="#zone">Zone</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>otherZone</span> <code class='quiet'>(<a href="#zone">Zone</a>)</code>
-	    the zone to compare
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
-        
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='zoneisvalid'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>isValid</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Return whether this Zone is valid.</p>
-
-    <div class='pre p1 fill-light mt0'>isValid</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
   
 
   
@@ -14763,6 +14077,17 @@ Notes:</li>
 
 
               
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.signMode</span> <code class='quiet'>(<code>"negative"</code> | <code>"all"</code> | <code>"negativeLargestOnly"</code>)</code>
+  
+    (default <code>negative</code>)
+  </td>
+  <td class='break-word'><span>How to handle signs
+</span></td>
+</tr>
+
+
+              
             </tbody>
           </table>
           
@@ -14797,6 +14122,15 @@ Notes:</li>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;M S&quot;</span>) <span class="hljs-comment">//=&gt; &quot;12 518402000&quot;</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">days</span>: <span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: <span class="hljs-number">2</span> }).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;d s&quot;</span>, { <span class="hljs-attr">signMode</span>: <span class="hljs-string">&quot;all&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;+6 +2&quot;</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">days</span>: -<span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: -<span class="hljs-number">2</span> }).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;d s&quot;</span>, { <span class="hljs-attr">signMode</span>: <span class="hljs-string">&quot;all&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;-6 -2&quot;</span></pre>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">days</span>: -<span class="hljs-number">6</span>, <span class="hljs-attr">seconds</span>: -<span class="hljs-number">2</span> }).<span class="hljs-title function_">toFormat</span>(<span class="hljs-string">&quot;d s&quot;</span>, { <span class="hljs-attr">signMode</span>: <span class="hljs-string">&quot;negativeLargestOnly&quot;</span> }) <span class="hljs-comment">//=&gt; &quot;-6 2&quot;</span></pre>
     
   
 
@@ -14882,6 +14216,17 @@ To modify its behavior, use <code>listStyle</code> and any Intl.NumberFormat opt
 
 
               
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.showZeros</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
+  
+    (default <code>true</code>)
+  </td>
+  <td class='break-word'><span>Show all units previously used by the duration even if they are zero
+</span></td>
+</tr>
+
+
+              
             </tbody>
           </table>
           
@@ -14911,10 +14256,11 @@ To modify its behavior, use <code>listStyle</code> and any Intl.NumberFormat opt
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">``</span><span class="hljs-string">`js
-var dur = Duration.fromObject({ days: 1, hours: 5, minutes: 6 })
-dur.toHuman() //=&gt; &#x27;1 day, 5 hours, 6 minutes&#x27;
-dur.toHuman({ listStyle: &quot;long&quot; }) //=&gt; &#x27;1 day, 5 hours, and 6 minutes&#x27;
-dur.toHuman({ unitDisplay: &quot;short&quot; }) //=&gt; &#x27;1 day, 5 hr, 6 min&#x27;
+var dur = Duration.fromObject({ months: 1, weeks: 0, hours: 5, minutes: 6 })
+dur.toHuman() //=&gt; &#x27;1 month, 0 weeks, 5 hours, 6 minutes&#x27;
+dur.toHuman({ listStyle: &quot;long&quot; }) //=&gt; &#x27;1 month, 0 weeks, 5 hours, and 6 minutes&#x27;
+dur.toHuman({ unitDisplay: &quot;short&quot; }) //=&gt; &#x27;1 mth, 0 wks, 5 hr, 6 min&#x27;
+dur.toHuman({ showZeros: false }) //=&gt; &#x27;1 month, 5 hours, 6 minutes&#x27;
 `</span><span class="hljs-string">``</span></pre>
     
   
@@ -16436,6 +15782,68 @@ Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds
       </div>
     </div>
   
+    <div class='border-bottom' id='durationremovezeros'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>removeZeros()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Removes all units with values equal to 0 from this Duration.</p>
+
+    <div class='pre p1 fill-light mt0'>removeZeros(): <a href="#duration">Duration</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#duration">Duration</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-title class_">Duration</span>.<span class="hljs-title function_">fromObject</span>({ <span class="hljs-attr">years</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">days</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">hours</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">minutes</span>: <span class="hljs-number">0</span> }).<span class="hljs-title function_">removeZeros</span>().<span class="hljs-title function_">toObject</span>() <span class="hljs-comment">//=&gt; { years: 2 }</span></pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='durationyears'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -17164,6 +16572,95 @@ Two Durations are equal iff they have the same units and the same values for eac
     </div>
   
 </div>
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='formatoffset'>
+      formatOffset
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Returns the offset's value as a string</p>
+
+    <div class='pre p1 fill-light mt0'>formatOffset(offset: any, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>offset</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    What style of offset to return.
+Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    Epoch milliseconds for which to get the offset
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
 
   
 
@@ -17927,7 +17424,8 @@ and ending with the latest.</p>
 
   
 
-  <p>Returns the end of the Interval</p>
+  <p>Returns the end of the Interval. This is the first instant which is not part of the interval
+(Interval is half-open).</p>
 
     <div class='pre p1 fill-light mt0'>end</div>
   
@@ -21837,6 +21335,665 @@ Keys:</p>
 </div>
 
   
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='zone'>
+      Zone
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>Zone</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='zonetype'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>type</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>The type of zone</p>
+
+    <div class='pre p1 fill-light mt0'>type</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zonename'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>name</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>The name of this zone.</p>
+
+    <div class='pre p1 fill-light mt0'>name</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zoneiananame'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>ianaName</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>The IANA name of this zone.
+Defaults to <code>name</code> if not overwritten by a subclass.</p>
+
+    <div class='pre p1 fill-light mt0'>ianaName</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zoneisuniversal'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isUniversal</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Returns whether the offset is known to be fixed for the whole year.</p>
+
+    <div class='pre p1 fill-light mt0'>isUniversal</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zoneoffsetname'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>offsetName(ts, opts)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Returns the offset's common name (such as EST) at the specified timestamp</p>
+
+    <div class='pre p1 fill-light mt0'>offsetName(ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    Epoch milliseconds for which to get the name
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    Options to affect the format
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.format</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>What style of offset to return. Accepts 'long' or 'short'.
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.locale</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>What locale to return the offset name in.
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zoneformatoffset'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>formatOffset(ts, format)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Returns the offset's value as a string</p>
+
+    <div class='pre p1 fill-light mt0'>formatOffset(ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    Epoch milliseconds for which to get the offset
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    What style of offset to return.
+Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zoneoffset'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>offset(ts)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Return the offset in minutes for this zone at the specified timestamp.</p>
+
+    <div class='pre p1 fill-light mt0'>offset(ts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    Epoch milliseconds for which to compute the offset
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zoneequals'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>equals(otherZone)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Return whether this Zone is equal to another zone</p>
+
+    <div class='pre p1 fill-light mt0'>equals(otherZone: <a href="#zone">Zone</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>otherZone</span> <code class='quiet'>(<a href="#zone">Zone</a>)</code>
+	    the zone to compare
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='zoneisvalid'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isValid</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Return whether this Zone is valid.</p>
+
+    <div class='pre p1 fill-light mt0'>isValid</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
 
   
 

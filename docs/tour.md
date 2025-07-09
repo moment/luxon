@@ -216,4 +216,31 @@ i.toISO()       //=> '2017-09-14T04:07:11.532-04:00/2020-10-12T00:00:00.000-04:0
 i.toString()    //=> '[2017-09-14T04:07:11.532-04:00 – 2020-10-12T00:00:00.000-04:00)
 ```
 
+Note that Luxon's Intervals are always half-open, meaning the starting point is included in the interval while the end point is not.
+The following code will not work as expected:
+```js
+const start = DateTime.now().startOf('day');
+const end = start.endOf('day');
+const i = Interval.fromDateTimes(start, end);
+
+i.length('hours')    //=> 23.99999972222222
+i.toString()         //=> [2025-07-09T00:00:00.000+02:00 – 2025-07-09T23:59:59.999+02:00)
+```
+
+This is because `endOf('day')` returns the last millisecond of the day and as a result that last millisecond is _not_
+included in the interval.
+
+`Interval.after` or `Interval.before` are better suited for creating Intervals of a specific length:
+```js
+const start = DateTime.now().startOf('day');
+const i1 = Interval.after(start, { days: 1 });
+const i2 = Interval.before(start, { days: 1 });
+
+i1.length('hours')    //=> 24
+i1.toString()         //=> [2025-07-09T00:00:00.000+02:00 – 2025-07-10T00:00:00.000+02:00)
+
+i2.length('hours')    //=> 24
+i2.toString()         //=> [2025-07-08T00:00:00.000+02:00 – 2025-07-09T00:00:00.000+02:00)
+```
+
 Intervals can be split up into smaller intervals, perform set-like operations with other intervals, and few other handy features. See the `Interval` API docs.

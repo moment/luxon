@@ -1269,6 +1269,11 @@ define(['exports'], (function (exports) { 'use strict';
         format = false;
       }
       return listStuff(this, length, months, function () {
+        // Workaround for "ja" locale: formatToParts does not label all parts of the month
+        // as "month" and for this locale there is no difference between "format" and "non-format".
+        // As such, just use format() instead of formatToParts() and take the whole string
+        var monthSpecialCase = _this2.intl === "ja" || _this2.intl.startsWith("ja-");
+        format &= !monthSpecialCase;
         var intl = format ? {
             month: length,
             day: "numeric"
@@ -1277,9 +1282,12 @@ define(['exports'], (function (exports) { 'use strict';
           },
           formatStr = format ? "format" : "standalone";
         if (!_this2.monthsCache[formatStr][length]) {
-          _this2.monthsCache[formatStr][length] = mapMonths(function (dt) {
+          var mapper = !monthSpecialCase ? function (dt) {
             return _this2.extract(dt, intl, "month");
-          });
+          } : function (dt) {
+            return _this2.dtFormatter(dt, intl).format();
+          };
+          _this2.monthsCache[formatStr][length] = mapMonths(mapper);
         }
         return _this2.monthsCache[formatStr][length];
       });
@@ -2310,13 +2318,25 @@ define(['exports'], (function (exports) { 'use strict';
       return Math.floor(f);
     }
   }
-  function roundTo(number, digits, towardZero) {
-    if (towardZero === void 0) {
-      towardZero = false;
+  function roundTo(number, digits, rounding) {
+    if (rounding === void 0) {
+      rounding = "round";
     }
-    var factor = Math.pow(10, digits),
-      rounder = towardZero ? Math.trunc : Math.round;
-    return rounder(number * factor) / factor;
+    var factor = Math.pow(10, digits);
+    switch (rounding) {
+      case "expand":
+        return number > 0 ? Math.ceil(number * factor) / factor : Math.floor(number * factor) / factor;
+      case "trunc":
+        return Math.trunc(number * factor) / factor;
+      case "round":
+        return Math.round(number * factor) / factor;
+      case "floor":
+        return Math.floor(number * factor) / factor;
+      case "ceil":
+        return Math.ceil(number * factor) / factor;
+      default:
+        throw new RangeError("Value rounding " + rounding + " is out of range");
+    }
   }
 
   // DATE BASICS
@@ -2418,7 +2438,7 @@ define(['exports'], (function (exports) { 'use strict';
 
   function asNumber(value) {
     var numericValue = Number(value);
-    if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue)) throw new InvalidArgumentError("Invalid unit value " + value);
+    if (typeof value === "boolean" || value === "" || !Number.isFinite(numericValue)) throw new InvalidArgumentError("Invalid unit value " + value);
     return numericValue;
   }
   function normalizeObject(obj, normalizer) {
@@ -2621,10 +2641,11 @@ define(['exports'], (function (exports) { 'use strict';
       for (var i = 0; i < fmt.length; i++) {
         var c = fmt.charAt(i);
         if (c === "'") {
-          if (currentFull.length > 0) {
+          // turn '' into a literal signal quote instead of just skipping the empty literal
+          if (currentFull.length > 0 || bracketed) {
             splits.push({
               literal: bracketed || /^\s+$/.test(currentFull),
-              val: currentFull
+              val: currentFull === "" ? "'" : currentFull
             });
           }
           current = null;
@@ -2688,9 +2709,12 @@ define(['exports'], (function (exports) { 'use strict';
     _proto.resolvedOptions = function resolvedOptions(dt, opts) {
       return this.dtFormatter(dt, opts).resolvedOptions();
     };
-    _proto.num = function num(n, p) {
+    _proto.num = function num(n, p, signDisplay) {
       if (p === void 0) {
         p = 0;
+      }
+      if (signDisplay === void 0) {
+        signDisplay = undefined;
       }
       // we get some perf out of doing this here, annoyingly
       if (this.opts.forceSimple) {
@@ -2699,6 +2723,9 @@ define(['exports'], (function (exports) { 'use strict';
       var opts = _extends({}, this.opts);
       if (p > 0) {
         opts.padTo = p;
+      }
+      if (signDisplay) {
+        opts.signDisplay = signDisplay;
       }
       return this.loc.numberFormatter(opts).format(n);
     };
@@ -2968,33 +2995,44 @@ define(['exports'], (function (exports) { 'use strict';
     };
     _proto.formatDurationFromString = function formatDurationFromString(dur, fmt) {
       var _this2 = this;
+      var invertLargest = this.opts.signMode === "negativeLargestOnly" ? -1 : 1;
       var tokenToField = function tokenToField(token) {
           switch (token[0]) {
             case "S":
-              return "millisecond";
+              return "milliseconds";
             case "s":
-              return "second";
+              return "seconds";
             case "m":
-              return "minute";
+              return "minutes";
             case "h":
-              return "hour";
+              return "hours";
             case "d":
-              return "day";
+              return "days";
             case "w":
-              return "week";
+              return "weeks";
             case "M":
-              return "month";
+              return "months";
             case "y":
-              return "year";
+              return "years";
             default:
               return null;
           }
         },
-        tokenToString = function tokenToString(lildur) {
+        tokenToString = function tokenToString(lildur, info) {
           return function (token) {
             var mapped = tokenToField(token);
             if (mapped) {
-              return _this2.num(lildur.get(mapped), token.length);
+              var inversionFactor = info.isNegativeDuration && mapped !== info.largestUnit ? invertLargest : 1;
+              var signDisplay;
+              if (_this2.opts.signMode === "negativeLargestOnly" && mapped !== info.largestUnit) {
+                signDisplay = "never";
+              } else if (_this2.opts.signMode === "all") {
+                signDisplay = "always";
+              } else {
+                // "auto" and "negative" are the same, but "auto" has better support
+                signDisplay = "auto";
+              }
+              return _this2.num(lildur.get(mapped) * inversionFactor, token.length, signDisplay);
             } else {
               return token;
             }
@@ -3008,8 +3046,14 @@ define(['exports'], (function (exports) { 'use strict';
         }, []),
         collapsed = dur.shiftTo.apply(dur, realTokens.map(tokenToField).filter(function (t) {
           return t;
-        }));
-      return stringifyTokens(tokens, tokenToString(collapsed));
+        })),
+        durationInfo = {
+          isNegativeDuration: collapsed < 0,
+          // this relies on "collapsed" being based on "shiftTo", which builds up the object
+          // in order
+          largestUnit: Object.keys(collapsed.values)[0]
+        };
+      return stringifyTokens(tokens, tokenToString(collapsed, durationInfo));
     };
     return Formatter;
   }();
@@ -3084,11 +3128,11 @@ define(['exports'], (function (exports) { 'use strict';
   }
 
   // ISO and SQL parsing
-  var offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/;
+  var offsetRegex = /(?:([Zz])|([+-]\d\d)(?::?(\d\d))?)/;
   var isoExtendedZone = "(?:" + offsetRegex.source + "?(?:\\[(" + ianaRegex.source + ")\\])?)?";
   var isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?/;
   var isoTimeRegex = RegExp("" + isoTimeBaseRegex.source + isoExtendedZone);
-  var isoTimeExtensionRegex = RegExp("(?:T" + isoTimeRegex.source + ")?");
+  var isoTimeExtensionRegex = RegExp("(?:[Tt]" + isoTimeRegex.source + ")?");
   var isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
   var isoWeekRegex = /(\d{4})-?W(\d\d)(?:-?(\d))?/;
   var isoOrdinalRegex = /(\d{4})-?(\d{3})/;
@@ -3729,9 +3773,13 @@ define(['exports'], (function (exports) { 'use strict';
      * @param {string} fmt - the format string
      * @param {Object} opts - options
      * @param {boolean} [opts.floor=true] - floor numerical values
+     * @param {'negative'|'all'|'negativeLargestOnly'} [opts.signMode=negative] - How to handle signs
      * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("y d s") //=> "1 6 2"
      * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("yy dd sss") //=> "01 06 002"
      * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("M S") //=> "12 518402000"
+     * @example Duration.fromObject({ days: 6, seconds: 2 }).toFormat("d s", { signMode: "all" }) //=> "+6 +2"
+     * @example Duration.fromObject({ days: -6, seconds: -2 }).toFormat("d s", { signMode: "all" }) //=> "-6 -2"
+     * @example Duration.fromObject({ days: -6, seconds: -2 }).toFormat("d s", { signMode: "negativeLargestOnly" }) //=> "-6 2"
      * @return {string}
      */
     _proto.toFormat = function toFormat(fmt, opts) {
@@ -3751,12 +3799,14 @@ define(['exports'], (function (exports) { 'use strict';
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
      * @param {Object} opts - Formatting options. Accepts the same keys as the options parameter of the native `Intl.NumberFormat` constructor, as well as `listStyle`.
      * @param {string} [opts.listStyle='narrow'] - How to format the merged list. Corresponds to the `style` property of the options parameter of the native `Intl.ListFormat` constructor.
+     * @param {boolean} [opts.showZeros=true] - Show all units previously used by the duration even if they are zero
      * @example
      * ```js
-     * var dur = Duration.fromObject({ days: 1, hours: 5, minutes: 6 })
-     * dur.toHuman() //=> '1 day, 5 hours, 6 minutes'
-     * dur.toHuman({ listStyle: "long" }) //=> '1 day, 5 hours, and 6 minutes'
-     * dur.toHuman({ unitDisplay: "short" }) //=> '1 day, 5 hr, 6 min'
+     * var dur = Duration.fromObject({ months: 1, weeks: 0, hours: 5, minutes: 6 })
+     * dur.toHuman() //=> '1 month, 0 weeks, 5 hours, 6 minutes'
+     * dur.toHuman({ listStyle: "long" }) //=> '1 month, 0 weeks, 5 hours, and 6 minutes'
+     * dur.toHuman({ unitDisplay: "short" }) //=> '1 mth, 0 wks, 5 hr, 6 min'
+     * dur.toHuman({ showZeros: false }) //=> '1 month, 5 hours, 6 minutes'
      * ```
      */;
     _proto.toHuman = function toHuman(opts) {
@@ -3765,9 +3815,10 @@ define(['exports'], (function (exports) { 'use strict';
         opts = {};
       }
       if (!this.isValid) return INVALID$2;
+      var showZeros = opts.showZeros !== false;
       var l = orderedUnits$1.map(function (unit) {
         var val = _this.values[unit];
-        if (isUndefined(val)) {
+        if (isUndefined(val) || val === 0 && !showZeros) {
           return null;
         }
         return _this.loc.numberFormatter(_extends({
@@ -4141,6 +4192,19 @@ define(['exports'], (function (exports) { 'use strict';
       }
       return clone$1(this, {
         values: negated
+      }, true);
+    }
+
+    /**
+     * Removes all units with values equal to 0 from this Duration.
+     * @example Duration.fromObject({ years: 2, days: 0, hours: 0, minutes: 0 }).removeZeros().toObject() //=> { years: 2 }
+     * @return {Duration}
+     */;
+    _proto.removeZeros = function removeZeros() {
+      if (!this.isValid) return this;
+      var vals = removeZeroes(this.values);
+      return clone$1(this, {
+        values: vals
       }, true);
     }
 
@@ -4959,7 +5023,8 @@ define(['exports'], (function (exports) { 'use strict';
       }
 
       /**
-       * Returns the end of the Interval
+       * Returns the end of the Interval. This is the first instant which is not part of the interval
+       * (Interval is half-open).
        * @type {DateTime}
        */
     }, {
@@ -6044,39 +6109,55 @@ define(['exports'], (function (exports) { 'use strict';
       forceSimple: true
     }).formatDateTimeFromString(dt, format) : null;
   }
-  function _toISODate(o, extended) {
+  function _toISODate(o, extended, precision) {
     var longFormat = o.c.year > 9999 || o.c.year < 0;
     var c = "";
     if (longFormat && o.c.year >= 0) c += "+";
     c += padStart(o.c.year, longFormat ? 6 : 4);
+    if (precision === "year") return c;
     if (extended) {
       c += "-";
       c += padStart(o.c.month);
+      if (precision === "month") return c;
       c += "-";
-      c += padStart(o.c.day);
     } else {
       c += padStart(o.c.month);
-      c += padStart(o.c.day);
+      if (precision === "month") return c;
     }
+    c += padStart(o.c.day);
     return c;
   }
-  function _toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone) {
-    var c = padStart(o.c.hour);
-    if (extended) {
-      c += ":";
-      c += padStart(o.c.minute);
-      if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
-        c += ":";
-      }
-    } else {
-      c += padStart(o.c.minute);
-    }
-    if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
-      c += padStart(o.c.second);
-      if (o.c.millisecond !== 0 || !suppressMilliseconds) {
-        c += ".";
-        c += padStart(o.c.millisecond, 3);
-      }
+  function _toISOTime(o, extended, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone, precision) {
+    var showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0,
+      c = "";
+    switch (precision) {
+      case "day":
+      case "month":
+      case "year":
+        break;
+      default:
+        c += padStart(o.c.hour);
+        if (precision === "hour") break;
+        if (extended) {
+          c += ":";
+          c += padStart(o.c.minute);
+          if (precision === "minute") break;
+          if (showSeconds) {
+            c += ":";
+            c += padStart(o.c.second);
+          }
+        } else {
+          c += padStart(o.c.minute);
+          if (precision === "minute") break;
+          if (showSeconds) {
+            c += padStart(o.c.second);
+          }
+        }
+        if (precision === "second") break;
+        if (showSeconds && (!suppressMilliseconds || o.c.millisecond !== 0)) {
+          c += ".";
+          c += padStart(o.c.millisecond, 3);
+        }
     }
     if (includeOffset) {
       if (o.isOffsetFixed && o.offset === 0 && !extendedZone) {
@@ -6257,8 +6338,9 @@ define(['exports'], (function (exports) { 'use strict';
   }
   function diffRelative(start, end, opts) {
     var round = isUndefined(opts.round) ? true : opts.round,
+      rounding = isUndefined(opts.rounding) ? "trunc" : opts.rounding,
       format = function format(c, unit) {
-        c = roundTo(c, round || opts.calendary ? 0 : 2, true);
+        c = roundTo(c, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
         var formatter = end.loc.clone(opts).relFormatter(opts);
         return formatter.format(c, unit);
       },
@@ -7358,10 +7440,13 @@ define(['exports'], (function (exports) { 'use strict';
      * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
      * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
      * @param {string} [opts.format='extended'] - choose between the basic and extended format
+     * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'years', 'months', 'days', 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
      * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
      * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
      * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
      * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
+     * @example DateTime.now().toISO({ precision: 'day' }) //=> '2017-04-22Z'
+     * @example DateTime.now().toISO({ precision: 'minute' }) //=> '2017-04-22T20:47Z'
      * @return {string|null}
      */;
     _proto.toISO = function toISO(_temp4) {
@@ -7375,14 +7460,17 @@ define(['exports'], (function (exports) { 'use strict';
         _ref5$includeOffset = _ref5.includeOffset,
         includeOffset = _ref5$includeOffset === void 0 ? true : _ref5$includeOffset,
         _ref5$extendedZone = _ref5.extendedZone,
-        extendedZone = _ref5$extendedZone === void 0 ? false : _ref5$extendedZone;
+        extendedZone = _ref5$extendedZone === void 0 ? false : _ref5$extendedZone,
+        _ref5$precision = _ref5.precision,
+        precision = _ref5$precision === void 0 ? "milliseconds" : _ref5$precision;
       if (!this.isValid) {
         return null;
       }
+      precision = normalizeUnit(precision);
       var ext = format === "extended";
-      var c = _toISODate(this, ext);
-      c += "T";
-      c += _toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone);
+      var c = _toISODate(this, ext, precision);
+      if (orderedUnits.indexOf(precision) >= 3) c += "T";
+      c += _toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone, precision);
       return c;
     }
 
@@ -7390,18 +7478,22 @@ define(['exports'], (function (exports) { 'use strict';
      * Returns an ISO 8601-compliant string representation of this DateTime's date component
      * @param {Object} opts - options
      * @param {string} [opts.format='extended'] - choose between the basic and extended format
+     * @param {string} [opts.precision='day'] - truncate output to desired precision: 'years', 'months', or 'days'.
      * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
      * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
+     * @example DateTime.utc(1982, 5, 25).toISODate({ precision: 'month' }) //=> '1982-05'
      * @return {string|null}
      */;
     _proto.toISODate = function toISODate(_temp5) {
       var _ref6 = _temp5 === void 0 ? {} : _temp5,
         _ref6$format = _ref6.format,
-        format = _ref6$format === void 0 ? "extended" : _ref6$format;
+        format = _ref6$format === void 0 ? "extended" : _ref6$format,
+        _ref6$precision = _ref6.precision,
+        precision = _ref6$precision === void 0 ? "day" : _ref6$precision;
       if (!this.isValid) {
         return null;
       }
-      return _toISODate(this, format === "extended");
+      return _toISODate(this, format === "extended", normalizeUnit(precision));
     }
 
     /**
@@ -7422,10 +7514,12 @@ define(['exports'], (function (exports) { 'use strict';
      * @param {boolean} [opts.extendedZone=true] - add the time zone format extension
      * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
      * @param {string} [opts.format='extended'] - choose between the basic and extended format
+     * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
      * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
      * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
      * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: 'basic' }) //=> '073419.361Z'
      * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ includePrefix: true }) //=> 'T07:34:19.361Z'
+     * @example DateTime.utc().set({ hour: 7, minute: 34, second: 56 }).toISOTime({ precision: 'minute' }) //=> '07:34Z'
      * @return {string}
      */;
     _proto.toISOTime = function toISOTime(_temp6) {
@@ -7441,12 +7535,15 @@ define(['exports'], (function (exports) { 'use strict';
         _ref7$extendedZone = _ref7.extendedZone,
         extendedZone = _ref7$extendedZone === void 0 ? false : _ref7$extendedZone,
         _ref7$format = _ref7.format,
-        format = _ref7$format === void 0 ? "extended" : _ref7$format;
+        format = _ref7$format === void 0 ? "extended" : _ref7$format,
+        _ref7$precision = _ref7.precision,
+        precision = _ref7$precision === void 0 ? "milliseconds" : _ref7$precision;
       if (!this.isValid) {
         return null;
       }
-      var c = includePrefix ? "T" : "";
-      return c + _toISOTime(this, format === "extended", suppressSeconds, suppressMilliseconds, includeOffset, extendedZone);
+      precision = normalizeUnit(precision);
+      var c = includePrefix && orderedUnits.indexOf(precision) >= 3 ? "T" : "";
+      return c + _toISOTime(this, format === "extended", suppressSeconds, suppressMilliseconds, includeOffset, extendedZone, precision);
     }
 
     /**
@@ -7735,12 +7832,13 @@ define(['exports'], (function (exports) { 'use strict';
 
     /**
      * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-     * platform supports Intl.RelativeTimeFormat. Rounds down by default.
+     * platform supports Intl.RelativeTimeFormat. Rounds towards zero by default.
      * @param {Object} options - options that affect the output
      * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
      * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
      * @param {string|string[]} options.unit - use a specific unit or array of units; if omitted, or an array, the method will pick the best unit. Use an array or one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
      * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+     * @param {string} [options.rounding="trunc"] - rounding method to use when rounding the numbers in the output. Can be "trunc" (toward zero), "expand" (away from zero), "round", "floor", or "ceil".
      * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
      * @param {string} options.locale - override the locale of this DateTime
      * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
@@ -8623,7 +8721,7 @@ define(['exports'], (function (exports) { 'use strict';
     }
   }
 
-  var VERSION = "3.6.1";
+  var VERSION = "3.7.0";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

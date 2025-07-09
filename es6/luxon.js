@@ -1053,10 +1053,18 @@ class Locale {
 
   months(length, format = false) {
     return listStuff(this, length, months, () => {
+      // Workaround for "ja" locale: formatToParts does not label all parts of the month
+      // as "month" and for this locale there is no difference between "format" and "non-format".
+      // As such, just use format() instead of formatToParts() and take the whole string
+      const monthSpecialCase = this.intl === "ja" || this.intl.startsWith("ja-");
+      format &= !monthSpecialCase;
       const intl = format ? { month: length, day: "numeric" } : { month: length },
         formatStr = format ? "format" : "standalone";
       if (!this.monthsCache[formatStr][length]) {
-        this.monthsCache[formatStr][length] = mapMonths((dt) => this.extract(dt, intl, "month"));
+        const mapper = !monthSpecialCase
+          ? (dt) => this.extract(dt, intl, "month")
+          : (dt) => this.dtFormatter(dt, intl).format();
+        this.monthsCache[formatStr][length] = mapMonths(mapper);
       }
       return this.monthsCache[formatStr][length];
     });
@@ -2040,10 +2048,24 @@ function parseMillis(fraction) {
   }
 }
 
-function roundTo(number, digits, towardZero = false) {
-  const factor = 10 ** digits,
-    rounder = towardZero ? Math.trunc : Math.round;
-  return rounder(number * factor) / factor;
+function roundTo(number, digits, rounding = "round") {
+  const factor = 10 ** digits;
+  switch (rounding) {
+    case "expand":
+      return number > 0
+        ? Math.ceil(number * factor) / factor
+        : Math.floor(number * factor) / factor;
+    case "trunc":
+      return Math.trunc(number * factor) / factor;
+    case "round":
+      return Math.round(number * factor) / factor;
+    case "floor":
+      return Math.floor(number * factor) / factor;
+    case "ceil":
+      return Math.ceil(number * factor) / factor;
+    default:
+      throw new RangeError(`Value rounding ${rounding} is out of range`);
+  }
 }
 
 // DATE BASICS
@@ -2151,7 +2173,7 @@ function signedOffset(offHourStr, offMinuteStr) {
 
 function asNumber(value) {
   const numericValue = Number(value);
-  if (typeof value === "boolean" || value === "" || Number.isNaN(numericValue))
+  if (typeof value === "boolean" || value === "" || !Number.isFinite(numericValue))
     throw new InvalidArgumentError(`Invalid unit value ${value}`);
   return numericValue;
 }
@@ -2410,8 +2432,12 @@ class Formatter {
     for (let i = 0; i < fmt.length; i++) {
       const c = fmt.charAt(i);
       if (c === "'") {
-        if (currentFull.length > 0) {
-          splits.push({ literal: bracketed || /^\s+$/.test(currentFull), val: currentFull });
+        // turn '' into a literal signal quote instead of just skipping the empty literal
+        if (currentFull.length > 0 || bracketed) {
+          splits.push({
+            literal: bracketed || /^\s+$/.test(currentFull),
+            val: currentFull === "" ? "'" : currentFull,
+          });
         }
         current = null;
         currentFull = "";
@@ -2475,7 +2501,7 @@ class Formatter {
     return this.dtFormatter(dt, opts).resolvedOptions();
   }
 
-  num(n, p = 0) {
+  num(n, p = 0, signDisplay = undefined) {
     // we get some perf out of doing this here, annoyingly
     if (this.opts.forceSimple) {
       return padStart(n, p);
@@ -2485,6 +2511,9 @@ class Formatter {
 
     if (p > 0) {
       opts.padTo = p;
+    }
+    if (signDisplay) {
+      opts.signDisplay = signDisplay;
     }
 
     return this.loc.numberFormatter(opts).format(n);
@@ -2721,32 +2750,44 @@ class Formatter {
   }
 
   formatDurationFromString(dur, fmt) {
+    const invertLargest = this.opts.signMode === "negativeLargestOnly" ? -1 : 1;
     const tokenToField = (token) => {
         switch (token[0]) {
           case "S":
-            return "millisecond";
+            return "milliseconds";
           case "s":
-            return "second";
+            return "seconds";
           case "m":
-            return "minute";
+            return "minutes";
           case "h":
-            return "hour";
+            return "hours";
           case "d":
-            return "day";
+            return "days";
           case "w":
-            return "week";
+            return "weeks";
           case "M":
-            return "month";
+            return "months";
           case "y":
-            return "year";
+            return "years";
           default:
             return null;
         }
       },
-      tokenToString = (lildur) => (token) => {
+      tokenToString = (lildur, info) => (token) => {
         const mapped = tokenToField(token);
         if (mapped) {
-          return this.num(lildur.get(mapped), token.length);
+          const inversionFactor =
+            info.isNegativeDuration && mapped !== info.largestUnit ? invertLargest : 1;
+          let signDisplay;
+          if (this.opts.signMode === "negativeLargestOnly" && mapped !== info.largestUnit) {
+            signDisplay = "never";
+          } else if (this.opts.signMode === "all") {
+            signDisplay = "always";
+          } else {
+            // "auto" and "negative" are the same, but "auto" has better support
+            signDisplay = "auto";
+          }
+          return this.num(lildur.get(mapped) * inversionFactor, token.length, signDisplay);
         } else {
           return token;
         }
@@ -2756,8 +2797,14 @@ class Formatter {
         (found, { literal, val }) => (literal ? found : found.concat(val)),
         []
       ),
-      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t));
-    return stringifyTokens(tokens, tokenToString(collapsed));
+      collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t)),
+      durationInfo = {
+        isNegativeDuration: collapsed < 0,
+        // this relies on "collapsed" being based on "shiftTo", which builds up the object
+        // in order
+        largestUnit: Object.keys(collapsed.values)[0],
+      };
+    return stringifyTokens(tokens, tokenToString(collapsed, durationInfo));
   }
 }
 
@@ -2818,11 +2865,11 @@ function simpleParse(...keys) {
 }
 
 // ISO and SQL parsing
-const offsetRegex = /(?:(Z)|([+-]\d\d)(?::?(\d\d))?)/;
+const offsetRegex = /(?:([Zz])|([+-]\d\d)(?::?(\d\d))?)/;
 const isoExtendedZone = `(?:${offsetRegex.source}?(?:\\[(${ianaRegex.source})\\])?)?`;
 const isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?/;
 const isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${isoExtendedZone}`);
-const isoTimeExtensionRegex = RegExp(`(?:T${isoTimeRegex.source})?`);
+const isoTimeExtensionRegex = RegExp(`(?:[Tt]${isoTimeRegex.source})?`);
 const isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 const isoWeekRegex = /(\d{4})-?W(\d\d)(?:-?(\d))?/;
 const isoOrdinalRegex = /(\d{4})-?(\d{3})/;
@@ -3537,9 +3584,13 @@ class Duration {
    * @param {string} fmt - the format string
    * @param {Object} opts - options
    * @param {boolean} [opts.floor=true] - floor numerical values
+   * @param {'negative'|'all'|'negativeLargestOnly'} [opts.signMode=negative] - How to handle signs
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("y d s") //=> "1 6 2"
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("yy dd sss") //=> "01 06 002"
    * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("M S") //=> "12 518402000"
+   * @example Duration.fromObject({ days: 6, seconds: 2 }).toFormat("d s", { signMode: "all" }) //=> "+6 +2"
+   * @example Duration.fromObject({ days: -6, seconds: -2 }).toFormat("d s", { signMode: "all" }) //=> "-6 -2"
+   * @example Duration.fromObject({ days: -6, seconds: -2 }).toFormat("d s", { signMode: "negativeLargestOnly" }) //=> "-6 2"
    * @return {string}
    */
   toFormat(fmt, opts = {}) {
@@ -3559,21 +3610,25 @@ class Duration {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
    * @param {Object} opts - Formatting options. Accepts the same keys as the options parameter of the native `Intl.NumberFormat` constructor, as well as `listStyle`.
    * @param {string} [opts.listStyle='narrow'] - How to format the merged list. Corresponds to the `style` property of the options parameter of the native `Intl.ListFormat` constructor.
+   * @param {boolean} [opts.showZeros=true] - Show all units previously used by the duration even if they are zero
    * @example
    * ```js
-   * var dur = Duration.fromObject({ days: 1, hours: 5, minutes: 6 })
-   * dur.toHuman() //=> '1 day, 5 hours, 6 minutes'
-   * dur.toHuman({ listStyle: "long" }) //=> '1 day, 5 hours, and 6 minutes'
-   * dur.toHuman({ unitDisplay: "short" }) //=> '1 day, 5 hr, 6 min'
+   * var dur = Duration.fromObject({ months: 1, weeks: 0, hours: 5, minutes: 6 })
+   * dur.toHuman() //=> '1 month, 0 weeks, 5 hours, 6 minutes'
+   * dur.toHuman({ listStyle: "long" }) //=> '1 month, 0 weeks, 5 hours, and 6 minutes'
+   * dur.toHuman({ unitDisplay: "short" }) //=> '1 mth, 0 wks, 5 hr, 6 min'
+   * dur.toHuman({ showZeros: false }) //=> '1 month, 5 hours, 6 minutes'
    * ```
    */
   toHuman(opts = {}) {
     if (!this.isValid) return INVALID$2;
 
+    const showZeros = opts.showZeros !== false;
+
     const l = orderedUnits$1
       .map((unit) => {
         const val = this.values[unit];
-        if (isUndefined(val)) {
+        if (isUndefined(val) || (val === 0 && !showZeros)) {
           return null;
         }
         return this.loc
@@ -3934,6 +3989,17 @@ class Duration {
   }
 
   /**
+   * Removes all units with values equal to 0 from this Duration.
+   * @example Duration.fromObject({ years: 2, days: 0, hours: 0, minutes: 0 }).removeZeros().toObject() //=> { years: 2 }
+   * @return {Duration}
+   */
+  removeZeros() {
+    if (!this.isValid) return this;
+    const vals = removeZeroes(this.values);
+    return clone$1(this, { values: vals }, true);
+  }
+
+  /**
    * Get the years.
    * @type {number}
    */
@@ -4243,7 +4309,8 @@ class Interval {
   }
 
   /**
-   * Returns the end of the Interval
+   * Returns the end of the Interval. This is the first instant which is not part of the interval
+   * (Interval is half-open).
    * @type {DateTime}
    */
   get end() {
@@ -5674,21 +5741,22 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
-function toISODate(o, extended) {
+function toISODate(o, extended, precision) {
   const longFormat = o.c.year > 9999 || o.c.year < 0;
   let c = "";
   if (longFormat && o.c.year >= 0) c += "+";
   c += padStart(o.c.year, longFormat ? 6 : 4);
-
+  if (precision === "year") return c;
   if (extended) {
     c += "-";
     c += padStart(o.c.month);
+    if (precision === "month") return c;
     c += "-";
-    c += padStart(o.c.day);
   } else {
     c += padStart(o.c.month);
-    c += padStart(o.c.day);
+    if (precision === "month") return c;
   }
+  c += padStart(o.c.day);
   return c;
 }
 
@@ -5698,26 +5766,39 @@ function toISOTime(
   suppressSeconds,
   suppressMilliseconds,
   includeOffset,
-  extendedZone
+  extendedZone,
+  precision
 ) {
-  let c = padStart(o.c.hour);
-  if (extended) {
-    c += ":";
-    c += padStart(o.c.minute);
-    if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
-      c += ":";
-    }
-  } else {
-    c += padStart(o.c.minute);
-  }
-
-  if (o.c.millisecond !== 0 || o.c.second !== 0 || !suppressSeconds) {
-    c += padStart(o.c.second);
-
-    if (o.c.millisecond !== 0 || !suppressMilliseconds) {
-      c += ".";
-      c += padStart(o.c.millisecond, 3);
-    }
+  let showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0,
+    c = "";
+  switch (precision) {
+    case "day":
+    case "month":
+    case "year":
+      break;
+    default:
+      c += padStart(o.c.hour);
+      if (precision === "hour") break;
+      if (extended) {
+        c += ":";
+        c += padStart(o.c.minute);
+        if (precision === "minute") break;
+        if (showSeconds) {
+          c += ":";
+          c += padStart(o.c.second);
+        }
+      } else {
+        c += padStart(o.c.minute);
+        if (precision === "minute") break;
+        if (showSeconds) {
+          c += padStart(o.c.second);
+        }
+      }
+      if (precision === "second") break;
+      if (showSeconds && (!suppressMilliseconds || o.c.millisecond !== 0)) {
+        c += ".";
+        c += padStart(o.c.millisecond, 3);
+      }
   }
 
   if (includeOffset) {
@@ -5909,8 +5990,9 @@ function quickDT(obj, opts) {
 
 function diffRelative(start, end, opts) {
   const round = isUndefined(opts.round) ? true : opts.round,
+    rounding = isUndefined(opts.rounding) ? "trunc" : opts.rounding,
     format = (c, unit) => {
-      c = roundTo(c, round || opts.calendary ? 0 : 2, true);
+      c = roundTo(c, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
       const formatter = end.loc.clone(opts).relFormatter(opts);
       return formatter.format(c, unit);
     },
@@ -7289,10 +7371,13 @@ class DateTime {
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'years', 'months', 'days', 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
    * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
    * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
+   * @example DateTime.now().toISO({ precision: 'day' }) //=> '2017-04-22Z'
+   * @example DateTime.now().toISO({ precision: 'minute' }) //=> '2017-04-22T20:47Z'
    * @return {string|null}
    */
   toISO({
@@ -7301,16 +7386,26 @@ class DateTime {
     suppressMilliseconds = false,
     includeOffset = true,
     extendedZone = false,
+    precision = "milliseconds",
   } = {}) {
     if (!this.isValid) {
       return null;
     }
 
+    precision = normalizeUnit(precision);
     const ext = format === "extended";
 
-    let c = toISODate(this, ext);
-    c += "T";
-    c += toISOTime(this, ext, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone);
+    let c = toISODate(this, ext, precision);
+    if (orderedUnits.indexOf(precision) >= 3) c += "T";
+    c += toISOTime(
+      this,
+      ext,
+      suppressSeconds,
+      suppressMilliseconds,
+      includeOffset,
+      extendedZone,
+      precision
+    );
     return c;
   }
 
@@ -7318,16 +7413,17 @@ class DateTime {
    * Returns an ISO 8601-compliant string representation of this DateTime's date component
    * @param {Object} opts - options
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='day'] - truncate output to desired precision: 'years', 'months', or 'days'.
    * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
    * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
+   * @example DateTime.utc(1982, 5, 25).toISODate({ precision: 'month' }) //=> '1982-05'
    * @return {string|null}
    */
-  toISODate({ format = "extended" } = {}) {
+  toISODate({ format = "extended", precision = "day" } = {}) {
     if (!this.isValid) {
       return null;
     }
-
-    return toISODate(this, format === "extended");
+    return toISODate(this, format === "extended", normalizeUnit(precision));
   }
 
   /**
@@ -7348,10 +7444,12 @@ class DateTime {
    * @param {boolean} [opts.extendedZone=true] - add the time zone format extension
    * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: 'basic' }) //=> '073419.361Z'
    * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ includePrefix: true }) //=> 'T07:34:19.361Z'
+   * @example DateTime.utc().set({ hour: 7, minute: 34, second: 56 }).toISOTime({ precision: 'minute' }) //=> '07:34Z'
    * @return {string}
    */
   toISOTime({
@@ -7361,12 +7459,14 @@ class DateTime {
     includePrefix = false,
     extendedZone = false,
     format = "extended",
+    precision = "milliseconds",
   } = {}) {
     if (!this.isValid) {
       return null;
     }
 
-    let c = includePrefix ? "T" : "";
+    precision = normalizeUnit(precision);
+    let c = includePrefix && orderedUnits.indexOf(precision) >= 3 ? "T" : "";
     return (
       c +
       toISOTime(
@@ -7375,7 +7475,8 @@ class DateTime {
         suppressSeconds,
         suppressMilliseconds,
         includeOffset,
-        extendedZone
+        extendedZone,
+        precision
       )
     );
   }
@@ -7653,12 +7754,13 @@ class DateTime {
 
   /**
    * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
-   * platform supports Intl.RelativeTimeFormat. Rounds down by default.
+   * platform supports Intl.RelativeTimeFormat. Rounds towards zero by default.
    * @param {Object} options - options that affect the output
    * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
    * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
    * @param {string|string[]} options.unit - use a specific unit or array of units; if omitted, or an array, the method will pick the best unit. Use an array or one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
    * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+   * @param {string} [options.rounding="trunc"] - rounding method to use when rounding the numbers in the output. Can be "trunc" (toward zero), "expand" (away from zero), "round", "floor", or "ceil".
    * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
@@ -8025,7 +8127,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "3.6.1";
+const VERSION = "3.7.0";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, Settings, SystemZone, VERSION, Zone };
 //# sourceMappingURL=luxon.js.map
