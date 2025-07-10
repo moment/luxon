@@ -71,11 +71,33 @@ function getCachedIntResolvedOptions(locString) {
   return opts;
 }
 
+const intlLocaleCache = new Map();
+function getCachedIntlLocale(locString) {
+  let intlLocale = intlLocaleCache.get(locString);
+  if (!intlLocale) {
+    intlLocale = new Intl.Locale(locString);
+    intlLocaleCache.set(locString, intlLocale);
+  }
+  return intlLocale;
+}
+
+const intlLocaleHourCyclesCache = new Map();
+function getCachedIntlLocaleHourCycles(locString) {
+  let data = intlLocaleHourCyclesCache.get(locString);
+  if (!data) {
+    const locale = getCachedIntlLocale(locString);
+    // browsers currently implement this as a property, but spec says it should be a getter function
+    data = "getHourCycles" in locale ? locale.getHourCycles() : locale.hourCycles;
+    intlLocaleHourCyclesCache.set(locString, data);
+  }
+  return data;
+}
+
 const weekInfoCache = new Map();
 function getCachedWeekInfo(locString) {
   let data = weekInfoCache.get(locString);
   if (!data) {
-    const locale = new Intl.Locale(locString);
+    const locale = getCachedIntlLocale(locString);
     // browsers currently implement this as a property, but spec says it should be a getter function
     data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
     // minimalDays was removed from WeekInfo: https://github.com/tc39/proposal-intl-locale-info/issues/86
@@ -531,6 +553,10 @@ export default class Locale {
       this.locale.toLowerCase() === "en-us" ||
       getCachedIntResolvedOptions(this.intl).locale.startsWith("en-us")
     );
+  }
+
+  getIntlLocaleHourCycles() {
+    return getCachedIntlLocaleHourCycles(this.locale);
   }
 
   getWeekSettings() {
