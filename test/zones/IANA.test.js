@@ -112,3 +112,12 @@ test("IANAZone.isValid returns false for invalid zone names", () => {
   expect(new IANAZone("America/Blorp").isValid).toBe(false);
   expect(new IANAZone(null).isValid).toBe(false);
 });
+
+test("IANAZone returns canonical zone name regardless of input casing", () => {
+  expect(new IANAZone("america/nEw_york").name).toBe("America/New_York");
+  expect(new IANAZone("AMERICA/NEW_YORK").name).toBe("America/New_York");
+  expect(new IANAZone("America/New_York").name).toBe("America/New_York");
+  expect(new IANAZone("europe/paris").name).toBe("Europe/Paris");
+  expect(new IANAZone("EUROPE/PARIS").name).toBe("Europe/Paris");
+  expect(new IANAZone("Asia/Tokyo").name).toBe("Asia/Tokyo");
+});

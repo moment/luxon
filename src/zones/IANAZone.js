@@ -116,9 +116,19 @@ export default class IANAZone extends Zone {
   constructor(name) {
     super();
     /** @private **/
-    this.zoneName = name;
-    /** @private **/
     this.valid = IANAZone.isValidZone(name);
+    /** @private **/
+    if (this.valid) {
+      // Get canonical zone name from Intl.DateTimeFormat
+      try {
+        const dtf = new Intl.DateTimeFormat("en-US", { timeZone: name });
+        this.zoneName = dtf.resolvedOptions().timeZone;
+      } catch (e) {
+        this.zoneName = name;
+      }
+    } else {
+      this.zoneName = name;
+    }
   }
 
   /**
