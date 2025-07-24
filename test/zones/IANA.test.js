@@ -117,10 +117,10 @@ test("IANAZone.normalize normalizes the zone name", () => {
   expect(IANAZone.normalizeZone("america/nEw_york")).toBe("America/New_York");
   expect(IANAZone.normalizeZone("AMERICA/NEW_YORK")).toBe("America/New_York");
   expect(IANAZone.normalizeZone("America/New_York")).toBe("America/New_York");
-  expect(IANAZone.normalizeZone("EST5EDT")).toBe("America/New_York");
   expect(IANAZone.normalizeZone("europe/paris")).toBe("Europe/Paris");
   expect(IANAZone.normalizeZone("EUROPE/PARIS")).toBe("Europe/Paris");
   expect(IANAZone.normalizeZone("Asia/Tokyo")).toBe("Asia/Tokyo");
+  expect(IANAZone.normalizeZone("Etc/GMT")).toBe("UTC");
 });
 
 test("IANAZone returns canonical zone name regardless of input casing", () => {
