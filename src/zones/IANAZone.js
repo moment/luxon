@@ -112,8 +112,8 @@ export default class IANAZone extends Zone {
    * @example IANAZone.normalizeZone("America/New_York") //=> "America/New_York"
    * @example IANAZone.normalizeZone("america/NEw_York") //=> "America/New_York"
    * @example IANAZone.normalizeZone("EST5EDT") //=> "America/New_York"
-   * @example IANAZone.isValidZone("Fantasia/Castle") //=> null
-   * @example IANAZone.isValidZone("Sport~~blorp") //=> null
+   * @example IANAZone.normalizeZone("Fantasia/Castle") //=> null
+   * @example IANAZone.normalizeZone("Sport~~blorp") //=> null
    * @return {string|null}
    */
   static normalizeZone(zone) {
