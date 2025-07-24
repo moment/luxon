@@ -102,23 +102,41 @@ export default class IANAZone extends Zone {
    * @return {boolean}
    */
   static isValidZone(zone) {
+    return IANAZone.normalizeZone(zone) != null;
+  }
+
+  /**
+   * Normalize the name of the provided IANA zone or return null
+   * if it is not a valid IANA zone.
+   * @param {string} zone - The string to normalize
+   * @example IANAZone.normalizeZone("America/New_York") //=> "America/New_York"
+   * @example IANAZone.normalizeZone("america/NEw_York") //=> "America/New_York"
+   * @example IANAZone.normalizeZone("EST5EDT") //=> "America/New_York"
+   * @example IANAZone.isValidZone("Fantasia/Castle") //=> null
+   * @example IANAZone.isValidZone("Sport~~blorp") //=> null
+   * @return {string|null}
+   */
+  static normalizeZone(zone) {
     if (!zone) {
-      return false;
+      return null;
     }
     try {
-      new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
-      return true;
+      return new Intl.DateTimeFormat("en-US", { timeZone: zone }).resolvedOptions().timeZone;
     } catch (e) {
-      return false;
+      return null;
     }
   }
 
   constructor(name) {
     super();
+    const normalizedName = IANAZone.normalizeZone(name);
     /** @private **/
-    this.zoneName = name;
+    this.valid = normalizedName != null;
+    // For backwards compatibility we only normalize in casing, otherwise would also normalize something like
+    // EST5EDT to America/New_York.
     /** @private **/
-    this.valid = IANAZone.isValidZone(name);
+    this.zoneName =
+      normalizedName && normalizedName.toLowerCase() === name.toLowerCase() ? normalizedName : name;
   }
 
   /**
