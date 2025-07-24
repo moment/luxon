@@ -1,5 +1,6 @@
 /* global test */
 import { DateTime, Settings } from "../src/luxon";
+import { hasLocaleWeekInfo } from "../src/impl/util";
 
 exports.withoutRTF = function (name, f) {
   const fullName = `With no RelativeTimeFormat support, ${name}`;
@@ -90,4 +91,11 @@ exports.cldrMajorVersion = function () {
   } catch {
     return null;
   }
+};
+
+exports.supportsMinDaysInFirstWeek = function () {
+  if (!hasLocaleWeekInfo()) return false;
+  const locale = new Intl.Locale("en-US");
+  const wi = locale.getWeekInfo?.() ?? locale.weekInfo;
+  return "minimalDays" in wi;
 };

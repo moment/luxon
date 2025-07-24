@@ -1,7 +1,7 @@
 /* global test expect */
 
 import { DateTime, Info } from "../../src/luxon";
-import Helpers from "../helpers";
+import Helpers, { supportsMinDaysInFirstWeek } from "../helpers";
 
 const withDefaultWeekSettings = Helpers.setUnset("defaultWeekSettings");
 
@@ -219,13 +219,39 @@ describe("weeksInLocalWeekYear", () => {
     expect(DateTime.local(2018, 6, 1, { locale: "en-US" }).weeksInLocalWeekYear).toBe(52);
   });
   test("2022 should have 53 weeks in en-US", () => {
-    expect(DateTime.local(2022, 6, 1, { locale: "en-US" }).weeksInLocalWeekYear).toBe(53);
+    expect(DateTime.local(2022, 6, 1, { locale: "en-US" }).weeksInLocalWeekYear).toBe(
+      supportsMinDaysInFirstWeek() ? 53 : 52
+    );
   });
   test("2022 should have 52 weeks in de-DE", () => {
     expect(DateTime.local(2022, 6, 1, { locale: "de-DE" }).weeksInLocalWeekYear).toBe(52);
   });
   test("2020 should have 53 weeks in de-DE", () => {
     expect(DateTime.local(2020, 6, 1, { locale: "de-DE" }).weeksInLocalWeekYear).toBe(53);
+  });
+  test("2018 should have 52 weeks with minDays 1, start 7", () => {
+    withDefaultWeekSettings(
+      {
+        minimalDays: 1,
+        firstDay: 7,
+        weekend: [6, 7],
+      },
+      () => {
+        expect(DateTime.local(2018, 6, 1).weeksInLocalWeekYear).toBe(52);
+      }
+    );
+  });
+  test("2022 should have 53 weeks with minDays 1, start 7", () => {
+    withDefaultWeekSettings(
+      {
+        minimalDays: 1,
+        firstDay: 7,
+        weekend: [6, 7],
+      },
+      () => {
+        expect(DateTime.local(2022, 6, 1).weeksInLocalWeekYear).toBe(53);
+      }
+    );
   });
 });
 

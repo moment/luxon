@@ -1,8 +1,12 @@
 /* global test expect */
 
 import { DateTime } from "../../src/luxon";
+import Helpers, { supportsMinDaysInFirstWeek } from "../helpers";
 
-const dt = DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
+const withDefaultWeekSettings = Helpers.setUnset("defaultWeekSettings");
+
+const dtFactory = () => DateTime.fromJSDate(new Date(1982, 4, 25, 9, 23, 54, 123));
+const dt = dtFactory();
 
 //------
 // year/month/day/hour/minute/second/millisecond
@@ -152,7 +156,7 @@ test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the
   expect(modified.localWeekNumber).toBe(2);
   expect(modified.year).toBe(1982);
   expect(modified.month).toBe(1);
-  expect(modified.day).toBe(5);
+  expect(modified.day).toBe(supportsMinDaysInFirstWeek() ? 5 : 12);
   expect(modified.hour).toBe(9);
   expect(modified.minute).toBe(23);
   expect(modified.second).toBe(54);
@@ -172,18 +176,62 @@ test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the
   expect(modified.millisecond).toBe(123);
 });
 
+test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (custom weekSettings)", () => {
+  withDefaultWeekSettings(
+    {
+      firstDay: 7,
+      weekend: [6, 7],
+      minimalDays: 1,
+    },
+    () => {
+      const modified = dtFactory().set({ localWeekNumber: 2 });
+      expect(modified.weekday).toBe(2); // still tuesday
+      expect(modified.localWeekNumber).toBe(2);
+      expect(modified.year).toBe(1982);
+      expect(modified.month).toBe(1);
+      expect(modified.day).toBe(5);
+      expect(modified.hour).toBe(9);
+      expect(modified.minute).toBe(23);
+      expect(modified.second).toBe(54);
+      expect(modified.millisecond).toBe(123);
+    }
+  );
+});
+
 test("DateTime#set({ localWeekYear }) sets the date to the same weekNumber/weekday of the target weekYear (en-US)", () => {
   const modified = dt.reconfigure({ locale: "en-US" }).set({ localWeekYear: 2017 });
   expect(modified.localWeekday).toBe(3); // still tuesday
-  expect(modified.localWeekNumber).toBe(22); // still week 22
+  expect(modified.localWeekNumber).toBe(supportsMinDaysInFirstWeek() ? 22 : 21); // still week 22
   expect(modified.localWeekYear).toBe(2017);
   expect(modified.year).toBe(2017);
   expect(modified.month).toBe(5);
-  expect(modified.day).toBe(30); // 2017-W22-3 is the 30
+  expect(modified.day).toBe(supportsMinDaysInFirstWeek() ? 30 : 23); // 2017-W22-3 is the 30
   expect(modified.hour).toBe(9);
   expect(modified.minute).toBe(23);
   expect(modified.second).toBe(54);
   expect(modified.millisecond).toBe(123);
+});
+
+test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (custom weekSettings)", () => {
+  withDefaultWeekSettings(
+    {
+      firstDay: 7,
+      weekend: [6, 7],
+      minimalDays: 1,
+    },
+    () => {
+      const modified = dtFactory().set({ localWeekNumber: 2 });
+      expect(modified.weekday).toBe(2); // still tuesday
+      expect(modified.localWeekNumber).toBe(2);
+      expect(modified.year).toBe(1982);
+      expect(modified.month).toBe(1);
+      expect(modified.day).toBe(5);
+      expect(modified.hour).toBe(9);
+      expect(modified.minute).toBe(23);
+      expect(modified.second).toBe(54);
+      expect(modified.millisecond).toBe(123);
+    }
+  );
 });
 
 test("DateTime#set({ localWeekYear }) sets the date to the same weekNumber/weekday of the target weekYear (de-DE)", () => {

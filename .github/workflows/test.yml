@@ -18,9 +18,10 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 18.20.6 # latest 18.x
-          - 20.18.3 # latest 20.x
-          - 22.14.0 # latest 22.x
+          - 18.20.8 # latest 18.x
+          - 20.19.4 # latest 20.x
+          - 22.17.1 # latest 22.x
+          - 24.4.1 # latest 22.x
 
     steps:
       - uses: actions/checkout@v3

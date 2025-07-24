@@ -1,13 +1,14 @@
 /* global test expect */
 
 import { DateTime, Settings } from "../../src/luxon";
-import Helpers from "../helpers";
+import Helpers, { supportsMinDaysInFirstWeek } from "../helpers";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
   withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar"),
   withthrowOnInvalid = Helpers.setUnset("throwOnInvalid"),
-  withDefaultZone = Helpers.withDefaultZone;
+  withDefaultZone = Helpers.withDefaultZone,
+  withDefaultWeekSettings = Helpers.setUnset("defaultWeekSettings");
 
 //------
 // .now()
@@ -653,7 +654,37 @@ test("DateTime.fromObject() w/locale weeks handles fully specified dates", () =>
   expect(dt.localWeekday).toBe(3);
   expect(dt.year).toBe(2022);
   expect(dt.month).toBe(1);
-  expect(dt.day).toBe(4);
+  expect(dt.day).toBe(supportsMinDaysInFirstWeek() ? 4 : 11);
+});
+
+test("DateTime.fromObject() w/locale weeks handles fully specified dates with custom week settings", () => {
+  withDefaultWeekSettings(
+    {
+      firstDay: 7,
+      minimalDays: 1,
+      weekend: [6, 7],
+    },
+    () => {
+      const dt = DateTime.fromObject(
+        {
+          localWeekYear: 2022,
+          localWeekNumber: 2,
+          localWeekday: 3,
+          hour: 9,
+          minute: 23,
+          second: 54,
+          millisecond: 123,
+        },
+        { locale: "en-US" }
+      );
+      expect(dt.localWeekYear).toBe(2022);
+      expect(dt.localWeekNumber).toBe(2);
+      expect(dt.localWeekday).toBe(3);
+      expect(dt.year).toBe(2022);
+      expect(dt.month).toBe(1);
+      expect(dt.day).toBe(4);
+    }
+  );
 });
 
 test("DateTime.fromObject() w/localWeekYears handles skew with Gregorian years", () => {
@@ -664,9 +695,9 @@ test("DateTime.fromObject() w/localWeekYears handles skew with Gregorian years",
   expect(dt.localWeekYear).toBe(2022);
   expect(dt.localWeekNumber).toBe(1);
   expect(dt.localWeekday).toBe(1);
-  expect(dt.year).toBe(2021);
-  expect(dt.month).toBe(12);
-  expect(dt.day).toBe(26);
+  expect(dt.year).toBe(supportsMinDaysInFirstWeek() ? 2021 : 2022);
+  expect(dt.month).toBe(supportsMinDaysInFirstWeek() ? 12 : 1);
+  expect(dt.day).toBe(supportsMinDaysInFirstWeek() ? 26 : 2);
 
   dt = DateTime.fromObject(
     { localWeekYear: 2009, localWeekNumber: 53, localWeekday: 5 },
@@ -678,6 +709,25 @@ test("DateTime.fromObject() w/localWeekYears handles skew with Gregorian years",
   expect(dt.year).toBe(2010);
   expect(dt.month).toBe(1);
   expect(dt.day).toBe(1);
+});
+
+test("DateTime.fromObject() w/localWeekYears handles skew with Gregorian years and custom week settings", () => {
+  withDefaultWeekSettings(
+    {
+      firstDay: 7,
+      minimalDays: 1,
+      weekend: [6, 7],
+    },
+    () => {
+      let dt = DateTime.fromObject({ localWeekYear: 2022, localWeekNumber: 1, localWeekday: 1 });
+      expect(dt.localWeekYear).toBe(2022);
+      expect(dt.localWeekNumber).toBe(1);
+      expect(dt.localWeekday).toBe(1);
+      expect(dt.year).toBe(2021);
+      expect(dt.month).toBe(12);
+      expect(dt.day).toBe(26);
+    }
+  );
 });
 
 test("DateTime.fromObject throws when both locale based weeks and ISO-weeks are specified", () => {
