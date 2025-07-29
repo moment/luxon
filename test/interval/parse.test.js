@@ -268,4 +268,58 @@ describe("Interval.fromISO defaults missing values in end to start", () => {
     expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
     expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
   });
+
+  // Mixed
+  test("Gregorian, end just weekday", () => {
+    const i = Interval.fromISO("2025-05-12T09/4T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Gregorian, end weekNumber and weekday", () => {
+    const i = Interval.fromISO("2025-05-12T09/W21-1T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-19T15:30:00.000-04:00");
+  });
+  test("Gregorian, end just ordinal", () => {
+    const i = Interval.fromISO("2025-05-12T09/135T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+
+  test("Week date, end just day", () => {
+    const i = Interval.fromISO("2025-W20-1T09/15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Week date, end month and day", () => {
+    const i = Interval.fromISO("2025-W20-1T09/06-15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-06-15T15:30:00.000-04:00");
+  });
+  test("Week date, end just ordinal", () => {
+    const i = Interval.fromISO("2025-W20-1T09/135T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+
+  test("Ordinal, end just day", () => {
+    const i = Interval.fromISO("2025-132T09/15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Ordinal, end month and day", () => {
+    const i = Interval.fromISO("2025-132T09/06-15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-06-15T15:30:00.000-04:00");
+  });
+  test("Ordinal, end just weekday", () => {
+    const i = Interval.fromISO("2025-132T09/4T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Ordinal, end weekNumber and weekday", () => {
+    const i = Interval.fromISO("2025-132T09/W21-1T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-19T15:30:00.000-04:00");
+  });
 });
