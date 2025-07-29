@@ -186,7 +186,7 @@ function adjustTime(inst, dur) {
 
 // helper useful in turning the results of parsing into real dates
 // by handling the zone options
-function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
+export function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
   const { setZone, zone } = opts;
   if ((parsed && Object.keys(parsed).length !== 0) || parsedZone) {
     const interpretationZone = parsedZone || zone,
@@ -797,7 +797,7 @@ export default class DateTime {
     const normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);
     const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, loc);
 
-    const tsNow = Settings.now(),
+    const tsNow = opts.overrideNow ?? Settings.now(),
       offsetProvis = !isUndefined(opts.specificOffset)
         ? opts.specificOffset
         : zoneToUse.offset(tsNow),

@@ -1,10 +1,11 @@
-import DateTime, { friendlyDateTime } from "./datetime.js";
+import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.js";
 import Duration from "./duration.js";
 import Settings from "./settings.js";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.js";
 import * as Formats from "./impl/formats.js";
+import { parseISOIntervalEnd } from "./impl/regexParser.js";
 
 const INVALID = "Invalid Interval";
 
@@ -134,11 +135,14 @@ export default class Interval {
    * @return {Interval}
    */
   static fromISO(text, opts) {
+    const { zone, setZone, ...restOpts } = opts || {};
     const [s, e] = (text || "").split("/", 2);
     if (s && e) {
       let start, startIsValid;
       try {
-        start = DateTime.fromISO(s, opts);
+        // we need to know the zone that was used in the string, so that we can
+        // default to it when parsing end, therefor use setZone: true
+        start = DateTime.fromISO(s, { ...restOpts, zone, setZone: true });
         startIsValid = start.isValid;
       } catch (e) {
         startIsValid = false;
@@ -146,10 +150,25 @@ export default class Interval {
 
       let end, endIsValid;
       try {
-        end = DateTime.fromISO(e, opts);
+        const [vals, parsedZone] = parseISOIntervalEnd(e);
+        const endParseOpts = {
+          ...restOpts,
+          overrideNow: startIsValid ? start.valueOf() : null,
+          zone: startIsValid ? start.zone : zone,
+          setZone: true,
+        };
+        end = parseDataToDateTime(vals, parsedZone, endParseOpts, "ISO 8601 Duration End", e);
         endIsValid = end.isValid;
       } catch (e) {
         endIsValid = false;
+      }
+
+      // if we overrode the user's choice for setZone earlier, make up for it now
+      if (startIsValid && !setZone) {
+        start = start.setZone(zone);
+      }
+      if (endIsValid && !setZone) {
+        end = end.setZone(zone);
       }
 
       if (startIsValid && endIsValid) {

@@ -294,6 +294,40 @@ export function parseISODate(s) {
   );
 }
 
+// ISO Interval parsing
+
+const partialYmdDate = /(\d\d)(?:-(\d\d))?/;
+const isoIntervalEndDate = combineRegexes(partialYmdDate, isoTimeExtensionRegex);
+
+function extractISOIntervalPartialDate(match, cursor) {
+  const first = match[cursor],
+    second = match[cursor + 1];
+  const item = {
+    month: second ? parseInteger(first) : undefined,
+    day: parseInteger(second ?? first),
+  };
+
+  return [item, null, cursor + 2];
+}
+
+const extractISOIntervalPartialDateAndTime = combineExtractors(
+  extractISOIntervalPartialDate,
+  extractISOTime,
+  extractISOOffset,
+  extractIANAZone
+);
+
+export function parseISOIntervalEnd(s) {
+  return parse(
+    s,
+    [isoIntervalEndDate, extractISOIntervalPartialDateAndTime],
+    [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
+    [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
+    [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],
+    [isoTimeCombinedRegex, extractISOTimeAndOffset]
+  );
+}
+
 export function parseRFC2822Date(s) {
   return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
 }

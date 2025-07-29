@@ -144,3 +144,89 @@ test.each(badInputs)("Interval.fromISO will return invalid for [%s]", (s) => {
   expect(i.isValid).toBe(false);
   expect(i.invalidReason).toBe("unparsable");
 });
+
+describe("Interval.fromISO defaults missing values in end to start", () => {
+  test("Gregorian, end just time", () => {
+    const i = Interval.fromISO("1988-04-15T09/15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-15T15:30:00.000-04:00");
+  });
+  test("Gregorian, end just time and zone", () => {
+    const i = Interval.fromISO("1988-04-15T09/15:30-07:00");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-15T18:30:00.000-04:00");
+  });
+  test("Gregorian, end just day", () => {
+    const i = Interval.fromISO("1988-04-15T09/17");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-17T00:00:00.000-04:00");
+  });
+  test("Gregorian, end day and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/17T15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-17T15:30:00.000-04:00");
+  });
+  test("Gregorian, end month and day", () => {
+    const i = Interval.fromISO("1988-04-15T09/05-17");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-05-17T00:00:00.000-04:00");
+  });
+  test("Gregorian, end month, day and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/05-17T15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-05-17T15:30:00.000-04:00");
+  });
+  test("Gregorian with zone in options and partial date", () => {
+    const i = Interval.fromISO("1988-04-15T09/19", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-19T00:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options and partial date and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/19T13:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-19T13:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options and full date and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/1989-03-01T13:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1989-03-01T13:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options and end zone", () => {
+    const i = Interval.fromISO("1988-04-15T09/16T15:00-07:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-16T16:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options, setZone and end zone", () => {
+    const i = Interval.fromISO("1988-04-15T09/16T15:00-07:00", {
+      zone: "UTC-06:00",
+      setZone: true,
+    });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-16T15:00:00.000-07:00");
+  });
+  test("Gregorian with start zone", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/17T15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T04:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-17T10:30:00.000-04:00");
+  });
+  test("Gregorian with start zone and zone in options", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T15:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T02:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-15T08:00:00.000-06:00");
+  });
+  test("Gregorian with start zone and setZone", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T15:00", { setZone: true });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000+01:00");
+    expect(i.end.toISO()).toBe("1988-04-15T15:00:00.000+01:00");
+  });
+  test("Gregorian with two zones", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T16:00+02:00");
+    expect(i.start.toISO()).toBe("1988-04-15T04:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-15T10:00:00.000-04:00");
+  });
+  test("Gregorian with two zones and setZone", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T16:00+02:00", { setZone: true });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000+01:00");
+    expect(i.end.toISO()).toBe("1988-04-15T16:00:00.000+02:00");
+  });
+});
