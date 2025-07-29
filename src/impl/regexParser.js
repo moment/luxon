@@ -296,22 +296,21 @@ export function parseISODate(s) {
 
 // ISO Interval parsing
 
-const partialYmdDate = /(\d\d)(?:-(\d\d))?/;
-const isoIntervalEndDate = combineRegexes(partialYmdDate, isoTimeExtensionRegex);
+// Note: Do not optimize the outer non-capturing group, it is necessary, because the
+// regex is combined with other regexes and contains |
+const partialIsoIntervalEndDate = /(?:(?:(\d\d)-)?(\d\d)?|(?:W(\d\d)-)?(\d)|(\d{3}))/;
+const isoIntervalMdEndDateTime = combineRegexes(partialIsoIntervalEndDate, isoTimeExtensionRegex);
 
-function extractISOIntervalPartialDate(match, cursor) {
-  const first = match[cursor],
-    second = match[cursor + 1];
-  const item = {
-    month: second ? parseInteger(first) : undefined,
-    day: parseInteger(second ?? first),
-  };
-
-  return [item, null, cursor + 2];
-}
+const extractPartialIsoIntervalEndDate = simpleParse(
+  "month",
+  "day",
+  "weekNumber",
+  "weekDay",
+  "ordinal"
+);
 
 const extractISOIntervalPartialDateAndTime = combineExtractors(
-  extractISOIntervalPartialDate,
+  extractPartialIsoIntervalEndDate,
   extractISOTime,
   extractISOOffset,
   extractIANAZone
@@ -320,7 +319,7 @@ const extractISOIntervalPartialDateAndTime = combineExtractors(
 export function parseISOIntervalEnd(s) {
   return parse(
     s,
-    [isoIntervalEndDate, extractISOIntervalPartialDateAndTime],
+    [isoIntervalMdEndDateTime, extractISOIntervalPartialDateAndTime],
     [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
     [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
     [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],

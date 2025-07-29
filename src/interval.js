@@ -157,7 +157,7 @@ export default class Interval {
           zone: startIsValid ? start.zone : zone,
           setZone: true,
         };
-        end = parseDataToDateTime(vals, parsedZone, endParseOpts, "ISO 8601 Duration End", e);
+        end = parseDataToDateTime(vals, parsedZone, endParseOpts, "ISO 8601 Interval end", e);
         endIsValid = end.isValid;
       } catch (e) {
         endIsValid = false;
