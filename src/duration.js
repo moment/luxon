@@ -114,6 +114,15 @@ const orderedUnits = [
 
 const reverseUnits = orderedUnits.slice(0).reverse();
 
+// This is a map of which units to convert
+// for toHuman due to missing support from Intl.
+// if value is set, then key is what to convert to and value is what to convert
+// if value is null, then key is a unit to be ignored
+const humanizeUnitConversion = {
+  months: "quarters",
+  quarters: null,
+};
+
 // clone really means "create another instance just like this one, but with these changes"
 function clone(dur, alts, clear = false) {
   // deep merge for vals
@@ -509,7 +518,15 @@ export default class Duration {
 
     const l = orderedUnits
       .map((unit) => {
-        const val = this.values[unit];
+        const convertUnit = humanizeUnitConversion[unit];
+        if (convertUnit === null) return null;
+        let val = this.values[unit];
+        if (convertUnit) {
+          const val2 = this.values[convertUnit];
+          if (val2) {
+            val = (val ?? 0) + val2 * this.matrix[convertUnit][unit];
+          }
+        }
         if (isUndefined(val) || (val === 0 && !showZeros)) {
           return null;
         }

@@ -424,3 +424,58 @@ test("Duration#toHuman works in differt languages", () => {
     "1 an, 2 mois, 1 semaine, 3 jours, 4 heures, 5 minutes, 6 secondes, 7 millisecondes"
   );
 });
+
+test("Duration#toHuman handles quarters", () => {
+  expect(
+    Duration.fromObject({
+      years: 1,
+      quarters: 2,
+      hours: 2,
+    }).toHuman()
+  ).toEqual("1 year, 6 months, 2 hours");
+});
+
+test("Duration#toHuman handles quarters and months together", () => {
+  expect(
+    Duration.fromObject({
+      years: 1,
+      months: 1,
+      quarters: 2,
+      hours: 2,
+    }).toHuman()
+  ).toEqual("1 year, 7 months, 2 hours");
+});
+
+test("Duration#toHuman handles quarters and months with showZeros false", () => {
+  expect(
+    Duration.fromObject({
+      years: 1,
+      months: 1,
+      quarters: 0,
+      hours: 2,
+    }).toHuman({ showZeros: false })
+  ).toEqual("1 year, 1 month, 2 hours");
+  expect(
+    Duration.fromObject({
+      years: 1,
+      months: 0,
+      quarters: 1,
+      hours: 2,
+    }).toHuman({ showZeros: false })
+  ).toEqual("1 year, 3 months, 2 hours");
+  expect(
+    Duration.fromObject({
+      years: 1,
+      months: 0,
+      quarters: 0,
+      hours: 2,
+    }).toHuman({ showZeros: false })
+  ).toEqual("1 year, 2 hours");
+  expect(
+    Duration.fromObject({
+      years: 1,
+      quarters: 0,
+      hours: 2,
+    }).toHuman({ showZeros: false })
+  ).toEqual("1 year, 2 hours");
+});
