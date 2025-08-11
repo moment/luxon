@@ -86,12 +86,15 @@ async function buildLibrary(dest, opts) {
   console.log("Building", dest);
   const promises = [babelAndRollup(dest, opts)];
 
+  const filename = opts.filename || "luxon.js";
+  const minFilename = filename.replace(/\.(m?js)$/, ".min.$1");
+
   if (opts.minify && TRUST_MINIFY) {
     promises.push(
       babelAndRollup(dest, {
         ...opts,
         minify: true,
-        filename: "luxon.min.js",
+        filename: minFilename,
       })
     );
   }
@@ -99,21 +102,21 @@ async function buildLibrary(dest, opts) {
   await Promise.all(promises);
 
   if (opts.minify && !TRUST_MINIFY) {
-    const code = fs.readFileSync(`build/${dest}/luxon.js`, "utf8"),
+    const code = fs.readFileSync(`build/${dest}/${filename}`, "utf8"),
       ugly = UglifyJS.minify(code, {
         toplevel: !opts.global,
         output: {
           comments: false,
         },
         sourceMap: {
-          filename: `build/${dest}/luxon.js`,
+          filename: `build/${dest}/${filename}`,
         },
       });
     if (ugly.error) {
       console.error("Error uglifying", ugly.error);
     } else {
-      fs.writeFileSync(`build/${dest}/luxon.min.js`, ugly.code);
-      fs.writeFileSync(`build/${dest}/luxon.min.js.map`, ugly.map);
+      fs.writeFileSync(`build/${dest}/${minFilename}`, ugly.code);
+      fs.writeFileSync(`build/${dest}/${minFilename}.map`, ugly.map);
     }
   }
   console.log("Built", dest);
@@ -153,6 +156,7 @@ async function es6() {
     format: "es",
     minify: true,
     compile: false,
+    filename: "luxon.mjs",
   });
 }
 
