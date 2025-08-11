@@ -294,6 +294,39 @@ export function parseISODate(s) {
   );
 }
 
+// ISO Interval parsing
+
+// Note: Do not optimize the outer non-capturing group, it is necessary, because the
+// regex is combined with other regexes and contains |
+const partialIsoIntervalEndDate = /(?:(?:(\d\d)-)?(\d\d)?|(?:W(\d\d)-)?(\d)|(\d{3}))/;
+const isoIntervalEndDateTime = combineRegexes(partialIsoIntervalEndDate, isoTimeExtensionRegex);
+
+const extractPartialIsoIntervalEndDate = simpleParse(
+  "month",
+  "day",
+  "weekNumber",
+  "weekDay",
+  "ordinal"
+);
+
+const extractISOIntervalPartialDateAndTime = combineExtractors(
+  extractPartialIsoIntervalEndDate,
+  extractISOTime,
+  extractISOOffset,
+  extractIANAZone
+);
+
+export function parseISOIntervalEnd(s) {
+  return parse(
+    s,
+    [isoIntervalEndDateTime, extractISOIntervalPartialDateAndTime],
+    [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
+    [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
+    [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],
+    [isoTimeCombinedRegex, extractISOTimeAndOffset]
+  );
+}
+
 export function parseRFC2822Date(s) {
   return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
 }

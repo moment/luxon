@@ -144,3 +144,182 @@ test.each(badInputs)("Interval.fromISO will return invalid for [%s]", (s) => {
   expect(i.isValid).toBe(false);
   expect(i.invalidReason).toBe("unparsable");
 });
+
+describe("Interval.fromISO defaults missing values in end to start", () => {
+  test("Gregorian, end just time", () => {
+    const i = Interval.fromISO("1988-04-15T09/15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-15T15:30:00.000-04:00");
+  });
+  test("Gregorian, end just time and zone", () => {
+    const i = Interval.fromISO("1988-04-15T09/15:30-07:00");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-15T18:30:00.000-04:00");
+  });
+  test("Gregorian, end just day", () => {
+    const i = Interval.fromISO("1988-04-15T09/17");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-17T00:00:00.000-04:00");
+  });
+  test("Gregorian, end day and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/17T15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-17T15:30:00.000-04:00");
+  });
+  test("Gregorian, end month and day", () => {
+    const i = Interval.fromISO("1988-04-15T09/05-17");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-05-17T00:00:00.000-04:00");
+  });
+  test("Gregorian, end month, day and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/05-17T15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-05-17T15:30:00.000-04:00");
+  });
+  test("Gregorian with zone in options and partial date", () => {
+    const i = Interval.fromISO("1988-04-15T09/19", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-19T00:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options and partial date and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/19T13:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-19T13:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options and full date and time", () => {
+    const i = Interval.fromISO("1988-04-15T09/1989-03-01T13:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1989-03-01T13:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options and end zone", () => {
+    const i = Interval.fromISO("1988-04-15T09/16T15:00-07:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-16T16:00:00.000-06:00");
+  });
+  test("Gregorian with zone in options, setZone and end zone", () => {
+    const i = Interval.fromISO("1988-04-15T09/16T15:00-07:00", {
+      zone: "UTC-06:00",
+      setZone: true,
+    });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-16T15:00:00.000-07:00");
+  });
+  test("Gregorian with start zone", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/17T15:30");
+    expect(i.start.toISO()).toBe("1988-04-15T04:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-17T10:30:00.000-04:00");
+  });
+  test("Gregorian with start zone and zone in options", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T15:00", { zone: "UTC-06:00" });
+    expect(i.start.toISO()).toBe("1988-04-15T02:00:00.000-06:00");
+    expect(i.end.toISO()).toBe("1988-04-15T08:00:00.000-06:00");
+  });
+  test("Gregorian with start zone and setZone", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T15:00", { setZone: true });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000+01:00");
+    expect(i.end.toISO()).toBe("1988-04-15T15:00:00.000+01:00");
+  });
+  test("Gregorian with two zones", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T16:00+02:00");
+    expect(i.start.toISO()).toBe("1988-04-15T04:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("1988-04-15T10:00:00.000-04:00");
+  });
+  test("Gregorian with two zones and setZone", () => {
+    const i = Interval.fromISO("1988-04-15T09:00:00+01:00/15T16:00+02:00", { setZone: true });
+    expect(i.start.toISO()).toBe("1988-04-15T09:00:00.000+01:00");
+    expect(i.end.toISO()).toBe("1988-04-15T16:00:00.000+02:00");
+  });
+
+  // Week dates
+  test("Week, end just time", () => {
+    const i = Interval.fromISO("2025-W20-1T09/15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-12T15:30:00.000-04:00");
+  });
+  test("Week, end just time and zone", () => {
+    const i = Interval.fromISO("2025-W20-1T09/15:30-07:00");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-12T18:30:00.000-04:00");
+  });
+  test("Week, end week day", () => {
+    const i = Interval.fromISO("2025-W20-1T09/3T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-14T15:30:00.000-04:00");
+  });
+  test("Week, end week number and week day", () => {
+    const i = Interval.fromISO("2025-W20-1T09/W21-3T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-21T15:30:00.000-04:00");
+  });
+
+  // Ordinal dates
+  test("Ordinal, end just time", () => {
+    const i = Interval.fromISO("2025-132T09/15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-12T15:30:00.000-04:00");
+  });
+  test("Ordinal, end just time and zone", () => {
+    const i = Interval.fromISO("2025-132T09/15:30-07:00");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-12T18:30:00.000-04:00");
+  });
+  test("Ordinal, end with ordinal", () => {
+    const i = Interval.fromISO("2025-132T09/135T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+
+  // Mixed
+  test("Gregorian, end just weekday", () => {
+    const i = Interval.fromISO("2025-05-12T09/4T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Gregorian, end weekNumber and weekday", () => {
+    const i = Interval.fromISO("2025-05-12T09/W21-1T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-19T15:30:00.000-04:00");
+  });
+  test("Gregorian, end just ordinal", () => {
+    const i = Interval.fromISO("2025-05-12T09/135T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+
+  test("Week date, end just day", () => {
+    const i = Interval.fromISO("2025-W20-1T09/15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Week date, end month and day", () => {
+    const i = Interval.fromISO("2025-W20-1T09/06-15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-06-15T15:30:00.000-04:00");
+  });
+  test("Week date, end just ordinal", () => {
+    const i = Interval.fromISO("2025-W20-1T09/135T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+
+  test("Ordinal, end just day", () => {
+    const i = Interval.fromISO("2025-132T09/15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Ordinal, end month and day", () => {
+    const i = Interval.fromISO("2025-132T09/06-15T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-06-15T15:30:00.000-04:00");
+  });
+  test("Ordinal, end just weekday", () => {
+    const i = Interval.fromISO("2025-132T09/4T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-15T15:30:00.000-04:00");
+  });
+  test("Ordinal, end weekNumber and weekday", () => {
+    const i = Interval.fromISO("2025-132T09/W21-1T15:30");
+    expect(i.start.toISO()).toBe("2025-05-12T09:00:00.000-04:00");
+    expect(i.end.toISO()).toBe("2025-05-19T15:30:00.000-04:00");
+  });
+});
