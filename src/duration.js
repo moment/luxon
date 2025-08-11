@@ -6,6 +6,7 @@ import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
 import {
   asNumber,
   hasOwnProperty,
+  isInteger,
   isNumber,
   isUndefined,
   normalizeObject,
@@ -13,6 +14,7 @@ import {
 } from "./impl/util.js";
 import Settings from "./settings.js";
 import DateTime from "./datetime.js";
+import { warnDeprecation } from "./deprecations.js";
 
 const INVALID = "Invalid Duration";
 
@@ -227,6 +229,22 @@ export default class Duration {
    * @private
    */
   constructor(config) {
+    if (config.conversionAccuracy || config.matrix) warnDeprecation("duration.accuracy");
+    if (config.values) {
+      let nonInteger = false,
+        pos = false,
+        neg = false;
+      for (const v of Object.values(config.values)) {
+        if (!nonInteger && !isInteger(v)) nonInteger = true;
+        if (v < 0) {
+          neg = true;
+        } else {
+          pos = true;
+        }
+      }
+      if (nonInteger) warnDeprecation("duration.fp");
+      if (pos && neg) warnDeprecation("duration.mixedSigns");
+    }
     const accurate = config.conversionAccuracy === "longterm" || false;
     let matrix = accurate ? accurateMatrix : casualMatrix;
 
