@@ -165,6 +165,38 @@ test("DateTime.fromFormat() parses hours", () => {
   expect(DateTime.fromFormat("13", "HH").hour).toBe(13);
 });
 
+test("DateTime.fromFormat() yields Invalid reason 'unit out of range' for incompatible formats", () => {
+  const rejects = (s, fmt, opts = {}) => {
+    const i = DateTime.fromFormat(s, fmt, opts);
+    expect(i.isValid).toBeFalsy();
+    expect(i.invalid).not.toBeNull;
+    expect(i.invalid.reason).toEqual("unit out of range");
+  };
+  const accepts = (s, fmt, opts = {}) =>
+    expect(DateTime.fromFormat(s, fmt, opts).isValid).toBeTruthy();
+
+  accepts("24", "h");
+  accepts("24", "H");
+  accepts("24-0", "h-S");
+  accepts("24-0", "H-S");
+  rejects("24-1", "h-S");
+  rejects("24-1", "H-S");
+  rejects("25", "h");
+  rejects("25", "H");
+
+  accepts("59", "m");
+  rejects("60", "m");
+
+  accepts("59", "s");
+  rejects("60", "s");
+
+  accepts("0", "h", { strictHours: true, locale: "en-US-u-hc-h11" });
+  rejects("0", "h", { strictHours: true });
+  rejects("12", "h", { strictHours: true, locale: "en-US-u-hc-h11" });
+  accepts("12", "h", { strictHours: true });
+  rejects("13", "h", { strictHours: true });
+});
+
 test("DateTime.fromFormat() parses milliseconds", () => {
   expect(DateTime.fromFormat("1", "S").millisecond).toBe(1);
   expect(DateTime.fromFormat("12", "S").millisecond).toBe(12);

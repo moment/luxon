@@ -14,7 +14,7 @@ import { ConflictingSpecificationError } from "../errors.js";
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
 
-function unitOutOfRange(unit, value) {
+export function unitOutOfRange(unit, value) {
   return new Invalid(
     "unit out of range",
     `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
