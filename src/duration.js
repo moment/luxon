@@ -14,7 +14,12 @@ import {
 } from "./impl/util.js";
 import Settings from "./settings.js";
 import DateTime from "./datetime.js";
-import { warnDeprecation } from "./deprecations.js";
+import {
+  DURATION_FRACTION,
+  DURATION_MIXED_SIGN,
+  DURATION_SHIFT_FRACTION,
+  warnDeprecation,
+} from "./deprecations.js";
 
 const INVALID = "Invalid Duration";
 
@@ -242,8 +247,8 @@ export default class Duration {
           pos = true;
         }
       }
-      if (nonInteger) warnDeprecation("duration.fp");
-      if (pos && neg) warnDeprecation("duration.mixedSigns");
+      if (nonInteger) warnDeprecation(DURATION_FRACTION);
+      if (pos && neg) warnDeprecation(DURATION_MIXED_SIGN);
     }
     const accurate = config.conversionAccuracy === "longterm" || false;
     let matrix = accurate ? accurateMatrix : casualMatrix;
@@ -814,6 +819,8 @@ export default class Duration {
   /**
    * Convert this Duration into its representation in a different set of units.
    * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
+   * @param units string[]
+   * @param [opts] {referenceDate?: DateTime}
    * @return {Duration}
    */
   shiftTo(...units) {
@@ -821,6 +828,19 @@ export default class Duration {
 
     if (units.length === 0) {
       return this;
+    }
+
+    const maybeOpts = units[units.length - 1];
+    let opts;
+    if (typeof maybeOpts === "object") {
+      opts = maybeOpts;
+      units.splice(-1, 1);
+    } else {
+      opts = {};
+    }
+
+    if (opts.referenceDate) {
+      return opts.referenceDate.plus(this).diff(opts.referenceDate, units);
     }
 
     units = units.map((u) => Duration.normalizeUnit(u));
@@ -863,6 +883,7 @@ export default class Duration {
     // lastUnit must be defined since units is not empty
     for (const key in accumulated) {
       if (accumulated[key] !== 0) {
+        warnDeprecation(DURATION_SHIFT_FRACTION);
         built[lastUnit] +=
           key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
       }
