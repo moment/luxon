@@ -23,6 +23,11 @@ test("does not equal an invalid DateTime", () => {
   const l1 = DateTime.local(2017, 5, 15),
     l2 = DateTime.invalid("whatever");
   expect(l1.equals(l2)).toBe(false);
+  expect(l1.equals(undefined)).toBe(false);
+  expect(l1.equals(null)).toBe(false);
+  expect(l1.equals({})).toBe(false);
+  expect(l1.equals("abc")).toBe(false);
+  expect(l1.equals(123)).toBe(false);
 });
 
 test("does not equal a different locale", () => {
