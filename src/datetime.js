@@ -2161,13 +2161,11 @@ export default class DateTime {
       return Duration.invalid("created by diffing an invalid DateTime");
     }
 
-    const durOpts = { locale: this.locale, numberingSystem: this.numberingSystem, ...opts };
-
     const units = maybeArray(unit).map(Duration.normalizeUnit),
       otherIsLater = otherDateTime.valueOf() > this.valueOf(),
       earlier = otherIsLater ? this : otherDateTime,
       later = otherIsLater ? otherDateTime : this,
-      diffed = diff(earlier, later, units, durOpts);
+      diffed = diff(earlier, later, units, opts, this);
 
     return otherIsLater ? diffed.negate() : diffed;
   }

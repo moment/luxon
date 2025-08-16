@@ -15,11 +15,13 @@ import {
 import Settings from "./settings.js";
 import DateTime from "./datetime.js";
 import {
+  DURATION_ACCURACY,
   DURATION_FRACTION,
   DURATION_MIXED_SIGN,
   DURATION_SHIFT_FRACTION,
   warnDeprecation,
 } from "./deprecations.js";
+import { roundLastDurationPart } from "./impl/durationUtil.js";
 
 const INVALID = "Invalid Duration";
 
@@ -138,6 +140,7 @@ function clone(dur, alts, clear = false) {
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
     matrix: alts.matrix || dur.matrix,
+    clone: true,
   };
   return new Duration(conf);
 }
@@ -234,7 +237,8 @@ export default class Duration {
    * @private
    */
   constructor(config) {
-    if (config.conversionAccuracy || config.matrix) warnDeprecation("duration.accuracy");
+    if (!config.clone && (config.conversionAccuracy || config.matrix))
+      warnDeprecation(DURATION_ACCURACY);
     if (config.values) {
       let nonInteger = false,
         pos = false,
@@ -777,10 +781,14 @@ export default class Duration {
    * @example Duration.fromObject({years: 1}).as('days') //=> 365
    * @example Duration.fromObject({years: 1}).as('months') //=> 12
    * @example Duration.fromObject({hours: 60}).as('days') //=> 2.5
+   * @param [opts]
+   * @param [opts.referenceDate] DateTime
+   * @param [opts.round] boolean
+   * @param [opts.rounding="round"]
    * @return {number}
    */
-  as(unit) {
-    return this.isValid ? this.shiftTo(unit).get(unit) : NaN;
+  as(unit, opts = {}) {
+    return this.isValid ? this.shiftTo(unit, opts).get(unit) : NaN;
   }
 
   /**
@@ -820,7 +828,10 @@ export default class Duration {
    * Convert this Duration into its representation in a different set of units.
    * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
    * @param units string[]
-   * @param [opts] {referenceDate?: DateTime}
+   * @param [opts]
+   * @param [opts.referenceDate] DateTime
+   * @param [opts.round] boolean
+   * @param [opts.rounding="trunc"]
    * @return {Duration}
    */
   shiftTo(...units) {
@@ -840,7 +851,7 @@ export default class Duration {
     }
 
     if (opts.referenceDate) {
-      return opts.referenceDate.plus(this).diff(opts.referenceDate, units);
+      return opts.referenceDate.plus(this).diff(opts.referenceDate, units, opts);
     }
 
     units = units.map((u) => Duration.normalizeUnit(u));
@@ -883,9 +894,10 @@ export default class Duration {
     // lastUnit must be defined since units is not empty
     for (const key in accumulated) {
       if (accumulated[key] !== 0) {
-        warnDeprecation(DURATION_SHIFT_FRACTION);
-        built[lastUnit] +=
-          key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
+        built[lastUnit] += roundLastDurationPart(
+          key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key],
+          opts
+        );
       }
     }
 
@@ -896,9 +908,14 @@ export default class Duration {
   /**
    * Shift this Duration to all available units.
    * Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
+   *
+   * @param [opts]
+   * @param [opts.referenceDate] DateTime
+   * @param [opts.round] boolean
+   * @param [opts.rounding="trunc"]
    * @return {Duration}
    */
-  shiftToAll() {
+  shiftToAll(opts = {}) {
     if (!this.isValid) return this;
     return this.shiftTo(
       "years",
@@ -908,7 +925,8 @@ export default class Duration {
       "hours",
       "minutes",
       "seconds",
-      "milliseconds"
+      "milliseconds",
+      opts
     );
   }
 

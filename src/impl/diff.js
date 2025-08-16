@@ -1,4 +1,5 @@
 import Duration from "../duration.js";
+import { roundLastDurationPart } from "./durationUtil.js";
 
 function dayDiff(earlier, later) {
   const utcDayStart = (dt) => dt.toUTC(0, { keepLocalTime: true }).startOf("day").valueOf(),
@@ -64,7 +65,14 @@ function highOrderDiffs(cursor, later, units) {
   return [cursor, results, highWater, lowestOrder];
 }
 
-export default function (earlier, later, units, opts) {
+export default function (earlier, later, units, opts, dateTime) {
+  const { round = false, rounding = "trunc", ...givenDurationOpts } = opts;
+  const durOpts = {
+    locale: dateTime.locale,
+    numberingSystem: dateTime.numberingSystem,
+    ...givenDurationOpts,
+  };
+
   let [cursor, results, highWater, lowestOrder] = highOrderDiffs(earlier, later, units);
 
   const remainingMillis = later - cursor;
@@ -79,15 +87,18 @@ export default function (earlier, later, units, opts) {
     }
 
     if (highWater !== cursor) {
-      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
+      results[lowestOrder] = roundLastDurationPart(
+        (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor),
+        opts
+      );
     }
   }
 
-  const duration = Duration.fromObject(results, opts);
+  const duration = Duration.fromObject(results, durOpts);
 
   if (lowerOrderUnits.length > 0) {
-    return Duration.fromMillis(remainingMillis, opts)
-      .shiftTo(...lowerOrderUnits)
+    return Duration.fromMillis(remainingMillis, durOpts)
+      .shiftTo(...lowerOrderUnits, { round, rounding })
       .plus(duration);
   } else {
     return duration;
