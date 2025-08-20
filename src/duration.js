@@ -16,9 +16,9 @@ import Settings from "./settings.js";
 import DateTime from "./datetime.js";
 import {
   DURATION_ACCURACY,
+  DURATION_AMBIGUOUS_CONVERSION,
   DURATION_FRACTION,
   DURATION_MIXED_SIGN,
-  DURATION_SHIFT_FRACTION,
   warnDeprecation,
 } from "./deprecations.js";
 import { roundLastDurationPart } from "./impl/durationUtil.js";
@@ -131,6 +131,31 @@ const humanizeUnitConversion = {
   months: "quarters",
   quarters: null,
 };
+
+// units within the same category can be converted losslessly
+// e.g. a year always has 3 quarters and 12 months
+// a week always has 7 days
+// but a year might have 52 or 53 weeks
+// units not present in this map are time units
+// getting their category will be undefined - so they
+// fall into the same category
+const unitCategory = new Map([
+  ["years", "m"],
+  ["quarters", "m"],
+  ["months", "m"],
+  ["days", "d"],
+  ["weeks", "d"],
+]);
+
+function isAmbiguousConversion(from, to) {
+  return unitCategory.get(from) !== unitCategory.get(to);
+}
+
+function maybeWarnAmbiguousConversion(from, to) {
+  if (isAmbiguousConversion(from, to)) {
+    warnDeprecation(DURATION_AMBIGUOUS_CONVERSION);
+  }
+}
 
 // clone really means "create another instance just like this one, but with these changes"
 function clone(dur, alts, clear = false) {
@@ -869,7 +894,9 @@ export default class Duration {
 
         // anything we haven't boiled down yet should get boiled to this unit
         for (const ak in accumulated) {
-          own += this.matrix[ak][k] * accumulated[ak];
+          const val = accumulated[ak];
+          if (val) maybeWarnAmbiguousConversion(ak, k);
+          own += this.matrix[ak][k] * val;
           accumulated[ak] = 0;
         }
 
@@ -894,6 +921,7 @@ export default class Duration {
     // lastUnit must be defined since units is not empty
     for (const key in accumulated) {
       if (accumulated[key] !== 0) {
+        maybeWarnAmbiguousConversion(key, lastUnit);
         built[lastUnit] += roundLastDurationPart(
           key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key],
           opts
