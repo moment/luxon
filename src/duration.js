@@ -245,6 +245,17 @@ function removeZeroes(vals) {
 }
 
 /**
+ *
+ * @param {DateTime} referenceDate
+ * @param {Duration} duration
+ * @param {string[]} units
+ * @return Duration
+ */
+function recreateDuration(referenceDate, duration, units) {
+  return referenceDate.plus(duration).diff(referenceDate, units);
+}
+
+/**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
  *
  * Here is a brief overview of commonly used methods and getters in Duration:
@@ -831,8 +842,12 @@ export default class Duration {
    * @example Duration.fromObject({ years: 2.5, days: 0, hours: 0 }).normalize().toObject() //=> { years: 2, days: 182, hours: 12 }
    * @return {Duration}
    */
-  normalize() {
+  normalize(opts = {}) {
     if (!this.isValid) return this;
+    if (opts.referenceDate) {
+      const units = orderedUnits.filter((unit) => this.values[unit] != null);
+      return recreateDuration(opts.referenceDate, this, units);
+    }
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
     return clone(this, { values: vals }, true);
@@ -874,9 +889,8 @@ export default class Duration {
     } else {
       opts = {};
     }
-
     if (opts.referenceDate) {
-      return opts.referenceDate.plus(this).diff(opts.referenceDate, units, opts);
+      return recreateDuration(opts.referenceDate, this, units);
     }
 
     units = units.map((u) => Duration.normalizeUnit(u));
