@@ -8721,7 +8721,7 @@ define(['exports'], (function (exports) { 'use strict';
     }
   }
 
-  var VERSION = "3.7.1";
+  var VERSION = "3.7.2";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

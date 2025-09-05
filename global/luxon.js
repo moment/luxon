@@ -8722,7 +8722,7 @@ var luxon = (function (exports) {
     }
   }
 
-  var VERSION = "3.7.1";
+  var VERSION = "3.7.2";
 
   exports.DateTime = DateTime;
   exports.Duration = Duration;

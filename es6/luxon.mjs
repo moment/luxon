@@ -8127,7 +8127,7 @@ function friendlyDateTime(dateTimeish) {
   }
 }
 
-const VERSION = "3.7.1";
+const VERSION = "3.7.2";
 
 export { DateTime, Duration, FixedOffsetZone, IANAZone, Info, Interval, InvalidZone, Settings, SystemZone, VERSION, Zone };
-//# sourceMappingURL=luxon.js.map
+//# sourceMappingURL=luxon.mjs.map
