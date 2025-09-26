@@ -160,8 +160,8 @@ export function formatRelativeTime(unit, count, numeric = "always", narrow = fal
         ? lilUnits[1]
         : lilUnits[2] || lilUnits[1]
       : singular
-      ? units[unit][0]
-      : unit;
+        ? units[unit][0]
+        : unit;
   return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
 }
 

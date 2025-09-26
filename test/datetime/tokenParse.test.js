@@ -797,7 +797,7 @@ test("DateTime.fromFormat() allows non-breaking white-space to be substituted in
 });
 
 test("DateTime.fromFormat() throws if you don't provide a format", () => {
-  expect(() => DateTime.fromFormat("yo")).toThrowError();
+  expect(() => DateTime.fromFormat("yo")).toThrow();
 });
 
 test("DateTime.fromFormat validates weekdays", () => {
@@ -1248,7 +1248,7 @@ test("DateTime.fromFormatParser throws error when used with a different locale t
   const formatParser = DateTime.buildFormatParser(format, { locale: "es-ES" });
   expect(() =>
     DateTime.fromFormatParser("1982/05/25 09:10:11.445", formatParser, { locale: "es-MX" })
-  ).toThrowError(
+  ).toThrow(
     "fromFormatParser called with a locale of Locale(es-MX, null, null), but the format parser was created for Locale(es-ES, null, null)"
   );
 });

@@ -863,8 +863,8 @@ export default class DateTime {
     const higherOrderInvalid = useWeekData
         ? hasInvalidWeekData(normalized, minDaysInFirstWeek, startOfWeek)
         : containsOrdinal
-        ? hasInvalidOrdinalData(normalized)
-        : hasInvalidGregorianData(normalized),
+          ? hasInvalidOrdinalData(normalized)
+          : hasInvalidGregorianData(normalized),
       invalid = higherOrderInvalid || hasInvalidTimeData(normalized);
 
     if (invalid) {
@@ -875,8 +875,8 @@ export default class DateTime {
     const gregorian = useWeekData
         ? weekToGregorian(normalized, minDaysInFirstWeek, startOfWeek)
         : containsOrdinal
-        ? ordinalToGregorian(normalized)
-        : normalized,
+          ? ordinalToGregorian(normalized)
+          : normalized,
       [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
       inst = new DateTime({
         ts: tsFinal,
