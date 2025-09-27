@@ -11,9 +11,8 @@
   "exports": {
     ".": {
       "import": "./build/es6/luxon.mjs",
-      "require": "./build/node/luxon.js"
-    },
-    "./package.json": "./package.json"
+      "require": "./build/cjs/luxon.js"
+    }
   },
   "scripts": {
     "build": "vite build",
@@ -51,27 +50,16 @@
     "prettier": "latest",
     "vite": "^7.1.7"
   },
-  "main": "build/node/luxon.js",
-  "module": "src/luxon.js",
-  "browser": "build/cjs-browser/luxon.js",
-  "jsdelivr": "build/global/luxon.min.js",
-  "unpkg": "build/global/luxon.min.js",
+  "main": "build/cjs/luxon.js",
+  "jsdelivr": "build/umd/luxon.min.js",
+  "unpkg": "build/umd/luxon.min.js",
   "engines": {
     "node": ">=20"
   },
   "files": [
-    "build/node/luxon.js",
-    "build/node/luxon.js.map",
-    "build/cjs-browser/luxon.js",
-    "build/cjs-browser/luxon.js.map",
-    "build/amd/luxon.js",
-    "build/amd/luxon.js.map",
-    "build/global/luxon.js",
-    "build/global/luxon.js.map",
-    "build/global/luxon.min.js",
-    "build/global/luxon.min.js.map",
-    "build/es6/luxon.mjs",
-    "build/es6/luxon.mjs.map",
+    "build/cjs",
+    "build/umd",
+    "build/es6",
     "src"
   ],
   "license": "MIT",

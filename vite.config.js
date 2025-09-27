@@ -29,12 +29,12 @@ export default defineConfig({
       output: [
         {
           format: "es",
-          entryFileNames: "es6/[name].js",
+          entryFileNames: "es6/[name].mjs",
           exports: "named",
         },
         {
           format: "es",
-          entryFileNames: "es6/[name].min.js",
+          entryFileNames: "es6/[name].min.mjs",
           exports: "named",
           plugins: [terser(terserOptions)],
         },
