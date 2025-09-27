@@ -16,7 +16,6 @@
   },
   "scripts": {
     "build": "vite build",
-    "jest": "jest",
     "test": "TZ=America/New_York LANG=en_US vitest run",
     "api-docs": "mkdir -p build && documentation build src/luxon.js -f html -o build/api-docs && sed -i.bak 's/<\\/body>/<script src=\"\\..\\/global\\/luxon.js\"><\\/script><script>console.log(\"You can try Luxon right here using the `luxon` global, like `luxon.DateTime.now()`\");<\\/script><\\/body>/g' build/api-docs/index.html && rm build/api-docs/index.html.bak",
     "copy-site": "mkdir -p build && rsync -a docs/ build/docs && rsync -a site/ build",
@@ -25,7 +24,7 @@
     "format-check": "prettier --check 'src/**/*.js' 'test/**/*.js' 'benchmarks/*.js'",
     "benchmark": "node benchmarks/index.js",
     "codecov": "codecov",
-    "prepack": "babel-node tasks/buildAll.js",
+    "prepack": "vite build",
     "prepare": "husky install",
     "show-site": "http-server build"
   },
@@ -35,18 +34,13 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.18.6",
-    "@babel/node": "^7.18.6",
-    "@babel/preset-env": "^7.28.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@vitest/coverage-v8": "^3.2.4",
-    "babel-jest": "^30.1.2",
     "benchmark": "latest",
     "codecov": "^3.8.2",
     "documentation": "^14.0.3",
     "http-server": "^14.1.1",
     "husky": "^9.1.7",
-    "jest": "^30.1.3",
     "lint-staged": "^16.2.1",
     "prettier": "latest",
     "vite": "^7.1.7",
