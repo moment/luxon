@@ -15,9 +15,13 @@ const terserOptions = {
 };
 
 export default defineConfig({
+  test: {
+    coverage: {
+      reportsDirectory: resolve(__dirname, "build/coverage"),
+      include: ["src/**"]
+    }
+  },
   build: {
-    test: {
-    },
     sourcemap: true,
     minify: false, // we minify manually
     lib: {
