@@ -1,7 +1,8 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import { DateTime, Settings } from "../../src/luxon";
-import Helpers, { supportsMinDaysInFirstWeek } from "../helpers";
+import * as Helpers from "../helpers";
+import { supportsMinDaysInFirstWeek } from "../helpers";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),

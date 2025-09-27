@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
 
 test("IANAZone.create returns a singleton per zone name", () => {

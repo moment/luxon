@@ -1,6 +1,6 @@
-/* global test expect */
+import { describe, test, expect } from "vitest";
 import { Interval } from "../../src/luxon";
-import Helpers from "../helpers";
+import * as Helpers from "../helpers";
 
 const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 

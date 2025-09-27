@@ -1,8 +1,7 @@
+import { test, expect } from "vitest";
 import DateTime from "../../src/datetime";
 
-const Helpers = require("../helpers");
-
-/* global expect test */
+import * as Helpers from "../helpers";
 
 //------
 // #toRelative()

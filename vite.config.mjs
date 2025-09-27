@@ -16,6 +16,8 @@ const terserOptions = {
 
 export default defineConfig({
   build: {
+    test: {
+    },
     sourcemap: true,
     minify: false, // we minify manually
     lib: {

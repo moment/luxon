@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import * as Formats from "../../src/impl/formats";
 import { formatRelativeTime, formatString, weekdays, eras } from "../../src/impl/english";
 

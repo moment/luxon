@@ -1,6 +1,7 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { DateTime } from "../../src/luxon";
-import Helpers, { cldrMajorVersion } from "../helpers";
+import * as Helpers from "../helpers";
+import { cldrMajorVersion } from "../helpers";
 import Settings from "../../src/settings";
 import { ConflictingSpecificationError } from "../../src/errors";
 

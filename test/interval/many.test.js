@@ -1,7 +1,7 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { DateTime, Interval, Duration } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import * as Helpers from "../helpers";
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
   todayFrom = (h1, h2) => Interval.fromDateTimes(Helpers.atHour(h1), Helpers.atHour(h2));

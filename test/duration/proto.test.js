@@ -1,3 +1,4 @@
+import { test, expect } from "vitest";
 import { Duration } from "../../src/luxon";
 
 test("Duration prototype properties should not throw when addressed", () => {

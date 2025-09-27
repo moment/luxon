@@ -1,8 +1,8 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { Info } from "../../src/luxon";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 
-const Helpers = require("../helpers");
+import * as Helpers from "../helpers";
 
 test("Info.getStartOfWeek reports the correct start of the week", () => {
   expect(Info.getStartOfWeek({ locale: "en-US" })).toBe(7);

@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import { DateTime, Zone, FixedOffsetZone } from "../../src/luxon";
 import { InvalidUnitError } from "../../src/errors";

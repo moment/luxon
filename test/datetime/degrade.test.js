@@ -1,7 +1,7 @@
-/* global expect */
+import { expect } from "vitest";
 import { DateTime } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import * as Helpers from "../helpers";
 
 Helpers.withoutRTF("calling toRelative falls back to English", () => {
   expect(
