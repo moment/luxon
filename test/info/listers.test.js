@@ -1,8 +1,9 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 
 import { Info } from "../../src/luxon";
 
 import * as Helpers from "../helpers";
+import { hasMissingLocaleMySupport } from "../specialCases";
 const withDefaultLocale = Helpers.withDefaultLocale;
 
 //------
@@ -365,9 +366,16 @@ test("Info.weekdaysFormat defaults to long names", () => {
 //------
 // .meridiems()
 //------
-test("Info.meridiems lists the meridiems", () => {
-  expect(Info.meridiems({ locale: "en" })).toEqual(["AM", "PM"]);
-  expect(Info.meridiems({ locale: "my" })).toEqual(["နံနက်", "ညနေ"]);
+describe("Info.meridiems lists the meridiems", () => {
+  test("in locale 'en'", () => {
+    expect(Info.meridiems({ locale: "en" })).toEqual(["AM", "PM"]);
+  });
+  test.skipIf(hasMissingLocaleMySupport)("in locale 'my'", () => {
+    expect(Info.meridiems({ locale: "my" })).toEqual(["နံနက်", "ညနေ"]);
+  });
+  test("in locale 'af'", () => {
+    expect(Info.meridiems({ locale: "af" })).toEqual(["vm.", "nm."]);
+  });
 });
 
 test("Info.meridiems defaults to the current locale", () => {

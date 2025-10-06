@@ -1,8 +1,9 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 
 import { DateTime, Settings } from "../../src/luxon";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
+import { hasMissingLocaleBeSupport } from "../specialCases";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -802,11 +803,19 @@ test("DateTime.fromObject accepts a locale", () => {
   expect(res.locale).toBe("be");
 });
 
-test("DateTime.fromObject accepts a locale with calendar and numbering identifiers", () => {
-  const res = DateTime.fromObject({}, { locale: "be-u-ca-coptic-nu-mong" });
-  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
-  expect(res.outputCalendar).toBe("coptic");
-  expect(res.numberingSystem).toBe("mong");
+describe("DateTime.fromObject accepts a locale with calendar and numbering identifiers", () => {
+  test.skipIf(hasMissingLocaleBeSupport)("with locale 'be'", () => {
+    const res = DateTime.fromObject({}, { locale: "be-u-ca-coptic-nu-mong" });
+    expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+    expect(res.outputCalendar).toBe("coptic");
+    expect(res.numberingSystem).toBe("mong");
+  });
+  test("with locale 'de'", () => {
+    const res = DateTime.fromObject({}, { locale: "de-u-ca-coptic-nu-mong" });
+    expect(res.locale).toBe("de-u-ca-coptic-nu-mong");
+    expect(res.outputCalendar).toBe("coptic");
+    expect(res.numberingSystem).toBe("mong");
+  });
 });
 
 test("DateTime.fromObject accepts a locale string with weird junk in it", () => {

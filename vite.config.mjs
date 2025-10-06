@@ -20,10 +20,14 @@ export default defineConfig({
       reportsDirectory: resolve(__dirname, "build/coverage"),
       include: ["src/**"]
     },
+    env: {
+      LANG: "en_US",
+      TZ: "America/New_York",
+    },
     projects: [
       {
-        name: "node",
         test: {
+          name: "node",
           environment: "node",
         }
       },
@@ -34,12 +38,13 @@ export default defineConfig({
             provider: 'playwright',
             enabled: true,
             headless: true,
+            screenshotFailures: false,
             instances: [
               {
                 browser: 'chromium',
                 context: {
                   locale: "en-US",
-                  timeZoneId: "America/New_York",
+                  timezoneId: "America/New_York",
                 }
               }
             ]

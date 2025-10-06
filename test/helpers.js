@@ -78,21 +78,6 @@ export function atHour(hour) {
   return DateTime.fromObject({ year: 2017, month: 5, day: 25 }).startOf("day").set({ hour });
 }
 
-export function cldrMajorVersion() {
-  try {
-    const cldr = process?.versions?.cldr;
-    if (cldr) {
-      const match = cldr.match(/^(\d+)\./);
-      if (match) {
-        return parseInt(match[1]);
-      }
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
 export function supportsMinDaysInFirstWeek() {
   if (!hasLocaleWeekInfo()) return false;
   const locale = new Intl.Locale("en-US");

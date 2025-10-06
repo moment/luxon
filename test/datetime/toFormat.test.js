@@ -1,6 +1,7 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 
 import { DateTime } from "../../src/luxon";
+import { hasMissingLocaleMySupport } from "../specialCases";
 
 const dt = DateTime.fromObject(
   {
@@ -160,11 +161,19 @@ test("DateTime#toFormat('z') returns the zone name", () => {
   expect(utc.toFormat("z")).toBe("UTC");
 });
 
-test("DateTime#toFormat('a') returns the meridiem", () => {
-  expect(dt.toFormat("a")).toBe("AM");
-  expect(dt.reconfigure({ locale: "my" }).toFormat("a")).toBe("နံနက်");
-  expect(dt.set({ hour: 13 }).toFormat("a")).toBe("PM");
-  expect(dt.set({ hour: 13 }).reconfigure({ locale: "my" }).toFormat("a")).toBe("ညနေ");
+describe("DateTime#toFormat('a') returns the meridiem", () => {
+  test("in default locale", () => {
+    expect(dt.toFormat("a")).toBe("AM");
+    expect(dt.set({ hour: 13 }).toFormat("a")).toBe("PM");
+  });
+  test.skipIf(hasMissingLocaleMySupport)("in locale 'my'", () => {
+    expect(dt.reconfigure({ locale: "my" }).toFormat("a")).toBe("နံနက်");
+    expect(dt.set({ hour: 13 }).reconfigure({ locale: "my" }).toFormat("a")).toBe("ညနေ");
+  });
+  test("in locale 'af'", () => {
+    expect(dt.reconfigure({ locale: "af" }).toFormat("a")).toBe("vm.");
+    expect(dt.set({ hour: 13 }).reconfigure({ locale: "af" }).toFormat("a")).toBe("nm.");
+  });
 });
 
 test("DateTime#toFormat('d') returns the day", () => {

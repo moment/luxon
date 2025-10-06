@@ -1,7 +1,8 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 
 import { DateTime, Zone, FixedOffsetZone } from "../../src/luxon";
 import { InvalidUnitError } from "../../src/errors";
+import { hasMissingLocaleBeSupport } from "../specialCases";
 
 const dtMaker = () =>
     DateTime.fromObject(
@@ -460,8 +461,15 @@ test("DateTime#toLocaleString lets the locale set the numbering system", () => {
   expect(dt.reconfigure({ locale: "ja-JP" }).toLocaleString({ hour: "numeric" })).toBe("9時");
 });
 
+test.skipIf(hasMissingLocaleBeSupport)(
+  "DateTime#toLocaleString accepts locale settings from the dateTime",
+  () => {
+    expect(dt.reconfigure({ locale: "be" }).toLocaleString()).toBe("25.5.1982");
+  }
+);
+
 test("DateTime#toLocaleString accepts locale settings from the dateTime", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleString()).toBe("25.5.1982");
+  expect(dt.reconfigure({ locale: "de" }).toLocaleString()).toBe("25.5.1982");
 });
 
 test("DateTime#toLocaleString accepts numbering system settings from the dateTime", () => {
@@ -589,28 +597,59 @@ test("DateTime#resolvedLocaleOpts returns a thing", () => {
   expect(res.numberingSystem).toBeDefined();
 });
 
+test.skipIf(hasMissingLocaleBeSupport)(
+  "DateTime#resolvedLocaleOpts reflects changes to the locale",
+  () => {
+    const res = DateTime.now()
+      .reconfigure({
+        locale: "be",
+        numberingSystem: "mong",
+        outputCalendar: "coptic",
+      })
+      .resolvedLocaleOptions();
+
+    expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+    expect(res.outputCalendar).toBe("coptic");
+    expect(res.numberingSystem).toBe("mong");
+  }
+);
+
 test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
   const res = DateTime.now()
     .reconfigure({
-      locale: "be",
+      locale: "de",
       numberingSystem: "mong",
       outputCalendar: "coptic",
     })
     .resolvedLocaleOptions();
 
-  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+  expect(res.locale).toBe("de-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
   expect(res.numberingSystem).toBe("mong");
 });
 
+test.skipIf(hasMissingLocaleBeSupport)(
+  "DateTime#resolvedLocaleOpts can override with options",
+  () => {
+    const res = DateTime.now().resolvedLocaleOptions({
+      locale: "be",
+      numberingSystem: "mong",
+      outputCalendar: "coptic",
+    });
+
+    expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+    expect(res.outputCalendar).toBe("coptic");
+    expect(res.numberingSystem).toBe("mong");
+  }
+);
 test("DateTime#resolvedLocaleOpts can override with options", () => {
   const res = DateTime.now().resolvedLocaleOptions({
-    locale: "be",
+    locale: "de",
     numberingSystem: "mong",
     outputCalendar: "coptic",
   });
 
-  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+  expect(res.locale).toBe("de-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
   expect(res.numberingSystem).toBe("mong");
 });
@@ -629,14 +668,25 @@ test("DateTime#toLocaleParts returns a en-US by default", () => {
   ]);
 });
 
-test("DateTime#toLocaleParts accepts locale settings from the dateTime", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleParts()).toEqual([
-    { type: "day", value: "25" },
-    { type: "literal", value: "." },
-    { type: "month", value: "5" },
-    { type: "literal", value: "." },
-    { type: "year", value: "1982" },
-  ]);
+describe("DateTime#toLocaleParts accepts locale settings from the dateTime", () => {
+  test.skipIf(hasMissingLocaleBeSupport)("in locale 'be'", () => {
+    expect(dt.reconfigure({ locale: "be" }).toLocaleParts()).toEqual([
+      { type: "day", value: "25" },
+      { type: "literal", value: "." },
+      { type: "month", value: "5" },
+      { type: "literal", value: "." },
+      { type: "year", value: "1982" },
+    ]);
+  });
+  test("in locale 'de'", () => {
+    expect(dt.reconfigure({ locale: "de" }).toLocaleParts()).toEqual([
+      { type: "day", value: "25" },
+      { type: "literal", value: "." },
+      { type: "month", value: "5" },
+      { type: "literal", value: "." },
+      { type: "year", value: "1982" },
+    ]);
+  });
 });
 
 test("DateTime#toLocaleParts can override the dateTime's locale", () => {
