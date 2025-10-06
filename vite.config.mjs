@@ -19,7 +19,34 @@ export default defineConfig({
     coverage: {
       reportsDirectory: resolve(__dirname, "build/coverage"),
       include: ["src/**"]
-    }
+    },
+    projects: [
+      {
+        name: "node",
+        test: {
+          environment: "node",
+        }
+      },
+      {
+        test: {
+          name: "browsers",
+          browser: {
+            provider: 'playwright',
+            enabled: true,
+            headless: true,
+            instances: [
+              {
+                browser: 'chromium',
+                context: {
+                  locale: "en-US",
+                  timeZoneId: "America/New_York",
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
   },
   build: {
     sourcemap: true,
