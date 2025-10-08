@@ -3,7 +3,9 @@ import {
   hasMissingLocaleBeSupport,
   hasMissingLocaleMySupport,
   hasOutdatedKannadaAmPmBehavior,
+  hasOutdatedTamilAmPmBehavior,
   isMissingLocaleWeekInfo,
+  hasMissingEtcGmtNormalization,
 } from "./specialCases";
 
 describe("test special cases still hold", () => {
@@ -22,10 +24,23 @@ describe("test special cases still hold", () => {
     expect(part).toBeDefined();
     expect(part.value === "ಅಪರಾಹ್ನ").toBe(hasOutdatedKannadaAmPmBehavior);
   });
+  test("hasOutdatedTamilAmPmBehavior", () => {
+    const part = new Intl.DateTimeFormat("ta", { hour: "numeric", hourCycle: "h12" })
+      .formatToParts()
+      .find((p) => p.type === "dayPeriod");
+    expect(part).toBeDefined();
+    expect(part.value === "பிற்பகல்").toBe(hasOutdatedTamilAmPmBehavior);
+  });
   test("isMissingLocaleWeekInfo", () => {
     const actuallyMissing = !(
       "weekInfo" in Intl.Locale.prototype || "getWeekInfo" in Intl.Locale.prototype
     );
     expect(isMissingLocaleWeekInfo).toBe(actuallyMissing);
+  });
+  test("hasMissingEtcGmtNormalization", () => {
+    const normalized = new Intl.DateTimeFormat(undefined, { timeZone: "Etc/GMT" }).resolvedOptions()
+      .timeZone;
+    expect(normalized).toBeOneOf(["Etc/GMT", "UTC"]);
+    expect(normalized === "Etc/GMT").toBe(hasMissingEtcGmtNormalization);
   });
 });

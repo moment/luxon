@@ -126,7 +126,7 @@ test("Interval#toLocaleString shows things in the right fixed-offset zone when s
     Interval.fromDateTimes(interval.start.setZone("UTC-8"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatch(/^May 25, 1982 at 1:00\sAM GMT-8\s–\sOctober 14, 1983 at 5:30\sAM GMT-8$/);
+  ).toMatch(/^May 25, 1982(?: at|,) 1:00\sAM GMT-8\s–\sOctober 14, 1983(?: at|,) 5:30\sAM GMT-8$/);
 });
 
 test("Interval#toLocaleString shows things with UTC if fixed-offset with 0 offset is used", () => {
@@ -134,7 +134,7 @@ test("Interval#toLocaleString shows things with UTC if fixed-offset with 0 offse
     Interval.fromDateTimes(interval.start.setZone("UTC"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatch(/^May 25, 1982 at 9:00\sAM UTC\s–\sOctober 14, 1983 at 1:30\sPM UTC$/);
+  ).toMatch(/^May 25, 1982(?: at|,) 9:00\sAM UTC\s–\sOctober 14, 1983(?: at|,) 1:30\sPM UTC$/);
 });
 
 test("Interval#toLocaleString does the best it can with unsupported fixed-offset zone when showing the zone", () => {
@@ -142,7 +142,7 @@ test("Interval#toLocaleString does the best it can with unsupported fixed-offset
     Interval.fromDateTimes(interval.start.setZone("UTC+4:30"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatch(/^May 25, 1982 at 9:00\sAM UTC\s–\sOctober 14, 1983 at 1:30\sPM UTC$/);
+  ).toMatch(/^May 25, 1982(?: at|,) 9:00\sAM UTC\s–\sOctober 14, 1983(?: at|,) 1:30\sPM UTC$/);
 });
 
 test("Interval#toLocaleString uses locale-appropriate time formats", () => {

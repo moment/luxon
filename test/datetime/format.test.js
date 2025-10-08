@@ -515,20 +515,20 @@ test("DateTime#toLocaleString() shows things in the right fixed-offset zone", ()
 });
 
 test("DateTime#toLocaleString() shows things in the right fixed-offset zone when showing the zone", () => {
-  expect(dt.setZone("UTC-8").toLocaleString(DateTime.DATETIME_FULL)).toBe(
-    "May 25, 1982 at 1:23 AM GMT-8"
+  expect(dt.setZone("UTC-8").toLocaleString(DateTime.DATETIME_FULL)).toMatch(
+    /^May 25, 1982(?: at|,) 1:23 AM GMT-8$/
   );
 });
 
 test("DateTime#toLocaleString() shows things with UTC if fixed-offset zone with 0 offset is used", () => {
   expect(dt.setZone("UTC").toLocaleString(DateTime.DATETIME_FULL)).toMatch(
-    /^May 25, 1982 at 9:23\sAM UTC$/
+    /^May 25, 1982(?: at|,) 9:23\sAM UTC$/
   );
 });
 
 test("DateTime#toLocaleString() does the best it can with unsupported fixed-offset zone when showing the zone", () => {
   expect(dt.setZone("UTC+4:30").toLocaleString(DateTime.DATETIME_FULL)).toMatch(
-    /^May 25, 1982 at 1:53\sPM UTC\+4:30$/
+    /^May 25, 1982(?: at|,) 1:53\sPM UTC\+4:30$/
   );
 });
 
@@ -546,7 +546,7 @@ test("DateTime#toLocaleString() shows things in the right custom zone", () => {
 
 test("DateTime#toLocaleString() shows things in the right custom zone when showing the zone", () => {
   expect(dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString(DateTime.DATETIME_FULL)).toMatch(
-    /^May 25, 1982 at 9:53\sAM CUST$/
+    /^May 25, 1982(?: at|,) 9:53\sAM CUST$/
   );
 });
 

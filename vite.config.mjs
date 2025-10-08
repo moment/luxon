@@ -54,6 +54,13 @@ export default defineConfig({
                   timezoneId: "America/New_York",
                 }
               },
+              {
+                browser: 'webkit',
+                context: {
+                  locale: "en-US",
+                  timezoneId: "America/New_York",
+                }
+              },
             ]
           }
         }

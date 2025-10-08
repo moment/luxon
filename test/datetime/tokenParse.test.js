@@ -3,7 +3,7 @@ import { DateTime } from "../../src/luxon";
 import * as Helpers from "../helpers";
 import Settings from "../../src/settings";
 import { ConflictingSpecificationError } from "../../src/errors";
-import { hasOutdatedKannadaAmPmBehavior } from "../specialCases";
+import { hasOutdatedKannadaAmPmBehavior, hasOutdatedTamilAmPmBehavior } from "../specialCases";
 
 //------
 // .fromFormat
@@ -1167,9 +1167,25 @@ describe("DateTime.fromFormatExplain() parses localized string with numberingSys
     expect(keyCount(ex15.result)).toBe(6);
   });
 
-  test("ex16", () => {
+  test.skipIf(hasOutdatedTamilAmPmBehavior)("locale 'ta'", () => {
     const ex16 = DateTime.fromFormatExplain(
       "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ PM",
+      "dd-MMMM-yyyy hh:mm:ss a",
+      {
+        locale: "ta",
+        numberingSystem: "tamldec",
+      }
+    );
+    expect(ex16.rawMatches).toBeInstanceOf(Array);
+    expect(ex16.matches).toBeInstanceOf(Object);
+    expect(keyCount(ex16.matches)).toBe(7);
+    expect(ex16.result).toBeInstanceOf(Object);
+    expect(keyCount(ex16.result)).toBe(6);
+  });
+
+  test.runIf(hasOutdatedTamilAmPmBehavior)("locale 'ta' (old CLDR)", () => {
+    const ex16 = DateTime.fromFormatExplain(
+      "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ பிற்பகல்",
       "dd-MMMM-yyyy hh:mm:ss a",
       {
         locale: "ta",
@@ -1278,10 +1294,10 @@ test("DateTime.fromString is an alias for DateTime.fromFormat", () => {
 
 test("DateTime.parseFormatForOpts returns a parsing format", () => {
   const format = DateTime.parseFormatForOpts(DateTime.DATETIME_FULL);
-  expect(format).toEqual("MMMM d, yyyyy at h:m a ZZZ");
+  expect(format).toMatch(/^MMMM d, yyyyy(?: at|,) h:m a ZZZ$/);
 });
 
-test("DateTime.parseFormatForOpts returns a parsing format", () => {
+test("DateTime.parseFormatForOpts returns null for invalid input", () => {
   const format = DateTime.parseFormatForOpts("");
   expect(format).toBeNull();
 });

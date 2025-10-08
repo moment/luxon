@@ -1,5 +1,6 @@
 import { test, expect } from "vitest";
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { hasMissingEtcGmtNormalization } from "../specialCases";
 
 test("IANAZone.create returns a singleton per zone name", () => {
   expect(IANAZone.create("UTC")).toBe(IANAZone.create("UTC"));
@@ -120,6 +121,13 @@ test("IANAZone.normalize normalizes the zone name", () => {
   expect(IANAZone.normalizeZone("europe/paris")).toBe("Europe/Paris");
   expect(IANAZone.normalizeZone("EUROPE/PARIS")).toBe("Europe/Paris");
   expect(IANAZone.normalizeZone("Asia/Tokyo")).toBe("Asia/Tokyo");
+});
+
+test.skipIf(hasMissingEtcGmtNormalization)("IANAZone.normalize normalizes Etc/GMT to UTC", () => {
+  // Specified in: https://tc39.es/ecma402/#sec-use-of-iana-time-zone-database
+  // > For historical reasons, "UTC" must be a primary time zone identifier.
+  // > "Etc/UTC", "Etc/GMT", and "GMT", as well as all Link names that resolve
+  // > to any of them, must be non-primary time identifiers that resolve to "UTC".
   expect(IANAZone.normalizeZone("Etc/GMT")).toBe("UTC");
 });
 
