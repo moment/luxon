@@ -46,7 +46,14 @@ export default defineConfig({
                   locale: "en-US",
                   timezoneId: "America/New_York",
                 }
-              }
+              },
+              {
+                browser: 'firefox',
+                context: {
+                  locale: "en-US",
+                  timezoneId: "America/New_York",
+                }
+              },
             ]
           }
         }

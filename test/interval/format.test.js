@@ -22,7 +22,7 @@ test("Interval#toString returns an unfriendly string for invalid intervals", () 
 //------
 
 test("Interval#toLocaleString defaults to the DATE_SHORT format", () =>
-  expect(interval.toLocaleString()).toBe("5/25/1982 – 10/14/1983"));
+  expect(interval.toLocaleString()).toMatch(/^5\/25\/1982\s–\s10\/14\/1983$/));
 
 test("Interval#toLocaleString returns an unfriendly string for invalid intervals", () =>
   expect(invalid.toLocaleString()).toBe("Invalid Interval"));
@@ -52,7 +52,7 @@ test("Interval#toLocaleString accepts locale settings from the start DateTime", 
       interval.start.reconfigure({ locale: "de" }),
       interval.end
     ).toLocaleString()
-  ).toBe("25.05.1982 – 14.10.1983");
+  ).toMatch(/^25.05.1982\s–\s14.10.1983$/);
 });
 
 test("Interval#toLocaleString accepts numbering system settings from the start DateTime", () => {
@@ -61,20 +61,20 @@ test("Interval#toLocaleString accepts numbering system settings from the start D
       interval.start.reconfigure({ numberingSystem: "beng" }),
       interval.end
     ).toLocaleString()
-  ).toBe("৫/২৫/১৯৮২ – ১০/১৪/১৯৮৩");
+  ).toMatch(/^৫\/২৫\/১৯৮২\s–\s১০\/১৪\/১৯৮৩$/);
 });
 
-test("Interval#toLocaleString accepts ouptput calendar settings from the start DateTime", () => {
+test("Interval#toLocaleString accepts output calendar settings from the start DateTime", () => {
   expect(
     Interval.fromDateTimes(
       interval.start.reconfigure({ outputCalendar: "islamic" }),
       interval.end
     ).toLocaleString()
-  ).toBe("8/2/1402 – 1/8/1404 AH");
+  ).toMatch(/^8\/2\/1402\s–\s1\/8\/1404 AH$/);
 });
 
 test("Interval#toLocaleString accepts options to the formatter", () => {
-  expect(interval.toLocaleString({ weekday: "short" })).toBe("Tue – Fri");
+  expect(interval.toLocaleString({ weekday: "short" })).toMatch(/^Tue\s–\sFri$/);
 });
 
 test("Interval#toLocaleString can override the start DateTime's locale", () => {
@@ -83,7 +83,7 @@ test("Interval#toLocaleString can override the start DateTime's locale", () => {
       interval.start.reconfigure({ locale: "be" }),
       interval.end
     ).toLocaleString({}, { locale: "fr" })
-  ).toBe("25/05/1982 – 14/10/1983");
+  ).toMatch(/^25\/05\/1982\s–\s14\/10\/1983$/);
 });
 
 test("Interval#toLocaleString can override the start DateTime's numbering system", () => {
@@ -92,7 +92,7 @@ test("Interval#toLocaleString can override the start DateTime's numbering system
       interval.start.reconfigure({ numberingSystem: "beng" }),
       interval.end
     ).toLocaleString({ numberingSystem: "mong" })
-  ).toBe("᠕/᠒᠕/᠑᠙᠘᠒ – ᠑᠐/᠑᠔/᠑᠙᠘᠓");
+  ).toMatch(/^᠕\/᠒᠕\/᠑᠙᠘᠒\s–\s᠑᠐\/᠑᠔\/᠑᠙᠘᠓$/);
 });
 
 test("Interval#toLocaleString can override the start DateTime's output calendar", () => {
@@ -101,7 +101,7 @@ test("Interval#toLocaleString can override the start DateTime's output calendar"
       interval.start.reconfigure({ outputCalendar: "islamic" }),
       interval.end
     ).toLocaleString({}, { outputCalendar: "coptic" })
-  ).toBe("9/17/1698 – 2/3/1700 ERA1");
+  ).toMatch(/^9\/17\/1698\s–\s2\/3\/1700 ERA1$/);
 });
 
 test("Interval#toLocaleString shows things in the right IANA zone", () => {
@@ -110,7 +110,7 @@ test("Interval#toLocaleString shows things in the right IANA zone", () => {
       interval.start.setZone("Australia/Melbourne"),
       interval.end
     ).toLocaleString(DateTime.DATETIME_SHORT)
-  ).toMatch(/^5\/25\/1982, 7:00\sPM – 10\/14\/1983, 11:30\sPM$/);
+  ).toMatch(/^5\/25\/1982, 7:00\sPM\s–\s10\/14\/1983, 11:30\sPM$/);
 });
 
 test("Interval#toLocaleString shows things in the right fixed-offset zone", () => {
@@ -134,7 +134,7 @@ test("Interval#toLocaleString shows things with UTC if fixed-offset with 0 offse
     Interval.fromDateTimes(interval.start.setZone("UTC"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatch(/^May 25, 1982 at 9:00\sAM UTC – October 14, 1983 at 1:30\sPM UTC$/);
+  ).toMatch(/^May 25, 1982 at 9:00\sAM UTC\s–\sOctober 14, 1983 at 1:30\sPM UTC$/);
 });
 
 test("Interval#toLocaleString does the best it can with unsupported fixed-offset zone when showing the zone", () => {
@@ -142,7 +142,7 @@ test("Interval#toLocaleString does the best it can with unsupported fixed-offset
     Interval.fromDateTimes(interval.start.setZone("UTC+4:30"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatch(/^May 25, 1982 at 9:00\sAM UTC – October 14, 1983 at 1:30\sPM UTC$/);
+  ).toMatch(/^May 25, 1982 at 9:00\sAM UTC\s–\sOctober 14, 1983 at 1:30\sPM UTC$/);
 });
 
 test("Interval#toLocaleString uses locale-appropriate time formats", () => {
@@ -150,24 +150,24 @@ test("Interval#toLocaleString uses locale-appropriate time formats", () => {
     Interval.after(interval.start.reconfigure({ locale: "en-US" }), { hour: 2 }).toLocaleString(
       DateTime.TIME_SIMPLE
     )
-  ).toMatch(/^9:00 – 11:00\sAM$/);
+  ).toMatch(/^9:00\s–\s11:00\sAM$/);
   expect(
     Interval.after(interval.start.reconfigure({ locale: "en-US" }), { hour: 2 }).toLocaleString(
       DateTime.TIME_24_SIMPLE
     )
-  ).toBe("09:00 – 11:00");
+  ).toMatch(/^09:00\s–\s11:00$/);
 
   // France has 24-hour by default
   expect(
     Interval.after(interval.start.reconfigure({ locale: "fr" }), { hour: 2 }).toLocaleString(
       DateTime.TIME_SIMPLE
     )
-  ).toBe("09:00 – 11:00");
+  ).toMatch(/^09:00\s–\s11:00$/);
   expect(
     Interval.after(interval.start.reconfigure({ locale: "fr" }), { hour: 2 }).toLocaleString(
       DateTime.TIME_24_SIMPLE
     )
-  ).toBe("09:00 – 11:00");
+  ).toMatch(/^09:00\s–\s11:00$/);
 
   // Spain does't prefix with "0" and doesn't use spaces
   expect(
@@ -183,8 +183,8 @@ test("Interval#toLocaleString uses locale-appropriate time formats", () => {
 });
 
 test("Interval#toLocaleString sets the separator between days for same-month dates", () => {
-  expect(Interval.after(interval.start, { day: 2 }).toLocaleString(DateTime.DATE_MED)).toBe(
-    "May 25 – 27, 1982"
+  expect(Interval.after(interval.start, { day: 2 }).toLocaleString(DateTime.DATE_MED)).toMatch(
+    /^May 25\s–\s27, 1982$/
   );
 });
 

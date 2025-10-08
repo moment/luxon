@@ -3,6 +3,7 @@ import { test, expect } from "vitest";
 import { DateTime } from "../../src/luxon";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
+import { isMissingLocaleWeekInfo } from "../specialCases";
 
 const withDefaultWeekSettings = Helpers.setUnset("defaultWeekSettings");
 
@@ -95,123 +96,105 @@ test("DateTime#set({ weekday }) handles week year edge cases", () => {
 // locale-based week units
 //------
 
-test("DateTime#set({ localWeekday }) sets the weekday to this week's matching day based on the locale (en-US)", () => {
-  const modified = dt.reconfigure({ locale: "en-US" }).set({ localWeekday: 1 });
-  expect(modified.localWeekday).toBe(1);
-  expect(modified.weekday).toBe(7);
-  expect(modified.year).toBe(1982);
-  expect(modified.month).toBe(5);
-  expect(modified.day).toBe(23);
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
-});
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekday }) sets the weekday to this week's matching day based on the locale (en-US)",
+  () => {
+    const modified = dt.reconfigure({ locale: "en-US" }).set({ localWeekday: 1 });
+    expect(modified.localWeekday).toBe(1);
+    expect(modified.weekday).toBe(7);
+    expect(modified.year).toBe(1982);
+    expect(modified.month).toBe(5);
+    expect(modified.day).toBe(23);
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
 
-test("DateTime#set({ localWeekday }) sets the weekday to this week's matching day based on the locale (de-DE)", () => {
-  const modified = dt.reconfigure({ locale: "de-DE" }).set({ localWeekday: 1 });
-  expect(modified.localWeekday).toBe(1);
-  expect(modified.weekday).toBe(1);
-  expect(modified.year).toBe(1982);
-  expect(modified.month).toBe(5);
-  expect(modified.day).toBe(24);
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
-});
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekday }) sets the weekday to this week's matching day based on the locale (de-DE)",
+  () => {
+    const modified = dt.reconfigure({ locale: "de-DE" }).set({ localWeekday: 1 });
+    expect(modified.localWeekday).toBe(1);
+    expect(modified.weekday).toBe(1);
+    expect(modified.year).toBe(1982);
+    expect(modified.month).toBe(5);
+    expect(modified.day).toBe(24);
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
 
-test("DateTime#set({ localWeekday }) handles crossing over into the previous year", () => {
-  const modified = DateTime.local(2022, 1, 1, 9, 23, 54, 123, { locale: "en-US" }).set({
-    localWeekday: 2,
-  });
-  expect(modified.localWeekday).toBe(2);
-  expect(modified.weekday).toBe(1);
-  expect(modified.year).toBe(2021);
-  expect(modified.month).toBe(12);
-  expect(modified.day).toBe(27);
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
-});
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekday }) handles crossing over into the previous year",
+  () => {
+    const modified = DateTime.local(2022, 1, 1, 9, 23, 54, 123, { locale: "en-US" }).set({
+      localWeekday: 2,
+    });
+    expect(modified.localWeekday).toBe(2);
+    expect(modified.weekday).toBe(1);
+    expect(modified.year).toBe(2021);
+    expect(modified.month).toBe(12);
+    expect(modified.day).toBe(27);
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
 
-test("DateTime#set({ localWeekday }) handles crossing over into the previous year", () => {
-  const modified = DateTime.local(2022, 1, 1, 9, 23, 54, 123, { locale: "en-US" }).set({
-    localWeekday: 2,
-  });
-  expect(modified.localWeekday).toBe(2);
-  expect(modified.weekday).toBe(1);
-  expect(modified.year).toBe(2021);
-  expect(modified.month).toBe(12);
-  expect(modified.day).toBe(27);
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
-});
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekday }) handles crossing over into the previous year",
+  () => {
+    const modified = DateTime.local(2022, 1, 1, 9, 23, 54, 123, { locale: "en-US" }).set({
+      localWeekday: 2,
+    });
+    expect(modified.localWeekday).toBe(2);
+    expect(modified.weekday).toBe(1);
+    expect(modified.year).toBe(2021);
+    expect(modified.month).toBe(12);
+    expect(modified.day).toBe(27);
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
 
-test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (en-US)", () => {
-  const modified = dt.reconfigure({ locale: "en-US" }).set({ localWeekNumber: 2 });
-  expect(modified.weekday).toBe(2); // still tuesday
-  expect(modified.localWeekNumber).toBe(2);
-  expect(modified.year).toBe(1982);
-  expect(modified.month).toBe(1);
-  expect(modified.day).toBe(supportsMinDaysInFirstWeek() ? 5 : 12);
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
-});
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (en-US)",
+  () => {
+    const modified = dt.reconfigure({ locale: "en-US" }).set({ localWeekNumber: 2 });
+    expect(modified.weekday).toBe(2); // still tuesday
+    expect(modified.localWeekNumber).toBe(2);
+    expect(modified.year).toBe(1982);
+    expect(modified.month).toBe(1);
+    expect(modified.day).toBe(supportsMinDaysInFirstWeek() ? 5 : 12);
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
 
-test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (de-DE)", () => {
-  const modified = dt.reconfigure({ locale: "de-DE" }).set({ localWeekNumber: 2 });
-  expect(modified.weekday).toBe(2); // still tuesday
-  expect(modified.localWeekNumber).toBe(2);
-  expect(modified.year).toBe(1982);
-  expect(modified.month).toBe(1);
-  expect(modified.day).toBe(12);
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
-});
-
-test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (custom weekSettings)", () => {
-  withDefaultWeekSettings(
-    {
-      firstDay: 7,
-      weekend: [6, 7],
-      minimalDays: 1,
-    },
-    () => {
-      const modified = dtFactory().set({ localWeekNumber: 2 });
-      expect(modified.weekday).toBe(2); // still tuesday
-      expect(modified.localWeekNumber).toBe(2);
-      expect(modified.year).toBe(1982);
-      expect(modified.month).toBe(1);
-      expect(modified.day).toBe(5);
-      expect(modified.hour).toBe(9);
-      expect(modified.minute).toBe(23);
-      expect(modified.second).toBe(54);
-      expect(modified.millisecond).toBe(123);
-    }
-  );
-});
-
-test("DateTime#set({ localWeekYear }) sets the date to the same weekNumber/weekday of the target weekYear (en-US)", () => {
-  const modified = dt.reconfigure({ locale: "en-US" }).set({ localWeekYear: 2017 });
-  expect(modified.localWeekday).toBe(3); // still tuesday
-  expect(modified.localWeekNumber).toBe(supportsMinDaysInFirstWeek() ? 22 : 21); // still week 22
-  expect(modified.localWeekYear).toBe(2017);
-  expect(modified.year).toBe(2017);
-  expect(modified.month).toBe(5);
-  expect(modified.day).toBe(supportsMinDaysInFirstWeek() ? 30 : 23); // 2017-W22-3 is the 30
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
-});
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (de-DE)",
+  () => {
+    const modified = dt.reconfigure({ locale: "de-DE" }).set({ localWeekNumber: 2 });
+    expect(modified.weekday).toBe(2); // still tuesday
+    expect(modified.localWeekNumber).toBe(2);
+    expect(modified.year).toBe(1982);
+    expect(modified.month).toBe(1);
+    expect(modified.day).toBe(12);
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
 
 test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (custom weekSettings)", () => {
   withDefaultWeekSettings(
@@ -235,19 +218,61 @@ test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the
   );
 });
 
-test("DateTime#set({ localWeekYear }) sets the date to the same weekNumber/weekday of the target weekYear (de-DE)", () => {
-  const modified = dt.reconfigure({ locale: "de-DE" }).set({ localWeekYear: 2017 });
-  expect(modified.localWeekday).toBe(2); // still tuesday
-  expect(modified.localWeekNumber).toBe(21); // still week 21
-  expect(modified.localWeekYear).toBe(2017);
-  expect(modified.year).toBe(2017);
-  expect(modified.month).toBe(5);
-  expect(modified.day).toBe(23); // 2017-W21-2 is the 30
-  expect(modified.hour).toBe(9);
-  expect(modified.minute).toBe(23);
-  expect(modified.second).toBe(54);
-  expect(modified.millisecond).toBe(123);
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekYear }) sets the date to the same weekNumber/weekday of the target weekYear (en-US)",
+  () => {
+    const modified = dt.reconfigure({ locale: "en-US" }).set({ localWeekYear: 2017 });
+    expect(modified.localWeekday).toBe(3); // still tuesday
+    expect(modified.localWeekNumber).toBe(supportsMinDaysInFirstWeek() ? 22 : 21); // still week 22
+    expect(modified.localWeekYear).toBe(2017);
+    expect(modified.year).toBe(2017);
+    expect(modified.month).toBe(5);
+    expect(modified.day).toBe(supportsMinDaysInFirstWeek() ? 30 : 23); // 2017-W22-3 is the 30
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
+
+test("DateTime#set({ localWeekNumber }) sets the date to the same weekday of the target weekNumber (custom weekSettings)", () => {
+  withDefaultWeekSettings(
+    {
+      firstDay: 7,
+      weekend: [6, 7],
+      minimalDays: 1,
+    },
+    () => {
+      const modified = dtFactory().set({ localWeekNumber: 2 });
+      expect(modified.weekday).toBe(2); // still tuesday
+      expect(modified.localWeekNumber).toBe(2);
+      expect(modified.year).toBe(1982);
+      expect(modified.month).toBe(1);
+      expect(modified.day).toBe(5);
+      expect(modified.hour).toBe(9);
+      expect(modified.minute).toBe(23);
+      expect(modified.second).toBe(54);
+      expect(modified.millisecond).toBe(123);
+    }
+  );
 });
+
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime#set({ localWeekYear }) sets the date to the same weekNumber/weekday of the target weekYear (de-DE)",
+  () => {
+    const modified = dt.reconfigure({ locale: "de-DE" }).set({ localWeekYear: 2017 });
+    expect(modified.localWeekday).toBe(2); // still tuesday
+    expect(modified.localWeekNumber).toBe(21); // still week 21
+    expect(modified.localWeekYear).toBe(2017);
+    expect(modified.year).toBe(2017);
+    expect(modified.month).toBe(5);
+    expect(modified.day).toBe(23); // 2017-W21-2 is the 30
+    expect(modified.hour).toBe(9);
+    expect(modified.minute).toBe(23);
+    expect(modified.second).toBe(54);
+    expect(modified.millisecond).toBe(123);
+  }
+);
 
 //------
 // year/ordinal

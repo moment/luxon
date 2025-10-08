@@ -3,7 +3,7 @@ import { describe, test, expect } from "vitest";
 import { DateTime, Settings } from "../../src/luxon";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
-import { hasMissingLocaleBeSupport } from "../specialCases";
+import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -638,26 +638,29 @@ test("DateTime.fromObject() w/locale weeks defaults high-order values to the cur
   expect(dt.localWeekday).toBe(2);
 });
 
-test("DateTime.fromObject() w/locale weeks handles fully specified dates", () => {
-  const dt = DateTime.fromObject(
-    {
-      localWeekYear: 2022,
-      localWeekNumber: 2,
-      localWeekday: 3,
-      hour: 9,
-      minute: 23,
-      second: 54,
-      millisecond: 123,
-    },
-    { locale: "en-US" }
-  );
-  expect(dt.localWeekYear).toBe(2022);
-  expect(dt.localWeekNumber).toBe(2);
-  expect(dt.localWeekday).toBe(3);
-  expect(dt.year).toBe(2022);
-  expect(dt.month).toBe(1);
-  expect(dt.day).toBe(supportsMinDaysInFirstWeek() ? 4 : 11);
-});
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime.fromObject() w/locale weeks handles fully specified dates",
+  () => {
+    const dt = DateTime.fromObject(
+      {
+        localWeekYear: 2022,
+        localWeekNumber: 2,
+        localWeekday: 3,
+        hour: 9,
+        minute: 23,
+        second: 54,
+        millisecond: 123,
+      },
+      { locale: "en-US" }
+    );
+    expect(dt.localWeekYear).toBe(2022);
+    expect(dt.localWeekNumber).toBe(2);
+    expect(dt.localWeekday).toBe(3);
+    expect(dt.year).toBe(2022);
+    expect(dt.month).toBe(1);
+    expect(dt.day).toBe(supportsMinDaysInFirstWeek() ? 4 : 11);
+  }
+);
 
 test("DateTime.fromObject() w/locale weeks handles fully specified dates with custom week settings", () => {
   withDefaultWeekSettings(
@@ -689,29 +692,32 @@ test("DateTime.fromObject() w/locale weeks handles fully specified dates with cu
   );
 });
 
-test("DateTime.fromObject() w/localWeekYears handles skew with Gregorian years", () => {
-  let dt = DateTime.fromObject(
-    { localWeekYear: 2022, localWeekNumber: 1, localWeekday: 1 },
-    { locale: "en-US" }
-  );
-  expect(dt.localWeekYear).toBe(2022);
-  expect(dt.localWeekNumber).toBe(1);
-  expect(dt.localWeekday).toBe(1);
-  expect(dt.year).toBe(supportsMinDaysInFirstWeek() ? 2021 : 2022);
-  expect(dt.month).toBe(supportsMinDaysInFirstWeek() ? 12 : 1);
-  expect(dt.day).toBe(supportsMinDaysInFirstWeek() ? 26 : 2);
+test.skipIf(isMissingLocaleWeekInfo)(
+  "DateTime.fromObject() w/localWeekYears handles skew with Gregorian years",
+  () => {
+    let dt = DateTime.fromObject(
+      { localWeekYear: 2022, localWeekNumber: 1, localWeekday: 1 },
+      { locale: "en-US" }
+    );
+    expect(dt.localWeekYear).toBe(2022);
+    expect(dt.localWeekNumber).toBe(1);
+    expect(dt.localWeekday).toBe(1);
+    expect(dt.year).toBe(supportsMinDaysInFirstWeek() ? 2021 : 2022);
+    expect(dt.month).toBe(supportsMinDaysInFirstWeek() ? 12 : 1);
+    expect(dt.day).toBe(supportsMinDaysInFirstWeek() ? 26 : 2);
 
-  dt = DateTime.fromObject(
-    { localWeekYear: 2009, localWeekNumber: 53, localWeekday: 5 },
-    { locale: "de-DE" }
-  );
-  expect(dt.localWeekYear).toBe(2009);
-  expect(dt.localWeekNumber).toBe(53);
-  expect(dt.localWeekday).toBe(5);
-  expect(dt.year).toBe(2010);
-  expect(dt.month).toBe(1);
-  expect(dt.day).toBe(1);
-});
+    dt = DateTime.fromObject(
+      { localWeekYear: 2009, localWeekNumber: 53, localWeekday: 5 },
+      { locale: "de-DE" }
+    );
+    expect(dt.localWeekYear).toBe(2009);
+    expect(dt.localWeekNumber).toBe(53);
+    expect(dt.localWeekday).toBe(5);
+    expect(dt.year).toBe(2010);
+    expect(dt.month).toBe(1);
+    expect(dt.day).toBe(1);
+  }
+);
 
 test("DateTime.fromObject() w/localWeekYears handles skew with Gregorian years and custom week settings", () => {
   withDefaultWeekSettings(

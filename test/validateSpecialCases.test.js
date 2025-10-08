@@ -3,6 +3,7 @@ import {
   hasMissingLocaleBeSupport,
   hasMissingLocaleMySupport,
   hasOutdatedKannadaAmPmBehavior,
+  isMissingLocaleWeekInfo,
 } from "./specialCases";
 
 describe("test special cases still hold", () => {
@@ -20,5 +21,11 @@ describe("test special cases still hold", () => {
       .find((p) => p.type === "dayPeriod");
     expect(part).toBeDefined();
     expect(part.value === "ಅಪರಾಹ್ನ").toBe(hasOutdatedKannadaAmPmBehavior);
+  });
+  test("isMissingLocaleWeekInfo", () => {
+    const actuallyMissing = !(
+      "weekInfo" in Intl.Locale.prototype || "getWeekInfo" in Intl.Locale.prototype
+    );
+    expect(isMissingLocaleWeekInfo).toBe(actuallyMissing);
   });
 });
