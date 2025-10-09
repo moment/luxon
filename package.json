@@ -30,7 +30,7 @@
     "show-site": "http-server build"
   },
   "lint-staged": {
-    "*.{js,json}": [
+    "*.{js,ts,mjs,json}": [
       "prettier --write"
     ]
   },

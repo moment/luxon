@@ -4,6 +4,10 @@ import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm
 export const LUXON_TYPE_ZONE = "zone" as LuxonTypeMarker<Zone>;
 
 export default class Zone {
+  constructor() {
+    if (new.target === Zone) throw new ZoneIsAbstractError();
+  }
+
   get [LUXON_TYPE](): typeof LUXON_TYPE_ZONE {
     return LUXON_TYPE_ZONE;
   }

@@ -1,13 +1,12 @@
 import { test, expect, describe } from "vitest";
 import { DateTime, FixedOffsetZone, IANAZone, SystemZone, Zone } from "../../src/luxon.ts";
 
-test("You can instantiate Zone directly", () => {
-  expect(() => new Zone().isValid).toThrow();
+test("You can't instantiate Zone directly", () => {
+  expect(() => new Zone()).toThrow();
 });
 
 describe("Zone.isZone", () => {
-  class CustomZone extends Zone {
-  }
+  class CustomZone extends Zone {}
 
   test.each([
     [() => IANAZone.create("Europe/Berlin"), "IANAZone"],
@@ -19,16 +18,26 @@ describe("Zone.isZone", () => {
     expect(Zone.isZone(value())).toBe(true);
   });
   test.for([
-    "asdf", "Europe/Berlin", "UTC", "GMT",
-    0, 0.5, NaN,
-    null, undefined,
+    "asdf",
+    "Europe/Berlin",
+    "UTC",
+    "GMT",
+    0,
+    0.5,
+    NaN,
+    null,
+    undefined,
     {},
     {
       name: "Europe/Berlin",
       ianaName: "Europe/Berlin",
     },
-    true, false,
-    [[0]], new Date(0), () => {}, Zone,
+    true,
+    false,
+    [[0]],
+    new Date(0),
+    () => {},
+    Zone,
     DateTime.fromMillis(0),
   ])("Should return false for $0", (value) => {
     expect(Zone.isZone(value)).toBe(false);
