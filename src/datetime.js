@@ -3,7 +3,7 @@ import Interval from "./interval.js";
 import Settings from "./settings.js";
 import Info from "./info.js";
 import Formatter from "./impl/formatter.js";
-import FixedOffsetZone from "./zones/fixedOffsetZone.js";
+import FixedOffsetZone from "./zones/fixedOffsetZone.ts";
 import Locale from "./impl/locale.js";
 import {
   isUndefined,

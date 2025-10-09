@@ -1,7 +1,7 @@
 import { formatOffset, signedOffset } from "../impl/util.js";
-import Zone from "../zone.ts";
+import Zone, { type UniversalZone } from "../zone.ts";
 
-let singleton = null;
+let singleton: FixedOffsetZone | null = null;
 
 /**
  * A zone with a fixed offset (meaning no DST)
@@ -12,11 +12,8 @@ export default class FixedOffsetZone extends Zone {
    * Get a singleton instance of UTC
    * @return {FixedOffsetZone}
    */
-  static get utcInstance() {
-    if (singleton === null) {
-      singleton = new FixedOffsetZone(0);
-    }
-    return singleton;
+  static get utcInstance(): FixedOffsetZone {
+    return (singleton ??= new FixedOffsetZone(0));
   }
 
   /**
@@ -24,7 +21,7 @@ export default class FixedOffsetZone extends Zone {
    * @param {number} offset - The offset in minutes
    * @return {FixedOffsetZone}
    */
-  static instance(offset) {
+  static instance(offset: number): FixedOffsetZone {
     return offset === 0 ? FixedOffsetZone.utcInstance : new FixedOffsetZone(offset);
   }
 
@@ -36,7 +33,7 @@ export default class FixedOffsetZone extends Zone {
    * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
    * @return {FixedOffsetZone}
    */
-  static parseSpecifier(s) {
+  static parseSpecifier(s: string): FixedOffsetZone | null {
     if (s) {
       const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
       if (r) {
@@ -46,10 +43,11 @@ export default class FixedOffsetZone extends Zone {
     return null;
   }
 
-  constructor(offset) {
+  readonly #fixed: number;
+
+  constructor(offset: number) {
     super();
-    /** @private **/
-    this.fixed = offset;
+    this.#fixed = offset;
   }
 
   /**
@@ -57,7 +55,7 @@ export default class FixedOffsetZone extends Zone {
    * @override
    * @type {string}
    */
-  get type() {
+  get type(): "fixed" {
     return "fixed";
   }
 
@@ -67,8 +65,8 @@ export default class FixedOffsetZone extends Zone {
    * @override
    * @type {string}
    */
-  get name() {
-    return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
+  get name(): string {
+    return this.#fixed === 0 ? "UTC" : `UTC${formatOffset(this.#fixed, "narrow")}`;
   }
 
   /**
@@ -77,11 +75,11 @@ export default class FixedOffsetZone extends Zone {
    * @override
    * @type {string}
    */
-  get ianaName() {
-    if (this.fixed === 0) {
+  get ianaName(): string {
+    if (this.#fixed === 0) {
       return "Etc/UTC";
     } else {
-      return `Etc/GMT${formatOffset(-this.fixed, "narrow")}`;
+      return `Etc/GMT${formatOffset(-this.#fixed, "narrow")}`;
     }
   }
 
@@ -91,7 +89,7 @@ export default class FixedOffsetZone extends Zone {
    * For fixed offset zones this equals to the zone name.
    * @override
    */
-  offsetName() {
+  offsetName(): string {
     return this.name;
   }
 
@@ -103,8 +101,8 @@ export default class FixedOffsetZone extends Zone {
    *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
    * @return {string}
    */
-  formatOffset(ts, format) {
-    return formatOffset(this.fixed, format);
+  formatOffset(ts: number, format: string): string {
+    return formatOffset(this.#fixed, format);
   }
 
   /**
@@ -113,7 +111,7 @@ export default class FixedOffsetZone extends Zone {
    * @override
    * @type {boolean}
    */
-  get isUniversal() {
+  isOffsetFixed(): this is UniversalZone {
     return true;
   }
 
@@ -124,8 +122,8 @@ export default class FixedOffsetZone extends Zone {
    * @override
    * @return {number}
    */
-  offset() {
-    return this.fixed;
+  offset(): number {
+    return this.#fixed;
   }
 
   /**
@@ -134,17 +132,9 @@ export default class FixedOffsetZone extends Zone {
    * @param {Zone} otherZone - the zone to compare
    * @return {boolean}
    */
-  equals(otherZone) {
-    return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
-  }
-
-  /**
-   * Return whether this Zone is valid:
-   * All fixed offset zones are valid.
-   * @override
-   * @type {boolean}
-   */
-  get isValid() {
-    return true;
+  equals(otherZone: unknown): boolean {
+    return (
+      Zone.isZone(otherZone) && otherZone.type === "fixed" && otherZone.offset(0) === this.#fixed
+    );
   }
 }

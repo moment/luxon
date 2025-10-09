@@ -29,8 +29,7 @@ export default class SystemZone extends Zone {
     return new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
-  /** @override **/
-  get isUniversal() {
+  isOffsetFixed() {
     return false;
   }
 
@@ -52,10 +51,5 @@ export default class SystemZone extends Zone {
   /** @override **/
   equals(otherZone) {
     return otherZone.type === "system";
-  }
-
-  /** @override **/
-  get isValid() {
-    return true;
   }
 }

@@ -1,6 +1,6 @@
 import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.js";
 import Formatter from "./formatter.js";
-import FixedOffsetZone from "../zones/fixedOffsetZone.js";
+import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";

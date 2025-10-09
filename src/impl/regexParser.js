@@ -7,7 +7,7 @@ import {
   parseFloating,
 } from "./util.js";
 import * as English from "./english.js";
-import FixedOffsetZone from "../zones/fixedOffsetZone.js";
+import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.js";
 
 /*

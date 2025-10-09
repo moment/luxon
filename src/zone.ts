@@ -3,6 +3,11 @@ import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm
 
 export const LUXON_TYPE_ZONE = "zone" as LuxonTypeMarker<Zone>;
 
+export interface UniversalZone {
+  readonly isUniversal: true;
+  offset(ts?: number): number;
+}
+
 export default class Zone {
   constructor() {
     if (new.target === Zone) throw new ZoneIsAbstractError();
@@ -53,8 +58,18 @@ export default class Zone {
    * Returns whether the offset is known to be fixed for the whole year.
    * @abstract
    * @type {boolean}
+   * @deprecated
    */
   get isUniversal(): boolean {
+    return this.isOffsetFixed();
+  }
+
+  /**
+   * Returns whether the offset is known to be fixed for the whole year.
+   * @abstract
+   * @type {boolean}
+   */
+  isOffsetFixed(): this is UniversalZone {
     throw new ZoneIsAbstractError();
   }
 
@@ -99,16 +114,16 @@ export default class Zone {
    * @param {Zone} otherZone - the zone to compare
    * @return {boolean}
    */
-  equals(otherZone: Zone): boolean {
+  equals(otherZone: unknown): boolean {
     throw new ZoneIsAbstractError();
   }
 
   /**
    * Return whether this Zone is valid.
-   * @abstract
    * @type {boolean}
+   * @deprecated
    */
   get isValid(): boolean {
-    throw new ZoneIsAbstractError();
+    return true;
   }
 }

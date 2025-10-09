@@ -29,11 +29,7 @@ class CustomZone extends Zone {
     this._offset = offset;
   }
 
-  get isUniversal() {
-    return true;
-  }
-
-  get isValid() {
+  isOffsetFixed() {
     return true;
   }
 

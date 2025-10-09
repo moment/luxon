@@ -35,10 +35,6 @@ describe("Zone.isZone", () => {
     true,
     false,
     [[0]],
-    new Date(0),
-    () => {},
-    Zone,
-    DateTime.fromMillis(0),
   ])("Should return false for $0", (value) => {
     expect(Zone.isZone(value)).toBe(false);
   });

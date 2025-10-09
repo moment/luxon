@@ -167,7 +167,7 @@ export default class IANAZone extends Zone {
    * @override
    * @type {boolean}
    */
-  get isUniversal() {
+  isOffsetFixed() {
     return false;
   }
 
@@ -244,14 +244,5 @@ export default class IANAZone extends Zone {
    */
   equals(otherZone) {
     return otherZone.type === "iana" && otherZone.name === this.name;
-  }
-
-  /**
-   * Return whether this Zone is valid.
-   * @override
-   * @type {boolean}
-   */
-  get isValid() {
-    return this.valid;
   }
 }
