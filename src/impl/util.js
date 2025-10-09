@@ -263,6 +263,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
   const parsed = new Intl.DateTimeFormat(locale, modified)
     .formatToParts(date)
     .find((m) => m.type.toLowerCase() === "timezonename");
+  // TODO: don't return null here
   return parsed ? parsed.value : null;
 }
 

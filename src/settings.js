@@ -1,4 +1,4 @@
-import SystemZone from "./zones/systemZone.js";
+import SystemZone from "./zones/systemZone.ts";
 import IANAZone from "./zones/IANAZone.js";
 import Locale from "./impl/locale.js";
 import DateTime from "./datetime.js";
