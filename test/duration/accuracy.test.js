@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src/luxon.ts";
 
 const convert = (amt, from, to, accuracy) =>
   Duration.fromObject({ [from]: amt }, { conversionAccuracy: accuracy }).as(to);

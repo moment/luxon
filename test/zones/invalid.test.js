@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { InvalidZone } from "../../src/luxon";
+import { InvalidZone } from "../../src/luxon.ts";
 
 test("InvalidZone", () => {
   const zone = new InvalidZone("foo");

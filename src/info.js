@@ -2,7 +2,7 @@ import DateTime from "./datetime.js";
 import Settings from "./settings.js";
 import Locale from "./impl/locale.js";
 import IANAZone from "./zones/IANAZone.js";
-import { normalizeZone } from "./impl/zoneUtil.js";
+import { normalizeZone } from "./impl/zoneUtil.ts";
 
 import { hasLocaleWeekInfo, hasRelative } from "./impl/util.js";
 

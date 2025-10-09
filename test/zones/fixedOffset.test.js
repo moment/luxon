@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { FixedOffsetZone, IANAZone } from "../../src/luxon.ts";
 
 test("FixedOffsetZone.utcInstance returns a singleton", () => {
   expect(FixedOffsetZone.utcInstance).toBe(FixedOffsetZone.utcInstance);

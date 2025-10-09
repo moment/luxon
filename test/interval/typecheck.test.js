@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 
-import { Interval, DateTime } from "../../src/luxon";
+import { Interval, DateTime } from "../../src/luxon.ts";
 
 //------
 // #isInterval

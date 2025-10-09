@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src/luxon.ts";
 
 // you hate to see a class like this, but here we are
 

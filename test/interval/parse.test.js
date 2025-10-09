@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { Interval } from "../../src/luxon";
+import { Interval } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 
 const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");

@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { Duration } from "../../src/luxon";
+import { Duration } from "../../src/luxon.ts";
 
 test("equals self", () => {
   const l = Duration.fromObject({ years: 5, days: 6 });

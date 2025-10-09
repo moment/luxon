@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 
-import { Duration, DateTime, Settings } from "../../src/luxon";
+import { Duration, DateTime, Settings } from "../../src/luxon.ts";
 
 test("Explicitly invalid durations are invalid", () => {
   const dur = Duration.invalid("just because", "seriously, just because");

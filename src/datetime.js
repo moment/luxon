@@ -20,7 +20,7 @@ import {
   objToLocalTS,
   padStart,
 } from "./impl/util.js";
-import { normalizeZone } from "./impl/zoneUtil.js";
+import { normalizeZone } from "./impl/zoneUtil.ts";
 import diff from "./impl/diff.js";
 import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
 import {

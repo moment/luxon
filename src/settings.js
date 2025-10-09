@@ -3,7 +3,7 @@ import IANAZone from "./zones/IANAZone.js";
 import Locale from "./impl/locale.js";
 import DateTime from "./datetime.js";
 
-import { normalizeZone } from "./impl/zoneUtil.js";
+import { normalizeZone } from "./impl/zoneUtil.ts";
 import { validateWeekSettings } from "./impl/util.js";
 import { resetDigitRegexCache } from "./impl/digits.js";
 

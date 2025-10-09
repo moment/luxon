@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { FixedOffsetZone, IANAZone } from "../../src/luxon.ts";
 import { hasMissingEtcGmtNormalization } from "../specialCases";
 
 test("IANAZone.create returns a singleton per zone name", () => {

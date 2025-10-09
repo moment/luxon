@@ -1,5 +1,5 @@
 import { test } from "vitest";
-import { DateTime, Settings } from "../src/luxon.js";
+import { DateTime, Settings } from "../src/luxon.ts";
 import { hasLocaleWeekInfo } from "../src/impl/util.js";
 
 export function withoutRTF(name, f) {

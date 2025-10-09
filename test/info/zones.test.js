@@ -7,7 +7,7 @@ import {
   InvalidZone,
   SystemZone,
   Settings,
-} from "../../src/luxon";
+} from "../../src/luxon.ts";
 
 import * as Helpers from "../helpers";
 

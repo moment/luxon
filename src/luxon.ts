@@ -2,7 +2,7 @@ import DateTime from "./datetime.js";
 import Duration from "./duration.js";
 import Interval from "./interval.js";
 import Info from "./info.js";
-import Zone from "./zone.js";
+import Zone from "./zone.ts";
 import FixedOffsetZone from "./zones/fixedOffsetZone.js";
 import IANAZone from "./zones/IANAZone.js";
 import InvalidZone from "./zones/invalidZone.js";

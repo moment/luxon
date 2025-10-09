@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { SystemZone } from "../../src/luxon";
+import { SystemZone } from "../../src/luxon.ts";
 
 test("SystemZone.instance returns a singleton", () => {
   expect(SystemZone.instance).toBe(SystemZone.instance);

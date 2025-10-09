@@ -1,15 +1,34 @@
 import { ZoneIsAbstractError } from "./errors.js";
+import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 
-/**
- * @interface
- */
+export const LUXON_TYPE_ZONE = "zone" as LuxonTypeMarker<Zone>;
+
+console.log("zone.ts runs!");
+
 export default class Zone {
+  get [LUXON_TYPE](): typeof LUXON_TYPE_ZONE {
+    return LUXON_TYPE_ZONE;
+  }
+
+  // static [Symbol.hasInstance](other: unknown): other is Zone {
+  //   console.log(
+  //     "hasInstance called",
+  //     this,
+  //     other,
+  //     Function.prototype[Symbol.hasInstance].call(Zone, other),
+  //     isLuxonType(other, LUXON_TYPE_ZONE)
+  //   );
+  //   return this === Zone
+  //     ? isLuxonType(other, LUXON_TYPE_ZONE)
+  //     : Function.prototype[Symbol.hasInstance].call(this, other);
+  // }
+
   /**
    * The type of zone
    * @abstract
    * @type {string}
    */
-  get type() {
+  get type(): string {
     throw new ZoneIsAbstractError();
   }
 
@@ -18,7 +37,7 @@ export default class Zone {
    * @abstract
    * @type {string}
    */
-  get name() {
+  get name(): string {
     throw new ZoneIsAbstractError();
   }
 
@@ -28,7 +47,7 @@ export default class Zone {
    * @abstract
    * @type {string}
    */
-  get ianaName() {
+  get ianaName(): string {
     return this.name;
   }
 
@@ -37,7 +56,7 @@ export default class Zone {
    * @abstract
    * @type {boolean}
    */
-  get isUniversal() {
+  get isUniversal(): boolean {
     throw new ZoneIsAbstractError();
   }
 
@@ -50,7 +69,7 @@ export default class Zone {
    * @param {string} opts.locale - What locale to return the offset name in.
    * @return {string}
    */
-  offsetName(ts, opts) {
+  offsetName(ts: number, opts: any): string {
     throw new ZoneIsAbstractError();
   }
 
@@ -62,7 +81,7 @@ export default class Zone {
    *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
    * @return {string}
    */
-  formatOffset(ts, format) {
+  formatOffset(ts: number, format: string): string {
     throw new ZoneIsAbstractError();
   }
 
@@ -72,7 +91,7 @@ export default class Zone {
    * @param {number} ts - Epoch milliseconds for which to compute the offset
    * @return {number}
    */
-  offset(ts) {
+  offset(ts: number): number {
     throw new ZoneIsAbstractError();
   }
 
@@ -82,7 +101,7 @@ export default class Zone {
    * @param {Zone} otherZone - the zone to compare
    * @return {boolean}
    */
-  equals(otherZone) {
+  equals(otherZone: Zone): boolean {
     throw new ZoneIsAbstractError();
   }
 
@@ -91,7 +110,7 @@ export default class Zone {
    * @abstract
    * @type {boolean}
    */
-  get isValid() {
+  get isValid(): boolean {
     throw new ZoneIsAbstractError();
   }
 }

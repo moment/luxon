@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { DateTime, Interval, Duration, Settings } from "../../src/luxon";
+import { DateTime, Interval, Duration, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 
 const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");

@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 
-import { DateTime, Zone, FixedOffsetZone } from "../../src/luxon";
+import { DateTime, Zone, FixedOffsetZone } from "../../src/luxon.ts";
 import { InvalidUnitError } from "../../src/errors";
 import { hasMissingLocaleBeSupport } from "../specialCases";
 

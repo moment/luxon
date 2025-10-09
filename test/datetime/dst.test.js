@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime, Settings } from "../../src/luxon.ts";
 
 const dateTimeConstructors = {
   fromObject: (year, month, day, hour) =>

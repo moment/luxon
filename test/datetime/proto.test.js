@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src/luxon.ts";
 
 test("DateTime prototype properties should not throw when accessed", () => {
   const d = DateTime.now();

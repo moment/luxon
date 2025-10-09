@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 
-import { DateTime, Settings, IANAZone } from "../../src/luxon";
+import { DateTime, Settings, IANAZone } from "../../src/luxon.ts";
 
 import * as Helpers from "../helpers";
 

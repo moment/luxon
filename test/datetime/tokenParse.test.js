@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import Settings from "../../src/settings";
 import { ConflictingSpecificationError } from "../../src/errors";

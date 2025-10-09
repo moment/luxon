@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 
-import { Info } from "../../src/luxon";
+import { Info } from "../../src/luxon.ts";
 
 import * as Helpers from "../helpers";
 import { hasMissingLocaleMySupport } from "../specialCases";

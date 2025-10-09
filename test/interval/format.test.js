@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { Interval, DateTime } from "../../src/luxon";
+import { Interval, DateTime } from "../../src/luxon.ts";
 import { hasMissingLocaleBeSupport } from "../specialCases";
 
 const fromISOs = (s, e) =>

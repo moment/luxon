@@ -1,5 +1,5 @@
 import { formatOffset, parseZoneInfo, isUndefined, objToLocalTS } from "../impl/util.js";
-import Zone from "../zone.js";
+import Zone from "../zone.ts";
 
 const dtfCache = new Map();
 function makeDTF(zoneName) {

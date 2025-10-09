@@ -1,5 +1,5 @@
 import { formatOffset, parseZoneInfo } from "../impl/util.js";
-import Zone from "../zone.js";
+import Zone from "../zone.ts";
 
 let singleton = null;
 

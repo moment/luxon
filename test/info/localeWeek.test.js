@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { Info } from "../../src/luxon";
+import { Info } from "../../src/luxon.ts";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 
 import * as Helpers from "../helpers";

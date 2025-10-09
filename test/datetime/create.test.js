@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 
-import { DateTime, Settings } from "../../src/luxon";
+import { DateTime, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";

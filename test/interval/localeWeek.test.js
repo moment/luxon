@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 
-import { DateTime, Interval } from "../../src/luxon";
+import { DateTime, Interval } from "../../src/luxon.ts";
 import { isMissingLocaleWeekInfo } from "../specialCases";
 import * as Helpers from "../helpers";
 

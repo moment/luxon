@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 
-import { DateTime } from "../../src/luxon";
+import { DateTime } from "../../src/luxon.ts";
 import { hasMissingLocaleMySupport, isMissingLocaleWeekInfo } from "../specialCases";
 
 const dt = DateTime.fromObject(
