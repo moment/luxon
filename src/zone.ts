@@ -3,25 +3,19 @@ import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm
 
 export const LUXON_TYPE_ZONE = "zone" as LuxonTypeMarker<Zone>;
 
-console.log("zone.ts runs!");
-
 export default class Zone {
   get [LUXON_TYPE](): typeof LUXON_TYPE_ZONE {
     return LUXON_TYPE_ZONE;
   }
 
-  // static [Symbol.hasInstance](other: unknown): other is Zone {
-  //   console.log(
-  //     "hasInstance called",
-  //     this,
-  //     other,
-  //     Function.prototype[Symbol.hasInstance].call(Zone, other),
-  //     isLuxonType(other, LUXON_TYPE_ZONE)
-  //   );
-  //   return this === Zone
-  //     ? isLuxonType(other, LUXON_TYPE_ZONE)
-  //     : Function.prototype[Symbol.hasInstance].call(this, other);
-  // }
+  /**
+   * Check if the provided value is a Zone.
+   * This function works across JavaScript realms (such as an iframe).
+   * @param value
+   */
+  static isZone(value: unknown): value is Zone {
+    return isLuxonType(value, LUXON_TYPE_ZONE);
+  }
 
   /**
    * The type of zone
