@@ -19,17 +19,17 @@ describe("test special cases still hold", () => {
   });
   test("hasOutdatedKannadaAmPmBehavior", () => {
     const part = new Intl.DateTimeFormat("kn", { hour: "numeric", hourCycle: "h12" })
-      .formatToParts()
+      .formatToParts(0)
       .find((p) => p.type === "dayPeriod");
     expect(part).toBeDefined();
-    expect(part.value === "ಅಪರಾಹ್ನ").toBe(hasOutdatedKannadaAmPmBehavior);
+    expect(part.value).toBe(hasOutdatedKannadaAmPmBehavior ? "ಅಪರಾಹ್ನ" : "PM");
   });
   test("hasOutdatedTamilAmPmBehavior", () => {
     const part = new Intl.DateTimeFormat("ta", { hour: "numeric", hourCycle: "h12" })
-      .formatToParts()
+      .formatToParts(0)
       .find((p) => p.type === "dayPeriod");
     expect(part).toBeDefined();
-    expect(part.value === "பிற்பகல்").toBe(hasOutdatedTamilAmPmBehavior);
+    expect(part.value).toBe(hasOutdatedTamilAmPmBehavior ? "பிற்பகல்" : "PM");
   });
   test("isMissingLocaleWeekInfo", () => {
     const actuallyMissing = !(
