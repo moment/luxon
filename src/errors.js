@@ -32,6 +32,8 @@ export class InvalidDurationError extends LuxonError {
   }
 }
 
+export class InvalidZoneError extends LuxonError {}
+
 /**
  * @private
  */

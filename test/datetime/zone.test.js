@@ -3,6 +3,7 @@ import { test, expect } from "vitest";
 import { DateTime, Settings, IANAZone } from "../../src/luxon.ts";
 
 import * as Helpers from "../helpers";
+import { InvalidZoneError } from "../../src/errors.js";
 
 const millis = 391147200000,
   // 1982-05-25T04:00:00.000Z
@@ -133,11 +134,7 @@ test('DateTime#setZone accepts "utc-3:30"', () => {
 });
 
 test("DateTime#setZone does not accept dumb things", () => {
-  Helpers.withDefaultZone("system", () => {
-    const zoned = DateTime.local().setZone("utc-yo");
-    // this is questionable; should this be invalid instead?
-    expect(zoned.zone.type).toBe("system");
-  });
+  expect(() => DateTime.local().setZone("utc-yo")).toThrow(InvalidZoneError);
 });
 
 test("DateTime#setZone accepts IANA zone names", () => {
@@ -198,9 +195,7 @@ test("DateTime#setZone with keepLocalTime handles zones with very different offs
 });
 
 test("DateTime#setZone rejects jibberish", () => {
-  const zoned = dt().setZone("blorp");
-  expect(zoned.isValid).toBe(false);
-  expect(zoned.invalidReason).toBe("unsupported zone");
+  expect(() => dt().setZone("blorp")).toThrow(InvalidZoneError);
 });
 
 // #650
@@ -339,28 +334,13 @@ test("invalid DateTimes have no zone", () => {
   expect(DateTime.invalid("because").zoneName).toBe(null);
 });
 
-test("can parse zones with special JS keywords as invalid", () => {
-  for (const kw of ["constructor", "__proto__"]) {
-    const dt = DateTime.fromISO(`2020-01-01T11:22:33+01:00[${kw}]`);
-    expect(dt.invalidReason).toBe("unsupported zone");
-    expect(dt.invalidExplanation).toBe(`the zone "${kw}" is not supported`);
+test.each(["constructor", "__proto__"])(
+  "can parse zones with special JS keyword $0 as invalid",
+  (kw) => {
+    expect(() => DateTime.fromISO(`2020-01-01T11:22:33+01:00[${kw}]`)).toThrow(InvalidZoneError);
   }
-});
+);
 
-test("Special JS keywords produce invalid Zone", () => {
-  for (const kw of ["constructor", "__proto__"]) {
-    const zone = IANAZone.create(kw);
-    expect(zone.isValid).toBe(false);
-  }
-});
-
-test("Invalid Zones named after special JS keywords produce NaN offset", () => {
-  for (const kw of ["constructor", "__proto__"]) {
-    const zone = IANAZone.create(kw);
-    expect(zone.offset(1742926058000)).toBe(NaN);
-  }
-});
-
-test("Invalid zones produce NaN offset", () => {
-  expect(IANAZone.create("INVALID").offset(1742926058000)).toBe(NaN);
+test.each(["constructor", "__proto__"])("Special JS keyword $0 throws InvalidZoneError", (kw) => {
+  expect(() => IANAZone.create(kw)).toThrow(InvalidZoneError);
 });

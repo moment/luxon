@@ -44,8 +44,8 @@ export default class Info {
    * @param {string|Zone|number} [input] - the value to be converted
    * @return {Zone}
    */
-  static normalizeZone(input) {
-    return normalizeZone(input, Settings.defaultZone);
+  static normalizeZone(input, fallback = Settings.defaultZone) {
+    return normalizeZone(input, fallback);
   }
 
   /**

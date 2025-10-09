@@ -1,15 +1,13 @@
 import { test, expect } from "vitest";
 import { FixedOffsetZone, IANAZone } from "../../src/luxon.ts";
 import { hasMissingEtcGmtNormalization } from "../specialCases";
+import { InvalidZoneError } from "../../src/errors.js";
 
 test("IANAZone.create returns a singleton per zone name", () => {
   expect(IANAZone.create("UTC")).toBe(IANAZone.create("UTC"));
   expect(IANAZone.create("America/New_York")).toBe(IANAZone.create("America/New_York"));
 
   expect(IANAZone.create("UTC")).not.toBe(IANAZone.create("America/New_York"));
-
-  // hold true even for invalid zone names
-  expect(IANAZone.create("blorp")).toBe(IANAZone.create("blorp"));
 });
 
 test("IANAZone.create should return IANAZone instance", () => {
@@ -41,13 +39,13 @@ test("IANAZone.isValidZone", () => {
 
 test("IANAZone.type returns a static string", () => {
   expect(new IANAZone("America/Santiago").type).toBe("iana");
-  expect(new IANAZone("America/Blorp").type).toBe("iana");
+  expect(new IANAZone("Europe/Berlin").type).toBe("iana");
+  expect(new IANAZone("Etc/UTC").type).toBe("iana");
 });
 
 test("IANAZone.name returns the zone name passed to the constructor", () => {
   expect(new IANAZone("America/Santiago").name).toBe("America/Santiago");
-  expect(new IANAZone("America/Blorp").name).toBe("America/Blorp");
-  expect(new IANAZone("foo").name).toBe("foo");
+  expect(new IANAZone("Etc/UTC").name).toBe("Etc/UTC");
 });
 
 test("IANAZone is not universal", () => {
@@ -106,12 +104,12 @@ test("IANAZone.isValid returns true for valid zone names", () => {
 });
 
 test("IANAZone.isValid returns false for invalid zone names", () => {
-  expect(new IANAZone("").isValid).toBe(false);
-  expect(new IANAZone("foo").isValid).toBe(false);
-  expect(new IANAZone("CEDT").isValid).toBe(false);
-  expect(new IANAZone("GMT+2").isValid).toBe(false);
-  expect(new IANAZone("America/Blorp").isValid).toBe(false);
-  expect(new IANAZone(null).isValid).toBe(false);
+  expect(() => new IANAZone("")).toThrow(InvalidZoneError);
+  expect(() => new IANAZone("foo")).toThrow(InvalidZoneError);
+  expect(() => new IANAZone("CEDT")).toThrow(InvalidZoneError);
+  expect(() => new IANAZone("GMT+2")).toThrow(InvalidZoneError);
+  expect(() => new IANAZone("America/Blorp")).toThrow(InvalidZoneError);
+  expect(() => new IANAZone(null)).toThrow(InvalidZoneError);
 });
 
 test("IANAZone.normalize normalizes the zone name", () => {

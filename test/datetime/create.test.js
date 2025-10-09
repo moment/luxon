@@ -4,6 +4,7 @@ import { DateTime, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
+import { InvalidZoneError } from "../../src/errors.js";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -505,9 +506,7 @@ test("DateTime.fromObject() accepts a Zone as the zone option", () => {
 });
 
 test("DateTime.fromObject() rejects invalid zones", () => {
-  const dt = DateTime.fromObject({}, { zone: "blorp" });
-  expect(dt.isValid).toBe(false);
-  expect(dt.invalidReason).toBe("unsupported zone");
+  expect(() => DateTime.fromObject({}, { zone: "blorp" })).toThrow(InvalidZoneError);
 });
 
 test("DateTime.fromObject() ignores the case of object keys", () => {

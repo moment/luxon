@@ -1,5 +1,6 @@
 import { formatOffset, parseZoneInfo, isUndefined, objToLocalTS } from "../impl/util.js";
 import Zone from "../zone.ts";
+import { InvalidZoneError } from "../errors.js";
 
 const dtfCache = new Map();
 function makeDTF(zoneName) {
@@ -130,8 +131,11 @@ export default class IANAZone extends Zone {
   constructor(name) {
     super();
     const normalizedName = IANAZone.normalizeZone(name);
+    if (normalizedName == null) {
+      throw new InvalidZoneError(`Invalid IANA Zone ${name}`);
+    }
     /** @private **/
-    this.valid = normalizedName != null;
+    this.valid = true;
     // For backwards compatibility we only normalize in casing, otherwise would also normalize something like
     // EST5EDT to America/New_York.
     /** @private **/
