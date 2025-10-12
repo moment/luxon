@@ -123,7 +123,7 @@ export default class IANAZone extends Zone {
     }
   }
 
-  readonly zoneName: string;
+  readonly #zoneName: string;
 
   private constructor(name: string, m?: typeof INTERNAL_CONSTRUCTOR) {
     super();
@@ -132,7 +132,7 @@ export default class IANAZone extends Zone {
     if (normalizedName == null) {
       throw new InvalidZoneError(`Invalid IANA Zone ${name}`);
     }
-    this.zoneName = normalizedName.toLowerCase() === name.toLowerCase() ? normalizedName : name;
+    this.#zoneName = normalizedName.toLowerCase() === name.toLowerCase() ? normalizedName : name;
   }
 
   /**
@@ -150,7 +150,7 @@ export default class IANAZone extends Zone {
    * @type {string}
    */
   get name(): string {
-    return this.zoneName;
+    return this.#zoneName;
   }
 
   /**
@@ -222,12 +222,6 @@ export default class IANAZone extends Zone {
     const over = asTS % 1000;
     asTS -= over >= 0 ? over : 1000 + over;
     return (asUTC - asTS) / (60 * 1000);
-  }
-
-  normalize(): IANAZone {
-    const normalized = IANAZone.normalizeZone(this.name);
-    if (normalized == null) throw new Error("Failed to normalize IANA zone.");
-    return IANAZone.create(normalized);
   }
 
   /**

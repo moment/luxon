@@ -1,5 +1,8 @@
 # Changelog
 
+# 4.0.0 (unreleased, in progress)
+- Private fields, methods, constructors encapsulated
+
 # 3.7.2 (2025-07-09)
 - Fix ES6 packaging
 
