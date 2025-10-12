@@ -3,11 +3,11 @@
  */
 
 import Zone from "../zone.ts";
-import IANAZone from "../zones/IANAZone.js";
-import FixedOffsetZone from "../zones/fixedOffsetZone.js";
+import IANAZone from "../zones/IANAZone.ts";
+import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 
 import { isInteger } from "./util.js";
-import SystemZone from "../zones/systemZone.js";
+import SystemZone from "../zones/systemZone.ts";
 import { InvalidZoneError } from "../errors.js";
 
 export type ZoneInput = Zone | string | number | null | undefined;

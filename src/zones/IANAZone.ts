@@ -6,12 +6,13 @@ import {
   throwInternalConstructorError,
 } from "../impl/internalConstructor.ts";
 
-const dtfCache = new Map();
+const dtfCache = new Map<string, Intl.DateTimeFormat>();
+
 function makeDTF(zoneName: string): Intl.DateTimeFormat {
   let dtf = dtfCache.get(zoneName);
   if (dtf === undefined) {
     dtf = new Intl.DateTimeFormat("en-US", {
-      hour12: false,
+      hourCycle: "h23",
       timeZone: zoneName,
       year: "numeric",
       month: "2-digit",
@@ -26,43 +27,8 @@ function makeDTF(zoneName: string): Intl.DateTimeFormat {
   return dtf;
 }
 
-const typeToPos = {
-  year: 0,
-  month: 1,
-  day: 2,
-  era: 3,
-  hour: 4,
-  minute: 5,
-  second: 6,
-};
-
-type OffsetResult = readonly [
-  year: number,
-  month: number,
-  day: number,
-  era: string,
-  hour: number,
-  minute: number,
-  second: number,
-];
-
-function partsOffset(dtf: Intl.DateTimeFormat, date: Date | number): OffsetResult {
-  const formatted = dtf.formatToParts(date);
-  const filled: Array<string | number> = [];
-  for (let i = 0; i < formatted.length; i++) {
-    const { type, value } = formatted[i];
-    const pos = typeToPos[type as keyof typeof typeToPos] as number | undefined;
-
-    if (type === "era") {
-      filled[pos!] = value;
-    } else if (!isUndefined(pos)) {
-      filled[pos] = parseInt(value, 10);
-    }
-  }
-  return filled as unknown as OffsetResult;
-}
-
 const ianaZoneCache = new Map<string, IANAZone>();
+
 /**
  * A zone identified by an IANA identifier, like America/New_York
  * @implements {Zone}
@@ -199,25 +165,32 @@ export default class IANAZone extends Zone {
 
     if (isNaN(+date)) return NaN;
     const dtf = makeDTF(this.name);
-    let [year, month, day, adOrBc, hour, minute, second] = partsOffset(dtf, date);
 
-    if (adOrBc === "BC") {
-      year = -Math.abs(year) + 1;
+    const formatted = dtf.formatToParts(date);
+    let bc = false;
+    const obj = {
+      year: 0,
+      month: 0,
+      day: 0,
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    };
+    for (let i = 0; i < formatted.length; i++) {
+      const { type, value } = formatted[i];
+      if (type in obj) {
+        // technically unsound, but we know this is safe here
+        obj[type as keyof typeof obj] = parseInt(value, 10);
+      } else if (type === "era") {
+        bc = value === "BC";
+      }
+    }
+    if (bc) {
+      obj.year = -Math.abs(obj.year) + 1;
     }
 
-    // because we're using hour12 and https://bugs.chromium.org/p/chromium/issues/detail?id=1025564&can=2&q=%2224%3A00%22%20datetimeformat
-    const adjustedHour = hour === 24 ? 0 : hour;
-
-    const asUTC = objToLocalTS({
-      year,
-      month,
-      day,
-      hour: adjustedHour,
-      minute,
-      second,
-      millisecond: 0,
-    });
-
+    const asUTC = objToLocalTS(obj);
     let asTS = +date;
     const over = asTS % 1000;
     asTS -= over >= 0 ? over : 1000 + over;

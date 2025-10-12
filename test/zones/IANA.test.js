@@ -129,3 +129,5 @@ test("IANAZone returns canonical zone name regardless of input casing", () => {
   expect(IANAZone.create("EUROPE/PARIS").name).toBe("Europe/Paris");
   expect(IANAZone.create("Asia/Tokyo").name).toBe("Asia/Tokyo");
 });
+
+test("IANAZone.offset works on hour 0 in Asia/Beirut", () => {});

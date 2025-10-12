@@ -2,6 +2,9 @@
 
 # 4.0.0 (unreleased, in progress)
 - Private fields, methods, constructors encapsulated
+- Required: 
+  - Intl.DateTimeFormat.formatToParts
+  - Intl.DateTimeFormat hourCycle parameter
 
 # 3.7.2 (2025-07-09)
 - Fix ES6 packaging
