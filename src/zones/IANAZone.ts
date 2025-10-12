@@ -1,9 +1,13 @@
-import { formatOffset, parseZoneInfo, isUndefined, objToLocalTS } from "../impl/util.js";
-import Zone from "../zone.ts";
+import { formatOffset, isUndefined, objToLocalTS, parseZoneInfo } from "../impl/util.js";
+import Zone, { type UniversalZone } from "../zone.ts";
 import { InvalidZoneError } from "../errors.js";
+import {
+  INTERNAL_CONSTRUCTOR,
+  throwInternalConstructorError,
+} from "../impl/internalConstructor.ts";
 
 const dtfCache = new Map();
-function makeDTF(zoneName) {
+function makeDTF(zoneName: string): Intl.DateTimeFormat {
   let dtf = dtfCache.get(zoneName);
   if (dtf === undefined) {
     dtf = new Intl.DateTimeFormat("en-US", {
@@ -32,30 +36,33 @@ const typeToPos = {
   second: 6,
 };
 
-function hackyOffset(dtf, date) {
-  const formatted = dtf.format(date).replace(/\u200E/g, ""),
-    parsed = /(\d+)\/(\d+)\/(\d+) (AD|BC),? (\d+):(\d+):(\d+)/.exec(formatted),
-    [, fMonth, fDay, fYear, fadOrBc, fHour, fMinute, fSecond] = parsed;
-  return [fYear, fMonth, fDay, fadOrBc, fHour, fMinute, fSecond];
-}
+type OffsetResult = readonly [
+  year: number,
+  month: number,
+  day: number,
+  era: string,
+  hour: number,
+  minute: number,
+  second: number,
+];
 
-function partsOffset(dtf, date) {
+function partsOffset(dtf: Intl.DateTimeFormat, date: Date | number): OffsetResult {
   const formatted = dtf.formatToParts(date);
-  const filled = [];
+  const filled: Array<string | number> = [];
   for (let i = 0; i < formatted.length; i++) {
     const { type, value } = formatted[i];
-    const pos = typeToPos[type];
+    const pos = typeToPos[type as keyof typeof typeToPos] as number | undefined;
 
     if (type === "era") {
-      filled[pos] = value;
+      filled[pos!] = value;
     } else if (!isUndefined(pos)) {
       filled[pos] = parseInt(value, 10);
     }
   }
-  return filled;
+  return filled as unknown as OffsetResult;
 }
 
-const ianaZoneCache = new Map();
+const ianaZoneCache = new Map<string, IANAZone>();
 /**
  * A zone identified by an IANA identifier, like America/New_York
  * @implements {Zone}
@@ -65,10 +72,10 @@ export default class IANAZone extends Zone {
    * @param {string} name - Zone name
    * @return {IANAZone}
    */
-  static create(name) {
+  static create(name: string): IANAZone {
     let zone = ianaZoneCache.get(name);
     if (zone === undefined) {
-      ianaZoneCache.set(name, (zone = new IANAZone(name)));
+      ianaZoneCache.set(name, (zone = new IANAZone(name, INTERNAL_CONSTRUCTOR)));
     }
     return zone;
   }
@@ -77,21 +84,9 @@ export default class IANAZone extends Zone {
    * Reset local caches. Should only be necessary in testing scenarios.
    * @return {void}
    */
-  static resetCache() {
+  static resetCache(): void {
     ianaZoneCache.clear();
     dtfCache.clear();
-  }
-
-  /**
-   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
-   * @param {string} s - The string to check validity on
-   * @example IANAZone.isValidSpecifier("America/New_York") //=> true
-   * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @deprecated For backward compatibility, this forwards to isValidZone, better use `isValidZone()` directly instead.
-   * @return {boolean}
-   */
-  static isValidSpecifier(s) {
-    return this.isValidZone(s);
   }
 
   /**
@@ -102,7 +97,7 @@ export default class IANAZone extends Zone {
    * @example IANAZone.isValidZone("Sport~~blorp") //=> false
    * @return {boolean}
    */
-  static isValidZone(zone) {
+  static isValidZone(zone: string): boolean {
     return IANAZone.normalizeZone(zone) != null;
   }
 
@@ -117,7 +112,7 @@ export default class IANAZone extends Zone {
    * @example IANAZone.normalizeZone("Sport~~blorp") //=> null
    * @return {string|null}
    */
-  static normalizeZone(zone) {
+  static normalizeZone(zone: string): string | null {
     if (!zone) {
       return null;
     }
@@ -128,19 +123,16 @@ export default class IANAZone extends Zone {
     }
   }
 
-  constructor(name) {
+  readonly zoneName: string;
+
+  private constructor(name: string, m?: typeof INTERNAL_CONSTRUCTOR) {
     super();
+    if (m !== INTERNAL_CONSTRUCTOR) throwInternalConstructorError("IANAZone");
     const normalizedName = IANAZone.normalizeZone(name);
     if (normalizedName == null) {
       throw new InvalidZoneError(`Invalid IANA Zone ${name}`);
     }
-    /** @private **/
-    this.valid = true;
-    // For backwards compatibility we only normalize in casing, otherwise would also normalize something like
-    // EST5EDT to America/New_York.
-    /** @private **/
-    this.zoneName =
-      normalizedName && normalizedName.toLowerCase() === name.toLowerCase() ? normalizedName : name;
+    this.zoneName = normalizedName.toLowerCase() === name.toLowerCase() ? normalizedName : name;
   }
 
   /**
@@ -148,7 +140,7 @@ export default class IANAZone extends Zone {
    * @override
    * @type {string}
    */
-  get type() {
+  get type(): "iana" {
     return "iana";
   }
 
@@ -157,7 +149,7 @@ export default class IANAZone extends Zone {
    * @override
    * @type {string}
    */
-  get name() {
+  get name(): string {
     return this.zoneName;
   }
 
@@ -167,7 +159,7 @@ export default class IANAZone extends Zone {
    * @override
    * @type {boolean}
    */
-  isOffsetFixed() {
+  isOffsetFixed(): this is UniversalZone {
     return false;
   }
 
@@ -180,8 +172,8 @@ export default class IANAZone extends Zone {
    * @param {string} opts.locale - What locale to return the offset name in.
    * @return {string}
    */
-  offsetName(ts, { format, locale }) {
-    return parseZoneInfo(ts, format, locale, this.name);
+  offsetName(ts: number, { format, locale }: any /* TODO */): string {
+    return parseZoneInfo(ts, format, locale, this.name as any /* TODO */) as string;
   }
 
   /**
@@ -192,7 +184,7 @@ export default class IANAZone extends Zone {
    *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
    * @return {string}
    */
-  formatOffset(ts, format) {
+  formatOffset(ts: number, format: string /* TODO */): string {
     return formatOffset(this.offset(ts), format);
   }
 
@@ -202,16 +194,12 @@ export default class IANAZone extends Zone {
    * @param {number} ts - Epoch milliseconds for which to compute the offset
    * @return {number}
    */
-  offset(ts) {
-    if (!this.valid) return NaN;
+  offset(ts: number): number {
     const date = new Date(ts);
 
-    if (isNaN(date)) return NaN;
-
+    if (isNaN(+date)) return NaN;
     const dtf = makeDTF(this.name);
-    let [year, month, day, adOrBc, hour, minute, second] = dtf.formatToParts
-      ? partsOffset(dtf, date)
-      : hackyOffset(dtf, date);
+    let [year, month, day, adOrBc, hour, minute, second] = partsOffset(dtf, date);
 
     if (adOrBc === "BC") {
       year = -Math.abs(year) + 1;
@@ -236,13 +224,19 @@ export default class IANAZone extends Zone {
     return (asUTC - asTS) / (60 * 1000);
   }
 
+  normalize(): IANAZone {
+    const normalized = IANAZone.normalizeZone(this.name);
+    if (normalized == null) throw new Error("Failed to normalize IANA zone.");
+    return IANAZone.create(normalized);
+  }
+
   /**
    * Return whether this Zone is equal to another zone
    * @override
    * @param {Zone} otherZone - the zone to compare
    * @return {boolean}
    */
-  equals(otherZone) {
-    return otherZone.type === "iana" && otherZone.name === this.name;
+  equals(otherZone: unknown): boolean {
+    return Zone.isZone(otherZone) && otherZone.type === "iana" && otherZone.name === this.name;
   }
 }

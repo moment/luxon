@@ -1,5 +1,5 @@
 import SystemZone from "./zones/systemZone.ts";
-import IANAZone from "./zones/IANAZone.js";
+import IANAZone from "./zones/IANAZone.ts";
 import Locale from "./impl/locale.js";
 import DateTime from "./datetime.js";
 

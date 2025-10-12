@@ -1,6 +1,9 @@
 import { formatOffset, parseZoneInfo } from "../impl/util.js";
 import Zone, { type UniversalZone } from "../zone.ts";
-import { SINGLETON_MARKER } from "../impl/singleton.ts";
+import {
+  INTERNAL_CONSTRUCTOR,
+  throwInternalConstructorError,
+} from "../impl/internalConstructor.ts";
 
 let singleton: SystemZone | null = null;
 
@@ -14,12 +17,12 @@ export default class SystemZone extends Zone {
    * @return {SystemZone}
    */
   static get instance(): SystemZone {
-    return (singleton ??= new SystemZone(SINGLETON_MARKER));
+    return (singleton ??= new SystemZone(INTERNAL_CONSTRUCTOR));
   }
 
-  private constructor(m: unknown) {
+  private constructor(m: typeof INTERNAL_CONSTRUCTOR) {
     super();
-    if (m !== SINGLETON_MARKER) throw new TypeError("SystemZone is a singleton");
+    if (m !== INTERNAL_CONSTRUCTOR) throwInternalConstructorError("SystemZone");
   }
 
   /** @override **/

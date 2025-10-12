@@ -8,7 +8,7 @@ import {
 } from "./util.js";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
-import IANAZone from "../zones/IANAZone.js";
+import IANAZone from "../zones/IANAZone.ts";
 
 /*
  * This file handles parsing for well-specified formats. Here's how it works:

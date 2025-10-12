@@ -15,16 +15,8 @@ test("IANAZone.create should return IANAZone instance", () => {
   expect(result).toBeInstanceOf(IANAZone);
 });
 
-test("IANAZone.isValidSpecifier", () => {
-  expect(IANAZone.isValidSpecifier("America/New_York")).toBe(true);
-  // this used to return true but now returns false, because we just defer to isValidZone
-  expect(IANAZone.isValidSpecifier("Fantasia/Castle")).toBe(false);
-  expect(IANAZone.isValidSpecifier("Sport~~blorp")).toBe(false);
-  expect(IANAZone.isValidSpecifier("Etc/GMT+8")).toBe(true);
-  expect(IANAZone.isValidSpecifier("Etc/GMT-8")).toBe(true);
-  expect(IANAZone.isValidSpecifier("Etc/GMT-0")).toBe(true);
-  expect(IANAZone.isValidSpecifier("Etc/GMT-1")).toBe(true);
-  expect(IANAZone.isValidSpecifier(null)).toBe(false);
+test("IANAZone should have a private constructor", () => {
+  expect(() => new IANAZone("America/Cancun")).toThrow(TypeError);
 });
 
 test("IANAZone.isValidZone", () => {
@@ -38,52 +30,52 @@ test("IANAZone.isValidZone", () => {
 });
 
 test("IANAZone.type returns a static string", () => {
-  expect(new IANAZone("America/Santiago").type).toBe("iana");
-  expect(new IANAZone("Europe/Berlin").type).toBe("iana");
-  expect(new IANAZone("Etc/UTC").type).toBe("iana");
+  expect(IANAZone.create("America/Santiago").type).toBe("iana");
+  expect(IANAZone.create("Europe/Berlin").type).toBe("iana");
+  expect(IANAZone.create("Etc/UTC").type).toBe("iana");
 });
 
 test("IANAZone.name returns the zone name passed to the constructor", () => {
-  expect(new IANAZone("America/Santiago").name).toBe("America/Santiago");
-  expect(new IANAZone("Etc/UTC").name).toBe("Etc/UTC");
+  expect(IANAZone.create("America/Santiago").name).toBe("America/Santiago");
+  expect(IANAZone.create("Etc/UTC").name).toBe("Etc/UTC");
 });
 
 test("IANAZone is not universal", () => {
-  expect(new IANAZone("America/Santiago").isUniversal).toBe(false);
+  expect(IANAZone.create("America/Santiago").isUniversal).toBe(false);
 });
 
 test("IANAZone.offsetName with a long format", () => {
-  const zone = new IANAZone("America/Santiago");
+  const zone = IANAZone.create("America/Santiago");
   const offsetName = zone.offsetName(1552089600, { format: "long", locale: "en-US" });
   expect(offsetName).toBe("Chile Summer Time");
 });
 
 test("IANAZone.offsetName with a short format", () => {
-  const zone = new IANAZone("America/Santiago");
+  const zone = IANAZone.create("America/Santiago");
   const offsetName = zone.offsetName(1552089600, { format: "short", locale: "en-US" });
   expect(offsetName).toBe("GMT-3");
 });
 
 test("IANAZone.formatOffset with a short format", () => {
-  const zone = new IANAZone("America/Santiago");
+  const zone = IANAZone.create("America/Santiago");
   const offsetName = zone.formatOffset(1552089600, "short");
   expect(offsetName).toBe("-03:00");
 });
 
 test("IANAZone.formatOffset with a narrow format", () => {
-  const zone = new IANAZone("America/Santiago");
+  const zone = IANAZone.create("America/Santiago");
   const offsetName = zone.formatOffset(1552089600, "narrow");
   expect(offsetName).toBe("-3");
 });
 
 test("IANAZone.formatOffset with a techie format", () => {
-  const zone = new IANAZone("America/Santiago");
+  const zone = IANAZone.create("America/Santiago");
   const offsetName = zone.formatOffset(1552089600, "techie");
   expect(offsetName).toBe("-0300");
 });
 
 test("IANAZone.formatOffset throws for an invalid format", () => {
-  const zone = new IANAZone("America/Santiago");
+  const zone = IANAZone.create("America/Santiago");
   expect(() => zone.formatOffset(1552089600, "blorp")).toThrow();
 });
 
@@ -98,18 +90,18 @@ test("IANAZone.equals returns false even if the two share offsets", () => {
 });
 
 test("IANAZone.isValid returns true for valid zone names", () => {
-  expect(new IANAZone("UTC").isValid).toBe(true);
-  expect(new IANAZone("America/Santiago").isValid).toBe(true);
-  expect(new IANAZone("Europe/Paris").isValid).toBe(true);
+  expect(IANAZone.create("UTC").isValid).toBe(true);
+  expect(IANAZone.create("America/Santiago").isValid).toBe(true);
+  expect(IANAZone.create("Europe/Paris").isValid).toBe(true);
 });
 
 test("IANAZone.isValid returns false for invalid zone names", () => {
-  expect(() => new IANAZone("")).toThrow(InvalidZoneError);
-  expect(() => new IANAZone("foo")).toThrow(InvalidZoneError);
-  expect(() => new IANAZone("CEDT")).toThrow(InvalidZoneError);
-  expect(() => new IANAZone("GMT+2")).toThrow(InvalidZoneError);
-  expect(() => new IANAZone("America/Blorp")).toThrow(InvalidZoneError);
-  expect(() => new IANAZone(null)).toThrow(InvalidZoneError);
+  expect(() => IANAZone.create("")).toThrow(InvalidZoneError);
+  expect(() => IANAZone.create("foo")).toThrow(InvalidZoneError);
+  expect(() => IANAZone.create("CEDT")).toThrow(InvalidZoneError);
+  expect(() => IANAZone.create("GMT+2")).toThrow(InvalidZoneError);
+  expect(() => IANAZone.create("America/Blorp")).toThrow(InvalidZoneError);
+  expect(() => IANAZone.create(null)).toThrow(InvalidZoneError);
 });
 
 test("IANAZone.normalize normalizes the zone name", () => {
@@ -130,10 +122,10 @@ test.skipIf(hasMissingEtcGmtNormalization)("IANAZone.normalize normalizes Etc/GM
 });
 
 test("IANAZone returns canonical zone name regardless of input casing", () => {
-  expect(new IANAZone("america/nEw_york").name).toBe("America/New_York");
-  expect(new IANAZone("AMERICA/NEW_YORK").name).toBe("America/New_York");
-  expect(new IANAZone("America/New_York").name).toBe("America/New_York");
-  expect(new IANAZone("europe/paris").name).toBe("Europe/Paris");
-  expect(new IANAZone("EUROPE/PARIS").name).toBe("Europe/Paris");
-  expect(new IANAZone("Asia/Tokyo").name).toBe("Asia/Tokyo");
+  expect(IANAZone.create("america/nEw_york").name).toBe("America/New_York");
+  expect(IANAZone.create("AMERICA/NEW_YORK").name).toBe("America/New_York");
+  expect(IANAZone.create("America/New_York").name).toBe("America/New_York");
+  expect(IANAZone.create("europe/paris").name).toBe("Europe/Paris");
+  expect(IANAZone.create("EUROPE/PARIS").name).toBe("Europe/Paris");
+  expect(IANAZone.create("Asia/Tokyo").name).toBe("Asia/Tokyo");
 });

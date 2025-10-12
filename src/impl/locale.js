@@ -2,7 +2,7 @@ import { hasLocaleWeekInfo, hasRelative, padStart, roundTo, validateWeekSettings
 import * as English from "./english.js";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
-import IANAZone from "../zones/IANAZone.js";
+import IANAZone from "../zones/IANAZone.ts";
 
 // todo - remap caching
 

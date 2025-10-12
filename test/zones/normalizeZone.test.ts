@@ -63,7 +63,7 @@ describe("normalizeZone", () => {
     const fixedOffsetZone = FixedOffsetZone.instance(5);
     expect(Info.normalizeZone(fixedOffsetZone)).toBe(fixedOffsetZone);
 
-    const ianaZone = new IANAZone("Europe/Paris");
+    const ianaZone = IANAZone.create("Europe/Paris");
     expect(Info.normalizeZone(ianaZone)).toBe(ianaZone);
 
     const systemZone = SystemZone.instance;
