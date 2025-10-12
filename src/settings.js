@@ -4,7 +4,7 @@ import Locale from "./impl/locale.js";
 import DateTime from "./datetime.js";
 
 import { normalizeZone } from "./impl/zoneUtil.ts";
-import { validateWeekSettings } from "./impl/util.js";
+import { validateWeekSettings } from "./impl/util.ts";
 import { resetDigitRegexCache } from "./impl/digits.js";
 
 let now = () => Date.now(),

@@ -10,7 +10,7 @@ import {
   isUndefined,
   normalizeObject,
   roundTo,
-} from "./impl/util.js";
+} from "./impl/util.ts";
 import Settings from "./settings.js";
 import DateTime from "./datetime.js";
 

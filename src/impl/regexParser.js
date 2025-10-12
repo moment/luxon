@@ -5,7 +5,7 @@ import {
   parseMillis,
   isUndefined,
   parseFloating,
-} from "./util.js";
+} from "./util.ts";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";

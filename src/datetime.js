@@ -19,7 +19,7 @@ import {
   roundTo,
   objToLocalTS,
   padStart,
-} from "./impl/util.js";
+} from "./impl/util.ts";
 import { normalizeZone } from "./impl/zoneUtil.ts";
 import diff from "./impl/diff.js";
 import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";

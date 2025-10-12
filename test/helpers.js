@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { DateTime, Settings } from "../src/luxon.ts";
-import { hasLocaleWeekInfo } from "../src/impl/util.js";
+import { hasLocaleWeekInfo } from "../src/impl/util.ts";
 
 export function withoutRTF(name, f) {
   const fullName = `With no RelativeTimeFormat support, ${name}`;

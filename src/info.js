@@ -4,7 +4,7 @@ import Locale from "./impl/locale.js";
 import IANAZone from "./zones/IANAZone.ts";
 import { normalizeZone } from "./impl/zoneUtil.ts";
 
-import { hasLocaleWeekInfo, hasRelative } from "./impl/util.js";
+import { hasLocaleWeekInfo, hasRelative } from "./impl/util.ts";
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.

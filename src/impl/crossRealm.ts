@@ -1,6 +1,6 @@
 export const LUXON_TYPE = Symbol.for("luxon:type");
 
-const typeMarkerBrand = Symbol();
+declare const typeMarkerBrand: unique symbol;
 
 export type LuxonTypeMarker<T> = string & {
   [typeMarkerBrand]: T;

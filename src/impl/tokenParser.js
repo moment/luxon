@@ -1,4 +1,4 @@
-import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.js";
+import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.ts";
 import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";

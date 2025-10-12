@@ -7,7 +7,7 @@ import {
   weeksInWeekYear,
   isInteger,
   isUndefined,
-} from "./util.js";
+} from "./util.ts";
 import Invalid from "./invalid.js";
 import { ConflictingSpecificationError } from "../errors.js";
 
