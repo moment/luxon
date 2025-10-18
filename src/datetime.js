@@ -11,9 +11,6 @@ import {
   isDate,
   isNumber,
   bestBy,
-  daysInMonth,
-  daysInYear,
-  isLeapYear,
   weeksInWeekYear,
   normalizeObject,
   roundTo,
@@ -40,7 +37,6 @@ import {
   hasInvalidOrdinalData,
   hasInvalidTimeData,
   usesLocalWeekValues,
-  isoWeekdayToLocal,
 } from "./impl/conversions.ts";
 import * as Formats from "./impl/formats.js";
 import {
@@ -50,6 +46,7 @@ import {
   InvalidDateTimeError,
 } from "./errors.js";
 import Invalid from "./impl/invalid.js";
+import { daysInMonth, daysInYear, isLeapYear, isoWeekdayToLocal } from "./impl/dateMath.ts";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;

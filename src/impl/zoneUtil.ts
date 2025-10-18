@@ -6,7 +6,7 @@ import Zone from "../zone.ts";
 import IANAZone from "../zones/IANAZone.ts";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 
-import { isInteger } from "./util.js";
+import { isInteger } from "./util.ts";
 import SystemZone from "../zones/systemZone.ts";
 import { InvalidZoneError } from "../errors.js";
 

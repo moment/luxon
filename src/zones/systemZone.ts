@@ -1,4 +1,4 @@
-import { formatOffset, parseZoneInfo } from "../impl/util.js";
+import { formatOffset, parseZoneInfo } from "../impl/util.ts";
 import Zone, { type UniversalZone } from "../zone.ts";
 import {
   INTERNAL_CONSTRUCTOR,

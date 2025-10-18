@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { daysInMonth } from "../../src/impl/util.ts";
+import { computeOrdinal, daysInMonth, uncomputeOrdinal } from "../../src/impl/dateMath.ts";
 
 describe("daysInMonth", () => {
   test("calculates the correct number of days for february in a non-leap year", () => {
@@ -45,6 +45,40 @@ describe("daysInMonth", () => {
     test("with overflow", () => {
       expect(daysInMonth(2021, month + 12)).toBe(days);
       expect(daysInMonth(1999, month + 24)).toBe(days);
+    });
+  });
+});
+
+describe("computeOrdinal", () => {
+  test.for(Array.from({ length: 365 }, (_, i) => i + 1))(
+    "ordinal $0 in a non-leap year",
+    (ordinal) => {
+      const d = new Date(Date.UTC(2025, 0, ordinal));
+      expect(computeOrdinal(2025, d.getUTCMonth() + 1, d.getUTCDate())).toBe(ordinal);
+    }
+  );
+  test.for(Array.from({ length: 366 }, (_, i) => i + 1))("ordinal $0 in a leap year", (ordinal) => {
+    const d = new Date(Date.UTC(2020, 0, ordinal));
+    expect(computeOrdinal(2020, d.getUTCMonth() + 1, d.getUTCDate())).toBe(ordinal);
+  });
+});
+
+describe("uncomputeOrdinal", () => {
+  test.for(Array.from({ length: 365 }, (_, i) => i + 1))(
+    "ordinal $0 in a non-leap year",
+    (ordinal) => {
+      const d = new Date(Date.UTC(2025, 0, ordinal));
+      expect(uncomputeOrdinal(2025, ordinal)).toEqual({
+        day: d.getUTCDate(),
+        month: d.getUTCMonth() + 1,
+      });
+    }
+  );
+  test.for(Array.from({ length: 366 }, (_, i) => i + 1))("ordinal $0 in a leap year", (ordinal) => {
+    const d = new Date(Date.UTC(2020, 0, ordinal));
+    expect(uncomputeOrdinal(2020, ordinal)).toEqual({
+      day: d.getUTCDate(),
+      month: d.getUTCMonth() + 1,
     });
   });
 });

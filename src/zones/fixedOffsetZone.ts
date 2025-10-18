@@ -1,4 +1,4 @@
-import { formatOffset, signedOffset } from "../impl/util.js";
+import { formatOffset, signedOffset } from "../impl/util.ts";
 import Zone, { type UniversalZone } from "../zone.ts";
 
 let singleton: FixedOffsetZone | null = null;

@@ -6,8 +6,8 @@
 
 import { InvalidArgumentError } from "../errors.js";
 import Settings from "../settings.js";
-import { dayOfWeek, isoWeekdayToLocal } from "./conversions.js";
 import type { AnyDateObject, DateTimeObject, TimeObject } from "./dateObjects.ts";
+import { dayOfWeek, daysInYear, isoWeekdayToLocal } from "./dateMath.ts";
 
 /**
  * @private
@@ -134,11 +134,6 @@ export function integerBetween(
   return isInteger(thing) && thing >= bottom && thing <= top;
 }
 
-// x % n but takes the sign of n instead of x
-export function floorMod(x: number, n: number): number {
-  return x - n * Math.floor(x / n);
-}
-
 export function padStart(input: number, n: number = 2): string {
   const isNeg = input < 0;
   let padded;
@@ -197,25 +192,6 @@ export function roundTo(number: number, digits: number, rounding = "round"): num
 }
 
 // DATE BASICS
-
-export function isLeapYear(year: number): boolean {
-  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-}
-
-export function daysInYear(year: number): number {
-  return isLeapYear(year) ? 366 : 365;
-}
-
-export function daysInMonth(year: number, month: number): number {
-  const modMonth = floorMod(month - 1, 12) + 1,
-    modYear = year + (month - modMonth) / 12;
-
-  if (modMonth === 2) {
-    return isLeapYear(modYear) ? 29 : 28;
-  } else {
-    return 30 + ((modMonth + (modMonth >>> 3)) & 1);
-  }
-}
 
 // convert a calendar object to a local timestamp (epoch, but with the offset baked in)
 export function objToLocalTS(obj: any /* TODO */): number {

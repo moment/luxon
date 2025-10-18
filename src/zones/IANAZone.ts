@@ -1,4 +1,4 @@
-import { formatOffset, isUndefined, objToLocalTS, parseZoneInfo } from "../impl/util.js";
+import { formatOffset, isUndefined, objToLocalTS, parseZoneInfo } from "../impl/util.ts";
 import Zone, { type UniversalZone } from "../zone.ts";
 import { InvalidZoneError } from "../errors.js";
 import {

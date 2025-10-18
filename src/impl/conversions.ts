@@ -1,19 +1,15 @@
-import {
-  integerBetween,
-  isLeapYear,
-  timeObject,
-  daysInYear,
-  daysInMonth,
-  weeksInWeekYear,
-  isInteger,
-  isUndefined,
-} from "./util.ts";
+import { integerBetween, isInteger, isUndefined, timeObject, weeksInWeekYear } from "./util.ts";
 import Invalid from "./invalid.js";
 import { ConflictingSpecificationError } from "../errors.js";
 import type { DateTimeObject, OrdinalDateObject, WeekDateObject } from "./dateObjects.ts";
-
-const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
-  leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+import {
+  computeOrdinal,
+  dayOfWeek,
+  daysInMonth,
+  daysInYear,
+  isoWeekdayToLocal,
+  uncomputeOrdinal,
+} from "./dateMath.ts";
 
 /**
  * @deprecated TODO: Remove invalid
@@ -23,33 +19,6 @@ function unitOutOfRange(unit: string, value: unknown): Invalid {
     "unit out of range",
     `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
   );
-}
-
-export function dayOfWeek(year: number, month: number, day: number): number {
-  const d = new Date(Date.UTC(year, month - 1, day));
-
-  if (year < 100 && year >= 0) {
-    d.setUTCFullYear(d.getUTCFullYear() - 1900);
-  }
-
-  const js = d.getUTCDay();
-
-  return js === 0 ? 7 : js;
-}
-
-function computeOrdinal(year: number, month: number, day: number): number {
-  return day + (isLeapYear(year) ? leapLadder : nonLeapLadder)[month - 1];
-}
-
-function uncomputeOrdinal(year: number, ordinal: number): { month: number; day: number } {
-  const table = isLeapYear(year) ? leapLadder : nonLeapLadder,
-    month0 = table.findIndex((i) => i < ordinal),
-    day = ordinal - table[month0];
-  return { month: month0 + 1, day };
-}
-
-export function isoWeekdayToLocal(isoWeekday: number, startOfWeek: number): number {
-  return ((isoWeekday - startOfWeek + 7) % 7) + 1;
 }
 
 /**
