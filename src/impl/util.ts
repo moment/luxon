@@ -193,26 +193,33 @@ export function roundTo(number: number, digits: number, rounding = "round"): num
 
 // DATE BASICS
 
-// convert a calendar object to a local timestamp (epoch, but with the offset baked in)
-export function objToLocalTS(obj: any /* TODO */): number {
-  let d = Date.UTC(
-    obj.year,
-    obj.month - 1,
-    obj.day,
-    obj.hour,
-    obj.minute,
-    obj.second,
-    obj.millisecond
-  );
+/**
+ * Like Date.UTC, but with 1-based month and non-weird year handling
+ */
+export function utcTs(
+  year: number,
+  month: number,
+  day: number,
+  hour: number = 0,
+  minute: number = 0,
+  second: number = 0,
+  millisecond: number = 0
+): number {
+  let d = Date.UTC(year, month - 1, day, hour, minute, second, millisecond);
 
   // for legacy reasons, years between 0 and 99 are interpreted as 19XX; revert that
-  if (obj.year < 100 && obj.year >= 0) {
+  if (year < 100 && year >= 0) {
     // set the month and day again, this is necessary because year 2000 is a leap year, but year 100 is not
     // so if obj.year is in 99, but obj.day makes it roll over into year 100,
     // the calculations done by Date.UTC are using year 2000 - which is incorrect
-    d = new Date(d).setUTCFullYear(obj.year, obj.month - 1, obj.day);
+    d = new Date(d).setUTCFullYear(year, month - 1, day);
   }
   return d;
+}
+
+// convert a calendar object to a local timestamp (epoch, but with the offset baked in)
+export function objToLocalTS(obj: any /* TODO */): number {
+  return utcTs(obj.year, obj.month, obj.day, obj.hour, obj.minute, obj.second, obj.millisecond);
 }
 
 // adapted from moment.js: https://github.com/moment/moment/blob/000ac1800e620f770f4eb31b5ae908f6167b0ab2/src/lib/units/week-calendar-utils.js

@@ -1,11 +1,11 @@
 import Duration from "../duration.js";
 import type DateTime from "../datetime.js";
+import { utcTs } from "./util.ts";
 
 function dayDiff(earlier: DateTime, later: DateTime): number {
-  const utcDayStart = (dt: DateTime): number =>
-      dt.toUTC(0, { keepLocalTime: true }).startOf("day").valueOf(),
-    ms = utcDayStart(later) - utcDayStart(earlier);
-  return Math.floor(Duration.fromMillis(ms).as("days"));
+  const ms =
+    utcTs(later.year, later.month, later.day) - utcTs(earlier.year, earlier.month, earlier.day);
+  return Math.trunc(ms / (24 * 60 * 60 * 1000));
 }
 
 function highOrderDiffs(
