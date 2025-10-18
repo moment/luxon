@@ -1,4 +1,4 @@
-import * as English from "./english.js";
+import * as English from "./english.ts";
 import * as Formats from "./formats.js";
 import { padStart } from "./util.ts";
 

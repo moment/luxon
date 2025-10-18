@@ -1,5 +1,6 @@
 import * as Formats from "./formats.js";
 import { pick } from "./util.ts";
+import type DateTime from "../datetime.js";
 
 function stringify(obj) {
   return JSON.stringify(obj, Object.keys(obj).sort());
@@ -41,7 +42,8 @@ export const monthsShort = [
 
 export const monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
 
-export function months(length) {
+export function months(length: NonNullable<Intl.DateTimeFormatOptions["month"]>): string[] | null {
+  // TODO: Do not return null
   switch (length) {
     case "narrow":
       return [...monthsNarrow];
@@ -72,7 +74,11 @@ export const weekdaysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export const weekdaysNarrow = ["M", "T", "W", "T", "F", "S", "S"];
 
-export function weekdays(length) {
+type WeekdayFormatLength = NonNullable<Intl.DateTimeFormatOptions["weekday"]> | "numeric";
+
+export function weekdays(length: WeekdayFormatLength): string[] | null {
+  // TODO: Do not return null
+  // TODO: investigate non-standard "numeric" option
   switch (length) {
     case "narrow":
       return [...weekdaysNarrow];
@@ -95,7 +101,7 @@ export const erasShort = ["BC", "AD"];
 
 export const erasNarrow = ["B", "A"];
 
-export function eras(length) {
+export function eras(length: NonNullable<Intl.DateTimeFormatOptions["era"]>): string[] | null {
   switch (length) {
     case "narrow":
       return [...erasNarrow];
@@ -108,20 +114,29 @@ export function eras(length) {
   }
 }
 
-export function meridiemForDateTime(dt) {
+export function meridiemForDateTime(dt: DateTime): string {
   return meridiems[dt.hour < 12 ? 0 : 1];
 }
 
-export function weekdayForDateTime(dt, length) {
-  return weekdays(length)[dt.weekday - 1];
+export function weekdayForDateTime(dt: DateTime, length: WeekdayFormatLength): string {
+  // TODO: investigate if null can happen
+  return weekdays(length)![dt.weekday - 1];
 }
 
-export function monthForDateTime(dt, length) {
-  return months(length)[dt.month - 1];
+export function monthForDateTime(
+  dt: DateTime,
+  length: NonNullable<Intl.DateTimeFormatOptions["month"]>
+): string {
+  // TODO: investigate if null can happen
+  return months(length)![dt.month - 1];
 }
 
-export function eraForDateTime(dt, length) {
-  return eras(length)[dt.year < 0 ? 0 : 1];
+export function eraForDateTime(
+  dt: DateTime,
+  length: NonNullable<Intl.DateTimeFormatOptions["era"]>
+): string {
+  // TODO: investigate if null can happen
+  return eras(length)![dt.year < 0 ? 0 : 1];
 }
 
 export function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
@@ -163,71 +178,4 @@ export function formatRelativeTime(unit, count, numeric = "always", narrow = fal
         ? units[unit][0]
         : unit;
   return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
-}
-
-export function formatString(knownFormat) {
-  // these all have the offsets removed because we don't have access to them
-  // without all the intl stuff this is backfilling
-  const filtered = pick(knownFormat, [
-      "weekday",
-      "era",
-      "year",
-      "month",
-      "day",
-      "hour",
-      "minute",
-      "second",
-      "timeZoneName",
-      "hourCycle",
-    ]),
-    key = stringify(filtered),
-    dateTimeHuge = "EEEE, LLLL d, yyyy, h:mm a";
-  switch (key) {
-    case stringify(Formats.DATE_SHORT):
-      return "M/d/yyyy";
-    case stringify(Formats.DATE_MED):
-      return "LLL d, yyyy";
-    case stringify(Formats.DATE_MED_WITH_WEEKDAY):
-      return "EEE, LLL d, yyyy";
-    case stringify(Formats.DATE_FULL):
-      return "LLLL d, yyyy";
-    case stringify(Formats.DATE_HUGE):
-      return "EEEE, LLLL d, yyyy";
-    case stringify(Formats.TIME_SIMPLE):
-      return "h:mm a";
-    case stringify(Formats.TIME_WITH_SECONDS):
-      return "h:mm:ss a";
-    case stringify(Formats.TIME_WITH_SHORT_OFFSET):
-      return "h:mm a";
-    case stringify(Formats.TIME_WITH_LONG_OFFSET):
-      return "h:mm a";
-    case stringify(Formats.TIME_24_SIMPLE):
-      return "HH:mm";
-    case stringify(Formats.TIME_24_WITH_SECONDS):
-      return "HH:mm:ss";
-    case stringify(Formats.TIME_24_WITH_SHORT_OFFSET):
-      return "HH:mm";
-    case stringify(Formats.TIME_24_WITH_LONG_OFFSET):
-      return "HH:mm";
-    case stringify(Formats.DATETIME_SHORT):
-      return "M/d/yyyy, h:mm a";
-    case stringify(Formats.DATETIME_MED):
-      return "LLL d, yyyy, h:mm a";
-    case stringify(Formats.DATETIME_FULL):
-      return "LLLL d, yyyy, h:mm a";
-    case stringify(Formats.DATETIME_HUGE):
-      return dateTimeHuge;
-    case stringify(Formats.DATETIME_SHORT_WITH_SECONDS):
-      return "M/d/yyyy, h:mm:ss a";
-    case stringify(Formats.DATETIME_MED_WITH_SECONDS):
-      return "LLL d, yyyy, h:mm:ss a";
-    case stringify(Formats.DATETIME_MED_WITH_WEEKDAY):
-      return "EEE, d LLL yyyy, h:mm a";
-    case stringify(Formats.DATETIME_FULL_WITH_SECONDS):
-      return "LLLL d, yyyy, h:mm:ss a";
-    case stringify(Formats.DATETIME_HUGE_WITH_SECONDS):
-      return "EEEE, LLLL d, yyyy, h:mm:ss a";
-    default:
-      return dateTimeHuge;
-  }
 }

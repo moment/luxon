@@ -1,5 +1,5 @@
 import { hasLocaleWeekInfo, hasRelative, padStart, roundTo, validateWeekSettings } from "./util.ts";
-import * as English from "./english.js";
+import * as English from "./english.ts";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
 import IANAZone from "../zones/IANAZone.ts";
