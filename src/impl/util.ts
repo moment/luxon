@@ -7,6 +7,7 @@
 import { InvalidArgumentError } from "../errors.js";
 import Settings from "../settings.js";
 import { dayOfWeek, isoWeekdayToLocal } from "./conversions.js";
+import type { AnyDateObject, DateTimeObject, TimeObject } from "./dateObjects.ts";
 
 /**
  * @private
@@ -346,6 +347,6 @@ export function formatOffset(offset: number, format: "short" | "narrow" | "techi
   }
 }
 
-export function timeObject(obj: any): any /* TODO */ {
+export function timeObject(obj: DateTimeObject<AnyDateObject>): TimeObject {
   return pick(obj, ["hour", "minute", "second", "millisecond"]);
 }

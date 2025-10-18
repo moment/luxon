@@ -10,18 +10,22 @@ import {
 } from "./util.ts";
 import Invalid from "./invalid.js";
 import { ConflictingSpecificationError } from "../errors.js";
+import type { DateTimeObject, OrdinalDateObject, WeekDateObject } from "./dateObjects.ts";
 
 const nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
   leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
 
-function unitOutOfRange(unit, value) {
+/**
+ * @deprecated TODO: Remove invalid
+ */
+function unitOutOfRange(unit: string, value: unknown): Invalid {
   return new Invalid(
     "unit out of range",
     `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
   );
 }
 
-export function dayOfWeek(year, month, day) {
+export function dayOfWeek(year: number, month: number, day: number): number {
   const d = new Date(Date.UTC(year, month - 1, day));
 
   if (year < 100 && year >= 0) {
@@ -33,18 +37,18 @@ export function dayOfWeek(year, month, day) {
   return js === 0 ? 7 : js;
 }
 
-function computeOrdinal(year, month, day) {
+function computeOrdinal(year: number, month: number, day: number): number {
   return day + (isLeapYear(year) ? leapLadder : nonLeapLadder)[month - 1];
 }
 
-function uncomputeOrdinal(year, ordinal) {
+function uncomputeOrdinal(year: number, ordinal: number): { month: number; day: number } {
   const table = isLeapYear(year) ? leapLadder : nonLeapLadder,
     month0 = table.findIndex((i) => i < ordinal),
     day = ordinal - table[month0];
   return { month: month0 + 1, day };
 }
 
-export function isoWeekdayToLocal(isoWeekday, startOfWeek) {
+export function isoWeekdayToLocal(isoWeekday: number, startOfWeek: number): number {
   return ((isoWeekday - startOfWeek + 7) % 7) + 1;
 }
 
@@ -52,7 +56,11 @@ export function isoWeekdayToLocal(isoWeekday, startOfWeek) {
  * @private
  */
 
-export function gregorianToWeek(gregObj, minDaysInFirstWeek = 4, startOfWeek = 1) {
+export function gregorianToWeek(
+  gregObj: DateTimeObject,
+  minDaysInFirstWeek = 4,
+  startOfWeek = 1
+): DateTimeObject<WeekDateObject> {
   const { year, month, day } = gregObj,
     ordinal = computeOrdinal(year, month, day),
     weekday = isoWeekdayToLocal(dayOfWeek(year, month, day), startOfWeek);
@@ -73,7 +81,11 @@ export function gregorianToWeek(gregObj, minDaysInFirstWeek = 4, startOfWeek = 1
   return { weekYear, weekNumber, weekday, ...timeObject(gregObj) };
 }
 
-export function weekToGregorian(weekData, minDaysInFirstWeek = 4, startOfWeek = 1) {
+export function weekToGregorian(
+  weekData: DateTimeObject<WeekDateObject>,
+  minDaysInFirstWeek = 4,
+  startOfWeek = 1
+): DateTimeObject {
   const { weekYear, weekNumber, weekday } = weekData,
     weekdayOfJan4 = isoWeekdayToLocal(dayOfWeek(weekYear, 1, minDaysInFirstWeek), startOfWeek),
     yearInDays = daysInYear(weekYear);
@@ -95,13 +107,13 @@ export function weekToGregorian(weekData, minDaysInFirstWeek = 4, startOfWeek = 
   return { year, month, day, ...timeObject(weekData) };
 }
 
-export function gregorianToOrdinal(gregData) {
+export function gregorianToOrdinal(gregData: DateTimeObject): DateTimeObject<OrdinalDateObject> {
   const { year, month, day } = gregData;
   const ordinal = computeOrdinal(year, month, day);
   return { year, ordinal, ...timeObject(gregData) };
 }
 
-export function ordinalToGregorian(ordinalData) {
+export function ordinalToGregorian(ordinalData: DateTimeObject<OrdinalDateObject>): DateTimeObject {
   const { year, ordinal } = ordinalData;
   const { month, day } = uncomputeOrdinal(year, ordinal);
   return { year, month, day, ...timeObject(ordinalData) };
@@ -113,7 +125,10 @@ export function ordinalToGregorian(ordinalData) {
  * Modifies obj in-place!
  * @param obj the object values
  */
-export function usesLocalWeekValues(obj, loc) {
+export function usesLocalWeekValues(
+  obj: any,
+  loc: any /* TODO */
+): { minDaysInFirstWeek: number; startOfWeek: number } {
   const hasLocaleWeekData =
     !isUndefined(obj.localWeekday) ||
     !isUndefined(obj.localWeekNumber) ||
@@ -142,7 +157,11 @@ export function usesLocalWeekValues(obj, loc) {
   }
 }
 
-export function hasInvalidWeekData(obj, minDaysInFirstWeek = 4, startOfWeek = 1) {
+export function hasInvalidWeekData(
+  obj: any,
+  minDaysInFirstWeek = 4,
+  startOfWeek = 1
+): false | Invalid {
   const validYear = isInteger(obj.weekYear),
     validWeek = integerBetween(
       obj.weekNumber,
@@ -160,7 +179,7 @@ export function hasInvalidWeekData(obj, minDaysInFirstWeek = 4, startOfWeek = 1)
   } else return false;
 }
 
-export function hasInvalidOrdinalData(obj) {
+export function hasInvalidOrdinalData(obj: any): false | Invalid {
   const validYear = isInteger(obj.year),
     validOrdinal = integerBetween(obj.ordinal, 1, daysInYear(obj.year));
 
@@ -171,7 +190,7 @@ export function hasInvalidOrdinalData(obj) {
   } else return false;
 }
 
-export function hasInvalidGregorianData(obj) {
+export function hasInvalidGregorianData(obj: any): false | Invalid {
   const validYear = isInteger(obj.year),
     validMonth = integerBetween(obj.month, 1, 12),
     validDay = integerBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
@@ -185,7 +204,7 @@ export function hasInvalidGregorianData(obj) {
   } else return false;
 }
 
-export function hasInvalidTimeData(obj) {
+export function hasInvalidTimeData(obj: any): false | Invalid {
   const { hour, minute, second, millisecond } = obj;
   const validHour =
       integerBetween(hour, 0, 23) ||
