@@ -1,6 +1,6 @@
 import SystemZone from "./zones/systemZone.ts";
 import IANAZone from "./zones/IANAZone.ts";
-import Locale from "./impl/locale.js";
+import Locale from "./impl/locale.ts";
 import DateTime from "./datetime.js";
 
 import { normalizeZone } from "./impl/zoneUtil.ts";

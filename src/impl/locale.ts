@@ -3,6 +3,8 @@ import * as English from "./english.ts";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
 import IANAZone from "../zones/IANAZone.ts";
+import type { LuxonWeekInfo } from "./weekInfo.ts";
+import WeekInfo = Intl.WeekInfo;
 
 // todo - remap caching
 
@@ -17,8 +19,8 @@ function getCachedLF(locString, opts = {}) {
   return dtf;
 }
 
-const intlDTCache = new Map();
-function getCachedDTF(locString, opts = {}) {
+const intlDTCache = new Map<string, Intl.DateTimeFormat>();
+function getCachedDTF(locString: string, opts: any /* TODO */ = {}): Intl.DateTimeFormat {
   const key = JSON.stringify([locString, opts]);
   let dtf = intlDTCache.get(key);
   if (dtf === undefined) {
@@ -28,8 +30,8 @@ function getCachedDTF(locString, opts = {}) {
   return dtf;
 }
 
-const intlNumCache = new Map();
-function getCachedINF(locString, opts = {}) {
+const intlNumCache = new Map<string, Intl.NumberFormat>();
+function getCachedINF(locString: string, opts: any /* TODO */ = {}): Intl.NumberFormat {
   const key = JSON.stringify([locString, opts]);
   let inf = intlNumCache.get(key);
   if (inf === undefined) {
@@ -39,8 +41,8 @@ function getCachedINF(locString, opts = {}) {
   return inf;
 }
 
-const intlRelCache = new Map();
-function getCachedRTF(locString, opts = {}) {
+const intlRelCache = new Map<string, Intl.RelativeTimeFormat>();
+function getCachedRTF(locString: string, opts: any /* TODO */ = {}): Intl.RelativeTimeFormat {
   const { base, ...cacheKeyOpts } = opts; // exclude `base` from the options
   const key = JSON.stringify([locString, cacheKeyOpts]);
   let inf = intlRelCache.get(key);
@@ -51,18 +53,13 @@ function getCachedRTF(locString, opts = {}) {
   return inf;
 }
 
-let sysLocaleCache = null;
-function systemLocale() {
-  if (sysLocaleCache) {
-    return sysLocaleCache;
-  } else {
-    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
-    return sysLocaleCache;
-  }
+let sysLocaleCache: string | null = null;
+function systemLocale(): string {
+  return (sysLocaleCache ??= new Intl.DateTimeFormat().resolvedOptions().locale);
 }
 
-const intlResolvedOptionsCache = new Map();
-function getCachedIntResolvedOptions(locString) {
+const intlResolvedOptionsCache = new Map<string, Intl.ResolvedDateTimeFormatOptions>();
+function getCachedIntResolvedOptions(locString: string): Intl.ResolvedDateTimeFormatOptions {
   let opts = intlResolvedOptionsCache.get(locString);
   if (opts === undefined) {
     opts = new Intl.DateTimeFormat(locString).resolvedOptions();
@@ -71,23 +68,25 @@ function getCachedIntResolvedOptions(locString) {
   return opts;
 }
 
-const weekInfoCache = new Map();
-function getCachedWeekInfo(locString) {
-  let data = weekInfoCache.get(locString);
+const weekInfoCache = new Map<string, LuxonWeekInfo>();
+function getCachedWeekInfo(locString: string): LuxonWeekInfo {
+  let data: LuxonWeekInfo | WeekInfo | undefined = weekInfoCache.get(locString);
   if (!data) {
     const locale = new Intl.Locale(locString);
     // browsers currently implement this as a property, but spec says it should be a getter function
-    data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
+    data = "getWeekInfo" in locale ? locale.getWeekInfo() : (locale as Intl.Locale).weekInfo;
     // minimalDays was removed from WeekInfo: https://github.com/tc39/proposal-intl-locale-info/issues/86
     if (!("minimalDays" in data)) {
       data = { ...fallbackWeekSettings, ...data };
     }
-    weekInfoCache.set(locString, data);
+    weekInfoCache.set(locString, data as LuxonWeekInfo);
   }
-  return data;
+  return data as LuxonWeekInfo;
 }
 
-function parseLocaleString(localeStr) {
+function parseLocaleString(
+  localeStr: string
+): [locale: string, numberingSystem?: string, calendar?: string] {
   // I really want to avoid writing a BCP 47 parser
   // see, e.g. https://github.com/wooorm/bcp-47
   // Instead, we'll do this:
@@ -124,7 +123,11 @@ function parseLocaleString(localeStr) {
   }
 }
 
-function intlConfigString(localeStr, numberingSystem, outputCalendar) {
+function intlConfigString(
+  localeStr: string,
+  numberingSystem: string | null | undefined,
+  outputCalendar: string | null | undefined
+): string {
   if (outputCalendar || numberingSystem) {
     if (!localeStr.includes("-u-")) {
       localeStr += "-u";

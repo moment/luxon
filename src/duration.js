@@ -1,7 +1,7 @@
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
 import Formatter from "./impl/formatter.js";
 import Invalid from "./impl/invalid.js";
-import Locale from "./impl/locale.js";
+import Locale from "./impl/locale.ts";
 import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
 import {
   asNumber,

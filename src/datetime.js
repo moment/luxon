@@ -4,7 +4,7 @@ import Settings from "./settings.js";
 import Info from "./info.js";
 import Formatter from "./impl/formatter.js";
 import FixedOffsetZone from "./zones/fixedOffsetZone.ts";
-import Locale from "./impl/locale.js";
+import Locale from "./impl/locale.ts";
 import {
   isUndefined,
   maybeArray,

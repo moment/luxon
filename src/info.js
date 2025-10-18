@@ -1,6 +1,6 @@
 import DateTime from "./datetime.js";
 import Settings from "./settings.js";
-import Locale from "./impl/locale.js";
+import Locale from "./impl/locale.ts";
 import IANAZone from "./zones/IANAZone.ts";
 import { normalizeZone } from "./impl/zoneUtil.ts";
 
