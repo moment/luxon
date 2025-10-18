@@ -6,7 +6,7 @@ const numberingSystems = {
   deva: "[\u0966-\u096F]",
   fullwide: "[\uFF10-\uFF19]",
   gujr: "[\u0AE6-\u0AEF]",
-  hanidec: "[〇|一|二|三|四|五|六|七|八|九]",
+  hanidec: "[〇一二三四五六七八九]",
   khmr: "[\u17E0-\u17E9]",
   knda: "[\u0CE6-\u0CEF]",
   laoo: "[\u0ED0-\u0ED9]",
@@ -44,40 +44,43 @@ const numberingSystemsUTF16 = {
   tibt: [3872, 3881],
 };
 
-const hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
+const hanidecChars = numberingSystems.hanidec.replace(/[\[\]]/g, "").split("");
 
-export function parseDigits(str) {
-  let value = parseInt(str, 10);
+export function parseDigits(str: string): number {
+  let value: number = parseInt(str, 10);
   if (isNaN(value)) {
-    value = "";
+    value = 0;
     for (let i = 0; i < str.length; i++) {
       const code = str.charCodeAt(i);
+      value *= 10;
 
       if (str[i].search(numberingSystems.hanidec) !== -1) {
         value += hanidecChars.indexOf(str[i]);
       } else {
         for (const key in numberingSystemsUTF16) {
-          const [min, max] = numberingSystemsUTF16[key];
+          const [min, max] = numberingSystemsUTF16[key as keyof typeof numberingSystemsUTF16];
           if (code >= min && code <= max) {
             value += code - min;
           }
         }
       }
     }
-    return parseInt(value, 10);
+    return value;
   } else {
     return value;
   }
 }
 
 // cache of {numberingSystem: {append: regex}}
-const digitRegexCache = new Map();
+const digitRegexCache = new Map<string, Map<string, RegExp>>();
 export function resetDigitRegexCache() {
   digitRegexCache.clear();
 }
 
-export function digitRegex({ numberingSystem }, append = "") {
-  const ns = numberingSystem || "latn";
+export function digitRegex({ numberingSystem }: { numberingSystem: string }, append = "") {
+  const ns = (
+    numberingSystem in numberingSystems ? numberingSystem : "latn"
+  ) as keyof typeof numberingSystems;
 
   let appendCache = digitRegexCache.get(ns);
   if (appendCache === undefined) {

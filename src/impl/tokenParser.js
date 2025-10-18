@@ -3,7 +3,7 @@ import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";
 import DateTime from "../datetime.js";
-import { digitRegex, parseDigits } from "./digits.js";
+import { digitRegex, parseDigits } from "./digits.ts";
 import { ConflictingSpecificationError } from "../errors.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";

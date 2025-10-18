@@ -5,7 +5,7 @@ import DateTime from "./datetime.js";
 
 import { normalizeZone } from "./impl/zoneUtil.ts";
 import { validateWeekSettings } from "./impl/util.ts";
-import { resetDigitRegexCache } from "./impl/digits.js";
+import { resetDigitRegexCache } from "./impl/digits.ts";
 
 let now = () => Date.now(),
   defaultZone = "system",
