@@ -41,7 +41,7 @@ import {
   hasInvalidTimeData,
   usesLocalWeekValues,
   isoWeekdayToLocal,
-} from "./impl/conversions.js";
+} from "./impl/conversions.ts";
 import * as Formats from "./impl/formats.js";
 import {
   InvalidArgumentError,
