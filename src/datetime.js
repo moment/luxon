@@ -18,7 +18,7 @@ import {
   padStart,
 } from "./impl/util.ts";
 import { normalizeZone } from "./impl/zoneUtil.ts";
-import diff from "./impl/diff.js";
+import diff from "./impl/diff.ts";
 import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
 import {
   parseFromTokens,

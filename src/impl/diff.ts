@@ -1,13 +1,19 @@
 import Duration from "../duration.js";
+import type DateTime from "../datetime.js";
 
-function dayDiff(earlier, later) {
-  const utcDayStart = (dt) => dt.toUTC(0, { keepLocalTime: true }).startOf("day").valueOf(),
+function dayDiff(earlier: DateTime, later: DateTime): number {
+  const utcDayStart = (dt: DateTime): number =>
+      dt.toUTC(0, { keepLocalTime: true }).startOf("day").valueOf(),
     ms = utcDayStart(later) - utcDayStart(earlier);
   return Math.floor(Duration.fromMillis(ms).as("days"));
 }
 
-function highOrderDiffs(cursor, later, units) {
-  const differs = [
+function highOrderDiffs(
+  cursor: DateTime,
+  later: DateTime,
+  units: string[]
+): [cursor: DateTime, results: any, highWater: DateTime, lowestOrder: string] {
+  const differs: Array<[string, (a: DateTime, b: DateTime) => number]> = [
     ["years", (a, b) => b.year - a.year],
     ["quarters", (a, b) => b.quarter - a.quarter + (b.year - a.year) * 4],
     ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12],
@@ -21,7 +27,7 @@ function highOrderDiffs(cursor, later, units) {
     ["days", dayDiff],
   ];
 
-  const results = {};
+  const results: any = {};
   const earlier = cursor;
   let lowestOrder, highWater;
 
@@ -61,13 +67,13 @@ function highOrderDiffs(cursor, later, units) {
     }
   }
 
-  return [cursor, results, highWater, lowestOrder];
+  return [cursor, results, highWater!, lowestOrder!];
 }
 
-export default function (earlier, later, units, opts) {
+export default function (earlier: DateTime, later: DateTime, units: string[], opts: any): Duration {
   let [cursor, results, highWater, lowestOrder] = highOrderDiffs(earlier, later, units);
 
-  const remainingMillis = later - cursor;
+  const remainingMillis = +later - +cursor;
 
   const lowerOrderUnits = units.filter(
     (u) => ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0
@@ -79,7 +85,7 @@ export default function (earlier, later, units, opts) {
     }
 
     if (highWater !== cursor) {
-      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
+      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (+highWater - +cursor);
     }
   }
 
