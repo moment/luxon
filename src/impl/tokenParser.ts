@@ -12,7 +12,7 @@ import type { DateTimeObjectInput } from "./dateObjects.ts";
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
 interface FormatTokenParser<T> {
-  regex: RegExp;
+  regex: string;
   deser: (match: string, matches: string[], index: number) => T;
   groups?: number;
   literal?: boolean;
@@ -26,7 +26,7 @@ interface FormatTokenParserInvalidMarker {
   token?: FormatToken;
 }
 
-function intUnit(regex: RegExp, post = (i: number): number => i): FormatTokenParser<number> {
+function intUnit(regex: string, post = (i: number): number => i): FormatTokenParser<number> {
   return { regex, deser: (s) => post(parseDigits(s)) };
 }
 
@@ -52,14 +52,14 @@ function oneOf(strings: string[] | null, startIndex: number): FormatTokenParser<
     return null;
   } else {
     return {
-      regex: RegExp(strings.map(fixListRegex).join("|")),
+      regex: strings.map(fixListRegex).join("|"),
       deser: (s) =>
         strings.findIndex((i) => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex,
     };
   }
 }
 
-function offset(regex: RegExp, groups: number): FormatTokenParser<number> {
+function offset(regex: string, groups: number): FormatTokenParser<number> {
   return {
     regex,
     deser: (_, matches, index) => signedOffset(matches[index + 1], matches[index + 2]),
@@ -67,7 +67,7 @@ function offset(regex: RegExp, groups: number): FormatTokenParser<number> {
   };
 }
 
-function simple(regex: RegExp): FormatTokenParser<string> {
+function simple(regex: string): FormatTokenParser<string> {
   return { regex, deser: (s) => s };
 }
 
@@ -95,12 +95,12 @@ function unitForToken(
     twoToFour = digitRegex(loc, "{2,4}"),
     fourToSix = digitRegex(loc, "{4,6}"),
     literal = (t: FormatToken): FormatTokenParser<string> => ({
-      regex: RegExp(escapeToken(t.val)),
+      regex: escapeToken(t.val),
       deser: ([s]) => s,
       literal: true,
     }),
     unitate = (t: FormatToken): FormatTokenParser<number> | FormatTokenParser<string> | null => {
-      if (token.literal) {
+      if (t.literal) {
         return literal(t);
       }
       switch (t.val) {
@@ -206,17 +206,17 @@ function unitForToken(
         // offset/zone
         case "Z":
         case "ZZ":
-          return offset(new RegExp(`([+-]${oneOrTwo.source})(?::(${two.source}))?`), 2);
+          return offset(`([+-]${oneOrTwo})(?::(${two}))?`, 2);
         case "ZZZ":
-          return offset(new RegExp(`([+-]${oneOrTwo.source})(${two.source})?`), 2);
+          return offset(`([+-]${oneOrTwo})(${two})?`, 2);
         // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
         // because we don't have any way to figure out what they are
         case "z":
-          return simple(/[a-z_+-/]{1,256}?/i);
+          return simple("[a-z_+-/]{1,256}?");
         // this special-case "token" represents a place where a macro-token expanded into a white-space literal
         // in this case we accept any non-newline white-space
         case " ":
-          return simple(/[^\S\n\r]/);
+          return simple("[^\\S\\n\\r]");
         default:
           return literal(t);
       }
@@ -329,7 +329,7 @@ function tokenForPart(
 }
 
 function buildRegex(units: Array<FormatTokenParser<unknown>>): string {
-  const re = units.map((u) => u.regex).reduce((f, r) => `${f}(${r.source})`, "");
+  const re = units.map((u) => u.regex).reduce((f, r) => `${f}(${r})`, "");
   return `^${re}$`;
 }
 

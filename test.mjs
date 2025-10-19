@@ -1,3 +1,7 @@
 import { Zone, DateTime } from "./src/luxon.ts";
 
-console.log(DateTime.fromFormatExplain("2024-04-01", "yyyyy-M-d"));
+const regexp = /^(\d+)-(\d+)-(\d+)$/;
+
+console.log("2024-04-01".match(regexp));
+
+console.log(/[a-z_+-/]{1,256}?/i.source);

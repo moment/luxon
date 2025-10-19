@@ -72,7 +72,7 @@ export function parseDigits(str: string): number {
 }
 
 // cache of {numberingSystem: {append: regex}}
-const digitRegexCache = new Map<string, Map<string, RegExp>>();
+const digitRegexCache = new Map<string, Map<string, string>>();
 
 export function resetDigitRegexCache() {
   digitRegexCache.clear();
@@ -81,7 +81,7 @@ export function resetDigitRegexCache() {
 export function digitRegex(
   { numberingSystem }: { numberingSystem: string | null },
   append = ""
-): RegExp {
+): string {
   const ns = (
     numberingSystem in numberingSystems ? numberingSystem : "latn"
   ) as keyof typeof numberingSystems;
@@ -93,7 +93,7 @@ export function digitRegex(
   }
   let regex = appendCache.get(append);
   if (regex === undefined) {
-    regex = new RegExp(`${numberingSystems[ns]}${append}`);
+    regex = `${numberingSystems[ns]}${append}`;
     appendCache.set(append, regex);
   }
 
