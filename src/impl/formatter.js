@@ -158,7 +158,7 @@ export default class Formatter {
       meridiem = () =>
         knownEnglish
           ? English.meridiemForDateTime(dt)
-          : string({ hour: "numeric", hourCycle: "h12" }, "dayperiod"),
+          : string({ hour: "numeric", hourCycle: "h12" }, "dayPeriod"),
       month = (length, standalone) =>
         knownEnglish
           ? English.monthForDateTime(dt, length)

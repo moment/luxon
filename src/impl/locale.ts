@@ -3,24 +3,29 @@ import * as English from "./english.ts";
 import Settings from "../settings.js";
 import DateTime from "../datetime.js";
 import IANAZone from "../zones/IANAZone.ts";
-import type { LuxonWeekInfo } from "./weekInfo.ts";
-import WeekInfo = Intl.WeekInfo;
+import type { LuxonWeekSettings } from "./weekInfo.ts";
+import type Zone from "../zone.ts";
 
 // todo - remap caching
 
-let intlLFCache = {};
-function getCachedLF(locString, opts = {}) {
+const intlLFCache = new Map<string, Intl.ListFormat>();
+
+function getCachedLF(locString: string, opts: Intl.ListFormatOptions = {}): Intl.ListFormat {
   const key = JSON.stringify([locString, opts]);
-  let dtf = intlLFCache[key];
+  let dtf = intlLFCache.get(key);
   if (!dtf) {
     dtf = new Intl.ListFormat(locString, opts);
-    intlLFCache[key] = dtf;
+    intlLFCache.set(key, dtf);
   }
   return dtf;
 }
 
 const intlDTCache = new Map<string, Intl.DateTimeFormat>();
-function getCachedDTF(locString: string, opts: any /* TODO */ = {}): Intl.DateTimeFormat {
+
+function getCachedDTF(
+  locString: string,
+  opts: Intl.DateTimeFormatOptions = {}
+): Intl.DateTimeFormat {
   const key = JSON.stringify([locString, opts]);
   let dtf = intlDTCache.get(key);
   if (dtf === undefined) {
@@ -31,7 +36,8 @@ function getCachedDTF(locString: string, opts: any /* TODO */ = {}): Intl.DateTi
 }
 
 const intlNumCache = new Map<string, Intl.NumberFormat>();
-function getCachedINF(locString: string, opts: any /* TODO */ = {}): Intl.NumberFormat {
+
+function getCachedINF(locString: string, opts: Intl.NumberFormatOptions = {}): Intl.NumberFormat {
   const key = JSON.stringify([locString, opts]);
   let inf = intlNumCache.get(key);
   if (inf === undefined) {
@@ -42,7 +48,11 @@ function getCachedINF(locString: string, opts: any /* TODO */ = {}): Intl.Number
 }
 
 const intlRelCache = new Map<string, Intl.RelativeTimeFormat>();
-function getCachedRTF(locString: string, opts: any /* TODO */ = {}): Intl.RelativeTimeFormat {
+
+function getCachedRTF(
+  locString: string,
+  opts: Intl.RelativeTimeFormatOptions & { base?: unknown } = {}
+): Intl.RelativeTimeFormat {
   const { base, ...cacheKeyOpts } = opts; // exclude `base` from the options
   const key = JSON.stringify([locString, cacheKeyOpts]);
   let inf = intlRelCache.get(key);
@@ -54,11 +64,13 @@ function getCachedRTF(locString: string, opts: any /* TODO */ = {}): Intl.Relati
 }
 
 let sysLocaleCache: string | null = null;
+
 function systemLocale(): string {
   return (sysLocaleCache ??= new Intl.DateTimeFormat().resolvedOptions().locale);
 }
 
 const intlResolvedOptionsCache = new Map<string, Intl.ResolvedDateTimeFormatOptions>();
+
 function getCachedIntResolvedOptions(locString: string): Intl.ResolvedDateTimeFormatOptions {
   let opts = intlResolvedOptionsCache.get(locString);
   if (opts === undefined) {
@@ -68,9 +80,10 @@ function getCachedIntResolvedOptions(locString: string): Intl.ResolvedDateTimeFo
   return opts;
 }
 
-const weekInfoCache = new Map<string, LuxonWeekInfo>();
-function getCachedWeekInfo(locString: string): LuxonWeekInfo {
-  let data: LuxonWeekInfo | WeekInfo | undefined = weekInfoCache.get(locString);
+const weekInfoCache = new Map<string, LuxonWeekSettings>();
+
+function getCachedWeekInfo(locString: string): LuxonWeekSettings {
+  let data: LuxonWeekSettings | Intl.WeekInfo | undefined = weekInfoCache.get(locString);
   if (!data) {
     const locale = new Intl.Locale(locString);
     // browsers currently implement this as a property, but spec says it should be a getter function
@@ -79,9 +92,9 @@ function getCachedWeekInfo(locString: string): LuxonWeekInfo {
     if (!("minimalDays" in data)) {
       data = { ...fallbackWeekSettings, ...data };
     }
-    weekInfoCache.set(locString, data as LuxonWeekInfo);
+    weekInfoCache.set(locString, data as LuxonWeekSettings);
   }
-  return data as LuxonWeekInfo;
+  return data as LuxonWeekSettings;
 }
 
 function parseLocaleString(
@@ -146,8 +159,8 @@ function intlConfigString(
   }
 }
 
-function mapMonths(f) {
-  const ms = [];
+function mapMonths<T>(f: (dt: DateTime) => T): T[] {
+  const ms: T[] = [];
   for (let i = 1; i <= 12; i++) {
     const dt = DateTime.utc(2009, i, 1);
     ms.push(f(dt));
@@ -155,8 +168,8 @@ function mapMonths(f) {
   return ms;
 }
 
-function mapWeekdays(f) {
-  const ms = [];
+function mapWeekdays<T>(f: (dt: DateTime) => T): T[] {
+  const ms: T[] = [];
   for (let i = 1; i <= 7; i++) {
     const dt = DateTime.utc(2016, 11, 13 + i);
     ms.push(f(dt));
@@ -164,19 +177,21 @@ function mapWeekdays(f) {
   return ms;
 }
 
-function listStuff(loc, length, englishFn, intlFn) {
+function listStuff<T, R>(
+  loc: Locale,
+  length: T,
+  englishFn: (length: T) => R,
+  intlFn: (length: T) => R
+): R {
   const mode = loc.listingMode();
-
-  if (mode === "error") {
-    return null;
-  } else if (mode === "en") {
+  if (mode === "en") {
     return englishFn(length);
   } else {
     return intlFn(length);
   }
 }
 
-function supportsFastNumbers(loc) {
+function supportsFastNumbers(loc: Locale): boolean {
   if (loc.numberingSystem && loc.numberingSystem !== "latn") {
     return false;
   } else {
@@ -193,21 +208,35 @@ function supportsFastNumbers(loc) {
  * @private
  */
 
+interface PolyNumberFormatterOptions extends Intl.NumberFormatOptions {
+  padTo?: number | null | undefined;
+  floor?: boolean | null | undefined;
+}
+
+interface ExtendedPolyNumberFormatterOptions extends PolyNumberFormatterOptions {
+  /* TODO: Investigate if this is used at all */
+  forceSimple?: boolean;
+}
+
 class PolyNumberFormatter {
-  constructor(intl, forceSimple, opts) {
+  private readonly padTo: number;
+  private readonly floor: boolean;
+  private readonly inf: Intl.NumberFormat | undefined;
+
+  constructor(intl: string, forceSimple: boolean, opts: PolyNumberFormatterOptions) {
     this.padTo = opts.padTo || 0;
     this.floor = opts.floor || false;
 
     const { padTo, floor, ...otherOpts } = opts;
 
     if (!forceSimple || Object.keys(otherOpts).length > 0) {
-      const intlOpts = { useGrouping: false, ...opts };
-      if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
+      const intlOpts: Intl.NumberFormatOptions = { useGrouping: false, ...otherOpts };
+      if (this.padTo > 0) intlOpts.minimumIntegerDigits = this.padTo;
       this.inf = getCachedINF(intl, intlOpts);
     }
   }
 
-  format(i) {
+  format(i: number): string {
     if (this.inf) {
       const fixed = this.floor ? Math.floor(i) : i;
       return this.inf.format(fixed);
@@ -223,8 +252,15 @@ class PolyNumberFormatter {
  * @private
  */
 
+interface PolyDateFormatterOptions extends Intl.DateTimeFormatOptions {}
+
 class PolyDateFormatter {
-  constructor(dt, intl, opts) {
+  private readonly dt: DateTime;
+  private readonly opts: PolyDateFormatterOptions;
+  private readonly originalZone: Zone | undefined;
+  private readonly dtf: Intl.DateTimeFormat;
+
+  constructor(dt: DateTime, intl: string, opts: PolyDateFormatterOptions) {
     this.opts = opts;
     this.originalZone = undefined;
 
@@ -269,7 +305,7 @@ class PolyDateFormatter {
     this.dtf = getCachedDTF(intl, intlOpts);
   }
 
-  format() {
+  format(): string {
     if (this.originalZone) {
       // If we have to substitute in the actual zone name, we have to use
       // formatToParts so that the timezone can be replaced.
@@ -280,12 +316,12 @@ class PolyDateFormatter {
     return this.dtf.format(this.dt.toJSDate());
   }
 
-  formatToParts() {
+  formatToParts(): Intl.DateTimeFormatPart[] {
     const parts = this.dtf.formatToParts(this.dt.toJSDate());
     if (this.originalZone) {
       return parts.map((part) => {
         if (part.type === "timeZoneName") {
-          const offsetName = this.originalZone.offsetName(this.dt.ts, {
+          const offsetName = this.originalZone!.offsetName(this.dt.ts, {
             locale: this.dt.locale,
             format: this.opts.timeZoneName,
           });
@@ -301,23 +337,28 @@ class PolyDateFormatter {
     return parts;
   }
 
-  resolvedOptions() {
+  resolvedOptions(): Intl.ResolvedDateTimeFormatOptions {
     return this.dtf.resolvedOptions();
   }
 }
+
+interface PolyRelFormatterOptions extends Intl.RelativeTimeFormatOptions {}
 
 /**
  * @private
  */
 class PolyRelFormatter {
-  constructor(intl, isEnglish, opts) {
+  private readonly opts: PolyRelFormatterOptions;
+  private readonly rtf: Intl.RelativeTimeFormat | undefined;
+
+  constructor(intl: string, isEnglish: boolean, opts: PolyRelFormatterOptions) {
     this.opts = { style: "long", ...opts };
     if (!isEnglish && hasRelative()) {
       this.rtf = getCachedRTF(intl, opts);
     }
   }
 
-  format(count, unit) {
+  format(count: number, unit: Intl.RelativeTimeFormatUnit): string {
     if (this.rtf) {
       return this.rtf.format(count, unit);
     } else {
@@ -325,10 +366,11 @@ class PolyRelFormatter {
     }
   }
 
-  formatToParts(count, unit) {
+  formatToParts(count: number, unit: Intl.RelativeTimeFormatUnit): Intl.RelativeTimeFormatPart[] {
     if (this.rtf) {
       return this.rtf.formatToParts(count, unit);
     } else {
+      /* TODO: Investigate if this causes problems */
       return [];
     }
   }
@@ -340,11 +382,22 @@ const fallbackWeekSettings = {
   weekend: [6, 7],
 };
 
+export interface LocaleOptions {
+  locale?: string | null | undefined;
+  numberingSystem?: string | null | undefined;
+  outputCalendar?: string | null | undefined;
+  weekSettings?: LuxonWeekSettings | null | undefined;
+}
+
+export interface InternalLocaleOptions extends LocaleOptions {
+  defaultToEN?: boolean | undefined;
+}
+
 /**
  * @private
  */
 export default class Locale {
-  static fromOpts(opts) {
+  static fromOpts(opts: InternalLocaleOptions): Locale {
     return Locale.create(
       opts.locale,
       opts.numberingSystem,
@@ -354,7 +407,13 @@ export default class Locale {
     );
   }
 
-  static create(locale, numberingSystem, outputCalendar, weekSettings, defaultToEN = false) {
+  static create(
+    locale: string | null | undefined,
+    numberingSystem: string | null | undefined,
+    outputCalendar: string | null | undefined,
+    weekSettings: LuxonWeekSettings | null | undefined,
+    defaultToEN = false
+  ): Locale {
     const specifiedLocale = locale || Settings.defaultLocale;
     // the system locale is useful for human-readable strings but annoying for parsing/formatting known formats
     const localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale());
@@ -367,17 +426,45 @@ export default class Locale {
   static resetCache() {
     sysLocaleCache = null;
     intlDTCache.clear();
+    intlLFCache.clear();
     intlNumCache.clear();
     intlRelCache.clear();
     intlResolvedOptionsCache.clear();
     weekInfoCache.clear();
   }
 
-  static fromObject({ locale, numberingSystem, outputCalendar, weekSettings } = {}) {
+  static fromObject({ locale, numberingSystem, outputCalendar, weekSettings }: LocaleOptions = {}) {
     return Locale.create(locale, numberingSystem, outputCalendar, weekSettings);
   }
 
-  constructor(locale, numbering, outputCalendar, weekSettings, specifiedLocale) {
+  readonly locale: string;
+  readonly numberingSystem: string | null;
+  readonly outputCalendar: string | null;
+  private readonly weekSettings: LuxonWeekSettings | null;
+  private readonly intl: string;
+  private readonly specifiedLocale: string;
+
+  private readonly weekdaysCache: Record<
+    "format" | "standalone",
+    Partial<Record<NonNullable<Intl.DateTimeFormatOptions["weekday"]>, string[]>>
+  >;
+  private readonly monthsCache: Record<
+    "format" | "standalone",
+    Partial<Record<NonNullable<Intl.DateTimeFormatOptions["month"]>, string[]>>
+  >;
+  private meridiemCache: string[] | null;
+  private readonly eraCache: Partial<
+    Record<NonNullable<Intl.DateTimeFormatOptions["era"]>, string[]>
+  >;
+  private fastNumbersCached: boolean | null;
+
+  constructor(
+    locale: string,
+    numbering: string | null,
+    outputCalendar: string | null,
+    weekSettings: LuxonWeekSettings | null,
+    specifiedLocale: string
+  ) {
     const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
 
     this.locale = parsedLocale;
@@ -396,14 +483,10 @@ export default class Locale {
   }
 
   get fastNumbers() {
-    if (this.fastNumbersCached == null) {
-      this.fastNumbersCached = supportsFastNumbers(this);
-    }
-
-    return this.fastNumbersCached;
+    return (this.fastNumbersCached ??= supportsFastNumbers(this));
   }
 
-  listingMode() {
+  listingMode(): "en" | "intl" {
     const isActuallyEn = this.isEnglish();
     const hasNoWeirdness =
       (this.numberingSystem === null || this.numberingSystem === "latn") &&
@@ -411,7 +494,7 @@ export default class Locale {
     return isActuallyEn && hasNoWeirdness ? "en" : "intl";
   }
 
-  clone(alts) {
+  clone(alts: InternalLocaleOptions | null | undefined) {
     if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
       return this;
     } else {
@@ -433,28 +516,30 @@ export default class Locale {
     return this.clone({ ...alts, defaultToEN: false });
   }
 
-  months(length, format = false) {
+  months(length: NonNullable<Intl.DateTimeFormatOptions["month"]>, format = false): string[] {
     return listStuff(this, length, English.months, () => {
       // Workaround for "ja" locale: formatToParts does not label all parts of the month
       // as "month" and for this locale there is no difference between "format" and "non-format".
       // As such, just use format() instead of formatToParts() and take the whole string
       const monthSpecialCase = this.intl === "ja" || this.intl.startsWith("ja-");
-      format &= !monthSpecialCase;
-      const intl = format ? { month: length, day: "numeric" } : { month: length },
+      format &&= !monthSpecialCase;
+      const intl: Intl.DateTimeFormatOptions = format
+          ? { month: length, day: "numeric" }
+          : { month: length },
         formatStr = format ? "format" : "standalone";
       if (!this.monthsCache[formatStr][length]) {
         const mapper = !monthSpecialCase
-          ? (dt) => this.extract(dt, intl, "month")
-          : (dt) => this.dtFormatter(dt, intl).format();
+          ? (dt: DateTime): string => this.extract(dt, intl, "month")
+          : (dt: DateTime): string => this.dtFormatter(dt, intl).format();
         this.monthsCache[formatStr][length] = mapMonths(mapper);
       }
       return this.monthsCache[formatStr][length];
     });
   }
 
-  weekdays(length, format = false) {
+  weekdays(length: NonNullable<Intl.DateTimeFormatOptions["weekday"]>, format = false): string[] {
     return listStuff(this, length, English.weekdays, () => {
-      const intl = format
+      const intl: Intl.DateTimeFormatOptions = format
           ? { weekday: length, year: "numeric", month: "long", day: "numeric" }
           : { weekday: length },
         formatStr = format ? "format" : "standalone";
@@ -467,7 +552,7 @@ export default class Locale {
     });
   }
 
-  meridiems() {
+  meridiems(): string[] {
     return listStuff(
       this,
       undefined,
@@ -476,9 +561,9 @@ export default class Locale {
         // In theory there could be aribitrary day periods. We're gonna assume there are exactly two
         // for AM and PM. This is probably wrong, but it's makes parsing way easier.
         if (!this.meridiemCache) {
-          const intl = { hour: "numeric", hourCycle: "h12" };
+          const intl: Intl.DateTimeFormatOptions = { hour: "numeric", hourCycle: "h12" };
           this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
-            (dt) => this.extract(dt, intl, "dayperiod")
+            (dt) => this.extract(dt, intl, "dayPeriod")
           );
         }
 
@@ -487,7 +572,7 @@ export default class Locale {
     );
   }
 
-  eras(length) {
+  eras(length: NonNullable<Intl.DateTimeFormatOptions["era"]>): string[] {
     return listStuff(this, length, English.eras, () => {
       const intl = { era: length };
 
@@ -503,32 +588,38 @@ export default class Locale {
     });
   }
 
-  extract(dt, intlOpts, field) {
+  extract(
+    dt: DateTime,
+    intlOpts: Intl.DateTimeFormatOptions,
+    field: Intl.DateTimeFormatPart["type"]
+  ): string {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
-      matching = results.find((m) => m.type.toLowerCase() === field);
-    return matching ? matching.value : null;
+      matching = results.find((m) => m.type === field);
+    return matching
+      ? matching.value
+      : null! /* TODO: Add error checking instead of returning null */;
   }
 
-  numberFormatter(opts = {}) {
+  numberFormatter(opts: ExtendedPolyNumberFormatterOptions = {}): PolyNumberFormatter {
     // this forcesimple option is never used (the only caller short-circuits on it, but it seems safer to leave)
     // (in contrast, the rest of the condition is used heavily)
     return new PolyNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
   }
 
-  dtFormatter(dt, intlOpts = {}) {
+  dtFormatter(dt: DateTime, intlOpts: PolyDateFormatterOptions = {}): PolyDateFormatter {
     return new PolyDateFormatter(dt, this.intl, intlOpts);
   }
 
-  relFormatter(opts = {}) {
+  relFormatter(opts: PolyRelFormatterOptions = {}): PolyRelFormatter {
     return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
   }
 
-  listFormatter(opts = {}) {
+  listFormatter(opts: Intl.ListFormatOptions = {}): Intl.ListFormat {
     return getCachedLF(this.intl, opts);
   }
 
-  isEnglish() {
+  isEnglish(): boolean {
     return (
       this.locale === "en" ||
       this.locale.toLowerCase() === "en-us" ||
@@ -536,7 +627,7 @@ export default class Locale {
     );
   }
 
-  getWeekSettings() {
+  getWeekSettings(): LuxonWeekSettings {
     if (this.weekSettings) {
       return this.weekSettings;
     } else if (!hasLocaleWeekInfo()) {
@@ -546,19 +637,19 @@ export default class Locale {
     }
   }
 
-  getStartOfWeek() {
+  getStartOfWeek(): number {
     return this.getWeekSettings().firstDay;
   }
 
-  getMinDaysInFirstWeek() {
+  getMinDaysInFirstWeek(): number {
     return this.getWeekSettings().minimalDays;
   }
 
-  getWeekendDays() {
+  getWeekendDays(): number[] {
     return this.getWeekSettings().weekend;
   }
 
-  equals(other) {
+  equals(other: Locale): boolean {
     return (
       this.locale === other.locale &&
       this.numberingSystem === other.numberingSystem &&
@@ -566,7 +657,7 @@ export default class Locale {
     );
   }
 
-  toString() {
+  toString(): string {
     return `Locale(${this.locale}, ${this.numberingSystem}, ${this.outputCalendar})`;
   }
 }

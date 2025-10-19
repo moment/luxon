@@ -1,10 +1,4 @@
-import * as Formats from "./formats.js";
-import { pick } from "./util.ts";
 import type DateTime from "../datetime.js";
-
-function stringify(obj) {
-  return JSON.stringify(obj, Object.keys(obj).sort());
-}
 
 /**
  * @private
@@ -42,8 +36,7 @@ export const monthsShort = [
 
 export const monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
 
-export function months(length: NonNullable<Intl.DateTimeFormatOptions["month"]>): string[] | null {
-  // TODO: Do not return null
+export function months(length: NonNullable<Intl.DateTimeFormatOptions["month"]>): string[] {
   switch (length) {
     case "narrow":
       return [...monthsNarrow];
@@ -56,7 +49,8 @@ export function months(length: NonNullable<Intl.DateTimeFormatOptions["month"]>)
     case "2-digit":
       return ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
     default:
-      return null;
+      // TODO: Do not return null
+      return null!;
   }
 }
 
@@ -76,9 +70,7 @@ export const weekdaysNarrow = ["M", "T", "W", "T", "F", "S", "S"];
 
 type WeekdayFormatLength = NonNullable<Intl.DateTimeFormatOptions["weekday"]> | "numeric";
 
-export function weekdays(length: WeekdayFormatLength): string[] | null {
-  // TODO: Do not return null
-  // TODO: investigate non-standard "numeric" option
+export function weekdays(length: WeekdayFormatLength): string[] {
   switch (length) {
     case "narrow":
       return [...weekdaysNarrow];
@@ -87,9 +79,11 @@ export function weekdays(length: WeekdayFormatLength): string[] | null {
     case "long":
       return [...weekdaysLong];
     case "numeric":
+      // TODO: investigate non-standard "numeric" option
       return ["1", "2", "3", "4", "5", "6", "7"];
     default:
-      return null;
+      // TODO: Do not return null
+      return null!;
   }
 }
 
@@ -101,7 +95,7 @@ export const erasShort = ["BC", "AD"];
 
 export const erasNarrow = ["B", "A"];
 
-export function eras(length: NonNullable<Intl.DateTimeFormatOptions["era"]>): string[] | null {
+export function eras(length: NonNullable<Intl.DateTimeFormatOptions["era"]>): string[] {
   switch (length) {
     case "narrow":
       return [...erasNarrow];
@@ -110,7 +104,8 @@ export function eras(length: NonNullable<Intl.DateTimeFormatOptions["era"]>): st
     case "long":
       return [...erasLong];
     default:
-      return null;
+      // TODO: Do not return null
+      return null!;
   }
 }
 
@@ -139,7 +134,12 @@ export function eraForDateTime(
   return eras(length)![dt.year < 0 ? 0 : 1];
 }
 
-export function formatRelativeTime(unit, count, numeric = "always", narrow = false) {
+export function formatRelativeTime(
+  unit: Intl.RelativeTimeFormatUnit,
+  count: number,
+  numeric: NonNullable<Intl.RelativeTimeFormatOptions["numeric"]> = "always",
+  narrow: boolean = false
+): string {
   const units = {
     years: ["year", "yr."],
     quarters: ["quarter", "qtr."],

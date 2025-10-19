@@ -8,6 +8,7 @@ import { InvalidArgumentError } from "../errors.js";
 import Settings from "../settings.js";
 import type { AnyDateObject, DateTimeObject, TimeObject } from "./dateObjects.ts";
 import { dayOfWeek, daysInYear, isoWeekdayToLocal } from "./dateMath.ts";
+import type { LuxonWeekSettings } from "./weekInfo.ts";
 
 /**
  * @private
@@ -49,7 +50,7 @@ export function hasRelative() {
   }
 }
 
-export function hasLocaleWeekInfo() {
+export function hasLocaleWeekInfo(): boolean {
   try {
     return (
       typeof Intl !== "undefined" &&
@@ -98,7 +99,7 @@ export function hasOwnProperty(obj: unknown, prop: PropertyKey): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-export function validateWeekSettings(settings: unknown) /* TODO */ {
+export function validateWeekSettings(settings: unknown): LuxonWeekSettings | null {
   if (settings == null) {
     return null;
   } else if (typeof settings !== "object") {
