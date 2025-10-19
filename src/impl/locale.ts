@@ -408,10 +408,10 @@ export default class Locale {
   }
 
   static create(
-    locale: string | null | undefined,
-    numberingSystem: string | null | undefined,
-    outputCalendar: string | null | undefined,
-    weekSettings: LuxonWeekSettings | null | undefined,
+    locale?: string | null | undefined,
+    numberingSystem?: string | null | undefined,
+    outputCalendar?: string | null | undefined,
+    weekSettings?: LuxonWeekSettings | null | undefined,
     defaultToEN = false
   ): Locale {
     const specifiedLocale = locale || Settings.defaultLocale;

@@ -44,13 +44,14 @@ const macroTokenToFormatOpts = {
   FFFF: Formats.DATETIME_HUGE_WITH_SECONDS,
 };
 
-export interface ParsedFormatPart {
+export interface FormatToken {
   literal: boolean;
   val: string;
 }
 
 export interface FormatterOptions extends PolyDateFormatterOptions, PolyNumberFormatterOptions {
   forceSimple?: boolean;
+  allowZ?: boolean;
 }
 
 /**
@@ -62,14 +63,14 @@ export default class Formatter {
     return new Formatter(locale, opts);
   }
 
-  static parseFormat(fmt: string): ParsedFormatPart[] {
+  static parseFormat(fmt: string): FormatToken[] {
     // white-space is always considered a literal in user-provided formats
     // the " " token has a special meaning (see unitForToken)
 
     let current = null,
       currentFull = "",
       bracketed = false;
-    const splits: ParsedFormatPart[] = [];
+    const splits: FormatToken[] = [];
     for (let i = 0; i < fmt.length; i++) {
       const c = fmt.charAt(i);
       if (c === "'") {
@@ -103,7 +104,7 @@ export default class Formatter {
     return splits;
   }
 
-  static macroTokenToFormatOpts(token) {
+  static macroTokenToFormatOpts(token: string): Intl.DateTimeFormatOptions | undefined {
     return macroTokenToFormatOpts[token];
   }
 
@@ -129,11 +130,11 @@ export default class Formatter {
     return this.loc.dtFormatter(dt, { ...this.opts, ...opts });
   }
 
-  formatDateTime(dt: DateTime, opts: PolyDateFormatterOptions): string {
+  formatDateTime(dt: DateTime, opts?: PolyDateFormatterOptions): string {
     return this.dtFormatter(dt, opts).format();
   }
 
-  formatDateTimeParts(dt: DateTime, opts: PolyDateFormatterOptions): Intl.DateTimeFormatPart[] {
+  formatDateTimeParts(dt: DateTime, opts?: PolyDateFormatterOptions): Intl.DateTimeFormatPart[] {
     return this.dtFormatter(dt, opts).formatToParts();
   }
 
@@ -144,7 +145,7 @@ export default class Formatter {
 
   resolvedOptions(
     dt: DateTime,
-    opts: PolyDateFormatterOptions
+    opts?: PolyDateFormatterOptions
   ): Intl.ResolvedDateTimeFormatOptions {
     return this.dtFormatter(dt, opts).resolvedOptions();
   }

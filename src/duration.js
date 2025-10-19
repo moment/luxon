@@ -12,7 +12,7 @@ import {
   roundTo,
 } from "./impl/util.ts";
 import Settings from "./settings.js";
-import DateTime from "./datetime.js";
+import DateTime from "./datetime.ts";
 
 const INVALID = "Invalid Duration";
 

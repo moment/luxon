@@ -219,7 +219,7 @@ export function utcTs(
 }
 
 // convert a calendar object to a local timestamp (epoch, but with the offset baked in)
-export function objToLocalTS(obj: any /* TODO */): number {
+export function objToLocalTS(obj: DateTimeObject): number {
   return utcTs(obj.year, obj.month, obj.day, obj.hour, obj.minute, obj.second, obj.millisecond);
 }
 

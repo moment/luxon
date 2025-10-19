@@ -1,4 +1,4 @@
-import DateTime from "./datetime.js";
+import DateTime from "./datetime.ts";
 import Settings from "./settings.js";
 import Locale from "./impl/locale.ts";
 import IANAZone from "./zones/IANAZone.ts";

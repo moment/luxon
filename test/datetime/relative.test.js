@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import DateTime from "../../src/datetime";
+import DateTime from "../../src/datetime.ts";
 
 import * as Helpers from "../helpers";
 

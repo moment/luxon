@@ -4,7 +4,7 @@ import Settings from "./settings.js";
 import Info from "./info.js";
 import Formatter from "./impl/formatter.ts";
 import FixedOffsetZone from "./zones/fixedOffsetZone.ts";
-import Locale from "./impl/locale.ts";
+import Locale, { type LocaleOptions } from "./impl/locale.ts";
 import {
   isUndefined,
   maybeArray,
@@ -17,7 +17,7 @@ import {
   objToLocalTS,
   padStart,
 } from "./impl/util.ts";
-import { normalizeZone } from "./impl/zoneUtil.ts";
+import { normalizeZone, type ZoneInput } from "./impl/zoneUtil.ts";
 import diff from "./impl/diff.ts";
 import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
 import {
@@ -47,11 +47,13 @@ import {
 } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 import { daysInMonth, daysInYear, isLeapYear, isoWeekdayToLocal } from "./impl/dateMath.ts";
+import type Zone from "./zone.ts";
+import type { DateTimeObject, DateTimeObjectInput, WeekDateObject } from "./impl/dateObjects.ts";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
 
-function unsupportedZone(zone) {
+function unsupportedZone(zone: Zone): Invalid {
   return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
 }
 
@@ -59,7 +61,7 @@ function unsupportedZone(zone) {
 /**
  * @param {DateTime} dt
  */
-function possiblyCachedWeekData(dt) {
+function possiblyCachedWeekData(dt: DateTime): DateTimeObject<WeekDateObject> {
   if (dt.weekData === null) {
     dt.weekData = gregorianToWeek(dt.c);
   }
@@ -69,7 +71,7 @@ function possiblyCachedWeekData(dt) {
 /**
  * @param {DateTime} dt
  */
-function possiblyCachedLocalWeekData(dt) {
+function possiblyCachedLocalWeekData(dt: DateTime): DateTimeObject<WeekDateObject> {
   if (dt.localWeekData === null) {
     dt.localWeekData = gregorianToWeek(
       dt.c,
@@ -96,7 +98,7 @@ function clone(inst, alts) {
 
 // find the right offset a given local time. The o input is our guess, which determines which
 // offset we'll pick in ambiguous cases (e.g. there are two 3 AMs b/c Fallback DST)
-function fixOffset(localTS, o, tz) {
+function fixOffset(localTS: number, o: number, tz: Zone): [ts: number, offset: number] {
   // Our UTC time is just a guess because our offset is just a guess
   let utcGuess = localTS - o * 60 * 1000;
 
@@ -122,7 +124,7 @@ function fixOffset(localTS, o, tz) {
 }
 
 // convert an epoch timestamp into a calendar object with the given offset
-function tsToObj(ts, offset) {
+function tsToObj(ts: number, offset: number): DateTimeObject {
   ts += offset * 60 * 1000;
 
   const d = new Date(ts);
@@ -139,7 +141,7 @@ function tsToObj(ts, offset) {
 }
 
 // convert a calendar object to a epoch timestamp
-function objToTS(obj, offset, zone) {
+function objToTS(obj: DateTimeObject, offset: number, zone: Zone): [ts: number, offset: number] {
   return fixOffset(objToLocalTS(obj), offset, zone);
 }
 
@@ -183,7 +185,14 @@ function adjustTime(inst, dur) {
 
 // helper useful in turning the results of parsing into real dates
 // by handling the zone options
-export function parseDataToDateTime(parsed, parsedZone, opts, format, text, specificOffset) {
+export function parseDataToDateTime(
+  parsed: DateTimeObjectInput,
+  parsedZone: Zone | null,
+  opts,
+  format,
+  text,
+  specificOffset
+): DateTime {
   const { setZone, zone } = opts;
   if ((parsed && Object.keys(parsed).length !== 0) || parsedZone) {
     const interpretationZone = parsedZone || zone,
@@ -202,16 +211,17 @@ export function parseDataToDateTime(parsed, parsedZone, opts, format, text, spec
 
 // if you want to output a technical format (e.g. RFC 2822), this helper
 // helps handle the details
-function toTechFormat(dt, format, allowZ = true) {
+function toTechFormat(dt: DateTime, format: string, allowZ = true): string {
+  // TODO: Do not return null when Invalid is removed
   return dt.isValid
     ? Formatter.create(Locale.create("en-US"), {
         allowZ,
         forceSimple: true,
       }).formatDateTimeFromString(dt, format)
-    : null;
+    : null!;
 }
 
-function toISODate(o, extended, precision) {
+function toISODate(o: DateTime, extended: boolean, precision?: "year" | "month"): string {
   const longFormat = o.c.year > 9999 || o.c.year < 0;
   let c = "";
   if (longFormat && o.c.year >= 0) c += "+";
@@ -231,13 +241,13 @@ function toISODate(o, extended, precision) {
 }
 
 function toISOTime(
-  o,
-  extended,
-  suppressSeconds,
-  suppressMilliseconds,
-  includeOffset,
-  extendedZone,
-  precision
+  o: DateTime,
+  extended: boolean,
+  suppressSeconds: boolean,
+  suppressMilliseconds: boolean,
+  includeOffset: boolean,
+  extendedZone: boolean,
+  precision: "day" | "month" | "year" | "hour" | "minute" | "second"
 ) {
   let showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0,
     c = "";
@@ -493,14 +503,14 @@ function diffRelative(start, end, opts) {
   return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
 }
 
-function lastOpts(argList) {
+function lastOpts<T extends object>(argList: Array<number | T>): [T | {}, number[]] {
   let opts = {},
     args;
   if (argList.length > 0 && typeof argList[argList.length - 1] === "object") {
     opts = argList[argList.length - 1];
-    args = Array.from(argList).slice(0, argList.length - 1);
+    args = Array.from(argList).slice(0, argList.length - 1) as number[];
   } else {
-    args = Array.from(argList);
+    args = Array.from(argList) as number[];
   }
   return [opts, args];
 }
@@ -516,6 +526,24 @@ let zoneOffsetTs;
  * zone.offset().
  */
 const zoneOffsetGuessCache = new Map();
+
+export interface DateTimeOptions extends LocaleOptions {}
+
+export interface DateTimeWithZoneOptions extends DateTimeOptions {
+  zone?: ZoneInput;
+}
+
+export interface InternalDateTimeFromObjectOptions extends DateTimeWithZoneOptions {
+  specificOffset?: number;
+  overrideNow?: number;
+}
+
+export type DateTimeLocalOptions = DateTimeWithZoneOptions;
+export type DateTimeUTCOptions = DateTimeOptions;
+
+export interface SetZoneOptions {
+  keepLocalTime?: boolean;
+}
 
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
@@ -538,6 +566,18 @@ const zoneOffsetGuessCache = new Map();
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
 export default class DateTime {
+  // TODO: Make these private
+  private readonly _zone: Zone;
+  private readonly ts: number;
+  readonly loc: Locale;
+  private readonly invalid: Invalid | null;
+  readonly c: DateTimeObject;
+  readonly o: number;
+  private readonly isLuxonDateTime: true;
+
+  weekData: DateTimeObject<WeekDateObject> | null;
+  localWeekData: DateTimeObject<WeekDateObject> | null;
+
   /**
    * @access private
    */
@@ -614,7 +654,7 @@ export default class DateTime {
    * @example DateTime.now().toISO() //~> now in the ISO format
    * @return {DateTime}
    */
-  static now() {
+  static now(): DateTime {
     return new DateTime({});
   }
 
@@ -639,8 +679,46 @@ export default class DateTime {
    * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765)       //~> 2017-03-12T05:45:10.765
    * @return {DateTime}
    */
-  static local() {
-    const [opts, args] = lastOpts(arguments),
+  static local(opts?: DateTimeLocalOptions): DateTime;
+  static local(year: number, opts?: DateTimeLocalOptions): DateTime;
+  static local(year: number, month: number, opts?: DateTimeLocalOptions): DateTime;
+  static local(year: number, month: number, day: number, opts?: DateTimeLocalOptions): DateTime;
+  static local(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    opts?: DateTimeLocalOptions
+  ): DateTime;
+  static local(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    opts?: DateTimeLocalOptions
+  ): DateTime;
+  static local(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    second: number,
+    opts?: DateTimeLocalOptions
+  ): DateTime;
+  static local(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    second: number,
+    millisecond: number,
+    opts?: DateTimeLocalOptions
+  ): DateTime;
+  static local(...argList: Array<number | DateTimeLocalOptions>): DateTime {
+    const [opts, args] = lastOpts(argList),
       [year, month, day, hour, minute, second, millisecond] = args;
     return quickDT({ year, month, day, hour, minute, second, millisecond }, opts);
   }
@@ -670,8 +748,46 @@ export default class DateTime {
    * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765, { locale: "fr" }) //~> 2017-03-12T05:45:10.765Z with a French locale
    * @return {DateTime}
    */
-  static utc() {
-    const [opts, args] = lastOpts(arguments),
+  static utc(opts?: DateTimeUTCOptions): DateTime;
+  static utc(year: number, opts?: DateTimeUTCOptions): DateTime;
+  static utc(year: number, month: number, opts?: DateTimeUTCOptions): DateTime;
+  static utc(year: number, month: number, day: number, opts?: DateTimeUTCOptions): DateTime;
+  static utc(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    opts?: DateTimeUTCOptions
+  ): DateTime;
+  static utc(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    opts?: DateTimeUTCOptions
+  ): DateTime;
+  static utc(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    second: number,
+    opts?: DateTimeUTCOptions
+  ): DateTime;
+  static utc(
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    second: number,
+    millisecond: number,
+    opts?: DateTimeUTCOptions
+  ): DateTime;
+  static utc(...argList: Array<number | DateTimeUTCOptions>): DateTime {
+    const [opts, args] = lastOpts(argList),
       [year, month, day, hour, minute, second, millisecond] = args;
 
     opts.zone = FixedOffsetZone.utcInstance;
@@ -685,7 +801,7 @@ export default class DateTime {
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @return {DateTime}
    */
-  static fromJSDate(date, options = {}) {
+  static fromJSDate(date: Date, options: DateTimeWithZoneOptions = {}): DateTime {
     const ts = isDate(date) ? date.valueOf() : NaN;
     if (Number.isNaN(ts)) {
       return DateTime.invalid("invalid input");
@@ -714,7 +830,7 @@ export default class DateTime {
    * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromMillis(milliseconds, options = {}) {
+  static fromMillis(milliseconds: number, options: DateTimeWithZoneOptions = {}): DateTime {
     if (!isNumber(milliseconds)) {
       throw new InvalidArgumentError(
         `fromMillis requires a numerical input, but received a ${typeof milliseconds} with value ${milliseconds}`
@@ -742,7 +858,7 @@ export default class DateTime {
    * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromSeconds(seconds, options = {}) {
+  static fromSeconds(seconds: number, options: DateTimeWithZoneOptions = {}): DateTime {
     if (!isNumber(seconds)) {
       throw new InvalidArgumentError("fromSeconds requires a numerical input");
     } else {
@@ -787,7 +903,14 @@ export default class DateTime {
    * @example DateTime.fromObject({ localWeekYear: 2022, localWeekNumber: 1, localWeekday: 1 }, { locale: "en-US" }).toISODate() //=> '2021-12-26'
    * @return {DateTime}
    */
-  static fromObject(obj, opts = {}) {
+  static fromObject(
+    obj?: DateTimeObjectInput | null | undefined,
+    opts?: DateTimeWithZoneOptions
+  ): DateTime;
+  static fromObject(
+    obj?: DateTimeObjectInput | null | undefined,
+    opts: InternalDateTimeFromObjectOptions = {}
+  ): DateTime {
     obj = obj || {};
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
     if (!zoneToUse.isValid) {
@@ -914,7 +1037,7 @@ export default class DateTime {
    * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */
-  static fromISO(text, opts = {}) {
+  static fromISO(text: string, opts: DateTimeWithZoneOptions = {}): DateTime {
     const [vals, parsedZone] = parseISODate(text);
     return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text);
   }
@@ -934,7 +1057,7 @@ export default class DateTime {
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
    * @return {DateTime}
    */
-  static fromRFC2822(text, opts = {}) {
+  static fromRFC2822(text: string, opts: DateTimeWithZoneOptions = {}): DateTime {
     const [vals, parsedZone] = parseRFC2822Date(text);
     return parseDataToDateTime(vals, parsedZone, opts, "RFC 2822", text);
   }
@@ -955,7 +1078,7 @@ export default class DateTime {
    * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
    * @return {DateTime}
    */
-  static fromHTTP(text, opts = {}) {
+  static fromHTTP(text: string, opts: DateTimeWithZoneOptions = {}): DateTime {
     const [vals, parsedZone] = parseHTTPDate(text);
     return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
   }
@@ -974,7 +1097,7 @@ export default class DateTime {
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromFormat(text, fmt, opts = {}) {
+  static fromFormat(text: string, fmt: string, opts: DateTimeWithZoneOptions = {}): DateTime {
     if (isUndefined(text) || isUndefined(fmt)) {
       throw new InvalidArgumentError("fromFormat requires an input string and a format");
     }
@@ -991,13 +1114,6 @@ export default class DateTime {
     } else {
       return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text, specificOffset);
     }
-  }
-
-  /**
-   * @deprecated use fromFormat instead
-   */
-  static fromString(text, fmt, opts = {}) {
-    return DateTime.fromFormat(text, fmt, opts);
   }
 
   /**
@@ -1021,7 +1137,7 @@ export default class DateTime {
    * @example DateTime.fromSQL('09:12:34.342')
    * @return {DateTime}
    */
-  static fromSQL(text, opts = {}) {
+  static fromSQL(text: string, opts: DateTimeWithZoneOptions = {}): DateTime {
     const [vals, parsedZone] = parseSQL(text);
     return parseDataToDateTime(vals, parsedZone, opts, "SQL", text);
   }
@@ -1031,8 +1147,9 @@ export default class DateTime {
    * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent.
    * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
    * @return {DateTime}
+   * @deprecated
    */
-  static invalid(reason, explanation = null) {
+  static invalid(reason: string | Invalid, explanation: string | null = null): DateTime {
     if (!reason) {
       throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
     }
@@ -1051,8 +1168,9 @@ export default class DateTime {
    * @param {object} o
    * @return {boolean}
    */
-  static isDateTime(o) {
-    return (o && o.isLuxonDateTime) || false;
+  static isDateTime(o: unknown): o is DateTime {
+    /* TODO: Use same mechanism as Zone */
+    return (o && (o as any).isLuxonDateTime) || false;
   }
 
   /**
@@ -1061,24 +1179,29 @@ export default class DateTime {
    * @param localeOpts
    * @returns {string}
    */
-  static parseFormatForOpts(formatOpts, localeOpts = {}) {
+  static parseFormatForOpts(
+    formatOpts: Intl.DateTimeFormatOptions,
+    localeOpts: LocaleOptions = {}
+  ): string {
     const tokenList = formatOptsToTokens(formatOpts, Locale.fromObject(localeOpts));
-    return !tokenList ? null : tokenList.map((t) => (t ? t.val : null)).join("");
+    /* TODO: Don't return null */
+    return !tokenList ? null! : tokenList.map((t) => (t ? t.val : null)).join("");
   }
 
   /**
    * Produce the the fully expanded format token for the locale
    * Does NOT quote characters, so quoted tokens will not round trip correctly
+   * // TODO: Validate if the above can be fixed or if it needs to be fixed
    * @param fmt
    * @param localeOpts
    * @returns {string}
    */
-  static expandFormat(fmt, localeOpts = {}) {
+  static expandFormat(fmt: string, localeOpts: LocaleOptions = {}): string {
     const expanded = expandMacroTokens(Formatter.parseFormat(fmt), Locale.fromObject(localeOpts));
     return expanded.map((t) => t.val).join("");
   }
 
-  static resetCache() {
+  static resetCache(): void {
     zoneOffsetTs = undefined;
     zoneOffsetGuessCache.clear();
   }
@@ -1091,8 +1214,9 @@ export default class DateTime {
    * @example DateTime.local(2017, 7, 4).get('month'); //=> 7
    * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
    * @return {number}
+   * @deprecated
    */
-  get(unit) {
+  get<T extends keyof DateTime>(unit: T): DateTime[T] {
     return this[unit];
   }
 
@@ -1101,24 +1225,27 @@ export default class DateTime {
    * * The DateTime was created from invalid calendar information, such as the 13th month or February 30
    * * The DateTime was created by an operation on another invalid date
    * @type {boolean}
+   * @deprecated
    */
-  get isValid() {
+  get isValid(): boolean {
     return this.invalid === null;
   }
 
   /**
    * Returns an error code if this DateTime is invalid, or null if the DateTime is valid
    * @type {string}
+   * @deprecated
    */
-  get invalidReason() {
+  get invalidReason(): string | null {
     return this.invalid ? this.invalid.reason : null;
   }
 
   /**
    * Returns an explanation of why this DateTime became invalid, or null if the DateTime is valid
    * @type {string}
+   * @deprecated
    */
-  get invalidExplanation() {
+  get invalidExplanation(): string | null {
     return this.invalid ? this.invalid.explanation : null;
   }
 
@@ -1127,8 +1254,9 @@ export default class DateTime {
    *
    * @type {string}
    */
-  get locale() {
-    return this.isValid ? this.loc.locale : null;
+  get locale(): string {
+    // TODO: Do not return null when Invalid is removed
+    return this.isValid ? this.loc.locale : null!;
   }
 
   /**
@@ -1136,7 +1264,9 @@ export default class DateTime {
    *
    * @type {string}
    */
-  get numberingSystem() {
+  get numberingSystem(): string | null {
+    // TODO: Do not return null when Invalid is removed
+    // TODO: Check if we should return the resolved numberingSystem instead
     return this.isValid ? this.loc.numberingSystem : null;
   }
 
@@ -1145,7 +1275,9 @@ export default class DateTime {
    *
    * @type {string}
    */
-  get outputCalendar() {
+  get outputCalendar(): string | null {
+    // TODO: Do not return null when Invalid is removed
+    // TODO: Check if we should return the resolved outputCalendar instead
     return this.isValid ? this.loc.outputCalendar : null;
   }
 
@@ -1153,7 +1285,7 @@ export default class DateTime {
    * Get the time zone associated with this DateTime.
    * @type {Zone}
    */
-  get zone() {
+  get zone(): Zone {
     return this._zone;
   }
 
@@ -1161,8 +1293,9 @@ export default class DateTime {
    * Get the name of the time zone.
    * @type {string}
    */
-  get zoneName() {
-    return this.isValid ? this.zone.name : null;
+  get zoneName(): string {
+    // TODO: Do not return null when Invalid is removed
+    return this.isValid ? this.zone.name : null!;
   }
 
   /**
@@ -1170,7 +1303,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).year //=> 2017
    * @type {number}
    */
-  get year() {
+  get year(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? this.c.year : NaN;
   }
 
@@ -1179,7 +1313,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).quarter //=> 2
    * @type {number}
    */
-  get quarter() {
+  get quarter(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
   }
 
@@ -1188,7 +1323,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).month //=> 5
    * @type {number}
    */
-  get month() {
+  get month(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? this.c.month : NaN;
   }
 
@@ -1197,7 +1333,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).day //=> 25
    * @type {number}
    */
-  get day() {
+  get day(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? this.c.day : NaN;
   }
 
@@ -1206,7 +1343,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25, 9).hour //=> 9
    * @type {number}
    */
-  get hour() {
+  get hour(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? this.c.hour : NaN;
   }
 
@@ -1215,7 +1353,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25, 9, 30).minute //=> 30
    * @type {number}
    */
-  get minute() {
+  get minute(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? this.c.minute : NaN;
   }
 
@@ -1224,7 +1363,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25, 9, 30, 52).second //=> 52
    * @type {number}
    */
-  get second() {
+  get second(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? this.c.second : NaN;
   }
 
@@ -1233,7 +1373,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond //=> 654
    * @type {number}
    */
-  get millisecond() {
+  get millisecond(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? this.c.millisecond : NaN;
   }
 
@@ -1243,7 +1384,8 @@ export default class DateTime {
    * @example DateTime.local(2014, 12, 31).weekYear //=> 2015
    * @type {number}
    */
-  get weekYear() {
+  get weekYear(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? possiblyCachedWeekData(this).weekYear : NaN;
   }
 
@@ -1253,7 +1395,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).weekNumber //=> 21
    * @type {number}
    */
-  get weekNumber() {
+  get weekNumber(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? possiblyCachedWeekData(this).weekNumber : NaN;
   }
 
@@ -1264,7 +1407,8 @@ export default class DateTime {
    * @example DateTime.local(2014, 11, 31).weekday //=> 4
    * @type {number}
    */
-  get weekday() {
+  get weekday(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? possiblyCachedWeekData(this).weekday : NaN;
   }
 
@@ -1272,7 +1416,8 @@ export default class DateTime {
    * Returns true if this date is on a weekend according to the locale, false otherwise
    * @returns {boolean}
    */
-  get isWeekend() {
+  get isWeekend(): boolean {
+    // TODO: Remove invalid check
     return this.isValid && this.loc.getWeekendDays().includes(this.weekday);
   }
 
@@ -1282,7 +1427,8 @@ export default class DateTime {
    * If the locale assigns Sunday as the first day of the week, then a date which is a Sunday will return 1,
    * @returns {number}
    */
-  get localWeekday() {
+  get localWeekday(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? possiblyCachedLocalWeekData(this).weekday : NaN;
   }
 
@@ -1292,7 +1438,8 @@ export default class DateTime {
    * is required for a week to count as the first week of a year.
    * @returns {number}
    */
-  get localWeekNumber() {
+  get localWeekNumber(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? possiblyCachedLocalWeekData(this).weekNumber : NaN;
   }
 
@@ -1301,7 +1448,8 @@ export default class DateTime {
    * differently, see localWeekNumber.
    * @returns {number}
    */
-  get localWeekYear() {
+  get localWeekYear(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? possiblyCachedLocalWeekData(this).weekYear : NaN;
   }
 
@@ -1310,7 +1458,8 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).ordinal //=> 145
    * @type {number|DateTime}
    */
-  get ordinal() {
+  get ordinal(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? gregorianToOrdinal(this.c).ordinal : NaN;
   }
 
@@ -1320,8 +1469,9 @@ export default class DateTime {
    * @example DateTime.local(2017, 10, 30).monthShort //=> Oct
    * @type {string}
    */
-  get monthShort() {
-    return this.isValid ? Info.months("short", { locObj: this.loc })[this.month - 1] : null;
+  get monthShort(): string {
+    // TODO: Do not return null when Invalid is removed
+    return this.isValid ? Info.months("short", { locObj: this.loc })[this.month - 1] : null!;
   }
 
   /**
@@ -1330,8 +1480,9 @@ export default class DateTime {
    * @example DateTime.local(2017, 10, 30).monthLong //=> October
    * @type {string}
    */
-  get monthLong() {
-    return this.isValid ? Info.months("long", { locObj: this.loc })[this.month - 1] : null;
+  get monthLong(): string {
+    // TODO: Do not return null when Invalid is removed
+    return this.isValid ? Info.months("long", { locObj: this.loc })[this.month - 1] : null!;
   }
 
   /**
@@ -1340,8 +1491,9 @@ export default class DateTime {
    * @example DateTime.local(2017, 10, 30).weekdayShort //=> Mon
    * @type {string}
    */
-  get weekdayShort() {
-    return this.isValid ? Info.weekdays("short", { locObj: this.loc })[this.weekday - 1] : null;
+  get weekdayShort(): string {
+    // TODO: Do not return null when Invalid is removed
+    return this.isValid ? Info.weekdays("short", { locObj: this.loc })[this.weekday - 1] : null!;
   }
 
   /**
@@ -1350,8 +1502,9 @@ export default class DateTime {
    * @example DateTime.local(2017, 10, 30).weekdayLong //=> Monday
    * @type {string}
    */
-  get weekdayLong() {
-    return this.isValid ? Info.weekdays("long", { locObj: this.loc })[this.weekday - 1] : null;
+  get weekdayLong(): string {
+    // TODO: Do not return null when Invalid is removed
+    return this.isValid ? Info.weekdays("long", { locObj: this.loc })[this.weekday - 1] : null!;
   }
 
   /**
@@ -1360,7 +1513,8 @@ export default class DateTime {
    * @example DateTime.utc().offset //=> 0
    * @type {number}
    */
-  get offset() {
+  get offset(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? +this.o : NaN;
   }
 
@@ -1369,14 +1523,15 @@ export default class DateTime {
    * Defaults to the system's locale if no locale has been specified
    * @type {string}
    */
-  get offsetNameShort() {
+  get offsetNameShort(): string {
+    // TODO: Do not return null when Invalid is removed
     if (this.isValid) {
       return this.zone.offsetName(this.ts, {
         format: "short",
         locale: this.locale,
       });
     } else {
-      return null;
+      return null!;
     }
   }
 
@@ -1385,14 +1540,15 @@ export default class DateTime {
    * Defaults to the system's locale if no locale has been specified
    * @type {string}
    */
-  get offsetNameLong() {
+  get offsetNameLong(): string {
+    // TODO: Do not return null when Invalid is removed
     if (this.isValid) {
       return this.zone.offsetName(this.ts, {
         format: "long",
         locale: this.locale,
       });
     } else {
-      return null;
+      return null!;
     }
   }
 
@@ -1400,15 +1556,16 @@ export default class DateTime {
    * Get whether this zone's offset ever changes, as in a DST.
    * @type {boolean}
    */
-  get isOffsetFixed() {
-    return this.isValid ? this.zone.isUniversal : null;
+  get isOffsetFixed(): boolean {
+    // TODO: Do not return null when Invalid is removed
+    return this.isValid ? this.zone.isUniversal : null!;
   }
 
   /**
    * Get whether the DateTime is in a DST.
    * @type {boolean}
    */
-  get isInDST() {
+  get isInDST(): boolean {
     if (this.isOffsetFixed) {
       return false;
     } else {
@@ -1426,7 +1583,7 @@ export default class DateTime {
    * This method will return both possible DateTimes if this DateTime's local time is ambiguous.
    * @returns {DateTime[]}
    */
-  getPossibleOffsets() {
+  getPossibleOffsets(): DateTime[] {
     if (!this.isValid || this.isOffsetFixed) {
       return [this];
     }
@@ -1462,7 +1619,7 @@ export default class DateTime {
    * @example DateTime.local(2013).isInLeapYear //=> false
    * @type {boolean}
    */
-  get isInLeapYear() {
+  get isInLeapYear(): boolean {
     return isLeapYear(this.year);
   }
 
@@ -1472,7 +1629,7 @@ export default class DateTime {
    * @example DateTime.local(2016, 3).daysInMonth //=> 31
    * @type {number}
    */
-  get daysInMonth() {
+  get daysInMonth(): number {
     return daysInMonth(this.year, this.month);
   }
 
@@ -1482,7 +1639,8 @@ export default class DateTime {
    * @example DateTime.local(2013).daysInYear //=> 365
    * @type {number}
    */
-  get daysInYear() {
+  get daysInYear(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? daysInYear(this.year) : NaN;
   }
 
@@ -1493,7 +1651,8 @@ export default class DateTime {
    * @example DateTime.local(2013).weeksInWeekYear //=> 52
    * @type {number}
    */
-  get weeksInWeekYear() {
+  get weeksInWeekYear(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid ? weeksInWeekYear(this.weekYear) : NaN;
   }
 
@@ -1503,7 +1662,8 @@ export default class DateTime {
    * @example DateTime.local(2020, 6, {locale: 'de-DE'}).weeksInLocalWeekYear //=> 53
    * @type {number}
    */
-  get weeksInLocalWeekYear() {
+  get weeksInLocalWeekYear(): number {
+    // TODO: Do not return NaN when Invalid is removed
     return this.isValid
       ? weeksInWeekYear(
           this.localWeekYear,
@@ -1519,7 +1679,7 @@ export default class DateTime {
    * @param {Object} opts - the same options as toLocaleString
    * @return {Object}
    */
-  resolvedLocaleOptions(opts = {}) {
+  resolvedLocaleOptions(opts: Intl.DateTimeFormatOptions = {}): LocaleOptions {
     const { locale, numberingSystem, calendar } = Formatter.create(
       this.loc.clone(opts),
       opts
@@ -1537,7 +1697,7 @@ export default class DateTime {
    * @param {Object} [opts={}] - options to pass to `setZone()`
    * @return {DateTime}
    */
-  toUTC(offset = 0, opts = {}) {
+  toUTC(offset: number = 0, opts: SetZoneOptions = {}): DateTime {
     return this.setZone(FixedOffsetZone.instance(offset), opts);
   }
 
@@ -1547,7 +1707,8 @@ export default class DateTime {
    * Equivalent to `setZone('local')`
    * @return {DateTime}
    */
-  toLocal() {
+  toLocal(): DateTime {
+    // TODO: Add options here
     return this.setZone(Settings.defaultZone);
   }
 
@@ -1560,7 +1721,7 @@ export default class DateTime {
    * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
    * @return {DateTime}
    */
-  setZone(zone, { keepLocalTime = false, keepCalendarTime = false } = {}) {
+  setZone(zone: ZoneInput, { keepLocalTime = false }: SetZoneOptions = {}): DateTime {
     zone = normalizeZone(zone, Settings.defaultZone);
     if (zone.equals(this.zone)) {
       return this;
@@ -1568,7 +1729,7 @@ export default class DateTime {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
       let newTS = this.ts;
-      if (keepLocalTime || keepCalendarTime) {
+      if (keepLocalTime) {
         const offsetGuess = zone.offset(this.ts);
         const asObj = this.toObject();
         [newTS] = objToTS(asObj, offsetGuess, zone);
@@ -1583,7 +1744,12 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
    * @return {DateTime}
    */
-  reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
+  reconfigure({
+    locale,
+    numberingSystem,
+    outputCalendar,
+  }: Omit<LocaleOptions, "weekSettings"> = {}): DateTime {
+    // TODO: Accept all options
     const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
     return clone(this, { loc });
   }
@@ -1594,7 +1760,7 @@ export default class DateTime {
    * @example DateTime.local(2017, 5, 25).setLocale('en-GB')
    * @return {DateTime}
    */
-  setLocale(locale) {
+  setLocale(locale: string): DateTime {
     return this.reconfigure({ locale });
   }
 
@@ -1611,7 +1777,7 @@ export default class DateTime {
    * @example dt.set({ year: 2005, ordinal: 234 })
    * @return {DateTime}
    */
-  set(values) {
+  set(values: DateTimeObjectInput): DateTime {
     if (!this.isValid) return this;
 
     const normalized = normalizeObject(values, normalizeUnitWithLocalWeeks);
@@ -1673,7 +1839,7 @@ export default class DateTime {
    * @example DateTime.now().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 3 hr, 13 min
    * @return {DateTime}
    */
-  plus(duration) {
+  plus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration);
     return clone(this, adjustTime(this, dur));
@@ -1685,7 +1851,7 @@ export default class DateTime {
    * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
    @return {DateTime}
    */
-  minus(duration) {
+  minus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration).negate();
     return clone(this, adjustTime(this, dur));
@@ -1703,10 +1869,13 @@ export default class DateTime {
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
    * @return {DateTime}
    */
-  startOf(unit, { useLocaleWeeks = false } = {}) {
+  startOf(
+    unit: any /* TODO: Waiting for Duration TS */,
+    { useLocaleWeeks = false } = {}
+  ): DateTime {
     if (!this.isValid) return this;
 
-    const o = {},
+    const o: DateTimeObjectInput = {},
       normalizedUnit = Duration.normalizeUnit(unit);
     switch (normalizedUnit) {
       case "years":
@@ -1767,7 +1936,7 @@ export default class DateTime {
    * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
    * @return {DateTime}
    */
-  endOf(unit, opts) {
+  endOf(unit: any /* TODO: Waiting for Duration TS */, opts: any): DateTime {
     return this.isValid
       ? this.plus({ [unit]: 1 })
           .startOf(unit, opts)
@@ -1789,9 +1958,10 @@ export default class DateTime {
    * @example DateTime.now().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
    * @return {string}
    */
-  toFormat(fmt, opts = {}) {
+  toFormat(fmt: string, opts: LocaleOptions = {}): string {
     return this.isValid
-      ? Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
+      ? // TODO: Validate / check locale options
+        Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 
@@ -1814,9 +1984,13 @@ export default class DateTime {
    * @example DateTime.now().toLocaleString({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }); //=> '11:32'
    * @return {string}
    */
-  toLocaleString(formatOpts = Formats.DATE_SHORT, opts = {}) {
+  toLocaleString(
+    formatOpts: Intl.DateTimeFormatOptions = Formats.DATE_SHORT,
+    opts: LocaleOptions = {}
+  ): string {
     return this.isValid
-      ? Formatter.create(this.loc.clone(opts), formatOpts).formatDateTime(this)
+      ? // TODO: Validate / check locale options
+        Formatter.create(this.loc.clone(opts), formatOpts).formatDateTime(this)
       : INVALID;
   }
 
@@ -1833,9 +2007,10 @@ export default class DateTime {
    *                                   //=>   { type: 'year', value: '1982' }
    *                                   //=> ]
    */
-  toLocaleParts(opts = {}) {
+  toLocaleParts(opts: LocaleOptions & Intl.DateTimeFormatOptions = {}): Intl.DateTimeFormatPart[] {
     return this.isValid
-      ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this)
+      ? // TODO: Make locale options separate like in toLocaleString
+        Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this)
       : [];
   }
 
@@ -1863,9 +2038,10 @@ export default class DateTime {
     includeOffset = true,
     extendedZone = false,
     precision = "milliseconds",
-  } = {}) {
+  } = {}): string {
     if (!this.isValid) {
-      return null;
+      // TODO: Do not return null when Invalid is removed
+      return null!;
     }
 
     precision = normalizeUnit(precision);
@@ -1895,9 +2071,10 @@ export default class DateTime {
    * @example DateTime.utc(1982, 5, 25).toISODate({ precision: 'month' }) //=> '1982-05'
    * @return {string|null}
    */
-  toISODate({ format = "extended", precision = "day" } = {}) {
+  toISODate({ format = "extended", precision = "day" } = {}): string {
     if (!this.isValid) {
-      return null;
+      // TODO: Do not return null when Invalid is removed
+      return null!;
     }
     return toISODate(this, format === "extended", normalizeUnit(precision));
   }
@@ -1907,7 +2084,7 @@ export default class DateTime {
    * @example DateTime.utc(1982, 5, 25).toISOWeekDate() //=> '1982-W21-2'
    * @return {string}
    */
-  toISOWeekDate() {
+  toISOWeekDate(): string {
     return toTechFormat(this, "kkkk-'W'WW-c");
   }
 
@@ -1936,9 +2113,10 @@ export default class DateTime {
     extendedZone = false,
     format = "extended",
     precision = "milliseconds",
-  } = {}) {
+  } = {}): string {
     if (!this.isValid) {
-      return null;
+      // TODO: Do not return null when Invalid is removed
+      return null!;
     }
 
     precision = normalizeUnit(precision);
@@ -1963,7 +2141,7 @@ export default class DateTime {
    * @example DateTime.local(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 -0400'
    * @return {string}
    */
-  toRFC2822() {
+  toRFC2822(): string {
     return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ", false);
   }
 
@@ -1975,7 +2153,7 @@ export default class DateTime {
    * @example DateTime.utc(2014, 7, 13, 19).toHTTP() //=> 'Sun, 13 Jul 2014 19:00:00 GMT'
    * @return {string}
    */
-  toHTTP() {
+  toHTTP(): string {
     return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy HH:mm:ss 'GMT'");
   }
 
@@ -1984,9 +2162,10 @@ export default class DateTime {
    * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
    * @return {string|null}
    */
-  toSQLDate() {
+  toSQLDate(): string {
     if (!this.isValid) {
-      return null;
+      // TODO: Do not return null when Invalid is removed
+      return null!;
     }
     return toISODate(this, true);
   }
@@ -2322,7 +2501,8 @@ export default class DateTime {
    * @param {Object} options - options taken by fromFormat()
    * @return {Object}
    */
-  static fromFormatExplain(text, fmt, options = {}) {
+  static fromFormatExplain(text: string, fmt: string, options: LocaleOptions = {}) {
+    // TODO: Use all locale options
     const { locale = null, numberingSystem = null } = options,
       localeToUse = Locale.fromOpts({
         locale,
@@ -2330,13 +2510,6 @@ export default class DateTime {
         defaultToEN: true,
       });
     return explainFromTokens(localeToUse, text, fmt);
-  }
-
-  /**
-   * @deprecated use fromFormatExplain instead
-   */
-  static fromStringExplain(text, fmt, options = {}) {
-    return DateTime.fromFormatExplain(text, fmt, options);
   }
 
   /**
@@ -2351,7 +2524,8 @@ export default class DateTime {
    * for parser
    * @returns {TokenParser} - opaque object to be used
    */
-  static buildFormatParser(fmt, options = {}) {
+  static buildFormatParser(fmt: string, options: LocaleOptions = {}): TokenParser {
+    // TODO: Handle all locale options
     const { locale = null, numberingSystem = null } = options,
       localeToUse = Locale.fromOpts({
         locale,
@@ -2371,12 +2545,18 @@ export default class DateTime {
    * @param {Object} opts - options taken by fromFormat()
    * @returns {DateTime}
    */
-  static fromFormatParser(text, formatParser, opts = {}) {
+  static fromFormatParser(
+    text: string,
+    formatParser: TokenParser,
+    opts: LocaleOptions = {}
+  ): DateTime {
     if (isUndefined(text) || isUndefined(formatParser)) {
       throw new InvalidArgumentError(
         "fromFormatParser requires an input string and a format parser"
       );
     }
+    // TODO: Use all locale options
+    // TODO: check formatter options
     const { locale = null, numberingSystem = null } = opts,
       localeToUse = Locale.fromOpts({
         locale,
@@ -2413,7 +2593,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 10/14/1983
    * @type {Object}
    */
-  static get DATE_SHORT() {
+  static get DATE_SHORT(): Intl.DateTimeFormatOptions {
     return Formats.DATE_SHORT;
   }
 
@@ -2421,7 +2601,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Oct 14, 1983'
    * @type {Object}
    */
-  static get DATE_MED() {
+  static get DATE_MED(): Intl.DateTimeFormatOptions {
     return Formats.DATE_MED;
   }
 
@@ -2429,7 +2609,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Fri, Oct 14, 1983'
    * @type {Object}
    */
-  static get DATE_MED_WITH_WEEKDAY() {
+  static get DATE_MED_WITH_WEEKDAY(): Intl.DateTimeFormatOptions {
     return Formats.DATE_MED_WITH_WEEKDAY;
   }
 
@@ -2437,7 +2617,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'October 14, 1983'
    * @type {Object}
    */
-  static get DATE_FULL() {
+  static get DATE_FULL(): Intl.DateTimeFormatOptions {
     return Formats.DATE_FULL;
   }
 
@@ -2445,7 +2625,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Tuesday, October 14, 1983'
    * @type {Object}
    */
-  static get DATE_HUGE() {
+  static get DATE_HUGE(): Intl.DateTimeFormatOptions {
     return Formats.DATE_HUGE;
   }
 
@@ -2453,7 +2633,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get TIME_SIMPLE() {
+  static get TIME_SIMPLE(): Intl.DateTimeFormatOptions {
     return Formats.TIME_SIMPLE;
   }
 
@@ -2461,7 +2641,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get TIME_WITH_SECONDS() {
+  static get TIME_WITH_SECONDS(): Intl.DateTimeFormatOptions {
     return Formats.TIME_WITH_SECONDS;
   }
 
@@ -2469,7 +2649,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get TIME_WITH_SHORT_OFFSET() {
+  static get TIME_WITH_SHORT_OFFSET(): Intl.DateTimeFormatOptions {
     return Formats.TIME_WITH_SHORT_OFFSET;
   }
 
@@ -2477,7 +2657,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get TIME_WITH_LONG_OFFSET() {
+  static get TIME_WITH_LONG_OFFSET(): Intl.DateTimeFormatOptions {
     return Formats.TIME_WITH_LONG_OFFSET;
   }
 
@@ -2485,7 +2665,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30', always 24-hour.
    * @type {Object}
    */
-  static get TIME_24_SIMPLE() {
+  static get TIME_24_SIMPLE(): Intl.DateTimeFormatOptions {
     return Formats.TIME_24_SIMPLE;
   }
 
@@ -2493,7 +2673,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30:23', always 24-hour.
    * @type {Object}
    */
-  static get TIME_24_WITH_SECONDS() {
+  static get TIME_24_WITH_SECONDS(): Intl.DateTimeFormatOptions {
     return Formats.TIME_24_WITH_SECONDS;
   }
 
@@ -2501,7 +2681,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30:23 EDT', always 24-hour.
    * @type {Object}
    */
-  static get TIME_24_WITH_SHORT_OFFSET() {
+  static get TIME_24_WITH_SHORT_OFFSET(): Intl.DateTimeFormatOptions {
     return Formats.TIME_24_WITH_SHORT_OFFSET;
   }
 
@@ -2509,7 +2689,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
    * @type {Object}
    */
-  static get TIME_24_WITH_LONG_OFFSET() {
+  static get TIME_24_WITH_LONG_OFFSET(): Intl.DateTimeFormatOptions {
     return Formats.TIME_24_WITH_LONG_OFFSET;
   }
 
@@ -2517,7 +2697,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_SHORT() {
+  static get DATETIME_SHORT(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_SHORT;
   }
 
@@ -2525,7 +2705,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_SHORT_WITH_SECONDS() {
+  static get DATETIME_SHORT_WITH_SECONDS(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_SHORT_WITH_SECONDS;
   }
 
@@ -2533,7 +2713,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_MED() {
+  static get DATETIME_MED(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_MED;
   }
 
@@ -2541,7 +2721,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_MED_WITH_SECONDS() {
+  static get DATETIME_MED_WITH_SECONDS(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_MED_WITH_SECONDS;
   }
 
@@ -2549,7 +2729,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_MED_WITH_WEEKDAY() {
+  static get DATETIME_MED_WITH_WEEKDAY(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_MED_WITH_WEEKDAY;
   }
 
@@ -2557,7 +2737,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_FULL() {
+  static get DATETIME_FULL(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_FULL;
   }
 
@@ -2565,7 +2745,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'October 14, 1983, 9:30:33 AM EDT'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_FULL_WITH_SECONDS() {
+  static get DATETIME_FULL_WITH_SECONDS(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_FULL_WITH_SECONDS;
   }
 
@@ -2573,7 +2753,7 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_HUGE() {
+  static get DATETIME_HUGE(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_HUGE;
   }
 
@@ -2581,24 +2761,26 @@ export default class DateTime {
    * {@link DateTime#toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
    * @type {Object}
    */
-  static get DATETIME_HUGE_WITH_SECONDS() {
+  static get DATETIME_HUGE_WITH_SECONDS(): Intl.DateTimeFormatOptions {
     return Formats.DATETIME_HUGE_WITH_SECONDS;
   }
 }
 
+export type DateTimeLike = DateTime | Date | DateTimeObjectInput;
+
 /**
  * @private
  */
-export function friendlyDateTime(dateTimeish) {
-  if (DateTime.isDateTime(dateTimeish)) {
-    return dateTimeish;
-  } else if (dateTimeish && dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
-    return DateTime.fromJSDate(dateTimeish);
-  } else if (dateTimeish && typeof dateTimeish === "object") {
-    return DateTime.fromObject(dateTimeish);
+export function friendlyDateTime(dateTimeLike: DateTimeLike): DateTime {
+  if (DateTime.isDateTime(dateTimeLike)) {
+    return dateTimeLike;
+  } else if (isDate(dateTimeLike)) {
+    return DateTime.fromJSDate(dateTimeLike);
+  } else if (dateTimeLike && typeof dateTimeLike === "object") {
+    return DateTime.fromObject(dateTimeLike);
   } else {
     throw new InvalidArgumentError(
-      `Unknown datetime argument: ${dateTimeish}, of type ${typeof dateTimeish}`
+      `Unknown datetime argument: ${dateTimeLike}, of type ${typeof dateTimeLike}`
     );
   }
 }

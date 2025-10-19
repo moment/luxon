@@ -1,5 +1,5 @@
 import Benchmark from "benchmark";
-import DateTime from "../src/datetime.js";
+import DateTime from "../src/datetime.ts";
 import Settings from "../src/settings.js";
 
 function runDateTimeSuite() {

@@ -1,7 +1,7 @@
 import SystemZone from "./zones/systemZone.ts";
 import IANAZone from "./zones/IANAZone.ts";
 import Locale from "./impl/locale.ts";
-import DateTime from "./datetime.js";
+import DateTime from "./datetime.ts";
 
 import { normalizeZone } from "./impl/zoneUtil.ts";
 import { validateWeekSettings } from "./impl/util.ts";

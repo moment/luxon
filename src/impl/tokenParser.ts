@@ -1,5 +1,5 @@
 import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.ts";
-import Formatter from "./formatter.js";
+import Formatter, { type FormatToken } from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";
 import DateTime from "../datetime.js";
@@ -9,7 +9,22 @@ import type Locale from "./locale.ts";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
-function intUnit(regex, post = (i) => i) {
+interface FormatTokenParser<T> {
+  regex: RegExp;
+  deser: (strings: string[]) => T;
+  groups?: number;
+  literal?: boolean;
+  token?: FormatToken;
+  invalidReason?: never;
+}
+
+interface FormatTokenParserInvalidMarker {
+  // TODO: Remove Invalid
+  invalidReason: string;
+  token?: FormatToken;
+}
+
+function intUnit(regex: RegExp, post = (i: number): number => i): FormatTokenParser<number> {
   return { regex, deser: ([s]) => post(parseDigits(s)) };
 }
 
@@ -30,12 +45,7 @@ function stripInsensitivities(s: string): string {
     .toLowerCase();
 }
 
-interface RegexParser<T> {
-  regex: RegExp;
-  deser: (strings: string[]) => T;
-}
-
-function oneOf(strings: string[] | null, startIndex: number): RegexParser<number> | null {
+function oneOf(strings: string[] | null, startIndex: number): FormatTokenParser<number> | null {
   if (strings === null) {
     return null;
   } else {
@@ -47,11 +57,11 @@ function oneOf(strings: string[] | null, startIndex: number): RegexParser<number
   }
 }
 
-function offset(regex: RegExp, groups) {
+function offset(regex: RegExp, groups: number): FormatTokenParser<number> {
   return { regex, deser: ([, h, m]) => signedOffset(h, m), groups };
 }
 
-function simple(regex: RegExp): RegexParser<string> {
+function simple(regex: RegExp): FormatTokenParser<string> {
   return { regex, deser: ([s]) => s };
 }
 
@@ -63,7 +73,10 @@ function escapeToken(value: string): string {
  * @param token
  * @param {Locale} loc
  */
-function unitForToken(token: string, loc: Locale): string {
+function unitForToken(
+  token: FormatToken,
+  loc: Locale
+): FormatTokenParser<string> | FormatTokenParser<number> | FormatTokenParserInvalidMarker {
   const one = digitRegex(loc),
     two = digitRegex(loc, "{2}"),
     three = digitRegex(loc, "{3}"),
@@ -75,8 +88,12 @@ function unitForToken(token: string, loc: Locale): string {
     oneToNine = digitRegex(loc, "{1,9}"),
     twoToFour = digitRegex(loc, "{2,4}"),
     fourToSix = digitRegex(loc, "{4,6}"),
-    literal = (t) => ({ regex: RegExp(escapeToken(t.val)), deser: ([s]) => s, literal: true }),
-    unitate = (t) => {
+    literal = (t: FormatToken): FormatTokenParser<string> => ({
+      regex: RegExp(escapeToken(t.val)),
+      deser: ([s]) => s,
+      literal: true,
+    }),
+    unitate = (t: FormatToken): FormatTokenParser<number> | FormatTokenParser<string> | null => {
       if (token.literal) {
         return literal(t);
       }
@@ -199,7 +216,10 @@ function unitForToken(token: string, loc: Locale): string {
       }
     };
 
-  const unit = unitate(token) || {
+  const unit:
+    | FormatTokenParser<string>
+    | FormatTokenParser<number>
+    | FormatTokenParserInvalidMarker = unitate(token) || {
     invalidReason: MISSING_FTP,
   };
 
@@ -251,7 +271,11 @@ const partTypeStyleToTokenVal = {
   },
 };
 
-function tokenForPart(part, formatOpts, resolvedOpts) {
+function tokenForPart(
+  part: Intl.DateTimeFormatPart,
+  formatOpts: Intl.DateTimeFormatOptions,
+  resolvedOpts: Intl.ResolvedDateTimeFormatOptions
+): FormatToken | undefined {
   const { type, value } = part;
 
   if (type === "literal") {
@@ -267,7 +291,7 @@ function tokenForPart(part, formatOpts, resolvedOpts) {
   // The user might have explicitly specified hour12 or hourCycle
   // if so, respect their decision
   // if not, refer back to the resolvedOpts, which are based on the locale
-  let actualType = type;
+  let actualType: Intl.DateTimeFormatPartTypes | "hour12" | "hour24" = type;
   if (type === "hour") {
     if (formatOpts.hour12 != null) {
       actualType = formatOpts.hour12 ? "hour12" : "hour24";
@@ -405,9 +429,9 @@ function dateTimeFromMatches(matches) {
   return [vals, zone, specificOffset];
 }
 
-let dummyDateTimeCache = null;
+let dummyDateTimeCache: DateTime | null = null;
 
-function getDummyDateTime() {
+function getDummyDateTime(): DateTime {
   if (!dummyDateTimeCache) {
     dummyDateTimeCache = DateTime.fromMillis(1555555555555);
   }
@@ -415,7 +439,7 @@ function getDummyDateTime() {
   return dummyDateTimeCache;
 }
 
-function maybeExpandMacroToken(token, locale) {
+function maybeExpandMacroToken(token: FormatToken, locale: Locale): FormatToken | FormatToken[] {
   if (token.literal) {
     return token;
   }
@@ -427,27 +451,42 @@ function maybeExpandMacroToken(token, locale) {
     return token;
   }
 
-  return tokens;
+  return tokens as FormatToken[];
 }
 
-export function expandMacroTokens(tokens, locale) {
-  return Array.prototype.concat(...tokens.map((t) => maybeExpandMacroToken(t, locale)));
+export function expandMacroTokens(tokens: FormatToken[], locale: Locale): FormatToken[] {
+  return tokens.flatMap((t) => maybeExpandMacroToken(t, locale));
+}
+
+export interface ParseExplanation {
+  input: string;
 }
 
 /**
  * @private
  */
 
+// TODO: create exportable opaque type for "buildFormatParser"
 export class TokenParser {
-  private readonly locale: Locale;
-  private readonly format: string;
+  // TODO: make these private?
+  readonly locale: Locale;
+  readonly format: string;
+
+  private readonly regex?: RegExp;
+  private readonly tokens: FormatToken[];
+  private readonly units: Array<
+    FormatTokenParser<string> | FormatTokenParser<number> | FormatTokenParserInvalidMarker
+  >;
+  private readonly disqualifyingUnit: FormatTokenParserInvalidMarker | undefined;
 
   constructor(locale: Locale, format: string) {
     this.locale = locale;
     this.format = format;
     this.tokens = expandMacroTokens(Formatter.parseFormat(format), locale);
     this.units = this.tokens.map((t) => unitForToken(t, locale));
-    this.disqualifyingUnit = this.units.find((t) => t.invalidReason);
+    this.disqualifyingUnit = this.units.find(
+      (t): t is FormatTokenParserInvalidMarker => !!t.invalidReason
+    );
 
     if (!this.disqualifyingUnit) {
       const [regexString, handlers] = buildRegex(this.units);
@@ -456,7 +495,7 @@ export class TokenParser {
     }
   }
 
-  explainFromTokens(input) {
+  explainFromTokens(input: string) {
     if (!this.isValid) {
       return { input, tokens: this.tokens, invalidReason: this.invalidReason };
     } else {
@@ -491,7 +530,7 @@ export class TokenParser {
   }
 }
 
-export function explainFromTokens(locale, input, format) {
+export function explainFromTokens(locale: Locale, input: string, format: string) {
   const parser = new TokenParser(locale, format);
   return parser.explainFromTokens(input);
 }
@@ -501,7 +540,10 @@ export function parseFromTokens(locale, input, format) {
   return [result, zone, specificOffset, invalidReason];
 }
 
-export function formatOptsToTokens(formatOpts, locale) {
+export function formatOptsToTokens(
+  formatOpts: Intl.DateTimeFormatOptions | null | undefined,
+  locale: Locale
+): Array<FormatToken | undefined> | null {
   if (!formatOpts) {
     return null;
   }

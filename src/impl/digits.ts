@@ -78,7 +78,10 @@ export function resetDigitRegexCache() {
   digitRegexCache.clear();
 }
 
-export function digitRegex({ numberingSystem }: { numberingSystem: string | null }, append = "") {
+export function digitRegex(
+  { numberingSystem }: { numberingSystem: string | null },
+  append = ""
+): RegExp {
   const ns = (
     numberingSystem in numberingSystems ? numberingSystem : "latn"
   ) as keyof typeof numberingSystems;

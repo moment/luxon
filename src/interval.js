@@ -1,4 +1,4 @@
-import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.js";
+import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.ts";
 import Duration from "./duration.js";
 import Settings from "./settings.js";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
