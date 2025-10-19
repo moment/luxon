@@ -73,11 +73,12 @@ export function parseDigits(str: string): number {
 
 // cache of {numberingSystem: {append: regex}}
 const digitRegexCache = new Map<string, Map<string, RegExp>>();
+
 export function resetDigitRegexCache() {
   digitRegexCache.clear();
 }
 
-export function digitRegex({ numberingSystem }: { numberingSystem: string }, append = "") {
+export function digitRegex({ numberingSystem }: { numberingSystem: string | null }, append = "") {
   const ns = (
     numberingSystem in numberingSystems ? numberingSystem : "latn"
   ) as keyof typeof numberingSystems;

@@ -5,6 +5,7 @@ import IANAZone from "../zones/IANAZone.ts";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.ts";
 import { ConflictingSpecificationError } from "../errors.js";
+import type Locale from "./locale.ts";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
@@ -16,20 +17,25 @@ const NBSP = String.fromCharCode(160);
 const spaceOrNBSP = `[ ${NBSP}]`;
 const spaceOrNBSPRegExp = new RegExp(spaceOrNBSP, "g");
 
-function fixListRegex(s) {
+function fixListRegex(s: string): string {
   // make dots optional and also make them literal
   // make space and non breakable space characters interchangeable
   return s.replace(/\./g, "\\.?").replace(spaceOrNBSPRegExp, spaceOrNBSP);
 }
 
-function stripInsensitivities(s) {
+function stripInsensitivities(s: string): string {
   return s
     .replace(/\./g, "") // ignore dots that were made optional
     .replace(spaceOrNBSPRegExp, " ") // interchange space and nbsp
     .toLowerCase();
 }
 
-function oneOf(strings, startIndex) {
+interface RegexParser<T> {
+  regex: RegExp;
+  deser: (strings: string[]) => T;
+}
+
+function oneOf(strings: string[] | null, startIndex: number): RegexParser<number> | null {
   if (strings === null) {
     return null;
   } else {
@@ -41,15 +47,15 @@ function oneOf(strings, startIndex) {
   }
 }
 
-function offset(regex, groups) {
+function offset(regex: RegExp, groups) {
   return { regex, deser: ([, h, m]) => signedOffset(h, m), groups };
 }
 
-function simple(regex) {
+function simple(regex: RegExp): RegexParser<string> {
   return { regex, deser: ([s]) => s };
 }
 
-function escapeToken(value) {
+function escapeToken(value: string): string {
   return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 }
 
@@ -57,7 +63,7 @@ function escapeToken(value) {
  * @param token
  * @param {Locale} loc
  */
-function unitForToken(token, loc) {
+function unitForToken(token: string, loc: Locale): string {
   const one = digitRegex(loc),
     two = digitRegex(loc, "{2}"),
     three = digitRegex(loc, "{3}"),
@@ -433,7 +439,10 @@ export function expandMacroTokens(tokens, locale) {
  */
 
 export class TokenParser {
-  constructor(locale, format) {
+  private readonly locale: Locale;
+  private readonly format: string;
+
+  constructor(locale: Locale, format: string) {
     this.locale = locale;
     this.format = format;
     this.tokens = expandMacroTokens(Formatter.parseFormat(format), locale);

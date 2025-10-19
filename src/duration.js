@@ -1,5 +1,5 @@
 import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
-import Formatter from "./impl/formatter.js";
+import Formatter from "./impl/formatter.ts";
 import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.ts";
 import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";

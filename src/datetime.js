@@ -2,7 +2,7 @@ import Duration from "./duration.js";
 import Interval from "./interval.js";
 import Settings from "./settings.js";
 import Info from "./info.js";
-import Formatter from "./impl/formatter.js";
+import Formatter from "./impl/formatter.ts";
 import FixedOffsetZone from "./zones/fixedOffsetZone.ts";
 import Locale from "./impl/locale.ts";
 import {
@@ -26,7 +26,7 @@ import {
   formatOptsToTokens,
   expandMacroTokens,
   TokenParser,
-} from "./impl/tokenParser.js";
+} from "./impl/tokenParser.ts";
 import {
   gregorianToWeek,
   weekToGregorian,

@@ -1,6 +1,13 @@
 import * as English from "./english.ts";
 import * as Formats from "./formats.ts";
 import { padStart } from "./util.ts";
+import Locale, {
+  PolyDateFormatter,
+  type PolyDateFormatterOptions,
+  type PolyNumberFormatterOptions,
+} from "./locale.ts";
+import type DateTime from "../datetime.js";
+import type Interval from "../interval.js";
 
 function stringifyTokens(splits, tokenToString) {
   let s = "";
@@ -37,23 +44,32 @@ const macroTokenToFormatOpts = {
   FFFF: Formats.DATETIME_HUGE_WITH_SECONDS,
 };
 
+export interface ParsedFormatPart {
+  literal: boolean;
+  val: string;
+}
+
+export interface FormatterOptions extends PolyDateFormatterOptions, PolyNumberFormatterOptions {
+  forceSimple?: boolean;
+}
+
 /**
  * @private
  */
 
 export default class Formatter {
-  static create(locale, opts = {}) {
+  static create(locale: Locale, opts: FormatterOptions = {}) {
     return new Formatter(locale, opts);
   }
 
-  static parseFormat(fmt) {
+  static parseFormat(fmt: string): ParsedFormatPart[] {
     // white-space is always considered a literal in user-provided formats
     // the " " token has a special meaning (see unitForToken)
 
     let current = null,
       currentFull = "",
       bracketed = false;
-    const splits = [];
+    const splits: ParsedFormatPart[] = [];
     for (let i = 0; i < fmt.length; i++) {
       const c = fmt.charAt(i);
       if (c === "'") {
@@ -91,13 +107,17 @@ export default class Formatter {
     return macroTokenToFormatOpts[token];
   }
 
-  constructor(locale, formatOpts) {
+  private readonly loc: Locale;
+  private systemLoc: Locale | null;
+  private readonly opts: FormatterOptions;
+
+  constructor(locale: Locale, formatOpts: FormatterOptions) {
     this.opts = formatOpts;
     this.loc = locale;
     this.systemLoc = null;
   }
 
-  formatWithSystemDefault(dt, opts) {
+  formatWithSystemDefault(dt: DateTime, opts: PolyDateFormatterOptions): string {
     if (this.systemLoc === null) {
       this.systemLoc = this.loc.redefaultToSystem();
     }
@@ -105,28 +125,31 @@ export default class Formatter {
     return df.format();
   }
 
-  dtFormatter(dt, opts = {}) {
+  dtFormatter(dt: DateTime, opts: PolyDateFormatterOptions = {}): PolyDateFormatter {
     return this.loc.dtFormatter(dt, { ...this.opts, ...opts });
   }
 
-  formatDateTime(dt, opts) {
+  formatDateTime(dt: DateTime, opts: PolyDateFormatterOptions): string {
     return this.dtFormatter(dt, opts).format();
   }
 
-  formatDateTimeParts(dt, opts) {
+  formatDateTimeParts(dt: DateTime, opts: PolyDateFormatterOptions): Intl.DateTimeFormatPart[] {
     return this.dtFormatter(dt, opts).formatToParts();
   }
 
-  formatInterval(interval, opts) {
+  formatInterval(interval: Interval, opts: PolyDateFormatterOptions): string {
     const df = this.dtFormatter(interval.start, opts);
     return df.dtf.formatRange(interval.start.toJSDate(), interval.end.toJSDate());
   }
 
-  resolvedOptions(dt, opts) {
+  resolvedOptions(
+    dt: DateTime,
+    opts: PolyDateFormatterOptions
+  ): Intl.ResolvedDateTimeFormatOptions {
     return this.dtFormatter(dt, opts).resolvedOptions();
   }
 
-  num(n, p = 0, signDisplay = undefined) {
+  num(n: number, p = 0, signDisplay: Intl.NumberFormatOptionsSignDisplay | undefined = undefined) {
     // we get some perf out of doing this here, annoyingly
     if (this.opts.forceSimple) {
       return padStart(n, p);
@@ -144,7 +167,7 @@ export default class Formatter {
     return this.loc.numberFormatter(opts).format(n);
   }
 
-  formatDateTimeFromString(dt, fmt) {
+  formatDateTimeFromString(dt: DateTime, fmt: string): string {
     const knownEnglish = this.loc.listingMode() === "en",
       useDateTimeFormatter = this.loc.outputCalendar && this.loc.outputCalendar !== "gregory",
       string = (opts, extract) => this.loc.extract(dt, opts, extract),
@@ -337,7 +360,7 @@ export default class Formatter {
           case "GGGGG":
             return era("narrow");
           case "kk":
-            return this.num(dt.weekYear.toString().slice(-2), 2);
+            return this.num(+dt.weekYear.toString().slice(-2), 2);
           case "kkkk":
             return this.num(dt.weekYear, 4);
           case "W":
@@ -349,7 +372,7 @@ export default class Formatter {
           case "nn":
             return this.num(dt.localWeekNumber, 2);
           case "ii":
-            return this.num(dt.localWeekYear.toString().slice(-2), 2);
+            return this.num(+dt.localWeekYear.toString().slice(-2), 2);
           case "iiii":
             return this.num(dt.localWeekYear, 4);
           case "o":
@@ -374,7 +397,7 @@ export default class Formatter {
     return stringifyTokens(Formatter.parseFormat(fmt), tokenToString);
   }
 
-  formatDurationFromString(dur, fmt) {
+  formatDurationFromString(dur: Duration, fmt: string) {
     const invertLargest = this.opts.signMode === "negativeLargestOnly" ? -1 : 1;
     const tokenToField = (token) => {
         switch (token[0]) {

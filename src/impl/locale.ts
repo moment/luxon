@@ -208,7 +208,7 @@ function supportsFastNumbers(loc: Locale): boolean {
  * @private
  */
 
-interface PolyNumberFormatterOptions extends Intl.NumberFormatOptions {
+export interface PolyNumberFormatterOptions extends Intl.NumberFormatOptions {
   padTo?: number | null | undefined;
   floor?: boolean | null | undefined;
 }
@@ -252,13 +252,13 @@ class PolyNumberFormatter {
  * @private
  */
 
-interface PolyDateFormatterOptions extends Intl.DateTimeFormatOptions {}
+export interface PolyDateFormatterOptions extends Intl.DateTimeFormatOptions {}
 
-class PolyDateFormatter {
+export class PolyDateFormatter {
   private readonly dt: DateTime;
   private readonly opts: PolyDateFormatterOptions;
   private readonly originalZone: Zone | undefined;
-  private readonly dtf: Intl.DateTimeFormat;
+  readonly dtf: Intl.DateTimeFormat;
 
   constructor(dt: DateTime, intl: string, opts: PolyDateFormatterOptions) {
     this.opts = opts;
