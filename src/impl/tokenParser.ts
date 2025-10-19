@@ -339,15 +339,12 @@ function match(
   if (matches) {
     const all: Record<string, number | string> = {};
     let matchIndex = 1;
-    for (const i in handlers) {
-      if (hasOwnProperty(handlers, i)) {
-        const h = handlers[i],
-          groups = h.groups ? h.groups + 1 : 1;
-        if (!h.literal && h.token) {
-          all[h.token.val[0]] = h.deser(matches.slice(matchIndex, matchIndex + groups));
-        }
-        matchIndex += groups;
+    for (const h of handlers) {
+      const groups = h.groups ? h.groups + 1 : 1;
+      if (!h.literal && h.token) {
+        all[h.token.val[0]] = h.deser(matches.slice(matchIndex, matchIndex + groups));
       }
+      matchIndex += groups;
     }
     return [matches, all];
   } else {
