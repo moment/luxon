@@ -13,7 +13,7 @@ const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
 interface FormatTokenParser<T> {
   regex: RegExp;
-  deser: (strings: string[]) => T;
+  deser: (match: string, matches: string[], index: number) => T;
   groups?: number;
   literal?: boolean;
   token?: FormatToken;
@@ -27,7 +27,7 @@ interface FormatTokenParserInvalidMarker {
 }
 
 function intUnit(regex: RegExp, post = (i: number): number => i): FormatTokenParser<number> {
-  return { regex, deser: ([s]) => post(parseDigits(s)) };
+  return { regex, deser: (s) => post(parseDigits(s)) };
 }
 
 const NBSP = String.fromCharCode(160);
@@ -53,18 +53,22 @@ function oneOf(strings: string[] | null, startIndex: number): FormatTokenParser<
   } else {
     return {
       regex: RegExp(strings.map(fixListRegex).join("|")),
-      deser: ([s]) =>
+      deser: (s) =>
         strings.findIndex((i) => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex,
     };
   }
 }
 
 function offset(regex: RegExp, groups: number): FormatTokenParser<number> {
-  return { regex, deser: ([, h, m]) => signedOffset(h, m), groups };
+  return {
+    regex,
+    deser: (_, matches, index) => signedOffset(matches[index + 1], matches[index + 2]),
+    groups,
+  };
 }
 
 function simple(regex: RegExp): FormatTokenParser<string> {
-  return { regex, deser: ([s]) => s };
+  return { regex, deser: (s) => s };
 }
 
 function escapeToken(value: string): string {
@@ -342,7 +346,7 @@ function match(
     for (const h of handlers) {
       const groups = h.groups ? h.groups + 1 : 1;
       if (!h.literal && h.token) {
-        all[h.token.val[0]] = h.deser(matches.slice(matchIndex, matchIndex + groups));
+        all[h.token.val[0]] = h.deser(matches[matchIndex], matches, matchIndex);
       }
       matchIndex += groups;
     }
