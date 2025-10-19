@@ -4,7 +4,7 @@ import Settings from "./settings.js";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.js";
-import * as Formats from "./impl/formats.js";
+import * as Formats from "./impl/formats.ts";
 import { parseISOIntervalEnd } from "./impl/regexParser.js";
 
 const INVALID = "Invalid Interval";

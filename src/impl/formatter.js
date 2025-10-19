@@ -1,5 +1,5 @@
 import * as English from "./english.ts";
-import * as Formats from "./formats.js";
+import * as Formats from "./formats.ts";
 import { padStart } from "./util.ts";
 
 function stringifyTokens(splits, tokenToString) {

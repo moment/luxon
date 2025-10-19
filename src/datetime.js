@@ -38,7 +38,7 @@ import {
   hasInvalidTimeData,
   usesLocalWeekValues,
 } from "./impl/conversions.ts";
-import * as Formats from "./impl/formats.js";
+import * as Formats from "./impl/formats.ts";
 import {
   InvalidArgumentError,
   ConflictingSpecificationError,
