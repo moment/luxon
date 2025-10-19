@@ -1,4 +1,4 @@
-import dateTimeSuites from "./datetime.js";
+import dateTimeSuites from "./datetime.ts";
 import infoSuites from "./info.js";
 
 const allSuites = [...dateTimeSuites, ...infoSuites];

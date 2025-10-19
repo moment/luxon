@@ -1,4 +1,4 @@
-import type DateTime from "../datetime.js";
+import type DateTime from "../datetime.ts";
 
 /**
  * @private

@@ -1,11 +1,13 @@
 import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.ts";
-import Formatter, { type FormatToken } from "./formatter.js";
+import Formatter, { type FormatToken } from "./formatter.ts";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";
-import DateTime from "../datetime.js";
+import DateTime from "../datetime.ts";
 import { digitRegex, parseDigits } from "./digits.ts";
 import { ConflictingSpecificationError } from "../errors.js";
 import type Locale from "./locale.ts";
+import type Zone from "../zone.ts";
+import type { DateTimeObjectInput } from "./dateObjects.ts";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
@@ -322,16 +324,20 @@ function tokenForPart(
   return undefined;
 }
 
-function buildRegex(units) {
+function buildRegex(units: Array<FormatTokenParser<unknown>>): string {
   const re = units.map((u) => u.regex).reduce((f, r) => `${f}(${r.source})`, "");
-  return [`^${re}$`, units];
+  return `^${re}$`;
 }
 
-function match(input, regex, handlers) {
+function match(
+  input: string,
+  regex: RegExp,
+  handlers: Array<FormatTokenParser<string> | FormatTokenParser<number>>
+): [rawMatches: RegExpMatchArray | null, Record<string, number | string>] {
   const matches = input.match(regex);
 
   if (matches) {
-    const all = {};
+    const all: Record<string, number | string> = {};
     let matchIndex = 1;
     for (const i in handlers) {
       if (hasOwnProperty(handlers, i)) {
@@ -349,8 +355,10 @@ function match(input, regex, handlers) {
   }
 }
 
-function dateTimeFromMatches(matches) {
-  const toField = (token) => {
+function dateTimeFromMatches(
+  matches: Record<string, string | number>
+): [vals: DateTimeObjectInput, zone: Zone | null, offset: number | undefined] {
+  const toField = (token: string) => {
     switch (token) {
       case "S":
         return "millisecond";
@@ -426,7 +434,7 @@ function dateTimeFromMatches(matches) {
     return r;
   }, {});
 
-  return [vals, zone, specificOffset];
+  return [vals, zone, specificOffset as number | undefined];
 }
 
 let dummyDateTimeCache: DateTime | null = null;
@@ -460,6 +468,13 @@ export function expandMacroTokens(tokens: FormatToken[], locale: Locale): Format
 
 export interface ParseExplanation {
   input: string;
+  tokens: FormatToken[];
+  regex: RegExp;
+  rawMatches: RegExpMatchArray | null;
+  matches: Record<string, string | number>;
+  result: DateTimeObjectInput | null;
+  zone: Zone | null;
+  specificOffset: number | undefined;
 }
 
 /**
@@ -477,6 +492,13 @@ export class TokenParser {
   private readonly units: Array<
     FormatTokenParser<string> | FormatTokenParser<number> | FormatTokenParserInvalidMarker
   >;
+  /**
+   * @deprecated
+   * @private
+   */
+  private readonly handlers?: Array<
+    FormatTokenParser<string> | FormatTokenParser<number> | FormatTokenParserInvalidMarker
+  >;
   private readonly disqualifyingUnit: FormatTokenParserInvalidMarker | undefined;
 
   constructor(locale: Locale, format: string) {
@@ -489,17 +511,25 @@ export class TokenParser {
     );
 
     if (!this.disqualifyingUnit) {
-      const [regexString, handlers] = buildRegex(this.units);
+      const regexString = buildRegex(
+        // TODO: Remove cast when invalid is removed
+        this.units as Array<FormatTokenParser<string> | FormatTokenParser<number>>
+      );
       this.regex = RegExp(regexString, "i");
-      this.handlers = handlers;
+      this.handlers = this.units;
     }
   }
 
-  explainFromTokens(input: string) {
+  explainFromTokens(input: string): ParseExplanation {
     if (!this.isValid) {
-      return { input, tokens: this.tokens, invalidReason: this.invalidReason };
+      // TODO: Remove invalid
+      return { input, tokens: this.tokens, invalidReason: this.invalidReason } as never;
     } else {
-      const [rawMatches, matches] = match(input, this.regex, this.handlers),
+      const [rawMatches, matches] = match(
+          input,
+          this.regex!,
+          this.handlers as Array<FormatTokenParser<string> | FormatTokenParser<number>>
+        ),
         [result, zone, specificOffset] = matches
           ? dateTimeFromMatches(matches)
           : [null, null, undefined];
@@ -511,7 +541,7 @@ export class TokenParser {
       return {
         input,
         tokens: this.tokens,
-        regex: this.regex,
+        regex: this.regex!,
         rawMatches,
         matches,
         result,
@@ -521,22 +551,36 @@ export class TokenParser {
     }
   }
 
-  get isValid() {
+  get isValid(): boolean {
     return !this.disqualifyingUnit;
   }
 
-  get invalidReason() {
+  get invalidReason(): string | null {
     return this.disqualifyingUnit ? this.disqualifyingUnit.invalidReason : null;
   }
 }
 
-export function explainFromTokens(locale: Locale, input: string, format: string) {
+export function explainFromTokens(locale: Locale, input: string, format: string): ParseExplanation {
   const parser = new TokenParser(locale, format);
   return parser.explainFromTokens(input);
 }
 
-export function parseFromTokens(locale, input, format) {
-  const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
+export function parseFromTokens(
+  locale: Locale,
+  input: string,
+  format: string
+): [
+  result: DateTimeObjectInput | null,
+  zone: Zone | null,
+  specificOffset: number | undefined,
+  invalidReason: string | null,
+] {
+  // TODO: Remove invalid
+  const { result, zone, specificOffset, invalidReason } = explainFromTokens(
+    locale,
+    input,
+    format
+  ) as never;
   return [result, zone, specificOffset, invalidReason];
 }
 

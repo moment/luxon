@@ -1109,6 +1109,7 @@ export default class DateTime {
         defaultToEN: true,
       }),
       [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);
+    // TODO: remove invalid
     if (invalid) {
       return DateTime.invalid(invalid);
     } else {

@@ -6,7 +6,7 @@ import Locale, {
   type PolyDateFormatterOptions,
   type PolyNumberFormatterOptions,
 } from "./locale.ts";
-import type DateTime from "../datetime.js";
+import type DateTime from "../datetime.ts";
 import type Interval from "../interval.js";
 
 function stringifyTokens(splits, tokenToString) {

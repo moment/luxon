@@ -1,4 +1,4 @@
-import DateTime from "./datetime.js";
+import DateTime from "./datetime.ts";
 import Duration from "./duration.js";
 import Interval from "./interval.js";
 import Info from "./info.js";

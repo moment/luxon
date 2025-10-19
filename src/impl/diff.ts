@@ -1,5 +1,5 @@
 import Duration from "../duration.js";
-import type DateTime from "../datetime.js";
+import type DateTime from "../datetime.ts";
 import { utcTs } from "./util.ts";
 
 function dayDiff(earlier: DateTime, later: DateTime): number {
