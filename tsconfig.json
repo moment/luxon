@@ -10,6 +10,7 @@
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
+    "noUncheckedIndexedAccess": true,
     "skipLibCheck": true
   }
 }

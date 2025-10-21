@@ -5,6 +5,8 @@
  */
 class LuxonError extends Error {}
 
+export class LuxonIntlError extends LuxonError {}
+
 /**
  * @private
  */
@@ -13,6 +15,8 @@ export class InvalidDateTimeError extends LuxonError {
     super(`Invalid DateTime: ${reason.toMessage()}`);
   }
 }
+
+export class InvalidFormatError extends LuxonError {}
 
 /**
  * @private

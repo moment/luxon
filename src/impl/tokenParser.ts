@@ -1,10 +1,10 @@
-import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty } from "./util.ts";
+import { hasOwnProperty, isUndefined, parseMillis, signedOffset, untruncateYear } from "./util.ts";
 import Formatter, { type FormatToken } from "./formatter.ts";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";
 import DateTime from "../datetime.ts";
 import { digitRegex, parseDigits } from "./digits.ts";
-import { ConflictingSpecificationError } from "../errors.js";
+import { ConflictingSpecificationError, InvalidFormatError } from "../errors.js";
 import type Locale from "./locale.ts";
 import type Zone from "../zone.ts";
 import type { DateTimeObjectInput } from "./dateObjects.ts";
@@ -47,16 +47,12 @@ function stripInsensitivities(s: string): string {
     .toLowerCase();
 }
 
-function oneOf(strings: string[] | null, startIndex: number): FormatTokenParser<number> | null {
-  if (strings === null) {
-    return null;
-  } else {
-    return {
-      regex: strings.map(fixListRegex).join("|"),
-      deser: (s) =>
-        strings.findIndex((i) => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex,
-    };
-  }
+function oneOf(strings: string[], startIndex: number): FormatTokenParser<number> {
+  return {
+    regex: strings.map(fixListRegex).join("|"),
+    deser: (s) =>
+      strings.findIndex((i) => stripInsensitivities(s) === stripInsensitivities(i)) + startIndex,
+  };
 }
 
 function offset(regex: string, groups: number): FormatTokenParser<number> {
@@ -99,7 +95,7 @@ function unitForToken(
       deser: ([s]) => s,
       literal: true,
     }),
-    unitate = (t: FormatToken): FormatTokenParser<number> | FormatTokenParser<string> | null => {
+    unitate = (t: FormatToken): FormatTokenParser<number> | FormatTokenParser<string> => {
       if (t.literal) {
         return literal(t);
       }
@@ -222,19 +218,25 @@ function unitForToken(
       }
     };
 
-  const unit:
-    | FormatTokenParser<string>
-    | FormatTokenParser<number>
-    | FormatTokenParserInvalidMarker = unitate(token) || {
-    invalidReason: MISSING_FTP,
-  };
+  const unit = unitate(token);
 
   unit.token = token;
 
   return unit;
 }
 
-const partTypeStyleToTokenVal = {
+type StyleSpecificOptions<PART extends keyof Intl.DateTimeFormatOptions> =
+  NonNullable<Intl.DateTimeFormatOptions[PART]> extends string
+    ? Partial<Record<NonNullable<Intl.DateTimeFormatOptions[PART]>, string>>
+    : never;
+
+type PartTypeStyleToTokenVal = {
+  [K in Intl.DateTimeFormatPartTypes as K extends "hour"
+    ? "hour12" | "hour24"
+    : K]: K extends keyof Intl.DateTimeFormatOptions ? StyleSpecificOptions<K> | string : string;
+};
+
+const partTypeStyleToTokenVal: PartTypeStyleToTokenVal = {
   year: {
     "2-digit": "yy",
     numeric: "yyyyy",
@@ -253,7 +255,6 @@ const partTypeStyleToTokenVal = {
     short: "EEE",
     long: "EEEE",
   },
-  dayperiod: "a",
   dayPeriod: "a",
   hour12: {
     numeric: "h",
@@ -277,7 +278,7 @@ const partTypeStyleToTokenVal = {
   },
 };
 
-function tokenForPart(
+export function tokenForPart(
   part: Intl.DateTimeFormatPart,
   formatOpts: Intl.DateTimeFormatOptions,
   resolvedOpts: Intl.ResolvedDateTimeFormatOptions
@@ -292,12 +293,12 @@ function tokenForPart(
     };
   }
 
-  const style = formatOpts[type];
-
+  // TODO: Add handling for fractional seconds
+  const style = type === "unknown" || type === "fractionalSecond" ? undefined : formatOpts[type];
   // The user might have explicitly specified hour12 or hourCycle
   // if so, respect their decision
   // if not, refer back to the resolvedOpts, which are based on the locale
-  let actualType: Intl.DateTimeFormatPartTypes | "hour12" | "hour24" = type;
+  let actualType: Exclude<Intl.DateTimeFormatPartTypes, "hour"> | "hour12" | "hour24";
   if (type === "hour") {
     if (formatOpts.hour12 != null) {
       actualType = formatOpts.hour12 ? "hour12" : "hour24";
@@ -312,10 +313,12 @@ function tokenForPart(
       // so we do not need to check hourCycle here, which is less supported anyways
       actualType = resolvedOpts.hour12 ? "hour12" : "hour24";
     }
+  } else {
+    actualType = type;
   }
   let val = partTypeStyleToTokenVal[actualType];
   if (typeof val === "object") {
-    val = val[style];
+    val = val[style as keyof typeof val];
   }
 
   if (val) {
@@ -454,13 +457,8 @@ function maybeExpandMacroToken(token: FormatToken, locale: Locale): FormatToken 
   }
 
   const formatOpts = Formatter.macroTokenToFormatOpts(token.val);
-  const tokens = formatOptsToTokens(formatOpts, locale);
-
-  if (tokens == null || tokens.includes(undefined)) {
-    return token;
-  }
-
-  return tokens as FormatToken[];
+  if (formatOpts == null) return token;
+  return formatOptsToTokens(formatOpts, locale);
 }
 
 export function expandMacroTokens(tokens: FormatToken[], locale: Locale): FormatToken[] {
@@ -586,16 +584,45 @@ export function parseFromTokens(
 }
 
 export function formatOptsToTokens(
-  formatOpts: Intl.DateTimeFormatOptions | null | undefined,
+  formatOpts: Intl.DateTimeFormatOptions,
   locale: Locale
-): Array<FormatToken | undefined> | null {
-  if (!formatOpts) {
-    return null;
-  }
-
+): Array<FormatToken> {
   const formatter = Formatter.create(locale, formatOpts);
   const df = formatter.dtFormatter(getDummyDateTime());
   const parts = df.formatToParts();
   const resolvedOpts = df.resolvedOptions();
-  return parts.map((p) => tokenForPart(p, formatOpts, resolvedOpts));
+  return parts.map((p) => tokenForPart(p, formatOpts, resolvedOpts)).filter((t) => t !== undefined);
+}
+
+function maybeQuote(literal: string): string {
+  if (/[a-z']/i.test(literal)) {
+    return "'" + literal.replaceAll("'", "''") + "'";
+  } else {
+    return literal;
+  }
+}
+
+export function formatTokensToFormat(tokens: readonly FormatToken[]): string {
+  let result = "";
+  for (const t of tokens) {
+    if (t.literal) {
+      const len = t.val.length;
+      let nextIndex: number;
+      for (let index = 0; index < len; index = nextIndex + 1) {
+        nextIndex = t.val.indexOf(" ", index);
+        if (nextIndex === -1) {
+          result += maybeQuote(t.val.substring(index));
+          break;
+        } else {
+          if (nextIndex !== index) {
+            result += maybeQuote(t.val.substring(index, nextIndex));
+          }
+          result += " ";
+        }
+      }
+    } else {
+      result += t.val;
+    }
+  }
+  return result;
 }

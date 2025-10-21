@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { DateTime } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import Settings from "../../src/settings";
-import { ConflictingSpecificationError } from "../../src/errors";
+import { ConflictingSpecificationError, InvalidFormatError } from "../../src/errors";
 import { hasOutdatedKannadaAmPmBehavior, hasOutdatedTamilAmPmBehavior } from "../specialCases";
 
 //------
@@ -1273,23 +1273,30 @@ test("DateTime.fromFormatExplain() takes the same options as fromFormat", () => 
 
 test("DateTime.parseFormatForOpts returns a parsing format", () => {
   const format = DateTime.parseFormatForOpts(DateTime.DATETIME_FULL);
-  expect(format).toMatch(/^MMMM d, yyyyy(?: at|,) h:m a ZZZ$/);
+  expect(format).toMatch(/^MMMM d, yyyyy(?: 'at'|,) h:m a ZZZ$/);
 });
 
-test("DateTime.parseFormatForOpts returns null for invalid input", () => {
-  const format = DateTime.parseFormatForOpts("");
-  expect(format).toBeNull();
-});
-test("DateTime.parseFormatForOpts respects the hour cycle", () => {
-  const enFormat = DateTime.parseFormatForOpts(DateTime.TIME_SIMPLE, { locale: "en-US" });
-  expect(enFormat).toEqual("h:m a");
+describe("DateTime.parseFormatForOpts respects the hour cycle", () => {
+  test("locale en-US", () => {
+    const enFormat = DateTime.parseFormatForOpts(DateTime.TIME_SIMPLE, { locale: "en-US" });
+    expect(enFormat).toEqual("h:m a");
+  });
 
-  const deFormat = DateTime.parseFormatForOpts(DateTime.TIME_SIMPLE, { locale: "de-DE" });
-  expect(deFormat).toEqual("H:m");
+  test("locale de-DE", () => {
+    const deFormat = DateTime.parseFormatForOpts(DateTime.TIME_SIMPLE, { locale: "de-DE" });
+    expect(deFormat).toEqual("H:m");
+  });
 });
+
 test("DateTime.parseFormatForOpts respects the hour cycle when forced by the options", () => {
   const format = DateTime.parseFormatForOpts(DateTime.TIME_24_SIMPLE, { locale: "en-US" });
   expect(format).toEqual("H:m");
+});
+
+describe("DateTime.parseFormatForOpts throws for invalid inputs", () => {
+  test.for(["", "T", 13, null, undefined, true, false, Symbol()])("input $0", (item) => {
+    expect(() => DateTime.parseFormatForOpts(item as never)).toThrow(TypeError);
+  });
 });
 
 //------
@@ -1306,17 +1313,26 @@ test("DateTime.expandFormat works with other locales", () => {
   expect(format).toBe("d/M/yyyyy");
 });
 
-test("DateTime.expandFormat respects the hour cycle", () => {
-  const enFormat = DateTime.expandFormat("t", { locale: "en-US" });
-  expect(enFormat).toBe("h:m a");
+describe("DateTime.expandFormat respects the hour cycle", () => {
+  test("en-US", () => {
+    const enFormat = DateTime.expandFormat("t", { locale: "en-US" });
+    expect(enFormat).toBe("h:m a");
+  });
 
-  const deFormat = DateTime.expandFormat("t", { locale: "de-DE" });
-  expect(deFormat).toBe("H:m");
+  test("de-DE", () => {
+    const deFormat = DateTime.expandFormat("t", { locale: "de-DE" });
+    expect(deFormat).toBe("H:m");
+  });
 });
 
 test("DateTime.expandFormat respects the hour cycle when forced by the macro token", () => {
   const format = DateTime.expandFormat("T", { locale: "en-US" });
   expect(format).toBe("H:m");
+});
+
+test("DateTime.expandFormat works with quoted elements", () => {
+  const format = DateTime.expandFormat("T 'quoted'", { locale: "en-US" });
+  expect(format).toBe("H:m 'quoted'");
 });
 
 //------

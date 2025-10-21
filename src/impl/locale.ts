@@ -5,6 +5,7 @@ import DateTime from "../datetime.ts";
 import IANAZone from "../zones/IANAZone.ts";
 import type { LuxonWeekSettings } from "./weekInfo.ts";
 import type Zone from "../zone.ts";
+import { LuxonIntlError } from "../errors.js";
 
 // todo - remap caching
 
@@ -596,9 +597,8 @@ export default class Locale {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
       matching = results.find((m) => m.type === field);
-    return matching
-      ? matching.value
-      : null! /* TODO: Add error checking instead of returning null */;
+    if (!matching) throw new LuxonIntlError(`Failed to extract ${field} from formatToParts.`);
+    return matching.value;
   }
 
   numberFormatter(opts: ExtendedPolyNumberFormatterOptions = {}): PolyNumberFormatter {

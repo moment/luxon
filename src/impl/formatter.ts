@@ -21,7 +21,7 @@ function stringifyTokens(splits, tokenToString) {
   return s;
 }
 
-const macroTokenToFormatOpts = {
+const macroTokenToFormatOpts: Readonly<Record<string, Intl.DateTimeFormatOptions>> = {
   D: Formats.DATE_SHORT,
   DD: Formats.DATE_MED,
   DDD: Formats.DATE_FULL,
