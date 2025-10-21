@@ -1,6 +1,6 @@
 import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.ts";
 import Duration from "./duration.js";
-import Settings from "./settings.js";
+import Settings from "./settings.ts";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.ts";
