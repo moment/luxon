@@ -10,7 +10,7 @@ import type { LuxonWeekSettings } from "./impl/weekInfo.ts";
 import type Zone from "./zone.ts";
 
 let now = () => Date.now(),
-  defaultZone: ZoneInput = "system",
+  defaultZone: Zone = SystemZone.instance,
   defaultLocale: string | null = null,
   defaultNumberingSystem: string | null = null,
   defaultOutputCalendar: string | null = null,
@@ -47,8 +47,7 @@ export default class Settings {
    * @type {string}
    */
   static set defaultZone(zone: ZoneInput) {
-    // TODO: Normalize in the setter, not the getter
-    defaultZone = zone;
+    defaultZone = normalizeZone(zone, SystemZone.instance);
   }
 
   /**
@@ -57,7 +56,7 @@ export default class Settings {
    * @type {Zone}
    */
   static get defaultZone(): Zone {
-    return normalizeZone(defaultZone, SystemZone.instance);
+    return defaultZone;
   }
 
   /**

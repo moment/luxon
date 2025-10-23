@@ -1,5 +1,5 @@
 import Benchmark from "benchmark";
-import Info from "../src/info.js";
+import Info from "../src/info.ts";
 import Locale from "../src/impl/locale.ts";
 
 function runWeekdaysSuite() {

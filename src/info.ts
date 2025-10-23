@@ -2,9 +2,10 @@ import DateTime from "./datetime.ts";
 import Settings from "./settings.ts";
 import Locale from "./impl/locale.ts";
 import IANAZone from "./zones/IANAZone.ts";
-import { normalizeZone } from "./impl/zoneUtil.ts";
+import { normalizeZone, type ZoneInput } from "./impl/zoneUtil.ts";
 
 import { hasLocaleWeekInfo, hasRelative } from "./impl/util.ts";
+import type Zone from "./zone.ts";
 
 /**
  * The Info class contains static methods for retrieving general time and date related data. For example, it has methods for finding out if a time zone has a DST, for listing the months in any supported locale, and for discovering which of Luxon features are available in the current environment.
@@ -15,10 +16,10 @@ export default class Info {
    * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.
    * @return {boolean}
    */
-  static hasDST(zone = Settings.defaultZone) {
+  static hasDST(zone: ZoneInput = Settings.defaultZone): boolean {
     const proto = DateTime.now().setZone(zone).set({ month: 12 });
 
-    return !zone.isUniversal && proto.offset !== proto.set({ month: 6 }).offset;
+    return !proto.zone.isOffsetFixed() && proto.offset !== proto.set({ month: 6 }).offset;
   }
 
   /**
@@ -26,7 +27,7 @@ export default class Info {
    * @param {string} zone - Zone to check
    * @return {boolean}
    */
-  static isValidIANAZone(zone) {
+  static isValidIANAZone(zone: string): boolean {
     return IANAZone.isValidZone(zone);
   }
 
@@ -44,7 +45,7 @@ export default class Info {
    * @param {string|Zone|number} [input] - the value to be converted
    * @return {Zone}
    */
-  static normalizeZone(input, fallback = Settings.defaultZone) {
+  static normalizeZone(input: ZoneInput, fallback: Zone = Settings.defaultZone): Zone {
     return normalizeZone(input, fallback);
   }
 
@@ -55,7 +56,7 @@ export default class Info {
    * @param {string} [opts.locObj=null] - an existing locale object to use
    * @returns {number} the start of the week, 1 for Monday through 7 for Sunday
    */
-  static getStartOfWeek({ locale = null, locObj = null } = {}) {
+  static getStartOfWeek({ locale = null, locObj = null } = {}): number {
     return (locObj || Locale.create(locale)).getStartOfWeek();
   }
 
@@ -67,7 +68,7 @@ export default class Info {
    * @param {string} [opts.locObj=null] - an existing locale object to use
    * @returns {number}
    */
-  static getMinimumDaysInFirstWeek({ locale = null, locObj = null } = {}) {
+  static getMinimumDaysInFirstWeek({ locale = null, locObj = null } = {}): number {
     return (locObj || Locale.create(locale)).getMinDaysInFirstWeek();
   }
 
@@ -78,7 +79,7 @@ export default class Info {
    * @param {string} [opts.locObj=null] - an existing locale object to use
    * @returns {number[]} an array of weekdays, 1 for Monday through 7 for Sunday
    */
-  static getWeekendWeekdays({ locale = null, locObj = null } = {}) {
+  static getWeekendWeekdays({ locale = null, locObj = null } = {}): number[] {
     // copy the array, because we cache it internally
     return (locObj || Locale.create(locale)).getWeekendDays().slice();
   }
@@ -101,9 +102,9 @@ export default class Info {
    * @return {Array}
    */
   static months(
-    length = "long",
+    length: NonNullable<Intl.DateTimeFormatOptions["month"]> = "long",
     { locale = null, numberingSystem = null, locObj = null, outputCalendar = "gregory" } = {}
-  ) {
+  ): string[] {
     return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length);
   }
 
@@ -121,9 +122,9 @@ export default class Info {
    * @return {Array}
    */
   static monthsFormat(
-    length = "long",
+    length: NonNullable<Intl.DateTimeFormatOptions["month"]> = "long",
     { locale = null, numberingSystem = null, locObj = null, outputCalendar = "gregory" } = {}
-  ) {
+  ): string[] {
     return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length, true);
   }
 
@@ -141,7 +142,10 @@ export default class Info {
    * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
    * @return {Array}
    */
-  static weekdays(length = "long", { locale = null, numberingSystem = null, locObj = null } = {}) {
+  static weekdays(
+    length: NonNullable<Intl.DateTimeFormatOptions["weekday"]> = "long",
+    { locale = null, numberingSystem = null, locObj = null } = {}
+  ): string[] {
     return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length);
   }
 
@@ -158,9 +162,9 @@ export default class Info {
    * @return {Array}
    */
   static weekdaysFormat(
-    length = "long",
+    length: NonNullable<Intl.DateTimeFormatOptions["weekday"]> = "long",
     { locale = null, numberingSystem = null, locObj = null } = {}
-  ) {
+  ): string[] {
     return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length, true);
   }
 
@@ -172,7 +176,7 @@ export default class Info {
    * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]
    * @return {Array}
    */
-  static meridiems({ locale = null } = {}) {
+  static meridiems({ locale = null } = {}): string[] {
     return Locale.create(locale).meridiems();
   }
 
@@ -186,7 +190,11 @@ export default class Info {
    * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
    * @return {Array}
    */
-  static eras(length = "short", { locale = null } = {}) {
+  static eras(
+    length: NonNullable<Intl.DateTimeFormatOptions["era"]> = "short",
+    { locale = null } = {}
+  ): string[] {
+    // TODO: Support other calendars if possible
     return Locale.create(locale, null, "gregory").eras(length);
   }
 
@@ -199,7 +207,8 @@ export default class Info {
    * @example Info.features() //=> { relative: false, localeWeek: true }
    * @return {Object}
    */
-  static features() {
+  static features(): { relative: boolean; localeWeek: boolean } {
+    // TODO: relative should be required now
     return { relative: hasRelative(), localeWeek: hasLocaleWeekInfo() };
   }
 }
