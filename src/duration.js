@@ -2,7 +2,7 @@ import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./
 import Formatter from "./impl/formatter.ts";
 import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.ts";
-import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
+import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.ts";
 import {
   asNumber,
   hasOwnProperty,
