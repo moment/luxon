@@ -1,14 +1,16 @@
 import {
-  untruncateYear,
-  signedOffset,
-  parseInteger,
-  parseMillis,
   isUndefined,
   parseFloating,
+  parseInteger,
+  parseMillis,
+  signedOffset,
+  untruncateYear,
 } from "./util.ts";
 import * as English from "./english.ts";
 import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";
+import type { DateTimeObjectInput } from "./dateObjects.ts";
+import type Zone from "../zone.ts";
 
 /*
  * This file handles parsing for well-specified formats. Here's how it works:
@@ -22,25 +24,37 @@ import IANAZone from "../zones/IANAZone.ts";
 
 const ianaRegex = /[A-Za-z_+-]{1,256}(?::?\/[A-Za-z0-9_+-]{1,256}(?:\/[A-Za-z0-9_+-]{1,256})?)?/;
 
-function combineRegexes(...regexes) {
+function combineRegexes(...regexes: RegExp[]): RegExp {
   const full = regexes.reduce((f, r) => f + r.source, "");
   return RegExp(`^${full}$`);
 }
 
-function combineExtractors(...extractors) {
-  return (m) =>
-    extractors
-      .reduce(
+type ExtractorResult<T> = [vals: T, zone: Zone | null, next: number];
+type Extractor<T> = (match: RegExpMatchArray, cursor: number) => ExtractorResult<T>;
+
+type EmptyObject = Record<PropertyKey, never>;
+
+type CombinedExtractorResult<T> = [vals: T | EmptyObject | null, zone: Zone | null];
+type CombinedExtractor<T> = (match: RegExpMatchArray) => CombinedExtractorResult<T>;
+
+function combineExtractors<T>(...extractors: Extractor<T>[]): CombinedExtractor<T> {
+  return (m) => {
+    return extractors
+      .reduce<ExtractorResult<T | EmptyObject>>(
         ([mergedVals, mergedZone, cursor], ex) => {
           const [val, zone, next] = ex(m, cursor);
           return [{ ...mergedVals, ...val }, zone || mergedZone, next];
         },
         [{}, null, 1]
       )
-      .slice(0, 2);
+      .slice(0, 2) as CombinedExtractorResult<T>;
+  };
 }
 
-function parse(s, ...patterns) {
+function parse<T>(
+  s: string | null,
+  ...patterns: Array<[RegExp, CombinedExtractor<T>]>
+): CombinedExtractorResult<T> {
   if (s == null) {
     return [null, null];
   }
@@ -54,13 +68,16 @@ function parse(s, ...patterns) {
   return [null, null];
 }
 
-function simpleParse(...keys) {
+function simpleParse<const T extends string[]>(
+  ...keys: T
+): Extractor<Partial<Record<T[number], number>>> {
   return (match, cursor) => {
-    const ret = {};
+    const ret: Partial<Record<T[number], number>> = {};
     let i;
 
     for (i = 0; i < keys.length; i++) {
-      ret[keys[i]] = parseInteger(match[cursor + i]);
+      const key: T[number] = keys[i]!;
+      ret[key] = parseInteger(match[cursor + i]);
     }
     return [ret, null, cursor + i];
   };
@@ -75,7 +92,7 @@ const isoTimeExtensionRegex = RegExp(`(?:[Tt]${isoTimeRegex.source})?`);
 const isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 const isoWeekRegex = /(\d{4})-?W(\d\d)(?:-?(\d))?/;
 const isoOrdinalRegex = /(\d{4})-?(\d{3})/;
-const extractISOWeekData = simpleParse("weekYear", "weekNumber", "weekDay");
+const extractISOWeekData = simpleParse("weekYear", "weekNumber", "weekday");
 const extractISOOrdinalData = simpleParse("year", "ordinal");
 const sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/; // dumbed-down version of the ISO one
 const sqlTimeRegex = RegExp(
@@ -83,12 +100,15 @@ const sqlTimeRegex = RegExp(
 );
 const sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
-function int(match, pos, fallback) {
+function int(match: RegExpMatchArray, pos: number, fallback?: number): number | undefined {
   const m = match[pos];
   return isUndefined(m) ? fallback : parseInteger(m);
 }
 
-function extractISOYmd(match, cursor) {
+function extractISOYmd(
+  match: RegExpMatchArray,
+  cursor: number
+): ExtractorResult<DateTimeObjectInput> {
   const item = {
     year: int(match, cursor),
     month: int(match, cursor + 1, 1),
@@ -98,25 +118,34 @@ function extractISOYmd(match, cursor) {
   return [item, null, cursor + 3];
 }
 
-function extractISOTime(match, cursor) {
+function extractISOTime(
+  match: RegExpMatchArray,
+  cursor: number
+): ExtractorResult<DateTimeObjectInput> {
   const item = {
-    hours: int(match, cursor, 0),
-    minutes: int(match, cursor + 1, 0),
-    seconds: int(match, cursor + 2, 0),
-    milliseconds: parseMillis(match[cursor + 3]),
+    hour: int(match, cursor, 0),
+    minute: int(match, cursor + 1, 0),
+    second: int(match, cursor + 2, 0),
+    millisecond: parseMillis(match[cursor + 3]),
   };
 
   return [item, null, cursor + 4];
 }
 
-function extractISOOffset(match, cursor) {
+function extractISOOffset(
+  match: RegExpMatchArray,
+  cursor: number
+): ExtractorResult<DateTimeObjectInput> {
   const local = !match[cursor] && !match[cursor + 1],
-    fullOffset = signedOffset(match[cursor + 1], match[cursor + 2]),
+    fullOffset = signedOffset(match[cursor + 1]!, match[cursor + 2]!),
     zone = local ? null : FixedOffsetZone.instance(fullOffset);
   return [{}, zone, cursor + 3];
 }
 
-function extractIANAZone(match, cursor) {
+function extractIANAZone(
+  match: RegExpMatchArray,
+  cursor: number
+): ExtractorResult<DateTimeObjectInput> {
   const zone = match[cursor] ? IANAZone.create(match[cursor]) : null;
   return [{}, zone, cursor + 1];
 }
@@ -130,14 +159,14 @@ const isoTimeOnly = RegExp(`^T?${isoTimeBaseRegex.source}$`);
 const isoDuration =
   /^-?P(?:(?:(-?\d{1,20}(?:\.\d{1,20})?)Y)?(?:(-?\d{1,20}(?:\.\d{1,20})?)M)?(?:(-?\d{1,20}(?:\.\d{1,20})?)W)?(?:(-?\d{1,20}(?:\.\d{1,20})?)D)?(?:T(?:(-?\d{1,20}(?:\.\d{1,20})?)H)?(?:(-?\d{1,20}(?:\.\d{1,20})?)M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,20}))?S)?)?)$/;
 
-function extractISODuration(match) {
+function extractISODuration(match: RegExpMatchArray): any /* TODO: Missing Duration types */ {
   const [s, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] =
     match;
 
   const hasNegativePrefix = s[0] === "-";
-  const negativeSeconds = secondStr && secondStr[0] === "-";
+  const negativeSeconds = !!secondStr && secondStr[0] === "-";
 
-  const maybeNegate = (num, force = false) =>
+  const maybeNegate = (num: number | undefined, force = false): number | undefined =>
     num !== undefined && (force || (num && hasNegativePrefix)) ? -num : num;
 
   return [
@@ -169,9 +198,17 @@ const obsOffsets = {
   PST: -8 * 60,
 };
 
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
-  const result = {
-    year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
+function fromStrings(
+  weekdayStr: string,
+  yearStr: string,
+  monthStr: string,
+  dayStr: string,
+  hourStr: string,
+  minuteStr: string,
+  secondStr: string
+): DateTimeObjectInput {
+  const result: DateTimeObjectInput = {
+    year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)!) : parseInteger(yearStr),
     month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInteger(dayStr),
     hour: parseInteger(hourStr),
@@ -193,7 +230,7 @@ function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, 
 const rfc2822 =
   /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/;
 
-function extractRFC2822(match) {
+function extractRFC2822(match: RegExpMatchArray): CombinedExtractorResult<DateTimeObjectInput> {
   const [
       ,
       weekdayStr,
@@ -208,21 +245,29 @@ function extractRFC2822(match) {
       offHourStr,
       offMinuteStr,
     ] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    result = fromStrings(
+      weekdayStr!,
+      yearStr!,
+      monthStr!,
+      dayStr!,
+      hourStr!,
+      minuteStr!,
+      secondStr!
+    );
 
   let offset;
   if (obsOffset) {
-    offset = obsOffsets[obsOffset];
+    offset = obsOffsets[obsOffset as keyof typeof obsOffsets];
   } else if (milOffset) {
     offset = 0;
   } else {
-    offset = signedOffset(offHourStr, offMinuteStr);
+    offset = signedOffset(offHourStr!, offMinuteStr!);
   }
 
   return [result, new FixedOffsetZone(offset)];
 }
 
-function preprocessRFC2822(s) {
+function preprocessRFC2822(s: string): string {
   // Remove comments and folding whitespace and replace multiple-spaces with a single space
   return s
     .replace(/\([^()]*\)|[\n\t]/g, " ")
@@ -239,15 +284,33 @@ const rfc1123 =
   ascii =
     /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
 
-function extractRFC1123Or850(match) {
+function extractRFC1123Or850(
+  match: RegExpMatchArray
+): CombinedExtractorResult<DateTimeObjectInput> {
   const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    result = fromStrings(
+      weekdayStr!,
+      yearStr!,
+      monthStr!,
+      dayStr!,
+      hourStr!,
+      minuteStr!,
+      secondStr!
+    );
   return [result, FixedOffsetZone.utcInstance];
 }
 
-function extractASCII(match) {
+function extractASCII(match: RegExpMatchArray): CombinedExtractorResult<DateTimeObjectInput> {
   const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    result = fromStrings(
+      weekdayStr!,
+      yearStr!,
+      monthStr!,
+      dayStr!,
+      hourStr!,
+      minuteStr!,
+      secondStr!
+    );
   return [result, FixedOffsetZone.utcInstance];
 }
 
@@ -256,25 +319,25 @@ const isoWeekWithTimeExtensionRegex = combineRegexes(isoWeekRegex, isoTimeExtens
 const isoOrdinalWithTimeExtensionRegex = combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex);
 const isoTimeCombinedRegex = combineRegexes(isoTimeRegex);
 
-const extractISOYmdTimeAndOffset = combineExtractors(
+const extractISOYmdTimeAndOffset = combineExtractors<DateTimeObjectInput>(
   extractISOYmd,
   extractISOTime,
   extractISOOffset,
   extractIANAZone
 );
-const extractISOWeekTimeAndOffset = combineExtractors(
+const extractISOWeekTimeAndOffset = combineExtractors<DateTimeObjectInput>(
   extractISOWeekData,
   extractISOTime,
   extractISOOffset,
   extractIANAZone
 );
-const extractISOOrdinalDateAndTime = combineExtractors(
+const extractISOOrdinalDateAndTime = combineExtractors<DateTimeObjectInput>(
   extractISOOrdinalData,
   extractISOTime,
   extractISOOffset,
   extractIANAZone
 );
-const extractISOTimeAndOffset = combineExtractors(
+const extractISOTimeAndOffset = combineExtractors<DateTimeObjectInput>(
   extractISOTime,
   extractISOOffset,
   extractIANAZone
@@ -284,7 +347,7 @@ const extractISOTimeAndOffset = combineExtractors(
  * @private
  */
 
-export function parseISODate(s) {
+export function parseISODate(s: string): CombinedExtractorResult<DateTimeObjectInput> {
   return parse(
     s,
     [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
@@ -316,7 +379,7 @@ const extractISOIntervalPartialDateAndTime = combineExtractors(
   extractIANAZone
 );
 
-export function parseISOIntervalEnd(s) {
+export function parseISOIntervalEnd(s: string): CombinedExtractorResult<DateTimeObjectInput> {
   return parse(
     s,
     [isoIntervalEndDateTime, extractISOIntervalPartialDateAndTime],
@@ -327,11 +390,11 @@ export function parseISOIntervalEnd(s) {
   );
 }
 
-export function parseRFC2822Date(s) {
+export function parseRFC2822Date(s: string): CombinedExtractorResult<DateTimeObjectInput> {
   return parse(preprocessRFC2822(s), [rfc2822, extractRFC2822]);
 }
 
-export function parseHTTPDate(s) {
+export function parseHTTPDate(s: string): CombinedExtractorResult<DateTimeObjectInput> {
   return parse(
     s,
     [rfc1123, extractRFC1123Or850],
@@ -340,13 +403,15 @@ export function parseHTTPDate(s) {
   );
 }
 
-export function parseISODuration(s) {
+export function parseISODuration(
+  s: string
+): CombinedExtractorResult<any /* TODO: Missing duration types */> {
   return parse(s, [isoDuration, extractISODuration]);
 }
 
 const extractISOTimeOnly = combineExtractors(extractISOTime);
 
-export function parseISOTimeOnly(s) {
+export function parseISOTimeOnly(s: string): CombinedExtractorResult<DateTimeObjectInput> {
   return parse(s, [isoTimeOnly, extractISOTimeOnly]);
 }
 
@@ -359,7 +424,7 @@ const extractISOTimeOffsetAndIANAZone = combineExtractors(
   extractIANAZone
 );
 
-export function parseSQL(s) {
+export function parseSQL(s: string): CombinedExtractorResult<DateTimeObjectInput> {
   return parse(
     s,
     [sqlYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],

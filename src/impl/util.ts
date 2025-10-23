@@ -162,7 +162,7 @@ export function parseFloating(string: string | null | undefined): number | undef
   }
 }
 
-export function parseMillis(fraction: string): number | undefined {
+export function parseMillis(fraction: string | undefined): number | undefined {
   // Return undefined (instead of 0) in these cases, where fraction is not set
   if (isUndefined(fraction) || fraction === null || fraction === "") {
     return undefined;
