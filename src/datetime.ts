@@ -2501,11 +2501,13 @@ export default class DateTime {
    * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
    * @return {DateTime} the min DateTime, or undefined if called with no argument
    */
-  static min(...dateTimes) {
+  static min(...dateTimes: readonly DateTime[]): DateTime | undefined;
+  static min(first: DateTime, ...dateTimes: readonly DateTime[]): DateTime;
+  static min(...dateTimes: readonly DateTime[]): DateTime | undefined {
     if (!dateTimes.every(DateTime.isDateTime)) {
       throw new InvalidArgumentError("min requires all arguments be DateTimes");
     }
-    return bestBy(dateTimes, (i) => i.valueOf(), Math.min);
+    return bestBy(dateTimes, (i) => i.toMillis(), Math.min);
   }
 
   /**
@@ -2513,11 +2515,13 @@ export default class DateTime {
    * @param {...DateTime} dateTimes - the DateTimes from which to choose the maximum
    * @return {DateTime} the max DateTime, or undefined if called with no argument
    */
-  static max(...dateTimes) {
+  static max(...dateTimes: readonly DateTime[]): DateTime | undefined;
+  static max(first: DateTime, ...dateTimes: readonly DateTime[]): DateTime;
+  static max(...dateTimes: readonly DateTime[]): DateTime | undefined {
     if (!dateTimes.every(DateTime.isDateTime)) {
       throw new InvalidArgumentError("max requires all arguments be DateTimes");
     }
-    return bestBy(dateTimes, (i) => i.valueOf(), Math.max);
+    return bestBy(dateTimes, (i) => i.toMillis(), Math.max);
   }
 
   // MISC
