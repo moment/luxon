@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 
 import { Duration } from "../../src/luxon.ts";
-import { casualMatrix } from "../../src/duration";
+import { casualMatrix } from "../../src/duration.ts";
 
 const businessMatrix = {
   ...casualMatrix,

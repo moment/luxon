@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 
 import { DateTime, Duration } from "../../src/luxon.ts";
-import { casualMatrix } from "../../src/duration";
+import { casualMatrix } from "../../src/duration.ts";
 
 function createDateTime() {
   return DateTime.fromObject({

@@ -1,5 +1,5 @@
 import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.ts";
-import Duration from "./duration.js";
+import Duration from "./duration.ts";
 import Settings from "./settings.ts";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
 import Invalid from "./impl/invalid.js";

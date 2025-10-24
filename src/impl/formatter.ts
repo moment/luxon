@@ -8,6 +8,7 @@ import Locale, {
 } from "./locale.ts";
 import type DateTime from "../datetime.ts";
 import type Interval from "../interval.js";
+import type Duration from "../duration.ts";
 
 function stringifyTokens(splits, tokenToString) {
   let s = "";
