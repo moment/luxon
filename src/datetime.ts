@@ -86,7 +86,7 @@ function possiblyCachedLocalWeekData(dt: DateTime): DateTimeObject<WeekDateObjec
 
 // clone really means, "make a new object with these modifications". all "setters" really use this
 // to create a new object while only changing some of the properties
-function clone(inst, alts) {
+function clone(inst: DateTime, alts) {
   const current = {
     ts: inst.ts,
     zone: inst.zone,
@@ -310,7 +310,7 @@ function toISOTime(
 }
 
 // defaults for unspecified units in the supported calendars
-const defaultUnitValues = {
+const defaultUnitValues: Omit<DateTimeObject, "year"> = {
     month: 1,
     day: 1,
     hour: 0,
@@ -335,7 +335,15 @@ const defaultUnitValues = {
   };
 
 // Units in the supported calendars, sorted by bigness
-const orderedUnits = ["year", "month", "day", "hour", "minute", "second", "millisecond"],
+const orderedUnits: ReadonlyArray<keyof DateTimeObject> = [
+    "year",
+    "month",
+    "day",
+    "hour",
+    "minute",
+    "second",
+    "millisecond",
+  ],
   orderedWeekUnits = [
     "weekYear",
     "weekNumber",
@@ -420,10 +428,8 @@ function normalizeUnitWithLocalWeeks(unit) {
  * @param {Zone} zone
  * @return {number}
  */
-function guessOffsetForZone(zone) {
-  if (zoneOffsetTs === undefined) {
-    zoneOffsetTs = Settings.now();
-  }
+function guessOffsetForZone(zone: Zone): number {
+  zoneOffsetTs ??= Settings.now();
 
   // Do not cache anything but IANA zones, because it is not safe to do so.
   // Guessing an offset which is not present in the zone can cause wrong results from fixOffset
@@ -442,12 +448,8 @@ function guessOffsetForZone(zone) {
 // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
 // are present, and so on.
-function quickDT(obj, opts) {
+function quickDT(obj: Partial<DateTimeObject>, opts): DateTime {
   const zone = normalizeZone(opts.zone, Settings.defaultZone);
-  if (!zone.isValid) {
-    return DateTime.invalid(unsupportedZone(zone));
-  }
-
   const loc = Locale.fromObject(opts);
 
   let ts, o;
@@ -456,7 +458,9 @@ function quickDT(obj, opts) {
   if (!isUndefined(obj.year)) {
     for (const u of orderedUnits) {
       if (isUndefined(obj[u])) {
-        obj[u] = defaultUnitValues[u];
+        // this cast is safe, because u can never be "year" here.
+        // The outer check verifies that obj.year is not undefined, so obj[u] cannot be undefined for u === "year".
+        obj[u] = defaultUnitValues[u as Exclude<keyof DateTimeObject, "year">];
       }
     }
 
@@ -466,7 +470,8 @@ function quickDT(obj, opts) {
     }
 
     const offsetProvis = guessOffsetForZone(zone);
-    [ts, o] = objToTS(obj, offsetProvis, zone);
+    // cast is safe, we fill in the missing values above
+    [ts, o] = objToTS(obj as DateTimeObject, offsetProvis, zone);
   } else {
     ts = Settings.now();
   }
@@ -505,13 +510,22 @@ function diffRelative(start, end, opts) {
   return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
 }
 
-function lastOpts<T extends object>(argList: Array<number | T>): [T | {}, number[]] {
-  let opts = {},
-    args;
-  if (argList.length > 0 && typeof argList[argList.length - 1] === "object") {
-    opts = argList[argList.length - 1];
+type EmptyObject = Record<PropertyKey, never>;
+
+function lastOpts<T extends object>(
+  argList: Array<number | T | undefined>
+): [T | EmptyObject, number[]] {
+  let opts: T | EmptyObject, args: number[];
+
+  let last: T | number | undefined;
+  if (
+    argList.length > 0 &&
+    (typeof (last = argList[argList.length - 1]) === "object" || last === undefined)
+  ) {
+    opts = last ?? {};
     args = Array.from(argList).slice(0, argList.length - 1) as number[];
   } else {
+    opts = {};
     args = Array.from(argList) as number[];
   }
   return [opts, args];
@@ -545,6 +559,15 @@ export type DateTimeUTCOptions = DateTimeOptions;
 
 export interface SetZoneOptions {
   keepLocalTime?: boolean;
+}
+
+interface DateTimeConstructorParams {
+  ts?: number | undefined;
+  zone?: Zone | undefined;
+  old?: DateTime | undefined;
+  invalid?: Invalid | undefined;
+  o?: number | undefined;
+  loc?: Locale | undefined;
 }
 
 /**
@@ -583,7 +606,7 @@ export default class DateTime {
   /**
    * @access private
    */
-  constructor(config) {
+  constructor(config: DateTimeConstructorParams) {
     const zone = config.zone || Settings.defaultZone;
 
     let invalid =
@@ -595,12 +618,10 @@ export default class DateTime {
      */
     this.ts = isUndefined(config.ts) ? Settings.now() : config.ts;
 
-    let c = null,
-      o = null;
+    let c: DateTimeObject | null = null,
+      o: number | null = null;
     if (!invalid) {
-      const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
-
-      if (unchanged) {
+      if (config.old && config.old.ts === this.ts && config.old.zone.equals(zone)) {
         [c, o] = [config.old.c, config.old.o];
       } else {
         // If an offset has been passed and we have not been called from
@@ -636,11 +657,11 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.c = c;
+    this.c = c!; // TODO: Remove ! when invalid is removed
     /**
      * @access private
      */
-    this.o = o;
+    this.o = o!; // TODO: Remove ! when invalid is removed
     /**
      * @access private
      */
@@ -719,7 +740,7 @@ export default class DateTime {
     millisecond: number,
     opts?: DateTimeLocalOptions
   ): DateTime;
-  static local(...argList: Array<number | DateTimeLocalOptions>): DateTime {
+  static local(...argList: Array<number | DateTimeLocalOptions | undefined>): DateTime {
     const [opts, args] = lastOpts(argList),
       [year, month, day, hour, minute, second, millisecond] = args;
     return quickDT({ year, month, day, hour, minute, second, millisecond }, opts);
