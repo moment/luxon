@@ -416,6 +416,6 @@ test("Interval#mapEndpoints returns a new Interval with the mapped endpoints", (
 
   const mapped = original.mapEndpoints((d) => d.toUTC());
 
-  expect(mapped.s.zoneName).toEqual("UTC");
-  expect(mapped.e.zoneName).toEqual("UTC");
+  expect(mapped.start.zoneName).toEqual("UTC");
+  expect(mapped.end.zoneName).toEqual("UTC");
 });
