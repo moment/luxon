@@ -124,18 +124,6 @@ const humanizeUnitConversion = {
   quarters: null,
 };
 
-// clone really means "create another instance just like this one, but with these changes"
-function clone(dur, alts, clear = false) {
-  // deep merge for vals
-  const conf = {
-    values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
-    loc: dur.loc.clone(alts.loc),
-    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
-    matrix: alts.matrix || dur.matrix,
-  };
-  return new Duration(conf);
-}
-
 function durationToMillis(matrix, vals) {
   let sum = vals.milliseconds ?? 0;
   for (const unit of reverseUnits.slice(1)) {
@@ -211,11 +199,24 @@ function removeZeroes(vals) {
 }
 
 interface DurationConstructorParams {
-  readonly values?: DurationObject; // TODO: Not optional when invalid is removed
+  readonly values?: DurationObject | undefined; // TODO: Not optional when invalid is removed
   readonly loc?: Locale | undefined;
+  /**
+   * @deprecated
+   */
   readonly invalid?: Invalid | undefined;
+  /**
+   * @deprecated
+   */
   readonly matrix?: any; // TODO: Remove matrix
+  /**
+   * @deprecated
+   */
   readonly conversionAccuracy?: string | undefined; // TODO: Remove accuracy
+}
+
+interface DurationCloneParams extends Omit<DurationConstructorParams, "loc"> {
+  readonly loc?: Locale | undefined;
 }
 
 export interface DurationOptions extends LocaleOptions {
@@ -719,7 +720,7 @@ export default class Duration {
       }
     }
 
-    return clone(this, { values: result }, true);
+    return this.#clone({ values: result }, true);
   }
 
   /**
@@ -748,7 +749,7 @@ export default class Duration {
     for (const k of Object.keys(this.values)) {
       result[k] = asNumber(fn(this.values[k], k));
     }
-    return clone(this, { values: result }, true);
+    return this.#clone({ values: result }, true);
   }
 
   /**
@@ -774,7 +775,7 @@ export default class Duration {
     if (!this.isValid) return this; // TODO: remove invalid
 
     const mixed = { ...this.values, ...normalizeObject(values, Duration.normalizeUnit) };
-    return clone(this, { values: mixed });
+    return this.#clone({ values: mixed });
   }
 
   /**
@@ -790,7 +791,7 @@ export default class Duration {
   }: DurationOptions = {}): Duration {
     const loc = this.loc.clone({ locale, numberingSystem });
     const opts = { loc, matrix, conversionAccuracy };
-    return clone(this, opts);
+    return this.#clone(opts);
   }
 
   /**
@@ -824,7 +825,7 @@ export default class Duration {
     if (!this.isValid) return this; // TODO: remove invalid
     const vals = this.toObject();
     normalizeValues(this.matrix, vals);
-    return clone(this, { values: vals }, true);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -835,7 +836,7 @@ export default class Duration {
   rescale(): Duration {
     if (!this.isValid) return this; // TODO: remove invalid
     const vals = removeZeroes(this.normalize().shiftToAll().toObject());
-    return clone(this, { values: vals }, true);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -896,7 +897,7 @@ export default class Duration {
     }
 
     normalizeValues(this.matrix, built);
-    return clone(this, { values: built }, true);
+    return this.#clone({ values: built }, true);
   }
 
   /**
@@ -929,7 +930,7 @@ export default class Duration {
     for (const k of Object.keys(this.values)) {
       negated[k] = this.values[k] === 0 ? 0 : -this.values[k];
     }
-    return clone(this, { values: negated }, true);
+    return this.#clone({ values: negated }, true);
   }
 
   /**
@@ -940,7 +941,7 @@ export default class Duration {
   removeZeros(): Duration {
     if (!this.isValid) return this; // TODO: remove invalid
     const vals = removeZeroes(this.values);
-    return clone(this, { values: vals }, true);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -1072,5 +1073,17 @@ export default class Duration {
       }
     }
     return true;
+  }
+
+  // clone really means "create another instance just like this one, but with these changes"
+  #clone(alts: Partial<DurationCloneParams>, clear: boolean = false): Duration {
+    // deep merge for vals
+    const conf: DurationConstructorParams = {
+      values: clear ? alts.values : { ...this.values, ...(alts.values || {}) },
+      loc: alts.loc ?? this.loc,
+      conversionAccuracy: alts.conversionAccuracy || this.conversionAccuracy,
+      matrix: alts.matrix || this.matrix,
+    };
+    return new Duration(conf);
   }
 }
