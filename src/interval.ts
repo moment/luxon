@@ -7,8 +7,12 @@ import Formatter from "./impl/formatter.ts";
 import * as Formats from "./impl/formats.ts";
 import { parseISOIntervalEnd } from "./impl/regexParser.ts";
 import type { DurationUnit } from "./impl/durationObjects.ts";
+import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
+import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 
 const INVALID = "Invalid Interval";
+
+export const LUXON_TYPE_INTERVAL = "interval" as LuxonTypeMarker<Interval>;
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start: DateTime, end: DateTime): Interval | null {
@@ -24,6 +28,15 @@ function validateStartEnd(start: DateTime, end: DateTime): Interval | null {
   } else {
     return null;
   }
+}
+
+interface IntervalConstructorParams {
+  start?: DateTime;
+  end?: DateTime;
+  /**
+   * @deprecated
+   */
+  invalid?: Invalid | undefined | null;
 }
 
 /**
@@ -45,12 +58,12 @@ export default class Interval {
    * @deprecated
    */
   private readonly invalid: Invalid | null;
-  private readonly isLuxonInterval: true;
 
   /**
    * @private
    */
-  constructor(config) {
+  constructor(config: IntervalConstructorParams, m: typeof INTERNAL_CONSTRUCTOR) {
+    if (m !== INTERNAL_CONSTRUCTOR) throwInternalConstructorError("Interval");
     /**
      * @access private
      */
@@ -63,10 +76,10 @@ export default class Interval {
      * @access private
      */
     this.invalid = config.invalid || null;
-    /**
-     * @access private
-     */
-    this.isLuxonInterval = true;
+  }
+
+  get [LUXON_TYPE](): typeof LUXON_TYPE_INTERVAL {
+    return LUXON_TYPE_INTERVAL;
   }
 
   /**
@@ -86,7 +99,7 @@ export default class Interval {
     if (Settings.throwOnInvalid) {
       throw new InvalidIntervalError(invalid);
     } else {
-      return new Interval({ invalid });
+      return new Interval({ invalid }, INTERNAL_CONSTRUCTOR);
     }
   }
 
@@ -103,10 +116,13 @@ export default class Interval {
     const validateError = validateStartEnd(builtStart, builtEnd);
 
     if (validateError == null) {
-      return new Interval({
-        start: builtStart,
-        end: builtEnd,
-      });
+      return new Interval(
+        {
+          start: builtStart,
+          end: builtEnd,
+        },
+        INTERNAL_CONSTRUCTOR
+      );
     } else {
       return validateError;
     }
@@ -206,7 +222,7 @@ export default class Interval {
    * @return {boolean}
    */
   static isInterval(o: unknown): o is Interval {
-    return (o && o.isLuxonInterval) || false;
+    return isLuxonType(o, LUXON_TYPE_INTERVAL);
   }
 
   /**
