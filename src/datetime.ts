@@ -1139,17 +1139,7 @@ export default class DateTime {
    * @deprecated
    */
   static invalid(reason: string | Invalid, explanation: string | null = null): DateTime {
-    if (!reason) {
-      throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
-    }
-
-    const invalid = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
-
-    if (Settings.throwOnInvalid) {
-      throw new InvalidDateTimeError(invalid);
-    } else {
-      return new DateTime({ invalid }, INTERNAL_CONSTRUCTOR);
-    }
+    throw new Error("Invalid DateTime is no longer a thing.");
   }
 
   /**

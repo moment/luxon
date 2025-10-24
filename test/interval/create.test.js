@@ -39,15 +39,6 @@ test("Interval.fromDateTimes creates an interval from Dates", () => {
   expect(int.end.toJSDate()).toEqual(end);
 });
 
-test("Interval.fromDateTimes throws if the endpoints are invalid", () => {
-  const validDate = DateTime.fromObject({ year: 2016, month: 5, day: 25 }),
-    invalidDate = DateTime.invalid("because");
-
-  expect(() => Interval.fromDateTimes(validDate, invalidDate)).toThrow(InvalidIntervalError);
-  expect(() => Interval.fromDateTimes(invalidDate, validDate)).toThrow(InvalidIntervalError);
-  expect(() => Interval.fromDateTimes(invalidDate, invalidDate)).toThrow(InvalidIntervalError);
-});
-
 test.for([true, false, null, undefined, "2021-01-01", "hello", 15])(
   "Interval.fromDateTimes throws with invalid input",
   (v) => {

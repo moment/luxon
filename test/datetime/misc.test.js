@@ -50,14 +50,6 @@ test("DateTime#hasSame() ignores time offsets and is symmetric", () => {
   expect(d2.hasSame(d1, "millisecond")).toBe(true);
 });
 
-test("DateTime#hasSame() returns false for invalid DateTimes", () => {
-  const dt = DateTime.now(),
-    invalid = DateTime.invalid("because");
-  expect(dt.hasSame(invalid, "day")).toBe(false);
-  expect(invalid.hasSame(invalid, "day")).toBe(false);
-  expect(invalid.hasSame(dt, "day")).toBe(false);
-});
-
 //------
 // #until()
 //------
@@ -71,15 +63,6 @@ test("DateTime#until() creates an Interval", () => {
   expect(i.end).toBe(other);
 });
 
-test("DateTime#until() creates an invalid Interval out of an invalid DateTime", () => {
-  const dt = DateTime.now(),
-    invalid = DateTime.invalid("because");
-
-  expect(() => invalid.until(invalid)).toThrow(InvalidIntervalError);
-  expect(() => invalid.until(dt)).toThrow(InvalidIntervalError);
-  expect(() => dt.until(invalid)).toThrow(InvalidIntervalError);
-});
-
 //------
 // #isInLeapYear
 //------
@@ -88,20 +71,12 @@ test("DateTime#isInLeapYear returns the whether the DateTime's year is in a leap
   expect(DateTime.local(2020, 5, 25).isInLeapYear).toBe(true);
 });
 
-test("DateTime#isInLeapYear returns false for invalid DateTimes", () => {
-  expect(DateTime.invalid("because").isInLeapYear).toBe(false);
-});
-
 //------
 // #daysInYear
 //------
 test("DateTime#daysInYear returns the number of days in the DateTime's year", () => {
   expect(DateTime.local(2017, 5, 25).daysInYear).toBe(365);
   expect(DateTime.local(2020, 5, 25).daysInYear).toBe(366);
-});
-
-test("DateTime#daysInYear returns NaN for invalid DateTimes", () => {
-  expect(DateTime.invalid("because").daysInYear).toBeFalsy();
 });
 
 //------
@@ -126,8 +101,4 @@ test("DateTime#weeksInWeekYear returns the number of days in the DateTime's year
   expect(DateTime.local(2004, 5, 25).weeksInWeekYear).toBe(53);
   expect(DateTime.local(2017, 5, 25).weeksInWeekYear).toBe(52);
   expect(DateTime.local(2020, 5, 25).weeksInWeekYear).toBe(53);
-});
-
-test("DateTime#weeksInWeekYear returns NaN for invalid DateTimes", () => {
-  expect(DateTime.invalid("because").weeksInWeekYear).toBeFalsy();
 });

@@ -22,12 +22,6 @@ test("Duration.invalid throws if you don't provide a reason", () => {
   expect(() => Duration.invalid()).toThrow();
 });
 
-test("Diffing invalid DateTimes creates invalid Durations", () => {
-  const invalidDT = DateTime.invalid("so?");
-  expect(invalidDT.diff(DateTime.now()).isValid).toBe(false);
-  expect(DateTime.now().diff(invalidDT).isValid).toBe(false);
-});
-
 test("Duration.invalid produces invalid Intervals", () => {
   expect(Duration.invalid("because").isValid).toBe(false);
 });

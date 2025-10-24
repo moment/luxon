@@ -320,7 +320,3 @@ test("DateTime#set throws for mixing incompatible units", () => {
   expect(() => dt.set({ weekday: 2, localWeekNumber: 22 })).toThrow();
   expect(() => dt.set({ weekday: 2, localWeekYear: 2022 })).toThrow();
 });
-
-test("DateTime#set maintains invalidity", () => {
-  expect(DateTime.invalid("because").set({ ordinal: 200 }).isValid).toBe(false);
-});

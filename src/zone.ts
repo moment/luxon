@@ -1,7 +1,7 @@
 import { ZoneIsAbstractError } from "./errors.js";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 
-export const LUXON_TYPE_ZONE = "zone" as LuxonTypeMarker<Zone>;
+const LUXON_TYPE_ZONE = "zone" as LuxonTypeMarker<Zone>;
 
 export interface UniversalZone {
   readonly isUniversal: true;

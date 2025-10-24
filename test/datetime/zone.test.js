@@ -37,10 +37,6 @@ test("DateTime#utc(offset) sets dt in UTC+offset 'mode'", () => {
   expect(zoned.isInDST).toBe(false);
 });
 
-test("DateTime#utc maintains invalidity", () => {
-  expect(DateTime.invalid("because").toUTC().isValid).toBe(false);
-});
-
 //------
 // #toLocal()
 //------
@@ -263,27 +259,6 @@ test("DateTime#getPossibleOffsets() returns the possible DateTimes when at an am
 });
 
 //------
-// #invalid
-//------
-
-// these functions got tested in the individual zones, but let's do invalid DateTimes
-
-test("DateTime#offset returns NaN for invalid times", () => {
-  const zoned = DateTime.invalid("because");
-  expect(zoned.isInDST).toBeFalsy();
-});
-
-test("DateTime#offsetNameLong returns null for invalid times", () => {
-  const zoned = DateTime.invalid("because");
-  expect(zoned.offsetNameLong).toBe(null);
-});
-
-test("DateTime#offsetNameShort returns null for invalid times", () => {
-  const zoned = DateTime.invalid("because");
-  expect(zoned.offsetNameShort).toBe(null);
-});
-
-//------
 // Etc/GMT zones
 //------
 test.each([
@@ -329,10 +304,6 @@ test("Setting the default zone to 'system' gives you back the system zone", () =
 //------
 // invalid
 //------
-
-test("invalid DateTimes have no zone", () => {
-  expect(DateTime.invalid("because").zoneName).toBe(null);
-});
 
 test.each(["constructor", "__proto__"])(
   "can parse zones with special JS keyword $0 as invalid",

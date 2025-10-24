@@ -19,8 +19,7 @@ const dtMaker = () =>
         zone: "utc",
       }
     ),
-  dt = dtMaker(),
-  invalid = DateTime.invalid("because");
+  dt = dtMaker();
 
 class CustomZone extends Zone {
   constructor(name, offset) {
@@ -100,10 +99,6 @@ test("DateTime#toISO() suppresses [milli]seconds", () => {
   expect(dt.set({ seconds: 0, milliseconds: 0 }).toISO(suppressOnlySeconds)).toBe(
     "1982-05-25T09:23Z"
   );
-});
-
-test("DateTime#toISO() returns null for invalid DateTimes", () => {
-  expect(invalid.toISO()).toBe(null);
 });
 
 // #724, Firefox specific issue, offset prints as '-05:50.60000000000002'
@@ -187,10 +182,6 @@ test("DateTime#toISODate() can output the basic format", () => {
   expect(dt.toISODate({ format: "basic" })).toBe("19820525");
 });
 
-test("DateTime#toISODate() returns null for invalid DateTimes", () => {
-  expect(invalid.toISODate()).toBe(null);
-});
-
 test("DateTime#toISODate() returns ISO 8601 date in format [±YYYYY]", () => {
   expect(
     DateTime.fromObject({ year: 118040, month: 5, day: 25 }, { zone: "utc" }).toISODate()
@@ -230,10 +221,6 @@ test("DateTime#toISODate({precision}) throws when the precision is invalid", () 
 //------
 test("DateTime#toISOWeekDate() returns ISO 8601 date", () => {
   expect(dt.toISOWeekDate()).toBe("1982-W21-2");
-});
-
-test("DateTime#toISOWeekDate() returns null for invalid DateTimes", () => {
-  expect(invalid.toISOWeekDate()).toBe(null);
 });
 
 //------
@@ -288,10 +275,6 @@ test("DateTime#toISOTime can include the prefix", () => {
   expect(dt.toISOTime({ format: "basic", includePrefix: true })).toBe("T092354.123Z");
 });
 
-test("DateTime#toISOTime() returns null for invalid DateTimes", () => {
-  expect(invalid.toISOTime()).toBe(null);
-});
-
 test("DateTime#toISOTime({precision}) truncates time to desired precision", () => {
   expect(dt.toISOTime({ precision: "millisecond" })).toBe("09:23:54.123Z");
   expect(dt.toISOTime({ precision: "second" })).toBe("09:23:54Z");
@@ -340,10 +323,6 @@ test("DateTime#toRFC2822() returns an RFC 2822 date", () => {
   expect(dt.set({ hour: 15 }).toRFC2822()).toBe("Tue, 25 May 1982 15:23:54 +0000");
 });
 
-test("DateTime#toRFC2822() returns null for invalid DateTimes", () => {
-  expect(invalid.toRFC2822()).toBe(null);
-});
-
 //------
 // #toHTTP()
 //------
@@ -354,10 +333,6 @@ test("DateTime#toHTTP() returns an RFC 1123 date", () => {
   expect(dt.plus({ hours: 10 }).toHTTP()).toBe("Tue, 25 May 1982 19:23:54 GMT");
 });
 
-test("DateTime#toHTTP() returns null for invalid DateTimes", () => {
-  expect(invalid.toHTTP()).toBe(null);
-});
-
 //------
 // #toSQLDate()
 //------
@@ -365,10 +340,6 @@ test("DateTime#toHTTP() returns null for invalid DateTimes", () => {
 test("DateTime#toSQLDate() returns SQL date", () => {
   expect(dt.toUTC().toSQLDate()).toBe("1982-05-25");
   expect(dt.setZone("America/New_York").toSQLDate()).toBe("1982-05-25");
-});
-
-test("DateTime#toSQLDate() returns null for invalid DateTimes", () => {
-  expect(invalid.toSQLDate()).toBe(null);
 });
 
 //------
@@ -396,10 +367,6 @@ test("DateTime#toSQLTime() accepts an includeZone option", () => {
   expect(dt.setZone("America/New_York").toSQLTime({ includeZone: true })).toBe(
     "05:23:54.123 America/New_York"
   );
-});
-
-test("DateTime#toSQLTime() returns null for invalid DateTimes", () => {
-  expect(invalid.toSQLTime()).toBe(null);
 });
 
 //------
@@ -431,19 +398,11 @@ test("DateTime#toSQL() accepts an includeZone option", () => {
   );
 });
 
-test("DateTime#toSQL() returns null for invalid DateTimes", () => {
-  expect(invalid.toSQL()).toBe(null);
-});
-
 //------
 // #toString()
 //-------
 test("DateTime#toString() returns the ISO time", () => {
   expect(dt.toUTC(-6 * 60).toString()).toBe("1982-05-25T03:23:54.123-06:00");
-});
-
-test("DateTime#toString() returns something different for invalid DateTimes", () => {
-  expect(invalid.toString()).toBe("Invalid DateTime");
 });
 
 //------
@@ -494,10 +453,6 @@ test("DateTime#toLocaleString can override the dateTime's output calendar", () =
   expect(
     dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString({}, { outputCalendar: "coptic" })
   ).toBe("9/17/1698 ERA1");
-});
-
-test("DateTime#toLocaleString() returns something different for invalid DateTimes", () => {
-  expect(invalid.toLocaleString()).toBe("Invalid DateTime");
 });
 
 test("DateTime#toLocaleString() shows things in the right IANA zone", () => {
@@ -703,8 +658,4 @@ test("DateTime#toLocaleParts accepts date formatting options", () => {
     { type: "literal", value: ":" },
     { type: "minute", value: "23" },
   ]);
-});
-
-test("DateTime#toLocaleParts returns empty for invalid DateTimes", () => {
-  expect(invalid.toLocaleParts()).toEqual([]);
 });
