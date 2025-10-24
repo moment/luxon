@@ -10,8 +10,6 @@ import type { DurationUnit } from "./impl/durationObjects.ts";
 import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 
-const INVALID = "Invalid Interval";
-
 export const LUXON_TYPE_INTERVAL = "interval" as LuxonTypeMarker<Interval>;
 
 // checks if the start is equal to or before the end
@@ -26,15 +24,6 @@ function validateStartEnd(start: DateTime, end: DateTime) {
       "interval.endBeforeStart"
     );
   }
-}
-
-interface IntervalConstructorParams {
-  start?: DateTime;
-  end?: DateTime;
-  /**
-   * @deprecated
-   */
-  invalid?: Invalid | undefined | null;
 }
 
 /**
@@ -52,28 +41,20 @@ interface IntervalConstructorParams {
 export default class Interval {
   readonly #start: DateTime;
   readonly #end: DateTime;
-  /**
-   * @deprecated
-   */
-  private readonly invalid: Invalid | null;
 
   /**
    * @private
    */
-  private constructor(config: IntervalConstructorParams, m: typeof INTERNAL_CONSTRUCTOR) {
+  private constructor(start: DateTime, end: DateTime, m: typeof INTERNAL_CONSTRUCTOR) {
     if (m !== INTERNAL_CONSTRUCTOR) throwInternalConstructorError("Interval");
     /**
      * @access private
      */
-    this.#start = config.start;
+    this.#start = start;
     /**
      * @access private
      */
-    this.#end = config.end;
-    /**
-     * @access private
-     */
-    this.invalid = config.invalid || null;
+    this.#end = end;
   }
 
   get [LUXON_TYPE](): typeof LUXON_TYPE_INTERVAL {
@@ -91,13 +72,7 @@ export default class Interval {
       builtEnd = friendlyDateTime(end);
 
     validateStartEnd(builtStart, builtEnd);
-    return new Interval(
-      {
-        start: builtStart,
-        end: builtEnd,
-      },
-      INTERNAL_CONSTRUCTOR
-    );
+    return new Interval(builtStart, builtEnd, INTERNAL_CONSTRUCTOR);
   }
 
   /**
@@ -220,15 +195,6 @@ export default class Interval {
    */
   get lastDateTime(): DateTime {
     return this.#end.minus(1);
-  }
-
-  /**
-   * Returns an error code if this Interval is invalid, or null if the Interval is valid
-   * @type {string}
-   * @deprecated
-   */
-  get invalidReason() {
-    return this.invalid ? this.invalid.reason : null;
   }
 
   /**
