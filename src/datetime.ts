@@ -448,7 +448,7 @@ function guessOffsetForZone(zone: Zone): number {
 // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
 // are present, and so on.
-function quickDT(obj: Partial<DateTimeObject>, opts): DateTime {
+function quickDT(obj: Partial<DateTimeObject>, opts: DateTimeWithZoneOptions): DateTime {
   const zone = normalizeZone(opts.zone, Settings.defaultZone);
   const loc = Locale.fromObject(opts);
 
@@ -510,25 +510,19 @@ function diffRelative(start, end, opts) {
   return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
 }
 
-type EmptyObject = Record<PropertyKey, never>;
-
-function lastOpts<T extends object>(
-  argList: Array<number | T | undefined>
-): [T | EmptyObject, number[]] {
-  let opts: T | EmptyObject, args: number[];
-
-  let last: T | number | undefined;
-  if (
-    argList.length > 0 &&
-    (typeof (last = argList[argList.length - 1]) === "object" || last === undefined)
-  ) {
-    opts = last ?? {};
-    args = Array.from(argList).slice(0, argList.length - 1) as number[];
+/**
+ * Pick an optional trailing options object off the array and return it. argList is modified
+ * in-place to no longer contain the object.
+ * @param argList
+ */
+function pickOpts<T extends object>(argList: Array<number | T | undefined>): T | undefined {
+  let maybeOpts: T | undefined | number = argList.at(-1);
+  if (typeof maybeOpts === "number") {
+    return undefined;
   } else {
-    opts = {};
-    args = Array.from(argList) as number[];
+    argList.splice(-1, 1);
+    return maybeOpts;
   }
-  return [opts, args];
 }
 
 /**
@@ -741,9 +735,10 @@ export default class DateTime {
     opts?: DateTimeLocalOptions
   ): DateTime;
   static local(...argList: Array<number | DateTimeLocalOptions | undefined>): DateTime {
-    const [opts, args] = lastOpts(argList),
-      [year, month, day, hour, minute, second, millisecond] = args;
-    return quickDT({ year, month, day, hour, minute, second, millisecond }, opts);
+    const opts = pickOpts(argList) ?? {};
+    const [year, month, day, hour, minute, second, millisecond] = argList as number[];
+    const res = quickDT({ year, month, day, hour, minute, second, millisecond }, opts);
+    return res;
   }
 
   /**
@@ -809,10 +804,9 @@ export default class DateTime {
     millisecond: number,
     opts?: DateTimeUTCOptions
   ): DateTime;
-  static utc(...argList: Array<number | DateTimeUTCOptions>): DateTime {
-    const [opts, args] = lastOpts(argList),
-      [year, month, day, hour, minute, second, millisecond] = args;
-
+  static utc(...argList: Array<number | DateTimeUTCOptions | undefined>): DateTime {
+    const opts: DateTimeWithZoneOptions = pickOpts(argList) ?? {};
+    const [year, month, day, hour, minute, second, millisecond] = argList as number[];
     opts.zone = FixedOffsetZone.utcInstance;
     return quickDT({ year, month, day, hour, minute, second, millisecond }, opts);
   }
