@@ -84,20 +84,6 @@ function possiblyCachedLocalWeekData(dt: DateTime): DateTimeObject<WeekDateObjec
   return dt.localWeekData;
 }
 
-// clone really means, "make a new object with these modifications". all "setters" really use this
-// to create a new object while only changing some of the properties
-function clone(inst: DateTime, alts) {
-  const current = {
-    ts: inst.ts,
-    zone: inst.zone,
-    c: inst.c,
-    o: inst.o,
-    loc: inst.loc,
-    invalid: inst.invalid,
-  };
-  return new DateTime({ ...current, ...alts, old: current });
-}
-
 // find the right offset a given local time. The o input is our guess, which determines which
 // offset we'll pick in ambiguous cases (e.g. there are two 3 AMs b/c Fallback DST)
 function fixOffset(localTS: number, o: number, tz: Zone): [ts: number, offset: number] {
@@ -558,8 +544,9 @@ export interface SetZoneOptions {
 interface DateTimeConstructorParams {
   ts?: number | undefined;
   zone?: Zone | undefined;
-  old?: DateTime | undefined;
-  invalid?: Invalid | undefined;
+  old?: DateTimeConstructorParams | undefined;
+  invalid?: Invalid | undefined | null;
+
   o?: number | undefined;
   loc?: Locale | undefined;
 }
@@ -587,9 +574,9 @@ interface DateTimeConstructorParams {
 export default class DateTime {
   // TODO: Make these private
   private readonly _zone: Zone;
-  private readonly ts: number;
+  readonly ts: number;
   readonly loc: Locale;
-  private readonly invalid: Invalid | null;
+  readonly invalid: Invalid | null;
   readonly c: DateTimeObject;
   readonly o: number;
   private readonly isLuxonDateTime: true;
@@ -1635,7 +1622,7 @@ export default class DateTime {
       c1.second === c2.second &&
       c1.millisecond === c2.millisecond
     ) {
-      return [clone(this, { ts: ts1 }), clone(this, { ts: ts2 })];
+      return [this.#clone({ ts: ts1 }), this.#clone(this, { ts: ts2 })];
     }
     return [this];
   }
@@ -1761,7 +1748,7 @@ export default class DateTime {
         const asObj = this.toObject();
         [newTS] = objToTS(asObj, offsetGuess, zone);
       }
-      return clone(this, { ts: newTS, zone });
+      return this.#clone({ ts: newTS, zone });
     }
   }
 
@@ -1778,7 +1765,7 @@ export default class DateTime {
   }: Omit<LocaleOptions, "weekSettings"> = {}): DateTime {
     // TODO: Accept all options
     const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
-    return clone(this, { loc });
+    return this.#clone({ loc });
   }
 
   /**
@@ -1850,7 +1837,7 @@ export default class DateTime {
     }
 
     const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o });
+    return this.#clone({ ts, o });
   }
 
   /**
@@ -1869,7 +1856,7 @@ export default class DateTime {
   plus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration);
-    return clone(this, adjustTime(this, dur));
+    return this.#clone(adjustTime(this, dur));
   }
 
   /**
@@ -1881,7 +1868,7 @@ export default class DateTime {
   minus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
     if (!this.isValid) return this;
     const dur = Duration.fromDurationLike(duration).negate();
-    return clone(this, adjustTime(this, dur));
+    return this.#clone(adjustTime(this, dur));
   }
 
   /**
@@ -2493,6 +2480,20 @@ export default class DateTime {
       units: ["years", "months", "days"],
       calendary: true,
     });
+  }
+
+  // clone really means, "make a new object with these modifications". all "setters" really use this
+  // to create a new object while only changing some of the properties
+  #clone(alts: Partial<DateTimeConstructorParams>): DateTime {
+    const current = {
+      ts: this.ts,
+      zone: this.zone,
+      c: this.c,
+      o: this.o,
+      loc: this.loc,
+      invalid: this.invalid,
+    };
+    return new DateTime({ ...current, ...alts, old: current });
   }
 
   /**
