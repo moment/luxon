@@ -53,6 +53,7 @@ import type { DateTimeObject, DateTimeObjectInput, WeekDateObject } from "./impl
 import { checkIntlDtfOptions } from "./impl/typeChecks.ts";
 import type { DurationUnit } from "./impl/durationObjects.ts";
 import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
+import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
@@ -528,6 +529,8 @@ interface DateTimeConstructorParams {
   loc?: Locale | undefined;
 }
 
+const LUXON_TYPE_DATETIME = "datetime" as LuxonTypeMarker<DateTime>;
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -556,7 +559,6 @@ export default class DateTime {
   readonly invalid: Invalid | null;
   readonly c: DateTimeObject;
   readonly o: number;
-  private readonly isLuxonDateTime: true;
 
   #weekData: DateTimeObject<WeekDateObject> | null = null;
   #localWeekData: DateTimeObject<WeekDateObject> | null = null;
@@ -613,10 +615,10 @@ export default class DateTime {
      * @access private
      */
     this.o = o!; // TODO: Remove ! when invalid is removed
-    /**
-     * @access private
-     */
-    this.isLuxonDateTime = true;
+  }
+
+  get [LUXON_TYPE]() {
+    return LUXON_TYPE_DATETIME;
   }
 
   // CONSTRUCT
@@ -1156,8 +1158,7 @@ export default class DateTime {
    * @return {boolean}
    */
   static isDateTime(o: unknown): o is DateTime {
-    /* TODO: Use same mechanism as Zone */
-    return (o && (o as any).isLuxonDateTime) || false;
+    return isLuxonType(o, LUXON_TYPE_DATETIME);
   }
 
   /**
