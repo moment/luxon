@@ -1,16 +1,17 @@
-import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.ts";
-import Duration from "./duration.ts";
+import DateTime, { type DateTimeLike, friendlyDateTime, parseDataToDateTime } from "./datetime.ts";
+import Duration, { type DurationInput } from "./duration.ts";
 import Settings from "./settings.ts";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.ts";
 import * as Formats from "./impl/formats.ts";
 import { parseISOIntervalEnd } from "./impl/regexParser.ts";
+import type { DurationUnit } from "./impl/durationObjects.ts";
 
 const INVALID = "Invalid Interval";
 
 // checks if the start is equal to or before the end
-function validateStartEnd(start, end) {
+function validateStartEnd(start: DateTime, end: DateTime): Interval | null {
   if (!start || !start.isValid) {
     return Interval.invalid("missing or invalid start");
   } else if (!end || !end.isValid) {
@@ -38,6 +39,14 @@ function validateStartEnd(start, end) {
  * * **Output** To convert the Interval into other representations, see {@link Interval#toString}, {@link Interval#toLocaleString}, {@link Interval#toISO}, {@link Interval#toISODate}, {@link Interval#toISOTime}, {@link Interval#toFormat}, and {@link Interval#toDuration}.
  */
 export default class Interval {
+  private readonly s: DateTime;
+  private readonly e: DateTime;
+  /**
+   * @deprecated
+   */
+  private readonly invalid: Invalid | null;
+  private readonly isLuxonInterval: true;
+
   /**
    * @private
    */
@@ -65,8 +74,9 @@ export default class Interval {
    * @param {string} reason - simple string of why this Interval is invalid. Should not contain parameters or anything else data-dependent
    * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
    * @return {Interval}
+   * @deprecated
    */
-  static invalid(reason, explanation = null) {
+  static invalid(reason: Invalid | string, explanation: string | null = null): Interval {
     if (!reason) {
       throw new InvalidArgumentError("need to specify a reason the Interval is invalid");
     }
@@ -86,7 +96,7 @@ export default class Interval {
    * @param {DateTime|Date|Object} end
    * @return {Interval}
    */
-  static fromDateTimes(start, end) {
+  static fromDateTimes(start: DateTimeLike, end: DateTimeLike): Interval {
     const builtStart = friendlyDateTime(start),
       builtEnd = friendlyDateTime(end);
 
@@ -108,7 +118,7 @@ export default class Interval {
    * @param {Duration|Object|number} duration - the length of the Interval.
    * @return {Interval}
    */
-  static after(start, duration) {
+  static after(start: DateTimeLike, duration: DurationInput): Interval {
     const dur = Duration.fromDurationLike(duration),
       dt = friendlyDateTime(start);
     return Interval.fromDateTimes(dt, dt.plus(dur));
@@ -120,7 +130,7 @@ export default class Interval {
    * @param {Duration|Object|number} duration - the length of the Interval.
    * @return {Interval}
    */
-  static before(end, duration) {
+  static before(end: DateTimeLike, duration: DurationInput): Interval {
     const dur = Duration.fromDurationLike(duration),
       dt = friendlyDateTime(end);
     return Interval.fromDateTimes(dt.minus(dur), dt);
@@ -134,7 +144,7 @@ export default class Interval {
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @return {Interval}
    */
-  static fromISO(text, opts) {
+  static fromISO(text: string, opts) {
     const { zone, setZone, ...restOpts } = opts || {};
     const [s, e] = (text || "").split("/", 2);
     if (s && e) {
@@ -195,7 +205,7 @@ export default class Interval {
    * @param {object} o
    * @return {boolean}
    */
-  static isInterval(o) {
+  static isInterval(o: unknown): o is Interval {
     return (o && o.isLuxonInterval) || false;
   }
 
@@ -203,8 +213,8 @@ export default class Interval {
    * Returns the start of the Interval
    * @type {DateTime}
    */
-  get start() {
-    return this.isValid ? this.s : null;
+  get start(): DateTime {
+    return this.isValid ? this.s : null!;
   }
 
   /**
@@ -212,29 +222,31 @@ export default class Interval {
    * (Interval is half-open).
    * @type {DateTime}
    */
-  get end() {
-    return this.isValid ? this.e : null;
+  get end(): DateTime {
+    return this.isValid ? this.e : null!;
   }
 
   /**
    * Returns the last DateTime included in the interval (since end is not part of the interval)
    * @type {DateTime}
    */
-  get lastDateTime() {
-    return this.isValid ? (this.e ? this.e.minus(1) : null) : null;
+  get lastDateTime(): DateTime {
+    return this.isValid ? (this.e ? this.e.minus(1) : null!) : null!;
   }
 
   /**
    * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
    * @type {boolean}
+   * @deprecated
    */
-  get isValid() {
+  get isValid(): boolean {
     return this.invalidReason === null;
   }
 
   /**
    * Returns an error code if this Interval is invalid, or null if the Interval is valid
    * @type {string}
+   * @deprecated
    */
   get invalidReason() {
     return this.invalid ? this.invalid.reason : null;
@@ -243,6 +255,7 @@ export default class Interval {
   /**
    * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
    * @type {string}
+   * @deprecated
    */
   get invalidExplanation() {
     return this.invalid ? this.invalid.explanation : null;
@@ -253,7 +266,7 @@ export default class Interval {
    * @param {string} unit - the unit (such as 'hours' or 'days') to return the length in.
    * @return {number}
    */
-  length(unit = "milliseconds") {
+  length(unit: DurationUnit = "milliseconds"): number {
     return this.isValid ? this.toDuration(...[unit]).get(unit) : NaN;
   }
 
@@ -266,7 +279,7 @@ export default class Interval {
    * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week; this operation will always use the locale of the start DateTime
    * @return {number}
    */
-  count(unit = "milliseconds", opts) {
+  count(unit: DurationUnit = "milliseconds", opts): number {
     if (!this.isValid) return NaN;
     const start = this.start.startOf(unit, opts);
     let end;
@@ -276,7 +289,7 @@ export default class Interval {
       end = this.end;
     }
     end = end.startOf(unit, opts);
-    return Math.floor(end.diff(start, unit).get(unit)) + (end.valueOf() !== this.end.valueOf());
+    return Math.floor(end.diff(start, unit).get(unit)) + +(end.valueOf() !== this.end.valueOf());
   }
 
   /**
@@ -284,7 +297,7 @@ export default class Interval {
    * @param {string} unit - the unit of time to check sameness on
    * @return {boolean}
    */
-  hasSame(unit) {
+  hasSame(unit: DurationUnit): boolean {
     return this.isValid ? this.isEmpty() || this.e.minus(1).hasSame(this.s, unit) : false;
   }
 
@@ -292,7 +305,7 @@ export default class Interval {
    * Return whether this Interval has the same start and end DateTimes.
    * @return {boolean}
    */
-  isEmpty() {
+  isEmpty(): boolean {
     return this.s.valueOf() === this.e.valueOf();
   }
 
@@ -301,7 +314,7 @@ export default class Interval {
    * @param {DateTime} dateTime
    * @return {boolean}
    */
-  isAfter(dateTime) {
+  isAfter(dateTime: DateTime): boolean {
     if (!this.isValid) return false;
     return this.s > dateTime;
   }
@@ -311,7 +324,7 @@ export default class Interval {
    * @param {DateTime} dateTime
    * @return {boolean}
    */
-  isBefore(dateTime) {
+  isBefore(dateTime: DateTime): boolean {
     if (!this.isValid) return false;
     return this.e <= dateTime;
   }
@@ -321,7 +334,7 @@ export default class Interval {
    * @param {DateTime} dateTime
    * @return {boolean}
    */
-  contains(dateTime) {
+  contains(dateTime: DateTime): boolean {
     if (!this.isValid) return false;
     return this.s <= dateTime && this.e > dateTime;
   }
@@ -333,7 +346,13 @@ export default class Interval {
    * @param {DateTime} values.end - the ending DateTime
    * @return {Interval}
    */
-  set({ start, end } = {}) {
+  set({
+    start,
+    end,
+  }: {
+    start?: DateTimeLike | null | undefined;
+    end?: DateTimeLike | null | undefined;
+  } = {}): Interval {
     if (!this.isValid) return this;
     return Interval.fromDateTimes(start || this.s, end || this.e);
   }
@@ -343,7 +362,7 @@ export default class Interval {
    * @param {...DateTime} dateTimes - the unit of time to count.
    * @return {Array}
    */
-  splitAt(...dateTimes) {
+  splitAt(...dateTimes: readonly DateTimeLike[]): Interval[] {
     if (!this.isValid) return [];
     const sorted = dateTimes
         .map(friendlyDateTime)
@@ -370,7 +389,7 @@ export default class Interval {
    * @param {Duration|Object|number} duration - The length of each resulting interval.
    * @return {Array}
    */
-  splitBy(duration) {
+  splitBy(duration: DurationInput): Interval[] {
     const dur = Duration.fromDurationLike(duration);
 
     if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
@@ -398,7 +417,7 @@ export default class Interval {
    * @param {number} numberOfParts - The number of Intervals to divide the Interval into.
    * @return {Array}
    */
-  divideEqually(numberOfParts) {
+  divideEqually(numberOfParts: number): Interval[] {
     if (!this.isValid) return [];
     return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
   }
@@ -408,7 +427,7 @@ export default class Interval {
    * @param {Interval} other
    * @return {boolean}
    */
-  overlaps(other) {
+  overlaps(other: Interval): boolean {
     return this.e > other.s && this.s < other.e;
   }
 
@@ -417,7 +436,7 @@ export default class Interval {
    * @param {Interval} other
    * @return {boolean}
    */
-  abutsStart(other) {
+  abutsStart(other: Interval): boolean {
     if (!this.isValid) return false;
     return +this.e === +other.s;
   }
@@ -427,7 +446,7 @@ export default class Interval {
    * @param {Interval} other
    * @return {boolean}
    */
-  abutsEnd(other) {
+  abutsEnd(other: Interval): boolean {
     if (!this.isValid) return false;
     return +other.e === +this.s;
   }
@@ -437,7 +456,7 @@ export default class Interval {
    * @param {Interval} other
    * @return {boolean}
    */
-  engulfs(other) {
+  engulfs(other: Interval): boolean {
     if (!this.isValid) return false;
     return this.s <= other.s && this.e >= other.e;
   }
@@ -447,7 +466,8 @@ export default class Interval {
    * @param {Interval} other
    * @return {boolean}
    */
-  equals(other) {
+  equals(other: Interval): boolean {
+    // TODO: Accept all values, not just Interval
     if (!this.isValid || !other.isValid) {
       return false;
     }
@@ -462,7 +482,7 @@ export default class Interval {
    * @param {Interval} other
    * @return {Interval}
    */
-  intersection(other) {
+  intersection(other: Interval): Interval | null {
     if (!this.isValid) return this;
     const s = this.s > other.s ? this.s : other.s,
       e = this.e < other.e ? this.e : other.e;
@@ -480,7 +500,7 @@ export default class Interval {
    * @param {Interval} other
    * @return {Interval}
    */
-  union(other) {
+  union(other: Interval): Interval {
     if (!this.isValid) return this;
     const s = this.s < other.s ? this.s : other.s,
       e = this.e > other.e ? this.e : other.e;
@@ -496,10 +516,10 @@ export default class Interval {
    * @param {Array} intervals
    * @return {Array}
    */
-  static merge(intervals) {
+  static merge(intervals: Interval[]): Interval[] {
     const [found, final] = intervals
-      .sort((a, b) => a.s - b.s)
-      .reduce(
+      .sort((a, b) => +a.s - +b.s)
+      .reduce<[Interval[], Interval | null]>(
         ([sofar, current], item) => {
           if (!current) {
             return [sofar, item];
@@ -522,7 +542,7 @@ export default class Interval {
    * @param {Array} intervals
    * @return {Array}
    */
-  static xor(intervals) {
+  static xor(intervals: Interval[]): Interval[] {
     let start = null,
       currentCount = 0;
     const results = [],
@@ -555,17 +575,17 @@ export default class Interval {
    * @param {...Interval} intervals
    * @return {Array}
    */
-  difference(...intervals) {
+  difference(...intervals: Interval[]): Interval[] {
     return Interval.xor([this].concat(intervals))
       .map((i) => this.intersection(i))
-      .filter((i) => i && !i.isEmpty());
+      .filter((i): i is Interval => i && !i.isEmpty());
   }
 
   /**
    * Returns a string representation of this Interval appropriate for debugging.
    * @return {string}
    */
-  toString() {
+  toString(): string {
     if (!this.isValid) return INVALID;
     return `[${this.s.toISO()} – ${this.e.toISO()})`;
   }
@@ -574,7 +594,7 @@ export default class Interval {
    * Returns a string representation of this Interval appropriate for the REPL.
    * @return {string}
    */
-  [Symbol.for("nodejs.util.inspect.custom")]() {
+  [Symbol.for("nodejs.util.inspect.custom")](): string {
     if (this.isValid) {
       return `Interval { start: ${this.s.toISO()}, end: ${this.e.toISO()} }`;
     } else {
@@ -600,7 +620,7 @@ export default class Interval {
    * @example Interval.fromISO('2022-11-07T17:00Z/2022-11-07T19:00Z').toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }); //=> Mon, Nov 07, 6:00 – 8:00 p
    * @return {string}
    */
-  toLocaleString(formatOpts = Formats.DATE_SHORT, opts = {}) {
+  toLocaleString(formatOpts: Intl.DateTimeFormatOptions = Formats.DATE_SHORT, opts = {}): string {
     return this.isValid
       ? Formatter.create(this.s.loc.clone(opts), formatOpts).formatInterval(this)
       : INVALID;
@@ -612,7 +632,7 @@ export default class Interval {
    * @param {Object} opts - The same options as {@link DateTime#toISO}
    * @return {string}
    */
-  toISO(opts) {
+  toISO(opts): string {
     if (!this.isValid) return INVALID;
     return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;
   }
@@ -623,7 +643,7 @@ export default class Interval {
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @return {string}
    */
-  toISODate() {
+  toISODate(): string {
     if (!this.isValid) return INVALID;
     return `${this.s.toISODate()}/${this.e.toISODate()}`;
   }
@@ -635,7 +655,7 @@ export default class Interval {
    * @param {Object} opts - The same options as {@link DateTime#toISO}
    * @return {string}
    */
-  toISOTime(opts) {
+  toISOTime(opts): string {
     if (!this.isValid) return INVALID;
     return `${this.s.toISOTime(opts)}/${this.e.toISOTime(opts)}`;
   }
@@ -651,7 +671,7 @@ export default class Interval {
    * representations.
    * @return {string}
    */
-  toFormat(dateFormat, { separator = " – " } = {}) {
+  toFormat(dateFormat: string, { separator = " – " }: { separator?: string } = {}): string {
     if (!this.isValid) return INVALID;
     return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
   }
@@ -668,7 +688,7 @@ export default class Interval {
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }
    * @return {Duration}
    */
-  toDuration(unit, opts) {
+  toDuration(unit: DurationUnit | readonly DurationUnit[], opts): Duration {
     if (!this.isValid) {
       return Duration.invalid(this.invalidReason);
     }
@@ -682,7 +702,7 @@ export default class Interval {
    * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.toUTC())
    * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.plus({ hours: 2 }))
    */
-  mapEndpoints(mapFn) {
+  mapEndpoints(mapFn: (d: DateTime) => DateTimeLike): Interval {
     return Interval.fromDateTimes(mapFn(this.s), mapFn(this.e));
   }
 }

@@ -139,7 +139,7 @@ export default class Formatter {
     return this.dtFormatter(dt, opts).formatToParts();
   }
 
-  formatInterval(interval: Interval, opts: PolyDateFormatterOptions): string {
+  formatInterval(interval: Interval, opts?: PolyDateFormatterOptions): string {
     const df = this.dtFormatter(interval.start, opts);
     return df.dtf.formatRange(interval.start.toJSDate(), interval.end.toJSDate());
   }

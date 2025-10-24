@@ -51,6 +51,7 @@ import { daysInMonth, daysInYear, isLeapYear, isoWeekdayToLocal } from "./impl/d
 import type Zone from "./zone.ts";
 import type { DateTimeObject, DateTimeObjectInput, WeekDateObject } from "./impl/dateObjects.ts";
 import { checkIntlDtfOptions } from "./impl/typeChecks.ts";
+import type { DurationUnit } from "./impl/durationObjects.ts";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
@@ -2346,7 +2347,7 @@ export default class DateTime {
    * i2.diff(i1, ['months', 'days', 'hours']).toObject() //=> { months: 16, days: 19, hours: 0.75 }
    * @return {Duration}
    */
-  diff(otherDateTime, unit = "milliseconds", opts = {}) {
+  diff(otherDateTime, unit: DurationUnit | readonly DurationUnit[] = "milliseconds", opts = {}) {
     if (!this.isValid || !otherDateTime.isValid) {
       return Duration.invalid("created by diffing an invalid DateTime");
     }

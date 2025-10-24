@@ -124,7 +124,7 @@ const humanizeUnitConversion = {
   quarters: null,
 };
 
-function durationToMillis(matrix, vals) {
+function durationToMillis(matrix: any, vals: DurationObject): number {
   let sum = vals.milliseconds ?? 0;
   for (const unit of reverseUnits.slice(1)) {
     if (vals[unit]) {
@@ -135,7 +135,7 @@ function durationToMillis(matrix, vals) {
 }
 
 // NB: mutates parameters
-function normalizeValues(matrix, vals) {
+function normalizeValues(matrix: any, vals: DurationObject) {
   // the logic below assumes the overall value of the duration is positive
   // if this is not the case, factor is used to make it so
   const factor = durationToMillis(matrix, vals) < 0 ? -1 : 1;
@@ -188,7 +188,7 @@ function normalizeValues(matrix, vals) {
 }
 
 // Remove all properties with a value of 0 from an object
-function removeZeroes(vals) {
+function removeZeroes(vals: DurationObject): DurationObject {
   const newVals = {};
   for (const [key, value] of Object.entries(vals)) {
     if (value !== 0) {
