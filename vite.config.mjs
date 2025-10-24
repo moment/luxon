@@ -18,7 +18,7 @@ export default defineConfig({
   test: {
     coverage: {
       reportsDirectory: resolve(__dirname, "build/coverage"),
-      include: ["src/**"]
+      include: ["src/**"],
     },
     env: {
       LANG: "en_US",
@@ -29,43 +29,44 @@ export default defineConfig({
         test: {
           name: "node",
           environment: "node",
-        }
+          setupFiles: ["test/setup.ts"],
+        },
       },
       {
         test: {
           name: "browsers",
           browser: {
-            provider: 'playwright',
+            provider: "playwright",
             enabled: true,
             headless: true,
             screenshotFailures: false,
             instances: [
               {
-                browser: 'chromium',
+                browser: "chromium",
                 context: {
                   locale: "en-US",
                   timezoneId: "America/New_York",
-                }
+                },
               },
               {
-                browser: 'firefox',
+                browser: "firefox",
                 context: {
                   locale: "en-US",
                   timezoneId: "America/New_York",
-                }
+                },
               },
               {
-                browser: 'webkit',
+                browser: "webkit",
                 context: {
                   locale: "en-US",
                   timezoneId: "America/New_York",
-                }
+                },
               },
-            ]
-          }
-        }
-      }
-    ]
+            ],
+          },
+        },
+      },
+    ],
   },
   build: {
     sourcemap: true,
@@ -75,7 +76,7 @@ export default defineConfig({
       name: "luxon",
       fileName: "luxon",
     },
-    target: ["es2020"],
+    target: ["es2022"],
     outDir: "build",
     rollupOptions: {
       output: [

@@ -1,7 +1,8 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 import { DateTime, Interval, Duration } from "../../src/luxon.ts";
 
 import * as Helpers from "../helpers";
+import { InvalidIntervalError } from "../../src/errors.ts";
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e)),
   todayFrom = (h1, h2) => Interval.fromDateTimes(Helpers.atHour(h1), Helpers.atHour(h2));
@@ -16,20 +17,34 @@ test("Interval#equals returns true iff the times are the same", () => {
     e2 = "2016-10-16",
     first = fromISOs(s, e);
 
-  expect(first.equals(fromISOs(s, e))).toBeTruthy();
-  expect(first.equals(fromISOs(s2, e))).toBeFalsy();
-  expect(first.equals(fromISOs(s, e2))).toBeFalsy();
-  expect(first.equals(fromISOs(s2, e2))).toBeFalsy();
+  expect(first.equals(fromISOs(s, e))).toBe(true);
+  expect(first.equals(fromISOs(s2, e))).toBe(false);
+  expect(first.equals(fromISOs(s, e2))).toBe(false);
+  expect(first.equals(fromISOs(s2, e2))).toBe(false);
 });
 
-test("Interval#equals returns false for invalid intervals", () => {
-  const invalid = Interval.invalid("blarg"),
-    normal = fromISOs("2017-01-01", "2017-01-02");
+describe("Interval#equals returns false for things that are not intervals", () => {
+  test.for([
+    DateTime.fromISO("2017-01-01T00:00:00.000Z"),
+    DateTime.fromISO("2017-01-02T00:00:00.000Z"),
+    new Date(),
+    0,
+    "2017-01-01T00:00:00.000Z/2017-01-02T00:00:00.000Z",
+    "blarg",
+    true,
+    false,
+    {
+      start: DateTime.fromISO("2017-01-01T00:00:00.000Z"),
+      end: DateTime.fromISO("2017-01-02T00:00:00.000Z"),
+    },
+    {
+      whatever: 1,
+    },
+  ])("$0", (val) => {
+    const normal = fromISOs("2017-01-01T00:00:00.000Z", "2017-01-02T00:00:00.000Z");
 
-  expect(invalid.equals(invalid)).toBeFalsy();
-  expect(normal.equals(invalid)).toBeFalsy();
-  expect(invalid.equals(normal)).toBeFalsy();
-  expect(normal.equals(normal)).toBeTruthy();
+    expect(normal.equals(val)).toBe(false);
+  });
 });
 
 //-------
@@ -63,10 +78,6 @@ test("Interval#union spans adjacent intervals", () => {
   expect(todayFrom(5, 8).union(todayFrom(8, 10)).equals(todayFrom(5, 10))).toBeTruthy();
 });
 
-test("Interval#union returns invalid for invalid intervals", () => {
-  expect(Interval.invalid("any reason").union(todayFrom(8, 10)).isValid).toBeFalsy();
-});
-
 //-------
 // #intersection()
 //-------
@@ -81,10 +92,6 @@ test("Interval#intersection returns the intersection for overlapping intervals",
 
 test("Interval#intersection returns null for adjacent intervals", () => {
   expect(todayFrom(5, 8).intersection(todayFrom(8, 10))).toBeNull();
-});
-
-test("Interval#intersection returns invalid for invalid intervals", () => {
-  expect(Interval.invalid("any reason").intersection(todayFrom(8, 10)).isValid).toBeFalsy();
 });
 
 //-------
@@ -230,11 +237,6 @@ test("Interval#engulfs", () => {
   expect(i.engulfs(todayFrom(9, 12), "equal")).toBeTruthy();
 });
 
-test("Interval#engulfs returns false for invalid intervals", () => {
-  expect(Interval.invalid("because").engulfs(todayFrom(9, 12))).toBe(false);
-  expect(todayFrom(9, 12).engulfs(Interval.invalid("because"))).toBe(false);
-});
-
 //-------
 // #abutsStart()
 //-------
@@ -243,11 +245,6 @@ test("Interval#abutsStart", () => {
   expect(todayFrom(9, 10).abutsStart(todayFrom(11, 12))).toBeFalsy();
   expect(todayFrom(9, 10).abutsStart(todayFrom(8, 11))).toBeFalsy();
   expect(todayFrom(9, 10).abutsStart(todayFrom(9, 10))).toBeFalsy();
-});
-
-test("Interval#abutsStart returns false for invalid intervals", () => {
-  expect(Interval.invalid("because").abutsStart(todayFrom(9, 12))).toBe(false);
-  expect(todayFrom(9, 12).abutsStart(Interval.invalid("because"))).toBe(false);
 });
 
 //-------
@@ -260,11 +257,6 @@ test("Interval#abutsEnd", () => {
   expect(todayFrom(9, 11).abutsEnd(todayFrom(9, 11))).toBeFalsy();
 });
 
-test("Interval#abutsEnd returns false for invalid intervals", () => {
-  expect(Interval.invalid("because").abutsEnd(todayFrom(9, 12))).toBe(false);
-  expect(todayFrom(9, 12).abutsEnd(Interval.invalid("because"))).toBe(false);
-});
-
 //-------
 // #splitAt()
 //-------
@@ -274,11 +266,6 @@ test("Interval#splitAt breaks up the interval", () => {
   expect(split[0].equals(todayFrom(8, 9))).toBeTruthy();
   expect(split[1].equals(todayFrom(9, 11))).toBeTruthy();
   expect(split[2].equals(todayFrom(11, 13))).toBeTruthy();
-});
-
-test("Interval#splitAt returns [] for invalid intervals", () => {
-  const split = Interval.invalid("because").splitAt(Helpers.atHour(9), Helpers.atHour(11));
-  expect(split).toEqual([]);
 });
 
 test("Interval#splitAt ignores times outside the interval", () => {
@@ -338,18 +325,13 @@ test("Interval#splitBy accepts a duration", () => {
   expect(split[2].equals(todayFrom(12, 13))).toBeTruthy();
 });
 
-test("Interval#splitBy returns [] for invalid intervals", () => {
-  const split = Interval.invalid("because").splitBy({ hours: 2 });
-  expect(split).toEqual([]);
-});
-
-test("Interval#split by returns [] for invalid durations", () => {
-  const split = todayFrom(8, 3).splitBy(Duration.invalid("because"));
-  expect(split).toEqual([]);
+test("Interval#split throws for invalid durations", () => {
+  const iv = todayFrom(3, 8);
+  expect(() => iv.splitBy(Duration.invalid("because"))).toThrow(InvalidIntervalError);
 });
 
 test("Interval#split by returns [] for durations of length 0", () => {
-  const split = todayFrom(8, 3).splitBy(Duration.fromObject({}));
+  const split = todayFrom(3, 8).splitBy(Duration.fromObject({}));
   expect(split).toEqual([]);
 });
 
@@ -400,11 +382,6 @@ test("Interval#divideEqually always gives you the right number of parts", () => 
   const int = Interval.after(Helpers.atHour(9), { minutes: 7 }),
     split = int.divideEqually(17);
   expect(split.length).toBe(17);
-});
-
-test("Interval#divideEqually returns [] for invalid intervals", () => {
-  const split = Interval.invalid("because").divideEqually(3);
-  expect(split).toEqual([]);
 });
 
 test("Interval#mapEndpoints returns a new Interval with the mapped endpoints", () => {

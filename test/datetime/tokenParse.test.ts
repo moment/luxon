@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { DateTime } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import Settings from "../../src/settings.ts";
-import { ConflictingSpecificationError, InvalidFormatError } from "../../src/errors";
+import { ConflictingSpecificationError, InvalidFormatError } from "../../src/errors.ts";
 import { hasOutdatedKannadaAmPmBehavior, hasOutdatedTamilAmPmBehavior } from "../specialCases";
 
 //------

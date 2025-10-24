@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest";
 import { Interval } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
+import { InvalidIntervalError } from "../../src/errors.ts";
 
 const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
@@ -108,27 +109,13 @@ test("Interval.fromISO can parse a variety of ISO formats", () => {
 
 test("Interval.fromISO accepts a zone argument", () => {
   const dateDate = Interval.fromISO("2016-01-01/2016-12-31", { zone: "Europe/Paris" });
-  expect(dateDate.isValid).toBe(true);
   expect(dateDate.start.zoneName).toBe("Europe/Paris");
 
   const dateDur = Interval.fromISO("2016-01-01/P1Y", { zone: "Europe/Paris" });
-  expect(dateDur.isValid).toBe(true);
   expect(dateDur.start.zoneName).toBe("Europe/Paris");
 
   const durDate = Interval.fromISO("P1Y/2016-01-01", { zone: "Europe/Paris" });
-  expect(durDate.isValid).toBe(true);
   expect(durDate.start.zoneName).toBe("Europe/Paris");
-});
-
-// #728
-test("Interval.fromISO works with Settings.throwOnInvalid", () => {
-  withThrowOnInvalid(true, () => {
-    const dateDur = Interval.fromISO("2020-06-22T17:30:00.000+02:00/PT5H30M");
-    expect(dateDur.isValid).toBe(true);
-
-    const durDate = Interval.fromISO("PT5H30M/2020-06-22T17:30:00.000+02:00");
-    expect(durDate.isValid).toBe(true);
-  });
 });
 
 const badInputs = [
@@ -139,10 +126,8 @@ const badInputs = [
   "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M", // valid ISO 8601 interval with a repeat, but not supported here
 ];
 
-test.each(badInputs)("Interval.fromISO will return invalid for [%s]", (s) => {
-  const i = Interval.fromISO(s);
-  expect(i.isValid).toBe(false);
-  expect(i.invalidReason).toBe("unparsable");
+test.each(badInputs)("Interval.fromISO will throw for [%s]", (s) => {
+  expect(() => Interval.fromISO(s)).toThrowLuxonError(InvalidIntervalError, "unparsable");
 });
 
 describe("Interval.fromISO defaults missing values in end to start", () => {

@@ -4,7 +4,7 @@ import { DateTime, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
-import { InvalidZoneError } from "../../src/errors.js";
+import { InvalidZoneError } from "../../src/errors.ts";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),

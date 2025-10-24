@@ -1,9 +1,18 @@
 // these aren't really private, but nor are they really useful to document
 
+import type Invalid from "./impl/invalid.js";
+
 /**
  * @private
  */
-class LuxonError extends Error {}
+export class LuxonError extends Error {
+  readonly code: string | undefined;
+
+  constructor(message?: string, code?: string) {
+    super(message);
+    this.code = code;
+  }
+}
 
 export class LuxonIntlError extends LuxonError {}
 
@@ -21,17 +30,13 @@ export class InvalidFormatError extends LuxonError {}
 /**
  * @private
  */
-export class InvalidIntervalError extends LuxonError {
-  constructor(reason) {
-    super(`Invalid Interval: ${reason.toMessage()}`);
-  }
-}
+export class InvalidIntervalError extends LuxonError {}
 
 /**
  * @private
  */
 export class InvalidDurationError extends LuxonError {
-  constructor(reason) {
+  constructor(reason: Invalid) {
     super(`Invalid Duration: ${reason.toMessage()}`);
   }
 }

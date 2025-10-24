@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
 
 import { DateTime, Zone, FixedOffsetZone } from "../../src/luxon.ts";
-import { InvalidUnitError } from "../../src/errors";
+import { InvalidUnitError } from "../../src/errors.ts";
 import { hasMissingLocaleBeSupport } from "../specialCases";
 
 const dtMaker = () =>

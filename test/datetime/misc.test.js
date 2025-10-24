@@ -1,5 +1,6 @@
 import { test, expect } from "vitest";
 import { DateTime } from "../../src/luxon.ts";
+import { InvalidIntervalError } from "../../src/errors.ts";
 
 // you hate to see a class like this, but here we are
 
@@ -74,9 +75,9 @@ test("DateTime#until() creates an invalid Interval out of an invalid DateTime", 
   const dt = DateTime.now(),
     invalid = DateTime.invalid("because");
 
-  expect(invalid.until(invalid).isValid).toBe(false);
-  expect(invalid.until(dt).isValid).toBe(false);
-  expect(dt.until(invalid).isValid).toBe(false);
+  expect(() => invalid.until(invalid)).toThrow(InvalidIntervalError);
+  expect(() => invalid.until(dt)).toThrow(InvalidIntervalError);
+  expect(() => dt.until(invalid)).toThrow(InvalidIntervalError);
 });
 
 //------

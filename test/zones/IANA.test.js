@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import { FixedOffsetZone, IANAZone } from "../../src/luxon.ts";
 import { hasMissingEtcGmtNormalization } from "../specialCases";
-import { InvalidZoneError } from "../../src/errors.js";
+import { InvalidZoneError } from "../../src/errors.ts";
 
 test("IANAZone.create returns a singleton per zone name", () => {
   expect(IANAZone.create("UTC")).toBe(IANAZone.create("UTC"));

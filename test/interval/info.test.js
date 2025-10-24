@@ -26,11 +26,6 @@ test("Interval#length('years') returns the right number of years", () => {
   expect(Math.floor(fromISOs("1996-02-17", "2012-08-14").length("years"))).toBe(16);
 });
 
-test("Interval#length() returns NaN for invalid intervals", () => {
-  const i = Interval.invalid("because");
-  expect(i.length("years")).toBeFalsy();
-});
-
 //------
 // #count()
 //-------
@@ -64,11 +59,6 @@ test("Interval#count() uses milliseconds by default", () => {
   expect(i.count()).toBe(39600000);
 });
 
-test("Interval#count() returns NaN for invalid intervals", () => {
-  const i = Interval.invalid("because");
-  expect(i.count("years")).toBeFalsy();
-});
-
 //------
 // #toDuration()
 //-------
@@ -99,12 +89,6 @@ test("Interval#toDuration accepts duration options", () => {
   expect(dur.conversionAccuracy).toBe("longterm");
 });
 
-test("Interval#toDuration returns an invalid duration for invalid intervals", () => {
-  const int = Interval.invalid("because"),
-    dur = int.toDuration(["hours"]);
-  expect(dur.isValid).toBeFalsy();
-});
-
 //------
 // #contains()
 //-------
@@ -130,11 +114,6 @@ test("Interval#contains returns true for the start endpoint", () => {
 
 test("Interval#contains returns false for the end endpoint", () => {
   const i = fromISOs("1982-05-25T06:00", "1982-05-25T07:00");
-  expect(i.contains(DateTime.fromISO("1982-05-25T07:00"))).toBe(false);
-});
-
-test("Interval#contains returns false for invalid intervals", () => {
-  const i = Interval.invalid("because");
   expect(i.contains(DateTime.fromISO("1982-05-25T07:00"))).toBe(false);
 });
 
@@ -184,12 +163,6 @@ test("Interval#isBefore returns false for intervals just inside the input", () =
   expect(i.isBefore(n.minus(1))).toBe(false);
 });
 
-test("Interval#isBefore returns false for invalid intervals", () => {
-  const n = DateTime.fromISO("1982-05-25T06:00"),
-    i = Interval.invalid("because");
-  expect(i.isBefore(n)).toBe(false);
-});
-
 //------
 // #isAfter()
 //-------
@@ -217,12 +190,6 @@ test("Interval#isAfter returns false for intervals beginning at the input", () =
   expect(i.isAfter(n)).toBe(false);
 });
 
-test("Interval#isAfter returns false for invalid intervals", () => {
-  const n = DateTime.fromISO("1982-05-25T06:00"),
-    i = Interval.invalid("because");
-  expect(i.isAfter(n)).toBe(false);
-});
-
 //------
 // #hasSame()
 //-------
@@ -242,11 +209,6 @@ test("Interval#hasSame('day') returns true for durations durations ending at mid
   const n = DateTime.fromISO("1982-05-25T06:00"),
     i = Interval.fromDateTimes(n, n.plus({ days: 1 }).startOf("day"));
   expect(i.hasSame("day")).toBe(true);
-});
-
-test("Interval#hasSame returns false for invalid intervals", () => {
-  const i = Interval.invalid("because");
-  expect(i.hasSame("day")).toBe(false);
 });
 
 test.each([

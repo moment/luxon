@@ -3,7 +3,7 @@ import { test, expect } from "vitest";
 import { DateTime, Settings, IANAZone } from "../../src/luxon.ts";
 
 import * as Helpers from "../helpers";
-import { InvalidZoneError } from "../../src/errors.js";
+import { InvalidZoneError } from "../../src/errors.ts";
 
 const millis = 391147200000,
   // 1982-05-25T04:00:00.000Z
