@@ -61,31 +61,6 @@ function unsupportedZone(zone: Zone): Invalid {
   return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
 }
 
-// we cache week data on the DT object and this intermediates the cache
-/**
- * @param {DateTime} dt
- */
-function possiblyCachedWeekData(dt: DateTime): DateTimeObject<WeekDateObject> {
-  if (dt.weekData === null) {
-    dt.weekData = gregorianToWeek(dt.c);
-  }
-  return dt.weekData;
-}
-
-/**
- * @param {DateTime} dt
- */
-function possiblyCachedLocalWeekData(dt: DateTime): DateTimeObject<WeekDateObject> {
-  if (dt.localWeekData === null) {
-    dt.localWeekData = gregorianToWeek(
-      dt.c,
-      dt.loc.getMinDaysInFirstWeek(),
-      dt.loc.getStartOfWeek()
-    );
-  }
-  return dt.localWeekData;
-}
-
 // find the right offset a given local time. The o input is our guess, which determines which
 // offset we'll pick in ambiguous cases (e.g. there are two 3 AMs b/c Fallback DST)
 function fixOffset(localTS: number, o: number, tz: Zone): [ts: number, offset: number] {
@@ -583,8 +558,8 @@ export default class DateTime {
   readonly o: number;
   private readonly isLuxonDateTime: true;
 
-  weekData: DateTimeObject<WeekDateObject> | null;
-  localWeekData: DateTimeObject<WeekDateObject> | null;
+  #weekData: DateTimeObject<WeekDateObject> | null = null;
+  #localWeekData: DateTimeObject<WeekDateObject> | null = null;
 
   /**
    * @access private
@@ -630,14 +605,6 @@ export default class DateTime {
      * @access private
      */
     this.invalid = invalid;
-    /**
-     * @access private
-     */
-    this.weekData = null;
-    /**
-     * @access private
-     */
-    this.localWeekData = null;
     /**
      * @access private
      */
@@ -1407,6 +1374,10 @@ export default class DateTime {
     return this.isValid ? this.c.millisecond : NaN;
   }
 
+  #possiblyCachedWeekData(): DateTimeObject<WeekDateObject> {
+    return (this.#weekData ??= gregorianToWeek(this.c));
+  }
+
   /**
    * Get the week year
    * @see https://en.wikipedia.org/wiki/ISO_week_date
@@ -1415,7 +1386,7 @@ export default class DateTime {
    */
   get weekYear(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? possiblyCachedWeekData(this).weekYear : NaN;
+    return this.isValid ? this.#possiblyCachedWeekData().weekYear : NaN;
   }
 
   /**
@@ -1426,7 +1397,7 @@ export default class DateTime {
    */
   get weekNumber(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? possiblyCachedWeekData(this).weekNumber : NaN;
+    return this.isValid ? this.#possiblyCachedWeekData().weekNumber : NaN;
   }
 
   /**
@@ -1438,7 +1409,7 @@ export default class DateTime {
    */
   get weekday(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? possiblyCachedWeekData(this).weekday : NaN;
+    return this.isValid ? this.#possiblyCachedWeekData().weekday : NaN;
   }
 
   /**
@@ -1450,6 +1421,14 @@ export default class DateTime {
     return this.isValid && this.loc.getWeekendDays().includes(this.weekday);
   }
 
+  #possiblyCachedLocalWeekData(): DateTimeObject<WeekDateObject> {
+    return (this.#localWeekData ??= gregorianToWeek(
+      this.c,
+      this.loc.getMinDaysInFirstWeek(),
+      this.loc.getStartOfWeek()
+    ));
+  }
+
   /**
    * Get the day of the week according to the locale.
    * 1 is the first day of the week and 7 is the last day of the week.
@@ -1458,7 +1437,7 @@ export default class DateTime {
    */
   get localWeekday(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? possiblyCachedLocalWeekData(this).weekday : NaN;
+    return this.isValid ? this.#possiblyCachedLocalWeekData().weekday : NaN;
   }
 
   /**
@@ -1469,7 +1448,7 @@ export default class DateTime {
    */
   get localWeekNumber(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? possiblyCachedLocalWeekData(this).weekNumber : NaN;
+    return this.isValid ? this.#possiblyCachedLocalWeekData().weekNumber : NaN;
   }
 
   /**
@@ -1479,7 +1458,7 @@ export default class DateTime {
    */
   get localWeekYear(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? possiblyCachedLocalWeekData(this).weekYear : NaN;
+    return this.isValid ? this.#possiblyCachedLocalWeekData().weekYear : NaN;
   }
 
   /**
