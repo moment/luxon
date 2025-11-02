@@ -8,7 +8,7 @@ import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 
 import { isInteger } from "./util.ts";
 import SystemZone from "../zones/systemZone.ts";
-import { InvalidZoneError } from "../errors.js";
+import { InvalidZoneError } from "../errors.ts";
 
 export type ZoneInput = Zone | string | number | null | undefined;
 

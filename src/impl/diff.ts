@@ -1,4 +1,4 @@
-import Duration from "../duration.js";
+import Duration from "../duration.ts";
 import type DateTime from "../datetime.ts";
 import { utcTs } from "./util.ts";
 

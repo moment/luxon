@@ -1,4 +1,4 @@
-import { ZoneIsAbstractError } from "./errors.js";
+import { ZoneIsAbstractError } from "./errors.ts";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 
 const LUXON_TYPE_ZONE = "zone" as LuxonTypeMarker<Zone>;

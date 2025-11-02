@@ -4,7 +4,8 @@ import { DateTime, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
-import { InvalidZoneError } from "../../src/errors.ts";
+import { InvalidArgumentError, InvalidDateTimeError, InvalidZoneError } from "../../src/errors.ts";
+import { INVALID_UNIT_VALUE } from "../../src/impl/dateTimeErrors.ts";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -141,8 +142,22 @@ test("DateTime.local accepts the default output calendar", () => {
 });
 
 test("DateTime.local does not accept non-integer values", () => {
-  const dt = DateTime.local(2017, 6.7, 12);
-  expect(dt.isValid).toBe(false);
+  expect(() => DateTime.local(2017, 6.7, 12)).toThrow(TypeError);
+});
+
+describe("DateTime.local does not accept out of range values", () => {
+  test.each([15, -2, 0])("for month $0", (m) => {
+    expect(() => DateTime.local(2017, m, 12)).toThrow(RangeError);
+  });
+  test.each([
+    [2024, 12, 32],
+    [2024, 11, 31],
+    [2024, 2, 30],
+    [2023, 2, 29],
+    [2024, 10, -2],
+  ])("for day", (year, month, day) => {
+    expect(() => DateTime.local(year, month, day)).toThrow(RangeError);
+  });
 });
 
 test("DateTime.local accepts the default time zone", () => {
@@ -313,24 +328,25 @@ test("DateTime.fromJSDate(date) accepts a zone option", () => {
   expect(dateTime.zoneName).toBe("America/Santiago");
 });
 
-test("DateTime.fromJSDate(date) returns invalid for invalid values", () => {
-  expect(DateTime.fromJSDate("").isValid).toBe(false);
-  expect(DateTime.fromJSDate(new Date("")).isValid).toBe(false);
-  expect(DateTime.fromJSDate(new Date().valueOf()).isValid).toBe(false);
-});
-
 test("DateTime.fromJSDate accepts the default locale", () => {
   withDefaultLocale("fr", () => expect(DateTime.fromJSDate(new Date()).locale).toBe("fr"));
 });
 
-test("DateTime.fromJSDate(date) throw errors for invalid values when throwOnInvalid is true", () => {
-  withthrowOnInvalid(true, () => {
-    expect(() => DateTime.fromJSDate("")).toThrow();
-    expect(() => DateTime.fromJSDate(new Date(""))).toThrow();
-    expect(() => DateTime.fromJSDate(new Date().valueOf())).toThrow();
-    expect(() => DateTime.fromJSDate(new Date(), { zone: "America/Blorp" })).toThrow();
-    expect(() => DateTime.fromJSDate("2019-04-16T11:32:32Z")).toThrow();
-  });
+test.for(["", 15, null, undefined, 13n, {}, { valueOf: () => 15 }, "2019-04-16T11:32:32Z"])(
+  "DateTime.fromJSDate(date) throw errors for invalid argument $0",
+  (val) => {
+    expect(() => DateTime.fromJSDate(val)).toThrow(TypeError);
+  }
+);
+
+test("DateTime.fromJSDate throws for invalid Date objects", () => {
+  expect(() => DateTime.fromJSDate(new Date(""))).toThrow(TypeError);
+});
+
+test("DateTime.fromJSDate throws for invalid time zones", () => {
+  expect(() => DateTime.fromJSDate(new Date(), { zone: "America/Blorp" })).toThrow(
+    InvalidZoneError
+  );
 });
 
 //------
@@ -355,19 +371,29 @@ test("DateTime.fromMillis accepts the default locale", () => {
   withDefaultLocale("fr", () => expect(DateTime.fromMillis(391147200000).locale).toBe("fr"));
 });
 
-test("DateTime.fromMillis(ms) throws InvalidArgumentError for non-numeric input", () => {
-  expect(() => DateTime.fromMillis("slurp")).toThrow();
-});
+test.each(["slurp", 3.5, { valueOf: () => 1 }, new Date(15), 13n])(
+  "DateTime.fromMillis($0) throws TypeError",
+  (v) => {
+    expect(() => DateTime.fromMillis(v)).toThrow(TypeError);
+  }
+);
 
-test("DateTime.fromMillis(ms) does not accept out-of-bounds numbers", () => {
-  expect(DateTime.fromMillis(-8.64e15 - 1).isValid).toBe(false);
-  expect(DateTime.fromMillis(8.64e15 + 1).isValid).toBe(false);
-});
+test.each([-8.64e15 - 1, 8.64e15 + 1])(
+  "DateTime.fromMillis(ms) does not accept out-of-bounds numbers",
+  () => {
+    expect(() => DateTime.fromMillis(-8.64e15 - 1)).toThrow(RangeError);
+  }
+);
 
-test("DateTime.fromMillis(ms) does not accept non-finite numbers", () => {
-  expect(DateTime.fromMillis(Infinity).isValid).toBe(false);
-  expect(DateTime.fromMillis(-Infinity).isValid).toBe(false);
-  expect(DateTime.fromMillis(NaN).isValid).toBe(false);
+test.each([Infinity, -Infinity, NaN])(
+  "DateTime.fromMillis(ms) does not accept non-finite number $0",
+  (v) => {
+    expect(() => DateTime.fromMillis(v)).toThrow(TypeError);
+  }
+);
+
+test("DateTime.fromMillis(-0) is normalized to 0", () => {
+  expect(DateTime.fromMillis(-0).toMillis()).toBe(0);
 });
 
 //------
@@ -380,7 +406,7 @@ test("DateTime.fromSeconds(seconds) has a value of 1000 * seconds", () => {
   expect(DateTime.fromSeconds(0).valueOf()).toBe(0);
 });
 
-test("DateTime.fromSeconds(ms) accepts a zone option", () => {
+test("DateTime.fromSeconds(seconds) accepts a zone option", () => {
   const seconds = 391147200,
     dateTime = DateTime.fromSeconds(seconds, { zone: "America/Santiago" });
 
@@ -392,19 +418,28 @@ test("DateTime.fromSeconds accepts the default locale", () => {
   withDefaultLocale("fr", () => expect(DateTime.fromSeconds(391147200).locale).toBe("fr"));
 });
 
-test("DateTime.fromSeconds(seconds) throws InvalidArgumentError for non-numeric input", () => {
-  expect(() => DateTime.fromSeconds("slurp")).toThrow();
-});
+test.each(["slurp", 3.5, { valueOf: () => 1 }, new Date(15), 13n])(
+  "DateTime.fromSeconds($0) throws TypeError",
+  (v) => {
+    expect(() => DateTime.fromSeconds(v)).toThrow(TypeError);
+  }
+);
 
-test("DateTime.fromSeconds(seconds) does not accept out-of-bounds numbers", () => {
-  expect(DateTime.fromSeconds(-8.64e12 - 1).isValid).toBe(false);
-  expect(DateTime.fromSeconds(8.64e12 + 1).isValid).toBe(false);
-});
+test.each([-8.64e12 - 1, 8.64e12 + 1])(
+  "DateTime.fromSeconds(seconds) does not accept out-of-bounds number $0",
+  (v) => {
+    expect(() => DateTime.fromSeconds(v)).toThrow(RangeError);
+  }
+);
+test.each([Infinity, -Infinity, NaN])(
+  "DateTime.fromSeconds(seconds) does not accept non-finite number $0",
+  (v) => {
+    expect(() => DateTime.fromSeconds(v)).toThrow(TypeError);
+  }
+);
 
-test("DateTime.fromSeconds(seconds) does not accept non-finite numbers", () => {
-  expect(DateTime.fromSeconds(Infinity).isValid).toBe(false);
-  expect(DateTime.fromSeconds(-Infinity).isValid).toBe(false);
-  expect(DateTime.fromSeconds(NaN).isValid).toBe(false);
+test("DateTime.fromSeconds(-0) is normalized to 0", () => {
+  expect(DateTime.fromSeconds(-0).toMillis()).toBe(0);
 });
 
 //------
@@ -511,7 +546,6 @@ test("DateTime.fromObject() rejects invalid zones", () => {
 
 test("DateTime.fromObject() ignores the case of object keys", () => {
   const dt = DateTime.fromObject({ Year: 2019, MONTH: 4, daYs: 10 });
-  expect(dt.isValid).toBe(true);
   expect(dt.year).toBe(2019);
   expect(dt.month).toBe(4);
   expect(dt.day).toBe(10);
@@ -521,16 +555,39 @@ test("DateTime.fromObject() throws with invalid object key", () => {
   expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow();
 });
 
-test("DateTime.fromObject() throws with invalid value types", () => {
-  expect(() => DateTime.fromObject({ year: "blorp" })).toThrow();
-  expect(() => DateTime.fromObject({ year: "" })).toThrow();
-  expect(() => DateTime.fromObject({ month: NaN })).toThrow();
-  expect(() => DateTime.fromObject({ month: Infinity })).toThrow();
-  expect(() => DateTime.fromObject({ month: -Infinity })).toThrow();
-  expect(() => DateTime.fromObject({ day: true })).toThrow();
-  expect(() => DateTime.fromObject({ day: false })).toThrow();
-  expect(() => DateTime.fromObject({ hour: {} })).toThrow();
-  expect(() => DateTime.fromObject({ hour: { unit: 42 } })).toThrow();
+describe("DateTime.fromObject() throws with invalid value types", () => {
+  test.for(
+    [
+      "year",
+      "month",
+      "day",
+      "hour",
+      "minute",
+      "second",
+      "millisecond",
+      "weekYear",
+      "weekNumber",
+      "weekday",
+      "localWeekYear",
+      "localWeekNumber",
+      "localWeekday",
+    ].flatMap((unit) => {
+      return [
+        "blorb",
+        "",
+        NaN,
+        Infinity,
+        -Infinity,
+        true,
+        false,
+        {},
+        { unit: 1 },
+        { valueOf: () => 1 },
+      ].map((val) => [val, unit]);
+    })
+  )("$1: $0", ([val, unit]) => {
+    expect(() => DateTime.fromObject({ [unit]: val })).toThrow(TypeError);
+  });
 });
 
 test("DateTime.fromObject() reject invalid values", () => {

@@ -1,6 +1,6 @@
 import { formatOffset, isUndefined, objToLocalTS, parseZoneInfo } from "../impl/util.ts";
 import Zone, { type UniversalZone } from "../zone.ts";
-import { InvalidZoneError } from "../errors.js";
+import { InvalidZoneError } from "../errors.ts";
 import {
   INTERNAL_CONSTRUCTOR,
   throwInternalConstructorError,

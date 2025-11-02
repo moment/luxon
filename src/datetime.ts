@@ -1,7 +1,7 @@
-import Duration from "./duration.js";
-import Interval from "./interval.js";
-import Settings from "./settings.js";
-import Info from "./info.js";
+import Duration from "./duration.ts";
+import Interval from "./interval.ts";
+import Settings from "./settings.ts";
+import Info from "./info.ts";
 import Formatter from "./impl/formatter.ts";
 import FixedOffsetZone from "./zones/fixedOffsetZone.ts";
 import Locale, { type LocaleOptions } from "./impl/locale.ts";
@@ -19,7 +19,7 @@ import {
 } from "./impl/util.ts";
 import { normalizeZone, type ZoneInput } from "./impl/zoneUtil.ts";
 import diff from "./impl/diff.ts";
-import { parseHTTPDate, parseISODate, parseRFC2822Date, parseSQL } from "./impl/regexParser.js";
+import { parseHTTPDate, parseISODate, parseRFC2822Date, parseSQL } from "./impl/regexParser.ts";
 import {
   expandMacroTokens,
   explainFromTokens,
@@ -29,6 +29,8 @@ import {
   TokenParser,
 } from "./impl/tokenParser.ts";
 import {
+  checkValidGregorianData,
+  checkValidTimeData,
   gregorianToOrdinal,
   gregorianToWeek,
   hasInvalidGregorianData,
@@ -45,15 +47,22 @@ import {
   InvalidArgumentError,
   InvalidDateTimeError,
   InvalidUnitError,
-} from "./errors.js";
+} from "./errors.ts";
 import Invalid from "./impl/invalid.js";
 import { daysInMonth, daysInYear, isLeapYear } from "./impl/dateMath.ts";
 import type Zone from "./zone.ts";
 import type { DateTimeObject, DateTimeObjectInput, WeekDateObject } from "./impl/dateObjects.ts";
-import { checkIntlDtfOptions } from "./impl/typeChecks.ts";
+import {
+  checkInteger,
+  checkIntegerBetween,
+  checkIntlDtfOptions,
+  checkValidDate,
+} from "./impl/typeChecks.ts";
 import type { DurationUnit } from "./impl/durationObjects.ts";
 import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
+import type { PartialNullable } from "./impl/utilTypes.ts";
+import * as DateTimeErrors from "./impl/dateTimeErrors.ts";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
@@ -169,8 +178,9 @@ export function parseDataToDateTime(
       });
     return setZone ? inst : inst.setZone(zone);
   } else {
-    return DateTime.invalid(
-      new Invalid("unparsable", `the input "${text}" can't be parsed as ${format}`)
+    throw new InvalidDateTimeError(
+      `the input "${text}" can't be parsed as ${format}`,
+      DateTimeErrors.UNPARSABLE
     );
   }
 }
@@ -412,7 +422,7 @@ function guessOffsetForZone(zone: Zone): number {
 // this is a dumbed down version of fromObject() that runs about 60% faster
 // but doesn't do any validation, makes a bunch of assumptions about what units
 // are present, and so on.
-function quickDT(obj: Partial<DateTimeObject>, opts: DateTimeWithZoneOptions): DateTime {
+function quickDT(obj: PartialNullable<DateTimeObject>, opts: DateTimeWithZoneOptions): DateTime {
   const zone = normalizeZone(opts.zone, Settings.defaultZone);
   const loc = Locale.fromObject(opts);
 
@@ -428,10 +438,8 @@ function quickDT(obj: Partial<DateTimeObject>, opts: DateTimeWithZoneOptions): D
       }
     }
 
-    const invalid = hasInvalidGregorianData(obj) || hasInvalidTimeData(obj);
-    if (invalid) {
-      return DateTime.invalid(invalid);
-    }
+    checkValidGregorianData(obj.year, obj.month, obj.day);
+    checkValidTimeData(obj.hour, obj.minute, obj.second, obj.millisecond);
 
     const offsetProvis = guessOffsetForZone(zone);
     // cast is safe, we fill in the missing values above
@@ -577,7 +585,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.ts = isUndefined(config.ts) ? Settings.now() : config.ts;
+    this.ts = (config.ts ?? Settings.now()) || 0; // make sure we normalize -0 to 0 by || 0
 
     let c: DateTimeObject | null = null,
       o: number | null = null;
@@ -778,16 +786,9 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromJSDate(date: Date, options: DateTimeWithZoneOptions = {}): DateTime {
-    const ts = isDate(date) ? date.valueOf() : NaN;
-    if (Number.isNaN(ts)) {
-      return DateTime.invalid("invalid input");
-    }
-
+    checkValidDate(date, "date");
+    const ts = +date;
     const zoneToUse = normalizeZone(options.zone, Settings.defaultZone);
-    if (!zoneToUse.isValid) {
-      return DateTime.invalid(unsupportedZone(zoneToUse));
-    }
-
     return new DateTime(
       {
         ts: ts,
@@ -810,23 +811,15 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromMillis(milliseconds: number, options: DateTimeWithZoneOptions = {}): DateTime {
-    if (!isNumber(milliseconds)) {
-      throw new InvalidArgumentError(
-        `fromMillis requires a numerical input, but received a ${typeof milliseconds} with value ${milliseconds}`
-      );
-    } else if (milliseconds < -MAX_DATE || milliseconds > MAX_DATE) {
-      // this isn't perfect because we can still end up out of range because of additional shifting, but it's a start
-      return DateTime.invalid("Timestamp out of range");
-    } else {
-      return new DateTime(
-        {
-          ts: milliseconds,
-          zone: normalizeZone(options.zone, Settings.defaultZone),
-          loc: Locale.fromObject(options),
-        },
-        INTERNAL_CONSTRUCTOR
-      );
-    }
+    checkIntegerBetween(milliseconds, -MAX_DATE, MAX_DATE, "milliseconds");
+    return new DateTime(
+      {
+        ts: milliseconds,
+        zone: normalizeZone(options.zone, Settings.defaultZone),
+        loc: Locale.fromObject(options),
+      },
+      INTERNAL_CONSTRUCTOR
+    );
   }
 
   /**
@@ -841,18 +834,15 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromSeconds(seconds: number, options: DateTimeWithZoneOptions = {}): DateTime {
-    if (!isNumber(seconds)) {
-      throw new InvalidArgumentError("fromSeconds requires a numerical input");
-    } else {
-      return new DateTime(
-        {
-          ts: seconds * 1000,
-          zone: normalizeZone(options.zone, Settings.defaultZone),
-          loc: Locale.fromObject(options),
-        },
-        INTERNAL_CONSTRUCTOR
-      );
-    }
+    checkIntegerBetween(seconds, -(MAX_DATE / 1000), MAX_DATE / 1000, "seconds");
+    return new DateTime(
+      {
+        ts: seconds * 1000,
+        zone: normalizeZone(options.zone, Settings.defaultZone),
+        loc: Locale.fromObject(options),
+      },
+      INTERNAL_CONSTRUCTOR
+    );
   }
 
   /**
@@ -898,10 +888,6 @@ export default class DateTime {
   ): DateTime {
     obj = obj || {};
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
-    if (!zoneToUse.isValid) {
-      return DateTime.invalid(unsupportedZone(zoneToUse));
-    }
-
     const loc = Locale.fromObject(opts);
     const normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);
     const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, loc);
@@ -1139,7 +1125,9 @@ export default class DateTime {
    * @deprecated
    */
   static invalid(reason: string | Invalid, explanation: string | null = null): DateTime {
-    throw new Error("Invalid DateTime is no longer a thing.");
+    throw new Error(
+      `Invalid DateTime is no longer a thing: ${reason instanceof Invalid ? reason.toMessage() : reason}`
+    );
   }
 
   /**

@@ -1,8 +1,6 @@
 import { expect } from "vitest";
 import { LuxonError } from "../src/errors.ts";
 
-console.log("SETUP RUNS");
-
 expect.extend({
   toThrowLuxonError(func: () => unknown, expected, code) {
     const { isNot } = this;

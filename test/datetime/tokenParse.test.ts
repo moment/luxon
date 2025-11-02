@@ -2,8 +2,14 @@ import { describe, expect, test } from "vitest";
 import { DateTime } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import Settings from "../../src/settings.ts";
-import { ConflictingSpecificationError, InvalidFormatError } from "../../src/errors.ts";
+import {
+  ConflictingSpecificationError,
+  InvalidDateTimeError,
+  InvalidFormatError,
+  LuxonParseError,
+} from "../../src/errors.ts";
 import { hasOutdatedKannadaAmPmBehavior, hasOutdatedTamilAmPmBehavior } from "../specialCases";
+import { UNPARSABLE } from "../../src/impl/dateTimeErrors.ts";
 
 //------
 // .fromFormat
@@ -19,10 +25,11 @@ test("DateTime.fromFormat() parses basic times", () => {
   expect(i.millisecond).toBe(445);
 });
 
-test("DateTime.fromFormat() yields Invalid reason 'unparseable' for incompatible formats", () => {
-  const i = DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy");
-  expect(i.invalid).not.toBeNull;
-  expect(i.invalid.reason).toEqual("unparsable");
+test("DateTime.fromFormat() throws code 'unparseable' for incompatible formats", () => {
+  expect(() => DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy")).toThrowLuxonError(
+    InvalidDateTimeError,
+    UNPARSABLE
+  );
 });
 
 test("DateTime.fromFormat() parses with variable-length input", () => {
@@ -110,16 +117,23 @@ test("DateTime.fromFormat() makes dots optional and handles non breakable spaces
   });
 });
 
-test("DateTime.fromFormat() parses variable-digit years", () => {
-  expect(DateTime.fromFormat("", "y").isValid).toBe(false);
-  expect(DateTime.fromFormat("2", "y").year).toBe(2);
-  expect(DateTime.fromFormat("22", "y").year).toBe(22);
-  expect(DateTime.fromFormat("222", "y").year).toBe(222);
-  expect(DateTime.fromFormat("2222", "y").year).toBe(2222);
-  expect(DateTime.fromFormat("22222", "y").year).toBe(22222);
-  expect(DateTime.fromFormat("222222", "y").year).toBe(222222);
-  expect(DateTime.fromFormat("2222222", "y").isValid).toBe(false);
+test.each([
+  ["2", 2],
+  ["22", 22],
+  ["222", 222],
+  ["2222", 2222],
+  ["22222", 22222],
+  ["222222", 222222],
+])("DateTime.fromFormat() parses $0 as variable-digit years with token y", (val, year) => {
+  expect(DateTime.fromFormat(val, "y").year).toBe(year);
 });
+
+test.each(["", "2222222"])(
+  "DateTime.fromFormat() does not accept $0 as variable-digit years with token y",
+  (val) => {
+    expect(() => DateTime.fromFormat(val, "y")).toThrow(LuxonParseError);
+  }
+);
 
 test("DateTime.fromFormat() with yyyyy optionally parses extended years", () => {
   expect(DateTime.fromFormat("222", "yyyyy").isValid).toBe(false);

@@ -1,6 +1,6 @@
 import { integerBetween, isInteger, isUndefined, timeObject, weeksInWeekYear } from "./util.ts";
 import Invalid from "./invalid.js";
-import { ConflictingSpecificationError } from "../errors.js";
+import { ConflictingSpecificationError } from "../errors.ts";
 import type { DateTimeObject, OrdinalDateObject, WeekDateObject } from "./dateObjects.ts";
 import {
   computeOrdinal,
@@ -10,6 +10,7 @@ import {
   isoWeekdayToLocal,
   uncomputeOrdinal,
 } from "./dateMath.ts";
+import { checkInteger, checkIntegerBetween } from "./typeChecks.ts";
 
 /**
  * @deprecated TODO: Remove invalid
@@ -157,6 +158,25 @@ export function hasInvalidOrdinalData(obj: any): false | Invalid {
   } else if (!validOrdinal) {
     return unitOutOfRange("ordinal", obj.ordinal);
   } else return false;
+}
+
+export function checkValidGregorianData(year: unknown, month: unknown, day: unknown) {
+  checkInteger(year, "year");
+  checkIntegerBetween(month, 1, 12, "month");
+  checkIntegerBetween(day, 1, daysInMonth(year, month), "day");
+}
+export function checkValidTimeData(
+  hour: unknown,
+  minute: unknown,
+  second: unknown,
+  millisecond: unknown
+) {
+  if (!(hour === 24 && minute === 0 && second === 0 && millisecond === 0)) {
+    checkIntegerBetween(hour, 0, 23, "hour");
+    checkIntegerBetween(minute, 0, 59, "minute");
+    checkIntegerBetween(second, 0, 59, "second");
+    checkIntegerBetween(millisecond, 0, 999, "millisecond");
+  }
 }
 
 export function hasInvalidGregorianData(obj: any): false | Invalid {

@@ -2,28 +2,39 @@
 
 import type Invalid from "./impl/invalid.js";
 
+export interface BaseLuxonError extends Error {
+  readonly code: string | number | undefined;
+}
+
 /**
  * @private
  */
-export class LuxonError extends Error {
-  readonly code: string | undefined;
+export class LuxonError extends Error implements BaseLuxonError {
+  readonly code: string | number | undefined;
 
-  constructor(message?: string, code?: string) {
+  constructor(message?: string, code?: string | number) {
     super(message);
     this.code = code;
   }
 }
+
+export class LuxonTypeError extends TypeError implements BaseLuxonError {
+  readonly code: string | number | undefined;
+
+  constructor(message?: string, code?: string | number) {
+    super(message);
+    this.code = code;
+  }
+}
+
+export class LuxonParseError extends Error {}
 
 export class LuxonIntlError extends LuxonError {}
 
 /**
  * @private
  */
-export class InvalidDateTimeError extends LuxonError {
-  constructor(reason) {
-    super(`Invalid DateTime: ${reason.toMessage()}`);
-  }
-}
+export class InvalidDateTimeError extends LuxonError {}
 
 export class InvalidFormatError extends LuxonError {}
 
@@ -60,7 +71,7 @@ export class InvalidUnitError extends LuxonError {
 /**
  * @private
  */
-export class InvalidArgumentError extends LuxonError {}
+export class InvalidArgumentError extends LuxonTypeError {}
 
 /**
  * @private

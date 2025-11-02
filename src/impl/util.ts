@@ -4,11 +4,12 @@
   it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
 */
 
-import { InvalidArgumentError } from "../errors.js";
-import Settings from "../settings.js";
+import { InvalidArgumentError } from "../errors.ts";
+import Settings from "../settings.ts";
 import type { AnyDateObject, DateTimeObject, TimeObject } from "./dateObjects.ts";
 import { dayOfWeek, daysInYear, isoWeekdayToLocal } from "./dateMath.ts";
 import type { LuxonWeekSettings } from "./weekInfo.ts";
+import { checkFiniteNumber, checkInteger } from "./typeChecks.ts";
 
 /**
  * @private

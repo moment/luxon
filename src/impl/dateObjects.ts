@@ -1,3 +1,5 @@
+import type { PartialNullable } from "./utilTypes.ts";
+
 export interface DateObject {
   year: number;
   month: number;
@@ -26,20 +28,11 @@ export interface TimeObject {
 
 export type DateTimeObject<T extends AnyDateObject = DateObject> = T & TimeObject;
 
-export interface DateTimeObjectInput {
-  // TODO: This is not complete
-  year?: number;
-  month?: number;
-  day?: number;
+interface AllDateObject extends DateObject, OrdinalDateObject, WeekDateObject {}
 
-  ordinal?: number;
+type AppendS<T> = T & {
+  [K in keyof T as K extends string ? `${K}s` : never]: T[K];
+};
 
-  weekYear?: number;
-  weekNumber?: number;
-  weekday?: number;
-
-  hour?: number;
-  minute?: number;
-  second?: number;
-  millisecond?: number;
-}
+export type DateTimeObjectInput = PartialNullable<AppendS<DateTimeObject<AllDateObject>>>;
+export type NormalizedDateTimeObjectInput = Partial<DateTimeObject<AllDateObject>>;

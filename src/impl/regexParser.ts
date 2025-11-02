@@ -368,7 +368,7 @@ const extractPartialIsoIntervalEndDate = simpleParse(
   "month",
   "day",
   "weekNumber",
-  "weekDay",
+  "weekday",
   "ordinal"
 );
 

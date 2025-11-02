@@ -1,4 +1,4 @@
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
+import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.ts";
 import Formatter from "./impl/formatter.ts";
 import Invalid from "./impl/invalid.js";
 import Locale, { type LocaleOptions } from "./impl/locale.ts";

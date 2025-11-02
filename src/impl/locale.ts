@@ -1,11 +1,11 @@
 import { hasLocaleWeekInfo, hasRelative, padStart, roundTo, validateWeekSettings } from "./util.ts";
 import * as English from "./english.ts";
-import Settings from "../settings.js";
+import Settings from "../settings.ts";
 import DateTime from "../datetime.ts";
 import IANAZone from "../zones/IANAZone.ts";
 import type { LuxonWeekSettings } from "./weekInfo.ts";
 import type Zone from "../zone.ts";
-import { LuxonIntlError } from "../errors.js";
+import { LuxonIntlError } from "../errors.ts";
 
 // todo - remap caching
 

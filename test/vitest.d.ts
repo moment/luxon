@@ -5,7 +5,7 @@ interface Constructable {
 }
 
 interface CustomMatchers<R = unknown> {
-  toThrowLuxonError: (errorType: Constructable, code?: string) => R;
+  toThrowLuxonError: (errorType: Constructable, code?: string | number) => R;
 }
 
 declare module "vitest" {

@@ -4,7 +4,7 @@ import FixedOffsetZone from "../zones/fixedOffsetZone.ts";
 import IANAZone from "../zones/IANAZone.ts";
 import DateTime from "../datetime.ts";
 import { digitRegex, parseDigits } from "./digits.ts";
-import { ConflictingSpecificationError, InvalidFormatError } from "../errors.js";
+import { ConflictingSpecificationError, InvalidFormatError } from "../errors.ts";
 import type Locale from "./locale.ts";
 import type Zone from "../zone.ts";
 import type { DateTimeObjectInput } from "./dateObjects.ts";

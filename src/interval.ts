@@ -1,7 +1,7 @@
 import DateTime, { type DateTimeLike, friendlyDateTime, parseDataToDateTime } from "./datetime.ts";
 import Duration, { type DurationInput } from "./duration.ts";
 import Settings from "./settings.ts";
-import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
+import { InvalidArgumentError, InvalidIntervalError } from "./errors.ts";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.ts";
 import * as Formats from "./impl/formats.ts";
