@@ -554,7 +554,8 @@ test("DateTime.fromISO() accepts 24:00", () => {
 });
 
 test("DateTime.fromISO() doesn't accept 24:23", () => {
-  expect(DateTime.fromISO("2018-05-25T24:23").isValid).toBe(false);
+  // TODO: Test for error info and correct error type
+  expect(() => DateTime.fromISO("2018-05-25T24:23")).toThrow();
 });
 
 test("DateTime.fromISO() accepts extended zones", () => {
@@ -707,25 +708,30 @@ test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
   });
 });
 
-test("DateTime.fromISO() rejects poop", () => {
-  const rejects = (s) => expect(DateTime.fromISO(s).isValid).toBeFalsy();
+test("DateTime.fromISO throws for null", () => {
+  // TODO: check if we already have tests for other bad inputs
+  expect(() => DateTime.fromISO(null)).toThrow(TypeError);
+});
 
-  rejects(null);
-  rejects("");
-  rejects(" ");
-  rejects("2016-1");
-  rejects("2016-1-15");
-  rejects("2016-01-5");
-  rejects("2016-01-00");
-  rejects("2016-00-01");
-  rejects("2016-05-25 08:34:34");
-  rejects("2016-05-25Q08:34:34");
-  rejects("2016-05-25T8:04:34");
-  rejects("2016-05-25T08:4:34");
-  rejects("2016-05-25T08:04:4");
-  rejects("2016-05-25T:03:4");
-  rejects("2016-05-25T08::4");
-  rejects("2016-W32-02");
+test.each([
+  "",
+  " ",
+  "2016-1",
+  "2016-1-15",
+  "2016-01-5",
+  "2016-01-00",
+  "2016-00-01",
+  "2016-05-25 08:34:34",
+  "2016-05-25Q08:34:34",
+  "2016-05-25T8:04:34",
+  "2016-05-25T08:4:34",
+  "2016-05-25T08:04:4",
+  "2016-05-25T:03:4",
+  "2016-05-25T08::4",
+  "2016-W32-02",
+])("DateTime.fromISO($0) rejects the bad input", (s) => {
+  // TODO: Check for correct error type and options
+  expect(() => DateTime.fromISO(s)).toThrow();
 });
 
 //------
@@ -771,8 +777,8 @@ test("DateTime.fromRFC2822 parses a range of dates", () => {
 });
 
 test("DateTime.fromRFC2822() rejects incorrect days of the week", () => {
-  const dt = DateTime.fromRFC2822("Wed, 01 Nov 2016 13:23:12 +0600");
-  expect(dt.isValid).toBe(false);
+  // TODO: Proper error type
+  expect(() => DateTime.fromRFC2822("Wed, 01 Nov 2016 13:23:12 +0600")).toThrow();
 });
 
 test("DateTime.fromRFC2822() can elide the day of the week", () => {

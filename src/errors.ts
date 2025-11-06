@@ -27,7 +27,7 @@ export class LuxonTypeError extends TypeError implements BaseLuxonError {
   }
 }
 
-export class LuxonParseError extends Error {}
+export class LuxonParseError extends RangeError {}
 
 export class LuxonIntlError extends LuxonError {}
 

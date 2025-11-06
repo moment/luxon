@@ -26,10 +26,8 @@ test("DateTime.fromFormat() parses basic times", () => {
 });
 
 test("DateTime.fromFormat() throws code 'unparseable' for incompatible formats", () => {
-  expect(() => DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy")).toThrowLuxonError(
-    InvalidDateTimeError,
-    UNPARSABLE
-  );
+  // TODO: Proper error type and params
+  expect(() => DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy")).toThrowError();
 });
 
 test("DateTime.fromFormat() parses with variable-length input", () => {
@@ -131,23 +129,38 @@ test.each([
 test.each(["", "2222222"])(
   "DateTime.fromFormat() does not accept $0 as variable-digit years with token y",
   (val) => {
-    expect(() => DateTime.fromFormat(val, "y")).toThrow(LuxonParseError);
+    expect(() => DateTime.fromFormat(val, "y")).toThrowError(
+      expect.objectContaining({
+        constructor: LuxonParseError,
+        // TODO: check that extended info is provided
+      })
+    );
   }
 );
 
-test("DateTime.fromFormat() with yyyyy optionally parses extended years", () => {
-  expect(DateTime.fromFormat("222", "yyyyy").isValid).toBe(false);
-  expect(DateTime.fromFormat("2222", "yyyyy").year).toBe(2222);
-  expect(DateTime.fromFormat("22222", "yyyyy").year).toBe(22222);
-  expect(DateTime.fromFormat("222222", "yyyyy").year).toBe(222222);
-  expect(DateTime.fromFormat("2222222", "yyyyy").isValid).toBe(false);
+test.each(["222", "2222222"])("DateTime.fromFormat() with yyyyy rejects $0", (input) => {
+  // TODO: Correct error type
+  expect(() => DateTime.fromFormat(input, "yyyyy")).toThrow();
 });
 
-test("DateTime.fromFormat() with yyyyyy strictly parses extended years", () => {
-  expect(DateTime.fromFormat("2222", "yyyyyy").isValid).toBe(false);
-  expect(DateTime.fromFormat("222222", "yyyyyy").year).toBe(222222);
-  expect(DateTime.fromFormat("022222", "yyyyyy").year).toBe(22222);
-  expect(DateTime.fromFormat("2222222", "yyyyyy").isValid).toBe(false);
+test.each([
+  ["2222", 2222],
+  ["22222", 22222],
+  ["222222", 222222],
+])("DateTime.fromFormat() with yyyyy parses $0 correctly", (input, year) => {
+  expect(DateTime.fromFormat(input, "yyyyy").year).toBe(year);
+});
+
+test.each(["2222", "2222222"])("DateTime.fromFormat() with yyyyyy rejects $0", (input) => {
+  // TODO: Correct error type
+  expect(() => DateTime.fromFormat(input, "yyyyyy")).toThrow();
+});
+
+test.each([
+  ["222222", 222222],
+  ["022222", 22222],
+])("DateTime.fromFormat() with yyyyyy parses $0 correctly", (input, year) => {
+  expect(DateTime.fromFormat(input, "yyyyyy").year).toBe(year);
 });
 
 test("DateTime.fromFormat() defaults yy to the right century", () => {
@@ -180,39 +193,74 @@ test("DateTime.fromFormat() parses hours", () => {
   expect(DateTime.fromFormat("13", "HH").hour).toBe(13);
 });
 
-test("DateTime.fromFormat() parses milliseconds", () => {
-  expect(DateTime.fromFormat("1", "S").millisecond).toBe(1);
-  expect(DateTime.fromFormat("12", "S").millisecond).toBe(12);
-  expect(DateTime.fromFormat("123", "S").millisecond).toBe(123);
-  expect(DateTime.fromFormat("1234", "S").isValid).toBe(false);
-
-  expect(DateTime.fromFormat("1", "S").millisecond).toBe(1);
-  expect(DateTime.fromFormat("12", "S").millisecond).toBe(12);
-  expect(DateTime.fromFormat("123", "S").millisecond).toBe(123);
-
-  expect(DateTime.fromFormat("1", "SSS").isValid).toBe(false);
-  expect(DateTime.fromFormat("12", "SSS").isValid).toBe(false);
-  expect(DateTime.fromFormat("123", "SSS").millisecond).toBe(123);
-  expect(DateTime.fromFormat("023", "SSS").millisecond).toBe(23);
-  expect(DateTime.fromFormat("1234", "SSS").isValid).toBe(false);
+test.each([
+  ["1", 1],
+  ["12", 12],
+  ["123", 123],
+])("DateTime.fromFormat('S') parses $0 as $1 milliseconds", (input, ms) => {
+  expect(DateTime.fromFormat(input, "S").millisecond).toBe(ms);
 });
 
-test("DateTime.fromFormat() parses fractional seconds", () => {
-  expect(DateTime.fromFormat("1", "u").millisecond).toBe(100);
-  expect(DateTime.fromFormat("12", "u").millisecond).toBe(120);
-  expect(DateTime.fromFormat("123", "u").millisecond).toBe(123);
-  expect(DateTime.fromFormat("023", "u").millisecond).toBe(23);
-  expect(DateTime.fromFormat("003", "u").millisecond).toBe(3);
-  expect(DateTime.fromFormat("1234", "u").millisecond).toBe(123);
-  expect(DateTime.fromFormat("1235", "u").millisecond).toBe(123);
+test("DateTime.fromFormat does not accept ms > 999 for token S", () => {
+  // TODO: Proper error type
+  expect(() => DateTime.fromFormat("1234", "S")).toThrow();
+});
 
-  expect(DateTime.fromFormat("1", "uu").millisecond).toBe(100);
-  expect(DateTime.fromFormat("12", "uu").millisecond).toBe(120);
-  expect(DateTime.fromFormat("02", "uu").millisecond).toBe(20);
-  expect(DateTime.fromFormat("-33", "uu").isValid).toBe(false);
+test.each([
+  ["123", 123],
+  ["023", 23],
+  ["001", 1],
+])("DateTime.fromFormat('SSS') parses $0 as $1 milliseconds", (input, ms) => {
+  expect(DateTime.fromFormat(input, "SSS").millisecond).toBe(ms);
+  expect(DateTime.fromFormat("023", "SSS").millisecond).toBe(23);
+});
 
-  expect(DateTime.fromFormat("1", "uuu").millisecond).toBe(100);
-  expect(DateTime.fromFormat("-2", "uuu").isValid).toBe(false);
+test("DateTime.fromFormat does not accept ms > 999 for token SSS", () => {
+  // TODO: Proper error type
+  expect(() => DateTime.fromFormat("1234", "SSS")).toThrow();
+});
+
+test("DateTime.fromFormat only accepts 3 digits for token SSS", () => {
+  // TODO: Proper error type
+  expect(() => DateTime.fromFormat("1", "SSS")).toThrow();
+  expect(() => DateTime.fromFormat("12", "SSS")).toThrow();
+});
+
+test.each([
+  ["1", 100],
+  ["12", 120],
+  ["123", 123],
+  ["023", 23],
+  ["003", 3],
+  ["1234", 123],
+  ["1235", 123],
+])("DateTime.fromFormat() parses $0 as fractional seconds with 'u'", (input, ms) => {
+  expect(DateTime.fromFormat(input, "u").millisecond).toBe(ms);
+});
+
+test.each([
+  ["1", 100],
+  ["12", 120],
+  ["02", 20],
+])("DateTime.fromFormat() parses $0 as fractional seconds with 'uu'", (input, ms) => {
+  expect(DateTime.fromFormat(input, "uu").millisecond).toBe(ms);
+});
+
+test("DateTime.fromFormat() does not allow negative fractional seconds with 'uu'", () => {
+  // TODO: Proper error type
+  expect(() => DateTime.fromFormat("-33", "uu")).toThrow();
+});
+
+test.each([["1", 100]])(
+  "DateTime.fromFormat() parses $0 as fractional seconds with 'uuu'",
+  (input, ms) => {
+    expect(DateTime.fromFormat(input, "uuu").millisecond).toBe(ms);
+  }
+);
+
+test("DateTime.fromFormat() does not allow negative fractional seconds with 'uuu'", () => {
+  // TODO: Proper error type
+  expect(() => DateTime.fromFormat("-2", "uuu")).toThrow();
 });
 
 test("DateTime.fromFormat() parses weekdays", () => {

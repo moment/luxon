@@ -13,6 +13,12 @@ export function checkValidDate(value: unknown, arg: string) {
   }
 }
 
+export function checkString(value: unknown, arg: string): asserts value is string {
+  if (typeof value !== "string") {
+    throw new TypeError(`${arg} must be a string, but received ${value}.`);
+  }
+}
+
 declare const integerBrand: unique symbol;
 
 type IntegerGuard = number & { [integerBrand]: true };

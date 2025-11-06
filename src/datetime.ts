@@ -47,6 +47,7 @@ import {
   InvalidArgumentError,
   InvalidDateTimeError,
   InvalidUnitError,
+  LuxonParseError,
 } from "./errors.ts";
 import Invalid from "./impl/invalid.js";
 import { daysInMonth, daysInYear, isLeapYear } from "./impl/dateMath.ts";
@@ -56,6 +57,7 @@ import {
   checkInteger,
   checkIntegerBetween,
   checkIntlDtfOptions,
+  checkString,
   checkValidDate,
 } from "./impl/typeChecks.ts";
 import type { DurationUnit } from "./impl/durationObjects.ts";
@@ -178,9 +180,10 @@ export function parseDataToDateTime(
       });
     return setZone ? inst : inst.setZone(zone);
   } else {
-    throw new InvalidDateTimeError(
-      `the input "${text}" can't be parsed as ${format}`,
-      DateTimeErrors.UNPARSABLE
+    throw new LuxonParseError(
+      `the input "${text}" can't be parsed as ${format}`
+      // TODO: Extended error info?
+      // DateTimeErrors.UNPARSABLE
     );
   }
 }
@@ -1012,6 +1015,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   static fromISO(text: string, opts: DateTimeWithZoneOptions = {}): DateTime {
+    checkString(text, "text");
     const [vals, parsedZone] = parseISODate(text);
     return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text);
   }
