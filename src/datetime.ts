@@ -57,6 +57,7 @@ import {
   checkInteger,
   checkIntegerBetween,
   checkIntlDtfOptions,
+  checkObject,
   checkString,
   checkValidDate,
 } from "./impl/typeChecks.ts";
@@ -893,7 +894,8 @@ export default class DateTime {
     obj?: DateTimeObjectInput | null | undefined,
     opts: InternalDateTimeFromObjectOptions = {}
   ): DateTime {
-    obj = obj || {};
+    obj ??= {};
+    checkObject(obj, "obj");
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
     const loc = Locale.fromObject(opts);
     const normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);

@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
 
 import { DateTime, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
@@ -555,6 +555,12 @@ test("DateTime.fromObject() throws with invalid object key", () => {
   expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow();
 });
 
+describe("DateTime.fromObject throws for non-objects", () => {
+  test.each([6, "6", "{ month: 5 }", '{ "month": 5 }', true, false, 15n, Symbol()])("$0", (v) => {
+    expect(() => DateTime.fromObject(v)).toThrow(TypeError);
+  });
+});
+
 describe("DateTime.fromObject() throws with invalid value types", () => {
   test.for(
     [
@@ -598,13 +604,32 @@ describe("DateTime.fromObject() reject invalid values", () => {
   });
 });
 
-test("DateTime.fromObject() defaults high-order values to the current date", () => {
-  const dateTime = DateTime.fromObject({}),
-    now = DateTime.now();
+describe("DateTime.fromObject() defaults high-order values to the current date", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
 
-  expect(dateTime.year).toBe(now.year);
-  expect(dateTime.month).toBe(now.month);
-  expect(dateTime.day).toBe(now.day);
+  test(() => {
+    vi.setSystemTime(Date.UTC(2020, 9, 8, 7, 6, 5, 4));
+    const dateTime = DateTime.fromObject({});
+
+    expect(dateTime.year).toBe(2020);
+    expect(dateTime.month).toBe(10);
+    expect(dateTime.day).toBe(8);
+    expect(dateTime.hour).toBe(7);
+    expect(dateTime.minute).toBe(6);
+    expect(dateTime.second).toBe(5);
+    expect(dateTime.millisecond).toBe(4);
+  });
+
+  test(() => {
+    vi.setSystemTime(Date.UTC(2020, 9, 8, 7, 6, 5, 4));
+    const dateTime = DateTime.fromObject({ hour: 4 });
+
+    expect(dateTime.year).toBe(2020);
+    expect(dateTime.month).toBe(10);
+    expect(dateTime.day).toBe(8);
+    expect(dateTime.hour).toBe(4);
+  });
 });
 
 test("DateTime.fromObject() defaults lower-order values to their minimums if a high-order value is set", () => {

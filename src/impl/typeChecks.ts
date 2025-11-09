@@ -19,6 +19,12 @@ export function checkString(value: unknown, arg: string): asserts value is strin
   }
 }
 
+export function checkObject(value: unknown, arg: string): asserts value is object {
+  if (typeof value !== "object") {
+    throw new TypeError(`${arg} must be a object, but received ${value}.`);
+  }
+}
+
 declare const integerBrand: unique symbol;
 
 type IntegerGuard = number & { [integerBrand]: true };
