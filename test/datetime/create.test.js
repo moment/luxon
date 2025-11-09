@@ -4,7 +4,13 @@ import { DateTime, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
-import { InvalidArgumentError, InvalidDateTimeError, InvalidZoneError } from "../../src/errors.ts";
+import {
+  ConflictingSpecificationError,
+  InvalidArgumentError,
+  InvalidDateTimeError,
+  InvalidZoneError,
+  LuxonError,
+} from "../../src/errors.ts";
 import { INVALID_UNIT_VALUE } from "../../src/impl/dateTimeErrors.ts";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
@@ -445,6 +451,50 @@ test("DateTime.fromSeconds(-0) is normalized to 0", () => {
 //------
 // .fromObject()
 //-------
+
+describe("DateTime.fromObject throws for invalid unit combinations", () => {
+  describe("weekYear/weekNumber with gregorian units", () => {
+    test.each([
+      { year: 2024, weekYear: 2024 },
+      { year: 2024, weekNumber: 10 },
+      { month: 10, weekYear: 2024 },
+      { month: 10, weekNumber: 10 },
+      { day: 10, weekYear: 2024 },
+      { day: 10, weekNumber: 10 },
+      { month: 11, day: 10, weekYear: 2024 },
+      { month: 11, day: 10, weekNumber: 10 },
+      { year: 2024, day: 10, weekYear: 2024 },
+      { year: 2024, day: 10, weekNumber: 10 },
+      { year: 2024, month: 11, day: 10, weekYear: 2024 },
+      { year: 2024, month: 11, day: 10, weekNumber: 10 },
+      { year: 2024, weekYear: 2024, weekNumber: 10 },
+    ])("$0", (o) => {
+      expect(() => DateTime.fromObject(o)).toThrow(ConflictingSpecificationError);
+    });
+  });
+  describe("weekYear/weekNumber with ordinal", () => {
+    test.each([
+      { ordinal: 15, weekYear: 2024 },
+      { ordinal: 15, weekNumber: 10 },
+      { ordinal: 15, weekYear: 5, weekNumber: 10 },
+    ])("$0", (o) => {
+      expect(() => DateTime.fromObject(o)).toThrow(ConflictingSpecificationError);
+    });
+  });
+  describe("ordinal with month/day", () => {
+    test.each([
+      { ordinal: 15, month: 10 },
+      { ordinal: 15, month: 10, day: 11 },
+      { ordinal: 15, day: 11 },
+      { ordinal: 15, year: 2024, day: 11 },
+      { ordinal: 15, year: 2024, month: 10 },
+      { ordinal: 15, year: 2024, month: 10, day: 11 },
+    ])("$0", (o) => {
+      expect(() => DateTime.fromObject(o)).toThrow(ConflictingSpecificationError);
+    });
+  });
+});
+
 const baseObject = {
   year: 1982,
   month: 5,
