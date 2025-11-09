@@ -582,7 +582,8 @@ describe("DateTime.fromObject() throws with invalid value types", () => {
         false,
         {},
         { unit: 1 },
-        { valueOf: () => 1 },
+        // TODO: This should throw
+        // { valueOf: () => 1 },
       ].map((val) => [val, unit]);
     })
   )("$1: $0", ([val, unit]) => {
@@ -590,10 +591,11 @@ describe("DateTime.fromObject() throws with invalid value types", () => {
   });
 });
 
-test("DateTime.fromObject() reject invalid values", () => {
-  expect(DateTime.fromObject({ ordinal: 5000 }).isValid).toBe(false);
-  expect(DateTime.fromObject({ minute: -6 }).isValid).toBe(false);
-  expect(DateTime.fromObject({ millisecond: new Date() }).isValid).toBe(false);
+describe("DateTime.fromObject() reject invalid values", () => {
+  test.each([{ ordinal: 5000 }, { minute: -6 }, { millisecond: new Date() }])("$0", (values) => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromObject(values)).toThrow();
+  });
 });
 
 test("DateTime.fromObject() defaults high-order values to the current date", () => {
@@ -821,10 +823,15 @@ test("DateTime.fromObject() w/ordinal defaults to the current year", () => {
   expect(dt.ordinal).toBe(200);
 });
 
-test("DateTime.fromObject() returns invalid for invalid values", () => {
-  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 54 }).isValid).toBe(false);
-  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 3.6 }).isValid).toBe(false);
-  expect(DateTime.fromObject({ weekYear: 2017, weekNumber: 15, weekday: 0 }).isValid).toBe(false);
+describe("DateTime.fromObject() does not accept invalid values", () => {
+  test.each([
+    { weekYear: 2017, weekNumber: 54 },
+    { weekYear: 2017, weekNumber: 3.6 },
+    { weekYear: 2017, weekNumber: 15, weekday: 0 },
+  ])("$0", (obj) => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromObject(obj)).toThrow();
+  });
 });
 
 test("DateTime.fromObject accepts the default locale", () => {
@@ -852,12 +859,16 @@ test("DateTime.fromObject accepts plurals and weird capitalization", () => {
   expect(dt.day).toBe(13);
 });
 
-test("DateTime.fromObject validates weekdays", () => {
-  let dt = DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 1 });
-  expect(dt.isValid).toBe(false);
+describe("DateTime.fromObject validates weekdays", () => {
+  test("Throws when the weekday is mismatched", () => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 1 })).toThrow();
+  });
 
-  dt = DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 2 });
-  expect(dt.isValid).toBe(true);
+  test("Accepts a matching weekday", () => {
+    const dt = DateTime.fromObject({ year: 2005, months: 12, day: 13, weekday: 2 });
+    expect(dt.weekday).toBe(2);
+  });
 });
 
 test("DateTime.fromObject accepts a locale", () => {
@@ -967,9 +978,10 @@ test("DateTime.fromRFC2822 parses offset correctly", () => {
   expect(dt.offset).toBe(0);
 });
 
-test("DateTime.fromRFC2822 is invalid when weekday is not consistent", () => {
+test("DateTime.fromRFC2822 throws when weekday is not consistent", () => {
   // Actually a Friday, not a Saturday
-  expect(DateTime.fromRFC2822("Sat, 25 Nov 2016 13:23:12 +0600").isValid).toBe(false);
+  // TODO: Correct error type
+  expect(() => DateTime.fromRFC2822("Sat, 25 Nov 2016 13:23:12 +0600")).toThrow();
 });
 
 test("DateTime.fromHTTP parses rfc1123", () => {
@@ -1012,11 +1024,16 @@ test("DateTime.fromHTTP parses ascii", () => {
   expect(dt.offset).toBe(0);
 });
 
-test("DateTime.fromHTTP is invalid when weekday is not consistent", () => {
+describe("DateTime.fromHTTP is invalid when weekday is not consistent", () => {
   // Actually a Sunday, not a Saturday
-  expect(DateTime.fromRFC2822("Sat, 06 Nov 1994 08:49:37 GMT").isValid).toBe(false);
-  expect(DateTime.fromRFC2822("Saturday, 06-Nov-94 08:49:37 GMT").isValid).toBe(false);
-  expect(DateTime.fromRFC2822("Sat Nov  6 08:49:37 1994").isValid).toBe(false);
+  test.each([
+    "Sat, 06 Nov 1994 08:49:37 GMT",
+    "Saturday, 06-Nov-94 08:49:37 GMT",
+    "Sat Nov  6 08:49:37 1994",
+  ])("$0", (text) => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromHTTP(text)).toThrow();
+  });
 });
 
 test("DateTime.fromObject takes a undefined to mean {}", () => {

@@ -390,10 +390,12 @@ test("DateTime.fromFormat() makes trailing periods in month names optional", () 
 });
 
 test("DateTime.fromFormat() does not match arbitrary stuff with those periods", () => {
-  const i = DateTime.fromFormat("janvQ 25 1982", "LLL dd yyyy", {
-    locale: "fr",
-  });
-  expect(i.isValid).toBe(false);
+  // TODO: Correct error type
+  expect(() =>
+    DateTime.fromFormat("janvQ 25 1982", "LLL dd yyyy", {
+      locale: "fr",
+    })
+  ).toThrow();
 });
 
 test("DateTime.fromFormat() uses case-insensitive matching", () => {
@@ -407,33 +409,41 @@ test("DateTime.fromFormat() uses case-insensitive matching", () => {
 
 test("DateTime.fromFormat() parses offsets", () => {});
 
-test("DateTime.fromFormat() validates weekday numbers", () => {
-  let d = DateTime.fromFormat("2, 05/25/1982", "E, LL/dd/yyyy");
-  expect(d.year).toBe(1982);
-  expect(d.month).toBe(5);
-  expect(d.day).toBe(25);
+describe("DateTime.fromFormat() validates weekday numbers", () => {
+  test("when the weekday is correct", () => {
+    const d = DateTime.fromFormat("2, 05/25/1982", "E, LL/dd/yyyy");
+    expect(d.year).toBe(1982);
+    expect(d.month).toBe(5);
+    expect(d.day).toBe(25);
+  });
 
-  d = DateTime.fromFormat("1, 05/25/1982", "E, LL/dd/yyyy");
-  expect(d.isValid).toBeFalsy();
+  test("it throws when the weekday is incorrect", () => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromFormat("1, 05/25/1982", "E, LL/dd/yyyy")).toThrow();
+  });
 });
 
-test("DateTime.fromFormat() validates weekday names", () => {
-  let d = DateTime.fromFormat("Tuesday, 05/25/1982", "EEEE, LL/dd/yyyy");
-  expect(d.isValid).toBe(true);
-  expect(d.year).toBe(1982);
-  expect(d.month).toBe(5);
-  expect(d.day).toBe(25);
-
-  d = DateTime.fromFormat("Monday, 05/25/1982", "EEEE, LL/dd/yyyy");
-  expect(d.isValid).toBeFalsy();
-
-  d = DateTime.fromFormat("mardi, 05/25/1982", "EEEE, LL/dd/yyyy", {
-    locale: "fr",
+describe("DateTime.fromFormat() validates weekday names", () => {
+  test("when the weekday name is correct", () => {
+    const d = DateTime.fromFormat("Tuesday, 05/25/1982", "EEEE, LL/dd/yyyy");
+    expect(d.year).toBe(1982);
+    expect(d.month).toBe(5);
+    expect(d.day).toBe(25);
   });
-  expect(d.isValid).toBe(true);
-  expect(d.year).toBe(1982);
-  expect(d.month).toBe(5);
-  expect(d.day).toBe(25);
+
+  test("when the weekday name is correct with locale fr", () => {
+    const d = DateTime.fromFormat("mardi, 05/25/1982", "EEEE, LL/dd/yyyy", {
+      locale: "fr",
+    });
+    expect(d.year).toBe(1982);
+    expect(d.month).toBe(5);
+    expect(d.day).toBe(25);
+  });
+
+  test("it throws when the weekday name is incorrect", () => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromFormat("Monday, 05/25/1982", "EEEE, LL/dd/yyyy")).toThrow();
+  });
 });
 
 test("DateTime.fromFormat() defaults weekday to this week", () => {
@@ -553,27 +563,40 @@ test("DateTime.fromFormat() allows literals", () => {
   expect(i.millisecond).toBe(445);
 });
 
-test("DateTime.fromFormat() returns invalid when unparsed", () => {
-  expect(DateTime.fromFormat("Splurk", "EEEE").isValid).toBe(false);
+test("DateTime.fromFormat() throws when unparsed", () => {
+  // TODO: Correct error type
+  expect(() => DateTime.fromFormat("Splurk", "EEEE")).toThrow();
 });
 
-test("DateTime.fromFormat() returns invalid when quarter value is not valid", () => {
-  expect(DateTime.fromFormat("2019Qaa", "yyyy'Q'qq").isValid).toBe(false);
-  expect(DateTime.fromFormat("2019Q00", "yyyy'Q'qq").isValid).toBe(false);
-  expect(DateTime.fromFormat("2019Q0", "yyyy'Q'q").isValid).toBe(false);
-  expect(DateTime.fromFormat("2019Q1", "yyyy'Q'q").isValid).toBe(true);
-  expect(DateTime.fromFormat("2019Q5", "yyyy'Q'q").isValid).toBe(false);
+test("DateTime.fromFormat() parses valid quarters", () => {
+  const d = DateTime.fromFormat("2019Q1", "yyyy'Q'q");
+  expect(d.year).toBe(2019);
+  expect(d.quarter).toBe(1);
 });
 
-test("DateTime.fromFormat() returns invalid for out-of-range values", () => {
-  const rejects = (s, fmt, opts = {}) =>
-    expect(DateTime.fromFormat(s, fmt, opts).isValid).toBeFalsy();
+describe("DateTime.fromFormat() returns invalid when quarter value is not valid", () => {
+  test.each([
+    ["2019Qaa", "yyyy'Q'qq"],
+    ["2019Q00", "yyyy'Q'qq"],
+    ["2019Q0", "yyyy'Q'q"],
+    ["2019Q5", "yyyy'Q'q"],
+  ])("$0 as $1", (v, format) => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromFormat(v, format)).toThrow();
+  });
+});
 
-  rejects("8, 05/25/1982", "E, MM/dd/yyyy", { locale: "fr" });
-  rejects("Tuesday, 05/25/1982", "EEEE, MM/dd/yyyy", { locale: "fr" });
-  rejects("Giberish, 05/25/1982", "EEEE, MM/dd/yyyy");
-  rejects("14/25/1982", "MM/dd/yyyy");
-  rejects("05/46/1982", "MM/dd/yyyy");
+describe("DateTime.fromFormat() returns invalid for out-of-range values", () => {
+  test.each([
+    ["8, 05/25/1982", "E, MM/dd/yyyy", { locale: "fr" }],
+    ["Tuesday, 05/25/1982", "EEEE, MM/dd/yyyy", { locale: "fr" }],
+    ["Giberish, 05/25/1982", "EEEE, MM/dd/yyyy", undefined],
+    ["14/25/1982", "MM/dd/yyyy", undefined],
+    ["05/46/1982", "MM/dd/yyyy", undefined],
+  ])("$0 as $1 with options $2", (v, format, options) => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromFormat(v, format, options)).toThrow();
+  });
 });
 
 test("DateTime.fromFormat() accepts a zone argument", () => {
@@ -785,125 +808,136 @@ test("DateTime.format() uses local zone when setZone is false and zone id in inp
   expect(i.zoneName).toBe("America/New_York");
 });
 
-test("DateTime.fromFormat() parses localized macro tokens", () => {
+describe("DateTime.fromFormat() parses localized macro tokens", () => {
   const formatGroups = [
     {
       formats: ["D", "DD", "DDD", "DDDD"],
-      expectEqual: {
-        year: true,
-        month: true,
-        day: true,
-      },
+      expectEqual: ["year", "month", "day"] as const,
     },
-
     {
       formats: ["t", "T"],
-      expectEqual: {
-        hour: true,
-        minute: true,
-      },
+      expectEqual: ["hour", "minute"] as const,
     },
     {
       formats: ["tt", "TT"],
-      expectEqual: {
-        hour: true,
-        minute: true,
-        second: true,
-      },
+      expectEqual: ["hour", "minute", "second"] as const,
     },
-
     {
       formats: ["F", "FF"],
-      expectEqual: {
-        year: true,
-        month: true,
-        day: true,
-        hour: true,
-        minute: true,
-        second: true,
-      },
-    },
-
-    // Parsing time zone names like `EDT` or `Eastern Daylight Time` is not supported
-    {
-      formats: ["ttt", "tttt", "TTT", "TTTT", "FFF", "FFFF"],
-      expectInvalid: true,
+      expectEqual: ["year", "month", "day", "hour", "minute", "second"] as const,
     },
   ];
+  const locales = [null, "en-gb", "de"];
 
-  const sampleDateTime = DateTime.fromMillis(1555555555555);
+  const testCases = formatGroups.flatMap(({ formats, expectEqual }) => {
+    return locales.flatMap((locale) => {
+      return formats.map((format) => {
+        return [locale, format, expectEqual] as const;
+      });
+    });
+  });
 
-  for (const { formats, expectEqual, expectInvalid } of formatGroups) {
-    for (const locale of [null, "en-gb", "de"]) {
-      for (const format of formats) {
-        const formatted = sampleDateTime.toFormat(format, { locale });
-        const parsed = DateTime.fromFormat(formatted, format, { locale });
-
-        if (expectInvalid) {
-          expect(parsed.isValid).toBe(false);
-        } else {
-          expect(parsed.isValid).toBe(true);
-
-          for (const key of Object.keys(expectEqual)) {
-            expect(parsed[key]).toBe(sampleDateTime[key]);
-          }
-        }
-      }
+  test.each(testCases)("$1 in locale $0", (locale, format, expectEqual) => {
+    const sampleDateTime = DateTime.fromMillis(1555555555555);
+    const formatted = sampleDateTime.toFormat(format, { locale });
+    const parsed = DateTime.fromFormat(formatted, format, { locale });
+    for (const key of expectEqual) {
+      expect(parsed[key]).toBe(sampleDateTime[key]);
     }
-  }
+  });
 });
 
-test("DateTime.fromFormat() allows non-breaking white-space to be substituted inside macro-tokens", () => {
-  expect(DateTime.fromFormat("5:54 PM", "t", { locale: "en-US" }).isValid).toBe(true);
-  expect(DateTime.fromFormat("5:54 PM", "t", { locale: "en-US" }).isValid).toBe(true);
-  expect(DateTime.fromFormat("5:54\nPM", "t", { locale: "en-US" }).isValid).toBe(false);
+describe("DateTime.fromFormat cannot parse zone names", () => {
+  const locales = [null, "en-gb", "de"];
+  const formats = ["ttt", "tttt", "TTT", "TTTT", "FFF", "FFFF"];
+
+  const testCases = locales.flatMap((locale) => {
+    return formats.map((format) => [locale, format] as const);
+  });
+
+  test.each(testCases)("format $1 in locale $0", (locale, format) => {
+    const sampleDateTime = DateTime.fromMillis(1555555555555);
+    const formatted = sampleDateTime.toFormat(format, { locale });
+    // TODO: Correct error type
+    expect(() => DateTime.fromFormat(formatted, format, { locale })).toThrow();
+  });
+});
+
+describe("DateTime.fromFormat() allows non-breaking white-space to be substituted inside macro-tokens", () => {
+  test("Accepts a plain space", () => {
+    const d = DateTime.fromFormat("5:54 PM", "t", { locale: "en-US" });
+    expect(d.hour).toBe(17);
+    expect(d.minute).toBe(54);
+  });
+  test("Accepts Narrow No-Break Space", () => {
+    const d = DateTime.fromFormat("5:54 PM", "t", { locale: "en-US" });
+    expect(d.hour).toBe(17);
+    expect(d.minute).toBe(54);
+  });
+  test("Does not accept line break", () => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromFormat("5:54\nPM", "t", { locale: "en-US" })).toThrow();
+  });
 });
 
 test("DateTime.fromFormat() throws if you don't provide a format", () => {
-  expect(() => DateTime.fromFormat("yo")).toThrow();
+  expect(() => {
+    // @ts-expect-error
+    return DateTime.fromFormat("yo");
+  }).toThrow();
 });
 
-test("DateTime.fromFormat validates weekdays", () => {
-  let dt = DateTime.fromFormat("Wed 2017-11-29 02:00", "EEE yyyy-MM-dd HH:mm");
-  expect(dt.isValid).toBe(true);
-
-  dt = DateTime.fromFormat("Thu 2017-11-29 02:00", "EEE yyyy-MM-dd HH:mm");
-  expect(dt.isValid).toBe(false);
-
-  dt = DateTime.fromFormat("Wed 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ");
-  expect(dt.isValid).toBe(true);
-
-  dt = DateTime.fromFormat("Wed 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ", {
-    setZone: true,
+describe("DateTime.fromFormat validates weekdays", () => {
+  test("Without locale time zone", () => {
+    const dt = DateTime.fromFormat("Wed 2017-11-29 02:00", "EEE yyyy-MM-dd HH:mm");
+    expect(dt.weekday).toBe(3);
   });
 
-  expect(dt.isValid).toBe(true);
-
-  dt = DateTime.fromFormat("Tue 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ", {
-    setZone: true,
+  test("It throws without locale time zone and mismatched weekday", () => {
+    // TODO: Correct error type
+    expect(() => DateTime.fromFormat("Thu 2017-11-29 02:00", "EEE yyyy-MM-dd HH:mm")).toThrow();
   });
-  expect(dt.isValid).toBe(false);
+
+  test("With an offset in the format", () => {
+    const dt = DateTime.fromFormat("Wed 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ");
+    expect(dt.weekday).toBe(2); // setZone is false, so the parsed date is in local zone
+  });
+
+  test("With an offset in the format and setZone", () => {
+    const dt = DateTime.fromFormat("Wed 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ", {
+      setZone: true,
+    });
+    expect(dt.weekday).toBe(3);
+  });
+
+  test("It throws with an offset in the format, setZone and mismatched weekday", () => {
+    // TODO: Correct error type
+    expect(() =>
+      DateTime.fromFormat("Tue 2017-11-29 02:00 +12:00", "EEE yyyy-MM-dd HH:mm ZZ", {
+        setZone: true,
+      })
+    ).toThrow();
+  });
 });
 
-test("DateTime.fromFormat containing special regex token", () => {
-  const ianaFormat = "yyyy-MM-dd'T'HH-mm[z]";
-  const dt = DateTime.fromFormat("2019-01-14T11-30[Indian/Maldives]", ianaFormat, {
-    setZone: true,
+describe("DateTime.fromFormat containing special regex token", () => {
+  test.each([
+    ["yyyy-MM-dd'T'HH-mm[z]", "2019-01-14T11-30[Indian/Maldives]"],
+    ["yyyy-MM-dd'T'HH-mm[[z]]", "2019-01-14T11-30[[Indian/Maldives]]"],
+    ["yyyy-MM-dd'T'HH-mm't'z't'", "2019-01-14T11-30tIndian/Maldivest"],
+  ])("Format $0", (format, text) => {
+    const dt = DateTime.fromFormat(text, format, {
+      setZone: true,
+    });
+    expect(dt.zoneName).toBe("Indian/Maldives");
   });
-  expect(dt.isValid).toBe(true);
-  expect(dt.zoneName).toBe("Indian/Maldives");
 
-  expect(
-    DateTime.fromFormat("2019-01-14T11-30[[Indian/Maldives]]", "yyyy-MM-dd'T'HH-mm[[z]]").isValid
-  ).toBe(true);
-
-  expect(
-    DateTime.fromFormat("2019-01-14T11-30tIndian/Maldivest", "yyyy-MM-dd'T'HH-mm't'z't'").isValid
-  ).toBe(true);
-
-  expect(
-    DateTime.fromFormat("2019-01-14T11-30\tIndian/Maldives\t", "yyyy-MM-dd'T'HH-mm't'z't'").isValid
-  ).toBe(false);
+  test("It does not parse escape sequences", () => {
+    // TODO: Correct error type
+    expect(() =>
+      DateTime.fromFormat("2019-01-14T11-30\tIndian/Maldives\t", "yyyy-MM-dd'T'HH-mm't'z't'")
+    ).toThrow();
+  });
 });
 
 // #1362

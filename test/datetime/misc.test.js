@@ -89,11 +89,6 @@ test("DateTime#daysInMonth returns the number of days in the DateTime's month", 
   expect(DateTime.local(2020, 2, 10).daysInMonth).toBe(29);
 });
 
-test.todo("DateTime#daysInMonth returns NaN for invalid DateTimes", () => {
-  // TODO: Rewrite this test when "invalidity" is gone
-  expect(DateTime.invalid("because").daysInMonth).toBeFalsy();
-});
-
 //------
 // #weeksInWeekYear
 //------

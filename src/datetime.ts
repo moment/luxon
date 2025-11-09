@@ -518,6 +518,10 @@ export interface DateTimeWithZoneOptions extends DateTimeOptions {
   zone?: ZoneInput;
 }
 
+export interface DateTimeFromFormatOptions extends DateTimeWithZoneOptions {
+  setZone?: boolean;
+}
+
 export interface InternalDateTimeFromObjectOptions extends DateTimeWithZoneOptions {
   specificOffset?: number;
   overrideNow?: number;
@@ -1075,7 +1079,7 @@ export default class DateTime {
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */
-  static fromFormat(text: string, fmt: string, opts: DateTimeWithZoneOptions = {}): DateTime {
+  static fromFormat(text: string, fmt: string, opts: DateTimeFromFormatOptions = {}): DateTime {
     if (isUndefined(text) || isUndefined(fmt)) {
       throw new InvalidArgumentError("fromFormat requires an input string and a format");
     }
