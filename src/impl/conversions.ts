@@ -91,14 +91,15 @@ export function ordinalToGregorian(ordinalData: DateTimeObject<OrdinalDateObject
 
 /**
  * Check if local week units like localWeekday are used in obj.
- * If so, validates that they are not mixed with ISO week units and then copies them to the normal week unit properties.
- * Modifies obj in-place!
+ * If so, validates that they are not mixed with ISO week units.
+ * returns the values for minDaysInFirstWeek and startOfWeek to use as well as obj normalized to use
+ * non-local week units.
  * @param obj the object values
  */
 export function usesLocalWeekValues(
   obj: any,
   loc: any /* TODO */
-): { minDaysInFirstWeek: number; startOfWeek: number } {
+): { minDaysInFirstWeek: number; startOfWeek: number; obj: any } {
   const hasLocaleWeekData =
     !isUndefined(obj.localWeekday) ||
     !isUndefined(obj.localWeekNumber) ||
@@ -112,18 +113,19 @@ export function usesLocalWeekValues(
         "Cannot mix locale-based week fields with ISO-based week fields"
       );
     }
-    if (!isUndefined(obj.localWeekday)) obj.weekday = obj.localWeekday;
-    if (!isUndefined(obj.localWeekNumber)) obj.weekNumber = obj.localWeekNumber;
-    if (!isUndefined(obj.localWeekYear)) obj.weekYear = obj.localWeekYear;
-    delete obj.localWeekday;
-    delete obj.localWeekNumber;
-    delete obj.localWeekYear;
+    const { localWeekday, localWeekNumber, localWeekYear, ...rest } = obj;
     return {
       minDaysInFirstWeek: loc.getMinDaysInFirstWeek(),
       startOfWeek: loc.getStartOfWeek(),
+      obj: {
+        ...rest,
+        ...(isUndefined(localWeekday) ? {} : { weekday: localWeekday }),
+        ...(isUndefined(localWeekNumber) ? {} : { weekNumber: localWeekNumber }),
+        ...(isUndefined(localWeekYear) ? {} : { weekYear: localWeekYear }),
+      },
     };
   } else {
-    return { minDaysInFirstWeek: 4, startOfWeek: 1 };
+    return { minDaysInFirstWeek: 4, startOfWeek: 1, obj };
   }
 }
 

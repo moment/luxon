@@ -898,8 +898,9 @@ export default class DateTime {
     checkObject(obj, "obj");
     const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
     const loc = Locale.fromObject(opts);
-    const normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);
-    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, loc);
+    let normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);
+    let minDaysInFirstWeek, startOfWeek;
+    ({ minDaysInFirstWeek, startOfWeek, obj: normalized } = usesLocalWeekValues(normalized, loc));
 
     const tsNow = opts.overrideNow ?? Settings.now(),
       offsetProvis = !isUndefined(opts.specificOffset)
@@ -1777,8 +1778,13 @@ export default class DateTime {
   set(values: DateTimeObjectInput): DateTime {
     if (!this.isValid) return this;
 
-    const normalized = normalizeObject(values, normalizeUnitWithLocalWeeks);
-    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, this.loc);
+    let normalized = normalizeObject(values, normalizeUnitWithLocalWeeks);
+    let minDaysInFirstWeek, startOfWeek;
+    ({
+      minDaysInFirstWeek,
+      startOfWeek,
+      obj: normalized,
+    } = usesLocalWeekValues(normalized, this.loc));
 
     const settingWeekStuff =
         !isUndefined(normalized.weekYear) ||

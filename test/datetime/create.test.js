@@ -466,8 +466,11 @@ describe("DateTime.fromObject throws for invalid unit combinations", () => {
       { year: 2024, day: 10, weekYear: 2024 },
       { year: 2024, day: 10, weekNumber: 10 },
       { year: 2024, month: 11, day: 10, weekYear: 2024 },
+      { year: 2024, month: 11, days: 10, weekYear: 2024 },
       { year: 2024, month: 11, day: 10, weekNumber: 10 },
+      { year: 2024, months: 11, day: 10, weekNumber: 10 },
       { year: 2024, weekYear: 2024, weekNumber: 10 },
+      { year: 2024, weekYears: 2024, weekNumbers: 10 },
     ])("$0", (o) => {
       expect(() => DateTime.fromObject(o)).toThrow(ConflictingSpecificationError);
     });
@@ -475,8 +478,11 @@ describe("DateTime.fromObject throws for invalid unit combinations", () => {
   describe("weekYear/weekNumber with ordinal", () => {
     test.each([
       { ordinal: 15, weekYear: 2024 },
+      { ordinal: 15, weekYears: 2024 },
       { ordinal: 15, weekNumber: 10 },
+      { ordinal: 15, weekNumbers: 10 },
       { ordinal: 15, weekYear: 5, weekNumber: 10 },
+      { ordinal: 15, weekYears: 5, weekNumbers: 10 },
     ])("$0", (o) => {
       expect(() => DateTime.fromObject(o)).toThrow(ConflictingSpecificationError);
     });
@@ -487,7 +493,9 @@ describe("DateTime.fromObject throws for invalid unit combinations", () => {
       { ordinal: 15, month: 10, day: 11 },
       { ordinal: 15, day: 11 },
       { ordinal: 15, year: 2024, day: 11 },
+      { ordinal: 15, year: 2024, days: 11 },
       { ordinal: 15, year: 2024, month: 10 },
+      { ordinal: 15, year: 2024, months: 10 },
       { ordinal: 15, year: 2024, month: 10, day: 11 },
     ])("$0", (o) => {
       expect(() => DateTime.fromObject(o)).toThrow(ConflictingSpecificationError);
