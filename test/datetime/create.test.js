@@ -66,101 +66,120 @@ describe("DateTime.now", () => {
 //------
 // .local()
 //------
-test("DateTime.local() has today's date", () => {
-  const date = new Date(),
-    now = DateTime.local();
-  expect(now.toJSDate().getDate()).toBe(date.getDate());
-  // The two instants should be a few milliseconds apart
-  expect(Math.abs(now.valueOf() - date.valueOf()) < 1000).toBe(true);
+
+describe("DateTime.local()", () => {
+  test("uses the system time when called with no arguments", () => {
+    useFakeTime(1422864245006);
+    const now = DateTime.local();
+    expect(now.toMillis()).toBe(1422864245006);
+  });
+
+  test("captures the system time when called and does not advance with it", () => {
+    useFakeTime(15771);
+    const first = DateTime.local();
+    vi.advanceTimersByTime(543);
+    const second = DateTime.local();
+    expect(first.toMillis()).toBe(15771);
+    expect(second.toMillis()).toBe(15771 + 543);
+  });
+
+  test("uses the system locale by default", () => {
+    expect(DateTime.local().locale).toBe("en-US");
+  });
+
+  test("accepts the default locale", () => {
+    useDefaultLocale("fr");
+    expect(DateTime.local().locale).toBe("fr");
+  });
+
+  test("accepts the default numbering system", () => {
+    useDefaultNumberingSystem("beng");
+    expect(DateTime.local().numberingSystem).toBe("beng");
+  });
+
+  test("DateTime.local accepts the default output calendar", () => {
+    useDefaultOutputCalendar("hebrew");
+    expect(DateTime.local().outputCalendar).toBe("hebrew");
+  });
 });
 
-test("DateTime.local(2017) is the beginning of the year", () => {
-  const dt = DateTime.local(2017);
-  expect(dt.year).toBe(2017);
-  expect(dt.month).toBe(1);
-  expect(dt.day).toBe(1);
-  expect(dt.hour).toBe(0);
-  expect(dt.minute).toBe(0);
-  expect(dt.second).toBe(0);
-  expect(dt.millisecond).toBe(0);
-});
+describe("DateTime.local() with args", () => {
+  test("DateTime.local(2017) is the beginning of the year", () => {
+    const dt = DateTime.local(2017);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(1);
+    expect(dt.day).toBe(1);
+    expect(dt.hour).toBe(0);
+    expect(dt.minute).toBe(0);
+    expect(dt.second).toBe(0);
+    expect(dt.millisecond).toBe(0);
+  });
 
-test("DateTime.local(2017, 6) is the beginning of the month", () => {
-  const dt = DateTime.local(2017, 6);
-  expect(dt.year).toBe(2017);
-  expect(dt.month).toBe(6);
-  expect(dt.day).toBe(1);
-  expect(dt.hour).toBe(0);
-  expect(dt.minute).toBe(0);
-  expect(dt.second).toBe(0);
-  expect(dt.millisecond).toBe(0);
-});
+  test("DateTime.local(2017, 6) is the beginning of the month", () => {
+    const dt = DateTime.local(2017, 6);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(6);
+    expect(dt.day).toBe(1);
+    expect(dt.hour).toBe(0);
+    expect(dt.minute).toBe(0);
+    expect(dt.second).toBe(0);
+    expect(dt.millisecond).toBe(0);
+  });
 
-test("DateTime.local(2017, 6, 12) is the beginning of 6/12", () => {
-  const dt = DateTime.local(2017, 6, 12);
-  expect(dt.year).toBe(2017);
-  expect(dt.month).toBe(6);
-  expect(dt.day).toBe(12);
-  expect(dt.hour).toBe(0);
-  expect(dt.minute).toBe(0);
-  expect(dt.second).toBe(0);
-  expect(dt.millisecond).toBe(0);
-});
+  test("DateTime.local(2017, 6, 12) is the beginning of 6/12", () => {
+    const dt = DateTime.local(2017, 6, 12);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(6);
+    expect(dt.day).toBe(12);
+    expect(dt.hour).toBe(0);
+    expect(dt.minute).toBe(0);
+    expect(dt.second).toBe(0);
+    expect(dt.millisecond).toBe(0);
+  });
 
-test("DateTime.local(2017, 6, 12, 5) is the beginning of the hour", () => {
-  const dt = DateTime.local(2017, 6, 12, 5);
-  expect(dt.year).toBe(2017);
-  expect(dt.month).toBe(6);
-  expect(dt.day).toBe(12);
-  expect(dt.hour).toBe(5);
-  expect(dt.minute).toBe(0);
-  expect(dt.second).toBe(0);
-  expect(dt.millisecond).toBe(0);
-});
+  test("DateTime.local(2017, 6, 12, 5) is the beginning of the hour", () => {
+    const dt = DateTime.local(2017, 6, 12, 5);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(6);
+    expect(dt.day).toBe(12);
+    expect(dt.hour).toBe(5);
+    expect(dt.minute).toBe(0);
+    expect(dt.second).toBe(0);
+    expect(dt.millisecond).toBe(0);
+  });
 
-test("DateTime.local(2017, 6, 12, 5, 25) is the beginning of the minute", () => {
-  const dt = DateTime.local(2017, 6, 12, 5, 25);
-  expect(dt.year).toBe(2017);
-  expect(dt.month).toBe(6);
-  expect(dt.day).toBe(12);
-  expect(dt.hour).toBe(5);
-  expect(dt.minute).toBe(25);
-  expect(dt.second).toBe(0);
-  expect(dt.millisecond).toBe(0);
-});
+  test("DateTime.local(2017, 6, 12, 5, 25) is the beginning of the minute", () => {
+    const dt = DateTime.local(2017, 6, 12, 5, 25);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(6);
+    expect(dt.day).toBe(12);
+    expect(dt.hour).toBe(5);
+    expect(dt.minute).toBe(25);
+    expect(dt.second).toBe(0);
+    expect(dt.millisecond).toBe(0);
+  });
 
-test("DateTime.local(2017, 6, 12, 5, 25, 16) is the beginning of the second", () => {
-  const dt = DateTime.local(2017, 6, 12, 5, 25, 16);
-  expect(dt.year).toBe(2017);
-  expect(dt.month).toBe(6);
-  expect(dt.day).toBe(12);
-  expect(dt.hour).toBe(5);
-  expect(dt.minute).toBe(25);
-  expect(dt.second).toBe(16);
-  expect(dt.millisecond).toBe(0);
-});
+  test("DateTime.local(2017, 6, 12, 5, 25, 16) is the beginning of the second", () => {
+    const dt = DateTime.local(2017, 6, 12, 5, 25, 16);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(6);
+    expect(dt.day).toBe(12);
+    expect(dt.hour).toBe(5);
+    expect(dt.minute).toBe(25);
+    expect(dt.second).toBe(16);
+    expect(dt.millisecond).toBe(0);
+  });
 
-test("DateTime.local(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond", () => {
-  const dt = DateTime.local(2017, 6, 12, 5, 25, 16, 255);
-  expect(dt.year).toBe(2017);
-  expect(dt.month).toBe(6);
-  expect(dt.day).toBe(12);
-  expect(dt.hour).toBe(5);
-  expect(dt.minute).toBe(25);
-  expect(dt.second).toBe(16);
-  expect(dt.millisecond).toBe(255);
-});
-
-test("DateTime.local accepts the default locale", () => {
-  withDefaultLocale("fr", () => expect(DateTime.local().locale).toBe("fr"));
-});
-
-test("DateTime.local accepts the default numbering system", () => {
-  withDefaultNumberingSystem("beng", () => expect(DateTime.local().numberingSystem).toBe("beng"));
-});
-
-test("DateTime.local accepts the default output calendar", () => {
-  withDefaultOutputCalendar("hebrew", () => expect(DateTime.local().outputCalendar).toBe("hebrew"));
+  test("DateTime.local(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond", () => {
+    const dt = DateTime.local(2017, 6, 12, 5, 25, 16, 255);
+    expect(dt.year).toBe(2017);
+    expect(dt.month).toBe(6);
+    expect(dt.day).toBe(12);
+    expect(dt.hour).toBe(5);
+    expect(dt.minute).toBe(25);
+    expect(dt.second).toBe(16);
+    expect(dt.millisecond).toBe(255);
+  });
 });
 
 test("DateTime.local does not accept non-integer values", () => {
