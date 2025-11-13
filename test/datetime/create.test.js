@@ -1,17 +1,10 @@
-import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { DateTime, Settings } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
-import {
-  ConflictingSpecificationError,
-  InvalidArgumentError,
-  InvalidDateTimeError,
-  InvalidZoneError,
-  LuxonError,
-} from "../../src/errors.ts";
-import { INVALID_UNIT_VALUE } from "../../src/impl/dateTimeErrors.ts";
+import { ConflictingSpecificationError, InvalidZoneError } from "../../src/errors.ts";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -23,12 +16,28 @@ const withDefaultLocale = Helpers.withDefaultLocale,
 //------
 // .now()
 //------
-test("DateTime.now has today's date", () => {
-  const date = new Date(),
-    now = DateTime.now();
-  expect(now.toJSDate().getDate()).toBe(date.getDate());
-  // The two instants should be a few milliseconds apart
-  expect(Math.abs(now.valueOf() - date.valueOf()) < 1000).toBe(true);
+describe("DateTime.now", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({
+      now: 15771,
+    });
+  });
+
+  test("uses the system time", () => {
+    expect(DateTime.now().toMillis()).toBe(15771);
+  });
+
+  test("captures the system time when called and does not advance with it", () => {
+    const first = DateTime.now();
+    vi.advanceTimersByTime(543);
+    const second = DateTime.now();
+    expect(first.toMillis()).toBe(15771);
+    expect(second.toMillis()).toBe(15771 + 543);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 });
 
 test("DateTime.now accepts the default locale", () => {
