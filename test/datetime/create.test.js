@@ -5,6 +5,13 @@ import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
 import { ConflictingSpecificationError, InvalidZoneError } from "../../src/errors.ts";
+import {
+  useDefaultLocale,
+  useDefaultNumberingSystem,
+  useDefaultOutputCalendar,
+  useDefaultZone,
+  useFakeTime,
+} from "../helpers2.ts";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
   withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
@@ -17,17 +24,13 @@ const withDefaultLocale = Helpers.withDefaultLocale,
 // .now()
 //------
 describe("DateTime.now", () => {
-  beforeEach(() => {
-    vi.useFakeTimers({
-      now: 15771,
-    });
-  });
-
   test("uses the system time", () => {
+    useFakeTime(15771);
     expect(DateTime.now().toMillis()).toBe(15771);
   });
 
   test("captures the system time when called and does not advance with it", () => {
+    useFakeTime(15771);
     const first = DateTime.now();
     vi.advanceTimersByTime(543);
     const second = DateTime.now();
@@ -35,25 +38,29 @@ describe("DateTime.now", () => {
     expect(second.toMillis()).toBe(15771 + 543);
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
+  test("uses the system locale by default", () => {
+    expect(DateTime.now().locale).toBe("en-US");
   });
-});
 
-test("DateTime.now accepts the default locale", () => {
-  withDefaultLocale("fr", () => expect(DateTime.now().locale).toBe("fr"));
-});
+  test("accepts the default locale", () => {
+    useDefaultLocale("fr");
+    expect(DateTime.now().locale).toBe("fr");
+  });
 
-test("DateTime.now accepts the default numbering system", () => {
-  withDefaultNumberingSystem("beng", () => expect(DateTime.now().numberingSystem).toBe("beng"));
-});
+  test("accepts the default numbering system", () => {
+    useDefaultNumberingSystem("beng");
+    expect(DateTime.now().numberingSystem).toBe("beng");
+  });
 
-test("DateTime.now accepts the default output calendar", () => {
-  withDefaultOutputCalendar("hebrew", () => expect(DateTime.now().outputCalendar).toBe("hebrew"));
-});
+  test("accepts the default output calendar", () => {
+    useDefaultOutputCalendar("hebrew");
+    expect(DateTime.now().outputCalendar).toBe("hebrew");
+  });
 
-test("DateTime.now accepts the default time zone", () => {
-  withDefaultZone("Europe/Paris", () => expect(DateTime.now().zoneName).toBe("Europe/Paris"));
+  test("accepts the default time zone", () => {
+    useDefaultZone("Europe/Paris");
+    expect(DateTime.now().zoneName).toBe("Europe/Paris");
+  });
 });
 
 //------
