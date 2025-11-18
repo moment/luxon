@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
-import { DateTime, Settings } from "../../src/luxon.ts";
+import { DateTime, Settings, FixedOffsetZone, IANAZone, SystemZone } from "../../src/luxon.ts";
 import * as Helpers from "../helpers";
 import { supportsMinDaysInFirstWeek } from "../helpers";
 import { hasMissingLocaleBeSupport, isMissingLocaleWeekInfo } from "../specialCases";
@@ -14,9 +14,6 @@ import {
 } from "../helpers2.ts";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
-  withDefaultNumberingSystem = Helpers.setUnset("defaultNumberingSystem"),
-  withDefaultOutputCalendar = Helpers.setUnset("defaultOutputCalendar"),
-  withthrowOnInvalid = Helpers.setUnset("throwOnInvalid"),
   withDefaultZone = Helpers.withDefaultZone,
   withDefaultWeekSettings = Helpers.setUnset("defaultWeekSettings");
 
@@ -202,35 +199,34 @@ describe("DateTime.local does not accept out of range values", () => {
 });
 
 test("DateTime.local accepts the default time zone", () => {
-  withDefaultZone("Europe/Paris", () => expect(DateTime.local().zoneName).toBe("Europe/Paris"));
+  useDefaultZone("Europe/Paris");
+  expect(DateTime.local().zoneName).toBe("Europe/Paris");
 });
 
-test("DateTime.local accepts an options hash in any position", () => {
+describe("DateTime.local accepts an options hash in any position", () => {
   const options = {
     zone: "Europe/Paris",
     numberingSystem: "beng",
     outputCalendar: "islamic",
     locale: "fr",
   };
-  const args = [
-    DateTime.local(options),
-    DateTime.local(2017, options),
-    DateTime.local(2017, 6, options),
-    DateTime.local(2017, 6, 12, options),
-    DateTime.local(2017, 6, 12, options),
-    DateTime.local(2017, 6, 12, 5, options),
-    DateTime.local(2017, 6, 12, 5, 25, options),
-    DateTime.local(2017, 6, 12, 5, 25, 16, options),
-    DateTime.local(2017, 6, 12, 5, 25, 16, 255, options),
-  ];
-
-  for (const i in args) {
-    const dt = args[i];
+  test.for([
+    [[options]],
+    [[2017, options]],
+    [[2017, 6, options]],
+    [[2017, 6, 12, options]],
+    [[2017, 6, 12, options]],
+    [[2017, 6, 12, 5, options]],
+    [[2017, 6, 12, 5, 25, options]],
+    [[2017, 6, 12, 5, 25, 16, options]],
+    [[2017, 6, 12, 5, 25, 16, 255, options]],
+  ])("", ([args]) => {
+    const dt = DateTime.local(...args);
     expect(dt.zoneName).toBe("Europe/Paris");
     expect(dt.numberingSystem).toBe("beng");
     expect(dt.outputCalendar).toBe("islamic");
     expect(dt.locale).toBe("fr");
-  }
+  });
 });
 
 //------
@@ -239,6 +235,8 @@ test("DateTime.local accepts an options hash in any position", () => {
 test("DateTime.utc() is in utc", () => {
   const now = DateTime.utc();
   expect(now.offset).toBe(0);
+  expect(now.isOffsetFixed).toBe(true);
+  expect(now.zone.equals(FixedOffsetZone.utcInstance)).toBe(true);
 });
 
 test("DateTime.utc(2017) is the beginning of the year", () => {
@@ -319,34 +317,34 @@ test("DateTime.utc(2017, 6, 12, 5, 25, 16, 255) is right down to the millisecond
 });
 
 test("DateTime.utc accepts the default locale", () => {
-  withDefaultLocale("fr", () => expect(DateTime.utc().locale).toBe("fr"));
+  useDefaultLocale("fr");
+  expect(DateTime.utc().locale).toBe("fr");
 });
 
-test("DateTime.utc accepts an options hash in any position", () => {
+describe("DateTime.utc accepts an options hash in any position", () => {
   const options = {
     numberingSystem: "beng",
     outputCalendar: "islamic",
     locale: "fr",
   };
-  const args = [
-    DateTime.utc(options),
-    DateTime.utc(2017, options),
-    DateTime.utc(2017, 6, options),
-    DateTime.utc(2017, 6, 12, options),
-    DateTime.utc(2017, 6, 12, options),
-    DateTime.utc(2017, 6, 12, 5, options),
-    DateTime.utc(2017, 6, 12, 5, 25, options),
-    DateTime.utc(2017, 6, 12, 5, 25, 16, options),
-    DateTime.utc(2017, 6, 12, 5, 25, 16, 255, options),
-  ];
 
-  for (const i in args) {
-    const dt = args[i];
+  test.for([
+    [options],
+    [2017, options],
+    [2017, 6, options],
+    [2017, 6, 12, options],
+    [2017, 6, 12, options],
+    [2017, 6, 12, 5, options],
+    [2017, 6, 12, 5, 25, options],
+    [2017, 6, 12, 5, 25, 16, options],
+    [2017, 6, 12, 5, 25, 16, 255, options],
+  ])("", (args) => {
+    const dt = DateTime.utc(...args);
     expect(dt.zoneName).toBe("UTC");
     expect(dt.numberingSystem).toBe("beng");
     expect(dt.outputCalendar).toBe("islamic");
     expect(dt.locale).toBe("fr");
-  }
+  });
 });
 
 //------
@@ -365,6 +363,7 @@ test("DateTime.fromJSDate(date) accepts a zone option", () => {
   const date = new Date(1982, 4, 25),
     dateTime = DateTime.fromJSDate(date, { zone: "America/Santiago" });
 
+  expect(dateTime.toMillis()).toBe(date.valueOf());
   expect(dateTime.toJSDate().valueOf()).toBe(date.valueOf());
   expect(dateTime.zoneName).toBe("America/Santiago");
 });
@@ -373,12 +372,19 @@ test("DateTime.fromJSDate accepts the default locale", () => {
   withDefaultLocale("fr", () => expect(DateTime.fromJSDate(new Date()).locale).toBe("fr"));
 });
 
-test.for(["", 15, null, undefined, 13n, {}, { valueOf: () => 15 }, "2019-04-16T11:32:32Z"])(
-  "DateTime.fromJSDate(date) throw errors for invalid argument $0",
-  (val) => {
-    expect(() => DateTime.fromJSDate(val)).toThrow(TypeError);
-  }
-);
+test.for([
+  "",
+  15,
+  null,
+  undefined,
+  13n,
+  {},
+  { valueOf: () => 15 },
+  "2019-04-16T11:32:32Z",
+  Symbol("test"),
+])("DateTime.fromJSDate(date) throw errors for invalid argument $0", (val) => {
+  expect(() => DateTime.fromJSDate(val)).toThrow(TypeError);
+});
 
 test("DateTime.fromJSDate throws for invalid Date objects", () => {
   expect(() => DateTime.fromJSDate(new Date(""))).toThrow(TypeError);
@@ -412,7 +418,7 @@ test("DateTime.fromMillis accepts the default locale", () => {
   withDefaultLocale("fr", () => expect(DateTime.fromMillis(391147200000).locale).toBe("fr"));
 });
 
-test.each(["slurp", 3.5, { valueOf: () => 1 }, new Date(15), 13n])(
+test.each(["slurp", 3.5, { valueOf: () => 1 }, new Date(15), 13n, Symbol("test")])(
   "DateTime.fromMillis($0) throws TypeError",
   (v) => {
     expect(() => DateTime.fromMillis(v)).toThrow(TypeError);
@@ -420,7 +426,7 @@ test.each(["slurp", 3.5, { valueOf: () => 1 }, new Date(15), 13n])(
 );
 
 test.each([-8.64e15 - 1, 8.64e15 + 1])(
-  "DateTime.fromMillis(ms) does not accept out-of-bounds numbers",
+  "DateTime.fromMillis(ms) does not accept out-of-bounds number $0",
   () => {
     expect(() => DateTime.fromMillis(-8.64e15 - 1)).toThrow(RangeError);
   }
@@ -459,7 +465,7 @@ test("DateTime.fromSeconds accepts the default locale", () => {
   withDefaultLocale("fr", () => expect(DateTime.fromSeconds(391147200).locale).toBe("fr"));
 });
 
-test.each(["slurp", 3.5, { valueOf: () => 1 }, new Date(15), 13n])(
+test.each(["slurp", 3.5, { valueOf: () => 1 }, new Date(15), 13n, Symbol("test")])(
   "DateTime.fromSeconds($0) throws TypeError",
   (v) => {
     expect(() => DateTime.fromSeconds(v)).toThrow(TypeError);
@@ -551,7 +557,37 @@ const baseObject = {
 test("DateTime.fromObject() sets all the fields", () => {
   const dateTime = DateTime.fromObject(baseObject);
 
+  expect(dateTime.year).toBe(1982);
+  expect(dateTime.month).toBe(5);
+  expect(dateTime.day).toBe(25);
+  expect(dateTime.hour).toBe(9);
+  expect(dateTime.minute).toBe(23);
+  expect(dateTime.second).toBe(54);
+  expect(dateTime.millisecond).toBe(123);
+});
+
+test("DateTime.fromObject() defaults to the system zone", () => {
+  const dateTime = DateTime.fromObject(baseObject);
+
   expect(dateTime.isOffsetFixed).toBe(false);
+  expect(dateTime.offset).toBe(-4 * 60);
+  expect(dateTime.zone.equals(SystemZone.instance)).toBe(true);
+  expect(dateTime.year).toBe(1982);
+  expect(dateTime.month).toBe(5);
+  expect(dateTime.day).toBe(25);
+  expect(dateTime.hour).toBe(9);
+  expect(dateTime.minute).toBe(23);
+  expect(dateTime.second).toBe(54);
+  expect(dateTime.millisecond).toBe(123);
+});
+
+test("DateTime.fromObject() accepts the default zone", () => {
+  useDefaultZone("Europe/Berlin");
+  const dateTime = DateTime.fromObject(baseObject);
+
+  expect(dateTime.isOffsetFixed).toBe(false);
+  expect(dateTime.offset).toBe(2 * 60);
+  expect(dateTime.zone.equals(IANAZone.create("Europe/Berlin"))).toBe(true);
   expect(dateTime.year).toBe(1982);
   expect(dateTime.month).toBe(5);
   expect(dateTime.day).toBe(25);
@@ -565,6 +601,8 @@ test('DateTime.fromObject() accepts a zone option of "utc"', () => {
   const dateTime = DateTime.fromObject(baseObject, { zone: "utc" });
 
   expect(dateTime.isOffsetFixed).toBe(true);
+  expect(dateTime.offset).toBe(0);
+  expect(dateTime.zone.equals(FixedOffsetZone.utcInstance)).toBe(true);
   expect(dateTime.year).toBe(1982);
   expect(dateTime.month).toBe(5);
   expect(dateTime.day).toBe(25);
@@ -579,6 +617,7 @@ test('DateTime.fromObject() accepts "utc-8" as the zone option', () => {
 
   expect(dateTime.isOffsetFixed).toBe(true);
   expect(dateTime.offset).toBe(-8 * 60);
+  expect(dateTime.zone.equals(FixedOffsetZone.instance(-8 * 60))).toBe(true);
   expect(dateTime.year).toBe(1982);
   expect(dateTime.month).toBe(5);
   expect(dateTime.day).toBe(25);
@@ -593,6 +632,7 @@ test('DateTime.fromObject() accepts "America/Los_Angeles" as the zone option', (
 
   expect(dateTime.isOffsetFixed).toBe(false);
   expect(dateTime.offset).toBe(-7 * 60);
+  expect(dateTime.zone.equals(IANAZone.create("America/Los_Angeles"))).toBe(true);
   expect(dateTime.year).toBe(1982);
   expect(dateTime.month).toBe(5);
   expect(dateTime.day).toBe(25);
@@ -602,35 +642,40 @@ test('DateTime.fromObject() accepts "America/Los_Angeles" as the zone option', (
   expect(dateTime.millisecond).toBe(123);
 });
 
-test("DateTime.fromObject() accepts a Zone as the zone option", () => {
-  const daylight = DateTime.fromObject(
-    { ...baseObject, month: 5 },
-    { zone: "America/Los_Angeles" }
-  );
-  const standard = DateTime.fromObject(
-    { ...baseObject, month: 12 },
-    { zone: "America/Los_Angeles" }
-  );
+describe("DateTime.fromObject() handles DST correctly", () => {
+  test("During DST", () => {
+    const daylight = DateTime.fromObject(
+      { ...baseObject, month: 5 },
+      { zone: "America/Los_Angeles" }
+    );
 
-  expect(daylight.isOffsetFixed).toBe(false);
-  expect(daylight.offset).toBe(-7 * 60);
-  expect(daylight.year).toBe(1982);
-  expect(daylight.month).toBe(5);
-  expect(daylight.day).toBe(25);
-  expect(daylight.hour).toBe(9);
-  expect(daylight.minute).toBe(23);
-  expect(daylight.second).toBe(54);
-  expect(daylight.millisecond).toBe(123);
+    expect(daylight.isOffsetFixed).toBe(false);
+    expect(daylight.offset).toBe(-7 * 60);
+    expect(daylight.year).toBe(1982);
+    expect(daylight.month).toBe(5);
+    expect(daylight.day).toBe(25);
+    expect(daylight.hour).toBe(9);
+    expect(daylight.minute).toBe(23);
+    expect(daylight.second).toBe(54);
+    expect(daylight.millisecond).toBe(123);
+  });
 
-  expect(standard.isOffsetFixed).toBe(false);
-  expect(standard.offset).toBe(-8 * 60);
-  expect(standard.year).toBe(1982);
-  expect(standard.month).toBe(12);
-  expect(standard.day).toBe(25);
-  expect(standard.hour).toBe(9);
-  expect(standard.minute).toBe(23);
-  expect(standard.second).toBe(54);
-  expect(standard.millisecond).toBe(123);
+  test("Outside DST", () => {
+    const standard = DateTime.fromObject(
+      { ...baseObject, month: 12 },
+      { zone: "America/Los_Angeles" }
+    );
+
+    expect(standard.isOffsetFixed).toBe(false);
+    expect(standard.offset).toBe(-8 * 60);
+    expect(standard.year).toBe(1982);
+    expect(standard.month).toBe(12);
+    expect(standard.day).toBe(25);
+    expect(standard.hour).toBe(9);
+    expect(standard.minute).toBe(23);
+    expect(standard.second).toBe(54);
+    expect(standard.millisecond).toBe(123);
+  });
 });
 
 test("DateTime.fromObject() rejects invalid zones", () => {
@@ -645,6 +690,7 @@ test("DateTime.fromObject() ignores the case of object keys", () => {
 });
 
 test("DateTime.fromObject() throws with invalid object key", () => {
+  // TODO: Validate error type
   expect(() => DateTime.fromObject({ invalidUnit: 42 })).toThrow();
 });
 
@@ -698,42 +744,58 @@ describe("DateTime.fromObject() reject invalid values", () => {
 });
 
 describe("DateTime.fromObject() defaults high-order values to the current date", () => {
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
-
-  test(() => {
-    vi.setSystemTime(Date.UTC(2020, 9, 8, 7, 6, 5, 4));
-    const dateTime = DateTime.fromObject({});
-
-    expect(dateTime.year).toBe(2020);
-    expect(dateTime.month).toBe(10);
-    expect(dateTime.day).toBe(8);
-    expect(dateTime.hour).toBe(7);
-    expect(dateTime.minute).toBe(6);
-    expect(dateTime.second).toBe(5);
-    expect(dateTime.millisecond).toBe(4);
-  });
-
-  test(() => {
-    vi.setSystemTime(Date.UTC(2020, 9, 8, 7, 6, 5, 4));
-    const dateTime = DateTime.fromObject({ hour: 4 });
-
-    expect(dateTime.year).toBe(2020);
-    expect(dateTime.month).toBe(10);
-    expect(dateTime.day).toBe(8);
-    expect(dateTime.hour).toBe(4);
+  test.each([
+    [{}, { year: 2020, month: 9, day: 8, hour: 7, minute: 6, second: 5, millisecond: 4 }],
+    [{ month: 10 }, { year: 2020, month: 10 }],
+    [{ day: 10 }, { year: 2020, month: 9, day: 10 }],
+    [{ hour: 10 }, { year: 2020, month: 9, day: 8, hour: 10 }],
+    [{ minute: 10 }, { year: 2020, month: 9, day: 8, hour: 7, minute: 10 }],
+    [{ second: 10 }, { year: 2020, month: 9, day: 8, hour: 7, minute: 6, second: 10 }],
+    [
+      { millisecond: 10 },
+      { year: 2020, month: 9, day: 8, hour: 7, minute: 6, second: 5, millisecond: 10 },
+    ],
+  ])("$0", (input, expected) => {
+    useFakeTime(new Date(2020, 8, 8, 7, 6, 5, 4));
+    expect(DateTime.fromObject(input).toObject()).toMatchObject(expected);
   });
 });
 
-test("DateTime.fromObject() defaults lower-order values to their minimums if a high-order value is set", () => {
-  const dateTime = DateTime.fromObject({ year: 2017 });
-  expect(dateTime.year).toBe(2017);
-  expect(dateTime.month).toBe(1);
-  expect(dateTime.day).toBe(1);
-  expect(dateTime.hour).toBe(0);
-  expect(dateTime.minute).toBe(0);
-  expect(dateTime.second).toBe(0);
-  expect(dateTime.millisecond).toBe(0);
+describe("DateTime.fromObject() defaults lower-order values to their minimums if a high-order value is set", () => {
+  test.each([
+    [
+      { year: 2017 },
+      { year: 2017, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
+    ],
+    [
+      { year: 2017, month: 4 },
+      { year: 2017, month: 4, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
+    ],
+    [
+      { year: 2017, month: 4, day: 5 },
+      { year: 2017, month: 4, day: 5, hour: 0, minute: 0, second: 0, millisecond: 0 },
+    ],
+    [
+      { year: 2017, month: 4, day: 5, hour: 6 },
+      { year: 2017, month: 4, day: 5, hour: 6, minute: 0, second: 0, millisecond: 0 },
+    ],
+    [
+      { year: 2017, month: 4, day: 5, hour: 6, minute: 7 },
+      { year: 2017, month: 4, day: 5, hour: 6, minute: 7, second: 0, millisecond: 0 },
+    ],
+    [
+      { year: 2017, month: 4, day: 5, hour: 6, minute: 7, second: 8 },
+      { year: 2017, month: 4, day: 5, hour: 6, minute: 7, second: 8, millisecond: 0 },
+    ],
+    [
+      { year: 2017, month: 4, day: 5, hour: 6, minute: 7, second: 8, millisecond: 9 },
+      { year: 2017, month: 4, day: 5, hour: 6, minute: 7, second: 8, millisecond: 9 },
+    ],
+  ])("$0", (input, expected) => {
+    useFakeTime(new Date(2019, 2, 3, 4, 5, 6, 7));
+    const dateTime = DateTime.fromObject(input);
+    expect(dateTime).toMatchObject(expected);
+  });
 });
 
 test("DateTime.fromObject() w/weeks handles fully specified dates", () => {

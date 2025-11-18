@@ -1,7 +1,7 @@
 import { Zone, DateTime } from "./src/luxon.ts";
 
-
-console.log(Object.is(-0, 0), -0, -0 || 0);
+const date = new Date(2015, 1, 2, 3, 4, 5, 6);
+console.log(date.valueOf());
 
 
 
