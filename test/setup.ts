@@ -1,5 +1,10 @@
-import { expect } from "vitest";
+import { expect, beforeEach } from "vitest";
 import { LuxonError } from "../src/errors.ts";
+import { Settings } from "../src/luxon.ts";
+
+beforeEach(() => {
+  Settings.resetCaches();
+});
 
 expect.extend({
   toThrowLuxonError(func: () => unknown, expected, code) {

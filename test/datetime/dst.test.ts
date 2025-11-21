@@ -1,22 +1,31 @@
 import { describe, test, expect } from "vitest";
 
 import { DateTime, Settings } from "../../src/luxon.ts";
+import { useFakeTime } from "../helpers2.ts";
 
 const dateTimeConstructors = {
-  fromObject: (year, month, day, hour) =>
+  fromObject: (year: number, month: number, day: number, hour: number): DateTime =>
     DateTime.fromObject({ year, month, day, hour }, { zone: "America/New_York" }),
-  local: (year, month, day, hour) =>
+  local: (year: number, month: number, day: number, hour: number): DateTime =>
     DateTime.local(year, month, day, hour, { zone: "America/New_York" }),
 };
 
-for (const [name, local] of Object.entries(dateTimeConstructors)) {
-  describe(`DateTime.${name}`, () => {
-    test("Hole dates are bumped forward", () => {
-      const d = local(2017, 3, 12, 2);
+describe("DST holes are bumped forward", () => {
+  describe.each(Object.entries(dateTimeConstructors))("DateTime.$0", (_, factory) => {
+    test.each([
+      ["when current time is before the hole", Date.UTC(2017, 3, 12, 6)],
+      ["when current time is after the hole", Date.UTC(2017, 3, 12, 10)],
+    ])("Hole dates are bumped forward %s", (_txt, systemTime) => {
+      useFakeTime(systemTime);
+      const d = factory(2017, 3, 12, 2);
       expect(d.hour).toBe(3);
       expect(d.offset).toBe(-4 * 60);
     });
+  });
+});
 
+for (const [name, local] of Object.entries(dateTimeConstructors)) {
+  describe(`DateTime.${name}`, () => {
     if (name == "fromObject") {
       // this is questionable behavior, but I wanted to document it
       test("Ambiguous dates pick the one with the current offset", () => {
