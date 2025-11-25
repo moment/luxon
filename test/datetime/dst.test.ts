@@ -4,78 +4,68 @@ import { DateTime, Settings } from "../../src/luxon.ts";
 import { useFakeTime } from "../helpers2.ts";
 
 const dateTimeConstructors = {
-  fromObject: (year: number, month: number, day: number, hour: number): DateTime =>
-    DateTime.fromObject({ year, month, day, hour }, { zone: "America/New_York" }),
-  local: (year: number, month: number, day: number, hour: number): DateTime =>
-    DateTime.local(year, month, day, hour, { zone: "America/New_York" }),
+  fromObject: (
+    year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number = 0
+  ): DateTime =>
+    DateTime.fromObject({ year, month, day, hour, minute }, { zone: "America/New_York" }),
+  local: (year: number, month: number, day: number, hour: number, minute: number = 0): DateTime =>
+    DateTime.local(year, month, day, hour, minute, { zone: "America/New_York" }),
 };
 
-describe("DST holes are bumped forward", () => {
-  describe.each(Object.entries(dateTimeConstructors))("DateTime.$0", (_, factory) => {
-    test.each([
+describe.each(Object.entries(dateTimeConstructors))(
+  "DateTime.$0 bumps DST holes forward",
+  (_, factory) => {
+    describe.each([
       ["when current time is before the hole", Date.UTC(2017, 3, 12, 6)],
       ["when current time is after the hole", Date.UTC(2017, 3, 12, 10)],
-    ])("Hole dates are bumped forward %s", (_txt, systemTime) => {
-      useFakeTime(systemTime);
-      const d = factory(2017, 3, 12, 2);
-      expect(d.hour).toBe(3);
-      expect(d.offset).toBe(-4 * 60);
+      ["when current time is right at the hole", Date.UTC(2017, 3, 12, 7)],
+    ])("%s", (_, systemTime) => {
+      test.each([
+        ["at the start of the hole", 0],
+        ["in the middle of the hole", 30],
+      ])("%s", (_, minute) => {
+        useFakeTime(systemTime);
+        const d = factory(2017, 3, 12, 2, minute);
+        expect(d.hour).toBe(3);
+        expect(d.minute).toBe(minute);
+        expect(d.offset).toBe(-4 * 60);
+      });
     });
-  });
-});
+  }
+);
+
+// TODO: Add option for which value to pick and add tests for that
+describe.each(Object.entries(dateTimeConstructors))(
+  "DateTime.$0 picks any valid instant for ambiguous dates",
+  (_, factory) => {
+    describe.each([
+      ["when current time is before the ambiguity", Date.UTC(2017, 10, 5, 4)],
+      ["when current time is after the ambiguity", Date.UTC(2017, 10, 5, 8)],
+      ["when current time is during the ambiguity", Date.UTC(2017, 10, 5, 6)],
+    ])("%s", (_, systemTime) => {
+      test.each([
+        ["at the start of the ambiguity", 0],
+        ["in the middle of the ambiguity", 30],
+      ])("%s", (_, minute) => {
+        useFakeTime(systemTime);
+        const d = factory(2017, 11, 5, 1, minute);
+        expect(d.hour).toBe(1);
+        expect(d.minute).toBe(minute);
+        expect([d.toMillis(), d.offset]).toBeOneOf([
+          [1509858000000 + minute * 60 * 1000, -4 * 60],
+          [1509861600000 + minute * 60 * 1000, -5 * 60],
+        ]);
+      });
+    });
+  }
+);
 
 for (const [name, local] of Object.entries(dateTimeConstructors)) {
   describe(`DateTime.${name}`, () => {
-    if (name == "fromObject") {
-      // this is questionable behavior, but I wanted to document it
-      test("Ambiguous dates pick the one with the current offset", () => {
-        const oldSettings = Settings.now;
-        try {
-          Settings.now = () => 1495653314595; // May 24, 2017
-          let d = local(2017, 11, 5, 1);
-          expect(d.hour).toBe(1);
-          expect(d.offset).toBe(-4 * 60);
-
-          Settings.now = () => 1484456400000; // Jan 15, 2017
-          d = local(2017, 11, 5, 1);
-          expect(d.hour).toBe(1);
-          expect(d.offset).toBe(-5 * 60);
-        } finally {
-          Settings.now = oldSettings;
-        }
-      });
-    } else {
-      test("Ambiguous dates pick the one with the cached offset", () => {
-        const oldSettings = Settings.now;
-        try {
-          Settings.resetCaches();
-          Settings.now = () => 1495653314595; // May 24, 2017
-          let d = local(2017, 11, 5, 1);
-          expect(d.hour).toBe(1);
-          expect(d.offset).toBe(-4 * 60);
-
-          Settings.now = () => 1484456400000; // Jan 15, 2017
-          d = local(2017, 11, 5, 1);
-          expect(d.hour).toBe(1);
-          expect(d.offset).toBe(-4 * 60);
-
-          Settings.resetCaches();
-
-          Settings.now = () => 1484456400000; // Jan 15, 2017
-          d = local(2017, 11, 5, 1);
-          expect(d.hour).toBe(1);
-          expect(d.offset).toBe(-5 * 60);
-
-          Settings.now = () => 1495653314595; // May 24, 2017
-          d = local(2017, 11, 5, 1);
-          expect(d.hour).toBe(1);
-          expect(d.offset).toBe(-5 * 60);
-        } finally {
-          Settings.now = oldSettings;
-        }
-      });
-    }
-
     test("Adding an hour to land on the Spring Forward springs forward", () => {
       const d = local(2017, 3, 12, 1).plus({ hour: 1 });
       expect(d.hour).toBe(3);
