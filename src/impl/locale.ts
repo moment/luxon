@@ -322,7 +322,7 @@ export class PolyDateFormatter {
     if (this.originalZone) {
       return parts.map((part) => {
         if (part.type === "timeZoneName") {
-          const offsetName = this.originalZone!.offsetName(this.dt.ts, {
+          const offsetName = this.originalZone!.offsetName(+this.dt, {
             locale: this.dt.locale,
             format: this.opts.timeZoneName,
           });

@@ -570,7 +570,9 @@ const LUXON_TYPE_DATETIME = "datetime" as LuxonTypeMarker<DateTime>;
 export default class DateTime {
   // TODO: Make these private
   private readonly _zone: Zone;
-  readonly ts: number;
+
+  readonly #ts: number;
+
   readonly loc: Locale;
   readonly invalid: Invalid | null;
   readonly c: DateTimeObject;
@@ -593,18 +595,18 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.ts = (config.ts ?? Settings.now()) || 0; // make sure we normalize -0 to 0 by || 0
+    this.#ts = (config.ts ?? Settings.now()) || 0; // make sure we normalize -0 to 0 by || 0
 
     let c: DateTimeObject | null = null,
       o: number | null = null;
     if (!invalid) {
-      if (config.old && config.old.ts === this.ts && config.old.zone.equals(zone)) {
+      if (config.old && config.old.ts === this.#ts && config.old.zone.equals(zone)) {
         [c, o] = [config.old.c, config.old.o];
       } else {
         // If an offset has been passed and we have not been called from
         // clone(), we can trust it and avoid the offset calculation.
-        const ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.ts);
-        c = tsToObj(this.ts, ot);
+        const ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.#ts);
+        c = tsToObj(this.#ts, ot);
         invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
         o = invalid ? null : ot;
@@ -1524,7 +1526,7 @@ export default class DateTime {
   get offsetNameShort(): string {
     // TODO: Do not return null when Invalid is removed
     if (this.isValid) {
-      return this.zone.offsetName(this.ts, {
+      return this.zone.offsetName(this.#ts, {
         format: "short",
         locale: this.locale,
       });
@@ -1541,7 +1543,7 @@ export default class DateTime {
   get offsetNameLong(): string {
     // TODO: Do not return null when Invalid is removed
     if (this.isValid) {
-      return this.zone.offsetName(this.ts, {
+      return this.zone.offsetName(this.#ts, {
         format: "long",
         locale: this.locale,
       });
@@ -1726,9 +1728,9 @@ export default class DateTime {
     } else if (!zone.isValid) {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
-      let newTS = this.ts;
+      let newTS = this.#ts;
       if (keepLocalTime) {
-        const offsetGuess = zone.offset(this.ts);
+        const offsetGuess = zone.offset(this.#ts);
         const asObj = this.toObject();
         [newTS] = objToTS(asObj, offsetGuess, zone);
       }
@@ -2255,7 +2257,7 @@ export default class DateTime {
    * @return {number}
    */
   toMillis() {
-    return this.isValid ? this.ts : NaN;
+    return this.isValid ? this.#ts : NaN;
   }
 
   /**
@@ -2263,7 +2265,7 @@ export default class DateTime {
    * @return {number}
    */
   toSeconds() {
-    return this.isValid ? this.ts / 1000 : NaN;
+    return this.isValid ? this.#ts / 1000 : NaN;
   }
 
   /**
@@ -2271,7 +2273,7 @@ export default class DateTime {
    * @return {number}
    */
   toUnixInteger() {
-    return this.isValid ? Math.floor(this.ts / 1000) : NaN;
+    return this.isValid ? Math.floor(this.#ts / 1000) : NaN;
   }
 
   /**
@@ -2315,7 +2317,7 @@ export default class DateTime {
    * @return {Date}
    */
   toJSDate() {
-    return new Date(this.isValid ? this.ts : NaN);
+    return new Date(this.isValid ? this.#ts : NaN);
   }
 
   // COMPARE
@@ -2475,7 +2477,7 @@ export default class DateTime {
   // to create a new object while only changing some of the properties
   #clone(alts: Partial<DateTimeConstructorParams>): DateTime {
     const current = {
-      ts: this.ts,
+      ts: this.#ts,
       zone: this.zone,
       c: this.c,
       o: this.o,

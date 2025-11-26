@@ -36,6 +36,14 @@ test("DateTime#toSeconds() returns seconds for valid DateTimes", () => {
 });
 
 //------
+// #toUnixInteger()
+//------
+test("DateTime#toUnixInteger() returns seconds for valid DateTimes", () => {
+  const js = dt.toJSDate();
+  expect(dt.toUnixInteger()).toBe(Math.floor(js.getTime() / 1000));
+});
+
+//------
 // #valueOf()
 //------
 test("DateTime#valueOf() just does toMillis()", () => {
