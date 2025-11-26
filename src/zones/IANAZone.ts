@@ -1,6 +1,6 @@
-import { formatOffset, isUndefined, objToLocalTS, parseZoneInfo } from "../impl/util.ts";
+import { formatOffset, parseZoneInfo } from "../impl/util.ts";
 import Zone, { type UniversalZone } from "../zone.ts";
-import { InvalidZoneError } from "../errors.ts";
+import { InvalidZoneError, LuxonIntlError } from "../errors.ts";
 import {
   INTERNAL_CONSTRUCTOR,
   throwInternalConstructorError,
@@ -12,15 +12,9 @@ function makeDTF(zoneName: string): Intl.DateTimeFormat {
   let dtf = dtfCache.get(zoneName);
   if (dtf === undefined) {
     dtf = new Intl.DateTimeFormat("en-US", {
-      hourCycle: "h23",
       timeZone: zoneName,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      era: "short",
+      hour: "numeric",
+      timeZoneName: "longOffset",
     });
     dtfCache.set(zoneName, dtf);
   }
@@ -161,40 +155,24 @@ export default class IANAZone extends Zone {
    * @return {number}
    */
   offset(ts: number): number {
-    const date = new Date(ts);
-
-    if (isNaN(+date)) return NaN;
     const dtf = makeDTF(this.name);
-
-    const formatted = dtf.formatToParts(date);
-    let bc = false;
-    const obj = {
-      year: 0,
-      month: 0,
-      day: 0,
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    };
-    for (let i = 0; i < formatted.length; i++) {
-      const { type, value } = formatted[i];
-      if (type in obj) {
-        // technically unsound, but we know this is safe here
-        obj[type as keyof typeof obj] = parseInt(value, 10);
-      } else if (type === "era") {
-        bc = value === "BC";
-      }
+    let offsetPart: Intl.DateTimeFormatPart | undefined;
+    try {
+      offsetPart = dtf.formatToParts(ts).find((p) => p.type === "timeZoneName");
+    } catch (e) {
+      return NaN;
     }
-    if (bc) {
-      obj.year = -Math.abs(obj.year) + 1;
+    const match = offsetPart?.value.match(/^GMT(?:([+-])(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?$/);
+    if (match == null) {
+      throw new LuxonIntlError(`Failed to extract GMT offset from ${offsetPart?.value}`);
     }
-
-    const asUTC = objToLocalTS(obj);
-    let asTS = +date;
-    const over = asTS % 1000;
-    asTS -= over >= 0 ? over : 1000 + over;
-    return (asUTC - asTS) / (60 * 1000);
+    const [, sign, h = 0, m = 0, s = 0] = match;
+    let r = +h * 3600 + +m * 60 + +s;
+    if (sign === "-") {
+      r *= -1;
+    }
+    // TODO: This should be in seconds
+    return r / 60;
   }
 
   /**
