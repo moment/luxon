@@ -531,7 +531,7 @@ const LUXON_TYPE_DATETIME = "datetime" as LuxonTypeMarker<DateTime>;
  */
 export default class DateTime {
   // TODO: Make these private
-  private readonly _zone: Zone;
+  readonly #zone: Zone;
 
   readonly #ts: number;
 
@@ -578,7 +578,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this._zone = zone;
+    this.#zone = zone;
     /**
      * @access private
      */
@@ -1236,7 +1236,8 @@ export default class DateTime {
    * @type {Zone}
    */
   get zone(): Zone {
-    return this._zone;
+    // TODO: "in" test is needed for a bogus test (proto.test.ts): Validate necessity
+    return #zone in this ? this.#zone : (null as never);
   }
 
   /**
