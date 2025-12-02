@@ -125,7 +125,7 @@ function objToTS(obj: DateTimeObject, offset: number, zone: Zone): [ts: number, 
 
 // create a new DT instance by adding a duration, adjusting for DSTs
 function adjustTime(inst, dur) {
-  const oPre = inst.o,
+  const oPre = inst.offset /* TODO: move to instance private method? */,
     year = inst.c.year + Math.trunc(dur.years),
     month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
     c = {
@@ -264,20 +264,20 @@ function toISOTime(
   if (includeOffset) {
     if (o.isOffsetFixed && o.offset === 0 && !extendedZone) {
       c += "Z";
-    } else if (o.o < 0) {
+    } else if (o.offset < 0) {
       c += "-";
-      c += padStart(Math.trunc(-o.o / 60));
+      c += padStart(Math.trunc(-o.offset / 60));
       if (extended) {
         c += ":";
       }
-      c += padStart(Math.trunc(-o.o % 60));
+      c += padStart(Math.trunc(-o.offset % 60));
     } else {
       c += "+";
-      c += padStart(Math.trunc(o.o / 60));
+      c += padStart(Math.trunc(o.offset / 60));
       if (extended) {
         c += ":";
       }
-      c += padStart(Math.trunc(o.o % 60));
+      c += padStart(Math.trunc(o.offset % 60));
     }
   }
 
@@ -576,7 +576,7 @@ export default class DateTime {
   readonly loc: Locale;
   readonly invalid: Invalid | null;
   readonly c: DateTimeObject;
-  readonly o: number;
+  readonly #o: number;
 
   #weekData: DateTimeObject<WeekDateObject> | null = null;
   #localWeekData: DateTimeObject<WeekDateObject> | null = null;
@@ -632,7 +632,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.o = o!; // TODO: Remove ! when invalid is removed
+    this.#o = o!; // TODO: Remove ! when invalid is removed
   }
 
   get [LUXON_TYPE]() {
@@ -1515,7 +1515,7 @@ export default class DateTime {
    */
   get offset(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? +this.o : NaN;
+    return this.isValid ? +this.#o : NaN;
   }
 
   /**
@@ -1827,7 +1827,7 @@ export default class DateTime {
       }
     }
 
-    const [ts, o] = objToTS(mixed, this.o, this.zone);
+    const [ts, o] = objToTS(mixed, this.#o, this.zone);
     return this.#clone({ ts, o });
   }
 
@@ -2480,7 +2480,7 @@ export default class DateTime {
       ts: this.#ts,
       zone: this.zone,
       c: this.c,
-      o: this.o,
+      o: this.#o,
       loc: this.loc,
       invalid: this.invalid,
     };
