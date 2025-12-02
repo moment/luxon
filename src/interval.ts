@@ -1,4 +1,9 @@
-import DateTime, { type DateTimeLike, friendlyDateTime, parseDataToDateTime } from "./datetime.ts";
+import DateTime, {
+  DATETIME_LOCALE_SYMBOL,
+  type DateTimeLike,
+  friendlyDateTime,
+  parseDataToDateTime,
+} from "./datetime.ts";
 import Duration, { type DurationInput } from "./duration.ts";
 import Settings from "./settings.ts";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.ts";
@@ -538,7 +543,10 @@ export default class Interval {
    * @return {string}
    */
   toLocaleString(formatOpts: Intl.DateTimeFormatOptions = Formats.DATE_SHORT, opts = {}): string {
-    return Formatter.create(this.#start.loc.clone(opts), formatOpts).formatInterval(this);
+    return Formatter.create(
+      this.#start[DATETIME_LOCALE_SYMBOL].clone(opts),
+      formatOpts
+    ).formatInterval(this);
   }
 
   /**

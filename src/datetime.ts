@@ -417,37 +417,6 @@ function quickDT(obj: PartialNullable<DateTimeObject>, opts: DateTimeWithZoneOpt
   return new DateTime({ ts, zone, loc, o }, INTERNAL_CONSTRUCTOR);
 }
 
-function diffRelative(start, end, opts) {
-  const round = isUndefined(opts.round) ? true : opts.round,
-    rounding = isUndefined(opts.rounding) ? "trunc" : opts.rounding,
-    format = (c, unit) => {
-      c = roundTo(c, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
-      const formatter = end.loc.clone(opts).relFormatter(opts);
-      return formatter.format(c, unit);
-    },
-    differ = (unit) => {
-      if (opts.calendary) {
-        if (!end.hasSame(start, unit)) {
-          return end.startOf(unit).diff(start.startOf(unit), unit).get(unit);
-        } else return 0;
-      } else {
-        return end.diff(start, unit).get(unit);
-      }
-    };
-
-  if (opts.unit) {
-    return format(differ(opts.unit), opts.unit);
-  }
-
-  for (const unit of opts.units) {
-    const count = differ(unit);
-    if (Math.abs(count) >= 1) {
-      return format(count, unit);
-    }
-  }
-  return format(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
-}
-
 /**
  * Pick an optional trailing options object off the array and return it. argList is modified
  * in-place to no longer contain the object.
@@ -507,6 +476,8 @@ interface DateTimeConstructorParams {
   loc?: Locale | undefined;
 }
 
+export const DATETIME_LOCALE_SYMBOL = Symbol.for("luxon:dateTimeLocale");
+
 const LUXON_TYPE_DATETIME = "datetime" as LuxonTypeMarker<DateTime>;
 
 /**
@@ -535,7 +506,7 @@ export default class DateTime {
 
   readonly #ts: number;
 
-  readonly loc: Locale;
+  readonly #loc: Locale;
   readonly invalid: Invalid | null;
   readonly #c: DateTimeObject;
   readonly #o: number;
@@ -582,7 +553,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.loc = config.loc || Locale.create();
+    this.#loc = config.loc || Locale.create();
     /**
      * @access private
      */
@@ -599,6 +570,14 @@ export default class DateTime {
 
   get [LUXON_TYPE]() {
     return LUXON_TYPE_DATETIME;
+  }
+
+  /**
+   * @private
+   * @deprecated TODO: Figure out alternatives where this is still needed? Maybe make Locale public API
+   */
+  private get [DATETIME_LOCALE_SYMBOL](): Locale {
+    return this.#loc;
   }
 
   // CONSTRUCT
@@ -1206,7 +1185,7 @@ export default class DateTime {
    */
   get locale(): string {
     // TODO: Do not return null when Invalid is removed
-    return this.isValid ? this.loc.locale : null!;
+    return this.isValid ? this.#loc.locale : null!;
   }
 
   /**
@@ -1217,7 +1196,7 @@ export default class DateTime {
   get numberingSystem(): string | null {
     // TODO: Do not return null when Invalid is removed
     // TODO: Check if we should return the resolved numberingSystem instead
-    return this.isValid ? this.loc.numberingSystem : null;
+    return this.isValid ? this.#loc.numberingSystem : null;
   }
 
   /**
@@ -1228,7 +1207,7 @@ export default class DateTime {
   get outputCalendar(): string | null {
     // TODO: Do not return null when Invalid is removed
     // TODO: Check if we should return the resolved outputCalendar instead
-    return this.isValid ? this.loc.outputCalendar : null;
+    return this.isValid ? this.#loc.outputCalendar : null;
   }
 
   /**
@@ -1246,7 +1225,7 @@ export default class DateTime {
    */
   get zoneName(): string {
     // TODO: Do not return null when Invalid is removed
-    return this.isValid ? this.zone.name : null!;
+    return this.isValid ? this.#zone.name : null!;
   }
 
   /**
@@ -1373,14 +1352,14 @@ export default class DateTime {
    */
   get isWeekend(): boolean {
     // TODO: Remove invalid check
-    return this.isValid && this.loc.getWeekendDays().includes(this.weekday);
+    return this.isValid && this.#loc.getWeekendDays().includes(this.weekday);
   }
 
   #possiblyCachedLocalWeekData(): DateTimeObject<WeekDateObject> {
     return (this.#localWeekData ??= gregorianToWeek(
       this.#c,
-      this.loc.getMinDaysInFirstWeek(),
-      this.loc.getStartOfWeek()
+      this.#loc.getMinDaysInFirstWeek(),
+      this.#loc.getStartOfWeek()
     ));
   }
 
@@ -1434,7 +1413,7 @@ export default class DateTime {
    */
   get monthShort(): string {
     // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.months("short", { locObj: this.loc })[this.month - 1] : null!;
+    return this.isValid ? Info.months("short", { locObj: this.#loc })[this.month - 1] : null!;
   }
 
   /**
@@ -1445,7 +1424,7 @@ export default class DateTime {
    */
   get monthLong(): string {
     // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.months("long", { locObj: this.loc })[this.month - 1] : null!;
+    return this.isValid ? Info.months("long", { locObj: this.#loc })[this.month - 1] : null!;
   }
 
   /**
@@ -1456,7 +1435,7 @@ export default class DateTime {
    */
   get weekdayShort(): string {
     // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.weekdays("short", { locObj: this.loc })[this.weekday - 1] : null!;
+    return this.isValid ? Info.weekdays("short", { locObj: this.#loc })[this.weekday - 1] : null!;
   }
 
   /**
@@ -1467,7 +1446,7 @@ export default class DateTime {
    */
   get weekdayLong(): string {
     // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.weekdays("long", { locObj: this.loc })[this.weekday - 1] : null!;
+    return this.isValid ? Info.weekdays("long", { locObj: this.#loc })[this.weekday - 1] : null!;
   }
 
   /**
@@ -1489,7 +1468,7 @@ export default class DateTime {
   get offsetNameShort(): string {
     // TODO: Do not return null when Invalid is removed
     if (this.isValid) {
-      return this.zone.offsetName(this.#ts, {
+      return this.#zone.offsetName(this.#ts, {
         format: "short",
         locale: this.locale,
       });
@@ -1630,8 +1609,8 @@ export default class DateTime {
     return this.isValid
       ? weeksInWeekYear(
           this.localWeekYear,
-          this.loc.getMinDaysInFirstWeek(),
-          this.loc.getStartOfWeek()
+          this.#loc.getMinDaysInFirstWeek(),
+          this.#loc.getStartOfWeek()
         )
       : NaN;
   }
@@ -1644,7 +1623,7 @@ export default class DateTime {
    */
   resolvedLocaleOptions(opts: Intl.DateTimeFormatOptions = {}): LocaleOptions {
     const { locale, numberingSystem, calendar } = Formatter.create(
-      this.loc.clone(opts),
+      this.#loc.clone(opts),
       opts
     ).resolvedOptions(this);
     return { locale, numberingSystem, outputCalendar: calendar };
@@ -1713,7 +1692,7 @@ export default class DateTime {
     outputCalendar,
   }: Omit<LocaleOptions, "weekSettings"> = {}): DateTime {
     // TODO: Accept all options
-    const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
+    const loc = this.#loc.clone({ locale, numberingSystem, outputCalendar });
     return this.#clone({ loc });
   }
 
@@ -1749,7 +1728,7 @@ export default class DateTime {
       minDaysInFirstWeek,
       startOfWeek,
       obj: normalized,
-    } = usesLocalWeekValues(normalized, this.loc));
+    } = usesLocalWeekValues(normalized, this.#loc));
 
     const settingWeekStuff =
         !isUndefined(normalized.weekYear) ||
@@ -1913,7 +1892,7 @@ export default class DateTime {
 
     if (normalizedUnit === "weeks") {
       if (useLocaleWeeks) {
-        const startOfWeek = this.loc.getStartOfWeek();
+        const startOfWeek = this.#loc.getStartOfWeek();
         const { weekday } = this;
         if (weekday < startOfWeek) {
           o.weekNumber = this.weekNumber - 1;
@@ -1969,7 +1948,7 @@ export default class DateTime {
   toFormat(fmt: string, opts: LocaleOptions = {}): string {
     return this.isValid
       ? // TODO: Validate / check locale options
-        Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
+        Formatter.create(this.#loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
       : INVALID;
   }
 
@@ -1998,7 +1977,7 @@ export default class DateTime {
   ): string {
     return this.isValid
       ? // TODO: Validate / check locale options
-        Formatter.create(this.loc.clone(opts), formatOpts).formatDateTime(this)
+        Formatter.create(this.#loc.clone(opts), formatOpts).formatDateTime(this)
       : INVALID;
   }
 
@@ -2018,7 +1997,7 @@ export default class DateTime {
   toLocaleParts(opts: LocaleOptions & Intl.DateTimeFormatOptions = {}): Intl.DateTimeFormatPart[] {
     return this.isValid
       ? // TODO: Make locale options separate like in toLocaleString
-        Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this)
+        Formatter.create(this.#loc.clone(opts), opts).formatDateTimeParts(this)
       : [];
   }
 
@@ -2309,8 +2288,8 @@ export default class DateTime {
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
-      base.numberingSystem = this.loc.numberingSystem;
-      base.locale = this.loc.locale;
+      base.numberingSystem = this.#loc.numberingSystem;
+      base.locale = this.#loc.locale;
     }
     return base;
   }
@@ -2388,7 +2367,7 @@ export default class DateTime {
    * @example DateTime.now().hasSame(otherDT, 'day'); //~> true if otherDT is in the same current calendar day
    * @return {boolean}
    */
-  hasSame(otherDateTime, unit, opts) {
+  hasSame(otherDateTime, unit, opts?: any) {
     if (!this.isValid) return false;
 
     const inputMs = otherDateTime.valueOf();
@@ -2410,8 +2389,8 @@ export default class DateTime {
       this.isValid &&
       other.isValid &&
       this.valueOf() === other.valueOf() &&
-      this.zone.equals(other.zone) &&
-      this.loc.equals(other.loc)
+      this.#zone.equals(other.zone) &&
+      this.#loc.equals(other[DATETIME_LOCALE_SYMBOL])
     );
   }
 
@@ -2444,7 +2423,7 @@ export default class DateTime {
       units = options.unit;
       unit = undefined;
     }
-    return diffRelative(base, this.plus(padding), {
+    return this.plus(padding).#diffRelative(base, {
       ...options,
       numeric: "always",
       units,
@@ -2468,7 +2447,7 @@ export default class DateTime {
   toRelativeCalendar(options = {}) {
     if (!this.isValid) return null;
 
-    return diffRelative(options.base || DateTime.fromObject({}, { zone: this.zone }), this, {
+    return this.#diffRelative(options.base || DateTime.fromObject({}, { zone: this.zone }), {
       ...options,
       numeric: "auto",
       units: ["years", "months", "days"],
@@ -2476,15 +2455,46 @@ export default class DateTime {
     });
   }
 
+  #diffRelative(start: DateTime, opts) {
+    const round = isUndefined(opts.round) ? true : opts.round,
+      rounding = isUndefined(opts.rounding) ? "trunc" : opts.rounding,
+      format = (c, unit) => {
+        c = roundTo(c, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
+        const formatter = this.#loc.clone(opts).relFormatter(opts);
+        return formatter.format(c, unit);
+      },
+      differ = (unit) => {
+        if (opts.calendary) {
+          if (!this.hasSame(start, unit)) {
+            return this.startOf(unit).diff(start.startOf(unit), unit).get(unit);
+          } else return 0;
+        } else {
+          return this.diff(start, unit).get(unit);
+        }
+      };
+
+    if (opts.unit) {
+      return format(differ(opts.unit), opts.unit);
+    }
+
+    for (const unit of opts.units) {
+      const count = differ(unit);
+      if (Math.abs(count) >= 1) {
+        return format(count, unit);
+      }
+    }
+    return format(start > this ? -0 : 0, opts.units[opts.units.length - 1]);
+  }
+
   // clone really means, "make a new object with these modifications". all "setters" really use this
   // to create a new object while only changing some of the properties
   #clone(alts: Partial<DateTimeConstructorParams>): DateTime {
     const current = {
       ts: this.#ts,
-      zone: this.zone,
+      zone: this.#zone,
       c: this.#c,
       o: this.#o,
-      loc: this.loc,
+      loc: this.#loc,
       invalid: this.invalid,
     };
     return new DateTime({ ...current, ...alts, old: current }, INTERNAL_CONSTRUCTOR);
