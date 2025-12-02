@@ -123,44 +123,6 @@ function objToTS(obj: DateTimeObject, offset: number, zone: Zone): [ts: number, 
   return fixOffset(objToLocalTS(obj), offset, zone);
 }
 
-// create a new DT instance by adding a duration, adjusting for DSTs
-function adjustTime(inst, dur) {
-  const oPre = inst.offset /* TODO: move to instance private method? */,
-    year = inst.c.year + Math.trunc(dur.years),
-    month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
-    c = {
-      ...inst.c,
-      year,
-      month,
-      day:
-        Math.min(inst.c.day, daysInMonth(year, month)) +
-        Math.trunc(dur.days) +
-        Math.trunc(dur.weeks) * 7,
-    },
-    millisToAdd = Duration.fromObject({
-      years: dur.years - Math.trunc(dur.years),
-      quarters: dur.quarters - Math.trunc(dur.quarters),
-      months: dur.months - Math.trunc(dur.months),
-      weeks: dur.weeks - Math.trunc(dur.weeks),
-      days: dur.days - Math.trunc(dur.days),
-      hours: dur.hours,
-      minutes: dur.minutes,
-      seconds: dur.seconds,
-      milliseconds: dur.milliseconds,
-    }).as("milliseconds"),
-    localTS = objToLocalTS(c);
-
-  let [ts, o] = fixOffset(localTS, oPre, inst.zone);
-
-  if (millisToAdd !== 0) {
-    ts += millisToAdd;
-    // that could have changed the offset by going over a DST, but we want to keep the ts the same
-    o = inst.zone.offset(ts);
-  }
-
-  return { ts, o };
-}
-
 // helper useful in turning the results of parsing into real dates
 // by handling the zone options
 export function parseDataToDateTime(
@@ -202,21 +164,21 @@ function toTechFormat(dt: DateTime, format: string, allowZ = true): string {
 }
 
 function toISODate(o: DateTime, extended: boolean, precision?: "year" | "month"): string {
-  const longFormat = o.c.year > 9999 || o.c.year < 0;
+  const longFormat = o.year > 9999 || o.year < 0;
   let c = "";
-  if (longFormat && o.c.year >= 0) c += "+";
-  c += padStart(o.c.year, longFormat ? 6 : 4);
+  if (longFormat && o.year >= 0) c += "+";
+  c += padStart(o.year, longFormat ? 6 : 4);
   if (precision === "year") return c;
   if (extended) {
     c += "-";
-    c += padStart(o.c.month);
+    c += padStart(o.month);
     if (precision === "month") return c;
     c += "-";
   } else {
-    c += padStart(o.c.month);
+    c += padStart(o.month);
     if (precision === "month") return c;
   }
-  c += padStart(o.c.day);
+  c += padStart(o.day);
   return c;
 }
 
@@ -229,7 +191,7 @@ function toISOTime(
   extendedZone: boolean,
   precision: "day" | "month" | "year" | "hour" | "minute" | "second"
 ) {
-  let showSeconds = !suppressSeconds || o.c.millisecond !== 0 || o.c.second !== 0,
+  let showSeconds = !suppressSeconds || o.millisecond !== 0 || o.second !== 0,
     c = "";
   switch (precision) {
     case "day":
@@ -237,27 +199,27 @@ function toISOTime(
     case "year":
       break;
     default:
-      c += padStart(o.c.hour);
+      c += padStart(o.hour);
       if (precision === "hour") break;
       if (extended) {
         c += ":";
-        c += padStart(o.c.minute);
+        c += padStart(o.minute);
         if (precision === "minute") break;
         if (showSeconds) {
           c += ":";
-          c += padStart(o.c.second);
+          c += padStart(o.second);
         }
       } else {
-        c += padStart(o.c.minute);
+        c += padStart(o.minute);
         if (precision === "minute") break;
         if (showSeconds) {
-          c += padStart(o.c.second);
+          c += padStart(o.second);
         }
       }
       if (precision === "second") break;
-      if (showSeconds && (!suppressMilliseconds || o.c.millisecond !== 0)) {
+      if (showSeconds && (!suppressMilliseconds || o.millisecond !== 0)) {
         c += ".";
-        c += padStart(o.c.millisecond, 3);
+        c += padStart(o.millisecond, 3);
       }
   }
 
@@ -575,7 +537,7 @@ export default class DateTime {
 
   readonly loc: Locale;
   readonly invalid: Invalid | null;
-  readonly c: DateTimeObject;
+  readonly #c: DateTimeObject;
   readonly #o: number;
 
   #weekData: DateTimeObject<WeekDateObject> | null = null;
@@ -628,7 +590,7 @@ export default class DateTime {
     /**
      * @access private
      */
-    this.c = c!; // TODO: Remove ! when invalid is removed
+    this.#c = c!; // TODO: Remove ! when invalid is removed
     /**
      * @access private
      */
@@ -1293,7 +1255,7 @@ export default class DateTime {
    */
   get year(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.c.year : NaN;
+    return this.isValid ? this.#c.year : NaN;
   }
 
   /**
@@ -1303,7 +1265,7 @@ export default class DateTime {
    */
   get quarter(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
+    return this.isValid ? Math.ceil(this.#c.month / 3) : NaN;
   }
 
   /**
@@ -1313,7 +1275,7 @@ export default class DateTime {
    */
   get month(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.c.month : NaN;
+    return this.isValid ? this.#c.month : NaN;
   }
 
   /**
@@ -1323,7 +1285,7 @@ export default class DateTime {
    */
   get day(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.c.day : NaN;
+    return this.isValid ? this.#c.day : NaN;
   }
 
   /**
@@ -1333,7 +1295,7 @@ export default class DateTime {
    */
   get hour(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.c.hour : NaN;
+    return this.isValid ? this.#c.hour : NaN;
   }
 
   /**
@@ -1343,7 +1305,7 @@ export default class DateTime {
    */
   get minute(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.c.minute : NaN;
+    return this.isValid ? this.#c.minute : NaN;
   }
 
   /**
@@ -1353,7 +1315,7 @@ export default class DateTime {
    */
   get second(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.c.second : NaN;
+    return this.isValid ? this.#c.second : NaN;
   }
 
   /**
@@ -1363,11 +1325,11 @@ export default class DateTime {
    */
   get millisecond(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.c.millisecond : NaN;
+    return this.isValid ? this.#c.millisecond : NaN;
   }
 
   #possiblyCachedWeekData(): DateTimeObject<WeekDateObject> {
-    return (this.#weekData ??= gregorianToWeek(this.c));
+    return (this.#weekData ??= gregorianToWeek(this.#c));
   }
 
   /**
@@ -1415,7 +1377,7 @@ export default class DateTime {
 
   #possiblyCachedLocalWeekData(): DateTimeObject<WeekDateObject> {
     return (this.#localWeekData ??= gregorianToWeek(
-      this.c,
+      this.#c,
       this.loc.getMinDaysInFirstWeek(),
       this.loc.getStartOfWeek()
     ));
@@ -1460,7 +1422,7 @@ export default class DateTime {
    */
   get ordinal(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? gregorianToOrdinal(this.c).ordinal : NaN;
+    return this.isValid ? gregorianToOrdinal(this.#c).ordinal : NaN;
   }
 
   /**
@@ -1589,7 +1551,7 @@ export default class DateTime {
     }
     const dayMs = 86400000;
     const minuteMs = 60000;
-    const localTS = objToLocalTS(this.c);
+    const localTS = objToLocalTS(this.#c);
     const oEarlier = this.zone.offset(localTS - dayMs);
     const oLater = this.zone.offset(localTS + dayMs);
 
@@ -1811,12 +1773,12 @@ export default class DateTime {
     let mixed;
     if (settingWeekStuff) {
       mixed = weekToGregorian(
-        { ...gregorianToWeek(this.c, minDaysInFirstWeek, startOfWeek), ...normalized },
+        { ...gregorianToWeek(this.#c, minDaysInFirstWeek, startOfWeek), ...normalized },
         minDaysInFirstWeek,
         startOfWeek
       );
     } else if (!isUndefined(normalized.ordinal)) {
-      mixed = ordinalToGregorian({ ...gregorianToOrdinal(this.c), ...normalized });
+      mixed = ordinalToGregorian({ ...gregorianToOrdinal(this.#c), ...normalized });
     } else {
       mixed = { ...this.toObject(), ...normalized };
 
@@ -1846,8 +1808,7 @@ export default class DateTime {
    */
   plus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
     if (!this.isValid) return this;
-    const dur = Duration.fromDurationLike(duration);
-    return this.#clone(adjustTime(this, dur));
+    return this.#adjustTime(Duration.fromDurationLike(duration));
   }
 
   /**
@@ -1858,8 +1819,49 @@ export default class DateTime {
    */
   minus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
     if (!this.isValid) return this;
-    const dur = Duration.fromDurationLike(duration).negate();
-    return this.#clone(adjustTime(this, dur));
+    return this.#adjustTime(Duration.fromDurationLike(duration).negate());
+  }
+
+  /**
+   * create a new DT instance by adding a duration, adjusting for DSTs
+   * @param dur
+   * @private
+   */
+  #adjustTime(dur: Duration) {
+    const oPre = this.#o,
+      year = this.#c.year + Math.trunc(dur.years),
+      month = this.#c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
+      c = {
+        ...this.#c,
+        year,
+        month,
+        day:
+          Math.min(this.#c.day, daysInMonth(year, month)) +
+          Math.trunc(dur.days) +
+          Math.trunc(dur.weeks) * 7,
+      },
+      millisToAdd = Duration.fromObject({
+        years: dur.years - Math.trunc(dur.years),
+        quarters: dur.quarters - Math.trunc(dur.quarters),
+        months: dur.months - Math.trunc(dur.months),
+        weeks: dur.weeks - Math.trunc(dur.weeks),
+        days: dur.days - Math.trunc(dur.days),
+        hours: dur.hours,
+        minutes: dur.minutes,
+        seconds: dur.seconds,
+        milliseconds: dur.milliseconds,
+      }).as("milliseconds"),
+      localTS = objToLocalTS(c);
+
+    let [ts, o] = fixOffset(localTS, oPre, this.zone);
+
+    if (millisToAdd !== 0) {
+      ts += millisToAdd;
+      // that could have changed the offset by going over a DST, but we want to keep the ts the same
+      o = this.zone.offset(ts);
+    }
+
+    return this.#clone({ ts, o });
   }
 
   /**
@@ -2302,7 +2304,7 @@ export default class DateTime {
   toObject(opts = {}) {
     if (!this.isValid) return {};
 
-    const base = { ...this.c };
+    const base = { ...this.#c };
 
     if (opts.includeConfig) {
       base.outputCalendar = this.outputCalendar;
@@ -2479,7 +2481,7 @@ export default class DateTime {
     const current = {
       ts: this.#ts,
       zone: this.zone,
-      c: this.c,
+      c: this.#c,
       o: this.#o,
       loc: this.loc,
       invalid: this.invalid,
