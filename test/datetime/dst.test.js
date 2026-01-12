@@ -15,6 +15,7 @@ for (const [name, local] of Object.entries(dateTimeConstructors)) {
       const d = local(2017, 3, 12, 2);
       expect(d.hour).toBe(3);
       expect(d.offset).toBe(-4 * 60);
+      expect(d.wasHole).toBe(true);
     });
 
     if (name == "fromObject") {
@@ -189,4 +190,28 @@ describe("DateTime.local() with offset caching", () => {
       }
     }
   }
+});
+
+describe("DateTime maintains the wasHole setting properly", () => {
+  test("is false by default", () => {
+    expect(DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 4 }).wasHole).toBe(false);
+  });
+
+  test("is set on hole times", () => {
+    expect(DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).wasHole).toBe(true);
+  });
+
+  test("is droped on math", () => {
+    expect(
+      DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).plus({ hours: 2 }).wasHole
+    ).toBe(false);
+  });
+
+  test("is kept on reconfigure", () => {
+    expect(
+      DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).reconfigure({
+        locale: "es-ES",
+      }).wasHole
+    ).toBe(true);
+  });
 });
