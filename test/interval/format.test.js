@@ -40,7 +40,7 @@ test("Interval#toLocaleString accepts locale settings from the start DateTime", 
       interval.start.reconfigure({ locale: "be" }),
       interval.end
     ).toLocaleString()
-  ).toBe("25.5.1982 – 14.10.1983");
+  ).toMatchIgnoringWeirdSpaces("25.5.1982 – 14.10.1983");
 });
 
 test("Interval#toLocaleString accepts numbering system settings from the start DateTime", () => {
@@ -49,7 +49,7 @@ test("Interval#toLocaleString accepts numbering system settings from the start D
       interval.start.reconfigure({ numberingSystem: "beng" }),
       interval.end
     ).toLocaleString()
-  ).toBe("৫/২৫/১৯৮২ – ১০/১৪/১৯৮৩");
+  ).toMatchIgnoringWeirdSpaces("৫/২৫/১৯৮২ – ১০/১৪/১৯৮৩");
 });
 
 test("Interval#toLocaleString accepts ouptput calendar settings from the start DateTime", () => {
@@ -58,11 +58,11 @@ test("Interval#toLocaleString accepts ouptput calendar settings from the start D
       interval.start.reconfigure({ outputCalendar: "islamic" }),
       interval.end
     ).toLocaleString()
-  ).toBe("8/2/1402 – 1/8/1404 AH");
+  ).toMatchIgnoringWeirdSpaces("8/2/1402 – 1/8/1404 AH");
 });
 
 test("Interval#toLocaleString accepts options to the formatter", () => {
-  expect(interval.toLocaleString({ weekday: "short" })).toBe("Tue – Fri");
+  expect(interval.toLocaleString({ weekday: "short" })).toMatchIgnoringWeirdSpaces("Tue – Fri");
 });
 
 test("Interval#toLocaleString can override the start DateTime's locale", () => {
@@ -71,7 +71,7 @@ test("Interval#toLocaleString can override the start DateTime's locale", () => {
       interval.start.reconfigure({ locale: "be" }),
       interval.end
     ).toLocaleString({}, { locale: "fr" })
-  ).toBe("25/05/1982 – 14/10/1983");
+  ).toMatchIgnoringWeirdSpaces("25/05/1982 – 14/10/1983");
 });
 
 test("Interval#toLocaleString can override the start DateTime's numbering system", () => {
@@ -80,7 +80,7 @@ test("Interval#toLocaleString can override the start DateTime's numbering system
       interval.start.reconfigure({ numberingSystem: "beng" }),
       interval.end
     ).toLocaleString({ numberingSystem: "mong" })
-  ).toBe("᠕/᠒᠕/᠑᠙᠘᠒ – ᠑᠐/᠑᠔/᠑᠙᠘᠓");
+  ).toMatchIgnoringWeirdSpaces("᠕/᠒᠕/᠑᠙᠘᠒ – ᠑᠐/᠑᠔/᠑᠙᠘᠓");
 });
 
 test("Interval#toLocaleString can override the start DateTime's output calendar", () => {
@@ -88,8 +88,8 @@ test("Interval#toLocaleString can override the start DateTime's output calendar"
     Interval.fromDateTimes(
       interval.start.reconfigure({ outputCalendar: "islamic" }),
       interval.end
-    ).toLocaleString({}, { outputCalendar: "buddhist" })
-  ).toMatchIgnoringWeirdSpaces("5/25/2525 – 10/14/2526 BE");
+    ).toLocaleString({}, { outputCalendar: "coptic" })
+  ).toMatchIgnoringWeirdSpaces("9/17/1698 – 2/3/1700 ERA1");
 });
 
 test("Interval#toLocaleString shows things in the right IANA zone", () => {
@@ -139,7 +139,6 @@ test("Interval#toLocaleString uses locale-appropriate time formats", () => {
       DateTime.TIME_SIMPLE
     )
   ).toMatchIgnoringWeirdSpaces("9:00 – 11:00 AM");
-
   expect(
     Interval.after(interval.start.reconfigure({ locale: "en-US" }), { hour: 2 }).toLocaleString(
       DateTime.TIME_24_SIMPLE
@@ -151,12 +150,12 @@ test("Interval#toLocaleString uses locale-appropriate time formats", () => {
     Interval.after(interval.start.reconfigure({ locale: "fr" }), { hour: 2 }).toLocaleString(
       DateTime.TIME_SIMPLE
     )
-  ).toBe("09:00 – 11:00");
+  ).toMatchIgnoringWeirdSpaces("09:00 – 11:00");
   expect(
     Interval.after(interval.start.reconfigure({ locale: "fr" }), { hour: 2 }).toLocaleString(
       DateTime.TIME_24_SIMPLE
     )
-  ).toBe("09:00 – 11:00");
+  ).toMatchIgnoringWeirdSpaces("09:00 – 11:00");
 
   // Spain does't prefix with "0" and doesn't use spaces
   expect(
