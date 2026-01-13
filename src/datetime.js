@@ -1578,12 +1578,11 @@ export default class DateTime {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
       let newTS = this.ts;
-      let wasHole = this.wasHole;
-      let _ignore = null;
+      let wasHole = false;
       if (keepLocalTime || keepCalendarTime) {
         const offsetGuess = zone.offset(this.ts);
         const asObj = this.toObject();
-        [newTS, _ignore, wasHole] = objToTS(asObj, offsetGuess, zone);
+        [newTS, , wasHole] = objToTS(asObj, offsetGuess, zone);
       }
       return clone(this, { ts: newTS, zone, wasHole });
     }

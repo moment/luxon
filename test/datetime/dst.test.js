@@ -214,4 +214,11 @@ describe("DateTime maintains the wasHole setting properly", () => {
       }).wasHole
     ).toBe(true);
   });
+
+  test("is dropped on rezoning", () => {
+    expect(
+      DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).setZone("Europe/London")
+        .wasHole
+    ).toBe(false);
+  });
 });
