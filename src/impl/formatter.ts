@@ -178,7 +178,7 @@ export default class Formatter {
           return "Z";
         }
 
-        return dt.isValid ? dt.zone.formatOffset(+dt, opts.format) : "";
+        return dt.zone.formatOffset(+dt, opts.format);
       },
       meridiem = () =>
         knownEnglish

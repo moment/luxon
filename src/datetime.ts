@@ -45,6 +45,7 @@ import * as Formats from "./impl/formats.ts";
 import {
   ConflictingSpecificationError,
   InvalidArgumentError,
+  InvalidDateTimeError,
   InvalidUnitError,
   LuxonParseError,
 } from "./errors.ts";
@@ -65,7 +66,6 @@ import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm
 import type { PartialNullable } from "./impl/utilTypes.ts";
 import type { AllDateTimeOptions } from "./datetimeOptions.ts";
 
-const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
 
 function unsupportedZone(zone: Zone): Invalid {
@@ -104,6 +104,9 @@ function tsToObj(ts: number, offset: number): DateTimeObject {
   ts += offset * 60 * 1000;
 
   const d = new Date(ts);
+  if (isNaN(+d)) {
+    throw new InvalidDateTimeError("Invalid timestamp");
+  }
 
   return {
     year: d.getUTCFullYear(),
@@ -464,9 +467,10 @@ export interface SetZoneOptions {
 interface DateTimeConstructorParams {
   ts?: number | undefined;
   zone?: Zone | undefined;
-  old?: DateTimeConstructorParams | undefined;
-  invalid?: Invalid | undefined | null;
-
+  // Note: When passing a DateTime here, it must be from the same realm,
+  // as we access private properties from it
+  old?: DateTime | undefined;
+  c?: DateTimeObject | undefined;
   o?: number | undefined;
   loc?: Locale | undefined;
 }
@@ -501,7 +505,6 @@ export default class DateTime {
   readonly #ts: number;
 
   readonly #loc: Locale;
-  readonly invalid: Invalid | null;
   readonly #c: DateTimeObject;
   readonly #o: number;
 
@@ -515,34 +518,26 @@ export default class DateTime {
     if (m !== INTERNAL_CONSTRUCTOR) throwInternalConstructorError("DateTime");
     const zone = config.zone || Settings.defaultZone;
 
-    let invalid =
-      config.invalid ||
-      (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
-      (!zone.isValid ? unsupportedZone(zone) : null);
-
+    if (Number.isNaN(config.ts)) {
+      // TODO Investigate if/how this can happen
+      throw new Error("Invalid timestamp passed.");
+    }
     this.#ts = (config.ts ?? Settings.now()) || 0; // make sure we normalize -0 to 0 by || 0
-
-    let c: DateTimeObject | null = null,
-      o: number | null = null;
-    if (!invalid) {
-      if (config.old && config.old.ts === this.#ts && config.old.zone.equals(zone)) {
-        [c, o] = [config.old.c, config.old.o];
-      } else {
-        // If an offset has been passed and we have not been called from
-        // clone(), we can trust it and avoid the offset calculation.
-        const ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.#ts);
-        c = tsToObj(this.#ts, ot);
-        invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
-        c = invalid ? null : c;
-        o = invalid ? null : ot;
-      }
+    let c: DateTimeObject, o: number;
+    if (config.old && config.old.#ts === this.#ts && config.old.#zone.equals(zone)) {
+      [c, o] = [config.old.#c, config.old.#o];
+    } else {
+      // If an offset has been passed, and we have not been called from
+      // clone(), we can trust it and avoid the offset calculation.
+      const ot = config.o !== undefined && !config.old ? config.o : zone.offset(this.#ts);
+      c = tsToObj(this.#ts, ot);
+      o = ot;
     }
 
     this.#zone = zone;
     this.#loc = config.loc || Locale.create();
-    this.invalid = invalid;
-    this.#c = c!; // TODO: Remove ! when invalid is removed
-    this.#o = o!; // TODO: Remove ! when invalid is removed
+    this.#c = c;
+    this.#o = o;
   }
 
   get [LUXON_TYPE]() {
@@ -913,10 +908,6 @@ export default class DateTime {
       );
     }
 
-    if (!inst.isValid) {
-      return DateTime.invalid(inst.invalid);
-    }
-
     return inst;
   }
 
@@ -1130,7 +1121,7 @@ export default class DateTime {
    * @deprecated
    */
   get isValid(): boolean {
-    return this.invalid === null;
+    return true;
   }
 
   /**
@@ -2367,15 +2358,14 @@ export default class DateTime {
   // clone really means, "make a new object with these modifications". all "setters" really use this
   // to create a new object while only changing some of the properties
   #clone(alts: Partial<DateTimeConstructorParams>): DateTime {
-    const current = {
+    const current: DateTimeConstructorParams = {
       ts: this.#ts,
       zone: this.#zone,
       c: this.#c,
       o: this.#o,
       loc: this.#loc,
-      invalid: this.invalid,
     };
-    return new DateTime({ ...current, ...alts, old: current }, INTERNAL_CONSTRUCTOR);
+    return new DateTime({ ...current, ...alts, old: this }, INTERNAL_CONSTRUCTOR);
   }
 
   /**

@@ -619,13 +619,11 @@ test("DateTime.fromFormat() parses IANA zones", () => {
     "1982/05/25 09:10:11.445 Asia/Tokyo",
     "yyyy/MM/dd HH:mm:ss.SSS z"
   ).toUTC();
-  expect(d.isValid).toBe(true);
   expect(d.offset).toBe(0);
   expect(d.hour).toBe(0);
   expect(d.minute).toBe(10);
 
   d = DateTime.fromFormat("1982/05/25 09:10:11.445 UTC", "yyyy/MM/dd HH:mm:ss.SSS z").toUTC();
-  expect(d.isValid).toBe(true);
   expect(d.offset).toBe(0);
   expect(d.hour).toBe(9);
   expect(d.minute).toBe(10);
@@ -689,7 +687,6 @@ test("DateTime.fromFormat() prefers IANA zone id", () => {
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
-  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(12);
@@ -708,7 +705,6 @@ test("DateTime.fromFormat() ignores numerical offsets when they conflict with th
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
-  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(12);
@@ -727,7 +723,6 @@ test("DateTime.fromFormat() ignores numerical offsets when they are are wrong ri
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
-  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(10);
   expect(i.day).toBe(3);
@@ -746,7 +741,6 @@ test("DateTime.fromFormat() maintains offset that belongs to time zone during ov
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
-  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(4);
   expect(i.day).toBe(4);
@@ -762,7 +756,6 @@ test("DateTime.fromFormat() maintains offset that belongs to time zone during ov
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: true }
   );
-  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(4);
   expect(i.day).toBe(4);
@@ -778,7 +771,6 @@ test("DateTime.format() uses local zone when setZone is false and offset in inpu
   const i = DateTime.fromFormat("2021-11-12T09:07:13.000+08:00", "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", {
     setZone: false,
   });
-  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(11);
@@ -796,7 +788,6 @@ test("DateTime.format() uses local zone when setZone is false and zone id in inp
     "yyyy-MM-dd'T'HH:mm:ss.SSSZZ[z]",
     { setZone: false }
   );
-  expect(i.isValid).toBe(true);
   expect(i.year).toBe(2021);
   expect(i.month).toBe(11);
   expect(i.day).toBe(11);
@@ -943,7 +934,6 @@ describe("DateTime.fromFormat containing special regex token", () => {
 // #1362
 test("DateTime.fromFormat only an offset", () => {
   const dt = DateTime.fromFormat("+0100", "ZZZ", { setZone: true });
-  expect(dt.isValid).toBe(true);
   expect(dt.offset).toBe(60);
 });
 
@@ -1443,7 +1433,6 @@ test("DateTime.fromFormatParser behaves equivalently to DateTime.fromFormat", ()
     ffP1 = DateTime.fromFormatParser(dateTimeStr, formatParser);
 
   expect(ffP1).toEqual(ff1);
-  expect(ffP1.isValid).toBe(true);
 });
 
 test("DateTime.fromFormatParser throws error when used with a different locale than it was created with", () => {

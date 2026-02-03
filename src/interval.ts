@@ -19,11 +19,7 @@ export const LUXON_TYPE_INTERVAL = "interval" as LuxonTypeMarker<Interval>;
 
 // checks if the start is equal to or before the end
 function validateStartEnd(start: DateTime, end: DateTime) {
-  if (!start.isValid) {
-    throw new InvalidIntervalError("invalid start", "legacy_invalid");
-  } else if (!end.isValid) {
-    throw new InvalidIntervalError("invalid end", "legacy_invalid");
-  } else if (end < start) {
+  if (end < start) {
     throw new InvalidIntervalError(
       `The end of an interval must be after its start, but you had start=${start.toISO()} and end=${end.toISO()}`,
       "interval.endBeforeStart"
@@ -121,8 +117,8 @@ export default class Interval {
         // we need to know the zone that was used in the string, so that we can
         // default to it when parsing end, therefor use setZone: true
         start = DateTime.fromISO(s, { ...restOpts, zone, setZone: true });
-        startIsValid = start.isValid;
-      } catch (e) {
+        startIsValid = true;
+      } catch {
         startIsValid = false;
       }
 
@@ -136,8 +132,8 @@ export default class Interval {
           setZone: true,
         };
         end = parseDataToDateTime(vals, parsedZone, endParseOpts, "ISO 8601 Interval end", e);
-        endIsValid = end.isValid;
-      } catch (e) {
+        endIsValid = true;
+      } catch {
         endIsValid = false;
       }
 

@@ -150,7 +150,6 @@ test.each([
   ["GMT0", 0],
 ])("DateTime#setZone accepts whacky zone %p", (iana, offset) => {
   const zoned = dt().setZone(iana);
-  expect(zoned.isValid).toBe(true);
   expect(zoned.zoneName).toBe(iana);
   expect(zoned.offset).toBe(offset * 60);
 });
@@ -269,7 +268,6 @@ test.each([
   ["Etc/GMT", 0],
 ])("Etc/GMTx zones now work natively", (zone, expectedOffset) => {
   let zoned = dt().setZone(zone);
-  expect(zoned.isValid).toBe(true);
   expect(zoned.offset).toEqual(expectedOffset * 60);
 });
 
