@@ -45,7 +45,6 @@ import * as Formats from "./impl/formats.ts";
 import {
   ConflictingSpecificationError,
   InvalidArgumentError,
-  InvalidDateTimeError,
   InvalidUnitError,
   LuxonParseError,
 } from "./errors.ts";
@@ -54,7 +53,6 @@ import { daysInMonth, daysInYear, isLeapYear } from "./impl/dateMath.ts";
 import type Zone from "./zone.ts";
 import type { DateTimeObject, DateTimeObjectInput, WeekDateObject } from "./impl/dateObjects.ts";
 import {
-  checkInteger,
   checkIntegerBetween,
   checkIntlDtfOptions,
   checkObject,
@@ -65,7 +63,7 @@ import type { DurationUnit } from "./impl/durationObjects.ts";
 import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 import type { PartialNullable } from "./impl/utilTypes.ts";
-import * as DateTimeErrors from "./impl/dateTimeErrors.ts";
+import type { AllDateTimeOptions } from "./datetimeOptions.ts";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
@@ -128,10 +126,10 @@ function objToTS(obj: DateTimeObject, offset: number, zone: Zone): [ts: number, 
 export function parseDataToDateTime(
   parsed: DateTimeObjectInput,
   parsedZone: Zone | null,
-  opts,
-  format,
-  text,
-  specificOffset
+  opts: AllDateTimeOptions,
+  format: string,
+  text: string,
+  specificOffset?: number
 ): DateTime {
   const { setZone, zone } = opts;
   if ((parsed && Object.keys(parsed).length !== 0) || parsedZone) {
@@ -154,13 +152,10 @@ export function parseDataToDateTime(
 // if you want to output a technical format (e.g. RFC 2822), this helper
 // helps handle the details
 function toTechFormat(dt: DateTime, format: string, allowZ = true): string {
-  // TODO: Do not return null when Invalid is removed
-  return dt.isValid
-    ? Formatter.create(Locale.create("en-US"), {
-        allowZ,
-        forceSimple: true,
-      }).formatDateTimeFromString(dt, format)
-    : null!;
+  return Formatter.create(Locale.create("en-US"), {
+    allowZ,
+    forceSimple: true,
+  }).formatDateTimeFromString(dt, format);
 }
 
 function toISODate(o: DateTime, extended: boolean, precision?: "year" | "month"): string {
@@ -501,7 +496,6 @@ const LUXON_TYPE_DATETIME = "datetime" as LuxonTypeMarker<DateTime>;
  * There's plenty others documented below. In addition, for more information on subtler topics like internationalization, time zones, alternative calendars, validity, and so on, see the external documentation.
  */
 export default class DateTime {
-  // TODO: Make these private
   readonly #zone: Zone;
 
   readonly #ts: number;
@@ -525,9 +519,7 @@ export default class DateTime {
       config.invalid ||
       (Number.isNaN(config.ts) ? new Invalid("invalid input") : null) ||
       (!zone.isValid ? unsupportedZone(zone) : null);
-    /**
-     * @access private
-     */
+
     this.#ts = (config.ts ?? Settings.now()) || 0; // make sure we normalize -0 to 0 by || 0
 
     let c: DateTimeObject | null = null,
@@ -546,25 +538,10 @@ export default class DateTime {
       }
     }
 
-    /**
-     * @access private
-     */
     this.#zone = zone;
-    /**
-     * @access private
-     */
     this.#loc = config.loc || Locale.create();
-    /**
-     * @access private
-     */
     this.invalid = invalid;
-    /**
-     * @access private
-     */
     this.#c = c!; // TODO: Remove ! when invalid is removed
-    /**
-     * @access private
-     */
     this.#o = o!; // TODO: Remove ! when invalid is removed
   }
 
@@ -831,11 +808,7 @@ export default class DateTime {
    */
   static fromObject(
     obj?: DateTimeObjectInput | null | undefined,
-    opts?: DateTimeWithZoneOptions
-  ): DateTime;
-  static fromObject(
-    obj?: DateTimeObjectInput | null | undefined,
-    opts: InternalDateTimeFromObjectOptions = {}
+    opts: AllDateTimeOptions = {}
   ): DateTime {
     obj ??= {};
     checkObject(obj, "obj");
@@ -1166,7 +1139,7 @@ export default class DateTime {
    * @deprecated
    */
   get invalidReason(): string | null {
-    return this.invalid ? this.invalid.reason : null;
+    return null;
   }
 
   /**
@@ -1175,7 +1148,7 @@ export default class DateTime {
    * @deprecated
    */
   get invalidExplanation(): string | null {
-    return this.invalid ? this.invalid.explanation : null;
+    return null;
   }
 
   /**
@@ -1184,8 +1157,7 @@ export default class DateTime {
    * @type {string}
    */
   get locale(): string {
-    // TODO: Do not return null when Invalid is removed
-    return this.isValid ? this.#loc.locale : null!;
+    return this.#loc.locale;
   }
 
   /**
@@ -1194,9 +1166,8 @@ export default class DateTime {
    * @type {string}
    */
   get numberingSystem(): string | null {
-    // TODO: Do not return null when Invalid is removed
     // TODO: Check if we should return the resolved numberingSystem instead
-    return this.isValid ? this.#loc.numberingSystem : null;
+    return this.#loc.numberingSystem;
   }
 
   /**
@@ -1205,9 +1176,8 @@ export default class DateTime {
    * @type {string}
    */
   get outputCalendar(): string | null {
-    // TODO: Do not return null when Invalid is removed
     // TODO: Check if we should return the resolved outputCalendar instead
-    return this.isValid ? this.#loc.outputCalendar : null;
+    return this.#loc.outputCalendar;
   }
 
   /**
@@ -1215,8 +1185,7 @@ export default class DateTime {
    * @type {Zone}
    */
   get zone(): Zone {
-    // TODO: "in" test is needed for a bogus test (proto.test.ts): Validate necessity
-    return #zone in this ? this.#zone : (null as never);
+    return this.#zone;
   }
 
   /**
@@ -1224,8 +1193,7 @@ export default class DateTime {
    * @type {string}
    */
   get zoneName(): string {
-    // TODO: Do not return null when Invalid is removed
-    return this.isValid ? this.#zone.name : null!;
+    return this.#zone.name;
   }
 
   /**
@@ -1234,8 +1202,7 @@ export default class DateTime {
    * @type {number}
    */
   get year(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#c.year : NaN;
+    return this.#c.year;
   }
 
   /**
@@ -1244,8 +1211,7 @@ export default class DateTime {
    * @type {number}
    */
   get quarter(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? Math.ceil(this.#c.month / 3) : NaN;
+    return Math.ceil(this.#c.month / 3);
   }
 
   /**
@@ -1254,8 +1220,7 @@ export default class DateTime {
    * @type {number}
    */
   get month(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#c.month : NaN;
+    return this.#c.month;
   }
 
   /**
@@ -1264,8 +1229,7 @@ export default class DateTime {
    * @type {number}
    */
   get day(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#c.day : NaN;
+    return this.#c.day;
   }
 
   /**
@@ -1274,8 +1238,7 @@ export default class DateTime {
    * @type {number}
    */
   get hour(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#c.hour : NaN;
+    return this.#c.hour;
   }
 
   /**
@@ -1284,8 +1247,7 @@ export default class DateTime {
    * @type {number}
    */
   get minute(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#c.minute : NaN;
+    return this.#c.minute;
   }
 
   /**
@@ -1294,8 +1256,7 @@ export default class DateTime {
    * @type {number}
    */
   get second(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#c.second : NaN;
+    return this.#c.second;
   }
 
   /**
@@ -1304,8 +1265,7 @@ export default class DateTime {
    * @type {number}
    */
   get millisecond(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#c.millisecond : NaN;
+    return this.#c.millisecond;
   }
 
   #possiblyCachedWeekData(): DateTimeObject<WeekDateObject> {
@@ -1319,8 +1279,7 @@ export default class DateTime {
    * @type {number}
    */
   get weekYear(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#possiblyCachedWeekData().weekYear : NaN;
+    return this.#possiblyCachedWeekData().weekYear;
   }
 
   /**
@@ -1330,8 +1289,7 @@ export default class DateTime {
    * @type {number}
    */
   get weekNumber(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#possiblyCachedWeekData().weekNumber : NaN;
+    return this.#possiblyCachedWeekData().weekNumber;
   }
 
   /**
@@ -1342,8 +1300,7 @@ export default class DateTime {
    * @type {number}
    */
   get weekday(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#possiblyCachedWeekData().weekday : NaN;
+    return this.#possiblyCachedWeekData().weekday;
   }
 
   /**
@@ -1351,8 +1308,7 @@ export default class DateTime {
    * @returns {boolean}
    */
   get isWeekend(): boolean {
-    // TODO: Remove invalid check
-    return this.isValid && this.#loc.getWeekendDays().includes(this.weekday);
+    return this.#loc.getWeekendDays().includes(this.weekday);
   }
 
   #possiblyCachedLocalWeekData(): DateTimeObject<WeekDateObject> {
@@ -1370,8 +1326,7 @@ export default class DateTime {
    * @returns {number}
    */
   get localWeekday(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#possiblyCachedLocalWeekData().weekday : NaN;
+    return this.#possiblyCachedLocalWeekData().weekday;
   }
 
   /**
@@ -1381,8 +1336,7 @@ export default class DateTime {
    * @returns {number}
    */
   get localWeekNumber(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#possiblyCachedLocalWeekData().weekNumber : NaN;
+    return this.#possiblyCachedLocalWeekData().weekNumber;
   }
 
   /**
@@ -1391,8 +1345,7 @@ export default class DateTime {
    * @returns {number}
    */
   get localWeekYear(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? this.#possiblyCachedLocalWeekData().weekYear : NaN;
+    return this.#possiblyCachedLocalWeekData().weekYear;
   }
 
   /**
@@ -1401,8 +1354,7 @@ export default class DateTime {
    * @type {number|DateTime}
    */
   get ordinal(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? gregorianToOrdinal(this.#c).ordinal : NaN;
+    return gregorianToOrdinal(this.#c).ordinal;
   }
 
   /**
@@ -1412,8 +1364,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthShort(): string {
-    // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.months("short", { locObj: this.#loc })[this.month - 1] : null!;
+    return Info.months("short", { locObj: this.#loc })[this.month - 1];
   }
 
   /**
@@ -1423,8 +1374,7 @@ export default class DateTime {
    * @type {string}
    */
   get monthLong(): string {
-    // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.months("long", { locObj: this.#loc })[this.month - 1] : null!;
+    return Info.months("long", { locObj: this.#loc })[this.month - 1];
   }
 
   /**
@@ -1434,8 +1384,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayShort(): string {
-    // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.weekdays("short", { locObj: this.#loc })[this.weekday - 1] : null!;
+    return Info.weekdays("short", { locObj: this.#loc })[this.weekday - 1];
   }
 
   /**
@@ -1445,8 +1394,7 @@ export default class DateTime {
    * @type {string}
    */
   get weekdayLong(): string {
-    // TODO: Do not return null when Invalid is removed
-    return this.isValid ? Info.weekdays("long", { locObj: this.#loc })[this.weekday - 1] : null!;
+    return Info.weekdays("long", { locObj: this.#loc })[this.weekday - 1];
   }
 
   /**
@@ -1456,8 +1404,8 @@ export default class DateTime {
    * @type {number}
    */
   get offset(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? +this.#o : NaN;
+    // TODO: Figure out why this + is here
+    return +this.#o;
   }
 
   /**
@@ -1466,15 +1414,10 @@ export default class DateTime {
    * @type {string}
    */
   get offsetNameShort(): string {
-    // TODO: Do not return null when Invalid is removed
-    if (this.isValid) {
-      return this.#zone.offsetName(this.#ts, {
-        format: "short",
-        locale: this.locale,
-      });
-    } else {
-      return null!;
-    }
+    return this.#zone.offsetName(this.#ts, {
+      format: "short",
+      locale: this.locale,
+    });
   }
 
   /**
@@ -1483,15 +1426,10 @@ export default class DateTime {
    * @type {string}
    */
   get offsetNameLong(): string {
-    // TODO: Do not return null when Invalid is removed
-    if (this.isValid) {
-      return this.zone.offsetName(this.#ts, {
-        format: "long",
-        locale: this.locale,
-      });
-    } else {
-      return null!;
-    }
+    return this.zone.offsetName(this.#ts, {
+      format: "long",
+      locale: this.locale,
+    });
   }
 
   /**
@@ -1499,8 +1437,7 @@ export default class DateTime {
    * @type {boolean}
    */
   get isOffsetFixed(): boolean {
-    // TODO: Do not return null when Invalid is removed
-    return this.isValid ? this.zone.isUniversal : null!;
+    return this.zone.isOffsetFixed();
   }
 
   /**
@@ -1526,7 +1463,7 @@ export default class DateTime {
    * @returns {DateTime[]}
    */
   getPossibleOffsets(): DateTime[] {
-    if (!this.isValid || this.isOffsetFixed) {
+    if (this.isOffsetFixed) {
       return [this];
     }
     const dayMs = 86400000;
@@ -1583,7 +1520,7 @@ export default class DateTime {
    */
   get daysInYear(): number {
     // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? daysInYear(this.year) : NaN;
+    return daysInYear(this.year);
   }
 
   /**
@@ -1594,8 +1531,7 @@ export default class DateTime {
    * @type {number}
    */
   get weeksInWeekYear(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid ? weeksInWeekYear(this.weekYear) : NaN;
+    return weeksInWeekYear(this.weekYear);
   }
 
   /**
@@ -1605,14 +1541,11 @@ export default class DateTime {
    * @type {number}
    */
   get weeksInLocalWeekYear(): number {
-    // TODO: Do not return NaN when Invalid is removed
-    return this.isValid
-      ? weeksInWeekYear(
-          this.localWeekYear,
-          this.#loc.getMinDaysInFirstWeek(),
-          this.#loc.getStartOfWeek()
-        )
-      : NaN;
+    return weeksInWeekYear(
+      this.localWeekYear,
+      this.#loc.getMinDaysInFirstWeek(),
+      this.#loc.getStartOfWeek()
+    );
   }
 
   /**
@@ -1667,8 +1600,6 @@ export default class DateTime {
     zone = normalizeZone(zone, Settings.defaultZone);
     if (zone.equals(this.zone)) {
       return this;
-    } else if (!zone.isValid) {
-      return DateTime.invalid(unsupportedZone(zone));
     } else {
       let newTS = this.#ts;
       if (keepLocalTime) {
@@ -1720,8 +1651,6 @@ export default class DateTime {
    * @return {DateTime}
    */
   set(values: DateTimeObjectInput): DateTime {
-    if (!this.isValid) return this;
-
     let normalized = normalizeObject(values, normalizeUnitWithLocalWeeks);
     let minDaysInFirstWeek, startOfWeek;
     ({
@@ -1787,7 +1716,6 @@ export default class DateTime {
    * @return {DateTime}
    */
   plus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
-    if (!this.isValid) return this;
     return this.#adjustTime(Duration.fromDurationLike(duration));
   }
 
@@ -1798,7 +1726,6 @@ export default class DateTime {
    @return {DateTime}
    */
   minus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
-    if (!this.isValid) return this;
     return this.#adjustTime(Duration.fromDurationLike(duration).negate());
   }
 
@@ -1860,8 +1787,6 @@ export default class DateTime {
     unit: any /* TODO: Waiting for Duration TS */,
     { useLocaleWeeks = false } = {}
   ): DateTime {
-    if (!this.isValid) return this;
-
     const o: DateTimeObjectInput = {},
       normalizedUnit = Duration.normalizeUnit(unit);
     switch (normalizedUnit) {
@@ -1924,11 +1849,9 @@ export default class DateTime {
    * @return {DateTime}
    */
   endOf(unit: any /* TODO: Waiting for Duration TS */, opts: any): DateTime {
-    return this.isValid
-      ? this.plus({ [unit]: 1 })
-          .startOf(unit, opts)
-          .minus(1)
-      : this;
+    return this.plus({ [unit]: 1 })
+      .startOf(unit, opts)
+      .minus(1);
   }
 
   // OUTPUT
@@ -1946,10 +1869,8 @@ export default class DateTime {
    * @return {string}
    */
   toFormat(fmt: string, opts: LocaleOptions = {}): string {
-    return this.isValid
-      ? // TODO: Validate / check locale options
-        Formatter.create(this.#loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt)
-      : INVALID;
+    // TODO: Validate / check locale options
+    return Formatter.create(this.#loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt);
   }
 
   /**
@@ -1975,10 +1896,8 @@ export default class DateTime {
     formatOpts: Intl.DateTimeFormatOptions = Formats.DATE_SHORT,
     opts: LocaleOptions = {}
   ): string {
-    return this.isValid
-      ? // TODO: Validate / check locale options
-        Formatter.create(this.#loc.clone(opts), formatOpts).formatDateTime(this)
-      : INVALID;
+    // TODO: Validate / check locale options
+    return Formatter.create(this.#loc.clone(opts), formatOpts).formatDateTime(this);
   }
 
   /**
@@ -1995,10 +1914,8 @@ export default class DateTime {
    *                                   //=> ]
    */
   toLocaleParts(opts: LocaleOptions & Intl.DateTimeFormatOptions = {}): Intl.DateTimeFormatPart[] {
-    return this.isValid
-      ? // TODO: Make locale options separate like in toLocaleString
-        Formatter.create(this.#loc.clone(opts), opts).formatDateTimeParts(this)
-      : [];
+    // TODO: Make locale options separate like in toLocaleString
+    return Formatter.create(this.#loc.clone(opts), opts).formatDateTimeParts(this);
   }
 
   /**
@@ -2026,11 +1943,6 @@ export default class DateTime {
     extendedZone = false,
     precision = "milliseconds",
   } = {}): string {
-    if (!this.isValid) {
-      // TODO: Do not return null when Invalid is removed
-      return null!;
-    }
-
     precision = normalizeUnit(precision);
     const ext = format === "extended";
 
@@ -2059,10 +1971,6 @@ export default class DateTime {
    * @return {string|null}
    */
   toISODate({ format = "extended", precision = "day" } = {}): string {
-    if (!this.isValid) {
-      // TODO: Do not return null when Invalid is removed
-      return null!;
-    }
     return toISODate(this, format === "extended", normalizeUnit(precision));
   }
 
@@ -2101,11 +2009,6 @@ export default class DateTime {
     format = "extended",
     precision = "milliseconds",
   } = {}): string {
-    if (!this.isValid) {
-      // TODO: Do not return null when Invalid is removed
-      return null!;
-    }
-
     precision = normalizeUnit(precision);
     let c = includePrefix && orderedUnits.indexOf(precision) >= 3 ? "T" : "";
     return (
@@ -2150,10 +2053,6 @@ export default class DateTime {
    * @return {string|null}
    */
   toSQLDate(): string {
-    if (!this.isValid) {
-      // TODO: Do not return null when Invalid is removed
-      return null!;
-    }
     return toISODate(this, true);
   }
 
@@ -2198,11 +2097,7 @@ export default class DateTime {
    * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: true }) //=> '2014-07-13 00:00:00.000 America/New_York'
    * @return {string}
    */
-  toSQL(opts = {}) {
-    if (!this.isValid) {
-      return null;
-    }
-
+  toSQL(opts = {}): string {
     return `${this.toSQLDate()} ${this.toSQLTime(opts)}`;
   }
 
@@ -2210,27 +2105,23 @@ export default class DateTime {
    * Returns a string representation of this DateTime appropriate for debugging
    * @return {string}
    */
-  toString() {
-    return this.isValid ? this.toISO() : INVALID;
+  toString(): string {
+    return this.toISO();
   }
 
   /**
    * Returns a string representation of this DateTime appropriate for the REPL.
    * @return {string}
    */
-  [Symbol.for("nodejs.util.inspect.custom")]() {
-    if (this.isValid) {
-      return `DateTime { ts: ${this.toISO()}, zone: ${this.zone.name}, locale: ${this.locale} }`;
-    } else {
-      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
-    }
+  [Symbol.for("nodejs.util.inspect.custom")](): string {
+    return `DateTime { ts: ${this.toISO()}, zone: ${this.zone.name}, locale: ${this.locale} }`;
   }
 
   /**
    * Returns the epoch milliseconds of this DateTime. Alias of {@link DateTime#toMillis}
    * @return {number}
    */
-  valueOf() {
+  valueOf(): number {
     return this.toMillis();
   }
 
@@ -2238,31 +2129,31 @@ export default class DateTime {
    * Returns the epoch milliseconds of this DateTime.
    * @return {number}
    */
-  toMillis() {
-    return this.isValid ? this.#ts : NaN;
+  toMillis(): number {
+    return this.#ts;
   }
 
   /**
    * Returns the epoch seconds (including milliseconds in the fractional part) of this DateTime.
    * @return {number}
    */
-  toSeconds() {
-    return this.isValid ? this.#ts / 1000 : NaN;
+  toSeconds(): number {
+    return this.#ts / 1000;
   }
 
   /**
    * Returns the epoch seconds (as a whole number) of this DateTime.
    * @return {number}
    */
-  toUnixInteger() {
-    return this.isValid ? Math.floor(this.#ts / 1000) : NaN;
+  toUnixInteger(): number {
+    return Math.floor(this.#ts / 1000);
   }
 
   /**
    * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON.
    * @return {string}
    */
-  toJSON() {
+  toJSON(): string {
     return this.toISO();
   }
 
@@ -2270,7 +2161,7 @@ export default class DateTime {
    * Returns a BSON serializable equivalent to this DateTime.
    * @return {Date}
    */
-  toBSON() {
+  toBSON(): Date {
     return this.toJSDate();
   }
 
@@ -2282,8 +2173,6 @@ export default class DateTime {
    * @return {Object}
    */
   toObject(opts = {}) {
-    if (!this.isValid) return {};
-
     const base = { ...this.#c };
 
     if (opts.includeConfig) {
@@ -2298,8 +2187,8 @@ export default class DateTime {
    * Returns a JavaScript Date equivalent to this DateTime.
    * @return {Date}
    */
-  toJSDate() {
-    return new Date(this.isValid ? this.#ts : NaN);
+  toJSDate(): Date {
+    return new Date(this.#ts);
   }
 
   // COMPARE
@@ -2320,10 +2209,6 @@ export default class DateTime {
    * @return {Duration}
    */
   diff(otherDateTime, unit: DurationUnit | readonly DurationUnit[] = "milliseconds", opts = {}) {
-    if (!this.isValid || !otherDateTime.isValid) {
-      return Duration.invalid("created by diffing an invalid DateTime");
-    }
-
     const durOpts = { locale: this.locale, numberingSystem: this.numberingSystem, ...opts };
 
     const units = maybeArray(unit).map(Duration.normalizeUnit),
@@ -2368,8 +2253,6 @@ export default class DateTime {
    * @return {boolean}
    */
   hasSame(otherDateTime, unit, opts?: any) {
-    if (!this.isValid) return false;
-
     const inputMs = otherDateTime.valueOf();
     const adjustedToZone = this.setZone(otherDateTime.zone, { keepLocalTime: true });
     return (
@@ -2386,8 +2269,6 @@ export default class DateTime {
    */
   equals(other) {
     return (
-      this.isValid &&
-      other.isValid &&
       this.valueOf() === other.valueOf() &&
       this.#zone.equals(other.zone) &&
       this.#loc.equals(other[DATETIME_LOCALE_SYMBOL])
@@ -2414,7 +2295,6 @@ export default class DateTime {
    * @example DateTime.now().minus({ hours: 36 }).toRelative({ round: false }) //=> "1.5 days ago"
    */
   toRelative(options = {}) {
-    if (!this.isValid) return null;
     const base = options.base || DateTime.fromObject({}, { zone: this.zone }),
       padding = options.padding ? (this < base ? -options.padding : options.padding) : 0;
     let units = ["years", "months", "days", "hours", "minutes", "seconds"];
@@ -2445,8 +2325,6 @@ export default class DateTime {
    * @example DateTime.now().minus({ days: 2 }).toRelativeCalendar() //=> "2 days ago"
    */
   toRelativeCalendar(options = {}) {
-    if (!this.isValid) return null;
-
     return this.#diffRelative(options.base || DateTime.fromObject({}, { zone: this.zone }), {
       ...options,
       numeric: "auto",

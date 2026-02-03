@@ -12,6 +12,7 @@
     "rewriteRelativeImportExtensions": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true
   }
 }

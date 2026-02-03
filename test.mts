@@ -1,13 +1,10 @@
 import { Zone, DateTime } from "./src/luxon.ts";
 
-const d = new Date(1935, 0, 1, 0, 0, 0, 0);
-const dUtc = new Date(Date.UTC(1935, 0, 1, 0, 0, 0, 0));
+const proto = Object.getPrototypeOf(DateTime.now());
+console.log(Object.getOwnPropertyNames(proto));
 
-const dtf = new Intl.DateTimeFormat("en-US", { hour: 'numeric', timeZoneName: "longOffset" });
-const parts = dtf.formatToParts(d);
-const timeZoneName = parts.find(p => p.type === "timeZoneName")!;
-const match = timeZoneName.value.match(/^GMT([+-]\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
-console.log(match, d.getTimezoneOffset());
+const outputCalendar = proto["resolvedLocaleOptions"];
+console.log(outputCalendar);
 
 
 // console.log(
