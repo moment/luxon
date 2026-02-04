@@ -928,7 +928,7 @@ export default class DateTime {
    * @example DateTime.fromISO('2016-W05-4')
    * @return {DateTime}
    */
-  static fromISO(text: string, opts: DateTimeWithZoneOptions = {}): DateTime {
+  static fromISO(text: string, opts: AllDateTimeOptions = {}): DateTime {
     checkString(text, "text");
     const [vals, parsedZone] = parseISODate(text);
     return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text);

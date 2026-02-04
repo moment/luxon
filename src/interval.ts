@@ -14,6 +14,7 @@ import { parseISOIntervalEnd } from "./impl/regexParser.ts";
 import type { DurationUnit } from "./impl/durationObjects.ts";
 import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
+import type { AllDateTimeOptions } from "./datetimeOptions.ts";
 
 export const LUXON_TYPE_INTERVAL = "interval" as LuxonTypeMarker<Interval>;
 
@@ -48,13 +49,7 @@ export default class Interval {
    */
   private constructor(start: DateTime, end: DateTime, m: typeof INTERNAL_CONSTRUCTOR) {
     if (m !== INTERNAL_CONSTRUCTOR) throwInternalConstructorError("Interval");
-    /**
-     * @access private
-     */
     this.#start = start;
-    /**
-     * @access private
-     */
     this.#end = end;
   }
 
@@ -108,53 +103,51 @@ export default class Interval {
    * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
    * @return {Interval}
    */
-  static fromISO(text: string, opts) {
+  static fromISO(text: string, opts?: AllDateTimeOptions): Interval {
     const { zone, setZone, ...restOpts } = opts || {};
     const [s, e] = (text || "").split("/", 2);
     if (s && e) {
-      let start, startIsValid;
+      let start: DateTime | undefined;
       try {
         // we need to know the zone that was used in the string, so that we can
         // default to it when parsing end, therefor use setZone: true
         start = DateTime.fromISO(s, { ...restOpts, zone, setZone: true });
-        startIsValid = true;
       } catch {
-        startIsValid = false;
+        start = undefined;
       }
 
-      let end, endIsValid;
+      let end: DateTime | undefined;
       try {
         const [vals, parsedZone] = parseISOIntervalEnd(e);
-        const endParseOpts = {
+        const endParseOpts: AllDateTimeOptions = {
           ...restOpts,
-          overrideNow: startIsValid ? start.valueOf() : null,
-          zone: startIsValid ? start.zone : zone,
+          overrideNow: start?.valueOf(),
+          zone: start?.zone ?? zone,
           setZone: true,
         };
         end = parseDataToDateTime(vals, parsedZone, endParseOpts, "ISO 8601 Interval end", e);
-        endIsValid = true;
       } catch {
-        endIsValid = false;
+        end = undefined;
       }
 
       // if we overrode the user's choice for setZone earlier, make up for it now
-      if (startIsValid && !setZone) {
+      if (start !== undefined && !setZone) {
         start = start.setZone(zone);
       }
-      if (endIsValid && !setZone) {
+      if (end !== undefined && !setZone) {
         end = end.setZone(zone);
       }
 
-      if (startIsValid && endIsValid) {
+      if (start !== undefined && end !== undefined) {
         return Interval.fromDateTimes(start, end);
       }
 
-      if (startIsValid) {
+      if (start !== undefined) {
         const dur = Duration.fromISO(e, opts);
         if (dur.isValid) {
           return Interval.after(start, dur);
         }
-      } else if (endIsValid) {
+      } else if (end !== undefined) {
         const dur = Duration.fromISO(s, opts);
         if (dur.isValid) {
           return Interval.before(end, dur);
@@ -195,6 +188,7 @@ export default class Interval {
    * @type {DateTime}
    */
   get lastDateTime(): DateTime {
+    // TODO: Needs test
     return this.#end.minus(1);
   }
 
@@ -216,7 +210,7 @@ export default class Interval {
    * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week; this operation will always use the locale of the start DateTime
    * @return {number}
    */
-  count(unit: DurationUnit = "milliseconds", opts): number {
+  count(unit: DurationUnit = "milliseconds", opts?: { useLocaleWeeks?: boolean }): number {
     const start = this.start.startOf(unit, opts);
     let end;
     if (opts?.useLocaleWeeks) {
@@ -603,7 +597,7 @@ export default class Interval {
    * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }
    * @return {Duration}
    */
-  toDuration(unit: DurationUnit | readonly DurationUnit[], opts): Duration {
+  toDuration(unit: DurationUnit | readonly DurationUnit[], opts?: any): Duration {
     return this.#end.diff(this.#start, unit, opts);
   }
 
