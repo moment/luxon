@@ -60,11 +60,12 @@ import {
   checkString,
   checkValidDate,
 } from "./impl/typeChecks.ts";
-import type { DurationUnit } from "./impl/durationObjects.ts";
+import type { DurationInput, DurationObject, DurationUnit } from "./impl/durationTypes.ts";
 import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 import type { PartialNullable } from "./impl/utilTypes.ts";
 import type { AllDateTimeOptions } from "./datetimeOptions.ts";
+import { normalizeToDurationObject } from "./impl/durationCore.ts";
 
 const MAX_DATE = 8.64e15;
 
@@ -1707,7 +1708,7 @@ export default class DateTime {
    * @return {DateTime}
    */
   plus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
-    return this.#adjustTime(Duration.fromDurationLike(duration));
+    return this.#adjustTime(duration, 1);
   }
 
   /**
@@ -1717,44 +1718,61 @@ export default class DateTime {
    @return {DateTime}
    */
   minus(duration: any /* TODO: Add DurationInput when Duration is TS */): DateTime {
-    return this.#adjustTime(Duration.fromDurationLike(duration).negate());
+    return this.#adjustTime(duration, -1);
   }
 
   /**
    * create a new DT instance by adding a duration, adjusting for DSTs
-   * @param dur
    * @private
    */
-  #adjustTime(dur: Duration) {
-    const oPre = this.#o,
-      year = this.#c.year + Math.trunc(dur.years),
-      month = this.#c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3,
-      c = {
-        ...this.#c,
-        year,
-        month,
-        day:
-          Math.min(this.#c.day, daysInMonth(year, month)) +
-          Math.trunc(dur.days) +
-          Math.trunc(dur.weeks) * 7,
-      },
-      millisToAdd = Duration.fromObject({
-        years: dur.years - Math.trunc(dur.years),
-        quarters: dur.quarters - Math.trunc(dur.quarters),
-        months: dur.months - Math.trunc(dur.months),
-        weeks: dur.weeks - Math.trunc(dur.weeks),
-        days: dur.days - Math.trunc(dur.days),
-        hours: dur.hours,
-        minutes: dur.minutes,
-        seconds: dur.seconds,
-        milliseconds: dur.milliseconds,
-      }).as("milliseconds"),
-      localTS = objToLocalTS(c);
+  #adjustTime(dur: DurationInput, dir: 1 | -1) {
+    let ts: number, o: number, millisToAdd: number;
+    if (dur === 0) {
+      return this;
+    } else if (typeof dur === "number") {
+      // Easy case, just add millis
+      ts = this.#ts;
+      o = this.#o;
+      millisToAdd = dur;
+    } else {
+      // first normalize and validate the Duration
+      const normalized = normalizeToDurationObject(dur);
 
-    let [ts, o] = fixOffset(localTS, oPre, this.zone);
-
+      // check if we need to do the "slow path" of during date math
+      if (
+        normalized.years == null &&
+        normalized.months == null &&
+        normalized.quarters == null &&
+        normalized.days == null &&
+        normalized.weeks == null
+      ) {
+        ts = this.#ts;
+        o = this.#o;
+      } else {
+        const oPre = this.#o,
+          year = this.#c.year + (normalized.years ?? 0) * dir,
+          month =
+            this.#c.month + (normalized.months ?? 0) * dir + (normalized.quarters ?? 0) * 3 * dir,
+          c = {
+            ...this.#c,
+            year,
+            month,
+            day:
+              Math.min(this.#c.day, daysInMonth(year, month)) +
+              (normalized.days ?? 0) * dir +
+              (normalized.weeks ?? 0) * 7 * dir,
+          },
+          localTS = objToLocalTS(c);
+        [ts, o] = fixOffset(localTS, oPre, this.zone);
+      }
+      millisToAdd =
+        (normalized.hours ?? 0) * 3_600_000 +
+        (normalized.minutes ?? 0) * 60_000 +
+        (normalized.seconds ?? 0) * 1_000 +
+        (normalized.milliseconds ?? 0);
+    }
     if (millisToAdd !== 0) {
-      ts += millisToAdd;
+      ts += millisToAdd * dir;
       // that could have changed the offset by going over a DST, but we want to keep the ts the same
       o = this.zone.offset(ts);
     }

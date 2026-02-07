@@ -4,14 +4,14 @@ import DateTime, {
   friendlyDateTime,
   parseDataToDateTime,
 } from "./datetime.ts";
-import Duration, { type DurationInput } from "./duration.ts";
+import Duration from "./duration.ts";
 import Settings from "./settings.ts";
 import { InvalidArgumentError, InvalidIntervalError } from "./errors.ts";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.ts";
 import * as Formats from "./impl/formats.ts";
 import { parseISOIntervalEnd } from "./impl/regexParser.ts";
-import type { DurationUnit } from "./impl/durationObjects.ts";
+import type { DurationInput, DurationUnit } from "./impl/durationTypes.ts";
 import { INTERNAL_CONSTRUCTOR, throwInternalConstructorError } from "./impl/internalConstructor.ts";
 import { isLuxonType, LUXON_TYPE, type LuxonTypeMarker } from "./impl/crossRealm.ts";
 import type { AllDateTimeOptions } from "./datetimeOptions.ts";

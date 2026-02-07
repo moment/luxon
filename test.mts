@@ -1,11 +1,16 @@
 import { Zone, DateTime } from "./src/luxon.ts";
 
-const proto = Object.getPrototypeOf(DateTime.now());
-console.log(Object.getOwnPropertyNames(proto));
+const mySymbol = Symbol("mySymbol");
+const x = Object.create(null);
 
-const outputCalendar = proto["resolvedLocaleOptions"];
-console.log(outputCalendar);
+Object.defineProperty(x, mySymbol, {
+  enumerable: false,
+  writable: false,
+  configurable: false,
+  value: "hello world",
+});
 
+console.log({ ...x });
 
 // console.log(
 //   DateTime.parseFormatForOpts({ timeZoneName: "long" }, { locale: "en-US" })

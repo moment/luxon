@@ -13,7 +13,14 @@ import {
 } from "./impl/util.ts";
 import Settings from "./settings.ts";
 import DateTime from "./datetime.ts";
-import type { DurationInputObject, DurationObject, DurationUnit } from "./impl/durationObjects.ts";
+import type {
+  DurationInput,
+  DurationInputObject,
+  DurationObject,
+  DurationUnit,
+} from "./impl/durationTypes.ts";
+import { LUXON_TYPE_DURATION } from "./impl/durationCore.ts";
+import { isLuxonType, LUXON_TYPE } from "./impl/crossRealm.ts";
 
 const INVALID = "Invalid Duration";
 
@@ -224,8 +231,6 @@ export interface DurationOptions extends LocaleOptions {
   readonly conversionAccuracy?: string | undefined; // TODO: Remove accuracy
 }
 
-export type DurationInput = number | Duration | DurationInputObject;
-
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
  *
@@ -294,6 +299,10 @@ export default class Duration {
      * @access private
      */
     this.isLuxonDuration = true;
+  }
+
+  get [LUXON_TYPE]() {
+    return LUXON_TYPE_DURATION;
   }
 
   /**
@@ -475,7 +484,7 @@ export default class Duration {
    * @return {boolean}
    */
   static isDuration(o: unknown): o is Duration {
-    return (o && (o as any).isLuxonDuration) || false;
+    return isLuxonType(o, LUXON_TYPE_DURATION);
   }
 
   /**

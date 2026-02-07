@@ -1,8 +1,8 @@
 {
   "include": ["src/**/*", "test/**/*"],
   "compilerOptions": {
-    "outDir": "dist",
-    "module": "Node20",
+    "outDir": "build",
+    "module": "Node16",
     "moduleResolution": "Node16",
     "strict": true,
     "allowJs": true,
@@ -10,7 +10,7 @@
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
-    "noUncheckedIndexedAccess": true,
+    "noUncheckedIndexedAccess": false,
     "skipLibCheck": true,
     "exactOptionalPropertyTypes": true,
     "verbatimModuleSyntax": true

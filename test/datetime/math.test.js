@@ -1,4 +1,4 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 
 import { DateTime, Duration } from "../../src/luxon.ts";
 import { casualMatrix } from "../../src/duration.ts";
@@ -128,27 +128,36 @@ test("DateTime#plus renders invalid when out of max. datetime range using IANAZo
   expect(() => d.plus({ second: 1e8 * 24 * 60 * 60 + 1 })).toThrow();
 });
 
-test("DateTime#plus handles fractional days", () => {
+describe("DateTime#plus throws on fractional units", () => {
   const d = DateTime.fromISO("2016-01-31T10:00");
-  expect(d.plus({ days: 0.8 })).toEqual(d.plus({ hours: (24 * 4) / 5 }));
-  expect(d.plus({ days: 6.8 })).toEqual(d.plus({ days: 6, hours: (24 * 4) / 5 }));
-  expect(d.plus({ days: 6.8, milliseconds: 17 })).toEqual(
-    d.plus({ days: 6, milliseconds: 0.8 * 24 * 60 * 60 * 1000 + 17 })
-  );
-});
 
-test("DateTime#plus handles fractional large units", () => {
-  const units = ["weeks", "months", "quarters", "years"];
-
-  for (const unit of units) {
-    const d = DateTime.fromISO("2016-01-31T10:00");
-    expect(d.plus({ [unit]: 8.7 })).toEqual(
-      d.plus({
-        [unit]: 8,
-        milliseconds: Duration.fromObject({ [unit]: 0.7 }).as("milliseconds"),
-      })
-    );
-  }
+  describe.each([
+    "years",
+    "quarters",
+    "months",
+    "weeks",
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+    "milliseconds",
+  ])("$1", (unit) => {
+    // TODO: Test for the correct error being thrown
+    test("Plural used alone", () => {
+      expect(() => d.plus({ [unit]: 0.8 })).toThrow();
+    });
+    test("Singular used alone", () => {
+      expect(() => d.plus({ [unit.slice(0, -1)]: 0.8 })).toThrow();
+    });
+    test("Plural used with another valid unit", () => {
+      expect(() => d.plus({ [unit]: 0.8, [unit === "years" ? "months" : "years"]: 2 })).toThrow();
+    });
+    test("Singular used with another valid unit", () => {
+      expect(() =>
+        d.plus({ [unit.slice(0, -1)]: 0.8, [unit === "years" ? "months" : "years"]: 2 })
+      ).toThrow();
+    });
+  });
 });
 
 // #645
@@ -156,7 +165,25 @@ test("DateTime#plus supports positive and negative duration units", () => {
   const d = DateTime.fromISO("2020-01-08T12:34");
   expect(d.plus({ months: 1, days: -1 })).toEqual(d.plus({ months: 1 }).plus({ days: -1 }));
   expect(d.plus({ years: 4, days: -1 })).toEqual(d.plus({ years: 4 }).plus({ days: -1 }));
-  expect(d.plus({ years: 0.5, days: -1.5 })).toEqual(d.plus({ years: 0.5 }).plus({ days: -1.5 }));
+  expect(d.plus({ hours: 2, minutes: -5 })).toEqual(d.plus({ hours: 2 }).plus({ minutes: -5 }));
+});
+
+test("DateTime#plus supports being called with just a number", () => {
+  const d = DateTime.fromMillis(1770479549000);
+  expect(d.plus(12345).valueOf()).toEqual(1770479549000 + 12345);
+});
+
+test("DateTime#plus supports being called with a Duration instance", () => {
+  const d = DateTime.fromISO("2026-02-07T02:00:00");
+  expect(d.plus(Duration.fromObject({ days: 2, hours: 1 })).toObject()).toEqual({
+    year: 2026,
+    month: 2,
+    day: 9,
+    hour: 3,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  });
 });
 
 //------
@@ -221,27 +248,35 @@ test("DateTime#plus renders invalid when out of max. datetime range using IANAZo
   expect(() => d.minus({ second: 1e8 * 24 * 60 * 60 + 1 })).toThrow();
 });
 
-test("DateTime#minus handles fractional days", () => {
+describe("DateTime#minus throws on fractional units", () => {
   const d = DateTime.fromISO("2016-01-31T10:00");
-  expect(d.minus({ days: 0.8 })).toEqual(d.minus({ hours: (24 * 4) / 5 }));
-  expect(d.minus({ days: 6.8 })).toEqual(d.minus({ days: 6, hours: (24 * 4) / 5 }));
-  expect(d.minus({ days: 6.8, milliseconds: 17 })).toEqual(
-    d.minus({ days: 6, milliseconds: 0.8 * 24 * 60 * 60 * 1000 + 17 })
-  );
-});
-
-test("DateTime#minus handles fractional large units", () => {
-  const units = ["weeks", "months", "quarters", "years"];
-
-  for (const unit of units) {
-    const d = DateTime.fromISO("2016-01-31T10:00");
-    expect(d.minus({ [unit]: 8.7 })).toEqual(
-      d.minus({
-        [unit]: 8,
-        milliseconds: Duration.fromObject({ [unit]: 0.7 }).as("milliseconds"),
-      })
-    );
-  }
+  describe.each([
+    "years",
+    "quarters",
+    "months",
+    "weeks",
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+    "milliseconds",
+  ])("$1", (unit) => {
+    // TODO: Test for the correct error being thrown
+    test("Plural used alone", () => {
+      expect(() => d.minus({ [unit]: 0.8 })).toThrow();
+    });
+    test("Singular used alone", () => {
+      expect(() => d.minus({ [unit.slice(0, -1)]: 0.8 })).toThrow();
+    });
+    test("Plural used with another valid unit", () => {
+      expect(() => d.minus({ [unit]: 0.8, [unit === "years" ? "months" : "years"]: 2 })).toThrow();
+    });
+    test("Singular used with another valid unit", () => {
+      expect(() =>
+        d.minus({ [unit.slice(0, -1)]: 0.8, [unit === "years" ? "months" : "years"]: 2 })
+      ).toThrow();
+    });
+  });
 });
 
 // #645
@@ -249,9 +284,25 @@ test("DateTime#minus supports positive and negative duration units", () => {
   const d = DateTime.fromISO("2020-01-08T12:34");
   expect(d.minus({ months: 1, days: -1 })).toEqual(d.minus({ months: 1 }).minus({ days: -1 }));
   expect(d.minus({ years: 4, days: -1 })).toEqual(d.minus({ years: 4 }).minus({ days: -1 }));
-  expect(d.minus({ years: 0.5, days: -1.5 })).toEqual(
-    d.minus({ years: 0.5 }).minus({ days: -1.5 })
-  );
+  expect(d.minus({ hours: 1, minutes: -5 })).toEqual(d.minus({ hours: 1 }).minus({ minutes: -5 }));
+});
+
+test("DateTime#minus supports being called with just a number", () => {
+  const d = DateTime.fromMillis(1770479549000);
+  expect(d.minus(12345).valueOf()).toEqual(1770479549000 - 12345);
+});
+
+test("DateTime#minus supports being called with a Duration instance", () => {
+  const d = DateTime.fromISO("2026-02-07T02:00:00");
+  expect(d.minus(Duration.fromObject({ days: 2, hours: 1 })).toObject()).toEqual({
+    year: 2026,
+    month: 2,
+    day: 5,
+    hour: 1,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  });
 });
 
 //------
