@@ -14,7 +14,7 @@
     toggleEl.id = TOGGLE_ID;
     dom.on(toggleEl, "click", () => applyTheme(true));
     hook.init(applyTheme);
-    hook.doneEach(() => dom.before(dom.find(".cover.show, .sidebar > .app-name"), toggleEl));
+    hook.doneEach(() => dom.before(dom.find(".sidebar > .app-name"), toggleEl));
   };
   $docsify ??= {};
   $docsify.plugins = [...($docsify.plugins ?? []), darkThemeTogglePlugin];
