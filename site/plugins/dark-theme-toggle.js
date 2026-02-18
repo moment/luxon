@@ -15,8 +15,6 @@
     dom.on(toggleEl, "click", () => applyTheme(true));
     hook.init(applyTheme);
 
-    //hook.doneEach(() => dom.before(dom.find(".sidebar > .app-name"), toggleEl));
-
     hook.doneEach(() => {
       const cover = dom.find(".cover.show");
       const sidebarTarget = dom.find(".sidebar > .app-name");
