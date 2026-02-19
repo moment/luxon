@@ -9,7 +9,6 @@
   top: 0;
   z-index: 0;
   cursor: pointer;
-  transition: opacity 250ms ease;
 }
 .sidebar > .app-name {
   position: relative;
@@ -19,6 +18,7 @@
   margin-top: 0;
   right: 0;
   left: unset;
+  transition: opacity 250ms ease;
   opacity: 0.0;
   pointer-events: none;
 }
