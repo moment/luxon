@@ -589,6 +589,9 @@ export default class Interval {
    * is browser-specific, but in general it will return an appropriate representation of the
    * Interval in the assigned locale. Defaults to the system's locale if no locale has been
    * specified.
+   *
+   * Requires support for Intl.DateTimeFormat.prototype.formatRange().
+   *
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
    * @param {Object} [formatOpts=DateTime.DATE_SHORT] - Either a DateTime preset or
    * Intl.DateTimeFormat constructor options.
