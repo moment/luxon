@@ -201,7 +201,24 @@ describe("DateTime maintains the wasHole setting properly", () => {
     expect(DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).wasHole).toBe(true);
   });
 
-  test("is droped on math", () => {
+  test("is false when setting to non-hole", () => {
+    const fromHole = DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 });
+    expect(fromHole.set({ hour: 4 }).wasHole).toBe(false);
+  });
+
+  test("is true when setting hole-time on time from hole", () => {
+    const dt = DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 });
+    expect(dt.wasHole).toBe(true);
+    expect(dt.set({ hour: 2 }).wasHole).toBe(true);
+  });
+
+  test("is true when setting hole-time on time from non-hole", () => {
+    const dt = DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 4 });
+    expect(dt.wasHole).toBe(false);
+    expect(dt.set({ hour: 2 }).wasHole).toBe(true);
+  });
+
+  test("is dropped on math", () => {
     expect(
       DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).plus({ hours: 2 }).wasHole
     ).toBe(false);
