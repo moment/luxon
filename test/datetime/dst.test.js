@@ -201,6 +201,10 @@ describe("DateTime maintains the wasHole setting properly", () => {
     expect(DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).wasHole).toBe(true);
   });
 
+  test("is set on hole times with DateTime.local", () => {
+    expect(DateTime.local(2017, 3, 12, 2).wasHole).toBe(true);
+  });
+
   test("is false when setting to non-hole", () => {
     const fromHole = DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 });
     expect(fromHole.set({ hour: 4 }).wasHole).toBe(false);
