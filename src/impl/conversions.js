@@ -112,6 +112,7 @@ export function ordinalToGregorian(ordinalData) {
  * If so, validates that they are not mixed with ISO week units and then copies them to the normal week unit properties.
  * Modifies obj in-place!
  * @param obj the object values
+ * @ignore
  */
 export function usesLocalWeekValues(obj, loc) {
   const hasLocaleWeekData =

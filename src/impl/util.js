@@ -307,6 +307,7 @@ export function normalizeObject(obj, normalizer) {
  * @param {string} format - What style of offset to return.
  *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
  * @return {string}
+ * @ignore
  */
 export function formatOffset(offset, format) {
   const hours = Math.trunc(Math.abs(offset / 60)),

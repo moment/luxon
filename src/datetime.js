@@ -60,6 +60,7 @@ function unsupportedZone(zone) {
 
 // we cache week data on the DT object and this intermediates the cache
 /**
+ * @ignore
  * @param {DateTime} dt
  */
 function possiblyCachedWeekData(dt) {
@@ -70,6 +71,7 @@ function possiblyCachedWeekData(dt) {
 }
 
 /**
+ * @ignore
  * @param {DateTime} dt
  */
 function possiblyCachedLocalWeekData(dt) {
@@ -411,6 +413,7 @@ function normalizeUnitWithLocalWeeks(unit) {
 /**
  * @param {Zone} zone
  * @return {number}
+ * @ignore
  */
 function guessOffsetForZone(zone) {
   if (zoneOffsetTs === undefined) {
@@ -511,6 +514,7 @@ function lastOpts(argList) {
 
 /**
  * Timestamp to use for cached zone offset guesses (exposed for test)
+ * @ignore
  */
 let zoneOffsetTs;
 /**
@@ -518,6 +522,8 @@ let zoneOffsetTs;
  *
  * This optimizes quickDT via guessOffsetForZone to avoid repeated calls of
  * zone.offset().
+ *
+ * @ignore
  */
 const zoneOffsetGuessCache = new Map();
 

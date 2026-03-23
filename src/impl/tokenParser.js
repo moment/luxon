@@ -52,6 +52,7 @@ function escapeToken(value) {
 /**
  * @param token
  * @param {Locale} loc
+ * @ignore
  */
 function unitForToken(token, loc) {
   const one = digitRegex(loc),
