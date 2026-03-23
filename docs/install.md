@@ -66,8 +66,8 @@ requirejs(["luxon"], function(luxon) {
 
 ## ES6
 
-- [Download full](https://moment.github.io/luxon/es6/luxon.js)
-- [Download minified](https://moment.github.io/luxon/es6/luxon.min.js)
+- [Download full](https://moment.github.io/luxon/es6/luxon.mjs)
+- [Download minified](https://moment.github.io/luxon/es6/luxon.min.mjs)
 
 ```js
 import { DateTime } from "luxon";
