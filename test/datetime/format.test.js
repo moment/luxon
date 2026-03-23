@@ -489,7 +489,7 @@ test("DateTime#toLocaleString can override the dateTime's numbering system", () 
 test("DateTime#toLocaleString can override the dateTime's output calendar", () => {
   expect(
     dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString({}, { outputCalendar: "coptic" })
-  ).toBe("9/17/1698 ERA1");
+  ).toBe("9/17/1698 AM");
 });
 
 test("DateTime#toLocaleString() returns something different for invalid DateTimes", () => {

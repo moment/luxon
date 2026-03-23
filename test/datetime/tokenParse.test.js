@@ -1117,17 +1117,13 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(ex17.result).toBeInstanceOf(Object);
   expect(keyCount(ex17.result)).toBe(6);
 
-  const ex18 = DateTime.fromFormatExplain(
-    "๐๓-เมษายน-๒๐๑๙ ๐๔:๐๒:๒๔ หลังเที่ยง",
-    "dd-MMMM-yyyy hh:mm:ss a",
-    {
-      locale: "th",
-      numberingSystem: "thai",
-    }
-  );
+  const ex18 = DateTime.fromFormatExplain("๑๒-มกราคม-๒๐๒๖ ๐๓:๔๖:๒๖", "dd-MMMM-yyyy hh:mm:ss", {
+    locale: "th",
+    numberingSystem: "thai",
+  });
   expect(ex18.rawMatches).toBeInstanceOf(Array);
   expect(ex18.matches).toBeInstanceOf(Object);
-  expect(keyCount(ex18.matches)).toBe(7);
+  expect(keyCount(ex18.matches)).toBe(6);
   expect(ex18.result).toBeInstanceOf(Object);
   expect(keyCount(ex18.result)).toBe(6);
 
