@@ -60,7 +60,7 @@
     "uglify-js": "^3.13.10"
   },
   "main": "build/node/luxon.js",
-  "module": "src/luxon.js",
+  "module": "build/es6/luxon.mjs",
   "browser": "build/cjs-browser/luxon.js",
   "jsdelivr": "build/global/luxon.min.js",
   "unpkg": "build/global/luxon.min.js",
