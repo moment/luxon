@@ -75,7 +75,7 @@ const isoTimeExtensionRegex = RegExp(`(?:[Tt]${isoTimeRegex.source})?`);
 const isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
 const isoWeekRegex = /(\d{4})-?W(\d\d)(?:-?(\d))?/;
 const isoOrdinalRegex = /(\d{4})-?(\d{3})/;
-const extractISOWeekData = simpleParse("weekYear", "weekNumber", "weekDay");
+const extractISOWeekData = simpleParse("weekYear", "weekNumber", "weekday");
 const extractISOOrdinalData = simpleParse("year", "ordinal");
 const sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/; // dumbed-down version of the ISO one
 const sqlTimeRegex = RegExp(
@@ -305,7 +305,7 @@ const extractPartialIsoIntervalEndDate = simpleParse(
   "month",
   "day",
   "weekNumber",
-  "weekDay",
+  "weekday",
   "ordinal"
 );
 
