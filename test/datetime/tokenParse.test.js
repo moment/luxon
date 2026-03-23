@@ -1248,3 +1248,52 @@ test("DateTime.fromFormatParser throws error when used with a different locale t
     "fromFormatParser called with a locale of Locale(es-MX, null, null), but the format parser was created for Locale(es-ES, null, null)"
   );
 });
+
+test("fromFormat with unix seconds token X", () => {
+  const dt = DateTime.fromFormat("1769758221", "X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat with unix milliseconds token x", () => {
+  const dt = DateTime.fromFormat("1769758221000", "x");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat with X at epoch zero", () => {
+  const dt = DateTime.fromFormat("0", "X", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(0);
+  expect(dt.year).toBe(1970);
+  expect(dt.month).toBe(1);
+  expect(dt.day).toBe(1);
+  expect(dt.hour).toBe(0);
+  expect(dt.minute).toBe(0);
+  expect(dt.second).toBe(0);
+});
+
+test("fromFormat with x at epoch zero", () => {
+  const dt = DateTime.fromFormat("0", "x", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(0);
+});
+
+test("fromFormat with X for negative unix timestamp (before 1970)", () => {
+  const dt = DateTime.fromFormat("-1", "X", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(-1000);
+  expect(dt.year).toBe(1969);
+  expect(dt.month).toBe(12);
+  expect(dt.day).toBe(31);
+  expect(dt.hour).toBe(23);
+  expect(dt.minute).toBe(59);
+  expect(dt.second).toBe(59);
+});
+
+test("fromFormat with x for negative unix milliseconds (before 1970)", () => {
+  const dt = DateTime.fromFormat("-1000", "x", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(-1000);
+  expect(dt.year).toBe(1969);
+});
