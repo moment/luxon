@@ -600,11 +600,11 @@ export default class DateTime {
      * @access private
      */
     this.c = c;
+
     /**
      * @access private
      */
-
-    this.wasHole = config.wasHole || false;
+    this._wasHole = config.wasHole || false;
 
     this.o = o;
     /**
@@ -1173,6 +1173,19 @@ export default class DateTime {
    */
   get zoneName() {
     return this.isValid ? this.zone.name : null;
+  }
+
+  /**
+   * Whether this DateTime was created from a "hole time" that can exist during DST due to the
+   * clocks moving forward.
+   *
+   * @example DateTime.local(2017, 3, 12, 2).wasHole; //=> true
+   * @example DateTime.local(2017, 3, 12, 4).wasHole; //=> false
+   *
+   * @return {boolean}
+   */
+  get wasHole() {
+    return this._wasHole;
   }
 
   /**
