@@ -93,6 +93,7 @@ function clone(inst, alts) {
     o: inst.o,
     loc: inst.loc,
     invalid: inst.invalid,
+    wasHole: inst.wasHole,
   };
   return new DateTime({ ...current, ...alts, old: current });
 }
@@ -108,7 +109,7 @@ function fixOffset(localTS, o, tz) {
 
   // If so, offset didn't change and we're done
   if (o === o2) {
-    return [utcGuess, o];
+    return [utcGuess, o, false];
   }
 
   // If not, change the ts by the difference in the offset
@@ -117,11 +118,11 @@ function fixOffset(localTS, o, tz) {
   // If that gives us the local time we want, we're done
   const o3 = tz.offset(utcGuess);
   if (o2 === o3) {
-    return [utcGuess, o2];
+    return [utcGuess, o2, false];
   }
 
   // If it's different, we're in a hole time. The offset has changed, but the we don't adjust the time
-  return [localTS - Math.min(o2, o3) * 60 * 1000, Math.max(o2, o3)];
+  return [localTS - Math.min(o2, o3) * 60 * 1000, Math.max(o2, o3), true];
 }
 
 // convert an epoch timestamp into a calendar object with the given offset
@@ -173,7 +174,7 @@ function adjustTime(inst, dur) {
     }).as("milliseconds"),
     localTS = objToLocalTS(c);
 
-  let [ts, o] = fixOffset(localTS, oPre, inst.zone);
+  let [ts, o, wasHole] = fixOffset(localTS, oPre, inst.zone);
 
   if (millisToAdd !== 0) {
     ts += millisToAdd;
@@ -181,7 +182,7 @@ function adjustTime(inst, dur) {
     o = inst.zone.offset(ts);
   }
 
-  return { ts, o };
+  return { ts, o, wasHole };
 }
 
 // helper useful in turning the results of parsing into real dates
@@ -441,7 +442,7 @@ function quickDT(obj, opts) {
 
   const loc = Locale.fromObject(opts);
 
-  let ts, o;
+  let ts, o, wasHole;
 
   // assume we have the higher-order units
   if (!isUndefined(obj.year)) {
@@ -457,12 +458,12 @@ function quickDT(obj, opts) {
     }
 
     const offsetProvis = guessOffsetForZone(zone);
-    [ts, o] = objToTS(obj, offsetProvis, zone);
+    [ts, o, wasHole] = objToTS(obj, offsetProvis, zone);
   } else {
     ts = Settings.now();
   }
 
-  return new DateTime({ ts, zone, loc, o });
+  return new DateTime({ ts, zone, loc, o, wasHole });
 }
 
 function diffRelative(start, end, opts) {
@@ -556,13 +557,14 @@ export default class DateTime {
      */
     this.ts = isUndefined(config.ts) ? Settings.now() : config.ts;
 
-    let c = null,
-      o = null;
+    let c = null;
+    let o = null;
     if (!invalid) {
       const unchanged = config.old && config.old.ts === this.ts && config.old.zone.equals(zone);
 
       if (unchanged) {
-        [c, o] = [config.old.c, config.old.o];
+        c = config.old.c;
+        o = config.old.o;
       } else {
         // If an offset has been passed and we have not been called from
         // clone(), we can trust it and avoid the offset calculation.
@@ -598,9 +600,12 @@ export default class DateTime {
      * @access private
      */
     this.c = c;
+
     /**
      * @access private
      */
+    this._wasHole = config.wasHole || false;
+
     this.o = o;
     /**
      * @access private
@@ -873,16 +878,18 @@ export default class DateTime {
 
     // compute the actual time
     const gregorian = useWeekData
-        ? weekToGregorian(normalized, minDaysInFirstWeek, startOfWeek)
-        : containsOrdinal
-        ? ordinalToGregorian(normalized)
-        : normalized,
-      [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse),
+      ? weekToGregorian(normalized, minDaysInFirstWeek, startOfWeek)
+      : containsOrdinal
+      ? ordinalToGregorian(normalized)
+      : normalized;
+
+    const [tsFinal, offsetFinal, wasHole] = objToTS(gregorian, offsetProvis, zoneToUse),
       inst = new DateTime({
         ts: tsFinal,
         zone: zoneToUse,
         o: offsetFinal,
         loc,
+        wasHole,
       });
 
     // gregorian data + weekday serves only to validate
@@ -1166,6 +1173,19 @@ export default class DateTime {
    */
   get zoneName() {
     return this.isValid ? this.zone.name : null;
+  }
+
+  /**
+   * Whether this DateTime was created from a "hole time" that can exist during DST due to the
+   * clocks moving forward.
+   *
+   * @example DateTime.local(2017, 3, 12, 2).wasHole; //=> true
+   * @example DateTime.local(2017, 3, 12, 4).wasHole; //=> false
+   *
+   * @return {boolean}
+   */
+  get wasHole() {
+    return this._wasHole;
   }
 
   /**
@@ -1571,12 +1591,13 @@ export default class DateTime {
       return DateTime.invalid(unsupportedZone(zone));
     } else {
       let newTS = this.ts;
+      let wasHole = false;
       if (keepLocalTime || keepCalendarTime) {
         const offsetGuess = zone.offset(this.ts);
         const asObj = this.toObject();
-        [newTS] = objToTS(asObj, offsetGuess, zone);
+        [newTS, , wasHole] = objToTS(asObj, offsetGuess, zone);
       }
-      return clone(this, { ts: newTS, zone });
+      return clone(this, { ts: newTS, zone, wasHole });
     }
   }
 
@@ -1659,8 +1680,8 @@ export default class DateTime {
       }
     }
 
-    const [ts, o] = objToTS(mixed, this.o, this.zone);
-    return clone(this, { ts, o });
+    const [ts, o, wasHole] = objToTS(mixed, this.o, this.zone);
+    return clone(this, { ts, o, wasHole });
   }
 
   /**

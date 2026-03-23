@@ -15,6 +15,7 @@ for (const [name, local] of Object.entries(dateTimeConstructors)) {
       const d = local(2017, 3, 12, 2);
       expect(d.hour).toBe(3);
       expect(d.offset).toBe(-4 * 60);
+      expect(d.wasHole).toBe(true);
     });
 
     if (name == "fromObject") {
@@ -189,4 +190,60 @@ describe("DateTime.local() with offset caching", () => {
       }
     }
   }
+});
+
+describe("DateTime maintains the wasHole setting properly", () => {
+  test("is false by default", () => {
+    expect(DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 4 }).wasHole).toBe(false);
+  });
+
+  test("is set on hole times", () => {
+    expect(DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).wasHole).toBe(true);
+  });
+
+  test("is set on hole times with DateTime.local", () => {
+    expect(DateTime.local(2017, 3, 12, 2).wasHole).toBe(true);
+  });
+
+  test("is set on hole times with DateTime.fromISO", () => {
+    expect(DateTime.fromISO("2017-03-12T02:00:00").wasHole).toBe(true);
+  });
+
+  test("is false when setting to non-hole", () => {
+    const fromHole = DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 });
+    expect(fromHole.set({ hour: 4 }).wasHole).toBe(false);
+  });
+
+  test("is true when setting hole-time on time from hole", () => {
+    const dt = DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 });
+    expect(dt.wasHole).toBe(true);
+    expect(dt.set({ hour: 2 }).wasHole).toBe(true);
+  });
+
+  test("is true when setting hole-time on time from non-hole", () => {
+    const dt = DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 4 });
+    expect(dt.wasHole).toBe(false);
+    expect(dt.set({ hour: 2 }).wasHole).toBe(true);
+  });
+
+  test("is dropped on math", () => {
+    expect(
+      DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).plus({ hours: 2 }).wasHole
+    ).toBe(false);
+  });
+
+  test("is kept on reconfigure", () => {
+    expect(
+      DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).reconfigure({
+        locale: "es-ES",
+      }).wasHole
+    ).toBe(true);
+  });
+
+  test("is dropped on rezoning", () => {
+    expect(
+      DateTime.fromObject({ year: 2017, month: 3, day: 12, hour: 2 }).setZone("Europe/London")
+        .wasHole
+    ).toBe(false);
+  });
 });
