@@ -1,4 +1,4 @@
-#docsify-dark-theme-toggle {
+.docsify-dark-theme-toggle {
   position: absolute;
   display: inline-block;
   width: 52px;
@@ -13,30 +13,38 @@
 .sidebar > .app-name {
   position: relative;
 }
-.app-name > #docsify-dark-theme-toggle {
+.app-name > .docsify-dark-theme-toggle {
   margin-right: 1rem;
   margin-top: 0;
   right: 0;
   left: unset;
+  transition: opacity 250ms ease, visibility 250ms steps(1, jump-both);
+  opacity: 0;
+  visibility: hidden;
 }
-#docsify-dark-theme-toggle::before, #docsify-dark-theme-toggle::after {
+.sticky .app-name > .docsify-dark-theme-toggle {
+  opacity: 1;
+  visibility: visible;
+}
+
+.docsify-dark-theme-toggle::before, .docsify-dark-theme-toggle::after {
   position: absolute;
   top: 0.1em;
   font-size: 16px;
   transition: opacity 0.3s;
 }
-#docsify-dark-theme-toggle::before {
+.docsify-dark-theme-toggle::before {
   content: "🌙";
   left: 0.1em;
   opacity: 0;
   z-index: 1;
 }
-#docsify-dark-theme-toggle::after {
+.docsify-dark-theme-toggle::after {
   content: "🌞";
   right: 0.1em;
   opacity: 1;
 }
-#docsify-dark-theme-toggle > span {
+.docsify-dark-theme-toggle > span {
   position: absolute;
   top: 0;
   left: 0;
@@ -46,7 +54,7 @@
   border-radius: 28px;
   transition: background-color 0.3s;
 }
-#docsify-dark-theme-toggle > span::before {
+.docsify-dark-theme-toggle > span::before {
   content: "";
   position: absolute;
   height: 22px;
@@ -58,15 +66,15 @@
   border-radius: 50%;
   transition: transform 0.3s;
 }
-.dark #docsify-dark-theme-toggle::after {
+.dark .docsify-dark-theme-toggle::after {
   opacity: 0;
 }
-.dark #docsify-dark-theme-toggle::before {
+.dark .docsify-dark-theme-toggle::before {
   opacity: 1;
 }
-.dark #docsify-dark-theme-toggle > span {
+.dark .docsify-dark-theme-toggle > span {
   background-color: var(--theme-color, #ea6f5a);
 }
-.dark #docsify-dark-theme-toggle > span::before {
+.dark .docsify-dark-theme-toggle > span::before {
   transform: translateX(24px);
 }
