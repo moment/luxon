@@ -18,13 +18,13 @@
   margin-top: 0;
   right: 0;
   left: unset;
-  transition: opacity 250ms ease;
-  opacity: 0.0;
-  pointer-events: none;
+  transition: opacity 250ms ease, visibility 250ms steps(1, jump-both);
+  opacity: 0;
+  visibility: hidden;
 }
 .sticky .app-name > .docsify-dark-theme-toggle {
-  opacity: 1.0;
-  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
 }
 
 .docsify-dark-theme-toggle::before, .docsify-dark-theme-toggle::after {
