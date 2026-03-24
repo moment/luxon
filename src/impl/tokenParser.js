@@ -470,15 +470,9 @@ export class TokenParser {
         );
       }
       if (knownEpochMs !== undefined && result && Object.keys(result).length > 0) {
-        const definedZone = zone ?? "UTC";
-        const epochDateTime = DateTime.fromMillis(knownEpochMs, { zone: definedZone });
-        for (const [key, value] of Object.entries(result)) {
-          if (epochDateTime[key] !== value) {
-            throw new ConflictingSpecificationError(
-              `Can't specify ${key} as ${value} when the unix timestamp implies ${epochDateTime[key]}`
-            );
-          }
-        }
+        throw new ConflictingSpecificationError(
+          "Can't use other format tokens alongside a unix timestamp"
+        );
       }
       return {
         input,

@@ -1338,43 +1338,26 @@ test("fromFormat with x rejects empty string", () => {
   expect(dt.isValid).toBe(false);
 });
 
-// ConflictingSpecificationError when X/x clashes with other tokens
+// ConflictingSpecificationError when X/x is mixed with other tokens
 
-test("fromFormat throws ConflictingSpecificationError when X year is inconsistent", () => {
-  // epoch 1769758221 = 2026-01-30T07:30:21Z, year=2025 is wrong
-  expect(() => DateTime.fromFormat("2025 1769758221", "yyyy X")).toThrow(
+test("fromFormat throws ConflictingSpecificationError when X is mixed with year", () => {
+  expect(() => DateTime.fromFormat("2026 1769758221", "yyyy X")).toThrow(
     ConflictingSpecificationError
   );
 });
 
-test("fromFormat throws ConflictingSpecificationError when X month is inconsistent", () => {
-  // epoch 1769758221 = 2026-01-30T07:30:21Z, month=2 is wrong
-  expect(() => DateTime.fromFormat("02 1769758221", "MM X")).toThrow(ConflictingSpecificationError);
+test("fromFormat throws ConflictingSpecificationError when X is mixed with month", () => {
+  expect(() => DateTime.fromFormat("01 1769758221", "MM X")).toThrow(ConflictingSpecificationError);
 });
 
-test("fromFormat throws ConflictingSpecificationError when X hour is inconsistent", () => {
-  // epoch 1769758221 = 2026-01-30T07:30:21Z, hour=08 is wrong
-  expect(() => DateTime.fromFormat("08 1769758221", "HH X")).toThrow(ConflictingSpecificationError);
-});
-
-test("fromFormat throws ConflictingSpecificationError when x year is inconsistent", () => {
-  expect(() => DateTime.fromFormat("2025 1769758221000", "yyyy x")).toThrow(
-    ConflictingSpecificationError
-  );
-});
-
-test("fromFormat does not throw when X and other tokens are consistent (UTC)", () => {
-  // epoch 1769758221 = 2026-01-30T07:30:21Z
+test("fromFormat throws ConflictingSpecificationError when X is mixed with full datetime", () => {
   expect(() =>
     DateTime.fromFormat("2026-01-30T07:30:21 1769758221", "yyyy-MM-dd'T'HH:mm:ss X")
-  ).not.toThrow();
-  const dt = DateTime.fromFormat("2026-01-30T07:30:21 1769758221", "yyyy-MM-dd'T'HH:mm:ss X");
-  expect(dt.isValid).toBe(true);
-  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+  ).toThrow(ConflictingSpecificationError);
 });
 
-test("fromFormat does not throw when x and other tokens are consistent (UTC)", () => {
-  expect(() => DateTime.fromFormat("2026 1769758221000", "yyyy x")).not.toThrow();
-  const dt = DateTime.fromFormat("2026 1769758221000", "yyyy x");
-  expect(dt.isValid).toBe(true);
+test("fromFormat throws ConflictingSpecificationError when x is mixed with year", () => {
+  expect(() => DateTime.fromFormat("2026 1769758221000", "yyyy x")).toThrow(
+    ConflictingSpecificationError
+  );
 });
