@@ -469,6 +469,17 @@ export class TokenParser {
           "Can't include meridiem when specifying 24-hour format"
         );
       }
+      if (knownEpochMs !== undefined && result && Object.keys(result).length > 0) {
+        const definedZone = zone ?? "UTC";
+        const epochDateTime = DateTime.fromMillis(knownEpochMs, { zone: definedZone });
+        for (const [key, value] of Object.entries(result)) {
+          if (epochDateTime[key] !== value) {
+            throw new ConflictingSpecificationError(
+              `Can't specify ${key} as ${value} when the unix timestamp implies ${epochDateTime[key]}`
+            );
+          }
+        }
+      }
       return {
         input,
         tokens: this.tokens,
