@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 import { DateTime } from "../../src/luxon";
-import { cldrMajorVersion } from "../helpers";
+import { cldrMajorVersion, isWebkit } from "../helpers";
 import * as Helpers from "../helpers";
 import Settings from "../../src/settings";
 import { ConflictingSpecificationError } from "../../src/errors";
@@ -903,7 +903,7 @@ test("DateTime.fromFormatExplain() parses zone correctly", () => {
 test("DateTime.fromFormatExplain() parses localized string with numberingSystem correctly", () => {
   const cldr = cldrMajorVersion();
   const ex1 = DateTime.fromFormatExplain(
-    cldr && cldr < 46
+    (cldr && cldr < 46) || isWebkit
       ? "೦೩-ಏಪ್ರಿಲ್-೨೦೧೯ ೧೨:೨೬:೦೭ ಅಪರಾಹ್ನ Asia/Calcutta"
       : "೦೩-ಏಪ್ರಿಲ್-೨೦೧೯ ೧೨:೨೬:೦೭ PM Asia/Calcutta",
     "dd-MMMM-yyyy hh:mm:ss a z",
@@ -1091,7 +1091,9 @@ test("DateTime.fromFormatExplain() parses localized string with numberingSystem 
   expect(keyCount(ex15.result)).toBe(6);
 
   const ex16 = DateTime.fromFormatExplain(
-    cldr && cldr < 45 ? "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ பிற்பகல்" : "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ PM",
+    (cldr && cldr < 45) || isWebkit
+      ? "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ பிற்பகல்"
+      : "௦௩-ஏப்ரல்-௨௦௧௯ ௦௪:௦௦:௪௧ PM",
     "dd-MMMM-yyyy hh:mm:ss a",
     {
       locale: "ta",
@@ -1179,7 +1181,11 @@ test("DateTime.fromString is an alias for DateTime.fromFormat", () => {
 
 test("DateTime.parseFormatForOpts returns a parsing format", () => {
   const format = DateTime.parseFormatForOpts(DateTime.DATETIME_FULL);
-  expect(format).toEqual("MMMM d, yyyyy at h:m a ZZZ");
+  expect(format).toBeOneOf([
+    "MMMM d, yyyyy at h:m a ZZZ",
+    // old format for WebKit
+    "MMMM d, yyyyy, h:m a ZZZ",
+  ]);
 });
 
 test("DateTime.parseFormatForOpts returns a parsing format", () => {

@@ -115,7 +115,11 @@ test("Interval#toLocaleString shows things in the right fixed-offset zone when s
     Interval.fromDateTimes(interval.start.setZone("UTC-8"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatchIgnoringWeirdSpaces("May 25, 1982 at 1:00 AM GMT-8 – October 14, 1983 at 5:30 AM GMT-8");
+  ).toMatchIgnoringWeirdSpaces([
+    "May 25, 1982 at 1:00 AM GMT-8 – October 14, 1983 at 5:30 AM GMT-8",
+    // Support ancient ICU in WebKit
+    "May 25, 1982, 1:00 AM GMT-8 – October 14, 1983, 5:30 AM GMT-8",
+  ]);
 });
 
 test("Interval#toLocaleString shows things with UTC if fixed-offset with 0 offset is used", () => {
@@ -123,7 +127,11 @@ test("Interval#toLocaleString shows things with UTC if fixed-offset with 0 offse
     Interval.fromDateTimes(interval.start.setZone("UTC"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatchIgnoringWeirdSpaces("May 25, 1982 at 9:00 AM UTC – October 14, 1983 at 1:30 PM UTC");
+  ).toMatchIgnoringWeirdSpaces([
+    "May 25, 1982 at 9:00 AM UTC – October 14, 1983 at 1:30 PM UTC",
+    // Support ancient ICU in WebKit
+    "May 25, 1982, 9:00 AM UTC – October 14, 1983, 1:30 PM UTC",
+  ]);
 });
 
 test("Interval#toLocaleString does the best it can with unsupported fixed-offset zone when showing the zone", () => {
@@ -131,7 +139,11 @@ test("Interval#toLocaleString does the best it can with unsupported fixed-offset
     Interval.fromDateTimes(interval.start.setZone("UTC+4:30"), interval.end).toLocaleString(
       DateTime.DATETIME_FULL
     )
-  ).toMatchIgnoringWeirdSpaces("May 25, 1982 at 9:00 AM UTC – October 14, 1983 at 1:30 PM UTC");
+  ).toMatchIgnoringWeirdSpaces([
+    "May 25, 1982 at 9:00 AM UTC – October 14, 1983 at 1:30 PM UTC",
+    // Support ancient ICU in WebKit
+    "May 25, 1982, 9:00 AM UTC – October 14, 1983, 1:30 PM UTC",
+  ]);
 });
 
 test("Interval#toLocaleString uses locale-appropriate time formats", () => {

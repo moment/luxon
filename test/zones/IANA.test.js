@@ -1,5 +1,6 @@
 import { test, expect } from "vitest";
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { isWebkit } from "../helpers";
 
 test("IANAZone.create returns a singleton per zone name", () => {
   expect(IANAZone.create("UTC")).toBe(IANAZone.create("UTC"));
@@ -113,13 +114,16 @@ test("IANAZone.isValid returns false for invalid zone names", () => {
   expect(new IANAZone(null).isValid).toBe(false);
 });
 
-test("IANAZone.normalize normalizes the zone name", () => {
+test("IANAZone.normalize normalizes the zone name for standard zones", () => {
   expect(IANAZone.normalizeZone("america/nEw_york")).toBe("America/New_York");
   expect(IANAZone.normalizeZone("AMERICA/NEW_YORK")).toBe("America/New_York");
   expect(IANAZone.normalizeZone("America/New_York")).toBe("America/New_York");
   expect(IANAZone.normalizeZone("europe/paris")).toBe("Europe/Paris");
   expect(IANAZone.normalizeZone("EUROPE/PARIS")).toBe("Europe/Paris");
   expect(IANAZone.normalizeZone("Asia/Tokyo")).toBe("Asia/Tokyo");
+});
+
+test.skipIf(isWebkit)("IANAZone.normalize normalizes Etc/GMT to UTC", () => {
   expect(IANAZone.normalizeZone("Etc/GMT")).toBe("UTC");
 });
 

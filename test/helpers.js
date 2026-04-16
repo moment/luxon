@@ -107,3 +107,11 @@ export function supportsMinDaysInFirstWeek() {
 export function supportsLocale(locale) {
   return Intl.DateTimeFormat.supportedLocalesOf(locale).includes(locale);
 }
+
+function hasUserAgentBrand(brand) {
+  return !!globalThis?.navigator?.userAgentData?.brands?.some((data) => data.brand === brand);
+}
+
+const userAgent = globalThis?.navigator?.userAgent ?? "";
+const isChromium = hasUserAgentBrand("Chromium");
+export const isWebkit = !isChromium && /AppleWebKit\/\d{3}/.test(userAgent);
