@@ -37,10 +37,10 @@ test("Interval#toLocaleString lets the locale set the numbering system", () => {
 test("Interval#toLocaleString accepts locale settings from the start DateTime", () => {
   expect(
     Interval.fromDateTimes(
-      interval.start.reconfigure({ locale: "be" }),
+      interval.start.reconfigure({ locale: "de" }),
       interval.end
     ).toLocaleString()
-  ).toMatchIgnoringWeirdSpaces("25.5.1982 – 14.10.1983");
+  ).toMatchIgnoringWeirdSpaces("25.05.1982 – 14.10.1983");
 });
 
 test("Interval#toLocaleString accepts numbering system settings from the start DateTime", () => {
@@ -89,7 +89,8 @@ test("Interval#toLocaleString can override the start DateTime's output calendar"
       interval.start.reconfigure({ outputCalendar: "islamic" }),
       interval.end
     ).toLocaleString({}, { outputCalendar: "coptic" })
-  ).toMatchIgnoringWeirdSpaces("9/17/1698 – 2/3/1700 AM");
+    // // some browsers have CLDR < 48, see https://unicode-org.atlassian.net/browse/CLDR-18465
+  ).toMatchIgnoringWeirdSpaces(["9/17/1698 – 2/3/1700 AM", "9/17/1698 – 2/3/1700 ERA1"]);
 });
 
 test("Interval#toLocaleString shows things in the right IANA zone", () => {

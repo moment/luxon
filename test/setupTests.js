@@ -2,17 +2,25 @@ import { expect } from "vitest";
 
 expect.extend({
   toMatchIgnoringWeirdSpaces(received, expected) {
-    const replaceNbspReceived = (str) => str.replace(/\s/g, " ");
-    const replaceNbspExpected = (str) => str.replace(/\s/g, " ");
+    function replaceWeirdSpaces(str) {
+      return str.replace(/\s/g, " ");
+    }
 
-    const pass = replaceNbspReceived(received) === replaceNbspExpected(expected);
+    let pass, expectedDisplay;
+    if (Array.isArray(expected)) {
+      pass = expected.some((e) => replaceWeirdSpaces(received) === replaceWeirdSpaces(e));
+      expectedDisplay = `one of ${expected.join(", ")}`;
+    } else {
+      pass = replaceWeirdSpaces(received) === replaceWeirdSpaces(expected);
+      expectedDisplay = expected;
+    }
 
     return {
       pass,
       message: () =>
         pass
-          ? `Expected ${String(received)} to be (ignorning weird spaces) ${String(expected)}`
-          : `Expected ${String(received)} to be (ignorning weird spaces) ${String(expected)}`,
+          ? `Expected ${String(received)} to be (ignoring weird spaces) ${expectedDisplay}`
+          : `Expected ${String(received)} to be (ignoring weird spaces) ${String(expectedDisplay)}`,
     };
   },
 });

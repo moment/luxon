@@ -803,8 +803,8 @@ test("DateTime.fromObject accepts a locale", () => {
 });
 
 test("DateTime.fromObject accepts a locale with calendar and numbering identifiers", () => {
-  const res = DateTime.fromObject({}, { locale: "be-u-ca-coptic-nu-mong" });
-  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+  const res = DateTime.fromObject({}, { locale: "de-u-ca-coptic-nu-mong" });
+  expect(res.locale).toBe("de-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
   expect(res.numberingSystem).toBe("mong");
 });

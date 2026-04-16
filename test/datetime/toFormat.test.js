@@ -1,6 +1,7 @@
 import { test, expect } from "vitest";
 
 import { DateTime } from "../../src/luxon";
+import { supportsLocale } from "../helpers";
 
 const dt = DateTime.fromObject(
   {
@@ -160,10 +161,13 @@ test("DateTime#toFormat('z') returns the zone name", () => {
   expect(utc.toFormat("z")).toBe("UTC");
 });
 
-test("DateTime#toFormat('a') returns the meridiem", () => {
+test("DateTime#toFormat('a') returns the meridiem in English", () => {
   expect(dt.toFormat("a")).toBe("AM");
-  expect(dt.reconfigure({ locale: "my" }).toFormat("a")).toBe("နံနက်");
   expect(dt.set({ hour: 13 }).toFormat("a")).toBe("PM");
+});
+
+test.skipIf(!supportsLocale("my"))("DateTime#toFormat('a') returns the meridiem in Burmese", () => {
+  expect(dt.reconfigure({ locale: "my" }).toFormat("a")).toBe("နံနက်");
   expect(dt.set({ hour: 13 }).reconfigure({ locale: "my" }).toFormat("a")).toBe("ညနေ");
 });
 
@@ -370,8 +374,8 @@ test("DateTime#toFormat('DDDD') returns a long date representation", () => {
 });
 
 test("DateTime#toFormat('t') returns a short time representation", () => {
-  expect(dt.toFormat("t")).toBe("9:23 AM");
-  expect(dt.set({ hour: 13 }).toFormat("t")).toBe("1:23 PM");
+  expect(dt.toFormat("t")).toMatchIgnoringWeirdSpaces("9:23 AM");
+  expect(dt.set({ hour: 13 }).toFormat("t")).toMatchIgnoringWeirdSpaces("1:23 PM");
   expect(dt.reconfigure({ locale: "fr" }).toFormat("t")).toBe("09:23");
   expect(dt.set({ hour: 13 }).reconfigure({ locale: "fr" }).toFormat("t")).toBe("13:23");
 });
@@ -384,8 +388,8 @@ test("DateTime#toFormat('T') returns a short 24-hour time representation", () =>
 });
 
 test("DateTime#toFormat('tt') returns a medium time representation", () => {
-  expect(dt.toFormat("tt")).toBe("9:23:54 AM");
-  expect(dt.set({ hour: 13 }).toFormat("tt")).toBe("1:23:54 PM");
+  expect(dt.toFormat("tt")).toMatchIgnoringWeirdSpaces("9:23:54 AM");
+  expect(dt.set({ hour: 13 }).toFormat("tt")).toMatchIgnoringWeirdSpaces("1:23:54 PM");
   expect(dt.reconfigure({ locale: "fr" }).toFormat("tt")).toBe("09:23:54");
   expect(dt.set({ hour: 13 }).reconfigure({ locale: "fr" }).toFormat("tt")).toBe("13:23:54");
 });

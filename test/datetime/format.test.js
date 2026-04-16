@@ -461,7 +461,7 @@ test("DateTime#toLocaleString lets the locale set the numbering system", () => {
 });
 
 test("DateTime#toLocaleString accepts locale settings from the dateTime", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleString()).toBe("25.5.1982");
+  expect(dt.reconfigure({ locale: "de" }).toLocaleString()).toBe("25.5.1982");
 });
 
 test("DateTime#toLocaleString accepts numbering system settings from the dateTime", () => {
@@ -489,7 +489,8 @@ test("DateTime#toLocaleString can override the dateTime's numbering system", () 
 test("DateTime#toLocaleString can override the dateTime's output calendar", () => {
   expect(
     dt.reconfigure({ outputCalendar: "islamic" }).toLocaleString({}, { outputCalendar: "coptic" })
-  ).toBe("9/17/1698 AM");
+    // some browsers have CLDR < 48, see https://unicode-org.atlassian.net/browse/CLDR-18465
+  ).toBeOneOf(["9/17/1698 AM", "9/17/1698 ERA1"]);
 });
 
 test("DateTime#toLocaleString() returns something different for invalid DateTimes", () => {
@@ -513,43 +514,45 @@ test("DateTime#toLocaleString() shows things in the right fixed-offset zone when
 });
 
 test("DateTime#toLocaleString() shows things with UTC if fixed-offset zone with 0 offset is used", () => {
-  expect(dt.setZone("UTC").toLocaleString(DateTime.DATETIME_FULL)).toBe(
+  expect(dt.setZone("UTC").toLocaleString(DateTime.DATETIME_FULL)).toMatchIgnoringWeirdSpaces(
     "May 25, 1982 at 9:23 AM UTC"
   );
 });
 
 test("DateTime#toLocaleString() does the best it can with unsupported fixed-offset zone when showing the zone", () => {
-  expect(dt.setZone("UTC+4:30").toLocaleString(DateTime.DATETIME_FULL)).toBe(
+  expect(dt.setZone("UTC+4:30").toLocaleString(DateTime.DATETIME_FULL)).toMatchIgnoringWeirdSpaces(
     "May 25, 1982 at 1:53\u202FPM UTC+4:30"
   );
 });
 
 test("DateTime#toLocaleString() does the best it can with unsupported fixed-offset zone with timeStyle full", () => {
-  expect(dt.setZone("UTC+4:30").toLocaleString({ timeStyle: "full" })).toBe(
+  expect(dt.setZone("UTC+4:30").toLocaleString({ timeStyle: "full" })).toMatchIgnoringWeirdSpaces(
     "1:53:54\u202FPM UTC+4:30"
   );
 });
 
 test("DateTime#toLocaleString() shows things in the right custom zone", () => {
-  expect(dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString(DateTime.DATETIME_SHORT)).toBe(
-    "5/25/1982, 9:53\u202FAM"
-  );
+  expect(
+    dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString(DateTime.DATETIME_SHORT)
+  ).toMatchIgnoringWeirdSpaces("5/25/1982, 9:53\u202FAM");
 });
 
 test("DateTime#toLocaleString() shows things in the right custom zone when showing the zone", () => {
-  expect(dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString(DateTime.DATETIME_FULL)).toBe(
-    "May 25, 1982 at 9:53\u202FAM CUST"
-  );
+  expect(
+    dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString(DateTime.DATETIME_FULL)
+  ).toMatchIgnoringWeirdSpaces("May 25, 1982 at 9:53\u202FAM CUST");
 });
 
 test("DateTime#toLocaleString() shows things in the right custom zone with timeStyle full", () => {
-  expect(dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString({ timeStyle: "full" })).toBe(
-    "9:53:54\u202FAM CUSTOM"
-  );
+  expect(
+    dt.setZone(new CustomZone("CUSTOM", 30)).toLocaleString({ timeStyle: "full" })
+  ).toMatchIgnoringWeirdSpaces("9:53:54\u202FAM CUSTOM");
 });
 
 test("DateTime#toLocaleString uses locale-appropriate time formats", () => {
-  expect(dt.reconfigure({ locale: "en-US" }).toLocaleString(DateTime.TIME_SIMPLE)).toBe("9:23 AM");
+  expect(
+    dt.reconfigure({ locale: "en-US" }).toLocaleString(DateTime.TIME_SIMPLE)
+  ).toMatchIgnoringWeirdSpaces("9:23 AM");
   expect(dt.reconfigure({ locale: "en-US" }).toLocaleString(DateTime.TIME_24_SIMPLE)).toBe("09:23");
 
   // France has 24-hour time by default
@@ -592,25 +595,25 @@ test("DateTime#resolvedLocaleOpts returns a thing", () => {
 test("DateTime#resolvedLocaleOpts reflects changes to the locale", () => {
   const res = DateTime.now()
     .reconfigure({
-      locale: "be",
+      locale: "de",
       numberingSystem: "mong",
       outputCalendar: "coptic",
     })
     .resolvedLocaleOptions();
 
-  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+  expect(res.locale).toBe("de-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
   expect(res.numberingSystem).toBe("mong");
 });
 
 test("DateTime#resolvedLocaleOpts can override with options", () => {
   const res = DateTime.now().resolvedLocaleOptions({
-    locale: "be",
+    locale: "de",
     numberingSystem: "mong",
     outputCalendar: "coptic",
   });
 
-  expect(res.locale).toBe("be-u-ca-coptic-nu-mong");
+  expect(res.locale).toBe("de-u-ca-coptic-nu-mong");
   expect(res.outputCalendar).toBe("coptic");
   expect(res.numberingSystem).toBe("mong");
 });
@@ -630,7 +633,7 @@ test("DateTime#toLocaleParts returns a en-US by default", () => {
 });
 
 test("DateTime#toLocaleParts accepts locale settings from the dateTime", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleParts()).toEqual([
+  expect(dt.reconfigure({ locale: "de" }).toLocaleParts()).toEqual([
     { type: "day", value: "25" },
     { type: "literal", value: "." },
     { type: "month", value: "5" },
@@ -640,7 +643,7 @@ test("DateTime#toLocaleParts accepts locale settings from the dateTime", () => {
 });
 
 test("DateTime#toLocaleParts can override the dateTime's locale", () => {
-  expect(dt.reconfigure({ locale: "be" }).toLocaleParts({ locale: "fr" })).toEqual([
+  expect(dt.reconfigure({ locale: "de" }).toLocaleParts({ locale: "fr" })).toEqual([
     { type: "day", value: "25" },
     { type: "literal", value: "/" },
     { type: "month", value: "05" },

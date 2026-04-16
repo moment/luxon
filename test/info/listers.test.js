@@ -3,6 +3,7 @@ import { test, expect } from "vitest";
 import { Info } from "../../src/luxon";
 
 import * as Helpers from "../helpers";
+import { supportsLocale } from "../helpers";
 const withDefaultLocale = Helpers.withDefaultLocale;
 
 //------
@@ -365,8 +366,11 @@ test("Info.weekdaysFormat defaults to long names", () => {
 //------
 // .meridiems()
 //------
-test("Info.meridiems lists the meridiems", () => {
+test("Info.meridiems lists the meridiems in English", () => {
   expect(Info.meridiems({ locale: "en" })).toEqual(["AM", "PM"]);
+});
+
+test.skipIf(!supportsLocale("my"))("Info.meridiems lists the meridiems in Burmese", () => {
   expect(Info.meridiems({ locale: "my" })).toEqual(["နံနက်", "ညနေ"]);
 });
 

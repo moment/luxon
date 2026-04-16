@@ -99,3 +99,11 @@ export function supportsMinDaysInFirstWeek() {
   const wi = locale.getWeekInfo?.() ?? locale.weekInfo;
   return "minimalDays" in wi;
 }
+
+/**
+ * @param locale {string}
+ * @returns {boolean}
+ */
+export function supportsLocale(locale) {
+  return Intl.DateTimeFormat.supportedLocalesOf(locale).includes(locale);
+}

@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
 
 import { DateTime, Info } from "../../src/luxon";
-import Helpers, { supportsMinDaysInFirstWeek } from "../helpers";
+import { supportsMinDaysInFirstWeek } from "../helpers";
 import * as Helpers from "../helpers";
 
 const withDefaultWeekSettings = Helpers.setUnset("defaultWeekSettings");
