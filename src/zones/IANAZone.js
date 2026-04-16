@@ -127,15 +127,22 @@ export default class IANAZone extends Zone {
     }
   }
 
+  /**
+   * @type {string}
+   */
+  #zoneName;
+  /**
+   * @type {boolean}
+   */
+  #valid;
+
   constructor(name) {
     super();
     const normalizedName = IANAZone.normalizeZone(name);
-    /** @private **/
-    this.valid = normalizedName != null;
+    this.#valid = normalizedName != null;
     // For backwards compatibility we only normalize in casing, otherwise would also normalize something like
     // EST5EDT to America/New_York.
-    /** @private **/
-    this.zoneName =
+    this.#zoneName =
       normalizedName && normalizedName.toLowerCase() === name.toLowerCase() ? normalizedName : name;
   }
 
@@ -154,7 +161,7 @@ export default class IANAZone extends Zone {
    * @type {string}
    */
   get name() {
-    return this.zoneName;
+    return this.#zoneName;
   }
 
   /**
@@ -199,7 +206,7 @@ export default class IANAZone extends Zone {
    * @return {number}
    */
   offset(ts) {
-    if (!this.valid) return NaN;
+    if (!this.#valid) return NaN;
     const date = new Date(ts);
 
     if (isNaN(date)) return NaN;
@@ -248,6 +255,6 @@ export default class IANAZone extends Zone {
    * @type {boolean}
    */
   get isValid() {
-    return this.valid;
+    return this.#valid;
   }
 }

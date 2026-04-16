@@ -238,7 +238,7 @@ class PolyDateFormatter {
       //    - < Etc/GMT-14, > Etc/GMT+12, and 30-minute or 45-minute offsets are not part of tzdata
       const gmtOffset = -1 * (dt.offset / 60);
       const offsetZ = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
-      if (dt.offset !== 0 && IANAZone.create(offsetZ).valid) {
+      if (dt.offset !== 0 && IANAZone.create(offsetZ).isValid) {
         z = offsetZ;
         this.dt = dt;
       } else {

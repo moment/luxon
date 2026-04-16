@@ -46,10 +46,14 @@ export default class FixedOffsetZone extends Zone {
     return null;
   }
 
+  /**
+   * @type {number}
+   */
+  #fixed;
+
   constructor(offset) {
     super();
-    /** @private **/
-    this.fixed = offset;
+    this.#fixed = offset;
   }
 
   /**
@@ -68,7 +72,7 @@ export default class FixedOffsetZone extends Zone {
    * @type {string}
    */
   get name() {
-    return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
+    return this.#fixed === 0 ? "UTC" : `UTC${formatOffset(this.#fixed, "narrow")}`;
   }
 
   /**
@@ -78,10 +82,10 @@ export default class FixedOffsetZone extends Zone {
    * @type {string}
    */
   get ianaName() {
-    if (this.fixed === 0) {
+    if (this.#fixed === 0) {
       return "Etc/UTC";
     } else {
-      return `Etc/GMT${formatOffset(-this.fixed, "narrow")}`;
+      return `Etc/GMT${formatOffset(-this.#fixed, "narrow")}`;
     }
   }
 
@@ -104,7 +108,7 @@ export default class FixedOffsetZone extends Zone {
    * @return {string}
    */
   formatOffset(ts, format) {
-    return formatOffset(this.fixed, format);
+    return formatOffset(this.#fixed, format);
   }
 
   /**
@@ -125,7 +129,7 @@ export default class FixedOffsetZone extends Zone {
    * @return {number}
    */
   offset() {
-    return this.fixed;
+    return this.#fixed;
   }
 
   /**
@@ -135,7 +139,7 @@ export default class FixedOffsetZone extends Zone {
    * @return {boolean}
    */
   equals(otherZone) {
-    return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
+    return otherZone.type === "fixed" && otherZone.offset() === this.#fixed;
   }
 
   /**
