@@ -1338,26 +1338,90 @@ test("fromFormat with x rejects empty string", () => {
   expect(dt.isValid).toBe(false);
 });
 
-// ConflictingSpecificationError when X/x is mixed with other tokens
+// Consistent redundant tokens alongside X/x should succeed
 
-test("fromFormat throws ConflictingSpecificationError when X is mixed with year", () => {
-  expect(() => DateTime.fromFormat("2026 1769758221", "yyyy X")).toThrow(
+test("fromFormat accepts consistent year alongside X", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z
+  const dt = DateTime.fromFormat("2026 1769758221", "yyyy X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat accepts consistent month alongside X", () => {
+  // epoch 1769758221 = 2026-01-30, month = 01 (January)
+  const dt = DateTime.fromFormat("01 1769758221", "MM X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().month).toBe(1);
+});
+
+test("fromFormat accepts consistent full datetime alongside X", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z
+  const dt = DateTime.fromFormat("2026-01-30T07:30:21 1769758221", "yyyy-MM-dd'T'HH:mm:ss X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat accepts consistent year alongside x", () => {
+  // epoch 1769758221000 = 2026-01-30T07:30:21Z
+  const dt = DateTime.fromFormat("2026 1769758221000", "yyyy x");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().year).toBe(2026);
+});
+
+// ConflictingSpecificationError when X/x tokens are inconsistent with other tokens
+
+test("fromFormat throws ConflictingSpecificationError when X year is inconsistent", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z, year=2025 is wrong
+  expect(() => DateTime.fromFormat("2025 1769758221", "yyyy X")).toThrow(
     ConflictingSpecificationError
   );
 });
 
-test("fromFormat throws ConflictingSpecificationError when X is mixed with month", () => {
-  expect(() => DateTime.fromFormat("01 1769758221", "MM X")).toThrow(ConflictingSpecificationError);
+test("fromFormat throws ConflictingSpecificationError when X month is inconsistent", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z, month=02 (February) is wrong
+  expect(() => DateTime.fromFormat("02 1769758221", "MM X")).toThrow(ConflictingSpecificationError);
 });
 
-test("fromFormat throws ConflictingSpecificationError when X is mixed with full datetime", () => {
-  expect(() =>
-    DateTime.fromFormat("2026-01-30T07:30:21 1769758221", "yyyy-MM-dd'T'HH:mm:ss X")
-  ).toThrow(ConflictingSpecificationError);
+test("fromFormat throws ConflictingSpecificationError when X hour is inconsistent", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z, hour=08 is wrong
+  expect(() => DateTime.fromFormat("08 1769758221", "HH X")).toThrow(ConflictingSpecificationError);
 });
 
-test("fromFormat throws ConflictingSpecificationError when x is mixed with year", () => {
-  expect(() => DateTime.fromFormat("2026 1769758221000", "yyyy x")).toThrow(
+test("fromFormat throws ConflictingSpecificationError when x year is inconsistent", () => {
+  // epoch 1769758221000 = 2026-01-30T07:30:21Z, year=2025 is wrong
+  expect(() => DateTime.fromFormat("2025 1769758221000", "yyyy x")).toThrow(
+    ConflictingSpecificationError
+  );
+});
+
+// X (unix seconds) + S/SSS/u: milliseconds are additive precision, not redundant
+
+test("fromFormat with X and SSS adds millisecond precision", () => {
+  // X gives second-precision, SSS adds the sub-second part
+  const dt = DateTime.fromFormat("1769758221 500", "X SSS");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().valueOf()).toBe(1769758221500);
+  expect(dt.toUTC().millisecond).toBe(500);
+});
+
+test("fromFormat with X and S adds millisecond precision", () => {
+  const dt = DateTime.fromFormat("1769758221 5", "X S");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().valueOf()).toBe(1769758221005);
+});
+
+// x (unix milliseconds) + S: redundant, validate consistency
+
+test("fromFormat accepts consistent SSS alongside x", () => {
+  // epoch 1769758221500 has millisecond = 500
+  const dt = DateTime.fromFormat("1769758221500 500", "x SSS");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().millisecond).toBe(500);
+});
+
+test("fromFormat throws ConflictingSpecificationError when x millisecond is inconsistent with SSS", () => {
+  // epoch 1769758221500 has millisecond = 500, SSS=501 is wrong
+  expect(() => DateTime.fromFormat("1769758221500 501", "x SSS")).toThrow(
     ConflictingSpecificationError
   );
 });

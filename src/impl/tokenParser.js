@@ -461,18 +461,32 @@ export class TokenParser {
       return { input, tokens: this.tokens, invalidReason: this.invalidReason };
     } else {
       const [rawMatches, matches] = match(input, this.regex, this.handlers),
-        [result, zone, specificOffset, knownEpochMs] = matches
+        [result, zone, specificOffset, knownEpochMsRaw] = matches
           ? dateTimeFromMatches(matches)
           : [null, null, undefined, undefined];
+      let knownEpochMs = knownEpochMsRaw;
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
           "Can't include meridiem when specifying 24-hour format"
         );
       }
       if (knownEpochMs !== undefined && result && Object.keys(result).length > 0) {
-        throw new ConflictingSpecificationError(
-          "Can't use other format tokens alongside a unix timestamp"
-        );
+        // X is unix seconds with no sub-second precision; S/SSS/u add the missing ms part
+        if (hasOwnProperty(matches, "X") && result.millisecond !== undefined) {
+          knownEpochMs = knownEpochMs + result.millisecond;
+          delete result.millisecond;
+        }
+        // All remaining tokens are redundant — validate they are consistent with the epoch
+        if (Object.keys(result).length > 0) {
+          const epochDateTime = DateTime.fromMillis(knownEpochMs, { zone: zone ?? "UTC" });
+          for (const [key, value] of Object.entries(result)) {
+            if (epochDateTime[key] !== value) {
+              throw new ConflictingSpecificationError(
+                `Can't specify ${key} as ${value} when the unix timestamp implies ${epochDateTime[key]}`
+              );
+            }
+          }
+        }
       }
       return {
         input,
