@@ -28,31 +28,24 @@ export default defineConfig({
           name: "browsers",
           setupFiles: ["test/setupTests.js"],
           browser: {
-            provider: playwright(),
+            provider: playwright({
+              contextOptions: {
+                locale: "en-US",
+                timezoneId: "America/New_York",
+              },
+            }),
             enabled: true,
             headless: true,
             screenshotFailures: false,
             instances: [
               {
                 browser: "chromium",
-                context: {
-                  locale: "en-US",
-                  timezoneId: "America/New_York",
-                },
               },
               {
                 browser: "firefox",
-                context: {
-                  locale: "en-US",
-                  timezoneId: "America/New_York",
-                },
               },
               {
                 browser: "webkit",
-                context: {
-                  locale: "en-US",
-                  timezoneId: "America/New_York",
-                },
               },
             ],
           },
