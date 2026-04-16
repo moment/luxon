@@ -2,6 +2,7 @@ import { test, expect } from "vitest";
 
 import { DateTime } from "../../src/luxon";
 import { supportsLocale } from "../helpers";
+import { hasLocaleWeekInfo } from "../../src/impl/util";
 
 const dt = DateTime.fromObject(
   {
@@ -492,32 +493,54 @@ test("DateTime#toFormat('FF') returns a medium date/time representation with sec
 });
 
 test("DateTime#toFormat('FFF') returns a medium date/time representation without seconds", () => {
-  expect(ny.toFormat("FFF")).toBe("May 25, 1982 at 9:23:54 AM EDT");
-  expect(ny.set({ hour: 13 }).toFormat("FFF")).toBe("May 25, 1982 at 1:23:54 PM EDT");
-  expect(ny.set({ month: 8 }).toFormat("FFF")).toBe("August 25, 1982 at 9:23:54 AM EDT");
-  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFF")).toBe("25 mai 1982 à 9:23:54 UTC−4");
-  expect(ny.set({ month: 2 }).reconfigure({ locale: "fr" }).toFormat("FFF")).toBe(
-    "25 février 1982 à 9:23:54 UTC−5"
-  );
-  expect(ny.set({ hour: 13 }).reconfigure({ locale: "fr" }).toFormat("FFF")).toBe(
-    "25 mai 1982 à 13:23:54 UTC−4"
-  );
+  // Firefox adds leading zeros here, likely due to a newer ICU version
+  expect(ny.toFormat("FFF")).toBeOneOf([
+    "May 25, 1982 at 9:23:54 AM EDT",
+    "May 25, 1982 at 09:23:54 AM EDT",
+  ]);
+  expect(ny.set({ hour: 13 }).toFormat("FFF")).toBeOneOf([
+    "May 25, 1982 at 1:23:54 PM EDT",
+    "May 25, 1982 at 01:23:54 PM EDT",
+  ]);
+  expect(ny.set({ month: 8 }).toFormat("FFF")).toBeOneOf([
+    "August 25, 1982 at 9:23:54 AM EDT",
+    "August 25, 1982 at 09:23:54 AM EDT",
+  ]);
+  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFF")).toBeOneOf([
+    "25 mai 1982 à 9:23:54 UTC−4",
+    "25 mai 1982 à 09:23:54 UTC−4",
+  ]);
+  expect(ny.set({ month: 2 }).reconfigure({ locale: "fr" }).toFormat("FFF")).toBeOneOf([
+    "25 février 1982 à 9:23:54 UTC−5",
+    "25 février 1982 à 09:23:54 UTC−5",
+  ]);
+  expect(ny.set({ hour: 13 }).reconfigure({ locale: "fr" }).toFormat("FFF")).toBeOneOf([
+    "25 mai 1982 à 13:23:54 UTC−4",
+  ]);
 });
 
 test("DateTime#toFormat('FFFF') returns a long date/time representation without seconds", () => {
-  expect(ny.toFormat("FFFF")).toBe("Tuesday, May 25, 1982 at 9:23:54 AM Eastern Daylight Time");
-  expect(ny.set({ hour: 13 }).toFormat("FFFF")).toBe(
-    "Tuesday, May 25, 1982 at 1:23:54 PM Eastern Daylight Time"
-  );
-  expect(ny.set({ month: 2 }).toFormat("FFFF")).toBe(
-    "Thursday, February 25, 1982 at 9:23:54 AM Eastern Standard Time"
-  );
-  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFFF")).toBe(
-    "mardi 25 mai 1982 à 9:23:54 heure d’été de l’Est nord-américain"
-  );
-  expect(ny.set({ month: 2 }).reconfigure({ locale: "fr" }).toFormat("FFFF")).toBe(
-    "jeudi 25 février 1982 à 9:23:54 heure normale de l’Est nord-américain"
-  );
+  // Firefox adds leading zeros here, likely due to a newer ICU version
+  expect(ny.toFormat("FFFF")).toBeOneOf([
+    "Tuesday, May 25, 1982 at 9:23:54 AM Eastern Daylight Time",
+    "Tuesday, May 25, 1982 at 09:23:54 AM Eastern Daylight Time",
+  ]);
+  expect(ny.set({ hour: 13 }).toFormat("FFFF")).toBeOneOf([
+    "Tuesday, May 25, 1982 at 1:23:54 PM Eastern Daylight Time",
+    "Tuesday, May 25, 1982 at 01:23:54 PM Eastern Daylight Time",
+  ]);
+  expect(ny.set({ month: 2 }).toFormat("FFFF")).toBeOneOf([
+    "Thursday, February 25, 1982 at 9:23:54 AM Eastern Standard Time",
+    "Thursday, February 25, 1982 at 09:23:54 AM Eastern Standard Time",
+  ]);
+  expect(ny.reconfigure({ locale: "fr" }).toFormat("FFFF")).toBeOneOf([
+    "mardi 25 mai 1982 à 9:23:54 heure d’été de l’Est nord-américain",
+    "mardi 25 mai 1982 à 09:23:54 heure d’été de l’Est nord-américain",
+  ]);
+  expect(ny.set({ month: 2 }).reconfigure({ locale: "fr" }).toFormat("FFFF")).toBeOneOf([
+    "jeudi 25 février 1982 à 9:23:54 heure normale de l’Est nord-américain",
+    "jeudi 25 février 1982 à 09:23:54 heure normale de l’Est nord-américain",
+  ]);
   expect(ny.set({ hour: 13 }).reconfigure({ locale: "fr" }).toFormat("FFFF")).toBe(
     "mardi 25 mai 1982 à 13:23:54 heure d’été de l’Est nord-américain"
   );
@@ -562,22 +585,22 @@ test("DateTime#toFormat('x') returns a Unix timestamp in milliseconds", () => {
   expect(dt.toFormat("x")).toBe("391166634123");
 });
 
-test("DateTime#toFormat('n')", () => {
+test.skipIf(!hasLocaleWeekInfo())("DateTime#toFormat('n')", () => {
   expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("n")).toBe("52");
   expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("n")).toBe("1");
 });
 
-test("DateTime#toFormat('nn')", () => {
+test.skipIf(!hasLocaleWeekInfo())("DateTime#toFormat('nn')", () => {
   expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("nn")).toBe("52");
   expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("nn")).toBe("01");
 });
 
-test("DateTime#toFormat('ii')", () => {
+test.skipIf(!hasLocaleWeekInfo())("DateTime#toFormat('ii')", () => {
   expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("ii")).toBe("11");
   expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("ii")).toBe("12");
 });
 
-test("DateTime#toFormat('iiii')", () => {
+test.skipIf(!hasLocaleWeekInfo())("DateTime#toFormat('iiii')", () => {
   expect(DateTime.fromISO("2012-01-01", { locale: "de-DE" }).toFormat("iiii")).toBe("2011");
   expect(DateTime.fromISO("2012-01-01", { locale: "en-US" }).toFormat("iiii")).toBe("2012");
 });

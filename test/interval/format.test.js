@@ -21,7 +21,7 @@ test("Interval#toString returns an unfriendly string for invalid intervals", () 
 //------
 
 test("Interval#toLocaleString defaults to the DATE_SHORT format", () =>
-  expect(interval.toLocaleString()).toBe("5/25/1982 – 10/14/1983"));
+  expect(interval.toLocaleString()).toMatchIgnoringWeirdSpaces("5/25/1982 – 10/14/1983"));
 
 test("Interval#toLocaleString returns an unfriendly string for invalid intervals", () =>
   expect(invalid.toLocaleString()).toBe("Invalid Interval"));
@@ -172,9 +172,9 @@ test("Interval#toLocaleString uses locale-appropriate time formats", () => {
 });
 
 test("Interval#toLocaleString sets the separator between days for same-month dates", () => {
-  expect(Interval.after(interval.start, { day: 2 }).toLocaleString(DateTime.DATE_MED)).toBe(
-    "May 25 – 27, 1982"
-  );
+  expect(
+    Interval.after(interval.start, { day: 2 }).toLocaleString(DateTime.DATE_MED)
+  ).toMatchIgnoringWeirdSpaces("May 25 – 27, 1982");
 });
 
 //------
