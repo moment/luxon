@@ -1,4 +1,4 @@
-// jest.setup.js
+import { expect } from "vitest";
 
 expect.extend({
   toMatchIgnoringWeirdSpaces(received, expected) {

@@ -1,7 +1,7 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { Interval } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import * as Helpers from "../helpers";
 
 const todayFrom = (h1, h2) => Interval.fromDateTimes(Helpers.atHour(h1), Helpers.atHour(h2));
 

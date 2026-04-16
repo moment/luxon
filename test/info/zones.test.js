@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import {
   Info,
@@ -9,7 +9,7 @@ import {
   Settings,
 } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import * as Helpers from "../helpers";
 
 //------
 // .hasDST()

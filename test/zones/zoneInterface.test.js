@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { Zone } from "../../src/luxon";
 
 test("You can instantiate Zone directly", () => {

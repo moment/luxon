@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { InvalidZone } from "../../src/luxon";
 
 test("InvalidZone", () => {

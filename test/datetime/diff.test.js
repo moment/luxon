@@ -1,8 +1,8 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import { DateTime } from "../../src/luxon";
 
-const Helpers = require("../helpers");
+import * as Helpers from "../helpers";
 
 //------
 // diff

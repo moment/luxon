@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import { DateTime, Duration } from "../../src/luxon";
 import { casualMatrix } from "../../src/duration";

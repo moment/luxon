@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { SystemZone } from "../../src/luxon";
 
 test("SystemZone.instance returns a singleton", () => {

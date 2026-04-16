@@ -1,6 +1,7 @@
+import { test, expect } from "vitest";
 import DateTime from "../../src/datetime";
 
-const Helpers = require("../helpers");
+import * as Helpers from "../helpers";
 
 /* global expect test */
 

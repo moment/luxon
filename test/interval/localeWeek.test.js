@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import { DateTime, Interval } from "../../src/luxon";
 

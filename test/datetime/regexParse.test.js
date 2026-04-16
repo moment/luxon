@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import { DateTime } from "../../src/luxon";
 import { withNow } from "../helpers";

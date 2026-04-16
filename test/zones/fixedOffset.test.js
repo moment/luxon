@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { FixedOffsetZone, IANAZone } from "../../src/luxon";
 
 test("FixedOffsetZone.utcInstance returns a singleton", () => {

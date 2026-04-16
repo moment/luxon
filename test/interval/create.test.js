@@ -1,6 +1,6 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { DateTime, Interval, Duration, Settings } from "../../src/luxon";
-import Helpers from "../helpers";
+import * as Helpers from "../helpers";
 
 const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 

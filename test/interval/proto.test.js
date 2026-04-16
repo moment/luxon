@@ -1,4 +1,4 @@
-/* global test expect */
+import { test, expect } from "vitest";
 import { DateTime } from "../../src/luxon";
 
 test("Interval prototype properties should not throw when addressed", () => {

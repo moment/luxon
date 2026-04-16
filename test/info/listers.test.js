@@ -1,8 +1,8 @@
-/* global test expect */
+import { test, expect } from "vitest";
 
 import { Info } from "../../src/luxon";
 
-import Helpers from "../helpers";
+import * as Helpers from "../helpers";
 const withDefaultLocale = Helpers.withDefaultLocale;
 
 //------
