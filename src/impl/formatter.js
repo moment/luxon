@@ -425,9 +425,7 @@ export default class Formatter {
       collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t)),
       durationInfo = {
         isNegativeDuration: collapsed < 0,
-        // this relies on "collapsed" being based on "shiftTo", which builds up the object
-        // in order
-        largestUnit: Object.keys(collapsed.values)[0],
+        largestUnit: collapsed._largestUnit,
       };
     return stringifyTokens(tokens, tokenToString(collapsed, durationInfo));
   }

@@ -123,18 +123,6 @@ const humanizeUnitConversion = {
   quarters: null,
 };
 
-// clone really means "create another instance just like this one, but with these changes"
-function clone(dur, alts, clear = false) {
-  // deep merge for vals
-  const conf = {
-    values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
-    loc: dur.loc.clone(alts.loc),
-    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
-    matrix: alts.matrix || dur.matrix,
-  };
-  return new Duration(conf);
-}
-
 function durationToMillis(matrix, vals) {
   let sum = vals.milliseconds ?? 0;
   for (const unit of reverseUnits.slice(1)) {
@@ -223,6 +211,24 @@ function removeZeroes(vals) {
  * There's are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
  */
 export default class Duration {
+  #values;
+  /**
+   * @type {Locale}
+   */
+  #loc;
+
+  /**
+   * @type {"longterm"|"casual"}
+   */
+  #conversionAccuracy;
+
+  /**
+   * @type {Invalid|null}
+   */
+  #invalid;
+
+  #matrix;
+
   /**
    * @private
    */
@@ -234,27 +240,13 @@ export default class Duration {
       matrix = config.matrix;
     }
 
+    this.#values = config.values;
+    this.#loc = config.loc || Locale.create();
+    this.#conversionAccuracy = accurate ? "longterm" : "casual";
+    this.#invalid = config.invalid || null;
+    this.#matrix = matrix;
     /**
-     * @access private
-     */
-    this.values = config.values;
-    /**
-     * @access private
-     */
-    this.loc = config.loc || Locale.create();
-    /**
-     * @access private
-     */
-    this.conversionAccuracy = accurate ? "longterm" : "casual";
-    /**
-     * @access private
-     */
-    this.invalid = config.invalid || null;
-    /**
-     * @access private
-     */
-    this.matrix = matrix;
-    /**
+     * TODO: Better "cross realm" type checking
      * @access private
      */
     this.isLuxonDuration = true;
@@ -446,7 +438,7 @@ export default class Duration {
    * @type {string}
    */
   get locale() {
-    return this.isValid ? this.loc.locale : null;
+    return this.isValid ? this.#loc.locale : null;
   }
 
   /**
@@ -455,7 +447,16 @@ export default class Duration {
    * @type {string}
    */
   get numberingSystem() {
-    return this.isValid ? this.loc.numberingSystem : null;
+    return this.isValid ? this.#loc.numberingSystem : null;
+  }
+
+  /**
+   * Get the conversion accuracy of this Duration, either "longterm" or "casual".
+   *
+   * @type {"longterm"|"casual"}
+   */
+  get conversionAccuracy() {
+    return this.#conversionAccuracy;
   }
 
   /**
@@ -491,7 +492,7 @@ export default class Duration {
       floor: opts.round !== false && opts.floor !== false,
     };
     return this.isValid
-      ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt)
+      ? Formatter.create(this.#loc, fmtOpts).formatDurationFromString(this, fmt)
       : INVALID;
   }
 
@@ -520,23 +521,23 @@ export default class Duration {
       .map((unit) => {
         const convertUnit = humanizeUnitConversion[unit];
         if (convertUnit === null) return null;
-        let val = this.values[unit];
+        let val = this.#values[unit];
         if (convertUnit) {
-          const val2 = this.values[convertUnit];
+          const val2 = this.#values[convertUnit];
           if (val2) {
-            val = (val ?? 0) + val2 * this.matrix[convertUnit][unit];
+            val = (val ?? 0) + val2 * this.#matrix[convertUnit][unit];
           }
         }
         if (isUndefined(val) || (val === 0 && !showZeros)) {
           return null;
         }
-        return this.loc
+        return this.#loc
           .numberFormatter({ style: "unit", unitDisplay: "long", ...opts, unit: unit.slice(0, -1) })
           .format(val);
       })
       .filter((n) => n);
 
-    return this.loc
+    return this.#loc
       .listFormatter({ type: "conjunction", style: opts.listStyle || "narrow", ...opts })
       .format(l);
   }
@@ -548,7 +549,7 @@ export default class Duration {
    */
   toObject() {
     if (!this.isValid) return {};
-    return { ...this.values };
+    return { ...this.#values };
   }
 
   /**
@@ -639,7 +640,7 @@ export default class Duration {
    */
   [Symbol.for("nodejs.util.inspect.custom")]() {
     if (this.isValid) {
-      return `Duration { values: ${JSON.stringify(this.values)} }`;
+      return `Duration { values: ${JSON.stringify(this.#values)} }`;
     } else {
       return `Duration { Invalid, reason: ${this.invalidReason} }`;
     }
@@ -652,7 +653,7 @@ export default class Duration {
   toMillis() {
     if (!this.isValid) return NaN;
 
-    return durationToMillis(this.matrix, this.values);
+    return durationToMillis(this.#matrix, this.#values);
   }
 
   /**
@@ -675,12 +676,12 @@ export default class Duration {
       result = {};
 
     for (const k of orderedUnits) {
-      if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
+      if (hasOwnProperty(dur.#values, k) || hasOwnProperty(this.#values, k)) {
         result[k] = dur.get(k) + this.get(k);
       }
     }
 
-    return clone(this, { values: result }, true);
+    return this.#clone({ values: result }, true);
   }
 
   /**
@@ -705,10 +706,10 @@ export default class Duration {
   mapUnits(fn) {
     if (!this.isValid) return this;
     const result = {};
-    for (const k of Object.keys(this.values)) {
-      result[k] = asNumber(fn(this.values[k], k));
+    for (const k of Object.keys(this.#values)) {
+      result[k] = asNumber(fn(this.#values[k], k));
     }
-    return clone(this, { values: result }, true);
+    return this.#clone({ values: result }, true);
   }
 
   /**
@@ -733,8 +734,8 @@ export default class Duration {
   set(values) {
     if (!this.isValid) return this;
 
-    const mixed = { ...this.values, ...normalizeObject(values, Duration.normalizeUnit) };
-    return clone(this, { values: mixed });
+    const mixed = { ...this.#values, ...normalizeObject(values, Duration.normalizeUnit) };
+    return this.#clone({ values: mixed });
   }
 
   /**
@@ -743,9 +744,9 @@ export default class Duration {
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy, matrix } = {}) {
-    const loc = this.loc.clone({ locale, numberingSystem });
+    const loc = this.#loc.clone({ locale, numberingSystem });
     const opts = { loc, matrix, conversionAccuracy };
-    return clone(this, opts);
+    return this.#clone(opts);
   }
 
   /**
@@ -778,8 +779,8 @@ export default class Duration {
   normalize() {
     if (!this.isValid) return this;
     const vals = this.toObject();
-    normalizeValues(this.matrix, vals);
-    return clone(this, { values: vals }, true);
+    normalizeValues(this.#matrix, vals);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -790,7 +791,7 @@ export default class Duration {
   rescale() {
     if (!this.isValid) return this;
     const vals = removeZeroes(this.normalize().shiftToAll().toObject());
-    return clone(this, { values: vals }, true);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -820,7 +821,7 @@ export default class Duration {
 
         // anything we haven't boiled down yet should get boiled to this unit
         for (const ak in accumulated) {
-          own += this.matrix[ak][k] * accumulated[ak];
+          own += this.#matrix[ak][k] * accumulated[ak];
           accumulated[ak] = 0;
         }
 
@@ -846,12 +847,12 @@ export default class Duration {
     for (const key in accumulated) {
       if (accumulated[key] !== 0) {
         built[lastUnit] +=
-          key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
+          key === lastUnit ? accumulated[key] : accumulated[key] / this.#matrix[lastUnit][key];
       }
     }
 
-    normalizeValues(this.matrix, built);
-    return clone(this, { values: built }, true);
+    normalizeValues(this.#matrix, built);
+    return this.#clone({ values: built }, true);
   }
 
   /**
@@ -881,10 +882,10 @@ export default class Duration {
   negate() {
     if (!this.isValid) return this;
     const negated = {};
-    for (const k of Object.keys(this.values)) {
-      negated[k] = this.values[k] === 0 ? 0 : -this.values[k];
+    for (const k of Object.keys(this.#values)) {
+      negated[k] = this.#values[k] === 0 ? 0 : -this.#values[k];
     }
-    return clone(this, { values: negated }, true);
+    return this.#clone({ values: negated }, true);
   }
 
   /**
@@ -894,8 +895,8 @@ export default class Duration {
    */
   removeZeros() {
     if (!this.isValid) return this;
-    const vals = removeZeroes(this.values);
-    return clone(this, { values: vals }, true);
+    const vals = removeZeroes(this.#values);
+    return this.#clone({ values: vals }, true);
   }
 
   /**
@@ -903,7 +904,7 @@ export default class Duration {
    * @type {number}
    */
   get years() {
-    return this.isValid ? this.values.years || 0 : NaN;
+    return this.isValid ? this.#values.years || 0 : NaN;
   }
 
   /**
@@ -911,7 +912,7 @@ export default class Duration {
    * @type {number}
    */
   get quarters() {
-    return this.isValid ? this.values.quarters || 0 : NaN;
+    return this.isValid ? this.#values.quarters || 0 : NaN;
   }
 
   /**
@@ -919,7 +920,7 @@ export default class Duration {
    * @type {number}
    */
   get months() {
-    return this.isValid ? this.values.months || 0 : NaN;
+    return this.isValid ? this.#values.months || 0 : NaN;
   }
 
   /**
@@ -927,7 +928,7 @@ export default class Duration {
    * @type {number}
    */
   get weeks() {
-    return this.isValid ? this.values.weeks || 0 : NaN;
+    return this.isValid ? this.#values.weeks || 0 : NaN;
   }
 
   /**
@@ -935,7 +936,7 @@ export default class Duration {
    * @type {number}
    */
   get days() {
-    return this.isValid ? this.values.days || 0 : NaN;
+    return this.isValid ? this.#values.days || 0 : NaN;
   }
 
   /**
@@ -943,7 +944,7 @@ export default class Duration {
    * @type {number}
    */
   get hours() {
-    return this.isValid ? this.values.hours || 0 : NaN;
+    return this.isValid ? this.#values.hours || 0 : NaN;
   }
 
   /**
@@ -951,7 +952,7 @@ export default class Duration {
    * @type {number}
    */
   get minutes() {
-    return this.isValid ? this.values.minutes || 0 : NaN;
+    return this.isValid ? this.#values.minutes || 0 : NaN;
   }
 
   /**
@@ -959,7 +960,7 @@ export default class Duration {
    * @return {number}
    */
   get seconds() {
-    return this.isValid ? this.values.seconds || 0 : NaN;
+    return this.isValid ? this.#values.seconds || 0 : NaN;
   }
 
   /**
@@ -967,7 +968,7 @@ export default class Duration {
    * @return {number}
    */
   get milliseconds() {
-    return this.isValid ? this.values.milliseconds || 0 : NaN;
+    return this.isValid ? this.#values.milliseconds || 0 : NaN;
   }
 
   /**
@@ -976,7 +977,7 @@ export default class Duration {
    * @return {boolean}
    */
   get isValid() {
-    return this.invalid === null;
+    return this.#invalid === null;
   }
 
   /**
@@ -984,7 +985,7 @@ export default class Duration {
    * @return {string}
    */
   get invalidReason() {
-    return this.invalid ? this.invalid.reason : null;
+    return this.#invalid ? this.#invalid.reason : null;
   }
 
   /**
@@ -992,7 +993,7 @@ export default class Duration {
    * @type {string}
    */
   get invalidExplanation() {
-    return this.invalid ? this.invalid.explanation : null;
+    return this.#invalid ? this.#invalid.explanation : null;
   }
 
   /**
@@ -1006,7 +1007,7 @@ export default class Duration {
       return false;
     }
 
-    if (!this.loc.equals(other.loc)) {
+    if (!this.#loc.equals(other.#loc)) {
       return false;
     }
 
@@ -1017,10 +1018,34 @@ export default class Duration {
     }
 
     for (const u of orderedUnits) {
-      if (!eq(this.values[u], other.values[u])) {
+      if (!eq(this.#values[u], other.#values[u])) {
         return false;
       }
     }
     return true;
+  }
+
+  #clone(alts, clear = false) {
+    // deep merge for vals
+    const conf = {
+      values: clear ? alts.values : { ...this.#values, ...(alts.values || {}) },
+      loc: this.#loc.clone(alts.loc),
+      conversionAccuracy: alts.conversionAccuracy || this.#conversionAccuracy,
+      matrix: alts.matrix || this.#matrix,
+    };
+    return new Duration(conf);
+  }
+
+  /**
+   * Largest unit of this Duration.
+   * @return {null|string}
+   * @internal
+   */
+  get _largestUnit() {
+    if (!this.isValid) return null;
+    for (const unit of orderedUnits) {
+      if (this.#values[unit]) return unit;
+    }
+    return null;
   }
 }

@@ -63,7 +63,7 @@ export default class Interval {
      */
     this.#invalid = config.invalid || null;
     /**
-     * // TODO: Better "cross realm" type checking
+     * TODO: Better "cross realm" type checking
      * @access private
      */
     this.isLuxonInterval = true;
