@@ -1368,30 +1368,34 @@ test("fromFormat accepts consistent year alongside x", () => {
   expect(dt.toUTC().year).toBe(2026);
 });
 
-// ConflictingSpecificationError when X/x tokens are inconsistent with other tokens
+// inconsistent tokens alongside X/x produce an invalid DateTime (not a throw)
 
-test("fromFormat throws ConflictingSpecificationError when X year is inconsistent", () => {
+test("fromFormat returns invalid DateTime when X year is inconsistent", () => {
   // epoch 1769758221 = 2026-01-30T07:30:21Z, year=2025 is wrong
-  expect(() => DateTime.fromFormat("2025 1769758221", "yyyy X")).toThrow(
-    ConflictingSpecificationError
-  );
+  const dt = DateTime.fromFormat("2025 1769758221", "yyyy X");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched year");
 });
 
-test("fromFormat throws ConflictingSpecificationError when X month is inconsistent", () => {
+test("fromFormat returns invalid DateTime when X month is inconsistent", () => {
   // epoch 1769758221 = 2026-01-30T07:30:21Z, month=02 (February) is wrong
-  expect(() => DateTime.fromFormat("02 1769758221", "MM X")).toThrow(ConflictingSpecificationError);
+  const dt = DateTime.fromFormat("02 1769758221", "MM X");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched month");
 });
 
-test("fromFormat throws ConflictingSpecificationError when X hour is inconsistent", () => {
+test("fromFormat returns invalid DateTime when X hour is inconsistent", () => {
   // epoch 1769758221 = 2026-01-30T07:30:21Z, hour=08 is wrong
-  expect(() => DateTime.fromFormat("08 1769758221", "HH X")).toThrow(ConflictingSpecificationError);
+  const dt = DateTime.fromFormat("08 1769758221", "HH X");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched hour");
 });
 
-test("fromFormat throws ConflictingSpecificationError when x year is inconsistent", () => {
+test("fromFormat returns invalid DateTime when x year is inconsistent", () => {
   // epoch 1769758221000 = 2026-01-30T07:30:21Z, year=2025 is wrong
-  expect(() => DateTime.fromFormat("2025 1769758221000", "yyyy x")).toThrow(
-    ConflictingSpecificationError
-  );
+  const dt = DateTime.fromFormat("2025 1769758221000", "yyyy x");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched year");
 });
 
 // X (unix seconds) + S/SSS/u: milliseconds are additive precision, not redundant
@@ -1419,9 +1423,25 @@ test("fromFormat accepts consistent SSS alongside x", () => {
   expect(dt.toUTC().millisecond).toBe(500);
 });
 
-test("fromFormat throws ConflictingSpecificationError when x millisecond is inconsistent with SSS", () => {
+test("fromFormat returns invalid DateTime when x millisecond is inconsistent with SSS", () => {
   // epoch 1769758221500 has millisecond = 500, SSS=501 is wrong
-  expect(() => DateTime.fromFormat("1769758221500 501", "x SSS")).toThrow(
-    ConflictingSpecificationError
-  );
+  const dt = DateTime.fromFormat("1769758221500 501", "x SSS");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched millisecond");
+});
+
+// X and x together
+
+test("fromFormat accepts X and x when they are consistent", () => {
+  // X=1769758221 seconds = 1769758221000 ms, x=1769758221000 ms — same point in time
+  const dt = DateTime.fromFormat("1769758221 1769758221000", "X x");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat returns invalid DateTime when X and x are inconsistent", () => {
+  // X=1769758221 → 1769758221000ms, x=1769758222000 → different point in time
+  const dt = DateTime.fromFormat("1769758221 1769758222000", "X x");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched unix timestamp");
 });

@@ -5,6 +5,7 @@ import IANAZone from "../zones/IANAZone.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";
 import { ConflictingSpecificationError } from "../errors.js";
+import Invalid from "./invalid.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
@@ -470,6 +471,20 @@ export class TokenParser {
           "Can't include meridiem when specifying 24-hour format"
         );
       }
+      if (hasOwnProperty(matches, "X") && hasOwnProperty(matches, "x")) {
+        if (matches.X * 1000 !== matches.x) {
+          return {
+            input,
+            tokens: this.tokens,
+            invalidReason: new Invalid(
+              "mismatched unix timestamp",
+              `X=${matches.X} (${matches.X * 1000}ms) and x=${
+                matches.x
+              } specify different points in time`
+            ),
+          };
+        }
+      }
       if (knownEpochMs !== undefined && result && Object.keys(result).length > 0) {
         // X is unix seconds with no sub-second precision; S/SSS/u add the missing ms part
         if (hasOwnProperty(matches, "X") && result.millisecond !== undefined) {
@@ -481,9 +496,14 @@ export class TokenParser {
           const epochDateTime = DateTime.fromMillis(knownEpochMs, { zone: zone ?? "UTC" });
           for (const [key, value] of Object.entries(result)) {
             if (epochDateTime[key] !== value) {
-              throw new ConflictingSpecificationError(
-                `Can't specify ${key} as ${value} when the unix timestamp implies ${epochDateTime[key]}`
-              );
+              return {
+                input,
+                tokens: this.tokens,
+                invalidReason: new Invalid(
+                  `mismatched ${key}`,
+                  `you can't specify ${key}=${value} when the unix timestamp implies ${key}=${epochDateTime[key]}`
+                ),
+              };
             }
           }
         }
