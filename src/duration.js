@@ -1,4 +1,9 @@
-import { InvalidArgumentError, InvalidDurationError, InvalidUnitError } from "./errors.js";
+import {
+  InvalidArgumentError,
+  InvalidDurationError,
+  InvalidUnitError,
+  ParseError,
+} from "./errors.js";
 import Formatter from "./impl/formatter.js";
 import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.js";
@@ -320,7 +325,7 @@ export default class Duration {
   /**
    * Create a Duration from an ISO 8601 duration string.
    * @param {string} text - text to parse
-   * @param {Object} opts - options for parsing
+   * @param {Object|undefined} [opts] - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
@@ -336,14 +341,14 @@ export default class Duration {
     if (parsed) {
       return Duration.fromObject(parsed, opts);
     } else {
-      return Duration.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
+      throw new ParseError("Duration", "ISO 8601 duration", text);
     }
   }
 
   /**
    * Create a Duration from an ISO 8601 time string.
    * @param {string} text - text to parse
-   * @param {Object} opts - options for parsing
+   * @param {Object|undefined} [opts] - options for parsing
    * @param {string} [opts.locale='en-US'] - the locale to use
    * @param {string} opts.numberingSystem - the numbering system to use
    * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
@@ -361,7 +366,7 @@ export default class Duration {
     if (parsed) {
       return Duration.fromObject(parsed, opts);
     } else {
-      return Duration.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
+      throw new ParseError("Duration", "ISO 8601 time", text);
     }
   }
 

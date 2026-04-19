@@ -1,7 +1,7 @@
 import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.js";
 import Duration from "./duration.js";
 import Settings from "./settings.js";
-import { InvalidArgumentError, InvalidDurationError, InvalidIntervalError } from "./errors.js";
+import { InvalidArgumentError, InvalidIntervalError, ParseError } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.js";
 import * as Formats from "./impl/formats.js";
@@ -189,7 +189,7 @@ export default class Interval {
         try {
           dur = Duration.fromISO(e, opts);
         } catch (e) {
-          if (!(e instanceof InvalidDurationError)) {
+          if (!(e instanceof ParseError)) {
             throw e;
           }
         }
@@ -201,7 +201,7 @@ export default class Interval {
         try {
           dur = Duration.fromISO(s, opts);
         } catch (e) {
-          if (!(e instanceof InvalidDurationError)) {
+          if (!(e instanceof ParseError)) {
             throw e;
           }
         }

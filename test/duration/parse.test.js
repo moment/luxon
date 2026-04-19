@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 
 import { Duration } from "../../src/luxon";
-import { InvalidDurationError } from "../../src/errors";
+import { ParseError } from "../../src/errors";
 
 //------
 // #fromISO()
@@ -84,19 +84,12 @@ test("Duration.fromISO can parse fractions", () => {
   });
 });
 
-const rejects = (s) => {
-  expect(() => Duration.fromISO(s)).toThrow(InvalidDurationError);
-};
-
-test("Duration.fromISO rejects junk", () => {
-  rejects("poop");
-  rejects("PTglorb");
-  rejects("P5Y34S");
-  rejects("5Y");
-  rejects("P34S");
-  rejects("P34K");
-  rejects("P5D2W");
-});
+test.each([["poop"], ["PTglorb"], ["P5Y34S"], ["5Y"], ["P34S"], ["P34K"], ["P5D2W"]])(
+  "Duration.fromISO rejects %s",
+  (s) => {
+    expect(() => Duration.fromISO(s)).toThrow(new ParseError("Duration", "ISO 8601 duration", s));
+  }
+);
 
 //------
 // #fromISOTime()
@@ -121,12 +114,6 @@ test("Duration.fromISOTime can parse a variety of basic ISO time formats", () =>
   checkTime("T1122", { hours: 11, minutes: 22, seconds: 0 });
 });
 
-const rejectsTime = (s) => {
-  expect(() => Duration.fromISOTime(s)).toThrow(InvalidDurationError);
-};
-
-test("Duration.fromISOTime rejects junk", () => {
-  rejectsTime("poop");
-  rejectsTime("Tglorb");
-  rejectsTime("-00:00");
+test.each([["poop"], ["Tglorb"], ["-00:00"]])("Duration.fromISOTime rejects %s", (s) => {
+  expect(() => Duration.fromISOTime(s)).toThrow(new ParseError("Duration", "ISO 8601 time", s));
 });

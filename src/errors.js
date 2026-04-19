@@ -15,6 +15,27 @@ export class InvalidDateTimeError extends LuxonError {
 }
 
 /**
+ * Thrown by parsing methods like DateTime.fromISO or DateTime.fromFormat when the input string
+ * cannot be parsed in the expected format.
+ */
+export class ParseError extends RangeError {
+  /**
+   * @param target {string} - The target type to be parsed, e.g., Duration or DateTime
+   * @param format {string} - The format being parsed, e.g., "ISO 8601" or "yyyy-MM-dd"
+   * @param input {string} - The input string being parsed
+   * @param [reason] {string|undefined} - Additional reason for the parsing failure
+   */
+  constructor(target, format, input, reason) {
+    super(`Failed to parse \`${input}\` as ${format} for ${target}`);
+    this.name = "ParseError";
+    this.target = target;
+    this.format = format;
+    this.input = input;
+    this.reason = reason;
+  }
+}
+
+/**
  * @private
  */
 export class InvalidIntervalError extends LuxonError {
