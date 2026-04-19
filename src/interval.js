@@ -1,7 +1,7 @@
 import DateTime, { friendlyDateTime, parseDataToDateTime } from "./datetime.js";
 import Duration from "./duration.js";
 import Settings from "./settings.js";
-import { InvalidArgumentError, InvalidIntervalError } from "./errors.js";
+import { InvalidArgumentError, InvalidDurationError, InvalidIntervalError } from "./errors.js";
 import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.js";
 import * as Formats from "./impl/formats.js";
@@ -185,13 +185,27 @@ export default class Interval {
       }
 
       if (startIsValid) {
-        const dur = Duration.fromISO(e, opts);
-        if (dur.isValid) {
+        let dur;
+        try {
+          dur = Duration.fromISO(e, opts);
+        } catch (e) {
+          if (!(e instanceof InvalidDurationError)) {
+            throw e;
+          }
+        }
+        if (dur !== undefined) {
           return Interval.after(start, dur);
         }
       } else if (endIsValid) {
-        const dur = Duration.fromISO(s, opts);
-        if (dur.isValid) {
+        let dur;
+        try {
+          dur = Duration.fromISO(s, opts);
+        } catch (e) {
+          if (!(e instanceof InvalidDurationError)) {
+            throw e;
+          }
+        }
+        if (dur !== undefined) {
           return Interval.before(end, dur);
         }
       }
@@ -382,7 +396,7 @@ export default class Interval {
   splitBy(duration) {
     const dur = Duration.fromDurationLike(duration);
 
-    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
+    if (!this.isValid || dur.as("milliseconds") === 0) {
       return [];
     }
 

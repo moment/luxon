@@ -3,6 +3,7 @@ import { test, expect } from "vitest";
 import { DateTime } from "../../src/luxon";
 
 import * as Helpers from "../helpers";
+import { InvalidDurationError } from "../../src/errors";
 
 //------
 // diff
@@ -258,10 +259,10 @@ test("DateTime#diff passes through options", () => {
   expect(dur2.conversionAccuracy).toBe("longterm");
 });
 
-test("DateTime#diff returns invalid Durations if the DateTimes are invalid", () => {
+test("DateTime#diff throws if the DateTimes are invalid", () => {
   const i = DateTime.invalid("because");
-  expect(i.diff(DateTime.now()).isValid).toBe(false);
-  expect(DateTime.now().diff(i).isValid).toBe(false);
+  expect(() => i.diff(DateTime.now())).toThrow(InvalidDurationError);
+  expect(() => DateTime.now().diff(i)).toThrow(InvalidDurationError);
 });
 
 test("DateTime#diff results in a duration with the same locale", () => {
@@ -350,7 +351,7 @@ Helpers.withNow("DateTime#diffNow passes through options", DateTime.local(2017, 
   expect(dur.conversionAccuracy).toBe("longterm");
 });
 
-test("DateTime#diffNow returns invalid Durations if the DateTime is invalid", () => {
+test("DateTime#diffNow throws if the DateTime is invalid", () => {
   const i = DateTime.invalid("because");
-  expect(i.diffNow().isValid).toBe(false);
+  expect(() => i.diffNow()).toThrow(InvalidDurationError);
 });

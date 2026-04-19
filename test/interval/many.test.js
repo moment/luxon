@@ -343,11 +343,6 @@ test("Interval#splitBy returns [] for invalid intervals", () => {
   expect(split).toEqual([]);
 });
 
-test("Interval#split by returns [] for invalid durations", () => {
-  const split = todayFrom(8, 3).splitBy(Duration.invalid("because"));
-  expect(split).toEqual([]);
-});
-
 test("Interval#split by returns [] for durations of length 0", () => {
   const split = todayFrom(8, 3).splitBy(Duration.fromObject({}));
   expect(split).toEqual([]);

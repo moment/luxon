@@ -137,6 +137,8 @@ const badInputs = [
   "hello",
   "foo/bar",
   "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M", // valid ISO 8601 interval with a repeat, but not supported here
+  "2008-03-01T13:00:00Z/foo", // Valid start, but invalid end
+  "foo/2008-03-01T13:00:00Z", // Valid end, but invalid start
 ];
 
 test.each(badInputs)("Interval.fromISO will return invalid for [%s]", (s) => {

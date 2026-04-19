@@ -1,6 +1,7 @@
 import { test, expect } from "vitest";
 
 import { Duration } from "../../src/luxon";
+import { InvalidDurationError } from "../../src/errors";
 
 //------
 // #fromISO()
@@ -84,7 +85,7 @@ test("Duration.fromISO can parse fractions", () => {
 });
 
 const rejects = (s) => {
-  expect(Duration.fromISO(s).isValid).toBe(false);
+  expect(() => Duration.fromISO(s)).toThrow(InvalidDurationError);
 };
 
 test("Duration.fromISO rejects junk", () => {
@@ -121,7 +122,7 @@ test("Duration.fromISOTime can parse a variety of basic ISO time formats", () =>
 });
 
 const rejectsTime = (s) => {
-  expect(Duration.fromISOTime(s).isValid).toBe(false);
+  expect(() => Duration.fromISOTime(s)).toThrow(InvalidDurationError);
 };
 
 test("Duration.fromISOTime rejects junk", () => {

@@ -66,12 +66,6 @@ test("Duration#plus adds number as milliseconds", () => {
   expect(result.milliseconds).toBe(333);
 });
 
-test("Duration#plus maintains invalidity", () => {
-  const dur = Duration.invalid("because").plus({ minutes: 5 });
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
-});
-
 test("Duration#plus results in the superset of units", () => {
   let dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({ seconds: 3, milliseconds: 0 });
   expect(dur.toObject()).toEqual({ hours: 1, minutes: 0, seconds: 3, milliseconds: 0 });
@@ -118,12 +112,6 @@ test("Duration#minus subtracts single values", () => {
   expect(result.seconds).toBe(2);
 });
 
-test("Duration#minus maintains invalidity", () => {
-  const dur = Duration.invalid("because").minus({ minutes: 5 });
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
-});
-
 //------
 // #negate()
 //------
@@ -134,13 +122,6 @@ test("Duration#negate flips all the signs", () => {
   expect(result.hours).toBe(-4);
   expect(result.minutes).toBe(12);
   expect(result.seconds).toBe(-2);
-});
-
-test("Duration#negate preserves invalidity", () => {
-  const dur = Duration.invalid("because"),
-    result = dur.negate();
-  expect(result.isValid).toBe(false);
-  expect(result.invalidReason).toBe("because");
 });
 
 test("Duration#negate doesn't mutate", () => {
@@ -186,12 +167,6 @@ test("Duration#units can take the unit into account", () => {
   expect(result.minutes).toBe(10);
   expect(result.seconds).toBe(-15);
   expect(result.milliseconds).toBe(-8);
-});
-
-test("Duration#mapUnits maintains invalidity", () => {
-  const dur = Duration.invalid("because").mapUnits((x) => x * 5);
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
 });
 
 test("Duration#mapUnits requires that fn return a number", () => {

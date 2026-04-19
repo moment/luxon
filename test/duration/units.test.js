@@ -35,34 +35,24 @@ test("Duration#shiftTo throws on invalid units", () => {
 
 test("Duration#shiftTo tacks decimals onto the end", () => {
   const dur = Duration.fromObject({ minutes: 73 }).shiftTo("hours");
-  expect(dur.isValid).toBe(true);
   expect(dur.hours).toBeCloseTo(1.2167, 4);
 });
 
 test("Duration#shiftTo deconstructs decimal inputs", () => {
   const dur = Duration.fromObject({ hours: 2.3 }).shiftTo("hours", "minutes");
-  expect(dur.isValid).toBe(true);
   expect(dur.hours).toBe(2);
   expect(dur.minutes).toBeCloseTo(18, 8);
 });
 
 test("Duration#shiftTo deconstructs in cascade and tacks decimal onto the end", () => {
   const dur = Duration.fromObject({ hours: 1.17 }).shiftTo("hours", "minutes", "seconds");
-  expect(dur.isValid).toBe(true);
   expect(dur.hours).toBe(1);
   expect(dur.minutes).toBe(10);
   expect(dur.seconds).toBeCloseTo(12, 8);
 });
 
-test("Duration#shiftTo maintains invalidity", () => {
-  const dur = Duration.invalid("because").shiftTo("years");
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
-});
-
 test("Duration#shiftTo without any units no-ops", () => {
   const dur = Duration.fromObject({ years: 3 }).shiftTo();
-  expect(dur.isValid).toBe(true);
   expect(dur.toObject()).toEqual({ years: 3 });
 });
 
@@ -149,12 +139,6 @@ test("Duration#shiftToAll does not produce unnecessary fractions in higher order
   expect(toAll.milliseconds).toBeCloseTo(0, 5);
 });
 
-test("Duration#shiftToAll maintains invalidity", () => {
-  const dur = Duration.invalid("because").shiftToAll();
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
-});
-
 //------
 // #normalize()
 //-------
@@ -234,12 +218,6 @@ test("Duration#normalize handles the full grid partially negative durations", ()
   sets.forEach(([from, to]) => {
     expect(Duration.fromObject(from).normalize().toObject()).toEqual(to);
   });
-});
-
-test("Duration#normalize maintains invalidity", () => {
-  const dur = Duration.invalid("because").normalize();
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
 });
 
 test("Duration#normalize can convert all unit pairs", () => {
@@ -322,12 +300,6 @@ test("Duration#rescale normalizes, shifts to all units and remove units with a v
   });
 });
 
-test("Duration#rescale maintains invalidity", () => {
-  const dur = Duration.invalid("because").rescale();
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
-});
-
 //------
 // #as()
 //-------
@@ -335,10 +307,6 @@ test("Duration#rescale maintains invalidity", () => {
 test("Duration#as shifts to one unit and returns it", () => {
   const dur = Duration.fromMillis(5760000);
   expect(dur.as("hours")).toBe(1.6);
-});
-
-test("Duration#as returns null for invalid durations", () => {
-  expect(Duration.invalid("because").as("hours")).toBeFalsy();
 });
 
 //------
@@ -402,10 +370,4 @@ test("Duration#removeZeros removes nothing if no value is zero", () => {
     milliseconds: 7,
   };
   expect(Duration.fromObject(dur).removeZeros().toObject()).toEqual(dur);
-});
-
-test("Duration#removeZeros maintains invalidity", () => {
-  const dur = Duration.invalid("because").removeZeros();
-  expect(dur.isValid).toBe(false);
-  expect(dur.invalidReason).toBe("because");
 });

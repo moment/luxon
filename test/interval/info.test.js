@@ -2,6 +2,7 @@ import { test, expect } from "vitest";
 import { DateTime, Interval } from "../../src/luxon";
 
 import * as Helpers from "../helpers";
+import { InvalidDurationError } from "../../src/errors";
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e));
 
@@ -99,10 +100,9 @@ test("Interval#toDuration accepts duration options", () => {
   expect(dur.conversionAccuracy).toBe("longterm");
 });
 
-test("Interval#toDuration returns an invalid duration for invalid intervals", () => {
-  const int = Interval.invalid("because"),
-    dur = int.toDuration(["hours"]);
-  expect(dur.isValid).toBeFalsy();
+test("Interval#toDuration throws InvalidDurationError for invalid intervals", () => {
+  const int = Interval.invalid("because");
+  expect(() => int.toDuration(["hours"])).toThrow(InvalidDurationError);
 });
 
 //------

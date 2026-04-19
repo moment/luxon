@@ -1,6 +1,7 @@
 import { test, expect } from "vitest";
 
 import { DateTime, Settings } from "../../src/luxon";
+import { InvalidDurationError } from "../../src/errors";
 
 const organic1 = DateTime.utc(2014, 13, 33),
   // not an actual Wednesday
@@ -66,9 +67,9 @@ test("Invalid DateTimes return invalid Dates", () => {
   expect(organic1.toJSDate().valueOf()).toBe(NaN);
 });
 
-test("Diffing invalid DateTimes creates invalid Durations", () => {
-  expect(organic1.diff(DateTime.now()).isValid).toBe(false);
-  expect(DateTime.now().diff(organic1).isValid).toBe(false);
+test("Diffing invalid DateTimes throws InvalidDurationError", () => {
+  expect(() => organic1.diff(DateTime.now())).toThrow(InvalidDurationError);
+  expect(() => DateTime.now().diff(organic1)).toThrow(InvalidDurationError);
 });
 
 test("throwOnInvalid throws", () => {
