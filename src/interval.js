@@ -614,7 +614,7 @@ export default class Interval {
    */
   toLocaleString(formatOpts = Formats.DATE_SHORT, opts = {}) {
     return this.isValid
-      ? Formatter.create(this.#s.loc.clone(opts), formatOpts).formatInterval(this)
+      ? Formatter.create(this.#s._locale.clone(opts), formatOpts).formatInterval(this)
       : INVALID;
   }
 

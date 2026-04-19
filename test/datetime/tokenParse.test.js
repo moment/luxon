@@ -21,8 +21,7 @@ test("DateTime.fromFormat() parses basic times", () => {
 
 test("DateTime.fromFormat() yields Invalid reason 'unparseable' for incompatible formats", () => {
   const i = DateTime.fromFormat("Mar 3, 2020", "MMM dd, yyyy");
-  expect(i.invalid).not.toBeNull;
-  expect(i.invalid.reason).toEqual("unparsable");
+  expect(i.invalidReason).toEqual("unparsable");
 });
 
 test("DateTime.fromFormat() parses with variable-length input", () => {
