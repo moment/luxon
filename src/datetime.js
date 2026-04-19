@@ -50,6 +50,7 @@ import {
   InvalidDateTimeError,
 } from "./errors.js";
 import Invalid from "./impl/invalid.js";
+import { LUXON_TYPE } from "./impl/crossRealm.js";
 
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
@@ -361,6 +362,8 @@ let zoneOffsetTs;
  */
 const zoneOffsetGuessCache = new Map();
 
+const DATETIME_TYPE = "datetime";
+
 /**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
@@ -456,11 +459,6 @@ export default class DateTime {
     this.#c = c;
     this.#wasHole = config.wasHole || false;
     this.#o = o;
-    /**
-     * TODO: Better "cross realm" type checking
-     * @access private
-     */
-    this.isLuxonDateTime = true;
   }
 
   // CONSTRUCT
@@ -909,10 +907,10 @@ export default class DateTime {
   /**
    * Check if an object is an instance of DateTime. Works across context boundaries
    * @param {object} o
-   * @return {boolean}
+   * @return {o is DateTime}
    */
   static isDateTime(o) {
-    return (o && o.isLuxonDateTime) || false;
+    return o?.[LUXON_TYPE] === DATETIME_TYPE;
   }
 
   /**
@@ -941,6 +939,10 @@ export default class DateTime {
   static resetCache() {
     zoneOffsetTs = undefined;
     zoneOffsetGuessCache.clear();
+  }
+
+  get [LUXON_TYPE]() {
+    return DATETIME_TYPE;
   }
 
   // INFO

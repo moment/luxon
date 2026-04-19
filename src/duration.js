@@ -17,6 +17,7 @@ import {
   roundTo,
 } from "./impl/util.js";
 import DateTime from "./datetime.js";
+import { LUXON_TYPE } from "./impl/crossRealm.js";
 
 // unit conversion constants
 export const lowOrderMatrix = {
@@ -199,6 +200,8 @@ function removeZeroes(vals) {
   return newVals;
 }
 
+const DURATION_TYPE = "duration";
+
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
  *
@@ -241,11 +244,6 @@ export default class Duration {
     this.#loc = config.loc || Locale.create();
     this.#conversionAccuracy = accurate ? "longterm" : "casual";
     this.#matrix = matrix;
-    /**
-     * TODO: Better "cross realm" type checking
-     * @access private
-     */
-    this.isLuxonDuration = true;
   }
 
   /**
@@ -421,7 +419,11 @@ export default class Duration {
    * @return {boolean}
    */
   static isDuration(o) {
-    return (o && o.isLuxonDuration) || false;
+    return o?.[LUXON_TYPE] === DURATION_TYPE;
+  }
+
+  get [LUXON_TYPE]() {
+    return DURATION_TYPE;
   }
 
   /**

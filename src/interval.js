@@ -6,6 +6,7 @@ import Invalid from "./impl/invalid.js";
 import Formatter from "./impl/formatter.js";
 import * as Formats from "./impl/formats.js";
 import { parseISOIntervalEnd } from "./impl/regexParser.js";
+import { LUXON_TYPE } from "./impl/crossRealm.js";
 
 const INVALID = "Invalid Interval";
 
@@ -24,6 +25,8 @@ function validateStartEnd(start, end) {
     return null;
   }
 }
+
+const TYPE_INTERVAL = "interval";
 
 /**
  * An Interval object represents a half-open interval of time, where each endpoint is a {@link DateTime}. Conceptually, it's a container for those two endpoints, accompanied by methods for creating, parsing, interrogating, comparing, transforming, and formatting them.
@@ -62,11 +65,6 @@ export default class Interval {
      * @access private
      */
     this.#invalid = config.invalid || null;
-    /**
-     * TODO: Better "cross realm" type checking
-     * @access private
-     */
-    this.isLuxonInterval = true;
   }
 
   /**
@@ -216,10 +214,14 @@ export default class Interval {
   /**
    * Check if an object is an Interval. Works across context boundaries
    * @param {object} o
-   * @return {boolean}
+   * @return {o is Interval}
    */
   static isInterval(o) {
-    return (o && o.isLuxonInterval) || false;
+    return o?.[LUXON_TYPE] === TYPE_INTERVAL;
+  }
+
+  get [LUXON_TYPE]() {
+    return TYPE_INTERVAL;
   }
 
   /**
