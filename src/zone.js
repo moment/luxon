@@ -1,9 +1,25 @@
 import { ZoneIsAbstractError } from "./errors.js";
+import { LUXON_TYPE } from "./impl/crossRealm.js";
+
+const TYPE_ZONE = "zone";
 
 /**
  * @interface
  */
 export default class Zone {
+  /**
+   * Check if an object is an instance of Zone. Works across context boundaries
+   * @param {object} o
+   * @return {o is Zone}
+   */
+  static isZone(o) {
+    return o?.[LUXON_TYPE] === TYPE_ZONE;
+  }
+
+  get [LUXON_TYPE]() {
+    return TYPE_ZONE;
+  }
+
   /**
    * The type of zone
    * @abstract
