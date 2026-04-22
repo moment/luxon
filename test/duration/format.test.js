@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { Duration } from "../../src/luxon";
+import { Duration, DateTime } from "../../src/luxon";
 
 const dur = () =>
   Duration.fromObject({
@@ -19,20 +19,6 @@ const dur = () =>
 
 test("Duration#toISO fills out every field", () => {
   expect(dur().toISO()).toBe("P1Y2M1W3DT4H5M6.007S");
-});
-
-test("Duration#toISO fills out every field with fractional", () => {
-  const dur = Duration.fromObject({
-    years: 1.1,
-    months: 2.2,
-    weeks: 1.1,
-    days: 3.3,
-    hours: 4.4,
-    minutes: 5.5,
-    seconds: 6.6,
-    milliseconds: 7,
-  });
-  expect(dur.toISO()).toBe("P1.1Y2.2M1.1W3.3DT4.4H5.5M6.607S");
 });
 
 test("Duration#toISO creates a minimal string", () => {
@@ -125,7 +111,41 @@ test("Duration#toISOTime is not influenced by the locale", () => {
 
 test("Duration#toMillis returns the value in milliseconds", () => {
   expect(Duration.fromMillis(1000).toMillis()).toBe(1000);
-  expect(dur().valueOf()).toBe(dur().toMillis());
+});
+
+test("Duration#toMillis returns the total value in milliseconds", () => {
+  expect(Duration.fromObject({ hours: 2, seconds: 2 }).toMillis()).toBe(
+    2 * 60 * 60 * 1000 + 2 * 1000
+  );
+});
+
+test("Duration#toMillis accepts a date reference", () => {
+  const date = DateTime.utc(2024, 1, 1);
+  expect(Duration.fromObject({ days: 2 }).toMillis({ after: date })).toBe(2 * 24 * 60 * 60 * 1000);
+});
+
+test("Duration#toMillis handles date reference DST", () => {
+  const date = DateTime.local(2026, 3, 8);
+  expect(Duration.fromObject({ days: 2 }).toMillis({ after: date })).toBe(
+    (24 + 23) * 60 * 60 * 1000
+  );
+});
+
+test("Duration#toMillis throws if a date reference is required", () => {
+  expect(() => Duration.fromObject({ days: 2 }).toMillis()).toThrow();
+});
+
+//------
+// #valueOf()
+//------
+test("Duration#valueOf returns the value in milliseconds", () => {
+  expect(Duration.fromMillis(1000).valueOf()).toBe(1000);
+});
+
+test("Duration#valueOf returns the total value in milliseconds", () => {
+  expect(Duration.fromObject({ hours: 2, seconds: 2 }).valueOf()).toBe(
+    2 * 60 * 60 * 1000 + 2 * 1000
+  );
 });
 
 //------
@@ -149,110 +169,133 @@ test("Duration#toString returns the ISO representation", () => {
 //------
 
 test("Duration#toFormat('S') returns milliseconds", () => {
-  expect(dur().toFormat("S")).toBe("37598706007");
+  const dur = Duration.fromObject({
+    hours: 1,
+    minutes: 2,
+    seconds: 3,
+    milliseconds: 4,
+  });
+  expect(dur.toFormat("S")).toBe("3723004");
+});
 
-  const lil = Duration.fromMillis(5);
-  expect(lil.toFormat("S")).toBe("5");
-  expect(lil.toFormat("SS")).toBe("05");
-  expect(lil.toFormat("SSSSS")).toBe("00005");
+test("Duration#toFormat pads milliseconds correctly", () => {
+  const dur = Duration.fromMillis(5);
+  expect(dur.toFormat("S")).toBe("5");
+  expect(dur.toFormat("SS")).toBe("05");
+  expect(dur.toFormat("SSSSS")).toBe("00005");
 });
 
 test("Duration#toFormat('s') returns seconds", () => {
-  expect(dur().toFormat("s")).toBe("37598706");
-  expect(dur().toFormat("s", { floor: false })).toBe("37598706.007");
-  expect(dur().toFormat("s.SSS")).toBe("37598706.007");
+  const dur = Duration.fromObject({
+    hours: 1,
+    minutes: 2,
+    seconds: 3,
+  });
+  expect(dur.toFormat("s")).toBe("3723");
+});
 
-  const lil = Duration.fromObject({ seconds: 6 });
-  expect(lil.toFormat("s")).toBe("6");
-  expect(lil.toFormat("ss")).toBe("06");
-  expect(lil.toFormat("sss")).toBe("006");
-  expect(lil.toFormat("ssss")).toBe("0006");
+test("Duration#toFormat pads seconds correctly", () => {
+  const dur = Duration.fromObject({ seconds: 6 });
+  expect(dur.toFormat("s")).toBe("6");
+  expect(dur.toFormat("ss")).toBe("06");
+  expect(dur.toFormat("sss")).toBe("006");
+  expect(dur.toFormat("ssss")).toBe("0006");
 });
 
 test("Duration#toFormat('m') returns minutes", () => {
-  expect(dur().toFormat("m")).toBe("626645");
-  expect(dur().toFormat("m", { floor: false })).toBe("626645.1");
-  expect(dur().toFormat("m:ss")).toBe("626645:06");
-  expect(dur().toFormat("m:ss.SSS")).toBe("626645:06.007");
+  const dur = Duration.fromObject({
+    hours: 1,
+    minutes: 2,
+  });
+  expect(dur.toFormat("m")).toBe("62");
+});
 
-  const lil = Duration.fromObject({ minutes: 6 });
-  expect(lil.toFormat("m")).toBe("6");
-  expect(lil.toFormat("mm")).toBe("06");
-  expect(lil.toFormat("mmm")).toBe("006");
-  expect(lil.toFormat("mmmm")).toBe("0006");
+test("Duration#toFormat pads minutes correctly", () => {
+  const dur = Duration.fromObject({ minutes: 6 });
+  expect(dur.toFormat("m")).toBe("6");
+  expect(dur.toFormat("mm")).toBe("06");
+  expect(dur.toFormat("mmm")).toBe("006");
+  expect(dur.toFormat("mmmm")).toBe("0006");
 });
 
 test("Duration#toFormat('h') returns hours", () => {
-  expect(dur().toFormat("h")).toBe("10444");
-  expect(dur().toFormat("h", { floor: false })).toBe("10444.085");
-  expect(dur().toFormat("h:ss")).toBe("10444:306");
-  expect(dur().toFormat("h:mm:ss.SSS")).toBe("10444:05:06.007");
+  const dur = Duration.fromObject({ hours: 2, minutes: 180 });
+  expect(dur.toFormat("h")).toBe("5");
+});
 
-  const lil = Duration.fromObject({ hours: 6 });
-  expect(lil.toFormat("h")).toBe("6");
-  expect(lil.toFormat("hh")).toBe("06");
-  expect(lil.toFormat("hhh")).toBe("006");
-  expect(lil.toFormat("hhhh")).toBe("0006");
+test("Duration#toFormat pads hours correctly", () => {
+  const dur = Duration.fromObject({ hours: 6 });
+  expect(dur.toFormat("h")).toBe("6");
+  expect(dur.toFormat("hh")).toBe("06");
+  expect(dur.toFormat("hhh")).toBe("006");
+  expect(dur.toFormat("hhhh")).toBe("0006");
 });
 
 test("Duration#toFormat('d') returns days", () => {
-  expect(dur().toFormat("d")).toBe("435");
-  expect(dur().toFormat("d", { floor: false })).toBe("435.17");
-  expect(dur().toFormat("d:h:ss")).toBe("435:4:306");
-  expect(dur().toFormat("d:h:mm:ss.SSS")).toBe("435:4:05:06.007");
+  const dur = Duration.fromObject({
+    days: 2,
+    weeks: 3,
+  });
+  expect(dur.toFormat("d")).toBe("23");
+});
 
-  const lil = Duration.fromObject({ days: 6 });
-  expect(lil.toFormat("d")).toBe("6");
-  expect(lil.toFormat("dd")).toBe("06");
-  expect(lil.toFormat("ddd")).toBe("006");
-  expect(lil.toFormat("dddd")).toBe("0006");
+test("Duration#toFormat pads days correctly", () => {
+  const dur = Duration.fromObject({ days: 6 });
+  expect(dur.toFormat("d")).toBe("6");
+  expect(dur.toFormat("dd")).toBe("06");
+  expect(dur.toFormat("ddd")).toBe("006");
+  expect(dur.toFormat("dddd")).toBe("0006");
 });
 
 test("Duration#toFormat('w') returns weeks", () => {
-  expect(dur().toFormat("w")).toBe("61");
-  expect(dur().toFormat("w", { floor: false })).toBe("61.453");
-  expect(dur().toFormat("w:s")).toBe("61:273906");
-  expect(dur().toFormat("w:dd:h:mm:ss.SSS")).toBe("61:03:4:05:06.007");
+  const dur = Duration.fromObject({ days: 14, weeks: 1 });
+  expect(dur.toFormat("w")).toBe("3");
+});
 
-  const lil = Duration.fromObject({ weeks: 6 });
-  expect(lil.toFormat("w")).toBe("6");
-  expect(lil.toFormat("ww")).toBe("06");
-  expect(lil.toFormat("www")).toBe("006");
-  expect(lil.toFormat("wwww")).toBe("0006");
+test("Duration#toFormat pads weeks correctly", () => {
+  const dur = Duration.fromObject({ weeks: 6 });
+  expect(dur.toFormat("w")).toBe("6");
+  expect(dur.toFormat("ww")).toBe("06");
+  expect(dur.toFormat("www")).toBe("006");
+  expect(dur.toFormat("wwww")).toBe("0006");
 });
 
 test("Duration#toFormat('M') returns months", () => {
-  expect(dur().toFormat("M")).toBe("14");
-  expect(dur().toFormat("M", { floor: false })).toBe("14.356");
-  expect(dur().toFormat("M:s")).toBe("14:878706");
-  expect(dur().toFormat("M:dd:h:mm:ss.SSS")).toBe("14:10:4:05:06.007");
+  const dur = Duration.fromObject({ months: 2, years: 1 });
+  expect(dur.toFormat("M")).toBe("14");
+});
 
-  const lil = Duration.fromObject({ months: 6 });
-  expect(lil.toFormat("M")).toBe("6");
-  expect(lil.toFormat("MM")).toBe("06");
-  expect(lil.toFormat("MMM")).toBe("006");
-  expect(lil.toFormat("MMMM")).toBe("0006");
+test("Duration#toFormat pads months correctly", () => {
+  const dur = Duration.fromObject({ months: 6 });
+  expect(dur.toFormat("M")).toBe("6");
+  expect(dur.toFormat("MM")).toBe("06");
+  expect(dur.toFormat("MMM")).toBe("006");
+  expect(dur.toFormat("MMMM")).toBe("0006");
+});
+
+test("Duration#toFormat('Q') returns quarters", () => {
+  const dur = Duration.fromObject({ months: 6, quarters: 1 });
+  expect(dur.toFormat("Q")).toBe("3");
+});
+
+test("Duration#toFormat pads quarters correctly", () => {
+  const dur = Duration.fromObject({ quarters: 6 });
+  expect(dur.toFormat("Q")).toBe("6");
+  expect(dur.toFormat("QQ")).toBe("06");
+  expect(dur.toFormat("QQQ")).toBe("006");
+  expect(dur.toFormat("QQQQ")).toBe("0006");
 });
 
 test("Duration#toFormat('y') returns years", () => {
-  expect(dur().toFormat("y")).toBe("1");
-  expect(dur().toFormat("y", { floor: false })).toBe("1.195");
-  expect(dur().toFormat("y:m")).toBe("1:101045");
-  expect(dur().toFormat("y:M:dd:h:mm:ss.SSS")).toBe("1:2:10:4:05:06.007");
-
-  const lil = Duration.fromObject({ years: 5 });
-  expect(lil.toFormat("y")).toBe("5");
-  expect(lil.toFormat("yy")).toBe("05");
-  expect(lil.toFormat("yyyyy")).toBe("00005");
+  const dur = Duration.fromObject({ years: 3 });
+  expect(dur.toFormat("y")).toBe("3");
 });
 
-test("Duration#toFormat accepts the deprecated 'round' option", () => {
-  expect(dur().toFormat("s", { round: false })).toBe("37598706.007");
-  expect(dur().toFormat("m", { round: false })).toBe("626645.1");
-  expect(dur().toFormat("h", { round: false })).toBe("10444.085");
-  expect(dur().toFormat("d", { round: false })).toBe("435.17");
-  expect(dur().toFormat("M", { round: false })).toBe("14.356");
-  expect(dur().toFormat("y", { round: false })).toBe("1.195");
+test("Duration#toFormat pads years correctly", () => {
+  const dur = Duration.fromObject({ years: 5 });
+  expect(dur.toFormat("y")).toBe("5");
+  expect(dur.toFormat("yy")).toBe("05");
+  expect(dur.toFormat("yyyyy")).toBe("00005");
 });
 
 test("Duration#toFormat leaves in zeros", () => {
@@ -261,102 +304,147 @@ test("Duration#toFormat leaves in zeros", () => {
   expect(tiny.toFormat("hh:mm:ss.SSS")).toBe("00:00:05.000");
 });
 
-test("Duration#toFormat rounds down", () => {
-  const tiny = Duration.fromObject({ seconds: 5.7 });
-  expect(tiny.toFormat("s")).toBe("5");
-
-  const unpromoted = Duration.fromObject({ seconds: 59.7 });
-  expect(unpromoted.toFormat("mm:ss")).toBe("00:59");
-});
-
 test("Duration#toFormat localizes the numbers", () => {
   expect(dur().reconfigure({ locale: "bn" }).toFormat("yy:MM:dd:h:mm:ss.SSS")).toBe(
     "০১:০২:১০:৪:০৫:০৬.০০৭"
   );
 });
 
-// - signMode negativeLargestOnly
-
-test("Duration#toFormat shows negative sign on the largest unit when using signMode negativeLargestOnly", () => {
-  expect(
-    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("yyss", {
-      signMode: "negativeLargestOnly",
-    })
-  ).toBe("-0345");
-  expect(
-    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("'before'yy'between'ss'after'", {
-      signMode: "negativeLargestOnly",
-    })
-  ).toBe("before-03between45after");
-  // Intentionally have the seconds not first to make sure years is still picked as the largest unit
-  expect(
-    Duration.fromObject({ seconds: -45, years: -3 }).toFormat("ssyy", {
-      signMode: "negativeLargestOnly",
-    })
-  ).toBe("45-03");
+test("Duration#toFormat allows converting to fractional values", () => {
+  const dur = Duration.fromObject({ days: 8 });
+  expect(dur.toFormat("w")).toBe("1.143");
 });
 
-test("Duration#toFormat shows no negative sign on the largest unit when using signMode negativeLargestOnly with positive Duration", () => {
-  expect(
-    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("yyss", {
-      signMode: "negativeLargestOnly",
-    })
-  ).toBe("0345");
-  expect(
-    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("'before'yy'between'ss'after'", {
-      signMode: "negativeLargestOnly",
-    })
-  ).toBe("before03between45after");
-  // Intentionally have the seconds not first to make sure years is still picked as the largest unit
-  expect(
-    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("ssyy", {
-      signMode: "negativeLargestOnly",
-    })
-  ).toBe("4503");
+test("Duration#toFormat accepts NumberFormat options", () => {
+  const dur = Duration.fromObject({ days: 8 });
+  expect(dur.toFormat("w", { maximumFractionDigits: 5 })).toBe("1.14286");
 });
 
-// - signMode all
-
-test("Duration#toFormat with signMode all shows positive sign on positive durations", () => {
-  expect(
-    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("yyss", {
-      signMode: "all",
-    })
-  ).toBe("+03+45");
-  expect(
-    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("'before'yy'between'ss'after'", {
-      signMode: "all",
-    })
-  ).toBe("before+03between+45after");
-  // Intentionally have the seconds not first to make sure years is still picked as the largest unit
-  expect(
-    Duration.fromObject({ years: 3, seconds: 45 }).toFormat("ssyy", {
-      signMode: "all",
-    })
-  ).toBe("+45+03");
+test("Duration#toFormat does not allow ambiguous conversions", () => {
+  const dur = Duration.fromObject({ months: 2 });
+  expect(() => dur.toFormat("d")).toThrow();
 });
 
-test("Duration#toFormat with signMode all shows positive sign on negative durations", () => {
-  expect(
-    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("yyss", {
-      signMode: "all",
-    })
-  ).toBe("-03-45");
-  expect(
-    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("'before'yy'between'ss'after'", {
-      signMode: "all",
-    })
-  ).toBe("before-03between-45after");
-  // Intentionally have the seconds not first to make sure years is still picked as the largest unit
-  expect(
-    Duration.fromObject({ years: -3, seconds: -45 }).toFormat("ssyy", {
-      signMode: "all",
-    })
-  ).toBe("-45-03");
+test("Duration#toFormat accepts a reference date", () => {
+  const dur = Duration.fromObject({ months: 2 });
+  const date = DateTime.utc(2025, 1, 1);
+  expect(() => dur.toFormat("d", { after: date })).toBe("59");
+});
+
+test("Duration#toFormat handles reference date DST", () => {
+  const dur = Duration.fromObject({ days: 2 });
+  const date = DateTime.local(2026, 3, 8);
+  expect(() => dur.toFormat("h", { after: date })).toBe("47");
+});
+
+// - signMode
+
+describe("Duration#toFormat applies signDisplay according to unitSignDisplay", () => {
+  test("Duration#toFormat with unitSignDisplay: 'all' applies signDisplay option to all units", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 0 });
+    expect(
+      dur.toFormat("y 'years' s 'seconds'", { signDisplay: "always", unitSignDisplay: "all" })
+    ).toBe("+3 years +0 seconds");
+  });
+  test("Duration#toFormat with unitSignDisplay: 'all' defaults signDisplay to 'exceptZero'", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 0 });
+    expect(dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "all" })).toBe(
+      "+3 years 0 seconds"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'all' defaults signDisplay to 'exceptZero' for mixed durations", () => {
+    const dur = Duration.fromObject({ years: 3, minutes: -5, seconds: 0 });
+    expect(dur.toFormat("y 'years' m 'minutes' s 'seconds'", { unitSignDisplay: "all" })).toBe(
+      "+3 years -5 minutes 0 seconds"
+    );
+  });
+
+  test("Duration#toFormat with unitSignDisplay: 'leading' shows sign only on leading unit", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 2 });
+    expect(
+      dur.toFormat("y 'years' s 'seconds'", { signDisplay: "always", unitSignDisplay: "leading" })
+    ).toBe("+3 years 2 seconds");
+  });
+  test("Duration#toFormat with unitSignDisplay: 'leading' defaults signDisplay to 'auto'", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 0 });
+    expect(dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "leading" })).toBe(
+      "3 years 0 seconds"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'leading' defaults signDisplay to 'auto' with negative durations", () => {
+    const dur = Duration.fromObject({ years: -3, seconds: -2 });
+    expect(dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "leading" })).toBe(
+      "-3 years 2 seconds"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'leading' throws for mixed durations", () => {
+    expect(() =>
+      Duration.fromObject({ years: -3, seconds: -2 }).toFormat("y s ", {
+        unitSignDisplay: "leading",
+      })
+    ).toThrow();
+  });
+
+  test("Duration#toFormat with unitSignDisplay: 'largest' shows sign only on largest unit", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 2 });
+    expect(
+      dur.toFormat("s 'seconds' y 'years'", { signDisplay: "always", unitSignDisplay: "largest" })
+    ).toBe("2 seconds +3 years");
+  });
+  test("Duration#toFormat with unitSignDisplay: 'largest' defaults signDisplay to 'auto'", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 0 });
+    expect(dur.toFormat("s 'seconds' y 'years'", { unitSignDisplay: "largest" })).toBe(
+      "0 seconds 3 years"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'largest' defaults signDisplay to 'auto' with negative durations", () => {
+    const dur = Duration.fromObject({ years: -3, seconds: -2 });
+    expect(dur.toFormat("s 'seconds' y 'years'", { unitSignDisplay: "largest" })).toBe(
+      "2 seconds -3 years"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'largest' throws for mixed durations", () => {
+    expect(() =>
+      Duration.fromObject({ years: -3, seconds: -2 }).toFormat("y s ", {
+        unitSignDisplay: "largest",
+      })
+    ).toThrow();
+  });
+
+  test("Duration#toFormat with unitSignDisplay: 'auto' defaults signDisplay to 'auto' for non-mixed durations", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 2 });
+    expect(dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "auto" })).toBe(
+      "3 years 2 seconds"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'auto' defaults signDisplay to 'exceptZero' for mixed durations", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: -2 });
+    expect(dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "auto" })).toBe(
+      "3 years -2 seconds"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'auto' means unitSignDisplay 'leading' for non-mixed durations", () => {
+    const dur = Duration.fromObject({ years: -3, seconds: -2 });
+    expect(dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "auto" })).toBe(
+      "-3 years 2 seconds"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'auto' means unitSignDisplay 'all', signDisplay 'exceptZero' for mixed durations", () => {
+    const dur = Duration.fromObject({ years: -3, seconds: 2 });
+    expect(dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "auto" })).toBe(
+      "-3 years +2 seconds"
+    );
+  });
+  test("Duration#toFormat with unitSignDisplay: 'auto' still allows setting signDisplay", () => {
+    const dur = Duration.fromObject({ years: 3, seconds: 2 });
+    expect(
+      dur.toFormat("y 'years' s 'seconds'", { unitSignDisplay: "auto", signDisplay: "always" })
+    ).toBe("+3 years 2 seconds");
+  });
 });
 
 //------
-// #humanize()
+// #toHuman()
 //------
 
 test("Duration#toHuman formats out a list", () => {
@@ -411,7 +499,7 @@ test("Duration#toHuman handles undefined showZeros", () => {
   ).toEqual("1 year, 0 months, 1 week, 0 days, 4 hours, 0 minutes, 6 seconds, 0 milliseconds");
 });
 
-test("Duration#toHuman works in differt languages", () => {
+test("Duration#toHuman works in different languages", () => {
   expect(dur().reconfigure({ locale: "fr" }).toHuman()).toEqual(
     "1 an, 2 mois, 1 semaine, 3 jours, 4 heures, 5 minutes, 6 secondes, 7 millisecondes"
   );

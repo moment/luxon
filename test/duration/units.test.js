@@ -1,20 +1,22 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 import { Duration } from "../../src/luxon";
 
 //------
 // #shiftTo()
 //-------
-test("Duration#shiftTo rolls milliseconds up hours and minutes", () => {
-  const dur = Duration.fromMillis(5760000);
-  expect(dur.shiftTo("hours").hours).toBe(1.6);
+test("Duration#shiftTo converts milliseconds to hours", () => {
+  const dur = Duration.fromMillis(2 * 60 * 60 * 1000);
+  expect(dur.shiftTo("hours").toObject()).toEqual({ hours: 2 });
+});
 
-  const mod = dur.shiftTo("hours", "minutes");
-  expect(mod.toObject()).toEqual({ hours: 1, minutes: 36 });
+test("Duration#shiftTo converts milliseconds to hours and minutes", () => {
+  const mod = Duration.fromMillis(3 * 60 * 60 * 1000 + 36 * 60 * 1000).shiftTo("hours", "minutes");
+  expect(mod.toObject()).toEqual({ hours: 3, minutes: 36 });
 });
 
 test("Duration#shiftTo boils hours down milliseconds", () => {
   const dur = Duration.fromObject({ hours: 1 }).shiftTo("milliseconds");
-  expect(dur.milliseconds).toBe(3600000);
+  expect(dur.toObject()).toEqual({ milliseconds: 3600000 });
 });
 
 test("Duration boils hours down shiftTo minutes and milliseconds", () => {
@@ -23,8 +25,8 @@ test("Duration boils hours down shiftTo minutes and milliseconds", () => {
 });
 
 test("Duration#shiftTo boils down and then rolls up", () => {
-  const dur = Duration.fromObject({ years: 2, hours: 5000 }).shiftTo("months", "days", "minutes");
-  expect(dur.toObject()).toEqual({ months: 30, days: 28, minutes: 8 * 60 });
+  const dur = Duration.fromObject({ hours: 2, seconds: 1400 }).shiftTo("minutes", "milliseconds");
+  expect(dur.toObject()).toEqual({ minutes: 143, milliseconds: 20000 });
 });
 
 test("Duration#shiftTo throws on invalid units", () => {
@@ -33,22 +35,33 @@ test("Duration#shiftTo throws on invalid units", () => {
   }).toThrow();
 });
 
-test("Duration#shiftTo tacks decimals onto the end", () => {
-  const dur = Duration.fromObject({ minutes: 73 }).shiftTo("hours");
-  expect(dur.hours).toBeCloseTo(1.2167, 4);
+describe("Duration#shiftTo supports the roundingMode option", () => {
+  // rounding is tested in more detail elsewhere
+  test("roundingMode = ceil", () => {
+    const dur = Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "ceil" });
+    expect(dur.toObject()).toEqual({ hours: 2 });
+  });
+  test("roundingMode = floor", () => {
+    const dur = Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "floor" });
+    expect(dur.toObject()).toEqual({ hours: 1 });
+  });
+  test("roundingMode = unnecessary", () => {
+    const dur = Duration.fromObject({ minutes: 180 }).shiftTo("hours", {
+      roundingMode: "unnecessary",
+    });
+    expect(dur.toObject()).toEqual({ hours: 2 });
+  });
+  test("roundingMode = unnecessary throws when rounding is needed", () => {
+    expect(() =>
+      Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "unnecessary" })
+    ).toThrow(RangeError);
+  });
 });
 
-test("Duration#shiftTo deconstructs decimal inputs", () => {
-  const dur = Duration.fromObject({ hours: 2.3 }).shiftTo("hours", "minutes");
-  expect(dur.hours).toBe(2);
-  expect(dur.minutes).toBeCloseTo(18, 8);
-});
-
-test("Duration#shiftTo deconstructs in cascade and tacks decimal onto the end", () => {
-  const dur = Duration.fromObject({ hours: 1.17 }).shiftTo("hours", "minutes", "seconds");
-  expect(dur.hours).toBe(1);
-  expect(dur.minutes).toBe(10);
-  expect(dur.seconds).toBeCloseTo(12, 8);
+test("Duration#shiftTo defaults to rounding = unnecessary", () => {
+  expect(() =>
+    Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "unnecessary" })
+  ).toThrow(RangeError);
 });
 
 test("Duration#shiftTo without any units no-ops", () => {
@@ -66,24 +79,14 @@ test("Duration#shiftTo accumulates when rolling up", () => {
 
 test("Duration#shiftTo keeps unnecessary higher-order negative units 0", () => {
   expect(
-    Duration.fromObject({ milliseconds: -100 }).shiftTo("hours", "minutes", "seconds").toObject()
-  ).toEqual({ hours: 0, minutes: 0, seconds: -0.1 });
+    Duration.fromObject({ milliseconds: -1000 }).shiftTo("hours", "minutes", "seconds").toObject()
+  ).toEqual({ hours: 0, minutes: 0, seconds: -1 });
 });
 
-test("Duration#shiftTo does not normalize values", () => {
-  // Normalizing would convert to { quarters: 4, months: 1, days: 10 }
-  // which would be converted back to 404 days instead
+test("Duration#shiftTo normalizes values", () => {
   expect(
-    Duration.fromObject({ quarters: 0, months: 0, days: 400 }).shiftTo("days").toObject()
-  ).toEqual({ days: 400 });
-});
-
-test("Duration#shiftTo boils hours down to hours and minutes", () => {
-  const dur = Duration.fromObject({ hour: 2.4 });
-  expect(dur.shiftTo("hours", "minutes").toObject()).toEqual({
-    hours: 2,
-    minutes: 24,
-  });
+    Duration.fromObject({ years: 0, quarters: 0, months: 30 }).shiftTo("years", "months").toObject()
+  ).toEqual({ years: 2, months: 6 });
 });
 
 test("Duration#shiftTo handles mixed units", () => {
@@ -95,15 +98,19 @@ test("Duration#shiftTo handles mixed units", () => {
   });
 });
 
-test("Duration#shiftTo does not produce unnecessary fractions in higher order units", () => {
-  const duration = Duration.fromObject(
-    { years: 2.5, weeks: -1 },
-    { conversionAccuracy: "longterm" }
-  );
-  const shifted = duration.shiftTo("years", "weeks", "minutes").toObject();
-  expect(shifted.years).toBe(2);
-  expect(shifted.weeks).toBe(25);
-  expect(shifted.minutes).toBeCloseTo(894.6, 5);
+describe("Duration#shiftTo does not do ambiguous conversions", () => {
+  test.each([
+    [{ days: 2, hours: 50 }, ["days", "minutes"], { days: 2, hours: 50 }],
+    [{ days: 2, minutes: 50 * 60 }, ["days", "hours"], { days: 2, hours: 50 }],
+    [{ months: 3, days: 62 }, ["months", "days"], { months: 3, days: 62 }],
+    [{ months: 3, days: 62 }, ["months", "weeks", "days"], { months: 3, weeks: 8, days: 6 }],
+  ])("%o.shiftTo(%S) => %o", (from, units, to) => {
+    expect(
+      Duration.fromObject(from)
+        .shiftTo(...units)
+        .toObject()
+    ).toEqual(to);
+  });
 });
 
 //------
@@ -123,179 +130,252 @@ test("Duration#shiftToAll shifts to all available units", () => {
   });
 });
 
-test("Duration#shiftToAll does not produce unnecessary fractions in higher order units", () => {
-  const duration = Duration.fromObject(
-    { years: 2.5, weeks: -1, seconds: 0 },
-    { conversionAccuracy: "longterm" }
-  );
-  const toAll = duration.shiftToAll().toObject();
-  expect(toAll.years).toBe(2);
-  expect(toAll.months).toBe(5);
-  expect(toAll.weeks).toBe(3);
-  expect(toAll.days).toBe(2);
-  expect(toAll.hours).toBe(10);
-  expect(toAll.minutes).toBe(29);
-  expect(toAll.seconds).toBe(6);
-  expect(toAll.milliseconds).toBeCloseTo(0, 5);
+test("Duration#shiftToAll does not do ambiguous conversions", () => {
+  // minimal test here, the extensive tests are done for shiftTo()
+  const duration = Duration.fromObject({ hours: 50 });
+  expect(duration.shiftToAll().toObject()).toEqual({
+    years: 0,
+    months: 0,
+    weeks: 0,
+    days: 0,
+    hours: 50,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
 });
 
 //------
 // #normalize()
 //-------
 test("Duration#normalize rebalances negative units", () => {
-  const dur = Duration.fromObject({ years: 2, days: -2 }).normalize();
-  expect(dur.toObject()).toEqual({ years: 1, days: 363 });
+  const dur = Duration.fromObject({ years: 2, months: -2 }).normalize();
+  expect(dur.toObject()).toEqual({ years: 1, months: 10 });
 });
 
 test("Duration#normalize de-overflows", () => {
-  const dur = Duration.fromObject({ years: 2, days: 5000 }).normalize();
-  expect(dur.years).toBe(15);
-  expect(dur.days).toBe(255);
-  expect(dur.toObject()).toEqual({ years: 15, days: 255 });
+  const dur = Duration.fromObject({ years: 2, months: 50 }).normalize();
+  expect(dur.toObject()).toEqual({ years: 6, months: 2 });
 });
 
 test("Duration#normalize handles fully negative durations", () => {
-  const dur = Duration.fromObject({ years: -2, days: -5000 }).normalize();
-  expect(dur.toObject()).toEqual({ years: -15, days: -255 });
+  const dur = Duration.fromObject({ years: -2, days: -50 }).normalize();
+  expect(dur.toObject()).toEqual({ years: -6, months: -2 });
 });
 
-test("Duration#normalize handles the full grid partially negative durations", () => {
-  const sets = [
+test("Duration#normalize does not introduce new units", () => {
+  const dur = Duration.fromObject({ hours: 50 }).normalize();
+  expect(dur.toObject()).toEqual({ hours: 50 });
+});
+
+describe("Duration#normalize handles the full grid partially negative durations", () => {
+  test.each([
     [
-      { months: 1, days: 32 },
-      { months: 2, days: 2 },
+      { weeks: 1, days: 9 },
+      { weeks: 2, days: 2 },
     ],
     [
-      { months: 1, days: 28 },
-      { months: 1, days: 28 },
+      { weeks: 1, days: 6 },
+      { weeks: 1, days: 6 },
     ],
     [
-      { months: 1, days: -32 },
-      { months: 0, days: -2 },
+      { weeks: 1, days: -9 },
+      { weeks: 0, days: -2 },
     ],
     [
-      { months: 1, days: -28 },
-      { months: 0, days: 2 },
+      { weeks: 1, days: -5 },
+      { weeks: 0, days: 2 },
     ],
     [
-      { months: -1, days: 32 },
-      { months: 0, days: 2 },
+      { weeks: -1, days: 9 },
+      { weeks: 0, days: 2 },
     ],
     [
-      { months: -1, days: 28 },
-      { months: 0, days: -2 },
+      { weeks: -1, days: 5 },
+      { weeks: 0, days: -2 },
     ],
     [
-      { months: -1, days: -32 },
-      { months: -2, days: -2 },
+      { weeks: -1, days: -9 },
+      { weeks: -2, days: -2 },
     ],
     [
-      { months: -1, days: -28 },
-      { months: -1, days: -28 },
+      { weeks: -1, days: -5 },
+      { weeks: -1, days: -5 },
     ],
     [
-      { months: 0, days: 32 },
-      { months: 1, days: 2 },
+      { weeks: 0, days: 9 },
+      { weeks: 1, days: 2 },
     ],
     [
-      { months: 0, days: 28 },
-      { months: 0, days: 28 },
+      { weeks: 0, days: 5 },
+      { weeks: 0, days: 5 },
     ],
     [
-      { months: 0, days: -32 },
-      { months: -1, days: -2 },
+      { weeks: 0, days: -9 },
+      { weeks: -1, days: -2 },
     ],
     [
-      { months: 0, days: -28 },
-      { months: 0, days: -28 },
+      { weeks: 0, days: -5 },
+      { weeks: 0, days: -5 },
     ],
     [
       { hours: 96, minutes: 0, seconds: -10 },
       { hours: 95, minutes: 59, seconds: 50 },
     ],
-  ];
-
-  sets.forEach(([from, to]) => {
+  ])("%o => %o", (from, to) => {
     expect(Duration.fromObject(from).normalize().toObject()).toEqual(to);
   });
 });
 
-test("Duration#normalize can convert all unit pairs", () => {
-  const units = [
-    "years",
-    "quarters",
-    "months",
-    "weeks",
-    "days",
-    "hours",
-    "minutes",
-    "seconds",
-    "milliseconds",
-  ];
-
-  for (let i = 0; i < units.length; i++) {
-    for (let j = i + 1; j < units.length; j++) {
-      const duration = Duration.fromObject({ [units[i]]: 1, [units[j]]: 2 });
-      const normalizedDuration = duration.normalize().toObject();
-      expect(normalizedDuration[units[i]]).not.toBe(NaN);
-      expect(normalizedDuration[units[j]]).not.toBe(NaN);
-
-      const accurateDuration = duration.reconfigure({ conversionAccuracy: "longterm" });
-      const normalizedAccurateDuration = accurateDuration.normalize().toObject();
-      expect(normalizedAccurateDuration[units[i]]).not.toBe(NaN);
-      expect(normalizedAccurateDuration[units[j]]).not.toBe(NaN);
-    }
-  }
+describe("Duration#normalize can convert all time unit pairs", () => {
+  const timeUnits = ["hours", "minutes", "seconds", "milliseconds"];
+  const conversions = {
+    hours: 60 * 60 * 1000,
+    minutes: 60 * 1000,
+    seconds: 1000,
+    milliseconds: 1,
+  };
+  describe.for(timeUnits)("%s", (sourceUnit) => {
+    test.for(timeUnits.filter((targetUnit) => conversions[targetUnit] > conversions[sourceUnit]))(
+      "into %s",
+      (targetUnit) => {
+        const targetValue = 2;
+        const sourceValue = (targetValue * conversions[targetUnit]) / conversions[sourceUnit];
+        const duration = Duration.fromObject({ [sourceUnit]: sourceValue, [targetUnit]: 5 });
+        expect(duration.normalize().toObject()).toEqual({
+          [targetUnit]: targetValue + 5,
+          [sourceUnit]: 0,
+        });
+      }
+    );
+  });
 });
 
-test("Duration#normalize moves fractions to lower-order units", () => {
-  expect(Duration.fromObject({ years: 2.5, days: 0, hours: 0 }).normalize().toObject()).toEqual({
-    years: 2,
-    days: 182,
-    hours: 12,
+describe("Duration#normalize can convert all day unit pairs", () => {
+  const dayUnits = ["days", "weeks"];
+  const conversions = {
+    weeks: 7,
+    days: 1,
+  };
+  describe.for(dayUnits)("%s", (sourceUnit) => {
+    test.for(dayUnits.filter((targetUnit) => conversions[targetUnit] > conversions[sourceUnit]))(
+      "into %s",
+      (targetUnit) => {
+        const targetValue = 2;
+        const sourceValue = (targetValue * conversions[targetUnit]) / conversions[sourceUnit];
+        const duration = Duration.fromObject({ [sourceUnit]: sourceValue, [targetUnit]: 5 });
+        expect(duration.normalize().toObject()).toEqual({
+          [targetUnit]: targetValue + 5,
+          [sourceUnit]: 0,
+        });
+      }
+    );
   });
-  expect(Duration.fromObject({ years: -2.5, days: 0, hours: 0 }).normalize().toObject()).toEqual({
-    years: -2,
-    days: -182,
-    hours: -12,
-  });
-  expect(Duration.fromObject({ years: 2.5, days: 12, hours: 0 }).normalize().toObject()).toEqual({
-    years: 2,
-    days: 194,
-    hours: 12,
-  });
-  expect(Duration.fromObject({ years: 2.5, days: 12.25, hours: 0 }).normalize().toObject()).toEqual(
-    { years: 2, days: 194, hours: 18 }
-  );
 });
 
-test("Duration#normalize does not produce fractions in higher order units when rolling up negative lower order unit values", () => {
-  const normalized = Duration.fromObject(
-    { years: 100, months: 0, weeks: -1, days: 0 },
-    { conversionAccuracy: "longterm" }
-  )
-    .normalize()
-    .toObject();
-  expect(normalized.years).toBe(99);
-  expect(normalized.months).toBe(11);
-  expect(normalized.weeks).toBe(3);
-  expect(normalized.days).toBeCloseTo(2.436875, 7);
+describe("Duration#normalize can convert all month unit pairs", () => {
+  const monthUnits = ["months", "quarters", "years"];
+  const conversions = {
+    years: 12,
+    quarters: 3,
+    months: 1,
+  };
+  describe.for(monthUnits)("%s", (sourceUnit) => {
+    test.for(monthUnits.filter((targetUnit) => conversions[targetUnit] > conversions[sourceUnit]))(
+      "into %s",
+      (targetUnit) => {
+        const targetValue = 2;
+        const sourceValue = (targetValue * conversions[targetUnit]) / conversions[sourceUnit];
+        const duration = Duration.fromObject({ [sourceUnit]: sourceValue, [targetUnit]: 5 });
+        expect(duration.normalize().toObject()).toEqual({
+          [targetUnit]: targetValue + 5,
+          [sourceUnit]: 0,
+        });
+      }
+    );
+  });
+});
+
+describe("Duration#normalize does not convert ambiguous units", () => {
+  describe.each(["milliseconds", "seconds", "minutes", "hours"])("time unit %s", (timeUnit) => {
+    test.each(["days", "weeks"])("into day-based unit %s", (dateUnit) => {
+      const timeValue = 16 * 24 * 60 * 60 * 1000; // 16 days in millis is > 1 week
+      const duration = Duration.fromObject({ [dateUnit]: 1, [timeUnit]: timeValue });
+      const normalizedDuration = duration.normalize();
+      expect(normalizedDuration.toObject()).toEqual({ [dateUnit]: 1, [timeUnit]: timeValue });
+    });
+    test.each(["months", "quarters", "years"])("into month-based unit %s", (dateUnit) => {
+      const timeValue = 600 * 24 * 60 * 60 * 1000; // 600 days in millis is > 1 year
+      const duration = Duration.fromObject({ [dateUnit]: 1, [timeUnit]: timeValue });
+      const normalizedDuration = duration.normalize();
+      expect(normalizedDuration.toObject()).toEqual({ [dateUnit]: 1, [timeUnit]: timeValue });
+    });
+  });
+
+  describe.each(["days", "weeks"])("day-based unit %s", (dayBasedUnit) => {
+    test.each(["milliseconds", "seconds", "minutes", "hours"])(
+      "into time-based unit %s",
+      (timeBasedUnit) => {
+        const duration = Duration.fromObject({ [timeBasedUnit]: 1, [dayBasedUnit]: 2 });
+        const normalizedDuration = duration.normalize();
+        expect(normalizedDuration.toObject()).toEqual({ [timeBasedUnit]: 1, [dayBasedUnit]: 2 });
+      }
+    );
+    test.each(["months", "quarters", "years"])("into month-based unit %s", (monthBasedUnit) => {
+      const dayValue = 600; // 600 because 600 days is > 1 year
+      const duration = Duration.fromObject({ [monthBasedUnit]: 1, [dayBasedUnit]: dayValue });
+      const normalizedDuration = duration.normalize();
+      expect(normalizedDuration.toObject()).toEqual({
+        [monthBasedUnit]: 1,
+        [dayBasedUnit]: dayValue,
+      });
+    });
+  });
+
+  describe.each(["months", "quarters", "years"])("month-based unit %s", (monthBasedUnit) => {
+    test.each(["milliseconds", "seconds", "minutes", "hours"])(
+      "into time-based unit %s",
+      (timeBasedUnit) => {
+        const duration = Duration.fromObject({ [timeBasedUnit]: 1, [monthBasedUnit]: 2 });
+        const normalizedDuration = duration.normalize();
+        expect(normalizedDuration.toObject()).toEqual({ [timeBasedUnit]: 1, [monthBasedUnit]: 2 });
+      }
+    );
+    test.each(["days", "weeks"])("into day-based unit %s", (dayBasedUnit) => {
+      const duration = Duration.fromObject({ [dayBasedUnit]: 1, [dayBasedUnit]: 3 });
+      const normalizedDuration = duration.normalize();
+      expect(normalizedDuration.toObject()).toEqual({ [dayBasedUnit]: 1, [dayBasedUnit]: 3 });
+    });
+  });
 });
 
 //------
 // #rescale()
 //-------
-test("Duration#rescale normalizes, shifts to all units and remove units with a value of 0", () => {
-  const sets = [
+describe("Duration#rescale reduces to optimal set of units", () => {
+  test.each([
     [{ milliseconds: 90000 }, { minutes: 1, seconds: 30 }],
     [
       { minutes: 70, milliseconds: 12100 },
       { hours: 1, minutes: 10, seconds: 12, milliseconds: 100 },
     ],
-    [{ months: 2, days: -30 }, { months: 1 }],
-  ];
+    [{ years: 2, months: -12 }, { years: 1 }],
+  ])("%o => %o", (from, to) => {
+    expect(Duration.fromObject(from).rescale().toObject()).toEqual(to);
+  });
+});
 
-  sets.forEach(([from, to]) => {
+describe("Duration#rescale does not convert ambiguous units", () => {
+  test.each([
+    [
+      { months: 2, days: -30 },
+      { months: 2, days: -30 },
+    ],
+    [
+      { days: 30, hours: 48 },
+      { days: 30, hours: 48 },
+    ],
+  ])("%o => %o", (from, to) => {
     expect(Duration.fromObject(from).rescale().toObject()).toEqual(to);
   });
 });

@@ -24,44 +24,15 @@ test("Duration.fromObject sets all the values", () => {
   expect(dur.milliseconds).toBe(7);
 });
 
-test("Duration.fromObject sets all the fractional values", () => {
-  const dur = Duration.fromObject({
-    years: 1,
-    months: 2,
-    days: 3,
-    hours: 4.5,
-  });
-  expect(dur.years).toBe(1);
-  expect(dur.months).toBe(2);
-  expect(dur.days).toBe(3);
-  expect(dur.hours).toBe(4.5);
-  expect(dur.minutes).toBe(0);
-  expect(dur.seconds).toBe(0);
-  expect(dur.milliseconds).toBe(0);
-});
-
-test("Duration.fromObject sets all the values from the object having string type values", () => {
-  const dur = Duration.fromObject({
-    years: "1",
-    months: "2",
-    days: "3",
-    hours: "4",
-    minutes: "5",
-    seconds: "6",
-    milliseconds: "7",
-  });
-  expect(dur.years).toBe(1);
-  expect(dur.months).toBe(2);
-  expect(dur.days).toBe(3);
-  expect(dur.hours).toBe(4);
-  expect(dur.minutes).toBe(5);
-  expect(dur.seconds).toBe(6);
-  expect(dur.milliseconds).toBe(7);
-});
-
-test("Duration.fromObject accepts a conversionAccuracy", () => {
-  const dur = Duration.fromObject({ days: 1 }, { conversionAccuracy: "longterm" });
-  expect(dur.conversionAccuracy).toBe("longterm");
+test("Duration.fromObject throws for fractional values", () => {
+  expect(() =>
+    Duration.fromObject({
+      years: 1,
+      months: 2,
+      days: 3,
+      hours: 4.5,
+    })
+  ).toThrow(TypeError);
 });
 
 test("Duration.fromObject throws if the argument is not an object", () => {
@@ -81,6 +52,11 @@ test("Duration.fromObject({}) constructs zero duration", () => {
   expect(dur.milliseconds).toBe(0);
 });
 
+test("Duration.fromObject normalizes -0", () => {
+  const dur = Duration.fromObject({ seconds: -0 });
+  expect(dur.toObject()).toStrictEqual({ seconds: 0 });
+});
+
 test("Duration.fromObject throws if the initial object has invalid keys", () => {
   expect(() => Duration.fromObject({ foo: 0 })).toThrow();
   expect(() => Duration.fromObject({ years: 1, foo: 0 })).toThrow();
@@ -96,7 +72,7 @@ test("Duration.fromObject throws if the initial object has invalid values", () =
 });
 
 test("Duration.fromObject is valid if providing options only", () => {
-  const dur = Duration.fromObject({}, { conversionAccuracy: "longterm" });
+  const dur = Duration.fromObject({}, { locale: "de" });
   expect(dur.years).toBe(0);
   expect(dur.months).toBe(0);
   expect(dur.days).toBe(0);
@@ -104,6 +80,7 @@ test("Duration.fromObject is valid if providing options only", () => {
   expect(dur.minutes).toBe(0);
   expect(dur.seconds).toBe(0);
   expect(dur.milliseconds).toBe(0);
+  expect(dur.locale).toBe("de");
 });
 
 //------
@@ -113,7 +90,7 @@ test("Duration.fromObject is valid if providing options only", () => {
 it("Duration.fromDurationLike returns a Duration from millis", () => {
   const dur = Duration.fromDurationLike(1000);
   expect(dur).toBeInstanceOf(Duration);
-  expect(dur).toMatchInlineSnapshot(`"PT1S"`);
+  expect(dur.toObject()).toStrictEqual({ milliseconds: 1000 });
 });
 
 it("Duration.fromDurationLike returns a Duration from object", () => {
@@ -125,7 +102,12 @@ it("Duration.fromDurationLike returns a Duration from object", () => {
 it("Duration.fromDurationLike returns passed Duration", () => {
   const durFromObject = Duration.fromObject({ hours: 1 });
   const dur = Duration.fromDurationLike(durFromObject);
-  expect(dur).toStrictEqual(durFromObject);
+  expect(dur).toBe(durFromObject);
+});
+
+test("Duration.fromDurationLike normalizes -0", () => {
+  const dur = Duration.fromDurationLike(-0);
+  expect(dur.toObject()).toStrictEqual({ milliseconds: 0 });
 });
 
 it("Duration.fromDurationLike throws for invalid inputs", () => {
