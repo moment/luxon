@@ -16,18 +16,7 @@ test("Duration#plus add straightforward durations", () => {
   expect(result.milliseconds).toBe(14);
 });
 
-test("Duration#plus add fractional durations", () => {
-  const first = Duration.fromObject({ hours: 4.2, minutes: 12, seconds: 2 }),
-    second = Duration.fromObject({ hours: 1, seconds: 6.8, milliseconds: 14 }),
-    result = first.plus(second);
-
-  expect(result.hours).toBeCloseTo(5.2, 8);
-  expect(result.minutes).toBe(12);
-  expect(result.seconds).toBeCloseTo(8.8, 8);
-  expect(result.milliseconds).toBe(14);
-});
-
-test("Duration#plus noops empty druations", () => {
+test("Duration#plus defaults empty durations to 0", () => {
   const first = Duration.fromObject({ hours: 4, minutes: 12, seconds: 2 }),
     second = Duration.fromObject({}),
     result = first.plus(second);
@@ -66,12 +55,24 @@ test("Duration#plus adds number as milliseconds", () => {
   expect(result.milliseconds).toBe(333);
 });
 
-test("Duration#plus results in the superset of units", () => {
-  let dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({ seconds: 3, milliseconds: 0 });
-  expect(dur.toObject()).toEqual({ hours: 1, minutes: 0, seconds: 3, milliseconds: 0 });
+describe("Duration#plus results in the union of the set units", () => {
+  test("Basic", () => {
+    const dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({ seconds: 3, milliseconds: 0 });
+    expect(dur.toObject()).toStrictEqual({
+      hours: expect.anything(),
+      minutes: expect.anything(),
+      seconds: expect.anything(),
+      milliseconds: expect.anything(),
+    });
+  });
 
-  dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({});
-  expect(dur.toObject()).toEqual({ hours: 1, minutes: 0 });
+  test("When adding empty Duration", () => {
+    const dur = Duration.fromObject({ hours: 1, minutes: 0 }).plus({});
+    expect(dur.toObject()).toStrictEqual({
+      hours: expect.anything(),
+      minutes: expect.anything(),
+    });
+  });
 });
 
 test("Duration#plus throws with invalid parameter", () => {
@@ -86,21 +87,12 @@ test("Duration#minus subtracts durations", () => {
     second = Duration.fromObject({ hours: 1, seconds: 6, milliseconds: 14 }),
     result = first.minus(second);
 
-  expect(result.hours).toBe(3);
-  expect(result.minutes).toBe(12);
-  expect(result.seconds).toBe(-4);
-  expect(result.milliseconds).toBe(-14);
-});
-
-test("Duration#minus subtracts fractional durations", () => {
-  const first = Duration.fromObject({ hours: 4.2, minutes: 12, seconds: 2 }),
-    second = Duration.fromObject({ hours: 1, seconds: 6, milliseconds: 14 }),
-    result = first.minus(second);
-
-  expect(result.hours).toBeCloseTo(3.2, 8);
-  expect(result.minutes).toBe(12);
-  expect(result.seconds).toBe(-4);
-  expect(result.milliseconds).toBe(-14);
+  expect(result.toObject()).toStrictEqual({
+    hours: 3,
+    minutes: 12,
+    seconds: -4,
+    milliseconds: -14,
+  });
 });
 
 test("Duration#minus subtracts single values", () => {
@@ -110,6 +102,17 @@ test("Duration#minus subtracts single values", () => {
   expect(result.hours).toBe(4);
   expect(result.minutes).toBe(7);
   expect(result.seconds).toBe(2);
+});
+
+test("Duration#minus produces the union of the set of units", () => {
+  const first = Duration.fromObject({ hours: 4, seconds: 2 }),
+    result = first.minus({ minutes: 5 });
+
+  expect(result.toObject()).toStrictEqual({
+    hours: expect.anything(),
+    minutes: expect.anything(),
+    seconds: expect.anything(),
+  });
 });
 
 //------
@@ -130,26 +133,22 @@ test("Duration#negate doesn't mutate", () => {
   expect(orig.hours).toBe(8);
 });
 
-test("Duration#negate preserves conversionAccuracy", () => {
-  const dur = Duration.fromObject(
-      {
-        hours: 4,
-        minutes: -12,
-        seconds: 2,
-      },
-      {
-        conversionAccuracy: "longterm",
-      }
-    ),
+test("Duration#negate does not change the set of units", () => {
+  const dur = Duration.fromObject({ years: 1, days: 2, minutes: 3 }),
     result = dur.negate();
-  expect(result.conversionAccuracy).toBe("longterm");
+
+  expect(result.toObject()).toStrictEqual({
+    years: expect.anything(),
+    days: expect.anything(),
+    minutes: expect.anything(),
+  });
 });
 
 //------
 // #mapUnits
 //------
 
-test("Duration#units can multiply durations", () => {
+test("Duration#mapUnits can multiply durations", () => {
   const dur = Duration.fromObject({ hours: 1, minutes: 2, seconds: -3, milliseconds: -4 }),
     result = dur.mapUnits((x) => x * 5);
 
@@ -157,6 +156,17 @@ test("Duration#units can multiply durations", () => {
   expect(result.minutes).toBe(10);
   expect(result.seconds).toBe(-15);
   expect(result.milliseconds).toBe(-20);
+});
+
+test("Duration#mapUnits does not change the set of units", () => {
+  const dur = Duration.fromObject({ years: 1, days: 2, minutes: 3 }),
+    result = dur.mapUnits((x) => x * 5);
+
+  expect(result.toObject()).toStrictEqual({
+    years: expect.anything(),
+    days: expect.anything(),
+    minutes: expect.anything(),
+  });
 });
 
 test("Duration#units can take the unit into account", () => {

@@ -15,15 +15,32 @@ const dur = () =>
     milliseconds: 1,
   });
 
-test("Duration#set() sets the values", () => {
-  expect(dur().set({ years: 2 }).years).toBe(2);
-  expect(dur().set({ months: 2 }).months).toBe(2);
-  expect(dur().set({ days: 2 }).days).toBe(2);
-  expect(dur().set({ hours: 4 }).hours).toBe(4);
-  expect(dur().set({ hours: 4.5 }).hours).toBe(4.5);
-  expect(dur().set({ minutes: 16 }).minutes).toBe(16);
-  expect(dur().set({ seconds: 45 }).seconds).toBe(45);
-  expect(dur().set({ milliseconds: 86 }).milliseconds).toBe(86);
+describe("Duration#set() sets the values", () => {
+  const source = {
+    years: 1,
+    months: 1,
+    days: 1,
+    hours: 1,
+    minutes: 1,
+    seconds: 1,
+    milliseconds: 1,
+  };
+  test.each([
+    ["years", 2],
+    ["months", 2],
+    ["days", 2],
+    ["hours", 4],
+    ["hours", 4],
+    ["minutes", 16],
+    ["seconds", 45],
+    ["milliseconds", 86],
+  ])("set({ %s: %s })", (key, value) => {
+    expect(
+      Duration.fromObject(source)
+        .set({ [key]: value })
+        .toObject()
+    ).toStrictEqual({ ...source, [key]: value });
+  });
 });
 
 test("Duration#set() throws for metadata", () => {

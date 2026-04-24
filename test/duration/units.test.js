@@ -36,25 +36,41 @@ test("Duration#shiftTo throws on invalid units", () => {
 });
 
 describe("Duration#shiftTo supports the roundingMode option", () => {
-  // rounding is tested in more detail elsewhere
+  // rounding itself and the different modes are tested in more detail elsewhere
   test("roundingMode = ceil", () => {
     const dur = Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "ceil" });
-    expect(dur.toObject()).toEqual({ hours: 2 });
+    expect(dur.toObject()).toStrictEqual({ hours: 2 });
   });
   test("roundingMode = floor", () => {
     const dur = Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "floor" });
-    expect(dur.toObject()).toEqual({ hours: 1 });
+    expect(dur.toObject()).toStrictEqual({ hours: 1 });
   });
   test("roundingMode = unnecessary", () => {
     const dur = Duration.fromObject({ minutes: 180 }).shiftTo("hours", {
       roundingMode: "unnecessary",
     });
-    expect(dur.toObject()).toEqual({ hours: 2 });
+    expect(dur.toObject()).toStrictEqual({ hours: 2 });
   });
   test("roundingMode = unnecessary throws when rounding is needed", () => {
     expect(() =>
       Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "unnecessary" })
     ).toThrow(RangeError);
+  });
+
+  test("rounding with target unit already present", () => {
+    const dur = Duration.fromObject({ years: 2, months: 14 });
+    expect(dur.shiftTo("years", { roundingMode: "floor" }).toObject()).toStrictEqual({ years: 3 });
+  });
+  test("rounding with multiple source units", () => {
+    const dur = Duration.fromObject({ minutes: 90, seconds: 3600 });
+    expect(dur.shiftTo("hours", { roundingMode: "floor" }).toObject()).toStrictEqual({ hours: 2 });
+  });
+  test("rounding with multiple target units", () => {
+    const dur = Duration.fromObject({ seconds: 5450 });
+    expect(dur.shiftTo("hours", "minutes", { roundingMode: "floor" }).toObject()).toStrictEqual({
+      hours: 1,
+      minutes: 30,
+    });
   });
 });
 

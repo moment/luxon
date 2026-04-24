@@ -38,22 +38,6 @@ test("Duration#hours returns the hours", () => {
   expect(dur.hours).toBe(4);
 });
 
-test("Duration#hours returns the fractional hours", () => {
-  const localDur = Duration.fromObject({
-    years: 1,
-    quarters: 2,
-    months: 2,
-    days: 3,
-    hours: 4.5,
-    minutes: 5,
-    seconds: 6,
-    milliseconds: 7,
-    weeks: 8,
-  });
-
-  expect(localDur.hours).toBe(4.5);
-});
-
 test("Duration#minutes returns the minutes", () => {
   expect(dur.minutes).toBe(5);
 });

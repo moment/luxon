@@ -14,6 +14,8 @@ test("Duration.fromObject sets all the values", () => {
     minutes: 5,
     seconds: 6,
     milliseconds: 7,
+    weeks: 9,
+    quarters: 10,
   });
   expect(dur.years).toBe(1);
   expect(dur.months).toBe(2);
@@ -22,6 +24,34 @@ test("Duration.fromObject sets all the values", () => {
   expect(dur.minutes).toBe(5);
   expect(dur.seconds).toBe(6);
   expect(dur.milliseconds).toBe(7);
+  expect(dur.weeks).toBe(9);
+  expect(dur.quarters).toBe(10);
+});
+
+test("Duration.fromObject accepts negative durations", () => {
+  const dur = Duration.fromObject({
+    days: -3,
+    weeks: -9,
+  });
+  expect(dur.toObject()).toStrictEqual({
+    days: -3,
+    weeks: -9,
+  });
+});
+
+test("Duration.fromObject accepts durations with negative and positive values", () => {
+  const dur = Duration.fromObject({
+    years: 1,
+    days: -3,
+    hours: 4,
+    seconds: -6,
+  });
+  expect(dur.toObject()).toStrictEqual({
+    years: 1,
+    days: -3,
+    hours: 4,
+    seconds: -6,
+  });
 });
 
 test("Duration.fromObject throws for fractional values", () => {
