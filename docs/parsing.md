@@ -239,4 +239,6 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | ff               |              | less short localized date and time                                | `Aug 6, 2014, 1:07 PM`      |
 | F                |              | short localized date and time with seconds                        | `8/6/2014, 1:07:04 PM`      |
 | FF               |              | less short localized date and time with seconds                   | `Aug 6, 2014, 1:07:04 PM`   |
+| X                |              | unix timestamp in seconds                                         | `1407344824`                |
+| x                |              | unix timestamp in milliseconds                                    | `1407344824054`             |
 | '                |              | literal start/end, characters between are not tokenized           | `'T'`                       |

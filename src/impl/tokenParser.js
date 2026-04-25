@@ -5,6 +5,7 @@ import IANAZone from "../zones/IANAZone.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";
 import { ConflictingSpecificationError } from "../errors.js";
+import Invalid from "./invalid.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 
@@ -181,6 +182,11 @@ function unitForToken(token, loc) {
         // because we don't have any way to figure out what they are
         case "z":
           return simple(/[a-z_+-/]{1,256}?/i);
+        // unix timestamps
+        case "X":
+          return intUnit(/[+-]?\d+/);
+        case "x":
+          return intUnit(/[+-]?\d+/);
         // this special-case "token" represents a place where a macro-token expanded into a white-space literal
         // in this case we accept any non-newline white-space
         case " ":
@@ -393,7 +399,14 @@ function dateTimeFromMatches(matches) {
     return r;
   }, {});
 
-  return [vals, zone, specificOffset];
+  let knownEpochMs;
+  if (!isUndefined(matches.X)) {
+    knownEpochMs = matches.X * 1000;
+  } else if (!isUndefined(matches.x)) {
+    knownEpochMs = matches.x;
+  }
+
+  return [vals, zone, specificOffset, knownEpochMs];
 }
 
 let dummyDateTimeCache = null;
@@ -449,13 +462,51 @@ export class TokenParser {
       return { input, tokens: this.tokens, invalidReason: this.invalidReason };
     } else {
       const [rawMatches, matches] = match(input, this.regex, this.handlers),
-        [result, zone, specificOffset] = matches
+        [result, zone, specificOffset, knownEpochMsRaw] = matches
           ? dateTimeFromMatches(matches)
-          : [null, null, undefined];
+          : [null, null, undefined, undefined];
+      let knownEpochMs = knownEpochMsRaw;
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
           "Can't include meridiem when specifying 24-hour format"
         );
+      }
+      if (hasOwnProperty(matches, "X") && hasOwnProperty(matches, "x")) {
+        if (matches.X * 1000 !== matches.x) {
+          return {
+            input,
+            tokens: this.tokens,
+            invalidReason: new Invalid(
+              "mismatched unix timestamp",
+              `X=${matches.X} (${matches.X * 1000}ms) and x=${
+                matches.x
+              } specify different points in time`
+            ),
+          };
+        }
+      }
+      if (knownEpochMs !== undefined && result && Object.keys(result).length > 0) {
+        // X is unix seconds with no sub-second precision; S/SSS/u add the missing ms part
+        if (hasOwnProperty(matches, "X") && result.millisecond !== undefined) {
+          knownEpochMs = knownEpochMs + result.millisecond;
+          delete result.millisecond;
+        }
+        // All remaining tokens are redundant — validate they are consistent with the epoch
+        if (Object.keys(result).length > 0) {
+          const epochDateTime = DateTime.fromMillis(knownEpochMs, { zone: zone ?? "UTC" });
+          for (const [key, value] of Object.entries(result)) {
+            if (epochDateTime[key] !== value) {
+              return {
+                input,
+                tokens: this.tokens,
+                invalidReason: new Invalid(
+                  `mismatched ${key}`,
+                  `you can't specify ${key}=${value} when the unix timestamp implies ${key}=${epochDateTime[key]}`
+                ),
+              };
+            }
+          }
+        }
       }
       return {
         input,
@@ -466,6 +517,7 @@ export class TokenParser {
         result,
         zone,
         specificOffset,
+        knownEpochMs,
       };
     }
   }
@@ -485,8 +537,12 @@ export function explainFromTokens(locale, input, format) {
 }
 
 export function parseFromTokens(locale, input, format) {
-  const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input, format);
-  return [result, zone, specificOffset, invalidReason];
+  const { result, zone, specificOffset, invalidReason, knownEpochMs } = explainFromTokens(
+    locale,
+    input,
+    format
+  );
+  return [result, zone, specificOffset, invalidReason, knownEpochMs];
 }
 
 export function formatOptsToTokens(formatOpts, locale) {

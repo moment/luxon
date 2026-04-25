@@ -1248,3 +1248,200 @@ test("DateTime.fromFormatParser throws error when used with a different locale t
     "fromFormatParser called with a locale of Locale(es-MX, null, null), but the format parser was created for Locale(es-ES, null, null)"
   );
 });
+
+test("fromFormat with unix seconds token X", () => {
+  const dt = DateTime.fromFormat("1769758221", "X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat with unix milliseconds token x", () => {
+  const dt = DateTime.fromFormat("1769758221000", "x");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat with X at epoch zero", () => {
+  const dt = DateTime.fromFormat("0", "X", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(0);
+  expect(dt.year).toBe(1970);
+  expect(dt.month).toBe(1);
+  expect(dt.day).toBe(1);
+  expect(dt.hour).toBe(0);
+  expect(dt.minute).toBe(0);
+  expect(dt.second).toBe(0);
+});
+
+test("fromFormat with x at epoch zero", () => {
+  const dt = DateTime.fromFormat("0", "x", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(0);
+});
+
+test("fromFormat with X for negative unix timestamp (before 1970)", () => {
+  const dt = DateTime.fromFormat("-1", "X", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(-1000);
+  expect(dt.year).toBe(1969);
+  expect(dt.month).toBe(12);
+  expect(dt.day).toBe(31);
+  expect(dt.hour).toBe(23);
+  expect(dt.minute).toBe(59);
+  expect(dt.second).toBe(59);
+});
+
+test("fromFormat with x for negative unix milliseconds (before 1970)", () => {
+  const dt = DateTime.fromFormat("-1000", "x", { zone: "UTC" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.valueOf()).toBe(-1000);
+  expect(dt.year).toBe(1969);
+});
+
+test("fromFormat with X rejects decimal numbers", () => {
+  const dt = DateTime.fromFormat("1769758221.5", "X");
+  expect(dt.isValid).toBe(false);
+});
+
+test("fromFormat with x rejects decimal numbers", () => {
+  const dt = DateTime.fromFormat("1769758221000.5", "x");
+  expect(dt.isValid).toBe(false);
+});
+
+test("fromFormat with X rejects non-numeric input", () => {
+  const dt = DateTime.fromFormat("abc", "X");
+  expect(dt.isValid).toBe(false);
+});
+
+test("fromFormat with x rejects non-numeric input", () => {
+  const dt = DateTime.fromFormat("abc", "x");
+  expect(dt.isValid).toBe(false);
+});
+
+test("fromFormat with X rejects bare sign without digits", () => {
+  const dt = DateTime.fromFormat("+", "X");
+  expect(dt.isValid).toBe(false);
+});
+
+test("fromFormat with x rejects bare sign without digits", () => {
+  const dt = DateTime.fromFormat("-", "x");
+  expect(dt.isValid).toBe(false);
+});
+
+test("fromFormat with X rejects empty string", () => {
+  const dt = DateTime.fromFormat("", "X");
+  expect(dt.isValid).toBe(false);
+});
+
+test("fromFormat with x rejects empty string", () => {
+  const dt = DateTime.fromFormat("", "x");
+  expect(dt.isValid).toBe(false);
+});
+
+// Consistent redundant tokens alongside X/x should succeed
+
+test("fromFormat accepts consistent year alongside X", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z
+  const dt = DateTime.fromFormat("2026 1769758221", "yyyy X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat accepts consistent month alongside X", () => {
+  // epoch 1769758221 = 2026-01-30, month = 01 (January)
+  const dt = DateTime.fromFormat("01 1769758221", "MM X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().month).toBe(1);
+});
+
+test("fromFormat accepts consistent full datetime alongside X", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z
+  const dt = DateTime.fromFormat("2026-01-30T07:30:21 1769758221", "yyyy-MM-dd'T'HH:mm:ss X");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat accepts consistent year alongside x", () => {
+  // epoch 1769758221000 = 2026-01-30T07:30:21Z
+  const dt = DateTime.fromFormat("2026 1769758221000", "yyyy x");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().year).toBe(2026);
+});
+
+// inconsistent tokens alongside X/x produce an invalid DateTime (not a throw)
+
+test("fromFormat returns invalid DateTime when X year is inconsistent", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z, year=2025 is wrong
+  const dt = DateTime.fromFormat("2025 1769758221", "yyyy X");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched year");
+});
+
+test("fromFormat returns invalid DateTime when X month is inconsistent", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z, month=02 (February) is wrong
+  const dt = DateTime.fromFormat("02 1769758221", "MM X");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched month");
+});
+
+test("fromFormat returns invalid DateTime when X hour is inconsistent", () => {
+  // epoch 1769758221 = 2026-01-30T07:30:21Z, hour=08 is wrong
+  const dt = DateTime.fromFormat("08 1769758221", "HH X");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched hour");
+});
+
+test("fromFormat returns invalid DateTime when x year is inconsistent", () => {
+  // epoch 1769758221000 = 2026-01-30T07:30:21Z, year=2025 is wrong
+  const dt = DateTime.fromFormat("2025 1769758221000", "yyyy x");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched year");
+});
+
+// X (unix seconds) + S/SSS/u: milliseconds are additive precision, not redundant
+
+test("fromFormat with X and SSS adds millisecond precision", () => {
+  // X gives second-precision, SSS adds the sub-second part
+  const dt = DateTime.fromFormat("1769758221 500", "X SSS");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().valueOf()).toBe(1769758221500);
+  expect(dt.toUTC().millisecond).toBe(500);
+});
+
+test("fromFormat with X and S adds millisecond precision", () => {
+  const dt = DateTime.fromFormat("1769758221 5", "X S");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().valueOf()).toBe(1769758221005);
+});
+
+// x (unix milliseconds) + S: redundant, validate consistency
+
+test("fromFormat accepts consistent SSS alongside x", () => {
+  // epoch 1769758221500 has millisecond = 500
+  const dt = DateTime.fromFormat("1769758221500 500", "x SSS");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().millisecond).toBe(500);
+});
+
+test("fromFormat returns invalid DateTime when x millisecond is inconsistent with SSS", () => {
+  // epoch 1769758221500 has millisecond = 500, SSS=501 is wrong
+  const dt = DateTime.fromFormat("1769758221500 501", "x SSS");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched millisecond");
+});
+
+// X and x together
+
+test("fromFormat accepts X and x when they are consistent", () => {
+  // X=1769758221 seconds = 1769758221000 ms, x=1769758221000 ms — same point in time
+  const dt = DateTime.fromFormat("1769758221 1769758221000", "X x");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2026-01-30T07:30:21.000Z");
+});
+
+test("fromFormat returns invalid DateTime when X and x are inconsistent", () => {
+  // X=1769758221 → 1769758221000ms, x=1769758222000 → different point in time
+  const dt = DateTime.fromFormat("1769758221 1769758222000", "X x");
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("mismatched unix timestamp");
+});

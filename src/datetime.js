@@ -1001,9 +1001,15 @@ export default class DateTime {
         numberingSystem,
         defaultToEN: true,
       }),
-      [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);
+      [vals, parsedZone, specificOffset, invalid, knownEpochMs] = parseFromTokens(
+        localeToUse,
+        text,
+        fmt
+      );
     if (invalid) {
       return DateTime.invalid(invalid);
+    } else if (knownEpochMs !== undefined) {
+      return DateTime.fromMillis(knownEpochMs, opts);
     } else {
       return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text, specificOffset);
     }
@@ -2429,10 +2435,13 @@ export default class DateTime {
       );
     }
 
-    const { result, zone, specificOffset, invalidReason } = formatParser.explainFromTokens(text);
+    const { result, zone, specificOffset, invalidReason, knownEpochMs } =
+      formatParser.explainFromTokens(text);
 
     if (invalidReason) {
       return DateTime.invalid(invalidReason);
+    } else if (knownEpochMs !== undefined) {
+      return DateTime.fromMillis(knownEpochMs, opts);
     } else {
       return parseDataToDateTime(
         result,
