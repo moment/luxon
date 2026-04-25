@@ -6,7 +6,7 @@ import { Duration } from "../../src/luxon";
 // #isDuration
 //-------
 test("Duration#isDuration return true for valid duration", () => {
-  const dur = Duration.fromObject({ hours: 1, minutes: 4.5 });
+  const dur = Duration.fromObject({ hours: 1, minutes: 4 });
   expect(Duration.isDuration(dur)).toBe(true);
 });
 

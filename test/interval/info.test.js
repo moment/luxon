@@ -2,7 +2,7 @@ import { test, expect } from "vitest";
 import { DateTime, Interval } from "../../src/luxon";
 
 import * as Helpers from "../helpers";
-import { InvalidDurationError } from "../../src/errors";
+import { InvalidDurationError, RoundingNecessaryError } from "../../src/errors";
 
 const fromISOs = (s, e) => DateTime.fromISO(s).until(DateTime.fromISO(e));
 
@@ -20,11 +20,29 @@ test("Interval#length('days') returns 1 for yesterday", () => {
 });
 
 test("Interval#length('months') returns the right number of months", () => {
-  expect(Math.floor(fromISOs("1996-02-17", "2012-08-14").length("months"))).toBe(197);
+  expect(fromISOs("1996-02-17", "2012-08-17").length("months")).toBe(198);
+});
+
+test("Interval#length accepts a rounding mode", () => {
+  expect(fromISOs("1996-02-17", "2012-08-14").length("months", { roundingMode: "floor" })).toBe(
+    197
+  );
+});
+
+test("Interval#length throws for roundingMode: unnecessary when rounding is necessary", () => {
+  expect(() => fromISOs("1996-02-17", "2012-08-14").length("months")).toThrow(
+    RoundingNecessaryError
+  );
+});
+
+test("Interval#length defaults to roundingMode: unnecessary", () => {
+  expect(() => fromISOs("1996-02-17", "2012-08-14").length("months")).toThrow(
+    RoundingNecessaryError
+  );
 });
 
 test("Interval#length('years') returns the right number of years", () => {
-  expect(Math.floor(fromISOs("1996-02-17", "2012-08-14").length("years"))).toBe(16);
+  expect(Math.floor(fromISOs("1996-02-17", "2012-08-17").length("years"))).toBe(16);
 });
 
 test("Interval#length() returns NaN for invalid intervals", () => {
@@ -81,8 +99,27 @@ test("Interval#toDuration creates a duration in those units", () => {
   expect(int.toDuration("seconds").toObject()).toEqual({ seconds: 4 * 3600 });
   expect(int.toDuration("minutes").toObject()).toEqual({ minutes: 4 * 60 });
   expect(int.toDuration("hours").toObject()).toEqual({ hours: 4 });
-  expect(int.toDuration("days").toObject()).toEqual({ days: 1 / 6 });
-  expect(int.toDuration("weeks").toObject()).toEqual({ weeks: 1 / (6 * 7) });
+  expect(Interval.fromDateTimes("2022-01-01", "2022-01-05").toDuration("days").toObject()).toEqual({
+    days: 4,
+  });
+  expect(Interval.fromDateTimes("2022-01-01", "2022-01-08").toDuration("weeks").toObject()).toEqual(
+    { weeks: 1 }
+  );
+});
+test("Interval#toDuration accepts a roundingMode", () => {
+  const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13));
+  expect(int.toDuration("days", { roundingMode: "ceil" }).toObject()).toEqual({ days: 1 });
+});
+
+test("Interval#toDuration throws for roundingMode: unnecessary when rounding is necessary", () => {
+  const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13));
+  expect(() => int.toDuration("days", { roundingMode: "unnecessary" })).toThrow(
+    RoundingNecessaryError
+  );
+});
+test("Interval#toDuration defaults to roundingMode: unnecessary", () => {
+  const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13));
+  expect(() => int.toDuration("days")).toThrow(RoundingNecessaryError);
 });
 
 test("Interval#toDuration accepts multiple units", () => {
@@ -92,12 +129,6 @@ test("Interval#toDuration accepts multiple units", () => {
   );
 
   expect(int.toDuration(["hours", "minutes"]).toObject()).toEqual({ hours: 4, minutes: 44 });
-});
-
-test("Interval#toDuration accepts duration options", () => {
-  const int = Interval.fromDateTimes(Helpers.atHour(9), Helpers.atHour(13)),
-    dur = int.toDuration(["hours"], { conversionAccuracy: "longterm" });
-  expect(dur.conversionAccuracy).toBe("longterm");
 });
 
 test("Interval#toDuration throws InvalidDurationError for invalid intervals", () => {

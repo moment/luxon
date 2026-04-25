@@ -1,5 +1,6 @@
 import { describe, test, expect } from "vitest";
-import { Duration } from "../../src/luxon";
+import { DateTime, Duration } from "../../src/luxon";
+import { RoundingNecessaryError } from "../../src/errors";
 
 //------
 // #shiftTo()
@@ -400,28 +401,88 @@ describe("Duration#rescale does not convert ambiguous units", () => {
 // #as()
 //-------
 
-test("Duration#as shifts to one unit and returns it", () => {
-  const dur = Duration.fromMillis(5760000);
-  expect(dur.as("hours")).toBe(1.6);
+describe("Duration#as shifts to one unit and returns it", () => {
+  test("can convert time units", () => {
+    const dur = Duration.fromMillis(2 * 60 * 60 * 1000);
+    expect(dur.as("hours")).toBe(2);
+  });
+  test("can convert month-based units", () => {
+    const dur = Duration.fromObject({ years: 2 });
+    expect(dur.as("quarters")).toBe(8);
+  });
+  test("can convert day-based units", () => {
+    const dur = Duration.fromObject({ days: 21 });
+    expect(dur.as("weeks")).toBe(3);
+  });
+});
+
+describe("Duration#as accepts a rounding mode", () => {
+  test("for time units", () => {
+    const dur = Duration.fromMillis(2 * 60 * 60 * 1000 + 50);
+    expect(dur.as("hours", { roundingMode: "ceil" })).toBe(3);
+  });
+  test("for month based units", () => {
+    const dur = Duration.fromObject({ years: 2, months: 2 });
+    expect(dur.as("months", { roundingMode: "expand" })).toBe(3);
+  });
+  test("for day based units", () => {
+    const dur = Duration.fromObject({ days: 11, weeks: 2 });
+    expect(dur.as("weeks", { roundingMode: "floor" })).toBe(3);
+  });
+});
+
+test("Duration#as rounds negative values correctly", () => {
+  const dur = Duration.fromMillis(-2 * 60 * 60 * 1000 - 50);
+  expect(dur.as("hours", { roundingMode: "ceil" })).toBe(-3);
+});
+
+test("Duration#as rounds mixed inputs correctly", () => {
+  const dur = Duration.fromObject({ days: 2, weeks: -4 });
+  expect(dur.as("weeks", { roundingMode: "trunc" })).toBe(-3);
+});
+
+test("Duration#as throws for roundingMode: unnecessary when rounding is necessary", () => {
+  const dur = Duration.fromObject({ days: 2, weeks: -4 });
+  expect(() => dur.as("weeks", { roundingMode: "unnecessary" })).toThrow(RoundingNecessaryError);
+});
+
+test("Duration#as defaults to roundingMode: unnecessary", () => {
+  const dur = Duration.fromObject({ days: 2, weeks: -4 });
+  expect(() => dur.as("weeks")).toThrow(RoundingNecessaryError);
+});
+
+describe("Duration#as accepts roundingMode: none", () => {
+  test("with exact numbers", () => {
+    const dur = Duration.fromObject({ hours: 1, minutes: 30 });
+    expect(dur.as("hours", { roundingMode: "none" })).toBe(1.5);
+  });
+  test("with inexact numbers", () => {
+    const dur = Duration.fromObject({ days: 3, weeks: 2 });
+    expect(dur.as("weeks", { roundingMode: "none" })).toBeCloseTo(2.42857142, 5);
+  });
+});
+
+test("Duration#as does not convert ambiguous units", () => {
+  expect(() => Duration.fromObject({ years: 2 }).as("days")).toThrow();
+});
+
+test("Duration#as accepts a reference date", () => {
+  const date = DateTime.local(2005);
+  expect(Duration.fromObject({ years: 2 }, { after: date }).as("days")).toBe(730);
+});
+test("Duration#as accepts a reference date and handles DST", () => {
+  const date = DateTime.local(2004);
+  expect(Duration.fromObject({ years: 2 }, { after: date }).as("days")).toBe(731);
 });
 
 //------
 // #valueOf()
 //-------
 
-test("Duration#valueOf value of zero duration", () => {
-  const dur = Duration.fromObject({});
-  expect(dur.valueOf()).toBe(0);
-});
-
-test("Duration#valueOf returns as millisecond value (lower order units)", () => {
-  const dur = Duration.fromObject({ hours: 1, minutes: 36, seconds: 0 });
-  expect(dur.valueOf()).toBe(5760000);
-});
-
-test("Duration#valueOf value of the duration with lower and higher order units", () => {
-  const dur = Duration.fromObject({ days: 2, seconds: 1 });
-  expect(dur.valueOf()).toBe(172801000);
+describe("Duration#valueOf throws TypeError", () => {
+  test("for empty durations", () => {
+    expect(() => Duration.fromObject({}).valueOf()).toThrow(TypeError);
+  });
 });
 
 //------

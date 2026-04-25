@@ -131,35 +131,11 @@ test("DateTime#plus renders invalid when out of max. datetime range using IANAZo
   expect(d.isValid).toBe(false);
 });
 
-test("DateTime#plus handles fractional days", () => {
-  const d = DateTime.fromISO("2016-01-31T10:00");
-  expect(d.plus({ days: 0.8 })).toEqual(d.plus({ hours: (24 * 4) / 5 }));
-  expect(d.plus({ days: 6.8 })).toEqual(d.plus({ days: 6, hours: (24 * 4) / 5 }));
-  expect(d.plus({ days: 6.8, milliseconds: 17 })).toEqual(
-    d.plus({ days: 6, milliseconds: 0.8 * 24 * 60 * 60 * 1000 + 17 })
-  );
-});
-
-test("DateTime#plus handles fractional large units", () => {
-  const units = ["weeks", "months", "quarters", "years"];
-
-  for (const unit of units) {
-    const d = DateTime.fromISO("2016-01-31T10:00");
-    expect(d.plus({ [unit]: 8.7 })).toEqual(
-      d.plus({
-        [unit]: 8,
-        milliseconds: Duration.fromObject({ [unit]: 0.7 }).as("milliseconds"),
-      })
-    );
-  }
-});
-
 // #645
 test("DateTime#plus supports positive and negative duration units", () => {
   const d = DateTime.fromISO("2020-01-08T12:34");
   expect(d.plus({ months: 1, days: -1 })).toEqual(d.plus({ months: 1 }).plus({ days: -1 }));
   expect(d.plus({ years: 4, days: -1 })).toEqual(d.plus({ years: 4 }).plus({ days: -1 }));
-  expect(d.plus({ years: 0.5, days: -1.5 })).toEqual(d.plus({ years: 0.5 }).plus({ days: -1.5 }));
 });
 
 //------

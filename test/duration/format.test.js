@@ -1,4 +1,4 @@
-import { test, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 import { Duration, DateTime } from "../../src/luxon";
 
 const dur = () =>
@@ -133,19 +133,6 @@ test("Duration#toMillis handles date reference DST", () => {
 
 test("Duration#toMillis throws if a date reference is required", () => {
   expect(() => Duration.fromObject({ days: 2 }).toMillis()).toThrow();
-});
-
-//------
-// #valueOf()
-//------
-test("Duration#valueOf returns the value in milliseconds", () => {
-  expect(Duration.fromMillis(1000).valueOf()).toBe(1000);
-});
-
-test("Duration#valueOf returns the total value in milliseconds", () => {
-  expect(Duration.fromObject({ hours: 2, seconds: 2 }).valueOf()).toBe(
-    2 * 60 * 60 * 1000 + 2 * 1000
-  );
 });
 
 //------

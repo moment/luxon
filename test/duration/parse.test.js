@@ -78,10 +78,6 @@ describe("Duration.fromISO rejects nonsense", () => {
 // #fromISOTime()
 //------
 
-const checkTime = (s, ob) => {
-  expect(Duration.fromISOTime(s).toObject()).toEqual(ob);
-};
-
 describe("Duration.fromISOTime can parse a variety of extended ISO time formats", () => {
   test.each([
     ["11:22:33.444", { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }],

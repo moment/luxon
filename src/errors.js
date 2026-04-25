@@ -36,6 +36,34 @@ export class ParseError extends RangeError {
 }
 
 /**
+ * Thrown when an invalid value is passed for a unit.
+ */
+export class InvalidUnitValueError extends TypeError {
+  /**
+   *
+   * @param unit {string}
+   * @param expectedType {string}
+   * @param value {unknown}
+   */
+  constructor(unit, expectedType, value) {
+    super(`Invalid value ${value} for unit ${unit}, expected ${expectedType}`);
+    this.name = "InvalidUnitValueError";
+    this.unit = unit;
+    this.value = value;
+  }
+}
+
+/**
+ * Thrown when roundingMode was specified as "unnecessary", but rounding was necessary.
+ */
+export class RoundingNecessaryError extends Error {
+  constructor() {
+    super("Rounding is necessary for this operation");
+    this.name = "RoundingNecessaryError";
+  }
+}
+
+/**
  * @private
  */
 export class InvalidIntervalError extends LuxonError {
