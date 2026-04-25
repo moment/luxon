@@ -900,6 +900,11 @@ export default class Duration {
 
   /**
    * Get the years.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @type {number}
    */
   get years() {
@@ -908,6 +913,11 @@ export default class Duration {
 
   /**
    * Get the quarters.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @type {number}
    */
   get quarters() {
@@ -916,6 +926,11 @@ export default class Duration {
 
   /**
    * Get the months.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @type {number}
    */
   get months() {
@@ -924,6 +939,11 @@ export default class Duration {
 
   /**
    * Get the weeks
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @type {number}
    */
   get weeks() {
@@ -932,6 +952,11 @@ export default class Duration {
 
   /**
    * Get the days.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @type {number}
    */
   get days() {
@@ -940,6 +965,11 @@ export default class Duration {
 
   /**
    * Get the hours.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @type {number}
    */
   get hours() {
@@ -948,6 +978,11 @@ export default class Duration {
 
   /**
    * Get the minutes.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @type {number}
    */
   get minutes() {
@@ -956,6 +991,11 @@ export default class Duration {
 
   /**
    * Get the seconds.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @return {number}
    */
   get seconds() {
@@ -964,6 +1004,11 @@ export default class Duration {
 
   /**
    * Get the milliseconds.
+   *
+   * Note: Durations created out of Duration.from* (e.g. fromObject) factories will always yield 0.
+   * This will give you the correct difference in years, if the Duration was created out of a diff operation.
+   *
+   * More information: https://moment.github.io/luxon/#/math?id=duration-math
    * @return {number}
    */
   get milliseconds() {
