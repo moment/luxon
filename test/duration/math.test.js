@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest";
 
 import { Duration } from "../../src/luxon";
+import { InvalidArgumentError, InvalidUnitValueError } from "../../src/errors";
 
 //------
 // #plus()
@@ -76,7 +77,7 @@ describe("Duration#plus results in the union of the set units", () => {
 });
 
 test("Duration#plus throws with invalid parameter", () => {
-  expect(() => Duration.fromObject({}).plus("123")).toThrow();
+  expect(() => Duration.fromObject({}).plus("123")).toThrow(InvalidArgumentError);
 });
 
 //------
@@ -181,5 +182,12 @@ test("Duration#units can take the unit into account", () => {
 
 test("Duration#mapUnits requires that fn return a number", () => {
   const dur = Duration.fromObject({ hours: 1, minutes: 2, seconds: -3, milliseconds: -4 });
-  expect(() => dur.mapUnits(() => "hello?")).toThrow();
+  expect(() => dur.mapUnits(() => "hello?")).toThrow(InvalidUnitValueError);
+});
+
+test("Duration#mapUnits reports the correct unit when throwing InvalidUnitValueError", () => {
+  const dur = Duration.fromObject({ hours: 1, minutes: 2 });
+  expect(() => dur.mapUnits((value, unit) => (unit === "minutes" ? "blorb" : value))).toThrow(
+    new InvalidUnitValueError("minutes", "integer", "blorb")
+  );
 });

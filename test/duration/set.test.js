@@ -1,5 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { Duration } from "../../src/luxon";
+import { InvalidUnitError } from "../../src/errors";
 
 //------
 // years/months/days/hours/minutes/seconds/milliseconds
@@ -44,7 +45,9 @@ describe("Duration#set() sets the values", () => {
 });
 
 test("Duration#set() throws for metadata", () => {
-  expect(() => dur.set({ locale: "be" })).toThrow();
-  expect(() => dur.set({ numberingSystem: "thai" })).toThrow();
-  expect(() => dur.set({ invalid: 42 })).toThrow();
+  expect(() => dur.set({ locale: "be" })).toThrow(new InvalidUnitError("locale"));
+  expect(() => dur.set({ numberingSystem: "thai" })).toThrow(
+    new InvalidUnitError("numberingSystem")
+  );
+  expect(() => dur.set({ invalid: 42 })).toThrow(new InvalidUnitError("invalid"));
 });

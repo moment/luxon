@@ -1,6 +1,7 @@
 import { it, test, expect } from "vitest";
 
 import { Duration } from "../../src/luxon";
+import { InvalidArgumentError, InvalidUnitError, InvalidUnitValueError } from "../../src/errors";
 
 //------
 // .fromObject()
@@ -62,13 +63,13 @@ test("Duration.fromObject throws for fractional values", () => {
       days: 3,
       hours: 4.5,
     })
-  ).toThrow(TypeError);
+  ).toThrow(new InvalidUnitValueError("hours", "integer", 4.5));
 });
 
 test("Duration.fromObject throws if the argument is not an object", () => {
-  expect(() => Duration.fromObject()).toThrow();
-  expect(() => Duration.fromObject(null)).toThrow();
-  expect(() => Duration.fromObject("foo")).toThrow();
+  expect(() => Duration.fromObject()).toThrow(InvalidArgumentError);
+  expect(() => Duration.fromObject(null)).toThrow(InvalidArgumentError);
+  expect(() => Duration.fromObject("foo")).toThrow(InvalidArgumentError);
 });
 
 test("Duration.fromObject({}) constructs zero duration", () => {
@@ -88,17 +89,17 @@ test("Duration.fromObject normalizes -0", () => {
 });
 
 test("Duration.fromObject throws if the initial object has invalid keys", () => {
-  expect(() => Duration.fromObject({ foo: 0 })).toThrow();
-  expect(() => Duration.fromObject({ years: 1, foo: 0 })).toThrow();
+  expect(() => Duration.fromObject({ foo: 0 })).toThrow(InvalidUnitError);
+  expect(() => Duration.fromObject({ years: 1, foo: 0 })).toThrow(InvalidUnitError);
 });
 
 test("Duration.fromObject throws if the initial object has invalid values", () => {
-  expect(() => Duration.fromObject({ years: {} })).toThrow();
-  expect(() => Duration.fromObject({ months: "some" })).toThrow();
-  expect(() => Duration.fromObject({ days: NaN })).toThrow();
-  expect(() => Duration.fromObject({ hours: true })).toThrow();
-  expect(() => Duration.fromObject({ minutes: false })).toThrow();
-  expect(() => Duration.fromObject({ seconds: "" })).toThrow();
+  expect(() => Duration.fromObject({ years: {} })).toThrow(InvalidUnitValueError);
+  expect(() => Duration.fromObject({ months: "some" })).toThrow(InvalidUnitValueError);
+  expect(() => Duration.fromObject({ days: NaN })).toThrow(InvalidUnitValueError);
+  expect(() => Duration.fromObject({ hours: true })).toThrow(InvalidUnitValueError);
+  expect(() => Duration.fromObject({ minutes: false })).toThrow(InvalidUnitValueError);
+  expect(() => Duration.fromObject({ seconds: "" })).toThrow(InvalidUnitValueError);
 });
 
 test("Duration.fromObject is valid if providing options only", () => {
@@ -141,8 +142,8 @@ test("Duration.fromDurationLike normalizes -0", () => {
 });
 
 it("Duration.fromDurationLike throws for invalid inputs", () => {
-  expect(() => Duration.fromDurationLike("foo")).toThrow();
-  expect(() => Duration.fromDurationLike(null)).toThrow();
-  expect(() => Duration.fromDurationLike(Infinity)).toThrow();
-  expect(() => Duration.fromDurationLike(NaN)).toThrow();
+  expect(() => Duration.fromDurationLike("foo")).toThrow(InvalidArgumentError);
+  expect(() => Duration.fromDurationLike(null)).toThrow(InvalidArgumentError);
+  expect(() => Duration.fromDurationLike(Infinity)).toThrow(InvalidUnitValueError);
+  expect(() => Duration.fromDurationLike(NaN)).toThrow(InvalidUnitValueError);
 });

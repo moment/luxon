@@ -1,5 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { Duration, DateTime } from "../../src/luxon";
+import { DateReferenceRequiredError } from "../../src/errors";
 
 const dur = () =>
   Duration.fromObject({
@@ -132,7 +133,7 @@ test("Duration#toMillis handles date reference DST", () => {
 });
 
 test("Duration#toMillis throws if a date reference is required", () => {
-  expect(() => Duration.fromObject({ days: 2 }).toMillis()).toThrow();
+  expect(() => Duration.fromObject({ days: 2 }).toMillis()).toThrow(DateReferenceRequiredError);
 });
 
 //------

@@ -64,6 +64,17 @@ export class RoundingNecessaryError extends Error {
 }
 
 /**
+ * Thrown when a Duration operation requires a date reference (such as converting days to hours),
+ * but no date reference was provided.
+ */
+export class DateReferenceRequiredError extends TypeError {
+  constructor() {
+    super("Duration operation requires a date reference");
+    this.name = "DateReferenceRequiredError";
+  }
+}
+
+/**
  * @private
  */
 export class InvalidIntervalError extends LuxonError {

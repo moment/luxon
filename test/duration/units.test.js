@@ -1,6 +1,10 @@
 import { describe, test, expect } from "vitest";
 import { DateTime, Duration } from "../../src/luxon";
-import { RoundingNecessaryError } from "../../src/errors";
+import {
+  DateReferenceRequiredError,
+  InvalidUnitError,
+  RoundingNecessaryError,
+} from "../../src/errors";
 
 //------
 // #shiftTo()
@@ -30,10 +34,18 @@ test("Duration#shiftTo boils down and then rolls up", () => {
   expect(dur.toObject()).toEqual({ minutes: 143, milliseconds: 20000 });
 });
 
-test("Duration#shiftTo throws on invalid units", () => {
-  expect(() => {
-    Duration.fromObject({ years: 2, hours: 5000 }).shiftTo("months", "glorp");
-  }).toThrow();
+describe("Duration#shiftTo throws on invalid unit values", () => {
+  test.for([
+    ["on their own", ["foo"], "foo"],
+    ["when combined with other units", ["months", "glorp"], "glorp"],
+    ["for random other types", [1], 1],
+    ["when combined with an options object", ["glorp", {}], "glorp"],
+    ["does not accept options outside last arg", [{}, "months"], {}],
+  ])("$0", ([_name, args, wrongUnit]) => {
+    expect(() => {
+      Duration.fromObject({ years: 2, hours: 5000 }).shiftTo(...args);
+    }).toThrow(new InvalidUnitError(wrongUnit));
+  });
 });
 
 describe("Duration#shiftTo supports the roundingMode option", () => {
@@ -55,7 +67,7 @@ describe("Duration#shiftTo supports the roundingMode option", () => {
   test("roundingMode = unnecessary throws when rounding is needed", () => {
     expect(() =>
       Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "unnecessary" })
-    ).toThrow(RangeError);
+    ).toThrow(RoundingNecessaryError);
   });
 
   test("rounding with target unit already present", () => {
@@ -78,7 +90,7 @@ describe("Duration#shiftTo supports the roundingMode option", () => {
 test("Duration#shiftTo defaults to rounding = unnecessary", () => {
   expect(() =>
     Duration.fromObject({ minutes: 90 }).shiftTo("hours", { roundingMode: "unnecessary" })
-  ).toThrow(RangeError);
+  ).toThrow(RoundingNecessaryError);
 });
 
 test("Duration#shiftTo without any units no-ops", () => {
@@ -462,27 +474,40 @@ describe("Duration#as accepts roundingMode: none", () => {
   });
 });
 
-test("Duration#as does not convert ambiguous units", () => {
-  expect(() => Duration.fromObject({ years: 2 }).as("days")).toThrow();
+test("Duration#as does not convert ambiguous units without a date reference", () => {
+  expect(() => Duration.fromObject({ years: 2 }).as("days")).toThrow(DateReferenceRequiredError);
 });
 
 test("Duration#as accepts a reference date", () => {
   const date = DateTime.local(2005);
-  expect(Duration.fromObject({ years: 2 }, { after: date }).as("days")).toBe(730);
+  expect(Duration.fromObject({ years: 2 }).as("days", { after: date })).toBe(730);
 });
 test("Duration#as accepts a reference date and handles DST", () => {
   const date = DateTime.local(2004);
-  expect(Duration.fromObject({ years: 2 }, { after: date }).as("days")).toBe(731);
+  expect(Duration.fromObject({ years: 2 }).as("days", { after: date })).toBe(731);
 });
 
 //------
 // #valueOf()
 //-------
 
-describe("Duration#valueOf throws TypeError", () => {
-  test("for empty durations", () => {
-    expect(() => Duration.fromObject({}).valueOf()).toThrow(TypeError);
-  });
+test("Duration#valueOf returns the millis for durations with only time units", () => {
+  expect(Duration.fromObject({ hours: 2 }).valueOf()).toBe(7200000);
+  expect(Duration.fromObject({ minutes: 360 }).valueOf()).toBe(21600000);
+  expect(Duration.fromObject({ seconds: 2 }).valueOf()).toBe(2000);
+  expect(Duration.fromObject({ hours: 1, seconds: 2, milliseconds: 3 }).valueOf()).toBe(10920003);
+});
+
+test("Duration#valueOf returns 0 for empty durations", () => {
+  expect(Duration.fromObject({}).valueOf()).toBe(0);
+});
+
+test("Duration#valueOf throws TypeError for durations with date units", () => {
+  expect(() => Duration.fromObject({ years: 2 }).valueOf()).toThrow(DateReferenceRequiredError);
+  expect(() => Duration.fromObject({ days: 3 }).valueOf()).toThrow(DateReferenceRequiredError);
+  expect(() => Duration.fromObject({ months: 4, hours: 2 }).valueOf()).toThrow(
+    DateReferenceRequiredError
+  );
 });
 
 //------
