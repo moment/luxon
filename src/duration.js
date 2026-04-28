@@ -387,6 +387,7 @@ export default class Duration {
    * @private
    */
   static normalizeUnit(unit) {
+    if (typeof unit !== "string") throw new InvalidUnitError(unit);
     const normalized = {
       year: "years",
       years: "years",
