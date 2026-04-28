@@ -45,9 +45,9 @@ describe("Duration#set() sets the values", () => {
 });
 
 test("Duration#set() throws for metadata", () => {
-  expect(() => dur.set({ locale: "be" })).toThrow(new InvalidUnitError("locale"));
-  expect(() => dur.set({ numberingSystem: "thai" })).toThrow(
+  expect(() => dur().set({ locale: "be" })).toThrow(new InvalidUnitError("locale"));
+  expect(() => dur().set({ numberingSystem: "thai" })).toThrow(
     new InvalidUnitError("numberingSystem")
   );
-  expect(() => dur.set({ invalid: 42 })).toThrow(new InvalidUnitError("invalid"));
+  expect(() => dur().set({ invalid: 42 })).toThrow(new InvalidUnitError("invalid"));
 });

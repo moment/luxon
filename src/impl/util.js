@@ -4,7 +4,7 @@
   it up into, say, parsingUtil.js and basicUtil.js and so on. But they are divided up by feature area.
 */
 
-import { InvalidArgumentError } from "../errors.js";
+import { InvalidArgumentError, InvalidUnitValueError } from "../errors.js";
 import Settings from "../settings.js";
 import { dayOfWeek, isoWeekdayToLocal } from "./conversions.js";
 
@@ -282,10 +282,25 @@ export function signedOffset(offHourStr, offMinuteStr) {
 
 // COERCION
 
-export function asNumber(value) {
-  const numericValue = Number(value);
-  if (typeof value === "boolean" || value === "" || !Number.isFinite(numericValue))
-    throw new InvalidArgumentError(`Invalid unit value ${value}`);
+/**
+ * @param value {unknown}
+ * @param unit {string}
+ * @return {number}
+ * @internal
+ * @ignore
+ */
+export function asInteger(value, unit) {
+  let numericValue;
+  try {
+    numericValue = Number(value);
+  } catch (cause) {
+    // This can throw, e.g., for BigInt, Symbol or if primitive coercion functions like valueOf throw.
+    throw new InvalidUnitValueError(unit, "integer", value, { cause });
+  }
+  // Guard against some bad coercions that are allowed by Number()
+  // Additinonally, only accept safe integers, so we can safely do integer math on them
+  if (typeof value === "boolean" || value === "" || !Number.isSafeInteger(numericValue))
+    throw new InvalidUnitValueError(unit, "integer", value);
   return numericValue;
 }
 
@@ -295,7 +310,7 @@ export function normalizeObject(obj, normalizer) {
     if (hasOwnProperty(obj, u)) {
       const v = obj[u];
       if (v === undefined || v === null) continue;
-      normalized[normalizer(u)] = asNumber(v);
+      normalized[normalizer(u)] = asInteger(v, u);
     }
   }
   return normalized;

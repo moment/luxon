@@ -15,7 +15,7 @@ describe("Duration.fromISO can parse a variety of ISO formats", () => {
     ["P1YT34000S", { years: 1, seconds: 34000 }],
     ["P1W1DT13H23M34S", { weeks: 1, days: 1, hours: 13, minutes: 23, seconds: 34 }],
     ["P2W", { weeks: 2 }],
-    ["PT10000000000000000000.999S", { seconds: 10000000000000000000, milliseconds: 999 }],
+    ["PT1000000000000000.999S", { seconds: 1000000000000000, milliseconds: 999 }],
   ])("fromISO(%s) => %o", (s, expected) => {
     expect(Duration.fromISO(s).toObject()).toStrictEqual(expected);
   });

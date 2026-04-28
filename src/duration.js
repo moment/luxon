@@ -9,7 +9,7 @@ import Invalid from "./impl/invalid.js";
 import Locale from "./impl/locale.js";
 import { parseISODuration, parseISOTimeOnly } from "./impl/regexParser.js";
 import {
-  asNumber,
+  asInteger,
   hasOwnProperty,
   isNumber,
   isUndefined,
@@ -681,7 +681,7 @@ export default class Duration {
   mapUnits(fn) {
     const result = {};
     for (const k of Object.keys(this.#values)) {
-      result[k] = asNumber(fn(this.#values[k], k));
+      result[k] = asInteger(fn(this.#values[k], k), k);
     }
     return this.#clone({ values: result }, true);
   }

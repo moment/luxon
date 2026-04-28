@@ -44,9 +44,10 @@ export class InvalidUnitValueError extends TypeError {
    * @param unit {string}
    * @param expectedType {string}
    * @param value {unknown}
+   * @param [opts] {object}
    */
-  constructor(unit, expectedType, value) {
-    super(`Invalid value ${value} for unit ${unit}, expected ${expectedType}`);
+  constructor(unit, expectedType, value, opts) {
+    super(`Invalid value ${String(value)} for unit ${unit}, expected ${expectedType}`, opts);
     this.name = "InvalidUnitValueError";
     this.unit = unit;
     this.value = value;
