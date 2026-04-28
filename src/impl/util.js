@@ -298,10 +298,11 @@ export function asInteger(value, unit) {
     throw new InvalidUnitValueError(unit, "integer", value, { cause });
   }
   // Guard against some bad coercions that are allowed by Number()
-  // Additinonally, only accept safe integers, so we can safely do integer math on them
+  // Additionally, only accept safe integers, so we can safely do integer math on them
   if (typeof value === "boolean" || value === "" || !Number.isSafeInteger(numericValue))
     throw new InvalidUnitValueError(unit, "integer", value);
-  return numericValue;
+  // Normalize -0 to 0
+  return numericValue || 0;
 }
 
 export function normalizeObject(obj, normalizer) {
