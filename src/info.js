@@ -38,7 +38,7 @@ export default class Info {
    *   with that name is returned.
    * * If `input` is a string that doesn't refer to a known time zone, a Zone
    *   instance with {@link Zone#isValid} == false is returned.
-   * * If `input is a number, a Zone instance with the specified fixed offset
+   * * If `input` is a number, a Zone instance with the specified fixed offset
    *   in minutes is returned.
    * * If `input` is `null` or `undefined`, the default zone is returned.
    * @param {string|Zone|number} [input] - the value to be converted
