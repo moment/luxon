@@ -236,6 +236,15 @@ test("Duration#normalize handles the full grid partially negative durations", ()
   });
 });
 
+test("Duration#normalize does not compound conversions through intermediate units", () => {
+  // 28 days is exactly 4 weeks, which is less than a (30-day) month, so it must
+  // not roll up into a month just because both `weeks` and `months` keys exist.
+  // See https://github.com/moment/luxon/issues/1514
+  const dur = Duration.fromObject({ months: 0, weeks: 0, days: 28 }).normalize();
+  expect(dur.as("days")).toBe(28);
+  expect(dur.toObject()).toEqual({ months: 0, weeks: 4, days: 0 });
+});
+
 test("Duration#normalize maintains invalidity", () => {
   const dur = Duration.invalid("because").normalize();
   expect(dur.isValid).toBe(false);

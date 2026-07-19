@@ -145,6 +145,12 @@ function durationToMillis(matrix, vals) {
   return sum;
 }
 
+// the number of milliseconds in a single unit, used to convert between two
+// units in a way that stays consistent with the duration's total value
+function unitToMillis(matrix, unit) {
+  return unit === "milliseconds" ? 1 : matrix[unit]["milliseconds"];
+}
+
 // NB: mutates parameters
 function normalizeValues(matrix, vals) {
   // the logic below assumes the overall value of the duration is positive
@@ -172,7 +178,16 @@ function normalizeValues(matrix, vals) {
         // Math.floor takes care of both of these cases, rounding away from 0
         // if previousVal < 0 it makes the absolute value larger
         // if previousVal >= it makes the absolute value smaller
-        const rollUp = Math.floor(previousVal / conv);
+        //
+        // Decide how many whole `current` units to roll up using the units'
+        // millisecond values rather than matrix[current][previous]. The casual
+        // matrix's pairwise factors can be internally inconsistent (e.g. 1 month
+        // = 4 weeks but also = 30 days); dividing by that factor would otherwise
+        // let a chained roll-up such as days -> weeks -> months roll up units
+        // that aren't really there and change the duration's total value (#1514).
+        const rollUp = Math.floor(
+          (previousVal * unitToMillis(matrix, previous)) / unitToMillis(matrix, current)
+        );
         vals[current] += rollUp * factor;
         vals[previous] -= rollUp * conv * factor;
       }
