@@ -835,6 +835,22 @@ export default class Duration {
         built[k] = i;
         accumulated[k] = (own * 1000 - i * 1000) / 1000;
 
+        // roll the whole part of any lower-order source units straight into this unit.
+        // Doing the conversion directly (e.g. days -> years) avoids compounding it through
+        // intermediate units whose ratios are not mutually consistent (twelve 30-day months
+        // are not one 365-day year), which used to strand a spurious remainder in the lower
+        // units (#1620, #1604). Any fractional leftover stays on the source unit and is
+        // boiled down to a smaller unit further along.
+        const kIndex = orderedUnits.indexOf(k);
+        for (const down in vals) {
+          if (orderedUnits.indexOf(down) > kIndex && isNumber(vals[down])) {
+            const conv = this.matrix[k][down];
+            const added = Math.trunc(vals[down] / conv);
+            built[k] += added;
+            vals[down] = (vals[down] * 1000 - added * conv * 1000) / 1000;
+          }
+        }
+
         // otherwise, keep it in the wings to boil it later
       } else if (isNumber(vals[k])) {
         accumulated[k] = vals[k];

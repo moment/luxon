@@ -116,6 +116,15 @@ test("Duration#shiftTo does not produce unnecessary fractions in higher order un
   expect(shifted.minutes).toBeCloseTo(894.6, 5);
 });
 
+test("Duration#shiftTo does not leave a remainder when higher-order units absorb the whole duration (#1620)", () => {
+  // 12 months == 1 year and 730 days == 2 years, so the result should be exactly 3 years.
+  // Regressed in 3.4.2: conversions were compounded through the intermediate "months"
+  // unit (730 days -> 24 months + 10 days -> 3 years leaving 10 stray days).
+  expect(
+    Duration.fromObject({ months: 12, days: 730 }).shiftTo("years", "months", "days").toObject()
+  ).toEqual({ years: 3, months: 0, days: 0 });
+});
+
 //------
 // #shiftToAll()
 //-------
@@ -147,6 +156,20 @@ test("Duration#shiftToAll does not produce unnecessary fractions in higher order
   expect(toAll.minutes).toBe(29);
   expect(toAll.seconds).toBe(6);
   expect(toAll.milliseconds).toBeCloseTo(0, 5);
+});
+
+test("Duration#shiftToAll does not inflate lower-order units when rolling up (#1604)", () => {
+  // 730 days is exactly 2 years; rolling up must not manufacture extra months/days.
+  expect(Duration.fromObject({ days: 730 }).shiftToAll().toObject()).toEqual({
+    years: 2,
+    months: 0,
+    weeks: 0,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
 });
 
 test("Duration#shiftToAll maintains invalidity", () => {
