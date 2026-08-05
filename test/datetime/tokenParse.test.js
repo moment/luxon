@@ -74,6 +74,12 @@ test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", (
   expect(() => DateTime.fromFormat("930PM", "Hmma")).toThrow(ConflictingSpecificationError);
 });
 
+test("DateTime.fromFormat() throws if h is used with 24-hour time", () => {
+  expect(() => DateTime.fromFormat("18:30 AM", "h:mm a")).toThrowError(
+    ConflictingSpecificationError
+  );
+});
+
 // #714
 test("DateTime.fromFormat() makes dots optional and handles non breakable spaces", () => {
   function parseMeridiem(input, isAM) {
