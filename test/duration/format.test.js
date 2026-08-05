@@ -342,6 +342,33 @@ test("Duration#toFormat shows no negative sign on the largest unit when using si
   ).toBe("4503");
 });
 
+test("Duration#toFormat keeps the negative sign on the largest unit when it is zero with signMode negativeLargestOnly", () => {
+  // The largest formatted unit rounds to zero, but the duration is negative.
+  // The sign must still appear on the largest unit, otherwise the result is
+  // indistinguishable from a positive duration.
+  expect(
+    Duration.fromObject({ minutes: -30 }).toFormat("h:mm", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("-0:30");
+  expect(
+    Duration.fromObject({ seconds: -30 }).toFormat("h:mm:ss", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("-0:00:30");
+  expect(
+    Duration.fromObject({ minutes: -45 }).toFormat("d:h:m", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("-0:0:45");
+  // A positive duration whose largest unit is zero must remain unsigned.
+  expect(
+    Duration.fromObject({ minutes: 30 }).toFormat("h:mm", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("0:30");
+});
+
 // - signMode all
 
 test("Duration#toFormat with signMode all shows positive sign on positive durations", () => {
