@@ -205,13 +205,13 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | a                |              | meridiem                                                          | `AM`                        |
 | d                |              | day of the month, no padding                                      | `6`                         |
 | dd               |              | day of the month, padded to 2                                     | `06`                        |
-| E                | c            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7)    | `3`                         |
-| EEE              | ccc          | day of the week, as an abbreviate localized string                | `Wed`                       |
-| EEEE             | cccc         | day of the week, as an unabbreviated localized string             | `Wednesday`                 |
-| M                | L            | month as an unpadded number                                       | `8`                         |
-| MM               | LL           | month as an padded number                                         | `08`                        |
-| MMM              | LLL          | month as an abbreviated localized string                          | `Aug`                       |
-| MMMM             | LLLL         | month as an unabbreviated localized string                        | `August`                    |
+| c                | E            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7)    | `3`                         |
+| ccc              | EEE          | day of the week, as an abbreviate localized string                | `Wed`                       |
+| cccc             | EEEE         | day of the week, as an unabbreviated localized string             | `Wednesday`                 |
+| L                | M            | month as an unpadded number                                       | `8`                         |
+| LL               | MM           | month as an padded number                                         | `08`                        |
+| LLL              | MMM          | month as an abbreviated localized string                          | `Aug`                       |
+| LLLL             | MMMM         | month as an unabbreviated localized string                        | `August`                    |
 | y                |              | year, 1-6 digits, very literally                                  | `2014`                      |
 | yy               |              | two-digit year, interpreted as > 1960 by default (also accepts 4) | `14`                        |
 | yyyy             |              | four-digit year                                                   | `2014`                      |
