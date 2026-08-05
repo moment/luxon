@@ -50,6 +50,8 @@ export default class FixedOffsetZone extends Zone {
     super();
     /** @private **/
     this.fixed = offset;
+    /** @private **/
+    this.valid = Number.isInteger(offset);
   }
 
   /**
@@ -140,11 +142,11 @@ export default class FixedOffsetZone extends Zone {
 
   /**
    * Return whether this Zone is valid:
-   * All fixed offset zones are valid.
+   * All fixed offset zones are valid, provided they were constructed with a numeric offset.
    * @override
    * @type {boolean}
    */
   get isValid() {
-    return true;
+    return this.valid;
   }
 }
