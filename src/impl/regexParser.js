@@ -159,6 +159,7 @@ function extractISODuration(match) {
 // I'm just going to ignore that
 const obsOffsets = {
   GMT: 0,
+  UT: 0,
   EDT: -4 * 60,
   EST: -5 * 60,
   CDT: -5 * 60,
