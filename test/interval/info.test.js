@@ -260,3 +260,13 @@ test.each([
     i = Interval.fromDateTimes(n, n);
   expect(i.hasSame("day")).toBe(true);
 });
+
+test("Interval#hasSame respects the zones of an empty interval's endpoints", () => {
+  // Same instant, but the endpoints are in different zones so their local
+  // hours differ (12:15 in UTC+2 vs 11:15 in UTC+1).
+  const s = DateTime.fromISO("2023-01-01T10:15:00.000+00:00", { zone: "UTC+2" }),
+    e = DateTime.fromISO("2023-01-01T10:15:00.000+00:00", { zone: "UTC+1" }),
+    i = Interval.fromDateTimes(s, e);
+  expect(i.isEmpty()).toBe(true);
+  expect(i.hasSame("hour")).toBe(false);
+});

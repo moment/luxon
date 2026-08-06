@@ -77,6 +77,25 @@ test("Duration#toISO handles mixed negative/positive numbers in seconds/millisec
   expect(Duration.fromObject({ seconds: -17, milliseconds: 548 }).toISO()).toBe("PT-16.452S");
 });
 
+test("Duration#toISO does not use exponential notation for very small values", () => {
+  // JS renders very small magnitudes in exponential notation (e.g. "1e-7"),
+  // which is not valid ISO 8601 and which Duration.fromISO cannot parse.
+  expect(Duration.fromObject({ years: 1e-7 }).toISO()).toBe("P0.0000001Y");
+  expect(Duration.fromObject({ days: 1e-7 }).toISO()).toBe("P0.0000001D");
+  expect(Duration.fromObject({ hours: 1e-7 }).toISO()).toBe("PT0.0000001H");
+  expect(Duration.fromObject({ minutes: 1e-7 }).toISO()).toBe("PT0.0000001M");
+});
+
+test("Duration#toISO output round-trips small fractional values through fromISO", () => {
+  // Converting a small duration to a coarse unit yields a tiny fractional value.
+  const dur = Duration.fromObject({ milliseconds: 1 }).shiftTo("hours");
+  expect(dur.toISO()).not.toMatch(/e/i);
+  expect(Duration.fromISO(dur.toISO()).isValid).toBe(true);
+
+  const exact = Duration.fromObject({ hours: 1e-7 });
+  expect(Duration.fromISO(exact.toISO()).hours).toBe(1e-7);
+});
+
 //------
 // #toISOTime()
 //------
@@ -321,6 +340,33 @@ test("Duration#toFormat shows no negative sign on the largest unit when using si
       signMode: "negativeLargestOnly",
     })
   ).toBe("4503");
+});
+
+test("Duration#toFormat keeps the negative sign on the largest unit when it is zero with signMode negativeLargestOnly", () => {
+  // The largest formatted unit rounds to zero, but the duration is negative.
+  // The sign must still appear on the largest unit, otherwise the result is
+  // indistinguishable from a positive duration.
+  expect(
+    Duration.fromObject({ minutes: -30 }).toFormat("h:mm", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("-0:30");
+  expect(
+    Duration.fromObject({ seconds: -30 }).toFormat("h:mm:ss", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("-0:00:30");
+  expect(
+    Duration.fromObject({ minutes: -45 }).toFormat("d:h:m", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("-0:0:45");
+  // A positive duration whose largest unit is zero must remain unsigned.
+  expect(
+    Duration.fromObject({ minutes: 30 }).toFormat("h:mm", {
+      signMode: "negativeLargestOnly",
+    })
+  ).toBe("0:30");
 });
 
 // - signMode all

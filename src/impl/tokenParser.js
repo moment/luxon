@@ -368,8 +368,15 @@ function dateTimeFromMatches(matches) {
     matches.M = (matches.q - 1) * 3 + 1;
   }
 
+  let hourInvalidReason;
+
   if (!isUndefined(matches.h)) {
-    if (matches.h < 12 && matches.a === 1) {
+    if (!isUndefined(matches.a) && (matches.h < 1 || matches.h > 12)) {
+      // "h" is the 12-hour token, so when a meridiem ("a") is also present the
+      // hour must be within [1, 12]. Anything else (e.g. "18:30 AM") is not a
+      // valid 12-hour time, so the result is invalid.
+      hourInvalidReason = `the 12-hour value "${matches.h}" is not in the [1, 12] range`;
+    } else if (matches.h < 12 && matches.a === 1) {
       matches.h += 12;
     } else if (matches.h === 12 && matches.a === 0) {
       matches.h = 0;
@@ -393,7 +400,7 @@ function dateTimeFromMatches(matches) {
     return r;
   }, {});
 
-  return [vals, zone, specificOffset];
+  return [vals, zone, specificOffset, hourInvalidReason];
 }
 
 let dummyDateTimeCache = null;
@@ -449,9 +456,9 @@ export class TokenParser {
       return { input, tokens: this.tokens, invalidReason: this.invalidReason };
     } else {
       const [rawMatches, matches] = match(input, this.regex, this.handlers),
-        [result, zone, specificOffset] = matches
+        [result, zone, specificOffset, parseInvalidReason] = matches
           ? dateTimeFromMatches(matches)
-          : [null, null, undefined];
+          : [null, null, undefined, undefined];
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
           "Can't include meridiem when specifying 24-hour format"
@@ -466,6 +473,7 @@ export class TokenParser {
         result,
         zone,
         specificOffset,
+        invalidReason: parseInvalidReason,
       };
     }
   }

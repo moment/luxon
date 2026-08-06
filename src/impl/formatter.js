@@ -412,7 +412,21 @@ export default class Formatter {
             // "auto" and "negative" are the same, but "auto" has better support
             signDisplay = "auto";
           }
-          return this.num(lildur.get(mapped) * inversionFactor, token.length, signDisplay);
+          let value = lildur.get(mapped) * inversionFactor;
+          // When the negative sign is only shown on the largest unit (signMode
+          // "negativeLargestOnly") and that unit rounds to zero, "auto" sign display
+          // would drop the sign entirely (positive zero formats without a sign),
+          // making a negative duration indistinguishable from a positive one. Use
+          // negative zero so the sign is preserved on the largest unit.
+          if (
+            this.opts.signMode === "negativeLargestOnly" &&
+            mapped === info.largestUnit &&
+            info.isNegativeDuration &&
+            value === 0
+          ) {
+            value = -0;
+          }
+          return this.num(value, token.length, signDisplay);
         } else {
           return token;
         }

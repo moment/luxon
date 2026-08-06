@@ -1,5 +1,5 @@
 /* global test expect */
-import { FixedOffsetZone, IANAZone } from "../../src/luxon";
+import { DateTime, FixedOffsetZone, IANAZone } from "../../src/luxon";
 
 test("FixedOffsetZone.utcInstance returns a singleton", () => {
   expect(FixedOffsetZone.utcInstance).toBe(FixedOffsetZone.utcInstance);
@@ -61,6 +61,30 @@ test("FixedOffsetZone.formatOffset prints the correct sign before the offset", (
   expect(FixedOffsetZone.instance(0).formatOffset(0, "short")).toBe("+00:00");
   expect(FixedOffsetZone.instance(30).formatOffset(0, "short")).toBe("+00:30");
   expect(FixedOffsetZone.instance(300).formatOffset(0, "short")).toBe("+05:00");
+});
+
+test("FixedOffsetZone is valid when constructed with a numeric offset", () => {
+  expect(new FixedOffsetZone(0).isValid).toBe(true);
+  expect(new FixedOffsetZone(120).isValid).toBe(true);
+  expect(new FixedOffsetZone(-300).isValid).toBe(true);
+  expect(FixedOffsetZone.instance(60).isValid).toBe(true);
+});
+
+test("FixedOffsetZone is invalid when constructed with a non-numeric offset", () => {
+  // see https://github.com/moment/luxon/issues/1068
+  expect(new FixedOffsetZone("CDT").isValid).toBe(false);
+  expect(new FixedOffsetZone("5").isValid).toBe(false);
+  expect(new FixedOffsetZone("abc").isValid).toBe(false);
+  expect(new FixedOffsetZone(NaN).isValid).toBe(false);
+  expect(new FixedOffsetZone(undefined).isValid).toBe(false);
+  expect(new FixedOffsetZone(null).isValid).toBe(false);
+  expect(new FixedOffsetZone({}).isValid).toBe(false);
+});
+
+test("A DateTime in an invalid FixedOffsetZone is itself invalid", () => {
+  const dt = DateTime.fromMillis(0, { zone: new FixedOffsetZone("CDT") });
+  expect(dt.isValid).toBe(false);
+  expect(dt.invalidReason).toBe("unsupported zone");
 });
 
 test("FixedOffsetZone.equals requires both zones to be fixed", () => {

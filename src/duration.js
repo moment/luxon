@@ -209,6 +209,15 @@ function removeZeroes(vals) {
   return newVals;
 }
 
+// Render a number for toISO(). JS prints very small magnitudes in exponential
+// notation (e.g. `1e-7`), which is not valid ISO 8601 and which fromISO() cannot
+// parse, so expand those to a plain decimal. (toFixed keeps exponential notation
+// for magnitudes >= 1e21, so very large durations are left untouched here.)
+function toISONumber(value) {
+  const str = `${value}`;
+  return str.includes("e") ? value.toFixed(20).replace(/\.?0+$/, "") : str;
+}
+
 /**
  * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
  *
@@ -566,18 +575,19 @@ export default class Duration {
     if (!this.isValid) return null;
 
     let s = "P";
-    if (this.years !== 0) s += this.years + "Y";
-    if (this.months !== 0 || this.quarters !== 0) s += this.months + this.quarters * 3 + "M";
-    if (this.weeks !== 0) s += this.weeks + "W";
-    if (this.days !== 0) s += this.days + "D";
+    if (this.years !== 0) s += toISONumber(this.years) + "Y";
+    if (this.months !== 0 || this.quarters !== 0)
+      s += toISONumber(this.months + this.quarters * 3) + "M";
+    if (this.weeks !== 0) s += toISONumber(this.weeks) + "W";
+    if (this.days !== 0) s += toISONumber(this.days) + "D";
     if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0)
       s += "T";
-    if (this.hours !== 0) s += this.hours + "H";
-    if (this.minutes !== 0) s += this.minutes + "M";
+    if (this.hours !== 0) s += toISONumber(this.hours) + "H";
+    if (this.minutes !== 0) s += toISONumber(this.minutes) + "M";
     if (this.seconds !== 0 || this.milliseconds !== 0)
       // this will handle "floating point madness" by removing extra decimal places
       // https://stackoverflow.com/questions/588004/is-floating-point-math-broken
-      s += roundTo(this.seconds + this.milliseconds / 1000, 3) + "S";
+      s += toISONumber(roundTo(this.seconds + this.milliseconds / 1000, 3)) + "S";
     if (s === "P") s += "T0S";
     return s;
   }

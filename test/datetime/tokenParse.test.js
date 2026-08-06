@@ -74,6 +74,20 @@ test("DateTime.fromFormat() throws if you specify meridiem with 24-hour time", (
   expect(() => DateTime.fromFormat("930PM", "Hmma")).toThrow(ConflictingSpecificationError);
 });
 
+// #1625
+test("DateTime.fromFormat() rejects 12-hour values outside [1, 12] with a meridiem", () => {
+  expect(DateTime.fromFormat("18:30 AM", "h:mm a").isValid).toBe(false);
+  expect(DateTime.fromFormat("16:00 PM", "h:mm a").isValid).toBe(false);
+  expect(DateTime.fromFormat("0:30 AM", "h:mm a").isValid).toBe(false);
+  expect(DateTime.fromFormat("13:00 PM", "h:mm a").isValid).toBe(false);
+
+  // Valid 12-hour values are still parsed correctly.
+  expect(DateTime.fromFormat("8:30 AM", "h:mm a").hour).toBe(8);
+  expect(DateTime.fromFormat("12:30 AM", "h:mm a").hour).toBe(0);
+  expect(DateTime.fromFormat("12:30 PM", "h:mm a").hour).toBe(12);
+  expect(DateTime.fromFormat("1:00 PM", "h:mm a").hour).toBe(13);
+});
+
 // #714
 test("DateTime.fromFormat() makes dots optional and handles non breakable spaces", () => {
   function parseMeridiem(input, isAM) {

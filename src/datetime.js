@@ -2279,7 +2279,7 @@ export default class DateTime {
    * @param {string} options.locale - override the locale of this DateTime
    * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
    * @example DateTime.now().plus({ days: 1 }).toRelative() //=> "in 1 day"
-   * @example DateTime.now().setLocale("es").toRelative({ days: 1 }) //=> "dentro de 1 día"
+   * @example DateTime.now().setLocale("es").plus({ days: 1 }).toRelative() //=> "dentro de 1 día"
    * @example DateTime.now().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
    * @example DateTime.now().minus({ days: 2 }).toRelative() //=> "2 days ago"
    * @example DateTime.now().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"

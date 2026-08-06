@@ -831,6 +831,20 @@ test("DateTime.fromRFC2822() can use a weird subset of offset abbreviations", ()
   });
 });
 
+test("DateTime.fromRFC2822() can use the obsolete UT zone", () => {
+  const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 UT");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 11,
+    day: 1,
+    hour: 13,
+    minute: 23,
+    second: 12,
+    millisecond: 0,
+  });
+});
+
 //------
 // .fromHTTP
 //-------
