@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { DateTime } from "../../src/luxon";
+import { DateTime, Settings } from "../../src/luxon";
 import { withNow } from "../helpers";
 
 //------
@@ -775,6 +775,39 @@ test("DateTime.fromRFC2822() rejects incorrect days of the week", () => {
   expect(dt.isValid).toBe(false);
 });
 
+// RFC 2822 4.3, kept by RFC 5322 as obs-year: 00 to 49 add 2000, 50 to 99 add
+// 1900, and any three digit year adds 1900. A fixed rule, unlike the HTTP one,
+// so no clock is needed here.
+test("DateTime.fromRFC2822() applies the obs-year rule to a two-digit year", () => {
+  // 15 June 1950 was a Thursday; under a cutoff of 60 this would be 2050.
+  const past = DateTime.fromRFC2822("Thu, 15 Jun 50 08:49:37 +0000");
+  expect(past.isValid).toBe(true);
+  expect(past.toUTC().year).toBe(1950);
+
+  // 15 June 2049 was a Tuesday.
+  const future = DateTime.fromRFC2822("Tue, 15 Jun 49 08:49:37 +0000");
+  expect(future.isValid).toBe(true);
+  expect(future.toUTC().year).toBe(2049);
+});
+
+test("DateTime.fromRFC2822() adds 1900 to a three-digit year", () => {
+  const dt = DateTime.fromRFC2822("15 Jun 099 08:49:37 +0000");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().year).toBe(1999);
+});
+
+test("DateTime.fromRFC2822() ignores Settings.twoDigitCutoffYear", () => {
+  const oldCutoff = Settings.twoDigitCutoffYear;
+  try {
+    Settings.twoDigitCutoffYear = 99;
+    const dt = DateTime.fromRFC2822("Thu, 15 Jun 50 08:49:37 +0000");
+    expect(dt.isValid).toBe(true);
+    expect(dt.toUTC().year).toBe(1950);
+  } finally {
+    Settings.twoDigitCutoffYear = oldCutoff;
+  }
+});
+
 test("DateTime.fromRFC2822() can elide the day of the week", () => {
   const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 +0600");
   expect(dt.isValid).toBe(true);
@@ -876,6 +909,59 @@ test("DateTime.fromHTTP() can parse RFC 850", () => {
     millisecond: 0,
   });
 });
+
+// RFC 9110 5.6.7 asks for a sliding window rather than a fixed cutoff: a
+// two-digit year that would land more than 50 years ahead means the most recent
+// past year with the same two digits. The clock is frozen here so the
+// expectations do not drift as the window moves.
+withNow(
+  "DateTime.fromHTTP() reads a two-digit year 50 years ahead as the future",
+  DateTime.fromObject({ year: 2026, month: 8, day: 8 }, { zone: "utc" }),
+  () => {
+    // 2076 is exactly 50 years out, so it is not "more than 50 years", and
+    // Monday is right for 15 June 2076.
+    const dt = DateTime.fromHTTP("Monday, 15-Jun-76 08:49:37 GMT");
+    expect(dt.isValid).toBe(true);
+    expect(dt.toUTC().year).toBe(2076);
+  }
+);
+
+withNow(
+  "DateTime.fromHTTP() reads a two-digit year past the window as the past",
+  DateTime.fromObject({ year: 2026, month: 8, day: 8 }, { zone: "utc" }),
+  () => {
+    // 2077 would be 51 years out, so it wraps to 1977, a Wednesday.
+    const dt = DateTime.fromHTTP("Wednesday, 15-Jun-77 08:49:37 GMT");
+    expect(dt.isValid).toBe(true);
+    expect(dt.toUTC().year).toBe(1977);
+  }
+);
+
+withNow(
+  "DateTime.fromHTTP() moves the window with the clock",
+  DateTime.fromObject({ year: 2126, month: 8, day: 8 }, { zone: "utc" }),
+  () => {
+    const dt = DateTime.fromHTTP("Saturday, 15-Jun-76 08:49:37 GMT");
+    expect(dt.isValid).toBe(true);
+    expect(dt.toUTC().year).toBe(2176);
+  }
+);
+
+withNow(
+  "DateTime.fromHTTP() ignores Settings.twoDigitCutoffYear",
+  DateTime.fromObject({ year: 2026, month: 8, day: 8 }, { zone: "utc" }),
+  () => {
+    const oldCutoff = Settings.twoDigitCutoffYear;
+    try {
+      Settings.twoDigitCutoffYear = 99;
+      const dt = DateTime.fromHTTP("Wednesday, 15-Jun-77 08:49:37 GMT");
+      expect(dt.isValid).toBe(true);
+      expect(dt.toUTC().year).toBe(1977);
+    } finally {
+      Settings.twoDigitCutoffYear = oldCutoff;
+    }
+  }
+);
 
 test("DateTime.fromHTTP() can parse RFC 850 on Wednesday", () => {
   const dt = DateTime.fromHTTP("Wednesday, 29-Jun-22 08:49:37 GMT");
