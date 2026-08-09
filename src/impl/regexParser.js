@@ -223,10 +223,40 @@ function extractRFC2822(match) {
   return [result, new FixedOffsetZone(offset)];
 }
 
+// RFC 5322 3.2.2 defines `ccontent` as `ctext / quoted-pair / comment`, so a
+// comment can hold another comment, and a backslash inside one escapes the next
+// character. `\([^()]*\)` cannot express either: it stops at the first `)` and
+// leaves the tail of the outer comment in the string, which then fails to match
+// the date grammar. Walking the string handles both.
+function stripComments(s) {
+  let out = "",
+    depth = 0;
+
+  for (let i = 0; i < s.length; i++) {
+    const char = s[i];
+
+    if (depth > 0 && char === "\\") {
+      // quoted-pair: whatever follows is comment text, including a parenthesis
+      i++;
+    } else if (char === "(") {
+      depth++;
+    } else if (char === ")" && depth > 0) {
+      depth--;
+      if (depth === 0) out += " ";
+    } else if (depth === 0) {
+      out += char;
+    }
+  }
+
+  // An unclosed comment is not a comment. Hand back the original and let the
+  // date grammar reject it, rather than swallowing the rest of the string.
+  return depth === 0 ? out : s;
+}
+
 function preprocessRFC2822(s) {
   // Remove comments and folding whitespace and replace multiple-spaces with a single space
-  return s
-    .replace(/\([^()]*\)|[\n\t]/g, " ")
+  return stripComments(s)
+    .replace(/[\n\t]/g, " ")
     .replace(/(\s\s+)/g, " ")
     .trim();
 }

@@ -775,6 +775,32 @@ test("DateTime.fromRFC2822() rejects incorrect days of the week", () => {
   expect(dt.isValid).toBe(false);
 });
 
+// RFC 5322 3.2.2: ccontent includes comment, so comments nest, and a backslash
+// inside one escapes the next character.
+test("DateTime.fromRFC2822() accepts a nested comment", () => {
+  const dt = DateTime.fromRFC2822("Tue, 01 Nov 2016 13:23:12 +0630 (a (b) c)");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO({ suppressMilliseconds: true })).toBe("2016-11-01T06:53:12Z");
+});
+
+test("DateTime.fromRFC2822() accepts a nested comment in the middle", () => {
+  const dt = DateTime.fromRFC2822("Tue, 01 (day (of) month) Nov 2016 13:23:12 +0630");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO({ suppressMilliseconds: true })).toBe("2016-11-01T06:53:12Z");
+});
+
+test("DateTime.fromRFC2822() accepts an escaped parenthesis inside a comment", () => {
+  // The runtime string holds a backslash before the parenthesis, which RFC 5322
+  // calls a quoted-pair: the `)` is comment text, not the end of the comment.
+  const dt = DateTime.fromRFC2822("Tue, 01 Nov 2016 13:23:12 +0630 (smile \\) here)");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO({ suppressMilliseconds: true })).toBe("2016-11-01T06:53:12Z");
+});
+
+test("DateTime.fromRFC2822() still rejects an unclosed comment", () => {
+  expect(DateTime.fromRFC2822("Tue, 01 Nov 2016 13:23:12 +0630 (oops").isValid).toBe(false);
+});
+
 test("DateTime.fromRFC2822() can elide the day of the week", () => {
   const dt = DateTime.fromRFC2822("01 Nov 2016 13:23:12 +0600");
   expect(dt.isValid).toBe(true);
