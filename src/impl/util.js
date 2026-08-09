@@ -179,6 +179,11 @@ export function roundTo(number, digits, rounding = "round") {
   }
 }
 
+export function snapFloatingPoint(val) {
+  const r = Math.round(val);
+  return Math.abs(val - r) < 4 * Number.EPSILON * Math.max(1, Math.abs(r)) ? r : val;
+}
+
 // DATE BASICS
 
 export function isLeapYear(year) {

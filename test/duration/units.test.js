@@ -116,6 +116,50 @@ test("Duration#shiftTo does not produce unnecessary fractions in higher order un
   expect(shifted.minutes).toBeCloseTo(894.6, 5);
 });
 
+// #1620
+test("Duration#siftTo does not create intermediate units when lower order units can go directly into a higher one", () => {
+  const duration = Duration.fromObject({
+    months: 12,
+    days: 730,
+  });
+  // We expect 12 months => 1 year
+  // 730 days => 2 years
+  // We don't want to convert the days first to months, then years: that would leave stray "days" behind.
+  expect(duration.shiftTo("years", "months", "days").toObject()).toEqual({
+    years: 3,
+    months: 0,
+    days: 0,
+  });
+});
+
+// 1634
+test.each([1, 5, -12])(
+  "Duration#shiftTo can convert milliseconds directly into whole years correctly: %i",
+  (years) => {
+    const duration = Duration.fromMillis(365 * 24 * 60 * 60 * 1000 * years);
+    expect(
+      duration
+        .shiftTo("years", "months", "days", "hours", "minutes", "seconds", "milliseconds")
+        .toObject()
+    ).toEqual({
+      years,
+      months: 0,
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
+  }
+);
+
+test("Duration#shiftTo with no units normalizes", () => {
+  expect(Duration.fromObject({ years: 0, days: 367 }).shiftTo().toObject()).toEqual({
+    years: 1,
+    days: 2,
+  });
+});
+
 //------
 // #shiftToAll()
 //-------
