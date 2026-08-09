@@ -1,11 +1,5 @@
-import {
-  untruncateYear,
-  signedOffset,
-  parseInteger,
-  parseMillis,
-  isUndefined,
-  parseFloating,
-} from "./util.js";
+import Settings from "../settings.js";
+import { signedOffset, parseInteger, parseMillis, isUndefined, parseFloating } from "./util.js";
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
@@ -170,9 +164,47 @@ const obsOffsets = {
   PST: -8 * 60,
 };
 
-function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+// `Settings.twoDigitCutoffYear` exists for `fromFormat`, where the user chooses
+// the century rule for their own `yy` token. The formats below are not the
+// user's to choose: each one carries its own rule, and the two rules disagree
+// with each other, so one cutoff cannot serve both.
+
+// RFC 9110 5.6.7: "Recipients of a timestamp value in rfc850-date format ...
+// MUST interpret a timestamp that appears to be more than 50 years in the
+// future as representing the most recent year in the past that had the same
+// last two digits." A sliding window, so it moves with the clock.
+function untruncateHTTPYear(yearStr) {
+  const year = parseInteger(yearStr);
+  if (yearStr.length !== 2) return year;
+
+  const nowYear = new Date(Settings.now()).getUTCFullYear();
+  let candidate = Math.floor(nowYear / 100) * 100 + year;
+  while (candidate - nowYear > 50) candidate -= 100;
+  return candidate;
+}
+
+// RFC 2822 4.3, kept by RFC 5322 4.3 as obs-year: two digits from 00 to 49 add
+// 2000, two digits from 50 to 99 add 1900, and "any three digit year" adds 1900.
+// A fixed rule, unlike the one above.
+function untruncateRFC2822Year(yearStr) {
+  const year = parseInteger(yearStr);
+  if (yearStr.length === 2) return year <= 49 ? 2000 + year : 1900 + year;
+  if (yearStr.length === 3) return 1900 + year;
+  return year;
+}
+
+function fromStrings(
+  weekdayStr,
+  yearStr,
+  monthStr,
+  dayStr,
+  hourStr,
+  minuteStr,
+  secondStr,
+  untruncate
+) {
   const result = {
-    year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
+    year: untruncate(yearStr),
     month: English.monthsShort.indexOf(monthStr) + 1,
     day: parseInteger(dayStr),
     hour: parseInteger(hourStr),
@@ -209,7 +241,16 @@ function extractRFC2822(match) {
       offHourStr,
       offMinuteStr,
     ] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    result = fromStrings(
+      weekdayStr,
+      yearStr,
+      monthStr,
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr,
+      untruncateRFC2822Year
+    );
 
   let offset;
   if (obsOffset) {
@@ -242,13 +283,33 @@ const rfc1123 =
 
 function extractRFC1123Or850(match) {
   const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    // Only rfc850-date carries two digits; IMF-fixdate always writes four, and
+    // untruncateHTTPYear leaves those alone.
+    result = fromStrings(
+      weekdayStr,
+      yearStr,
+      monthStr,
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr,
+      untruncateHTTPYear
+    );
   return [result, FixedOffsetZone.utcInstance];
 }
 
 function extractASCII(match) {
   const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    result = fromStrings(
+      weekdayStr,
+      yearStr,
+      monthStr,
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr,
+      untruncateHTTPYear
+    );
   return [result, FixedOffsetZone.utcInstance];
 }
 
