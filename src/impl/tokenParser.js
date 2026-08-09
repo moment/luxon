@@ -46,7 +46,12 @@ function simple(regex) {
 }
 
 function escapeToken(value) {
-  return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+  // Match any whitespace where a literal contains whitespace, so that strings
+  // produced by `toLocaleString` (which can use NBSP ` ` or narrow NBSP
+  // ` ` around the meridiem) round-trip back through `fromFormat`.
+  return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, (match) =>
+    /\s/.test(match) ? "\\s" : `\\${match}`
+  );
 }
 
 /**

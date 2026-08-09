@@ -123,6 +123,22 @@ test("DateTime.fromFormat() makes dots optional and handles non breakable spaces
   });
 });
 
+// `toLocaleString` can emit a non-breaking (U+00A0) or narrow non-breaking
+// (U+202F) space before the meridiem, so a whitespace literal in the format
+// should match any whitespace to allow round-tripping.
+// See https://github.com/moment/luxon/issues/1619
+test("DateTime.fromFormat() matches any whitespace for a whitespace literal", () => {
+  const nbsp = String.fromCharCode(0x00a0);
+  const narrow = String.fromCharCode(0x202f);
+
+  for (const space of [" ", nbsp, narrow]) {
+    const d = DateTime.fromFormat(`10:30${space}AM`, "h:mm a");
+    expect(d.isValid).toBe(true);
+    expect(d.hour).toBe(10);
+    expect(d.minute).toBe(30);
+  }
+});
+
 test("DateTime.fromFormat() parses variable-digit years", () => {
   expect(DateTime.fromFormat("", "y").isValid).toBe(false);
   expect(DateTime.fromFormat("2", "y").year).toBe(2);
