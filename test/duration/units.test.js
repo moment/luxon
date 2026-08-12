@@ -116,6 +116,16 @@ test("Duration#shiftTo does not produce unnecessary fractions in higher order un
   expect(shifted.minutes).toBeCloseTo(894.6, 5);
 });
 
+test("Duration#shiftTo keeps a consistent sign when the leftover fraction lands in the smallest unit", () => {
+  // -86399999 ms. The fraction (0.001 s) that lands in the smallest requested unit
+  // must take the overall (negative) sign, not stay positive.
+  const shifted = Duration.fromObject({ days: -1, milliseconds: 1 })
+    .shiftTo("minutes", "seconds")
+    .toObject();
+  expect(shifted.minutes).toBe(-1439);
+  expect(shifted.seconds).toBeCloseTo(-59.999, 5);
+});
+
 // #1620
 test("Duration#siftTo does not create intermediate units when lower order units can go directly into a higher one", () => {
   const duration = Duration.fromObject({
