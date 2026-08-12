@@ -839,12 +839,15 @@ export default class Duration {
               const higherUnit = reverseUnits[j];
               if (higherUnit in built) {
                 const conv = this.matrix[higherUnit][unit];
-                // we want to an integer divide by "conv" and round away from zero.
+                // we want to integer divide by "conv" and round the magnitude away from zero,
+                // so that any leftover fraction flips to the overall sign.
                 // For example: 3 hours, -122 minutes
                 // => -122 / 60 => -3 hours to borrow so that we get 0 hours, 58 minutes
                 // Another example: -3 hours, 122 minutes
                 // => 122 / 60 => 3 hours to borrow so that we get 0 hours, -58 minutes
-                const toBorrow = Math.trunc((unitValue + (conv - 1) * unitSign) / conv);
+                // Rounding the magnitude up (rather than truncating) also handles a wrong-signed
+                // fraction smaller than "conv" in the smallest unit, e.g. 0.001 leftover seconds.
+                const toBorrow = unitSign * Math.ceil(Math.abs(unitValue) / conv);
                 built[higherUnit] += toBorrow;
                 // this may leave a fractional part behind - it will be fixed below
                 built[unit] -= toBorrow * conv;
