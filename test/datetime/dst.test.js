@@ -152,6 +152,44 @@ for (const [name, local] of Object.entries(dateTimeConstructors)) {
   });
 }
 
+// #398 covered the case where the *current* unit starts on a DST hole. These cover the case
+// where the *next* unit does not start at a plain, unambiguous local midnight.
+describe("DateTime#endOf across an unusual unit boundary", () => {
+  test("endOf('day') stays in the day when the next day starts with an ambiguous midnight", () => {
+    // Cuba leaves DST at 01:00, so 2022-11-06T00:00 happens twice
+    const d = DateTime.fromISO("2022-11-05T12:00", { zone: "America/Havana" });
+    expect(d.endOf("day").toISO()).toBe("2022-11-05T23:59:59.999-04:00");
+  });
+
+  test("endOf('month') and endOf('quarter') stay in the unit when the next one starts with an ambiguous midnight", () => {
+    // Tunisia left DST at 01:00 on 1978-10-01, so that midnight happens twice
+    const d = DateTime.fromISO("1978-09-30T12:00", { zone: "Africa/Tunis" });
+    expect(d.endOf("month").toISO()).toBe("1978-09-30T23:59:59.999+02:00");
+    expect(d.endOf("quarter").toISO()).toBe("1978-09-30T23:59:59.999+02:00");
+  });
+
+  test("endOf('day') stays in the day when the next day's last hour is a hole", () => {
+    // Bangladesh entered DST at 23:00 on 2009-06-19, so 2009-06-19T23:30 doesn't exist
+    const d = DateTime.fromISO("2009-06-18T23:30", { zone: "Asia/Dhaka" });
+    expect(d.endOf("day").toISO()).toBe("2009-06-18T23:59:59.999+06:00");
+  });
+
+  test("hasSame('day') doesn't reach into the next day over an ambiguous midnight", () => {
+    const d = DateTime.fromISO("2022-11-05T12:00", { zone: "America/Havana" });
+    // the first of the two 2022-11-06T00:30s, i.e. the next day
+    const next = DateTime.fromMillis(Date.UTC(2022, 10, 6, 4, 30), { zone: "America/Havana" });
+    expect(next.day).toBe(6);
+    expect(d.hasSame(next, "day")).toBe(false);
+  });
+
+  test("endOf() on sub-day units keeps the half of an ambiguous hour it started in", () => {
+    // Venezuela moved from -04:00 to -04:30 at 03:00, so 02:30 through 03:00 happens twice
+    const d = DateTime.fromMillis(Date.UTC(2007, 11, 9, 7), { zone: "America/Caracas" });
+    expect(d.toISO()).toBe("2007-12-09T02:30:00.000-04:30");
+    expect(d.endOf("hour").toISO()).toBe("2007-12-09T02:59:59.999-04:30");
+  });
+});
+
 describe("DateTime.local() with offset caching", () => {
   const edtTs = 1495653314000; // May 24, 2017 15:15:14 -0400
   const estTs = 1484456400000; // Jan 15, 2017 00:00 -0500
