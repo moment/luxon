@@ -2,6 +2,7 @@
 
 import { DateTime, Duration } from "../../src/luxon";
 import { casualMatrix } from "../../src/duration";
+import { InvalidUnitError } from "../../src/errors";
 
 function createDateTime() {
   return DateTime.fromObject({
@@ -533,4 +534,25 @@ test("DateTime#endOf maintains invalidity", () => {
 
 test("DateTime#endOf throws on invalid units", () => {
   expect(() => DateTime.fromISO("2016-03-12T10:00").endOf("splork")).toThrow();
+});
+
+test("DateTime#endOf throws InvalidUnitError on non-string units", () => {
+  const dt = DateTime.fromISO("2016-03-12T10:00");
+  expect(() => dt.endOf(1)).toThrow(InvalidUnitError);
+  expect(() => dt.endOf({})).toThrow(InvalidUnitError);
+  expect(() => dt.endOf([])).toThrow(InvalidUnitError);
+});
+
+// endOf() normalizes to the start of the unit first, which at the very bottom of the
+// representable range falls out of it; that must not turn a valid result invalid
+test("DateTime#endOf stays valid at the bottom of the representable range", () => {
+  const min = DateTime.fromMillis(-8.64e15, { zone: "UTC" });
+  expect(min.endOf("year").isValid).toBe(true);
+  expect(min.endOf("year").toISO()).toBe("-271821-12-31T23:59:59.999Z");
+  expect(min.endOf("quarter").toISO()).toBe("-271821-06-30T23:59:59.999Z");
+  expect(min.endOf("month").toISO()).toBe("-271821-04-30T23:59:59.999Z");
+  expect(min.endOf("day").toISO()).toBe("-271821-04-20T23:59:59.999Z");
+
+  const minish = DateTime.fromMillis(-8.64e15 + 3600000, { zone: "Asia/Kathmandu" });
+  expect(minish.endOf("day").toISO()).toBe("-271821-04-20T23:59:59.999+05:41");
 });

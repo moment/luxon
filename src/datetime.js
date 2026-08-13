@@ -54,6 +54,10 @@ import Invalid from "./impl/invalid.js";
 const INVALID = "Invalid DateTime";
 const MAX_DATE = 8.64e15;
 
+// units that plus()/minus() advance with calendar math, i.e. by changing the calendar fields and
+// keeping the local time of day, rather than by adding a fixed number of milliseconds
+const calendarUnits = ["years", "quarters", "months", "weeks", "days"];
+
 function unsupportedZone(zone) {
   return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
 }
@@ -1806,11 +1810,28 @@ export default class DateTime {
    * @return {DateTime}
    */
   endOf(unit, opts) {
-    return this.isValid
-      ? this.plus({ [unit]: 1 })
-          .startOf(unit, opts)
-          .minus(1)
-      : this;
+    if (!this.isValid) return this;
+
+    // The end of a unit is one millisecond before the start of the next one. For calendar units we
+    // step off the *start* of the current unit instead of off `this`, because plus() keeps the
+    // local time of day: stepping from an arbitrary time of day can land in a DST hole or on the
+    // later of two ambiguous local times, and startOf() then reports the start of the unit *after*
+    // the next one. Sub-day units advance by a fixed number of milliseconds and can't overshoot
+    // that way, and normalizing them first would conflate the two halves of an ambiguous hour.
+    //
+    // Non-string units are left alone so that the computed key below still string-coerces them and
+    // throws InvalidUnitError, rather than normalizeUnit() throwing a TypeError on them here.
+    const normalized = typeof unit === "string" ? Duration.normalizeUnit(unit) : null;
+    const start = calendarUnits.includes(normalized) ? this.startOf(unit, opts) : this;
+
+    // At the very bottom of the representable range startOf() can fall out of it and go invalid.
+    // Step off `this` there instead of propagating the invalid.
+    const base = start.isValid ? start : this;
+
+    return base
+      .plus({ [unit]: 1 })
+      .startOf(unit, opts)
+      .minus(1);
   }
 
   // OUTPUT
