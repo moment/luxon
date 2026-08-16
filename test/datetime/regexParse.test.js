@@ -557,6 +557,14 @@ test("DateTime.fromISO() doesn't accept 24:23", () => {
   expect(DateTime.fromISO("2018-05-25T24:23").isValid).toBe(false);
 });
 
+test("DateTime.fromISO() doesn't accept out-of-range zone offsets", () => {
+  expect(DateTime.fromISO("2016-05-25T09:08:34+00:60").isValid).toBe(false);
+  expect(DateTime.fromISO("2016-05-25T09:08:34+24:00").isValid).toBe(false);
+  expect(DateTime.fromISO("2016-05-25T09:08:34+99:99").isValid).toBe(false);
+  expect(DateTime.fromISO("2016-05-25T09:08:34+18:00").isValid).toBe(true);
+  expect(DateTime.fromISO("2016-05-25T09:08:34-05:30").isValid).toBe(true);
+});
+
 test("DateTime.fromISO() accepts extended zones", () => {
   let dt = DateTime.fromISO("2016-05-14T10:23:54[Europe/Paris]", {
     setZone: true,
