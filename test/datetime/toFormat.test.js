@@ -2,6 +2,9 @@
 
 import { DateTime } from "../../src/luxon";
 
+const Helpers = require("../helpers");
+const { withDefaultLocale } = Helpers;
+
 const dt = DateTime.fromObject(
   {
     year: 1982,
@@ -26,6 +29,23 @@ test("DateTime#toFormat accepts the locale from the DateTime or the options", ()
   expect(dt.setLocale("fr").toFormat("LLLL")).toBe("mai");
   expect(dt.toFormat("LLLL", { locale: "fr" })).toBe("mai");
   expect(dt.setLocale("pt").toFormat("LLLL", { locale: "fr" })).toBe("mai");
+});
+
+test("DateTime#toFormat falls back to the default locale for unsupported locales", () => {
+  withDefaultLocale("fr", () => {
+    expect(dt.toFormat("LLLL", { locale: "zz" })).toBe("mai");
+    expect(dt.toFormat("ffff", { locale: "zz" })).toBe(dt.toFormat("ffff", { locale: "fr" }));
+  });
+});
+
+test("DateTime#toFormat picks up changes of the default locale for unsupported locales", () => {
+  withDefaultLocale("fr", () => {
+    expect(dt.toFormat("LLLL", { locale: "zz" })).toBe("mai");
+  });
+
+  withDefaultLocale("en-US", () => {
+    expect(dt.toFormat("LLLL", { locale: "zz" })).toBe("May");
+  });
 });
 
 test("DateTime#toFormat('u') returns fractional seconds", () => {

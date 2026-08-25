@@ -263,7 +263,15 @@ class PolyDateFormatter {
 
     const intlOpts = { ...this.opts };
     intlOpts.timeZone = intlOpts.timeZone || z;
-    this.dtf = getCachedDTF(intl, intlOpts);
+
+    // Intl silently falls back to the system locale for unknown locales, so the
+    // default locale is listed as a backup for Intl to prefer over the system one.
+    // The formatter cache is keyed by the locales list, so changing
+    // Settings.defaultLocale picks up new formatters.
+    this.dtf =
+      Settings.defaultLocale && Settings.defaultLocale !== intl
+        ? getCachedDTF([intl, Settings.defaultLocale], intlOpts)
+        : getCachedDTF(intl, intlOpts);
   }
 
   format() {
