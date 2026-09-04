@@ -471,6 +471,11 @@ test("Duration#toHuman works in differt languages", () => {
   );
 });
 
+test("Duration#toHuman keeps an explicit zero quarters visible", () => {
+  expect(Duration.fromObject({ quarters: 0 }).toHuman()).toEqual("0 months");
+  expect(Duration.fromObject({ quarters: 0, hours: 5 }).toHuman()).toEqual("0 months, 5 hours");
+});
+
 test("Duration#toHuman handles quarters", () => {
   expect(
     Duration.fromObject({

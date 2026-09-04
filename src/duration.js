@@ -480,7 +480,7 @@ export default class Duration {
         let val = this.values[unit];
         if (convertUnit) {
           const val2 = this.values[convertUnit];
-          if (val2) {
+          if (val2 !== undefined) {
             val = (val ?? 0) + val2 * this.matrix[convertUnit][unit];
           }
         }
