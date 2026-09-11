@@ -1,6 +1,6 @@
 /* global test expect */
 
-import { Info } from "../../src/luxon";
+import { DateTime, Info } from "../../src/luxon";
 
 import Helpers from "../helpers";
 const withDefaultLocale = Helpers.withDefaultLocale;
@@ -414,4 +414,28 @@ test("Info English lists are not mutable", () => {
       expect(expected).toEqual(original);
     }
   });
+});
+
+//------
+// mutation
+//------
+test("Info lists can be mutated without affecting later calls or DateTimes", () => {
+  const months = Info.months("long", { locale: "fr" });
+  months.reverse();
+  expect(Info.months("long", { locale: "fr" })[0]).toBe("janvier");
+  expect(DateTime.fromMillis(0, { zone: "utc", locale: "fr" }).monthLong).toBe("janvier");
+
+  const weekdays = Info.weekdays("short", { locale: "fr" });
+  weekdays.unshift(weekdays.pop());
+  expect(Info.weekdays("short", { locale: "fr" })[0]).toBe("lun.");
+  expect(Info.weekdaysFormat("short", { locale: "fr" })[0]).toBe("lun.");
+
+  const meridiems = Info.meridiems({ locale: "fr" });
+  meridiems.length = 0;
+  expect(Info.meridiems({ locale: "fr" })).toEqual(["AM", "PM"]);
+  expect(DateTime.fromFormat("9 PM", "h a", { locale: "fr" }).hour).toBe(21);
+
+  const eras = Info.eras("short", { locale: "fr" });
+  eras.length = 0;
+  expect(Info.eras("short", { locale: "fr" })).toEqual(["av. J.-C.", "ap. J.-C."]);
 });
