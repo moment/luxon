@@ -169,7 +169,8 @@ function listStuff(loc, length, englishFn, intlFn) {
   } else if (mode === "en") {
     return englishFn(length);
   } else {
-    return intlFn(length);
+    // copy the list: it is cached on a Locale that every DateTime with this configuration shares
+    return intlFn(length).slice();
   }
 }
 
@@ -337,6 +338,65 @@ const fallbackWeekSettings = {
   weekend: [6, 7],
 };
 
+// Locales are immutable and their lazily-built name lists depend only on their configuration, so
+// every DateTime with the same resolved configuration can share one instance, the way
+// IANAZone.create shares zones. Entries are bucketed by locale string and compared field by field,
+// because building a composite key on every DateTime creation costs more than the allocation it
+// saves. The limits only matter to callers that pass unbounded distinct locale strings or week
+// settings; when one is hit, the affected entries are dropped and rebuilt on demand.
+const localeCache = new Map();
+const LOCALE_CACHE_LIMIT = 100;
+const LOCALE_BUCKET_LIMIT = 20;
+
+// compared by value, because validateWeekSettings returns a fresh copy every time; the identity
+// check covers null and the single object behind Settings.defaultWeekSettings
+function sameWeekSettings(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.firstDay !== b.firstDay || a.minimalDays !== b.minimalDays) return false;
+  if (a.weekend.length !== b.weekend.length) return false;
+  for (let i = 0; i < a.weekend.length; i++) {
+    if (a.weekend[i] !== b.weekend[i]) return false;
+  }
+  return true;
+}
+
+function getCachedLocale(locale, numberingSystem, outputCalendar, weekSettings, specifiedLocale) {
+  // specifiedLocale is falsy for a fallback to the system locale or en-US and equal to locale
+  // otherwise, so a flag is enough to keep the two apart; they must not share an instance because
+  // clone() only redefaults the fallback
+  const specified = !!specifiedLocale;
+
+  let bucket = localeCache.get(locale);
+  if (bucket === undefined) {
+    if (localeCache.size >= LOCALE_CACHE_LIMIT) localeCache.clear();
+    localeCache.set(locale, (bucket = []));
+  }
+
+  for (let i = 0; i < bucket.length; i++) {
+    const entry = bucket[i];
+    if (
+      entry.specified === specified &&
+      entry.numberingSystem === numberingSystem &&
+      entry.outputCalendar === outputCalendar &&
+      sameWeekSettings(entry.weekSettings, weekSettings)
+    ) {
+      // a deep-frozen DateTime freezes its Locale too (see #1104); drop a frozen one and build its
+      // replacement below, so the damage stays confined to that DateTime
+      if (Object.isExtensible(entry.loc)) return entry.loc;
+      bucket.splice(i, 1);
+      break;
+    }
+  }
+
+  if (bucket.length >= LOCALE_BUCKET_LIMIT) bucket.length = 0;
+  const loc = new Locale(locale, numberingSystem, outputCalendar, weekSettings, specifiedLocale);
+  // the constructor fills numberingSystem and outputCalendar from -u- tags in the locale string,
+  // so a Locale cannot serve as its own key; the inputs that built it are kept beside it
+  bucket.push({ specified, numberingSystem, outputCalendar, weekSettings, loc });
+  return loc;
+}
+
 /**
  * @private
  */
@@ -358,11 +418,18 @@ export default class Locale {
     const numberingSystemR = numberingSystem || Settings.defaultNumberingSystem;
     const outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
     const weekSettingsR = validateWeekSettings(weekSettings) || Settings.defaultWeekSettings;
-    return new Locale(localeR, numberingSystemR, outputCalendarR, weekSettingsR, specifiedLocale);
+    return getCachedLocale(
+      localeR,
+      numberingSystemR,
+      outputCalendarR,
+      weekSettingsR,
+      specifiedLocale
+    );
   }
 
   static resetCache() {
     sysLocaleCache = null;
+    localeCache.clear();
     intlDTCache.clear();
     intlNumCache.clear();
     intlRelCache.clear();
