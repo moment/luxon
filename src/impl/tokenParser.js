@@ -2,6 +2,7 @@ import { parseMillis, isUndefined, untruncateYear, signedOffset, hasOwnProperty 
 import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
+import { normalizeZone } from "./zoneUtil.js";
 import DateTime from "../datetime.js";
 import { digitRegex, parseDigits } from "./digits.js";
 import { ConflictingSpecificationError } from "../errors.js";
@@ -354,7 +355,7 @@ function dateTimeFromMatches(matches) {
   let zone = null;
   let specificOffset;
   if (!isUndefined(matches.z)) {
-    zone = IANAZone.create(matches.z);
+    zone = normalizeZone(matches.z, null); // Etc/UTC aliases -> fixed UTC (#1358)
   }
 
   if (!isUndefined(matches.Z)) {
@@ -461,7 +462,7 @@ export class TokenParser {
           : [null, null, undefined, undefined];
       if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
         throw new ConflictingSpecificationError(
-          "Can't include meridiem when specifying 24-hour format"
+          "Can't include meridiem when specifying 24-hour format",
         );
       }
       return {

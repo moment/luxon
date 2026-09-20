@@ -206,7 +206,7 @@ test("DateTime#setZone rejects jibberish", () => {
 // #650
 test("DateTime#setZone works for dates before 1970 with milliseconds", () => {
   const offset = DateTime.fromJSDate(new Date("1967-01-01T00:00:00.001Z")).setZone(
-    "America/New_York"
+    "America/New_York",
   ).offset;
   expect(offset).toBe(-300);
 });
@@ -289,6 +289,20 @@ test("DateTime#offsetNameShort returns null for invalid times", () => {
 });
 
 //------
+
+// #1358 Etc/UTC (and other UTC aliases) should behave like fixed UTC for ISO "Z"
+test.each(["Etc/UTC", "Etc/GMT", "Etc/UCT", "Etc/Universal", "Etc/Zulu", "Etc/Greenwich"])(
+  "setZone(%s) uses fixed UTC so toISO emits Z",
+  (zone) => {
+    const dt = DateTime.fromISO("2022-01-07T16:00:00-05:00").setZone(zone);
+    expect(dt.zone.type).toBe("fixed");
+    expect(dt.zoneName).toBe("UTC");
+    expect(dt.offset).toBe(0);
+    expect(dt.toISO()).toBe("2022-01-07T21:00:00.000Z");
+    expect(dt.toISO()).toBe(dt.setZone("UTC").toISO());
+  },
+);
+
 // Etc/GMT zones
 //------
 test.each([
