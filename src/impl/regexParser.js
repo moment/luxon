@@ -9,6 +9,7 @@ import {
 import * as English from "./english.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
+import { normalizeZone } from "./zoneUtil.js";
 
 /*
  * This file handles parsing for well-specified formats. Here's how it works:
@@ -35,7 +36,7 @@ function combineExtractors(...extractors) {
           const [val, zone, next] = ex(m, cursor);
           return [{ ...mergedVals, ...val }, zone || mergedZone, next];
         },
-        [{}, null, 1]
+        [{}, null, 1],
       )
       .slice(0, 2);
 }
@@ -79,7 +80,7 @@ const extractISOWeekData = simpleParse("weekYear", "weekNumber", "weekday");
 const extractISOOrdinalData = simpleParse("year", "ordinal");
 const sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/; // dumbed-down version of the ISO one
 const sqlTimeRegex = RegExp(
-  `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|(${ianaRegex.source}))?`
+  `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|(${ianaRegex.source}))?`,
 );
 const sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
 
@@ -117,7 +118,8 @@ function extractISOOffset(match, cursor) {
 }
 
 function extractIANAZone(match, cursor) {
-  const zone = match[cursor] ? IANAZone.create(match[cursor]) : null;
+  // Route through normalizeZone so Etc/UTC aliases become fixed UTC (#1358)
+  const zone = match[cursor] ? normalizeZone(match[cursor], null) : null;
   return [{}, zone, cursor + 1];
 }
 
@@ -261,24 +263,24 @@ const extractISOYmdTimeAndOffset = combineExtractors(
   extractISOYmd,
   extractISOTime,
   extractISOOffset,
-  extractIANAZone
+  extractIANAZone,
 );
 const extractISOWeekTimeAndOffset = combineExtractors(
   extractISOWeekData,
   extractISOTime,
   extractISOOffset,
-  extractIANAZone
+  extractIANAZone,
 );
 const extractISOOrdinalDateAndTime = combineExtractors(
   extractISOOrdinalData,
   extractISOTime,
   extractISOOffset,
-  extractIANAZone
+  extractIANAZone,
 );
 const extractISOTimeAndOffset = combineExtractors(
   extractISOTime,
   extractISOOffset,
-  extractIANAZone
+  extractIANAZone,
 );
 
 /*
@@ -291,7 +293,7 @@ export function parseISODate(s) {
     [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
     [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
     [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],
-    [isoTimeCombinedRegex, extractISOTimeAndOffset]
+    [isoTimeCombinedRegex, extractISOTimeAndOffset],
   );
 }
 
@@ -307,14 +309,14 @@ const extractPartialIsoIntervalEndDate = simpleParse(
   "day",
   "weekNumber",
   "weekday",
-  "ordinal"
+  "ordinal",
 );
 
 const extractISOIntervalPartialDateAndTime = combineExtractors(
   extractPartialIsoIntervalEndDate,
   extractISOTime,
   extractISOOffset,
-  extractIANAZone
+  extractIANAZone,
 );
 
 export function parseISOIntervalEnd(s) {
@@ -324,7 +326,7 @@ export function parseISOIntervalEnd(s) {
     [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
     [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
     [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],
-    [isoTimeCombinedRegex, extractISOTimeAndOffset]
+    [isoTimeCombinedRegex, extractISOTimeAndOffset],
   );
 }
 
@@ -337,7 +339,7 @@ export function parseHTTPDate(s) {
     s,
     [rfc1123, extractRFC1123Or850],
     [rfc850, extractRFC1123Or850],
-    [ascii, extractASCII]
+    [ascii, extractASCII],
   );
 }
 
@@ -357,13 +359,13 @@ const sqlTimeCombinedRegex = combineRegexes(sqlTimeRegex);
 const extractISOTimeOffsetAndIANAZone = combineExtractors(
   extractISOTime,
   extractISOOffset,
-  extractIANAZone
+  extractIANAZone,
 );
 
 export function parseSQL(s) {
   return parse(
     s,
     [sqlYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
-    [sqlTimeCombinedRegex, extractISOTimeOffsetAndIANAZone]
+    [sqlTimeCombinedRegex, extractISOTimeOffsetAndIANAZone],
   );
 }

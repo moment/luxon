@@ -10,6 +10,27 @@ import InvalidZone from "../zones/invalidZone.js";
 import { isUndefined, isString, isNumber } from "./util.js";
 import SystemZone from "../zones/systemZone.js";
 
+// IANA aliases that are defined as identical to UTC in tzdata's "etcetera".
+// Map them to the fixed UTC zone so toISO() emits "Z" consistently with setZone("UTC").
+// See https://github.com/moment/luxon/issues/1358
+const UTC_ZONE_ALIASES = new Set([
+  "utc",
+  "gmt",
+  "etc/utc",
+  "etc/uct",
+  "etc/universal",
+  "etc/zulu",
+  "etc/greenwich",
+  "etc/gmt",
+  "etc/gmt+0",
+  "etc/gmt-0",
+  "etc/gmt0",
+]);
+
+function isUtcZoneAlias(lowered) {
+  return UTC_ZONE_ALIASES.has(lowered);
+}
+
 export function normalizeZone(input, defaultZone) {
   let offset;
   if (isUndefined(input) || input === null) {
@@ -20,7 +41,7 @@ export function normalizeZone(input, defaultZone) {
     const lowered = input.toLowerCase();
     if (lowered === "default") return defaultZone;
     else if (lowered === "local" || lowered === "system") return SystemZone.instance;
-    else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
+    else if (isUtcZoneAlias(lowered)) return FixedOffsetZone.utcInstance;
     else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input);
   } else if (isNumber(input)) {
     return FixedOffsetZone.instance(input);

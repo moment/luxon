@@ -589,7 +589,7 @@ test("DateTime.fromISO() accepts extended zones", () => {
 
   dt = DateTime.fromISO("2016-05-14T10:23:54[Etc/UTC]", { setZone: true });
   expect(dt.isValid).toBe(true);
-  expect(dt.zoneName).toBe("Etc/UTC");
+  expect(dt.zoneName).toBe("UTC");
   expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -620,7 +620,7 @@ test("DateTime.fromISO() accepts extended zones and offsets", () => {
 
   dt = DateTime.fromISO("2016-05-14T10:23:54+00:00[Etc/UTC]", { setZone: true });
   expect(dt.isValid).toBe(true);
-  expect(dt.zoneName).toBe("Etc/UTC");
+  expect(dt.zoneName).toBe("UTC");
   expect(dt.offset).toBe(0);
   expect(dt.toObject()).toEqual({
     year: 2016,
@@ -670,7 +670,7 @@ withNow(
       second: 54,
       millisecond: 0,
     });
-  }
+  },
 );
 
 test("DateTime.fromISO() accepts some technically incorrect stuff", () => {
