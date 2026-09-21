@@ -293,9 +293,11 @@ export default class Interval {
 
   /**
    * Return whether this Interval has the same start and end DateTimes.
+   * Returns false if this Interval is invalid.
    * @return {boolean}
    */
   isEmpty() {
+    if (!this.isValid) return false;
     return this.s.valueOf() === this.e.valueOf();
   }
 

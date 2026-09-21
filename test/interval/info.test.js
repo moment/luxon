@@ -151,6 +151,17 @@ test("Interval#isEmpty returns false for non-empty intervals", () => {
   expect(i.isEmpty()).toBe(false);
 });
 
+test("Interval#isEmpty returns false for invalid intervals", () => {
+  const i = Interval.invalid("because");
+  expect(i.isEmpty()).toBe(false);
+});
+
+test("Interval#isEmpty returns false when the end is before the start", () => {
+  const i = Interval.fromISO("2024-06-01T12:00Z/2024-06-01T06:00Z");
+  expect(i.isValid).toBe(false);
+  expect(i.isEmpty()).toBe(false);
+});
+
 //------
 // #isBefore()
 //------
