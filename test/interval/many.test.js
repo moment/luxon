@@ -349,8 +349,121 @@ test("Interval#split by returns [] for invalid durations", () => {
 });
 
 test("Interval#split by returns [] for durations of length 0", () => {
-  const split = todayFrom(8, 3).splitBy(Duration.fromObject({}));
+  const split = todayFrom(8, 13).splitBy(Duration.fromObject({}));
   expect(split).toEqual([]);
+});
+
+test("Interval#splitBy returns [] for negative or non-finite-length durations", () => {
+  const interval = todayFrom(8, 13);
+  expect(interval.splitBy({ hours: -1 })).toEqual([]);
+  expect(interval.splitBy(-1)).toEqual([]);
+  expect(() => interval.splitBy(Number.NaN)).toThrow();
+  expect(() => interval.splitBy(Number.POSITIVE_INFINITY)).toThrow();
+});
+
+test("Interval#splitBy advances through mixed calendar units and includes the remainder", () => {
+  const start = DateTime.fromISO("2024-01-01T00:00:00Z", { setZone: true });
+  const end = DateTime.fromISO("2024-04-02T00:00:00Z", { setZone: true });
+  const interval = Interval.fromDateTimes(start, end);
+  const duration = Duration.fromObject({ months: 1, days: -1, hours: 2 });
+  const parts = interval.splitBy(duration);
+
+  expect(parts.length).toBe(4);
+  for (let i = 1; i < parts.length; i++) {
+    expect(parts[i].start.equals(parts[i - 1].end)).toBeTruthy();
+    expect(parts[i].start > parts[i - 1].start).toBeTruthy();
+  }
+  expect(parts[parts.length - 1].end.equals(end)).toBeTruthy();
+});
+
+test("Interval#splitBy preserves calendar-day stepping across DST", () => {
+  const zone = "America/New_York";
+  const start = DateTime.fromISO("2024-03-09T00:00:00", { zone });
+  const end = DateTime.fromISO("2024-03-12T00:00:00", { zone });
+  const parts = Interval.fromDateTimes(start, end).splitBy({ days: 1 });
+
+  expect(parts.map((part) => part.length())).toEqual([86400000, 82800000, 86400000]);
+  expect(parts.map((part) => part.start.toFormat("yyyy-MM-dd HH:mm"))).toEqual([
+    "2024-03-09 00:00",
+    "2024-03-10 00:00",
+    "2024-03-11 00:00",
+  ]);
+});
+
+test("Interval#splitBy rejects a split that advances and then stalls across DST", () => {
+  const zone = "America/New_York";
+  const interval = Interval.fromDateTimes(
+    DateTime.fromISO("2024-03-09T00:00:00", { zone }),
+    DateTime.fromISO("2024-03-09T03:00:00", { zone })
+  );
+
+  expect(interval.splitBy({ days: 1, hours: -23 })).toEqual([]);
+});
+
+test("Interval#splitBy rejects a precision-stalled split", () => {
+  const start = DateTime.fromMillis(1704067200000, { zone: "UTC" });
+  const interval = Interval.fromDateTimes(start, start.plus(2));
+  expect(interval.splitBy(1e-10)).toEqual([]);
+});
+
+test("Interval#splitBy preserves legitimate fractional milliseconds", () => {
+  const start = DateTime.fromMillis(1704067200000, { zone: "UTC" });
+  const parts = Interval.fromDateTimes(start, start.plus(2)).splitBy(0.5);
+
+  expect(parts.length).toBe(4);
+  expect(parts.map((part) => [part.start.toMillis(), part.end.toMillis()])).toEqual([
+    [1704067200000, 1704067200000.5],
+    [1704067200000.5, 1704067200001],
+    [1704067200001, 1704067200001.5],
+    [1704067200001.5, 1704067200002],
+  ]);
+});
+
+test("Interval#splitBy keeps month boundaries anchored to the start", () => {
+  const start = DateTime.fromISO("2024-01-31T00:00:00Z", { setZone: true });
+  const end = DateTime.fromISO("2024-04-30T00:00:00Z", { setZone: true });
+  const parts = Interval.fromDateTimes(start, end).splitBy({ months: 1 });
+
+  expect(parts.map((part) => part.start.toISODate())).toEqual([
+    "2024-01-31",
+    "2024-02-29",
+    "2024-03-31",
+  ]);
+  expect(parts[parts.length - 1].end.toISODate()).toBe("2024-04-30");
+});
+
+test("Interval#splitBy preserves fixed-hour stepping across spring DST", () => {
+  const zone = "America/New_York";
+  const start = DateTime.fromISO("2024-03-10T00:00:00", { zone });
+  const end = DateTime.fromISO("2024-03-10T06:00:00", { zone });
+  const parts = Interval.fromDateTimes(start, end).splitBy({ hours: 2 });
+
+  expect(parts.map((part) => part.length())).toEqual([7200000, 7200000, 3600000]);
+});
+
+test("Interval#splitBy preserves calendar days across autumn DST", () => {
+  const zone = "America/New_York";
+  const start = DateTime.fromISO("2024-11-03T00:00:00", { zone });
+  const end = DateTime.fromISO("2024-11-04T00:00:00", { zone });
+  const parts = Interval.fromDateTimes(start, end).splitBy({ days: 1 });
+
+  expect(parts.length).toBe(1);
+  expect(parts[0].length()).toBe(90000000);
+});
+
+test("Interval#splitBy preserves valid mixed-sign fixed units", () => {
+  const start = DateTime.fromISO("2024-01-01T00:00:00Z", { setZone: true });
+  const parts = Interval.fromDateTimes(start, start.plus({ hours: 3 })).splitBy({
+    hours: 2,
+    minutes: -60,
+  });
+
+  expect(parts.map((part) => part.start.toMillis())).toEqual([
+    start.toMillis(),
+    start.plus({ hours: 1 }).toMillis(),
+    start.plus({ hours: 2 }).toMillis(),
+  ]);
+  expect(parts[parts.length - 1].end.toMillis()).toBe(start.plus({ hours: 3 }).toMillis());
 });
 
 test("Interval#split by works across varying length months", () => {
@@ -400,6 +513,13 @@ test("Interval#divideEqually always gives you the right number of parts", () => 
   const int = Interval.after(Helpers.atHour(9), { minutes: 7 }),
     split = int.divideEqually(17);
   expect(split.length).toBe(17);
+});
+
+test("Interval#divideEqually returns [] for invalid numbers of parts", () => {
+  const interval = todayFrom(8, 13);
+  for (const numberOfParts of [0, -0, -1, 1.5, Number.NaN, Infinity, -Infinity]) {
+    expect(interval.divideEqually(numberOfParts)).toEqual([]);
+  }
 });
 
 test("Interval#divideEqually returns [] for invalid intervals", () => {
