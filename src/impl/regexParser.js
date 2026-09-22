@@ -134,6 +134,10 @@ function extractISODuration(match) {
   const [s, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] =
     match;
 
+  if (match.slice(1).every((value) => value === undefined)) {
+    return [null];
+  }
+
   const hasNegativePrefix = s[0] === "-";
   const negativeSeconds = secondStr && secondStr[0] === "-";
 

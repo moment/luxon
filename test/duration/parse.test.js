@@ -1,6 +1,9 @@
 /* global test expect */
 
 import { Duration } from "../../src/luxon";
+import Helpers from "../helpers";
+
+const withThrowOnInvalid = Helpers.setUnset("throwOnInvalid");
 
 //------
 // #fromISO()
@@ -80,6 +83,28 @@ test("Duration.fromISO can parse fractions", () => {
   });
   expect(Duration.fromISO("PT9.5H").toObject()).toEqual({
     hours: 9.5,
+  });
+});
+
+test("Duration.fromISO accepts zero-valued components", () => {
+  for (const text of ["P0Y", "P0M", "P0W", "P0D", "PT0H", "PT0M", "PT0S", "PT0.0S"]) {
+    expect(Duration.fromISO(text).isValid).toBe(true);
+  }
+});
+
+test("Duration.fromISO rejects ISO strings without a component", () => {
+  for (const text of ["P", "PT", "-P", "-PT"]) {
+    const duration = Duration.fromISO(text);
+    expect(duration.isValid).toBe(false);
+    expect(duration.invalidReason).toBe("unparsable");
+  }
+});
+
+test("Duration.fromISO throws for ISO strings without a component when throwOnInvalid is set", () => {
+  withThrowOnInvalid(true, () => {
+    expect(() => Duration.fromISO("P")).toThrow();
+    expect(() => Duration.fromISO("PT")).toThrow();
+    expect(() => Duration.fromISO("-P")).toThrow();
   });
 });
 

@@ -131,6 +131,39 @@ test("Interval.fromISO works with Settings.throwOnInvalid", () => {
   });
 });
 
+test("Interval.fromISO rejects ISO durations without a component in both forms", () => {
+  const start = "2024-06-01T09:00Z";
+  for (const text of [
+    `${start}/P`,
+    `${start}/PT`,
+    `${start}/-P`,
+    `P/${start}`,
+    `PT/${start}`,
+    `-P/${start}`,
+  ]) {
+    const interval = Interval.fromISO(text);
+    expect(interval.isValid).toBe(false);
+    expect(interval.invalidReason).toBe("unparsable");
+  }
+});
+
+test("Interval.fromISO preserves valid empty duration intervals", () => {
+  const start = "2024-06-01T09:00Z";
+  for (const text of [`${start}/${start}`, `${start}/PT0S`, `PT0S/${start}`]) {
+    const interval = Interval.fromISO(text);
+    expect(interval.isValid).toBe(true);
+    expect(interval.isEmpty()).toBe(true);
+  }
+});
+
+test("Interval.fromISO propagates empty duration errors when throwOnInvalid is set", () => {
+  withThrowOnInvalid(true, () => {
+    const start = "2024-06-01T09:00Z";
+    expect(() => Interval.fromISO(`${start}/P`)).toThrow();
+    expect(() => Interval.fromISO(`P/${start}`)).toThrow();
+  });
+});
+
 const badInputs = [
   null,
   "",
