@@ -174,7 +174,7 @@ function toISONumber(value) {
  * * **Creation** To create a Duration, use {@link Duration.fromMillis}, {@link Duration.fromObject}, or {@link Duration.fromISO}.
  * * **Unit values** See the {@link Duration#years}, {@link Duration#months}, {@link Duration#weeks}, {@link Duration#days}, {@link Duration#hours}, {@link Duration#minutes}, {@link Duration#seconds}, {@link Duration#milliseconds} accessors.
  * * **Configuration** See  {@link Duration#locale} and {@link Duration#numberingSystem} accessors.
- * * **Transformation** To create new Durations out of old ones use {@link Duration#plus}, {@link Duration#minus}, {@link Duration#normalize}, {@link Duration#set}, {@link Duration#reconfigure}, {@link Duration#shiftTo}, and {@link Duration#negate}.
+ * * **Transformation** To create new Durations out of old ones use {@link Duration#plus}, {@link Duration#minus}, {@link Duration#normalize}, {@link Duration#set}, {@link Duration#reconfigure}, {@link Duration#setLocale}, {@link Duration#shiftTo}, and {@link Duration#negate}.
  * * **Output** To convert the Duration into other representations, see {@link Duration#as}, {@link Duration#toISO}, {@link Duration#toFormat}, and {@link Duration#toJSON}
  *
  * There's are more methods documented below. In addition, for more information on subtler topics like internationalization and validity, see the external documentation.
@@ -457,6 +457,8 @@ export default class Duration {
    * To modify its behavior, use `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
    * @param {Object} opts - Formatting options. Accepts the same keys as the options parameter of the native `Intl.NumberFormat` constructor, as well as `listStyle`.
+   * @param {string} [opts.locale] - the locale to use for this formatting operation
+   * @param {string} [opts.numberingSystem] - the numbering system to use for this formatting operation
    * @param {string} [opts.listStyle='narrow'] - How to format the merged list. Corresponds to the `style` property of the options parameter of the native `Intl.ListFormat` constructor.
    * @param {boolean} [opts.showZeros=true] - Show all units previously used by the duration even if they are zero
    * @example
@@ -466,12 +468,14 @@ export default class Duration {
    * dur.toHuman({ listStyle: "long" }) //=> '1 month, 0 weeks, 5 hours, and 6 minutes'
    * dur.toHuman({ unitDisplay: "short" }) //=> '1 mth, 0 wks, 5 hr, 6 min'
    * dur.toHuman({ showZeros: false }) //=> '1 month, 5 hours, 6 minutes'
+   * dur.toHuman({ locale: 'fr' }) //=> '1 mois, 0 semaine, 5 heures, 6 minutes'
    * ```
    */
   toHuman(opts = {}) {
     if (!this.isValid) return INVALID;
 
     const showZeros = opts.showZeros !== false;
+    const loc = this.loc.clone({ locale: opts.locale, numberingSystem: opts.numberingSystem });
 
     const l = orderedUnits
       .map((unit) => {
@@ -487,13 +491,13 @@ export default class Duration {
         if (isUndefined(val) || (val === 0 && !showZeros)) {
           return null;
         }
-        return this.loc
+        return loc
           .numberFormatter({ style: "unit", unitDisplay: "long", ...opts, unit: unit.slice(0, -1) })
           .format(val);
       })
       .filter((n) => n);
 
-    return this.loc
+    return loc
       .listFormatter({ type: "conjunction", style: opts.listStyle || "narrow", ...opts })
       .format(l);
   }
@@ -704,6 +708,16 @@ export default class Duration {
     const loc = this.loc.clone({ locale, numberingSystem });
     const opts = { loc, matrix, conversionAccuracy };
     return clone(this, opts);
+  }
+
+  /**
+   * "Set" the locale. Returns a newly-constructed Duration.
+   * Just a convenient alias for reconfigure({ locale })
+   * @example dur.setLocale('en-GB')
+   * @return {Duration}
+   */
+  setLocale(locale) {
+    return this.reconfigure({ locale });
   }
 
   /**

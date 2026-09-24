@@ -26,6 +26,14 @@ test("Duration#reconfigure() sets the locale", () => {
   expect(recon.conversionAccuracy).toBe("longterm");
 });
 
+test("Duration#setLocale() returns a new Duration with the locale set", () => {
+  const localized = dur.setLocale("ja");
+  expect(localized).not.toBe(dur);
+  expect(localized.locale).toBe("ja");
+  expect(localized.numberingSystem).toBe("beng");
+  expect(dur.locale).toBe("fr");
+});
+
 test("Duration#reconfigure() sets the numberingSystem", () => {
   const recon = dur.reconfigure({ numberingSystem: "thai" });
   expect(recon.locale).toBe("fr");
