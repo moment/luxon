@@ -1,5 +1,5 @@
 /* global test expect */
-import { Duration } from "../../src/luxon";
+import { Duration, Settings } from "../../src/luxon";
 
 const dur = () =>
   Duration.fromObject({
@@ -433,6 +433,23 @@ test("Duration#toHuman accepts number format opts", () => {
   expect(dur().toHuman({ unitDisplay: "short" })).toEqual(
     "1 yr, 2 mths, 1 wk, 3 days, 4 hr, 5 min, 6 sec, 7 ms"
   );
+});
+
+test("Duration#toHuman accepts per-call locale and numbering system without mutation", () => {
+  const localized = Duration.fromObject({ hours: 3, minutes: 20 });
+  const originalHuman = localized.toHuman();
+  const originalLocale = localized.locale;
+  const originalNumberingSystem = localized.numberingSystem;
+  const originalDefaultLocale = Settings.defaultLocale;
+  const originalDefaultNumberingSystem = Settings.defaultNumberingSystem;
+
+  expect(localized.toHuman({ locale: "ja" })).toBe("3 時間、20 分");
+  expect(localized.toHuman({ locale: "en", numberingSystem: "beng" })).toBe("৩ hours, ২০ minutes");
+  expect(localized.toHuman()).toBe(originalHuman);
+  expect(localized.locale).toBe(originalLocale);
+  expect(localized.numberingSystem).toBe(originalNumberingSystem);
+  expect(Settings.defaultLocale).toBe(originalDefaultLocale);
+  expect(Settings.defaultNumberingSystem).toBe(originalDefaultNumberingSystem);
 });
 
 test("Duration#toHuman accepts hiding of zero values", () => {
