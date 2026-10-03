@@ -136,6 +136,12 @@ test("Duration#toISOTime returns null if the value is outside the range of one d
   expect(Duration.fromObject({ milliseconds: -1 }).toISOTime()).toBe(null);
 });
 
+test("Duration#toISOTime truncates fractional milliseconds", () => {
+  expect(Duration.fromObject({ hours: 1.1 }).toISOTime()).toBe("01:06:00.000");
+  expect(Duration.fromObject({ seconds: 1.001 }).toISOTime()).toBe("00:00:01.000");
+  expect(Duration.fromMillis(1.5).toISOTime()).toBe("00:00:00.001");
+});
+
 test("Duration#toISOTime is not influenced by the locale", () => {
   expect(Duration.fromObject({ hours: 3, minutes: 10 }, { locale: "ar-QA" }).toISOTime()).toBe(
     "03:10:00.000"

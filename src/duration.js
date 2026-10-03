@@ -571,7 +571,7 @@ export default class Duration {
       includeOffset: false,
     };
 
-    const dateTime = DateTime.fromMillis(millis, { zone: "UTC" });
+    const dateTime = DateTime.fromMillis(Math.trunc(millis), { zone: "UTC" });
     return dateTime.toISOTime(opts);
   }
 
