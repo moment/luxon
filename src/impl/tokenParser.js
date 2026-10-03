@@ -3,7 +3,7 @@ import Formatter from "./formatter.js";
 import FixedOffsetZone from "../zones/fixedOffsetZone.js";
 import IANAZone from "../zones/IANAZone.js";
 import DateTime from "../datetime.js";
-import { digitRegex, parseDigits } from "./digits.js";
+import { digitRegex, parseDigits, toAsciiDigits } from "./digits.js";
 import { ConflictingSpecificationError } from "../errors.js";
 
 const MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
@@ -38,11 +38,20 @@ function oneOf(strings, startIndex) {
 }
 
 function offset(regex, groups) {
-  return { regex, deser: ([, h, m]) => signedOffset(h, m), groups };
+  return {
+    regex,
+    deser: ([, h, m]) => signedOffset(toAsciiDigits(h), m === undefined ? m : toAsciiDigits(m)),
+    groups,
+  };
 }
 
 function simple(regex) {
   return { regex, deser: ([s]) => s };
+}
+
+// Like simple, but for digits whose leading zeros matter (fractional seconds).
+function digitString(regex) {
+  return { regex, deser: ([s]) => toAsciiDigits(s) };
 }
 
 function escapeToken(value) {
@@ -141,9 +150,9 @@ function unitForToken(token, loc) {
         case "SSS":
           return intUnit(three);
         case "u":
-          return simple(oneToNine);
+          return digitString(oneToNine);
         case "uu":
-          return simple(oneOrTwo);
+          return digitString(oneOrTwo);
         case "uuu":
           return intUnit(one);
         // meridiem

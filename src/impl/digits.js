@@ -1,3 +1,5 @@
+import { hasOwnProperty } from "./util.js";
+
 const numberingSystems = {
   arab: "[\u0660-\u0669]",
   arabext: "[\u06F0-\u06F9]",
@@ -70,23 +72,62 @@ export function parseDigits(str) {
   }
 }
 
+/**
+ * Converts any supported non-ASCII digits in `str` to ASCII, leaving every other
+ * character (signs, leading zeros) as is. For deserializers that hand matched
+ * text to parseInt/parseFloat instead of parseDigits.
+ */
+export function toAsciiDigits(str) {
+  let out = "";
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    const hanidec = hanidecChars.indexOf(str[i]);
+    let digit = hanidec === -1 ? null : hanidec;
+    if (digit === null) {
+      for (const key in numberingSystemsUTF16) {
+        const [min, max] = numberingSystemsUTF16[key];
+        if (code >= min && code <= max) {
+          digit = code - min;
+          break;
+        }
+      }
+    }
+    out += digit === null ? str[i] : digit;
+  }
+  return out;
+}
+
 // cache of {numberingSystem: {append: regex}}
 const digitRegexCache = new Map();
 export function resetDigitRegexCache() {
   digitRegexCache.clear();
 }
 
-export function digitRegex({ numberingSystem }, append = "") {
-  const ns = numberingSystem || "latn";
+export function digitRegex(loc, append = "") {
+  let ns = loc.numberingSystem || "latn";
+  let alsoLatin = false;
+  // Without an explicit numbering system, toFormat() writes the locale's default
+  // one (e.g. Arabic-Indic digits for ar-SA), so accept those as well as ASCII.
+  if (!loc.numberingSystem && loc.resolvedNumberingSystem) {
+    const resolved = loc.resolvedNumberingSystem();
+    if (resolved !== "latn" && hasOwnProperty(numberingSystems, resolved)) {
+      ns = resolved;
+      alsoLatin = true;
+    }
+  }
+  const key = alsoLatin ? `${ns}+latn` : ns;
 
-  let appendCache = digitRegexCache.get(ns);
+  let appendCache = digitRegexCache.get(key);
   if (appendCache === undefined) {
     appendCache = new Map();
-    digitRegexCache.set(ns, appendCache);
+    digitRegexCache.set(key, appendCache);
   }
   let regex = appendCache.get(append);
   if (regex === undefined) {
-    regex = new RegExp(`${numberingSystems[ns]}${append}`);
+    // Quantify each alternative separately so one token can't mix digit systems.
+    regex = alsoLatin
+      ? new RegExp(`(?:${numberingSystems[ns]}${append}|\\d${append})`)
+      : new RegExp(`${numberingSystems[ns]}${append}`);
     appendCache.set(append, regex);
   }
 

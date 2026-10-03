@@ -533,6 +533,14 @@ export default class Locale {
     );
   }
 
+  /**
+   * The numbering system Intl formats this locale with, e.g. "arab" for ar-SA.
+   * @returns {string}
+   */
+  resolvedNumberingSystem() {
+    return this.numberingSystem || getCachedIntResolvedOptions(this.intl).numberingSystem;
+  }
+
   getWeekSettings() {
     if (this.weekSettings) {
       return this.weekSettings;
