@@ -407,12 +407,13 @@ export default class Interval {
   }
 
   /**
-   * Return whether this Interval overlaps with the specified Interval
+   * Return whether this Interval overlaps with the specified Interval.
+   * Empty intervals do not overlap any interval.
    * @param {Interval} other
    * @return {boolean}
    */
   overlaps(other) {
-    return this.e > other.s && this.s < other.e;
+    return this.s < this.e && other.s < other.e && this.e > other.s && this.s < other.e;
   }
 
   /**
@@ -492,7 +493,7 @@ export default class Interval {
 
   /**
    * Merge an array of Intervals into an equivalent minimal set of Intervals.
-   * Combines overlapping and adjacent Intervals.
+   * Combines overlapping and adjacent Intervals and omits empty Intervals.
    * The resulting array will contain the Intervals in ascending order, that is, starting with the earliest Interval
    * and ending with the latest.
    *
@@ -504,7 +505,10 @@ export default class Interval {
       .sort((a, b) => a.s - b.s)
       .reduce(
         ([sofar, current], item) => {
-          if (!current) {
+          // avoid isEmpty(): invalid intervals have no endpoints
+          if (+item.s === +item.e) {
+            return [sofar, current];
+          } else if (!current) {
             return [sofar, item];
           } else if (current.overlaps(item) || current.abutsStart(item)) {
             return [sofar, current.union(item)];
