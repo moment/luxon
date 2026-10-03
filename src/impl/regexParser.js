@@ -192,7 +192,11 @@ function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, 
 
 // RFC 2822/5322
 const rfc2822 =
-  /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/;
+  /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/i;
+
+function normalizeRFC2822Name(name) {
+  return name && name[0].toUpperCase() + name.slice(1).toLowerCase();
+}
 
 function extractRFC2822(match) {
   const [
@@ -209,11 +213,19 @@ function extractRFC2822(match) {
       offHourStr,
       offMinuteStr,
     ] = match,
-    result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+    result = fromStrings(
+      normalizeRFC2822Name(weekdayStr),
+      yearStr,
+      normalizeRFC2822Name(monthStr),
+      dayStr,
+      hourStr,
+      minuteStr,
+      secondStr
+    );
 
   let offset;
   if (obsOffset) {
-    offset = obsOffsets[obsOffset];
+    offset = obsOffsets[obsOffset.toUpperCase()];
   } else if (milOffset) {
     offset = 0;
   } else {

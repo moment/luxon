@@ -770,6 +770,46 @@ test("DateTime.fromRFC2822 parses a range of dates", () => {
   }
 });
 
+test("DateTime.fromRFC2822() accepts lowercase names", () => {
+  const dt = DateTime.fromRFC2822("fri, 25 nov 2016 13:23:12 gmt");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2016-11-25T13:23:12.000Z");
+});
+
+test("DateTime.fromRFC2822() accepts uppercase names", () => {
+  const dt = DateTime.fromRFC2822("FRI, 25 NOV 2016 13:23:12 GMT");
+  expect(dt.isValid).toBe(true);
+  expect(dt.toUTC().toISO()).toBe("2016-11-25T13:23:12.000Z");
+});
+
+test("DateTime.fromRFC2822() accepts lowercase zone names", () => {
+  const zones = {
+    ut: 0,
+    gmt: 0,
+    edt: -4 * 60,
+    est: -5 * 60,
+    cdt: -5 * 60,
+    cst: -6 * 60,
+    mdt: -6 * 60,
+    mst: -7 * 60,
+    pdt: -7 * 60,
+    pst: -8 * 60,
+  };
+
+  for (const zone in zones) {
+    const dt = DateTime.fromRFC2822(`01 Nov 2016 13:23:12 ${zone}`, { setZone: true });
+    expect(dt.isValid).toBe(true);
+    expect(dt.offset).toBe(zones[zone]);
+  }
+});
+
+test("DateTime.fromRFC2822() still validates case-insensitive names", () => {
+  expect(DateTime.fromRFC2822("wed, 01 nov 2016 13:23:12 gmt").invalidReason).toBe(
+    "mismatched weekday"
+  );
+  expect(DateTime.fromRFC2822("tue, 01 nux 2016 13:23:12 gmt").invalidReason).toBe("unparsable");
+});
+
 test("DateTime.fromRFC2822() rejects incorrect days of the week", () => {
   const dt = DateTime.fromRFC2822("Wed, 01 Nov 2016 13:23:12 +0600");
   expect(dt.isValid).toBe(false);
