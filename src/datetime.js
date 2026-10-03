@@ -719,7 +719,8 @@ export default class DateTime {
 
   /**
    * Create a DateTime from a number of milliseconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
-   * @param {number} milliseconds - a number of milliseconds since 1970 UTC
+   * Fractional milliseconds produce an invalid DateTime.
+   * @param {number} milliseconds - a whole number of milliseconds since 1970 UTC
    * @param {Object} options - configuration options for the DateTime
    * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
@@ -736,6 +737,11 @@ export default class DateTime {
     } else if (milliseconds < -MAX_DATE || milliseconds > MAX_DATE) {
       // this isn't perfect because we can still end up out of range because of additional shifting, but it's a start
       return DateTime.invalid("Timestamp out of range");
+    } else if (Number.isFinite(milliseconds) && !Number.isInteger(milliseconds)) {
+      return DateTime.invalid(
+        "invalid input",
+        "fromMillis requires a whole number of milliseconds"
+      );
     } else {
       return new DateTime({
         ts: milliseconds,

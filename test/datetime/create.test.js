@@ -340,6 +340,34 @@ test("DateTime.fromMillis(ms) has a value of ms", () => {
   expect(DateTime.fromMillis(0).valueOf()).toBe(0);
 });
 
+test.each([0.5, -0.5, 123.456, -123.456, Number.MIN_VALUE, -Number.MIN_VALUE])(
+  "DateTime.fromMillis(%s) rejects fractional milliseconds",
+  (milliseconds) => {
+    const dt = DateTime.fromMillis(milliseconds);
+    expect(dt.isValid).toBe(false);
+    expect(dt.invalidReason).toBe("invalid input");
+    expect(dt.invalidExplanation).toBe("fromMillis requires a whole number of milliseconds");
+  }
+);
+
+test.each([-8.64e15, -1, 0, 1, 8.64e15])(
+  "DateTime.fromMillis(%s) preserves integer timestamps",
+  (milliseconds) => {
+    const dt = DateTime.fromMillis(milliseconds, { zone: "UTC" });
+    expect(dt.isValid).toBe(true);
+    expect(dt.toMillis()).toBe(milliseconds);
+    expect(dt.toJSDate().valueOf()).toBe(milliseconds);
+  }
+);
+
+test("DateTime.fromMillis rejects fractional milliseconds when throwOnInvalid is true", () => {
+  withthrowOnInvalid(true, () => {
+    expect(() => DateTime.fromMillis(123.456)).toThrow(
+      "fromMillis requires a whole number of milliseconds"
+    );
+  });
+});
+
 test("DateTime.fromMillis(ms) accepts a zone option", () => {
   const value = 391147200000,
     dateTime = DateTime.fromMillis(value, { zone: "America/Santiago" });
