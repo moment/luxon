@@ -33,6 +33,44 @@ test("Interval#equals returns false for invalid intervals", () => {
 });
 
 //-------
+// #overlaps()
+//-------
+test.each([4, 5, 6, 7, 8, 9])("Interval#overlaps excludes an empty interval at hour %s", (hour) => {
+  const interval = todayFrom(5, 8),
+    empty = todayFrom(hour, hour);
+
+  expect(interval.overlaps(empty)).toBe(false);
+  expect(empty.overlaps(interval)).toBe(false);
+  expect(empty.overlaps(empty)).toBe(false);
+});
+
+test.each([
+  [3, 4, false],
+  [3, 5, false],
+  [3, 6, true],
+  [5, 8, true],
+  [6, 7, true],
+  [7, 9, true],
+  [8, 9, false],
+  [9, 10, false],
+])("Interval#overlaps compares non-empty intervals [%s, %s)", (start, end, expected) => {
+  const interval = todayFrom(5, 8),
+    other = todayFrom(start, end);
+
+  expect(interval.overlaps(other)).toBe(expected);
+  expect(other.overlaps(interval)).toBe(expected);
+});
+
+test("Interval#overlaps returns false for invalid intervals", () => {
+  const invalid = Interval.invalid("because"),
+    interval = todayFrom(5, 8);
+
+  expect(interval.overlaps(invalid)).toBe(false);
+  expect(invalid.overlaps(interval)).toBe(false);
+  expect(invalid.overlaps(invalid)).toBe(false);
+});
+
+//-------
 // #union()
 //-------
 test("Interval#union returns an interval spanning a later interval", () => {
@@ -108,6 +146,18 @@ test("Interval.merge returns the minimal set of intervals", () => {
 
 test("Interval.merge returns empty for an empty input", () => {
   expect(Interval.merge([])).toEqual([]);
+});
+
+test.each([4, 5, 6, 7, 8, 9])("Interval.merge omits an empty interval at hour %s", (hour) => {
+  const interval = todayFrom(5, 8),
+    empty = todayFrom(hour, hour);
+
+  expect(Interval.merge([empty, interval])).toEqual([interval]);
+  expect(Interval.merge([interval, empty])).toEqual([interval]);
+});
+
+test("Interval.merge returns no intervals when all inputs are empty", () => {
+  expect(Interval.merge([todayFrom(5, 5), todayFrom(6, 6)])).toEqual([]);
 });
 
 //-------
