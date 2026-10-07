@@ -296,6 +296,7 @@ export default class Interval {
    * @return {boolean}
    */
   isEmpty() {
+    if (!this.isValid) return false;
     return this.s.valueOf() === this.e.valueOf();
   }
 
