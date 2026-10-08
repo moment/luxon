@@ -232,8 +232,9 @@ export default class Duration {
 
   /**
    * Create a Duration from a JavaScript object with keys like 'years' and 'hours'.
+   * Singular unit names are also accepted (e.g. 'year' or 'hour').
    * If this object is empty then a zero milliseconds duration is returned.
-   * @param {Object} obj - the object to create the DateTime from
+   * @param {Object} obj - the object to create the Duration from
    * @param {number} obj.years
    * @param {number} obj.quarters
    * @param {number} obj.months
