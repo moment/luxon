@@ -1946,7 +1946,14 @@ export default class DateTime {
    * @return {string}
    */
   toISOWeekDate() {
-    return toTechFormat(this, "kkkk-'W'WW-c");
+    if (!this.isValid) {
+      return null;
+    }
+    // Like toISODate, use the expanded year representation outside 0-9999
+    const longFormat = this.weekYear > 9999 || this.weekYear < 0;
+    let c = longFormat && this.weekYear >= 0 ? "+" : "";
+    c += padStart(this.weekYear, longFormat ? 6 : 4);
+    return c + toTechFormat(this, "-'W'WW-c");
   }
 
   /**
