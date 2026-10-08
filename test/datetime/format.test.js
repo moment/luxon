@@ -235,6 +235,14 @@ test("DateTime#toISOWeekDate() returns ISO 8601 date", () => {
   expect(dt.toISOWeekDate()).toBe("1982-W21-2");
 });
 
+test("DateTime#toISOWeekDate() uses the expanded year format outside 0-9999", () => {
+  expect(DateTime.utc(10000, 3, 5).toISOWeekDate()).toBe("+010000-W09-7");
+  expect(DateTime.utc(-1, 3, 5).toISOWeekDate()).toBe("-000001-W09-5");
+  // the week year, not the calendar year, decides the format
+  expect(DateTime.utc(10000, 1, 1).toISOWeekDate()).toBe("9999-W52-6");
+  expect(DateTime.utc(0, 1, 1).toISOWeekDate()).toBe("-000001-W52-6");
+});
+
 test("DateTime#toISOWeekDate() returns null for invalid DateTimes", () => {
   expect(invalid.toISOWeekDate()).toBe(null);
 });

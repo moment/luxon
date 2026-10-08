@@ -222,6 +222,14 @@ test("DateTime.fromISO() accepts extend years", () => {
   });
 });
 
+test("DateTime.fromISO() accepts extend years in week and ordinal dates", () => {
+  const midnight = { hour: 0, minute: 0, second: 0, millisecond: 0 };
+  isSame("+010000-W09-7", { year: 10000, month: 3, day: 5, ...midnight });
+  isSame("-000001-W09-5", { year: -1, month: 3, day: 5, ...midnight });
+  isSame("+010000-064", { year: 10000, month: 3, day: 4, ...midnight });
+  isSame("-002016-200", { year: -2016, month: 7, day: 18, ...midnight });
+});
+
 test("DateTime.fromISO() accepts year-month-dayThour", () => {
   isSame("2016-05-25T09", {
     year: 2016,
