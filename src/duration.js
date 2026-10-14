@@ -131,7 +131,11 @@ function clone(dur, alts, clear = false) {
     values: clear ? alts.values : { ...dur.values, ...(alts.values || {}) },
     loc: dur.loc.clone(alts.loc),
     conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
-    matrix: alts.matrix || dur.matrix,
+    matrix:
+      alts.matrix ||
+      (alts.conversionAccuracy && (dur.matrix === casualMatrix || dur.matrix === accurateMatrix)
+        ? undefined
+        : dur.matrix),
   };
   return new Duration(conf);
 }
