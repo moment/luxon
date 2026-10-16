@@ -1262,3 +1262,17 @@ test("DateTime.fromFormatParser throws error when used with a different locale t
     "fromFormatParser called with a locale of Locale(es-MX, null, null), but the format parser was created for Locale(es-ES, null, null)"
   );
 });
+
+test("DateTime.fromFormat() reuses parsers only for the same locale and format", () => {
+  expect(DateTime.fromFormat("25 mai 1982", "d LLLL yyyy", { locale: "fr" }).month).toBe(5);
+  expect(DateTime.fromFormat("25 mai 1982", "d LLLL yyyy", { locale: "en" }).isValid).toBe(false);
+  expect(DateTime.fromFormat("25 May 1982", "d LLLL yyyy", { locale: "en" }).month).toBe(5);
+  expect(DateTime.fromFormat("25 May 1982", "d LLLL yyyy", { locale: "fr" }).isValid).toBe(false);
+  expect(DateTime.fromFormat("٢٥", "dd", { numberingSystem: "arab" }).day).toBe(25);
+  expect(DateTime.fromFormat("٢٥", "dd").isValid).toBe(false);
+
+  Helpers.withDefaultLocale("fr", () => {
+    expect(DateTime.fromFormat("25 mai 1982", "d LLLL yyyy").month).toBe(5);
+  });
+  expect(DateTime.fromFormat("25 mai 1982", "d LLLL yyyy").isValid).toBe(false);
+});

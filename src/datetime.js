@@ -24,7 +24,6 @@ import { normalizeZone } from "./impl/zoneUtil.js";
 import diff from "./impl/diff.js";
 import { parseRFC2822Date, parseISODate, parseHTTPDate, parseSQL } from "./impl/regexParser.js";
 import {
-  parseFromTokens,
   explainFromTokens,
   formatOptsToTokens,
   expandMacroTokens,
@@ -528,6 +527,26 @@ let zoneOffsetTs;
 const zoneOffsetGuessCache = new Map();
 
 /**
+ * Cache for format parsers used by fromFormat, keyed by locale and format.
+ *
+ * Building a parser (tokenizing the format, expanding macros and compiling
+ * the regex) costs much more than running it.
+ *
+ * @ignore
+ */
+const formatParserCache = new Map();
+
+function cachedFormatParser(locale, fmt) {
+  const key = `${locale.locale}|${locale.numberingSystem}|${locale.outputCalendar}|${fmt}`;
+  let parser = formatParserCache.get(key);
+  if (parser === undefined) {
+    parser = new TokenParser(locale, fmt);
+    formatParserCache.set(key, parser);
+  }
+  return parser;
+}
+
+/**
  * A DateTime is an immutable data structure representing a specific date and time and accompanying methods. It contains class and instance methods for creating, parsing, interrogating, transforming, and formatting them.
  *
  * A DateTime comprises of:
@@ -1001,7 +1020,12 @@ export default class DateTime {
         numberingSystem,
         defaultToEN: true,
       }),
-      [vals, parsedZone, specificOffset, invalid] = parseFromTokens(localeToUse, text, fmt);
+      {
+        result: vals,
+        zone: parsedZone,
+        specificOffset,
+        invalidReason: invalid,
+      } = cachedFormatParser(localeToUse, fmt).explainFromTokens(text);
     if (invalid) {
       return DateTime.invalid(invalid);
     } else {
@@ -1097,6 +1121,7 @@ export default class DateTime {
   static resetCache() {
     zoneOffsetTs = undefined;
     zoneOffsetGuessCache.clear();
+    formatParserCache.clear();
   }
 
   // INFO
