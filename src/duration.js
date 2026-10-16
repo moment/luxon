@@ -700,8 +700,16 @@ export default class Duration {
   }
 
   /**
-   * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
+   * "Set" the locale, numberingSystem, conversionAccuracy, and/or matrix. Returns a newly-constructed Duration.
+   * Changing conversionAccuracy selects the matching preset unless a custom matrix is in use.
+   * A supplied matrix takes precedence over the preset and replaces the current matrix.
+   * @param {Object} [opts={}] - options to change
+   * @param {string} [opts.locale] - the locale to use
+   * @param {string} [opts.numberingSystem] - the numbering system to use
+   * @param {string} [opts.conversionAccuracy] - the preset conversion system: 'casual' or 'longterm'
+   * @param {Object} [opts.matrix] - a replacement conversion matrix
    * @example dur.reconfigure({ locale: 'en-GB' })
+   * @example Duration.fromObject({ years: 1 }).reconfigure({ conversionAccuracy: 'longterm' }).as('days') //=> 365.2425
    * @return {Duration}
    */
   reconfigure({ locale, numberingSystem, conversionAccuracy, matrix } = {}) {
