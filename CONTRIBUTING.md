@@ -15,38 +15,27 @@ Here are some vague notes on Luxon's design philosophy:
 
 ## Building and testing
 
-Building and testing is done through npm scripts. The tests run in Node and require Node 18 with full-icu support. This is because some of the features available in Luxon (like internationalization and time zones) need that stuff and we test it all. On any platform, if you have Node 18 installed with full-icu, you're good to go; just run `scripts/test`. But you probably don't have that, so read on.
+Building and testing uses npm scripts. Use a Node version listed in [the CI workflow](.github/workflows/test.yml), with full ICU data for the internationalisation and time-zone tests. Official Node binaries include full ICU by default; a separate `full-icu` package is not needed for those builds.
 
-### OSX
+Install and build with the same commands on macOS, Linux and native Windows:
 
-Mac is easy:
-Open the terminal.
-
-```
-brew install node --with-full-icu
-npm install
-./scripts/test
+```sh
+npm ci
+npm run build
 ```
 
-If that's for whatever reason a pain, the Linux instructions should also work, as well as the Docker ones.
+The tests expect the same locale and time zone as CI. In a POSIX shell:
 
-### Linux
-
-There are two ways to get full-icu support in Linux: build it with that support, or provide it as a module. We'll cover the latter. Assuming you've installed Node 10:
-
-```
-npm install
-npm install full-icu
-./scripts/test
+```sh
+LANG=en_US.utf8 TZ=America/New_York npm test
+npm run format-check
 ```
 
-Where `scripts/test` is just `NODE_ICU_DATA="$(pwd)/node_modules/full-icu" npm run test`, which is required for making Node load the full-icu module you just installed. You can run all the other npm scripts (e.g. `npm run docs`) directly; they don't require Intl support.
+On Windows, use WSL with Linux Node to run these test and formatting commands. Native Windows Node uses the system's default locale, which is not changed by setting `LANG`, and the formatting scripts use POSIX shell quoting.
 
-### Windows
+If you use a custom Node build with reduced ICU data, follow [Node's internationalisation instructions](https://nodejs.org/api/intl.html) to provide compatible ICU data through `NODE_ICU_DATA` or `--icu-data-dir` before running the tests. This is only needed for such custom builds.
 
-If you have [Bash](https://git-scm.com/downloads) or [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10), the Linux instructions seem to work fine.
-
-I would love to add instructions for a non-WSL install of the dev env!
+The website build, `npm run site`, also uses Unix tools such as `sed` and `rsync`. On Windows, run that command in a Unix environment providing those tools, such as WSL.
 
 ### Docker
 
@@ -61,9 +50,9 @@ In case messing with your Node environment just to run Luxon's tests is too much
 
 Once you're sure your bugfix or feature makes sense for Luxon, make sure you take these steps:
 
-1.  Be sure to add tests and run them with `scripts/test`
+1.  Be sure to add tests and run them with `npm test`
 1.  Be sure you run `npm run format` before you commit. Note this will modify your source files to line up with the style guidelines.
-1.  Make sure you add or ESDoc annotations appropriately. You can run `npm run docs` to generate the HTML for them. They land in the `build/docs` directory. This also builds the markdown files in `/docs` into the guide on the Luxon website.
+1.  Make sure you add or update documentation annotations appropriately. Run `npm run api-docs` to generate their HTML in `build/api-docs`. Run `npm run site` to also copy the guides from `/docs` into the website in `build`.
 1.  To test Luxon in your browser, run `npm run site` and then open `build/demo/global.html`. You can access Luxon classes in the console like `window.luxon.DateTime`.
 1.  To test in Node, run `npm run build` and then run something like `var DateTime = require('./build/cjs-browser/luxon').DateTime`.
 
@@ -71,12 +60,13 @@ Luxon uses [Husky](https://github.com/typicode/husky) to run the formatter on yo
 
 ## npm script reference
 
-| Command                      | Function                                |
-| ---------------------------- | --------------------------------------- |
-| `npm run build`              | Build all the distributable files       |
-| `npm run build-node`         | Build just for Node                     |
-| `npm run test`               | Run the test suite, but see notes above |
-| `npm run format`             | Run the Prettier formatter              |
-| `npm run site`               | Build the Luxon website, including docs                 |
-| `npm run check-doc-coverage` | Check whether there's full doc coverage |
-| `npm run benchmark`          | Run performance benchmarks |
+| Command                | Function                                |
+| ---------------------- | --------------------------------------- |
+| `npm run build`        | Build all the distributable files       |
+| `npm run build-node`   | Build just for Node                     |
+| `npm test`             | Run the test suite, but see notes above |
+| `npm run format`       | Run the Prettier formatter              |
+| `npm run format-check` | Check formatting without changing files |
+| `npm run api-docs`     | Build the API reference                 |
+| `npm run site`         | Build the Luxon website, including docs |
+| `npm run benchmark`    | Run performance benchmarks              |
