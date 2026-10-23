@@ -46,6 +46,63 @@ test("DateTime.fromISO() uses the Z if provided, but keeps the dateTime as local
   });
 });
 
+test("DateTime.fromISO() accepts an offset with zero seconds", () => {
+  // #865
+  const dt = DateTime.fromISO("2021-02-01T00:00:00.000+08:00:00", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.offset).toBe(480);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2021,
+    month: 1,
+    day: 31,
+    hour: 16,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  });
+});
+
+test("DateTime.fromISO() accepts an offset with seconds", () => {
+  const dt = DateTime.fromISO("2021-02-01T00:00:00.000+08:00:30", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.offset).toBe(480.5);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2021,
+    month: 1,
+    day: 31,
+    hour: 15,
+    minute: 59,
+    second: 30,
+    millisecond: 0,
+  });
+
+  const negative = DateTime.fromISO("2021-02-01T00:00:00.000-05:30:15", { setZone: true });
+  expect(negative.isValid).toBe(true);
+  expect(negative.offset).toBe(-330.25);
+  expect(negative.toUTC().toObject()).toEqual({
+    year: 2021,
+    month: 2,
+    day: 1,
+    hour: 5,
+    minute: 30,
+    second: 15,
+    millisecond: 0,
+  });
+});
+
+test("DateTime.fromISO() accepts an offset with seconds, but keeps the dateTime as local", () => {
+  const dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00:30");
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 2016,
+    month: 5,
+    day: 25,
+    hour: 3,
+    minute: 8,
+    second: 4,
+    millisecond: 123,
+  });
+});
+
 test("DateTime.fromISO() optionally adopts the UTC offset provided", () => {
   let dt = DateTime.fromISO("2016-05-25T09:08:34.123+06:00", { setZone: true });
   expect(dt.zone.name).toBe("UTC+6");
@@ -1072,6 +1129,21 @@ test("DateTime.fromSQL() can parse an optional offset", () => {
     hour: 4,
     minute: 23,
     second: 54,
+    millisecond: 0,
+  });
+});
+
+test("DateTime.fromSQL() can parse an optional offset with seconds", () => {
+  const dt = DateTime.fromSQL("1816-01-01 00:01:04+00:34:08", { setZone: true });
+  expect(dt.isValid).toBe(true);
+  expect(dt.offset).toBeCloseTo(34 + 8 / 60, 10);
+  expect(dt.toUTC().toObject()).toEqual({
+    year: 1815,
+    month: 12,
+    day: 31,
+    hour: 23,
+    minute: 26,
+    second: 56,
     millisecond: 0,
   });
 });

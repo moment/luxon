@@ -67,7 +67,7 @@ function simpleParse(...keys) {
 }
 
 // ISO and SQL parsing
-const offsetRegex = /(?:([Zz])|([+-]\d\d)(?::?(\d\d))?)/;
+const offsetRegex = /(?:([Zz])|([+-]\d\d)(?::?(\d\d)(?::?(\d\d))?)?)/;
 const isoExtendedZone = `(?:${offsetRegex.source}?(?:\\[(${ianaRegex.source})\\])?)?`;
 const isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?/;
 const isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${isoExtendedZone}`);
@@ -111,9 +111,9 @@ function extractISOTime(match, cursor) {
 
 function extractISOOffset(match, cursor) {
   const local = !match[cursor] && !match[cursor + 1],
-    fullOffset = signedOffset(match[cursor + 1], match[cursor + 2]),
+    fullOffset = signedOffset(match[cursor + 1], match[cursor + 2], match[cursor + 3]),
     zone = local ? null : FixedOffsetZone.instance(fullOffset);
-  return [{}, zone, cursor + 3];
+  return [{}, zone, cursor + 4];
 }
 
 function extractIANAZone(match, cursor) {
