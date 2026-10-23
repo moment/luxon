@@ -272,7 +272,7 @@ export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
 }
 
 // signedOffset('-5', '30') -> -330
-export function signedOffset(offHourStr, offMinuteStr) {
+export function signedOffset(offHourStr, offMinuteStr, offSecondStr) {
   let offHour = parseInt(offHourStr, 10);
 
   // don't || this because we want to preserve -0
@@ -281,8 +281,10 @@ export function signedOffset(offHourStr, offMinuteStr) {
   }
 
   const offMin = parseInt(offMinuteStr, 10) || 0,
-    offMinSigned = offHour < 0 || Object.is(offHour, -0) ? -offMin : offMin;
-  return offHour * 60 + offMinSigned;
+    offSec = parseInt(offSecondStr, 10) || 0,
+    offMinSigned = offHour < 0 || Object.is(offHour, -0) ? -offMin : offMin,
+    offSecSigned = offHour < 0 || Object.is(offHour, -0) ? -offSec : offSec;
+  return offHour * 60 + offMinSigned + offSecSigned / 60;
 }
 
 // COERCION

@@ -51,7 +51,7 @@ export default class FixedOffsetZone extends Zone {
     /** @private **/
     this.fixed = offset;
     /** @private **/
-    this.valid = Number.isInteger(offset);
+    this.valid = Number.isFinite(offset);
   }
 
   /**
