@@ -522,12 +522,16 @@ export default class Duration {
     // we could use the formatter, but this is an easier way to get the minimum string
     if (!this.isValid) return null;
 
+    // ISO 8601 does not permit mixing the PnYnMnD and PnW formats, and many
+    // parsers reject the week unit entirely, so express weeks as days
+    // (see #484; this matches Java's Period and moment.js)
+    const days = this.days + this.weeks * 7;
+
     let s = "P";
     if (this.years !== 0) s += toISONumber(this.years) + "Y";
     if (this.months !== 0 || this.quarters !== 0)
       s += toISONumber(this.months + this.quarters * 3) + "M";
-    if (this.weeks !== 0) s += toISONumber(this.weeks) + "W";
-    if (this.days !== 0) s += toISONumber(this.days) + "D";
+    if (days !== 0) s += toISONumber(days) + "D";
     if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0)
       s += "T";
     if (this.hours !== 0) s += toISONumber(this.hours) + "H";

@@ -18,7 +18,7 @@ const dur = () =>
 //------
 
 test("Duration#toISO fills out every field", () => {
-  expect(dur().toISO()).toBe("P1Y2M1W3DT4H5M6.007S");
+  expect(dur().toISO()).toBe("P1Y2M10DT4H5M6.007S");
 });
 
 test("Duration#toISO fills out every field with fractional", () => {
@@ -32,7 +32,13 @@ test("Duration#toISO fills out every field with fractional", () => {
     seconds: 6.6,
     milliseconds: 7,
   });
-  expect(dur.toISO()).toBe("P1.1Y2.2M1.1W3.3DT4.4H5.5M6.607S");
+  expect(dur.toISO()).toBe("P1.1Y2.2M11DT4.4H5.5M6.607S");
+});
+
+test("Duration#toISO expresses weeks as days (ISO 8601 forbids mixing PnW with PnD)", () => {
+  expect(Duration.fromObject({ weeks: 1, days: 4 }).toISO()).toBe("P11D");
+  expect(Duration.fromObject({ weeks: 2 }).toISO()).toBe("P14D");
+  expect(Duration.fromObject({ years: 3, months: 6, weeks: 1, days: 4 }).toISO()).toBe("P3Y6M11D");
 });
 
 test("Duration#toISO creates a minimal string", () => {
