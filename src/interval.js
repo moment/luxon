@@ -9,6 +9,8 @@ import { parseISOIntervalEnd } from "./impl/regexParser.js";
 
 const INVALID = "Invalid Interval";
 
+const calendarUnits = ["years", "quarters", "months", "weeks", "days"];
+
 // checks if the start is equal to or before the end
 function validateStartEnd(start, end) {
   if (!start || !start.isValid) {
@@ -276,7 +278,15 @@ export default class Interval {
       end = this.end;
     }
     end = end.startOf(unit, opts);
-    return Math.floor(end.diff(start, unit).get(unit)) + (end.valueOf() !== this.end.valueOf());
+    const diff = end.diff(start, unit).get(unit);
+    // Both ends are now unit boundaries, so for calendar units the true difference is a whole
+    // number. When DST skips local midnight, startOf() lands at the first existing instant
+    // (e.g. 01:00), which makes the diff fall just short of that whole number; flooring it
+    // would drop a whole day/week from the count.
+    const whole = calendarUnits.includes(Duration.normalizeUnit(unit))
+      ? Math.round(diff)
+      : Math.floor(diff);
+    return whole + (end.valueOf() !== this.end.valueOf());
   }
 
   /**
