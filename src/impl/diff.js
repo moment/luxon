@@ -75,7 +75,10 @@ export default function (earlier, later, units, opts) {
 
   if (lowerOrderUnits.length === 0) {
     if (highWater < later) {
-      highWater = cursor.plus({ [lowestOrder]: 1 });
+      // Measure the fraction against the next anchor reached from `earlier`, like the
+      // overshoot branch does. `cursor.plus(1 unit)` is shorter when the cursor was clamped
+      // to a month end (e.g. Jan 31 + 1 month = Feb 28, but Feb 28 + 1 month = Mar 28, not Mar 31).
+      highWater = earlier.plus({ ...results, [lowestOrder]: results[lowestOrder] + 1 });
     }
 
     if (highWater !== cursor) {
