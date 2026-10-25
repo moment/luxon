@@ -15,7 +15,7 @@ This section covers creating strings to represent a DateTime. There are three ty
 ```js
 dt.toISO(); //=> '2017-04-20T11:32:00.000-04:00'
 dt.toISODate(); //=> '2017-04-20'
-dt.toISOWeekDate(); //=> '2017-W17-7'
+dt.toISOWeekDate(); //=> '2017-W16-4'
 dt.toISOTime(); //=> '11:32:00.000-04:00'
 ```
 
@@ -27,7 +27,7 @@ There are a number of legacy standard date and time formats out there, and Luxon
 
 ```js
 dt.toRFC2822(); //=> 'Thu, 20 Apr 2017 11:32:00 -0400'
-dt.toHTTP(); //=> 'Thu, 20 Apr 2017 03:32:00 GMT'
+dt.toHTTP(); //=> 'Thu, 20 Apr 2017 15:32:00 GMT'
 ```
 
 ### Unix timestamps
@@ -69,7 +69,7 @@ DateTime.DATETIME_FULL;  //=> {
                          //     month: 'long',
                          //     day: 'numeric',
                          //     hour: 'numeric',
-                         //     minute: '2-digit',
+                         //     minute: 'numeric',
                          //     timeZoneName: 'short'
                          //   }
 ```
@@ -195,15 +195,15 @@ The macro options available correspond one-to-one with the preset formats define
 | mm               |              | minute, padded to 2                                            | `07`                                                          |
 | h                |              | hour in 12-hour time, no padding                               | `1`                                                           |
 | hh               |              | hour in 12-hour time, padded to 2                              | `01`                                                          |
-| H                |              | hour in 24-hour time, no padding                               | `9`                                                           |
+| H                |              | hour in 24-hour time, no padding                               | `13`                                                          |
 | HH               |              | hour in 24-hour time, padded to 2                              | `13`                                                          |
-| Z                |              | narrow offset                                                  | `+5`                                                          |
-| ZZ               |              | short offset                                                   | `+05:00`                                                      |
-| ZZZ              |              | techie offset                                                  | `+0500`                                                       |
-| ZZZZ             |              | abbreviated named offset                                       | `EST`                                                         |
-| ZZZZZ            |              | unabbreviated named offset                                     | `Eastern Standard Time`                                       |
+| Z                |              | narrow offset                                                  | `-4`                                                          |
+| ZZ               |              | short offset                                                   | `-04:00`                                                      |
+| ZZZ              |              | techie offset                                                  | `-0400`                                                       |
+| ZZZZ             |              | abbreviated named offset                                       | `EDT`                                                         |
+| ZZZZZ            |              | unabbreviated named offset                                     | `Eastern Daylight Time`                                       |
 | z                |              | IANA zone                                                      | `America/New_York`                                            |
-| a                |              | meridiem                                                       | `AM`                                                          |
+| a                |              | meridiem                                                       | `PM`                                                          |
 | d                |              | day of the month, no padding                                   | `6`                                                           |
 | dd               |              | day of the month, padded to 2                                  | `06`                                                          |
 | c                | E            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7) | `3`                                                           |
@@ -233,11 +233,11 @@ The macro options available correspond one-to-one with the preset formats define
 | ooo              |              | ordinal (day of year), padded to 3                             | `218`                                                         |
 | q                |              | quarter, no padding                                            | `3`                                                           |
 | qq               |              | quarter, padded to 2                                           | `03`                                                          |
-| D                |              | localized numeric date                                         | `9/4/2017`                                                    |
+| D                |              | localized numeric date                                         | `8/6/2014`                                                    |
 | DD               |              | localized date with abbreviated month                          | `Aug 6, 2014`                                                 |
 | DDD              |              | localized date with full month                                 | `August 6, 2014`                                              |
 | DDDD             |              | localized date with full month and weekday                     | `Wednesday, August 6, 2014`                                   |
-| t                |              | localized time                                                 | `9:07 AM`                                                     |
+| t                |              | localized time                                                 | `1:07 PM`                                                     |
 | tt               |              | localized time with seconds                                    | `1:07:04 PM`                                                  |
 | ttt              |              | localized time with seconds and abbreviated offset             | `1:07:04 PM EDT`                                              |
 | tttt             |              | localized time with seconds and full offset                    | `1:07:04 PM Eastern Daylight Time`                            |
@@ -253,5 +253,5 @@ The macro options available correspond one-to-one with the preset formats define
 | FF               |              | less short localized date and time with seconds                | `Aug 6, 2014, 1:07:04 PM`                                     |
 | FFF              |              | verbose localized date and time with seconds                   | `August 6, 2014, 1:07:04 PM EDT`                              |
 | FFFF             |              | extra verbose localized date and time with seconds             | `Wednesday, August 6, 2014, 1:07:04 PM Eastern Daylight Time` |
-| X                |              | unix timestamp in seconds                                      | `1407287224`                                                  |
-| x                |              | unix timestamp in milliseconds                                 | `1407287224054`                                               |
+| X                |              | unix timestamp in seconds                                      | `1407344824`                                                  |
+| x                |              | unix timestamp in milliseconds                                 | `1407344824054`                                               |
