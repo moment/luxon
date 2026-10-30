@@ -151,6 +151,11 @@ test("Interval#isEmpty returns false for non-empty intervals", () => {
   expect(i.isEmpty()).toBe(false);
 });
 
+test("Interval#isEmpty returns false for invalid intervals", () => {
+  const i = Interval.invalid("because");
+  expect(i.isEmpty()).toBe(false);
+});
+
 //------
 // #isBefore()
 //------
