@@ -20,8 +20,9 @@ jobs:
         node-version:
           - 20.20.1 # latest 20.x
           - 22.22.1 # latest 22.x
-          - 24.14.0 # latest 22.x
-          - 25.8.1 # bleeding edge
+          - 24.14.0 # latest 24.x
+          - 25.8.1 # previous bleeding edge
+          - 26.13.0 # bleeding edge / current LTS line
 
     steps:
       - uses: actions/checkout@v3
