@@ -247,3 +247,47 @@ describe("DateTime maintains the wasHole setting properly", () => {
     ).toBe(false);
   });
 });
+
+describe("DateTime in a zone whose current offset is far from its offset at that date", () => {
+  // Samoa moved across the date line in 2011, so its offset now (+13:00) is a day away from the
+  // -11:00 / -10:00 it had in 2010. Daylight saving began at midnight on 2010-09-26, so 00:00 to
+  // 00:59 did not exist that day, but 01:00 did.
+  const zone = "Pacific/Apia";
+  const oldNow = Settings.now;
+
+  beforeEach(() => {
+    Settings.now = () => Date.UTC(2024, 5, 1);
+    Settings.resetCaches();
+  });
+
+  afterEach(() => {
+    Settings.now = oldNow;
+    Settings.resetCaches();
+  });
+
+  test("a local time that exists is not mistaken for a hole", () => {
+    const dts = [
+      DateTime.fromObject({ year: 2010, month: 9, day: 26, hour: 1, minute: 30 }, { zone }),
+      DateTime.fromISO("2010-09-26T01:30:00", { zone }),
+      DateTime.local(2010, 9, 26, 1, 30, { zone }),
+    ];
+    for (const dt of dts) {
+      expect(dt.hour).toBe(1);
+      expect(dt.minute).toBe(30);
+      expect(dt.offset).toBe(-10 * 60);
+      expect(dt.wasHole).toBe(false);
+      expect(dt.toUTC().toISO()).toBe("2010-09-26T11:30:00.000Z");
+    }
+  });
+
+  test("a local time that does not exist is still bumped forward", () => {
+    const dt = DateTime.fromObject(
+      { year: 2010, month: 9, day: 26, hour: 0, minute: 30 },
+      { zone }
+    );
+    expect(dt.hour).toBe(1);
+    expect(dt.minute).toBe(30);
+    expect(dt.offset).toBe(-10 * 60);
+    expect(dt.wasHole).toBe(true);
+  });
+});
