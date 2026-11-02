@@ -856,43 +856,55 @@ export default class Duration {
       }
     }
 
-    // Pass 3: ensure any fractional parts created by the sign redistribution above are
-    // distributed to lower order units again
-    for (let i = 0; i < orderedUnits.length; i++) {
-      const unit = orderedUnits[i];
-      // last unit keeps fractions
-      if (unit !== lastUnit && unit in built) {
-        const unitValue = built[unit];
-        if (!Number.isInteger(unitValue)) {
-          // find the next unit down to convert it into
-          for (let j = i + 1; j < orderedUnits.length; j++) {
-            const smallerUnit = orderedUnits[j];
-            if (smallerUnit in built) {
-              const conv = this.matrix[unit][smallerUnit];
-              const unitFrac = unitValue % 1;
-              built[unit] = Math.trunc(unitValue);
-              built[smallerUnit] += unitFrac * conv;
-              break;
+    // Passes 3 and 4 can undo each other's work: when the conversion factor between two units is not a
+    // whole number (as in the "longterm" matrix), rolling an overflow up into a larger unit leaves a
+    // fraction behind in the smaller one, and moving that fraction down can overflow the unit below it.
+    // Repeat until nothing moves anymore.
+    for (let attempt = 0, moved = true; moved && attempt < orderedUnits.length; attempt++) {
+      moved = false;
+
+      // Pass 3: ensure any fractional parts created by the sign redistribution above are
+      // distributed to lower order units again
+      for (let i = 0; i < orderedUnits.length; i++) {
+        const unit = orderedUnits[i];
+        // last unit keeps fractions
+        if (unit !== lastUnit && unit in built) {
+          const unitValue = built[unit];
+          if (!Number.isInteger(unitValue)) {
+            // find the next unit down to convert it into
+            for (let j = i + 1; j < orderedUnits.length; j++) {
+              const smallerUnit = orderedUnits[j];
+              if (smallerUnit in built) {
+                const conv = this.matrix[unit][smallerUnit];
+                const unitFrac = unitValue % 1;
+                built[unit] = Math.trunc(unitValue);
+                built[smallerUnit] += unitFrac * conv;
+                moved = true;
+                break;
+              }
             }
           }
         }
       }
-    }
 
-    // Pass 4: make sure any overflowing units get converted into a higher unit
-    for (let i = 0; i < reverseUnits.length; i++) {
-      const unit = reverseUnits[i];
-      if (units.includes(unit)) {
-        for (const ak in built) {
-          if (i > reverseUnits.indexOf(ak)) {
-            // unit is a larger unit than ak
-            // try to up-convert any overflow in "ak"
-            // for example, 61 minutes => 1 hour, 1 minute
-            const conv = this.matrix[unit][ak];
-            const av = built[ak];
-            const toConvert = Math.trunc(av / conv);
-            built[unit] += toConvert;
-            built[ak] -= toConvert * conv;
+      // Pass 4: make sure any overflowing units get converted into a higher unit
+      for (let i = 0; i < reverseUnits.length; i++) {
+        const unit = reverseUnits[i];
+        if (units.includes(unit)) {
+          for (const ak in built) {
+            if (i > reverseUnits.indexOf(ak)) {
+              // unit is a larger unit than ak
+              // try to up-convert any overflow in "ak"
+              // for example, 61 minutes => 1 hour, 1 minute
+              const conv = this.matrix[unit][ak];
+              const av = built[ak];
+              const toConvert = Math.trunc(av / conv);
+              if (toConvert !== 0) {
+                built[unit] += toConvert;
+                built[ak] -= toConvert * conv;
+                moved = true;
+              }
+            }
           }
         }
       }
