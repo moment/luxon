@@ -110,6 +110,23 @@ test("Interval.merge returns empty for an empty input", () => {
   expect(Interval.merge([])).toEqual([]);
 });
 
+test.each([false, true])("Interval.merge preserves its input array (frozen=%s)", (frozen) => {
+  const later = todayFrom(10, 12),
+    earlier = todayFrom(4, 8),
+    overlap = todayFrom(5, 9),
+    list = [later, earlier, overlap];
+  if (frozen) Object.freeze(list);
+
+  const result = Interval.merge(list);
+  expect(list[0]).toBe(later);
+  expect(list[1]).toBe(earlier);
+  expect(list[2]).toBe(overlap);
+  expect(result).not.toBe(list);
+  expect(result).toHaveLength(2);
+  expect(result[0].equals(todayFrom(4, 9))).toBe(true);
+  expect(result[1]).toBe(later);
+});
+
 //-------
 // .xor()
 //-------

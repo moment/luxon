@@ -501,6 +501,7 @@ export default class Interval {
    */
   static merge(intervals) {
     const [found, final] = intervals
+      .slice()
       .sort((a, b) => a.s - b.s)
       .reduce(
         ([sofar, current], item) => {
