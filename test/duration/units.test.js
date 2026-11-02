@@ -348,6 +348,41 @@ test("Duration#normalize does not produce fractions in higher order units when r
   expect(normalized.days).toBeCloseTo(2.436875, 7);
 });
 
+test("Duration#shiftTo does not leave a fraction in a unit that is not the smallest when an overflow rolls up", () => {
+  // 49 days + 2095 hours is 4 months and about 14.54 days. Rolling the fourth month up must not
+  // leave 13.563125 days behind in the middle unit.
+  const options = { conversionAccuracy: "longterm" };
+  const shifted = Duration.fromObject({ days: 49, hours: 2095 }, options)
+    .shiftTo("months", "days", "seconds")
+    .toObject();
+  expect(shifted.months).toBe(4);
+  expect(shifted.days).toBe(14);
+  expect(shifted.seconds).toBeCloseTo(47016, 4);
+
+  const negated = Duration.fromObject({ days: -49, hours: -2095 }, options)
+    .shiftTo("months", "days", "seconds")
+    .toObject();
+  expect(negated.months).toBe(-4);
+  expect(negated.days).toBe(-14);
+  expect(negated.seconds).toBeCloseTo(-47016, 4);
+});
+
+test("Duration#shiftTo gives the same result when it is applied to its own output", () => {
+  const once = Duration.fromObject({ hours: 2104, days: 51 }, { conversionAccuracy: "longterm" })
+    .shiftTo("quarters", "weeks", "seconds")
+    .toObject();
+  expect(once.quarters).toBe(1);
+  expect(once.weeks).toBe(6);
+  expect(once.seconds).toBeCloseTo(462762, 4);
+
+  const twice = Duration.fromObject(once, { conversionAccuracy: "longterm" })
+    .shiftTo("quarters", "weeks", "seconds")
+    .toObject();
+  expect(twice.quarters).toBe(once.quarters);
+  expect(twice.weeks).toBe(once.weeks);
+  expect(twice.seconds).toBeCloseTo(once.seconds, 4);
+});
+
 //------
 // #rescale()
 //-------
