@@ -123,7 +123,15 @@ function fixOffset(localTS, o, tz) {
     return [utcGuess, o2, false];
   }
 
-  // If it's different, we're in a hole time. The offset has changed, but the we don't adjust the time
+  // If it's different, we're in a hole time, or our guess was so far off that we only just found the right
+  // offset (e.g. a zone that has since moved across the date line). A hole has no valid offset at all, so
+  // if o3 gives us the local time we want, it was not a hole.
+  const utcFromO3 = localTS - o3 * 60 * 1000;
+  if (tz.offset(utcFromO3) === o3) {
+    return [utcFromO3, o3, false];
+  }
+
+  // We're in a hole time. The offset has changed, but the we don't adjust the time
   return [localTS - Math.min(o2, o3) * 60 * 1000, Math.max(o2, o3), true];
 }
 
