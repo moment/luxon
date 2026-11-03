@@ -142,6 +142,11 @@ test("Duration#toISOTime is not influenced by the locale", () => {
   );
 });
 
+test("Duration#toISOTime shows fractional seconds without floating point error", () => {
+  expect(Duration.fromObject({ seconds: 32.19 }).toISOTime()).toBe("00:00:32.190");
+  expect(Duration.fromObject({ seconds: 64.38 }).toISOTime()).toBe("00:01:04.380");
+});
+
 //------
 // #toMillis()
 //------
@@ -149,6 +154,12 @@ test("Duration#toISOTime is not influenced by the locale", () => {
 test("Duration#toMillis returns the value in milliseconds", () => {
   expect(Duration.fromMillis(1000).toMillis()).toBe(1000);
   expect(dur().valueOf()).toBe(dur().toMillis());
+});
+
+test("Duration#toMillis is not thrown off by floating point error", () => {
+  expect(Duration.fromObject({ seconds: 4.07 }).toMillis()).toBe(4070);
+  expect(Duration.fromObject({ seconds: 32.19 }).toMillis()).toBe(32190);
+  expect(Duration.fromObject({ hours: 1.1 }).toMillis()).toBe(3960000);
 });
 
 //------
@@ -170,6 +181,38 @@ test("Duration#toString returns the ISO representation", () => {
 //------
 // #toFormat()
 //------
+
+test("Duration#toFormat is not thrown off by floating point error in decimal hours and fractional seconds", () => {
+  expect(Duration.fromObject({ seconds: 67.99 }).toFormat("hh:mm:ss.SSS")).toBe("00:01:07.990");
+  expect(Duration.fromObject({ seconds: 5.18 }).toFormat("s.SSS")).toBe("5.180");
+  expect(Duration.fromObject({ seconds: 11.1 }).toFormat("mm:ss.SSS")).toBe("00:11.100");
+
+  // every hundredth of a second in the first minute
+  const wrong = [];
+  for (let hundredths = 0; hundredths < 6000; hundredths++) {
+    const whole = String(Math.floor(hundredths / 100)).padStart(2, "0");
+    const expected = whole + "." + String((hundredths % 100) * 10).padStart(3, "0");
+    const actual = Duration.fromObject({ seconds: hundredths / 100 }).toFormat("ss.SSS");
+    if (actual !== expected)
+      wrong.push(hundredths / 100 + "s: " + actual + " instead of " + expected);
+  }
+  expect(wrong).toEqual([]);
+
+  // every tenth of an hour in the first day (a tenth of an hour is a whole 6 minutes)
+  expect(Duration.fromObject({ hours: 4.1 }).toFormat("hh:mm")).toBe("04:06");
+  const wrongHours = [];
+  for (let tenths = 0; tenths < 240; tenths++) {
+    const minutes = tenths * 6;
+    const expected =
+      String(Math.floor(minutes / 60)).padStart(2, "0") +
+      ":" +
+      String(minutes % 60).padStart(2, "0");
+    const actual = Duration.fromObject({ hours: tenths / 10 }).toFormat("hh:mm");
+    if (actual !== expected)
+      wrongHours.push(tenths / 10 + "h: " + actual + " instead of " + expected);
+  }
+  expect(wrongHours).toEqual([]);
+});
 
 test("Duration#toFormat('S') returns milliseconds", () => {
   expect(dur().toFormat("S")).toBe("37598706007");

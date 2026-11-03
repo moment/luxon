@@ -348,6 +348,13 @@ test("Duration#normalize does not produce fractions in higher order units when r
   expect(normalized.days).toBeCloseTo(2.436875, 7);
 });
 
+test("Duration#shiftTo is not thrown off by floating point error in fractional seconds", () => {
+  const shifted = Duration.fromObject({ seconds: 67.99 })
+    .shiftTo("minutes", "seconds", "milliseconds")
+    .toObject();
+  expect(shifted).toEqual({ minutes: 1, seconds: 7, milliseconds: 990 });
+});
+
 //------
 // #rescale()
 //-------

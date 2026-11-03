@@ -179,9 +179,13 @@ export function roundTo(number, digits, rounding = "round") {
   }
 }
 
-export function snapFloatingPoint(val) {
+// Snap val to the nearest integer if it is within floating point error of it. That error scales with the size
+// of the numbers that went into val, not with val itself: 67.99 seconds is off by about 7e-15, which is
+// about 7e-12 once it has been converted to milliseconds. Callers that know the size of what they started
+// from can pass it as magnitude.
+export function snapFloatingPoint(val, magnitude = 0) {
   const r = Math.round(val);
-  return Math.abs(val - r) < 4 * Number.EPSILON * Math.max(1, Math.abs(r)) ? r : val;
+  return Math.abs(val - r) < 4 * Number.EPSILON * Math.max(1, Math.abs(r), magnitude) ? r : val;
 }
 
 // DATE BASICS

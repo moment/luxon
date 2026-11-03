@@ -138,12 +138,15 @@ function clone(dur, alts, clear = false) {
 
 function durationToMillis(matrix, vals) {
   let sum = vals.milliseconds ?? 0;
+  let magnitude = Math.abs(sum);
   for (const unit of reverseUnits.slice(1)) {
     if (vals[unit]) {
-      sum += vals[unit] * matrix[unit]["milliseconds"];
+      const millis = vals[unit] * matrix[unit]["milliseconds"];
+      sum += millis;
+      magnitude += Math.abs(millis);
     }
   }
-  return sum;
+  return snapFloatingPoint(sum, magnitude);
 }
 
 // Remove all properties with a value of 0 from an object
@@ -771,6 +774,23 @@ export default class Duration {
     //         still left in "accumulated".
     //         Additionally, we accumulate the entire Duration in the smallest unit to determine
     //         the overall sign of the target Duration.
+    // The size of the whole Duration measured in unit "to". Floating point error in a conversion scales with
+    // this, not with the leftover we happen to be looking at (e.g., 67.99 seconds => 989.99999999999 ms).
+    const sizeIn = (to) => {
+      let size = 0;
+      for (const from in this.values) {
+        const value = Math.abs(this.values[from]);
+        if (from === to) {
+          size += value;
+        } else if (orderedUnits.indexOf(from) < orderedUnits.indexOf(to)) {
+          size += value * this.matrix[from][to];
+        } else {
+          size += value / this.matrix[to][from];
+        }
+      }
+      return size;
+    };
+
     let lastUnit;
     let lastUnitTotal = 0;
     for (let i = 0; i < orderedUnits.length; i++) {
@@ -804,7 +824,7 @@ export default class Duration {
           }
         }
 
-        own = snapFloatingPoint(own);
+        own = snapFloatingPoint(own, sizeIn(k));
         // only keep the integer part for now in the hopes of putting any decimal part
         // into a smaller unit later
         accumulated[k] = own % 1;
