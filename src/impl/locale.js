@@ -503,7 +503,13 @@ export default class Locale {
   extract(dt, intlOpts, field) {
     const df = this.dtFormatter(dt, intlOpts),
       results = df.formatToParts(),
-      matching = results.find((m) => m.type.toLowerCase() === field);
+      // The Chinese and Dangi calendars (and some older runtimes for other calendars) have no plain "year"
+      // part. They report a "relatedYear", the Gregorian year the calendar year starts in, instead.
+      matching =
+        results.find((m) => m.type.toLowerCase() === field) ??
+        (field === "year"
+          ? results.find((m) => m.type.toLowerCase() === "relatedyear")
+          : undefined);
     return matching ? matching.value : null;
   }
 

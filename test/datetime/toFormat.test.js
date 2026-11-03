@@ -542,6 +542,22 @@ test("DateTime#toFormat() uses the output calendar", () => {
   expect(dt.toFormat("MMMM yyyy", { outputCalendar: "islamic" })).toBe("Shaʻban 1402");
 });
 
+test("DateTime#toFormat() uses the related Gregorian year for calendars without a plain year part", () => {
+  // Intl reports the Chinese and Dangi calendars as a "relatedYear" plus a "yearName", never as a "year"
+  const zh = DateTime.fromISO("2022-06-20T23:29:04Z", { zone: "utc" }).reconfigure({
+    locale: "zh-CN",
+    outputCalendar: "chinese",
+  });
+  expect(zh.toFormat("y")).toBe("2022");
+  expect(zh.toFormat("yyyy")).toBe("2022");
+
+  const ko = DateTime.fromISO("2022-06-20T23:29:04Z", { zone: "utc" }).reconfigure({
+    locale: "ko-KR",
+    outputCalendar: "dangi",
+  });
+  expect(ko.toFormat("y")).toBe("2022");
+});
+
 test("DateTime#toFormat() returns something different for invalid DateTimes", () => {
   expect(DateTime.invalid("because").toFormat("dd MM yyyy")).toBe("Invalid DateTime");
 });
