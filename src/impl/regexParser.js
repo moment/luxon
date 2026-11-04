@@ -128,7 +128,7 @@ const isoTimeOnly = RegExp(`^T?${isoTimeBaseRegex.source}$`);
 // ISO duration parsing
 
 const isoDuration =
-  /^-?P(?:(?:(-?\d{1,20}(?:\.\d{1,20})?)Y)?(?:(-?\d{1,20}(?:\.\d{1,20})?)M)?(?:(-?\d{1,20}(?:\.\d{1,20})?)W)?(?:(-?\d{1,20}(?:\.\d{1,20})?)D)?(?:T(?:(-?\d{1,20}(?:\.\d{1,20})?)H)?(?:(-?\d{1,20}(?:\.\d{1,20})?)M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,20}))?S)?)?)$/;
+  /^-?P(?:(?:(-?\d{1,20}(?:[.,]\d{1,20})?)Y)?(?:(-?\d{1,20}(?:[.,]\d{1,20})?)M)?(?:(-?\d{1,20}(?:[.,]\d{1,20})?)W)?(?:(-?\d{1,20}(?:[.,]\d{1,20})?)D)?(?:T(?:(-?\d{1,20}(?:[.,]\d{1,20})?)H)?(?:(-?\d{1,20}(?:[.,]\d{1,20})?)M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,20}))?S)?)?)$/;
 
 function extractISODuration(match) {
   const [s, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] =
@@ -140,14 +140,17 @@ function extractISODuration(match) {
   const maybeNegate = (num, force = false) =>
     num !== undefined && (force || (num && hasNegativePrefix)) ? -num : num;
 
+  // ISO 8601 allows a comma as well as a full stop as the decimal sign.
+  const parseDecimal = (str) => parseFloating(str && str.replace(",", "."));
+
   return [
     {
-      years: maybeNegate(parseFloating(yearStr)),
-      months: maybeNegate(parseFloating(monthStr)),
-      weeks: maybeNegate(parseFloating(weekStr)),
-      days: maybeNegate(parseFloating(dayStr)),
-      hours: maybeNegate(parseFloating(hourStr)),
-      minutes: maybeNegate(parseFloating(minuteStr)),
+      years: maybeNegate(parseDecimal(yearStr)),
+      months: maybeNegate(parseDecimal(monthStr)),
+      weeks: maybeNegate(parseDecimal(weekStr)),
+      days: maybeNegate(parseDecimal(dayStr)),
+      hours: maybeNegate(parseDecimal(hourStr)),
+      minutes: maybeNegate(parseDecimal(minuteStr)),
       seconds: maybeNegate(parseFloating(secondStr), secondStr === "-0"),
       milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds),
     },
