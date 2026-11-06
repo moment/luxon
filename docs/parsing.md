@@ -227,6 +227,7 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | o                |              | ordinal (day of year), unpadded                                   | `218`                       |
 | ooo              |              | ordinal (day of year), padded to 3                                | `218`                       |
 | q                |              | quarter, no padding                                               | `3`                         |
+| qq               |              | quarter, padded to 2                                              | `03`                        |
 | D                |              | localized numeric date                                            | `9/6/2014`                  |
 | DD               |              | localized date with abbreviated month                             | `Aug 6, 2014`               |
 | DDD              |              | localized date with full month                                    | `August 6, 2014`            |
