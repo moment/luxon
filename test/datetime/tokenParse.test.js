@@ -234,6 +234,12 @@ test("DateTime.fromFormat() parses eras", () => {
 
   dt = DateTime.fromFormat("0206 Before Christ", "yyyy GG");
   expect(dt.year).toEqual(-206);
+
+  dt = DateTime.fromFormat("0206 A", "yyyy GGGGG");
+  expect(dt.year).toEqual(206);
+
+  dt = DateTime.fromFormat("0206 B", "yyyy GGGGG");
+  expect(dt.year).toEqual(-206);
 });
 
 test("DateTime.fromFormat() parses variable-length days", () => {
