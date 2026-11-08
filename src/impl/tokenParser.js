@@ -77,6 +77,8 @@ function unitForToken(token, loc) {
           return oneOf(loc.eras("short"), 0);
         case "GG":
           return oneOf(loc.eras("long"), 0);
+        case "GGGGG":
+          return oneOf(loc.eras("narrow"), 0);
         // years
         case "y":
           return intUnit(oneToSix);
