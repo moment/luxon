@@ -97,7 +97,7 @@ export default class Info {
    * @example Info.months('numeric')[0] //=> '1'
    * @example Info.months('short', { locale: 'fr-CA' } )[0] //=> 'janv.'
    * @example Info.months('numeric', { locale: 'ar' })[0] //=> '١'
-   * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'
+   * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Muharram'
    * @return {Array}
    */
   static months(

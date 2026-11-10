@@ -156,7 +156,7 @@ If you parse something and get an invalid date, the debugging steps are slightly
 ```js
 var d = DateTime.fromFormat("August 32 1982", "MMMM d yyyy");
 d.isValid; //=> false
-d.invalidReason; //=> 'day out of range'
+d.invalidReason; //=> 'unit out of range'
 ```
 
 For more on validity and how to debug it, see [validity](validity.md). You may find more comprehensive tips there. But as it applies specifically to `fromFormat`, again try `fromFormatExplain`:
@@ -198,11 +198,11 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | hh               |              | hour in 12-hour time, padded to 2                                 | `01`                        |
 | H                |              | hour in 24-hour time, no padding                                  | `13`                        |
 | HH               |              | hour in 24-hour time, padded to 2                                 | `13`                        |
-| Z                |              | narrow offset                                                     | `+5`                        |
-| ZZ               |              | short offset                                                      | `+05:00`                    |
-| ZZZ              |              | techie offset                                                     | `+0500`                     |
+| Z                |              | narrow offset                                                     | `-4`                        |
+| ZZ               |              | short offset                                                      | `-04:00`                    |
+| ZZZ              |              | techie offset                                                     | `-0400`                     |
 | z                |              | IANA zone                                                         | `America/New_York`          |
-| a                |              | meridiem                                                          | `AM`                        |
+| a                |              | meridiem                                                          | `PM`                        |
 | d                |              | day of the month, no padding                                      | `6`                         |
 | dd               |              | day of the month, padded to 2                                     | `06`                        |
 | c                | E            | day of the week, as number from 1-7 (Monday is 1, Sunday is 7)    | `3`                         |
@@ -220,18 +220,18 @@ Because Luxon was able to parse the string without difficulty, the output is a l
 | G                |              | abbreviated localized era                                         | `AD`                        |
 | GG               |              | unabbreviated localized era                                       | `Anno Domini`               |
 | GGGGG            |              | one-letter localized era                                          | `A`                         |
-| kk               |              | ISO week year, unpadded                                           | `17`                        |
+| kk               |              | ISO week year, unpadded                                           | `14`                        |
 | kkkk             |              | ISO week year, padded to 4                                        | `2014`                      |
 | W                |              | ISO week number, unpadded                                         | `32`                        |
 | WW               |              | ISO week number, padded to 2                                      | `32`                        |
 | o                |              | ordinal (day of year), unpadded                                   | `218`                       |
 | ooo              |              | ordinal (day of year), padded to 3                                | `218`                       |
 | q                |              | quarter, no padding                                               | `3`                         |
-| D                |              | localized numeric date                                            | `9/6/2014`                  |
+| D                |              | localized numeric date                                            | `8/6/2014`                  |
 | DD               |              | localized date with abbreviated month                             | `Aug 6, 2014`               |
 | DDD              |              | localized date with full month                                    | `August 6, 2014`            |
 | DDDD             |              | localized date with full month and weekday                        | `Wednesday, August 6, 2014` |
-| t                |              | localized time                                                    | `1:07 AM`                   |
+| t                |              | localized time                                                    | `1:07 PM`                   |
 | tt               |              | localized time with seconds                                       | `1:07:04 PM`                |
 | T                |              | localized 24-hour time                                            | `13:07`                     |
 | TT               |              | localized 24-hour time with seconds                               | `13:07:04`                  |

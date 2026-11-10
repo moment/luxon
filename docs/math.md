@@ -243,7 +243,7 @@ Luxon methods that create Durations de novo accept an option called `conversionA
 
 ```js
 Duration.fromObject({ years: 23 }, { conversionAccuracy: 'longterm' });
-Duration.fromISO('PY23', { conversionAccuracy: 'longterm' });
+Duration.fromISO('P23Y', { conversionAccuracy: 'longterm' });
 
 end.diff(start, 'days', { conversionAccuracy: 'longterm' })
 ```

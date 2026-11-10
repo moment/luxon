@@ -1290,7 +1290,7 @@ export default class DateTime {
    * Get the day of the week.
    * 1 is Monday and 7 is Sunday
    * @see https://en.wikipedia.org/wiki/ISO_week_date
-   * @example DateTime.local(2014, 11, 31).weekday //=> 4
+   * @example DateTime.local(2014, 12, 31).weekday //=> 3
    * @type {number}
    */
   get weekday() {
@@ -1737,7 +1737,7 @@ export default class DateTime {
    * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
    * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
    * @example DateTime.local(2014, 3, 3).startOf('week').toISODate(); //=> '2014-03-03', weeks always start on Mondays
-   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00:00.000-05:00'
    * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
    * @return {DateTime}
    */
@@ -1798,9 +1798,9 @@ export default class DateTime {
    * @param {string} unit - The unit to go to the end of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
    * @param {Object} opts - options
    * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week
-   * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-31T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-31T23:59:59.999-04:00'
    * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
-   * @example DateTime.local(2014, 3, 3).endOf('week').toISO(); // => '2014-03-09T23:59:59.999-05:00', weeks start on Mondays
+   * @example DateTime.local(2014, 3, 3).endOf('week').toISO(); // => '2014-03-09T23:59:59.999-04:00', weeks start on Mondays
    * @example DateTime.local(2014, 3, 3, 5, 30).endOf('day').toISO(); //=> '2014-03-03T23:59:59.999-05:00'
    * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
    * @return {DateTime}
@@ -1886,12 +1886,12 @@ export default class DateTime {
    * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'years', 'months', 'days', 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
-   * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
+   * @example DateTime.utc(1982, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
    * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
    * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
-   * @example DateTime.now().toISO({ precision: 'day' }) //=> '2017-04-22Z'
-   * @example DateTime.now().toISO({ precision: 'minute' }) //=> '2017-04-22T20:47Z'
+   * @example DateTime.now().toISO({ precision: 'day' }) //=> '2017-04-22-04:00'
+   * @example DateTime.now().toISO({ precision: 'minute' }) //=> '2017-04-22T20:47-04:00'
    * @return {string|null}
    */
   toISO({
@@ -2035,10 +2035,10 @@ export default class DateTime {
    * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
    * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
    * @param {boolean} [opts.includeOffsetSpace=true] - include the space between the time and the offset, such as '05:15:16.345 -04:00'
-   * @example DateTime.utc().toSQL() //=> '05:15:16.345'
-   * @example DateTime.now().toSQL() //=> '05:15:16.345 -04:00'
-   * @example DateTime.now().toSQL({ includeOffset: false }) //=> '05:15:16.345'
-   * @example DateTime.now().toSQL({ includeZone: false }) //=> '05:15:16.345 America/New_York'
+   * @example DateTime.utc().toSQLTime() //=> '05:15:16.345 Z'
+   * @example DateTime.now().toSQLTime() //=> '05:15:16.345 -04:00'
+   * @example DateTime.now().toSQLTime({ includeOffset: false }) //=> '05:15:16.345'
+   * @example DateTime.now().toSQLTime({ includeZone: true }) //=> '05:15:16.345 America/New_York'
    * @return {string}
    */
   toSQLTime({ includeOffset = true, includeZone = false, includeOffsetSpace = true } = {}) {
