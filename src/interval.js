@@ -342,7 +342,7 @@ export default class Interval {
   }
 
   /**
-   * Split this Interval at each of the specified DateTimes
+   * Split this Interval at each distinct DateTime strictly inside it.
    * @param {...DateTime} dateTimes - the unit of time to count.
    * @return {Array}
    */
@@ -359,8 +359,10 @@ export default class Interval {
     while (s < this.e) {
       const added = sorted[i] || this.e,
         next = +added > +this.e ? this.e : added;
-      results.push(Interval.fromDateTimes(s, next));
-      s = next;
+      if (+s < +next) {
+        results.push(Interval.fromDateTimes(s, next));
+        s = next;
+      }
       i += 1;
     }
 

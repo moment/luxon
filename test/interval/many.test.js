@@ -301,6 +301,21 @@ test("Interval#splitAt ignores times outside the interval", () => {
   expect(oneAfterOneDuring[1]).toEqual(todayFrom(11, 13));
 });
 
+test("Interval#splitAt ignores cuts at the interval boundaries", () => {
+  const interval = todayFrom(8, 13);
+  const split = interval.splitAt(interval.start.setZone("UTC+8"), interval.end);
+  expect(split).toEqual([interval]);
+});
+
+test("Interval#splitAt ignores repeated cuts at the same instant", () => {
+  const interval = todayFrom(8, 13);
+  const first = Helpers.atHour(9);
+  const second = Helpers.atHour(11);
+  const split = interval.splitAt(second, first, first.setZone("UTC+8"));
+
+  expect(split).toEqual([todayFrom(8, 9), todayFrom(9, 11), todayFrom(11, 13)]);
+});
+
 test("Interval#splitAt handles DST shifts", () => {
   const zone = "Europe/Berlin";
   const dayStart = DateTime.fromISO("2023-10-29T00:00:00+02:00", { zone });
