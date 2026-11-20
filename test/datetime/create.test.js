@@ -1,6 +1,7 @@
 /* global test expect */
 
 import { DateTime, Settings } from "../../src/luxon";
+import { InvalidArgumentError } from "../../src/errors";
 import Helpers, { supportsMinDaysInFirstWeek } from "../helpers";
 
 const withDefaultLocale = Helpers.withDefaultLocale,
@@ -391,6 +392,27 @@ test("DateTime.fromSeconds accepts the default locale", () => {
 
 test("DateTime.fromSeconds(seconds) throws InvalidArgumentError for non-numeric input", () => {
   expect(() => DateTime.fromSeconds("slurp")).toThrow();
+});
+
+test.each([
+  ["123", "string", "123"],
+  [undefined, "undefined", "undefined"],
+  [null, "object", "null"],
+  [false, "boolean", "false"],
+  [Symbol("timestamp"), "symbol", "Symbol(timestamp)"],
+  [{ toString: () => "timestamp" }, "object", "timestamp"],
+])("DateTime.fromSeconds reports the type and value of %p", (value, type, description) => {
+  expect(() => DateTime.fromSeconds(value)).toThrow(
+    new InvalidArgumentError(
+      `fromSeconds requires a numerical input, but received a ${type} with value ${description}`
+    )
+  );
+});
+
+test("DateTime.fromSeconds still rejects values that cannot be converted to strings", () => {
+  const value = Object.create(null);
+  expect(() => DateTime.fromSeconds(value)).toThrow(InvalidArgumentError);
+  expect(() => DateTime.fromSeconds(value)).toThrow("received a object");
 });
 
 test("DateTime.fromSeconds(seconds) does not accept out-of-bounds numbers", () => {

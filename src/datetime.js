@@ -758,7 +758,15 @@ export default class DateTime {
    */
   static fromSeconds(seconds, options = {}) {
     if (!isNumber(seconds)) {
-      throw new InvalidArgumentError("fromSeconds requires a numerical input");
+      let description;
+      try {
+        description = String(seconds);
+      } catch {
+        description = "<unprintable>";
+      }
+      throw new InvalidArgumentError(
+        `fromSeconds requires a numerical input, but received a ${typeof seconds} with value ${description}`
+      );
     } else {
       return new DateTime({
         ts: seconds * 1000,
