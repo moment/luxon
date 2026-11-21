@@ -32,6 +32,25 @@ test("FixedOffsetZone.parseSpecifier returns a valid instance from a UTC offset 
   expect(zone.name).toBe("UTC-6");
 });
 
+test("FixedOffsetZone.parseSpecifier accepts offsets without a colon", () => {
+  let zone = FixedOffsetZone.parseSpecifier("UTC+0530");
+  expect(zone.isValid).toBe(true);
+  expect(zone.offset()).toBe(330);
+  expect(zone.name).toBe("UTC+5:30");
+
+  zone = FixedOffsetZone.parseSpecifier("UTC-0530");
+  expect(zone.isValid).toBe(true);
+  expect(zone.offset()).toBe(-330);
+  expect(zone.name).toBe("UTC-5:30");
+});
+
+test("DateTime accepts a colonless fixed offset zone", () => {
+  const dt = DateTime.fromMillis(0, { zone: "UTC+0530" });
+  expect(dt.isValid).toBe(true);
+  expect(dt.offset).toBe(330);
+  expect(dt.toISO()).toBe("1970-01-01T05:30:00.000+05:30");
+});
+
 test("FixedOffsetZone.parseSpecifier returns null for invalid data", () => {
   expect(FixedOffsetZone.parseSpecifier()).toBe(null);
   expect(FixedOffsetZone.parseSpecifier(null)).toBe(null);

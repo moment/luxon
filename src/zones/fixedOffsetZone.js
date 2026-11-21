@@ -34,11 +34,12 @@ export default class FixedOffsetZone extends Zone {
    * @example FixedOffsetZone.parseSpecifier("UTC+6")
    * @example FixedOffsetZone.parseSpecifier("UTC+06")
    * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
+   * @example FixedOffsetZone.parseSpecifier("UTC+0530")
    * @return {FixedOffsetZone}
    */
   static parseSpecifier(s) {
     if (s) {
-      const r = s.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
+      const r = s.match(/^utc(?:([+-]\d{1,2})(?::?(\d{2}))?)?$/i);
       if (r) {
         return new FixedOffsetZone(signedOffset(r[1], r[2]));
       }
