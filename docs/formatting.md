@@ -218,6 +218,7 @@ The macro options available correspond one-to-one with the preset formats define
 | y                |              | year, unpadded                                                 | `2014`                                                        |
 | yy               |              | two-digit year                                                 | `14`                                                          |
 | yyyy             |              | four- to six- digit year, pads to 4                            | `2014`                                                        |
+| yyyyy            |              | same as `yyyy`; used by expanded macro tokens                   | `2014`                                                        |
 | G                |              | abbreviated localized era                                      | `AD`                                                          |
 | GG               |              | unabbreviated localized era                                    | `Anno Domini`                                                 |
 | GGGGG            |              | one-letter localized era                                       | `A`                                                           |

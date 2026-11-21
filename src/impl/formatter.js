@@ -318,6 +318,7 @@ export default class Formatter {
               ? string({ year: "2-digit" }, "year")
               : this.num(dt.year.toString().slice(-2), 2);
           case "yyyy":
+          case "yyyyy":
             // like 0012
             return useDateTimeFormatter
               ? string({ year: "numeric" }, "year")
