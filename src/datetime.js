@@ -1083,15 +1083,26 @@ export default class DateTime {
   }
 
   /**
-   * Produce the the fully expanded format token for the locale
-   * Does NOT quote characters, so quoted tokens will not round trip correctly
+   * Produce the fully expanded format string for the locale, quoting literal text
+   * so that it can be used with {@link DateTime#toFormat} or {@link DateTime.fromFormat}.
    * @param fmt
    * @param localeOpts
    * @returns {string}
    */
   static expandFormat(fmt, localeOpts = {}) {
     const expanded = expandMacroTokens(Formatter.parseFormat(fmt), Locale.fromObject(localeOpts));
-    return expanded.map((t) => t.val).join("");
+    return expanded
+      .map((t) => {
+        if (t.literal && /[a-zA-Z']/.test(t.val)) {
+          // Empty quoted strings represent literal apostrophes.
+          return t.val
+            .split("'")
+            .map((part) => (part ? `'${part}'` : ""))
+            .join("''");
+        }
+        return t.val;
+      })
+      .join("");
   }
 
   static resetCache() {

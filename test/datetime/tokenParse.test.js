@@ -1238,6 +1238,26 @@ test("DateTime.expandFormat respects the hour cycle when forced by the macro tok
   expect(format).toBe("H:m");
 });
 
+test.each(["pt-BR", "es-ES", "en-US"])(
+  "DateTime.expandFormat preserves date literals for %s",
+  (locale) => {
+    const date = DateTime.fromISO("2014-08-06T13:00:00Z"),
+      format = DateTime.expandFormat("DD", { locale }),
+      text = date.toFormat("DD", { locale });
+    expect(date.toFormat(format, { locale })).toBe(text);
+    expect(DateTime.fromFormat(text, format, { locale }).toISODate()).toBe("2014-08-06");
+  }
+);
+
+test.each(["'at' HH:mm", "HH 'o''''clock'", "''HH''", "'T' HH"])(
+  "DateTime.expandFormat preserves existing literals in %s",
+  (format) => {
+    const date = DateTime.fromISO("2014-08-06T13:00:00"),
+      expanded = DateTime.expandFormat(format, { locale: "en-US" });
+    expect(date.toFormat(expanded)).toBe(date.toFormat(format));
+  }
+);
+
 //------
 // .fromFormatParser
 //-------

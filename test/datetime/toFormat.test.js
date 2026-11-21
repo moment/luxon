@@ -269,6 +269,15 @@ test("DateTime#toFormat('yyyy') returns the padded full year", () => {
   expect(lilDt.toFormat("yyyy")).toBe("0017");
 });
 
+test.each([
+  [17, "0017"],
+  [2014, "2014"],
+  [22222, "22222"],
+  [222222, "222222"],
+])("DateTime#toFormat('yyyyy') formats the expanded year %s", (year, expected) => {
+  expect(DateTime.utc(year, 1, 1).toFormat("yyyyy")).toBe(expected);
+});
+
 test("DateTime#toFormat('yyyyyy') returns the padded extended year", () => {
   const hugeDt = DateTime.fromObject({ year: 136000 });
   expect(hugeDt.toFormat("yyyyyy")).toBe("136000");
