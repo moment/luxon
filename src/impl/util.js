@@ -250,22 +250,14 @@ export function untruncateYear(year) {
 
 export function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
   const date = new Date(ts),
-    intlOpts = {
-      hourCycle: "h23",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
+    // Request only the zone name so unrelated fields do not affect its width.
+    intlOpts = { timeZoneName: offsetFormat };
 
   if (timeZone) {
     intlOpts.timeZone = timeZone;
   }
 
-  const modified = { timeZoneName: offsetFormat, ...intlOpts };
-
-  const parsed = new Intl.DateTimeFormat(locale, modified)
+  const parsed = new Intl.DateTimeFormat(locale, intlOpts)
     .formatToParts(date)
     .find((m) => m.type.toLowerCase() === "timezonename");
   return parsed ? parsed.value : null;

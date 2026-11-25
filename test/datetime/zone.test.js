@@ -288,6 +288,25 @@ test("DateTime#offsetNameShort returns null for invalid times", () => {
   expect(zoned.offsetNameShort).toBe(null);
 });
 
+test.each(["el", "el-u-hc-h23", "en"])(
+  "DateTime offset names match native Intl widths in %s",
+  (locale) => {
+    for (const iso of ["2026-01-15T12:00:00Z", "2026-07-15T12:00:00Z"]) {
+      for (const zone of ["America/New_York", "system"]) {
+        const zoned = DateTime.fromISO(iso, { locale, zone }),
+          options = zone === "system" ? {} : { timeZone: zone },
+          nativeName = (timeZoneName) =>
+            new Intl.DateTimeFormat(locale, { ...options, timeZoneName })
+              .formatToParts(zoned.toJSDate())
+              .find((part) => part.type === "timeZoneName").value;
+
+        expect(zoned.offsetNameShort).toBe(nativeName("short"));
+        expect(zoned.offsetNameLong).toBe(nativeName("long"));
+      }
+    }
+  }
+);
+
 //------
 // Etc/GMT zones
 //------
