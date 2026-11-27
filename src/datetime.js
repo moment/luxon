@@ -217,6 +217,24 @@ function toTechFormat(dt, format, allowZ = true) {
     : null;
 }
 
+// When the UTC offset has a sub-minute part, toISO() and friends print the
+// offset truncated to whole minutes (#755). The wall time printed alongside
+// it then has to be the wall time that belongs to the truncated offset, so
+// that the printed time plus the printed offset still names the same instant
+// (#1851). Returns a DateTime at the same instant whose wall time is shifted
+// by the dropped seconds and whose offset is the truncated one, or the
+// original DateTime when there is nothing to shift.
+function adjustForTruncatedOffset(dt, includeOffset) {
+  if (!dt.isValid || !includeOffset) {
+    return dt;
+  }
+  const truncated = Math.trunc(dt.o);
+  if (truncated === dt.o) {
+    return dt;
+  }
+  return new DateTime({ ts: dt.ts, zone: dt.zone, o: truncated, loc: dt.loc });
+}
+
 function toISODate(o, extended, precision) {
   const longFormat = o.c.year > 9999 || o.c.year < 0;
   let c = "";
@@ -1909,10 +1927,11 @@ export default class DateTime {
     precision = normalizeUnit(precision);
     const ext = format === "extended";
 
-    let c = toISODate(this, ext, precision);
+    const dt = adjustForTruncatedOffset(this, includeOffset);
+    let c = toISODate(dt, ext, precision);
     if (orderedUnits.indexOf(precision) >= 3) c += "T";
     c += toISOTime(
-      this,
+      dt,
       ext,
       suppressSeconds,
       suppressMilliseconds,
@@ -1984,7 +2003,7 @@ export default class DateTime {
     return (
       c +
       toISOTime(
-        this,
+        adjustForTruncatedOffset(this, includeOffset),
         format === "extended",
         suppressSeconds,
         suppressMilliseconds,
@@ -2055,7 +2074,9 @@ export default class DateTime {
       }
     }
 
-    return toTechFormat(this, fmt, true);
+    // the offset is only printed when includeOffset is set and includeZone
+    // does not override it, so only then does the wall time need shifting
+    return toTechFormat(adjustForTruncatedOffset(this, includeOffset && !includeZone), fmt, true);
   }
 
   /**
@@ -2075,7 +2096,11 @@ export default class DateTime {
       return null;
     }
 
-    return `${this.toSQLDate()} ${this.toSQLTime(opts)}`;
+    // shift the wall time (and date, if it crosses midnight) to match the
+    // truncated offset printed by toSQLTime; adjusting again inside
+    // toSQLTime is a no-op because the offset is already whole minutes
+    const dt = adjustForTruncatedOffset(this, opts.includeOffset !== false && !opts.includeZone);
+    return `${dt.toSQLDate()} ${dt.toSQLTime(opts)}`;
   }
 
   /**

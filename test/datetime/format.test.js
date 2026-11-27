@@ -110,10 +110,82 @@ test("DateTime#toISO() returns null for invalid DateTimes", () => {
 });
 
 // #724, Firefox specific issue, offset prints as '-05:50.60000000000002'
+// #1851: the offset is still truncated to whole minutes, but the wall time
+// is shifted by the dropped 36 seconds so the string names the same instant
 test("DateTime#toISO() rounds fractional timezone minute offsets", () => {
   expect(DateTime.fromMillis(-62090696591000).setZone("America/Chicago").toISO()).toBe(
-    "0002-06-04T10:26:13.000-05:50"
+    "0002-06-04T10:26:49.000-05:50"
   );
+});
+
+// #1851, the offset at the instant has seconds (local mean time), so toISO()
+// prints the wall time that belongs to the truncated offset and the instant
+// round-trips exactly
+test("DateTime#toISO() preserves the instant when the offset has seconds", () => {
+  const start = DateTime.fromObject(
+    { year: 1850, month: 1, day: 15 },
+    { zone: "America/New_York" }
+  );
+  expect(start.offset).toBeCloseTo(-296.0333, 4);
+  expect(start.toISO()).toBe("1850-01-15T00:00:02.000-04:56");
+
+  const back = DateTime.fromISO(start.toISO(), { zone: "America/New_York" });
+  expect(back.toMillis()).toBe(start.toMillis());
+  expect(back.toISODate()).toBe("1850-01-15");
+  expect(back.toISO()).toBe(start.toISO());
+});
+
+test("DateTime#toISO() preserves the instant for a positive offset with seconds", () => {
+  const start = DateTime.fromObject({ year: 1850, month: 1, day: 15 }, { zone: "Asia/Tokyo" });
+  expect(start.offset).toBeCloseTo(558.9833, 4);
+  expect(start.toISO()).toBe("1850-01-14T23:59:01.000+09:18");
+
+  const back = DateTime.fromISO(start.toISO(), { zone: "Asia/Tokyo" });
+  expect(back.toMillis()).toBe(start.toMillis());
+  expect(back.toISODate()).toBe("1850-01-15");
+});
+
+test("DateTime#toISO() preserves the instant across midnight in both directions", () => {
+  const beforeMidnight = DateTime.fromObject(
+    { year: 1850, month: 1, day: 14, hour: 23, minute: 59, second: 59 },
+    { zone: "America/New_York" }
+  );
+  expect(beforeMidnight.toISO()).toBe("1850-01-15T00:00:01.000-04:56");
+  expect(DateTime.fromISO(beforeMidnight.toISO(), { zone: "America/New_York" }).toMillis()).toBe(
+    beforeMidnight.toMillis()
+  );
+  // the date-only outputs carry no offset, so they still show the true wall date
+  expect(beforeMidnight.toISODate()).toBe("1850-01-14");
+  expect(beforeMidnight.toSQLDate()).toBe("1850-01-14");
+
+  const afterMidnight = DateTime.fromObject(
+    { year: 1850, month: 1, day: 15, hour: 0, minute: 0, second: 1 },
+    { zone: "Asia/Tokyo" }
+  );
+  expect(afterMidnight.toISO()).toBe("1850-01-14T23:59:02.000+09:18");
+  expect(DateTime.fromISO(afterMidnight.toISO(), { zone: "Asia/Tokyo" }).toMillis()).toBe(
+    afterMidnight.toMillis()
+  );
+});
+
+test("DateTime#toISO() shifts the wall time for basic format and extendedZone too", () => {
+  const start = DateTime.fromObject(
+    { year: 1850, month: 1, day: 15 },
+    { zone: "America/New_York" }
+  );
+  expect(start.toISO({ format: "basic" })).toBe("18500115T000002.000-0456");
+  expect(start.toISO({ extendedZone: true })).toBe(
+    "1850-01-15T00:00:02.000-04:56[America/New_York]"
+  );
+});
+
+test("DateTime#toISO() does not shift the wall time when the offset is omitted", () => {
+  const start = DateTime.fromObject(
+    { year: 1850, month: 1, day: 15 },
+    { zone: "America/New_York" }
+  );
+  expect(start.toISO({ includeOffset: false })).toBe("1850-01-15T00:00:00.000");
+  expect(start.toISOTime({ includeOffset: false })).toBe("00:00:00.000");
 });
 
 test("DateTime#toISO() handles long gregorian format", () => {
@@ -286,6 +358,20 @@ test("DateTime#toISOTime() can output the basic format", () => {
   expect(dt2.toISOTime({ format: "basic", suppressSeconds: true })).toBe("0923Z");
 });
 
+// #1851
+test("DateTime#toISOTime() preserves the instant when the offset has seconds", () => {
+  const start = DateTime.fromObject(
+    { year: 1850, month: 1, day: 15 },
+    { zone: "America/New_York" }
+  );
+  expect(start.toISOTime()).toBe("00:00:02.000-04:56");
+  expect(start.toISOTime({ format: "basic" })).toBe("000002.000-0456");
+  expect(start.toISOTime({ extendedZone: true })).toBe("00:00:02.000-04:56[America/New_York]");
+
+  const tokyo = DateTime.fromObject({ year: 1850, month: 1, day: 15 }, { zone: "Asia/Tokyo" });
+  expect(tokyo.toISOTime()).toBe("23:59:01.000+09:18");
+});
+
 test("DateTime#toISOTime can include the prefix", () => {
   expect(dt.toISOTime({ includePrefix: true })).toBe("T09:23:54.123Z");
   expect(dt.toISOTime({ format: "basic", includePrefix: true })).toBe("T092354.123Z");
@@ -401,6 +487,21 @@ test("DateTime#toSQLTime() accepts an includeZone option", () => {
   );
 });
 
+// #1851
+test("DateTime#toSQLTime() preserves the instant when the offset has seconds", () => {
+  const start = DateTime.fromObject(
+    { year: 1850, month: 1, day: 15 },
+    { zone: "America/New_York" }
+  );
+  expect(start.toSQLTime()).toBe("00:00:02.000 -04:56");
+  expect(start.toSQLTime({ includeOffset: false })).toBe("00:00:00.000");
+  // no offset is printed with includeZone, so the wall time is not shifted
+  expect(start.toSQLTime({ includeZone: true })).toBe("00:00:00.000 America/New_York");
+
+  const tokyo = DateTime.fromObject({ year: 1850, month: 1, day: 15 }, { zone: "Asia/Tokyo" });
+  expect(tokyo.toSQLTime()).toBe("23:59:01.000 +09:18");
+});
+
 test("DateTime#toSQLTime() returns null for invalid DateTimes", () => {
   expect(invalid.toSQLTime()).toBe(null);
 });
@@ -431,6 +532,35 @@ test("DateTime#toSQL() accepts an includeZone option", () => {
   expect(dt.toUTC().toSQL({ includeZone: true })).toBe("1982-05-25 09:23:54.123 UTC");
   expect(dt.setZone("America/New_York").toSQL({ includeZone: true })).toBe(
     "1982-05-25 05:23:54.123 America/New_York"
+  );
+});
+
+// #1851
+test("DateTime#toSQL() preserves the instant when the offset has seconds", () => {
+  const start = DateTime.fromObject(
+    { year: 1850, month: 1, day: 15 },
+    { zone: "America/New_York" }
+  );
+  expect(start.toSQL()).toBe("1850-01-15 00:00:02.000 -04:56");
+  expect(DateTime.fromSQL(start.toSQL(), { zone: "America/New_York" }).toMillis()).toBe(
+    start.toMillis()
+  );
+  expect(start.toSQL({ includeOffset: false })).toBe("1850-01-15 00:00:00.000");
+  expect(start.toSQL({ includeZone: true })).toBe("1850-01-15 00:00:00.000 America/New_York");
+
+  const tokyo = DateTime.fromObject({ year: 1850, month: 1, day: 15 }, { zone: "Asia/Tokyo" });
+  expect(tokyo.toSQL()).toBe("1850-01-14 23:59:01.000 +09:18");
+  expect(DateTime.fromSQL(tokyo.toSQL(), { zone: "Asia/Tokyo" }).toMillis()).toBe(tokyo.toMillis());
+});
+
+test("DateTime#toSQL() shifts the date when the shifted time crosses midnight", () => {
+  const beforeMidnight = DateTime.fromObject(
+    { year: 1850, month: 1, day: 14, hour: 23, minute: 59, second: 59 },
+    { zone: "America/New_York" }
+  );
+  expect(beforeMidnight.toSQL()).toBe("1850-01-15 00:00:01.000 -04:56");
+  expect(DateTime.fromSQL(beforeMidnight.toSQL(), { zone: "America/New_York" }).toMillis()).toBe(
+    beforeMidnight.toMillis()
   );
 });
 
